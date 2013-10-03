@@ -6,8 +6,6 @@ using System.ServiceModel;
 using System.Windows;
 using System.Windows.Ink;
 using System.Windows.Threading;
-using Catel.IoC;
-using Catel.MVVM.Views;
 using Classroom_Learning_Partner.ViewModels;
 using CLP.Models;
 using Classroom_Learning_Partner.Views;
@@ -24,15 +22,11 @@ namespace Classroom_Learning_Partner
         void AddPageToDisplay(string pageID);
 
         [OperationContract]
-        void AddStudentSubmission(List<StrokeDTO> serializedStrokes,
-            List<ICLPPageObject> pageObjects,
-            Person submitter, Group groupSubmitter,
-            string notebookID, string pageID, string submissionID, DateTime submissionTime,
-            bool isGroupSubmission, double pageHeight);
+        void RemovePageFromDisplay(string pageID);
 
         [OperationContract]
-        void AddSerializedSubmission(string sPage, Person submitter, Group groupSubmitter,
-            DateTime submissionTime, bool isGroupSubmission, String notebookID, String submissionID);
+        void AddSerializedSubmission(string zippedPage, string submissionID,
+            DateTime submissionTime, string notebookID, string zippedSubmitter);
 
         [OperationContract]
         void ScrollPage(string pageID, string submissionID, double offset);
@@ -40,44 +34,48 @@ namespace Classroom_Learning_Partner
 
     public class ProjectorService : IProjectorContract
     {
-        public ProjectorService() { }
-
         public void SwitchProjectorDisplay(string displayType, List<string> displayPages)
         {
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                (DispatcherOperationCallback)delegate(object arg)
-                {
+                (DispatcherOperationCallback)delegate
+                                             {
+                                                 var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+                                                 if(notebookWorkspaceViewModel == null)
+                                                 {
+                                                     return null;
+                                                 }
                     if(App.CurrentUserMode == App.UserMode.Projector)
                     {
                         if(displayType == "MirrorDisplay")
                         {
-                            (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).MirrorDisplay;
+
+                                notebookWorkspaceViewModel.SelectedDisplay = notebookWorkspaceViewModel.MirrorDisplay;
+
 
                             AddPageToDisplay(displayPages[0]);
                         }
                         else
                         {
-                            bool isNewDisplay = true;
-                            foreach(GridDisplayViewModel gridDisplay in (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Displays)
+                            var isNewDisplay = true;
+                            foreach(var gridDisplay in notebookWorkspaceViewModel.Displays.Where(gridDisplay => gridDisplay.UniqueID == displayType && gridDisplay is CLPGridDisplay)) 
                             {
-                                //if(gridDisplay.DisplayID == displayType)
-                                //{
-                                //    gridDisplay.DisplayedPages.Clear();
-                                //    (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay = gridDisplay;
+                                (gridDisplay as CLPGridDisplay).Pages.Clear();
+                                notebookWorkspaceViewModel.SelectedDisplay = gridDisplay;
 
-                                //    isNewDisplay = false;
-                                //    break;
-                                //}
+                                isNewDisplay = false;
+                                break;
                             }
 
                             if(isNewDisplay)
                             {
-                                //GridDisplayViewModel newGridDisplay = new GridDisplayViewModel();
-                                //newGridDisplay.DisplayID = displayType;
-                                //newGridDisplay.DisplayedPages.Clear();
-                                //(App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).GridDisplays.Add(newGridDisplay);
+                                var newGridDisplay = new CLPGridDisplay
+                                                     {
+                                                         UniqueID = displayType
+                                                     };
+                                newGridDisplay.Pages.Clear();
+                                notebookWorkspaceViewModel.Notebook.Displays.Add(newGridDisplay);
 
-                                //(App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay = newGridDisplay;
+                                notebookWorkspaceViewModel.SelectedDisplay = newGridDisplay;
                             }
 
                             foreach(var pageID in displayPages)
@@ -93,180 +91,145 @@ namespace Classroom_Learning_Partner
         public void AddPageToDisplay(string pageID)
         {
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                (DispatcherOperationCallback)delegate(object arg)
+                (DispatcherOperationCallback)delegate
+                                             {
+                    if(App.CurrentUserMode == App.UserMode.Projector)
+                    {
+                        foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
+                        {
+                            var page = notebook.GetNotebookPageByID(pageID) ?? notebook.GetSubmissionByID(pageID);
+
+                            if(page == null)
+                            {
+                                continue;
+                            }
+
+                            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+                            if(notebookWorkspaceViewModel != null)
+                            {
+                                notebookWorkspaceViewModel.SelectedDisplay.AddPageToDisplay(page);
+                            }
+                            break;
+                        }
+                    }
+                    return null;
+                }, null);
+        }
+
+        public void RemovePageFromDisplay(string pageID)
+        {
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                (DispatcherOperationCallback)delegate
                 {
                     if(App.CurrentUserMode == App.UserMode.Projector)
                     {
                         foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
                         {
-                            var page = notebook.GetNotebookPageByID(pageID);
+                            var page = notebook.GetNotebookPageByID(pageID) ?? notebook.GetSubmissionByID(pageID);
 
                             if(page == null)
                             {
-                                page = notebook.GetSubmissionByID(pageID);
+                                continue;
                             }
 
-                            if(page != null)
+                            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+                            if(notebookWorkspaceViewModel != null)
                             {
-                                (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay.AddPageToDisplay(page);
-                                break;
+                                notebookWorkspaceViewModel.SelectedDisplay.RemovePageFromDisplay(page);
                             }
+                            break;
                         }
                     }
                     return null;
                 }, null);
         }
 
-        public void AddStudentSubmission(List<StrokeDTO> serializedStrokes,
-            List<ICLPPageObject> pageObjects,
-            Person submitter, Group groupSubmitter,
-            string notebookID, string pageID, string submissionID, DateTime submissionTime,
-            bool isGroupSubmission, double pageHeight)
+        public void AddSerializedSubmission(string zippedPage, string submissionID,
+            DateTime submissionTime, string notebookID, string zippedSubmitter)
         {
+            var unZippedPage = CLPServiceAgent.Instance.UnZip(zippedPage);
+            var page = ObjectSerializer.ToObject(unZippedPage);
             ICLPPage submission = null;
-            CLPNotebook currentNotebook = null;
-
-            foreach(var notebook in App.MainWindowViewModel.OpenNotebooks.Where(notebook => notebookID == notebook.UniqueID))
+            if(page is CLPPage)
             {
-                currentNotebook = notebook;
-                var page = notebook.GetNotebookPageByID(pageID);
-                if(page is CLPPage)
-                {
-                    submission = (page as CLPPage).Clone() as CLPPage;
-                    break;
-                }
-                if(page is CLPAnimationPage)
-                {
-                    submission = (page as CLPAnimationPage).Clone() as CLPAnimationPage;
-                    break;
-                }
+                submission = page as CLPPage;
+            }
+            else if(page is CLPAnimationPage)
+            {
+                submission = page as CLPAnimationPage;
             }
 
-            if(submission != null)
+            var unZippedSubmitter = CLPServiceAgent.Instance.UnZip(zippedSubmitter);
+            var submitter = ObjectSerializer.ToObject(unZippedSubmitter) as Person;
+
+            if(submission == null || submitter == null)
             {
-                submission.SerializedStrokes = new ObservableCollection<StrokeDTO>(serializedStrokes);
-                submission.InkStrokes = StrokeDTO.LoadInkStrokes(submission.SerializedStrokes);
-
-                submission.SubmissionType = isGroupSubmission ? SubmissionType.Group : SubmissionType.Single;
-                submission.SubmissionID = submissionID;
-                submission.SubmissionTime = submissionTime;
-                submission.Submitter = submitter;
-                submission.GroupSubmitter = groupSubmitter;
-                submission.PageHeight = pageHeight;
-
-                foreach(ICLPPageObject pageObject in pageObjects)
-                {
-                    submission.PageObjects.Add(pageObject);
-                }
-
-                foreach(ICLPPageObject pageObject in submission.PageObjects)
-                {
-                    pageObject.ParentPage = submission;
-                    if(pageObject is ISubmittable)
-                    {
-                        ICLPPageObject o = pageObject;
-                        Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                            (DispatcherOperationCallback)delegate
-                                {
-                                    var submittable = o as ISubmittable;
-                                    if(submittable != null)
-                                    {
-                                        submittable.AfterSubmit(isGroupSubmission, currentNotebook);
-                                    }
-                                    return null;
-                                }, null);
-                    }
-                }
-
-                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                (DispatcherOperationCallback)delegate
-                    {
-                    try
-                    {
-                        CLPServiceAgent.Instance.AddSubmission(currentNotebook, submission);
-                    }
-                    catch(Exception e)
-                    {
-                        Logger.Instance.WriteToLog("[ERROR] Recieved Submission from wrong notebook: " + e.Message);
-                    }
-
-                    return null;
-                }, null);
+                Logger.Instance.WriteToLog("Failed to receive student submission. Page or Submitter is null.");
+                return;
             }
+            submission.SubmissionType = SubmissionType.Single;
+            submission.SubmissionID = submissionID;
+            submission.SubmissionTime = submissionTime;
+            submission.Submitter = submitter;
 
-            //CLPServiceAgent.Instance.QuickSaveNotebook("RECIEVE-" + userName);
-        }
-
-        public void AddSerializedSubmission(string sPage, Person submitter, Group groupSubmitter,
-            DateTime submissionTime, bool isGroupSubmission, String notebookID, String submissionID)
-        {
-            var submission = ObjectSerializer.ToObject(sPage) as CLPPage;
-            if(submission != null)
-            {
-                submission.SubmissionType = isGroupSubmission ? SubmissionType.Group : SubmissionType.Single;
-                submission.SubmissionID = submissionID;
-                submission.SubmissionTime = submissionTime;
-                submission.Submitter = submitter;
-                submission.GroupSubmitter = groupSubmitter;
-                submission.InkStrokes = StrokeDTO.LoadInkStrokes(submission.SerializedStrokes);
-
-                foreach(ICLPPageObject pageObject in submission.PageObjects)
-                {
-                    pageObject.ParentPage = submission;
-                }
-            }
+            ACLPPageBase.Deserialize(submission);
 
             var currentNotebook = App.MainWindowViewModel.OpenNotebooks.FirstOrDefault(notebook => notebookID == notebook.UniqueID);
 
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                (DispatcherOperationCallback)delegate
-                    {
-                    try
-                    {
-                        CLPServiceAgent.Instance.AddSubmission(currentNotebook, submission);
-                        //CLPServiceAgent.Instance.QuickSaveNotebook("RECIEVE-" + userName);
-                    }
-                    catch(Exception e)
-                    {
-                        Logger.Instance.WriteToLog("[ERROR] Recieved Submission from wrong notebook: " + e.Message);
-                    }
+                                                       (DispatcherOperationCallback)delegate
+                                                       {
+                                                           try
+                                                           {
+                                                               CLPServiceAgent.Instance.AddSubmission(currentNotebook, submission);
+                                                               //CLPServiceAgent.Instance.QuickSaveNotebook("RECIEVE-" + userName);
+                                                           }
+                                                           catch(Exception e)
+                                                           {
+                                                               Logger.Instance.WriteToLog("[ERROR] Recieved Submission from wrong notebook: " +
+                                                                                          e.Message);
+                                                           }
 
-                    return null;
-                }, null);
+                                                           return null;
+                                                       },
+                                                       null);
         }
 
         public void ScrollPage(string pageID, string submissionID, double offset)
         {
-            if (App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
+            var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
+            if(currentPage == null || currentPage.UniqueID != pageID)
             {
-                if((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay is CLPMirrorDisplay)
-                {
-                    var currentPage = ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage;
-
-                    if(currentPage.UniqueID == pageID)
-                    {
-                        if(submissionID == "" || submissionID == currentPage.SubmissionID)
-                        {
-                            var mirrorDisplay = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay;
-                            var mirrorDisplayViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(mirrorDisplay);
-                            var mirrorDisplayView =
-                                CLPServiceAgent.Instance.GetViewFromViewModel(mirrorDisplayViewModels.FirstOrDefault());
-
-                            if(mirrorDisplayView == null)
-                            {
-                                return;
-                            }
-
-                            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                            (DispatcherOperationCallback)delegate
-                                {
-                                    (mirrorDisplayView as MirrorDisplayView).MirrorDisplayScroller.ScrollToVerticalOffset(offset);
-                                return null;
-                            }, null);
-                        }
-                    }
-                }
+                return;
             }
+
+            if(submissionID != "" &&
+               submissionID != currentPage.SubmissionID)
+            {
+                return;
+            }
+
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null)
+            {
+                return;
+            }
+
+            var mirrorDisplay = notebookWorkspaceViewModel.SelectedDisplay as CLPMirrorDisplay;
+            var mirrorDisplayViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(mirrorDisplay);
+            var mirrorDisplayView = CLPServiceAgent.Instance.GetViewFromViewModel(mirrorDisplayViewModels.FirstOrDefault()) as MirrorDisplayView;
+
+            if(mirrorDisplayView == null)
+            {
+                return;
+            }
+
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                                                       (DispatcherOperationCallback)delegate
+                                                                                    {
+                                                                                        mirrorDisplayView.MirrorDisplayScroller.ScrollToVerticalOffset(offset);
+                                                                                        return null;
+                                                                                    }, null);
         }
 
         #region INotebookContract Members
@@ -275,42 +238,86 @@ namespace Classroom_Learning_Partner
         {
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                 (DispatcherOperationCallback)delegate
-                    {
+                {
                     foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
                     {
                         var page = notebook.GetNotebookPageByID(pageID);
 
                         if(page == null)
                         {
-                            page = notebook.GetSubmissionByID(pageID);
+                            continue;
                         }
 
-                        if(page != null)
-                        {
-                            StrokeCollection strokesToRemove = StrokeDTO.LoadInkStrokes(new ObservableCollection<StrokeDTO>(strokesRemoved));
+                        var strokesToRemove = StrokeDTO.LoadInkStrokes(new ObservableCollection<StrokeDTO>(strokesRemoved));
 
-                            var strokes =
-                                from externalStroke in strokesToRemove
-                                from stroke in page.InkStrokes
-                                where stroke.GetStrokeUniqueID() == externalStroke.GetStrokeUniqueID()
-                                select stroke;
+                        var strokes =
+                            from externalStroke in strokesToRemove
+                            from stroke in page.InkStrokes
+                            where stroke.GetStrokeUniqueID() == externalStroke.GetStrokeUniqueID()
+                            select stroke;
 
-                            StrokeCollection actualStrokesToRemove = new StrokeCollection(strokes.ToList());
+                        var actualStrokesToRemove = new StrokeCollection(strokes.ToList());
 
-                            page.InkStrokes.Remove(actualStrokesToRemove);
+                        page.InkStrokes.Remove(actualStrokesToRemove);
 
-                            StrokeCollection strokesToAdd = StrokeDTO.LoadInkStrokes(new ObservableCollection<StrokeDTO>(strokesAdded));
-                            page.InkStrokes.Add(strokesToAdd);
-                            break;
-                        }
+                        var strokesToAdd = StrokeDTO.LoadInkStrokes(new ObservableCollection<StrokeDTO>(strokesAdded));
+                        page.InkStrokes.Add(strokesToAdd);
+                        break;
                     }
                     return null;
                 }, null);
         }
 
-        public void AddNewPage(string s_page, int index) { }
+        public void AddNewPage(string zippedPage, int index)
+        {
+            var unZippedPage = CLPServiceAgent.Instance.UnZip(zippedPage);
+            var page = ObjectSerializer.ToObject(unZippedPage) as ICLPPage;
 
-        public void ReplacePage(string s_page, int index) { }
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null ||
+               page == null)
+            {
+                Logger.Instance.WriteToLog("Failed to add broadcasted page.");
+                return;
+            }
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                                                       (DispatcherOperationCallback)delegate
+                                                                                    {
+                                                                                        if(index < notebookWorkspaceViewModel.Notebook.Pages.Count)
+                                                                                        {
+                                                                                            notebookWorkspaceViewModel.Notebook.InsertPageAt(index, page);
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            notebookWorkspaceViewModel.Notebook.AddPage(page);
+                                                                                        }
+                                                           return null;
+                                                       },
+                                                       null);
+        }
+
+        public void ReplacePage(string zippedPage, int index)
+        {
+            var unZippedPage = CLPServiceAgent.Instance.UnZip(zippedPage);
+            var page = ObjectSerializer.ToObject(unZippedPage) as ICLPPage;
+
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null ||
+               page == null)
+            {
+                Logger.Instance.WriteToLog("Failed to add broadcasted page.");
+                return;
+            }
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                                                       (DispatcherOperationCallback)delegate
+                                                       {
+                                                           notebookWorkspaceViewModel.Notebook.RemovePageAt(index);
+                                                           notebookWorkspaceViewModel.Notebook.InsertPageAt(index, page);
+
+                                                           return null;
+                                                       },
+                                                       null);
+        }
         
         #endregion
     }

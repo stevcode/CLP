@@ -659,9 +659,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     try
                     {
-                        string sNotebook = ObjectSerializer.ToString(notebook);
+                        var sNotebook = ObjectSerializer.ToString(notebook);
+                        var zippedNotebook = CLPServiceAgent.Instance.Zip(sNotebook);
 
-                        App.Network.InstructorProxy.CollectStudentNotebook(sNotebook, App.Network.CurrentUser.FullName);
+                        App.Network.InstructorProxy.CollectStudentNotebook(zippedNotebook, App.Network.CurrentUser.FullName);
                     }
                     catch(Exception)
                     {
@@ -1129,48 +1130,57 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             //TODO: Steve - change to different thread and do callback to make sure sent page has arrived
             IsSending = true;
-            System.Timers.Timer timer = new System.Timers.Timer();
-            timer.Interval = 1000;
-            timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
+            var timer = new System.Timers.Timer
+                        {
+                            Interval = 1000
+                        };
+            timer.Elapsed += timer_Elapsed;
             timer.Enabled = true;
 
-            if(CanSendToTeacher)
+            if(!CanSendToTeacher)
             {
-                var page = NotebookPagesPanelViewModel.GetCurrentPage();
-                if(page == null)
-                {
-                    return;
-                }
-                page.SerializedStrokes = StrokeDTO.SaveInkStrokes(page.InkStrokes);
-                CLPNotebook notebook = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
-
-                // Perform analysis (syntactic and semantic interpretation) of the page here, on the student machine
-                PageAnalysis.AnalyzeArray(page);
-                PageAnalysis.AnalyzeStamps(page);
-                CLPServiceAgent.Instance.SubmitPage(page, notebook.UniqueID, false);
-
-                ICLPPage submission = null;
-                if(page is CLPPage)
-                {
-                    submission = (page as CLPPage).Clone() as CLPPage;
-                }
-                if(page is CLPAnimationPage)
-                {
-                    submission = (page as CLPAnimationPage).Clone() as CLPAnimationPage;
-                }
-                submission.InkStrokes = StrokeDTO.LoadInkStrokes(submission.SerializedStrokes);
-
-                if(notebook != null && submission != null)
-                {
-                    submission.SubmissionType = SubmissionType.Single;
-                    foreach (var pageObject in submission.PageObjects)
-                    {
-                        pageObject.ParentPage = submission;
-                    }
-
-                    notebook.AddStudentSubmission(submission.UniqueID, submission);
-                }
+                return;
             }
+
+            var page = NotebookPagesPanelViewModel.GetCurrentPage();
+            if(page == null)
+            {
+                return;
+            }
+
+            page.SerializedStrokes = StrokeDTO.SaveInkStrokes(page.InkStrokes);
+            var notebookPagesPanel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
+            if(notebookPagesPanel == null)
+            {
+                return;
+            }
+
+            // Perform analysis (syntactic and semantic interpretation) of the page here, on the student machine
+            PageAnalysis.AnalyzeArray(page);
+            PageAnalysis.AnalyzeStamps(page);
+            CLPServiceAgent.Instance.SubmitPage(page, notebookPagesPanel.Notebook.UniqueID, false);
+
+            //ICLPPage submission = null;
+            //if(page is CLPPage)
+            //{
+            //    submission = (page as CLPPage).Clone() as CLPPage;
+            //}
+            //if(page is CLPAnimationPage)
+            //{
+            //    submission = (page as CLPAnimationPage).Clone() as CLPAnimationPage;
+            //}
+            //submission.InkStrokes = StrokeDTO.LoadInkStrokes(submission.SerializedStrokes);
+
+            //if(notebook != null && submission != null)
+            //{
+            //    submission.SubmissionType = SubmissionType.Single;
+            //    foreach (var pageObject in submission.PageObjects)
+            //    {
+            //        pageObject.ParentPage = submission;
+            //    }
+
+            //    notebook.AddStudentSubmission(submission.UniqueID, submission);
+            //}
             CanSendToTeacher = false;
         }
 
@@ -1223,6 +1233,10 @@ namespace Classroom_Learning_Partner.ViewModels
         void timer_Elapsed(object sender, ElapsedEventArgs e)
         {
             var timer = sender as System.Timers.Timer;
+            if(timer == null)
+            {
+                return;
+            }
             timer.Stop();
             timer.Elapsed -= timer_Elapsed;
             IsSending = false;
@@ -1460,24 +1474,39 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnBroadcastPageCommandExecute()
         {
             //TODO: Steve - also broadcast to Projector
-            var page = ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage;
-            string s_page = ObjectSerializer.ToString(page);
+            var page = NotebookPagesPanelViewModel.GetCurrentPage();
+            var s_page = ObjectSerializer.ToString(page);
+            var zippedPage = CLPServiceAgent.Instance.Zip(s_page);
             int index = page.PageIndex - 1;
 
             if(App.Network.ClassList.Any())
             {
-                foreach(Person student in App.Network.ClassList)
+                foreach(var student in App.Network.ClassList)
                 {
                     try
                     {
-                        IStudentContract StudentProxy = ChannelFactory<IStudentContract>.CreateChannel(App.Network.DefaultBinding, new EndpointAddress(student.CurrentMachineAddress));
-                        StudentProxy.AddNewPage(s_page, index);
-                        (StudentProxy as ICommunicationObject).Close();
+                        var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(App.Network.DefaultBinding, new EndpointAddress(student.CurrentMachineAddress));
+                        studentProxy.AddNewPage(zippedPage, index);
+                        (studentProxy as ICommunicationObject).Close();
                     }
                     catch(Exception ex)
                     {
                         Console.WriteLine(ex.Message);
                     }
+                }
+                if(App.Network.ProjectorProxy != null)
+                {
+                    try
+                    {
+                        App.Network.ProjectorProxy.AddNewPage(zippedPage, index);
+                    }
+                    catch(Exception)
+                    {
+                    }
+                }
+                else
+                {
+                    Logger.Instance.WriteToLog("No Projector Found");
                 }
             }
             else
@@ -1494,8 +1523,9 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnReplacePageCommandExecute()
         {
             //TODO: Steve - also broadcast to Projector
-            var page = ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage;
-            string s_page = ObjectSerializer.ToString(page);
+            var page = NotebookPagesPanelViewModel.GetCurrentPage();
+            var s_page = ObjectSerializer.ToString(page);
+            var zippedPage = CLPServiceAgent.Instance.Zip(s_page);
             int index = page.PageIndex - 1;
 
             if(App.Network.ClassList.Count > 0)
@@ -1504,14 +1534,28 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     try
                     {
-                        IStudentContract StudentProxy = ChannelFactory<IStudentContract>.CreateChannel(App.Network.DefaultBinding, new EndpointAddress(student.CurrentMachineAddress));
-                        StudentProxy.ReplacePage(s_page, index);
-                        (StudentProxy as ICommunicationObject).Close();
+                        var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(App.Network.DefaultBinding, new EndpointAddress(student.CurrentMachineAddress));
+                        studentProxy.ReplacePage(zippedPage, index);
+                        (studentProxy as ICommunicationObject).Close();
                     }
                     catch(Exception ex)
                     {
                         Console.WriteLine(ex.Message);
                     }
+                }
+                if(App.Network.ProjectorProxy != null)
+                {
+                    try
+                    {
+                        App.Network.ProjectorProxy.ReplacePage(zippedPage, index);
+                    }
+                    catch(Exception)
+                    {
+                    }
+                }
+                else
+                {
+                    Logger.Instance.WriteToLog("No Projector Found");
                 }
             }
             else

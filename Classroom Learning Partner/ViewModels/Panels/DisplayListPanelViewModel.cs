@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
@@ -162,6 +163,65 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData MirrorDisplaySelectedColorProperty = RegisterProperty("MirrorDisplaySelectedColor", typeof(string));
 
         /// <summary>
+        /// Whether or not the MirrorDisplay has been sent to the projector.
+        /// </summary>
+        public bool MirrorDisplayIsOnProjector
+        {
+            get { return GetValue<bool>(MirrorDisplayIsOnProjectorProperty); }
+            set { SetValue(MirrorDisplayIsOnProjectorProperty, value); }
+        }
+
+        public static readonly PropertyData MirrorDisplayIsOnProjectorProperty = RegisterProperty("MirrorDisplayIsOnProjector", typeof(bool), false, OnIsOnProjectorChanged);
+
+        private static void OnIsOnProjectorChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
+        {
+            var displayListPanel = sender as DisplayListPanelViewModel;
+
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null || displayListPanel == null)
+            {
+                return;
+            }
+
+            var mirrorDisplayVM = CLPServiceAgent.Instance.GetViewModelsFromModel(displayListPanel.MirrorDisplay).FirstOrDefault() as MirrorDisplayViewModel;
+            if(mirrorDisplayVM == null)
+            {
+                displayListPanel.MirrorDisplayIsOnProjector = false;
+                return;
+            }
+
+            foreach(var viewModel in
+                notebookWorkspaceViewModel.Notebook.Displays.Select(display =>
+                    CLPServiceAgent.Instance.GetViewModelsFromModel(display as ModelBase)).SelectMany(displayViewModels => displayViewModels.OfType<IDisplayViewModel>()))
+            {
+                viewModel.IsOnProjector = false;
+            }
+
+            if(App.Network.ProjectorProxy == null)
+            {
+                displayListPanel.MirrorDisplayIsOnProjector = false;
+                mirrorDisplayVM.IsOnProjector = false;
+                return;
+            }
+
+            mirrorDisplayVM.IsOnProjector = advancedPropertyChangedEventArgs.NewValue is bool && (bool)advancedPropertyChangedEventArgs.NewValue;
+
+            if(!mirrorDisplayVM.IsOnProjector)
+            {
+                return;
+            }
+
+            try
+            {
+                App.Network.ProjectorProxy.SwitchProjectorDisplay("MirrorDisplay", new List<string> { mirrorDisplayVM.CurrentPage.UniqueID });
+            }
+            catch(Exception)
+            {
+
+            }
+        }
+
+        /// <summary>
         /// The selected display in the list of the Notebook's Displays. Does not include the MirrorDisplay.
         /// </summary>
         public ICLPDisplay CurrentDisplay
@@ -225,7 +285,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel != null)
             {
-                notebookWorkspaceViewModel.SelectedDisplay = notebookWorkspaceViewModel.MirrorDisplay;
+                notebookWorkspaceViewModel.SelectedDisplay = MirrorDisplay;
             }
         }
 
@@ -241,5 +301,15 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //Commands
+
+        #region Static Methods
+
+        public static DisplayListPanelViewModel GetDisplayListPanelViewModel()
+        {
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            return notebookWorkspaceViewModel == null ? null : notebookWorkspaceViewModel.DisplayListPanel;
+        }
+
+        #endregion //Static Methods
     }
 }

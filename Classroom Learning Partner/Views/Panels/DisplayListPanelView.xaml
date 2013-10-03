@@ -49,7 +49,7 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <Grid Grid.Row="0" Background="{Binding ViewModel.IsOnProjector, ElementName=MirrorDisplayPreviewView, Converter={StaticResource ProjectedDisplayBackgroundConverter}}"
+            <Grid Grid.Row="0" Background="{Binding MirrorDisplayIsOnProjector, Converter={StaticResource ProjectedDisplayBackgroundConverter}}"
                   Height="150">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -98,7 +98,7 @@
                 
                 <ToggleButton Grid.Column="2" Padding="5"
                               Width="32" Height="32"
-                              IsChecked="{Binding ViewModel.IsOnProjector, ElementName=MirrorDisplayPreviewView}">
+                              IsChecked="{Binding MirrorDisplayIsOnProjector}">
                     <ToggleButton.Template>
                         <ControlTemplate TargetType="{x:Type ToggleButton}">
                             <Grid>
@@ -165,8 +165,7 @@
                           <Rectangle Grid.Column="1" Margin="5"
                                      Stroke="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
                                      StrokeThickness="2"
-                                     Fill="Transparent">
-                          </Rectangle>
+                                     Fill="Transparent" />
 
                             <ToggleButton Grid.Column="2" Padding="5"
                                           VerticalAlignment="Top"

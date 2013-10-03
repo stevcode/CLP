@@ -78,6 +78,36 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Model
 
+        #region Bindings
+
+        /// <summary>
+        /// Current, selected submission.
+        /// </summary>
+        public ICLPPage CurrentPage
+        {
+            get { return GetValue<ICLPPage>(CurrentPageProperty); }
+            set { SetValue(CurrentPageProperty, value); }
+        }
+
+        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(ICLPPage), null, OnCurrentPageChanged);
+
+        private static void OnCurrentPageChanged(object sender, AdvancedPropertyChangedEventArgs args)
+        {
+            var submissionssPanelViewModel = sender as SubmissionsPanelViewModel;
+            if(args.NewValue == null || submissionssPanelViewModel == null)
+            {
+                return;
+            }
+
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel != null)
+            {
+                notebookWorkspaceViewModel.SelectedDisplay.AddPageToDisplay(args.NewValue as ICLPPage);
+            }
+        }
+
+        #endregion //Bindings
+
         #region Properties
 
         /// <summary>

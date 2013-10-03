@@ -381,6 +381,24 @@ namespace CLP.Models
             }
         }
 
+        public static void Deserialize(ICLPPage page)
+        {
+            page.InkStrokes = StrokeDTO.LoadInkStrokes(page.SerializedStrokes);
+
+            foreach(var pageObject in page.PageObjects)
+            {
+                pageObject.ParentPage = page;
+            }
+            foreach(var clpHistoryItem in page.PageHistory.UndoItems)
+            {
+                clpHistoryItem.ParentPage = page;
+            }
+            foreach(var clpHistoryItem in page.PageHistory.RedoItems)
+            {
+                clpHistoryItem.ParentPage = page;
+            }
+        }
+
         #endregion //Methods
     }
 }

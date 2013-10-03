@@ -89,7 +89,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     try
                     {
-                        App.Network.InstructorProxy.StudentLogin(App.Network.CurrentUser);
+                        var sStudent = ObjectSerializer.ToString(App.Network.CurrentUser);
+                        var zippedStudent = CLPServiceAgent.Instance.Zip(sStudent);
+                        App.Network.InstructorProxy.StudentLogin(zippedStudent);
                         App.MainWindowViewModel.OnlineStatus = "CONNECTED - As " + App.Network.CurrentUser.FullName;
                     }
                     catch(System.Exception)

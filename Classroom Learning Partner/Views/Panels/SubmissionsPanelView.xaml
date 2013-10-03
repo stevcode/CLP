@@ -273,6 +273,7 @@
             <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                      Background="Lavender"
                      ItemsSource="{Binding FilteredSubmissions.View}"
+                     SelectedValue="{Binding CurrentPage}"
                      ItemContainerStyle="{StaticResource PageSidebarContainer}"
                      SelectionMode="Single">
                 <ListBox.ItemsPanel>

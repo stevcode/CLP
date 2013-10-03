@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Threading;
 using System.Windows;
 using System.Windows.Media;
@@ -12,10 +13,8 @@ using Catel.MVVM;
 using Catel.MVVM.Views;
 using Catel.IoC;
 using Catel.Windows.Controls;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Collections.Generic;
-using System.Windows.Ink;
 using System.Windows.Media.Imaging;
 
 namespace Classroom_Learning_Partner
@@ -154,6 +153,85 @@ namespace Classroom_Learning_Partner
             return ret;
         }
 
+        /// <summary>
+        /// Compresses byte array to new byte array.
+        /// </summary>
+        public byte[] Compress(byte[] raw)
+        {
+            using(var memory = new MemoryStream())
+            {
+                using(var gzip = new GZipStream(memory, CompressionMode.Compress, true))
+                {
+                    gzip.Write(raw, 0, raw.Length);
+                }
+                return memory.ToArray();
+            }
+        }
+
+        public byte[] Decompress(byte[] gzip)
+        {
+            using(var stream = new GZipStream(new MemoryStream(gzip), CompressionMode.Decompress))
+            {
+                const int SIZE = 4096;
+                var buffer = new byte[SIZE];
+                using(var memory = new MemoryStream())
+                {
+                    int count;
+                    do
+                    {
+                        count = stream.Read(buffer, 0, SIZE);
+                        if(count > 0)
+                        {
+                            memory.Write(buffer, 0, count);
+                        }
+                    }
+                    while(count > 0);
+                    return memory.ToArray();
+                }
+            }
+        }
+
+        public string Zip(string text)
+        {
+            var buffer = System.Text.Encoding.Unicode.GetBytes(text);
+            var ms = new MemoryStream();
+            using(var zip = new GZipStream(ms, CompressionMode.Compress, true))
+            {
+                zip.Write(buffer, 0, buffer.Length);
+            }
+
+            ms.Position = 0;
+            var outStream = new MemoryStream();
+
+            var compressed = new byte[ms.Length];
+            ms.Read(compressed, 0, compressed.Length);
+
+            var gzBuffer = new byte[compressed.Length + 4];
+            Buffer.BlockCopy(compressed, 0, gzBuffer, 4, compressed.Length);
+            Buffer.BlockCopy(BitConverter.GetBytes(buffer.Length), 0, gzBuffer, 0, 4);
+            return Convert.ToBase64String(gzBuffer);
+        }
+
+        public string UnZip(string compressedText)
+        {
+            var gzBuffer = Convert.FromBase64String(compressedText);
+            using(var ms = new MemoryStream())
+            {
+                var msgLength = BitConverter.ToInt32(gzBuffer, 0);
+                ms.Write(gzBuffer, 4, gzBuffer.Length - 4);
+
+                var buffer = new byte[msgLength];
+
+                ms.Position = 0;
+                using(var zip = new GZipStream(ms, CompressionMode.Decompress))
+                {
+                    zip.Read(buffer, 0, buffer.Length);
+                }
+
+                return System.Text.Encoding.Unicode.GetString(buffer, 0, buffer.Length);
+            }
+        }
+
         #endregion //Utilies
 
         #region Notebook
@@ -171,12 +249,14 @@ namespace Classroom_Learning_Partner
                             page.TrimPage();
 
                             var sPage = ObjectSerializer.ToString(page);
+                            Console.WriteLine("String page length: " + sPage.Length);
+                            var zippedPage = Zip(sPage);
+                            Console.WriteLine("Zipped page length: " + zippedPage.Length);
 
-                            var byteStrokes = StrokeDTO.SaveInkStrokes(page.InkStrokes);
-                            var pageObjects = new ObservableCollection<ICLPPageObject>();
+                            var sSubmitter = ObjectSerializer.ToString(App.Network.CurrentUser);
+                            var zippedSubmitter = Zip(sSubmitter);
 
-                            App.Network.InstructorProxy.AddSerializedSubmission(sPage, App.Network.CurrentUser, App.Network.CurrentGroup, page.SubmissionTime, isGroupSubmission, notebookID, page.SubmissionID);
-                            //App.Network.InstructorProxy.AddStudentSubmission(byteStrokes, pageObjects, App.Network.CurrentUser, App.Network.CurrentGroup, notebookID, page.UniqueID, page.SubmissionID, page.SubmissionTime, isGroupSubmission, page.PageHeight);
+                            App.Network.InstructorProxy.AddSerializedSubmission(zippedPage, page.SubmissionID, page.SubmissionTime, notebookID, zippedSubmitter);
                         }
                         catch(Exception ex)
                         {
@@ -237,7 +317,7 @@ namespace Classroom_Learning_Partner
             }
 
             stopWatch.Stop();
-            Logger.Instance.WriteToLog("Time to open notebook (In Seconds): " + stopWatch.ElapsedMilliseconds / 1000.0);
+            Logger.Instance.WriteToLog("Time to open notebook (In Seconds): " + stopWatch.ElapsedMilliseconds / 100.0);
 
             if(notebook == null)
             {
@@ -250,54 +330,25 @@ namespace Classroom_Learning_Partner
 
             foreach(var page in notebook.Pages)
             {
-                page.InkStrokes = StrokeDTO.LoadInkStrokes(page.SerializedStrokes);
-
-                foreach(ICLPPageObject pageObject in page.PageObjects)
+                ACLPPageBase.Deserialize(page);
+                if(!notebook.Submissions.ContainsKey(page.UniqueID))
                 {
-                    pageObject.ParentPage = page;
+                    continue;
                 }
-                foreach(var clpHistoryItem in page.PageHistory.UndoItems)
+                foreach(var submission in notebook.Submissions[page.UniqueID])
                 {
-                    clpHistoryItem.ParentPage = page;
-                }
-                foreach(var clpHistoryItem in page.PageHistory.RedoItems)
-                {
-                    clpHistoryItem.ParentPage = page;
-                }
-                if(notebook.Submissions.ContainsKey(page.UniqueID))
-                {
-                    foreach(var submission in notebook.Submissions[page.UniqueID])
-                    {
-                        submission.InkStrokes = StrokeDTO.LoadInkStrokes(submission.SerializedStrokes);
-
-                        foreach(ICLPPageObject pageObject in submission.PageObjects)
-                        {
-                            pageObject.ParentPage = submission;
-                        }
-                        foreach(var clpHistoryItem in page.PageHistory.UndoItems)
-                        {
-                            clpHistoryItem.ParentPage = page;
-                        }
-                        foreach(var clpHistoryItem in page.PageHistory.RedoItems)
-                        {
-                            clpHistoryItem.ParentPage = page;
-                        }
-                    }
+                    ACLPPageBase.Deserialize(submission);
                 }
             }
 
             notebook.InitializeAfterDeserialize();
 
-            int count = 0;
-            foreach(var otherNotebook in App.MainWindowViewModel.OpenNotebooks)
+            var count = 0;
+            foreach(var otherNotebook in App.MainWindowViewModel.OpenNotebooks.Where(otherNotebook => otherNotebook.UniqueID == notebook.UniqueID && otherNotebook.NotebookName == notebook.NotebookName)) 
             {
-                if(otherNotebook.UniqueID == notebook.UniqueID &&
-                   otherNotebook.NotebookName == notebook.NotebookName)
-                {
-                    App.MainWindowViewModel.SelectedWorkspace = new NotebookWorkspaceViewModel(otherNotebook);
-                    count++;
-                    break;
-                }
+                App.MainWindowViewModel.SelectedWorkspace = new NotebookWorkspaceViewModel(otherNotebook);
+                count++;
+                break;
             }
 
             if(count == 0)

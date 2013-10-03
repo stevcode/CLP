@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.ServiceModel;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Ink;
 using System.Windows.Threading;
@@ -32,8 +30,8 @@ namespace Classroom_Learning_Partner
         public void TogglePenDownMode(bool isPenDownModeEnabled)
         {
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                (DispatcherOperationCallback)delegate(object arg)
-                {
+                (DispatcherOperationCallback)delegate
+                                             {
                     //TODO: Steve - AutoSave here
                     if(isPenDownModeEnabled)
                     {
@@ -82,66 +80,87 @@ namespace Classroom_Learning_Partner
         public void ModifyPageInkStrokes(List<StrokeDTO> strokesAdded, List<StrokeDTO> strokesRemoved, string pageID)
         {
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                (DispatcherOperationCallback)delegate(object arg)
-                {
+                (DispatcherOperationCallback)delegate
+                                             {
                     foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
                     {
                         var page = notebook.GetNotebookPageByID(pageID);
 
-                        if(page != null)
+                        if(page == null)
                         {
-                            StrokeCollection strokesToRemove = StrokeDTO.LoadInkStrokes(new ObservableCollection<StrokeDTO>(strokesRemoved));
-
-                            var strokes =
-                                from externalStroke in strokesToRemove
-                                from stroke in page.InkStrokes
-                                where stroke.GetStrokeUniqueID() == externalStroke.GetStrokeUniqueID()
-                                select stroke;
-
-                            StrokeCollection actualStrokesToRemove = new StrokeCollection(strokes.ToList());
-
-                            page.InkStrokes.Remove(actualStrokesToRemove);
-
-                            StrokeCollection strokesToAdd = StrokeDTO.LoadInkStrokes(new ObservableCollection<StrokeDTO>(strokesAdded));
-                            page.InkStrokes.Add(strokesToAdd);
-                            break;
+                            continue;
                         }
+
+                        var strokesToRemove = StrokeDTO.LoadInkStrokes(new ObservableCollection<StrokeDTO>(strokesRemoved));
+
+                        var strokes =
+                            from externalStroke in strokesToRemove
+                            from stroke in page.InkStrokes
+                            where stroke.GetStrokeUniqueID() == externalStroke.GetStrokeUniqueID()
+                            select stroke;
+
+                        var actualStrokesToRemove = new StrokeCollection(strokes.ToList());
+
+                        page.InkStrokes.Remove(actualStrokesToRemove);
+
+                        var strokesToAdd = StrokeDTO.LoadInkStrokes(new ObservableCollection<StrokeDTO>(strokesAdded));
+                        page.InkStrokes.Add(strokesToAdd);
+                        break;
                     }
                     return null;
                 }, null);
         }
 
-        public void AddNewPage(string s_page, int index)
+        public void AddNewPage(string zippedPage, int index)
         {
-            if(App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
-            {
-                CLPPage page = ObjectSerializer.ToObject(s_page) as CLPPage;
+            var unZippedPage = CLPServiceAgent.Instance.UnZip(zippedPage);
+            var page = ObjectSerializer.ToObject(unZippedPage) as ICLPPage;
 
-                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                    (DispatcherOperationCallback)delegate(object arg)
-                    {
-                        (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.InsertPageAt(index, page);
-                        
-                        return null;
-                    }, null);
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null ||
+               page == null)
+            {
+                Logger.Instance.WriteToLog("Failed to add broadcasted page.");
+                return;
             }
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                                                       (DispatcherOperationCallback)delegate
+                                                                                    {
+                                                                                        if(index < notebookWorkspaceViewModel.Notebook.Pages.Count)
+                                                                                        {
+                                                                                            notebookWorkspaceViewModel.Notebook.InsertPageAt(index, page);
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            notebookWorkspaceViewModel.Notebook.AddPage(page);
+                                                                                        }
+
+                                                                                        return null;
+                                                                                    },
+                                                       null);
         }
 
-        public void ReplacePage(string s_page, int index)
+        public void ReplacePage(string zippedPage, int index)
         {
-            if(App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
+            var unZippedPage = CLPServiceAgent.Instance.UnZip(zippedPage);
+            var page = ObjectSerializer.ToObject(unZippedPage) as ICLPPage;
+
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null ||
+               page == null)
             {
-                CLPPage page = ObjectSerializer.ToObject(s_page) as CLPPage;
-
-                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                    (DispatcherOperationCallback)delegate(object arg)
-                    {
-                        (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.RemovePageAt(index);
-                        (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.InsertPageAt(index, page);
-
-                        return null;
-                    }, null);
+                Logger.Instance.WriteToLog("Failed to add broadcasted page.");
+                return;
             }
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                                                       (DispatcherOperationCallback)delegate
+                                                       {
+                                                           notebookWorkspaceViewModel.Notebook.RemovePageAt(index);
+                                                           notebookWorkspaceViewModel.Notebook.InsertPageAt(index, page);
+
+                                                           return null;
+                                                       },
+                                                       null);
         }
 
         #endregion

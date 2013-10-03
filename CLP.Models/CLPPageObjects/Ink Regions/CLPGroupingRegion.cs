@@ -77,7 +77,7 @@ namespace CLP.Models
             Groupings.Clear();
             var validGroupingObjects = ParentPage.PageObjects.Where(ValidObjectForGrouping).ToList();
 
-            AddGrouping(InkGrouping(validGroupingObjects), true, Groupings);
+            //AddGrouping(InkGrouping(validGroupingObjects), true, Groupings);
             AddGrouping(DistanceClustering(validGroupingObjects, true), true, Groupings);
             AddContainerGrouping(DistanceClustering(validGroupingObjects, false), Groupings);
             AddGrouping(BasicGrouping(validGroupingObjects), false, Groupings);

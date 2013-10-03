@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.ServiceModel;
@@ -15,144 +13,42 @@ namespace Classroom_Learning_Partner
     public interface IInstructorContract
     {
         [OperationContract]
-        void AddStudentSubmission(List<StrokeDTO> serializedStrokes,
-            List<ICLPPageObject> pageObjects, 
-            Person submitter, Group groupSubmitter,
-            string notebookID, string pageID, string submissionID, DateTime submissionTime,
-            bool isGroupSubmission, double pageHeight);
+        void AddSerializedSubmission(string zippedPage, string submissionID, 
+            DateTime submissionTime, string notebookID, string zippedSubmitter);
 
         [OperationContract]
-        void AddSerializedSubmission(string sPage, Person submitter, Group groupSubmitter, 
-            DateTime submissionTime, bool isGroupSubmission, String notebookID, String submissionID);
+        void CollectStudentNotebook(string zippedNotebook, string studentName);
 
         [OperationContract]
-        void CollectStudentNotebook(string sNotebook, string studentName);
+        void StudentLogin(string zippedStudent);
 
         [OperationContract]
-        void StudentLogin(Person student);
-
-        [OperationContract]
-        void StudentLogout(Person student);
+        void StudentLogout(string zippedStudent);
     }
 
     public class InstructorService : IInstructorContract
     {
         #region IInstructorContract Members
 
-        public void AddStudentSubmission(List<StrokeDTO> serializedStrokes, 
-            List<ICLPPageObject> pageObjects, 
-            Person submitter, Group groupSubmitter, 
-            string notebookID, string pageID, string submissionID, DateTime submissionTime,
-            bool isGroupSubmission, double pageHeight)
+        public void AddSerializedSubmission(string zippedPage, string submissionID,
+            DateTime submissionTime, string notebookID, string zippedSubmitter)
         {
             if(App.Network.ProjectorProxy != null)
             {
                 var t = new Thread(() =>
-                {
-                    try
-                    {
-                        App.Network.ProjectorProxy.AddStudentSubmission(serializedStrokes, pageObjects,
-                            submitter, groupSubmitter,
-                            notebookID, pageID, submissionID, submissionTime,
-                            isGroupSubmission, pageHeight);
-                    }
-                    catch(Exception ex)
-                    {
-                        Logger.Instance.WriteToLog("Submit to Projector Error: " + ex.Message);
-                    }
-                }) {IsBackground = true};
-                t.Start();
-            }
-            //TODO: Steve - add pages to a queue and send when a projector is found
-
-            ICLPPage submission = null;
-            CLPNotebook currentNotebook = null;
-
-            foreach(var notebook in App.MainWindowViewModel.OpenNotebooks.Where(notebook => notebookID == notebook.UniqueID)) 
-            {
-                currentNotebook = notebook;
-                var page = notebook.GetNotebookPageByID(pageID);
-                if(page is CLPPage)
-                {
-                    submission = (page as CLPPage).Clone() as CLPPage;
-                    break;
-                }
-                if(page is CLPAnimationPage)
-                {
-                    submission = (page as CLPAnimationPage).Clone() as CLPAnimationPage;
-                    break;
-                }
-            }
-
-            if(submission != null)
-            {
-                submission.SerializedStrokes = new ObservableCollection<StrokeDTO>(serializedStrokes);
-                submission.InkStrokes = StrokeDTO.LoadInkStrokes(submission.SerializedStrokes);
-
-                submission.SubmissionType = isGroupSubmission ? SubmissionType.Group : SubmissionType.Single;
-                submission.SubmissionID = submissionID;
-                submission.SubmissionTime = submissionTime;
-                submission.Submitter = submitter;
-                submission.GroupSubmitter = groupSubmitter;
-                submission.PageHeight = pageHeight;
-
-                foreach(ICLPPageObject pageObject in pageObjects)
-                {
-                    submission.PageObjects.Add(pageObject);
-                }
-
-                foreach(ICLPPageObject pageObject in submission.PageObjects)
-                {
-                    pageObject.ParentPage = submission;
-                    if(pageObject is ISubmittable)
-                    {
-                        Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                            (DispatcherOperationCallback)delegate(object arg)
-                            {
-                                (pageObject as ISubmittable).AfterSubmit(isGroupSubmission, currentNotebook);
-                                return null;
-                            }, null);
-                    }
-                }
-
-                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                (DispatcherOperationCallback)delegate(object arg)
-                {
-                    try
-                    {
-                        CLPServiceAgent.Instance.AddSubmission(currentNotebook, submission);
-                        //CLPServiceAgent.Instance.QuickSaveNotebook("RECIEVE-" + userName);
-                    }
-                    catch(Exception e)
-                    {
-                        Logger.Instance.WriteToLog("[ERROR] Recieved Submission from wrong notebook: " + e.Message);
-                    }
-
-                    return null;
-                }, null);
-            }
-
-            //CLPServiceAgent.Instance.QuickSaveNotebook("RECIEVE-" + userName);
-        }
-
-        public void AddSerializedSubmission(string sPage, Person submitter, Group groupSubmitter, 
-            DateTime submissionTime, bool isGroupSubmission, String notebookID, String submissionID)
-        {
-            if(App.Network.ProjectorProxy != null)
-            {
-                Thread t = new Thread(() =>
-                {
-                    try
-                    {
-                        App.Network.ProjectorProxy.AddSerializedSubmission(sPage, submitter, groupSubmitter,
-            submissionTime, isGroupSubmission, notebookID, submissionID);
-                    }
-                    catch(Exception ex)
-                    {
-                        Logger.Instance.WriteToLog("Submit to Projector Error: " + ex.Message);
-                    }
-                });
-                t.IsBackground = true;
+                                   {
+                                       try
+                                       {
+                                           App.Network.ProjectorProxy.AddSerializedSubmission(zippedPage, submissionID, submissionTime, notebookID, zippedSubmitter);
+                                       }
+                                       catch(Exception ex)
+                                       {
+                                           Logger.Instance.WriteToLog("Submit to Projector Error: " + ex.Message);
+                                       }
+                                   })
+                        {
+                            IsBackground = true
+                        };
                 t.Start();
             }
             else
@@ -161,83 +57,104 @@ namespace Classroom_Learning_Partner
                 Console.WriteLine("Projector NOT Available");
             }
 
-            var page = ObjectSerializer.ToObject(sPage);
+            var unZippedPage = CLPServiceAgent.Instance.UnZip(zippedPage);
+            var page = ObjectSerializer.ToObject(unZippedPage);
             ICLPPage submission = null;
             if(page is CLPPage)
             {
-                submission = (page as CLPPage).Clone() as CLPPage;
+                submission = page as CLPPage;
             }
-            if(page is CLPAnimationPage)
+            else if(page is CLPAnimationPage)
             {
-                submission = (page as CLPAnimationPage).Clone() as CLPAnimationPage;
+                submission = page as CLPAnimationPage;
             }
-            submission.SubmissionType = isGroupSubmission ? SubmissionType.Group : SubmissionType.Single;
+
+            var unZippedSubmitter = CLPServiceAgent.Instance.UnZip(zippedSubmitter);
+            var submitter = ObjectSerializer.ToObject(unZippedSubmitter) as Person;
+
+            if(submission == null || submitter == null)
+            {
+                Logger.Instance.WriteToLog("Failed to receive student submission. Page or Submitter is null.");
+                return;
+            }
+            submission.SubmissionType = SubmissionType.Single;
             submission.SubmissionID = submissionID;
             submission.SubmissionTime = submissionTime;
             submission.Submitter = submitter;
-            submission.GroupSubmitter = groupSubmitter;
-            submission.InkStrokes = StrokeDTO.LoadInkStrokes(submission.SerializedStrokes);
 
-            foreach(ICLPPageObject pageObject in submission.PageObjects)
-            {
-                pageObject.ParentPage = submission;
-            }
+            ACLPPageBase.Deserialize(submission);
 
-            CLPNotebook currentNotebook = null;
-
-            foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
-            {
-                if(notebookID == notebook.UniqueID)
-                {
-                    currentNotebook = notebook;
-                    break;
-                }
-            }
+            var currentNotebook = App.MainWindowViewModel.OpenNotebooks.FirstOrDefault(notebook => notebookID == notebook.UniqueID);
 
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                (DispatcherOperationCallback)delegate(object arg)
-                {
-                    try
-                    {
-                        CLPServiceAgent.Instance.AddSubmission(currentNotebook, submission);
-                        //CLPServiceAgent.Instance.QuickSaveNotebook("RECIEVE-" + userName);
-                    }
-                    catch(Exception e)
-                    {
-                        Logger.Instance.WriteToLog("[ERROR] Recieved Submission from wrong notebook: " + e.Message);
-                    }
+                                                       (DispatcherOperationCallback)delegate
+                                                                                    {
+                                                                                        try
+                                                                                        {
+                                                                                            CLPServiceAgent.Instance.AddSubmission(currentNotebook, submission);
+                                                                                            //CLPServiceAgent.Instance.QuickSaveNotebook("RECIEVE-" + userName);
+                                                                                        }
+                                                                                        catch(Exception e)
+                                                                                        {
+                                                                                            Logger.Instance.WriteToLog("[ERROR] Recieved Submission from wrong notebook: " +
+                                                                                                                       e.Message);
+                                                                                        }
 
-                    return null;
-                }, null);
+                                                                                        return null;
+                                                                                    },
+                                                       null);
         }
 
-        public void CollectStudentNotebook(string sNotebook, string studentName)
+        public void CollectStudentNotebook(string zippedNotebook, string studentName)
         {
-            CLPNotebook notebook = ObjectSerializer.ToObject(sNotebook) as CLPNotebook;
+            var unZippedNotebook = CLPServiceAgent.Instance.UnZip(zippedNotebook);
+            var notebook = ObjectSerializer.ToObject(unZippedNotebook) as CLPNotebook;
+
+            if(notebook == null)
+            {
+                Logger.Instance.WriteToLog("Failed to collect notebook from " + studentName);
+                return;
+            }
             
-            string filePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\CollectedStudentNotebooks";
+            var filePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\CollectedStudentNotebooks";
 
             if(!Directory.Exists(filePath))
             {
                 Directory.CreateDirectory(filePath);
             }
 
-            DateTime saveTime = DateTime.Now;
-            string time = saveTime.Year + "." + saveTime.Month + "." + saveTime.Day;
+            var saveTime = DateTime.Now;
+            var time = saveTime.Year + "." + saveTime.Month + "." + saveTime.Day;
 
-            string filePathName = filePath + @"\" + time + "-" + studentName + "-" + notebook.NotebookName + @".clp";
+            var filePathName = filePath + @"\" + time + "-" + studentName + "-" + notebook.NotebookName + @".clp";
             notebook.Save(filePathName);
         }
 
-        public void StudentLogin(Person student)
+        public void StudentLogin(string zippedStudent)
         {
-            App.Network.ClassList.Add(student);
+            var unZippedStudent = CLPServiceAgent.Instance.UnZip(zippedStudent);
+            var student = ObjectSerializer.ToObject(unZippedStudent) as Person;
+
+            if(student == null)
+            {
+                Logger.Instance.WriteToLog("Failed to log in student. student is null.");
+                return;
+            }
             Logger.Instance.WriteToLog("Student Logged In: " + student.FullName);
+            App.Network.ClassList.Add(student);
         }
 
-        public void StudentLogout(Person student)
+        public void StudentLogout(string zippedStudent)
         {
-            Console.WriteLine("Logout");
+            var unZippedStudent = CLPServiceAgent.Instance.UnZip(zippedStudent);
+            var student = ObjectSerializer.ToObject(unZippedStudent) as Person;
+
+            if(student == null)
+            {
+                Logger.Instance.WriteToLog("Failed to log out student. student is null.");
+                return;
+            }
+            Logger.Instance.WriteToLog("Student Logged Out: " + student.FullName);
         }
 
         #endregion

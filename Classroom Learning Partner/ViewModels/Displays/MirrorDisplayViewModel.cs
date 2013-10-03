@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Windows.Controls;
 using Catel.Data;
 using Catel.MVVM;
@@ -72,23 +71,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(IsOnProjectorProperty, value); }
         }
 
-        public static readonly PropertyData IsOnProjectorProperty = RegisterProperty("IsOnProjector", typeof(bool), false, OnIsOnProjectorChanged);
-
-        private static void OnIsOnProjectorChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
-        {
-            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel == null)
-            {
-                return;
-            }
-
-            foreach(var viewModel in 
-                notebookWorkspaceViewModel.Notebook.Displays.Select(display => 
-                    CLPServiceAgent.Instance.GetViewModelsFromModel(display as ModelBase)).SelectMany(displayViewModels => displayViewModels.OfType<IDisplayViewModel>())) 
-            {
-                viewModel.IsOnProjector = false;
-            }
-        }
+        public static readonly PropertyData IsOnProjectorProperty = RegisterProperty("IsOnProjector", typeof(bool), false);
 
         public void AddPageToDisplay(ICLPPage page)
         {

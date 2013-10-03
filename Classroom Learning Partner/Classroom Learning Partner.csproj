@@ -680,6 +680,9 @@
     <Content Include="External Libraries\NRtfTree.dll" />
     <Content Include="External Libraries\ServiceModelEx.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
+    <Resource Include="Resources\Images\ArrayCard16.png" />
+    <Resource Include="Resources\Images\ArrayCard32.png" />
+    <Resource Include="Resources\Images\ArrayCard64.png" />
     <Resource Include="Resources\Images\Trash32.png" />
     <Resource Include="Resources\Images\Projector32.png" />
     <Resource Include="Resources\Images\DisplaySubmissionsButton50x25.png" />

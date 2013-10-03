@@ -291,8 +291,8 @@
                               CommandParameter="DEFAULT" />
 
                 <RibbonButton Label="Array Card"
-                              LargeImageSource="pack://application:,,,/Resources/Images/InkArray32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/InkArray16.png"
+                              LargeImageSource="pack://application:,,,/Resources/Images/ArrayCard32.png"
+                              SmallImageSource="pack://application:,,,/Resources/Images/ArrayCard16.png"
                               Command="{Binding InsertArrayCommand}"
                               CommandParameter="CARD" />
 

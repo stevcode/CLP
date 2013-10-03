@@ -66,6 +66,10 @@ namespace CLP.Models
             foreach(var display in Displays)
             {
                 var gridDisplay = display as CLPGridDisplay;
+                if(gridDisplay == null)
+                {
+                    continue;
+                }
                 foreach(var pageID in display.DisplayPageIDs)
                 {
                     var newDisplayPage = GetNotebookPageOrSubmissionByID(pageID);

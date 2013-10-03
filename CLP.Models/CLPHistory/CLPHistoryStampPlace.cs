@@ -8,7 +8,6 @@ namespace CLP.Models
     [Serializable]
     public class CLPHistoryStampPlace : ACLPHistoryItemBase
     {
-
         #region Constructors
 
         public CLPHistoryStampPlace(ICLPPage parentPage, string stampCopyId)

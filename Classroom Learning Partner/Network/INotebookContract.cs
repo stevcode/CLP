@@ -11,9 +11,9 @@ namespace Classroom_Learning_Partner
         void ModifyPageInkStrokes(List<StrokeDTO> strokesAdded, List<StrokeDTO> strokesRemoved, string pageID);
 
         [OperationContract]
-        void AddNewPage(string s_page, int index);
+        void AddNewPage(string zippedPage, int index);
 
         [OperationContract]
-        void ReplacePage(string s_page, int index);
+        void ReplacePage(string zippedPage, int index);
     }
 }
