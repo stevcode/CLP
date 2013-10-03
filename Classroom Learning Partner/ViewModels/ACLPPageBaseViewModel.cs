@@ -719,12 +719,11 @@ namespace Classroom_Learning_Partner.ViewModels
             //    {
                     try
                     {
+                        // avoid uniqueID duplication
                         var removedStrokeIDs = new List<string>();
                         foreach (var stroke in e.Removed)
                         {
                             removedStrokeIDs.Add(stroke.GetPropertyData(ACLPPageBase.StrokeIDKey) as string);
-                            //TODO: Make batch inking to recognize point erasing.
-                            Page.PageHistory.AddHistoryItem(new CLPHistoryStrokeRemove(Page, stroke));
                         }
                         foreach(var stroke in e.Added)
                         {
@@ -743,9 +742,37 @@ namespace Classroom_Learning_Partner.ViewModels
                                     stroke.SetStrokeUniqueID(newUniqueID);
                                 }  
                             }
-                            Page.PageHistory.AddHistoryItem(new CLPHistoryStrokeAdd(Page, stroke.GetStrokeUniqueID()));
                         }
 
+                        // deal with history
+                        if(e.Removed.Count + e.Added.Count > 1)
+                        {
+                            var strokeIdsAdded = new List<string>();
+                            foreach(var stroke in e.Added)
+                            {
+                                strokeIdsAdded.Add(stroke.GetStrokeUniqueID());
+                            }
+
+                            var strokesRemoved = new List<Stroke>();
+                            foreach(var stroke in e.Removed)
+                            {
+                                strokesRemoved.Add(stroke);
+                            }
+                            Page.PageHistory.AddHistoryItem(
+                                new CLPHistoryStrokesChanged(Page, strokeIdsAdded, strokesRemoved));
+                        }
+                        else if(e.Removed.Count == 1)
+                        {
+                            Page.PageHistory.AddHistoryItem(
+                                new CLPHistoryStrokeRemove(Page, e.Removed.ElementAt(0)));
+                        }
+                        else if(e.Added.Count == 1)
+                        {
+                            Page.PageHistory.AddHistoryItem(
+                                new CLPHistoryStrokeAdd(Page, e.Added.ElementAt(0).GetStrokeUniqueID()));
+                        }
+
+                        // deal with page objects that accept strokes
                         foreach(ICLPPageObject pageObject in PageObjects)
                         {
                             if(!pageObject.CanAcceptStrokes)
