@@ -135,14 +135,14 @@
                 </TextBlock>
             </StatusBarItem>
 
-            <StatusBarItem>
+            <!--<StatusBarItem>
                 <TextBlock>
                     <Run Text="PAGE " />
                     <Run Text="{Binding CurrentPageIndex}" />
                     <Run Text=" OF " />
                     <Run Text="{Binding NotebookPageCount}" />
                 </TextBlock>
-            </StatusBarItem>
+            </StatusBarItem>-->
 
             <StatusBarItem HorizontalAlignment="Right">
                 <TextBlock>
