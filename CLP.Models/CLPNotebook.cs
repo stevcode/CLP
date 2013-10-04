@@ -312,14 +312,14 @@ namespace CLP.Models
             if(Submissions.ContainsKey(pageID))
             {
                 int groupCount = 0;
-                foreach(var page in Submissions[pageID])
-                {
-                    if(submission.GroupSubmitter.GroupName == page.GroupSubmitter.GroupName)
-                    {
-                        groupCount++;
-                        break;
-                    }
-                }
+                //foreach(var page in Submissions[pageID])
+                //{
+                //    if(submission.GroupSubmitter.GroupName == page.GroupSubmitter.GroupName)
+                //    {
+                //        groupCount++;
+                //        break;
+                //    }
+                //}
 
                 int individualCount = 0;
                 foreach(var page in Submissions[pageID])

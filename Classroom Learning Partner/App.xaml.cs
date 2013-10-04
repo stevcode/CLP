@@ -34,7 +34,7 @@ namespace Classroom_Learning_Partner
             Catel.Windows.Controls.UserControl.DefaultSkipSearchingForInfoBarMessageControlValue = true;
             Catel.Windows.Controls.UserControl.DefaultCreateWarningAndErrorValidatorForViewModelValue = false;
 
-            _currentUserMode = UserMode.Projector;
+            _currentUserMode = UserMode.Instructor;
 
             Logger.Instance.InitializeLog();
             CLPServiceAgent.Instance.Initialize();
@@ -125,7 +125,7 @@ namespace Classroom_Learning_Partner
             }
         }
 
-        private static UserMode _currentUserMode = UserMode.Projector;
+        private static UserMode _currentUserMode = UserMode.Instructor;
         public static UserMode CurrentUserMode
         {
             get
