@@ -297,8 +297,8 @@
                               CommandParameter="CARD" />
 
                 <RibbonButton Label="Stamp"
-                              LargeImageSource="pack://application:,,,/Resources/Images/BlankStamp32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/BlankStamp16.png"
+                              LargeImageSource="pack://application:,,,/Resources/Images/Stamp32.png"
+                              SmallImageSource="pack://application:,,,/Resources/Images/Stamp16.png"
                               Command="{Binding InsertBlankStampCommand}" />
 
                 <RibbonButton Label="Collection Stamp"
