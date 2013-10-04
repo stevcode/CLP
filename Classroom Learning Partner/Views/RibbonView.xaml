@@ -302,8 +302,8 @@
                               Command="{Binding InsertBlankStampCommand}" />
 
                 <RibbonButton Label="Collection Stamp"
-                              LargeImageSource="pack://application:,,,/Resources/Images/BlankStamp32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/BlankStamp16.png"
+                              LargeImageSource="pack://application:,,,/Resources/Images/CollectionStamp32.png"
+                              SmallImageSource="pack://application:,,,/Resources/Images/CollectionStamp16.png"
                               Command="{Binding InsertBlankContainerStampCommand}" />
 
             </RibbonGroup>

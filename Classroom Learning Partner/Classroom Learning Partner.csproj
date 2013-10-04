@@ -680,6 +680,9 @@
     <Content Include="External Libraries\NRtfTree.dll" />
     <Content Include="External Libraries\ServiceModelEx.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
+    <Resource Include="Resources\Images\CollectionStamp16.png" />
+    <Resource Include="Resources\Images\CollectionStamp32.png" />
+    <Resource Include="Resources\Images\CollectionStamp64.png" />
     <Resource Include="Resources\Images\Stamp16.png" />
     <Resource Include="Resources\Images\Stamp32.png" />
     <Resource Include="Resources\Images\Stamp64.png" />
