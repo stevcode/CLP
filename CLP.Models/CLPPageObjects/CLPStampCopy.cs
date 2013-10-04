@@ -111,6 +111,21 @@ namespace CLP.Models
             }
         }
 
+        public override void OnMoved()
+        {
+            if(!CanAcceptPageObjects ||
+               !IsStamped)
+            {
+                return;
+            }
+            foreach(var po in GetPageObjectsOverPageObject())
+            {
+                //TODO: move contained pageObjects? moving pageObjects doesn't appear to be recursive.
+                //to test, fill collection stamp, then add to an array. move array, collection stamp copy moves,
+                //collected stampCopies do not
+            }
+        }
+
         private void RefreshParts()
         {
             var count = GetPageObjectsOverPageObject().Sum(pageObject => pageObject.Parts);

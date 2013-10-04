@@ -121,7 +121,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             if(HasParts() || IsCollectionStamp)
             {
-                var keyPad = new KeypadWindowView
+                var keyPad = new KeypadWindowView("How many stamp copies?", 21)
                 {
                     Owner = Application.Current.MainWindow,
                     WindowStartupLocation = WindowStartupLocation.Manual,
@@ -423,6 +423,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             PageObject.ParentPage.PageHistory.AddHistoryItem(new CLPHistoryStampPlace(PageObject.ParentPage, StampCopy.UniqueID));
+            StampCopy.OnMoved();
         }
 
         /// <summary>
@@ -478,7 +479,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var clpStamp = PageObject as CLPStamp;
             if(clpStamp != null && (App.MainWindowViewModel.IsAuthoring || !clpStamp.PartsAuthorGenerated))
             {
-                var keyPad = new KeypadWindowView
+                var keyPad = new KeypadWindowView("How many parts?", 100)
                     {
                         Owner = Application.Current.MainWindow,
                         WindowStartupLocation = WindowStartupLocation.Manual,

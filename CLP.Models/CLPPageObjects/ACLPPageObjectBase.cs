@@ -271,27 +271,27 @@ namespace CLP.Models
         //TODO: make this static in viewModel?
         private void AddRemovePageObjectFromOtherObjects(bool isHistory=true)
         {
-            if(!CanAcceptPageObjects)
+            foreach(var container in ParentPage.PageObjects)
             {
-                foreach(ICLPPageObject container in ParentPage.PageObjects)
+                if(!container.CanAcceptPageObjects ||
+                   ParentID.Equals(container.UniqueID) ||
+                   UniqueID.Equals(container.UniqueID))
                 {
-                    if(container.CanAcceptPageObjects && !ParentID.Equals(container.UniqueID))
-                    {
-                        var addObjects = new ObservableCollection<ICLPPageObject>();
-                        var removeObjects = new ObservableCollection<ICLPPageObject>();
-
-                        if(container.PageObjectIsOver(this, .50))
-                        {
-                            addObjects.Add(this);
-                        }
-                        else
-                        {
-                            removeObjects.Add(this);
-                        }
-
-                        container.AcceptObjects(addObjects, removeObjects);
-                    }
+                    continue;
                 }
+                var addObjects = new ObservableCollection<ICLPPageObject>();
+                var removeObjects = new ObservableCollection<ICLPPageObject>();
+
+                if(container.PageObjectIsOver(this, .50))
+                {
+                    addObjects.Add(this);
+                }
+                else
+                {
+                    removeObjects.Add(this);
+                }
+
+                container.AcceptObjects(addObjects, removeObjects);
             }
         }
 

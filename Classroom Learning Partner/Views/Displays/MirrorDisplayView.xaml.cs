@@ -25,8 +25,6 @@ namespace Classroom_Learning_Partner.Views
             var mirrorDisplayViewModel = ViewModel as MirrorDisplayViewModel;
             if(mirrorDisplayViewModel != null)
             {
-                Console.WriteLine("ActualWidth: " + ActualWidth);
-                Console.WriteLine("ActualHeight: " + ActualHeight);
                 mirrorDisplayViewModel.DisplayWidthHeight = new Tuple<double, double>(ActualWidth, ActualHeight);
             }
 

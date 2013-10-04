@@ -491,8 +491,6 @@ namespace CLP.Models
             }
         }
 
-        #endregion //Methods
-
-        
+        #endregion //Methods  
     }
 }
