@@ -1475,9 +1475,10 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             //TODO: Steve - also broadcast to Projector
             var page = NotebookPagesPanelViewModel.GetCurrentPage();
-            var s_page = ObjectSerializer.ToString(page);
-            var zippedPage = CLPServiceAgent.Instance.Zip(s_page);
-            int index = page.PageIndex - 1;
+            page.SerializedStrokes = StrokeDTO.SaveInkStrokes(page.InkStrokes);
+            var sPage = ObjectSerializer.ToString(page);
+            var zippedPage = CLPServiceAgent.Instance.Zip(sPage);
+            int index = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.Pages.IndexOf(page);
 
             if(App.Network.ClassList.Any())
             {
@@ -1524,9 +1525,10 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             //TODO: Steve - also broadcast to Projector
             var page = NotebookPagesPanelViewModel.GetCurrentPage();
-            var s_page = ObjectSerializer.ToString(page);
-            var zippedPage = CLPServiceAgent.Instance.Zip(s_page);
-            int index = page.PageIndex - 1;
+            page.SerializedStrokes = StrokeDTO.SaveInkStrokes(page.InkStrokes);
+            var sPage = ObjectSerializer.ToString(page);
+            var zippedPage = CLPServiceAgent.Instance.Zip(sPage);
+            var index = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.Pages.IndexOf(page);
 
             if(App.Network.ClassList.Count > 0)
             {

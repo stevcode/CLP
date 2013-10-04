@@ -272,6 +272,7 @@ namespace Classroom_Learning_Partner
         {
             var unZippedPage = CLPServiceAgent.Instance.UnZip(zippedPage);
             var page = ObjectSerializer.ToObject(unZippedPage) as ICLPPage;
+            ACLPPageBase.Deserialize(page);
 
             var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel == null ||
@@ -300,6 +301,7 @@ namespace Classroom_Learning_Partner
         {
             var unZippedPage = CLPServiceAgent.Instance.UnZip(zippedPage);
             var page = ObjectSerializer.ToObject(unZippedPage) as ICLPPage;
+            ACLPPageBase.Deserialize(page);
 
             var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel == null ||
