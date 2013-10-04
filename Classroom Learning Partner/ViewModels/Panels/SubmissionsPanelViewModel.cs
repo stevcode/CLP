@@ -373,7 +373,7 @@ namespace Classroom_Learning_Partner.ViewModels
             FilteredSubmissions.Source = SubmissionPages;
             StudentsWithNoSubmissions = getStudentsWithNoSubmissions();
 
-            PropertyGroupDescription submitterNameDescription = new PropertyGroupDescription("SubmitterName");
+            PropertyGroupDescription submitterNameDescription = new PropertyGroupDescription("Submitter.FullName");
             PropertyGroupDescription groupNameDescription = new PropertyGroupDescription("GroupName", new GroupLabelConverter());
             PropertyGroupDescription timeDescription = new PropertyGroupDescription("SubmissionTime");
             PropertyGroupDescription isGroupDescription = new PropertyGroupDescription("IsGroupSubmission", new BooleantoGroupConverter());

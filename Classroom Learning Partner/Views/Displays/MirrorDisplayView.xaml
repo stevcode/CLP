@@ -16,7 +16,7 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>

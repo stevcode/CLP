@@ -70,8 +70,8 @@
 
                 <ToggleButton Grid.Row="0" x:Name="toggle" Width="120" Click="toggle_Click_student_name">
                     <DockPanel>
-                        <TextBlock HorizontalAlignment="Left" FontWeight="Bold" Text="{Binding Path=Name}" Width="50" />
-                        <TextBlock HorizontalAlignment="Right" FontWeight="Bold" Text="{Binding Path=ItemCount}" />
+                        <TextBlock HorizontalAlignment="Left" FontWeight="Bold" Text="{Binding Name}" Width="50" />
+                        <TextBlock HorizontalAlignment="Right" FontWeight="Bold" Text="{Binding ItemCount}" />
                     </DockPanel>
                 </ToggleButton>
 
@@ -236,12 +236,12 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-                    <Label Grid.Column="0">Sort By:</Label>
+                    <Label Grid.Column="0">Sort By: Student Name</Label>
                     <!--Populating ComboBox with Sorting Options-->
-                    <ComboBox x:Name="SortComboBox" Grid.Column="1"
+                    <!--<ComboBox x:Name="SortComboBox" Grid.Column="1"
                               ItemsSource="{Binding FilterTypes}"
                               SelectedItem="{Binding SelectedFilterType, Mode=TwoWay}"
-                              SelectedIndex="0" />
+                              SelectedIndex="0" />-->
 
                 </Grid>
 
@@ -281,12 +281,12 @@
                         <WrapPanel />
                     </ItemsPanelTemplate>
                 </ListBox.ItemsPanel>
-                <!--<ListBox.GroupStyle>
+                <ListBox.GroupStyle>
                     <GroupStyle>
                         <GroupStyle.ContainerStyle>
                             <Style x:Name="GroupItemStyle" TargetType="{x:Type GroupItem}">
                                 <Setter Property="Template" Value="{StaticResource StudentNameTemplate}" />
-                                <Style.Triggers>
+                                <!--<Style.Triggers>
                                     <DataTrigger Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Group Submissions">
                                         <Setter Property="Template" Value="{StaticResource StudentNameForGroupTemplate}" />
                                     </DataTrigger>
@@ -343,20 +343,20 @@
                                         </MultiDataTrigger.Conditions>
                                         <Setter Property="Template" Value="{StaticResource IndividualSubmissionsByGroupTemplate}" />
                                     </MultiDataTrigger>
-                                </Style.Triggers>
+                                </Style.Triggers>-->
 
                             </Style>
                         </GroupStyle.ContainerStyle>
-                        <GroupStyle.Panel>
+                        <!--<GroupStyle.Panel>
                             <ItemsPanelTemplate>
                                 <WrapPanel Orientation="Horizontal"
                                            HorizontalAlignment="Stretch"
                                            VerticalAlignment="Stretch"
                                            Width="{Binding ElementName=SubmissionsSideBar,Path=ActualWidth,Mode=OneWay}" />
                             </ItemsPanelTemplate>
-                        </GroupStyle.Panel>
+                        </GroupStyle.Panel>-->
                     </GroupStyle>
-                </ListBox.GroupStyle>-->
+                </ListBox.GroupStyle>
 
                 <ListBox.ItemTemplate>
                     <DataTemplate x:Name="SortTrigger">
@@ -366,10 +366,10 @@
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
-                            <views:CLPPagePreviewView x:Name="PagePreviewView" Grid.Row="0" Margin="5"
+                            <views:CLPPagePreviewView x:Name="PagePreviewView" Grid.Row="0" Margin="5 5 5 0"
                                                       DataContext="{Binding}" />
 
-                            <Rectangle Grid.Row="0" Margin="5"
+                            <Rectangle Grid.Row="0" Margin="5 5 5 0"
                                        Stroke="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
                                        StrokeThickness="2"
                                        Fill="Transparent" />

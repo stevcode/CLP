@@ -31,24 +31,24 @@ namespace Classroom_Learning_Partner.Views
             foreach(UIElement item in vsp.Children)
             {
 
-                var bord = GetVisualChild<Border>(item);
-                var border = bord as Border;
-                if(border != null)
-                {
-                    if((bool)(sender as ToggleButton).IsChecked)
-                    {
+                //var bord = GetVisualChild<Border>(item);
+                //var border = bord as Border;
+                //if(border != null)
+                //{
+                //    if((bool)(sender as ToggleButton).IsChecked)
+                //    {
 
-                        //((sender as ToggleButton).Parent as Grid).Children[2].Visibility = Visibility.Visible;
-                        //((sender as ToggleButton).Parent as Grid).Children[1].Visibility = Visibility.Collapsed;
+                //        //((sender as ToggleButton).Parent as Grid).Children[2].Visibility = Visibility.Visible;
+                //        //((sender as ToggleButton).Parent as Grid).Children[1].Visibility = Visibility.Collapsed;
 
-                        hide_stacks(border, e);
-                    }
-                    else
-                    {
-                        show_stacks(border, true);
-                    }
+                //        hide_stacks(border, e);
+                //    }
+                //    else
+                //    {
+                //        show_stacks(border, true);
+                //    }
 
-                }
+                //}
                 if(item != vsp.Children[0])
                 {
                     if((bool)(sender as ToggleButton).IsChecked)
@@ -257,7 +257,7 @@ namespace Classroom_Learning_Partner.Views
                     //var grid = GetVisualParent<Grid>(border);
                     // var stack = grid.Children[0];
                     //  stack.Visibility = Visibility.Visible;
-                    show_stacks(border, true);
+      //              show_stacks(border, true);
                 }
                 //use snoop, find visual child down to the clppagepreview, set them all invis by default and change below to Visible if == instead of !=
                 if(item != vsp.Children[0])
