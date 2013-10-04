@@ -16,7 +16,7 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
@@ -37,11 +37,10 @@
         </TextBlock>
         
         <Border Grid.Column="1" 
-                BorderThickness="{Binding BorderThickness}" BorderBrush="{StaticResource GrayBorderColor}" 
+                BorderThickness="0" 
                 Width="{Binding BorderWidth}" Height="{Binding BorderHeight}">
             <ScrollViewer x:Name="MirrorDisplayScroller" 
-                          HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto"
-                          Padding="0,0,8,0" Margin="0,0,-33,0">
+                          HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
                 <ScrollViewer.Resources>
                     <sys:Double x:Key="{x:Static SystemParameters.VerticalScrollBarWidthKey}">25</sys:Double>
                 </ScrollViewer.Resources>
@@ -87,6 +86,10 @@
                 </Grid>
             </ScrollViewer>
         </Border>
+
+        <Rectangle Grid.Column="1" 
+                   StrokeThickness="{Binding BorderThickness}" Stroke="{StaticResource GrayBorderColor}" 
+                   Width="{Binding BorderWidth}" Height="{Binding BorderHeight}" />
         
     </Grid>
 

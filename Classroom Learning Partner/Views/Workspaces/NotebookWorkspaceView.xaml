@@ -49,7 +49,7 @@
         </Control>
 
         <!--LeftLinked Panel-->
-        <Control DockPanel.Dock="Left"
+        <!--<Control DockPanel.Dock="Left"
                  Visibility="{Binding LeftPanel.LinkedPanel.IsVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
             <Control.Resources>
 
@@ -63,7 +63,7 @@
                 <Style TargetType="{x:Type Control}">
                     <Style.Triggers>
 
-                        <!--NotebookPagesPanel trigger-->
+                        --><!--NotebookPagesPanel trigger--><!--
                         <DataTrigger Binding="{Binding LeftPanel.LinkedPanel, Converter={StaticResource TypeToStringConverter}}" Value="NotebookPagesPanelViewModel">
                             <Setter Property="Template" Value="{StaticResource NotebookPagesPanelTemplate}" />
                         </DataTrigger>
@@ -71,7 +71,7 @@
                     </Style.Triggers>
                 </Style>
             </Control.Style>
-        </Control>
+        </Control>-->
 
         <!--Right Panel-->
         <Control DockPanel.Dock="Right"
@@ -108,7 +108,7 @@
         </Control>
 
         <!-- Control that dynamically determines what Display to show -->
-        <Control HorizontalContentAlignment="Center" HorizontalAlignment="Center">
+        <Control HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 
             <Control.Resources>
 
