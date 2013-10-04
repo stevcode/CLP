@@ -479,7 +479,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var clpStamp = PageObject as CLPStamp;
             if(clpStamp != null && (App.MainWindowViewModel.IsAuthoring || !clpStamp.PartsAuthorGenerated))
             {
-                var keyPad = new KeypadWindowView("How many parts?", 100)
+                var keyPad = new KeypadWindowView("How many things?", 100)
                     {
                         Owner = Application.Current.MainWindow,
                         WindowStartupLocation = WindowStartupLocation.Manual,
