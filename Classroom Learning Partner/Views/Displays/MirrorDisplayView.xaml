@@ -22,7 +22,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <TextBlock Grid.Column="0" 
+        <TextBlock Grid.Column="0" Margin="0 0 0 15"
                    Text="{Binding CurrentPage.Submitter.FullName}"              
                    Foreground="{StaticResource MainColor}"   
                    FontWeight="Bold" VerticalAlignment="Bottom">

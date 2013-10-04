@@ -31,11 +31,13 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Grid.Column="0" Text="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Converter={StaticResource ItemsControlItemIndexConverter}}"
+                    <TextBlock Grid.Column="0" Margin="0 5 0 0"
+                               Text="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Converter={StaticResource ItemsControlItemIndexConverter}}"
                                Foreground="{StaticResource MainColor}"
                                FontWeight="Bold" VerticalAlignment="Top" />
           
-                    <TextBlock Grid.Column="0" Text="{Binding Submitter.FullName}" 
+                    <TextBlock Grid.Column="0" Margin="0 0 0 15"
+                               Text="{Binding Submitter.FullName}" 
                                Foreground="{StaticResource MainColor}"
                                FontWeight="Bold" VerticalAlignment="Bottom">
                         <TextBlock.LayoutTransform>
