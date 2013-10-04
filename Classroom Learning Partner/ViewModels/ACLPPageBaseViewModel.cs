@@ -146,6 +146,19 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData InitialPageAspectRatioProperty = RegisterProperty("InitialPageAspectRatio", typeof(double));
 
+        /// <summary>
+        /// Number of submissions associated with this page.
+        /// This property is automatically mapped to the corresponding property in Page.
+        /// </summary>
+        [ViewModelToModel("Page")]
+        public int NumberOfSubmissions
+        {
+            get { return GetValue<int>(NumberOfSubmissionsProperty); }
+            set { SetValue(NumberOfSubmissionsProperty, value); }
+        }
+
+        public static readonly PropertyData NumberOfSubmissionsProperty = RegisterProperty("NumberOfSubmissions", typeof(int));
+
         #endregion //Model
 
         #region Properties
@@ -375,13 +388,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData IsShowingSubmissionsProperty = RegisterProperty("IsShowingSubmissions", typeof(bool), false);
 
-        /// <summary>
-        /// Number of submissions associated with the page.
-        /// </summary>
-        public int NumberOfSubmissions
-        {
-            get { return 0; }
-        }
         
         #endregion //Bindings
 
