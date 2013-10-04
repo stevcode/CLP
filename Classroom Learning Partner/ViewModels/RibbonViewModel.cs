@@ -2234,6 +2234,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 switch(arrayType)
                 {
                     case "DEFAULT":
+                        array.IsDivisionBehaviorOn = false;
+                        array.IsSnappable = false;
                         break;
                     case "CARD":
                         array.IsDivisionBehaviorOn = false;
@@ -2253,11 +2255,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var arrayStacks = 1;
             const double LABEL_LENGTH = 22.0;
 
-            var isHorizontallyAligned = true;
-            if(columns / currentPage.PageWidth > rows / currentPage.PageHeight)
-            {
-                isHorizontallyAligned = false;
-            }
+            var isHorizontallyAligned = !(columns / currentPage.PageWidth > rows / currentPage.PageHeight);
 
             while(xPosition + 2 * LABEL_LENGTH + initializedSquareSize * columns >= currentPage.PageWidth || yPosition + 2 * LABEL_LENGTH + initializedSquareSize * rows >= currentPage.PageHeight)
             {
@@ -2325,6 +2323,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 switch(arrayType)
                 {
                     case "DEFAULT":
+                        array.IsDivisionBehaviorOn = false;
+                        array.IsSnappable = false;
                         break;
                     case "CARD":
                         array.IsDivisionBehaviorOn = false;

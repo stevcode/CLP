@@ -111,10 +111,11 @@
 
             <TextBox x:Name="NumberOfArrays" 
                      Grid.Column="1" Grid.Row="0" Margin="5"
+                     Height="32" Width="74"
                      BorderThickness="1" BorderBrush="Black" PreviewMouseUp="TextBox_OnMouseUp"
                      Text="" FontSize="24" TextAlignment="Right" />
 
-            <TextBlock Grid.Column="0" Grid.Row="1" Margin="10"
+            <!--<TextBlock Grid.Column="0" Grid.Row="1" Margin="10"
                        VerticalAlignment="Center"
                        Text="How do you want the arrays arranged?" />
 
@@ -139,7 +140,7 @@
                     <Image Source="pack://application:,,,/Resources/Images/VerticalArrayStack32.png" />
                 </RadioButton>
 
-            </Grid>
+            </Grid>-->
 
         </Grid>
 
