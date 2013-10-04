@@ -126,33 +126,56 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Methods
 
-        //From Interface IDisplayViewModel
-        public void AddPageToDisplay(ICLPPage page)
+        void Pages_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            GridDisplay.AddPageToDisplay(page);
-            if(!IsOnProjector)
+            UGridRows = Pages.Count < 3 ? 1 : 0;
+
+            if(!IsOnProjector || App.Network.ProjectorProxy == null)
             {
                 return;
             }
 
-            var pageID = page.SubmissionType != SubmissionType.None ? page.SubmissionID : page.UniqueID;
-
-            if(App.Network.ProjectorProxy != null)
+            if(e.NewItems != null)
             {
-                try
+                foreach(var pageAdded in e.NewItems)
                 {
-                    App.Network.ProjectorProxy.AddPageToDisplay(pageID);
-                }
-                catch(Exception)
-                {
+                    var page = pageAdded as ICLPPage;
+                    if(page == null)
+                    {
+                        continue;
+                    }
+                    var pageID = page.SubmissionType != SubmissionType.None ? page.SubmissionID : page.UniqueID;
+                    try
+                    {
+                        App.Network.ProjectorProxy.AddPageToDisplay(pageID);
+                    }
+                    catch(Exception)
+                    {
 
+                    }
                 }
             }
-        }
 
-        void Pages_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            UGridRows = Pages.Count < 3 ? 1 : 0;
+            if(e.OldItems != null)
+            {
+                foreach(var pageRemoved in e.OldItems)
+                {
+                    var page = pageRemoved as ICLPPage;
+                    if(page == null)
+                    {
+                        continue;
+                    }
+                    var pageID = page.SubmissionType != SubmissionType.None ? page.SubmissionID : page.UniqueID;
+                    try
+                    {
+                        App.Network.ProjectorProxy.RemovePageFromDisplay(pageID);
+                    }
+                    catch(Exception)
+                    {
+
+                    }
+                }
+            }
         }
 
         #endregion //Methods
@@ -170,24 +193,6 @@ namespace Classroom_Learning_Partner.ViewModels
         public void OnRemovePageFromGridDisplayCommandExecute(ICLPPage page)
         {
             GridDisplay.RemovePageFromDisplay(page);
-            if(!IsOnProjector)
-            {
-                return;
-            }
-
-            var pageID = page.SubmissionType != SubmissionType.None ? page.SubmissionID : page.UniqueID;
-
-            if(App.Network.ProjectorProxy != null)
-            {
-                try
-                {
-                    App.Network.ProjectorProxy.RemovePageFromDisplay(pageID);
-                }
-                catch(Exception)
-                {
-
-                }
-            }
         }
 
         #endregion //Commands

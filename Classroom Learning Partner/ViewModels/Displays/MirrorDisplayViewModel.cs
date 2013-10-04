@@ -56,6 +56,25 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             mirrorDisplayViewModel.OnPageResize();
+
+            if(!mirrorDisplayViewModel.IsOnProjector)
+            {
+                return;
+            }
+
+            var pageID = mirrorDisplayViewModel.CurrentPage.SubmissionType != SubmissionType.None ? mirrorDisplayViewModel.CurrentPage.SubmissionID : mirrorDisplayViewModel.CurrentPage.UniqueID;
+
+            if(App.Network.ProjectorProxy != null)
+            {
+                try
+                {
+                    App.Network.ProjectorProxy.AddPageToDisplay(pageID);
+                }
+                catch(Exception)
+                {
+
+                }
+            }
         }
 
         #endregion //Model
@@ -72,30 +91,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData IsOnProjectorProperty = RegisterProperty("IsOnProjector", typeof(bool), false);
-
-        public void AddPageToDisplay(ICLPPage page)
-        {
-            MirrorDisplay.AddPageToDisplay(page);
-            if(!IsOnProjector)
-            {
-                return;
-            }
-
-            var pageID = CurrentPage.SubmissionType != SubmissionType.None ? CurrentPage.SubmissionID : CurrentPage.UniqueID;
-
-            if(App.Network.ProjectorProxy != null)
-            {
-                try
-                {
-                    App.Network.ProjectorProxy.AddPageToDisplay(pageID);
-                }
-                catch(Exception) 
-                {
-
-                }
-            }
-            //TODO: Steve - add pages to a queue and send when a projector is found
-        }
 
         #endregion //IDisplayViewModel Implementation
 
