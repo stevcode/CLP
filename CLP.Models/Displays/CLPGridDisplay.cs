@@ -31,6 +31,17 @@ namespace CLP.Models
         #region Properties
 
         /// <summary>
+        /// Index of the Display in the notebook.
+        /// </summary>
+        public int DisplayIndex
+        {
+            get { return GetValue<int>(DisplayIndexProperty); }
+            set { SetValue(DisplayIndexProperty, value); }
+        }
+
+        public static readonly PropertyData DisplayIndexProperty = RegisterProperty("DisplayIndex", typeof(int), 0);
+
+        /// <summary>
         /// Pages on the GridDisplay.
         /// </summary>
         public ObservableCollection<ICLPPage> Pages

@@ -40,6 +40,19 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData GridDisplayProperty = RegisterProperty("GridDisplay", typeof(CLPGridDisplay));
 
         /// <summary>
+        /// Index of the Display in the notebook.
+        /// This property is automatically mapped to the corresponding property in GridDisplay.
+        /// </summary>
+        [ViewModelToModel("GridDisplay")]
+        public int DisplayIndex
+        {
+            get { return GetValue<int>(DisplayIndexProperty); }
+            set { SetValue(DisplayIndexProperty, value); }
+        }
+
+        public static readonly PropertyData DisplayIndexProperty = RegisterProperty("DisplayIndex", typeof(int));
+
+        /// <summary>
         /// A property mapped to a property on the Model GridDisplay.
         /// </summary>
         [ViewModelToModel("GridDisplay")]

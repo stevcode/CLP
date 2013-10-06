@@ -89,9 +89,12 @@
         </ItemsControl>
         
         <TextBlock Grid.Row="1"
-                   Text="Grid Display 1"
+                   Foreground="{StaticResource MainColor}"
                    TextAlignment="Right" HorizontalAlignment="Right" 
-                   Margin="5" />
+                   Margin="5">
+            <Run Text="Grid Display " />
+            <Run Text="{Binding DisplayIndex}" />
+        </TextBlock>
     </Grid>
 
 </catel:UserControl>
