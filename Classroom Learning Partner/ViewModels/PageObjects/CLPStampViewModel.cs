@@ -423,7 +423,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             PageObject.ParentPage.PageHistory.AddHistoryItem(new CLPHistoryStampPlace(PageObject.ParentPage, StampCopy.UniqueID));
-            StampCopy.OnMoved();
+            StampCopy.OnAdded();
         }
 
         /// <summary>

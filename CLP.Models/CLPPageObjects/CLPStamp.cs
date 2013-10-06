@@ -332,6 +332,10 @@ namespace CLP.Models
             return newStamp;
         }
 
+        public virtual void OnAdded()
+        {
+        }
+
         public void OnRemoved()
         {
             if(StampCopy.IsStamped)

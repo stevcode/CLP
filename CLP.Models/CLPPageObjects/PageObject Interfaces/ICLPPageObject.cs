@@ -29,6 +29,7 @@ namespace CLP.Models
         string BackgroundColor { get; set; }
 
         ICLPPageObject Duplicate();
+        void OnAdded();
         void OnRemoved();
         void OnMoved();
         void OnResized();

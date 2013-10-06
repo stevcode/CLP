@@ -2,8 +2,10 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <!-- Colors -->
-    <!-- BlueMainColor: 2F64B9 -->
-    <SolidColorBrush x:Key="MainColor" Color="#502C5F" />
+    <!--<SolidColorBrush x:Key="MainColor" Color="#502C5F" />
+    <SolidColorBrush x:Key="HighlightColor" Color="#744887" />
+    <SolidColorBrush x:Key="BoldColor" Color="#3F1B4E" />-->
+    <SolidColorBrush x:Key="MainColor" Color="#2F64B9" />
     <SolidColorBrush x:Key="HighlightColor" Color="#744887" />
     <SolidColorBrush x:Key="BoldColor" Color="#3F1B4E" />
     <SolidColorBrush x:Key="GrayBackgroundColor" Color="#F3F3F3" />

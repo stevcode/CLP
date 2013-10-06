@@ -261,6 +261,11 @@ namespace CLP.Models
 
         public abstract ICLPPageObject Duplicate();
 
+        public virtual void OnAdded()
+        {
+            AddRemovePageObjectFromOtherObjects();
+        }
+
         public virtual void OnRemoved() { }
 
         public virtual void OnMoved() 
@@ -269,7 +274,7 @@ namespace CLP.Models
         }
 
         //TODO: make this static in viewModel?
-        private void AddRemovePageObjectFromOtherObjects(bool isHistory=true)
+        protected void AddRemovePageObjectFromOtherObjects(bool isHistory=true)
         {
             foreach(var container in ParentPage.PageObjects)
             {

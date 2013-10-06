@@ -32,7 +32,7 @@
         <!--Application Menu Button-->
         <Ribbon.ApplicationMenu>
             <RibbonApplicationMenu SmallImageSource="pack://application:,,,/Resources/Images/File.png"
-                                   Background="Purple">
+                                   Background="{StaticResource MainColor}">
 
                 <RibbonApplicationMenuItem Header="New Notebook"
                                            KeyTip="N"
@@ -301,10 +301,10 @@
                               SmallImageSource="pack://application:,,,/Resources/Images/Stamp16.png"
                               Command="{Binding InsertBlankStampCommand}" />
 
-                <!--<RibbonButton Label="Collection Stamp"
+                <RibbonButton Label="Collection Stamp"
                               LargeImageSource="pack://application:,,,/Resources/Images/CollectionStamp32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/CollectionStamp16.png"
-                              Command="{Binding InsertBlankContainerStampCommand}" />-->
+                              Command="{Binding InsertBlankContainerStampCommand}" />
 
             </RibbonGroup>
 
@@ -631,7 +631,7 @@
 
         <!--Test Tab-->
         <RibbonTab Header="Test Features"
-                   Visibility="{Binding Path=InstructorVisibility}">
+                   Visibility="{Binding InstructorVisibility}">
 
             <RibbonGroup Header="ClassList Commands">
 
@@ -1079,7 +1079,7 @@
             <ToggleButton Content="^"
                           VerticalContentAlignment="Center"
                           Height="22" Width="40"
-                          Background="CornflowerBlue"
+                          Background="{StaticResource MainColor}"
                           IsChecked="{Binding ElementName=Ribbon, Path=IsMinimized}" />
         </Ribbon.HelpPaneContent>
 

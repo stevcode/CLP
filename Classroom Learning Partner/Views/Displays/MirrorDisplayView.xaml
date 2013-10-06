@@ -22,10 +22,26 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
+        <TextBlock Grid.Column="0" Margin="0 15 0 0"            
+                   Foreground="{StaticResource MainColor}"   
+                   FontWeight="Bold" VerticalAlignment="Top">
+            <Run Text="Page " />
+            <Run Text="{Binding CurrentPage.PageIndex}" />
+            <TextBlock.LayoutTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform/>
+                    <RotateTransform Angle="-90"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </TextBlock.LayoutTransform>
+        </TextBlock>
+
         <TextBlock Grid.Column="0" Margin="0 0 0 15"
                    Text="{Binding CurrentPage.Submitter.FullName}"              
                    Foreground="{StaticResource MainColor}"   
-                   FontWeight="Bold" VerticalAlignment="Bottom">
+                   FontWeight="Bold" VerticalAlignment="Bottom"
+                   Visibility="{Binding MainWindowViewModel.Ribbon.InstructorVisibility, Source={x:Static Application.Current}}">
             <TextBlock.LayoutTransform>
                 <TransformGroup>
                     <ScaleTransform/>
