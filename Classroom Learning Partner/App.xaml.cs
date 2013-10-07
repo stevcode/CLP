@@ -1,6 +1,5 @@
 using System;
 using System.Windows;
-using System.Windows.Media;
 using System.Windows.Threading;
 using Catel.Logging;
 using Classroom_Learning_Partner.ViewModels;

@@ -115,10 +115,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public ObservableCollection<ICLPPage> SubmissionPages
         {
-            get
-            {
-                return GetValue<ObservableCollection<ICLPPage>>(SubmissionPagesProperty);
-            }
+            get { return GetValue<ObservableCollection<ICLPPage>>(SubmissionPagesProperty); }
             set
             {
                 SetValue(SubmissionPagesProperty, value);
@@ -135,14 +132,8 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public string StudentsWithNoSubmissions
         {
-            get
-            {
-                return GetValue<string>(StudentsWithNoSubmissionsProperty);
-            }
-            set
-            {
-                SetValue(StudentsWithNoSubmissionsProperty, value);
-            }
+            get { return GetValue<string>(StudentsWithNoSubmissionsProperty); }
+            set { SetValue(StudentsWithNoSubmissionsProperty, value); }
         }
 
         public static readonly PropertyData StudentsWithNoSubmissionsProperty = RegisterProperty("StudentsWithNoSubmissions", typeof(string), "");
@@ -152,17 +143,11 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public CollectionViewSource FilteredSubmissions
         {
-            get
-            {
-                return GetValue<CollectionViewSource>(FilteredSubmissionsProperty);
-            }
-            set
-            {
-                SetValue(FilteredSubmissionsProperty, value);
-            }
+            get { return GetValue<CollectionViewSource>(FilteredSubmissionsProperty); }
+            set { SetValue(FilteredSubmissionsProperty, value); }
         }
 
-        public static readonly PropertyData FilteredSubmissionsProperty = RegisterProperty("FilteredSubmissions", typeof(CollectionViewSource), null);
+        public static readonly PropertyData FilteredSubmissionsProperty = RegisterProperty("FilteredSubmissions", typeof(CollectionViewSource));
 
         /// <summary>
         /// Gets or sets the property value.
@@ -172,27 +157,18 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public ObservableCollection<string> FilterTypes
         {
-            get
-            {
-                return GetValue<ObservableCollection<string>>(FilterTypesProperty);
-            }
-            set
-            {
-                SetValue(FilterTypesProperty, value);
-            }
+            get { return GetValue<ObservableCollection<string>>(FilterTypesProperty); }
+            set {  SetValue(FilterTypesProperty, value); }
         }
 
-        public static readonly PropertyData FilterTypesProperty = RegisterProperty("FilterTypes", typeof(ObservableCollection<string>), null);
+        public static readonly PropertyData FilterTypesProperty = RegisterProperty("FilterTypes", typeof(ObservableCollection<string>));
 
         /// <summary>
         /// The Current SubmissionPages Filter.
         /// </summary>
         public string SelectedFilterType
         {
-            get
-            {
-                return GetValue<string>(SelectedFilterTypeProperty);
-            }
+            get { return GetValue<string>(SelectedFilterTypeProperty); }
             set
             {
                 SetValue(SelectedFilterTypeProperty, value);
@@ -200,7 +176,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        public static readonly PropertyData SelectedFilterTypeProperty = RegisterProperty("SelectedFilterType", typeof(string), null);
+        public static readonly PropertyData SelectedFilterTypeProperty = RegisterProperty("SelectedFilterType", typeof(string));
 
         #endregion //Propertes
 
@@ -365,26 +341,26 @@ namespace Classroom_Learning_Partner.ViewModels
             return tags;
         }
 
-
-
         public void FilterSubmissions(string Sort)
         {
-            FilteredSubmissions = new CollectionViewSource();
-            FilteredSubmissions.Source = SubmissionPages;
-            StudentsWithNoSubmissions = getStudentsWithNoSubmissions();
+            FilteredSubmissions = new CollectionViewSource
+                                  {
+                                      Source = SubmissionPages
+                                  };
+            //StudentsWithNoSubmissions = getStudentsWithNoSubmissions();
 
-            PropertyGroupDescription submitterNameDescription = new PropertyGroupDescription("Submitter.FullName");
-            PropertyGroupDescription groupNameDescription = new PropertyGroupDescription("GroupName", new GroupLabelConverter());
-            PropertyGroupDescription timeDescription = new PropertyGroupDescription("SubmissionTime");
-            PropertyGroupDescription isGroupDescription = new PropertyGroupDescription("IsGroupSubmission", new BooleantoGroupConverter());
-            PropertyGroupDescription correctnessDescription = new PropertyGroupDescription(null, new PagetToCorrectnessTagConverter());
-            PropertyGroupDescription starredDescription = new PropertyGroupDescription(null, new PagetToStarredTagConverter());
+            var submitterNameDescription = new PropertyGroupDescription("Submitter.FullName");
+            //PropertyGroupDescription groupNameDescription = new PropertyGroupDescription("GroupName", new GroupLabelConverter());
+            //PropertyGroupDescription timeDescription = new PropertyGroupDescription("SubmissionTime");
+            //PropertyGroupDescription isGroupDescription = new PropertyGroupDescription("IsGroupSubmission", new BooleantoGroupConverter());
+            //PropertyGroupDescription correctnessDescription = new PropertyGroupDescription(null, new PagetToCorrectnessTagConverter());
+            //PropertyGroupDescription starredDescription = new PropertyGroupDescription(null, new PagetToStarredTagConverter());
 
-            SortDescription submitterNameSort = new SortDescription("SubmitterName", ListSortDirection.Ascending);
-            SortDescription groupNameSort = new SortDescription("GroupName", ListSortDirection.Ascending);
-            SortDescription timeDescendingSort = new SortDescription("SubmissionTime", ListSortDirection.Descending);
-            SortDescription timeAscendingSort = new SortDescription("SubmissionTime", ListSortDirection.Ascending);
-            SortDescription isGroupSubmissionSort = new SortDescription("IsGroupSubmission", ListSortDirection.Ascending);
+            var submitterNameSort = new SortDescription("Submitter.FullName", ListSortDirection.Ascending);
+            //SortDescription groupNameSort = new SortDescription("GroupName", ListSortDirection.Ascending);
+            var timeDescendingSort = new SortDescription("SubmissionTime", ListSortDirection.Descending);
+            //SortDescription timeAscendingSort = new SortDescription("SubmissionTime", ListSortDirection.Ascending);
+            //SortDescription isGroupSubmissionSort = new SortDescription("IsGroupSubmission", ListSortDirection.Ascending);
 
             if(Sort == "Student Name - Alphabetical")
             {
@@ -393,71 +369,71 @@ namespace Classroom_Learning_Partner.ViewModels
                 FilteredSubmissions.SortDescriptions.Add(timeDescendingSort);
             }
 
-            else if(Sort == "Group Submissions")
-            {
-                FilteredSubmissions.Filter += new FilterEventHandler(OnlyGroupSubmissionsFilter);
+            //else if(Sort == "Group Submissions")
+            //{
+            //    FilteredSubmissions.Filter += new FilterEventHandler(OnlyGroupSubmissionsFilter);
 
-                FilteredSubmissions.GroupDescriptions.Add(groupNameDescription);
-                FilteredSubmissions.SortDescriptions.Add(groupNameSort);
-                FilteredSubmissions.GroupDescriptions.Add(timeDescription);
+            //    FilteredSubmissions.GroupDescriptions.Add(groupNameDescription);
+            //    FilteredSubmissions.SortDescriptions.Add(groupNameSort);
+            //    FilteredSubmissions.GroupDescriptions.Add(timeDescription);
 
-                FilteredSubmissions.SortDescriptions.Add(timeDescendingSort);
-                FilteredSubmissions.GroupDescriptions.Add(submitterNameDescription);
-                FilteredSubmissions.SortDescriptions.Add(submitterNameSort);
-
-
-            }
-            else if(Sort == "Submissions By Group Name")
-            {
-                FilteredSubmissions.Filter += new FilterEventHandler(OnlyIndividualSubmissionsFilter);
-
-                FilteredSubmissions.GroupDescriptions.Add(groupNameDescription);
-                FilteredSubmissions.SortDescriptions.Add(groupNameSort);
-
-                FilteredSubmissions.GroupDescriptions.Add(submitterNameDescription);
-                FilteredSubmissions.SortDescriptions.Add(submitterNameSort);
-            }
-
-            else if(Sort == "Time In - Ascending")
-            {
-
-                FilteredSubmissions.GroupDescriptions.Add(timeDescription);
-                FilteredSubmissions.GroupDescriptions.Add(submitterNameDescription);
-
-                FilteredSubmissions.SortDescriptions.Add(timeAscendingSort);
-            }
-            else if(Sort == "Time In - Descending")
-            {
-                FilteredSubmissions.GroupDescriptions.Add(timeDescription);
-                FilteredSubmissions.GroupDescriptions.Add(submitterNameDescription);
+            //    FilteredSubmissions.SortDescriptions.Add(timeDescendingSort);
+            //    FilteredSubmissions.GroupDescriptions.Add(submitterNameDescription);
+            //    FilteredSubmissions.SortDescriptions.Add(submitterNameSort);
 
 
-                FilteredSubmissions.SortDescriptions.Add(timeDescendingSort);
-            }
-            else if(Sort == "Correctness")
-            {
-                FilteredSubmissions.GroupDescriptions.Clear();
-                FilteredSubmissions.SortDescriptions.Clear();
-                FilteredSubmissions.GroupDescriptions.Add(correctnessDescription);
-                FilteredSubmissions.GroupDescriptions.Add(submitterNameDescription);
-            }
-            else if(Sort == "Starred")
-            {
-                FilteredSubmissions.GroupDescriptions.Clear();
-                FilteredSubmissions.SortDescriptions.Clear();
-                FilteredSubmissions.GroupDescriptions.Add(starredDescription);
-                FilteredSubmissions.GroupDescriptions.Add(submitterNameDescription);
-            }
-            else
-            {
-                FilteredSubmissions.GroupDescriptions.Clear();
-                FilteredSubmissions.SortDescriptions.Clear();
+            //}
+            //else if(Sort == "Submissions By Group Name")
+            //{
+            //    FilteredSubmissions.Filter += new FilterEventHandler(OnlyIndividualSubmissionsFilter);
 
-                PropertyGroupDescription pgd = new PropertyGroupDescription(null, new PageToTagConverter(Sort));
-                FilteredSubmissions.GroupDescriptions.Add(pgd);
-                FilteredSubmissions.GroupDescriptions.Add(submitterNameDescription);
+            //    FilteredSubmissions.GroupDescriptions.Add(groupNameDescription);
+            //    FilteredSubmissions.SortDescriptions.Add(groupNameSort);
 
-            }
+            //    FilteredSubmissions.GroupDescriptions.Add(submitterNameDescription);
+            //    FilteredSubmissions.SortDescriptions.Add(submitterNameSort);
+            //}
+
+            //else if(Sort == "Time In - Ascending")
+            //{
+
+            //    FilteredSubmissions.GroupDescriptions.Add(timeDescription);
+            //    FilteredSubmissions.GroupDescriptions.Add(submitterNameDescription);
+
+            //    FilteredSubmissions.SortDescriptions.Add(timeAscendingSort);
+            //}
+            //else if(Sort == "Time In - Descending")
+            //{
+            //    FilteredSubmissions.GroupDescriptions.Add(timeDescription);
+            //    FilteredSubmissions.GroupDescriptions.Add(submitterNameDescription);
+
+
+            //    FilteredSubmissions.SortDescriptions.Add(timeDescendingSort);
+            //}
+            //else if(Sort == "Correctness")
+            //{
+            //    FilteredSubmissions.GroupDescriptions.Clear();
+            //    FilteredSubmissions.SortDescriptions.Clear();
+            //    FilteredSubmissions.GroupDescriptions.Add(correctnessDescription);
+            //    FilteredSubmissions.GroupDescriptions.Add(submitterNameDescription);
+            //}
+            //else if(Sort == "Starred")
+            //{
+            //    FilteredSubmissions.GroupDescriptions.Clear();
+            //    FilteredSubmissions.SortDescriptions.Clear();
+            //    FilteredSubmissions.GroupDescriptions.Add(starredDescription);
+            //    FilteredSubmissions.GroupDescriptions.Add(submitterNameDescription);
+            //}
+            //else
+            //{
+            //    FilteredSubmissions.GroupDescriptions.Clear();
+            //    FilteredSubmissions.SortDescriptions.Clear();
+
+            //    PropertyGroupDescription pgd = new PropertyGroupDescription(null, new PageToTagConverter(Sort));
+            //    FilteredSubmissions.GroupDescriptions.Add(pgd);
+            //    FilteredSubmissions.GroupDescriptions.Add(submitterNameDescription);
+
+            //}
         }
 
         #endregion //Methods

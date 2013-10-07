@@ -74,7 +74,7 @@ namespace Classroom_Learning_Partner
                                                      };
                                 newGridDisplay.Pages.Clear();
                                 notebookWorkspaceViewModel.Notebook.Displays.Add(newGridDisplay);
-
+                                notebookWorkspaceViewModel.Notebook.GenerageDisplayIndexes();
                                 notebookWorkspaceViewModel.SelectedDisplay = newGridDisplay;
                             }
 

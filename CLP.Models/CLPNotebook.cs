@@ -92,6 +92,9 @@ namespace CLP.Models
                     gridDisplay.Pages.Add(newDisplayPage);
                 }
             }
+
+            GeneratePageIndexes();
+            GenerageDisplayIndexes();
         }
 
         #endregion //Constructors
@@ -183,6 +186,7 @@ namespace CLP.Models
         {
             display.ParentNotebookID = UniqueID;
             Displays.Add(display);
+            GenerageDisplayIndexes();
         }
 
         public void AddPage(ICLPPage page)
@@ -190,6 +194,27 @@ namespace CLP.Models
             page.ParentNotebookID = UniqueID;
             Pages.Add(page);
             GenerateSubmissionViews(page.UniqueID);
+            GeneratePageIndexes();
+        }
+
+        public void GeneratePageIndexes()
+        {
+            var pageIndexCount = 1;
+            foreach(var page in Pages)
+            {
+                page.PageIndex = pageIndexCount;
+                pageIndexCount++;
+            }
+        }
+
+        public void GenerageDisplayIndexes()
+        {
+            var displayIndexCount = 1;
+            foreach(var display in Displays.OfType<CLPGridDisplay>()) 
+            {
+                display.DisplayIndex = displayIndexCount;
+                displayIndexCount++;
+            }
         }
 
         public void InsertPageAt(int index, ICLPPage page)
@@ -197,6 +222,7 @@ namespace CLP.Models
             page.ParentNotebookID = UniqueID;
             Pages.Insert(index, page);
             GenerateSubmissionViews(page.UniqueID);
+            GeneratePageIndexes();
         }
 
         public void RemovePageAt(int index)
@@ -210,6 +236,7 @@ namespace CLP.Models
             {
                 AddPage(new CLPPage());
             }
+            GeneratePageIndexes();
         }
 
         public ICLPPage GetPageAt(int pageIndex, int submissionIndex)
