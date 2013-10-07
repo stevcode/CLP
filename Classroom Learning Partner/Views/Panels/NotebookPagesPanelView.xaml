@@ -19,7 +19,6 @@
             <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
             <conv:ProjectedDisplayBackgroundConverter x:Key="ProjectedDisplayBackgroundConverter" />
             <conv:ItemSelectedToColorConverter x:Key="PageOrDisplaySelectionColorConverter" />
-            <conv:ItemsControlItemIndexConverter x:Key="ItemsControlItemIndexConverter" />
 
             <!-- Style to override ListBoxItem selection visuals for Pages -->
             <Style x:Key="PageSidebarContainer" TargetType="{x:Type ListBoxItem}">
@@ -47,8 +46,7 @@
                 Grid.Column="0"
                 Width="{Binding InitialWidth}">
 
-            <ListBox x:Name="PagesListBox" 
-                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+            <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                      ItemsSource="{Binding Pages}"
                      SelectedValue="{Binding CurrentPage}"
                      ItemContainerStyle="{StaticResource PageSidebarContainer}"
@@ -88,10 +86,19 @@
                             <Rectangle Grid.Column="1" Margin="5"
                                        Stroke="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
                                        StrokeThickness="2"
-                                       Fill="Transparent" />
+                                       Fill="Transparent">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="MouseUp">
+                                        <catel:EventToCommand
+                                                Command="{Binding DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                                PassEventArgsToCommand="False"
+                                                CommandParameter="{Binding}" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </Rectangle>
 
                             <Grid Grid.Column="2" VerticalAlignment="Center" Margin="0 0 5 0"
-                                  Visibility="{Binding Source={x:Static Application.Current}, Path=MainWindowViewModel.Ribbon.InstructorVisibility}">
+                                  Visibility="{Binding MainWindowViewModel.Ribbon.InstructorVisibility, Source={x:Static Application.Current}}">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />

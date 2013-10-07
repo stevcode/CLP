@@ -5,7 +5,6 @@ using System.IO;
 using System.Windows.Data;
 using Catel.Data;
 using Catel.MVVM;
-using Classroom_Learning_Partner.Resources;
 using CLP.Models;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -54,6 +53,8 @@ namespace Classroom_Learning_Partner.ViewModels
             FilterTypes.Add(StampGroupingTypeTagType.Instance.Name);
 
             #endregion //Tag Stuff
+
+            SetCurrentPageCommand = new Command<ICLPPage>(OnSetCurrentPageCommandExecute);
         }
 
         /// <summary>
@@ -89,22 +90,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(CurrentPageProperty, value); }
         }
 
-        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(ICLPPage), null, OnCurrentPageChanged);
-
-        private static void OnCurrentPageChanged(object sender, AdvancedPropertyChangedEventArgs args)
-        {
-            var submissionssPanelViewModel = sender as SubmissionsPanelViewModel;
-            if(args.NewValue == null || submissionssPanelViewModel == null)
-            {
-                return;
-            }
-
-            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel != null)
-            {
-                notebookWorkspaceViewModel.SelectedDisplay.AddPageToDisplay(args.NewValue as ICLPPage);
-            }
-        }
+        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(ICLPPage));
 
         #endregion //Bindings
 
@@ -254,6 +240,24 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData LinkedPanelProperty = RegisterProperty("LinkedPanel", typeof(IPanel));
 
         #endregion
+
+        #region Commands
+
+        /// <summary>
+        /// Sets the current selected page in the listbox.
+        /// </summary>
+        public Command<ICLPPage> SetCurrentPageCommand { get; private set; }
+
+        private void OnSetCurrentPageCommandExecute(ICLPPage page)
+        {
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel != null)
+            {
+                notebookWorkspaceViewModel.SelectedDisplay.AddPageToDisplay(page);
+            }
+        }
+
+        #endregion //Commands
 
         #region Methods
 

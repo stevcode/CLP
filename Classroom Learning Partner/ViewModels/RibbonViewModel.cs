@@ -1042,7 +1042,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if(index > 0)
             {
-                panel.CurrentPage = panel.Notebook.Pages[index - 1];
+                var page = panel.Notebook.Pages[index - 1];
+                panel.CurrentPage = page;
+                panel.SetCurrentPage(page);
             }
         }
 
@@ -1076,7 +1078,9 @@ namespace Classroom_Learning_Partner.ViewModels
             var index = panel.Notebook.Pages.IndexOf(currentPage);
             if(index < panel.Notebook.Pages.Count - 1)
             {
-                panel.CurrentPage = panel.Notebook.Pages[index + 1];
+                var page = panel.Notebook.Pages[index + 1];
+                panel.CurrentPage = page;
+                panel.SetCurrentPage(page);
             }
         }
 

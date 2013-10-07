@@ -1,6 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.Windows;
-using System.Windows.Controls.Primitives;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
@@ -19,6 +17,7 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentPage = notebook.MirrorDisplay.CurrentPage;
             LinkedPanel = new SubmissionsPanelViewModel(notebook);
 
+            SetCurrentPageCommand = new Command<ICLPPage>(OnSetCurrentPageCommandExecute);
             ShowSubmissionsCommand = new Command<ICLPPage>(OnShowSubmissionsCommandExecute);
             HideSubmissionsCommand = new Command<ICLPPage>(OnHideSubmissionsCommandExecute);
         }
@@ -143,35 +142,26 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(CurrentPageProperty, value); }
         }
 
-        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(ICLPPage), null, OnCurrentPageChanged);
-
-        private static void OnCurrentPageChanged(object sender, AdvancedPropertyChangedEventArgs args)
-        {
-            var notebookPagesPanelViewModel = sender as NotebookPagesPanelViewModel;
-            if(args.NewValue == null || notebookPagesPanelViewModel == null)
-            {
-                return;
-            }
-
-            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel != null)
-            {
-                notebookWorkspaceViewModel.SelectedDisplay.AddPageToDisplay(args.NewValue as ICLPPage);
-            }
-        }
+        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(ICLPPage));
 
         #endregion //Bindings
 
         #region Commands
 
         /// <summary>
+        /// Sets the current selected page in the listbox.
+        /// </summary>
+        public Command<ICLPPage> SetCurrentPageCommand { get; private set; }
+
+        private void OnSetCurrentPageCommandExecute(ICLPPage page)
+        {
+            SetCurrentPage(page);
+        }
+
+        /// <summary>
         /// Shows the submissions for the selected page.
         /// </summary>
-        public Command<ICLPPage> ShowSubmissionsCommand
-        {
-            get;
-            private set;
-        }
+        public Command<ICLPPage> ShowSubmissionsCommand { get; private set; }
 
         private void OnShowSubmissionsCommandExecute(ICLPPage page)
         {
@@ -204,6 +194,25 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //Commands
+
+        #region Methods
+
+        public void SetCurrentPage(ICLPPage page)
+        {
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel != null)
+            {
+                notebookWorkspaceViewModel.SelectedDisplay.AddPageToDisplay(page);
+            }
+
+            var submissionsPanel = LinkedPanel as SubmissionsPanelViewModel;
+            if(submissionsPanel != null)
+            {
+                submissionsPanel.CurrentPage = null;
+            }
+        }
+
+        #endregion //Methods
 
         #region Static Methods
 
