@@ -92,7 +92,18 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(CurrentNotebookNameProperty, value); }
         }
 
-        public static readonly PropertyData CurrentNotebookNameProperty = RegisterProperty("CurrentNotebookName", typeof(string), String.Empty);
+        public static readonly PropertyData CurrentNotebookNameProperty = RegisterProperty("CurrentNotebookName", typeof(string), string.Empty);
+
+        /// <summary>
+        /// Shows the last time the notebook was saved during the current session.
+        /// </summary>
+        public string LastSavedTime
+        {
+            get { return GetValue<string>(LastSavedTimeProperty); }
+            set { SetValue(LastSavedTimeProperty, value); }
+        }
+
+        public static readonly PropertyData LastSavedTimeProperty = RegisterProperty("LastSavedTime", typeof(string), string.Empty);
 
         /// <summary>
         /// Number of pages in the current notebook.

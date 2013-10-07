@@ -451,7 +451,7 @@ namespace Classroom_Learning_Partner
         public void SaveNotebook(CLPNotebook notebook)
         {
             string filePath = App.NotebookDirectory + @"\" + notebook.NotebookName + @".clp";
-            //if(App.CurrentUserMode == App.UserMode.Student)
+            //if(App.CurrentUserMode ==; App.UserMode.Student)
             //{
             //    notebook.Submissions.Clear();
             //}
@@ -463,6 +463,8 @@ namespace Classroom_Learning_Partner
             //}
             
             notebook.Save(filePath);
+
+            App.MainWindowViewModel.LastSavedTime = DateTime.Now.ToString("HH:mm:ss");
 
             //_autoSaveTimer.Start();
         }

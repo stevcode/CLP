@@ -135,6 +135,13 @@
                 </TextBlock>
             </StatusBarItem>
 
+            <StatusBarItem>
+                <TextBlock>
+                    <Run Text="Last Saved: " />
+                    <Run Text="{Binding LastSavedTime}" />
+                </TextBlock>
+            </StatusBarItem>
+
             <!--<StatusBarItem>
                 <TextBlock>
                     <Run Text="PAGE " />
