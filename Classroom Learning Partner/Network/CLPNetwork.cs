@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.ServiceModel;
 using System.Threading;
+using Classroom_Learning_Partner.ViewModels;
 using CLP.Models;
 using ServiceModelEx;
 
@@ -95,14 +96,21 @@ namespace Classroom_Learning_Partner
                         {
                             Thread.Sleep(1000);
                         }
-                        App.MainWindowViewModel.OnlineStatus = "CONNECTED";
+                        
                         try
                         {
                             ProjectorProxy = ChannelFactory<IProjectorContract>.CreateChannel(DefaultBinding, DiscoveredProjectors.Addresses[0]);
+                            App.MainWindowViewModel.OnlineStatus = "CONNECTED";
+                            var displayList = DisplayListPanelViewModel.GetDisplayListPanelViewModel();
+                            if(displayList != null)
+                            {
+                                displayList.MirrorDisplayIsOnProjector = true;
+                            }
                         }
                         catch(Exception)
                         {
                             Logger.Instance.WriteToLog("Failed to create Projector Proxy");
+                            App.MainWindowViewModel.OnlineStatus = "FAILED TO CONNECT";
                         }
                     }).Start();
                     break;
@@ -118,14 +126,16 @@ namespace Classroom_Learning_Partner
                         {
                             Thread.Sleep(1000);
                         }
-                        App.MainWindowViewModel.OnlineStatus = "CONNECTED - As " + CurrentUser.FullName;
+
                         try
                         {
-                            InstructorProxy = ChannelFactory<IInstructorContract>.CreateChannel(DefaultBinding, DiscoveredInstructors.Addresses[0]); 
+                            InstructorProxy = ChannelFactory<IInstructorContract>.CreateChannel(DefaultBinding, DiscoveredInstructors.Addresses[0]);
+                            App.MainWindowViewModel.OnlineStatus = "CONNECTED - As " + CurrentUser.FullName;
                         }
                         catch(Exception)
                         {
                             Logger.Instance.WriteToLog("Failed to create Instructor Proxy");
+                            App.MainWindowViewModel.OnlineStatus = "FAILED TO CONNECT";
                         }
                     }).Start();
                     break;
