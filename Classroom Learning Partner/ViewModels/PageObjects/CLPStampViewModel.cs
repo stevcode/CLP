@@ -184,7 +184,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             else
             {
-                MessageBox.Show("What are you counting on the stamp?  Please write the number on the line below the stamp before making copies.", "What are you counting?");
+                MessageBox.Show("What are you counting on the stamp?  Please click the questionmark on the line below the stamp before making copies.", "What are you counting?");
             }  
 
             
@@ -283,7 +283,7 @@ namespace Classroom_Learning_Partner.ViewModels
             } 
             else 
             {
-                MessageBox.Show("What are you counting on the stamp?  Please write the number on the line below the stamp before making copies.", "What are you counting?");
+                MessageBox.Show("What are you counting on the stamp?  Please click the questionmark on the line below the stamp before making copies.", "What are you counting?");
             }  
         }
 
