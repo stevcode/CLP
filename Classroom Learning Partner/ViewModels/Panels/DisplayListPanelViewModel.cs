@@ -176,44 +176,30 @@ namespace Classroom_Learning_Partner.ViewModels
         private static void OnIsOnProjectorChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
         {
             var displayListPanel = sender as DisplayListPanelViewModel;
-
             var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel == null || displayListPanel == null)
+            if(displayListPanel == null || notebookWorkspaceViewModel == null || App.CurrentUserMode != App.UserMode.Instructor)
             {
                 return;
             }
 
-            var mirrorDisplayVM = CLPServiceAgent.Instance.GetViewModelsFromModel(displayListPanel.MirrorDisplay).FirstOrDefault() as MirrorDisplayViewModel;
-            if(mirrorDisplayVM == null)
+            displayListPanel.MirrorDisplayIsOnProjector = advancedPropertyChangedEventArgs.NewValue is bool && (bool)advancedPropertyChangedEventArgs.NewValue;
+            if(!displayListPanel.MirrorDisplayIsOnProjector)
             {
-                displayListPanel.MirrorDisplayIsOnProjector = false;
                 return;
-            }
-
-            foreach(var viewModel in
-                notebookWorkspaceViewModel.Notebook.Displays.Select(display =>
-                    CLPServiceAgent.Instance.GetViewModelsFromModel(display as ModelBase)).SelectMany(displayViewModels => displayViewModels.OfType<IDisplayViewModel>()))
-            {
-                viewModel.IsOnProjector = false;
             }
 
             if(App.Network.ProjectorProxy == null)
             {
                 displayListPanel.MirrorDisplayIsOnProjector = false;
-                mirrorDisplayVM.IsOnProjector = false;
+                displayListPanel.ProjectedDisplayString = string.Empty;
+
                 return;
             }
-
-            mirrorDisplayVM.IsOnProjector = advancedPropertyChangedEventArgs.NewValue is bool && (bool)advancedPropertyChangedEventArgs.NewValue;
-
-            if(!mirrorDisplayVM.IsOnProjector)
-            {
-                return;
-            }
-
+            
             try
             {
-                App.Network.ProjectorProxy.SwitchProjectorDisplay("MirrorDisplay", new List<string> { mirrorDisplayVM.CurrentPage.UniqueID });
+                displayListPanel.ProjectedDisplayString = displayListPanel.MirrorDisplay.UniqueID;
+                App.Network.ProjectorProxy.SwitchProjectorDisplay("MirrorDisplay", new List<string> { displayListPanel.Notebook.MirrorDisplay.CurrentPage.UniqueID });
             }
             catch(Exception)
             {
@@ -235,7 +221,8 @@ namespace Classroom_Learning_Partner.ViewModels
         private static void OnCurrentDisplayChanged(object sender, AdvancedPropertyChangedEventArgs args)
         {
             var displayListPanelViewModel = sender as DisplayListPanelViewModel;
-            if(args.NewValue == null || displayListPanelViewModel == null || App.CurrentUserMode != App.UserMode.Instructor)
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(displayListPanelViewModel == null || notebookWorkspaceViewModel == null || App.CurrentUserMode != App.UserMode.Instructor || args.NewValue == null)
             {
                 return;
             }
@@ -246,12 +233,19 @@ namespace Classroom_Learning_Partner.ViewModels
             var color = dict["GrayBorderColor"].ToString();
             displayListPanelViewModel.MirrorDisplaySelectedColor = color;
 
-            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel != null)
-            {
-                notebookWorkspaceViewModel.SelectedDisplay = args.NewValue as ICLPDisplay;
-            }
+            notebookWorkspaceViewModel.SelectedDisplay = args.NewValue as ICLPDisplay;
         }
+
+        /// <summary>
+        /// UniqueID of the projected display.
+        /// </summary>
+        public string ProjectedDisplayString
+        {
+            get { return GetValue<string>(ProjectedDisplayStringProperty); }
+            set { SetValue(ProjectedDisplayStringProperty, value); }
+        }
+
+        public static readonly PropertyData ProjectedDisplayStringProperty = RegisterProperty("ProjectedDisplayString", typeof(string), string.Empty);
 
         #endregion //Bindings
 
@@ -296,6 +290,13 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnRemoveDisplayCommandExecute(ICLPDisplay display)
         {
+            var result = MessageBox.Show("Are you sure you want to delete Grid Display " + (display as CLPGridDisplay).DisplayIndex +"?", "Delete Display?", MessageBoxButton.YesNo);
+
+            if(result == MessageBoxResult.No)
+            {
+                return;
+            }
+
             display.IsTrashed = true;
             OnSetMirrorDisplayCommandExecute();
         }

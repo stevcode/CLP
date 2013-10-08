@@ -13,7 +13,6 @@ using System.Windows.Threading;
 using CLP.Models;
 using Catel.Data;
 using Catel.MVVM;
-using System.Windows.Shapes;
 using Classroom_Learning_Partner.Views;
 
 namespace Classroom_Learning_Partner.ViewModels

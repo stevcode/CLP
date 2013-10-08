@@ -17,5 +17,15 @@ namespace Classroom_Learning_Partner.Views
         {
             return typeof(GridDisplayViewModel);
         }
+
+        protected override void OnViewModelChanged()
+        {
+            if(ViewModel is GridDisplayViewModel)
+            {
+                (ViewModel as GridDisplayViewModel).IsDisplayPreview = true;
+            }
+
+            base.OnViewModelChanged();
+        }
     }
 }

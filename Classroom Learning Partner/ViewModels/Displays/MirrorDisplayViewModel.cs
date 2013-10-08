@@ -8,6 +8,7 @@ namespace Classroom_Learning_Partner.ViewModels
 {
     [InterestedIn(typeof(CLPPageViewModel))]
     [InterestedIn(typeof(CLPAnimationPageViewModel))]
+    [InterestedIn(typeof(DisplayListPanelViewModel))]
     public class MirrorDisplayViewModel : ViewModelBase, IDisplayViewModel
     {
         /// <summary>
@@ -17,6 +18,12 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             MirrorDisplay = mirrorDisplay;
             PageScrollCommand = new Command<ScrollChangedEventArgs>(OnPageScrollCommandExecute);
+            var displayListViewModel = DisplayListPanelViewModel.GetDisplayListPanelViewModel();
+            if(displayListViewModel == null)
+            {
+                return;
+            }
+            IsOnProjector = displayListViewModel.ProjectedDisplayString == MirrorDisplay.UniqueID;
         }
 
         public override string Title { get { return "MirrorDisplayVM"; } }
@@ -57,23 +64,20 @@ namespace Classroom_Learning_Partner.ViewModels
 
             mirrorDisplayViewModel.OnPageResize();
 
-            if(!mirrorDisplayViewModel.IsOnProjector)
+            if(!mirrorDisplayViewModel.IsOnProjector || App.Network.ProjectorProxy == null)
             {
                 return;
             }
 
             var pageID = mirrorDisplayViewModel.CurrentPage.SubmissionType != SubmissionType.None ? mirrorDisplayViewModel.CurrentPage.SubmissionID : mirrorDisplayViewModel.CurrentPage.UniqueID;
 
-            if(App.Network.ProjectorProxy != null)
+            try
             {
-                try
-                {
-                    App.Network.ProjectorProxy.AddPageToDisplay(pageID);
-                }
-                catch(Exception)
-                {
+                App.Network.ProjectorProxy.AddPageToDisplay(pageID);
+            }
+            catch(Exception)
+            {
 
-                }
             }
         }
 
@@ -216,6 +220,11 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     OnPageResize();
                 }
+            }
+
+            if(propertyName == "ProjectedDisplayString" && viewModel is DisplayListPanelViewModel)
+            {
+                IsOnProjector = (viewModel as DisplayListPanelViewModel).ProjectedDisplayString == MirrorDisplay.UniqueID;
             }
 
             base.OnViewModelPropertyChanged(viewModel, propertyName);

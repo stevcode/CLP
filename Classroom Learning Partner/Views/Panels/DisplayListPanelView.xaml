@@ -98,6 +98,7 @@
                 
                 <ToggleButton Grid.Column="2" Padding="5"
                               Width="32" Height="32"
+                              Click="MirrorDisplayToggle_Click"
                               IsChecked="{Binding MirrorDisplayIsOnProjector}">
                     <ToggleButton.Template>
                         <ControlTemplate TargetType="{x:Type ToggleButton}">
@@ -170,6 +171,7 @@
                             <ToggleButton Grid.Column="2" Padding="5"
                                           VerticalAlignment="Top"
                                           Width="32" Height="32"
+                                          Click="GridDisplayToggle_Click"
                                           IsChecked="{Binding ViewModel.IsOnProjector, ElementName=DisplayPreviewView}">
                                 <ToggleButton.Template>
                                     <ControlTemplate TargetType="{x:Type ToggleButton}">

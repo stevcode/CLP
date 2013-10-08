@@ -9,6 +9,7 @@ using CLP.Models;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
+    [InterestedIn(typeof(DisplayListPanelViewModel))]
     public class GridDisplayViewModel : ViewModelBase, IDisplayViewModel
     {
         /// <summary>
@@ -19,8 +20,14 @@ namespace Classroom_Learning_Partner.ViewModels
             GridDisplay = gridDisplay;
             Pages.CollectionChanged += Pages_CollectionChanged;
             UGridRows = Pages.Count < 3 ? 1 : 0;
-
             RemovePageFromGridDisplayCommand = new Command<ICLPPage>(OnRemovePageFromGridDisplayCommandExecute);
+
+            var displayListViewModel = DisplayListPanelViewModel.GetDisplayListPanelViewModel();
+            if(displayListViewModel == null)
+            {
+                return;
+            }
+            IsOnProjector = displayListViewModel.ProjectedDisplayString == GridDisplay.UniqueID;
         }
 
         public override string Title { get { return "GridDisplayVM"; } }
@@ -82,24 +89,24 @@ namespace Classroom_Learning_Partner.ViewModels
         private static void IsOnProjectorChanged(object sender, AdvancedPropertyChangedEventArgs args)
         {
             var gridDisplayViewModel = sender as GridDisplayViewModel;
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
             var displayListPanel = DisplayListPanelViewModel.GetDisplayListPanelViewModel();
-            if(gridDisplayViewModel == null || displayListPanel == null)
+            if(gridDisplayViewModel == null || notebookWorkspaceViewModel == null || displayListPanel == null || App.CurrentUserMode != App.UserMode.Instructor)
             {
                 return;
             }
 
-            foreach(var displayViewModel in (from display in displayListPanel.Displays
-                                             where gridDisplayViewModel.GridDisplay.UniqueID != display.UniqueID
-                                             select CLPServiceAgent.Instance.GetViewModelsFromModel(display as ModelBase).FirstOrDefault()).OfType<IDisplayViewModel>())
+            gridDisplayViewModel.IsOnProjector = args.NewValue is bool && (bool)args.NewValue;
+            if(!gridDisplayViewModel.IsOnProjector || !gridDisplayViewModel.IsDisplayPreview)
             {
-                displayViewModel.IsOnProjector = false;
+                return;
             }
 
-            displayListPanel.MirrorDisplayIsOnProjector = false;
-
-            if(App.Network.ProjectorProxy == null || !gridDisplayViewModel.IsOnProjector)
+            if(App.Network.ProjectorProxy == null)
             {
-                gridDisplayViewModel.IsOnProjector = false;
+                displayListPanel.MirrorDisplayIsOnProjector = false;
+                displayListPanel.ProjectedDisplayString = string.Empty;
+
                 return;
             }
 
@@ -112,6 +119,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
             try
             {
+                displayListPanel.MirrorDisplayIsOnProjector = false;
+                displayListPanel.ProjectedDisplayString = gridDisplayViewModel.GridDisplay.UniqueID;
                 App.Network.ProjectorProxy.SwitchProjectorDisplay(gridDisplayViewModel.GridDisplay.UniqueID, pageIDs);
             }
             catch(Exception)
@@ -135,15 +144,36 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData UGridRowsProperty = RegisterProperty("UGridRows", typeof(int), 1);
 
+        /// <summary>
+        /// Toggle to ignore viewModels of Display Previews
+        /// </summary>
+        public bool IsDisplayPreview
+        {
+            get { return GetValue<bool>(IsDisplayPreviewProperty); }
+            set { SetValue(IsDisplayPreviewProperty, value); }
+        }
+
+        public static readonly PropertyData IsDisplayPreviewProperty = RegisterProperty("IsDisplayPreview", typeof(bool), false);
+
         #endregion //Bindings
 
         #region Methods
+
+        protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
+        {
+            if(propertyName == "ProjectedDisplayString" && viewModel is DisplayListPanelViewModel)
+            {
+                IsOnProjector = (viewModel as DisplayListPanelViewModel).ProjectedDisplayString == GridDisplay.UniqueID;
+            }
+
+            base.OnViewModelPropertyChanged(viewModel, propertyName);
+        }
 
         void Pages_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             UGridRows = Pages.Count < 3 ? 1 : 0;
 
-            if(!IsOnProjector || App.Network.ProjectorProxy == null)
+            if(!IsOnProjector || App.Network.ProjectorProxy == null || IsDisplayPreview)
             {
                 return;
             }
