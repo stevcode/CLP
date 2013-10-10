@@ -28,6 +28,21 @@ namespace Classroom_Learning_Partner.ViewModels
             SendMirrorDisplayToProjectorCommand = new Command<RoutedEventArgs>(OnSendMirrorDisplayToProjectorCommandExecute);
             RemoveDisplayCommand = new Command<ICLPDisplay>(OnRemoveDisplayCommandExecute);
             IsVisible = false;
+
+            if(App.Network.ProjectorProxy == null)
+            {
+                return;
+            }
+            MirrorDisplayIsOnProjector = true;
+            ProjectedDisplayString = MirrorDisplay.UniqueID;
+            try
+            {
+                App.Network.ProjectorProxy.SwitchProjectorDisplay("MirrorDisplay", new List<string> { Notebook.MirrorDisplay.CurrentPage.UniqueID });
+            }
+            catch(Exception)
+            {
+
+            }
         }
 
         /// <summary>
