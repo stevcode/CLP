@@ -5,9 +5,116 @@
                 xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                 xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
                 xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
-                xmlns:system="clr-namespace:System;assembly=mscorlib"
                 xmlns:extenders="clr-namespace:Classroom_Learning_Partner.Views.Extenders">
-        <Grid>
-            
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Resources/MainWindowResources.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Resources/CLPBrushes.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- Converters -->
+            <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
+            <conv:ItemSelectedToColorConverter x:Key="PageOrDisplaySelectionColorConverter" />
+
+            <!-- Style to override ListBoxItem selection visuals for Pages -->
+            <Style x:Key="PageContainer" TargetType="{x:Type ListBoxItem}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                            <ContentPresenter />
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+        </ResourceDictionary>
+
+    </UserControl.Resources>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        
+        <ToggleButton Grid.Row="0" 
+                      Content="Open History"
+                      HorizontalAlignment="Left" 
+                      Margin="20 0" Padding="10 5"
+                      IsChecked="{Binding IsSubmissionHistoryVisible}">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="Click">
+                    <catel:EventToCommand Command="{Binding TogglePanelCommand}"
+                                          PassEventArgsToCommand="True" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </ToggleButton>
+
+        <Border Background="{StaticResource GrayBackgroundColor}"
+                BorderBrush="{StaticResource GrayEdgeColor}" BorderThickness="0,5,0,0"
+                Grid.Row="1"
+                Height="{Binding InitialWidth}"
+                Visibility="{Binding IsSubmissionHistoryVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
+
+            <ListBox ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                     ItemsSource="{Binding SubmissionPages}"
+                     SelectedValue="{Binding CurrentPage}"
+                     ItemContainerStyle="{StaticResource PageContainer}"
+                     SelectionMode="Single"
+                     extenders:ListBoxExtenders.AutoScrollToCurrentItem="True">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0" Margin="5 15 0 0"
+                                       Foreground="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
+                                       FontWeight="Bold" VerticalAlignment="Top">
+                                <Run Text="{Binding SubmissionTime}" />
+                                <TextBlock.LayoutTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform />
+                                        <SkewTransform />
+                                        <RotateTransform Angle="-90" />
+                                        <TranslateTransform />
+                                    </TransformGroup>
+                                </TextBlock.LayoutTransform>
+                            </TextBlock>
+
+                            <views:CLPPagePreviewView x:Name="PagePreviewView" Grid.Column="1" Margin="5"
+                                                      DataContext="{Binding}"
+                                                      ClipToBounds="True" />
+
+                            <Rectangle Grid.Column="1" Margin="5"
+                                       Stroke="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
+                                       StrokeThickness="2"
+                                       Fill="Transparent">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="MouseUp">
+                                        <catel:EventToCommand
+                                                Command="{Binding DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                                PassEventArgsToCommand="False"
+                                                CommandParameter="{Binding}" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </Rectangle>
+
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+        </Border>
+
     </Grid>
 </catel:UserControl>

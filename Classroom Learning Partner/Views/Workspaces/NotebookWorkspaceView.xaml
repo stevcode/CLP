@@ -82,12 +82,13 @@
         </Control>
 
         <!--Bottom Panel-->
-        <!--<Control DockPanel.Dock="Bottom"
+        <Control DockPanel.Dock="Bottom"
                  Visibility="{Binding BottomPanel.IsVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
             <Control.Resources>
 
                 <ControlTemplate x:Key="SubmissionHistoryPanelTemplate">
-                    <views:SubmissionHistoryPanelView DataContext="{Binding BottomPanel}" />
+                    <views:SubmissionHistoryPanelView DataContext="{Binding BottomPanel}"
+                                                      Visibility="{Binding MainWindowViewModel.Ribbon.StudentVisibility, Source={x:Static Application.Current}}"/>
                 </ControlTemplate>
 
             </Control.Resources>
@@ -96,7 +97,7 @@
                 <Style TargetType="{x:Type Control}">
                     <Style.Triggers>
 
-                        --><!--SubmissionHistoryPanel trigger--><!--
+                        <!--SubmissionHistoryPanel trigger-->
                         <DataTrigger Binding="{Binding BottomPanel, Converter={StaticResource TypeToStringConverter}}" Value="SubmissionHistoryPanelViewModel">
                             <Setter Property="Template" Value="{StaticResource SubmissionHistoryPanelTemplate}" />
                         </DataTrigger>
@@ -104,7 +105,7 @@
                     </Style.Triggers>
                 </Style>
             </Control.Style>
-        </Control>-->
+        </Control>
 
         <!-- Control that dynamically determines what Display to show -->
         <Control HorizontalAlignment="Stretch" VerticalAlignment="Stretch">

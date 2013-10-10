@@ -106,12 +106,10 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 SetValue(SubmissionPagesProperty, value);
                 SelectedFilterType = "Student Name - Alphabetical";
-                //FilterSubmissions("Student Name - Alphabetical");
             }
         }
 
         public static readonly PropertyData SubmissionPagesProperty = RegisterProperty("SubmissionPages", typeof(ObservableCollection<ICLPPage>), () => new ObservableCollection<ICLPPage>());
-
 
         /// <summary>
         /// Gets or sets the property value.

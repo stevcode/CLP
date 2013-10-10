@@ -210,6 +210,13 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 submissionsPanel.CurrentPage = null;
             }
+
+            var historyPanel = GetSubmissionHistoryPanelViewModel();
+            if(historyPanel != null)
+            {
+                historyPanel.CurrentPage = null;
+                historyPanel.IsSubmissionHistoryVisible = false;
+            }
         }
 
         #endregion //Methods
@@ -237,6 +244,12 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
             return notebookWorkspaceViewModel == null ? null : notebookWorkspaceViewModel.NotebookPagesPanel.LinkedPanel as SubmissionsPanelViewModel;
+        }
+
+        public static SubmissionHistoryPanelViewModel GetSubmissionHistoryPanelViewModel()
+        {
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            return notebookWorkspaceViewModel == null ? null : notebookWorkspaceViewModel.SubmissionHistoryPanel;
         }
 
         #endregion //Methods

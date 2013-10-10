@@ -1,4 +1,7 @@
-﻿using Catel.Data;
+﻿using System.Collections.ObjectModel;
+using System.Windows;
+using System.Windows.Controls.Primitives;
+using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
 
@@ -13,6 +16,9 @@ namespace Classroom_Learning_Partner.ViewModels
         public SubmissionHistoryPanelViewModel(CLPNotebook notebook)
         {
             Notebook = notebook;
+
+            TogglePanelCommand = new Command<RoutedEventArgs>(OnTogglePanelCommandExecute);
+            SetCurrentPageCommand = new Command<ICLPPage>(OnSetCurrentPageCommandExecute);
         }
 
         /// <summary>
@@ -104,5 +110,91 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData LinkedPanelProperty = RegisterProperty("LinkedPanel", typeof(IPanel));
 
         #endregion
+
+        #region Bindings
+
+        /// <summary>
+        /// Current, selected submission.
+        /// </summary>
+        public ICLPPage CurrentPage
+        {
+            get { return GetValue<ICLPPage>(CurrentPageProperty); }
+            set { SetValue(CurrentPageProperty, value); }
+        }
+
+        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(ICLPPage));
+
+        /// <summary>
+        /// All the submissions for the desired page.
+        /// </summary>
+        public ObservableCollection<ICLPPage> SubmissionPages
+        {
+            get { return GetValue<ObservableCollection<ICLPPage>>(SubmissionPagesProperty); }
+            set { SetValue(SubmissionPagesProperty, value); }
+        }
+
+        public static readonly PropertyData SubmissionPagesProperty = RegisterProperty("SubmissionPages", typeof(ObservableCollection<ICLPPage>), () => new ObservableCollection<ICLPPage>());
+
+        /// <summary>
+        /// Whether or not the submission history listbox is visible.
+        /// </summary>
+        public bool IsSubmissionHistoryVisible
+        {
+            get { return GetValue<bool>(IsSubmissionHistoryVisibleProperty); }
+            set { SetValue(IsSubmissionHistoryVisibleProperty, value); }
+        }
+
+        public static readonly PropertyData IsSubmissionHistoryVisibleProperty = RegisterProperty("IsSubmissionHistoryVisible", typeof(bool), false);
+
+        #endregion //Bindings
+
+        #region Commands
+
+        private string _currentNotebookPageID = string.Empty;
+
+        /// <summary>
+        /// Toggles the listbox visibility.
+        /// </summary>
+        public Command<RoutedEventArgs> TogglePanelCommand { get; private set; }
+
+        private void OnTogglePanelCommandExecute(RoutedEventArgs e)
+        {
+            var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
+            var notebookPagesPanel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
+            var toggleButton = e.Source as ToggleButton;
+            if(toggleButton == null)
+            {
+                return;
+            }
+            if((toggleButton.IsChecked != null && !(bool)toggleButton.IsChecked) || currentPage == null || notebookPagesPanel == null)
+            {
+                IsSubmissionHistoryVisible = false;
+                return;
+            }
+
+            if(currentPage.UniqueID != _currentNotebookPageID)
+            {
+                _currentNotebookPageID = currentPage.UniqueID;
+                SubmissionPages = notebookPagesPanel.Notebook.Submissions[_currentNotebookPageID];
+            }
+
+            IsSubmissionHistoryVisible = true;
+        }       
+
+        /// <summary>
+        /// Sets the current selected page in the listbox.
+        /// </summary>
+        public Command<ICLPPage> SetCurrentPageCommand { get; private set; }
+
+        private void OnSetCurrentPageCommandExecute(ICLPPage page)
+        {
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel != null)
+            {
+                notebookWorkspaceViewModel.SelectedDisplay.AddPageToDisplay(page);
+            }
+        }
+
+        #endregion //Commands
     }
 }
