@@ -646,6 +646,27 @@ namespace CLP.Models
             return labels;
         }
 
+        public int[,] GetPartialProducts()
+        {
+            int horizDivs = Math.Max(HorizontalDivisions.Count, 1);
+            int vertDivs = Math.Max(VerticalDivisions.Count, 1);
+            int[,] partialProducts = new int[horizDivs, vertDivs];
+
+            for(int i = 0; i < horizDivs; i++)
+            {
+                for(int j = 0; j < vertDivs; j++)
+                {
+                    int yAxisValue = (horizDivs > 1 ? HorizontalDivisions[i].Value : Rows);
+                    int xAxisValue = (vertDivs > 1 ? VerticalDivisions[j].Value : Columns);
+
+                    partialProducts[i, j] = yAxisValue * xAxisValue;
+                }
+            }
+
+
+            return partialProducts;
+        }
+
         public void RotateArray()
         {
             var tempCols = Columns;

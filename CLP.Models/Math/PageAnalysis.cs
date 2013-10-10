@@ -76,6 +76,7 @@ namespace CLP.Models
                     tag.TagType.Name == ArrayOrientationTagType.Instance.Name ||
                     tag.TagType.Name == ArrayXAxisStrategyTagType.Instance.Name ||
                     tag.TagType.Name == ArrayYAxisStrategyTagType.Instance.Name ||
+                    tag.TagType.Name == ArrayPartialProductsStrategyTagType.Instance.Name ||
                     tag.TagType.Name == ArrayDivisionCorrectnessTagType.Instance.Name ||
                     tag.TagType.Name == ArrayVerticalDivisionsTagType.Instance.Name ||
                     tag.TagType.Name == ArrayHorizontalDivisionsTagType.Instance.Name)
@@ -157,6 +158,13 @@ namespace CLP.Models
                 horizDivs.Add(div.Value);
             }
             horizDivs.Sort();
+
+            // special case where no dividers have been added to axis
+            if(array.HorizontalDivisions.Count == 0)
+            {
+                horizDivs.Add(array.Rows);
+            }
+
             /*String horizDivsString = "";
             foreach(int x in horizDivs)
             {
@@ -195,6 +203,12 @@ namespace CLP.Models
             }
             vertDivs.Sort();
 
+            // special case where no dividers have been added to axis
+            if(array.VerticalDivisions.Count == 0)
+            {
+                vertDivs.Add(array.Columns);
+            }
+
             // Now check the student's divisions against known strategies
             if(array.VerticalDivisions.Count == 0)
             {
@@ -220,8 +234,56 @@ namespace CLP.Models
             tags.Add(strategyTagY);
             tags.Add(strategyTagX);
 
-            Logger.Instance.WriteToLog("Tag added: " + strategyTagY.TagType.Name + " -> " + strategyTagY.Value[0].Value);
-            Logger.Instance.WriteToLog("Tag added: " + strategyTagX.TagType.Name + " -> " + strategyTagX.Value[0].Value);
+            //Logger.Instance.WriteToLog("Tag added: " + strategyTagY.TagType.Name + " -> " + strategyTagY.Value[0].Value);
+            //Logger.Instance.WriteToLog("Tag added: " + strategyTagX.TagType.Name + " -> " + strategyTagX.Value[0].Value);
+
+            // Add a strategy tag for inner products (if applicable)
+            int[,] partialProducts = array.GetPartialProducts();
+
+            Tag partialProductStrategyTag = new Tag(Tag.Origins.Generated, ArrayPartialProductsStrategyTagType.Instance);
+            Boolean friendlyFound = false;
+            Boolean incomplete = false;
+            
+            ObservableCollection<int> foundProducts = new ObservableCollection<int>();
+            foreach(int partialProduct in partialProducts)
+            {
+                if(partialProduct == 0)
+                {
+                    incomplete = true;
+                    break;
+                }
+
+                if(partialProduct % 100 == 0 && ! friendlyFound)
+                {
+                    partialProductStrategyTag.AddTagOptionValue(new TagOptionValue("friendly numbers"));
+                    friendlyFound = true;
+                }
+
+                if(!foundProducts.Contains(partialProduct))
+                {
+                    foundProducts.Add(partialProduct);
+                }
+            }
+
+            if(!incomplete)
+            {
+                if(foundProducts.Count > 1 && foundProducts.Count < (horizDivs.Count * vertDivs.Count))
+                {
+                    partialProductStrategyTag.AddTagOptionValue(new TagOptionValue("some repeated"));
+                }
+                else
+                {
+                    if(foundProducts.Count == 1 && (horizDivs.Count * vertDivs.Count) > 1)
+                    {
+                        partialProductStrategyTag.AddTagOptionValue(new TagOptionValue("all repeated"));
+                    }
+                }
+            }
+
+            if(partialProductStrategyTag.Value.Count > 0)
+            {
+                tags.Add(partialProductStrategyTag);
+            }
 
             // Add an array divider correctness tag
             Tag divisionCorrectnessTag = CheckArrayDivisionCorrectness(array);
