@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls.Primitives;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
@@ -24,6 +25,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             AddGridDisplayCommand = new Command(OnAddGridDisplayCommandExecute);
             SetMirrorDisplayCommand = new Command(OnSetMirrorDisplayCommandExecute);
+            SendMirrorDisplayToProjectorCommand = new Command<RoutedEventArgs>(OnSendMirrorDisplayToProjectorCommandExecute);
             RemoveDisplayCommand = new Command<ICLPDisplay>(OnRemoveDisplayCommandExecute);
             IsVisible = false;
         }
@@ -171,41 +173,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(MirrorDisplayIsOnProjectorProperty, value); }
         }
 
-        public static readonly PropertyData MirrorDisplayIsOnProjectorProperty = RegisterProperty("MirrorDisplayIsOnProjector", typeof(bool), false, OnIsOnProjectorChanged);
-
-        private static void OnIsOnProjectorChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
-        {
-            var displayListPanel = sender as DisplayListPanelViewModel;
-            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
-            if(displayListPanel == null || notebookWorkspaceViewModel == null || App.CurrentUserMode != App.UserMode.Instructor)
-            {
-                return;
-            }
-
-            displayListPanel.MirrorDisplayIsOnProjector = advancedPropertyChangedEventArgs.NewValue is bool && (bool)advancedPropertyChangedEventArgs.NewValue;
-            if(!displayListPanel.MirrorDisplayIsOnProjector)
-            {
-                return;
-            }
-
-            if(App.Network.ProjectorProxy == null)
-            {
-                displayListPanel.MirrorDisplayIsOnProjector = false;
-                displayListPanel.ProjectedDisplayString = string.Empty;
-
-                return;
-            }
-            
-            try
-            {
-                displayListPanel.ProjectedDisplayString = displayListPanel.MirrorDisplay.UniqueID;
-                App.Network.ProjectorProxy.SwitchProjectorDisplay("MirrorDisplay", new List<string> { displayListPanel.Notebook.MirrorDisplay.CurrentPage.UniqueID });
-            }
-            catch(Exception)
-            {
-
-            }
-        }
+        public static readonly PropertyData MirrorDisplayIsOnProjectorProperty = RegisterProperty("MirrorDisplayIsOnProjector", typeof(bool), false);
 
         /// <summary>
         /// The selected display in the list of the Notebook's Displays. Does not include the MirrorDisplay.
@@ -280,6 +248,43 @@ namespace Classroom_Learning_Partner.ViewModels
             if(notebookWorkspaceViewModel != null)
             {
                 notebookWorkspaceViewModel.SelectedDisplay = MirrorDisplay;
+            }
+        }
+
+        /// <summary>
+        /// Sends the MirrorDisplay to the projector, or toggles send to projector off.
+        /// </summary>
+        public Command<RoutedEventArgs> SendMirrorDisplayToProjectorCommand { get; private set; }
+
+        private void OnSendMirrorDisplayToProjectorCommandExecute(RoutedEventArgs e)
+        {
+            if(App.Network.ProjectorProxy == null)
+            {
+                MirrorDisplayIsOnProjector = false;
+                ProjectedDisplayString = string.Empty;
+
+                return;
+            }
+
+            var toggleButton = e.Source as ToggleButton;
+            if(toggleButton == null)
+            {
+                return;
+            }
+            if(toggleButton.IsChecked != null && !(bool)toggleButton.IsChecked)
+            {
+                ProjectedDisplayString = string.Empty;
+                return;
+            }
+
+            ProjectedDisplayString = MirrorDisplay.UniqueID;
+            try
+            {
+                App.Network.ProjectorProxy.SwitchProjectorDisplay("MirrorDisplay", new List<string> { Notebook.MirrorDisplay.CurrentPage.UniqueID });
+            }
+            catch(Exception)
+            {
+
             }
         }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.ServiceModel;
@@ -105,6 +106,8 @@ namespace Classroom_Learning_Partner
                             if(displayList != null)
                             {
                                 displayList.MirrorDisplayIsOnProjector = true;
+                                displayList.ProjectedDisplayString = displayList.MirrorDisplay.UniqueID;
+                                ProjectorProxy.SwitchProjectorDisplay("MirrorDisplay", new List<string> { displayList.MirrorDisplay.CurrentPage.UniqueID });
                             }
                         }
                         catch(Exception)

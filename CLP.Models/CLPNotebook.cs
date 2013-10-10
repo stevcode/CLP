@@ -212,8 +212,7 @@ namespace CLP.Models
             var displayIndexCount = 1;
             foreach(var display in Displays.OfType<CLPGridDisplay>()) 
             {
-                display.DisplayIndex = displayIndexCount;
-                displayIndexCount++;
+                display.DisplayIndex = display.IsTrashed ? -1 : displayIndexCount++;
             }
         }
 

@@ -15,8 +15,7 @@
             <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter"/>
             <catel:IntToStringConverter x:Key="IntToString" />
             <conv:TypeToStringConverter x:Key="TypeToStringConverter" />
-            <conv:ProjectedDisplayBackgroundConverter x:Key="BackgroundConverter" />
-            <!--<conv:LastItemInCollectionConverter x:Key="LastItem" />-->        
+            <conv:ProjectedDisplayBackgroundConverter x:Key="BackgroundConverter" />     
 
         </ResourceDictionary>
     </UserControl.Resources>
@@ -47,31 +46,6 @@
                 </Style>
             </Control.Style>
         </Control>
-
-        <!--LeftLinked Panel-->
-        <!--<Control DockPanel.Dock="Left"
-                 Visibility="{Binding LeftPanel.LinkedPanel.IsVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
-            <Control.Resources>
-
-                <ControlTemplate x:Key="NotebookPagesPanelTemplate">
-                    <views:NotebookPagesPanelView DataContext="{Binding LeftPanel.LinkedPanel}" />
-                </ControlTemplate>
-
-            </Control.Resources>
-
-            <Control.Style>
-                <Style TargetType="{x:Type Control}">
-                    <Style.Triggers>
-
-                        --><!--NotebookPagesPanel trigger--><!--
-                        <DataTrigger Binding="{Binding LeftPanel.LinkedPanel, Converter={StaticResource TypeToStringConverter}}" Value="NotebookPagesPanelViewModel">
-                            <Setter Property="Template" Value="{StaticResource NotebookPagesPanelTemplate}" />
-                        </DataTrigger>
-
-                    </Style.Triggers>
-                </Style>
-            </Control.Style>
-        </Control>-->
 
         <!--Right Panel-->
         <Control DockPanel.Dock="Right"
@@ -106,6 +80,31 @@
                 </Style>
             </Control.Style>
         </Control>
+
+        <!--Bottom Panel-->
+        <!--<Control DockPanel.Dock="Bottom"
+                 Visibility="{Binding BottomPanel.IsVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
+            <Control.Resources>
+
+                <ControlTemplate x:Key="SubmissionHistoryPanelTemplate">
+                    <views:SubmissionHistoryPanelView DataContext="{Binding BottomPanel}" />
+                </ControlTemplate>
+
+            </Control.Resources>
+
+            <Control.Style>
+                <Style TargetType="{x:Type Control}">
+                    <Style.Triggers>
+
+                        --><!--SubmissionHistoryPanel trigger--><!--
+                        <DataTrigger Binding="{Binding BottomPanel, Converter={StaticResource TypeToStringConverter}}" Value="SubmissionHistoryPanelViewModel">
+                            <Setter Property="Template" Value="{StaticResource SubmissionHistoryPanelTemplate}" />
+                        </DataTrigger>
+
+                    </Style.Triggers>
+                </Style>
+            </Control.Style>
+        </Control>-->
 
         <!-- Control that dynamically determines what Display to show -->
         <Control HorizontalAlignment="Stretch" VerticalAlignment="Stretch">

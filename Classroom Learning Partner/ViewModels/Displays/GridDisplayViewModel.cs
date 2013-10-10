@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Linq;
+using System.Windows;
+using System.Windows.Controls.Primitives;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
@@ -20,6 +21,7 @@ namespace Classroom_Learning_Partner.ViewModels
             GridDisplay = gridDisplay;
             Pages.CollectionChanged += Pages_CollectionChanged;
             UGridRows = Pages.Count < 3 ? 1 : 0;
+            SendDisplayToProjectorCommand = new Command<RoutedEventArgs>(OnSendDisplayToProjectorCommandExecute);
             RemovePageFromGridDisplayCommand = new Command<ICLPPage>(OnRemovePageFromGridDisplayCommandExecute);
 
             var displayListViewModel = DisplayListPanelViewModel.GetDisplayListPanelViewModel();
@@ -84,50 +86,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(IsOnProjectorProperty, value); }
         }
 
-        public static readonly PropertyData IsOnProjectorProperty = RegisterProperty("IsOnProjector", typeof(bool), false, IsOnProjectorChanged);
-
-        private static void IsOnProjectorChanged(object sender, AdvancedPropertyChangedEventArgs args)
-        {
-            var gridDisplayViewModel = sender as GridDisplayViewModel;
-            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
-            var displayListPanel = DisplayListPanelViewModel.GetDisplayListPanelViewModel();
-            if(gridDisplayViewModel == null || notebookWorkspaceViewModel == null || displayListPanel == null || App.CurrentUserMode != App.UserMode.Instructor)
-            {
-                return;
-            }
-
-            gridDisplayViewModel.IsOnProjector = args.NewValue is bool && (bool)args.NewValue;
-            if(!gridDisplayViewModel.IsOnProjector || !gridDisplayViewModel.IsDisplayPreview)
-            {
-                return;
-            }
-
-            if(App.Network.ProjectorProxy == null)
-            {
-                displayListPanel.MirrorDisplayIsOnProjector = false;
-                displayListPanel.ProjectedDisplayString = string.Empty;
-
-                return;
-            }
-
-            var pageIDs = new List<string>();
-            foreach(var page in gridDisplayViewModel.Pages)
-            {
-                var pageID = page.SubmissionType != SubmissionType.None ? page.SubmissionID : page.UniqueID;
-                pageIDs.Add(pageID);
-            }
-
-            try
-            {
-                displayListPanel.MirrorDisplayIsOnProjector = false;
-                displayListPanel.ProjectedDisplayString = gridDisplayViewModel.GridDisplay.UniqueID;
-                App.Network.ProjectorProxy.SwitchProjectorDisplay(gridDisplayViewModel.GridDisplay.UniqueID, pageIDs);
-            }
-            catch(Exception)
-            {
-
-            }
-        }
+        public static readonly PropertyData IsOnProjectorProperty = RegisterProperty("IsOnProjector", typeof(bool), false);
 
         #endregion //Interface
 
@@ -224,6 +183,57 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Methods
 
         #region Commands
+
+        /// <summary>
+        /// Sends the display to the projector, or toggles send to projector off.
+        /// </summary>
+        public Command<RoutedEventArgs> SendDisplayToProjectorCommand { get; private set; }
+
+        private void OnSendDisplayToProjectorCommandExecute(RoutedEventArgs e)
+        {
+            var displayListPanel = DisplayListPanelViewModel.GetDisplayListPanelViewModel();
+            if(displayListPanel == null)
+            {
+                return;
+            }
+
+            if(App.Network.ProjectorProxy == null)
+            {
+                displayListPanel.MirrorDisplayIsOnProjector = false;
+                displayListPanel.ProjectedDisplayString = string.Empty;
+
+                return;
+            }
+
+            var toggleButton = e.Source as ToggleButton;
+            if(toggleButton == null)
+            {
+                return;
+            }
+            if(toggleButton.IsChecked != null && !(bool)toggleButton.IsChecked)
+            {
+                displayListPanel.ProjectedDisplayString = string.Empty;
+                return;
+            }
+
+            displayListPanel.MirrorDisplayIsOnProjector = false;
+            displayListPanel.ProjectedDisplayString = GridDisplay.UniqueID;
+            var pageIDs = new List<string>();
+            foreach(var page in Pages)
+            {
+                var pageID = page.SubmissionType != SubmissionType.None ? page.SubmissionID : page.UniqueID;
+                pageIDs.Add(pageID);
+            }
+
+            try
+            {
+                App.Network.ProjectorProxy.SwitchProjectorDisplay(GridDisplay.UniqueID, pageIDs);
+            }
+            catch(Exception)
+            {
+
+            }
+        }
 
         /// <summary>
         /// Gets the RemovePageFromGridDisplayCommand command.

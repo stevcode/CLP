@@ -1,0 +1,13 @@
+﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.SubmissionHistoryPanelView"
+                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:catel="http://catel.codeplex.com"
+                xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+                xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
+                xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
+                xmlns:system="clr-namespace:System;assembly=mscorlib"
+                xmlns:extenders="clr-namespace:Classroom_Learning_Partner.Views.Extenders">
+        <Grid>
+            
+    </Grid>
+</catel:UserControl>

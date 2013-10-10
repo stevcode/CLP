@@ -241,7 +241,7 @@ namespace Classroom_Learning_Partner
                 {
                     foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
                     {
-                        var page = notebook.GetNotebookPageByID(pageID);
+                        var page = notebook.GetNotebookPageOrSubmissionByID(pageID);
 
                         if(page == null)
                         {
