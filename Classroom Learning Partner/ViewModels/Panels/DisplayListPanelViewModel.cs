@@ -35,9 +35,11 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             MirrorDisplayIsOnProjector = true;
             ProjectedDisplayString = MirrorDisplay.UniqueID;
+            var currentPage = MirrorDisplay.CurrentPage;
+            var currentPageID = currentPage.SubmissionType != SubmissionType.None ? currentPage.SubmissionID : currentPage.UniqueID;
             try
             {
-                App.Network.ProjectorProxy.SwitchProjectorDisplay("MirrorDisplay", new List<string> { Notebook.MirrorDisplay.CurrentPage.UniqueID });
+                App.Network.ProjectorProxy.SwitchProjectorDisplay("MirrorDisplay", new List<string> { currentPageID });
             }
             catch(Exception)
             {
@@ -293,9 +295,11 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             ProjectedDisplayString = MirrorDisplay.UniqueID;
+            var currentPage = MirrorDisplay.CurrentPage;
+            var currentPageID = currentPage.SubmissionType != SubmissionType.None ? currentPage.SubmissionID : currentPage.UniqueID;
             try
             {
-                App.Network.ProjectorProxy.SwitchProjectorDisplay("MirrorDisplay", new List<string> { Notebook.MirrorDisplay.CurrentPage.UniqueID });
+                App.Network.ProjectorProxy.SwitchProjectorDisplay("MirrorDisplay", new List<string> { currentPageID });
             }
             catch(Exception)
             {

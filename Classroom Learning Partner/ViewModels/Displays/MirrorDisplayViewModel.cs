@@ -56,15 +56,16 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private static void OnCurrentPageChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
         {
+            var displayPanel = DisplayListPanelViewModel.GetDisplayListPanelViewModel();
             var mirrorDisplayViewModel = sender as MirrorDisplayViewModel;
-            if(mirrorDisplayViewModel == null)
+            if(mirrorDisplayViewModel == null || displayPanel == null)
             {
                 return;
             }
 
             mirrorDisplayViewModel.OnPageResize();
 
-            if(!mirrorDisplayViewModel.IsOnProjector || App.Network.ProjectorProxy == null)
+            if(!displayPanel.MirrorDisplayIsOnProjector || App.Network.ProjectorProxy == null)
             {
                 return;
             }

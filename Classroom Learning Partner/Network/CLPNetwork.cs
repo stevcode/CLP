@@ -107,7 +107,9 @@ namespace Classroom_Learning_Partner
                             {
                                 displayList.MirrorDisplayIsOnProjector = true;
                                 displayList.ProjectedDisplayString = displayList.MirrorDisplay.UniqueID;
-                                ProjectorProxy.SwitchProjectorDisplay("MirrorDisplay", new List<string> { displayList.MirrorDisplay.CurrentPage.UniqueID });
+                                var currentPage = displayList.MirrorDisplay.CurrentPage;
+                                var currentPageID = currentPage.SubmissionType != SubmissionType.None ? currentPage.SubmissionID : currentPage.UniqueID;
+                                ProjectorProxy.SwitchProjectorDisplay("MirrorDisplay", new List<string> { currentPageID });
                             }
                         }
                         catch(Exception)
