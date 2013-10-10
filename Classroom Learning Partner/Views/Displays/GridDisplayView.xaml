@@ -11,10 +11,11 @@
             </ResourceDictionary.MergedDictionaries>
 
             <conv:ItemsControlItemIndexConverter x:Key="ItemsControlItemIndexConverter" />
+            <conv:ProjectedDisplayBackgroundConverter x:Key="ProjectedDisplayBackgroundConverter" />
         </ResourceDictionary>
     </UserControl.Resources>
-    
-    <Grid>
+
+    <Grid Background="{Binding IsOnProjector, Converter={StaticResource ProjectedDisplayBackgroundConverter}}">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
