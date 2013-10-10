@@ -1164,27 +1164,24 @@ namespace Classroom_Learning_Partner.ViewModels
             PageAnalysis.AnalyzeStamps(page);
             CLPServiceAgent.Instance.SubmitPage(page, notebookPagesPanel.Notebook.UniqueID, false);
 
-            //ICLPPage submission = null;
-            //if(page is CLPPage)
-            //{
-            //    submission = (page as CLPPage).Clone() as CLPPage;
-            //}
-            //if(page is CLPAnimationPage)
-            //{
-            //    submission = (page as CLPAnimationPage).Clone() as CLPAnimationPage;
-            //}
-            //submission.InkStrokes = StrokeDTO.LoadInkStrokes(submission.SerializedStrokes);
+            ICLPPage submission = null;
+            if(page is CLPPage)
+            {
+                submission = (page as CLPPage).Clone() as CLPPage;
+            }
+            else if(page is CLPAnimationPage)
+            {
+                submission = (page as CLPAnimationPage).Clone() as CLPAnimationPage;
+            }
 
-            //if(notebook != null && submission != null)
-            //{
-            //    submission.SubmissionType = SubmissionType.Single;
-            //    foreach (var pageObject in submission.PageObjects)
-            //    {
-            //        pageObject.ParentPage = submission;
-            //    }
+            if(submission == null)
+            {
+                return;
+            }
 
-            //    notebook.AddStudentSubmission(submission.UniqueID, submission);
-            //}
+            ACLPPageBase.Deserialize(submission);
+            submission.SubmissionType = SubmissionType.Single;
+            notebookPagesPanel.Notebook.AddStudentSubmission(submission.UniqueID, submission);
             CanSendToTeacher = false;
         }
 
