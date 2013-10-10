@@ -238,37 +238,60 @@ namespace Classroom_Learning_Partner
 
         public void SubmitPage(ICLPPage page, string notebookID, bool isGroupSubmission)
         {
-            if(App.Network.InstructorProxy != null)
+            if(App.Network.InstructorProxy == null)
             {
-                var t = new Thread(() =>
+                Logger.Instance.WriteToLog("Instructor NOT Available for Student Submission");
+                return;
+            }
+            var t = new Thread(() =>
+                               {
+                                   try
+                                   {
+                                       page.SerializedStrokes = StrokeDTO.SaveInkStrokes(page.InkStrokes);
+                                       // Perform analysis (syntactic and semantic interpretation) of the page here, on the student machine
+                                       PageAnalysis.AnalyzeArray(page);
+                                       PageAnalysis.AnalyzeStamps(page);
+                                       page.SubmissionID = Guid.NewGuid().ToString();
+                                       page.SubmissionTime = DateTime.Now;
+                                       page.TrimPage();
+
+                                       var sPage = ObjectSerializer.ToString(page);
+                                       var zippedPage = Zip(sPage);
+
+                                       var sSubmitter = ObjectSerializer.ToString(App.Network.CurrentUser);
+                                       var zippedSubmitter = Zip(sSubmitter);
+
+                                       App.Network.InstructorProxy.AddSerializedSubmission(zippedPage, page.SubmissionID, page.SubmissionTime, notebookID, zippedSubmitter);
+
+                                       ICLPPage submission = null;
+                                       if(page is CLPPage)
+                                       {
+                                           submission = (page as CLPPage).Clone() as CLPPage;
+                                       }
+                                       else if(page is CLPAnimationPage)
+                                       {
+                                           submission = (page as CLPAnimationPage).Clone() as CLPAnimationPage;
+                                       }
+
+                                       var notebookPagesPanel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
+                                       if(submission == null || notebookPagesPanel == null)
+                                       {
+                                           return;
+                                       }
+
+                                       ACLPPageBase.Deserialize(submission);
+                                       submission.SubmissionType = isGroupSubmission ? SubmissionType.Group : SubmissionType.Single;
+                                       notebookPagesPanel.Notebook.AddStudentSubmission(submission.UniqueID, submission);
+                                   }
+                                   catch(Exception ex)
+                                   {
+                                       Logger.Instance.WriteToLog("Error Sending Submission: " + ex.Message);
+                                   }
+                               })
                     {
-                        try
-                        {
-                            page.SubmissionID = Guid.NewGuid().ToString();
-                            page.SubmissionTime = DateTime.Now;
-                            page.TrimPage();
-
-                            var sPage = ObjectSerializer.ToString(page);
-                            Console.WriteLine("String page length: " + sPage.Length);
-                            var zippedPage = Zip(sPage);
-                            Console.WriteLine("Zipped page length: " + zippedPage.Length);
-
-                            var sSubmitter = ObjectSerializer.ToString(App.Network.CurrentUser);
-                            var zippedSubmitter = Zip(sSubmitter);
-
-                            App.Network.InstructorProxy.AddSerializedSubmission(zippedPage, page.SubmissionID, page.SubmissionTime, notebookID, zippedSubmitter);
-                        }
-                        catch(Exception ex)
-                        {
-                            Logger.Instance.WriteToLog("Error Sending Submission: " + ex.Message);
-                        }
-                    }) {IsBackground = true};
-                t.Start();
-            }
-            else
-            {
-                Console.WriteLine("Instructor NOT Available");
-            }
+                        IsBackground = true
+                    };
+            t.Start();
         }
 
         public void AddSubmission(CLPNotebook notebook, ICLPPage page)

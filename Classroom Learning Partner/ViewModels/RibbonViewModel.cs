@@ -1141,47 +1141,14 @@ namespace Classroom_Learning_Partner.ViewModels
             timer.Elapsed += timer_Elapsed;
             timer.Enabled = true;
 
-            if(!CanSendToTeacher)
-            {
-                return;
-            }
-
             var page = NotebookPagesPanelViewModel.GetCurrentPage();
-            if(page == null)
-            {
-                return;
-            }
-
-            page.SerializedStrokes = StrokeDTO.SaveInkStrokes(page.InkStrokes);
             var notebookPagesPanel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
-            if(notebookPagesPanel == null)
+            if(!CanSendToTeacher || page == null || notebookPagesPanel == null)
             {
                 return;
             }
 
-            // Perform analysis (syntactic and semantic interpretation) of the page here, on the student machine
-            PageAnalysis.AnalyzeArray(page);
-            PageAnalysis.AnalyzeStamps(page);
             CLPServiceAgent.Instance.SubmitPage(page, notebookPagesPanel.Notebook.UniqueID, false);
-
-            ICLPPage submission = null;
-            if(page is CLPPage)
-            {
-                submission = (page as CLPPage).Clone() as CLPPage;
-            }
-            else if(page is CLPAnimationPage)
-            {
-                submission = (page as CLPAnimationPage).Clone() as CLPAnimationPage;
-            }
-
-            if(submission == null)
-            {
-                return;
-            }
-
-            ACLPPageBase.Deserialize(submission);
-            submission.SubmissionType = SubmissionType.Single;
-            notebookPagesPanel.Notebook.AddStudentSubmission(submission.UniqueID, submission);
             CanSendToTeacher = false;
         }
 
@@ -1201,11 +1168,13 @@ namespace Classroom_Learning_Partner.ViewModels
             timer.Enabled = true;
 
             var page = NotebookPagesPanelViewModel.GetCurrentPage();
-            if(!CanGroupSendToTeacher || page == null)
+            var notebookPagesPanel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
+            if(!CanGroupSendToTeacher || page == null || notebookPagesPanel == null)
             {
                 return;
             }
-            CLPServiceAgent.Instance.SubmitPage(page, (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.UniqueID, true);
+
+            CLPServiceAgent.Instance.SubmitPage(page, notebookPagesPanel.Notebook.UniqueID, true);
             CanGroupSendToTeacher = false;
         }
 
