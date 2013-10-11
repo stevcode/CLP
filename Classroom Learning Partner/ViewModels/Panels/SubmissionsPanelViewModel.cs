@@ -46,6 +46,7 @@ namespace Classroom_Learning_Partner.ViewModels
             FilterTypes.Add(RepresentationCorrectnessTagType.Instance.Name);
             FilterTypes.Add(ArrayXAxisStrategyTagType.Instance.Name);
             FilterTypes.Add(ArrayYAxisStrategyTagType.Instance.Name);
+            FilterTypes.Add(ArrayPartialProductsStrategyTagType.Instance.Name);
             FilterTypes.Add(ArrayDivisionCorrectnessTagType.Instance.Name);
             FilterTypes.Add(ArrayHorizontalDivisionsTagType.Instance.Name);
             FilterTypes.Add(ArrayVerticalDivisionsTagType.Instance.Name);
