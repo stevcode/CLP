@@ -301,10 +301,10 @@
                               SmallImageSource="pack://application:,,,/Resources/Images/Stamp16.png"
                               Command="{Binding InsertBlankStampCommand}" />
 
-                <RibbonButton Label="Collection Stamp"
+                <!--<RibbonButton Label="Collection Stamp"
                               LargeImageSource="pack://application:,,,/Resources/Images/CollectionStamp32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/CollectionStamp16.png"
-                              Command="{Binding InsertBlankContainerStampCommand}" />
+                              Command="{Binding InsertBlankContainerStampCommand}" />-->
 
             </RibbonGroup>
 

@@ -204,6 +204,7 @@
 
         </ControlTemplate>
 
+        <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
         <conv:ItemSelectedToColorConverter x:Key="PageOrDisplaySelectionColorConverter" />
 
         <!-- Style to override ListBoxItem selection visuals for Pages -->
@@ -248,27 +249,27 @@
                 <!--<Slider x:Name="Slider" Cursor="Hand" Grid.Row="1" Margin="10" Minimum="150" Maximum="{Binding ElementName=Slider, Path=ActualWidth}" />-->
             </Grid>
 
-            <!--<Border DockPanel.Dock="Bottom"  
-                BorderBrush="Black" BorderThickness="0" MinHeight="100">
-            <Border.Style>
-                <Style x:Name="SubmissionsListBorderStyle" TargetType="{x:Type Border}">
-                    <Setter Property="Visibility" Value="Collapsed" />
-                    <Setter Property="BorderThickness" Value="0" />
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Student Name - Alphabetical">
-                            <Setter Property="Visibility" Value="Visible" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Border.Style>
-            <DockPanel>
+            <Border DockPanel.Dock="Bottom"  
+                    BorderBrush="{StaticResource GrayEdgeColor}" BorderThickness="0,5,0,0">
+                <DockPanel LastChildFill="True">
+                    <ToggleButton DockPanel.Dock="Top" Height="30"
+                                  HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                                  Content="Students With No Submissions"
+                                  IsChecked="{Binding IsStudentsWithNoSubmissionsVisible}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <catel:EventToCommand Command="{Binding ToggleNoSubmissionsCommand}"
+                                                      PassEventArgsToCommand="True" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ToggleButton>
 
-                <TextBlock DockPanel.Dock="Top"  TextAlignment="Center" HorizontalAlignment="Center" Width="200"  FontWeight="Bold" FontSize="14" Text="No Submissions"/>
-
-                <TextBlock  DockPanel.Dock="Bottom" TextAlignment="Center" HorizontalAlignment="Center"  FontSize="12" Text="{Binding Path=StudentsWithNoSubmissions}"/>
-
-            </DockPanel>
-        </Border>-->
+                    <ListBox ItemsSource="{Binding StudentsWithNoSubmissions}"
+                             HorizontalContentAlignment="Center"
+                             Height="300"
+                             Visibility="{Binding IsStudentsWithNoSubmissionsVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />
+                </DockPanel>
+            </Border>
 
             <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                      Background="Lavender"

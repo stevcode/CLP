@@ -15,19 +15,18 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Initializes a new instance of the UserLoginWorkspaceViewModel class.
         /// </summary>
         public UserLoginWorkspaceViewModel()
-            : base()
         {
             LogInCommand = new Command<string>(OnLogInCommandExecute);
 
             UserNames = new ObservableCollection<string>();
             //Steve - move to CLPService and grab from database
-            string filePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\StudentNames.txt";
+            var filePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\StudentNames.txt";
 
             if (File.Exists(filePath))
             {
-                StreamReader reader = new StreamReader(filePath);
+                var reader = new StreamReader(filePath);
                 string name;
-                while (!((name = reader.ReadLine()) == null))
+                while ((name = reader.ReadLine()) != null)
                 {
                     UserNames.Add(name);
                 }
@@ -37,7 +36,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 for(int i = 1; i < 26; i++)
                 {
-                    UserNames.Add("Guest " + i.ToString());
+                    UserNames.Add("Guest " + i);
                 }
             }
         }

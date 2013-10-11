@@ -2,6 +2,9 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using Catel.Data;
 using Catel.MVVM;
@@ -18,8 +21,6 @@ namespace Classroom_Learning_Partner.ViewModels
         public SubmissionsPanelViewModel(CLPNotebook notebook)
         {
             Notebook = notebook;
-
-            StudentsWithNoSubmissions = getStudentsWithNoSubmissions();
 
             #region Tag Stuff
 
@@ -54,6 +55,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             #endregion //Tag Stuff
 
+            ToggleNoSubmissionsCommand = new Command<RoutedEventArgs>(OnToggleNoSubmissionsCommandExecute);
             SetCurrentPageCommand = new Command<ICLPPage>(OnSetCurrentPageCommandExecute);
         }
 
@@ -92,6 +94,28 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(ICLPPage));
 
+        /// <summary>
+        /// List of student names who don't have submissions for the CurrentPage.
+        /// </summary>
+        public ObservableCollection<string> StudentsWithNoSubmissions
+        {
+            get { return GetValue<ObservableCollection<string>>(StudentsWithNoSubmissionsProperty); }
+            set { SetValue(StudentsWithNoSubmissionsProperty, value); }
+        }
+
+        public static readonly PropertyData StudentsWithNoSubmissionsProperty = RegisterProperty("StudentsWithNoSubmissions", typeof(ObservableCollection<string>), () => new ObservableCollection<string>());
+
+        /// <summary>
+        /// Whether the panel showing students with no submissions is visible.
+        /// </summary>
+        public bool IsStudentsWithNoSubmissionsVisible
+        {
+            get { return GetValue<bool>(IsStudentsWithNoSubmissionsVisibleProperty); }
+            set { SetValue(IsStudentsWithNoSubmissionsVisibleProperty, value); }
+        }
+
+        public static readonly PropertyData IsStudentsWithNoSubmissionsVisibleProperty = RegisterProperty("IsStudentsWithNoSubmissionsVisible", typeof(bool), false);
+
         #endregion //Bindings
 
         #region Properties
@@ -110,17 +134,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData SubmissionPagesProperty = RegisterProperty("SubmissionPages", typeof(ObservableCollection<ICLPPage>), () => new ObservableCollection<ICLPPage>());
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public string StudentsWithNoSubmissions
-        {
-            get { return GetValue<string>(StudentsWithNoSubmissionsProperty); }
-            set { SetValue(StudentsWithNoSubmissionsProperty, value); }
-        }
-
-        public static readonly PropertyData StudentsWithNoSubmissionsProperty = RegisterProperty("StudentsWithNoSubmissions", typeof(string), "");
 
         /// <summary>
         /// Gets or sets the property value.
@@ -242,6 +255,26 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Commands
 
         /// <summary>
+        /// Toggles the panel that shows the student names who haven't submitted.
+        /// </summary>
+        public Command<RoutedEventArgs> ToggleNoSubmissionsCommand { get; private set; }
+
+        private void OnToggleNoSubmissionsCommandExecute(RoutedEventArgs e)
+        {
+            var toggleButton = e.Source as ToggleButton;
+            if(toggleButton == null)
+            {
+                return;
+            }
+            if(toggleButton.IsChecked != null && !(bool)toggleButton.IsChecked)
+            {
+                return;
+            }
+
+            StudentsWithNoSubmissions = GetStudentsWithNoSubmissions();
+        }      
+
+        /// <summary>
         /// Sets the current selected page in the listbox.
         /// </summary>
         public Command<ICLPPage> SetCurrentPageCommand { get; private set; }
@@ -259,39 +292,33 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Methods
 
-        public string getStudentsWithNoSubmissions()
+        public ObservableCollection<string> GetStudentsWithNoSubmissions()
         {
-            ObservableCollection<string> UserNames = new ObservableCollection<string>();
+            var userNames = new ObservableCollection<string>();
             //Steve - move to CLPService and grab from database
-            string filePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\StudentNames.txt";
+            var filePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\StudentNames.txt";
 
             if(File.Exists(filePath))
             {
-                StreamReader reader = new StreamReader(filePath);
+                var reader = new StreamReader(filePath);
                 string name;
-                while(!((name = reader.ReadLine()) == null))
+                while((name = reader.ReadLine()) != null)
                 {
-                    string user = name.Split(new char[] { ',' })[0];
-                    UserNames.Add(user);
+                    var user = name.Split(new[] { ',' })[0];
+                    userNames.Add(user);
                 }
                 reader.Dispose();
             }
             else
             {
-                return "";
+                return userNames;
             }
-            foreach(var p in SubmissionPages)
-            {
-                UserNames.Remove(p.Submitter.FullName);
 
-            }
-            string names = "";
-            foreach(string user in UserNames)
+            foreach(var p in SubmissionPages.Where(p => userNames.Contains(p.Submitter.FullName))) 
             {
-                names = names + user + "\n";
+                userNames.Remove(p.Submitter.FullName);
             }
-            names = names.Substring(0, names.Length - 2);
-            return names;
+            return userNames;
         }
 
         public void OnlyGroupSubmissionsFilter(object sender, FilterEventArgs e)
@@ -345,6 +372,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public void FilterSubmissions(string Sort)
         {
+            IsStudentsWithNoSubmissionsVisible = false;
             FilteredSubmissions = new CollectionViewSource
                                   {
                                       Source = SubmissionPages
