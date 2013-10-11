@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
@@ -49,8 +50,12 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnSelectNotebookCommandExecute(string notebookName)
         {
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
             Catel.Windows.PleaseWaitHelper.Show(() =>
             CLPServiceAgent.Instance.OpenNotebook(notebookName), null, "Loading Notebook", 0.0 / 0.0);
+            stopWatch.Stop();
+            Logger.Instance.WriteToLog("Time to LOAD notebook (In Seconds): " + stopWatch.ElapsedMilliseconds / 100.0);
         }
 
         public string WorkspaceName

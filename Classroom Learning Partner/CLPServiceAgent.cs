@@ -340,13 +340,17 @@ namespace Classroom_Learning_Partner
             }
 
             stopWatch.Stop();
-            Logger.Instance.WriteToLog("Time to open notebook (In Seconds): " + stopWatch.ElapsedMilliseconds / 100.0);
+            Logger.Instance.WriteToLog("Time to OPEN notebook (In Seconds): " + stopWatch.ElapsedMilliseconds / 100.0);
 
             if(notebook == null)
             {
                 MessageBox.Show("Notebook could not be opened. Check error log.");
                 return;
             }
+
+
+            var stopWatch2 = new Stopwatch();
+            stopWatch2.Start();
 
             notebook.NotebookName = notebookName;
             App.MainWindowViewModel.CurrentNotebookName = notebookName;
@@ -364,7 +368,16 @@ namespace Classroom_Learning_Partner
                 }
             }
 
+            stopWatch2.Stop();
+            Logger.Instance.WriteToLog("Time to DESERIALIZE PAGES in notebook (In Seconds): " + stopWatch2.ElapsedMilliseconds / 100.0);
+
+            var stopWatch3 = new Stopwatch();
+            stopWatch3.Start();
+
             notebook.InitializeAfterDeserialize();
+
+            stopWatch3.Stop();
+            Logger.Instance.WriteToLog("Time to INITIALIZE notebook (In Seconds): " + stopWatch3.ElapsedMilliseconds / 100.0);
 
             var count = 0;
             foreach(var otherNotebook in App.MainWindowViewModel.OpenNotebooks.Where(otherNotebook => otherNotebook.UniqueID == notebook.UniqueID && otherNotebook.NotebookName == notebook.NotebookName)) 
