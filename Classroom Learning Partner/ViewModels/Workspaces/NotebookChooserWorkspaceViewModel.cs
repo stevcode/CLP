@@ -55,7 +55,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Catel.Windows.PleaseWaitHelper.Show(() =>
             CLPServiceAgent.Instance.OpenNotebook(notebookName), null, "Loading Notebook", 0.0 / 0.0);
             stopWatch.Stop();
-            Logger.Instance.WriteToLog("Time to LOAD notebook (In Seconds): " + stopWatch.ElapsedMilliseconds / 100.0);
+            Logger.Instance.WriteToLog("Time to LOAD notebook (In Seconds): " + stopWatch.ElapsedMilliseconds / 1000.0);
         }
 
         public string WorkspaceName
