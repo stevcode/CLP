@@ -396,8 +396,6 @@ namespace Classroom_Learning_Partner.ViewModels
             //TODO: refresh pageObjects here?
         }
 
-       
-
         /// <summary>
         /// Gets the ResizePageObjectCommand command.
         /// </summary>

@@ -129,65 +129,66 @@ namespace Classroom_Learning_Partner.ViewModels
                     Left = 100
                 };
                 keyPad.ShowDialog();
-                if(keyPad.DialogResult == true && keyPad.NumbersEntered.Text.Length > 0)
+                if(keyPad.DialogResult != true ||
+                   keyPad.NumbersEntered.Text.Length <= 0)
                 {
-                    var numberOfCopies = Int32.Parse(keyPad.NumbersEntered.Text);
-                    var originalStrokes = PageObject.GetStrokesOverPageObject();
-                    var clonedStrokes = new StrokeCollection();
-
-                    foreach(var stroke in originalStrokes)
-                    {
-                        var newStroke = (new StrokeDTO(stroke)).ToStroke();
-                        var transform = new Matrix();
-                        transform.Translate(-XPosition, -YPosition - CLPStamp.HandleHeight);
-                        newStroke.Transform(transform, true);
-                        clonedStrokes.Add(newStroke);
-                    }
-
-                    StampCopy.SerializedStrokes = StrokeDTO.SaveInkStrokes(clonedStrokes);
-                    
-                    //TODO: clipping
-
-                    var initialXPosition = 25.0;
-                    var initialYPosition = YPosition + Height + 20; 
-                    var stampCopiesToAdd = new List<ICLPPageObject>();
-                    for(var i = 0; i < numberOfCopies; i++)
-                    {
-                        var stampCopyClone = StampCopy.Duplicate() as CLPStampCopy;
-                        if(stampCopyClone == null)
-                        {
-                            continue;
-                        }
-                        stampCopyClone.ParentID = PageObject.UniqueID;
-                        stampCopyClone.IsStamped = true;
-                        stampCopyClone.Parts = PageObject.Parts;
-                        stampCopyClone.IsInternalPageObject = false;
-                        stampCopyClone.IsCollectionCopy = IsCollectionStamp;
-                        stampCopyClone.CanAcceptPageObjects = IsCollectionStamp;
-                        stampCopyClone.PageObjectObjectParentIDs = PageObject.PageObjectObjectParentIDs;
-                        stampCopyClone.YPosition = initialYPosition;
-                        stampCopyClone.XPosition = initialXPosition;
-                        stampCopiesToAdd.Add(stampCopyClone);
-                        if(initialXPosition + 2*StampCopy.Width + 5 < PageObject.ParentPage.PageWidth)
-                        {
-                            initialXPosition += StampCopy.Width + 5;
-                        }
-                        else if(initialYPosition + 2*StampCopy.Height + 5 < PageObject.ParentPage.PageHeight)
-                        {
-                            initialXPosition = 25;
-                            initialYPosition += StampCopy.Height + 5;
-                        }
-                    }
-
-                    ACLPPageBaseViewModel.AddPageObjectsToPage(PageObject.ParentPage, stampCopiesToAdd);
+                    return;
                 }
+
+                var numberOfCopies = Int32.Parse(keyPad.NumbersEntered.Text);
+                var originalStrokes = PageObject.GetStrokesOverPageObject();
+                var clonedStrokes = new StrokeCollection();
+
+                foreach(var stroke in originalStrokes)
+                {
+                    var newStroke = (new StrokeDTO(stroke)).ToStroke();
+                    var transform = new Matrix();
+                    transform.Translate(-XPosition, -YPosition - CLPStamp.HandleHeight);
+                    newStroke.Transform(transform, true);
+                    clonedStrokes.Add(newStroke);
+                }
+
+                StampCopy.SerializedStrokes = StrokeDTO.SaveInkStrokes(clonedStrokes);
+                    
+                //TODO: clipping
+
+                var initialXPosition = 25.0;
+                var initialYPosition = YPosition + Height + 20; 
+                var stampCopiesToAdd = new List<ICLPPageObject>();
+                for(var i = 0; i < numberOfCopies; i++)
+                {
+                    var stampCopyClone = StampCopy.Duplicate() as CLPStampCopy;
+                    if(stampCopyClone == null)
+                    {
+                        continue;
+                    }
+                    stampCopyClone.ParentID = PageObject.UniqueID;
+                    stampCopyClone.IsStamped = true;
+                    stampCopyClone.Parts = PageObject.Parts;
+                    stampCopyClone.IsInternalPageObject = false;
+                    stampCopyClone.IsCollectionCopy = IsCollectionStamp;
+                    stampCopyClone.CanAcceptPageObjects = IsCollectionStamp;
+                    stampCopyClone.PageObjectObjectParentIDs = PageObject.PageObjectObjectParentIDs;
+                    stampCopyClone.YPosition = initialYPosition;
+                    stampCopyClone.XPosition = initialXPosition;
+                    stampCopiesToAdd.Add(stampCopyClone);
+                    if(initialXPosition + 2*StampCopy.Width + 5 < PageObject.ParentPage.PageWidth)
+                    {
+                        initialXPosition += StampCopy.Width + 5;
+                    }
+                    else if(initialYPosition + 2*StampCopy.Height + 5 < PageObject.ParentPage.PageHeight)
+                    {
+                        initialXPosition = 25;
+                        initialYPosition += StampCopy.Height + 5;
+                    }
+                }
+
+                ACLPPageBaseViewModel.AddPageObjectsToPage(PageObject.ParentPage, stampCopiesToAdd);
             }
             else
             {
                 MessageBox.Show("What are you counting on the stamp?  Please click the questionmark on the line below the stamp before making copies.", "What are you counting?");
             }  
-
-            
         }      
 
         /// <summary>
