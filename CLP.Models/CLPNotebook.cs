@@ -113,6 +113,17 @@ namespace CLP.Models
         public static readonly PropertyData CreationDateProperty = RegisterProperty("CreationDate", typeof(DateTime));
 
         /// <summary>
+        /// Date and time of the last save for the notebook.
+        /// </summary>
+        public DateTime LastSavedTime
+        {
+            get { return GetValue<DateTime>(LastSavedTimeProperty); }
+            set { SetValue(LastSavedTimeProperty, value); }
+        }
+
+        public static readonly PropertyData LastSavedTimeProperty = RegisterProperty("LastSavedTime", typeof(DateTime));
+
+        /// <summary>
         /// UniqueID assigned to the notebook.
         /// </summary>
         public string UniqueID

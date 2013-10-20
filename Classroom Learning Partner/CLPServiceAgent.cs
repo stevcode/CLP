@@ -398,6 +398,11 @@ namespace Classroom_Learning_Partner
                 }
             }
 
+            if(notebook.LastSavedTime != null)
+            {
+                App.MainWindowViewModel.LastSavedTime = notebook.LastSavedTime.ToString("HH:mm:ss");
+            }
+
             if(App.CurrentUserMode == App.UserMode.Student)
             {
                 // _autoSaveTimer.Start();
@@ -497,10 +502,13 @@ namespace Classroom_Learning_Partner
             //while(_isAutoSaving)
             //{
             //}
+
+            var saveTime = DateTime.Now;
+            notebook.LastSavedTime = saveTime;
             
             notebook.Save(filePath);
 
-            App.MainWindowViewModel.LastSavedTime = DateTime.Now.ToString("HH:mm:ss");
+            App.MainWindowViewModel.LastSavedTime = saveTime.ToString("HH:mm:ss");
 
             //_autoSaveTimer.Start();
         }
