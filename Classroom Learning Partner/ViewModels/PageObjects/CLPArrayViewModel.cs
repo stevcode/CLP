@@ -358,13 +358,20 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command<DragCompletedEventArgs> DragStopAndSnapCommand { get; private set; }
 
+        private enum SnapType
+        {
+            Top,
+            Bottom,
+            Left,
+            Right
+        }
+
         private void OnDragStopAndSnapCommandExecute(DragCompletedEventArgs e)
         {
             var movementBatch = PageObject.ParentPage.PageHistory.CurrentHistoryBatch as CLPHistoryPageObjectMoveBatch;
             if(movementBatch != null)
             {
-                movementBatch.AddPositionPointToBatch(PageObject.UniqueID,
-                                                      new Point(PageObject.XPosition, PageObject.YPosition));
+                movementBatch.AddPositionPointToBatch(PageObject.UniqueID, new Point(PageObject.XPosition, PageObject.YPosition));
             }
             PageObject.ParentPage.PageHistory.EndBatch();
             PageObject.OnMoved();
@@ -375,6 +382,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
+            CLPArray closestPersistingArray = null;
+            var closestSnappingDistance = Double.MaxValue;
+            var snapType = SnapType.Top;
             foreach(var pageObject in PageObject.ParentPage.PageObjects)
             {
                 var persistingArray = pageObject as CLPArray;
@@ -383,293 +393,241 @@ namespace Classroom_Learning_Partner.ViewModels
                     continue;
                 }
 
-                var deltaX = Math.Abs(snappingArray.XPosition + snappingArray.LabelLength - (persistingArray.XPosition + persistingArray.LabelLength));
-                var deltaY = Math.Abs(snappingArray.YPosition + snappingArray.LabelLength - (persistingArray.YPosition + persistingArray.LabelLength));
+                var top = Math.Max(snappingArray.YPosition + snappingArray.LabelLength, 
+                                   persistingArray.YPosition + persistingArray.LabelLength);
+                var bottom = Math.Min(snappingArray.YPosition + snappingArray.LabelLength + snappingArray.ArrayHeight, 
+                                      persistingArray.YPosition + persistingArray.LabelLength + persistingArray.ArrayHeight);
+                var verticalIntersectionLength = bottom - top;
+                var isVerticalIntersection = verticalIntersectionLength > persistingArray.ArrayHeight / 2 || verticalIntersectionLength > snappingArray.ArrayHeight / 2;
 
-                var bottomDiff = Math.Abs(snappingArray.YPosition + snappingArray.LabelLength - (persistingArray.YPosition + persistingArray.Height));
-                if(bottomDiff < 50 && deltaX < 50 && snappingArray.Columns == persistingArray.Columns) //Snapping from below
+                var left = Math.Max(snappingArray.XPosition + snappingArray.LabelLength,
+                                   persistingArray.XPosition + persistingArray.LabelLength);
+                var right = Math.Min(snappingArray.XPosition + snappingArray.LabelLength + snappingArray.ArrayWidth,
+                                      persistingArray.XPosition + persistingArray.LabelLength + persistingArray.ArrayWidth);
+                var horizontalIntersectionLength = right - left;
+                var isHorizontalIntersection = horizontalIntersectionLength > persistingArray.ArrayWidth / 2 || horizontalIntersectionLength > snappingArray.ArrayWidth / 2;
+
+                if(isVerticalIntersection && snappingArray.Rows == persistingArray.Rows)
                 {
-                    PageObject.ParentPage.PageHistory.AddHistoryItem(new CLPHistoryArraySnap(
-                        PageObject.ParentPage, 
-                        persistingArray, 
-                        snappingArray, 
-                        true));
+                    var rightDiff = Math.Abs(snappingArray.XPosition + snappingArray.LabelLength - (persistingArray.XPosition + persistingArray.LabelLength + persistingArray.ArrayWidth));
+                    if(rightDiff < 50)
+                    {
+                        if(closestPersistingArray == null || rightDiff < closestSnappingDistance)
+                        {
+                            closestPersistingArray = persistingArray;
+                            closestSnappingDistance = rightDiff;
+                            snapType = SnapType.Right;
+                        }
+                    }
 
-                    persistingArray.VerticalDivisions.Clear();
-                    
-                    var squareSize = persistingArray.ArrayWidth/persistingArray.Columns;
+                    var leftDiff = Math.Abs(snappingArray.XPosition + snappingArray.LabelLength + snappingArray.ArrayWidth - (persistingArray.XPosition + persistingArray.LabelLength));
+                    if(leftDiff < 50)
+                    {
+                        if(closestPersistingArray == null || leftDiff < closestSnappingDistance)
+                        {
+                            closestPersistingArray = persistingArray;
+                            closestSnappingDistance = leftDiff;
+                            snapType = SnapType.Left;
+                        }
+                    }
+                }
+
+                if(isHorizontalIntersection && snappingArray.Columns == persistingArray.Columns)
+                {
+                    var bottomDiff = Math.Abs(snappingArray.YPosition + snappingArray.LabelLength - (persistingArray.YPosition + persistingArray.LabelLength + persistingArray.ArrayHeight));
+                    if(bottomDiff < 50)
+                    {
+                        if(closestPersistingArray == null || bottomDiff < closestSnappingDistance)
+                        {
+                            closestPersistingArray = persistingArray;
+                            closestSnappingDistance = bottomDiff;
+                            snapType = SnapType.Bottom;
+                        }
+                    }
+
+                    var topDiff = Math.Abs(snappingArray.YPosition + snappingArray.LabelLength + snappingArray.ArrayHeight - (persistingArray.YPosition + persistingArray.LabelLength));
+                    if(topDiff < 50)
+                    {
+                        if(closestPersistingArray == null || topDiff < closestSnappingDistance)
+                        {
+                            closestPersistingArray = persistingArray;
+                            closestSnappingDistance = topDiff;
+                            snapType = SnapType.Top;
+                        }
+                    }
+                }
+            }
+
+            if (closestPersistingArray == null)
+	        {
+                return;
+	        }
+
+            var squareSize = closestPersistingArray.ArrayWidth / closestPersistingArray.Columns;
+            ObservableCollection<CLPArrayDivision> tempDivisions;
+            switch (snapType)
+	        {
+		        case SnapType.Top:
+                    PageObject.ParentPage.PageHistory.AddHistoryItem(new CLPHistoryArraySnap(PageObject.ParentPage, closestPersistingArray, snappingArray, true));
+
+                    closestPersistingArray.VerticalDivisions.Clear();
+
                     snappingArray.SizeArrayToGridLevel(squareSize);
 
-                    if(!persistingArray.HorizontalDivisions.Any())
+                    if(closestPersistingArray.HorizontalDivisions.Any())
                     {
-                        persistingArray.HorizontalDivisions.Add(new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, 0,
-                                                                                persistingArray.ArrayHeight, persistingArray.Rows));
+                        tempDivisions = new ObservableCollection<CLPArrayDivision>(closestPersistingArray.HorizontalDivisions);
+                        closestPersistingArray.HorizontalDivisions.Clear();
+                    }
+                    else
+                    {
+                        tempDivisions = new ObservableCollection<CLPArrayDivision>
+                                        {
+                                            new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, 0, closestPersistingArray.ArrayHeight, closestPersistingArray.Rows)
+                                        };
                     }
 
                     if(!snappingArray.HorizontalDivisions.Any())
                     {
-                        persistingArray.HorizontalDivisions.Add(new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, persistingArray.ArrayHeight,
-                                                                                snappingArray.ArrayHeight, snappingArray.Rows));
+                        closestPersistingArray.HorizontalDivisions.Add(new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, 0, snappingArray.ArrayHeight, snappingArray.Rows));
+                    }
+
+                    foreach(var horizontalDivision in snappingArray.HorizontalDivisions)
+                    {
+                        closestPersistingArray.HorizontalDivisions.Add(horizontalDivision);
+                    }
+                    foreach(var horizontalDivision in tempDivisions)
+                    {
+                        closestPersistingArray.HorizontalDivisions.Add(new CLPArrayDivision(horizontalDivision.Orientation, horizontalDivision.Position + snappingArray.ArrayHeight,
+                                                                                            horizontalDivision.Length, horizontalDivision.Value));
+                    }
+
+                    closestPersistingArray.Rows += snappingArray.Rows;
+                    closestPersistingArray.YPosition -= snappingArray.ArrayHeight;
+                    break;
+                case SnapType.Bottom:
+                    PageObject.ParentPage.PageHistory.AddHistoryItem(new CLPHistoryArraySnap(PageObject.ParentPage, closestPersistingArray, snappingArray, true));
+
+                    closestPersistingArray.VerticalDivisions.Clear();
+                    
+                    snappingArray.SizeArrayToGridLevel(squareSize);
+
+                    if(!closestPersistingArray.HorizontalDivisions.Any())
+                    {
+                        closestPersistingArray.HorizontalDivisions.Add(new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, 0, closestPersistingArray.ArrayHeight, closestPersistingArray.Rows));
+                    }
+
+                    if(!snappingArray.HorizontalDivisions.Any())
+                    {
+                        closestPersistingArray.HorizontalDivisions.Add(new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, closestPersistingArray.ArrayHeight, snappingArray.ArrayHeight, snappingArray.Rows));
                     }
                     else
                     {
                         foreach(var horizontalDivision in snappingArray.HorizontalDivisions)
                         {
-                            persistingArray.HorizontalDivisions.Add(new CLPArrayDivision(
-                                horizontalDivision.Orientation, 
-                                horizontalDivision.Position + persistingArray.ArrayHeight, 
-                                horizontalDivision.Length, 
-                                horizontalDivision.Value));
+                            closestPersistingArray.HorizontalDivisions.Add(new CLPArrayDivision(horizontalDivision.Orientation, horizontalDivision.Position + closestPersistingArray.ArrayHeight, 
+                                                                                                horizontalDivision.Length, horizontalDivision.Value));
                         }
                     }
 
-                    persistingArray.Rows += snappingArray.Rows;
-                    persistingArray.SizeArrayToGridLevel(squareSize, false);
-                    persistingArray.IsDivisionBehaviorOn = true;
-
-                    var extraPageObjects = PageObject.GetPageObjectsOverPageObject(); 
-                    PageObject.ParentPage.PageObjects.Remove(PageObject);
-                    persistingArray.RefreshStrokeParentIDs();
-                    persistingArray.RefreshPageObjectIDs();
-
-                    var addObjects = new ObservableCollection<ICLPPageObject>();
-                    var removeObjects = new ObservableCollection<ICLPPageObject>();
-                    foreach(var obj in extraPageObjects)
-                    {
-                        if(!(persistingArray.GetPageObjectsOverPageObject().Contains(obj)))
-                        {
-                            if(obj.XPosition + obj.Width < persistingArray.XPosition + persistingArray.LabelLength || obj.XPosition > persistingArray.XPosition + persistingArray.LabelLength + persistingArray.ArrayWidth
-                               || obj.YPosition + obj.Height < persistingArray.YPosition + persistingArray.LabelLength || obj.YPosition > persistingArray.YPosition + persistingArray.LabelLength + persistingArray.ArrayHeight)
-                            {
-                                obj.XPosition = persistingArray.XPosition + persistingArray.LabelLength + 10 * addObjects.Count + 5;
-                                obj.YPosition = persistingArray.YPosition + persistingArray.LabelLength + 10 * addObjects.Count + 5;
-                            }
-                            addObjects.Add(obj);
-                        }
-                    }
-                    persistingArray.AcceptObjects(addObjects, removeObjects);
+                    closestPersistingArray.Rows += snappingArray.Rows;
                     break;
-                }
+                case SnapType.Left:
+                    PageObject.ParentPage.PageHistory.AddHistoryItem(new CLPHistoryArraySnap(PageObject.ParentPage, closestPersistingArray, snappingArray, false));
 
-                var topDiff = Math.Abs(PageObject.YPosition + PageObject.Height - (persistingArray.YPosition + persistingArray.LabelLength));
-                if(topDiff < 50 && deltaX < 50 && snappingArray.Columns == persistingArray.Columns) //Snapping from above
-                {
-                    PageObject.ParentPage.PageHistory.AddHistoryItem(new CLPHistoryArraySnap(
-                        PageObject.ParentPage,
-                        persistingArray,
-                        snappingArray,
-                        true));
+                    closestPersistingArray.HorizontalDivisions.Clear();
 
-                    persistingArray.VerticalDivisions.Clear();
-
-                    var squareSize = persistingArray.ArrayWidth / persistingArray.Columns;
                     snappingArray.SizeArrayToGridLevel(squareSize);
 
-                    ObservableCollection<CLPArrayDivision> tempDivisions;
-                    if(persistingArray.HorizontalDivisions.Any())
+                    if(closestPersistingArray.VerticalDivisions.Any())
                     {
-                        tempDivisions = new ObservableCollection<CLPArrayDivision>(persistingArray.HorizontalDivisions);
-                        persistingArray.HorizontalDivisions.Clear();
+                        tempDivisions = new ObservableCollection<CLPArrayDivision>(closestPersistingArray.VerticalDivisions);
+                        closestPersistingArray.VerticalDivisions.Clear();
                     }
                     else
                     {
                         tempDivisions = new ObservableCollection<CLPArrayDivision>
                                         {
-                                            new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, 0,
-                                                                 persistingArray.ArrayHeight, persistingArray.Rows)
-                                        };
-                    }
-
-                    if(!snappingArray.HorizontalDivisions.Any())
-                    {
-                        persistingArray.HorizontalDivisions.Add(new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, 0,
-                                                                               snappingArray.ArrayHeight, snappingArray.Rows));
-                    }
-
-                    foreach(var horizontalDivision in snappingArray.HorizontalDivisions)
-                    {
-                        persistingArray.HorizontalDivisions.Add(horizontalDivision);
-                    }
-                    foreach(var horizontalDivision in tempDivisions)
-                    {
-                        persistingArray.HorizontalDivisions.Add(new CLPArrayDivision(
-                                horizontalDivision.Orientation,
-                                horizontalDivision.Position + snappingArray.ArrayHeight,
-                                horizontalDivision.Length,
-                                horizontalDivision.Value));
-                    }
-
-                    persistingArray.Rows += snappingArray.Rows;
-                    persistingArray.YPosition -= snappingArray.ArrayHeight;
-                    persistingArray.SizeArrayToGridLevel(squareSize, false);
-                    persistingArray.IsDivisionBehaviorOn = true;
-
-                    var extraPageObjects = PageObject.GetPageObjectsOverPageObject();
-                    PageObject.ParentPage.PageObjects.Remove(PageObject);
-                    persistingArray.RefreshStrokeParentIDs();
-                    persistingArray.RefreshPageObjectIDs();
-
-                    var addObjects = new ObservableCollection<ICLPPageObject>();
-                    var removeObjects = new ObservableCollection<ICLPPageObject>();
-                    foreach(var obj in extraPageObjects)
-                    {
-                        if(!(persistingArray.GetPageObjectsOverPageObject().Contains(obj)))
-                        {
-                            if(obj.XPosition + obj.Width < persistingArray.XPosition + persistingArray.LabelLength || obj.XPosition > persistingArray.XPosition + persistingArray.LabelLength + persistingArray.ArrayWidth
-                               || obj.YPosition + obj.Height < persistingArray.YPosition + persistingArray.LabelLength || obj.YPosition > persistingArray.YPosition + persistingArray.LabelLength + persistingArray.ArrayHeight)
-                            {
-                                obj.XPosition = persistingArray.XPosition + persistingArray.LabelLength + 10 * addObjects.Count + 5;
-                                obj.YPosition = persistingArray.YPosition + persistingArray.LabelLength + 10 * addObjects.Count + 5;
-                            }
-                            addObjects.Add(obj);
-                        }
-                    }
-                    persistingArray.AcceptObjects(addObjects, removeObjects);
-                    break;
-                }
-
-                var leftDiff = Math.Abs(snappingArray.XPosition + snappingArray.Width - (persistingArray.XPosition + persistingArray.LabelLength));
-                if(leftDiff < 50 && deltaY < 50 && snappingArray.Rows == persistingArray.Rows) //Snapping from left
-                {
-                    PageObject.ParentPage.PageHistory.AddHistoryItem(new CLPHistoryArraySnap(
-                        PageObject.ParentPage,
-                        persistingArray,
-                        snappingArray,
-                        false));
-
-                    persistingArray.HorizontalDivisions.Clear();
-
-                    var squareSize = persistingArray.ArrayWidth / persistingArray.Columns;
-                    snappingArray.SizeArrayToGridLevel(squareSize);
-
-                    ObservableCollection<CLPArrayDivision> tempDivisions;
-                    if(persistingArray.VerticalDivisions.Any())
-                    {
-                        tempDivisions = new ObservableCollection<CLPArrayDivision>(persistingArray.VerticalDivisions);
-                        persistingArray.VerticalDivisions.Clear();
-                    }
-                    else
-                    {
-                        tempDivisions = new ObservableCollection<CLPArrayDivision>
-                                        {
-                                            new CLPArrayDivision(ArrayDivisionOrientation.Vertical, 0,
-                                                                 persistingArray.ArrayWidth, persistingArray.Columns)
+                                            new CLPArrayDivision(ArrayDivisionOrientation.Vertical, 0, closestPersistingArray.ArrayWidth, closestPersistingArray.Columns)
                                         };
                     }
 
                     if(!snappingArray.VerticalDivisions.Any())
                     {
-                        persistingArray.VerticalDivisions.Add(new CLPArrayDivision(ArrayDivisionOrientation.Vertical, 0,
-                                                                             snappingArray.ArrayWidth, snappingArray.Columns));
+                        closestPersistingArray.VerticalDivisions.Add(new CLPArrayDivision(ArrayDivisionOrientation.Vertical, 0, snappingArray.ArrayWidth, snappingArray.Columns));
                     }
 
                     foreach(var verticalDivision in snappingArray.VerticalDivisions)
                     {
-                        persistingArray.VerticalDivisions.Add(verticalDivision);
+                        closestPersistingArray.VerticalDivisions.Add(verticalDivision);
                     }
                     foreach(var verticalDivision in tempDivisions)
                     {
-                        persistingArray.VerticalDivisions.Add(new CLPArrayDivision(
-                                verticalDivision.Orientation,
-                                verticalDivision.Position + snappingArray.ArrayWidth,
-                                verticalDivision.Length,
-                                verticalDivision.Value));
+                        closestPersistingArray.VerticalDivisions.Add(new CLPArrayDivision(verticalDivision.Orientation, verticalDivision.Position + snappingArray.ArrayWidth,
+                                                                                          verticalDivision.Length, verticalDivision.Value));
                     }
 
-                    persistingArray.Columns += snappingArray.Columns;
-                    persistingArray.XPosition -= snappingArray.ArrayWidth;
-                    persistingArray.SizeArrayToGridLevel(squareSize, false);
-                    persistingArray.IsDivisionBehaviorOn = true;
-
-                    var extraPageObjects = PageObject.GetPageObjectsOverPageObject();
-                    PageObject.ParentPage.PageObjects.Remove(PageObject);
-                    persistingArray.RefreshStrokeParentIDs();
-                    persistingArray.RefreshPageObjectIDs();
-
-                    var addObjects = new ObservableCollection<ICLPPageObject>();
-                    var removeObjects = new ObservableCollection<ICLPPageObject>();
-                    foreach(var obj in extraPageObjects)
-                    {
-                        if(!(persistingArray.GetPageObjectsOverPageObject().Contains(obj)))
-                        {
-                            if(obj.XPosition + obj.Width < persistingArray.XPosition + persistingArray.LabelLength || obj.XPosition > persistingArray.XPosition + persistingArray.LabelLength + persistingArray.ArrayWidth
-                               || obj.YPosition + obj.Height < persistingArray.YPosition + persistingArray.LabelLength || obj.YPosition > persistingArray.YPosition + persistingArray.LabelLength + persistingArray.ArrayHeight)
-                            {
-                                obj.XPosition = persistingArray.XPosition + persistingArray.LabelLength + 10 * addObjects.Count + 5;
-                                obj.YPosition = persistingArray.YPosition + persistingArray.LabelLength + 10 * addObjects.Count + 5;
-                            }
-                            addObjects.Add(obj);
-                        }
-                    }
-                    persistingArray.AcceptObjects(addObjects, removeObjects);
+                    closestPersistingArray.Columns += snappingArray.Columns;
+                    closestPersistingArray.XPosition -= snappingArray.ArrayWidth;
                     break;
-                }
+                case SnapType.Right:
+                    PageObject.ParentPage.PageHistory.AddHistoryItem(new CLPHistoryArraySnap(PageObject.ParentPage, closestPersistingArray, snappingArray, false));
 
-                var rightDiff = Math.Abs(snappingArray.XPosition + snappingArray.LabelLength - (persistingArray.XPosition + persistingArray.Width));
-                if(rightDiff < 50 && deltaY < 50 && snappingArray.Rows == persistingArray.Rows) //Snapping from right
-                {
-                    PageObject.ParentPage.PageHistory.AddHistoryItem(new CLPHistoryArraySnap(
-                        PageObject.ParentPage,
-                        persistingArray,
-                        snappingArray,
-                        false));
+                    closestPersistingArray.HorizontalDivisions.Clear();
 
-                    persistingArray.HorizontalDivisions.Clear();
-
-                    var squareSize = persistingArray.ArrayWidth / persistingArray.Columns;
                     snappingArray.SizeArrayToGridLevel(squareSize);
 
-                    if(!persistingArray.VerticalDivisions.Any())
+                    if(!closestPersistingArray.VerticalDivisions.Any())
                     {
-                        persistingArray.VerticalDivisions.Add(new CLPArrayDivision(ArrayDivisionOrientation.Vertical, 0,
-                                                                                persistingArray.ArrayWidth, persistingArray.Columns));
+                        closestPersistingArray.VerticalDivisions.Add(new CLPArrayDivision(ArrayDivisionOrientation.Vertical, 0, closestPersistingArray.ArrayWidth, closestPersistingArray.Columns));
                     }
 
                     if(!snappingArray.VerticalDivisions.Any())
                     {
-                        persistingArray.VerticalDivisions.Add(new CLPArrayDivision(ArrayDivisionOrientation.Vertical, persistingArray.ArrayWidth,
-                                                                                snappingArray.ArrayWidth, snappingArray.Columns));
+                        closestPersistingArray.VerticalDivisions.Add(new CLPArrayDivision(ArrayDivisionOrientation.Vertical, closestPersistingArray.ArrayWidth, snappingArray.ArrayWidth, snappingArray.Columns));
                     }
                     else
                     {
                         foreach(var verticalDivision in snappingArray.VerticalDivisions)
                         {
-                            persistingArray.VerticalDivisions.Add(new CLPArrayDivision(
-                                verticalDivision.Orientation,
-                                verticalDivision.Position + persistingArray.ArrayWidth,
-                                verticalDivision.Length,
-                                verticalDivision.Value));
+                            closestPersistingArray.VerticalDivisions.Add(new CLPArrayDivision(verticalDivision.Orientation, verticalDivision.Position + closestPersistingArray.ArrayWidth,
+                                                                                              verticalDivision.Length, verticalDivision.Value));
                         }
                     }
 
-                    persistingArray.Columns += snappingArray.Columns;
-                    persistingArray.SizeArrayToGridLevel(squareSize, false);
-                    persistingArray.IsDivisionBehaviorOn = true;
-
-                    var extraPageObjects = PageObject.GetPageObjectsOverPageObject();
-                    PageObject.ParentPage.PageObjects.Remove(PageObject);
-                    persistingArray.RefreshStrokeParentIDs();
-                    persistingArray.RefreshPageObjectIDs();
-
-                    var addObjects = new ObservableCollection<ICLPPageObject>();
-                    var removeObjects = new ObservableCollection<ICLPPageObject>();
-                    foreach(var obj in extraPageObjects)
-                    {
-                        if(!(persistingArray.GetPageObjectsOverPageObject().Contains(obj)))
-                        {
-                            if(obj.XPosition + obj.Width < persistingArray.XPosition + persistingArray.LabelLength || obj.XPosition > persistingArray.XPosition + persistingArray.LabelLength + persistingArray.ArrayWidth
-                               || obj.YPosition + obj.Height < persistingArray.YPosition + persistingArray.LabelLength || obj.YPosition > persistingArray.YPosition + persistingArray.LabelLength + persistingArray.ArrayHeight)
-                            {
-                                obj.XPosition = persistingArray.XPosition + persistingArray.LabelLength + 10 * addObjects.Count + 5;
-                                obj.YPosition = persistingArray.YPosition + persistingArray.LabelLength + 10 * addObjects.Count + 5;
-                            }
-                            addObjects.Add(obj);
-                        }
-                    }
-                    persistingArray.AcceptObjects(addObjects, removeObjects);
+                    closestPersistingArray.Columns += snappingArray.Columns;
                     break;
+                default:
+                    return;
+                    break;
+	        }
+
+            closestPersistingArray.SizeArrayToGridLevel(squareSize, false);
+            closestPersistingArray.IsDivisionBehaviorOn = true;
+
+            var extraPageObjects = PageObject.GetPageObjectsOverPageObject();
+            PageObject.ParentPage.PageObjects.Remove(PageObject);
+            closestPersistingArray.RefreshStrokeParentIDs();
+            closestPersistingArray.RefreshPageObjectIDs();
+
+            var addObjects = new ObservableCollection<ICLPPageObject>();
+            var removeObjects = new ObservableCollection<ICLPPageObject>();
+            foreach(var obj in extraPageObjects)
+            {
+                if(!(closestPersistingArray.GetPageObjectsOverPageObject().Contains(obj)))
+                {
+                    if(obj.XPosition + obj.Width < closestPersistingArray.XPosition + closestPersistingArray.LabelLength ||
+                       obj.XPosition > closestPersistingArray.XPosition + closestPersistingArray.LabelLength + closestPersistingArray.ArrayWidth ||
+                       obj.YPosition + obj.Height < closestPersistingArray.YPosition + closestPersistingArray.LabelLength ||
+                       obj.YPosition > closestPersistingArray.YPosition + closestPersistingArray.LabelLength + closestPersistingArray.ArrayHeight)
+                    {
+                        obj.XPosition = closestPersistingArray.XPosition + closestPersistingArray.LabelLength + 10 * addObjects.Count + 5;
+                        obj.YPosition = closestPersistingArray.YPosition + closestPersistingArray.LabelLength + 10 * addObjects.Count + 5;
+                    }
+                    addObjects.Add(obj);
                 }
             }
+            closestPersistingArray.AcceptObjects(addObjects, removeObjects);
         }
 
         /// <summary>
