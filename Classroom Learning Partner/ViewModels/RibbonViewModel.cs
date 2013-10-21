@@ -297,6 +297,17 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Bindings
 
         /// <summary>
+        /// Disables the use of history to broadcast changes to a page to the projector.
+        /// </summary>
+        public bool IsBroadcastHistoryDisabled
+        {
+            get { return GetValue<bool>(IsBroadcastHistoryDisabledProperty); }
+            set { SetValue(IsBroadcastHistoryDisabledProperty, value); }
+        }
+
+        public static readonly PropertyData IsBroadcastHistoryDisabledProperty = RegisterProperty("IsBroadcastHistoryDisabled", typeof(bool), false);
+
+        /// <summary>
         /// Gets or sets the property value.
         /// </summary>
         public bool SideBarVisibility

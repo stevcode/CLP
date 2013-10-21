@@ -935,7 +935,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 page.PageHistory.AddHistoryItem(historyItem); 
             }
 
-            if(App.CurrentUserMode != App.UserMode.Instructor || App.Network.ProjectorProxy == null)
+            if(App.CurrentUserMode != App.UserMode.Instructor || App.Network.ProjectorProxy == null || App.MainWindowViewModel.Ribbon.IsBroadcastHistoryDisabled)
             {
                 return;
             }
@@ -946,9 +946,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 Logger.Instance.WriteToLog("Failed to UndoRedoCompleteClone history item");
                 return;
             }
-            var historyItemString = ObjectSerializer.ToString(historyItem);
-            var test = ObjectSerializer.ToObject(historyItemString);
-            Console.WriteLine(test.GetType());
+            var historyItemString = ObjectSerializer.ToString(historyItemCopy);
             var zippedHistoryItem = CLPServiceAgent.Instance.Zip(historyItemString);
 
             var pageID = page.SubmissionType != SubmissionType.None ? page.SubmissionID : page.UniqueID;

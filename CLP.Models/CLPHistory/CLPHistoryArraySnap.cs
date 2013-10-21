@@ -196,6 +196,7 @@ namespace CLP.Models
                 Logger.Instance.WriteToLog("ArraySnap Redo Failure: Can't find snapped array.");
                 return;
             }
+            SnappedArray.ParentPage = ParentPage;
 
             var persistingArray = ParentPage.GetPageObjectByUniqueID(PersistingArrayUniqueID) as CLPArray;
             if(persistingArray == null)

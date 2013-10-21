@@ -98,6 +98,7 @@ namespace CLP.Models
 
             foreach(var pageObject in PageObjects)
             {
+                pageObject.ParentPage = ParentPage;
                 ParentPage.PageObjects.Add(pageObject);
             }
 

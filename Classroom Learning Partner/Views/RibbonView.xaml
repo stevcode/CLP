@@ -638,6 +638,26 @@
 
             <RibbonGroup Header="ClassList Commands">
 
+                <RibbonToggleButton IsChecked="{Binding IsBroadcastHistoryDisabled}">
+                    <RibbonToggleButton.Style>
+                        <Style TargetType="{x:Type RibbonToggleButton}">
+                            <Setter Property="Label"
+                                    Value="Broadcast History Enabled" />
+                            <Setter Property="LargeImageSource"
+                                    Value="pack://application:,,,/Images/LargeIcon.png" />
+                            <Style.Triggers>
+                                <Trigger Property="IsChecked"
+                                         Value="True">
+                                    <Setter Property="Label"
+                                            Value="Broadcast History Disabled" />
+                                    <Setter Property="LargeImageSource"
+                                            Value="pack://application:,,,/Images/LargeIcon.png" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </RibbonToggleButton.Style>
+                </RibbonToggleButton>
+
                 <RibbonToggleButton IsChecked="{Binding BlockStudentPenInput}">
                     <RibbonToggleButton.Style>
                         <Style TargetType="{x:Type RibbonToggleButton}">

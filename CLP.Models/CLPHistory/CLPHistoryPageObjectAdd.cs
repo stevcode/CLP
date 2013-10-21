@@ -102,6 +102,7 @@ namespace CLP.Models
                 Logger.Instance.WriteToLog("AddPageObject Redo Failure: No object to add.");
                 return;
             }
+            PageObject.ParentPage = ParentPage;
 
             //restore proper z-order if possible
             if(Index >= ParentPage.PageObjects.Count)
