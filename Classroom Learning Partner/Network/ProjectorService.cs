@@ -270,7 +270,35 @@ namespace Classroom_Learning_Partner
 
         public void AddHistoryItem(string pageID, string zippedHistoryItem)
         {
+            var unzippedHistoryItem = CLPServiceAgent.Instance.UnZip(zippedHistoryItem);
+            var historyItem = ObjectSerializer.ToObject(unzippedHistoryItem) as ICLPHistoryItem;
+            if(historyItem == null)
+            {
+                Logger.Instance.WriteToLog("Failed to apply historyItem to projector.");
+                return;
+            }
 
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                (DispatcherOperationCallback)delegate
+                {
+                    foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
+                    {
+                        var page = notebook.GetNotebookPageOrSubmissionByID(pageID);
+
+                        if(page == null)
+                        {
+                            continue;
+                        }
+
+                        historyItem.ParentPage = page;
+                        page.PageHistory.RedoItems.Clear();
+                        page.PageHistory.RedoItems.Add(historyItem);
+                        page.PageHistory.Redo();
+                       
+                        break;
+                    }
+                    return null;
+                }, null);
         }
 
         public void AddNewPage(string zippedPage, int index)

@@ -123,18 +123,15 @@ namespace CLP.Models
                 return null;
             }
 
-            if(clonedHistoryItem.PageObject == null)
+            var pageObject = ParentPage.GetPageObjectByUniqueID(PageObjectUniqueID);
+            if(pageObject == null)
             {
-                var pageObject = ParentPage.GetPageObjectByUniqueID(PageObjectUniqueID);
-
-                if(pageObject == null)
-                {
-                    Logger.Instance.WriteToLog("Failed to get pageObject by ID during UndoRedoComplete in HistoryPageObjectAdd.");
-                    return null;
-                }
-                clonedHistoryItem.PageObject = pageObject;
-                clonedHistoryItem.Index = ParentPage.PageObjects.IndexOf(pageObject);
+                Logger.Instance.WriteToLog("Failed to get pageObject by ID during UndoRedoComplete in HistoryPageObjectAdd.");
+                return null;
             }
+            clonedHistoryItem.PageObject = pageObject;
+            clonedHistoryItem.Index = ParentPage.PageObjects.IndexOf(pageObject);
+
 
             return clonedHistoryItem;
         }

@@ -947,6 +947,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
             var historyItemString = ObjectSerializer.ToString(historyItem);
+            var test = ObjectSerializer.ToObject(historyItemString);
+            Console.WriteLine(test.GetType());
             var zippedHistoryItem = CLPServiceAgent.Instance.Zip(historyItemString);
 
             var pageID = page.SubmissionType != SubmissionType.None ? page.SubmissionID : page.UniqueID;

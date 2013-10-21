@@ -121,17 +121,14 @@ namespace CLP.Models
                 return null;
             }
 
-            if(clonedHistoryItem.StampCopy == null)
+            var stampCopy = ParentPage.GetPageObjectByUniqueID(StampCopyId) as CLPStampCopy;
+            if(stampCopy == null)
             {
-                var stampCopy = ParentPage.GetPageObjectByUniqueID(StampCopyId) as CLPStampCopy;
-                if(stampCopy == null)
-                {
-                    Logger.Instance.WriteToLog("StampPlace UndoRedoCompleteClone: Could not find StampCopy on Page");
-                    return null;
-                }
-                clonedHistoryItem.StampCopy = stampCopy;
-                clonedHistoryItem.PageObjectsOverStampCopy = stampCopy.GetPageObjectsOverPageObject();
+                Logger.Instance.WriteToLog("StampPlace UndoRedoCompleteClone: Could not find StampCopy on Page");
+                return null;
             }
+            clonedHistoryItem.StampCopy = stampCopy;
+            clonedHistoryItem.PageObjectsOverStampCopy = stampCopy.GetPageObjectsOverPageObject();            
 
             return clonedHistoryItem;
         }

@@ -172,13 +172,10 @@ namespace CLP.Models
                 return null;
             }
 
-            if(clonedHistoryItem.SerializedStrokesAdded == null)
+            clonedHistoryItem.SerializedStrokesAdded = new List<StrokeDTO>();
+            foreach(var stroke in StrokeIDsAdded.Select(id => ParentPage.GetStrokeByStrokeID(id)))
             {
-                clonedHistoryItem.SerializedStrokesAdded = new List<StrokeDTO>();
-                foreach(var stroke in StrokeIDsAdded.Select(id => ParentPage.GetStrokeByStrokeID(id)))
-                {
-                    clonedHistoryItem.SerializedStrokesAdded.Add(new StrokeDTO(stroke));
-                }
+                clonedHistoryItem.SerializedStrokesAdded.Add(new StrokeDTO(stroke));
             }
 
             return clonedHistoryItem;
