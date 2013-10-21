@@ -290,11 +290,11 @@
                               Command="{Binding InsertArrayCommand}"
                               CommandParameter="DEFAULT" />
 
-                <RibbonButton Label="Array Card"
+                <!--<RibbonButton Label="Array Card"
                               LargeImageSource="pack://application:,,,/Resources/Images/ArrayCard32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/ArrayCard16.png"
                               Command="{Binding InsertArrayCommand}"
-                              CommandParameter="CARD" />
+                              CommandParameter="CARD" />-->
 
                 <RibbonButton Label="Stamp"
                               LargeImageSource="pack://application:,,,/Resources/Images/Stamp32.png"
@@ -526,15 +526,18 @@
 
             <RibbonGroup Header="Arrays">
 
+                <!--Array + Divider-->
                 <RibbonButton Label="Array"
-                              LargeImageSource="..\Images\InkArray.png"
+                              LargeImageSource="pack://application:,,,/Resources/Images/Array32.png"
+                              SmallImageSource="pack://application:,,,/Resources/Images/Array16.png"
                               Command="{Binding InsertArrayCommand}"
-                              CommandParameter="FALSE" />
+                              CommandParameter="DEFAULT" />
 
-                <RibbonButton Label="Array + Dividers"
-                              LargeImageSource="..\Images\Array.png"
+                <RibbonButton Label="Array Card"
+                              LargeImageSource="pack://application:,,,/Resources/Images/ArrayCard32.png"
+                              SmallImageSource="pack://application:,,,/Resources/Images/ArrayCard16.png"
                               Command="{Binding InsertArrayCommand}"
-                              CommandParameter="TRUE" />
+                              CommandParameter="CARD" />
 
             </RibbonGroup>
 
