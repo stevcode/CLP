@@ -2224,6 +2224,11 @@ namespace Classroom_Learning_Partner.ViewModels
                         array.IsSnappable = false;
                         array.BackgroundColor = Colors.SkyBlue.ToString();
                         break;
+                    //TODO: FACTORCARD - add switch case for "FACTORCARD"
+                        //divisionbehavior = false;
+                        //issnappable = false
+                        //isgridon = false;
+                        //isfactorcard = true;
                 }
 
                 ACLPPageBaseViewModel.AddPageObjectToPage(array);
@@ -2313,6 +2318,11 @@ namespace Classroom_Learning_Partner.ViewModels
                         array.IsSnappable = false;
                         array.BackgroundColor = Colors.SkyBlue.ToString();
                         break;
+                    //TODO: FACTORCARD - add switch case for "FACTORCARD"
+                    //divisionbehavior = false;
+                    //issnappable = false
+                    //isgridon = false;
+                    //isfactorcard = true;
                 }
 
                 if(isHorizontallyAligned)

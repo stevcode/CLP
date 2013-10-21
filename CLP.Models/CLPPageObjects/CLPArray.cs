@@ -110,6 +110,7 @@ namespace CLP.Models
             CanAcceptPageObjects = true;
 
             IsGridOn = rows < 45 && columns < 45;
+            //TODO: FACTORCARD - add bool property IsFactorCard, default false
             Rows = rows;
             Columns = columns;
 
