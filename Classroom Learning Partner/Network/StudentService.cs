@@ -111,6 +111,11 @@ namespace Classroom_Learning_Partner
                 }, null);
         }
 
+        public void AddHistoryItem(string pageID, string zippedHistoryItem)
+        {
+            
+        }
+
         public void AddNewPage(string zippedPage, int index)
         {
             var unZippedPage = CLPServiceAgent.Instance.UnZip(zippedPage);

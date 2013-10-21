@@ -451,7 +451,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnMouseDownCommandExecute(MouseEventArgs e)
         {
-
         }
 
         /// <summary>
@@ -576,288 +575,91 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            if(App.MainWindowViewModel.Ribbon.PageInteractionMode == PageInteractionMode.Scissors)
+            switch(App.MainWindowViewModel.Ribbon.PageInteractionMode)
             {
-                foreach(var stroke in e.Added)
+                case PageInteractionMode.Scissors:
                 {
-                    InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
-                    PageObjects.CollectionChanged -= PageObjects_CollectionChanged;
-                    if(!stroke.ContainsPropertyData(ACLPPageBase.StrokeIDKey))
+                    var stroke = e.Added.FirstOrDefault();
+                    if(stroke == null)
                     {
-                        var newUniqueID = Guid.NewGuid().ToString();
-                        stroke.AddPropertyData(ACLPPageBase.StrokeIDKey, newUniqueID);
+                        return;
                     }
-                    Page.InkStrokes.Remove(stroke);
-
-                    var allCutPageObjects = new List<ICLPPageObject>();
-                    var allHalvedPageObjects = new List<ICLPPageObject>();
-                    foreach(var pageObject in PageObjects)
-                    {
-                        var halvedPageObjects = pageObject.Cut(stroke);
-                        if(!halvedPageObjects.Any())
-                        {
-                            continue;
-                        }
-                        allCutPageObjects.Add(pageObject);
-                        allHalvedPageObjects.AddRange(halvedPageObjects);
-                    }
-
-                    foreach(var pageObject in allCutPageObjects)
-                    {
-                        PageObjects.Remove(pageObject);
-                    }
-
-                    var allHalvedPageObjectIDs = new List<string>();
-                    foreach(var pageObject in allHalvedPageObjects)
-                    {
-                        allHalvedPageObjectIDs.Add(pageObject.UniqueID);
-                        AddPageObjectToPage(Page, pageObject, false, false);
-                    }
-
-                    Page.PageHistory.AddHistoryItem(new CLPHistoryPageObjectCut(Page, stroke, allCutPageObjects, allHalvedPageObjectIDs));
-
-                    RefreshInkStrokes();
-                    RefreshPageObjects(allHalvedPageObjects);
-
-                    InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
-                    PageObjects.CollectionChanged += PageObjects_CollectionChanged;
-                    return;
+                    CutStroke(stroke);
                 }
-            }
-
-            if(App.MainWindowViewModel.Ribbon.PageInteractionMode == PageInteractionMode.Lasso)
-            {
-                foreach(var stroke in e.Added)
+                    break;
+                case PageInteractionMode.Lasso:
                 {
-                    InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
-                    PageObjects.CollectionChanged -= PageObjects_CollectionChanged;
-
-                    var lassoedPageObjects = new List<ICLPPageObject>();
-
-                    var strokeGeometry = new PathGeometry();
-                    var pathFigure = new PathFigure();
-                    pathFigure.StartPoint = stroke.StylusPoints.First().ToPoint();
-                    pathFigure.Segments = new PathSegmentCollection();
-                    var polyLine = new PolyLineSegment
-                                   {
-                                       Points = new PointCollection((Point[])stroke.StylusPoints)
-                                                       {
-                                                           stroke.StylusPoints.First().ToPoint()
-                                                       }
-                                   };
-                    pathFigure.Segments.Add(polyLine);
-
-                    strokeGeometry.Figures.Add(pathFigure);
-    
-
-                    foreach(var pageObject in PageObjects)
+                    var stroke = e.Added.FirstOrDefault();
+                    if(stroke == null)
                     {
-                        var pageObjectGeometry =
-                            new RectangleGeometry(new Rect(pageObject.XPosition, pageObject.YPosition, pageObject.Width,
-                                                           pageObject.Height));
-
-                        if(strokeGeometry.FillContains(pageObjectGeometry))
-                        {
-                            lassoedPageObjects.Add(pageObject);
-                        }
+                        return;
                     }
-
-                    var lassoedPageObjectParameterizationView = new LassoedPageObjectParameterizationView() { Owner = Application.Current.MainWindow };
-                    lassoedPageObjectParameterizationView.ShowDialog();
-
-                    if(lassoedPageObjectParameterizationView.DialogResult == true)
-                    {
-                        int numberOfCopies;
-                        try
-                        {
-                            numberOfCopies = Convert.ToInt32(lassoedPageObjectParameterizationView.NumberOfCopies.Text);
-                        }
-                        catch(FormatException)
-                        {
-                            numberOfCopies = 1;
-                        }
-
-                        var isHorizontallyAligned = lassoedPageObjectParameterizationView.HorizontalToggle.IsChecked != null &&
-                                                    (bool)lassoedPageObjectParameterizationView.HorizontalToggle.IsChecked;
-                        var isVerticallyAligned = lassoedPageObjectParameterizationView.VerticalToggle.IsChecked != null &&
-                                                  (bool)lassoedPageObjectParameterizationView.VerticalToggle.IsChecked;
-
-                        foreach(var lassoedPageObject in lassoedPageObjects)
-                        {
-                            for(int i = 0; i < numberOfCopies; i++)
-                            {
-                                var duplicatePageObject = lassoedPageObject.Duplicate();
-                                if(isHorizontallyAligned)
-                                {
-                                    duplicatePageObject.XPosition += duplicatePageObject.Width + 10;
-                                }
-                                else if(isVerticallyAligned)
-                                {
-                                    duplicatePageObject.YPosition += duplicatePageObject.Height + 10;
-                                }
-                                ACLPPageObjectBase.ApplyDistinctPosition(duplicatePageObject);
-                                AddPageObjectToPage(duplicatePageObject, addToHistory: false);
-                                //TODO: Steve - add MassPageObjectAdd history item and MassPageObjectRemove history item.
-                            }
-                        }
-                    }
-
-                    if(!stroke.ContainsPropertyData(ACLPPageBase.StrokeIDKey))
-                    {
-                        var newUniqueID = Guid.NewGuid().ToString();
-                        stroke.AddPropertyData(ACLPPageBase.StrokeIDKey, newUniqueID);
-                    }
-                    Page.InkStrokes.Remove(stroke);
-
-                    InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
-                    PageObjects.CollectionChanged += PageObjects_CollectionChanged;
-                    return;
+                    LassoStroke(stroke);
                 }
+                    break;
+                case PageInteractionMode.Highlighter:
+                case PageInteractionMode.Pen:
+                    if(e.Removed.Any())
+                    {
+                        RemoveStroke(e.Removed, e.Added);
+                    }
+                    else
+                    {
+                        var stroke = e.Added.FirstOrDefault();
+                        if(stroke == null)
+                        {
+                            return;
+                        }
+                        AddStroke(stroke);
+                    }
+                    break;
+                case PageInteractionMode.Eraser:
+                    RemoveStroke(e.Removed, e.Added);
+                    break;
             }
-
 
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
-            App.MainWindowViewModel.Ribbon.CanGroupSendToTeacher = true;
+            App.MainWindowViewModel.Ribbon.CanGroupSendToTeacher = true;              
 
-            //TODO: Steve - do this in thread queue instead, strokes aren't arriving on projector in correct order.
-            //Task.Factory.StartNew(() =>
-            //    {
-                    try
-                    {
-                        // avoid uniqueID duplication
-                        var removedStrokeIDs = new List<string>();
-                        foreach (var stroke in e.Removed)
-                        {
-                            removedStrokeIDs.Add(stroke.GetPropertyData(ACLPPageBase.StrokeIDKey) as string);
-                        }
-                        foreach(var stroke in e.Added)
-                        {
-                            if(!stroke.ContainsPropertyData(ACLPPageBase.StrokeIDKey))
-                            {
-                                var newUniqueID = Guid.NewGuid().ToString();
-                                stroke.AddPropertyData(ACLPPageBase.StrokeIDKey, newUniqueID);
-                            }
 
-                            //Ensures truly uniqueIDs
-                            foreach(string id in removedStrokeIDs)
-                            {
-                                if(id == stroke.GetStrokeUniqueID())
-                                {
-                                    var newUniqueID = Guid.NewGuid().ToString();
-                                    stroke.SetStrokeUniqueID(newUniqueID);
-                                }  
-                            }
-                        }
+                        //if(App.CurrentUserMode != App.UserMode.Instructor)
+                        //{
+                        //    return;
+                        //}
+                        //var add = new List<StrokeDTO>(StrokeDTO.SaveInkStrokes(e.Added));
+                        //var remove = new List<StrokeDTO>(StrokeDTO.SaveInkStrokes(e.Removed));
 
-                        // deal with history
-                        if(e.Removed.Count + e.Added.Count > 1)
-                        {
-                            var strokeIdsAdded = new List<string>();
-                            foreach(var stroke in e.Added)
-                            {
-                                strokeIdsAdded.Add(stroke.GetStrokeUniqueID());
-                            }
+                        //var pageID = Page.SubmissionType != SubmissionType.None ? Page.SubmissionID : Page.UniqueID;
 
-                            var strokesRemoved = new List<Stroke>();
-                            foreach(var stroke in e.Removed)
-                            {
-                                strokesRemoved.Add(stroke);
-                            }
-                            Page.PageHistory.AddHistoryItem(
-                                new CLPHistoryStrokesChanged(Page, strokeIdsAdded, strokesRemoved));
-                        }
-                        else if(e.Removed.Count == 1)
-                        {
-                            Page.PageHistory.AddHistoryItem(
-                                new CLPHistoryStrokeRemove(Page, e.Removed.ElementAt(0)));
-                        }
-                        else if(e.Added.Count == 1)
-                        {
-                            Page.PageHistory.AddHistoryItem(
-                                new CLPHistoryStrokeAdd(Page, e.Added.ElementAt(0).GetStrokeUniqueID()));
-                        }
+                        //if(App.Network.ProjectorProxy != null)
+                        //{
+                        //    try
+                        //    {
+                        //        App.Network.ProjectorProxy.ModifyPageInkStrokes(add, remove, pageID);
+                        //    }
+                        //    catch(Exception)
+                        //    {
+                        //    }
+                        //}
+        
+                        //if(!App.MainWindowViewModel.Ribbon.BroadcastInkToStudents || Page.SubmissionType != SubmissionType.None || !App.Network.ClassList.Any())
+                        //{
+                        //    return;
+                        //}
 
-                        // deal with page objects that accept strokes
-                        foreach(ICLPPageObject pageObject in PageObjects)
-                        {
-                            if(!pageObject.CanAcceptStrokes)
-                            {
-                                continue;
-                            }
+                        //foreach(var student in App.Network.ClassList)
+                        //{
+                        //    try
+                        //    {
+                        //        var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(App.Network.DefaultBinding, new EndpointAddress(student.CurrentMachineAddress));
+                        //        studentProxy.ModifyPageInkStrokes(add, remove, pageID);
+                        //        (studentProxy as ICommunicationObject).Close();
+                        //    }
+                        //    catch(Exception)
+                        //    {
+                        //    }
+                        //}
 
-                            var rect = new Rect(pageObject.XPosition, pageObject.YPosition, pageObject.Width, pageObject.Height);
-
-                            var addedStrokesOverObject =
-                                from stroke in e.Added
-                                where stroke.HitTest(rect, 3)
-                                select stroke;
-
-                            var removedStrokesOverObject =
-                                from stroke in e.Removed
-                                where stroke.HitTest(rect, 3)
-                                select stroke;
-
-                            var addStrokes = new StrokeCollection(addedStrokesOverObject);
-                            var removeStrokes = new StrokeCollection(removedStrokesOverObject);
-                            ICLPPageObject o = pageObject;
-                            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
-                                                                       (DispatcherOperationCallback)delegate
-                                                                           {
-                                                                               o.AcceptStrokes(addStrokes, removeStrokes);
-
-                                                                               return null;
-                                                                           }, null);
-                        }
-
-                        if(App.CurrentUserMode != App.UserMode.Instructor)
-                        {
-                            return;
-                        }
-                        var add = new List<StrokeDTO>(StrokeDTO.SaveInkStrokes(e.Added));
-                        var remove = new List<StrokeDTO>(StrokeDTO.SaveInkStrokes(e.Removed));
-
-                        var pageID = Page.SubmissionType != SubmissionType.None ? Page.SubmissionID : Page.UniqueID;
-
-                        if(App.Network.ProjectorProxy != null)
-                        {
-                            try
-                            {
-                                App.Network.ProjectorProxy.ModifyPageInkStrokes(add, remove, pageID);
-                            }
-                            catch(Exception)
-                            {
-                            }
-                        }
-                        //TODO: Steve - Add pages to a queue and send when a projector is found in Else statement
-
-                        if(!App.MainWindowViewModel.Ribbon.BroadcastInkToStudents || Page.SubmissionType != SubmissionType.None || !App.Network.ClassList.Any())
-                        {
-                            return;
-                        }
-
-                        foreach(var student in App.Network.ClassList)
-                        {
-                            try
-                            {
-                                var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(App.Network.DefaultBinding, new EndpointAddress(student.CurrentMachineAddress));
-                                studentProxy.ModifyPageInkStrokes(add, remove, pageID);
-                                (studentProxy as ICommunicationObject).Close();
-                            }
-                            catch(Exception)
-                            {
-                            }
-                        }
-                    }
-                    catch(Exception ex)
-                    {
-                        Logger.Instance.WriteToLog("InkStrokeCollectionChanged Exception: " + ex.Message);
-                        Logger.Instance.WriteToLog("[UNHANDLED ERROR] - " + ex.Message + " " + (ex.InnerException != null ? "\n" + ex.InnerException.Message : null));
-                        Logger.Instance.WriteToLog("[HResult]: " + ex.HResult);
-                        Logger.Instance.WriteToLog("[Source]: " + ex.Source);
-                        Logger.Instance.WriteToLog("[Method]: " + ex.TargetSite);
-                        Logger.Instance.WriteToLog("[StackTrace]: " + ex.StackTrace);
-                    }
-               //});
         }
 
         protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
@@ -900,6 +702,38 @@ namespace Classroom_Learning_Partner.ViewModels
             base.OnViewModelPropertyChanged(viewModel, propertyName);
         }
 
+        private void RefreshAcceptedStrokes(List<Stroke> addedStrokes, List<Stroke> removedStrokes)
+        {
+            foreach(var pageObject in PageObjects)
+            {
+                if(!pageObject.CanAcceptStrokes)
+                {
+                    continue;
+                }
+
+                var pageObjectBounds = new Rect(pageObject.XPosition, pageObject.YPosition, pageObject.Width, pageObject.Height);
+
+                var addedStrokesOverObject = from stroke in addedStrokes
+                                             where stroke.HitTest(pageObjectBounds, 3)
+                                             select stroke;
+
+                var removedStrokesOverObject = from stroke in removedStrokes
+                                               where stroke.HitTest(pageObjectBounds, 3)
+                                               select stroke;
+
+                var addStrokes = new StrokeCollection(addedStrokesOverObject);
+                var removeStrokes = new StrokeCollection(removedStrokesOverObject);
+                var o = pageObject;
+                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
+                                                           (DispatcherOperationCallback)delegate
+                                                               {
+                                                                   o.AcceptStrokes(addStrokes, removeStrokes);
+
+                                                                   return null;
+                                                               }, null);
+            }
+        }
+
         private void RefreshInkStrokes()
         {
             var pageObjects = Page.PageObjects;
@@ -924,7 +758,214 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        #endregion //Methods        
+        #endregion //Methods   
+     
+        #region Page Interaction Methods
+
+        private void CutStroke(Stroke stroke)
+        {
+            InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
+            PageObjects.CollectionChanged -= PageObjects_CollectionChanged;
+            if(!stroke.ContainsPropertyData(ACLPPageBase.StrokeIDKey))
+            {
+                var newUniqueID = Guid.NewGuid().ToString();
+                stroke.AddPropertyData(ACLPPageBase.StrokeIDKey, newUniqueID);
+            }
+            Page.InkStrokes.Remove(stroke);
+
+            var allCutPageObjects = new List<ICLPPageObject>();
+            var allHalvedPageObjects = new List<ICLPPageObject>();
+            foreach(var pageObject in PageObjects)
+            {
+                var halvedPageObjects = pageObject.Cut(stroke);
+                if(!halvedPageObjects.Any() || pageObject.IsBackground)
+                {
+                    continue;
+                }
+                allCutPageObjects.Add(pageObject);
+                allHalvedPageObjects.AddRange(halvedPageObjects);
+            }
+
+            foreach(var pageObject in allCutPageObjects)
+            {
+                PageObjects.Remove(pageObject);
+            }
+
+            var allHalvedPageObjectIDs = new List<string>();
+            foreach(var pageObject in allHalvedPageObjects)
+            {
+                allHalvedPageObjectIDs.Add(pageObject.UniqueID);
+                AddPageObjectToPage(Page, pageObject, false, false);
+            }
+
+            Page.PageHistory.AddHistoryItem(new CLPHistoryPageObjectCut(Page, stroke, allCutPageObjects, allHalvedPageObjectIDs));
+
+            RefreshInkStrokes();
+            RefreshPageObjects(allHalvedPageObjects);
+
+            InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
+            PageObjects.CollectionChanged += PageObjects_CollectionChanged;
+        }
+
+        private void LassoStroke(Stroke stroke)
+        {
+            InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
+            PageObjects.CollectionChanged -= PageObjects_CollectionChanged;
+
+            var lassoedPageObjects = new List<ICLPPageObject>();
+
+            var strokeGeometry = new PathGeometry();
+            var pathFigure = new PathFigure();
+            pathFigure.StartPoint = stroke.StylusPoints.First().ToPoint();
+            pathFigure.Segments = new PathSegmentCollection();
+            var polyLine = new PolyLineSegment
+            {
+                Points = new PointCollection((Point[])stroke.StylusPoints)
+                                                       {
+                                                           stroke.StylusPoints.First().ToPoint()
+                                                       }
+            };
+            pathFigure.Segments.Add(polyLine);
+
+            strokeGeometry.Figures.Add(pathFigure);
+
+
+            foreach(var pageObject in PageObjects)
+            {
+                var pageObjectGeometry =
+                    new RectangleGeometry(new Rect(pageObject.XPosition, pageObject.YPosition, pageObject.Width,
+                                                   pageObject.Height));
+
+                if(strokeGeometry.FillContains(pageObjectGeometry))
+                {
+                    lassoedPageObjects.Add(pageObject);
+                }
+            }
+
+            var lassoedPageObjectParameterizationView = new LassoedPageObjectParameterizationView()
+            {
+                Owner = Application.Current.MainWindow
+            };
+            lassoedPageObjectParameterizationView.ShowDialog();
+
+            if(lassoedPageObjectParameterizationView.DialogResult == true)
+            {
+                int numberOfCopies;
+                try
+                {
+                    numberOfCopies = Convert.ToInt32(lassoedPageObjectParameterizationView.NumberOfCopies.Text);
+                }
+                catch(FormatException)
+                {
+                    numberOfCopies = 1;
+                }
+
+                var isHorizontallyAligned = lassoedPageObjectParameterizationView.HorizontalToggle.IsChecked != null &&
+                                            (bool)lassoedPageObjectParameterizationView.HorizontalToggle.IsChecked;
+                var isVerticallyAligned = lassoedPageObjectParameterizationView.VerticalToggle.IsChecked != null &&
+                                          (bool)lassoedPageObjectParameterizationView.VerticalToggle.IsChecked;
+
+                foreach(var lassoedPageObject in lassoedPageObjects)
+                {
+                    for(int i = 0; i < numberOfCopies; i++)
+                    {
+                        var duplicatePageObject = lassoedPageObject.Duplicate();
+                        if(isHorizontallyAligned)
+                        {
+                            duplicatePageObject.XPosition += duplicatePageObject.Width + 10;
+                        }
+                        else if(isVerticallyAligned)
+                        {
+                            duplicatePageObject.YPosition += duplicatePageObject.Height + 10;
+                        }
+                        ACLPPageObjectBase.ApplyDistinctPosition(duplicatePageObject);
+                        AddPageObjectToPage(duplicatePageObject, false);
+                        //TODO: Steve - add MassPageObjectAdd history item and MassPageObjectRemove history item.
+                    }
+                }
+            }
+
+            if(!stroke.ContainsPropertyData(ACLPPageBase.StrokeIDKey))
+            {
+                var newUniqueID = Guid.NewGuid().ToString();
+                stroke.AddPropertyData(ACLPPageBase.StrokeIDKey, newUniqueID);
+            }
+            Page.InkStrokes.Remove(stroke);
+
+            InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
+            PageObjects.CollectionChanged += PageObjects_CollectionChanged;
+        }
+
+        private void AddStroke(Stroke stroke)
+        {
+            try
+            {
+                var addedStrokeIDs = new List<string>();
+                var removedStrokes = new List<Stroke>();
+                if(!stroke.ContainsPropertyData(ACLPPageBase.StrokeIDKey))
+                {
+                    var newUniqueID = Guid.NewGuid().ToString();
+                    stroke.AddPropertyData(ACLPPageBase.StrokeIDKey, newUniqueID);
+                }
+                addedStrokeIDs.Add(stroke.GetStrokeUniqueID());
+
+                RefreshAcceptedStrokes(new List<Stroke>{ stroke }, removedStrokes);
+                Page.PageHistory.AddHistoryItem(new CLPHistoryStrokesChanged(Page, addedStrokeIDs, removedStrokes));
+            }
+            catch(Exception ex)
+            {
+                Logger.Instance.WriteToLog("InkStrokeCollectionChanged Exception: " + ex.Message);
+                Logger.Instance.WriteToLog("[UNHANDLED ERROR] - " + ex.Message + " " + (ex.InnerException != null ? "\n" + ex.InnerException.Message : null));
+                Logger.Instance.WriteToLog("[HResult]: " + ex.HResult);
+                Logger.Instance.WriteToLog("[Source]: " + ex.Source);
+                Logger.Instance.WriteToLog("[Method]: " + ex.TargetSite);
+                Logger.Instance.WriteToLog("[StackTrace]: " + ex.StackTrace);
+            }
+        }
+
+        private void RemoveStroke(IEnumerable<Stroke> removedStrokes, IEnumerable<Stroke> addedStrokes)
+        {
+            try
+            {
+                //Avoid uniqueID duplication
+                var removedStrokeIDs = removedStrokes.Select(stroke => stroke.GetPropertyData(ACLPPageBase.StrokeIDKey) as string).ToList();
+                var addedStrokeIDs = new List<string>();
+                foreach(var stroke in addedStrokes)
+                {
+                    if(!stroke.ContainsPropertyData(ACLPPageBase.StrokeIDKey))
+                    {
+                        var newUniqueID = Guid.NewGuid().ToString();
+                        stroke.AddPropertyData(ACLPPageBase.StrokeIDKey, newUniqueID);
+                    }
+
+                    //Ensures truly uniqueIDs
+                    foreach(var id in removedStrokeIDs)
+                    {
+                        if(id != stroke.GetStrokeUniqueID())
+                        {
+                            continue;
+                        }
+                        var newUniqueID = Guid.NewGuid().ToString();
+                        stroke.SetStrokeUniqueID(newUniqueID);
+                    }
+
+                    addedStrokeIDs.Add(stroke.GetStrokeUniqueID());
+                }
+                RefreshAcceptedStrokes(addedStrokes.ToList(), removedStrokes.ToList());
+                Page.PageHistory.AddHistoryItem(new CLPHistoryStrokesChanged(Page, addedStrokeIDs, removedStrokes.ToList()));
+            }
+            catch(Exception ex)
+            {
+                Logger.Instance.WriteToLog("InkStrokeCollectionChanged Exception: " + ex.Message);
+                Logger.Instance.WriteToLog("[UNHANDLED ERROR] - " + ex.Message + " " + (ex.InnerException != null ? "\n" + ex.InnerException.Message : null));
+                Logger.Instance.WriteToLog("[HResult]: " + ex.HResult);
+                Logger.Instance.WriteToLog("[Source]: " + ex.Source);
+                Logger.Instance.WriteToLog("[Method]: " + ex.TargetSite);
+                Logger.Instance.WriteToLog("[StackTrace]: " + ex.StackTrace);
+            }
+        }
+
+        #endregion //Page Interaction methods
 
         #region Static Methods
 
