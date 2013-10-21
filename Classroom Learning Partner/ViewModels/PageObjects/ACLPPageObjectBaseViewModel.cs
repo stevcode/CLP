@@ -390,7 +390,8 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                  new Point(PageObject.XPosition,
                                                                                            PageObject.YPosition));
             }
-            PageObject.ParentPage.PageHistory.EndBatch();
+            var batchHistoryItem = PageObject.ParentPage.PageHistory.EndBatch();
+            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, batchHistoryItem, true);
             PageObject.OnMoved();
 
             //TODO: refresh pageObjects here?
@@ -454,7 +455,8 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                  new Point(PageObject.Width,
                                                                                            PageObject.Height));
             }
-            PageObject.ParentPage.PageHistory.EndBatch();
+            var batchHistoryItem = PageObject.ParentPage.PageHistory.EndBatch();
+            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, batchHistoryItem, true);
 
             //TODO: refresh ink and pageObjects here?
         }
@@ -525,8 +527,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
                 else
                 {
-                    page.PageHistory.EndBatch();
                     //TODO: log this error
+                    var batchHistoryItem = page.PageHistory.EndBatch();
+                    ACLPPageBaseViewModel.AddHistoryItemToPage(page, batchHistoryItem, true);
                 }
             }
 
@@ -552,8 +555,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
                 else
                 {
-                    page.PageHistory.EndBatch();
                     //TODO: log this error
+                    var batchHistoryItem = page.PageHistory.EndBatch();
+                    ACLPPageBaseViewModel.AddHistoryItemToPage(page, batchHistoryItem, true);
                 }
             }
             pageObject.Height = height;

@@ -755,7 +755,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 AddPageObjectToPage(Page, pageObject, false, false);
             }
 
-            Page.PageHistory.AddHistoryItem(new CLPHistoryPageObjectCut(Page, stroke, allCutPageObjects, allHalvedPageObjectIDs));
+            AddHistoryItemToPage(Page, new CLPHistoryPageObjectCut(Page, stroke, allCutPageObjects, allHalvedPageObjectIDs));
 
             RefreshInkStrokes();
             RefreshPageObjects(allHalvedPageObjects);
@@ -867,7 +867,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 addedStrokeIDs.Add(stroke.GetStrokeUniqueID());
 
                 RefreshAcceptedStrokes(new List<Stroke>{ stroke }, removedStrokes);
-                Page.PageHistory.AddHistoryItem(new CLPHistoryStrokesChanged(Page, addedStrokeIDs, removedStrokes));
+                AddHistoryItemToPage(Page, new CLPHistoryStrokesChanged(Page, addedStrokeIDs, removedStrokes));
             }
             catch(Exception ex)
             {
@@ -909,7 +909,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     addedStrokeIDs.Add(stroke.GetStrokeUniqueID());
                 }
                 RefreshAcceptedStrokes(addedStrokes.ToList(), removedStrokes.ToList());
-                Page.PageHistory.AddHistoryItem(new CLPHistoryStrokesChanged(Page, addedStrokeIDs, removedStrokes.ToList()));
+                AddHistoryItemToPage(Page, new CLPHistoryStrokesChanged(Page, addedStrokeIDs, removedStrokes.ToList()));
             }
             catch(Exception ex)
             {
@@ -926,11 +926,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Static Methods
 
-        public static void AddHistoryItemToPage(ICLPPage page, ICLPHistoryItem historyItem)
+        public static void AddHistoryItemToPage(ICLPPage page, ICLPHistoryItem historyItem, bool isBatch = false)
         {
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
-            App.MainWindowViewModel.Ribbon.CanGroupSendToTeacher = true;    
-            page.PageHistory.AddHistoryItem(historyItem);
+            App.MainWindowViewModel.Ribbon.CanGroupSendToTeacher = true;
+            if(!isBatch)
+            {
+                page.PageHistory.AddHistoryItem(historyItem); 
+            }
 
             if(App.CurrentUserMode != App.UserMode.Instructor || App.Network.ProjectorProxy == null)
             {
@@ -1007,7 +1010,7 @@ namespace Classroom_Learning_Partner.ViewModels
             
             if(addToHistory)
             {
-                page.PageHistory.AddHistoryItem(new CLPHistoryPageObjectAdd(page, pageObject.UniqueID, (index == -1) ? (page.PageObjects.Count - 1) : index));
+                AddHistoryItemToPage(page, new CLPHistoryPageObjectAdd(page, pageObject.UniqueID, (index == -1) ? (page.PageObjects.Count - 1) : index));
             }
 
             if(forceSelectMode)
@@ -1028,7 +1031,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if(addToHistory)
             {
-                page.PageHistory.AddHistoryItem(new CLPHistoryPageObjectsMassAdd(page, pageObjectIDs));
+                AddHistoryItemToPage(page, new CLPHistoryPageObjectsMassAdd(page, pageObjectIDs));
             }
 
             if(forceSelectMode)
@@ -1048,7 +1051,7 @@ namespace Classroom_Learning_Partner.ViewModels
             if(addToHistory)
             {
                 var currentIndex = page.PageObjects.IndexOf(pageObject);
-                page.PageHistory.AddHistoryItem(new CLPHistoryPageObjectRemove(page, pageObject, currentIndex));
+                AddHistoryItemToPage(page, new CLPHistoryPageObjectRemove(page, pageObject, currentIndex));
             }
             pageObject.OnRemoved();
             page.PageObjects.Remove(pageObject);

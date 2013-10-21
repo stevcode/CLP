@@ -249,7 +249,8 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             else
             {
-                PageObject.ParentPage.PageHistory.EndBatch();
+                var batchHistoryItem = PageObject.ParentPage.PageHistory.EndBatch();
+                ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, batchHistoryItem, true);
                 //TODO: log this error
             }
         }      
@@ -423,7 +424,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 StampCopy.YPosition = yPosition;
             }
 
-            PageObject.ParentPage.PageHistory.AddHistoryItem(new CLPHistoryStampPlace(PageObject.ParentPage, StampCopy.UniqueID));
+            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryStampPlace(PageObject.ParentPage, StampCopy.UniqueID));
             StampCopy.OnAdded();
         }
 
