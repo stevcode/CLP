@@ -296,7 +296,11 @@
                               Command="{Binding InsertArrayCommand}"
                               CommandParameter="CARD" />-->
 
-                <!--TODO: FACTORCARD - FactorCard Button, pass CommandParameter "FACTORCARD" -->
+                <RibbonButton Label="Factor Card"
+                              LargeImageSource="pack://application:,,,/Resources/Images/FactorCard32.png"
+                              SmallImageSource="pack://application:,,,/Resources/Images/FactorCard16.png"
+                              Command="{Binding InsertArrayCommand}"
+                              CommandParameter="FACTORCARD" />
 
                 <RibbonButton Label="Stamp"
                               LargeImageSource="pack://application:,,,/Resources/Images/Stamp32.png"

@@ -110,7 +110,6 @@ namespace CLP.Models
             CanAcceptPageObjects = true;
 
             IsGridOn = rows < 45 && columns < 45;
-            //TODO: FACTORCARD - add bool property IsFactorCard, default false
             Rows = rows;
             Columns = columns;
 
@@ -182,6 +181,23 @@ namespace CLP.Models
         }
 
         public static readonly PropertyData IsLabelOnProperty = RegisterProperty("IsLabelOn", typeof(bool), true);
+
+        /// <summary>
+        /// Sets whether or not the array is a factor card
+        /// </summary>
+        public bool IsFactorCard
+        {
+            get
+            {
+                return GetValue<bool>(IsFactorCardProperty);
+            }
+            set
+            {
+                SetValue(IsFactorCardProperty, value);
+            }
+        }
+
+        public static readonly PropertyData IsFactorCardProperty = RegisterProperty("IsFactorCard", typeof(bool), false);
 
         /// <summary>
         /// The Height of the Array.

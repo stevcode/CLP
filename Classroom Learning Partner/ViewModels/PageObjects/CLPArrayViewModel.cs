@@ -97,6 +97,25 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData IsSnappableProperty = RegisterProperty("IsSnappable", typeof(bool));
 
         /// <summary>
+        /// Whether or not the array is a factor card
+        /// This property is automatically mapped to the corresponding property in PageObject.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public bool IsFactorCard
+        {
+            get
+            {
+                return GetValue<bool>(IsFactorCardProperty);
+            }
+            set
+            {
+                SetValue(IsFactorCardProperty, value);
+            }
+        }
+
+        public static readonly PropertyData IsFactorCardProperty = RegisterProperty("IsFactorCard", typeof(bool));
+
+        /// <summary>
         /// Gets or sets the Rows value
         /// </summary>
         [ViewModelToModel("PageObject")]

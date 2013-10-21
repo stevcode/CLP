@@ -10,6 +10,7 @@
     <UserControl.Resources>
         <oldconv:LengthConverter x:Key="LengthConverter" />
         <oldconv:NegativeLengthSubtractConverter x:Key="NegativeLengthSubtractConverter" />
+        <oldconv:InvertBoolConverter x:Key="InvertBoolConverter" />
         <conv:ZeroToQuestionMarkConverter x:Key="ZeroToQuestionMarkConverter" />
         <conv:DoubleToVisibilityConverter x:Key="DoubleToVisibilityConverter" />
         <conv:AllBoolToVisibilityMultiConverter x:Key="AllBoolToVisibilityMultiConverter" />
@@ -295,8 +296,21 @@
                        FontWeight="Bold" FontSize="{Binding PageObject.LabelLength}"
                        Foreground="{StaticResource TopLabelColor}"
                        Height="{Binding PageObject.LabelLength}"
+                       Width="{Binding ArrayWidth}">
+                <TextBlock.Visibility>
+                    <MultiBinding Converter="{StaticResource AllBoolToVisibilityMultiConverter}">
+                        <Binding Path="IsLabelOn" />
+                        <Binding Path="IsFactorCard" Converter="{StaticResource InvertBoolConverter}" />
+                    </MultiBinding>
+                </TextBlock.Visibility>
+            </TextBlock>
+            <TextBlock Grid.Column="1" Grid.Row="0" IsHitTestVisible="False" 
+                       Text="?" TextAlignment="Center"
+                       FontWeight="Bold" FontSize="{Binding PageObject.LabelLength}"
+                       Foreground="{StaticResource TopLabelColor}"
+                       Height="{Binding PageObject.LabelLength}"
                        Width="{Binding ArrayWidth}"
-                       Visibility="{Binding IsLabelOn, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                       Visibility="{Binding IsFactorCard, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
             <TextBlock Grid.Column="0" Grid.Row="1" IsHitTestVisible="False"
                        Text="{Binding Rows}" TextAlignment="Center"
@@ -320,14 +334,13 @@
                        Width="{Binding ArrayWidth}" Height="{Binding ArrayHeight}"
                        Fill="{Binding PageObject.BackgroundColor}" StrokeThickness="0" Opacity="0.20" />
 
-            <!-- TODO: FACTORCARD - 
             <TextBlock Grid.Column="1" Grid.Row="1" IsHitTestVisible="False"
                        Text="64" TextAlignment="Center"
-                       FontWeight="Bold" FontSize="PICK SIZE"
-                       Foreground="COLOR"
+                       FontWeight="Bold" FontSize="32"
+                       Foreground="Black"
                        Height="{Binding ArrayHeight}"
                        Width="{Binding ArrayWidth}"
-                       Visibility="{Binding PageObject.IsFactorCard, Converter={StaticResource BooleanToVisibilityConverter}}" />-->
+                       Visibility="{Binding PageObject.IsFactorCard, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
             <!--Grid Lines-->
             <ItemsControl Grid.Row="1" Grid.Column="1"
@@ -483,13 +496,12 @@
                                                           ConverterParameter=0}"
                                   Width="{Binding Length}"
                                   Height="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
-                                <TextBlock IsHitTestVisible="False"
+                                <TextBlock IsHitTestVisible="False" 
                                            Text="{Binding Value, Converter={StaticResource ZeroToQuestionMarkConverter}}" TextAlignment="Center"
                                            FontSize="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
                                            Foreground="{StaticResource TopLabelColor}"
                                            Height="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
                                            Width="{Binding Length}" />
-                                <!--TODO: FACTORCARD - textblock similar to above, visibility based on IsFactorCard, Text="?" -->
                                 <Rectangle Tag="TopLabelHitBox" Fill="Transparent" MouseMove="TopDivisorButton_Mouse"
                                            Width="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
                                            Height="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
