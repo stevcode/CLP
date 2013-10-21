@@ -69,5 +69,6 @@ namespace CLP.Models
 
         protected abstract void RedoAction(bool isAnimationRedo);
 
+        public abstract ICLPHistoryItem UndoRedoCompleteClone();
     }
 }

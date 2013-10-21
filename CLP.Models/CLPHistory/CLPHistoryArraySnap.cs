@@ -113,14 +113,8 @@ namespace CLP.Models
         /// </summary>
         public ObservableCollection<CLPArrayDivision> PersistingArrayVerticalDivisions
         {
-            get
-            {
-                return GetValue<ObservableCollection<CLPArrayDivision>>(PersistingArrayVerticalDivisionsProperty);
-            }
-            set
-            {
-                SetValue(PersistingArrayVerticalDivisionsProperty, value);
-            }
+            get { return GetValue<ObservableCollection<CLPArrayDivision>>(PersistingArrayVerticalDivisionsProperty); }
+            set { SetValue(PersistingArrayVerticalDivisionsProperty, value); }
         }
 
         public static readonly PropertyData PersistingArrayVerticalDivisionsProperty = RegisterProperty("PersistingArrayVerticalDivisions", typeof(ObservableCollection<CLPArrayDivision>));
@@ -178,6 +172,7 @@ namespace CLP.Models
             }
 
             SnappedArray.SizeArrayToGridLevel(SnappedArraySquareSize);
+            SnappedArray.ParentPage = ParentPage;
             ParentPage.PageObjects.Add(SnappedArray);
             SnappedArray = null;
 
@@ -252,6 +247,12 @@ namespace CLP.Models
                 persistingArray.XPosition = PersistingArrayXOrYPosition;
                 PersistingArrayXOrYPosition = tempPosition;
             }
+        }
+
+        public override ICLPHistoryItem UndoRedoCompleteClone()
+        {
+            var clonedHistoryItem = Clone() as CLPHistoryArraySnap;
+            return clonedHistoryItem;
         }
 
         #endregion //Methods

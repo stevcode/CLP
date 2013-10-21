@@ -115,6 +115,30 @@ namespace CLP.Models
             PageObject = null; //no sense storing the actual pageObject for serialization if it's on the page.
         }
 
+        public override ICLPHistoryItem UndoRedoCompleteClone()
+        {
+            var clonedHistoryItem = Clone() as CLPHistoryPageObjectAdd;
+            if(clonedHistoryItem == null)
+            {
+                return null;
+            }
+
+            if(clonedHistoryItem.PageObject == null)
+            {
+                var pageObject = ParentPage.GetPageObjectByUniqueID(PageObjectUniqueID);
+
+                if(pageObject == null)
+                {
+                    Logger.Instance.WriteToLog("Failed to get pageObject by ID during UndoRedoComplete in HistoryPageObjectAdd.");
+                    return null;
+                }
+                clonedHistoryItem.PageObject = pageObject;
+                clonedHistoryItem.Index = ParentPage.PageObjects.IndexOf(pageObject);
+            }
+
+            return clonedHistoryItem;
+        }
+
         #endregion //Methods
     }
 }

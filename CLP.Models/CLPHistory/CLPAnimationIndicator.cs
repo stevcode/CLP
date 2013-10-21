@@ -68,6 +68,12 @@ namespace CLP.Models
         /// </summary>
         protected override void RedoAction(bool isAnimationRedo) {}
 
+        public override ICLPHistoryItem UndoRedoCompleteClone()
+        {
+            var clonedHistoryItem = Clone() as CLPAnimationIndicator;
+            return clonedHistoryItem;
+        }
+
         #endregion //Methods
     }
 }

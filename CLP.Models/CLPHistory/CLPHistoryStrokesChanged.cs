@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows.Ink;
 using Catel.Data;
@@ -9,7 +10,6 @@ namespace CLP.Models
     [Serializable]
     public class CLPHistoryStrokesChanged : ACLPHistoryItemBase
     {
-
         #region Constructors
 
         public CLPHistoryStrokesChanged(ICLPPage parentPage, List<string> strokeIdsAdded, List<Stroke> strokesRemoved)
@@ -18,7 +18,7 @@ namespace CLP.Models
             StrokeIDsAdded = strokeIdsAdded;
             StrokeIDsRemoved = new List<string>();
             SerializedStrokesRemoved = new List<StrokeDTO>();
-            foreach(Stroke s in strokesRemoved)
+            foreach(var s in strokesRemoved)
             {
                 StrokeIDsRemoved.Add(s.GetStrokeUniqueID());
                 SerializedStrokesRemoved.Add(new StrokeDTO(s));
@@ -103,9 +103,8 @@ namespace CLP.Models
         protected override void UndoAction(bool isAnimationUndo)
         {
             SerializedStrokesAdded = new List<StrokeDTO>();
-            foreach(string id in StrokeIDsAdded)
+            foreach(var stroke in StrokeIDsAdded.Select(id => ParentPage.GetStrokeByStrokeID(id))) 
             {
-                var stroke = ParentPage.GetStrokeByStrokeID(id);
                 SerializedStrokesAdded.Add(new StrokeDTO(stroke));
                 try
                 {
@@ -119,7 +118,7 @@ namespace CLP.Models
 
             if(SerializedStrokesRemoved != null)
             {
-                foreach(StrokeDTO serializedStroke in SerializedStrokesRemoved)
+                foreach(var serializedStroke in SerializedStrokesRemoved)
                 {
                     ParentPage.InkStrokes.Add(serializedStroke.ToStroke());
                 }
@@ -163,6 +162,26 @@ namespace CLP.Models
             {
                 Logger.Instance.WriteToLog("StrokesChanged Redo Failure: Null SerializedStrokesAdded");
             }
+        }
+
+        public override ICLPHistoryItem UndoRedoCompleteClone()
+        {
+            var clonedHistoryItem = Clone() as CLPHistoryStrokesChanged;
+            if(clonedHistoryItem == null)
+            {
+                return null;
+            }
+
+            if(clonedHistoryItem.SerializedStrokesAdded == null)
+            {
+                clonedHistoryItem.SerializedStrokesAdded = new List<StrokeDTO>();
+                foreach(var stroke in StrokeIDsAdded.Select(id => ParentPage.GetStrokeByStrokeID(id)))
+                {
+                    clonedHistoryItem.SerializedStrokesAdded.Add(new StrokeDTO(stroke));
+                }
+            }
+
+            return clonedHistoryItem;
         }
 
         #endregion //Methods

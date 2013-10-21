@@ -81,20 +81,19 @@ namespace CLP.Models
         /// </summary>
         protected override void UndoAction(bool isAnimationUndo)
         {
-            StampCopy = ParentPage.GetPageObjectByUniqueID(StampCopyId) as ICLPPageObject;
-            if(StampCopy != null && ParentPage.PageObjects.Contains(StampCopy))
+            StampCopy = ParentPage.GetPageObjectByUniqueID(StampCopyId) as CLPStampCopy;
+            if(StampCopy == null)
             {
-                PageObjectsOverStampCopy = StampCopy.GetPageObjectsOverPageObject();
-                foreach(ICLPPageObject pageObject in PageObjectsOverStampCopy)
-                {
-                    ParentPage.PageObjects.Remove(pageObject);
-                }
-                ParentPage.PageObjects.Remove(StampCopy);
+                Logger.Instance.WriteToLog("StampPlace Undo: Could not find StampCopy on Page");
+                return;
             }
-            else
+
+            PageObjectsOverStampCopy = StampCopy.GetPageObjectsOverPageObject();
+            foreach(var pageObject in PageObjectsOverStampCopy)
             {
-                Logger.Instance.WriteToLog("StampPlace Undo: Could not find StampCopy");
+                ParentPage.PageObjects.Remove(pageObject);
             }
+            ParentPage.PageObjects.Remove(StampCopy);
         }
 
         /// <summary>
@@ -105,13 +104,36 @@ namespace CLP.Models
             if(StampCopy != null)
             {
                 ParentPage.PageObjects.Add(StampCopy);
-                foreach (ICLPPageObject pageObject in PageObjectsOverStampCopy) {
-                    pageObject.IsInternalPageObject = true;
+                foreach (var pageObject in PageObjectsOverStampCopy) 
+                {
                     ParentPage.PageObjects.Add(pageObject);
                 }
             }
             StampCopy = null;
             PageObjectsOverStampCopy = null;
+        }
+
+        public override ICLPHistoryItem UndoRedoCompleteClone()
+        {
+            var clonedHistoryItem = Clone() as CLPHistoryStampPlace;
+            if(clonedHistoryItem == null)
+            {
+                return null;
+            }
+
+            if(clonedHistoryItem.StampCopy == null)
+            {
+                var stampCopy = ParentPage.GetPageObjectByUniqueID(StampCopyId) as CLPStampCopy;
+                if(stampCopy == null)
+                {
+                    Logger.Instance.WriteToLog("StampPlace UndoRedoCompleteClone: Could not find StampCopy on Page");
+                    return null;
+                }
+                clonedHistoryItem.StampCopy = stampCopy;
+                clonedHistoryItem.PageObjectsOverStampCopy = stampCopy.GetPageObjectsOverPageObject();
+            }
+
+            return clonedHistoryItem;
         }
 
         #endregion //Methods

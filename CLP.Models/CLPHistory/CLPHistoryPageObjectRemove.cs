@@ -116,6 +116,12 @@ namespace CLP.Models
             }
         }
 
+        public override ICLPHistoryItem UndoRedoCompleteClone()
+        {
+            var clonedHistoryItem = Clone() as CLPHistoryPageObjectRemove;
+            return clonedHistoryItem;
+        }
+
         #endregion //Methods
     }
 }

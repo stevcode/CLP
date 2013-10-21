@@ -194,6 +194,26 @@ namespace CLP.Models
             }
         }
 
+        public override ICLPHistoryItem UndoRedoCompleteClone()
+        {
+            var clonedHistoryItem = Clone() as CLPHistoryPageObjectCut;
+            if(clonedHistoryItem == null)
+            {
+                return null;
+            }
+
+            if(!HalvedPageObjectIDs.Any())
+            {
+                Logger.Instance.WriteToLog("Empty HalvedPageObjectIDs in CLPHistoryPageObjectCut during UndoRedoCompleteClone.");
+                return null;
+            }
+
+            var halvedPageObjects = HalvedPageObjectIDs.Select(halvedPageObjectID => ParentPage.GetPageObjectByUniqueID(halvedPageObjectID)).ToList();
+            clonedHistoryItem.HalvedPageObjects = halvedPageObjects;
+
+            return clonedHistoryItem;
+        }
+
         #endregion //Methods
     }
 }

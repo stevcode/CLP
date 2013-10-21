@@ -226,6 +226,19 @@ namespace CLP.Models
             TravelledPositions = new List<Point>(newBatch);
         }
 
+        public override ICLPHistoryItem UndoRedoCompleteClone()
+        {
+            var clonedHistoryItem = Clone() as CLPHistoryPageObjectMoveBatch;
+            if(clonedHistoryItem == null)
+            {
+                return null;
+            }
+
+            clonedHistoryItem.CurrentBatchTickIndex = -1;
+
+            return clonedHistoryItem;
+        }
+
         #endregion //Methods
     }
 }

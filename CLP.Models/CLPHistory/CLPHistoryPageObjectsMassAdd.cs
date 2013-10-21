@@ -104,6 +104,23 @@ namespace CLP.Models
             PageObjects.Clear(); //no sense storing the actual pageObjects for serialization if it's on the page.
         }
 
+        public override ICLPHistoryItem UndoRedoCompleteClone()
+        {
+            var clonedHistoryItem = Clone() as CLPHistoryPageObjectsMassAdd;
+            if(clonedHistoryItem == null)
+            {
+                return null;
+            }
+
+            clonedHistoryItem.PageObjects.Clear();
+            foreach(var pageObject in PageObjectIDs.Select(pageObjectID => ParentPage.GetPageObjectByUniqueID(pageObjectID)))
+            {
+                clonedHistoryItem.PageObjects.Add(pageObject);
+            }
+
+            return clonedHistoryItem;
+        }
+
         #endregion //Methods
     }
 }

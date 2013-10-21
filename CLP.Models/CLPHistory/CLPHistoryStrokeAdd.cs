@@ -97,6 +97,28 @@ namespace CLP.Models
             }
         }
 
+        public override ICLPHistoryItem UndoRedoCompleteClone()
+        {
+            var clonedHistoryItem = Clone() as CLPHistoryStrokeAdd;
+            if(clonedHistoryItem == null)
+            {
+                return null;
+            }
+
+            if(clonedHistoryItem.SerializedStroke == null)
+            {
+                var stroke = ParentPage.GetStrokeByStrokeID(StrokeID);
+                if(stroke == null)
+                {
+                    Logger.Instance.WriteToLog("Failed to get stroke by ID during UndoRedoComplete in HistoryStrokeAdd.");
+                    return null;
+                }
+                clonedHistoryItem.SerializedStroke = new StrokeDTO(stroke);
+            }
+
+            return clonedHistoryItem;
+        }
+
         #endregion //Methods
     }
 }

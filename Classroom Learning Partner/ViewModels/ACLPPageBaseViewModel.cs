@@ -616,50 +616,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 case PageInteractionMode.Eraser:
                     RemoveStroke(e.Removed, e.Added);
                     break;
-            }
-
-            App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
-            App.MainWindowViewModel.Ribbon.CanGroupSendToTeacher = true;              
-
-
-                        //if(App.CurrentUserMode != App.UserMode.Instructor)
-                        //{
-                        //    return;
-                        //}
-                        //var add = new List<StrokeDTO>(StrokeDTO.SaveInkStrokes(e.Added));
-                        //var remove = new List<StrokeDTO>(StrokeDTO.SaveInkStrokes(e.Removed));
-
-                        //var pageID = Page.SubmissionType != SubmissionType.None ? Page.SubmissionID : Page.UniqueID;
-
-                        //if(App.Network.ProjectorProxy != null)
-                        //{
-                        //    try
-                        //    {
-                        //        App.Network.ProjectorProxy.ModifyPageInkStrokes(add, remove, pageID);
-                        //    }
-                        //    catch(Exception)
-                        //    {
-                        //    }
-                        //}
-        
-                        //if(!App.MainWindowViewModel.Ribbon.BroadcastInkToStudents || Page.SubmissionType != SubmissionType.None || !App.Network.ClassList.Any())
-                        //{
-                        //    return;
-                        //}
-
-                        //foreach(var student in App.Network.ClassList)
-                        //{
-                        //    try
-                        //    {
-                        //        var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(App.Network.DefaultBinding, new EndpointAddress(student.CurrentMachineAddress));
-                        //        studentProxy.ModifyPageInkStrokes(add, remove, pageID);
-                        //        (studentProxy as ICommunicationObject).Close();
-                        //    }
-                        //    catch(Exception)
-                        //    {
-                        //    }
-                        //}
-
+            }            
         }
 
         protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
@@ -968,6 +925,57 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Page Interaction methods
 
         #region Static Methods
+
+        public static void AddHistoryItemToPage(ICLPPage page, ICLPHistoryItem historyItem)
+        {
+            App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
+            App.MainWindowViewModel.Ribbon.CanGroupSendToTeacher = true;    
+            page.PageHistory.AddHistoryItem(historyItem);
+
+            if(App.CurrentUserMode != App.UserMode.Instructor || App.Network.ProjectorProxy == null)
+            {
+                return;
+            }
+
+            var historyItemCopy = historyItem.UndoRedoCompleteClone();
+            if(historyItemCopy == null)
+            {
+                Logger.Instance.WriteToLog("Failed to UndoRedoCompleteClone history item");
+                return;
+            }
+            var historyItemString = ObjectSerializer.ToString(historyItem);
+            var zippedHistoryItem = CLPServiceAgent.Instance.Zip(historyItemString);
+
+            var pageID = page.SubmissionType != SubmissionType.None ? page.SubmissionID : page.UniqueID;
+
+            try
+            {
+                App.Network.ProjectorProxy.AddHistoryItem(pageID, zippedHistoryItem);
+            }
+            catch(Exception)
+            {
+                Logger.Instance.WriteToLog("Failed to send historyItem to Projector");
+            }
+            
+
+            //if(!App.MainWindowViewModel.Ribbon.BroadcastInkToStudents || page.SubmissionType != SubmissionType.None || !App.Network.ClassList.Any())
+            //{
+            //    return;
+            //}
+
+            //foreach(var student in App.Network.ClassList)
+            //{
+            //    try
+            //    {
+            //        var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(App.Network.DefaultBinding, new EndpointAddress(student.CurrentMachineAddress));
+            //        studentProxy.ModifyPageInkStrokes(add, remove, pageID);
+            //        (studentProxy as ICommunicationObject).Close();
+            //    }
+            //    catch(Exception)
+            //    {
+            //    }
+            //}
+        }
 
         public static void AddPageObjectToPage(ICLPPageObject pageObject, bool addToHistory = true, bool forceSelectMode = true, int index = -1)
         {

@@ -174,6 +174,19 @@ namespace CLP.Models
             StretchedDimensions = new ObservableCollection<Point>(newBatch);
         }
 
+        public override ICLPHistoryItem UndoRedoCompleteClone()
+        {
+            var clonedHistoryItem = Clone() as CLPHistoryPageObjectResizeBatch;
+            if(clonedHistoryItem == null)
+            {
+                return null;
+            }
+
+            clonedHistoryItem.CurrentBatchTickIndex = -1;
+
+            return clonedHistoryItem;
+        }
+
         #endregion //Methods
     }
 }
