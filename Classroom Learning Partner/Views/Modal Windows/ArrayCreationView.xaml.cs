@@ -117,6 +117,14 @@ namespace Classroom_Learning_Partner.Views
                 {
                     MessageBox.Show("The ratio between the numbers you entered is too large. Please try again.", "Okay");
                 }
+                else if(rowNum == 1 && colNum > 44)
+                {
+                    MessageBox.Show("The ratio between the numbers you entered is too large. Please try again.", "Okay");
+                }
+                else if(colNum == 1 && rowNum > 44)
+                {
+                    MessageBox.Show("The ratio between the numbers you entered is too large. Please try again.", "Okay");
+                }
                 else
                 {
                     DialogResult = true;
