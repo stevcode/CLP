@@ -124,6 +124,8 @@ namespace CLP.Models
                     }
                 }
 
+                //TODO: move child pageObjects as well, also for REDO
+
                 pageObject.XPosition = travelledPosition.X;
                 pageObject.YPosition = travelledPosition.Y;
                 CurrentBatchTickIndex--;

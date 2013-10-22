@@ -597,6 +597,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     LassoStroke(stroke);
                 }
                     break;
+                case PageInteractionMode.Select:
                 case PageInteractionMode.Highlighter:
                 case PageInteractionMode.Pen:
                     if(e.Removed.Any())
