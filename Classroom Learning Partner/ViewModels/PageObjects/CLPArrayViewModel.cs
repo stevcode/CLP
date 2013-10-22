@@ -101,19 +101,17 @@ namespace Classroom_Learning_Partner.ViewModels
         /// This property is automatically mapped to the corresponding property in PageObject.
         /// </summary>
         [ViewModelToModel("PageObject")]
-        public bool IsFactorCard
+        public bool IsProductVisible
         {
-            get
-            {
-                return GetValue<bool>(IsFactorCardProperty);
-            }
+            get { return GetValue<bool>(IsProductVisibleProperty); }
             set
             {
-                SetValue(IsFactorCardProperty, value);
+                SetValue(IsProductVisibleProperty, value);
+                RaisePropertyChanged("IsToggleGridAdornerVisible");
             }
         }
 
-        public static readonly PropertyData IsFactorCardProperty = RegisterProperty("IsFactorCard", typeof(bool));
+        public static readonly PropertyData IsProductVisibleProperty = RegisterProperty("IsProductVisible", typeof(bool));
 
         /// <summary>
         /// Gets or sets the Rows value
@@ -285,7 +283,10 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public bool IsToggleGridAdornerVisible
         {
-            get { return IsDefaultAdornerVisible && Rows < 51 && Columns < 51; }
+            get
+            {
+                return IsDefaultAdornerVisible && Rows < 51 && Columns < 51; // && !IsProductVisible;
+            }
         }
 
         #endregion //Bindings

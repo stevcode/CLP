@@ -2228,7 +2228,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         array.IsDivisionBehaviorOn = false;
                         array.IsSnappable = false;
                         array.IsGridOn = false;
-                        array.IsFactorCard = true;
+                        array.IsProductVisible = true;
                         break;
                 }
 
@@ -2323,7 +2323,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         array.IsDivisionBehaviorOn = false;
                         array.IsSnappable = false;
                         array.IsGridOn = false;
-                        array.IsFactorCard = true;
+                        array.IsProductVisible = true;
                         break;
                 }
 

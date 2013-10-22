@@ -8,12 +8,13 @@
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters">
 
     <UserControl.Resources>
+        <catel:BooleanToOppositeBooleanConverter x:Key="BooleanToOppositeBooleanConverter" />
         <oldconv:LengthConverter x:Key="LengthConverter" />
         <oldconv:NegativeLengthSubtractConverter x:Key="NegativeLengthSubtractConverter" />
-        <oldconv:InvertBoolConverter x:Key="InvertBoolConverter" />
         <conv:ZeroToQuestionMarkConverter x:Key="ZeroToQuestionMarkConverter" />
         <conv:DoubleToVisibilityConverter x:Key="DoubleToVisibilityConverter" />
         <conv:AllBoolToVisibilityMultiConverter x:Key="AllBoolToVisibilityMultiConverter" />
+        <conv:MultiplyAllIntToTextMultiConverter x:Key="MultiplyAllIntToTextMultiConverter" />
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <Style x:Key="HorizontalGridLineStyle">
             <Setter Property="Canvas.Left"
@@ -300,7 +301,7 @@
                 <TextBlock.Visibility>
                     <MultiBinding Converter="{StaticResource AllBoolToVisibilityMultiConverter}">
                         <Binding Path="IsLabelOn" />
-                        <Binding Path="IsFactorCard" Converter="{StaticResource InvertBoolConverter}" />
+                        <Binding Path="IsProductVisible" Converter="{StaticResource BooleanToOppositeBooleanConverter}" />
                     </MultiBinding>
                 </TextBlock.Visibility>
             </TextBlock>
@@ -310,7 +311,7 @@
                        Foreground="{StaticResource TopLabelColor}"
                        Height="{Binding PageObject.LabelLength}"
                        Width="{Binding ArrayWidth}"
-                       Visibility="{Binding IsFactorCard, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                       Visibility="{Binding IsProductVisible, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
             <TextBlock Grid.Column="0" Grid.Row="1" IsHitTestVisible="False"
                        Text="{Binding Rows}" TextAlignment="Center"
@@ -335,12 +336,19 @@
                        Fill="{Binding PageObject.BackgroundColor}" StrokeThickness="0" Opacity="0.20" />
 
             <TextBlock Grid.Column="1" Grid.Row="1" IsHitTestVisible="False"
-                       Text="64" TextAlignment="Center"
+                       TextAlignment="Center"
                        FontWeight="Bold" FontSize="32"
                        Foreground="Black"
-                       Height="{Binding ArrayHeight}"
-                       Width="{Binding ArrayWidth}"
-                       Visibility="{Binding PageObject.IsFactorCard, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
+                       Visibility="{Binding IsProductVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <TextBlock.Text>
+                    <MultiBinding Converter="{StaticResource MultiplyAllIntToTextMultiConverter}">
+                        <Binding Path="Columns" />
+                        <Binding Path="Rows" />
+                    </MultiBinding>
+                </TextBlock.Text>
+            </TextBlock>
 
             <!--Grid Lines-->
             <ItemsControl Grid.Row="1" Grid.Column="1"

@@ -99,7 +99,6 @@
                         </i:EventTrigger>
                         <i:EventTrigger EventName="DragStarted">
                             <catel:EventToCommand Command="{Binding ResizeStartPageObjectCommand}" PassEventArgsToCommand="True" />
-                            <!--TODO: Make ResizeStampCommand for aspect ratio enforcing-->
                         </i:EventTrigger>
                         <i:EventTrigger EventName="DragCompleted">
                             <catel:EventToCommand Command="{Binding ResizeStopPageObjectCommand}" PassEventArgsToCommand="True" />

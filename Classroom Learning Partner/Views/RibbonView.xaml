@@ -290,11 +290,11 @@
                               Command="{Binding InsertArrayCommand}"
                               CommandParameter="DEFAULT" />
 
-                <!--<RibbonButton Label="Array Card"
+                <RibbonButton Label="Array Card"
                               LargeImageSource="pack://application:,,,/Resources/Images/ArrayCard32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/ArrayCard16.png"
                               Command="{Binding InsertArrayCommand}"
-                              CommandParameter="CARD" />-->
+                              CommandParameter="CARD" />
 
                 <RibbonButton Label="Factor Card"
                               LargeImageSource="pack://application:,,,/Resources/Images/FactorCard32.png"

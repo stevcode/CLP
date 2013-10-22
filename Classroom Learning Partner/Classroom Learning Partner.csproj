@@ -191,6 +191,7 @@
     <Compile Include="Converters\HeightToWidthAspectRatioMultiConverter.cs" />
     <Compile Include="Converters\ItemsControlItemIndexConverter.cs" />
     <Compile Include="Converters\ItemSelectedToColorConverter.cs" />
+    <Compile Include="Converters\MultiplyAllIntToTextMultiConverter.cs" />
     <Compile Include="Converters\ProjectedDisplayBackgroundConverter.cs" />
     <Compile Include="Converters\TypeToStringConverter.cs" />
     <Compile Include="Converters\WidthToHeightAspectRatioMultiConverter.cs" />

@@ -93,13 +93,7 @@ namespace CLP.Models
     [Serializable]
     public class CLPArray : ACLPPageObjectBase
     {
-        public double LabelLength
-        {
-            get
-            {
-                return 22;
-            }
-        }
+        public double LabelLength { get { return 22; } }
 
         #region Constructors
 
@@ -185,19 +179,13 @@ namespace CLP.Models
         /// <summary>
         /// Sets whether or not the array is a factor card
         /// </summary>
-        public bool IsFactorCard
+        public bool IsProductVisible
         {
-            get
-            {
-                return GetValue<bool>(IsFactorCardProperty);
-            }
-            set
-            {
-                SetValue(IsFactorCardProperty, value);
-            }
+            get { return GetValue<bool>(IsProductVisibleProperty); }
+            set { SetValue(IsProductVisibleProperty, value); }
         }
 
-        public static readonly PropertyData IsFactorCardProperty = RegisterProperty("IsFactorCard", typeof(bool), false);
+        public static readonly PropertyData IsProductVisibleProperty = RegisterProperty("IsProductVisible", typeof(bool), false);
 
         /// <summary>
         /// The Height of the Array.
