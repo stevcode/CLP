@@ -13,10 +13,11 @@ namespace CLP.Models
     {
         #region Constructor
 
-        public CLPHistoryPartsChanged(ICLPPage parentPage, string pageObjectID, int newPartsValue, int oldPartsValue) 
+        public CLPHistoryPartsChanged(ICLPPage parentPage, string pageObjectID, int previousParts) 
             : base(parentPage)
         {
             PageObjectID = pageObjectID;
+            Parts = previousParts;
         }
 
         /// <summary>

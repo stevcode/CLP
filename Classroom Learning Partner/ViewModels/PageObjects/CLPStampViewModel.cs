@@ -491,7 +491,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 keyPad.ShowDialog();
                 if(keyPad.DialogResult == true && keyPad.NumbersEntered.Text.Length > 0)
                 {
-                    PageObject.Parts = Int32.Parse(keyPad.NumbersEntered.Text);
+                    var oldParts = PageObject.Parts;
+                    var parts = Int32.Parse(keyPad.NumbersEntered.Text);
+                    PageObject.Parts = parts;
+                    ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryPartsChanged(PageObject.ParentPage, PageObject.UniqueID, oldParts));
                     if(App.MainWindowViewModel.IsAuthoring)
                     {
                         (PageObject as CLPStamp).PartsAuthorGenerated = true;
