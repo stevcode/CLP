@@ -366,6 +366,8 @@ namespace CLP.Models
 
         public void OnResized()
         {
+            StampCopy.Height = Height - HandleHeight - PartsHeight;
+            StampCopy.Width = Width;
         }
 
         public void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)

@@ -227,6 +227,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 newWidth = Width;
             }
 
+            //may be able to get away with just calling OnResized() and calling normal ChangePageObjectSize method
             Height = newHeight;
             StampCopy.Height = newHeight - CLPStamp.HandleHeight - CLPStamp.PartsHeight;
             Width = newWidth;
@@ -279,13 +280,15 @@ namespace Classroom_Learning_Partner.ViewModels
                     newStroke.Transform(transform, true);
                     clonedStrokes.Add(newStroke);
                 }
-
+                PageObject.CanAcceptStrokes = false;
                 StampCopy.SerializedStrokes = StrokeDTO.SaveInkStrokes(clonedStrokes);
                 StampCopy.IsStamped = true;
             } 
             else 
             {
                 MessageBox.Show("What are you counting on the stamp?  Please click the questionmark on the line below the stamp before making copies.", "What are you counting?");
+                App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.Pen;
+                App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.Select;
             }  
         }
 
@@ -341,7 +344,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     ACLPPageBaseViewModel.AddPageObjectToPage(PageObject.ParentPage, leftBehindStamp, false);
                 }
-             //   leftBehindStamp.Parts = Parts;
             }
             catch(Exception ex)
             {
@@ -429,7 +431,7 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
-        /// Stamp Dragged By Adorner
+        /// Stamp Dragged By Handle
         /// </summary>
         public Command<DragDeltaEventArgs> DragStampCommand { get; private set; }
 
@@ -438,37 +440,26 @@ namespace Classroom_Learning_Partner.ViewModels
             IsAdornerVisible = false;
             IsMouseOverShowEnabled = false;
 
-            var x = PageObject.XPosition + e.HorizontalChange;
-            var y = PageObject.YPosition + e.VerticalChange;
-            if (x < 0)
+            var newX = PageObject.XPosition + e.HorizontalChange;
+            var newY = PageObject.YPosition + e.VerticalChange;
+            if(newX < 0)
             {
-                x = 0;
+                newX = 0;
             }
-            if (y < - CLPStamp.HandleHeight)
+            if(newY < -CLPStamp.HandleHeight)
             {
-                y = -CLPStamp.HandleHeight;
+                newY = -CLPStamp.HandleHeight;
             }
-            if (x > PageObject.ParentPage.PageWidth - PageObject.Width)
+            if(newX > PageObject.ParentPage.PageWidth - PageObject.Width)
             {
-                x = PageObject.ParentPage.PageWidth - PageObject.Width;
+                newX = PageObject.ParentPage.PageWidth - PageObject.Width;
             }
-            if(y > PageObject.ParentPage.PageHeight - PageObject.Height + CLPStamp.PartsHeight)
+            if(newY > PageObject.ParentPage.PageHeight - PageObject.Height + CLPStamp.PartsHeight)
             {
-                y = PageObject.ParentPage.PageHeight - PageObject.Height + CLPStamp.PartsHeight;
-            }
-
-            var xDelta = x - PageObject.XPosition;
-            var yDelta = y - PageObject.YPosition;
-
-            foreach(var pageObject in PageObject.GetPageObjectsOverPageObject())
-            {
-                var pageObjectPt = new Point((xDelta + pageObject.XPosition), (yDelta + pageObject.YPosition));
-                ChangePageObjectPosition(pageObject, pageObjectPt);
+                newY = PageObject.ParentPage.PageHeight - PageObject.Height + CLPStamp.PartsHeight;
             }
 
-            var pt = new Point(x, y);
-
-            ChangePageObjectPosition(PageObject, pt);
+            ChangePageObjectPosition(PageObject, newX, newY, false);
         }
 
         /// <summary>

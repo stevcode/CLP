@@ -310,54 +310,28 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnDragPageObjectCommandExecute(DragDeltaEventArgs e)
         {
-            var parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
+            var parentPage = PageObject.ParentPage;
 
-            double x = PageObject.XPosition + e.HorizontalChange;
-            double y = PageObject.YPosition + e.VerticalChange;
-            if (x < 0)
+            var newX = PageObject.XPosition + e.HorizontalChange;
+            var newY = PageObject.YPosition + e.VerticalChange;
+            if(newX < 0)
             {
-                x = 0;
+                newX = 0;
             }
-            if (y < 0)
+            if(newY < 0)
             {
-                y = 0;
+                newY = 0;
             }
-            if (x > parentPage.PageWidth - PageObject.Width)
+            if(newX > parentPage.PageWidth - PageObject.Width)
             {
-                x = parentPage.PageWidth - PageObject.Width;
+                newX = parentPage.PageWidth - PageObject.Width;
             }
-            if (y > parentPage.PageHeight - PageObject.Height)
+            if(newY > parentPage.PageHeight - PageObject.Height)
             {
-                y = parentPage.PageHeight - PageObject.Height;
+                newY = parentPage.PageHeight - PageObject.Height;
             }
-            Point pt = new Point(x, y);
 
-            if (PageObject.CanAcceptStrokes) //TODO: Steve - Move to ChangePOPos method in ServiceAgent.
-            {
-                double xDelta = x - PageObject.XPosition;
-                double yDelta = y - PageObject.YPosition;
-                Matrix moveStroke = new Matrix();
-                moveStroke.Translate(xDelta, yDelta);
-
-                StrokeCollection strokesToMove = PageObject.GetStrokesOverPageObject();
-                foreach(Stroke stroke in strokesToMove)
-                {  
-                    stroke.Transform(moveStroke, true);  
-                }
-            }
-            
-            /*if (PageObject.PageObjectObjectParentIDs.Any())
-            {
-                double xDelta = x - PageObject.XPosition;
-                double yDelta = y - PageObject.YPosition;
-
-                foreach(ICLPPageObject pageObject in PageObject.GetPageObjectsOverPageObject())
-                {
-                    Point pageObjectPt = new Point((xDelta + pageObject.XPosition), (yDelta + pageObject.YPosition));
-                    CLPServiceAgent.Instance.ChangePageObjectPosition(pageObject, pageObjectPt);
-                }
-            }*/
-            ChangePageObjectPosition(PageObject, pt, x, y, true);
+            ChangePageObjectPosition(PageObject, newX, newY);
         }
 
         /// <summary>
@@ -393,8 +367,6 @@ namespace Classroom_Learning_Partner.ViewModels
             var batchHistoryItem = PageObject.ParentPage.PageHistory.EndBatch();
             ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, batchHistoryItem, true);
             PageObject.OnMoved();
-
-            //TODO: refresh pageObjects here?
         }
 
         /// <summary>
@@ -404,10 +376,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnResizePageObjectCommandExecute(DragDeltaEventArgs e)
         {
-            var parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
+            var parentPage = PageObject.ParentPage;
 
-            double newHeight = PageObject.Height + e.VerticalChange;
-            double newWidth = PageObject.Width + e.HorizontalChange;
+            var newHeight = PageObject.Height + e.VerticalChange;
+            var newWidth = PageObject.Width + e.HorizontalChange;
             if (newHeight < 10)
             {
                 newHeight = 10;
@@ -457,8 +429,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             var batchHistoryItem = PageObject.ParentPage.PageHistory.EndBatch();
             ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, batchHistoryItem, true);
-
-            //TODO: refresh ink and pageObjects here?
+            PageObject.OnResized();
         }
 
         #endregion //Default Adorners
@@ -489,65 +460,64 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Commands
 
-        public static void ChangePageObjectPosition(ICLPPageObject pageObject, Point pt)
-        { 
-            ChangePageObjectPosition(pageObject, pt, 0, 0, false);
-        }
-
-        public static void ChangePageObjectPosition(ICLPPageObject pageObject, Point pt, double x, double y, bool usexy)
+        public static void ChangePageObjectPosition(ICLPPageObject pageObject, double newX, double newY, bool useHistory = true)
         {
-            if(usexy)
-            {
-                if(pageObject.PageObjectObjectParentIDs.Any())
-                {
-                    double xDelta = x - pageObject.XPosition;
-                    double yDelta = y - pageObject.YPosition;
+            var oldXPos = pageObject.XPosition;
+            var oldYPos = pageObject.YPosition;
+            var xDelta = newX - oldXPos;
+            var yDelta = newY - oldYPos;
 
-                    foreach(ICLPPageObject pageObject1 in pageObject.GetPageObjectsOverPageObject())
-                    {
-                        Point pageObjectPt = new Point((xDelta + pageObject1.XPosition), (yDelta + pageObject1.YPosition));
-                        ChangePageObjectPosition(pageObject1, pageObjectPt);
-                    }
+            if(pageObject.CanAcceptPageObjects && pageObject.PageObjectObjectParentIDs.Any())
+            {
+                foreach(var childPageObject in pageObject.GetPageObjectsOverPageObject())
+                {
+                    ChangePageObjectPosition(childPageObject, xDelta + childPageObject.XPosition, yDelta + childPageObject.YPosition, false);
                 }
             }
 
-            double oldXPos = pageObject.XPosition;
-            double oldYPos = pageObject.YPosition;
-            var page = pageObject.ParentPage;
-            
-            double xDiff = Math.Abs(oldXPos - pt.X);
-            double yDiff = Math.Abs(oldYPos - pt.Y);
-            double diff = xDiff + yDiff;
-            if(diff > CLPHistory.SAMPLE_RATE)
+            if(pageObject.CanAcceptStrokes && pageObject.PageObjectStrokeParentIDs.Any())
             {
-                var batch = page.PageHistory.CurrentHistoryBatch;
+                var moveStroke = new Matrix();
+                moveStroke.Translate(xDelta, yDelta);
+
+                foreach(var stroke in pageObject.GetStrokesOverPageObject())
+                {
+                    stroke.Transform(moveStroke, true);
+                }
+            }
+
+            var xDiff = Math.Abs(xDelta);
+            var yDiff = Math.Abs(yDelta);
+            var diff = xDiff + yDiff;
+            if(diff > CLPHistory.SAMPLE_RATE && useHistory)
+            {
+                var batch = pageObject.ParentPage.PageHistory.CurrentHistoryBatch;
                 if(batch is CLPHistoryPageObjectMoveBatch)
                 {
-                    (batch as CLPHistoryPageObjectMoveBatch).AddPositionPointToBatch(pageObject.UniqueID, pt);
+                    (batch as CLPHistoryPageObjectMoveBatch).AddPositionPointToBatch(pageObject.UniqueID, new Point(newX, newY));
                 }
                 else
                 {
-                    //TODO: log this error
-                    var batchHistoryItem = page.PageHistory.EndBatch();
-                    ACLPPageBaseViewModel.AddHistoryItemToPage(page, batchHistoryItem, true);
+                    Logger.Instance.WriteToLog("Error: Current Batch not ChangePositionBatch.");
+                    var batchHistoryItem = pageObject.ParentPage.PageHistory.EndBatch();
+                    ACLPPageBaseViewModel.AddHistoryItemToPage(pageObject.ParentPage, batchHistoryItem, true);
                 }
             }
 
-            pageObject.XPosition = pt.X;
-            pageObject.YPosition = pt.Y;
+            pageObject.XPosition = newX;
+            pageObject.YPosition = newY;
         }
 
-        public static void ChangePageObjectDimensions(ICLPPageObject pageObject, double height, double width)
+        public static void ChangePageObjectDimensions(ICLPPageObject pageObject, double height, double width, bool useHistory = true)
         {
             var oldHeight = pageObject.Height;
             var oldWidth = pageObject.Width;
-            var page = pageObject.ParentPage;
             var heightDiff = Math.Abs(oldHeight - height);
             var widthDiff = Math.Abs(oldWidth - width);
             var diff = heightDiff + widthDiff;
-            if(diff > CLPHistory.SAMPLE_RATE)
+            if(diff > CLPHistory.SAMPLE_RATE && useHistory)
             {
-                var batch = page.PageHistory.CurrentHistoryBatch;
+                var batch = pageObject.ParentPage.PageHistory.CurrentHistoryBatch;
                 if(batch is CLPHistoryPageObjectResizeBatch)
                 {
                     (batch as CLPHistoryPageObjectResizeBatch).AddResizePointToBatch(pageObject.UniqueID,
@@ -555,11 +525,12 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
                 else
                 {
-                    //TODO: log this error
-                    var batchHistoryItem = page.PageHistory.EndBatch();
-                    ACLPPageBaseViewModel.AddHistoryItemToPage(page, batchHistoryItem, true);
+                    Logger.Instance.WriteToLog("Error: Current Batch not ResizeBatch.");
+                    var batchHistoryItem = pageObject.ParentPage.PageHistory.EndBatch();
+                    ACLPPageBaseViewModel.AddHistoryItemToPage(pageObject.ParentPage, batchHistoryItem, true);
                 }
             }
+
             pageObject.Height = height;
             pageObject.Width = width;
         }

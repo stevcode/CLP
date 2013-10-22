@@ -103,9 +103,11 @@ namespace CLP.Models
         {
             if(StampCopy != null)
             {
+                StampCopy.ParentPage = ParentPage;
                 ParentPage.PageObjects.Add(StampCopy);
-                foreach (var pageObject in PageObjectsOverStampCopy) 
+                foreach (var pageObject in PageObjectsOverStampCopy)
                 {
+                    pageObject.ParentPage = ParentPage;
                     ParentPage.PageObjects.Add(pageObject);
                 }
             }
