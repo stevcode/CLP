@@ -346,7 +346,6 @@ namespace CLP.Models
             foreach(var stroke in GetStrokesOverPageObject())
             {
                 ParentPage.InkStrokes.Remove(stroke);
-                //TODO: re-write InkStrokeCollectionChanged to call RemoveStrokes and AddStrokes methods so history can work better
             }
 
             if(CanAcceptPageObjects)

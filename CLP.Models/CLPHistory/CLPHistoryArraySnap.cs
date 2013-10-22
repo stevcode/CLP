@@ -253,6 +253,26 @@ namespace CLP.Models
         public override ICLPHistoryItem UndoRedoCompleteClone()
         {
             var clonedHistoryItem = Clone() as CLPHistoryArraySnap;
+            var persistingArray = ParentPage.GetPageObjectByUniqueID(PersistingArrayUniqueID) as CLPArray;
+            if(clonedHistoryItem == null || persistingArray == null)
+            {
+                return null;
+            }
+
+            clonedHistoryItem.PersistingArrayHorizontalDivisions = persistingArray.HorizontalDivisions;
+            clonedHistoryItem.PersistingArrayVerticalDivisions = persistingArray.VerticalDivisions;
+
+            if(IsHorizontal)
+            {
+                clonedHistoryItem.PersistingArrayRowsOrColumns = persistingArray.Rows + SnappedArray.Rows;
+                clonedHistoryItem.PersistingArrayXOrYPosition = persistingArray.YPosition;
+            }
+            else
+            {
+                clonedHistoryItem.PersistingArrayRowsOrColumns = persistingArray.Columns + SnappedArray.Columns;
+                clonedHistoryItem.PersistingArrayXOrYPosition = persistingArray.XPosition;
+            }
+
             return clonedHistoryItem;
         }
 

@@ -175,6 +175,7 @@ namespace CLP.Models
 
             foreach(var halvedPageObject in HalvedPageObjects)
             {
+                halvedPageObject.ParentPage = ParentPage;
                 ParentPage.PageObjects.Add(halvedPageObject);
                 //halvedPageObject.RefreshStrokeParentIDs(); //TODO: find way to do this after CutStroke removal if is an animation.
             }

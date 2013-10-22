@@ -136,7 +136,7 @@ namespace CLP.Models
         protected override void RedoAction(bool isAnimationRedo)
         {
             SerializedStrokesRemoved = new List<StrokeDTO>();
-            foreach(string id in StrokeIDsRemoved)
+            foreach(var id in StrokeIDsRemoved)
             {
                 var stroke = ParentPage.GetStrokeByStrokeID(id);
                 SerializedStrokesRemoved.Add(new StrokeDTO(stroke));
@@ -152,7 +152,7 @@ namespace CLP.Models
 
             if(SerializedStrokesAdded != null)
             {
-                foreach(StrokeDTO serializedStroke in SerializedStrokesAdded)
+                foreach(var serializedStroke in SerializedStrokesAdded)
                 {
                     ParentPage.InkStrokes.Add(serializedStroke.ToStroke());
                 }
