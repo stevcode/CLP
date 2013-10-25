@@ -734,6 +734,22 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         var currentPageView = new CLPPagePreviewView { DataContext = page };
                         currentPageView.UpdateLayout();
+
+                        var grid = new Grid();
+                        grid.Children.Add(currentPageView);
+                        var pageIndexlabel = new Label
+                        {
+                            FontSize = 20,
+                            FontWeight = FontWeights.Bold,
+                            FontStyle = FontStyles.Oblique,
+                            HorizontalAlignment = HorizontalAlignment.Right,
+                            VerticalAlignment = VerticalAlignment.Top,
+                            Content = "Page " + page.PageIndex,
+                            Margin = new Thickness(0, transformAmount + 5, 5, 0)
+                        };
+                        grid.Children.Add(pageIndexlabel);
+                        grid.UpdateLayout();
+
                         var transform = new TransformGroup();
                         var translate = new TranslateTransform(0, -transformAmount);
                         transform.Children.Add(translate);
@@ -744,12 +760,12 @@ namespace Classroom_Learning_Partner.ViewModels
                             transform.Children.Add(rotate);
                             transform.Children.Add(translate2);
                         }
-                        currentPageView.RenderTransform = transform;
+                        grid.RenderTransform = transform;
                         transformAmount += printHeight;
 
                         var pageContent = new PageContent();
                         var fixedPage = new FixedPage();
-                        fixedPage.Children.Add(currentPageView);
+                        fixedPage.Children.Add(grid);
 
                         ((System.Windows.Markup.IAddChild)pageContent).AddChild(fixedPage);
                         document.Pages.Add(pageContent);
