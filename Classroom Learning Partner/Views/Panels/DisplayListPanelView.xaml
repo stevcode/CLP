@@ -44,8 +44,8 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
             <Grid Grid.Row="0" Background="{Binding MirrorDisplayIsOnProjector, Converter={StaticResource ProjectedDisplayBackgroundConverter}}"
@@ -116,7 +116,13 @@
             <Rectangle Grid.Row="1" Height="3"
                        Stroke="{StaticResource GrayEdgeColor}" Fill="{StaticResource GrayEdgeColor}" />
 
-            <ListBox Grid.Row="2"
+            <Button Grid.Row="2" VerticalAlignment="Bottom"
+                    Height="32"
+                    Command="{Binding AddGridDisplayCommand}">
+                Add Grid Display
+            </Button>
+
+            <ListBox Grid.Row="3"
                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                      ScrollViewer.VerticalScrollBarVisibility="Visible"
                      ItemsSource="{Binding Displays}"
@@ -207,13 +213,7 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-
-            <Button Grid.Row="3" VerticalAlignment="Bottom"
-                    Height="32"
-                    Command="{Binding AddGridDisplayCommand}">
-                Add Grid Display
-            </Button>
-
+            
         </Grid>
 
     </Border>
