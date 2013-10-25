@@ -837,6 +837,17 @@ namespace Classroom_Learning_Partner.ViewModels
                             Margin = new Thickness(0, transformAmount + 5, 5, 0)
                         };
                         grid.Children.Add(label);
+                        var pageIndexlabel = new Label
+                        {
+                            FontSize = 20,
+                            FontWeight = FontWeights.Bold,
+                            FontStyle = FontStyles.Oblique,
+                            HorizontalAlignment = HorizontalAlignment.Right,
+                            VerticalAlignment = VerticalAlignment.Top,
+                            Content = "Page " + page.PageIndex,
+                            Margin = new Thickness(0, transformAmount + 30, 5, 0)
+                        };
+                        grid.Children.Add(pageIndexlabel);
                         grid.UpdateLayout();
 
                         var transform = new TransformGroup();
@@ -930,6 +941,17 @@ namespace Classroom_Learning_Partner.ViewModels
                             Margin = new Thickness(0, transformAmount + 5, 5, 0)
                         };
                         grid.Children.Add(label);
+                        var pageIndexlabel = new Label
+                        {
+                            FontSize = 20,
+                            FontWeight = FontWeights.Bold,
+                            FontStyle = FontStyles.Oblique,
+                            HorizontalAlignment = HorizontalAlignment.Right,
+                            VerticalAlignment = VerticalAlignment.Top,
+                            Content = "Page " + page.PageIndex,
+                            Margin = new Thickness(0, transformAmount + 30, 5, 0)
+                        };
+                        grid.Children.Add(pageIndexlabel);
                         grid.UpdateLayout();
 
                         var transform = new TransformGroup();
