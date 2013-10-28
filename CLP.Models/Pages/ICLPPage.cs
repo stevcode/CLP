@@ -21,6 +21,7 @@ namespace CLP.Models
 
     public interface ICLPPage
     {
+        byte[] PageThumbnail { get; set; }
         DateTime CreationDate { get; }
         string UniqueID { get; set; }
         string ParentNotebookID { get; set; }

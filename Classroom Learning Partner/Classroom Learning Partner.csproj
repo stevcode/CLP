@@ -185,6 +185,7 @@
     <Compile Include="Converters\BoolZeroToQuestionMarkMultiConverter.cs" />
     <Compile Include="CLPServiceAgent.cs" />
     <Compile Include="Converters\BoolToDoubleConverter.cs" />
+    <Compile Include="Converters\BytesToImageSourceConverter.cs" />
     <Compile Include="Converters\CurrentWorkspaceToButtonEnabledConverter.cs" />
     <Compile Include="Converters\DoubleToVisibilityConverter.cs" />
     <Compile Include="Converters\EnumToBoolConverter.cs" />

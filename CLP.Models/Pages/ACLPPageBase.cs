@@ -92,6 +92,17 @@ namespace CLP.Models
         #region ICLPPage Properties
 
         /// <summary>
+        /// JPG Thumbnail of the page for use in submissions panel.
+        /// </summary>
+        public byte[] PageThumbnail
+        {
+            get { return GetValue<byte[]>(PageThumbnailProperty); }
+            set { SetValue(PageThumbnailProperty, value); }
+        }
+
+        public static readonly PropertyData PageThumbnailProperty = RegisterProperty("PageThumbnail", typeof(byte[]));
+
+        /// <summary>
         /// Exact time and date the page was created.
         /// </summary>
         public DateTime CreationDate

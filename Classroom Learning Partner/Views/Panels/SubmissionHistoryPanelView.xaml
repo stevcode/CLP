@@ -16,6 +16,7 @@
             <!-- Converters -->
             <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
             <conv:ItemSelectedToColorConverter x:Key="PageOrDisplaySelectionColorConverter" />
+            <conv:BytesToImageSourceConverter x:Key="BytesToImageSourceConverter" />
 
             <!-- Style to override ListBoxItem selection visuals for Pages -->
             <Style x:Key="PageContainer" TargetType="{x:Type ListBoxItem}">
@@ -91,9 +92,11 @@
                                 </TextBlock.LayoutTransform>
                             </TextBlock>
 
-                            <views:CLPPagePreviewView x:Name="PagePreviewView" Grid.Column="1" Margin="5"
+                            <!--<views:CLPPagePreviewView x:Name="PagePreviewView" Grid.Column="1" Margin="5"
                                                       DataContext="{Binding}"
-                                                      ClipToBounds="True" />
+                                                      ClipToBounds="True" />-->
+
+                            <Image Grid.Column="1" Margin="5" Source="{Binding PageThumbnail, Converter={StaticResource BytesToImageSourceConverter}}" />
 
                             <Rectangle Grid.Column="1" Margin="5"
                                        Stroke="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"

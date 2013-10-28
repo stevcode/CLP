@@ -5,6 +5,7 @@ using System.IO.Compression;
 using System.Threading;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Threading;
 using Catel.Data;
 using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Views.Modal_Windows;
@@ -243,6 +244,14 @@ namespace Classroom_Learning_Partner
                 Logger.Instance.WriteToLog("Instructor NOT Available for Student Submission");
                 return;
             }
+
+            page.TrimPage();
+            var pageViewModels = GetViewModelsFromModel(page as ACLPPageBase);
+            var currentPageViewModel = pageViewModels.Select(pageViewModel => pageViewModel as ACLPPageBaseViewModel).FirstOrDefault(pageVM => !pageVM.IsPagePreview);
+
+            var pageView = GetViewFromViewModel(currentPageViewModel);
+            page.PageThumbnail = GetJpgImage(pageView as UIElement);
+
             var t = new Thread(() =>
                                {
                                    try
@@ -252,8 +261,7 @@ namespace Classroom_Learning_Partner
                                        PageAnalysis.AnalyzeArray(page);
                                        PageAnalysis.AnalyzeStamps(page);
                                        page.SubmissionID = Guid.NewGuid().ToString();
-                                       page.SubmissionTime = DateTime.Now;
-                                       page.TrimPage();
+                                       page.SubmissionTime = DateTime.Now; 
 
                                        var sPage = ObjectSerializer.ToString(page);
                                        var zippedPage = Zip(sPage);
@@ -281,7 +289,14 @@ namespace Classroom_Learning_Partner
 
                                        ACLPPageBase.Deserialize(submission);
                                        submission.SubmissionType = isGroupSubmission ? SubmissionType.Group : SubmissionType.Single;
-                                       notebookPagesPanel.Notebook.AddStudentSubmission(submission.UniqueID, submission);
+                                       submission.Submitter = App.Network.CurrentUser;
+                                       
+                                       Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                                                                        (DispatcherOperationCallback)delegate
+                                                                        {
+                                                                            notebookPagesPanel.Notebook.AddStudentSubmission(submission.UniqueID, submission);
+                                                                            return null;
+                                                                        }, null);
                                    }
                                    catch(Exception ex)
                                    {
