@@ -52,7 +52,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var genBmpImage = new BitmapImage();
 
             genBmpImage.BeginInit();
-            genBmpImage.CacheOption = BitmapCacheOption.OnLoad;
+            genBmpImage.CacheOption = BitmapCacheOption.OnDemand;
             //genBmpImage.DecodePixelHeight = Convert.ToInt32(this.Height);
             genBmpImage.StreamSource = memoryStream;
             genBmpImage.EndInit();

@@ -15,6 +15,7 @@
         <res:HalfLengthConverter x:Key="halfConverter" />
         <res:TimeToBooleanConverter x:Key="timeConverter" />
         <res:TagToBooleanConverter x:Key="tagConverter" />
+        <conv:BytesToImageSourceConverter x:Key="BytesToImageSourceConverter" />
 
         <!-- Submissions with the Trigger for Selected -->
         <Style x:Key="SubmissionsSidebarContainer" TargetType="{x:Type ListBoxItem}">
@@ -367,8 +368,10 @@
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
-                            <views:CLPPagePreviewView x:Name="PagePreviewView" Grid.Row="0" Margin="5 5 5 0"
-                                                      DataContext="{Binding}" />
+                            <!--<views:CLPPagePreviewView x:Name="PagePreviewView" Grid.Row="0" Margin="5 5 5 0"
+                                                      DataContext="{Binding}" />-->
+
+                            <Image Margin="5 5 5 0" Source="{Binding PageThumbnail, Converter={StaticResource BytesToImageSourceConverter}, IsAsync=True}" />
 
                             <Rectangle Grid.Row="0" Margin="5 5 5 0"
                                        Stroke="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"

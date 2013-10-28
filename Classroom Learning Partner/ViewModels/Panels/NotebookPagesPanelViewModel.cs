@@ -172,6 +172,12 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             submissionsPanel.IsVisible = true;
+
+            if(_currentDisplaySubmissionsPageID == page.UniqueID)
+            {
+                return;
+            }
+
             _currentDisplaySubmissionsPageID = page.UniqueID;
             submissionsPanel.SubmissionPages = Notebook.Submissions[_currentDisplaySubmissionsPageID];
         }
