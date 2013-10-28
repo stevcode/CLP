@@ -153,7 +153,12 @@ namespace Classroom_Learning_Partner.ViewModels
                 //TODO: clipping
 
                 var initialXPosition = 25.0;
-                var initialYPosition = YPosition + Height + 20; 
+                var initialYPosition = YPosition + Height + 20;
+                if(initialYPosition + StampCopy.Height > PageObject.ParentPage.PageHeight)
+                {
+                    initialYPosition = PageObject.ParentPage.PageHeight - StampCopy.Height;
+                    initialXPosition = PageObject.XPosition + PageObject.Width + 10.0;
+                }
                 var stampCopiesToAdd = new List<ICLPPageObject>();
                 for(var i = 0; i < numberOfCopies; i++)
                 {
