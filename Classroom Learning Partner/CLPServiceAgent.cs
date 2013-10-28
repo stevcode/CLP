@@ -400,7 +400,7 @@ namespace Classroom_Learning_Partner
 
             if(notebook.LastSavedTime != null)
             {
-                App.MainWindowViewModel.LastSavedTime = notebook.LastSavedTime.ToString("HH:mm:ss");
+                App.MainWindowViewModel.LastSavedTime = notebook.LastSavedTime.ToString("yyyy/MM/dd - HH:mm:ss");
             }
 
             if(App.CurrentUserMode == App.UserMode.Student)
@@ -508,7 +508,7 @@ namespace Classroom_Learning_Partner
             
             notebook.Save(filePath);
 
-            App.MainWindowViewModel.LastSavedTime = saveTime.ToString("HH:mm:ss");
+            App.MainWindowViewModel.LastSavedTime = saveTime.ToString("yyyy/MM/dd - HH:mm:ss");
 
             //_autoSaveTimer.Start();
         }
