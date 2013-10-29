@@ -24,6 +24,7 @@ namespace Classroom_Learning_Partner.ViewModels
             OnSetMirrorDisplayCommandExecute();
 
             AddGridDisplayCommand = new Command(OnAddGridDisplayCommandExecute);
+            AddPageToNewGridDisplayCommand = new Command(OnAddPageToNewGridDisplayCommandExecute);
             SetMirrorDisplayCommand = new Command(OnSetMirrorDisplayCommandExecute);
             SendMirrorDisplayToProjectorCommand = new Command<RoutedEventArgs>(OnSendMirrorDisplayToProjectorCommandExecute);
             RemoveDisplayCommand = new Command<ICLPDisplay>(OnRemoveDisplayCommandExecute);
@@ -246,6 +247,19 @@ namespace Classroom_Learning_Partner.ViewModels
             Notebook.AddDisplay(new CLPGridDisplay());
             CurrentDisplay = Displays.LastOrDefault();
         }     
+
+        /// <summary>
+        /// Adds the current page on the MirrorDisplay to a new GridDisplay.
+        /// </summary>
+        public Command AddPageToNewGridDisplayCommand { get; private set; }
+
+        private void OnAddPageToNewGridDisplayCommandExecute()
+        {
+            var newGridDisplay = new CLPGridDisplay();
+            newGridDisplay.AddPageToDisplay(MirrorDisplay.CurrentPage);
+            Notebook.AddDisplay(newGridDisplay);
+            CurrentDisplay = newGridDisplay;
+        }
 
         /// <summary>
         /// Sets the current display to the Mirror Display.
