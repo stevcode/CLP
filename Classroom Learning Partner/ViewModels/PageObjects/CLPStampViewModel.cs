@@ -158,6 +158,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     initialYPosition = PageObject.ParentPage.PageHeight - StampCopy.Height;
                     initialXPosition = PageObject.XPosition + PageObject.Width + 10.0;
+                    if(initialXPosition + numberOfCopies * (StampCopy.Width + 5) > PageObject.ParentPage.PageWidth)
+                    {
+                        initialXPosition = 25.0;
+                    }
                 }
                 var stampCopiesToAdd = new List<ICLPPageObject>();
                 for(var i = 0; i < numberOfCopies; i++)
