@@ -155,25 +155,6 @@
                               SmallImageSource="pack://application:,,,/Resources/Images/NextPage16.png"
                               Command="{Binding NextPageCommand}" />
 
-                <RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/Displays32.png"
-                                    IsChecked="{Binding DisplayPanelVisibility}"
-                                    IsEnabled="{Binding MainWindow.SelectedWorkspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
-                                    Visibility="{Binding InstructorVisibility}">
-                    <RibbonToggleButton.Style>
-                        <Style TargetType="{x:Type RibbonToggleButton}">
-                            <Setter Property="Label"
-                                    Value="Show Displays" />
-                            <Style.Triggers>
-                                <Trigger Property="IsChecked"
-                                         Value="True">
-                                    <Setter Property="Label"
-                                            Value="Hide Displays" />
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </RibbonToggleButton.Style>
-                </RibbonToggleButton>
-
             </RibbonGroup>
 
             <RibbonGroup Header="Tools">
@@ -416,6 +397,29 @@
                               SmallImageSource="pack://application:,,,/Resources/Images/Redo16.png"
                               Command="{Binding RedoCommand}" />
 
+            </RibbonGroup>
+            
+            <RibbonGroup Header="Displays">
+
+                <RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/Displays32.png"
+                                    IsChecked="{Binding DisplayPanelVisibility}"
+                                    IsEnabled="{Binding MainWindow.SelectedWorkspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
+                                    Visibility="{Binding InstructorVisibility}">
+                    <RibbonToggleButton.Style>
+                        <Style TargetType="{x:Type RibbonToggleButton}">
+                            <Setter Property="Label"
+                                    Value="Show Displays" />
+                            <Style.Triggers>
+                                <Trigger Property="IsChecked"
+                                         Value="True">
+                                    <Setter Property="Label"
+                                            Value="Hide Displays" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </RibbonToggleButton.Style>
+                </RibbonToggleButton>
+                
             </RibbonGroup>
 
         </RibbonTab>
