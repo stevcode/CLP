@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Shapes;
 using Catel.Data;
 using Catel.MVVM;
@@ -34,6 +35,7 @@ namespace Classroom_Learning_Partner.ViewModels
             ResizeArrayCommand = new Command<DragDeltaEventArgs>(OnResizeArrayCommandExecute);
             DragStopAndSnapCommand = new Command<DragCompletedEventArgs>(OnDragStopAndSnapCommandExecute);
             ToggleGridCommand = new Command(OnToggleGridCommandExecute);
+            ToggleDivisionAdornersCommand = new Command(OnToggleDivisionAdornersCommandExecute);
             RotateArrayCommand = new Command(OnRotateArrayCommandExecute);
             CreateVerticalDivisionCommand = new Command(OnCreateVerticalDivisionCommandExecute);
             CreateHorizontalDivisionCommand = new Command(OnCreateHorizontalDivisionCommandExecute);
@@ -251,6 +253,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 SetValue(IsDefaultAdornerVisibleProperty, value);
                 RaisePropertyChanged("IsToggleGridAdornerVisible");
+                RaisePropertyChanged("IsToggleDivisionAdornerVisible");
             }
         }
 
@@ -286,6 +289,14 @@ namespace Classroom_Learning_Partner.ViewModels
             get
             {
                 return IsDefaultAdornerVisible && Rows < 51 && Columns < 51; // && !IsProductVisible;
+            }
+        }
+
+        public bool IsToggleDivisionAdornerVisible
+        {
+            get
+            {
+                return IsDefaultAdornerVisible && PageObject.BackgroundColor != Colors.SkyBlue.ToString() && !IsProductVisible;
             }
         }
 
@@ -671,6 +682,16 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                                PageObject.UniqueID));
             }
             
+        }
+
+        /// <summary>
+        /// Toggles the Division Behavior on and off.
+        /// </summary>
+        public Command ToggleDivisionAdornersCommand { get; private set; }
+
+        private void OnToggleDivisionAdornersCommandExecute()
+        {
+            IsDivisionBehaviorOn = !IsDivisionBehaviorOn;
         }
 
         /// <summary>
