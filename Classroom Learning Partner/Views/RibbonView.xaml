@@ -199,7 +199,7 @@
                 <RibbonMenuButton Label="Brush Size"
                                   LargeImageSource="pack://application:,,,/Resources/Images/PenSize32.png"
                                   SmallImageSource="pack://application:,,,/Resources/Images/PenSize16.png"
-                                  Visibility="{Binding InstructorVisibility}">
+                                  >
                     <RibbonGallery SelectedValuePath="Content.Height"
                                    SelectedValue="{Binding PenSize, Mode=TwoWay}"
                                    ScrollViewer.VerticalScrollBarVisibility="Hidden">
@@ -218,14 +218,14 @@
                                            Height="3"
                                            Width="150" />
                             </RibbonGalleryItem>
-                            <RibbonGalleryItem Height="30">
+                            <RibbonGalleryItem Height="30" Visibility="{Binding InstructorVisibility}">
                                 <Rectangle VerticalAlignment="Center"
                                            StrokeThickness="0"
                                            Fill="Black"
                                            Height="5"
                                            Width="150" />
                             </RibbonGalleryItem>
-                            <RibbonGalleryItem Height="30">
+                            <RibbonGalleryItem Height="30" Visibility="{Binding InstructorVisibility}">
                                 <Rectangle VerticalAlignment="Center"
                                            StrokeThickness="0"
                                            Fill="Black"
@@ -296,7 +296,7 @@
                               Command="{Binding InsertArrayCommand}"
                               CommandParameter="CARD" />
 
-                <RibbonButton Label="Factor Card"
+                <RibbonButton Label="Factor Card" Visibility="{Binding InstructorVisibility}"
                               LargeImageSource="pack://application:,,,/Resources/Images/FactorCard32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/FactorCard16.png"
                               Command="{Binding InsertArrayCommand}"
