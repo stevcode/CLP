@@ -398,13 +398,12 @@
                               Command="{Binding RedoCommand}" />
 
             </RibbonGroup>
-            
-            <RibbonGroup Header="Displays">
+
+            <RibbonGroup Header="Displays" Visibility="{Binding InstructorVisibility}">
 
                 <RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/Displays32.png"
                                     IsChecked="{Binding DisplayPanelVisibility}"
-                                    IsEnabled="{Binding MainWindow.SelectedWorkspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
-                                    Visibility="{Binding InstructorVisibility}">
+                                    IsEnabled="{Binding MainWindow.SelectedWorkspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}">
                     <RibbonToggleButton.Style>
                         <Style TargetType="{x:Type RibbonToggleButton}">
                             <Setter Property="Label"
