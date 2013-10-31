@@ -975,6 +975,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 array.IsLabelOn = IsLabelOn;
                 array.IsSnappable = IsSnappable;
                 array.IsDivisionBehaviorOn = IsDivisionBehaviorOn;
+                array.IsGridOn = IsGridOn;
                 array.BackgroundColor = PageObject.BackgroundColor;
 
                 array.Width = Width;
