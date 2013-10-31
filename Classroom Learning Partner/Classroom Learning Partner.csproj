@@ -193,6 +193,7 @@
     <Compile Include="Converters\ItemsControlItemIndexConverter.cs" />
     <Compile Include="Converters\ItemSelectedToColorConverter.cs" />
     <Compile Include="Converters\MultiplyAllIntToTextMultiConverter.cs" />
+    <Compile Include="Converters\PageHasSubmissionsToBoolConverter.cs" />
     <Compile Include="Converters\ProjectedDisplayBackgroundConverter.cs" />
     <Compile Include="Converters\TypeToStringConverter.cs" />
     <Compile Include="Converters\WidthToHeightAspectRatioMultiConverter.cs" />
@@ -689,6 +690,7 @@
     <Content Include="External Libraries\NRtfTree.dll" />
     <Content Include="External Libraries\ServiceModelEx.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
+    <Resource Include="Resources\Images\Check16.png" />
     <Resource Include="Resources\Images\GrayPlus16.png" />
     <Resource Include="Resources\Images\GrayPlus32.png" />
     <Resource Include="Resources\Images\GrayPlus64.png" />
