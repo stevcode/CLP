@@ -216,6 +216,26 @@
                     </Button.Template>
                 </Button>
 
+                <!--Duplicate Array Button-->
+                <Button Command="{Binding DuplicateArrayCommand}"
+                        Cursor="Hand"
+                        Width="40" Height="40"
+                        Canvas.Right="20"
+                        Canvas.Top="-50"
+                        Visibility="{Binding IsDefaultAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Button.Template>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Grid>
+                                <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
+                                         VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+                                <Path Data="M0.5,0 L0.5,1 M0,0.5 L1,0.5" 
+                                      Stretch="Fill" Margin="5"
+                                      Stroke="Green" StrokeThickness="3" />
+                            </Grid>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
                 <!--Left Divisor Line-->
                 <Rectangle IsHitTestVisible="False"
                            StrokeDashArray="1.0 3.0" StrokeThickness="3"
