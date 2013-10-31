@@ -1222,7 +1222,7 @@ namespace Classroom_Learning_Partner.ViewModels
             IsSending = true;
             var timer = new System.Timers.Timer
                         {
-                            Interval = 1000
+                            Interval = 2000
                         };
             timer.Elapsed += timer_Elapsed;
             timer.Enabled = true;
@@ -1235,6 +1235,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             CLPServiceAgent.Instance.SubmitPage(page, notebookPagesPanel.Notebook.UniqueID, false);
+            
             CanSendToTeacher = false;
         }
 
@@ -1248,7 +1249,7 @@ namespace Classroom_Learning_Partner.ViewModels
             IsSending = true;
             var timer = new System.Timers.Timer
                         {
-                            Interval = 1000
+                            Interval = 2000
                         };
             timer.Elapsed += timer_Elapsed;
             timer.Enabled = true;

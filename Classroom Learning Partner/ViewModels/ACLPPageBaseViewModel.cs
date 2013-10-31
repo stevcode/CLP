@@ -387,7 +387,18 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData IsShowingSubmissionsProperty = RegisterProperty("IsShowingSubmissions", typeof(bool), false);
 
-        
+        /// <summary>
+        /// Whether the page has submissions or not.
+        /// </summary>
+        public bool HasSubmissions
+        {
+            get
+            {
+                var notebookPagesPanel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
+                return notebookPagesPanel != null && App.CurrentUserMode == App.UserMode.Student && notebookPagesPanel.Notebook.Submissions[Page.UniqueID].Any();
+            }
+        }
+
         #endregion //Bindings
 
         #region Commands
@@ -622,6 +633,16 @@ namespace Classroom_Learning_Partner.ViewModels
 
         protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
         {
+            if(propertyName == "CanSendToTeacher" && viewModel is RibbonViewModel)
+            {
+                RaisePropertyChanged("HasSubmissions");
+            }
+
+            if(propertyName == "IsSending" && viewModel is RibbonViewModel)
+            {
+                RaisePropertyChanged("HasSubmissions");
+            }
+
             if(IsPagePreview)
             {
                 return;

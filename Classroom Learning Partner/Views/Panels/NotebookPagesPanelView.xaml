@@ -19,8 +19,6 @@
             <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
             <conv:ProjectedDisplayBackgroundConverter x:Key="ProjectedDisplayBackgroundConverter" />
             <conv:ItemSelectedToColorConverter x:Key="PageOrDisplaySelectionColorConverter" />
-            <conv:AllBoolToVisibilityMultiConverter x:Key="AllBoolToVisibilityMultiConverter" />
-            <conv:PageHasSubmissionsToBoolConverter x:Key="PageHasSubmissionsToBoolConverter" />
 
             <!-- Style to override ListBoxItem selection visuals for Pages -->
             <Style x:Key="PageSidebarContainer" TargetType="{x:Type ListBoxItem}">
@@ -104,12 +102,8 @@
                                    VerticalAlignment="Bottom"
                                    HorizontalAlignment="Right"
                                    IsHitTestVisible="False"
-                                   Source="pack://application:,,,/Resources/Images/Check16.png">
-                                <Image.Visibility>
-                                    <MultiBinding Converter="{StaticResource AllBoolToVisibilityMultiConverter}">
-                                        <Binding Path="ViewModel.Page" ElementName="PagePreviewView" Converter="{StaticResource PageHasSubmissionsToBoolConverter}" />
-                                    </MultiBinding>
-                                </Image.Visibility>
+                                   Source="pack://application:,,,/Resources/Images/Check16.png"
+                                   Visibility="{Binding ViewModel.HasSubmissions, ElementName=PagePreviewView, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
                             </Image>
 
                             <Grid Grid.Column="2" VerticalAlignment="Center" Margin="0 0 5 0"
