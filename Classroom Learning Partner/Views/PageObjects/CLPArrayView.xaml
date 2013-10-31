@@ -226,7 +226,7 @@
                         Width="40" Height="40"
                         Canvas.Right="-50"
                         Canvas.Top="20"
-                        Visibility="{Binding IsDefaultAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        Visibility="{Binding IsRotateAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Grid>

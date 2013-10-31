@@ -110,6 +110,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 SetValue(IsProductVisibleProperty, value);
                 RaisePropertyChanged("IsToggleGridAdornerVisible");
+                RaisePropertyChanged("IsRotateAdornerVisible");
             }
         }
 
@@ -254,6 +255,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 SetValue(IsDefaultAdornerVisibleProperty, value);
                 RaisePropertyChanged("IsToggleGridAdornerVisible");
                 RaisePropertyChanged("IsToggleDivisionAdornerVisible");
+                RaisePropertyChanged("IsRotateAdornerVisible");
             }
         }
 
@@ -288,7 +290,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             get
             {
-                return IsDefaultAdornerVisible && Rows < 51 && Columns < 51; // && !IsProductVisible;
+                return IsDefaultAdornerVisible && Rows < 51 && Columns < 51 && !IsProductVisible;
             }
         }
 
@@ -297,6 +299,14 @@ namespace Classroom_Learning_Partner.ViewModels
             get
             {
                 return IsDefaultAdornerVisible && PageObject.BackgroundColor != Colors.SkyBlue.ToString() && !IsProductVisible;
+            }
+        }
+
+        public bool IsRotateAdornerVisible
+        {
+            get
+            {
+                return IsDefaultAdornerVisible && !IsProductVisible;
             }
         }
 

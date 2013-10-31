@@ -277,7 +277,7 @@
                               Command="{Binding InsertArrayCommand}"
                               CommandParameter="CARD" />
 
-                <RibbonButton Label="Factor Card" Visibility="{Binding InstructorVisibility}"
+                <RibbonButton Label="Factor Card"
                               LargeImageSource="pack://application:,,,/Resources/Images/FactorCard32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/FactorCard16.png"
                               Command="{Binding InsertArrayCommand}"

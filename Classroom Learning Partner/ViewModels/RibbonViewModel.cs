@@ -2233,14 +2233,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnInsertArrayCommandExecute(string arrayType)
         {
-            var arrayCreationView = new ArrayCreationView {Owner = Application.Current.MainWindow};
-            arrayCreationView.ShowDialog();
-
-            if(arrayCreationView.DialogResult != true)
-            {
-                return;
-            }
-
             var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel == null)
             {
@@ -2252,6 +2244,56 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
             var currentPage = clpMirrorDisplay.CurrentPage;
+
+            if(arrayType == "FACTORCARD")
+            {
+                var factorCreationView = new FactorCardCreationView {Owner = Application.Current.MainWindow};
+                factorCreationView.ShowDialog();
+                if(factorCreationView.DialogResult != true)
+                {
+                    return;
+                }
+
+                int product;
+                try
+                {
+                    product = Convert.ToInt32(factorCreationView.Product.Text);
+                }
+                catch(FormatException)
+                {
+                    return;
+                }
+
+                int factor;
+                try
+                {
+                    factor = Convert.ToInt32(factorCreationView.Factor.Text);
+                }
+                catch(FormatException)
+                {
+                    return;
+                }
+
+                var otherFactor = product / factor;
+                var array = new CLPArray(factor, otherFactor, currentPage)
+                            {
+                                IsDivisionBehaviorOn = false,
+                                IsSnappable = false,
+                                IsGridOn = false,
+                                IsProductVisible = true
+                            };
+
+                ACLPPageBaseViewModel.AddPageObjectToPage(array);
+                return;
+            }
+
+            var arrayCreationView = new ArrayCreationView {Owner = Application.Current.MainWindow};
+            arrayCreationView.ShowDialog();
+
+            if(arrayCreationView.DialogResult != true)
+            {
+                return;
+            }
 
             int rows;
             try
@@ -2298,12 +2340,6 @@ namespace Classroom_Learning_Partner.ViewModels
                         array.IsLabelOn = false;
                         array.IsSnappable = false;
                         array.BackgroundColor = Colors.SkyBlue.ToString();
-                        break;
-                    case "FACTORCARD":
-                        array.IsDivisionBehaviorOn = false;
-                        array.IsSnappable = false;
-                        array.IsGridOn = false;
-                        array.IsProductVisible = true;
                         break;
                 }
 
@@ -2393,12 +2429,6 @@ namespace Classroom_Learning_Partner.ViewModels
                         array.IsLabelOn = false;
                         array.IsSnappable = false;
                         array.BackgroundColor = Colors.SkyBlue.ToString();
-                        break;
-                    case "FACTORCARD":
-                        array.IsDivisionBehaviorOn = false;
-                        array.IsSnappable = false;
-                        array.IsGridOn = false;
-                        array.IsProductVisible = true;
                         break;
                 }
 

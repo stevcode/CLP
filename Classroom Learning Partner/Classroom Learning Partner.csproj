@@ -276,6 +276,9 @@
     <Compile Include="Views\Modal Windows\ArrayCreationView.xaml.cs">
       <DependentUpon>ArrayCreationView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Modal Windows\FactorCardCreationView.xaml.cs">
+      <DependentUpon>FactorCardCreationView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Modal Windows\LassoedPageObjectParameterizationView.xaml.cs">
       <DependentUpon>LassoedPageObjectParameterizationView.xaml</DependentUpon>
     </Compile>
@@ -440,6 +443,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Modal Windows\ArrayCreationView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Modal Windows\FactorCardCreationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
