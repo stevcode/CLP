@@ -18,7 +18,6 @@
             <!-- Converters -->
             <catel:BooleanToCollapsingVisibilityConverter x:Key="OppositeBooleanToCollapsingVisibilityConverter" />
 
-            <conv:ProjectedDisplayBackgroundConverter x:Key="ProjectedDisplayBackgroundConverter" />
             <conv:ItemSelectedToColorConverter x:Key="PageOrDisplaySelectionColorConverter" />
             <conv:HeightToWidthAspectRatioMultiConverter x:Key="HeightToWidthAspectRatioMultiConverter" />
             <conv:WidthToHeightAspectRatioMultiConverter x:Key="WidthToHeightAspectRatioMultiConverter" />
@@ -48,8 +47,7 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <Grid Grid.Row="0" Background="{Binding MirrorDisplayIsOnProjector, Converter={StaticResource ProjectedDisplayBackgroundConverter}}"
-                  Height="140">
+            <Grid Grid.Row="0" Height="140">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
@@ -57,7 +55,7 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Grid.Column="0" Margin="5 0 0 5"
-                           Text="Mirror Display"
+                           Text="Single Display"
                            Foreground="{Binding MirrorDisplaySelectedColor}"
                            FontWeight="Bold" VerticalAlignment="Bottom">
                     <TextBlock.LayoutTransform>
@@ -96,26 +94,6 @@
                     </i:Interaction.Triggers>
                 </Rectangle>
 
-                <ToggleButton Grid.Column="2" Margin="5 15 5 0"
-                              HorizontalAlignment="Left"
-                              VerticalAlignment="Top"
-                              Width="32" Height="32"
-                              IsChecked="{Binding MirrorDisplayIsOnProjector}">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="Click">
-                            <catel:EventToCommand Command="{Binding SendMirrorDisplayToProjectorCommand}"
-                                                  PassEventArgsToCommand="True" />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                    <ToggleButton.Template>
-                        <ControlTemplate TargetType="{x:Type ToggleButton}">
-                            <Grid>
-                                <Image Source="pack://application:,,,/Resources/Images/Projector32.png" />
-                            </Grid>
-                        </ControlTemplate>
-                    </ToggleButton.Template>
-                </ToggleButton>
-
                 <Button Grid.Column="2" Margin="5 0 5 15"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Bottom"
@@ -124,15 +102,14 @@
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Grid>
-                                <Image Source="pack://application:,,,/Resources/Images/Plus32.png" />
+                                <Image Source="pack://application:,,,/Resources/Images/GrayPlus32.png" />
                             </Grid>
                         </ControlTemplate>
                     </Button.Template>
                 </Button>
             </Grid>
 
-            <Rectangle Grid.Row="1" Height="3"
-                       Stroke="{StaticResource GrayEdgeColor}" Fill="{StaticResource GrayEdgeColor}" />
+            <Rectangle Grid.Row="1" Height="3" Stroke="{StaticResource GrayEdgeColor}" Fill="{StaticResource GrayEdgeColor}" />
 
             <Button Grid.Row="2" VerticalAlignment="Bottom"
                     Height="32"
@@ -151,8 +128,7 @@
 
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <Grid Background="{Binding ViewModel.IsOnProjector, ElementName=DisplayPreviewView, Converter={StaticResource ProjectedDisplayBackgroundConverter}}"
-                              Visibility="{Binding IsTrashed, Converter={StaticResource OppositeBooleanToCollapsingVisibilityConverter}, ConverterParameter=False}">
+                        <Grid Visibility="{Binding IsTrashed, Converter={StaticResource OppositeBooleanToCollapsingVisibilityConverter}, ConverterParameter=False}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
@@ -193,25 +169,6 @@
                                        Stroke="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
                                        StrokeThickness="2"
                                        Fill="Transparent" />
-
-                            <ToggleButton Grid.Column="2" Margin="0 5 5 0"
-                                          VerticalAlignment="Top"
-                                          Width="32" Height="32"
-                                          IsChecked="{Binding ViewModel.IsOnProjector, ElementName=DisplayPreviewView}">
-                                <i:Interaction.Triggers>
-                                    <i:EventTrigger EventName="Click">
-                                        <catel:EventToCommand Command="{Binding ViewModel.SendDisplayToProjectorCommand, ElementName=DisplayPreviewView}"
-                                                              PassEventArgsToCommand="True" />
-                                    </i:EventTrigger>
-                                </i:Interaction.Triggers>
-                                <ToggleButton.Template>
-                                    <ControlTemplate TargetType="{x:Type ToggleButton}">
-                                        <Grid>
-                                            <Image Source="pack://application:,,,/Resources/Images/Projector32.png" />
-                                        </Grid>
-                                    </ControlTemplate>
-                                </ToggleButton.Template>
-                            </ToggleButton>
 
                             <Button Grid.Column="2" Margin="0 0 5 20"
                                     VerticalAlignment="Bottom"

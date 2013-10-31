@@ -238,7 +238,6 @@
     <Compile Include="ViewModels\PageObjects\ACLPPageObjectBaseViewModel.cs" />
     <Compile Include="ViewModels\ACLPPageBaseViewModel.cs" />
     <Compile Include="ViewModels\Displays\GridDisplayViewModel.cs" />
-    <Compile Include="ViewModels\Displays\IDisplayViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Ink Regions\CLPInkShapeRegionViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Ink Regions\CLPDataTableViewModel.cs" />
@@ -690,6 +689,10 @@
     <Content Include="External Libraries\NRtfTree.dll" />
     <Content Include="External Libraries\ServiceModelEx.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
+    <Resource Include="Resources\Images\GrayPlus16.png" />
+    <Resource Include="Resources\Images\GrayPlus32.png" />
+    <Resource Include="Resources\Images\GrayPlus64.png" />
+    <Resource Include="Resources\Images\Projector16.png" />
     <Resource Include="Resources\Images\FactorCard64.png" />
     <Resource Include="Resources\Images\Plus32.png" />
     <Resource Include="Resources\Images\FactorCard16.png" />

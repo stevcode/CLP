@@ -15,7 +15,7 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid Background="{Binding IsOnProjector, Converter={StaticResource ProjectedDisplayBackgroundConverter}}">
+    <Grid Background="{Binding MainWindowViewModel.Ribbon.IsProjectorOn, Source={x:Static Application.Current}, Converter={StaticResource ProjectedDisplayBackgroundConverter}}">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />

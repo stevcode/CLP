@@ -418,7 +418,23 @@
                         </Style>
                     </RibbonToggleButton.Style>
                 </RibbonToggleButton>
-                
+
+                <RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/Projector32.png"
+                                    SmallImageSource="pack://application:,,,/Resources/Images/Projector16.png"
+                                    IsChecked="{Binding IsProjectorOn}"
+                                    IsEnabled="{Binding MainWindow.SelectedWorkspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}">
+                    <RibbonToggleButton.Style>
+                        <Style TargetType="{x:Type RibbonToggleButton}">
+                            <Setter Property="Label" Value="OFF" />
+                            <Style.Triggers>
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter Property="Label" Value="ON" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </RibbonToggleButton.Style>
+                </RibbonToggleButton>
+
             </RibbonGroup>
 
         </RibbonTab>

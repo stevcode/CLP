@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls.Primitives;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
@@ -26,7 +25,6 @@ namespace Classroom_Learning_Partner.ViewModels
             AddGridDisplayCommand = new Command(OnAddGridDisplayCommandExecute);
             AddPageToNewGridDisplayCommand = new Command(OnAddPageToNewGridDisplayCommandExecute);
             SetMirrorDisplayCommand = new Command(OnSetMirrorDisplayCommandExecute);
-            SendMirrorDisplayToProjectorCommand = new Command<RoutedEventArgs>(OnSendMirrorDisplayToProjectorCommandExecute);
             RemoveDisplayCommand = new Command<ICLPDisplay>(OnRemoveDisplayCommandExecute);
             IsVisible = false;
 
@@ -34,18 +32,8 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 return;
             }
-            MirrorDisplayIsOnProjector = true;
-            ProjectedDisplayString = MirrorDisplay.UniqueID;
-            var currentPage = MirrorDisplay.CurrentPage;
-            var currentPageID = currentPage.SubmissionType != SubmissionType.None ? currentPage.SubmissionID : currentPage.UniqueID;
-            try
-            {
-                App.Network.ProjectorProxy.SwitchProjectorDisplay("MirrorDisplay", new List<string> { currentPageID });
-            }
-            catch(Exception)
-            {
 
-            }
+            App.MainWindowViewModel.Ribbon.IsProjectorOn = true;
         }
 
         /// <summary>
@@ -183,17 +171,6 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData MirrorDisplaySelectedColorProperty = RegisterProperty("MirrorDisplaySelectedColor", typeof(string));
 
         /// <summary>
-        /// Whether or not the MirrorDisplay has been sent to the projector.
-        /// </summary>
-        public bool MirrorDisplayIsOnProjector
-        {
-            get { return GetValue<bool>(MirrorDisplayIsOnProjectorProperty); }
-            set { SetValue(MirrorDisplayIsOnProjectorProperty, value); }
-        }
-
-        public static readonly PropertyData MirrorDisplayIsOnProjectorProperty = RegisterProperty("MirrorDisplayIsOnProjector", typeof(bool), false);
-
-        /// <summary>
         /// The selected display in the list of the Notebook's Displays. Does not include the MirrorDisplay.
         /// </summary>
         public ICLPDisplay CurrentDisplay
@@ -220,18 +197,21 @@ namespace Classroom_Learning_Partner.ViewModels
             displayListPanelViewModel.MirrorDisplaySelectedColor = color;
 
             notebookWorkspaceViewModel.SelectedDisplay = args.NewValue as ICLPDisplay;
-        }
 
-        /// <summary>
-        /// UniqueID of the projected display.
-        /// </summary>
-        public string ProjectedDisplayString
-        {
-            get { return GetValue<string>(ProjectedDisplayStringProperty); }
-            set { SetValue(ProjectedDisplayStringProperty, value); }
-        }
+            if(App.Network.ProjectorProxy == null || !App.MainWindowViewModel.Ribbon.IsProjectorOn || notebookWorkspaceViewModel.SelectedDisplay == null)
+            {
+                return;
+            }
 
-        public static readonly PropertyData ProjectedDisplayStringProperty = RegisterProperty("ProjectedDisplayString", typeof(string), string.Empty);
+            try
+            {
+                App.Network.ProjectorProxy.SwitchProjectorDisplay(notebookWorkspaceViewModel.SelectedDisplay.UniqueID, notebookWorkspaceViewModel.SelectedDisplay.DisplayPageIDs.ToList());
+            }
+            catch(Exception)
+            {
+
+            }
+        }
 
         #endregion //Bindings
 
@@ -276,39 +256,17 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentDisplay = null;
 
             var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel != null)
-            {
-                notebookWorkspaceViewModel.SelectedDisplay = MirrorDisplay;
-            }
-        }
-
-        /// <summary>
-        /// Sends the MirrorDisplay to the projector, or toggles send to projector off.
-        /// </summary>
-        public Command<RoutedEventArgs> SendMirrorDisplayToProjectorCommand { get; private set; }
-
-        private void OnSendMirrorDisplayToProjectorCommandExecute(RoutedEventArgs e)
-        {
-            if(App.Network.ProjectorProxy == null)
-            {
-                MirrorDisplayIsOnProjector = false;
-                ProjectedDisplayString = string.Empty;
-
-                return;
-            }
-
-            var toggleButton = e.Source as ToggleButton;
-            if(toggleButton == null)
+            if(notebookWorkspaceViewModel == null)
             {
                 return;
             }
-            if(toggleButton.IsChecked != null && !(bool)toggleButton.IsChecked)
+            notebookWorkspaceViewModel.SelectedDisplay = MirrorDisplay;
+
+            if(App.Network.ProjectorProxy == null || !App.MainWindowViewModel.Ribbon.IsProjectorOn)
             {
-                ProjectedDisplayString = string.Empty;
                 return;
             }
 
-            ProjectedDisplayString = MirrorDisplay.UniqueID;
             var currentPage = MirrorDisplay.CurrentPage;
             var currentPageID = currentPage.SubmissionType != SubmissionType.None ? currentPage.SubmissionID : currentPage.UniqueID;
             try

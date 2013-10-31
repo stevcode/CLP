@@ -297,6 +297,43 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Bindings
 
         /// <summary>
+        /// Whether or not to mirror the displays to the projector.
+        /// </summary>
+        public bool IsProjectorOn
+        {
+            get { return GetValue<bool>(IsProjectorOnProperty); }
+            set { SetValue(IsProjectorOnProperty, value); }
+        }
+
+        public static readonly PropertyData IsProjectorOnProperty = RegisterProperty("IsProjectorOn", typeof(bool), false, IsProjectorOn_Changed);
+
+        private static void IsProjectorOn_Changed(object sender, AdvancedPropertyChangedEventArgs args)
+        {
+            var displayList = DisplayListPanelViewModel.GetDisplayListPanelViewModel();
+            if(App.Network.ProjectorProxy == null || displayList == null)
+            {
+                return;
+            }
+
+            var isCurrentDisplayASingleDisplay = displayList.CurrentDisplay == null;
+            var displayID = isCurrentDisplayASingleDisplay ? "MirrorDisplay" : displayList.CurrentDisplay.UniqueID;
+            var currentPage = displayList.MirrorDisplay.CurrentPage;
+            var currentPageID = currentPage.SubmissionType != SubmissionType.None ? currentPage.SubmissionID : currentPage.UniqueID;
+            var pageIDs = isCurrentDisplayASingleDisplay
+                              ? new List<string> { currentPageID }
+                              : displayList.CurrentDisplay.DisplayPageIDs.ToList();
+
+            try
+            {
+                App.Network.ProjectorProxy.SwitchProjectorDisplay(displayID, pageIDs);
+            }
+            catch(Exception)
+            {
+
+            }         
+        }
+
+        /// <summary>
         /// Disables the use of history to broadcast changes to a page to the projector.
         /// </summary>
         public bool IsBroadcastHistoryDisabled
