@@ -2348,7 +2348,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 switch(arrayType)
                 {
                     case "DEFAULT":
-                        //array.IsDivisionBehaviorOn = false;
+                        array.IsDivisionBehaviorOn = false;
                         //array.IsSnappable = false;
                         break;
                     case "CARD":
