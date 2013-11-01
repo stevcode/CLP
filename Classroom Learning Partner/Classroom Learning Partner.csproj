@@ -212,6 +212,7 @@
     <Compile Include="ViewModels\Math\ProductRelationViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPAggregationDataTableViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPArrayViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\CLPRegionViewModel.cs" />
     <Compile Include="ViewModels\Panels\DisplayListPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\NotebookPagesPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\SubmissionHistoryPanelViewModel.cs" />
@@ -219,6 +220,9 @@
     <Compile Include="ViewModels\Panels\WebcamPanelViewModel.cs" />
     <Compile Include="Views\CLPAnimationPageView.xaml.cs">
       <DependentUpon>CLPAnimationPageView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CLPRegionView.xaml.cs">
+      <DependentUpon>CLPRegionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Controls\AdornedControl\AdornedControl.cs" />
     <Compile Include="Views\Controls\AdornedControl\FrameworkElementAdorner.cs" />
@@ -397,6 +401,10 @@
     <Page Include="Views\CLPAnimationPageView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CLPRegionView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Controls\FilteredPagesSideBar.xaml">
       <SubType>Designer</SubType>

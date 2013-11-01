@@ -790,6 +790,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
             foreach(var pageObject in PageObjects)
             {
+                //TO DO liz: instead of having to be completely contained
+                //Instead of creating rectangle that big, make a 50x50 in the center only if that's contained in it
                 var pageObjectGeometry =
                     new RectangleGeometry(new Rect(pageObject.XPosition, pageObject.YPosition, pageObject.Width,
                                                    pageObject.Height));
@@ -800,48 +802,45 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
 
-            var lassoedPageObjectParameterizationView = new LassoedPageObjectParameterizationView()
+            if(lassoedPageObjects.Count == 0)
             {
-                Owner = Application.Current.MainWindow
-            };
-            lassoedPageObjectParameterizationView.ShowDialog();
+                return;
+            }
 
-            if(lassoedPageObjectParameterizationView.DialogResult == true)
+            double xPosition = lassoedPageObjects.First().XPosition;
+            double yPosition = lassoedPageObjects.First().YPosition;
+            double endXPosition = lassoedPageObjects.First().XPosition + lassoedPageObjects.First().Width;
+            double endYPosition = lassoedPageObjects.First().YPosition + lassoedPageObjects.First().Height;
+            foreach(var pageObject in lassoedPageObjects)
             {
-                int numberOfCopies;
-                try
+                if(pageObject.XPosition < xPosition)
                 {
-                    numberOfCopies = Convert.ToInt32(lassoedPageObjectParameterizationView.NumberOfCopies.Text);
+                    xPosition = pageObject.XPosition;
                 }
-                catch(FormatException)
+                if(pageObject.YPosition < yPosition)
                 {
-                    numberOfCopies = 1;
+                    yPosition = pageObject.YPosition;
                 }
-
-                var isHorizontallyAligned = lassoedPageObjectParameterizationView.HorizontalToggle.IsChecked != null &&
-                                            (bool)lassoedPageObjectParameterizationView.HorizontalToggle.IsChecked;
-                var isVerticallyAligned = lassoedPageObjectParameterizationView.VerticalToggle.IsChecked != null &&
-                                          (bool)lassoedPageObjectParameterizationView.VerticalToggle.IsChecked;
-
-                foreach(var lassoedPageObject in lassoedPageObjects)
+                if(pageObject.XPosition + pageObject.Width > endXPosition)
                 {
-                    for(int i = 0; i < numberOfCopies; i++)
-                    {
-                        var duplicatePageObject = lassoedPageObject.Duplicate();
-                        if(isHorizontallyAligned)
-                        {
-                            duplicatePageObject.XPosition += duplicatePageObject.Width + 10;
-                        }
-                        else if(isVerticallyAligned)
-                        {
-                            duplicatePageObject.YPosition += duplicatePageObject.Height + 10;
-                        }
-                        ACLPPageObjectBase.ApplyDistinctPosition(duplicatePageObject);
-                        AddPageObjectToPage(duplicatePageObject, false);
-                        //TODO: Steve - add MassPageObjectAdd history item and MassPageObjectRemove history item.
-                    }
+                    endXPosition = pageObject.XPosition + pageObject.Width;
+                }
+                if(pageObject.YPosition + pageObject.Height > endYPosition)
+                {
+                    endYPosition = pageObject.YPosition + pageObject.Height;
                 }
             }
+
+            ObservableCollection<string> pageObjectIDs = new ObservableCollection<string>();
+            foreach(var pageObject in lassoedPageObjects)
+            {
+                pageObjectIDs.Add(pageObject.UniqueID);
+            }
+            double width = endXPosition - xPosition;
+            double height = endYPosition - yPosition;
+
+            CLPRegion region = new CLPRegion(pageObjectIDs, xPosition, yPosition, height, width, Page);
+            AddPageObjectToPage(region);
 
             if(!stroke.ContainsPropertyData(ACLPPageBase.StrokeIDKey))
             {

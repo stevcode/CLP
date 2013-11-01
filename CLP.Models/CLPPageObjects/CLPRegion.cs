@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using Catel.Data;
 
 namespace CLP.Models
 {
@@ -8,10 +11,15 @@ namespace CLP.Models
     {
         #region Constructors
 
-        public CLPRegion(ICLPPage page)
+        public CLPRegion(ObservableCollection<string> pageObjectIDs, double xPosition, double yPosition, double height, double width, ICLPPage page)
             : base(page)
         {
-            CanAcceptStrokes = true;
+            PageObjectObjectParentIDs = pageObjectIDs;
+            XPosition = xPosition;
+            YPosition = yPosition;
+            Height = height;
+            Width = width;
+            CanAcceptStrokes = false;
             CanAcceptPageObjects = true;
         }
 
@@ -29,14 +37,22 @@ namespace CLP.Models
 
         public override string PageObjectType
         {
-            get { throw new NotImplementedException(); }
+            get { return "CLPRegion"; }
         }
 
         public override ICLPPageObject Duplicate()
         {
-            throw new NotImplementedException();
+            var newRegion = Clone() as CLPRegion;
+            if(newRegion != null) {
+                newRegion.UniqueID = Guid.NewGuid().ToString();
+                newRegion.ParentPage = ParentPage;
+                return newRegion;
+            }
+            return null;
         }
 
-        #endregion
+        #endregion //Overrides of ACLPPageObjectBase
+
+
     }
 }

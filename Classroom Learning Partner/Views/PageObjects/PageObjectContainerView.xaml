@@ -59,6 +59,10 @@
                 <Views:CLPArrayView DataContext="{Binding}" />
             </ControlTemplate>
 
+            <ControlTemplate x:Key="CLPRegionTemplate">
+                <Views:CLPRegionView DataContext="{Binding}" />
+            </ControlTemplate>
+
         </Control.Resources>
 
         <Control.Style>
@@ -128,6 +132,11 @@
                     <!-- CLPArray trigger -->
                     <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPArray">
                         <Setter Property="Template" Value="{StaticResource CLPArrayTemplate}" />
+                    </DataTrigger>
+
+                    <!-- CLPRegion trigger -->
+                    <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPRegion">
+                        <Setter Property="Template" Value="{StaticResource CLPRegionTemplate}" />
                     </DataTrigger>
 
                 </Style.Triggers>
