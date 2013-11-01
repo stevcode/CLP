@@ -182,8 +182,8 @@
                 <!--Toggle Grid Button-->
                 <Button Command="{Binding ToggleGridCommand}"
                         Width="40" Height="40"
-                        Canvas.Left="-40"
-                        Canvas.Bottom="-40"
+                        Canvas.Left="20"
+                        Canvas.Bottom="-50"
                         Visibility="{Binding IsToggleGridAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
@@ -201,8 +201,8 @@
                 <!--Toggle Division Adorners Button-->
                 <Button Command="{Binding ToggleDivisionAdornersCommand}"
                         Width="40" Height="40"
-                        Canvas.Left="20"
-                        Canvas.Bottom="-50"
+                        Canvas.Right="20"
+                        Canvas.Top="-50"
                         Visibility="{Binding IsToggleDivisionAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
@@ -244,8 +244,8 @@
                 <Button Command="{Binding DuplicateArrayCommand}"
                         Cursor="Hand"
                         Width="40" Height="40"
-                        Canvas.Right="20"
-                        Canvas.Top="-50"
+                        Canvas.Left="-40"
+                        Canvas.Bottom="-40"
                         Visibility="{Binding IsDefaultAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">

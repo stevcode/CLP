@@ -963,11 +963,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Brings up a menu to make multiple copies of an array
         /// </summary>
-        public Command DuplicateArrayCommand
-        {
-            get;
-            private set;
-        }
+        public Command DuplicateArrayCommand { get; private set; }
 
         private void OnDuplicateArrayCommandExecute()
         {
