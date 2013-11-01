@@ -971,25 +971,20 @@ namespace Classroom_Learning_Partner.ViewModels
             var arraysToAdd = new List<CLPArray>();
             foreach(var index in Enumerable.Range(1, numberOfArrays))
             {
-                var array = new CLPArray(Rows, Columns, PageObject.ParentPage);
-                array.IsLabelOn = IsLabelOn;
-                array.IsSnappable = IsSnappable;
-                array.IsDivisionBehaviorOn = IsDivisionBehaviorOn;
-                array.IsGridOn = IsGridOn;
-                array.BackgroundColor = PageObject.BackgroundColor;
-
-                array.Width = Width;
-                array.Height = Height;
-                array.RefreshArrayDimensions();
-                array.CalculateGridLines();
-
+                var array = PageObject.Duplicate() as CLPArray;
                 array.XPosition = xPosition;
                 array.YPosition = yPosition;
+
                 if(xPosition + 2*(ArrayWidth + LABEL_LENGTH) <= PageObject.ParentPage.PageWidth)
                 {
                     xPosition += ArrayWidth + LABEL_LENGTH;
                 }
-
+                //If there isn't room, diagonally pile the rest
+                else if((xPosition + ArrayWidth + LABEL_LENGTH + 20.0 <= PageObject.ParentPage.PageWidth) && (yPosition + ArrayHeight + LABEL_LENGTH + 20.0 <= PageObject.ParentPage.PageHeight))
+                {
+                    xPosition += 20.0;
+                    yPosition += 20.0;
+                }
                 arraysToAdd.Add(array);
             }
 
