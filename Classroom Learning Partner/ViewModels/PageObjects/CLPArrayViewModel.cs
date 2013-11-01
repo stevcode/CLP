@@ -42,6 +42,7 @@ namespace Classroom_Learning_Partner.ViewModels
             EditLabelCommand = new Command<CLPArrayDivision>(OnEditLabelCommandExecute);
             EraseDivisionCommand = new Command<MouseEventArgs>(OnEraseDivisionCommandExecute);
             ToggleMainArrayAdornersCommand = new Command<MouseButtonEventArgs>(OnToggleMainArrayAdornersCommandExecute);
+            DuplicateArrayCommand = new Command(OnDuplicateArrayCommandExecute);
         }
 
         #endregion //Constructor
@@ -956,6 +957,75 @@ namespace Classroom_Learning_Partner.ViewModels
                 IsDefaultAdornerVisible = !tempAdornerState;
                 IsTopAdornerVisible = tempAdornerState;
                 IsLeftAdornerVisible = tempAdornerState;
+            }
+        }
+
+        /// <summary>
+        /// Brings up a menu to make multiple copies of an array
+        /// </summary>
+        public Command DuplicateArrayCommand
+        {
+            get;
+            private set;
+        }
+
+        private void OnDuplicateArrayCommandExecute()
+        {
+            var keyPad = new KeypadWindowView("How many copies?", 21)
+            {
+                Owner = Application.Current.MainWindow,
+                WindowStartupLocation = WindowStartupLocation.Manual,
+                Top = 100,
+                Left = 100
+            };
+            keyPad.ShowDialog();
+            if(keyPad.DialogResult != true ||
+               keyPad.NumbersEntered.Text.Length <= 0)
+            {
+                return;
+            }
+            var numberOfArrays = Int32.Parse(keyPad.NumbersEntered.Text);
+
+            var xPosition = 10.0;
+            var yPosition = 160.0;
+            if(YPosition + 2 * Height + 10.0 < PageObject.ParentPage.PageHeight)
+            {
+                yPosition = YPosition + Height + 10.0;
+            }
+            else if(XPosition + 2 * Width + 10.0 < PageObject.ParentPage.PageWidth)
+            {
+                yPosition = YPosition;
+                xPosition = XPosition + Width + 10.0;
+            }
+            const double LABEL_LENGTH = 22.0;
+
+            var arraysToAdd = new List<CLPArray>();
+            foreach(var index in Enumerable.Range(1, numberOfArrays))
+            {
+                var array = PageObject.Duplicate() as CLPArray;
+                array.XPosition = xPosition;
+                array.YPosition = yPosition;
+
+                if(xPosition + 2*(ArrayWidth + LABEL_LENGTH) <= PageObject.ParentPage.PageWidth)
+                {
+                    xPosition += ArrayWidth + LABEL_LENGTH;
+                }
+                //If there isn't room, diagonally pile the rest
+                else if((xPosition + ArrayWidth + LABEL_LENGTH + 20.0 <= PageObject.ParentPage.PageWidth) && (yPosition + ArrayHeight + LABEL_LENGTH + 20.0 <= PageObject.ParentPage.PageHeight))
+                {
+                    xPosition += 20.0;
+                    yPosition += 20.0;
+                }
+                arraysToAdd.Add(array);
+            }
+
+            if(arraysToAdd.Count == 1)
+            {
+                ACLPPageBaseViewModel.AddPageObjectToPage(arraysToAdd.First());
+            }
+            else
+            {
+                ACLPPageBaseViewModel.AddPageObjectsToPage(PageObject.ParentPage, arraysToAdd);
             }
         }
 
