@@ -21,6 +21,7 @@
             <conv:ItemSelectedToColorConverter x:Key="PageOrDisplaySelectionColorConverter" />
             <conv:HeightToWidthAspectRatioMultiConverter x:Key="HeightToWidthAspectRatioMultiConverter" />
             <conv:WidthToHeightAspectRatioMultiConverter x:Key="WidthToHeightAspectRatioMultiConverter" />
+            <conv:AllBoolToColorMultiConverter x:Key="AllBoolToColorMultiConverter" />
 
             <!-- Style to override ListBoxItem selection visuals for Displays -->
             <Style x:Key="DisplaySidebarContainer" TargetType="{x:Type ListBoxItem}">
@@ -47,7 +48,7 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <Grid Grid.Row="0" Height="140">
+            <Grid Grid.Row="0" Height="140" Background="{Binding MirrorDisplaySelectedBackgroundColor}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
@@ -129,6 +130,14 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid Visibility="{Binding IsTrashed, Converter={StaticResource OppositeBooleanToCollapsingVisibilityConverter}, ConverterParameter=False}">
+                            <Grid.Background>
+                                <MultiBinding Converter="{StaticResource AllBoolToColorMultiConverter}" ConverterParameter="Colors.PaleGreen">
+                                    <Binding Path="IsSelected"
+                                             RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}" />
+                                    <Binding Path="MainWindowViewModel.Ribbon.IsProjectorOn"
+                                             Source="{x:Static Application.Current}" />
+                                </MultiBinding>
+                            </Grid.Background>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />

@@ -12,6 +12,7 @@ namespace Classroom_Learning_Partner.ViewModels
     /// <summary>
     /// UserControl view model.
     /// </summary>
+    [InterestedIn(typeof(RibbonViewModel))]
     public class DisplayListPanelViewModel : ViewModelBase, IPanel
     {
         /// <summary>
@@ -159,6 +160,19 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Bindings
 
+        
+
+        /// <summary>
+        /// Color of the MirrorDisplay background.
+        /// </summary>
+        public string MirrorDisplaySelectedBackgroundColor
+        {
+            get { return GetValue<string>(MirrorDisplaySelectedBackgroundColorProperty); }
+            set { SetValue(MirrorDisplaySelectedBackgroundColorProperty, value); }
+        }
+
+        public static readonly PropertyData MirrorDisplaySelectedBackgroundColorProperty = RegisterProperty("MirrorDisplaySelectedBackgroundColor", typeof(string));
+
         /// <summary>
         /// Color of the highlighted border around the MirrorDisplay.
         /// </summary>
@@ -195,6 +209,7 @@ namespace Classroom_Learning_Partner.ViewModels
             dict.Source = uri;
             var color = dict["GrayBorderColor"].ToString();
             displayListPanelViewModel.MirrorDisplaySelectedColor = color;
+            displayListPanelViewModel.MirrorDisplaySelectedBackgroundColor = "Transparent";
 
             notebookWorkspaceViewModel.SelectedDisplay = args.NewValue as ICLPDisplay;
 
@@ -253,6 +268,7 @@ namespace Classroom_Learning_Partner.ViewModels
             dict.Source = uri;
             var color = dict["MainColor"].ToString();
             MirrorDisplaySelectedColor = color;
+            MirrorDisplaySelectedBackgroundColor = App.MainWindowViewModel.Ribbon.IsProjectorOn ? "PaleGreen" : "Transparent";
             CurrentDisplay = null;
 
             var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
@@ -298,6 +314,27 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //Commands
+
+        #region Methods
+
+        protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
+        {
+            if(propertyName == "IsProjectorOn" && viewModel is RibbonViewModel)
+            {
+                if(CurrentDisplay == null && (viewModel as RibbonViewModel).IsProjectorOn)
+                {
+                    MirrorDisplaySelectedBackgroundColor = "PaleGreen";
+                }
+                else
+                {
+                    MirrorDisplaySelectedBackgroundColor = "Transparent";
+                }
+            }
+
+            base.OnViewModelPropertyChanged(viewModel, propertyName);
+        }
+
+        #endregion //Methods
 
         #region Static Methods
 
