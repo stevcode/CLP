@@ -29,9 +29,6 @@ namespace Classroom_Learning_Partner.ViewModels
             PageObject = region;
 
             RemovePageObjectsCommand = new Command(OnRemovePageObjectsCommandExecute);
-            DragPageObjectsCommand = new Command<DragDeltaEventArgs>(OnDragPageObjectsCommandExecute);
-            DragStartPageObjectsCommand = new Command<DragStartedEventArgs>(OnDragStartPageObjectsCommandExecute);
-            DragStopPageObjectsCommand = new Command<DragCompletedEventArgs>(OnDragStopPageObjectsCommandExecute);
             DuplicateCommand = new Command(OnDuplicateCommandExecute);
             UnselectRegionCommand = new Command(OnUnselectRegionCommandExecute);
         }
@@ -55,96 +52,6 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 ACLPPageBaseViewModel.RemovePageObjectFromPage(pageObject);
             }
-            ACLPPageBaseViewModel.RemovePageObjectFromPage(PageObject);
-        }
-
-        /// <summary>
-        /// Gets the DragPageObjectsCommand command.
-        /// </summary>
-        public Command<DragDeltaEventArgs> DragPageObjectsCommand
-        {
-            get;
-            set;
-        }
-
-        private void OnDragPageObjectsCommandExecute(DragDeltaEventArgs e)
-        {
-            var parentPage = PageObject.ParentPage;
-
-            foreach(ICLPPageObject pageObject in PageObject.GetPageObjectsOverPageObject())
-            {
-                var newX = PageObject.XPosition + e.HorizontalChange;
-                var newY = PageObject.YPosition + e.VerticalChange;
-                if(newX < 0)
-                {
-                    newX = 0;
-                }
-                if(newY < 0)
-                {
-                    newY = 0;
-                }
-                if(newX > parentPage.PageWidth - PageObject.Width)
-                {
-                    newX = parentPage.PageWidth - PageObject.Width;
-                }
-                if(newY > parentPage.PageHeight - PageObject.Height)
-                {
-                    newY = parentPage.PageHeight - PageObject.Height;
-                }
-
-                ChangePageObjectPosition(PageObject, newX, newY);
-            }
-        }
-
-        /// <summary>
-        /// Gets the DragStartPageObjectsCommand command.
-        /// </summary>
-        public Command<DragStartedEventArgs> DragStartPageObjectsCommand
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Method to invoke when the DragStartPageObjectsCommand command is executed.
-        /// </summary>
-        private void OnDragStartPageObjectsCommandExecute(DragStartedEventArgs e)
-        {
-            foreach(ICLPPageObject pageObject in PageObject.GetPageObjectsOverPageObject())
-            {
-                PageObject.ParentPage.PageHistory.BeginBatch(new CLPHistoryPageObjectMoveBatch(PageObject.ParentPage,
-                                                                                           PageObject.UniqueID,
-                                                                                           new Point(PageObject.XPosition,
-                                                                                                     PageObject.YPosition)));
-            }
-        }
-
-        /// <summary>
-        /// Gets the DragStopPageObjectsCommand command.
-        /// </summary>
-        public Command<DragCompletedEventArgs> DragStopPageObjectsCommand
-        {
-            get;
-            set;
-        }
-
-        private void OnDragStopPageObjectsCommandExecute(DragCompletedEventArgs e)
-        {
-            foreach(ICLPPageObject pageObject in PageObject.GetPageObjectsOverPageObject())
-            {
-                var batch = PageObject.ParentPage.PageHistory.CurrentHistoryBatch;
-                if(batch is CLPHistoryPageObjectMoveBatch)
-                {
-                    (batch as CLPHistoryPageObjectMoveBatch).AddPositionPointToBatch(PageObject.UniqueID,
-                                                                                     new Point(PageObject.XPosition,
-                                                                                               PageObject.YPosition));
-                }
-                var batchHistoryItem = PageObject.ParentPage.PageHistory.EndBatch();
-                ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, batchHistoryItem, true);
-                PageObject.OnMoved();
-            }
-
-            //Remove region after operation
             ACLPPageBaseViewModel.RemovePageObjectFromPage(PageObject);
         }
 
@@ -174,22 +81,34 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             var numberOfCopies = Int32.Parse(keyPad.NumbersEntered.Text);
 
-            bool isHorizontallyAligned = (Width / PageObject.ParentPage.PageWidth < Height / PageObject.ParentPage.PageHeight);
+            double xPosition = 50.0;
+            double yPosition = YPosition;
+            if(XPosition + Width * (numberOfCopies + 1) < PageObject.ParentPage.PageWidth)
+            {
+                xPosition = XPosition + Width;
+            }
+            else if(YPosition + 2 * Height < PageObject.ParentPage.PageHeight)
+            {
+                yPosition = YPosition + Height;
+            }
             foreach(var lassoedPageObject in PageObject.GetPageObjectsOverPageObject())
             {
                 for(int i = 0; i < numberOfCopies; i++)
                 {
                     var duplicatePageObject = lassoedPageObject.Duplicate();
-                    if(isHorizontallyAligned)
+                    double xOffset = lassoedPageObject.XPosition - XPosition;
+                    double yOffset = lassoedPageObject.YPosition - YPosition;
+
+                    if(xPosition + (i + 2) * Width <= PageObject.ParentPage.PageWidth)
                     {
-                        duplicatePageObject.XPosition += duplicatePageObject.Width + 10;
+                        duplicatePageObject.XPosition = xPosition + xOffset + i * Width;
+                        duplicatePageObject.YPosition = yPosition + yOffset;
                     }
                     else
                     {
-                        duplicatePageObject.YPosition += duplicatePageObject.Height + 10;
+                        ACLPPageObjectBase.ApplyDistinctPosition(duplicatePageObject);
                     }
-                    ACLPPageObjectBase.ApplyDistinctPosition(duplicatePageObject);
-                    ACLPPageBaseViewModel.AddPageObjectToPage(PageObject.ParentPage, duplicatePageObject, false);
+                    ACLPPageBaseViewModel.AddPageObjectToPage(PageObject.ParentPage, duplicatePageObject, true);
                     //TODO: Steve - add MassPageObjectAdd history item and MassPageObjectRemove history item.
                 }
             }

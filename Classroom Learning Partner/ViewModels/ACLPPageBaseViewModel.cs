@@ -790,11 +790,20 @@ namespace Classroom_Learning_Partner.ViewModels
 
             foreach(var pageObject in PageObjects)
             {
-                //TO DO liz: instead of having to be completely contained
-                //Instead of creating rectangle that big, make a 50x50 in the center only if that's contained in it
-                var pageObjectGeometry =
-                    new RectangleGeometry(new Rect(pageObject.XPosition, pageObject.YPosition, pageObject.Width,
-                                                   pageObject.Height));
+                RectangleGeometry pageObjectGeometry;
+                if(pageObject.Width > 50.0 || pageObject.Height > 50)
+                {
+                    pageObjectGeometry =
+                      new RectangleGeometry(new Rect(pageObject.XPosition + pageObject.Width/2 - 25.0,
+                                                     pageObject.YPosition + pageObject.Height/2 - 25.0, 
+                                                     50.0, 50.0));
+                }
+                else
+                {
+                    pageObjectGeometry =
+                        new RectangleGeometry(new Rect(pageObject.XPosition, pageObject.YPosition, pageObject.Width,
+                                                       pageObject.Height));
+                }
 
                 if(strokeGeometry.FillContains(pageObjectGeometry))
                 {
@@ -802,45 +811,43 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
 
-            if(lassoedPageObjects.Count == 0)
+            if(lassoedPageObjects.Count > 0)
             {
-                return;
-            }
+                double xPosition = lassoedPageObjects.First().XPosition;
+                double yPosition = lassoedPageObjects.First().YPosition;
+                double endXPosition = lassoedPageObjects.First().XPosition + lassoedPageObjects.First().Width;
+                double endYPosition = lassoedPageObjects.First().YPosition + lassoedPageObjects.First().Height;
+                foreach(var pageObject in lassoedPageObjects)
+                {
+                    if(pageObject.XPosition < xPosition)
+                    {
+                        xPosition = pageObject.XPosition;
+                    }
+                    if(pageObject.YPosition < yPosition)
+                    {
+                        yPosition = pageObject.YPosition;
+                    }
+                    if(pageObject.XPosition + pageObject.Width > endXPosition)
+                    {
+                        endXPosition = pageObject.XPosition + pageObject.Width;
+                    }
+                    if(pageObject.YPosition + pageObject.Height > endYPosition)
+                    {
+                        endYPosition = pageObject.YPosition + pageObject.Height;
+                    }
+                }
 
-            double xPosition = lassoedPageObjects.First().XPosition;
-            double yPosition = lassoedPageObjects.First().YPosition;
-            double endXPosition = lassoedPageObjects.First().XPosition + lassoedPageObjects.First().Width;
-            double endYPosition = lassoedPageObjects.First().YPosition + lassoedPageObjects.First().Height;
-            foreach(var pageObject in lassoedPageObjects)
-            {
-                if(pageObject.XPosition < xPosition)
+                ObservableCollection<string> pageObjectIDs = new ObservableCollection<string>();
+                foreach(var pageObject in lassoedPageObjects)
                 {
-                    xPosition = pageObject.XPosition;
+                    pageObjectIDs.Add(pageObject.UniqueID);
                 }
-                if(pageObject.YPosition < yPosition)
-                {
-                    yPosition = pageObject.YPosition;
-                }
-                if(pageObject.XPosition + pageObject.Width > endXPosition)
-                {
-                    endXPosition = pageObject.XPosition + pageObject.Width;
-                }
-                if(pageObject.YPosition + pageObject.Height > endYPosition)
-                {
-                    endYPosition = pageObject.YPosition + pageObject.Height;
-                }
-            }
+                double width = endXPosition - xPosition;
+                double height = endYPosition - yPosition;
 
-            ObservableCollection<string> pageObjectIDs = new ObservableCollection<string>();
-            foreach(var pageObject in lassoedPageObjects)
-            {
-                pageObjectIDs.Add(pageObject.UniqueID);
+                CLPRegion region = new CLPRegion(pageObjectIDs, xPosition, yPosition, height, width, Page);
+                AddPageObjectToPage(region, false);
             }
-            double width = endXPosition - xPosition;
-            double height = endYPosition - yPosition;
-
-            CLPRegion region = new CLPRegion(pageObjectIDs, xPosition, yPosition, height, width, Page);
-            AddPageObjectToPage(region);
 
             if(!stroke.ContainsPropertyData(ACLPPageBase.StrokeIDKey))
             {
