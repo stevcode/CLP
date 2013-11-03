@@ -1,9 +1,11 @@
 ﻿using System.Collections.ObjectModel;
+using System.Drawing;
 using System.Windows;
 using System.Windows.Media;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
+using Brush = System.Windows.Media.Brush;
 
 namespace Classroom_Learning_Partner.ViewModels
 {

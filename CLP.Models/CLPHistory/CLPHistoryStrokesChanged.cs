@@ -120,7 +120,13 @@ namespace CLP.Models
             {
                 foreach(var serializedStroke in SerializedStrokesRemoved)
                 {
-                    ParentPage.InkStrokes.Add(serializedStroke.ToStroke());
+                    var stroke = serializedStroke.ToStroke();
+                    if(stroke == null)
+                    {
+                        Logger.Instance.WriteToLog("Skipped Loading of corrupted stroke");
+                        continue;
+                    }
+                    ParentPage.InkStrokes.Add(stroke);
                 }
                 SerializedStrokesRemoved = null;
             }
@@ -154,7 +160,13 @@ namespace CLP.Models
             {
                 foreach(var serializedStroke in SerializedStrokesAdded)
                 {
-                    ParentPage.InkStrokes.Add(serializedStroke.ToStroke());
+                    var stroke = serializedStroke.ToStroke();
+                    if(stroke == null)
+                    {
+                        Logger.Instance.WriteToLog("Skipped Loading of corrupted stroke");
+                        continue;
+                    }
+                    ParentPage.InkStrokes.Add(stroke);
                 }
                 SerializedStrokesAdded = null;
             }

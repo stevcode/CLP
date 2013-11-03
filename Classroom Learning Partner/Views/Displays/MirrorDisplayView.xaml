@@ -17,7 +17,7 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid Background="{Binding IsOnProjector, Converter={StaticResource ProjectedDisplayBackgroundConverter}}">
+    <Grid Background="{Binding MainWindowViewModel.Ribbon.IsProjectorOn, Source={x:Static Application.Current}, Converter={StaticResource ProjectedDisplayBackgroundConverter}}">
         <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>

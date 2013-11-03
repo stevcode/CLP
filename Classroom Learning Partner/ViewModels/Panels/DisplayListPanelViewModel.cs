@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls.Primitives;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
@@ -13,6 +12,7 @@ namespace Classroom_Learning_Partner.ViewModels
     /// <summary>
     /// UserControl view model.
     /// </summary>
+    [InterestedIn(typeof(RibbonViewModel))]
     public class DisplayListPanelViewModel : ViewModelBase, IPanel
     {
         /// <summary>
@@ -24,8 +24,8 @@ namespace Classroom_Learning_Partner.ViewModels
             OnSetMirrorDisplayCommandExecute();
 
             AddGridDisplayCommand = new Command(OnAddGridDisplayCommandExecute);
+            AddPageToNewGridDisplayCommand = new Command(OnAddPageToNewGridDisplayCommandExecute);
             SetMirrorDisplayCommand = new Command(OnSetMirrorDisplayCommandExecute);
-            SendMirrorDisplayToProjectorCommand = new Command<RoutedEventArgs>(OnSendMirrorDisplayToProjectorCommandExecute);
             RemoveDisplayCommand = new Command<ICLPDisplay>(OnRemoveDisplayCommandExecute);
             IsVisible = false;
 
@@ -33,18 +33,8 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 return;
             }
-            MirrorDisplayIsOnProjector = true;
-            ProjectedDisplayString = MirrorDisplay.UniqueID;
-            var currentPage = MirrorDisplay.CurrentPage;
-            var currentPageID = currentPage.SubmissionType != SubmissionType.None ? currentPage.SubmissionID : currentPage.UniqueID;
-            try
-            {
-                App.Network.ProjectorProxy.SwitchProjectorDisplay("MirrorDisplay", new List<string> { currentPageID });
-            }
-            catch(Exception)
-            {
 
-            }
+            App.MainWindowViewModel.Ribbon.IsProjectorOn = true;
         }
 
         /// <summary>
@@ -170,6 +160,19 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Bindings
 
+        
+
+        /// <summary>
+        /// Color of the MirrorDisplay background.
+        /// </summary>
+        public string MirrorDisplaySelectedBackgroundColor
+        {
+            get { return GetValue<string>(MirrorDisplaySelectedBackgroundColorProperty); }
+            set { SetValue(MirrorDisplaySelectedBackgroundColorProperty, value); }
+        }
+
+        public static readonly PropertyData MirrorDisplaySelectedBackgroundColorProperty = RegisterProperty("MirrorDisplaySelectedBackgroundColor", typeof(string));
+
         /// <summary>
         /// Color of the highlighted border around the MirrorDisplay.
         /// </summary>
@@ -180,17 +183,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData MirrorDisplaySelectedColorProperty = RegisterProperty("MirrorDisplaySelectedColor", typeof(string));
-
-        /// <summary>
-        /// Whether or not the MirrorDisplay has been sent to the projector.
-        /// </summary>
-        public bool MirrorDisplayIsOnProjector
-        {
-            get { return GetValue<bool>(MirrorDisplayIsOnProjectorProperty); }
-            set { SetValue(MirrorDisplayIsOnProjectorProperty, value); }
-        }
-
-        public static readonly PropertyData MirrorDisplayIsOnProjectorProperty = RegisterProperty("MirrorDisplayIsOnProjector", typeof(bool), false);
 
         /// <summary>
         /// The selected display in the list of the Notebook's Displays. Does not include the MirrorDisplay.
@@ -217,20 +209,24 @@ namespace Classroom_Learning_Partner.ViewModels
             dict.Source = uri;
             var color = dict["GrayBorderColor"].ToString();
             displayListPanelViewModel.MirrorDisplaySelectedColor = color;
+            displayListPanelViewModel.MirrorDisplaySelectedBackgroundColor = "Transparent";
 
             notebookWorkspaceViewModel.SelectedDisplay = args.NewValue as ICLPDisplay;
-        }
 
-        /// <summary>
-        /// UniqueID of the projected display.
-        /// </summary>
-        public string ProjectedDisplayString
-        {
-            get { return GetValue<string>(ProjectedDisplayStringProperty); }
-            set { SetValue(ProjectedDisplayStringProperty, value); }
-        }
+            if(App.Network.ProjectorProxy == null || !App.MainWindowViewModel.Ribbon.IsProjectorOn || notebookWorkspaceViewModel.SelectedDisplay == null)
+            {
+                return;
+            }
 
-        public static readonly PropertyData ProjectedDisplayStringProperty = RegisterProperty("ProjectedDisplayString", typeof(string), string.Empty);
+            try
+            {
+                App.Network.ProjectorProxy.SwitchProjectorDisplay(notebookWorkspaceViewModel.SelectedDisplay.UniqueID, notebookWorkspaceViewModel.SelectedDisplay.DisplayPageIDs.ToList());
+            }
+            catch(Exception)
+            {
+
+            }
+        }
 
         #endregion //Bindings
 
@@ -248,6 +244,19 @@ namespace Classroom_Learning_Partner.ViewModels
         }     
 
         /// <summary>
+        /// Adds the current page on the MirrorDisplay to a new GridDisplay.
+        /// </summary>
+        public Command AddPageToNewGridDisplayCommand { get; private set; }
+
+        private void OnAddPageToNewGridDisplayCommandExecute()
+        {
+            var newGridDisplay = new CLPGridDisplay();
+            newGridDisplay.AddPageToDisplay(MirrorDisplay.CurrentPage);
+            Notebook.AddDisplay(newGridDisplay);
+            CurrentDisplay = newGridDisplay;
+        }
+
+        /// <summary>
         /// Sets the current display to the Mirror Display.
         /// </summary>
         public Command SetMirrorDisplayCommand { get; private set; }
@@ -259,42 +268,21 @@ namespace Classroom_Learning_Partner.ViewModels
             dict.Source = uri;
             var color = dict["MainColor"].ToString();
             MirrorDisplaySelectedColor = color;
+            MirrorDisplaySelectedBackgroundColor = App.MainWindowViewModel.Ribbon.IsProjectorOn ? "PaleGreen" : "Transparent";
             CurrentDisplay = null;
 
             var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel != null)
-            {
-                notebookWorkspaceViewModel.SelectedDisplay = MirrorDisplay;
-            }
-        }
-
-        /// <summary>
-        /// Sends the MirrorDisplay to the projector, or toggles send to projector off.
-        /// </summary>
-        public Command<RoutedEventArgs> SendMirrorDisplayToProjectorCommand { get; private set; }
-
-        private void OnSendMirrorDisplayToProjectorCommandExecute(RoutedEventArgs e)
-        {
-            if(App.Network.ProjectorProxy == null)
-            {
-                MirrorDisplayIsOnProjector = false;
-                ProjectedDisplayString = string.Empty;
-
-                return;
-            }
-
-            var toggleButton = e.Source as ToggleButton;
-            if(toggleButton == null)
+            if(notebookWorkspaceViewModel == null)
             {
                 return;
             }
-            if(toggleButton.IsChecked != null && !(bool)toggleButton.IsChecked)
+            notebookWorkspaceViewModel.SelectedDisplay = MirrorDisplay;
+
+            if(App.Network.ProjectorProxy == null || !App.MainWindowViewModel.Ribbon.IsProjectorOn)
             {
-                ProjectedDisplayString = string.Empty;
                 return;
             }
 
-            ProjectedDisplayString = MirrorDisplay.UniqueID;
             var currentPage = MirrorDisplay.CurrentPage;
             var currentPageID = currentPage.SubmissionType != SubmissionType.None ? currentPage.SubmissionID : currentPage.UniqueID;
             try
@@ -326,6 +314,27 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //Commands
+
+        #region Methods
+
+        protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
+        {
+            if(propertyName == "IsProjectorOn" && viewModel is RibbonViewModel)
+            {
+                if(CurrentDisplay == null && (viewModel as RibbonViewModel).IsProjectorOn)
+                {
+                    MirrorDisplaySelectedBackgroundColor = "PaleGreen";
+                }
+                else
+                {
+                    MirrorDisplaySelectedBackgroundColor = "Transparent";
+                }
+            }
+
+            base.OnViewModelPropertyChanged(viewModel, propertyName);
+        }
+
+        #endregion //Methods
 
         #region Static Methods
 

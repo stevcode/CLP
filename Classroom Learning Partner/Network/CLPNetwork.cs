@@ -102,15 +102,7 @@ namespace Classroom_Learning_Partner
                         {
                             ProjectorProxy = ChannelFactory<IProjectorContract>.CreateChannel(DefaultBinding, DiscoveredProjectors.Addresses[0]);
                             App.MainWindowViewModel.OnlineStatus = "CONNECTED";
-                            var displayList = DisplayListPanelViewModel.GetDisplayListPanelViewModel();
-                            if(displayList != null)
-                            {
-                                displayList.MirrorDisplayIsOnProjector = true;
-                                displayList.ProjectedDisplayString = displayList.MirrorDisplay.UniqueID;
-                                var currentPage = displayList.MirrorDisplay.CurrentPage;
-                                var currentPageID = currentPage.SubmissionType != SubmissionType.None ? currentPage.SubmissionID : currentPage.UniqueID;
-                                ProjectorProxy.SwitchProjectorDisplay("MirrorDisplay", new List<string> { currentPageID });
-                            }
+                            App.MainWindowViewModel.Ribbon.IsProjectorOn = true;
                         }
                         catch(Exception)
                         {

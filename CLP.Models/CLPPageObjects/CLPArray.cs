@@ -293,6 +293,11 @@ namespace CLP.Models
 
             var halvedPageObjects = new List<ICLPPageObject>();
 
+            if(IsProductVisible)
+            {
+                return halvedPageObjects;
+            }
+
             //TODO: Tim - This is fine for now, but you could have an instance where a really wide, but short rectangle is made
             // and a stroke could be made that was only a few pixels high, and quite wide, that would try to make a horizontal
             // cut instead of the vertical cut that was intended. See Also Shape.Cut().
@@ -518,7 +523,8 @@ namespace CLP.Models
                 }
             }
 
-            var rect = new Rect(XPosition + LabelLength, YPosition + LabelLength, ArrayWidth, ArrayHeight);
+            //var rect = new Rect(XPosition + LabelLength, YPosition + LabelLength, ArrayWidth, ArrayHeight);
+            var rect = new Rect(XPosition, YPosition, Width, Height);
             foreach(var stroke in addedStrokes.Where(stroke => stroke.HitTest(rect, 50))) 
             {
                 PageObjectStrokeParentIDs.Add(stroke.GetStrokeUniqueID());

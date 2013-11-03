@@ -1,17 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Windows;
-using System.Windows.Controls.Primitives;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    [InterestedIn(typeof(DisplayListPanelViewModel))]
-    public class GridDisplayViewModel : ViewModelBase, IDisplayViewModel
+    public class GridDisplayViewModel : ViewModelBase
     {
         /// <summary>
         /// Initializes a new instance of the GridDisplayViewModel class.
@@ -21,15 +17,7 @@ namespace Classroom_Learning_Partner.ViewModels
             GridDisplay = gridDisplay;
             Pages.CollectionChanged += Pages_CollectionChanged;
             UGridRows = Pages.Count < 3 ? 1 : 0;
-            SendDisplayToProjectorCommand = new Command<RoutedEventArgs>(OnSendDisplayToProjectorCommandExecute);
             RemovePageFromGridDisplayCommand = new Command<ICLPPage>(OnRemovePageFromGridDisplayCommandExecute);
-
-            var displayListViewModel = DisplayListPanelViewModel.GetDisplayListPanelViewModel();
-            if(displayListViewModel == null)
-            {
-                return;
-            }
-            IsOnProjector = displayListViewModel.ProjectedDisplayString == GridDisplay.UniqueID;
         }
 
         public override string Title { get { return "GridDisplayVM"; } }
@@ -75,21 +63,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Model
 
-        #region Interface
-
-        /// <summary>
-        /// If Display is currently being projected.
-        /// </summary>
-        public bool IsOnProjector
-        {
-            get { return GetValue<bool>(IsOnProjectorProperty); }
-            set { SetValue(IsOnProjectorProperty, value); }
-        }
-
-        public static readonly PropertyData IsOnProjectorProperty = RegisterProperty("IsOnProjector", typeof(bool), false);
-
-        #endregion //Interface
-
         #region Bindings
 
         /// <summary>
@@ -118,21 +91,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Methods
 
-        protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
-        {
-            if(propertyName == "ProjectedDisplayString" && viewModel is DisplayListPanelViewModel)
-            {
-                IsOnProjector = (viewModel as DisplayListPanelViewModel).ProjectedDisplayString == GridDisplay.UniqueID;
-            }
-
-            base.OnViewModelPropertyChanged(viewModel, propertyName);
-        }
-
         void Pages_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             UGridRows = Pages.Count < 3 ? 1 : 0;
 
-            if(!IsOnProjector || App.Network.ProjectorProxy == null || IsDisplayPreview)
+            if(!App.MainWindowViewModel.Ribbon.IsProjectorOn || App.Network.ProjectorProxy == null || IsDisplayPreview)
             {
                 return;
             }
@@ -185,57 +148,6 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Commands
 
         /// <summary>
-        /// Sends the display to the projector, or toggles send to projector off.
-        /// </summary>
-        public Command<RoutedEventArgs> SendDisplayToProjectorCommand { get; private set; }
-
-        private void OnSendDisplayToProjectorCommandExecute(RoutedEventArgs e)
-        {
-            var displayListPanel = DisplayListPanelViewModel.GetDisplayListPanelViewModel();
-            if(displayListPanel == null)
-            {
-                return;
-            }
-
-            if(App.Network.ProjectorProxy == null)
-            {
-                displayListPanel.MirrorDisplayIsOnProjector = false;
-                displayListPanel.ProjectedDisplayString = string.Empty;
-
-                return;
-            }
-
-            var toggleButton = e.Source as ToggleButton;
-            if(toggleButton == null)
-            {
-                return;
-            }
-            if(toggleButton.IsChecked != null && !(bool)toggleButton.IsChecked)
-            {
-                displayListPanel.ProjectedDisplayString = string.Empty;
-                return;
-            }
-
-            displayListPanel.MirrorDisplayIsOnProjector = false;
-            displayListPanel.ProjectedDisplayString = GridDisplay.UniqueID;
-            var pageIDs = new List<string>();
-            foreach(var page in Pages)
-            {
-                var pageID = page.SubmissionType != SubmissionType.None ? page.SubmissionID : page.UniqueID;
-                pageIDs.Add(pageID);
-            }
-
-            try
-            {
-                App.Network.ProjectorProxy.SwitchProjectorDisplay(GridDisplay.UniqueID, pageIDs);
-            }
-            catch(Exception)
-            {
-
-            }
-        }
-
-        /// <summary>
         /// Gets the RemovePageFromGridDisplayCommand command.
         /// </summary>
         public Command<ICLPPage> RemovePageFromGridDisplayCommand { get; private set; }
@@ -249,6 +161,5 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //Commands
-
     }
 }

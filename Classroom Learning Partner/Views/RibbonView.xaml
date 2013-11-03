@@ -24,9 +24,6 @@
             <RibbonContextualTabGroup Header="Debugging"
                                       Visibility="{Binding DebugTabVisibility}"
                                       Background="Violet" />
-            <RibbonContextualTabGroup Header="Extras"
-                                      Visibility="{Binding ExtrasTabVisibility}"
-                                      Background="DarkOrange" />
         </Ribbon.ContextualTabGroups>
 
         <!--Application Menu Button-->
@@ -145,6 +142,11 @@
                     </RibbonToggleButton.Style>
                 </RibbonToggleButton>
 
+                <RibbonButton Label="Hide Subs" 
+                              LargeImageSource="pack://application:,,,/Resources/Images/DisplaySubmissionsButton50x25.png" 
+                              Command="{Binding HideSubmissionsPanelCommand}"
+                              Visibility="{Binding InstructorVisibility}" />
+
                 <RibbonButton Label="Previous Page"
                               LargeImageSource="pack://application:,,,/Resources/Images/PreviousPage32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/PreviousPage16.png"
@@ -154,25 +156,6 @@
                               LargeImageSource="pack://application:,,,/Resources/Images/NextPage32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/NextPage16.png"
                               Command="{Binding NextPageCommand}" />
-
-                <RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/Displays32.png"
-                                    IsChecked="{Binding DisplayPanelVisibility}"
-                                    IsEnabled="{Binding MainWindow.SelectedWorkspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
-                                    Visibility="{Binding InstructorVisibility}">
-                    <RibbonToggleButton.Style>
-                        <Style TargetType="{x:Type RibbonToggleButton}">
-                            <Setter Property="Label"
-                                    Value="Show Displays" />
-                            <Style.Triggers>
-                                <Trigger Property="IsChecked"
-                                         Value="True">
-                                    <Setter Property="Label"
-                                            Value="Hide Displays" />
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </RibbonToggleButton.Style>
-                </RibbonToggleButton>
 
             </RibbonGroup>
 
@@ -196,10 +179,10 @@
                                     IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
                                     IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionMode.Highlighter}}" />
 
-                <RibbonMenuButton Label="Brush Size"
+                <RibbonMenuButton Label="Pen Size"
                                   LargeImageSource="pack://application:,,,/Resources/Images/PenSize32.png"
                                   SmallImageSource="pack://application:,,,/Resources/Images/PenSize16.png"
-                                  Visibility="{Binding InstructorVisibility}">
+                                  >
                     <RibbonGallery SelectedValuePath="Content.Height"
                                    SelectedValue="{Binding PenSize, Mode=TwoWay}"
                                    ScrollViewer.VerticalScrollBarVisibility="Hidden">
@@ -218,14 +201,14 @@
                                            Height="3"
                                            Width="150" />
                             </RibbonGalleryItem>
-                            <RibbonGalleryItem Height="30">
+                            <RibbonGalleryItem Height="30" Visibility="{Binding InstructorVisibility}">
                                 <Rectangle VerticalAlignment="Center"
                                            StrokeThickness="0"
                                            Fill="Black"
                                            Height="5"
                                            Width="150" />
                             </RibbonGalleryItem>
-                            <RibbonGalleryItem Height="30">
+                            <RibbonGalleryItem Height="30" Visibility="{Binding InstructorVisibility}">
                                 <Rectangle VerticalAlignment="Center"
                                            StrokeThickness="0"
                                            Fill="Black"
@@ -372,9 +355,9 @@
                 </Border>
             </RibbonGroup>
 
-            <RibbonGroup Header="Page Size">
+            <RibbonGroup Header="Page">
 
-                <RibbonButton Label="Make Page Longer"
+                <RibbonButton Label="Longer Page"
                               LargeImageSource="pack://application:,,,/Resources/Images/MakePageLonger32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/MakePageLonger16.png"
                               Command="{Binding MakePageLongerCommand}" />
@@ -415,6 +398,44 @@
                               LargeImageSource="pack://application:,,,/Resources/Images/Redo32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/Redo16.png"
                               Command="{Binding RedoCommand}" />
+
+            </RibbonGroup>
+
+            <RibbonGroup Header="Displays" Visibility="{Binding InstructorVisibility}">
+
+                <RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/Displays32.png"
+                                    IsChecked="{Binding DisplayPanelVisibility}"
+                                    IsEnabled="{Binding MainWindow.SelectedWorkspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}">
+                    <RibbonToggleButton.Style>
+                        <Style TargetType="{x:Type RibbonToggleButton}">
+                            <Setter Property="Label"
+                                    Value="Show Displays" />
+                            <Style.Triggers>
+                                <Trigger Property="IsChecked"
+                                         Value="True">
+                                    <Setter Property="Label"
+                                            Value="Hide Displays" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </RibbonToggleButton.Style>
+                </RibbonToggleButton>
+
+                <RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/Projector32.png"
+                                    SmallImageSource="pack://application:,,,/Resources/Images/Projector16.png"
+                                    IsChecked="{Binding IsProjectorOn}"
+                                    IsEnabled="{Binding MainWindow.SelectedWorkspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}">
+                    <RibbonToggleButton.Style>
+                        <Style TargetType="{x:Type RibbonToggleButton}">
+                            <Setter Property="Label" Value="OFF" />
+                            <Style.Triggers>
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter Property="Label" Value="ON" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </RibbonToggleButton.Style>
+                </RibbonToggleButton>
 
             </RibbonGroup>
 
@@ -719,6 +740,14 @@
                 <RibbonButton Label="Analyze Stamps"
                               LargeImageSource="..\Images\AddPathStamp.png"
                               Command="{Binding AnalyzeStampsCommand}" />
+
+            </RibbonGroup>
+            
+            <RibbonGroup Header="History">
+
+                <RibbonButton Label="Replay"
+                              LargeImageSource="..\Images\video.png"
+                              Command="{Binding ReplayCommand}" />
 
             </RibbonGroup>
 
@@ -1034,29 +1063,6 @@
 
         </RibbonTab>
 
-        <!--Extras Tab-->
-        <RibbonTab Header="Extras"
-                   ContextualTabGroupHeader="Extras">
-
-            <RibbonGroup Header="Insert">
-
-                <RibbonButton Label="Array + Dividers"
-                              LargeImageSource="..\Images\Array.png"
-                              Command="{Binding InsertArrayCommand}"
-                              CommandParameter="TRUE" />
-
-            </RibbonGroup>
-
-            <RibbonGroup Header="History">
-
-                <RibbonButton Label="Replay"
-                              LargeImageSource="..\Images\video.png"
-                              Command="{Binding ReplayCommand}" />
-
-            </RibbonGroup>
-
-        </RibbonTab>
-
         <!--Debug Tab-->
         <RibbonTab Header="General Debug"
                    ContextualTabGroupHeader="Debugging">
@@ -1084,6 +1090,10 @@
                 <RibbonButton Label="Clear History"
                               LargeImageSource="..\Images\LargeIcon.png"
                               Command="{Binding ClearHistoryCommand}" />
+                
+                <RibbonButton Label="Clear Page"
+                              LargeImageSource="..\Images\LargeIcon.png"
+                              Command="{Binding ClearPageCommand}" />
 
             </RibbonGroup>
 
@@ -1100,6 +1110,10 @@
                 <RibbonButton Label="Trim Page"
                               LargeImageSource="..\Images\LargeIcon.png"
                               Command="{Binding TrimPageCommand}" />
+                
+                <RibbonButton Label="Clear History From Page"
+                              LargeImageSource="..\Images\LargeIcon.png"
+                              Command="{Binding ClearPageHistoryCommand}" />
             </RibbonGroup>
 
         </RibbonTab>

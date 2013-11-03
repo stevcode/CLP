@@ -181,10 +181,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\AllBoolToColorMultiConverter.cs" />
     <Compile Include="Converters\AllBoolToVisibilityMultiConverter.cs" />
     <Compile Include="Converters\BoolZeroToQuestionMarkMultiConverter.cs" />
     <Compile Include="CLPServiceAgent.cs" />
     <Compile Include="Converters\BoolToDoubleConverter.cs" />
+    <Compile Include="Converters\BytesToImageSourceConverter.cs" />
     <Compile Include="Converters\CurrentWorkspaceToButtonEnabledConverter.cs" />
     <Compile Include="Converters\DoubleToVisibilityConverter.cs" />
     <Compile Include="Converters\EnumToBoolConverter.cs" />
@@ -241,7 +243,6 @@
     <Compile Include="ViewModels\PageObjects\ACLPPageObjectBaseViewModel.cs" />
     <Compile Include="ViewModels\ACLPPageBaseViewModel.cs" />
     <Compile Include="ViewModels\Displays\GridDisplayViewModel.cs" />
-    <Compile Include="ViewModels\Displays\IDisplayViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Ink Regions\CLPInkShapeRegionViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Ink Regions\CLPDataTableViewModel.cs" />
@@ -278,6 +279,9 @@
     </Compile>
     <Compile Include="Views\Modal Windows\ArrayCreationView.xaml.cs">
       <DependentUpon>ArrayCreationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Modal Windows\FactorCardCreationView.xaml.cs">
+      <DependentUpon>FactorCardCreationView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Modal Windows\LassoedPageObjectParameterizationView.xaml.cs">
       <DependentUpon>LassoedPageObjectParameterizationView.xaml</DependentUpon>
@@ -447,6 +451,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Modal Windows\ArrayCreationView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Modal Windows\FactorCardCreationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -697,6 +705,13 @@
     <Content Include="External Libraries\NRtfTree.dll" />
     <Content Include="External Libraries\ServiceModelEx.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
+    <Resource Include="Resources\Images\Check16.png" />
+    <Resource Include="Resources\Images\GrayPlus16.png" />
+    <Resource Include="Resources\Images\GrayPlus32.png" />
+    <Resource Include="Resources\Images\GrayPlus64.png" />
+    <Resource Include="Resources\Images\Projector16.png" />
+    <Resource Include="Resources\Images\FactorCard64.png" />
+    <Resource Include="Resources\Images\Plus32.png" />
     <Resource Include="Resources\Images\FactorCard16.png" />
     <Resource Include="Resources\Images\FactorCard32.png" />
     <Resource Include="Resources\Images\CollectionStamp16.png" />
