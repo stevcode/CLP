@@ -24,9 +24,6 @@
             <RibbonContextualTabGroup Header="Debugging"
                                       Visibility="{Binding DebugTabVisibility}"
                                       Background="Violet" />
-            <RibbonContextualTabGroup Header="Extras"
-                                      Visibility="{Binding ExtrasTabVisibility}"
-                                      Background="DarkOrange" />
         </Ribbon.ContextualTabGroups>
 
         <!--Application Menu Button-->
@@ -745,6 +742,14 @@
                               Command="{Binding AnalyzeStampsCommand}" />
 
             </RibbonGroup>
+            
+            <RibbonGroup Header="History">
+
+                <RibbonButton Label="Replay"
+                              LargeImageSource="..\Images\video.png"
+                              Command="{Binding ReplayCommand}" />
+
+            </RibbonGroup>
 
         </RibbonTab>
 
@@ -1053,29 +1058,6 @@
                         </Button>
                     </RibbonGallery>
                 </RibbonMenuButton>
-
-            </RibbonGroup>
-
-        </RibbonTab>
-
-        <!--Extras Tab-->
-        <RibbonTab Header="Extras"
-                   ContextualTabGroupHeader="Extras">
-
-            <RibbonGroup Header="Insert">
-
-                <RibbonButton Label="Array + Dividers"
-                              LargeImageSource="..\Images\Array.png"
-                              Command="{Binding InsertArrayCommand}"
-                              CommandParameter="TRUE" />
-
-            </RibbonGroup>
-
-            <RibbonGroup Header="History">
-
-                <RibbonButton Label="Replay"
-                              LargeImageSource="..\Images\video.png"
-                              Command="{Binding ReplayCommand}" />
 
             </RibbonGroup>
 

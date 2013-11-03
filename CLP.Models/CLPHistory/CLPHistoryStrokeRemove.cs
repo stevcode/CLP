@@ -73,7 +73,13 @@ namespace CLP.Models
         {
             if(SerializedStroke != null)
             {
-                ParentPage.InkStrokes.Add(SerializedStroke.ToStroke());
+                var stroke = SerializedStroke.ToStroke();
+                if(stroke == null)
+                {
+                    Logger.Instance.WriteToLog("Skipped Loading of corrupted stroke");
+                    return;
+                }
+                ParentPage.InkStrokes.Add(stroke);
                 SerializedStroke = null; //on Page again, don't want to reserialize.
             }
             else

@@ -527,7 +527,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         protected void PageObjects_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if(IsPagePreview)
+            if(IsPagePreview || PageInteractionMode == PageInteractionMode.None)
             {
                 return;
             }

@@ -1400,76 +1400,32 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnReplayCommandExecute()
         {
-            //Thread t = new Thread(() =>
-            //{
-            //    try
-            //    {
-            //        CLPPage page = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
-            //        ICLPHistory pageHistory = page.PageHistory;
+            var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
+            if(currentPage == null) { return; }
 
-            //        Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-            //        (DispatcherOperationCallback)delegate(object arg)
-            //        {
-            //            pageHistory.Freeze();
-            //            return null;
-            //        }, null);
+            var oldPageInteractionMode = (PageInteractionMode == PageInteractionMode.None) ? PageInteractionMode.Pen : PageInteractionMode;
+            PageInteractionMode = PageInteractionMode.None;
 
-            //        Stack<CLPHistoryItem> metaFuture = new Stack<CLPHistoryItem>();
-            //        Stack<CLPHistoryItem> metaPast = new Stack<CLPHistoryItem>(new Stack<CLPHistoryItem>(pageHistory.MetaPast));
+            while(currentPage.PageHistory.UndoItems.Any()) { currentPage.PageHistory.Undo(); }
 
-            //        while(metaPast.Count > 0)
-            //        {
-            //            CLPHistoryItem item = metaPast.Pop();
-            //            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-            //            (DispatcherOperationCallback)delegate(object arg)
-            //            {
-            //                if(item != null) // TODO (caseymc): find out why one of these would ever be null and fix
-            //                {
-            //                    item.Undo(page);
-            //                }
-            //                return null;
-            //            }, null);
-            //            metaFuture.Push(item);
-            //        }
+            var t = new Thread(() =>
+                               {
+                                   while(currentPage.PageHistory.RedoItems.Any())
+                                   {
+                                       var historyItemAnimationDelay = Convert.ToInt32(Math.Round(currentPage.PageHistory.CurrentAnimationDelay / 2.0));
+                                       Application.Current.Dispatcher.Invoke(DispatcherPriority.DataBind,
+                                                                             (DispatcherOperationCallback)delegate
+                                                                                                          {
+                                                                                                              currentPage.PageHistory.Redo(true);
+                                                                                                              return null;
+                                                                                                          },
+                                                                             null);
+                                       Thread.Sleep(historyItemAnimationDelay);
+                                   }
+                                   PageInteractionMode = oldPageInteractionMode;
+                               });
 
-                
-            //        Thread.Sleep(400);
-            //        while(metaFuture.Count > 0)
-            //        {
-            //            CLPHistoryItem item = metaFuture.Pop();
-            //            if(item.ItemType == HistoryItemType.MoveObject || item.ItemType == HistoryItemType.ResizeObject)
-            //            {
-            //                Thread.Sleep(50); // make intervals between move-steps less painfully slow
-            //            }
-            //            else
-            //            {
-            //                Thread.Sleep(400);
-            //            }
-            //            Console.WriteLine("This is the action being REDONE: " + item.ItemType);
-            //            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-            //            (DispatcherOperationCallback)delegate(object arg)
-            //            {
-            //                if(item != null)
-            //                {
-            //                    item.Redo(page);
-            //                }
-            //                return null;
-            //            }, null);
-            //        }
-            //        Thread.Sleep(400);
-            //        Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-            //        (DispatcherOperationCallback)delegate(object arg)
-            //        {
-            //            pageHistory.Unfreeze();
-            //            return null;
-            //        }, null);
-            //    }
-            //    catch(Exception e)
-            //    {
-            //        Console.WriteLine(e.Message);
-            //    }
-            //});
-            //t.Start();
+            t.Start();
         }
 
         /// <summary>
@@ -1789,7 +1745,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public Command SwitchPageTypeCommand { get; private set; }
 
-        public void OnSwitchPageTypeCommandExecute(){
+        public void OnSwitchPageTypeCommandExecute()
+        {
             var page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage;
             int index = page.PageIndex;
             double pageheight = page.PageHeight;
