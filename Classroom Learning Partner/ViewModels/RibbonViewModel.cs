@@ -94,6 +94,7 @@ namespace Classroom_Learning_Partner.ViewModels
             RefreshNetworkCommand = new Command(OnRefreshNetworkCommandExecute);
             ToggleThumbnailsCommand = new Command(OnToggleThumbnailsCommandExecute);
             ClearHistoryCommand = new Command(OnClearHistoryCommandExecute);
+            ClearPageHistoryCommand = new Command(OnClearPageHistoryCommandExecute);
             DisableHistoryCommand = new Command(OnDisableHistoryCommandExecute);
             ExitCommand = new Command(OnExitCommandExecute);
 
@@ -1074,6 +1075,19 @@ namespace Classroom_Learning_Partner.ViewModels
                     page.PageHistory.ClearHistory();
                 }
             }
+        }
+
+        /// <summary>
+        /// Completely clears the history for the current page.
+        /// </summary>
+        public Command ClearPageHistoryCommand { get; private set; }
+
+        private void OnClearPageHistoryCommandExecute()
+        {
+            var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
+            if(currentPage == null) { return; }
+
+            currentPage.PageHistory.ClearHistory();
         }
 
         /// <summary>

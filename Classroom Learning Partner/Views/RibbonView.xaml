@@ -1124,6 +1124,10 @@
                 <RibbonButton Label="Trim Page"
                               LargeImageSource="..\Images\LargeIcon.png"
                               Command="{Binding TrimPageCommand}" />
+                
+                <RibbonButton Label="Clear History From Page"
+                              LargeImageSource="..\Images\LargeIcon.png"
+                              Command="{Binding ClearPageHistoryCommand}" />
             </RibbonGroup>
 
         </RibbonTab>
