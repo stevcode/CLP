@@ -142,8 +142,8 @@
                     </RibbonToggleButton.Style>
                 </RibbonToggleButton>
 
-                <RibbonButton Label="Hide Subs" 
-                              LargeImageSource="pack://application:,,,/Resources/Images/DisplaySubmissionsButton50x25.png" 
+                <RibbonButton Label="Hide Submissions" 
+                              LargeImageSource="pack://application:,,,/Resources/Images/HideSubmissionsButton50x25.png" 
                               Command="{Binding HideSubmissionsPanelCommand}"
                               Visibility="{Binding InstructorVisibility}" />
 
@@ -355,9 +355,9 @@
                 </Border>
             </RibbonGroup>
 
-            <RibbonGroup Header="Page">
+            <RibbonGroup Header="Page" Visibility="{Binding StudentVisibility}">
 
-                <RibbonButton Label="Longer Page"
+                <RibbonButton Label="Longer Page" 
                               LargeImageSource="pack://application:,,,/Resources/Images/MakePageLonger32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/MakePageLonger16.png"
                               Command="{Binding MakePageLongerCommand}" />
