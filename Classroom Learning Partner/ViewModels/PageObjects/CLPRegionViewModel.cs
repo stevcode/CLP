@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows;
-using System.Windows.Controls.Primitives;
-using System.Windows.Input;
-using System.Windows.Shapes;
-using Catel.Data;
+using Catel;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Models;
@@ -18,11 +12,10 @@ namespace Classroom_Learning_Partner.ViewModels
     /// </summary>
     public class CLPRegionViewModel : ACLPPageObjectBaseViewModel
     {
-
         #region Constructor 
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CLPRegionViewModel"/> class.
+        /// Initializes a new instance of the <see cref="CLPRegionViewModel" /> class.
         /// </summary>
         public CLPRegionViewModel(CLPRegion region)
         {
@@ -35,16 +28,18 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Constructor
 
+        public override void ClearAdorners()
+        {
+            IsAdornerVisible = false;
+            ACLPPageBaseViewModel.RemovePageObjectFromPage(PageObject, false);
+        }
+
         #region Commands
 
         /// <summary>
         /// Removes pageObjects from page when Delete button is pressed.
         /// </summary>
-        public Command RemovePageObjectsCommand
-        {
-            get;
-            set;
-        }
+        public Command RemovePageObjectsCommand { get; set; }
 
         private void OnRemovePageObjectsCommandExecute()
         {
@@ -52,45 +47,32 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 ACLPPageBaseViewModel.RemovePageObjectFromPage(pageObject);
             }
-            ACLPPageBaseViewModel.RemovePageObjectFromPage(PageObject);
+            ACLPPageBaseViewModel.RemovePageObjectFromPage(PageObject, false);
         }
 
         /// <summary>
         /// Brings up a menu to make multiple copies of page objects in the region
         /// </summary>
-        public Command DuplicateCommand
-        {
-            get;
-            private set;
-        }
+        public Command DuplicateCommand { get; private set; }
 
         private void OnDuplicateCommandExecute()
         {
             var keyPad = new KeypadWindowView("How many copies?", 21)
-            {
-                Owner = Application.Current.MainWindow,
-                WindowStartupLocation = WindowStartupLocation.Manual,
-                Top = 100,
-                Left = 100
-            };
+                         {
+                             Owner = Application.Current.MainWindow,
+                             WindowStartupLocation = WindowStartupLocation.Manual,
+                             Top = 100,
+                             Left = 100
+                         };
             keyPad.ShowDialog();
             if(keyPad.DialogResult != true ||
-               keyPad.NumbersEntered.Text.Length <= 0)
-            {
-                return;
-            }
+               keyPad.NumbersEntered.Text.Length <= 0) { return; }
             var numberOfCopies = Int32.Parse(keyPad.NumbersEntered.Text);
 
             double xPosition = 50.0;
             double yPosition = YPosition;
-            if(XPosition + Width * (numberOfCopies + 1) < PageObject.ParentPage.PageWidth)
-            {
-                xPosition = XPosition + Width;
-            }
-            else if(YPosition + 2 * Height < PageObject.ParentPage.PageHeight)
-            {
-                yPosition = YPosition + Height;
-            }
+            if(XPosition + Width * (numberOfCopies + 1) < PageObject.ParentPage.PageWidth) { xPosition = XPosition + Width; }
+            else if(YPosition + 2 * Height < PageObject.ParentPage.PageHeight) { yPosition = YPosition + Height; }
             foreach(var lassoedPageObject in PageObject.GetPageObjectsOverPageObject())
             {
                 for(int i = 0; i < numberOfCopies; i++)
@@ -105,9 +87,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         duplicatePageObject.YPosition = yPosition + yOffset;
                     }
                     else
-                    {
-                        ACLPPageObjectBase.ApplyDistinctPosition(duplicatePageObject);
-                    }
+                    { ACLPPageObjectBase.ApplyDistinctPosition(duplicatePageObject); }
                     ACLPPageBaseViewModel.AddPageObjectToPage(PageObject.ParentPage, duplicatePageObject, true);
                     //TODO: Steve - add MassPageObjectAdd history item and MassPageObjectRemove history item.
                 }
@@ -117,18 +97,13 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Unselects the region
         /// </summary>
-        public Command UnselectRegionCommand
-        {
-            get;
-            private set;
-        }
+        public Command UnselectRegionCommand { get; private set; }
 
         private void OnUnselectRegionCommandExecute()
         {
-            ACLPPageBaseViewModel.RemovePageObjectFromPage(PageObject);
+            ACLPPageBaseViewModel.RemovePageObjectFromPage(PageObject, false);
         }
 
         #endregion //Commands
-
     }
 }

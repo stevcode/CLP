@@ -221,7 +221,7 @@
     <Compile Include="Views\CLPAnimationPageView.xaml.cs">
       <DependentUpon>CLPAnimationPageView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\CLPRegionView.xaml.cs">
+    <Compile Include="Views\PageObjects\CLPRegionView.xaml.cs">
       <DependentUpon>CLPRegionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Controls\AdornedControl\AdornedControl.cs" />
@@ -402,7 +402,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\CLPRegionView.xaml">
+    <Page Include="Views\PageObjects\CLPRegionView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
