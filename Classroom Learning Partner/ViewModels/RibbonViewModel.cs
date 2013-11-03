@@ -98,6 +98,7 @@ namespace Classroom_Learning_Partner.ViewModels
             ExitCommand = new Command(OnExitCommandExecute);
 
             //Notebook
+            HideSubmissionsPanelCommand = new Command(OnHideSubmissionsPanelCommandExecute, OnHideSubmissionsPanelCanExecute);
             PreviousPageCommand = new Command(OnPreviousPageCommandExecute, OnPreviousPageCanExecute);
             NextPageCommand = new Command(OnNextPageCommandExecute, OnNextPageCanExecute);
 
@@ -1109,6 +1110,34 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //File Menu
 
         #region Notebook Commands
+
+        /// <summary>
+        /// Hides the Submissions Panel.
+        /// </summary>
+        public Command HideSubmissionsPanelCommand { get; private set; }
+
+        private void OnHideSubmissionsPanelCommandExecute()
+        {
+            var panel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
+            if(panel == null) { return; }
+
+            var submissionsPanel = panel.LinkedPanel as SubmissionsPanelViewModel;
+            if(submissionsPanel == null) { return; }
+
+            submissionsPanel.IsVisible = false;
+        }
+
+        private bool OnHideSubmissionsPanelCanExecute()
+        {
+            var panel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
+            if(panel == null)
+            {
+                return false;
+            }
+
+            var submissionsPanel = panel.LinkedPanel as SubmissionsPanelViewModel;
+            return submissionsPanel != null && submissionsPanel.IsVisible;
+        }
 
         /// <summary>
         /// Navigates to previous page in the notebook.

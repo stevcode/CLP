@@ -145,6 +145,11 @@
                     </RibbonToggleButton.Style>
                 </RibbonToggleButton>
 
+                <RibbonButton Label="Hide Subs" 
+                              LargeImageSource="pack://application:,,,/Resources/Images/DisplaySubmissionsButton50x25.png" 
+                              Command="{Binding HideSubmissionsPanelCommand}"
+                              Visibility="{Binding InstructorVisibility}" />
+
                 <RibbonButton Label="Previous Page"
                               LargeImageSource="pack://application:,,,/Resources/Images/PreviousPage32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/PreviousPage16.png"
@@ -177,7 +182,7 @@
                                     IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
                                     IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionMode.Highlighter}}" />
 
-                <RibbonMenuButton Label="Brush Size"
+                <RibbonMenuButton Label="Pen Size"
                                   LargeImageSource="pack://application:,,,/Resources/Images/PenSize32.png"
                                   SmallImageSource="pack://application:,,,/Resources/Images/PenSize16.png"
                                   >
@@ -353,9 +358,9 @@
                 </Border>
             </RibbonGroup>
 
-            <RibbonGroup Header="Page Size">
+            <RibbonGroup Header="Page">
 
-                <RibbonButton Label="Make Page Longer"
+                <RibbonButton Label="Longer Page"
                               LargeImageSource="pack://application:,,,/Resources/Images/MakePageLonger32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/MakePageLonger16.png"
                               Command="{Binding MakePageLongerCommand}" />
