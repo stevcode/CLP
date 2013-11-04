@@ -8,8 +8,7 @@ namespace Classroom_Learning_Partner.ViewModels
 {
     [InterestedIn(typeof(CLPPageViewModel))]
     [InterestedIn(typeof(CLPAnimationPageViewModel))]
-    [InterestedIn(typeof(DisplayListPanelViewModel))]
-    public class MirrorDisplayViewModel : ViewModelBase, IDisplayViewModel
+    public class MirrorDisplayViewModel : ViewModelBase
     {
         /// <summary>
         /// Initializes a new instance of the MirrorDisplayViewModel class.
@@ -18,12 +17,6 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             MirrorDisplay = mirrorDisplay;
             PageScrollCommand = new Command<ScrollChangedEventArgs>(OnPageScrollCommandExecute);
-            var displayListViewModel = DisplayListPanelViewModel.GetDisplayListPanelViewModel();
-            if(displayListViewModel == null)
-            {
-                return;
-            }
-            IsOnProjector = displayListViewModel.ProjectedDisplayString == MirrorDisplay.UniqueID;
         }
 
         public override string Title { get { return "MirrorDisplayVM"; } }
@@ -65,7 +58,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             mirrorDisplayViewModel.OnPageResize();
 
-            if(!displayPanel.MirrorDisplayIsOnProjector || App.Network.ProjectorProxy == null)
+            if(!App.MainWindowViewModel.Ribbon.IsProjectorOn || App.Network.ProjectorProxy == null)
             {
                 return;
             }
@@ -83,21 +76,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //Model
-
-        #region IDisplayViewModel Implementation
-
-        /// <summary>
-        /// If Display is currently being projected.
-        /// </summary>
-        public bool IsOnProjector
-        {
-            get { return GetValue<bool>(IsOnProjectorProperty); }
-            set { SetValue(IsOnProjectorProperty, value); }
-        }
-
-        public static readonly PropertyData IsOnProjectorProperty = RegisterProperty("IsOnProjector", typeof(bool), false);
-
-        #endregion //IDisplayViewModel Implementation
 
         #region Page Resizing Bindings
 
@@ -189,7 +167,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnPageScrollCommandExecute(ScrollChangedEventArgs e)
         {
-            if(App.CurrentUserMode != App.UserMode.Instructor || App.Network.ProjectorProxy == null)
+            if(App.CurrentUserMode != App.UserMode.Instructor || App.Network.ProjectorProxy == null || !App.MainWindowViewModel.Ribbon.IsProjectorOn)
             {
                 return;
             }
@@ -221,11 +199,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     OnPageResize();
                 }
-            }
-
-            if(propertyName == "ProjectedDisplayString" && viewModel is DisplayListPanelViewModel)
-            {
-                IsOnProjector = (viewModel as DisplayListPanelViewModel).ProjectedDisplayString == MirrorDisplay.UniqueID;
             }
 
             base.OnViewModelPropertyChanged(viewModel, propertyName);

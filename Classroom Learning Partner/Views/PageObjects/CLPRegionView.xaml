@@ -14,16 +14,16 @@
 
     <ac:AdornedControl HorizontalAlignment="Center" VerticalAlignment="Center"
                        HorizontalAdornerPlacement="Outside" VerticalAdornerPlacement="Outside"
-                       IsAdornerVisible="{Binding IsAdornerVisible, Mode=TwoWay}"
                        IsMouseOverShowEnabled="{Binding IsMouseOverShowEnabled}"
                        OpenAdornerTimeOut="{Binding OpenAdornerTimeOut}"
-                       CloseAdornerTimeOut="{Binding CloseAdornerTimeOut}">
+                       CloseAdornerTimeOut="{Binding CloseAdornerTimeOut}"
+                       IsAdornerVisible="{Binding IsAdornerVisible, Mode=TwoWay}">
         <!--This is the adorner-->
         <ac:AdornedControl.AdornerContent>
             <Canvas HorizontalAlignment="Center" VerticalAlignment="Center"
                     Width="{Binding Width}" Height="{Binding Height}">
 
-                <Rectangle Stroke="Black" StrokeDashArray="0.5 1.0 0.3" StrokeThickness="2"
+                <Rectangle Stroke="DarkGoldenrod" StrokeDashArray="0.5 1.0 0.3" StrokeThickness="2"
                            RadiusX="10" RadiusY="10"
                            Canvas.Top="-5" Canvas.Left="-5"
                            Width="{Binding Width, Converter={StaticResource LengthConverter}, ConverterParameter=10}"

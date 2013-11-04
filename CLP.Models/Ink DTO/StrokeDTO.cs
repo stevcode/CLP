@@ -135,7 +135,13 @@ namespace CLP.Models
             var strokes = new StrokeCollection();
             foreach(var strokeDTO in serializedStrokes.Where(strokeDTO => strokeDTO.StrokePoints.Any()))
             {
-                strokes.Add(strokeDTO.ToStroke());
+                var stroke = strokeDTO.ToStroke();
+                if(stroke == null)
+                {
+                    Logger.Instance.WriteToLog("Skipped Loading of corrupted stroke");
+                    continue;
+                }
+                strokes.Add(stroke);
             }
 
             return strokes;

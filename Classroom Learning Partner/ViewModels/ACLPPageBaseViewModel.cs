@@ -199,6 +199,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     pageViewModel.EditingMode = InkCanvasEditingMode.None;
                     pageViewModel.IsUsingCustomCursors = true;
                     pageViewModel.PageCursor = Cursors.No;
+                    pageViewModel.ClearAdorners();
                     break;
                 case PageInteractionMode.Select:
                     pageViewModel.IsInkCanvasHitTestVisible = false;
@@ -214,6 +215,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     pageViewModel.DefaultDA.Height = pageViewModel.PenSize;
                     pageViewModel.DefaultDA.Width = pageViewModel.PenSize;
                     pageViewModel.DefaultDA.StylusTip = StylusTip.Ellipse;
+                    pageViewModel.ClearAdorners();
                     break;
                 case PageInteractionMode.Highlighter:
                     pageViewModel.IsInkCanvasHitTestVisible = true;
@@ -224,6 +226,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     pageViewModel.DefaultDA.Height = 12;
                     pageViewModel.DefaultDA.Width = 12;
                     pageViewModel.DefaultDA.StylusTip = StylusTip.Rectangle;
+                    pageViewModel.ClearAdorners();
                     break;
                 case PageInteractionMode.PenAndSelect:
                     pageViewModel.IsInkCanvasHitTestVisible = true;
@@ -234,6 +237,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         pageViewModel.PageCursor = new Cursor(penAndSelectStream.Stream);
                     }
+                    pageViewModel.ClearAdorners();
                     break;
                 case PageInteractionMode.Eraser:
                     pageViewModel.IsInkCanvasHitTestVisible = true;
@@ -244,6 +248,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     pageViewModel.DefaultDA.Height = pageViewModel.PenSize;
                     pageViewModel.DefaultDA.Width = pageViewModel.PenSize;
                     pageViewModel.DefaultDA.StylusTip = StylusTip.Rectangle;
+                    pageViewModel.ClearAdorners();
                     break;
                 case PageInteractionMode.Lasso:
                     pageViewModel.IsInkCanvasHitTestVisible = true;
@@ -259,6 +264,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     pageViewModel.DefaultDA.Height = 2.0;
                     pageViewModel.DefaultDA.Width = 2.0;
                     pageViewModel.DefaultDA.StylusTip = StylusTip.Ellipse;
+                    pageViewModel.ClearAdorners();
                     break;
                 case PageInteractionMode.Scissors:
                     pageViewModel.IsInkCanvasHitTestVisible = true;
@@ -274,14 +280,14 @@ namespace Classroom_Learning_Partner.ViewModels
                     pageViewModel.DefaultDA.Height = 2.0;
                     pageViewModel.DefaultDA.Width = 2.0;
                     pageViewModel.DefaultDA.StylusTip = StylusTip.Ellipse;
+                    pageViewModel.ClearAdorners();
                     break;
                 case PageInteractionMode.EditObjectProperties:
                     pageViewModel.IsInkCanvasHitTestVisible = false;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
-            }
-            pageViewModel.ClearAdorners();
+            }   
         }
 
         #endregion //Properties
@@ -387,7 +393,18 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData IsShowingSubmissionsProperty = RegisterProperty("IsShowingSubmissions", typeof(bool), false);
 
-        
+        /// <summary>
+        /// Whether the page has submissions or not.
+        /// </summary>
+        public bool HasSubmissions
+        {
+            get
+            {
+                var notebookPagesPanel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
+                return notebookPagesPanel != null && App.CurrentUserMode == App.UserMode.Student && notebookPagesPanel.Notebook.Submissions[Page.UniqueID].Any();
+            }
+        }
+
         #endregion //Bindings
 
         #region Commands
@@ -505,18 +522,16 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public void ClearAdorners()
         {
-            if(PageObjects != null)
+            if(PageObjects == null) { return; }
+            foreach(var aclpPageObjectBaseViewModel in PageObjects.SelectMany(pageObject => ViewModelManager.GetViewModelsOfModel(pageObject)).OfType<ACLPPageObjectBaseViewModel>().ToList()) 
             {
-                foreach(var aclpPageObjectBaseViewModel in PageObjects.SelectMany(pageObject => ViewModelManager.GetViewModelsOfModel(pageObject)).OfType<ACLPPageObjectBaseViewModel>()) 
-                {
-                    aclpPageObjectBaseViewModel.ClearAdorners();
-                }
+                aclpPageObjectBaseViewModel.ClearAdorners();
             }
         }
 
         protected void PageObjects_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if(IsPagePreview)
+            if(IsPagePreview || PageInteractionMode == PageInteractionMode.None)
             {
                 return;
             }
@@ -622,6 +637,16 @@ namespace Classroom_Learning_Partner.ViewModels
 
         protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
         {
+            if(propertyName == "CanSendToTeacher" && viewModel is RibbonViewModel)
+            {
+                RaisePropertyChanged("HasSubmissions");
+            }
+
+            if(propertyName == "IsSending" && viewModel is RibbonViewModel)
+            {
+                RaisePropertyChanged("HasSubmissions");
+            }
+
             if(IsPagePreview)
             {
                 return;
@@ -837,15 +862,15 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                 }
 
-                ObservableCollection<string> pageObjectIDs = new ObservableCollection<string>();
+                var pageObjectIDs = new ObservableCollection<string>();
                 foreach(var pageObject in lassoedPageObjects)
                 {
                     pageObjectIDs.Add(pageObject.UniqueID);
                 }
-                double width = endXPosition - xPosition;
-                double height = endYPosition - yPosition;
+                var width = endXPosition - xPosition;
+                var height = endYPosition - yPosition;
 
-                CLPRegion region = new CLPRegion(pageObjectIDs, xPosition, yPosition, height, width, Page);
+                var region = new CLPRegion(pageObjectIDs, xPosition, yPosition, height, width, Page);
                 AddPageObjectToPage(region, false);
             }
 
@@ -995,7 +1020,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 Logger.Instance.WriteToLog("ParentPage for pageObject not set in AddPageObjectToPage().");
                 return;
             }
-            AddPageObjectToPage(parentPage, pageObject, addToHistory);
+            AddPageObjectToPage(parentPage, pageObject, addToHistory, forceSelectMode, index);
         }
 
         public static void AddPageObjectToPage(ICLPPage page, ICLPPageObject pageObject, bool addToHistory = true, bool forceSelectMode = true, int index = -1)

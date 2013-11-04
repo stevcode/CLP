@@ -9,6 +9,7 @@
 
     <UserControl.Resources>
         <catel:BooleanToOppositeBooleanConverter x:Key="BooleanToOppositeBooleanConverter" />
+        <catel:BooleanToHidingVisibilityConverter x:Key="BooleanToHidingVisibilityConverter" />
         <oldconv:LengthConverter x:Key="LengthConverter" />
         <oldconv:NegativeLengthSubtractConverter x:Key="NegativeLengthSubtractConverter" />
         <conv:ZeroToQuestionMarkConverter x:Key="ZeroToQuestionMarkConverter" />
@@ -181,8 +182,8 @@
                 <!--Toggle Grid Button-->
                 <Button Command="{Binding ToggleGridCommand}"
                         Width="40" Height="40"
-                        Canvas.Left="-40"
-                        Canvas.Bottom="-40"
+                        Canvas.Left="20"
+                        Canvas.Bottom="-50"
                         Visibility="{Binding IsToggleGridAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
@@ -197,12 +198,35 @@
                     </Button.Template>
                 </Button>
 
+                <!--Toggle Division Adorners Button-->
+                <Button Command="{Binding ToggleDivisionAdornersCommand}"
+                        Width="40" Height="40"
+                        Canvas.Right="20"
+                        Canvas.Top="-50"
+                        Visibility="{Binding IsToggleDivisionAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Button.Template>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Grid>
+                                <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
+                                         VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+                                <Path Data="M0,1 L1,.5 L0,0 M-1,.5 L1,.5"
+                                      Stretch="Fill" Margin="5"
+                                      Stroke="{StaticResource LeftLabelColor}" StrokeThickness="3" />
+                                <Path Data="M.25,.25 L.75,.75"
+                                      Stretch="Fill" Margin="5"
+                                      Stroke="Red" StrokeThickness="3"
+                                      Visibility="{Binding IsDivisionBehaviorOn, Converter={StaticResource BooleanToHidingVisibilityConverter}, ConverterParameter=False}"/>
+                            </Grid>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
                 <!--Rotate Array Button-->
                 <Button Command="{Binding RotateArrayCommand}"
                         Width="40" Height="40"
                         Canvas.Right="-50"
                         Canvas.Top="20"
-                        Visibility="{Binding IsDefaultAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        Visibility="{Binding IsRotateAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Grid>
@@ -220,8 +244,8 @@
                 <Button Command="{Binding DuplicateArrayCommand}"
                         Cursor="Hand"
                         Width="40" Height="40"
-                        Canvas.Right="20"
-                        Canvas.Top="-50"
+                        Canvas.Left="-40"
+                        Canvas.Bottom="-40"
                         Visibility="{Binding IsDefaultAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">

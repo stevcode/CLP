@@ -94,10 +94,12 @@ namespace Classroom_Learning_Partner.ViewModels
             RefreshNetworkCommand = new Command(OnRefreshNetworkCommandExecute);
             ToggleThumbnailsCommand = new Command(OnToggleThumbnailsCommandExecute);
             ClearHistoryCommand = new Command(OnClearHistoryCommandExecute);
+            ClearPageHistoryCommand = new Command(OnClearPageHistoryCommandExecute);
             DisableHistoryCommand = new Command(OnDisableHistoryCommandExecute);
             ExitCommand = new Command(OnExitCommandExecute);
 
             //Notebook
+            HideSubmissionsPanelCommand = new Command(OnHideSubmissionsPanelCommandExecute, OnHideSubmissionsPanelCanExecute);
             PreviousPageCommand = new Command(OnPreviousPageCommandExecute, OnPreviousPageCanExecute);
             NextPageCommand = new Command(OnNextPageCommandExecute, OnNextPageCanExecute);
 
@@ -295,6 +297,43 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Properties
 
         #region Bindings
+
+        /// <summary>
+        /// Whether or not to mirror the displays to the projector.
+        /// </summary>
+        public bool IsProjectorOn
+        {
+            get { return GetValue<bool>(IsProjectorOnProperty); }
+            set { SetValue(IsProjectorOnProperty, value); }
+        }
+
+        public static readonly PropertyData IsProjectorOnProperty = RegisterProperty("IsProjectorOn", typeof(bool), false, IsProjectorOn_Changed);
+
+        private static void IsProjectorOn_Changed(object sender, AdvancedPropertyChangedEventArgs args)
+        {
+            var displayList = DisplayListPanelViewModel.GetDisplayListPanelViewModel();
+            if(App.Network.ProjectorProxy == null || displayList == null)
+            {
+                return;
+            }
+
+            var isCurrentDisplayASingleDisplay = displayList.CurrentDisplay == null;
+            var displayID = isCurrentDisplayASingleDisplay ? "MirrorDisplay" : displayList.CurrentDisplay.UniqueID;
+            var currentPage = displayList.MirrorDisplay.CurrentPage;
+            var currentPageID = currentPage.SubmissionType != SubmissionType.None ? currentPage.SubmissionID : currentPage.UniqueID;
+            var pageIDs = isCurrentDisplayASingleDisplay
+                              ? new List<string> { currentPageID }
+                              : displayList.CurrentDisplay.DisplayPageIDs.ToList();
+
+            try
+            {
+                App.Network.ProjectorProxy.SwitchProjectorDisplay(displayID, pageIDs);
+            }
+            catch(Exception)
+            {
+
+            }         
+        }
 
         /// <summary>
         /// Disables the use of history to broadcast changes to a page to the projector.
@@ -1039,6 +1078,19 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
+        /// Completely clears the history for the current page.
+        /// </summary>
+        public Command ClearPageHistoryCommand { get; private set; }
+
+        private void OnClearPageHistoryCommandExecute()
+        {
+            var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
+            if(currentPage == null) { return; }
+
+            currentPage.PageHistory.ClearHistory();
+        }
+
+        /// <summary>
         /// Prevents history from storing actions.
         /// </summary>
         public Command DisableHistoryCommand { get; private set; }
@@ -1072,6 +1124,34 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //File Menu
 
         #region Notebook Commands
+
+        /// <summary>
+        /// Hides the Submissions Panel.
+        /// </summary>
+        public Command HideSubmissionsPanelCommand { get; private set; }
+
+        private void OnHideSubmissionsPanelCommandExecute()
+        {
+            var panel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
+            if(panel == null) { return; }
+
+            var submissionsPanel = panel.LinkedPanel as SubmissionsPanelViewModel;
+            if(submissionsPanel == null) { return; }
+
+            submissionsPanel.IsVisible = false;
+        }
+
+        private bool OnHideSubmissionsPanelCanExecute()
+        {
+            var panel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
+            if(panel == null)
+            {
+                return false;
+            }
+
+            var submissionsPanel = panel.LinkedPanel as SubmissionsPanelViewModel;
+            return submissionsPanel != null && submissionsPanel.IsVisible;
+        }
 
         /// <summary>
         /// Navigates to previous page in the notebook.
@@ -1185,7 +1265,7 @@ namespace Classroom_Learning_Partner.ViewModels
             IsSending = true;
             var timer = new System.Timers.Timer
                         {
-                            Interval = 1000
+                            Interval = 2000
                         };
             timer.Elapsed += timer_Elapsed;
             timer.Enabled = true;
@@ -1198,6 +1278,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             CLPServiceAgent.Instance.SubmitPage(page, notebookPagesPanel.Notebook.UniqueID, false);
+            
             CanSendToTeacher = false;
         }
 
@@ -1211,7 +1292,7 @@ namespace Classroom_Learning_Partner.ViewModels
             IsSending = true;
             var timer = new System.Timers.Timer
                         {
-                            Interval = 1000
+                            Interval = 2000
                         };
             timer.Elapsed += timer_Elapsed;
             timer.Enabled = true;
@@ -1319,76 +1400,32 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnReplayCommandExecute()
         {
-            //Thread t = new Thread(() =>
-            //{
-            //    try
-            //    {
-            //        CLPPage page = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage;
-            //        ICLPHistory pageHistory = page.PageHistory;
+            var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
+            if(currentPage == null) { return; }
 
-            //        Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-            //        (DispatcherOperationCallback)delegate(object arg)
-            //        {
-            //            pageHistory.Freeze();
-            //            return null;
-            //        }, null);
+            var oldPageInteractionMode = (PageInteractionMode == PageInteractionMode.None) ? PageInteractionMode.Pen : PageInteractionMode;
+            PageInteractionMode = PageInteractionMode.None;
 
-            //        Stack<CLPHistoryItem> metaFuture = new Stack<CLPHistoryItem>();
-            //        Stack<CLPHistoryItem> metaPast = new Stack<CLPHistoryItem>(new Stack<CLPHistoryItem>(pageHistory.MetaPast));
+            while(currentPage.PageHistory.UndoItems.Any()) { currentPage.PageHistory.Undo(); }
 
-            //        while(metaPast.Count > 0)
-            //        {
-            //            CLPHistoryItem item = metaPast.Pop();
-            //            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-            //            (DispatcherOperationCallback)delegate(object arg)
-            //            {
-            //                if(item != null) // TODO (caseymc): find out why one of these would ever be null and fix
-            //                {
-            //                    item.Undo(page);
-            //                }
-            //                return null;
-            //            }, null);
-            //            metaFuture.Push(item);
-            //        }
+            var t = new Thread(() =>
+                               {
+                                   while(currentPage.PageHistory.RedoItems.Any())
+                                   {
+                                       var historyItemAnimationDelay = Convert.ToInt32(Math.Round(currentPage.PageHistory.CurrentAnimationDelay / 2.0));
+                                       Application.Current.Dispatcher.Invoke(DispatcherPriority.DataBind,
+                                                                             (DispatcherOperationCallback)delegate
+                                                                                                          {
+                                                                                                              currentPage.PageHistory.Redo(true);
+                                                                                                              return null;
+                                                                                                          },
+                                                                             null);
+                                       Thread.Sleep(historyItemAnimationDelay);
+                                   }
+                                   PageInteractionMode = oldPageInteractionMode;
+                               });
 
-                
-            //        Thread.Sleep(400);
-            //        while(metaFuture.Count > 0)
-            //        {
-            //            CLPHistoryItem item = metaFuture.Pop();
-            //            if(item.ItemType == HistoryItemType.MoveObject || item.ItemType == HistoryItemType.ResizeObject)
-            //            {
-            //                Thread.Sleep(50); // make intervals between move-steps less painfully slow
-            //            }
-            //            else
-            //            {
-            //                Thread.Sleep(400);
-            //            }
-            //            Console.WriteLine("This is the action being REDONE: " + item.ItemType);
-            //            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-            //            (DispatcherOperationCallback)delegate(object arg)
-            //            {
-            //                if(item != null)
-            //                {
-            //                    item.Redo(page);
-            //                }
-            //                return null;
-            //            }, null);
-            //        }
-            //        Thread.Sleep(400);
-            //        Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-            //        (DispatcherOperationCallback)delegate(object arg)
-            //        {
-            //            pageHistory.Unfreeze();
-            //            return null;
-            //        }, null);
-            //    }
-            //    catch(Exception e)
-            //    {
-            //        Console.WriteLine(e.Message);
-            //    }
-            //});
-            //t.Start();
+            t.Start();
         }
 
         /// <summary>
@@ -1708,7 +1745,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public Command SwitchPageTypeCommand { get; private set; }
 
-        public void OnSwitchPageTypeCommandExecute(){
+        public void OnSwitchPageTypeCommandExecute()
+        {
             var page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage;
             int index = page.PageIndex;
             double pageheight = page.PageHeight;
@@ -2196,14 +2234,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnInsertArrayCommandExecute(string arrayType)
         {
-            var arrayCreationView = new ArrayCreationView {Owner = Application.Current.MainWindow};
-            arrayCreationView.ShowDialog();
-
-            if(arrayCreationView.DialogResult != true)
-            {
-                return;
-            }
-
             var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel == null)
             {
@@ -2215,6 +2245,56 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
             var currentPage = clpMirrorDisplay.CurrentPage;
+
+            if(arrayType == "FACTORCARD")
+            {
+                var factorCreationView = new FactorCardCreationView {Owner = Application.Current.MainWindow};
+                factorCreationView.ShowDialog();
+                if(factorCreationView.DialogResult != true)
+                {
+                    return;
+                }
+
+                int product;
+                try
+                {
+                    product = Convert.ToInt32(factorCreationView.Product.Text);
+                }
+                catch(FormatException)
+                {
+                    return;
+                }
+
+                int factor;
+                try
+                {
+                    factor = Convert.ToInt32(factorCreationView.Factor.Text);
+                }
+                catch(FormatException)
+                {
+                    return;
+                }
+
+                var otherFactor = product / factor;
+                var array = new CLPArray(factor, otherFactor, currentPage)
+                            {
+                                IsDivisionBehaviorOn = false,
+                                IsSnappable = false,
+                                IsGridOn = false,
+                                IsProductVisible = true
+                            };
+
+                ACLPPageBaseViewModel.AddPageObjectToPage(array);
+                return;
+            }
+
+            var arrayCreationView = new ArrayCreationView {Owner = Application.Current.MainWindow};
+            arrayCreationView.ShowDialog();
+
+            if(arrayCreationView.DialogResult != true)
+            {
+                return;
+            }
 
             int rows;
             try
@@ -2277,7 +2357,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 switch(arrayType)
                 {
                     case "DEFAULT":
-                        //array.IsDivisionBehaviorOn = false;
+                        array.IsDivisionBehaviorOn = false;
                         //array.IsSnappable = false;
                         break;
                     case "CARD":
@@ -2285,12 +2365,6 @@ namespace Classroom_Learning_Partner.ViewModels
                         array.IsLabelOn = false;
                         array.IsSnappable = false;
                         array.BackgroundColor = Colors.SkyBlue.ToString();
-                        break;
-                    case "FACTORCARD":
-                        array.IsDivisionBehaviorOn = false;
-                        array.IsSnappable = false;
-                        array.IsGridOn = false;
-                        array.IsProductVisible = true;
                         break;
                 }
 
@@ -2418,7 +2492,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 switch(arrayType)
                 {
                     case "DEFAULT":
-                        //array.IsDivisionBehaviorOn = false;
+                        array.IsDivisionBehaviorOn = false;
                         //array.IsSnappable = false;
                         break;
                     case "CARD":
@@ -2426,12 +2500,6 @@ namespace Classroom_Learning_Partner.ViewModels
                         array.IsLabelOn = false;
                         array.IsSnappable = false;
                         array.BackgroundColor = Colors.SkyBlue.ToString();
-                        break;
-                    case "FACTORCARD":
-                        array.IsDivisionBehaviorOn = false;
-                        array.IsSnappable = false;
-                        array.IsGridOn = false;
-                        array.IsProductVisible = true;
                         break;
                 }
 

@@ -1,7 +1,4 @@
-﻿using System.Timers;
-using System.Windows.Input;
-using CLP.Models;
-using Classroom_Learning_Partner.ViewModels;
+﻿using Classroom_Learning_Partner.ViewModels;
 using System;
 
 
@@ -24,12 +21,11 @@ namespace Classroom_Learning_Partner.Views
 
         protected override void OnViewModelChanged()
         {
+            base.OnViewModelChanged();
             if(ViewModel is CLPRegionViewModel)
             {
                 (ViewModel as CLPRegionViewModel).IsAdornerVisible = true;
             }
-
-            base.OnViewModelChanged();
         }
     }
 }

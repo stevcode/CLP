@@ -19,7 +19,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
             SetCurrentPageCommand = new Command<ICLPPage>(OnSetCurrentPageCommandExecute);
             ShowSubmissionsCommand = new Command<ICLPPage>(OnShowSubmissionsCommandExecute);
-            HideSubmissionsCommand = new Command<ICLPPage>(OnHideSubmissionsCommandExecute);
         }
 
         /// <summary>
@@ -172,26 +171,17 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             submissionsPanel.IsVisible = true;
+
+            if(_currentDisplaySubmissionsPageID == page.UniqueID)
+            {
+                return;
+            }
+
             _currentDisplaySubmissionsPageID = page.UniqueID;
             submissionsPanel.SubmissionPages = Notebook.Submissions[_currentDisplaySubmissionsPageID];
         }
 
         private string _currentDisplaySubmissionsPageID;
-
-        /// <summary>
-        /// Hides submissions panel.
-        /// </summary>
-        public Command<ICLPPage> HideSubmissionsCommand { get; private set; }
-
-        private void OnHideSubmissionsCommandExecute(ICLPPage page)
-        {
-            var submissionsPanel = LinkedPanel as SubmissionsPanelViewModel;
-            if(submissionsPanel == null || _currentDisplaySubmissionsPageID != page.UniqueID)
-            {
-                return;
-            }
-            submissionsPanel.IsVisible = false;
-        }
 
         #endregion //Commands
 

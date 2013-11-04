@@ -1,6 +1,4 @@
-﻿using System.Windows;
-using System.Windows.Controls.Primitives;
-using Classroom_Learning_Partner.ViewModels;
+﻿using Classroom_Learning_Partner.ViewModels;
 
 namespace Classroom_Learning_Partner.Views
 {
@@ -20,23 +18,6 @@ namespace Classroom_Learning_Partner.Views
         protected override System.Type GetViewModelType()
         {
             return typeof(NotebookPagesPanelViewModel);
-        }
-
-        private ToggleButton _lastCheckedToggleButton;
-
-        private void ToggleButton_OnChecked(object sender, RoutedEventArgs e)
-        {
-            var toggleButton = e.Source as ToggleButton;
-            if(toggleButton == null)
-            {
-                return;
-            }
-            if(_lastCheckedToggleButton != null &&
-               !Equals(_lastCheckedToggleButton, toggleButton))
-            {
-                _lastCheckedToggleButton.IsChecked = false;
-            }
-            _lastCheckedToggleButton = toggleButton;
         }
     }
 }
