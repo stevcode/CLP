@@ -2246,6 +2246,30 @@ namespace Classroom_Learning_Partner.ViewModels
                 numberOfArrays = 1;
             }
 
+            const double MIN_SIDE = 25.0;
+            const double LABEL_LENGTH = 22.0;
+            var xPosition = 0.0;
+            var yPosition = 150.0;
+
+            //If there are arrays and all have same grid size (excluding ones at minimum size), squareSize will be non-zero
+            double squareSize = 0.0;
+            foreach(var pageObject in currentPage.PageObjects)
+            {
+                if(pageObject is CLPArray)
+                {
+                    if(squareSize == 0.0)
+                    {
+                        squareSize = (pageObject as CLPArray).ArrayHeight / (pageObject as CLPArray).Rows;
+                    }
+                    else if(squareSize !=  (pageObject as CLPArray).ArrayHeight / (pageObject as CLPArray).Rows &&
+                        (pageObject as CLPArray).ArrayHeight > MIN_SIDE && (pageObject as CLPArray).ArrayHeight > MIN_SIDE)
+                    {
+                        squareSize = 0.0;
+                        break;
+                    }
+                }
+            }
+
             if(numberOfArrays == 1)
             {
                 var array = new CLPArray(rows, columns, currentPage);
@@ -2270,16 +2294,43 @@ namespace Classroom_Learning_Partner.ViewModels
                         break;
                 }
 
+                if(squareSize > 0)
+                {
+                    squareSize = Math.Max(squareSize, (MIN_SIDE / (Math.Min(rows, columns))));
+                    if(squareSize * rows + 2 * LABEL_LENGTH < currentPage.PageHeight && squareSize * columns + 2 * LABEL_LENGTH < currentPage.PageWidth)
+                    {
+                        array.SizeArrayToGridLevel(squareSize);
+                    }
+                    // If it doesn't fit, resize all other arrays on page to match new array grid size
+                    else
+                    {
+                        while(xPosition + 2 * LABEL_LENGTH + squareSize * columns >= currentPage.PageWidth || yPosition + 2 * LABEL_LENGTH + squareSize * rows >= currentPage.PageHeight)
+                        {
+                            squareSize = Math.Abs(squareSize - 45.0) < .0001 ? 22.5 : squareSize / 4 * 3;
+                        }
+                        foreach(var pageObject in currentPage.PageObjects)
+                        {
+                            if(pageObject is CLPArray)
+                            {
+                                if((pageObject as CLPArray).Rows * squareSize > MIN_SIDE && (pageObject as CLPArray).Columns * squareSize > MIN_SIDE)
+                                {
+                                    (pageObject as CLPArray).SizeArrayToGridLevel(squareSize);
+                                }
+                                else
+                                {
+                                    (pageObject as CLPArray).SizeArrayToGridLevel(MIN_SIDE / Math.Min((pageObject as CLPArray).Rows, (pageObject as CLPArray).Columns));
+                                }
+                            }
+                        }
+                        array.SizeArrayToGridLevel(squareSize);
+                    }
+                }
                 ACLPPageBaseViewModel.AddPageObjectToPage(array);
                 return;
             }
-            
-            var initializedSquareSize = 45.0;
-            var xPosition = 0.0;
-            var yPosition = 150.0;
-            var arrayStacks = 1;
-            const double LABEL_LENGTH = 22.0;
 
+            var initializedSquareSize = (squareSize > 0) ? Math.Max(squareSize, (MIN_SIDE / (Math.Min(rows, columns)))) : 45.0;
+            var arrayStacks = 1;
             var isHorizontallyAligned = !(columns / currentPage.PageWidth > rows / currentPage.PageHeight);
 
             while(xPosition + 2 * LABEL_LENGTH + initializedSquareSize * columns >= currentPage.PageWidth || yPosition + 2 * LABEL_LENGTH + initializedSquareSize * rows >= currentPage.PageHeight)
@@ -2336,6 +2387,25 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         arrayStacks = 3;
                         break;
+                    }
+                }
+            }
+            
+            // If it doesn't fit, resize all other arrays on page to match new array grid size
+            if(squareSize > 0.0 && initializedSquareSize != squareSize)
+            {
+                foreach(var pageObject in currentPage.PageObjects)
+                {
+                    if(pageObject is CLPArray)
+                    {
+                        if((pageObject as CLPArray).Rows * initializedSquareSize > MIN_SIDE && (pageObject as CLPArray).Columns * initializedSquareSize > MIN_SIDE)
+                        {
+                            (pageObject as CLPArray).SizeArrayToGridLevel(initializedSquareSize);
+                        }
+                        else
+                        {
+                            (pageObject as CLPArray).SizeArrayToGridLevel(MIN_SIDE / Math.Min((pageObject as CLPArray).Rows, (pageObject as CLPArray).Columns));
+                        }
                     }
                 }
             }
