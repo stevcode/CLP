@@ -815,6 +815,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
             foreach(var pageObject in PageObjects)
             {
+                if(pageObject.IsBackground && !App.MainWindowViewModel.IsAuthoring)
+                {
+                    continue;
+                }
                 RectangleGeometry pageObjectGeometry;
                 if(pageObject.Width > 50.0 || pageObject.Height > 50)
                 {
