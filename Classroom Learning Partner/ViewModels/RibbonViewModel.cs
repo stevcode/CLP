@@ -2331,22 +2331,13 @@ namespace Classroom_Learning_Partner.ViewModels
             var xPosition = 0.0;
             var yPosition = 150.0;
 
-            //If there are arrays and all have same grid size (excluding ones at minimum size), squareSize will be non-zero
+            //squareSize will be the grid size of the most recently placed array, or 0 if there are no non-background arrays
             double squareSize = 0.0;
             foreach(var pageObject in currentPage.PageObjects)
             {
-                if(pageObject is CLPArray)
+                if(pageObject is CLPArray && !pageObject.IsBackground)
                 {
-                    if(squareSize == 0.0)
-                    {
-                        squareSize = (pageObject as CLPArray).ArrayHeight / (pageObject as CLPArray).Rows;
-                    }
-                    else if(squareSize !=  (pageObject as CLPArray).ArrayHeight / (pageObject as CLPArray).Rows &&
-                        (pageObject as CLPArray).ArrayHeight > MIN_SIDE && (pageObject as CLPArray).ArrayHeight > MIN_SIDE)
-                    {
-                        squareSize = 0.0;
-                        break;
-                    }
+                    squareSize = (pageObject as CLPArray).ArrayHeight / (pageObject as CLPArray).Rows;
                 }
             }
 
@@ -2375,7 +2366,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         array.SizeArrayToGridLevel(squareSize);
                     }
-                    // If it doesn't fit, resize all other arrays on page to match new array grid size
+                    // If it doesn't fit, resize all other non-background arrays on page to match new array grid size
                     else
                     {
                         while(xPosition + 2 * LABEL_LENGTH + squareSize * columns >= currentPage.PageWidth || yPosition + 2 * LABEL_LENGTH + squareSize * rows >= currentPage.PageHeight)
@@ -2384,7 +2375,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         }
                         foreach(var pageObject in currentPage.PageObjects)
                         {
-                            if(pageObject is CLPArray)
+                            if(pageObject is CLPArray && !pageObject.IsBackground)
                             {
                                 if((pageObject as CLPArray).Rows * squareSize > MIN_SIDE && (pageObject as CLPArray).Columns * squareSize > MIN_SIDE)
                                 {
@@ -2465,12 +2456,12 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
             
-            // If it doesn't fit, resize all other arrays on page to match new array grid size
+            // If it doesn't fit, resize all other non-background arrays on page to match new array grid size
             if(squareSize > 0.0 && initializedSquareSize != squareSize)
             {
                 foreach(var pageObject in currentPage.PageObjects)
                 {
-                    if(pageObject is CLPArray)
+                    if(pageObject is CLPArray && !pageObject.IsBackground)
                     {
                         if((pageObject as CLPArray).Rows * initializedSquareSize > MIN_SIDE && (pageObject as CLPArray).Columns * initializedSquareSize > MIN_SIDE)
                         {
