@@ -816,12 +816,13 @@ namespace Classroom_Learning_Partner.ViewModels
             foreach(var pageObject in PageObjects)
             {
                 RectangleGeometry pageObjectGeometry;
-                if(pageObject.Width > 50.0 || pageObject.Height > 50)
+                if(pageObject.Width > 10.0 || pageObject.Height > 10.0)
                 {
                     pageObjectGeometry =
-                      new RectangleGeometry(new Rect(pageObject.XPosition + pageObject.Width/2 - 25.0,
-                                                     pageObject.YPosition + pageObject.Height/2 - 25.0, 
-                                                     50.0, 50.0));
+                      new RectangleGeometry(new Rect(pageObject.XPosition + Math.Max(pageObject.Width / 2 - 5.0, 0.0),
+                                                     pageObject.YPosition + Math.Max(pageObject.Height / 2 - 5.0, 0.0),
+                                                     Math.Min(10.0, pageObject.Width),
+                                                     Math.Min(10.0, pageObject.Height)));
                 }
                 else
                 {
