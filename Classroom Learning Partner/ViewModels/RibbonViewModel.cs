@@ -2362,7 +2362,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 if(squareSize > 0)
                 {
                     squareSize = Math.Max(squareSize, (MIN_SIDE / (Math.Min(rows, columns))));
-                    if(squareSize * rows + 2 * LABEL_LENGTH < currentPage.PageHeight && squareSize * columns + 2 * LABEL_LENGTH < currentPage.PageWidth)
+                    if(yPosition + squareSize * rows + 2 * LABEL_LENGTH < currentPage.PageHeight && xPosition + squareSize * columns + 2 * LABEL_LENGTH < currentPage.PageWidth)
                     {
                         array.SizeArrayToGridLevel(squareSize);
                     }
@@ -2390,6 +2390,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         array.SizeArrayToGridLevel(squareSize);
                     }
                 }
+                ACLPPageObjectBase.ApplyDistinctPosition(array);
                 ACLPPageBaseViewModel.AddPageObjectToPage(array);
                 return;
             }
