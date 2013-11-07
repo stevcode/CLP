@@ -71,7 +71,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
             double xPosition = 50.0;
             double yPosition = YPosition;
-            if(XPosition + Width * (numberOfCopies + 1) < PageObject.ParentPage.PageWidth) { xPosition = XPosition + Width; }
+            const double GAP = 35.0;
+            if(XPosition + Width * (numberOfCopies + 1) + GAP * numberOfCopies <= PageObject.ParentPage.PageWidth) { xPosition = XPosition + Width + GAP; }
             else if(YPosition + 2 * Height < PageObject.ParentPage.PageHeight) { yPosition = YPosition + Height; }
             foreach(var lassoedPageObject in PageObject.GetPageObjectsOverPageObject())
             {
@@ -81,9 +82,9 @@ namespace Classroom_Learning_Partner.ViewModels
                     double xOffset = lassoedPageObject.XPosition - XPosition;
                     double yOffset = lassoedPageObject.YPosition - YPosition;
 
-                    if(xPosition + (i + 2) * Width <= PageObject.ParentPage.PageWidth)
+                    if(xPosition + Width * (i + 1) + GAP * i <= PageObject.ParentPage.PageWidth)
                     {
-                        duplicatePageObject.XPosition = xPosition + xOffset + i * Width;
+                        duplicatePageObject.XPosition = xPosition + xOffset + i * (Width + GAP);
                         duplicatePageObject.YPosition = yPosition + yOffset;
                     }
                     else
