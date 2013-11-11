@@ -1823,12 +1823,24 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnDeletePageCommandExecute()
         {
-            //TODO: Move to "X" command on page in notebookpagespanel for each item/page in the listbox.
             var page = NotebookPagesPanelViewModel.GetCurrentPage();
             var panel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
             if(page == null || panel == null)
             {
                 return;
+            }
+
+            if(page.SubmissionType != SubmissionType.None) 
+            {
+                if(MessageBoxResult.Yes != MessageBox.Show("This is a submission page, are you sure you want to delete it?", "Delete Student Submission?", MessageBoxButton.YesNo)) 
+                {
+                    return;
+                }
+
+                var submissionIndex = panel.Notebook.GetSubmissionIndex(page);
+                if(submissionIndex == -1) { return; }
+                panel.Notebook.Submissions[page.UniqueID].RemoveAt(submissionIndex);
+                panel.CurrentPage = panel.Notebook.Pages[0];
             }
 
             var index = panel.Notebook.Pages.IndexOf(page);

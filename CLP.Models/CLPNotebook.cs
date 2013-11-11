@@ -312,25 +312,19 @@ namespace CLP.Models
 
         public int GetSubmissionIndex(ICLPPage page)
         {
-            if(page.SubmissionType != SubmissionType.None)
-            {
-                int submissionIndex = -1;
-                foreach(string uniqueID in Submissions.Keys)
-                {
-                    foreach(CLPPage submission in Submissions[uniqueID])
-                    {
-                        if(submission.SubmissionID == page.SubmissionID)
-                        {
-                            submissionIndex = Submissions[uniqueID].IndexOf(submission);
-                            break;
-                        }
-                    }
-                }
+            if(page.SubmissionType == SubmissionType.None) { return -1; }
 
-                return submissionIndex;
+            var submissionIndex = -1;
+            foreach(var uniqueID in Submissions.Keys)
+            {
+                foreach(var submission in Submissions[uniqueID].Where(submission => submission.SubmissionID == page.SubmissionID)) 
+                {
+                    submissionIndex = Submissions[uniqueID].IndexOf(submission);
+                    break;
+                }
             }
 
-            return -1;
+            return submissionIndex;
         }
 
         public ICLPPage GetNotebookPageOrSubmissionByID(string id)
