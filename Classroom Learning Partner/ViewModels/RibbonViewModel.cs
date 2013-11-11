@@ -143,6 +143,7 @@ namespace Classroom_Learning_Partner.ViewModels
             BroadcastPageCommand = new Command(OnBroadcastPageCommandExecute);
             ReplacePageCommand = new Command(OnReplacePageCommandExecute);
             RemoveAllSubmissionsCommand = new Command(OnRemoveAllSubmissionsCommandExecute);
+            RemoveAllPageSubmissionsCommand = new Command(OnRemoveAllPageSubmissionsCommandExecute);
             
             //Page
             AddNewPageCommand = new Command<string>(OnAddNewPageCommandExecute);
@@ -1641,6 +1642,26 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+        /// <summary>
+        /// Removes all the submissions for the current page.
+        /// </summary>
+        public Command RemoveAllPageSubmissionsCommand { get; private set; }
+
+        private void OnRemoveAllPageSubmissionsCommandExecute()
+        {
+            var page = NotebookPagesPanelViewModel.GetCurrentPage();
+            var panel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
+            if(page == null || panel == null || page.SubmissionType != SubmissionType.None)
+            {
+                MessageBox.Show("You can't be on a submission page. Please select the notebook page you want to delete the submissions from.");
+                return;
+            }
+
+            panel.Notebook.Submissions[page.UniqueID].Clear();
+            page.NumberOfSubmissions = 0;
+            page.NumberOfGroupSubmissions = 0;
+        }
+
         #endregion //Testing
 
         #region Page Commands
@@ -1671,7 +1692,6 @@ namespace Classroom_Learning_Partner.ViewModels
             notebookPanel.Notebook.InsertPageAt(index, page);
         }
 
-
         public Command<string> AddNewProofPageCommand { get; private set; }
 
         private void OnAddNewProofPageCommandExecute(string pageOrientation)
@@ -1700,7 +1720,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command SwitchPageLayoutCommand { get; private set; }
        
-
         private void OnSwitchPageLayoutCommandExecute()
         {
             var page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage;

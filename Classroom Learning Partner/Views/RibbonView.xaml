@@ -724,6 +724,10 @@
                 <RibbonButton Label="Remove All Submissions"
                               LargeImageSource="..\Images\LargeIcon.png"
                               Command="{Binding RemoveAllSubmissionsCommand}" />
+                
+                <RibbonButton Label="Remove Submissions For This Page"
+                              LargeImageSource="..\Images\LargeIcon.png"
+                              Command="{Binding RemoveAllPageSubmissionsCommand}" />
 
             </RibbonGroup>
 
