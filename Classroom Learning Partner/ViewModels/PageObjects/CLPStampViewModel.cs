@@ -273,6 +273,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnCopyStampCommandExecute()
         { 
             StampHandleColor = new SolidColorBrush(Colors.Green);
+            _copyFailed = false;
             if (HasParts() || IsCollectionStamp)
             {
                 PartsRegionVisibility = Visibility.Collapsed;
@@ -298,11 +299,13 @@ namespace Classroom_Learning_Partner.ViewModels
                 MessageBox.Show("What are you counting on the stamp?  Please click the questionmark on the line below the stamp before making copies.", "What are you counting?");
                 App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.Pen;
                 App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.Select;
+                _copyFailed = true;
             }  
         }
 
         double _originalX;
         double _originalY;
+        bool _copyFailed = false;
 
         private void CopyStamp(int stampIndex)
         {
@@ -367,6 +370,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnPlaceStampCommandExecute()
         {
+            if(_copyFailed) { return; }
+
             if(!HasParts() && !IsCollectionStamp)
             {
                 return;
@@ -446,6 +451,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnDragStampCommandExecute(DragDeltaEventArgs e)
         {
+            if(_copyFailed) { return; }
+
             IsAdornerVisible = false;
             IsMouseOverShowEnabled = false;
 
