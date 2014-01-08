@@ -868,7 +868,21 @@ namespace Classroom_Learning_Partner.ViewModels
             keyPad.ShowDialog();
             if(keyPad.DialogResult == true && keyPad.NumbersEntered.Text.Length > 0)
             {
+                var previousValue = division.Value;
+                var isHorizontalDivision = division.Orientation == ArrayDivisionOrientation.Horizontal;
+                
                 division.Value = Int32.Parse(keyPad.NumbersEntered.Text);
+
+                var array = PageObject as CLPArray;
+                if(array == null) { return; }
+                var divisionIndex = isHorizontalDivision ? array.HorizontalDivisions.IndexOf(division) : array.VerticalDivisions.IndexOf(division);
+
+                ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, 
+                                                           new CLPHistoryArrayDivisionValueChanged(PageObject.ParentPage,
+                                                                                                   PageObject.UniqueID,
+                                                                                                   isHorizontalDivision,
+                                                                                                   divisionIndex,
+                                                                                                   previousValue));
             }
         }
 

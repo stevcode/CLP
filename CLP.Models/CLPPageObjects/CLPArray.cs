@@ -693,6 +693,14 @@ namespace CLP.Models
             HorizontalDivisions = VerticalDivisions;
             VerticalDivisions = tempHorizontalDivisions;
             ResizeDivisions();
+            foreach(var verticalDivision in VerticalDivisions) 
+            {
+                verticalDivision.Orientation = ArrayDivisionOrientation.Vertical;
+            }
+            foreach(var horizontalDivision in HorizontalDivisions) 
+            {
+                horizontalDivision.Orientation = ArrayDivisionOrientation.Horizontal;
+            }
 
             if(XPosition + Width > ParentPage.PageWidth)
             {

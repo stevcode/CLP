@@ -105,6 +105,7 @@
   <ItemGroup>
     <Compile Include="CLPHistory\ACLPHistoryItemBase.cs" />
     <Compile Include="CLPHistory\CLPAnimationIndicator.cs" />
+    <Compile Include="CLPHistory\CLPHistoryArrayDivisionValueChanged.cs" />
     <Compile Include="CLPHistory\CLPHistoryArrayGridToggle.cs" />
     <Compile Include="CLPHistory\CLPHistoryArrayRotate.cs" />
     <Compile Include="CLPHistory\CLPHistoryArraySnap.cs" />
