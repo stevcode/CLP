@@ -18,7 +18,10 @@
             <ColumnDefinition />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <TextBlock x:Name="QuestionText" Background="DarkGray" Grid.Row="0" Grid.ColumnSpan="3" TextAlignment="Center" FontSize="20" Padding="10" />
+        <Viewbox Grid.Row="0" Grid.ColumnSpan="3">
+            <TextBlock x:Name="QuestionText" Background="DarkGray"  TextAlignment="Center" FontSize="20" Padding="10" />
+        </Viewbox>
+        
         <TextBox x:Name="NumbersEntered" Grid.Row="1" Grid.ColumnSpan="3" Text="" FontSize="30" />
         <Button Grid.Column="0" Grid.Row="2" Name="button1" Click="ValueButton_Click" Content="1" />
         <Button Grid.Column="1" Grid.Row="2" Name="button2" Click="ValueButton_Click" Content="2" />
