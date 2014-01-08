@@ -21,6 +21,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public SubmissionsPanelViewModel(CLPNotebook notebook)
         {
             Notebook = notebook;
+            PanelWidth = InitialWidth;
 
             #region Tag Stuff
 
@@ -58,6 +59,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             ToggleNoSubmissionsCommand = new Command<RoutedEventArgs>(OnToggleNoSubmissionsCommandExecute);
             SetCurrentPageCommand = new Command<ICLPPage>(OnSetCurrentPageCommandExecute);
+            PanelResizeDragCommand = new Command<DragDeltaEventArgs>(OnPanelResizeDragCommandExecute);
         }
 
         /// <summary>
@@ -229,6 +231,14 @@ namespace Classroom_Learning_Partner.ViewModels
             get { return 250; }
         }
 
+        public double PanelWidth
+        {
+            get { return GetValue<double>(PanelWidthProperty); }
+            set { SetValue(PanelWidthProperty, value); }
+        }
+
+        public static readonly PropertyData PanelWidthProperty = RegisterProperty("PanelWidth", typeof(double), 250);
+
         /// <summary>
         /// The Panel's Location relative to the Workspace.
         /// </summary>
@@ -254,6 +264,22 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion
 
         #region Commands
+
+        /// <summary>
+        /// Resizes the panel.
+        /// </summary>
+        public Command<DragDeltaEventArgs> PanelResizeDragCommand { get; private set; }
+
+        private void OnPanelResizeDragCommandExecute(DragDeltaEventArgs e)
+        {
+            var newWidth = PanelWidth + e.HorizontalChange;
+            if(newWidth < 50) { newWidth = 50; }
+
+            var notebookPagesPanel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
+            var notebookPagesPanelWidth = notebookPagesPanel != null ? notebookPagesPanel.PanelWidth : 0;
+            if(newWidth > Application.Current.MainWindow.ActualWidth - 100 - notebookPagesPanelWidth) { newWidth = Application.Current.MainWindow.ActualWidth - 100 - notebookPagesPanelWidth; }
+            PanelWidth = newWidth;
+        }
 
         /// <summary>
         /// Toggles the panel that shows the student names who haven't submitted.

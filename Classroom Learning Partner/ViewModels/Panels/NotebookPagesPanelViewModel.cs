@@ -1,4 +1,6 @@
 ﻿using System.Collections.ObjectModel;
+using System.Windows;
+using System.Windows.Controls.Primitives;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Models;
@@ -16,9 +18,11 @@ namespace Classroom_Learning_Partner.ViewModels
             Notebook = notebook;
             CurrentPage = notebook.MirrorDisplay.CurrentPage;
             LinkedPanel = new SubmissionsPanelViewModel(notebook);
+            PanelWidth = InitialWidth;
 
             SetCurrentPageCommand = new Command<ICLPPage>(OnSetCurrentPageCommandExecute);
             ShowSubmissionsCommand = new Command<ICLPPage>(OnShowSubmissionsCommandExecute);
+            PanelResizeDragCommand = new Command<DragDeltaEventArgs>(OnPanelResizeDragCommandExecute);
         }
 
         /// <summary>
@@ -106,6 +110,14 @@ namespace Classroom_Learning_Partner.ViewModels
             get { return 250; }
         }
 
+        public double PanelWidth
+        {
+            get { return GetValue<double>(PanelWidthProperty); }
+            set { SetValue(PanelWidthProperty, value); }
+        }
+
+        public static readonly PropertyData PanelWidthProperty = RegisterProperty("PanelWidth", typeof(double), 250);
+
         /// <summary>
         /// The Panel's Location relative to the Workspace.
         /// </summary>
@@ -146,6 +158,19 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Bindings
 
         #region Commands
+
+        /// <summary>
+        /// Resizes the panel.
+        /// </summary>
+        public Command<DragDeltaEventArgs> PanelResizeDragCommand { get; private set; }
+
+        private void OnPanelResizeDragCommandExecute(DragDeltaEventArgs e)
+        {
+            var newWidth = PanelWidth + e.HorizontalChange;
+            if(newWidth < 50) { newWidth = 50; }
+            if(newWidth > Application.Current.MainWindow.ActualWidth - 100) { newWidth = Application.Current.MainWindow.ActualWidth - 100; }
+            PanelWidth = newWidth;
+        }
 
         /// <summary>
         /// Sets the current selected page in the listbox.

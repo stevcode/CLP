@@ -7,7 +7,7 @@
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
                    xmlns:system="clr-namespace:System;assembly=mscorlib"
                    xmlns:extenders="clr-namespace:Classroom_Learning_Partner.Views.Extenders"
-                   Width="{Binding InitialWidth}">
+                   Width="{Binding PanelWidth}">
 
     <UserControl.Resources>
         <ResourceDictionary>
@@ -196,6 +196,23 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
+            
+            <Thumb Grid.Row="0" Grid.RowSpan="4" Cursor="ScrollWE" Width="5" Height="30" Margin="-5 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Left">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="DragDelta">
+                        <catel:EventToCommand Command="{Binding PanelResizeDragCommand}" PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                <Thumb.Template>
+                    <ControlTemplate>
+                        <UniformGrid Columns="1" Background="Transparent">
+                            <Ellipse StrokeThickness="0" Fill="{StaticResource HighlightColor}" Height="3" Width="3" />
+                            <Ellipse StrokeThickness="0" Fill="{StaticResource HighlightColor}" Height="3" Width="3" />
+                            <Ellipse StrokeThickness="0" Fill="{StaticResource HighlightColor}" Height="3" Width="3" />
+                        </UniformGrid>
+                    </ControlTemplate>
+                </Thumb.Template>
+            </Thumb>
             
         </Grid>
 
