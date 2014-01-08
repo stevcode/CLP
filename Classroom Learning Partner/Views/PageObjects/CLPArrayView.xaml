@@ -574,21 +574,23 @@
 
             <!--Divisor Hitboxes-->
             <Rectangle Grid.Column="1" Grid.Row="1" Fill="Transparent"
+                       Margin="-8 0 0 0"
                        HorizontalAlignment="Left"
                        VerticalAlignment="Top"
                        Tag="DivisionHitBox"
                        MouseMove="ArrayLeftHitBox_MouseMove"
                        MouseLeave="ArrayDivisionHitBox_MouseLeave"
-                       Width="5" Height="{Binding ArrayHeight}"
+                       Width="13" Height="{Binding ArrayHeight}"
                        IsHitTestVisible="{Binding IsDivisionBehaviorOn}" />
 
             <Rectangle Grid.Column="1" Grid.Row="1" Fill="Transparent"
+                       Margin="0 -8 0 0"
                        HorizontalAlignment="Left"
                        VerticalAlignment="Top"
                        Tag="DivisionHitBox"
                        MouseMove="ArrayTopHitBox_MouseMove"
                        MouseLeave="ArrayDivisionHitBox_MouseLeave"
-                       Height="5" Width="{Binding ArrayWidth}"
+                       Height="13" Width="{Binding ArrayWidth}"
                        IsHitTestVisible="{Binding IsDivisionBehaviorOn}" />
 
         </Grid>
