@@ -88,6 +88,7 @@ namespace Classroom_Learning_Partner.ViewModels
             SaveNotebookCommand = new Command(OnSaveNotebookCommandExecute);
             SaveAllNotebooksCommand = new Command(OnSaveAllNotebooksCommandExecute);
             SubmitNotebookToTeacherCommand = new Command(OnSubmitNotebookToTeacherCommandExecute);
+            ConvertDisplaysToXPSCommand = new Command(OnConvertDisplaysToXPSCommandExecute);
             ConvertToXPSCommand = new Command(OnConvertToXPSCommandExecute);
             ConvertPageSubmissionToXPSCommand = new Command(OnConvertPageSubmissionToXPSCommandExecute);
             ConvertAllSubmissionsToXPSCommand = new Command(OnConvertAllSubmissionsToXPSCommandExecute);
@@ -725,6 +726,89 @@ namespace Classroom_Learning_Partner.ViewModels
                     Console.WriteLine("Instructor NOT Available");
                 }
             }
+        }
+
+        /// <summary>
+        /// Converts Notebook Pages to XPS.
+        /// </summary>
+        public Command ConvertDisplaysToXPSCommand { get; private set; }
+
+        private void OnConvertDisplaysToXPSCommandExecute()
+        {
+            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null)
+            {
+                return;
+            }
+
+            Catel.Windows.PleaseWaitHelper.Show(() =>
+            {
+                var notebook = notebookWorkspaceViewModel.Notebook;
+                var directoryPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Displays - XPS\";
+                if(!Directory.Exists(directoryPath))
+                {
+                    Directory.CreateDirectory(directoryPath);
+                }
+
+                var fileName = notebook.NotebookName + " - Displays.xps";
+                var filePath = directoryPath + fileName;
+                if(File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                }
+
+                var document = new FixedDocument();
+                document.DocumentPaginator.PageSize = new Size(96 * 11, 96 * 8.5);
+
+                foreach(var display in notebook.Displays)
+                {
+                    var currentDisplayView = new GridDisplayPreviewView
+                                             {
+                                                 DataContext = display,
+                                                 Height = 96 * 8.5,
+                                                 Width = 96 * 11
+                                             };
+                    currentDisplayView.UpdateLayout();
+                    var gridDisplay = display as CLPGridDisplay;
+                    var displayIndex = gridDisplay != null ? gridDisplay.DisplayIndex : 0;
+
+                    var grid = new Grid();
+                    grid.Children.Add(currentDisplayView);
+                    var pageIndexlabel = new Label
+                    {
+                        FontSize = 20,
+                        FontWeight = FontWeights.Bold,
+                        FontStyle = FontStyles.Oblique,
+                        HorizontalAlignment = HorizontalAlignment.Right,
+                        VerticalAlignment = VerticalAlignment.Top,
+                        Content = "Display " + displayIndex,
+                        Margin = new Thickness(0, 5, 5, 0)
+                    };
+                    grid.Children.Add(pageIndexlabel);
+                    grid.UpdateLayout();
+
+                    var transform = new TransformGroup();
+                    var rotate = new RotateTransform(90.0);
+                    var translate = new TranslateTransform(816, 0);
+                    transform.Children.Add(rotate);
+                    transform.Children.Add(translate);
+                    grid.RenderTransform = transform;
+
+                    var pageContent = new PageContent();
+                    var fixedPage = new FixedPage();
+                    fixedPage.Children.Add(grid);
+
+                    ((System.Windows.Markup.IAddChild)pageContent).AddChild(fixedPage);
+                    document.Pages.Add(pageContent);
+                }
+
+                //Save the document
+                var xpsDocument = new XpsDocument(filePath, FileAccess.ReadWrite);
+                var documentWriter = XpsDocument.CreateXpsDocumentWriter(xpsDocument);
+                documentWriter.Write(document);
+                xpsDocument.Close();
+
+            }, null, "Converting Notebook Displays to XPS", 0.0 / 0.0);
         }
 
         /// <summary>

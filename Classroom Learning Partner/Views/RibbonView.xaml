@@ -83,6 +83,10 @@
                 <RibbonApplicationMenuItem Header="Convert All Submissions To XPS"
                                            ImageSource="pack://application:,,,/Resources/Images/ConvertToXPS32.png"
                                            Command="{Binding ConvertAllSubmissionsToXPSCommand}" />
+                
+                <RibbonApplicationMenuItem Header="Convert Displays To XPS"
+                                           ImageSource="pack://application:,,,/Resources/Images/ConvertToXPS32.png"
+                                           Command="{Binding ConvertDisplaysToXPSCommand}" />
 
                 <RibbonSeparator />
 
