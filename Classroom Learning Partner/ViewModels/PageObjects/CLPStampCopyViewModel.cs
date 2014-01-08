@@ -175,7 +175,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 var strokePathViewModel = new StrokePathViewModel(geometry, 
                                                                   (SolidColorBrush)new BrushConverter().ConvertFromString(stroke.DrawingAttributes.Color.ToString()), 
-                                                                  stroke.DrawingAttributes.Width);
+                                                                  stroke.DrawingAttributes.Width,
+                                                                  stroke.DrawingAttributes.IsHighlighter);
                 StrokePathViewModels.Add(strokePathViewModel);
             }
         }

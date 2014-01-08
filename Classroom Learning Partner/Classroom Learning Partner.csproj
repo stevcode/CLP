@@ -183,6 +183,7 @@
     </ApplicationDefinition>
     <Compile Include="Converters\AllBoolToColorMultiConverter.cs" />
     <Compile Include="Converters\AllBoolToVisibilityMultiConverter.cs" />
+    <Compile Include="Converters\BoolToHighlighterConverter.cs" />
     <Compile Include="Converters\BoolZeroToQuestionMarkMultiConverter.cs" />
     <Compile Include="CLPServiceAgent.cs" />
     <Compile Include="Converters\BoolToDoubleConverter.cs" />

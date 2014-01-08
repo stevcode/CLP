@@ -3,13 +3,15 @@
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:ac="clr-namespace:AdornedControl"
-                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources"
+                   xmlns:oldconv="clr-namespace:Classroom_Learning_Partner.Resources"
+                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:model="clr-namespace:CLP.Models;assembly=CLP.Models">
 
     <UserControl.Resources>
         <ResourceDictionary>
-            <conv:LengthConverter x:Key="LengthConverter"/>
+            <oldconv:LengthConverter x:Key="LengthConverter"/>
+            <conv:BoolToHighlighterConverter x:Key="BoolToHighlighterConverter" />
             <catel:BooleanToHidingVisibilityConverter x:Key="BooleanToHidingVisibilityConverter" />
             <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
         </ResourceDictionary>
@@ -111,7 +113,8 @@
                     <DataTemplate>
                         <Path Data="{Binding PathData}" 
                               StrokeThickness="{Binding PathWidth}" 
-                              Stroke="{Binding PathColor}"/>
+                              Stroke="{Binding PathColor}"
+                              Opacity="{Binding IsHighlighter, Converter={StaticResource BoolToHighlighterConverter}, ConverterParameter=.5}"/>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
