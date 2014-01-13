@@ -54,13 +54,13 @@
             <ControlTemplate x:Key="CLPTextBoxTemplate">
                 <Views:CLPTextBoxView DataContext="{Binding}" />
             </ControlTemplate>
+            
+            <ControlTemplate x:Key="CLPFactorCardTemplate">
+                <Views:CLPFactorCardView DataContext="{Binding}" />
+            </ControlTemplate>
 
             <ControlTemplate x:Key="CLPArrayTemplate">
                 <Views:CLPArrayView DataContext="{Binding}" />
-            </ControlTemplate>
-
-            <ControlTemplate x:Key="CLPFactorCardTemplate">
-                <Views:CLPFactorCardView DataContext="{Binding}" />
             </ControlTemplate>
 
             <ControlTemplate x:Key="CLPRegionTemplate">
@@ -132,15 +132,15 @@
                     <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPTextBox">
                         <Setter Property="Template" Value="{StaticResource CLPTextBoxTemplate}" />
                     </DataTrigger>
+                    
+                    <!-- CLPFactorCard trigger -->
+                    <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPFactorCard">
+                        <Setter Property="Template" Value="{StaticResource CLPFactorCardTemplate}" />
+                    </DataTrigger>
 
                     <!-- CLPArray trigger -->
                     <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPArray">
                         <Setter Property="Template" Value="{StaticResource CLPArrayTemplate}" />
-                    </DataTrigger>
-
-                    <!-- CLPFactorCard trigger -->
-                    <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPFactorCard">
-                        <Setter Property="Template" Value="{StaticResource CLPFactorCardTemplate}" />
                     </DataTrigger>
 
                     <!-- CLPRegion trigger -->
