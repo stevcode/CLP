@@ -7,7 +7,7 @@ using System.Windows;
 using System.Windows.Ink;
 using Catel.Data;
 
-namespace CLP.Models.CLPPageObjects
+namespace CLP.Models
 {
 
     [Serializable]
@@ -18,6 +18,9 @@ namespace CLP.Models.CLPPageObjects
         public CLPFactorCard(int rows, int columns, ICLPPage page)
             : base(rows, columns, page)
         {
+            IsDivisionBehaviorOn = false;
+            IsSnappable = false;
+            IsGridOn = false;
         }
         
         /// <summary>

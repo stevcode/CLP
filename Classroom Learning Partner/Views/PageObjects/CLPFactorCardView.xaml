@@ -259,69 +259,6 @@
                         </ControlTemplate>
                     </Button.Template>
                 </Button>
-
-                <!--Left Divisor Line-->
-                <Rectangle IsHitTestVisible="False"
-                           StrokeDashArray="1.0 3.0" StrokeThickness="3"
-                           Stroke="{StaticResource LeftLabelColor}" Fill="Transparent"
-                           Height="3"
-                           Width="{Binding ArrayWidth}"
-                           Canvas.Left="22"
-                           Canvas.Top="{Binding LeftArrowPosition, Converter={StaticResource LengthConverter}, ConverterParameter=19}"
-                           Visibility="{Binding IsLeftAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
-
-                <!--Left Divisor Button-->
-                <Button Command="{Binding CreateHorizontalDivisionCommand}"
-                        MouseLeave="DivisorButton_Leave" MouseEnter="DivisorButton_Enter" MouseMove="LeftDivisorButton_Mouse"
-                        Cursor="SizeWE"
-                        Width="30" Height="30"
-                        Canvas.Left="17"
-                        Canvas.Top="{Binding LeftArrowPosition, Converter={StaticResource LengthConverter}, ConverterParameter=7}"
-                        Visibility="{Binding IsLeftAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <Button.Template>
-                        <ControlTemplate TargetType="{x:Type Button}">
-                            <Grid>
-                                <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
-                                         VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
-                                <Path Data="M0,1 L1,.5 L0,0 M-1,.5 L1,.5"
-                                      Stretch="Fill" Margin="5"
-                                      Stroke="{StaticResource LeftLabelColor}" StrokeThickness="3" />
-                            </Grid>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
-
-                <!--Top Divisor Line-->
-                <Rectangle IsHitTestVisible="False"
-                           StrokeDashArray="1.0 3.0" StrokeThickness="3"
-                           Stroke="{StaticResource TopLabelColor}" Fill="Transparent"
-                           Height="{Binding ArrayHeight}"
-                           Width="3"
-                           Canvas.Top="22"
-                           Canvas.Left="{Binding TopArrowPosition, Converter={StaticResource LengthConverter}, ConverterParameter=19}"
-                           Visibility="{Binding IsTopAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
-
-                <!--Top Divisor Button-->
-                <Button Command="{Binding CreateVerticalDivisionCommand}"
-                        MouseLeave="DivisorButton_Leave" MouseEnter="DivisorButton_Enter" MouseMove="TopDivisorButton_Mouse"
-                        Cursor="SizeNS"
-                        Width="30" Height="30"
-                        Canvas.Top="17"
-                        Canvas.Left="{Binding TopArrowPosition, Converter={StaticResource LengthConverter}, ConverterParameter=7}"
-                        Visibility="{Binding IsTopAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <Button.Template>
-                        <ControlTemplate TargetType="{x:Type Button}">
-                            <Grid>
-                                <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
-                                         VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
-                                <Path Data="M-.5,.5 L0,1 L.5,.5 M0,0 L0,1"
-                                      Stretch="Fill" Margin="5"
-                                      Stroke="{StaticResource TopLabelColor}" StrokeThickness="3" />
-                            </Grid>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
-
             </Canvas>
         </ac:AdornedControl.AdornerContent>
 
@@ -384,8 +321,7 @@
                        FontWeight="Bold" FontSize="32"
                        Foreground="Black"
                        VerticalAlignment="Center"
-                       HorizontalAlignment="Center"
-                       Visibility="{Binding IsProductVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                       HorizontalAlignment="Center">
                 <TextBlock.Text>
                     <MultiBinding Converter="{StaticResource MultiplyAllIntToTextMultiConverter}">
                         <Binding Path="Columns" />
@@ -433,165 +369,13 @@
             <Rectangle x:Name="Array" Grid.Row="1" Grid.Column="1"
                        Tag="ArrayBodyHitBox"
                        Width="{Binding ArrayWidth}" Height="{Binding ArrayHeight}"
-                       Fill="Transparent" Stroke="Black" StrokeThickness="3">
+                       Fill="Transparent" Stroke="Red" StrokeThickness="3">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="PreviewMouseUp">
                         <catel:EventToCommand Command="{Binding ToggleMainArrayAdornersCommand}" PassEventArgsToCommand="True" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </Rectangle>
-
-            <!--Horizontal Divisions-->
-            <ItemsControl Grid.Row="1" Grid.Column="1"
-                          ItemsSource="{Binding HorizontalDivisions}"
-                          ItemContainerStyle="{StaticResource HorizontalDivisionStyle}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <Canvas Height="Auto" Width="Auto" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Canvas Height="{Binding Length}"
-                                Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
-                            <!--The Visible Division Line-->
-                            <Rectangle Tag="DivisionHitBox"
-                                       Height="3" Margin="3 0"
-                                       Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, 
-                                                                    Converter={StaticResource LengthConverter}, 
-                                                                    ConverterParameter=-6}"
-                                       StrokeThickness="0" Fill="{StaticResource LeftLabelColor}"
-                                       Visibility="{Binding Position, Converter={StaticResource DoubleToVisibilityConverter}}">
-                                <i:Interaction.Triggers>
-                                    <i:EventTrigger EventName="MouseEnter">
-                                        <catel:EventToCommand
-                                            Command="{Binding DataContext.EraseDivisionCommand, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
-                                            PassEventArgsToCommand="True" />
-                                    </i:EventTrigger>
-                                </i:Interaction.Triggers>
-                            </Rectangle>
-
-                            <!--The Small Label-->
-                            <Grid Canvas.Right="{Binding DataContext.PageObject.LabelLength, 
-                                                         RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}},
-                                                         Converter={StaticResource NegativeLengthSubtractConverter},
-                                                         ConverterParameter=0}"
-                                  Height="{Binding Length}"
-                                  Width="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
-                                <TextBlock IsHitTestVisible="False"
-                                           Text="{Binding Value, Converter={StaticResource ZeroToQuestionMarkConverter}}" TextAlignment="Center"
-                                           FontSize="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
-                                           Foreground="{StaticResource LeftLabelColor}"
-                                           Height="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
-                                           Width="{Binding Length}">
-                                    <TextBlock.LayoutTransform>
-                                        <TransformGroup>
-                                            <ScaleTransform />
-                                            <SkewTransform />
-                                            <RotateTransform Angle="-90" />
-                                            <TranslateTransform />
-                                        </TransformGroup>
-                                    </TextBlock.LayoutTransform>
-                                </TextBlock>
-                                <Rectangle Tag="LeftLabelHitBox" Fill="Transparent" MouseMove="LeftDivisorButton_Mouse"
-                                           Width="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
-                                           Height="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
-                                           VerticalAlignment="Center" HorizontalAlignment="Center">
-                                    <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="MouseUp">
-                                            <catel:EventToCommand
-                                                Command="{Binding DataContext.EditLabelCommand, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
-                                                PassEventArgsToCommand="False" CommandParameter="{Binding}" />
-                                        </i:EventTrigger>
-                                    </i:Interaction.Triggers>
-                                </Rectangle>
-                            </Grid>
-                        </Canvas>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-
-            <!--Vertical Divisions-->
-            <ItemsControl Grid.Row="1" Grid.Column="1"
-                          ItemsSource="{Binding VerticalDivisions}"
-                          ItemContainerStyle="{StaticResource VerticalDivisionStyle}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <Canvas Height="Auto" Width="Auto" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Canvas Width="{Binding Length}"
-                                Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
-                            <!--The Visible Division Line-->
-                            <Rectangle Tag="DivisionHitBox"
-                                       Width="3" Margin="0 3"
-                                       Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, 
-                                                                      Converter={StaticResource LengthConverter}, 
-                                                                      ConverterParameter=-6}"
-                                       StrokeThickness="0" Fill="{StaticResource TopLabelColor}"
-                                       Visibility="{Binding Position, Converter={StaticResource DoubleToVisibilityConverter}}">
-                                <i:Interaction.Triggers>
-                                    <i:EventTrigger EventName="MouseEnter">
-                                        <catel:EventToCommand
-                                            Command="{Binding DataContext.EraseDivisionCommand, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
-                                            PassEventArgsToCommand="True" />
-                                    </i:EventTrigger>
-                                </i:Interaction.Triggers>
-                            </Rectangle>
-
-                            <!--The Small Label-->
-                            <Grid Canvas.Bottom="{Binding DataContext.PageObject.LabelLength, 
-                                                          RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}},
-                                                          Converter={StaticResource NegativeLengthSubtractConverter},
-                                                          ConverterParameter=0}"
-                                  Width="{Binding Length}"
-                                  Height="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
-                                <TextBlock IsHitTestVisible="False" 
-                                           Text="{Binding Value, Converter={StaticResource ZeroToQuestionMarkConverter}}" TextAlignment="Center"
-                                           FontSize="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
-                                           Foreground="{StaticResource TopLabelColor}"
-                                           Height="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
-                                           Width="{Binding Length}" />
-                                <Rectangle Tag="TopLabelHitBox" Fill="Transparent" MouseMove="TopDivisorButton_Mouse"
-                                           Width="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
-                                           Height="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
-                                           VerticalAlignment="Center" HorizontalAlignment="Center">
-                                    <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="MouseUp">
-                                            <catel:EventToCommand
-                                                Command="{Binding DataContext.EditLabelCommand, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
-                                                PassEventArgsToCommand="False" CommandParameter="{Binding}" />
-                                        </i:EventTrigger>
-                                    </i:Interaction.Triggers>
-                                </Rectangle>
-                            </Grid>
-                        </Canvas>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-
-            <!--Divisor Hitboxes-->
-            <Rectangle Grid.Column="1" Grid.Row="1" Fill="Transparent"
-                       Margin="-8 0 0 0"
-                       HorizontalAlignment="Left"
-                       VerticalAlignment="Top"
-                       Tag="DivisionHitBox"
-                       MouseMove="ArrayLeftHitBox_MouseMove"
-                       MouseLeave="ArrayDivisionHitBox_MouseLeave"
-                       Width="13" Height="{Binding ArrayHeight}"
-                       IsHitTestVisible="{Binding IsDivisionBehaviorOn}" />
-
-            <Rectangle Grid.Column="1" Grid.Row="1" Fill="Transparent"
-                       Margin="0 -8 0 0"
-                       HorizontalAlignment="Left"
-                       VerticalAlignment="Top"
-                       Tag="DivisionHitBox"
-                       MouseMove="ArrayTopHitBox_MouseMove"
-                       MouseLeave="ArrayDivisionHitBox_MouseLeave"
-                       Height="13" Width="{Binding ArrayWidth}"
-                       IsHitTestVisible="{Binding IsDivisionBehaviorOn}" />
 
         </Grid>
 

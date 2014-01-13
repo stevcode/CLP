@@ -2391,12 +2391,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
 
                 var otherFactor = product / factor;
-                var factorCard = new CLPFactorCard(factor, otherFactor, currentPage)
-                            {
-                                IsDivisionBehaviorOn = false,
-                                IsSnappable = false,
-                                IsGridOn = false
-                            };
+                var factorCard = new CLPFactorCard(factor, otherFactor, currentPage);
 
                 ACLPPageBaseViewModel.AddPageObjectToPage(factorCard);
                 return;
