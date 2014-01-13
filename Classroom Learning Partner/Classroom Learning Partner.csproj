@@ -215,6 +215,7 @@
     <Compile Include="ViewModels\Math\ProductRelationViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPAggregationDataTableViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPArrayViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\CLPFactorCardViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPRegionViewModel.cs" />
     <Compile Include="ViewModels\Panels\DisplayListPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\NotebookPagesPanelViewModel.cs" />
@@ -223,6 +224,9 @@
     <Compile Include="ViewModels\Panels\WebcamPanelViewModel.cs" />
     <Compile Include="Views\CLPAnimationPageView.xaml.cs">
       <DependentUpon>CLPAnimationPageView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PageObjects\CLPFactorCardView.xaml.cs">
+      <DependentUpon>CLPFactorCardView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\CLPRegionView.xaml.cs">
       <DependentUpon>CLPRegionView.xaml</DependentUpon>
@@ -404,6 +408,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\CLPAnimationPageView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PageObjects\CLPFactorCardView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
