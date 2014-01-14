@@ -1,4 +1,4 @@
-﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.CLPFactorCardView"
+﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.CLPFuzzyFactorCardView"
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com"
@@ -6,7 +6,6 @@
                    xmlns:ac="clr-namespace:AdornedControl"
                    xmlns:oldconv="clr-namespace:Classroom_Learning_Partner.Resources"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters">
-
     <UserControl.Resources>
         <catel:BooleanToOppositeBooleanConverter x:Key="BooleanToOppositeBooleanConverter" />
         <catel:BooleanToHidingVisibilityConverter x:Key="BooleanToHidingVisibilityConverter" />

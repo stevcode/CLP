@@ -2361,7 +2361,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             var currentPage = clpMirrorDisplay.CurrentPage;
 
-            if(arrayType == "FACTORCARD")
+            if(arrayType == "FACTORCARD" || arrayType == "FUZZYFACTORCARD")
             {
                 var factorCreationView = new FactorCardCreationView {Owner = Application.Current.MainWindow};
                 factorCreationView.ShowDialog();
@@ -2391,11 +2391,13 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
 
                 var otherFactor = product / factor;
-                var factorCard = new CLPFactorCard(factor, otherFactor, currentPage);
-
+                var factorCard = (arrayType == "FACTORCARD") ?
+                    new CLPFactorCard(factor, otherFactor, currentPage) :
+                    new CLPFuzzyFactorCard(factor, otherFactor, currentPage);
                 ACLPPageBaseViewModel.AddPageObjectToPage(factorCard);
                 return;
             }
+
 
             var arrayCreationView = new ArrayCreationView {Owner = Application.Current.MainWindow};
             arrayCreationView.ShowDialog();

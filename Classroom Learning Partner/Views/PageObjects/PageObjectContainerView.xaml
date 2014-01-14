@@ -54,7 +54,11 @@
             <ControlTemplate x:Key="CLPTextBoxTemplate">
                 <Views:CLPTextBoxView DataContext="{Binding}" />
             </ControlTemplate>
-            
+
+            <ControlTemplate x:Key="CLPFuzzyFactorCardTemplate">
+                <Views:CLPFuzzyFactorCardView DataContext="{Binding}" />
+            </ControlTemplate>
+
             <ControlTemplate x:Key="CLPFactorCardTemplate">
                 <Views:CLPFactorCardView DataContext="{Binding}" />
             </ControlTemplate>
@@ -132,7 +136,12 @@
                     <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPTextBox">
                         <Setter Property="Template" Value="{StaticResource CLPTextBoxTemplate}" />
                     </DataTrigger>
-                    
+
+                    <!-- CLPFuzzyFactorCard trigger -->
+                    <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPFuzzyFactorCard">
+                        <Setter Property="Template" Value="{StaticResource CLPFuzzyFactorCardTemplate}" />
+                    </DataTrigger>
+
                     <!-- CLPFactorCard trigger -->
                     <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPFactorCard">
                         <Setter Property="Template" Value="{StaticResource CLPFactorCardTemplate}" />

@@ -100,24 +100,6 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData IsSnappableProperty = RegisterProperty("IsSnappable", typeof(bool));
 
         /// <summary>
-        /// Whether or not the array is a factor card
-        /// This property is automatically mapped to the corresponding property in PageObject.
-        /// </summary>
-        [ViewModelToModel("PageObject")]
-        public bool IsProductVisible
-        {
-            get { return GetValue<bool>(IsProductVisibleProperty); }
-            set
-            {
-                SetValue(IsProductVisibleProperty, value);
-                RaisePropertyChanged("IsToggleGridAdornerVisible");
-                RaisePropertyChanged("IsRotateAdornerVisible");
-            }
-        }
-
-        public static readonly PropertyData IsProductVisibleProperty = RegisterProperty("IsProductVisible", typeof(bool));
-
-        /// <summary>
         /// Gets or sets the Rows value
         /// </summary>
         [ViewModelToModel("PageObject")]
@@ -291,7 +273,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             get
             {
-                return IsDefaultAdornerVisible && Rows < 51 && Columns < 51 && !IsProductVisible;
+                return IsDefaultAdornerVisible && Rows < 51 && Columns < 51;
             }
         }
 
@@ -299,7 +281,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             get
             {
-                return IsDefaultAdornerVisible && PageObject.BackgroundColor != Colors.SkyBlue.ToString() && !IsProductVisible;
+                return IsDefaultAdornerVisible && PageObject.BackgroundColor != Colors.SkyBlue.ToString();
             }
         }
 
@@ -307,7 +289,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             get
             {
-                return IsDefaultAdornerVisible && !IsProductVisible;
+                return IsDefaultAdornerVisible;
             }
         }
 
@@ -710,7 +692,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command RotateArrayCommand { get; private set; }
 
-        private void OnRotateArrayCommandExecute()
+        protected void OnRotateArrayCommandExecute()
         {
             if((PageObject as CLPArray).ArrayHeight > PageObject.ParentPage.PageWidth || (PageObject as CLPArray).ArrayWidth > PageObject.ParentPage.PageHeight)
             {

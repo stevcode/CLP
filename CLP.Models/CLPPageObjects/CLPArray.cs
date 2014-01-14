@@ -177,17 +177,6 @@ namespace CLP.Models
         public static readonly PropertyData IsLabelOnProperty = RegisterProperty("IsLabelOn", typeof(bool), true);
 
         /// <summary>
-        /// Sets whether or not the array is a factor card
-        /// </summary>
-        public bool IsProductVisible
-        {
-            get { return GetValue<bool>(IsProductVisibleProperty); }
-            set { SetValue(IsProductVisibleProperty, value); }
-        }
-
-        public static readonly PropertyData IsProductVisibleProperty = RegisterProperty("IsProductVisible", typeof(bool), false);
-
-        /// <summary>
         /// The Height of the Array.
         /// </summary>
         public double ArrayHeight
@@ -293,7 +282,7 @@ namespace CLP.Models
 
             var halvedPageObjects = new List<ICLPPageObject>();
 
-            if(IsProductVisible)
+            if(PageObjectType == "CLPFactorCard" || PageObjectType == "CLPFuzzyFactorCard")
             {
                 return halvedPageObjects;
             }

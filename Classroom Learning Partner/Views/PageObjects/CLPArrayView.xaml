@@ -342,20 +342,7 @@
                        Foreground="{StaticResource TopLabelColor}"
                        Height="{Binding PageObject.LabelLength}"
                        Width="{Binding ArrayWidth}">
-                <TextBlock.Visibility>
-                    <MultiBinding Converter="{StaticResource AllBoolToVisibilityMultiConverter}">
-                        <Binding Path="IsLabelOn" />
-                        <Binding Path="IsProductVisible" Converter="{StaticResource BooleanToOppositeBooleanConverter}" />
-                    </MultiBinding>
-                </TextBlock.Visibility>
             </TextBlock>
-            <TextBlock Grid.Column="1" Grid.Row="0" IsHitTestVisible="False" 
-                       Text="?" TextAlignment="Center"
-                       FontWeight="Bold" FontSize="{Binding PageObject.LabelLength}"
-                       Foreground="{StaticResource TopLabelColor}"
-                       Height="{Binding PageObject.LabelLength}"
-                       Width="{Binding ArrayWidth}"
-                       Visibility="{Binding IsProductVisible, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
             <TextBlock Grid.Column="0" Grid.Row="1" IsHitTestVisible="False"
                        Text="{Binding Rows}" TextAlignment="Center"
@@ -378,21 +365,6 @@
             <Rectangle Grid.Row="1" Grid.Column="1"
                        Width="{Binding ArrayWidth}" Height="{Binding ArrayHeight}"
                        Fill="{Binding PageObject.BackgroundColor}" StrokeThickness="0" Opacity="0.20" />
-
-            <TextBlock Grid.Column="1" Grid.Row="1" IsHitTestVisible="False"
-                       TextAlignment="Center"
-                       FontWeight="Bold" FontSize="32"
-                       Foreground="Black"
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Center"
-                       Visibility="{Binding IsProductVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <TextBlock.Text>
-                    <MultiBinding Converter="{StaticResource MultiplyAllIntToTextMultiConverter}">
-                        <Binding Path="Columns" />
-                        <Binding Path="Rows" />
-                    </MultiBinding>
-                </TextBlock.Text>
-            </TextBlock>
 
             <!--Grid Lines-->
             <ItemsControl Grid.Row="1" Grid.Column="1"

@@ -1,5 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Runtime.Serialization;
+using System.Windows;
+using System.Windows.Ink;
+using Catel.Data;
 
 namespace CLP.Models
 {
@@ -31,5 +37,39 @@ namespace CLP.Models
         {
             get { return "CLPFactorCard"; }
         }
+
+        #region Properties
+
+        /// <summary>
+        /// Whether the top label is displayed or shown as a "?".
+        /// </summary>
+        public bool IsTopLabelVisible
+        {
+            get
+            {
+                return GetValue<bool>(IsTopLabelVisibleProperty);
+            }
+            set
+            {
+                SetValue(IsTopLabelVisibleProperty, value);
+            }
+        }
+
+        /// <summary>
+        /// Register the IsTopLabelVisible property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData IsTopLabelVisibleProperty = RegisterProperty("IsTopLabelVisible", typeof(bool), false);
+        
+        #endregion //Properties
+
+        //#region Methods
+
+        //new public void RotateArray()
+        //{
+        //    IsTopLabelVisible = !IsTopLabelVisible;
+        //    base.RotateArray();
+        //}
+
+        //#endregion //Methods
     }
 }
