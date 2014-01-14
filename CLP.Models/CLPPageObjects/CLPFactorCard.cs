@@ -62,14 +62,5 @@ namespace CLP.Models
         
         #endregion //Properties
 
-        //#region Methods
-
-        //new public void RotateArray()
-        //{
-        //    IsTopLabelVisible = !IsTopLabelVisible;
-        //    base.RotateArray();
-        //}
-
-        //#endregion //Methods
     }
 }

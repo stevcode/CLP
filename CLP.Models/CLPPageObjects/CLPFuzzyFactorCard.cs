@@ -9,6 +9,7 @@ using Catel.Data;
 
 namespace CLP.Models
 {
+    [Serializable]
     public class CLPFuzzyFactorCard : CLPFactorCard
     {
 

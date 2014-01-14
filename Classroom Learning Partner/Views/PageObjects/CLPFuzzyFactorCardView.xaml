@@ -172,10 +172,12 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="{Binding PageObject.LabelLength}" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="{Binding PageObject.LabelLength}"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="{Binding PageObject.LabelLength}" />
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="{Binding PageObject.LabelLength}" />
             </Grid.ColumnDefinitions>
 
             <!--Top Labels-->
@@ -187,24 +189,35 @@
                        Width="{Binding ArrayWidth}"
                        Visibility="{Binding IsTopLabelVisible, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
-            <!--TO DO Liz: Fix this (should only be visible when IsTopLabelVisible is false)-->
             <TextBlock Grid.Column="1" Grid.Row="0" IsHitTestVisible="False" 
                        Text="?" TextAlignment="Center"
                        FontWeight="Bold" FontSize="{Binding PageObject.LabelLength}"
                        Foreground="{StaticResource TopLabelColor}"
                        Height="{Binding PageObject.LabelLength}"
-                       Width="{Binding ArrayWidth}"
-                       Visibility="{Binding IsTopLabelVisible, Converter={StaticResource BooleanToOppositeBooleanConverter}}"/>
+                       Width="{Binding ArrayWidth}">
+                <!--TO DO Liz: Figure out better way to convert boolean to opposite visibility-->
+                <TextBlock.Visibility>
+                    <MultiBinding Converter="{StaticResource AllBoolToVisibilityMultiConverter}">
+                        <Binding Path="IsTopLabelVisible" Converter="{StaticResource BooleanToOppositeBooleanConverter}" />
+                        <Binding Path="IsTopLabelVisible" Converter="{StaticResource BooleanToOppositeBooleanConverter}" />
+                    </MultiBinding>
+                </TextBlock.Visibility>
+             </TextBlock>
 
             <!--Left Labels-->
-            <!--TO DO Liz: Fix this (should only be visible when IsTopLabelVisible is false)-->
             <TextBlock Grid.Column="0" Grid.Row="1" IsHitTestVisible="False"
                        Text="{Binding Rows}" TextAlignment="Center"
                        FontWeight="Bold" FontSize="{Binding PageObject.LabelLength}"
                        Foreground="{StaticResource LeftLabelColor}"
                        Height="{Binding PageObject.LabelLength}"
-                       Width="{Binding ArrayHeight}"
-                       Visibility="{Binding IsTopLabelVisible, Converter={StaticResource BooleanToOppositeBooleanConverter}}">
+                       Width="{Binding ArrayHeight}">
+                <!--TO DO Liz: Figure out better way to convert boolean to opposite visibility-->
+                <TextBlock.Visibility>
+                    <MultiBinding Converter="{StaticResource AllBoolToVisibilityMultiConverter}">
+                        <Binding Path="IsTopLabelVisible" Converter="{StaticResource BooleanToOppositeBooleanConverter}" />
+                        <Binding Path="IsTopLabelVisible" Converter="{StaticResource BooleanToOppositeBooleanConverter}" />
+                    </MultiBinding>
+                </TextBlock.Visibility>
                 <TextBlock.LayoutTransform>
                     <TransformGroup>
                         <ScaleTransform />
@@ -252,16 +265,72 @@
             </TextBlock>
 
             <!--This is the actual array-->
+            <Path Grid.Row="1" Grid.Column="1"
+                    Width="{Binding ArrayWidth}" Height="{Binding ArrayHeight}"
+                    Fill="Transparent" Stroke="Black" StrokeThickness="3"
+                    Stretch="Fill"
+                    Data="M 0,0 L 100,0 M 0,0 L 0,100">
+            </Path>
+
+            <!--Array hit box-->
             <Rectangle x:Name="Array" Grid.Row="1" Grid.Column="1"
                        Tag="ArrayBodyHitBox"
                        Width="{Binding ArrayWidth}" Height="{Binding ArrayHeight}"
-                       Fill="Transparent" Stroke="Black" StrokeThickness="3">
+                       Fill="Transparent" Stroke="Transparent" StrokeThickness="3">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="PreviewMouseUp">
                         <catel:EventToCommand Command="{Binding ToggleMainArrayAdornersCommand}" PassEventArgsToCommand="True" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </Rectangle>
+
+            <!--Right Fuzzy Edge-->
+            <Path Grid.Row="1" Grid.Column="2"
+                  Width="{Binding LabelLength}" Height ="{Binding ArrayHeight}"
+                  Stretch="Fill" Margin="0"
+                  Stroke="Gray" StrokeThickness="3" 
+                  HorizontalAlignment="Left"
+                  Data="M -1,0 L 1,0 C 1,0 2,1 1,2 C 1,2 0,3 1,4 C 1,4 2,5 1,6 C 1,6 0,7 1,8 C 1,8 2,9 1,10 C 1,10 0,11 1,12 C 1,12 2,13 1,14 C 1,14 0,15 1,16 C 1,16 2,17 1,18 C 1,18 0,19 1,20 C 1,20 2,21 1,22 C 1,22 0,23 1,24 C 1,24 2,25 1,26 M 1,26 L -1,26" >
+                <!--TO DO Liz: Figure out better way to convert boolean to opposite visibility-->
+                <Path.Visibility>
+                    <MultiBinding Converter="{StaticResource AllBoolToVisibilityMultiConverter}">
+                        <Binding Path="IsTopLabelVisible" Converter="{StaticResource BooleanToOppositeBooleanConverter}" />
+                        <Binding Path="IsTopLabelVisible" Converter="{StaticResource BooleanToOppositeBooleanConverter}" />
+                    </MultiBinding>
+                </Path.Visibility>
+            </Path>
+
+            <Path Grid.Row="1" Grid.Column="1"
+                  Width="{Binding LabelLength}" Height ="{Binding ArrayHeight}"
+                  Stretch="Fill" Margin="0"
+                  Stroke="Black" StrokeThickness="3" 
+                  VerticalAlignment="Bottom"
+                  Data="M 0,0 L 100,0">
+                <!--TO DO Liz: Figure out better way to convert boolean to opposite visibility-->
+                <Path.Visibility>
+                    <MultiBinding Converter="{StaticResource AllBoolToVisibilityMultiConverter}">
+                        <Binding Path="IsTopLabelVisible" Converter="{StaticResource BooleanToOppositeBooleanConverter}" />
+                        <Binding Path="IsTopLabelVisible" Converter="{StaticResource BooleanToOppositeBooleanConverter}" />
+                    </MultiBinding>
+                </Path.Visibility>
+            </Path>
+            
+            <!--Bottom Fuzzy Edge-->
+            <Path Grid.Row="2" Grid.Column="1"
+                  Width ="{Binding ArrayWidth}" Height="{Binding LabelLength}"
+                  Visibility="{Binding IsTopLabelVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
+                  VerticalAlignment="Top"
+                  Data="M 0,-1 L 0,0 C 0,0 1,1 2,0 C 2,0 3,-1 4,0 M 4,0 C 4,0 5,1 6,0 C 6,0 7,-1 8,0 C 8,0 9,1 10,0 C 10,0 11,-1 12,0 C 12,0 13,1 14,0 C 14,0 15,-1 16,0 C 16,0 17,1 18,0 C 18,0 19,-1 20,0 C 20,0 21,1 22,0 C 22,0 23,-1 24,0 C 24,0 25,1 26,0  M 26,0 L 26,-1"
+                  Stretch="Fill" Margin="0"
+                  Stroke="Gray" StrokeThickness="3" />
+
+            <Path Grid.Row="1" Grid.Column="1"
+                  Width="{Binding LabelLength}" Height ="{Binding ArrayHeight}"
+                  Visibility="{Binding IsTopLabelVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
+                  Stretch="Fill" Margin="0"
+                  Stroke="Black" StrokeThickness="3" 
+                  HorizontalAlignment="Right"
+                  Data="M 0,0 L 0,100"/>
 
         </Grid>
 
