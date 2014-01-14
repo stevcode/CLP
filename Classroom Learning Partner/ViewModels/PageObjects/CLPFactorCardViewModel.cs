@@ -67,11 +67,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         new protected void OnRotateArrayCommandExecute()
         {
-            Console.Write(IsTopLabelVisible);
             IsTopLabelVisible = !IsTopLabelVisible; 
             base.OnRotateArrayCommandExecute();
-            Console.Write(" --> ");
-            Console.WriteLine(IsTopLabelVisible);
         }
 
         #endregion

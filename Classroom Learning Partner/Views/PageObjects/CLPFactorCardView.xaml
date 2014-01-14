@@ -187,7 +187,7 @@
                        Width="{Binding ArrayWidth}"
                        Visibility="{Binding IsTopLabelVisible, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
-            <!--BROKEN, shows up all the time-->
+            <!--TO DO Liz: Fix this (should only be visible when IsTopLabelVisible is false)-->
             <TextBlock Grid.Column="1" Grid.Row="0" IsHitTestVisible="False" 
                        Text="?" TextAlignment="Center"
                        FontWeight="Bold" FontSize="{Binding PageObject.LabelLength}"
@@ -197,7 +197,7 @@
                        Visibility="{Binding IsTopLabelVisible, Converter={StaticResource BooleanToOppositeBooleanConverter}}"/>
 
             <!--Left Labels-->
-            <!--BROKEN, shows up all the time-->
+            <!--TO DO Liz: Fix this (should only be visible when IsTopLabelVisible is false)-->
             <TextBlock Grid.Column="0" Grid.Row="1" IsHitTestVisible="False"
                        Text="{Binding Rows}" TextAlignment="Center"
                        FontWeight="Bold" FontSize="{Binding PageObject.LabelLength}"
