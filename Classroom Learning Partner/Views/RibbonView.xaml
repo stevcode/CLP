@@ -737,6 +737,10 @@
 
             <RibbonGroup Header="Page Analysis">
 
+                <RibbonButton Label="Show Tags"
+                              LargeImageSource="..\Images\Array.png"
+                              Command="{Binding ShowTagsCommand}" />
+                
                 <RibbonButton Label="Page Definition"
                               LargeImageSource="..\Images\Array.png"
                               Command="{Binding EditPageDefinitionCommand}" />

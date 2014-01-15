@@ -148,7 +148,8 @@ namespace Classroom_Learning_Partner.ViewModels
             ReplacePageCommand = new Command(OnReplacePageCommandExecute);
             RemoveAllSubmissionsCommand = new Command(OnRemoveAllSubmissionsCommandExecute);
             RemoveAllPageSubmissionsCommand = new Command(OnRemoveAllPageSubmissionsCommandExecute);
-            
+            ShowTagsCommand = new Command(OnShowTagsCommandExecute);
+
             //Page
             AddNewPageCommand = new Command<string>(OnAddNewPageCommandExecute);
             AddNewProofPageCommand = new Command<string>(OnAddNewProofPageCommandExecute);
@@ -1777,6 +1778,28 @@ namespace Classroom_Learning_Partner.ViewModels
             panel.Notebook.Submissions[page.UniqueID].Clear();
             page.NumberOfSubmissions = 0;
             page.NumberOfGroupSubmissions = 0;
+        }
+
+        public Command ShowTagsCommand { get; private set; }
+
+        private void OnShowTagsCommandExecute()
+        {
+            var page = NotebookPagesPanelViewModel.GetCurrentPage();
+
+            string tags = "";
+            foreach(Tag t in page.PageTags) 
+            {
+                string values = "";
+                foreach(TagOptionValue v in t.Value)
+                {
+                    values = values + v.Value.ToString() + ", ";
+                }
+                tags = tags + t.TagType.Name + " = " + values + "\n";
+            }
+
+            var tagsView = new SimpleTextWindowView("Tags for this page", tags);
+            tagsView.Owner = Application.Current.MainWindow;
+            tagsView.ShowDialog();
         }
 
         #endregion //Testing
