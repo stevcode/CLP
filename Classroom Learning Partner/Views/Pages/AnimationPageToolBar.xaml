@@ -1,0 +1,90 @@
+﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.AnimationPageToolBar"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:catel="http://catel.codeplex.com"
+                   xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                   xmlns:resources="clr-namespace:Classroom_Learning_Partner.Resources">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Resources/CLPPageResources.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <catel:BooleanToHidingVisibilityConverter x:Key="BooleanToHidingVisibilityConverter" />
+            <resources:AnimationPresentConverter x:Key="AnimationPresentConverter" />
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid Background="LightGray">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!--Animation Present Indicator-->
+        <Rectangle Grid.Row="0" HorizontalAlignment="Left"
+                   Height="20" Width="20"
+                   Stroke="Black" Fill="{Binding PageHistory.IsAnimation, Converter={StaticResource AnimationPresentConverter}}" />
+
+        <!--Animation Progress Bar-->
+        <Slider Grid.Row="0" HorizontalAlignment="Center"
+                Height="20" Width="743"
+                Minimum="0" Maximum="{Binding PageHistory.TotalHistoryTicks}"
+                Value="{Binding PageHistory.CurrentHistoryTick}"
+                IsSnapToTickEnabled="True" TickFrequency="1.0" IsMoveToPointEnabled="True"
+                Background="Yellow"
+                Visibility="{Binding PageHistory.IsAnimation, Converter={StaticResource BooleanToHidingVisibilityConverter}}">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="ValueChanged">
+                    <catel:EventToCommand Command="{Binding SliderChangedCommand}"
+                                          PassEventArgsToCommand="True" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </Slider>
+
+        <!--Playback Controls-->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Height="30">
+
+            <Button Width="70" Margin="0,0,10,0"
+                    FontSize="12" FontWeight="Bold" Background="White"
+                    Command="{Binding ClearPageCommand}">
+            Clear
+            </Button>
+
+            <Slider Minimum="0.25" Maximum="4"
+                    IsSnapToTickEnabled="True"
+                    TickFrequency="0.25"
+                    TickPlacement="BottomRight"
+                    Width="200" Margin="10,0,10,0"
+                    Value="{Binding CurrentPlaybackSpeed}"
+                    Visibility="{Binding PageHistory.IsAnimation, Converter={StaticResource BooleanToHidingVisibilityConverter}}" />
+
+            <Button Width="70"
+                    FontSize="12" FontWeight="Bold" Background="Red"
+                    Command="{Binding RecordAnimationCommand}">
+            Record
+            </Button>
+
+            <Button Width="70"
+                    FontSize="12" FontWeight="Bold" Background="Purple"
+                    Command="{Binding RewindAnimationCommand}">
+            Rewind
+            </Button>
+
+            <Button Width="70"
+                    FontSize="12" FontWeight="Bold" Background="Green"
+                    Command="{Binding PlayAnimationCommand}">
+            Play
+            </Button>
+
+            <Button Width="70"
+                    FontSize="12" FontWeight="Bold" Background="Gray"
+                    Command="{Binding StopAnimationCommand}">
+            Stop
+            </Button>
+
+        </StackPanel>
+
+    </Grid>
+</catel:UserControl>

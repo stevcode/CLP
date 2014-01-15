@@ -1,5 +1,6 @@
 ﻿using System;
 using Classroom_Learning_Partner.ViewModels;
+using CLP.Models;
 
 namespace Classroom_Learning_Partner.Views
 {
@@ -8,24 +9,32 @@ namespace Classroom_Learning_Partner.Views
     /// </summary>
     public partial class CLPPageView
     {
-        public CLPPageView()
-        {
-            InitializeComponent();
-        }
+        public CLPPageView() { InitializeComponent(); }
 
-        protected override Type GetViewModelType()
+        protected override Type GetViewModelType() { return typeof(ACLPPageBaseViewModel); }
+
+        protected override Type GetViewModelType(object dataContext)
         {
-            return typeof(CLPPageViewModel);
+            if(dataContext is CLPPage)
+            {
+                return typeof(CLPPageViewModel);
+            }
+            if(dataContext is CLPAnimationPage)
+            {
+                return typeof(CLPAnimationPageViewModel);
+            }
+
+            return null;
         }
 
         protected override void OnViewModelChanged()
         {
-            if(ViewModel is CLPPageViewModel)
+            if(ViewModel is ACLPPageBaseViewModel)
             {
-                (ViewModel as CLPPageViewModel).TopCanvas = TopCanvas;
-                (ViewModel as CLPPageViewModel).IsPagePreview = false;
+                (ViewModel as ACLPPageBaseViewModel).TopCanvas = TopCanvas;
+                (ViewModel as ACLPPageBaseViewModel).IsPagePreview = false;
             }
-            
+
             base.OnViewModelChanged();
         }
     }
