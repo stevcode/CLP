@@ -120,7 +120,7 @@ namespace CLP.Models
             if(isAnimationUndo)
             {
                 ParentPage.InkStrokes.Add(cuttingStroke);
-                Wait(STROKE_CUT_DELAY);
+             //   Wait(STROKE_CUT_DELAY);
             }
             var halvedPageObjects = new List<ICLPPageObject>();
             foreach(var pageObject in HalvedPageObjectIDs.Select(halvedPageObjectID => ParentPage.GetPageObjectByUniqueID(halvedPageObjectID))) 
@@ -138,7 +138,7 @@ namespace CLP.Models
             CutPageObjects = null;
             if(isAnimationUndo)
             {
-                Wait(STROKE_CUT_DELAY);
+            //    Wait(STROKE_CUT_DELAY);
                 ParentPage.InkStrokes.Remove(cuttingStroke);
             }
         }

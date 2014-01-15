@@ -2,8 +2,7 @@
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com"
-                   xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-                   xmlns:resources="clr-namespace:Classroom_Learning_Partner.Resources">
+                   xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
 
     <UserControl.Resources>
         <ResourceDictionary>
@@ -12,7 +11,56 @@
             </ResourceDictionary.MergedDictionaries>
 
             <catel:BooleanToHidingVisibilityConverter x:Key="BooleanToHidingVisibilityConverter" />
-            <resources:AnimationPresentConverter x:Key="AnimationPresentConverter" />
+
+            <Style x:Key="AnimationThumbSliderStyle" TargetType="{x:Type Thumb}">
+                <Setter Property="OverridesDefaultStyle" Value="True" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Thumb}">
+                            <Rectangle Fill="Black" Stroke="Black" Height="15" Width="15" />
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="AnimationSliderStyle" TargetType="{x:Type Slider}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Slider}">
+                            <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" MinHeight="{TemplateBinding MinHeight}" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <TickBar x:Name="TopTick" Visibility="Collapsed" Fill="{TemplateBinding Foreground}" Placement="Top" Height="4" Grid.Row="0" />
+                                    <TickBar x:Name="BottomTick" Visibility="Collapsed" Fill="{TemplateBinding Foreground}" Placement="Bottom" Height="4" Grid.Row="2" />
+                                    <Border x:Name="TrackBackground" BorderThickness="1" CornerRadius="1" Margin="5,0" VerticalAlignment="Center" Height="4.0" Grid.Row="1">
+                                        <Canvas>
+                                            <Rectangle Visibility="Hidden" x:Name="PART_SelectionRange" Height="4.0"
+                                                       Fill="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"
+                                                       Stroke="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}" StrokeThickness="1.0" />
+                                        </Canvas>
+                                    </Border>
+                                    <Track x:Name="PART_Track" Grid.Row="1">
+                                        <Track.DecreaseRepeatButton>
+                                            <RepeatButton Command="{x:Static Slider.DecreaseLarge}" Background="Yellow" />
+                                        </Track.DecreaseRepeatButton>
+                                        <Track.IncreaseRepeatButton>
+                                            <RepeatButton Command="{x:Static Slider.IncreaseLarge}" Background="Transparent" BorderThickness="0" />
+                                        </Track.IncreaseRepeatButton>
+                                        <Track.Thumb>
+                                            <Thumb x:Name="Thumb" Style="{StaticResource AnimationThumbSliderStyle}" Background="Black" />
+                                        </Track.Thumb>
+                                    </Track>
+                                </Grid>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -22,69 +70,58 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!--Animation Present Indicator-->
-        <Rectangle Grid.Row="0" HorizontalAlignment="Left"
-                   Height="20" Width="20"
-                   Stroke="Black" Fill="{Binding PageHistory.IsAnimation, Converter={StaticResource AnimationPresentConverter}}" />
-
-        <!--Animation Progress Bar-->
-        <Slider Grid.Row="0" HorizontalAlignment="Center"
-                Height="20" Width="743"
-                Minimum="0" Maximum="{Binding PageHistory.TotalHistoryTicks}"
-                Value="{Binding PageHistory.CurrentHistoryTick}"
-                IsSnapToTickEnabled="True" TickFrequency="1.0" IsMoveToPointEnabled="True"
-                Background="Yellow"
-                Visibility="{Binding PageHistory.IsAnimation, Converter={StaticResource BooleanToHidingVisibilityConverter}}">
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="ValueChanged">
-                    <catel:EventToCommand Command="{Binding SliderChangedCommand}"
-                                          PassEventArgsToCommand="True" />
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
-        </Slider>
-
         <!--Playback Controls-->
-        <StackPanel Grid.Row="1" Orientation="Horizontal" Height="30">
+        <DockPanel Name="PlaybackControls"
+                   Grid.Row="0"
+                   Height="30"
+                   Background="Blue"
+                   LastChildFill="False">
+            
+            <!--change to toggle-->
+            <Button Content="Record"
+                    DockPanel.Dock="Left"
+                    Width="70"
+                    FontSize="12" FontWeight="Bold" Background="Red"
+                    Command="{Binding RecordAnimationCommand}" />
 
-            <Button Width="70" Margin="0,0,10,0"
-                    FontSize="12" FontWeight="Bold" Background="White"
-                    Command="{Binding ClearPageCommand}">
-            Clear
-            </Button>
+            <!--change to toggle-->
+            <Button Content="Play"
+                    DockPanel.Dock="Left"
+                    Width="70"
+                    FontSize="12" FontWeight="Bold" Background="Green"
+                    Command="{Binding PlayAnimationCommand}" />
 
-            <Slider Minimum="0.25" Maximum="4"
+            <Slider DockPanel.Dock="Left"
+                    Minimum="0.25" Maximum="4"
                     IsSnapToTickEnabled="True"
                     TickFrequency="0.25"
                     TickPlacement="BottomRight"
                     Width="200" Margin="10,0,10,0"
-                    Value="{Binding CurrentPlaybackSpeed}"
-                    Visibility="{Binding PageHistory.IsAnimation, Converter={StaticResource BooleanToHidingVisibilityConverter}}" />
+                    Value="{Binding CurrentPlaybackSpeed}" />
 
-            <Button Width="70"
-                    FontSize="12" FontWeight="Bold" Background="Red"
-                    Command="{Binding RecordAnimationCommand}">
-            Record
-            </Button>
+            <Button Content="Clear Page"
+                    DockPanel.Dock="Right"
+                    Width="70"
+                    FontSize="12" FontWeight="Bold" Background="White"
+                    Command="{Binding ClearPageCommand}" />
+            
+        </DockPanel>
 
-            <Button Width="70"
-                    FontSize="12" FontWeight="Bold" Background="Purple"
-                    Command="{Binding RewindAnimationCommand}">
-            Rewind
-            </Button>
-
-            <Button Width="70"
-                    FontSize="12" FontWeight="Bold" Background="Green"
-                    Command="{Binding PlayAnimationCommand}">
-            Play
-            </Button>
-
-            <Button Width="70"
-                    FontSize="12" FontWeight="Bold" Background="Gray"
-                    Command="{Binding StopAnimationCommand}">
-            Stop
-            </Button>
-
-        </StackPanel>
+        <!--Animation Progress Bar-->
+        <Slider Grid.Row="1" 
+                HorizontalAlignment="Center" VerticalAlignment="Center"
+                Style="{StaticResource AnimationSliderStyle}"
+                Height="20" Width="{Binding ActualWidth, ElementName=PlaybackControls}"
+                Minimum="0" Maximum="{Binding PageHistory.TotalHistoryTicks}"
+                Value="{Binding PageHistory.CurrentHistoryTick}"
+                IsSnapToTickEnabled="True" TickFrequency="1.0" IsMoveToPointEnabled="True"
+                Visibility="{Binding PageHistory.IsAnimation, Converter={StaticResource BooleanToHidingVisibilityConverter}}">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="ValueChanged">
+                    <catel:EventToCommand Command="{Binding SliderChangedCommand}" PassEventArgsToCommand="True" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </Slider>
 
     </Grid>
 </catel:UserControl>

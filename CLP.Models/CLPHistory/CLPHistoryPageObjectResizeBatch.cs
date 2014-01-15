@@ -114,7 +114,7 @@ namespace CLP.Models
 
             var pageObject = ParentPage.GetPageObjectByUniqueID(PageObjectUniqueID);
 
-            if(isAnimationUndo)
+            if(isAnimationUndo && CurrentBatchTickIndex > 0)
             {
                 var stretchedDimension = StretchedDimensions[CurrentBatchTickIndex - 1];
                 pageObject.Width = stretchedDimension.X;

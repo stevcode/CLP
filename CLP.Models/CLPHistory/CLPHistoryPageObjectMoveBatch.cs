@@ -106,7 +106,7 @@ namespace CLP.Models
 
             var pageObject = ParentPage.GetPageObjectByUniqueID(PageObjectUniqueID);
 
-            if(isAnimationUndo)
+            if(isAnimationUndo && CurrentBatchTickIndex > 0)
             {
                 var travelledPosition = TravelledPositions[CurrentBatchTickIndex - 1];
 
