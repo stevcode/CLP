@@ -201,7 +201,12 @@ namespace CLP.Models
             return clonedHistoryItem;
         }
 
-        private void Wait(int timeToWait)
+        //TODO: Move to helper class and make public
+        /// <summary>
+        /// Forces the UI Thread to sleep for the given number of milliseconds.
+        /// </summary>
+        /// <param name="timeToWait"></param>
+        private static void Wait(int timeToWait)
         {
             var frame = new DispatcherFrame();
             new Thread(() =>
