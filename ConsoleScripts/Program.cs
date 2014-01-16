@@ -41,6 +41,10 @@ namespace ConsoleScripts
             {
                 stripHistory();
             }
+            else if(command.Equals("combine"))
+            {
+                NotebookMerge.Combine();
+            }
             else if(command.Equals("exit"))
             {
                 return false;
