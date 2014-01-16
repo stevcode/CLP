@@ -60,6 +60,12 @@ namespace CLP.Models
                         }
                     }
                 }
+
+                if(currentMirrorDisplayPage == null)
+                {
+                    currentMirrorDisplayPage = Pages.First();
+                }
+
                 MirrorDisplay.AddPageToDisplay(currentMirrorDisplayPage);
             }
 
