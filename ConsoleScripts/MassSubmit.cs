@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
+using Catel.Data;
 using CLP.Models;
 
 namespace ConsoleScripts
@@ -38,49 +40,62 @@ namespace ConsoleScripts
 
         public static CLPNotebook OpenNotebook(string filePath)
         {
+            if(!File.Exists(filePath))
+            {
+                return null;
+            }
+
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
             CLPNotebook notebook = null;
 
-            if(File.Exists(filePath))
+            try
+            {     
+                ModelBase.GlobalLeanAndMeanModel = true;
+                notebook = CLPNotebook.Load(filePath);
+                ModelBase.GlobalLeanAndMeanModel = false;
+            }
+            catch(Exception ex)
             {
-                //Steve - Conversion happens here
-                try
-                {
-                    notebook = CLPNotebook.Load(filePath, true);
-                }
-                catch(Exception)
-                {
-                    Console.WriteLine("Exception Opening Notebook at {0}", filePath);
-                }
+                Console.WriteLine("[ERROR] - Notebook could not be loaded: " + ex.Message);
+            }
 
-                if(notebook != null)
-                {
-                    foreach(var page in notebook.Pages)
-                    {
-                        foreach(ICLPPageObject pageObject in page.PageObjects)
-                        {
-                            pageObject.ParentPage = page;
-                        }
-                        if(notebook.Submissions.ContainsKey(page.UniqueID))
-                        {
-                            foreach(var submission in notebook.Submissions[page.UniqueID])
-                            {
-                                foreach(ICLPPageObject pageObject in submission.PageObjects)
-                                {
-                                    pageObject.ParentPage = submission;
-                                }
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("Couldn't Open Notebook at {0}", filePath);
-                }
-            }
-            else
+            stopWatch.Stop();
+            Console.WriteLine("Time to OPEN notebook (In Seconds): " + stopWatch.ElapsedMilliseconds / 1000.0);
+
+            if(notebook == null)
             {
-                Console.WriteLine("Filepath Wrong at {0}", filePath);
+                Console.WriteLine("Notebook could not be opened. Check error log.");
+                return null;
             }
+
+
+            var stopWatch2 = new Stopwatch();
+            stopWatch2.Start();
+
+            foreach(var page in notebook.Pages)
+            {
+                ACLPPageBase.Deserialize(page);
+                if(!notebook.Submissions.ContainsKey(page.UniqueID))
+                {
+                    continue;
+                }
+                foreach(var submission in notebook.Submissions[page.UniqueID])
+                {
+                    ACLPPageBase.Deserialize(submission);
+                }
+            }
+
+            stopWatch2.Stop();
+            Console.WriteLine("Time to DESERIALIZE PAGES in notebook (In Seconds): " + stopWatch2.ElapsedMilliseconds / 1000.0);
+
+            var stopWatch3 = new Stopwatch();
+            stopWatch3.Start();
+
+            notebook.InitializeAfterDeserialize();
+
+            stopWatch3.Stop();
+            Console.WriteLine("Time to INITIALIZE notebook (In Seconds): " + stopWatch3.ElapsedMilliseconds / 1000.0);
 
             return notebook;
         }
