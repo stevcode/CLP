@@ -2361,6 +2361,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             var currentPage = clpMirrorDisplay.CurrentPage;
 
+            int rows, columns, numberOfArrays;
             if(arrayType == "FACTORCARD" || arrayType == "FUZZYFACTORCARD")
             {
                 var factorCreationView = new FactorCardCreationView {Owner = Application.Current.MainWindow};
@@ -2380,61 +2381,55 @@ namespace Classroom_Learning_Partner.ViewModels
                     return;
                 }
 
-                int factor;
                 try
                 {
-                    factor = Convert.ToInt32(factorCreationView.Factor.Text);
+                    rows = Convert.ToInt32(factorCreationView.Factor.Text);
                 }
                 catch(FormatException)
                 {
                     return;
                 }
 
-                var otherFactor = product / factor;
-                var factorCard = (arrayType == "FACTORCARD") ?
-                    new CLPFactorCard(factor, otherFactor, currentPage) :
-                    new CLPFuzzyFactorCard(factor, otherFactor, currentPage);
-                ACLPPageBaseViewModel.AddPageObjectToPage(factorCard);
-                return;
-            }
-
-
-            var arrayCreationView = new ArrayCreationView {Owner = Application.Current.MainWindow};
-            arrayCreationView.ShowDialog();
-
-            if(arrayCreationView.DialogResult != true)
-            {
-                return;
-            }
-
-            int rows;
-            try
-            {
-                rows = Convert.ToInt32(arrayCreationView.Rows.Text);
-            }
-            catch(FormatException)
-            {
-                rows = 1;
-            }
-
-            int columns;
-            try
-            {
-                columns = Convert.ToInt32(arrayCreationView.Columns.Text);
-            }
-            catch(FormatException)
-            {
-                columns = 1;
-            }
-
-            int numberOfArrays;
-            try
-            {
-                numberOfArrays = Convert.ToInt32(arrayCreationView.NumberOfArrays.Text);
-            }
-            catch(FormatException)
-            {
+                columns = product / rows;
                 numberOfArrays = 1;
+            }
+
+            else
+            {
+                var arrayCreationView = new ArrayCreationView {Owner = Application.Current.MainWindow};
+                arrayCreationView.ShowDialog();
+
+                if(arrayCreationView.DialogResult != true)
+                {
+                    return;
+                }
+
+                try
+                {
+                    rows = Convert.ToInt32(arrayCreationView.Rows.Text);
+                }
+                catch(FormatException)
+                {
+                    rows = 1;
+                }
+
+                try
+                {
+                    columns = Convert.ToInt32(arrayCreationView.Columns.Text);
+                }
+                catch(FormatException)
+                {
+                    columns = 1;
+                }
+
+                try
+                {
+                    numberOfArrays = Convert.ToInt32(arrayCreationView.NumberOfArrays.Text);
+                }
+                catch(FormatException)
+                {
+                    numberOfArrays = 1;
+                }
             }
 
             const double MIN_SIDE = 25.0;
@@ -2454,19 +2449,26 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if(numberOfArrays == 1)
             {
-                var array = new CLPArray(rows, columns, currentPage);
-
+                CLPArray array;
                 switch(arrayType)
                 {
-                    case "DEFAULT":
-                        array.IsDivisionBehaviorOn = false;
-                        //array.IsSnappable = false;
-                        break;
                     case "CARD":
+                        array = new CLPArray(rows, columns, currentPage);
                         array.IsDivisionBehaviorOn = false;
                         array.IsLabelOn = false;
                         array.IsSnappable = false;
                         array.BackgroundColor = Colors.SkyBlue.ToString();
+                        break;
+                    case "FACTORCARD":
+                        array = new CLPFactorCard(rows, columns, currentPage);
+                        break;
+                    case "FUZZYFACTORCARD":
+                        array = new CLPFuzzyFactorCard(rows, columns, currentPage);
+                        break;
+                    default:
+                        array = new CLPArray(rows, columns, currentPage);
+                        array.IsDivisionBehaviorOn = false;
+                        //array.IsSnappable = false;
                         break;
                 }
 
