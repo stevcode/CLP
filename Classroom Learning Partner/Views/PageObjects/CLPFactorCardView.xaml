@@ -16,6 +16,7 @@
         <conv:DoubleToVisibilityConverter x:Key="DoubleToVisibilityConverter" />
         <conv:AllBoolToVisibilityMultiConverter x:Key="AllBoolToVisibilityMultiConverter" />
         <conv:MultiplyAllIntToTextMultiConverter x:Key="MultiplyAllIntToTextMultiConverter" />
+        <conv:BooleanToOppositeVisibilityConverter x:Key="BooleanToOppositeVisibilityConverter" />
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 
         <SolidColorBrush x:Key="TopLabelColor" Color="DarkOrange" />
@@ -192,15 +193,8 @@
                        FontWeight="Bold" FontSize="{Binding PageObject.LabelLength}"
                        Foreground="{StaticResource TopLabelColor}"
                        Height="{Binding PageObject.LabelLength}"
-                       Width="{Binding ArrayWidth}">
-                <!--TO DO Liz: Figure out better way to convert boolean to opposite visibility-->
-                <TextBlock.Visibility>
-                    <MultiBinding Converter="{StaticResource AllBoolToVisibilityMultiConverter}">
-                        <Binding Path="IsTopLabelVisible" Converter="{StaticResource BooleanToOppositeBooleanConverter}" />
-                        <Binding Path="IsTopLabelVisible" Converter="{StaticResource BooleanToOppositeBooleanConverter}" />
-                    </MultiBinding>
-                </TextBlock.Visibility>
-            </TextBlock>
+                       Width="{Binding ArrayWidth}"
+                       Visibility="{Binding IsTopLabelVisible, Converter={StaticResource BooleanToOppositeVisibilityConverter}}"/>
 
             <!--Left Labels-->
             <TextBlock Grid.Column="0" Grid.Row="1" IsHitTestVisible="False"
@@ -208,14 +202,8 @@
                        FontWeight="Bold" FontSize="{Binding PageObject.LabelLength}"
                        Foreground="{StaticResource LeftLabelColor}"
                        Height="{Binding PageObject.LabelLength}"
-                       Width="{Binding ArrayHeight}">
-                <!--TO DO Liz: Figure out better way to convert boolean to opposite visibility-->
-                <TextBlock.Visibility>
-                    <MultiBinding Converter="{StaticResource AllBoolToVisibilityMultiConverter}">
-                        <Binding Path="IsTopLabelVisible" Converter="{StaticResource BooleanToOppositeBooleanConverter}" />
-                        <Binding Path="IsTopLabelVisible" Converter="{StaticResource BooleanToOppositeBooleanConverter}" />
-                    </MultiBinding>
-                </TextBlock.Visibility>
+                       Width="{Binding ArrayHeight}"
+                       Visibility="{Binding IsTopLabelVisible, Converter={StaticResource BooleanToOppositeVisibilityConverter}}">
                 <TextBlock.LayoutTransform>
                     <TransformGroup>
                         <ScaleTransform />
