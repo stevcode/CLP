@@ -2476,10 +2476,14 @@ namespace Classroom_Learning_Partner.ViewModels
                     if(yPosition + squareSize * rows + 2 * LABEL_LENGTH < currentPage.PageHeight && xPosition + squareSize * columns + 2 * LABEL_LENGTH < currentPage.PageWidth)
                     {
                         array.SizeArrayToGridLevel(squareSize);
+                        ACLPPageObjectBase.ApplyDistinctPosition(array);
+                        ACLPPageBaseViewModel.AddPageObjectToPage(array);
+                        return;
                     }
                     // If it doesn't fit, resize all other non-background arrays on page to match new array grid size
                     else
                     {
+                        Dictionary<string, Point> oldDimensions = new Dictionary<string, Point>();
                         while(xPosition + 2 * LABEL_LENGTH + squareSize * columns >= currentPage.PageWidth || yPosition + 2 * LABEL_LENGTH + squareSize * rows >= currentPage.PageHeight)
                         {
                             squareSize = Math.Abs(squareSize - 45.0) < .0001 ? 22.5 : squareSize / 4 * 3;
@@ -2488,6 +2492,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         {
                             if(pageObject is CLPArray && (!pageObject.IsBackground || MainWindow.IsAuthoring))
                             {
+                                oldDimensions.Add(pageObject.UniqueID, new Point(pageObject.Width, pageObject.Height));
                                 if((pageObject as CLPArray).Rows * squareSize > MIN_SIDE && (pageObject as CLPArray).Columns * squareSize > MIN_SIDE)
                                 {
                                     (pageObject as CLPArray).SizeArrayToGridLevel(squareSize);
@@ -2499,11 +2504,20 @@ namespace Classroom_Learning_Partner.ViewModels
                             }
                         }
                         array.SizeArrayToGridLevel(squareSize);
+
+                        if(currentPage == null)
+                        {
+                            Logger.Instance.WriteToLog("ParentPage for pageObject not set in AddPageObjectToPage().");
+                            return;
+                        }
+                        array.IsBackground = App.MainWindowViewModel.IsAuthoring;
+                        ACLPPageObjectBase.ApplyDistinctPosition(array);
+                        currentPage.PageObjects.Add(array);
+                        ACLPPageBaseViewModel.AddHistoryItemToPage(currentPage, new CLPHistoryArrayAddMassResize(currentPage, array.UniqueID, currentPage.PageObjects.Count - 1, oldDimensions));
+                        App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.Select;
+                        return;
                     }
                 }
-                ACLPPageObjectBase.ApplyDistinctPosition(array);
-                ACLPPageBaseViewModel.AddPageObjectToPage(array);
-                return;
             }
 
             var initializedSquareSize = (squareSize > 0) ? Math.Max(squareSize, (MIN_SIDE / (Math.Min(rows, columns)))) : 45.0;
@@ -2568,25 +2582,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
             
-            // If it doesn't fit, resize all other non-background arrays on page to match new array grid size
-            if(squareSize > 0.0 && initializedSquareSize != squareSize)
-            {
-                foreach(var pageObject in currentPage.PageObjects)
-                {
-                    if(pageObject is CLPArray && (!pageObject.IsBackground || MainWindow.IsAuthoring))
-                    {
-                        if((pageObject as CLPArray).Rows * initializedSquareSize > MIN_SIDE && (pageObject as CLPArray).Columns * initializedSquareSize > MIN_SIDE)
-                        {
-                            (pageObject as CLPArray).SizeArrayToGridLevel(initializedSquareSize);
-                        }
-                        else
-                        {
-                            (pageObject as CLPArray).SizeArrayToGridLevel(MIN_SIDE / Math.Min((pageObject as CLPArray).Rows, (pageObject as CLPArray).Columns));
-                        }
-                    }
-                }
-            }
-
             var arraysToAdd = new List<CLPArray>();
             foreach(var index in Enumerable.Range(1, numberOfArrays))
             {
@@ -2646,6 +2641,51 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
 
                 arraysToAdd.Add(array);
+            }
+
+            // If it doesn't fit, resize all other non-background arrays on page to match new array grid size
+            if(squareSize > 0.0 && initializedSquareSize != squareSize)
+            {
+                Dictionary<string, Point> oldDimensions = new Dictionary<string, Point>();
+                foreach(var pageObject in currentPage.PageObjects)
+                {
+                    if(pageObject is CLPArray && (!pageObject.IsBackground || MainWindow.IsAuthoring))
+                    {
+                        oldDimensions.Add(pageObject.UniqueID, new Point(pageObject.Width, pageObject.Height));
+                        if((pageObject as CLPArray).Rows * initializedSquareSize > MIN_SIDE && (pageObject as CLPArray).Columns * initializedSquareSize > MIN_SIDE)
+                        {
+                            (pageObject as CLPArray).SizeArrayToGridLevel(initializedSquareSize);
+                        }
+                        else
+                        {
+                            (pageObject as CLPArray).SizeArrayToGridLevel(MIN_SIDE / Math.Min((pageObject as CLPArray).Rows, (pageObject as CLPArray).Columns));
+                        }
+                    }
+                }
+
+                if(arraysToAdd.Count == 1)
+                {
+                    var array = arraysToAdd.First();
+                    array.IsBackground = App.MainWindowViewModel.IsAuthoring;
+                    ACLPPageObjectBase.ApplyDistinctPosition(array);
+                    currentPage.PageObjects.Add(array);
+                    ACLPPageBaseViewModel.AddHistoryItemToPage(currentPage, new CLPHistoryArrayAddMassResize(currentPage, array.UniqueID, currentPage.PageObjects.Count - 1, oldDimensions));
+                    App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.Select;
+                    return;
+                }
+                else
+                {
+                    var pageObjectIDs = new List<string>();
+                    foreach(var array in arraysToAdd)
+                    {
+                        array.IsBackground = App.MainWindowViewModel.IsAuthoring;
+                        pageObjectIDs.Add(array.UniqueID);
+                        currentPage.PageObjects.Add(array);
+                    }
+                    ACLPPageBaseViewModel.AddHistoryItemToPage(currentPage, new CLPHistoryArrayMassAddMassResize(currentPage, pageObjectIDs, oldDimensions));
+                    App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.Select;
+                    return;
+                }
             }
 
             if(arraysToAdd.Count == 1)
