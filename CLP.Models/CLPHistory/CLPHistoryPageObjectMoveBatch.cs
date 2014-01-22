@@ -105,6 +105,7 @@ namespace CLP.Models
             }
 
             var pageObject = ParentPage.GetPageObjectByUniqueID(PageObjectUniqueID);
+            pageObject.ParentPage = ParentPage;
 
             if(isAnimationUndo && CurrentBatchTickIndex > 0)
             {
