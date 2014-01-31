@@ -128,8 +128,9 @@
                     </Thumb.Template>
                 </Thumb>
 
+                <!--TO DO Liz : re-enable rotate later on-->
                 <!--Rotate Array Button-->
-                <Button Command="{Binding RotateArrayCommand}"
+                <!--<Button Command="{Binding RotateArrayCommand}"
                         Width="40" Height="40"
                         Canvas.Right="-50"
                         Canvas.Top="20"
@@ -145,7 +146,7 @@
                             </Grid>
                         </ControlTemplate>
                     </Button.Template>
-                </Button>
+                </Button>-->
 
                 <!--Duplicate Array Button-->
                 <Button Command="{Binding DuplicateArrayCommand}"
@@ -243,14 +244,8 @@
                        FontWeight="Bold" FontSize="32"
                        Foreground="Black"
                        VerticalAlignment="Center"
-                       HorizontalAlignment="Center">
-                <TextBlock.Text>
-                    <MultiBinding Converter="{StaticResource MultiplyAllIntToTextMultiConverter}">
-                        <Binding Path="Columns" />
-                        <Binding Path="Rows" />
-                    </MultiBinding>
-                </TextBlock.Text>
-            </TextBlock>
+                       HorizontalAlignment="Center"
+                       Text="{Binding Dividend}"/>
 
             <!--This is the actual array-->
             <Path Grid.Row="1" Grid.Column="1"
@@ -289,7 +284,7 @@
                   Visibility="{Binding IsTopLabelVisible, Converter={StaticResource BooleanToOppositeVisibilityConverter}}"
                   Data="M 0,0 L 100,0" />
 
-                <!--Bottom Fuzzy Edge-->
+            <!--Bottom Fuzzy Edge-->
             <Path Grid.Row="2" Grid.Column="1"
                   Width ="{Binding ArrayWidth}" Height="{Binding LabelLength}"
                   Visibility="{Binding IsTopLabelVisible, Converter={StaticResource BooleanToVisibilityConverter}}"

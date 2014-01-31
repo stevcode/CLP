@@ -15,9 +15,10 @@ namespace CLP.Models
 
         #region Constructors
 
-        public CLPFuzzyFactorCard(int rows, int columns, ICLPPage page)
+        public CLPFuzzyFactorCard(int rows, int columns, int dividend, ICLPPage page)
             : base(rows, columns, page)
         {
+            Dividend = dividend;
         }
         
         /// <summary>
@@ -30,9 +31,32 @@ namespace CLP.Models
 
         #endregion //Constructors
 
+        #region Properties
         public override string PageObjectType
         {
             get { return "CLPFuzzyFactorCard"; }
         }
+
+        /// <summary>
+        /// Value of the dividend.
+        /// </summary>
+        public int Dividend
+        {
+            get
+            {
+                return GetValue<int>(DividendProperty);
+            }
+            set
+            {
+                SetValue(DividendProperty, value);
+            }
+        }
+
+        /// <summary>
+        /// Register the Dividend property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData DividendProperty = RegisterProperty("Dividend", typeof(int), null);
+
+        #endregion //Properties
     }
 }

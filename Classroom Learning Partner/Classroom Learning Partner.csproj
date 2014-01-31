@@ -227,6 +227,9 @@
     <Compile Include="Views\CLPAnimationPageView.xaml.cs">
       <DependentUpon>CLPAnimationPageView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Modal Windows\FuzzyFactorCardCreationView.xaml.cs">
+      <DependentUpon>FuzzyFactorCardCreationView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PageObjects\CLPFactorCardView.xaml.cs">
       <DependentUpon>CLPFactorCardView.xaml</DependentUpon>
     </Compile>
@@ -413,6 +416,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\CLPAnimationPageView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Modal Windows\FuzzyFactorCardCreationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -27,5 +27,30 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //Constructor    
+
+        #region Properties
+
+        /// <summary>
+        /// Value of the Dividend.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public int Dividend
+        {
+            get
+            {
+                return GetValue<int>(DividendProperty);
+            }
+            set
+            {
+                SetValue(DividendProperty, value);
+            }
+        }
+
+        /// <summary>
+        /// Register the Dividend property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData DividendProperty = RegisterProperty("Dividend", typeof(int));
+
+        #endregion //Properties
     }
 }

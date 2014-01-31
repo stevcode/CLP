@@ -2361,20 +2361,20 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             var currentPage = clpMirrorDisplay.CurrentPage;
 
-            int rows, columns, numberOfArrays;
-            if(arrayType == "FACTORCARD" || arrayType == "FUZZYFACTORCARD")
+            int rows, columns, dividend, numberOfArrays;
+            dividend = 0;
+            if(arrayType == "FACTORCARD")
             {
-                var factorCreationView = new FactorCardCreationView {Owner = Application.Current.MainWindow};
+                var factorCreationView = new FactorCardCreationView{ Owner = Application.Current.MainWindow};
                 factorCreationView.ShowDialog();
                 if(factorCreationView.DialogResult != true)
                 {
                     return;
                 }
 
-                int product;
                 try
                 {
-                    product = Convert.ToInt32(factorCreationView.Product.Text);
+                    dividend = Convert.ToInt32(factorCreationView.Product.Text);
                 }
                 catch(FormatException)
                 {
@@ -2390,7 +2390,38 @@ namespace Classroom_Learning_Partner.ViewModels
                     return;
                 }
 
-                columns = product / rows;
+                columns = dividend / rows;
+                numberOfArrays = 1;
+            }
+
+            if(arrayType == "FUZZYFACTORCARD")
+            {
+                var factorCreationView = new FuzzyFactorCardCreationView{ Owner = Application.Current.MainWindow};
+                factorCreationView.ShowDialog();
+                if(factorCreationView.DialogResult != true)
+                {
+                    return;
+                }
+
+                try
+                {
+                    dividend = Convert.ToInt32(factorCreationView.Product.Text);
+                }
+                catch(FormatException)
+                {
+                    return;
+                }
+
+                try
+                {
+                    rows = Convert.ToInt32(factorCreationView.Factor.Text);
+                }
+                catch(FormatException)
+                {
+                    return;
+                }
+
+                columns = dividend / rows;
                 numberOfArrays = 1;
             }
 
@@ -2463,7 +2494,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         array = new CLPFactorCard(rows, columns, currentPage);
                         break;
                     case "FUZZYFACTORCARD":
-                        array = new CLPFuzzyFactorCard(rows, columns, currentPage);
+                        array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
                         break;
                     default:
                         array = new CLPArray(rows, columns, currentPage);
@@ -2591,15 +2622,23 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 switch(arrayType)
                 {
-                    case "DEFAULT":
-                        array.IsDivisionBehaviorOn = false;
-                        //array.IsSnappable = false;
-                        break;
                     case "CARD":
+                        array = new CLPArray(rows, columns, currentPage);
                         array.IsDivisionBehaviorOn = false;
                         array.IsLabelOn = false;
                         array.IsSnappable = false;
                         array.BackgroundColor = Colors.SkyBlue.ToString();
+                        break;
+                    case "FACTORCARD":
+                        array = new CLPFactorCard(rows, columns, currentPage);
+                        break;
+                    case "FUZZYFACTORCARD":
+                        array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
+                        break;
+                    default:
+                        array = new CLPArray(rows, columns, currentPage);
+                        array.IsDivisionBehaviorOn = false;
+                        //array.IsSnappable = false;
                         break;
                 }
 
