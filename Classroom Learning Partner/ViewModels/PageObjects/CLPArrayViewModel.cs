@@ -433,6 +433,39 @@ namespace Classroom_Learning_Partner.ViewModels
                 var horizontalIntersectionLength = right - left;
                 var isHorizontalIntersection = horizontalIntersectionLength > persistingArray.ArrayWidth / 2 || horizontalIntersectionLength > snappingArray.ArrayWidth / 2;
 
+                //Fuzzy Factor Card array snapping in - for now this will override array snapping even if an array might be closer
+                if(pageObject.PageObjectType == "CLPFuzzyFactorCard")
+                {
+                    var factorCard = pageObject as CLPFuzzyFactorCard;
+                    double lastDivisionPosition = 0.0;
+                    foreach(var division in factorCard.VerticalDivisions)
+                    {
+                        if(division.Position > lastDivisionPosition)
+                        {
+                            lastDivisionPosition = division.Position;
+                        }
+                    }
+
+                    if(isVerticalIntersection && snappingArray.Rows == factorCard.Rows)
+                    {
+                        var diff = Math.Abs(snappingArray.XPosition + snappingArray.LabelLength - (persistingArray.XPosition + persistingArray.LabelLength + lastDivisionPosition));
+                        if(diff < 50)
+                        {
+                            //Add a new division and remove snapping array
+                            var position = lastDivisionPosition + snappingArray.ArrayWidth * (factorCard.ArrayHeight / snappingArray.ArrayHeight);
+                            (factorCard as CLPArray).CreateVerticalDivisionAtPosition(position);
+                            PageObject.ParentPage.PageObjects.Remove(PageObject);
+
+                            // To Do Liz - history
+                            //ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryArrayDivisionsChanged(PageObject.ParentPage, pageObject.UniqueID, addedDivisions, removedDivisions));
+
+                            return;
+                        }
+
+                    }
+
+                }
+
                 if(isVerticalIntersection && snappingArray.Rows == persistingArray.Rows)
                 {
                     var rightDiff = Math.Abs(snappingArray.XPosition + snappingArray.LabelLength - (persistingArray.XPosition + persistingArray.LabelLength + persistingArray.ArrayWidth));

@@ -19,6 +19,19 @@
         <conv:BooleanToOppositeVisibilityConverter x:Key="BooleanToOppositeVisibilityConverter" />
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 
+        <Style x:Key="HorizontalDivisionStyle">
+            <Setter Property="Canvas.Left"
+                    Value="0" />
+            <Setter Property="Canvas.Top"
+                    Value="{Binding Position}" />
+        </Style>
+        <Style x:Key="VerticalDivisionStyle">
+            <Setter Property="Canvas.Left"
+                    Value="{Binding Position}" />
+            <Setter Property="Canvas.Top"
+                    Value="0" />
+        </Style>
+
         <SolidColorBrush x:Key="TopLabelColor" Color="DarkOrange" />
         <SolidColorBrush x:Key="LeftLabelColor" Color="Blue" />
     </UserControl.Resources>
@@ -276,7 +289,7 @@
                   Visibility="{Binding IsTopLabelVisible, Converter={StaticResource BooleanToOppositeVisibilityConverter}}"
                   Data="M -1,0 L 1,0 C 1,0 2,1 1,2 C 1,2 0,3 1,4 C 1,4 2,5 1,6 C 1,6 0,7 1,8 C 1,8 2,9 1,10 C 1,10 0,11 1,12 C 1,12 2,13 1,14 C 1,14 0,15 1,16 C 1,16 2,17 1,18 C 1,18 0,19 1,20 C 1,20 2,21 1,22 C 1,22 0,23 1,24 C 1,24 2,25 1,26 M 1,26 L -1,26" />
 
-                <Path Grid.Row="1" Grid.Column="1"
+            <Path Grid.Row="1" Grid.Column="1"
                   Width="{Binding LabelLength}" Height ="{Binding ArrayHeight}"
                   Stretch="Fill" Margin="0"
                   Stroke="Black" StrokeThickness="3" 
@@ -300,6 +313,69 @@
                   Stroke="Black" StrokeThickness="3" 
                   HorizontalAlignment="Right"
                   Data="M 0,0 L 0,100"/>
+
+            <!--Vertical Divisions-->
+            <ItemsControl Grid.Row="1" Grid.Column="1"
+                          ItemsSource="{Binding VerticalDivisions}"
+                          ItemContainerStyle="{StaticResource VerticalDivisionStyle}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas Height="Auto" Width="Auto" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Canvas Width="{Binding Length}"
+                                Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
+                            <!--The Visible Division Line-->
+                            <Rectangle Tag="DivisionHitBox"
+                                       Width="3" Margin="0 3"
+                                       Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, 
+                                                                      Converter={StaticResource LengthConverter}, 
+                                                                      ConverterParameter=-6}"
+                                       StrokeThickness="0" Fill="{StaticResource TopLabelColor}"
+                                       Visibility="{Binding Position, Converter={StaticResource DoubleToVisibilityConverter}}"/>
+
+                            <!--The Small Label-->
+                            <!--<Grid Canvas.Bottom="{Binding DataContext.PageObject.LabelLength, 
+                                                          RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}},
+                                                          Converter={StaticResource NegativeLengthSubtractConverter},
+                                                          ConverterParameter=0}"
+                                  Width="{Binding Length}"
+                                  Height="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
+                                <TextBlock IsHitTestVisible="False" 
+                                           Text="{Binding Value, Converter={StaticResource ZeroToQuestionMarkConverter}}" TextAlignment="Center"
+                                           FontSize="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
+                                           Foreground="{StaticResource TopLabelColor}"
+                                           Height="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
+                                           Width="{Binding Length}" />
+                                <Rectangle Tag="TopLabelHitBox" Fill="Transparent" 
+                                           Width="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
+                                           Height="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
+                                           VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            </Grid>-->
+                        </Canvas>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <!--Divisor Hitboxes-->
+            <!--
+            <Rectangle Grid.Column="1" Grid.Row="1" Fill="Transparent"
+                       Margin="-8 0 0 0"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Top"
+                       Tag="DivisionHitBox"
+                       Width="13" Height="{Binding ArrayHeight}"
+                       IsHitTestVisible="{Binding IsDivisionBehaviorOn}" />
+
+            <Rectangle Grid.Column="1" Grid.Row="1" Fill="Transparent"
+                       Margin="0 -8 0 0"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Top"
+                       Tag="DivisionHitBox"
+                       Height="13" Width="{Binding ArrayWidth}"
+                       IsHitTestVisible="{Binding IsDivisionBehaviorOn}" />-->
 
         </Grid>
 

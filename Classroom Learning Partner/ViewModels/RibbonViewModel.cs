@@ -2495,6 +2495,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         break;
                     case "FUZZYFACTORCARD":
                         array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
+                        array.IsSnappable = true;
                         break;
                     default:
                         array = new CLPArray(rows, columns, currentPage);
@@ -2634,6 +2635,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         break;
                     case "FUZZYFACTORCARD":
                         array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
+                        array.IsSnappable = true;
                         break;
                     default:
                         array = new CLPArray(rows, columns, currentPage);
