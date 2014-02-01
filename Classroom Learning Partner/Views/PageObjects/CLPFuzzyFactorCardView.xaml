@@ -18,7 +18,18 @@
         <conv:MultiplyAllIntToTextMultiConverter x:Key="MultiplyAllIntToTextMultiConverter" />
         <conv:BooleanToOppositeVisibilityConverter x:Key="BooleanToOppositeVisibilityConverter" />
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-
+        <Style x:Key="HorizontalGridLineStyle">
+            <Setter Property="Canvas.Left"
+                    Value="0" />
+            <Setter Property="Canvas.Top"
+                    Value="{Binding}" />
+        </Style>
+        <Style x:Key="VerticalGridLineStyle">
+            <Setter Property="Canvas.Left"
+                    Value="{Binding}" />
+            <Setter Property="Canvas.Top"
+                    Value="0" />
+        </Style>
         <Style x:Key="HorizontalDivisionStyle">
             <Setter Property="Canvas.Left"
                     Value="0" />
@@ -34,6 +45,11 @@
 
         <SolidColorBrush x:Key="TopLabelColor" Color="DarkOrange" />
         <SolidColorBrush x:Key="LeftLabelColor" Color="Blue" />
+        <SolidColorBrush x:Key="DividerColor" Color="Gray" />
+        <SolidColorBrush x:Key="GridColor" Color="SlateGray" />
+        <SolidColorBrush x:Key="ShadingColor" Color="LightGray" />
+        <SolidColorBrush x:Key="SumColor" Color="DarkMagenta" />
+        <SolidColorBrush x:Key="RemainderColor" Color="Green" />
     </UserControl.Resources>
 
     <ac:AdornedControl HorizontalAlignment="Center" VerticalAlignment="Center"
@@ -247,18 +263,97 @@
                 </TextBlock.LayoutTransform>
             </TextBlock>
 
-            <!--Background Color for Array-->
-            <Rectangle Grid.Row="1" Grid.Column="1"
-                       Width="{Binding ArrayWidth}" Height="{Binding ArrayHeight}"
-                       Fill="{Binding PageObject.BackgroundColor}" StrokeThickness="0" Opacity="0.20" />
-
+            <!--Dividend-->
             <TextBlock Grid.Column="1" Grid.Row="1" IsHitTestVisible="False"
-                       TextAlignment="Center"
-                       FontWeight="Bold" FontSize="32"
-                       Foreground="Black"
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Center"
-                       Text="{Binding Dividend}"/>
+                           TextAlignment="Center" Canvas.ZIndex="5"
+                           FontWeight="Bold" FontSize="32"
+                           Foreground="Black"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"
+                           Text="{Binding Dividend}"/>
+            <Ellipse Grid.Column="1" Grid.Row="1" Height="60" Width="60"
+                     StrokeThickness="3" Fill="Yellow" Opacity="0.5"  
+                     VerticalAlignment="Center" HorizontalAlignment="Center" Canvas.ZIndex="1" />
+
+            <!--Grid seperated at at last divider-->
+            <Grid Grid.Column="1" Grid.Row="1" Width="{Binding ArrayWidth}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="{Binding LastDivisionPosition}" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <!--Value of the total product subtracted so far--> 
+                <TextBlock Grid.Column="0" Grid.Row="0" Foreground="{StaticResource SumColor}"  IsHitTestVisible="False"
+                           TextAlignment="Center" Canvas.ZIndex="0"
+                           FontWeight="Bold" FontSize="18"
+                           VerticalAlignment="Bottom"
+                           HorizontalAlignment="Center">
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource MultiplyAllIntToTextMultiConverter}">
+                            <Binding Path="Rows" />
+                            <Binding Path="GroupsSubtracted" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+
+                <!-- TO DO Liz: turn visibility on/off, and move to bottom -->
+                <!--Value of the answer so far-->
+                <TextBlock Grid.Column="0" Grid.Row="0" Foreground="DarkOrange"  IsHitTestVisible="False"
+                           TextAlignment="Center" Canvas.ZIndex="0"
+                           FontWeight="Bold" FontSize="20"
+                           VerticalAlignment="Top"
+                           HorizontalAlignment="Center"
+                           Text="{Binding GroupsSubtracted}"
+                           Visibility="{Binding IsAnswerVisible, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                <!--Shading of subtracted arrays-->
+                <Rectangle Grid.Column="0" Grid.Row="0" Fill="{StaticResource ShadingColor}" Canvas.ZIndex="2"/>
+            
+                <!--Value of the remainder so far-->
+                <TextBlock Grid.Column="1" Grid.Row="0" Foreground="{StaticResource RemainderColor}"  IsHitTestVisible="False"
+                           TextAlignment="Center" Canvas.ZIndex="0"
+                           FontWeight="Bold" FontSize="18"
+                           VerticalAlignment="Bottom"
+                           HorizontalAlignment="Center"
+                           Text="{Binding CurrentRemainder}"/>
+
+                <!--White to cover up grid lines-->
+                <Rectangle Grid.Column="1" Grid.Row="0" Fill="White" Canvas.ZIndex="2"/>
+            </Grid>
+
+            <!--Grid Lines-->
+            <ItemsControl Grid.Row="1" Grid.Column="1"
+                          ItemsSource="{Binding HorizontalGridLines}"
+                          ItemContainerStyle="{StaticResource HorizontalGridLineStyle}"
+                          Visibility="{Binding IsGridOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas Background="Transparent" Height="Auto" Width="Auto" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Rectangle Height="1" Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
+                                   Stroke="{StaticResource GridColor}" StrokeThickness="3" Canvas.ZIndex="3" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <ItemsControl Grid.Row="1" Grid.Column="1"
+                          ItemsSource="{Binding VerticalGridLines}"
+                          ItemContainerStyle="{StaticResource VerticalGridLineStyle}"
+                          Visibility="{Binding IsGridOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas Background="Transparent" Height="Auto" Width="Auto" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Rectangle Width="1" Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
+                                   Stroke="{StaticResource GridColor}" StrokeThickness="3" Canvas.ZIndex="3" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
 
             <!--This is the actual array-->
             <Path Grid.Row="1" Grid.Column="1"
@@ -333,11 +428,11 @@
                                        Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, 
                                                                       Converter={StaticResource LengthConverter}, 
                                                                       ConverterParameter=-6}"
-                                       StrokeThickness="0" Fill="{StaticResource TopLabelColor}"
+                                       StrokeThickness="0" Fill="{StaticResource DividerColor}" Canvas.ZIndex="2"
                                        Visibility="{Binding Position, Converter={StaticResource DoubleToVisibilityConverter}}"/>
 
                             <!--The Small Label-->
-                            <!--<Grid Canvas.Bottom="{Binding DataContext.PageObject.LabelLength, 
+                            <Grid Canvas.Bottom="{Binding DataContext.PageObject.LabelLength, 
                                                           RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}},
                                                           Converter={StaticResource NegativeLengthSubtractConverter},
                                                           ConverterParameter=0}"
@@ -353,29 +448,11 @@
                                            Width="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
                                            Height="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
                                            VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                            </Grid>-->
+                            </Grid> 
                         </Canvas>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-
-            <!--Divisor Hitboxes-->
-            <!--
-            <Rectangle Grid.Column="1" Grid.Row="1" Fill="Transparent"
-                       Margin="-8 0 0 0"
-                       HorizontalAlignment="Left"
-                       VerticalAlignment="Top"
-                       Tag="DivisionHitBox"
-                       Width="13" Height="{Binding ArrayHeight}"
-                       IsHitTestVisible="{Binding IsDivisionBehaviorOn}" />
-
-            <Rectangle Grid.Column="1" Grid.Row="1" Fill="Transparent"
-                       Margin="0 -8 0 0"
-                       HorizontalAlignment="Left"
-                       VerticalAlignment="Top"
-                       Tag="DivisionHitBox"
-                       Height="13" Width="{Binding ArrayWidth}"
-                       IsHitTestVisible="{Binding IsDivisionBehaviorOn}" />-->
 
         </Grid>
 

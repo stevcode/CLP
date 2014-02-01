@@ -451,9 +451,15 @@ namespace Classroom_Learning_Partner.ViewModels
                         var diff = Math.Abs(snappingArray.XPosition + snappingArray.LabelLength - (persistingArray.XPosition + persistingArray.LabelLength + lastDivisionPosition));
                         if(diff < 50)
                         {
+                            // To Do Liz - later allow going over the edge
+                            if(factorCard.CurrentRemainder < factorCard.Rows * snappingArray.Columns)
+                            {
+                                continue;
+                            }
+
                             //Add a new division and remove snapping array
                             var position = lastDivisionPosition + snappingArray.ArrayWidth * (factorCard.ArrayHeight / snappingArray.ArrayHeight);
-                            (factorCard as CLPArray).CreateVerticalDivisionAtPosition(position);
+                            factorCard.CreateVerticalDivisionAtPosition(position, snappingArray.Columns);
                             PageObject.ParentPage.PageObjects.Remove(PageObject);
 
                             // To Do Liz - history
@@ -461,9 +467,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
                             return;
                         }
-
                     }
-
+                    continue;
                 }
 
                 if(isVerticalIntersection && snappingArray.Rows == persistingArray.Rows)

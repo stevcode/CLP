@@ -2394,7 +2394,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 numberOfArrays = 1;
             }
 
-            if(arrayType == "FUZZYFACTORCARD")
+            else if(arrayType == "FUZZYFACTORCARD")
             {
                 var factorCreationView = new FuzzyFactorCardCreationView{ Owner = Application.Current.MainWindow};
                 factorCreationView.ShowDialog();

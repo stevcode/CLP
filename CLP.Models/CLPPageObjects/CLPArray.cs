@@ -723,42 +723,6 @@ namespace CLP.Models
             return prev;
         }
 
-        public void CreateVerticalDivisionAtPosition(double position)
-        {
-            CLPArrayDivision divAbove = FindDivisionAbove(position, VerticalDivisions);
-            CLPArrayDivision divBelow = FindDivisionBelow(position, VerticalDivisions);
-
-            var addedDivisions = new List<CLPArrayDivision>();
-            var removedDivisions = new List<CLPArrayDivision>();
-
-            CLPArrayDivision topDiv;
-            if(divAbove == null)
-            {
-                topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, 0, position, 0);
-            }
-            else
-            {
-                topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, divAbove.Position, position - divAbove.Position, 0);
-                VerticalDivisions.Remove(divAbove);
-                removedDivisions.Add(divAbove);
-            }
-            VerticalDivisions.Add(topDiv);
-            addedDivisions.Add(topDiv);
-
-            CLPArrayDivision bottomDiv;
-            if(divBelow == null)
-            {
-                bottomDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, position, ArrayWidth - position, 0);
-            }
-            else
-            {
-                bottomDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, position, divBelow.Position - position, 0);
-            }
-
-            VerticalDivisions.Add(bottomDiv);
-            addedDivisions.Add(bottomDiv);
-        }
-
         #endregion //Methods
     }
 }
