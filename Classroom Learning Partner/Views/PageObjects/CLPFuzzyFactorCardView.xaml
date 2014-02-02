@@ -208,7 +208,8 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="{Binding PageObject.LabelLength}" />
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="{Binding PageObject.LabelLength}" />
+                <!-- TODO Liz: Make this width depend on IsHorizontallyAligned -->
+                <ColumnDefinition Width="{Binding PageObject.LargeLabelLength}" />
             </Grid.ColumnDefinitions>
 
             <!--Top Labels-->
@@ -263,40 +264,30 @@
                 </TextBlock.LayoutTransform>
             </TextBlock>-->
 
-            <!--Grid Lines-->
-            <ItemsControl Grid.Row="1" Grid.Column="1"
-                          ItemsSource="{Binding HorizontalGridLines}"
-                          ItemContainerStyle="{StaticResource HorizontalGridLineStyle}"
-                          Visibility="{Binding IsGridOn, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <Canvas Background="Transparent" Height="Auto" Width="Auto" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Rectangle Height="1" Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
-                                   Stroke="{StaticResource GridColor}" StrokeThickness="3" />
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+            <!--Right Fuzzy Edge-->
+            <Path Grid.Row="1" Grid.Column="2"
+                  Stretch="Fill" Margin="0"
+                  Stroke="Gray" StrokeThickness="3" 
+                  HorizontalAlignment="Right"
+                  Visibility="{Binding IsHorizontallyAligned, Converter={StaticResource BooleanToVisibilityConverter}}"
+                  SnapsToDevicePixels="True"
+                  Data="M -1,0 L 1,0 C 1,0 2,1 1,2 C 1,2 0,3 1,4 C 1,4 2,5 1,6 C 1,6 0,7 1,8 C 1,8 2,9 1,10 C 1,10 0,11 1,12 C 1,12 2,13 1,14 C 1,14 0,15 1,16 C 1,16 2,17 1,18 C 1,18 0,19 1,20 C 1,20 2,21 1,22 C 1,22 0,23 1,24 C 1,24 2,25 1,26 M 1,26 L -1,26" />
+            <Border Grid.Row="1" Grid.Column="2"
+                     Height="{Binding ArrayHeight}" Width="{Binding PageObject.LabelLength}"
+                     HorizontalAlignment="Left" VerticalAlignment="Top"
+                     BorderBrush="Gray" BorderThickness="0 3 0 3" Margin="0"
+                     SnapsToDevicePixels="True"
+                     Visibility="{Binding IsHorizontallyAligned, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
-            <ItemsControl Grid.Row="1" Grid.Column="1"
-                          ItemsSource="{Binding VerticalGridLines}"
-                          ItemContainerStyle="{StaticResource VerticalGridLineStyle}"
-                          Visibility="{Binding IsGridOn, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <Canvas Background="Transparent" Height="Auto" Width="Auto" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Rectangle Width="1" Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
-                                   Stroke="{StaticResource GridColor}" StrokeThickness="3" />
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+            <!--Bottom Fuzzy Edge-->
+            <!-- TODO Liz - make fixes as in right fuzzy edge-->
+            <Path Grid.Row="2" Grid.Column="1"
+                  Visibility="{Binding IsHorizontallyAligned, Converter={StaticResource BooleanToOppositeVisibilityConverter}}"
+                  VerticalAlignment="Bottom"
+                  SnapsToDevicePixels="True"
+                  Data="M 0,-1 L 0,0 C 0,0 1,1 2,0 C 2,0 3,-1 4,0 M 4,0 C 4,0 5,1 6,0 C 6,0 7,-1 8,0 C 8,0 9,1 10,0 C 10,0 11,-1 12,0 C 12,0 13,1 14,0 C 14,0 15,-1 16,0 C 16,0 17,1 18,0 C 18,0 19,-1 20,0 C 20,0 21,1 22,0 C 22,0 23,-1 24,0 C 24,0 25,1 26,0  M 26,0 L 26,-1"
+                  Stretch="Fill" Margin="0"
+                  Stroke="Gray" StrokeThickness="3" />
 
             <!--Vertical Divisions-->
             <ItemsControl Grid.Row="1" Grid.Column="1"
@@ -345,9 +336,45 @@
                     <ColumnDefinition Width="{Binding PageObject.LastDivisionPosition}" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
+                <!--TODO Liz: Add rows for rotating-->
 
                 <!--Shading of subtracted arrays-->
                 <Rectangle Grid.Column="0" Fill="{StaticResource ShadingColor}" Opacity=".5" />
+
+                <!--Grid Lines-->
+                <ItemsControl Grid.Column="0" 
+                          ItemsSource="{Binding HorizontalGridLines}"
+                          ItemContainerStyle="{StaticResource HorizontalGridLineStyle}"
+                          Visibility="{Binding IsGridOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas Background="Transparent" Height="Auto" Width="Auto" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Rectangle Height="1" Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
+                                   Stroke="{StaticResource GridColor}" StrokeThickness="3" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <ItemsControl Grid.Column="0"
+                          ItemsSource="{Binding VerticalGridLines}"
+                          ItemContainerStyle="{StaticResource VerticalGridLineStyle}"
+                          Visibility="{Binding IsGridOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas Background="Transparent" Height="Auto" Width="Auto" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Rectangle Width="1" Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
+                                   Stroke="{StaticResource GridColor}" StrokeThickness="3" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
 
                 <!--Value of the total product subtracted so far-->
                 <TextBlock Grid.Column="0" Foreground="{Binding SumColor}"  IsHitTestVisible="False"
@@ -373,11 +400,11 @@
                            Visibility="{Binding IsAnswerVisible, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
                 <!--White to cover up grid lines-->
-                <Border Grid.Column="1" Background="White" BorderThickness="3 0 0 0" BorderBrush="Black"/>
+                <Border Grid.Column="1" Background="Transparent" BorderThickness="3 0 0 0" BorderBrush="Black"/>
 
                 <!--Value of the remainder so far-->
                 <TextBlock Grid.Column="1" Foreground="{StaticResource RemainderColor}"  IsHitTestVisible="False"
-                           TextAlignment="Center" Margin="0 0 10 20"
+                           TextAlignment="Center" Margin="0 0 15 20"
                            FontWeight="Bold" FontSize="18"
                            VerticalAlignment="Bottom"
                            HorizontalAlignment="Center"
@@ -407,42 +434,12 @@
                      SnapsToDevicePixels="True"
                      Visibility="{Binding IsHorizontallyAligned, Converter={StaticResource BooleanToOppositeVisibilityConverter}}"/>
 
-            <!--Right Fuzzy Edge-->
-            <Path Grid.Row="1" Grid.Column="2"
-                  Stretch="Fill" Margin="0"
-                  Stroke="Gray" StrokeThickness="3" 
-                  HorizontalAlignment="Left"
-                  Visibility="{Binding IsHorizontallyAligned, Converter={StaticResource BooleanToVisibilityConverter}}"
-                  SnapsToDevicePixels="True"
-                  Data="M 1,0 C 1,0 2,1 1,2 C 1,2 0,3 1,4 C 1,4 2,5 1,6 C 1,6 0,7 1,8 C 1,8 2,9 1,10 C 1,10 0,11 1,12 C 1,12 2,13 1,14 C 1,14 0,15 1,16 C 1,16 2,17 1,18 C 1,18 0,19 1,20 C 1,20 2,21 1,22 C 1,22 0,23 1,24 C 1,24 2,25 1,26" />
-            <Border Grid.Row="1" Grid.Column="2"
-                     Height="{Binding ArrayHeight}" Width="{Binding PageObject.LabelLength}"
-                     HorizontalAlignment="Left" VerticalAlignment="Top"
-                     BorderBrush="Black" BorderThickness="0 3 0 0" Margin="0"
-                     SnapsToDevicePixels="True"
-                     Visibility="{Binding IsHorizontallyAligned, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-            <Border Grid.Row="1" Grid.Column="2"
-                     Height="{Binding ArrayHeight}" Width="{Binding PageObject.LabelLength}"
-                     HorizontalAlignment="Left" VerticalAlignment="Bottom"
-                     BorderBrush="Black" BorderThickness="0 0 0 3" Margin="0"
-                     SnapsToDevicePixels="True"
-                     Visibility="{Binding IsHorizontallyAligned, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-            
-            <!--Bottom Fuzzy Edge-->
-            <Path Grid.Row="2" Grid.Column="1"
-                  Visibility="{Binding IsHorizontallyAligned, Converter={StaticResource BooleanToOppositeVisibilityConverter}}"
-                  VerticalAlignment="Top"
-                  SnapsToDevicePixels="True"
-                  Data="M 0,-1 L 0,0 C 0,0 1,1 2,0 C 2,0 3,-1 4,0 M 4,0 C 4,0 5,1 6,0 C 6,0 7,-1 8,0 C 8,0 9,1 10,0 C 10,0 11,-1 12,0 C 12,0 13,1 14,0 C 14,0 15,-1 16,0 C 16,0 17,1 18,0 C 18,0 19,-1 20,0 C 20,0 21,1 22,0 C 22,0 23,-1 24,0 C 24,0 25,1 26,0  M 26,0 L 26,-1"
-                  Stretch="Fill" Margin="0"
-                  Stroke="Gray" StrokeThickness="3" />
-
             <!--Dividend-->
-            <Ellipse Grid.Column="1" Grid.Row="1" Height="60" Width="60"
+            <Ellipse Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2"  Height="60" Width="60"
                      StrokeThickness="3" Fill="Yellow" Opacity=".5"
                      VerticalAlignment="Center" HorizontalAlignment="Center" />
 
-            <TextBlock Grid.Column="1" Grid.Row="1" IsHitTestVisible="False"
+            <TextBlock Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2"  IsHitTestVisible="False"
                            TextAlignment="Center" 
                            FontWeight="Bold" FontSize="32"
                            Foreground="Black"

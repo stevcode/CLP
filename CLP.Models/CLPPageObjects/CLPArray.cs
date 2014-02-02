@@ -556,7 +556,7 @@ namespace CLP.Models
             ArrayWidth = Width - 2*LabelLength;
         }
 
-        public void CalculateGridLines()
+        public virtual void CalculateGridLines()
         {
             HorizontalGridLines.Clear();
             VerticalGridLines.Clear();

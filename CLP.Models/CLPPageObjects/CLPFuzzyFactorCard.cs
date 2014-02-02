@@ -150,8 +150,9 @@ namespace CLP.Models
             return null;
         }
 
-        public void SizeArrayToGridLevel(double toSquareSize = -1, bool recalculateDivisions = true)
+        public override void SizeArrayToGridLevel(double toSquareSize = -1, bool recalculateDivisions = true)
         {
+            // TODO Liz: add a min size for FFC
             var rightLabelLength = IsHorizontallyAligned ? LargeLabelLength : LabelLength;
             var bottomLabelLength = IsHorizontallyAligned ? LabelLength : LargeLabelLength;
             var initialSquareSize = 45.0;
@@ -170,8 +171,8 @@ namespace CLP.Models
             ArrayHeight = initialSquareSize * Rows;
             ArrayWidth = initialSquareSize * Columns;
 
-            Height = ArrayHeight + 2 * LabelLength;
-            Width = ArrayWidth + 2 * LabelLength;
+            Height = ArrayHeight + LabelLength + bottomLabelLength;
+            Width = ArrayWidth + LabelLength + rightLabelLength;
             if(IsGridOn)
             {
                 CalculateGridLines();
@@ -179,10 +180,26 @@ namespace CLP.Models
             if(recalculateDivisions)
             {
                 ResizeDivisions();
+                RaisePropertyChanged("LastDivisionPosition");
             }
         }
 
-        public void RefreshArrayDimensions()
+        public override void CalculateGridLines()
+        {
+            HorizontalGridLines.Clear();
+            VerticalGridLines.Clear();
+            var squareSize = ArrayWidth / Columns;
+            for(int i = 1; i < Rows; i++)
+            {
+                HorizontalGridLines.Add(i * squareSize);
+            }
+            for(int i = 1; i < GroupsSubtracted; i++)
+            {
+                VerticalGridLines.Add(i * squareSize);
+            }
+        }
+
+        public override void RefreshArrayDimensions()
         {
             var rightLabelLength = IsHorizontallyAligned ? LargeLabelLength : LabelLength;
             var bottomLabelLength = IsHorizontallyAligned ? LabelLength : LargeLabelLength;
@@ -229,6 +246,11 @@ namespace CLP.Models
             RaisePropertyChanged("GroupsSubtracted");
             RaisePropertyChanged("CurrentRemainder");
             RaisePropertyChanged("LastDivisionPosition");
+
+            if(IsGridOn)
+            {
+                CalculateGridLines();
+            }
         }
 
         public void RotateArray()
