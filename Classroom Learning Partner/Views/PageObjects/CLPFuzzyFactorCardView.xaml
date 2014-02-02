@@ -218,7 +218,7 @@
                        Foreground="{StaticResource TopLabelColor}"
                        Height="{Binding PageObject.LabelLength}"
                        Width="{Binding ArrayWidth}"
-                       Visibility="{Binding IsTopLabelVisible, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                       Visibility="{Binding IsHorizontallyAligned, Converter={StaticResource BooleanToOppositeVisibilityConverter}}"/>
 
             <!--<TextBlock Grid.Column="1" Grid.Row="0" IsHitTestVisible="False" 
                        Text="?" TextAlignment="Center"
@@ -226,7 +226,7 @@
                        Foreground="{StaticResource TopLabelColor}"
                        Height="{Binding PageObject.LabelLength}"
                        Width="{Binding ArrayWidth}"
-                       Visibility="{Binding IsTopLabelVisible, Converter={StaticResource BooleanToOppositeVisibilityConverter}}"/>-->
+                       Visibility="{Binding IsHorizontallyAligned, Converter={StaticResource BooleanToVisibilityConverter}}"/>-->
 
             <!--Left Labels-->
             <TextBlock Grid.Column="0" Grid.Row="1" IsHitTestVisible="False"
@@ -235,7 +235,7 @@
                        Foreground="{StaticResource LeftLabelColor}"
                        Height="{Binding PageObject.LabelLength}"
                        Width="{Binding ArrayHeight}"
-                       Visibility="{Binding IsTopLabelVisible, Converter={StaticResource BooleanToOppositeVisibilityConverter}}">
+                       Visibility="{Binding IsHorizontallyAligned, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <TextBlock.LayoutTransform>
                     <TransformGroup>
                         <ScaleTransform />
@@ -252,7 +252,7 @@
                        Foreground="{StaticResource LeftLabelColor}"
                        Height="{Binding PageObject.LabelLength}"
                        Width="{Binding ArrayHeight}"
-                       Visibility="{Binding IsTopLabelVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                       Visibility="{Binding IsHorizontallyAligned, Converter={StaticResource BooleanToOppositeVisibilityConverter}}">
                 <TextBlock.LayoutTransform>
                     <TransformGroup>
                         <ScaleTransform />
@@ -342,7 +342,7 @@
             <!--Grid seperated at at last divider-->
             <Grid Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="{Binding LastDivisionPosition}" />
+                    <ColumnDefinition Width="{Binding PageObject.LastDivisionPosition}" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
@@ -358,7 +358,7 @@
                     <TextBlock.Text>
                         <MultiBinding Converter="{StaticResource MultiplyAllIntToTextMultiConverter}">
                             <Binding Path="Rows" />
-                            <Binding Path="GroupsSubtracted" />
+                            <Binding Path="PageObject.GroupsSubtracted" />
                         </MultiBinding>
                     </TextBlock.Text>
                 </TextBlock>
@@ -369,7 +369,7 @@
                            FontWeight="Bold" FontSize="20"
                            VerticalAlignment="Bottom"
                            HorizontalAlignment="Center"
-                           Text="{Binding GroupsSubtracted}"
+                           Text="{Binding PageObject.GroupsSubtracted}"
                            Visibility="{Binding IsAnswerVisible, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
                 <!--White to cover up grid lines-->
@@ -381,7 +381,7 @@
                            FontWeight="Bold" FontSize="18"
                            VerticalAlignment="Bottom"
                            HorizontalAlignment="Center"
-                           Text="{Binding CurrentRemainder}"/>
+                           Text="{Binding PageObject.CurrentRemainder}"/>
             </Grid>
 
             <!--This is the actual array-->
@@ -397,7 +397,7 @@
                      HorizontalAlignment="Left" VerticalAlignment="Top"
                      BorderBrush="Black" BorderThickness="0 0 0 3" Margin="0"
                      SnapsToDevicePixels="True"
-                     Visibility="{Binding IsTopLabelVisible, Converter={StaticResource BooleanToOppositeVisibilityConverter}}"/>
+                     Visibility="{Binding IsHorizontallyAligned, Converter={StaticResource BooleanToVisibilityConverter}}"/>
             
             <!--Right edge-->
             <Border Grid.Row="1" Grid.Column="1"
@@ -405,14 +405,14 @@
                      HorizontalAlignment="Left" VerticalAlignment="Top"
                      BorderBrush="Black" BorderThickness="0 0 3 0" Margin="0"
                      SnapsToDevicePixels="True"
-                     Visibility="{Binding IsTopLabelVisible, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                     Visibility="{Binding IsHorizontallyAligned, Converter={StaticResource BooleanToOppositeVisibilityConverter}}"/>
 
             <!--Right Fuzzy Edge-->
             <Path Grid.Row="1" Grid.Column="2"
                   Stretch="Fill" Margin="0"
                   Stroke="Gray" StrokeThickness="3" 
                   HorizontalAlignment="Left"
-                  Visibility="{Binding IsTopLabelVisible, Converter={StaticResource BooleanToOppositeVisibilityConverter}}"
+                  Visibility="{Binding IsHorizontallyAligned, Converter={StaticResource BooleanToVisibilityConverter}}"
                   SnapsToDevicePixels="True"
                   Data="M 1,0 C 1,0 2,1 1,2 C 1,2 0,3 1,4 C 1,4 2,5 1,6 C 1,6 0,7 1,8 C 1,8 2,9 1,10 C 1,10 0,11 1,12 C 1,12 2,13 1,14 C 1,14 0,15 1,16 C 1,16 2,17 1,18 C 1,18 0,19 1,20 C 1,20 2,21 1,22 C 1,22 0,23 1,24 C 1,24 2,25 1,26" />
             <Border Grid.Row="1" Grid.Column="2"
@@ -420,17 +420,17 @@
                      HorizontalAlignment="Left" VerticalAlignment="Top"
                      BorderBrush="Black" BorderThickness="0 3 0 0" Margin="0"
                      SnapsToDevicePixels="True"
-                     Visibility="{Binding IsTopLabelVisible, Converter={StaticResource BooleanToOppositeVisibilityConverter}}"/>
+                     Visibility="{Binding IsHorizontallyAligned, Converter={StaticResource BooleanToVisibilityConverter}}"/>
             <Border Grid.Row="1" Grid.Column="2"
                      Height="{Binding ArrayHeight}" Width="{Binding PageObject.LabelLength}"
                      HorizontalAlignment="Left" VerticalAlignment="Bottom"
                      BorderBrush="Black" BorderThickness="0 0 0 3" Margin="0"
                      SnapsToDevicePixels="True"
-                     Visibility="{Binding IsTopLabelVisible, Converter={StaticResource BooleanToOppositeVisibilityConverter}}"/>
+                     Visibility="{Binding IsHorizontallyAligned, Converter={StaticResource BooleanToVisibilityConverter}}"/>
             
             <!--Bottom Fuzzy Edge-->
             <Path Grid.Row="2" Grid.Column="1"
-                  Visibility="{Binding IsTopLabelVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
+                  Visibility="{Binding IsHorizontallyAligned, Converter={StaticResource BooleanToOppositeVisibilityConverter}}"
                   VerticalAlignment="Top"
                   SnapsToDevicePixels="True"
                   Data="M 0,-1 L 0,0 C 0,0 1,1 2,0 C 2,0 3,-1 4,0 M 4,0 C 4,0 5,1 6,0 C 6,0 7,-1 8,0 C 8,0 9,1 10,0 C 10,0 11,-1 12,0 C 12,0 13,1 14,0 C 14,0 15,-1 16,0 C 16,0 17,1 18,0 C 18,0 19,-1 20,0 C 20,0 21,1 22,0 C 22,0 23,-1 24,0 C 24,0 25,1 26,0  M 26,0 L 26,-1"

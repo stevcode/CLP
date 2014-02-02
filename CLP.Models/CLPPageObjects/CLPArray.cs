@@ -520,7 +520,7 @@ namespace CLP.Models
             }
         }
 
-        public void SizeArrayToGridLevel(double toSquareSize = -1, bool recalculateDivisions = true)
+        public virtual void SizeArrayToGridLevel(double toSquareSize = -1, bool recalculateDivisions = true)
         {
             var initialSquareSize = 45.0;
             if(toSquareSize <= 0)
@@ -550,7 +550,7 @@ namespace CLP.Models
             }  
         }
 
-        public void RefreshArrayDimensions()
+        public virtual void RefreshArrayDimensions()
         {
             ArrayHeight = Height - 2*LabelLength;
             ArrayWidth = Width - 2*LabelLength;
@@ -667,7 +667,7 @@ namespace CLP.Models
             return partialProducts;
         }
 
-        public void RotateArray()
+        public virtual void RotateArray()
         {
             var tempCols = Columns;
             Columns = Rows;

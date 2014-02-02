@@ -51,26 +51,25 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public static readonly PropertyData IsAnswerVisibleProperty = RegisterProperty("IsAnswerVisible", typeof(bool));
 
+
         /// <summary>
-        /// Whether the top label is shown or displayed as a "?".
+        /// True if FFC is aligned so that fuzzy edge is on the right
         /// </summary>
         [ViewModelToModel("PageObject")]
-        public bool IsTopLabelVisible
+        public bool IsHorizontallyAligned
         {
             get
             {
-                return GetValue<bool>(IsTopLabelVisibleProperty);
+                return GetValue<bool>(IsHorizontallyAlignedProperty);
             }
             set
             {
-                SetValue(IsTopLabelVisibleProperty, value);
+                SetValue(IsHorizontallyAlignedProperty, value);
             }
         }
 
-        /// <summary>
-        /// Register the IsTopLabelVisible property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData IsTopLabelVisibleProperty = RegisterProperty("IsTopLabelVisible", typeof(bool));
+        public static readonly PropertyData IsHorizontallyAlignedProperty = RegisterProperty("IsHorizontallyAligned", typeof(bool));
+
 
         /// <summary>
         /// Value of the Dividend.
@@ -92,69 +91,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Register the Dividend property so it is known in the class.
         /// </summary>
         public static readonly PropertyData DividendProperty = RegisterProperty("Dividend", typeof(int));
-
-        /// <summary>
-        /// The total number of groups (columns or rows) that have been subtracted so far.
-        /// </summary>
-        [ViewModelToModel("PageObject")]
-        public int GroupsSubtracted
-        {
-            get
-            {
-                return GetValue<int>(GroupsSubtractedProperty);
-            }
-            set
-            {
-                SetValue(GroupsSubtractedProperty, value);
-            }
-        }
-
-        /// <summary>
-        /// Register the GroupsSubtracted property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData GroupsSubtractedProperty = RegisterProperty("GroupsSubtracted", typeof(int));
-
-        /// <summary>
-        /// The area remaining in the array after subtracting the area of the snapped in arrays.
-        /// </summary>
-        [ViewModelToModel("PageObject")]
-        public int CurrentRemainder
-        {
-            get
-            {
-                return GetValue<int>(CurrentRemainderProperty);
-            }
-            set
-            {
-                SetValue(CurrentRemainderProperty, value);
-            }
-        }
-
-        /// <summary>
-        /// Register the CurrentRemainder property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData CurrentRemainderProperty = RegisterProperty("CurrentRemainder", typeof(int));
-
-        /// <summary>
-        /// Position of the last division in the FFC.
-        /// </summary>
-        [ViewModelToModel("PageObject")]
-        public double LastDivisionPosition
-        {
-            get
-            {
-                return GetValue<double>(LastDivisionPositionProperty);
-            }
-            set
-            {
-                SetValue(LastDivisionPositionProperty, value);
-            }
-        }
-
-        /// <summary>
-        /// Register the LastDivisionPosition property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData LastDivisionPositionProperty = RegisterProperty("LastDivisionPosition", typeof(double));
 
         #endregion //Properties
     }

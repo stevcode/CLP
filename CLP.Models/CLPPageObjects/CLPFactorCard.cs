@@ -38,6 +38,22 @@ namespace CLP.Models
             get { return "CLPFactorCard"; }
         }
 
+        #region Methods
+
+        public override ICLPPageObject Duplicate()
+        {
+            var newArray = Clone() as CLPFactorCard;
+            if(newArray != null)
+            {
+                newArray.UniqueID = Guid.NewGuid().ToString();
+                newArray.ParentPage = ParentPage;
+                return newArray;
+            }
+            return null;
+        }
+
+        #endregion //Methods
+
         #region Properties
 
         /// <summary>

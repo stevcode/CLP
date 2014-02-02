@@ -10,8 +10,10 @@ using Catel.Data;
 namespace CLP.Models
 {
     [Serializable]
-    public class CLPFuzzyFactorCard : CLPFactorCard
+    public class CLPFuzzyFactorCard : CLPArray
     {
+
+        public double LargeLabelLength { get { return LabelLength * 2; } }
 
         #region Constructors
 
@@ -19,7 +21,6 @@ namespace CLP.Models
             : base(rows, columns, page)
         {
             Dividend = dividend;
-            CurrentRemainder = dividend;
             IsGridOn = rows < 45 && columns < 45;
             IsAnswerVisible = true;
         }
@@ -34,11 +35,7 @@ namespace CLP.Models
 
         #endregion //Constructors
 
-        #region Properties
-        public override string PageObjectType
-        {
-            get { return "CLPFuzzyFactorCard"; }
-        }
+        #region A/B Testing Toggles
 
         /// <summary>
         /// Whether or not the answer is displayed.
@@ -55,10 +52,37 @@ namespace CLP.Models
             }
         }
 
-        /// <summary>
-        /// Register the IsAnswerVisible property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData IsAnswerVisibleProperty = RegisterProperty("IsAnswerVisible", typeof(bool), true);
+
+        /// <summary>
+        /// True if division labels are on top and answer (if shown) is on bottom.
+        /// </summary>
+        public bool IsArrayDivisionLabelOnTop
+        {
+	        get { return GetValue<bool>(IsArrayDivisionLabelOnTopProperty); }
+	        set { SetValue(IsArrayDivisionLabelOnTopProperty, value); }
+        }
+
+        public static readonly PropertyData IsArrayDivisionLabelOnTopProperty = RegisterProperty("IsArrayDivisionLabelOnTop", typeof(bool), true);
+
+        #endregion
+
+        #region Properties
+        public override string PageObjectType
+        {
+            get { return "CLPFuzzyFactorCard"; }
+        }
+
+        /// <summary>
+        /// True if FFC is aligned so that fuzzy edge is on the right
+        /// </summary>
+        public bool IsHorizontallyAligned
+        {
+	        get { return GetValue<bool>(IsHorizontallyAlignedProperty); }
+	        set { SetValue(IsHorizontallyAlignedProperty, value); }
+        }
+
+        public static readonly PropertyData IsHorizontallyAlignedProperty = RegisterProperty("IsHorizontallyAligned", typeof(bool), true);
 
         /// <summary>
         /// Value of the dividend.
@@ -75,74 +99,96 @@ namespace CLP.Models
             }
         }
 
-        /// <summary>
-        /// Register the Dividend property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData DividendProperty = RegisterProperty("Dividend", typeof(int), null);
 
-        /// <summary>
-        /// The total number of groups (columns or rows) that have been subtracted so far.
-        /// </summary>
         public int GroupsSubtracted
         {
             get
             {
-                return GetValue<int>(GroupsSubtractedProperty);
-            }
-            set
-            {
-                SetValue(GroupsSubtractedProperty, value);
+                int groupsSubtracted = 0;
+                foreach(var division in VerticalDivisions)
+                {
+                    groupsSubtracted += division.Value;
+                }
+                return groupsSubtracted;
             }
         }
-
-        /// <summary>
-        /// Register the GroupsSubtracted property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData GroupsSubtractedProperty = RegisterProperty("GroupsSubtracted", typeof(int), 0);
-
-        /// <summary>
-        /// The area remaining in the array after subtracting the area of the snapped in arrays.
-        /// </summary>
         public int CurrentRemainder
         {
             get
             {
-                return GetValue<int>(CurrentRemainderProperty);
-            }
-            set
-            {
-                SetValue(CurrentRemainderProperty, value);
+                return Dividend - GroupsSubtracted * Rows;
             }
         }
 
-        /// <summary>
-        /// Register the CurrentRemainder property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData CurrentRemainderProperty = RegisterProperty("CurrentRemainder", typeof(int), null);
-
-        /// <summary>
-        /// Position of the last division in the FFC.
-        /// </summary>
         public double LastDivisionPosition
         {
             get
             {
-                return GetValue<double>(LastDivisionPositionProperty);
-            }
-            set
-            {
-                SetValue(LastDivisionPositionProperty, value);
+                if(!VerticalDivisions.Any())
+                {
+                    return 0.0;
+                }
+                return VerticalDivisions.Last().Position;
             }
         }
 
-        /// <summary>
-        /// Register the LastDivisionPosition property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData LastDivisionPositionProperty = RegisterProperty("LastDivisionPosition", typeof(double), 0.0);
 
         #endregion //Properties
 
         #region Methods
+
+        public override ICLPPageObject Duplicate()
+        {
+            var newArray = Clone() as CLPFuzzyFactorCard;
+            if(newArray != null)
+            {
+                newArray.UniqueID = Guid.NewGuid().ToString();
+                newArray.ParentPage = ParentPage;
+                return newArray;
+            }
+            return null;
+        }
+
+        public void SizeArrayToGridLevel(double toSquareSize = -1, bool recalculateDivisions = true)
+        {
+            var rightLabelLength = IsHorizontallyAligned ? LargeLabelLength : LabelLength;
+            var bottomLabelLength = IsHorizontallyAligned ? LabelLength : LargeLabelLength;
+            var initialSquareSize = 45.0;
+            if(toSquareSize <= 0)
+            {
+                while(XPosition + LabelLength + rightLabelLength + initialSquareSize * Columns >= ParentPage.PageWidth || YPosition + LabelLength + bottomLabelLength + initialSquareSize * Rows >= ParentPage.PageHeight)
+                {
+                    initialSquareSize = Math.Abs(initialSquareSize - 45.0) < .0001 ? 22.5 : initialSquareSize / 4 * 3;
+                }
+            }
+            else
+            {
+                initialSquareSize = toSquareSize;
+            }
+
+            ArrayHeight = initialSquareSize * Rows;
+            ArrayWidth = initialSquareSize * Columns;
+
+            Height = ArrayHeight + 2 * LabelLength;
+            Width = ArrayWidth + 2 * LabelLength;
+            if(IsGridOn)
+            {
+                CalculateGridLines();
+            }
+            if(recalculateDivisions)
+            {
+                ResizeDivisions();
+            }
+        }
+
+        public void RefreshArrayDimensions()
+        {
+            var rightLabelLength = IsHorizontallyAligned ? LargeLabelLength : LabelLength;
+            var bottomLabelLength = IsHorizontallyAligned ? LabelLength : LargeLabelLength;
+            ArrayHeight = Height - LabelLength - bottomLabelLength;
+            ArrayWidth = Width - LabelLength - rightLabelLength;
+        }
 
         public void CreateVerticalDivisionAtPosition(double position, int value)
         {
@@ -179,10 +225,49 @@ namespace CLP.Models
             VerticalDivisions.Add(bottomDiv);
             addedDivisions.Add(bottomDiv);
 
-            // Update the totals
-            GroupsSubtracted += value;
-            CurrentRemainder -= (value * Rows);
-            LastDivisionPosition = position;
+            //To Do Liz: Add this to any division removal code and history items
+            RaisePropertyChanged("GroupsSubtracted");
+            RaisePropertyChanged("CurrentRemainder");
+            RaisePropertyChanged("LastDivisionPosition");
+        }
+
+        public void RotateArray()
+        {
+            IsHorizontallyAligned = !IsHorizontallyAligned;
+            var rightLabelLength = IsHorizontallyAligned ? LargeLabelLength : LabelLength;
+            var bottomLabelLength = IsHorizontallyAligned ? LabelLength : LargeLabelLength;
+            var tempCols = Columns;
+            Columns = Rows;
+            Rows = tempCols;
+            var tempArrayHeight = ArrayHeight;
+            ArrayHeight = ArrayWidth;
+            ArrayWidth = tempArrayHeight;
+            Height = ArrayHeight + LabelLength + bottomLabelLength;
+            Width = ArrayWidth + LabelLength + rightLabelLength;
+            CalculateGridLines();
+            var tempHorizontalDivisions = HorizontalDivisions;
+            HorizontalDivisions = VerticalDivisions;
+            VerticalDivisions = tempHorizontalDivisions;
+            ResizeDivisions();
+            foreach(var verticalDivision in VerticalDivisions) 
+            {
+                verticalDivision.Orientation = ArrayDivisionOrientation.Vertical;
+            }
+            foreach(var horizontalDivision in HorizontalDivisions) 
+            {
+                horizontalDivision.Orientation = ArrayDivisionOrientation.Horizontal;
+            }
+
+            if(XPosition + Width > ParentPage.PageWidth)
+            {
+                XPosition = ParentPage.PageWidth - Width;
+            }
+            if(YPosition + Height > ParentPage.PageHeight)
+            {
+                YPosition = ParentPage.PageHeight - Height;
+            }
+
+            RefreshStrokeParentIDs();
         }
 
         #endregion //Methods
