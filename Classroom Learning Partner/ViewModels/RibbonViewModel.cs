@@ -2394,7 +2394,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 numberOfArrays = 1;
             }
 
-            else if(arrayType == "FUZZYFACTORCARD")
+            else if(arrayType == "FUZZYFACTORCARDTOP" || arrayType == "FUZZYFACTORCARDBOTTOM" || arrayType == "FUZZYFACTORCARDBOTTOMNOANSWER" || arrayType == "FUZZYFACTORCARDTOPNOANSWER")
             {
                 var factorCreationView = new FuzzyFactorCardCreationView{ Owner = Application.Current.MainWindow};
                 factorCreationView.ShowDialog();
@@ -2493,10 +2493,28 @@ namespace Classroom_Learning_Partner.ViewModels
                     case "FACTORCARD":
                         array = new CLPFactorCard(rows, columns, currentPage);
                         break;
-                    case "FUZZYFACTORCARD":
+                    case "FUZZYFACTORCARDTOP":
                         array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
-                        array.IsSnappable = true;
+                        (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = true;
                         break;
+                    case "FUZZYFACTORCARDBOTTOM":
+                        array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
+                        (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = false;
+                        break;
+                    case "FUZZYFACTORCARDTOPNOANSWER":
+                        array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
+                        (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = true;
+                        (array as CLPFuzzyFactorCard).IsAnswerVisible = false;
+                        break;
+                    case "FUZZYFACTORCARDBOTTOMNOANSWER":
+                        array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
+                        (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = false;
+                        (array as CLPFuzzyFactorCard).IsAnswerVisible = false;
+                        break;
+                    //case "FUZZYFACTORCARD":
+                    //    array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
+                    //    array.IsSnappable = true;
+                    //    break;
                     default:
                         array = new CLPArray(rows, columns, currentPage);
                         array.IsDivisionBehaviorOn = false;
@@ -2633,10 +2651,28 @@ namespace Classroom_Learning_Partner.ViewModels
                     case "FACTORCARD":
                         array = new CLPFactorCard(rows, columns, currentPage);
                         break;
-                    case "FUZZYFACTORCARD":
+                    case "FUZZYFACTORCARDTOP":
                         array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
-                        array.IsSnappable = true;
+                        (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = true;
                         break;
+                    case "FUZZYFACTORCARDBOTTOM":
+                        array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
+                        (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = false;
+                        break;
+                    case "FUZZYFACTORCARDTOPNOANSWER":
+                        array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
+                        (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = true;
+                        (array as CLPFuzzyFactorCard).IsAnswerVisible = false;
+                        break;
+                    case "FUZZYFACTORCARDBOTTOMNOANSWER":
+                        array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
+                        (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = false;
+                        (array as CLPFuzzyFactorCard).IsAnswerVisible = false;
+                        break;
+                    //case "FUZZYFACTORCARD":
+                    //    array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
+                    //    array.IsSnappable = true;
+                    //    break;
                     default:
                         array = new CLPArray(rows, columns, currentPage);
                         array.IsDivisionBehaviorOn = false;

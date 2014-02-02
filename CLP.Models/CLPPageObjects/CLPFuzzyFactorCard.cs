@@ -23,6 +23,7 @@ namespace CLP.Models
             Dividend = dividend;
             IsGridOn = rows < 45 && columns < 45;
             IsAnswerVisible = true;
+            IsArrayDivisionLabelOnTop = true;
         }
         
         /// <summary>

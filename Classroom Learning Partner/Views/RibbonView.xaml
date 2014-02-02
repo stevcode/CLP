@@ -277,7 +277,8 @@
                               Command="{Binding InsertArrayCommand}"
                               CommandParameter="DEFAULT" />
 
-                <RibbonButton Label="Array Card"
+                <!--TODO Liz: Uncomment array card, factor card and stamp buttons when done demoing-->
+                <!--<RibbonButton Label="Array Card"
                               LargeImageSource="pack://application:,,,/Resources/Images/ArrayCard32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/ArrayCard16.png"
                               Command="{Binding InsertArrayCommand}"
@@ -287,18 +288,36 @@
                               LargeImageSource="pack://application:,,,/Resources/Images/FactorCard32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/FactorCard16.png"
                               Command="{Binding InsertArrayCommand}"
-                              CommandParameter="FACTORCARD" />
+                              CommandParameter="FACTORCARD" />-->
 
-                <RibbonButton Label="Fuzzy Factor Card"
+                <RibbonButton Label="FFC: labels top"
                               LargeImageSource="pack://application:,,,/Resources/Images/FactorCard32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/FactorCard16.png"
                               Command="{Binding InsertArrayCommand}"
-                              CommandParameter="FUZZYFACTORCARD" />
+                              CommandParameter="FUZZYFACTORCARDTOP" />
+                
+                <RibbonButton Label="FFC: labels bottom"
+                              LargeImageSource="pack://application:,,,/Resources/Images/FactorCard32.png"
+                              SmallImageSource="pack://application:,,,/Resources/Images/FactorCard16.png"
+                              Command="{Binding InsertArrayCommand}"
+                              CommandParameter="FUZZYFACTORCARDBOTTOM" />
 
-                <RibbonButton Label="Stamp"
+                <RibbonButton Label="FFC: labels top, no answer"
+                              LargeImageSource="pack://application:,,,/Resources/Images/FactorCard32.png"
+                              SmallImageSource="pack://application:,,,/Resources/Images/FactorCard16.png"
+                              Command="{Binding InsertArrayCommand}"
+                              CommandParameter="FUZZYFACTORCARDTOPNOANSWER" />
+
+                <RibbonButton Label="FFC: labels bottom, no answer"
+                              LargeImageSource="pack://application:,,,/Resources/Images/FactorCard32.png"
+                              SmallImageSource="pack://application:,,,/Resources/Images/FactorCard16.png"
+                              Command="{Binding InsertArrayCommand}"
+                              CommandParameter="FUZZYFACTORCARDBOTTOMNOANSWER" />
+
+                <!--<RibbonButton Label="Stamp"
                               LargeImageSource="pack://application:,,,/Resources/Images/Stamp32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/Stamp16.png"
-                              Command="{Binding InsertBlankStampCommand}" />
+                              Command="{Binding InsertBlankStampCommand}" />-->
 
                 <!--<RibbonButton Label="Collection Stamp"
                               LargeImageSource="pack://application:,,,/Resources/Images/CollectionStamp32.png"

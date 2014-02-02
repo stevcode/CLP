@@ -184,6 +184,7 @@
     <Compile Include="Converters\AllBoolToColorMultiConverter.cs" />
     <Compile Include="Converters\AllBoolToVisibilityMultiConverter.cs" />
     <Compile Include="Converters\BooleanToOppositeVisibilityConverter.cs" />
+    <Compile Include="Converters\BoolToAlignmentConverter.cs" />
     <Compile Include="Converters\BoolToHighlighterConverter.cs" />
     <Compile Include="Converters\BoolZeroToQuestionMarkMultiConverter.cs" />
     <Compile Include="CLPServiceAgent.cs" />

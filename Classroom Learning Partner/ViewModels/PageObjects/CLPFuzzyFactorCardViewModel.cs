@@ -47,6 +47,25 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
+        /// True if division labels are on top and answer (if shown) is on bottom.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public bool IsArrayDivisionLabelOnTop
+        {
+            get
+            {
+                return GetValue<bool>(IsArrayDivisionLabelOnTopProperty);
+            }
+            set
+            {
+                SetValue(IsArrayDivisionLabelOnTopProperty, value);
+            }
+        }
+
+        public static readonly PropertyData IsArrayDivisionLabelOnTopProperty = RegisterProperty("IsArrayDivisionLabelOnTop", typeof(bool));
+
+
+        /// <summary>
         /// Register the IsAnswerVisible property so it is known in the class.
         /// </summary>
         public static readonly PropertyData IsAnswerVisibleProperty = RegisterProperty("IsAnswerVisible", typeof(bool));
