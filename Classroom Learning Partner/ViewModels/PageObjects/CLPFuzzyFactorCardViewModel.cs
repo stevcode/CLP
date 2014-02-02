@@ -14,7 +14,7 @@ using CLP.Models;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    public class CLPFuzzyFactorCardViewModel : CLPFactorCardViewModel
+    public class CLPFuzzyFactorCardViewModel : CLPArrayViewModel
     {
                 
         #region Constructor
@@ -50,6 +50,27 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Register the IsAnswerVisible property so it is known in the class.
         /// </summary>
         public static readonly PropertyData IsAnswerVisibleProperty = RegisterProperty("IsAnswerVisible", typeof(bool));
+
+        /// <summary>
+        /// Whether the top label is shown or displayed as a "?".
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public bool IsTopLabelVisible
+        {
+            get
+            {
+                return GetValue<bool>(IsTopLabelVisibleProperty);
+            }
+            set
+            {
+                SetValue(IsTopLabelVisibleProperty, value);
+            }
+        }
+
+        /// <summary>
+        /// Register the IsTopLabelVisible property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData IsTopLabelVisibleProperty = RegisterProperty("IsTopLabelVisible", typeof(bool));
 
         /// <summary>
         /// Value of the Dividend.
