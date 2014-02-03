@@ -24,6 +24,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public CLPFuzzyFactorCardViewModel(CLPFuzzyFactorCard factorCard) : base(factorCard)
         {
+            ResizeFuzzyFactorCardCommand = new Command<DragDeltaEventArgs>(OnResizeFuzzyFactorCardCommandExecute);
         }
 
         #endregion //Constructor    
@@ -112,5 +113,95 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData DividendProperty = RegisterProperty("Dividend", typeof(int));
 
         #endregion //Properties
+
+        #region Commands
+
+        /// <summary>
+        /// Gets the ResizePageObjectCommand command.
+        /// </summary>
+        public Command<DragDeltaEventArgs> ResizeFuzzyFactorCardCommand
+        {
+            get;
+            set;
+        }
+
+        private void OnResizeFuzzyFactorCardCommandExecute(DragDeltaEventArgs e)
+        {
+            var clpArray = PageObject as CLPFuzzyFactorCard;
+            if(clpArray == null)
+            {
+                return;
+            }
+            var oldHeight = Height;
+            var oldWidth = Width;
+
+            double newArrayHeight;
+            var isVerticalChange = e.VerticalChange > e.HorizontalChange;
+            if(isVerticalChange)
+            {
+                newArrayHeight = ArrayHeight + e.VerticalChange;
+            }
+            else
+            {
+                newArrayHeight = (ArrayWidth + e.HorizontalChange) / Columns * Rows;
+            }
+
+            //TODO Liz - make min dimension depend on horizontal vs vertical alignment
+            const double MIN_SIZE = 150.0; //16.875; //11.25;
+
+            //Control Min Dimensions of Array.
+            if(newArrayHeight < MIN_SIZE)
+            {
+                newArrayHeight = MIN_SIZE;
+            }
+            var newSquareSize = newArrayHeight / Rows;
+            var newArrayWidth = newSquareSize * Columns;
+            if(newArrayWidth < MIN_SIZE)
+            {
+                newArrayWidth = MIN_SIZE;
+                newSquareSize = newArrayWidth / Columns;
+                newArrayHeight = newSquareSize * Rows;
+            }
+
+            //Control Max Dimensions of Array.
+            if(newArrayHeight + 2 * clpArray.LabelLength + YPosition > clpArray.ParentPage.PageHeight)
+            {
+                newArrayHeight = clpArray.ParentPage.PageHeight - YPosition - 2 * clpArray.LabelLength;
+                newSquareSize = newArrayHeight / Rows;
+                newArrayWidth = newSquareSize * Columns;
+            }
+            if(newArrayWidth + 2 * clpArray.LabelLength + XPosition > clpArray.ParentPage.PageWidth)
+            {
+                newArrayWidth = clpArray.ParentPage.PageWidth - XPosition - 2 * clpArray.LabelLength;
+                newSquareSize = newArrayWidth / Columns;
+                //newArrayHeight = newSquareSize * Rows;
+            }
+
+            clpArray.SizeArrayToGridLevel(newSquareSize);
+
+            //Resize History
+            var heightDiff = Math.Abs(oldHeight - Height);
+            var widthDiff = Math.Abs(oldWidth - Width);
+            var diff = heightDiff + widthDiff;
+            if(!(diff > CLPHistory.SAMPLE_RATE))
+            {
+                return;
+            }
+
+            var batch = PageObject.ParentPage.PageHistory.CurrentHistoryBatch;
+            if(batch is CLPHistoryPageObjectResizeBatch)
+            {
+                (batch as CLPHistoryPageObjectResizeBatch).AddResizePointToBatch(PageObject.UniqueID,
+                                                                                 new Point(Width, Height));
+            }
+            else
+            {
+                var batchHistoryItem = PageObject.ParentPage.PageHistory.EndBatch();
+                ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, batchHistoryItem, true);
+                //TODO: log this error
+            }
+        }
+
+        #endregion //Commands
     }
 }

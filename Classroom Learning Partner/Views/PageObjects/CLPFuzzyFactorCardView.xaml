@@ -46,11 +46,12 @@
 
         <SolidColorBrush x:Key="TopLabelColor" Color="DarkOrange" />
         <SolidColorBrush x:Key="LeftLabelColor" Color="Blue" />
-        <SolidColorBrush x:Key="DividerColor" Color="Gray" />
-        <SolidColorBrush x:Key="GridColor" Color="SlateGray" />
+        <SolidColorBrush x:Key="DividerColor" Color="DarkGray" />
+        <SolidColorBrush x:Key="GridColor" Color="CornflowerBlue" />
         <SolidColorBrush x:Key="ShadingColor" Color="LightGray" />
         <SolidColorBrush x:Key="SumColor" Color="DarkMagenta" />
         <SolidColorBrush x:Key="RemainderColor" Color="Green" />
+        <SolidColorBrush x:Key="DividendColor" Color="Yellow" />
     </UserControl.Resources>
 
     <ac:AdornedControl HorizontalAlignment="Center" VerticalAlignment="Center"
@@ -136,7 +137,7 @@
                        Visibility="{Binding IsDefaultAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="DragDelta">
-                            <catel:EventToCommand Command="{Binding ResizeArrayCommand}" PassEventArgsToCommand="True" />
+                            <catel:EventToCommand Command="{Binding ResizeFuzzyFactorCardCommand}" PassEventArgsToCommand="True" />
                         </i:EventTrigger>
                         <i:EventTrigger EventName="DragStarted">
                             <catel:EventToCommand Command="{Binding ResizeStartPageObjectCommand}" PassEventArgsToCommand="True" />
@@ -291,62 +292,7 @@
                   Stretch="Fill" Margin="0"
                   Stroke="Gray" StrokeThickness="3" />
 
-            <!--Vertical Divisions-->
-            <ItemsControl Grid.Row="1" Grid.Column="1"
-                          ItemsSource="{Binding VerticalDivisions}"
-                          ItemContainerStyle="{StaticResource VerticalDivisionStyle}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <Canvas Height="Auto" Width="Auto" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Canvas Width="{Binding Length}"
-                                Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
-                            <!--The Visible Division Line-->
-                            <Rectangle Tag="DivisionHitBox"
-                                       Width="3" Margin="0 3"
-                                       Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, 
-                                                                      Converter={StaticResource LengthConverter}, 
-                                                                      ConverterParameter=-6}"
-                                       StrokeThickness="0" Fill="{StaticResource DividerColor}" 
-                                       Visibility="{Binding Position, Converter={StaticResource DoubleToVisibilityConverter}}"/>
 
-                            <!--The Small Label-->
-                            <Grid Canvas.Top="{Binding DataContext.PageObject.LabelLength, 
-                                                          RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}},
-                                                          Converter={StaticResource NegativeLengthSubtractConverter},
-                                                          ConverterParameter=0}"
-                                  Width="{Binding Length}"
-                                  Height="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
-                                <TextBlock IsHitTestVisible="False" 
-                                           Text="{Binding Value, Converter={StaticResource ZeroToQuestionMarkConverter}}" TextAlignment="Center"
-                                           FontSize="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
-                                           Foreground="{StaticResource TopLabelColor}"
-                                           Height="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
-                                           Width="{Binding Length}" 
-                                           Visibility="{Binding DataContext.IsArrayDivisionLabelOnTop,  RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                            </Grid>
-                            <Grid Canvas.Bottom="{Binding DataContext.PageObject.LabelLength, 
-                                                          RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}},
-                                                          Converter={StaticResource NegativeLengthSubtractConverter},
-                                                          ConverterParameter=0}"
-                                  Width="{Binding Length}"
-                                  Height="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
-                                <TextBlock IsHitTestVisible="False" 
-                                           Text="{Binding Value, Converter={StaticResource ZeroToQuestionMarkConverter}}" TextAlignment="Center"
-                                           FontSize="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
-                                           Foreground="{StaticResource TopLabelColor}"
-                                           Height="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
-                                           Width="{Binding Length}" 
-                                           Visibility="{Binding DataContext.IsArrayDivisionLabelOnTop, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Converter={StaticResource BooleanToOppositeVisibilityConverter}}"/>
-                            </Grid>
-                        </Canvas>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-            
             <!--Grid seperated at at last divider-->
             <Grid Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2">
                 <Grid.ColumnDefinitions>
@@ -393,6 +339,62 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
 
+                <!--Vertical Divisions-->
+                <ItemsControl Grid.Column="0"
+                          ItemsSource="{Binding VerticalDivisions}"
+                          ItemContainerStyle="{StaticResource VerticalDivisionStyle}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas Height="Auto" Width="Auto" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Canvas Width="{Binding Length}"
+                                Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
+                                <!--The Visible Division Line-->
+                                <Rectangle Tag="DivisionHitBox"
+                                       Width="3" Margin="0 3"
+                                       Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, 
+                                                                      Converter={StaticResource LengthConverter}, 
+                                                                      ConverterParameter=-6}"
+                                       StrokeThickness="0" Fill="{StaticResource DividerColor}" Opacity="1"
+                                       Visibility="{Binding Position, Converter={StaticResource DoubleToVisibilityConverter}}"/>
+
+                                <!--The Small Label-->
+                                <Grid Canvas.Top="{Binding DataContext.PageObject.LabelLength, 
+                                                          RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}},
+                                                          Converter={StaticResource NegativeLengthSubtractConverter},
+                                                          ConverterParameter=0}"
+                                  Width="{Binding Length}"
+                                  Height="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
+                                    <TextBlock IsHitTestVisible="False" 
+                                           Text="{Binding Value, Converter={StaticResource ZeroToQuestionMarkConverter}}" TextAlignment="Center"
+                                           FontSize="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
+                                           Foreground="{StaticResource TopLabelColor}"
+                                           Height="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
+                                           Width="{Binding Length}" 
+                                           Visibility="{Binding DataContext.IsArrayDivisionLabelOnTop,  RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                </Grid>
+                                <Grid Canvas.Bottom="{Binding DataContext.PageObject.LabelLength, 
+                                                          RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}},
+                                                          Converter={StaticResource NegativeLengthSubtractConverter},
+                                                          ConverterParameter=0}"
+                                  Width="{Binding Length}"
+                                  Height="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
+                                    <TextBlock IsHitTestVisible="False" 
+                                           Text="{Binding Value, Converter={StaticResource ZeroToQuestionMarkConverter}}" TextAlignment="Center"
+                                           FontSize="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
+                                           Foreground="{StaticResource TopLabelColor}"
+                                           Height="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
+                                           Width="{Binding Length}" 
+                                           Visibility="{Binding DataContext.IsArrayDivisionLabelOnTop, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Converter={StaticResource BooleanToOppositeVisibilityConverter}}"/>
+                                </Grid>
+                            </Canvas>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
                 <!--Value of the total product subtracted so far-->
                 <TextBlock Grid.Column="0" Foreground="{StaticResource SumColor}"  IsHitTestVisible="False"
                            TextAlignment="Center" Margin ="0 0 0 20"
@@ -416,7 +418,7 @@
                            Text="{Binding PageObject.GroupsSubtracted}"
                            Visibility="{Binding IsAnswerVisible, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
-                <!--White to cover up grid lines-->
+                <!--Black line for last divider-->
                 <Border Grid.Column="1" Background="Transparent" BorderThickness="3 0 0 0" BorderBrush="Black"/>
 
                 <!--Value of the remainder so far-->
@@ -453,7 +455,7 @@
 
             <!--Dividend-->
             <Ellipse Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2"  Height="60" Width="60"
-                     StrokeThickness="3" Fill="Yellow" Opacity=".5"
+                     StrokeThickness="3" Fill="{StaticResource DividendColor}" Opacity=".5"
                      VerticalAlignment="Center" HorizontalAlignment="Center" />
 
             <TextBlock Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2"  IsHitTestVisible="False"
