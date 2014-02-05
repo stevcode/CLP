@@ -2464,6 +2464,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             const double MIN_SIDE = 25.0;
+            const double MIN_FFC_SIDE = 150.0;
             const double LABEL_LENGTH = 22.0;
             var xPosition = 0.0;
             var yPosition = 150.0;
@@ -2522,9 +2523,10 @@ namespace Classroom_Learning_Partner.ViewModels
                         break;
                 }
 
+                var arrayMinSide = (array is CLPFuzzyFactorCard) ? MIN_FFC_SIDE : MIN_SIDE;
                 if(squareSize > 0)
                 {
-                    squareSize = Math.Max(squareSize, (MIN_SIDE / (Math.Min(rows, columns))));
+                    squareSize = Math.Max(squareSize, (arrayMinSide / (Math.Min(rows, columns))));
                     if(yPosition + squareSize * rows + 2 * LABEL_LENGTH < currentPage.PageHeight && xPosition + squareSize * columns + 2 * LABEL_LENGTH < currentPage.PageWidth)
                     {
                         array.SizeArrayToGridLevel(squareSize);
@@ -2544,14 +2546,15 @@ namespace Classroom_Learning_Partner.ViewModels
                         {
                             if(pageObject is CLPArray && (!pageObject.IsBackground || MainWindow.IsAuthoring))
                             {
+                                var pageObjectMinSide = (pageObject is CLPFuzzyFactorCard) ? MIN_FFC_SIDE : MIN_SIDE;
                                 oldDimensions.Add(pageObject.UniqueID, new Point(pageObject.Width, pageObject.Height));
-                                if((pageObject as CLPArray).Rows * squareSize > MIN_SIDE && (pageObject as CLPArray).Columns * squareSize > MIN_SIDE)
+                                if((pageObject as CLPArray).Rows * squareSize > pageObjectMinSide && (pageObject as CLPArray).Columns * squareSize > pageObjectMinSide)
                                 {
                                     (pageObject as CLPArray).SizeArrayToGridLevel(squareSize);
                                 }
                                 else
                                 {
-                                    (pageObject as CLPArray).SizeArrayToGridLevel(MIN_SIDE / Math.Min((pageObject as CLPArray).Rows, (pageObject as CLPArray).Columns));
+                                    (pageObject as CLPArray).SizeArrayToGridLevel(pageObjectMinSide / Math.Min((pageObject as CLPArray).Rows, (pageObject as CLPArray).Columns));
                                 }
                             }
                         }
@@ -2572,7 +2575,14 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
 
-            var initializedSquareSize = (squareSize > 0) ? Math.Max(squareSize, (MIN_SIDE / (Math.Min(rows, columns)))) : 45.0;
+            //TODO Liz: clean up this code when getting rid of fuzzy factor card variations
+            var minSide = (arrayType == "FUZZYFACTORCARDTOP" || arrayType == "FUZZYFACTORCARDBOTTOM" || arrayType == "FUZZYFACTORCARDTOPNOANSWER" || arrayType == "FUZZYFACTORCARDBOTTOMNOANSWER")
+                ? MIN_FFC_SIDE:
+                MIN_SIDE;
+            var minSquareSize = (arrayType == "FUZZYFACTORCARDTOP" || arrayType == "FUZZYFACTORCARDBOTTOM" || arrayType == "FUZZYFACTORCARDTOPNOANSWER" || arrayType == "FUZZYFACTORCARDBOTTOMNOANSWER")
+                ? MIN_FFC_SIDE / Math.Min(rows, columns) :
+                45.0;
+            var initializedSquareSize = (squareSize > 0) ? Math.Max(squareSize, (minSide / (Math.Min(rows, columns)))) : minSquareSize;
             var arrayStacks = 1;
             var isHorizontallyAligned = !(columns / currentPage.PageWidth > rows / currentPage.PageHeight);
 
@@ -2782,16 +2792,17 @@ namespace Classroom_Learning_Partner.ViewModels
                 Dictionary<string, Point> oldDimensions = new Dictionary<string, Point>();
                 foreach(var pageObject in currentPage.PageObjects)
                 {
+                    var pageObjectMinSide = (pageObject is CLPFuzzyFactorCard) ? MIN_FFC_SIDE : MIN_SIDE;
                     if(pageObject is CLPArray && (!pageObject.IsBackground || MainWindow.IsAuthoring))
                     {
                         oldDimensions.Add(pageObject.UniqueID, new Point(pageObject.Width, pageObject.Height));
-                        if((pageObject as CLPArray).Rows * initializedSquareSize > MIN_SIDE && (pageObject as CLPArray).Columns * initializedSquareSize > MIN_SIDE)
+                        if((pageObject as CLPArray).Rows * initializedSquareSize > pageObjectMinSide && (pageObject as CLPArray).Columns * initializedSquareSize > pageObjectMinSide)
                         {
                             (pageObject as CLPArray).SizeArrayToGridLevel(initializedSquareSize);
                         }
                         else
                         {
-                            (pageObject as CLPArray).SizeArrayToGridLevel(MIN_SIDE / Math.Min((pageObject as CLPArray).Rows, (pageObject as CLPArray).Columns));
+                            (pageObject as CLPArray).SizeArrayToGridLevel(pageObjectMinSide / Math.Min((pageObject as CLPArray).Rows, (pageObject as CLPArray).Columns));
                         }
                     }
                 }
