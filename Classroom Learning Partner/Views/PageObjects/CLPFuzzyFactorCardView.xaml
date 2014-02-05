@@ -46,7 +46,7 @@
 
         <SolidColorBrush x:Key="TopLabelColor" Color="DarkOrange" />
         <SolidColorBrush x:Key="LeftLabelColor" Color="Blue" />
-        <SolidColorBrush x:Key="DividerColor" Color="DarkGray" />
+        <SolidColorBrush x:Key="DividerColor" Color="DimGray" />
         <SolidColorBrush x:Key="GridColor" Color="CornflowerBlue" />
         <SolidColorBrush x:Key="ShadingColor" Color="LightGray" />
         <SolidColorBrush x:Key="SumColor" Color="DarkMagenta" />
@@ -180,8 +180,8 @@
                     </Button.Template>
                 </Button>-->
 
-                <!--Duplicate Array Button-->
-                <Button Command="{Binding DuplicateArrayCommand}"
+                <!--Take Away Last Array Button-->
+                <Button Command="{Binding RemoveLastArrayCommand}"
                         Cursor="Hand"
                         Width="40" Height="40"
                         Canvas.Left="-40"
@@ -192,13 +192,14 @@
                             <Grid>
                                 <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
                                          VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
-                                <Path Data="M0.5,0 L0.5,1 M0,0.5 L1,0.5" 
+                                <Path Data="M0,0.5 L1,0.5" 
                                       Stretch="Fill" Margin="5"
                                       Stroke="Green" StrokeThickness="3" />
                             </Grid>
                         </ControlTemplate>
                     </Button.Template>
                 </Button>
+
             </Canvas>
         </ac:AdornedControl.AdornerContent>
 
@@ -358,7 +359,7 @@
                                        Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, 
                                                                       Converter={StaticResource LengthConverter}, 
                                                                       ConverterParameter=-6}"
-                                       StrokeThickness="0" Fill="{StaticResource DividerColor}" Opacity="1"
+                                       StrokeThickness="0" Fill="{StaticResource DividerColor}" Opacity=".9"
                                        Visibility="{Binding Position, Converter={StaticResource DoubleToVisibilityConverter}}"/>
 
                                 <!--The Small Label-->

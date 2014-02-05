@@ -293,6 +293,25 @@ namespace CLP.Models
             RefreshStrokeParentIDs();
         }
 
+        public void RemoveLastDivision()
+        {
+            if(VerticalDivisions.Count > 1)
+            {
+                var lastDiv = VerticalDivisions.Last();
+                var prevDiv = VerticalDivisions[VerticalDivisions.Count - 2];
+
+                VerticalDivisions.Add(new CLPArrayDivision(ArrayDivisionOrientation.Vertical, prevDiv.Position, prevDiv.Length + lastDiv.Length, 0));
+                VerticalDivisions.Remove(lastDiv);
+                VerticalDivisions.Remove(prevDiv);
+
+                RaisePropertyChanged("GroupsSubtracted");
+                RaisePropertyChanged("CurrentRemainder");
+                RaisePropertyChanged("LastDivisionPosition");
+
+                CalculateGridLines();
+            }
+        }
+
         #endregion //Methods
     }
 }

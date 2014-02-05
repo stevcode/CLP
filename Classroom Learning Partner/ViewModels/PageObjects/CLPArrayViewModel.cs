@@ -454,6 +454,16 @@ namespace Classroom_Learning_Partner.ViewModels
                             // To Do Liz - later allow going over the edge
                             if(factorCard.CurrentRemainder < factorCard.Rows * snappingArray.Columns)
                             {
+                                //TODO Liz - get old position - maybe from move batch? (Steve will email about this)
+                                var oldX = 10.0;
+                                var oldY = 10.0;
+                                ACLPPageObjectBaseViewModel.ChangePageObjectPosition(snappingArray, oldX, oldY, false);
+                                //TODO Liz:
+                                //notify FFC so it can flash - only have acess to model - use method to access viewmodel (in serviceagent - get viewmodelfrommodel - might be a list, if so grab the first one)
+                                //in the viewmodel make a new method called here - FFC.RejectSnappedArray
+                                //try making the black border flash red
+                                //bind the black borders to a color in viewmodel, default black and change to red in RejectSnappedArray method
+                                //wait one second and change back (Steve will email about this)
                                 continue;
                             }
 
@@ -470,6 +480,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                     continue;
                 }
+                //end of FFC code
 
                 if(isVerticalIntersection && snappingArray.Rows == persistingArray.Rows)
                 {

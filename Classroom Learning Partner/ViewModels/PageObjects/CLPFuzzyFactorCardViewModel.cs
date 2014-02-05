@@ -25,6 +25,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public CLPFuzzyFactorCardViewModel(CLPFuzzyFactorCard factorCard) : base(factorCard)
         {
             ResizeFuzzyFactorCardCommand = new Command<DragDeltaEventArgs>(OnResizeFuzzyFactorCardCommandExecute);
+            RemoveLastArrayCommand = new Command(OnRemoveLastArrayCommandExecute);
         }
 
         #endregion //Constructor    
@@ -200,6 +201,16 @@ namespace Classroom_Learning_Partner.ViewModels
                 ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, batchHistoryItem, true);
                 //TODO: log this error
             }
+        }
+
+        /// <summary>
+        /// Gets the RemoveLastArrayCommand command.
+        /// </summary>
+        public Command RemoveLastArrayCommand { get; private set; }
+
+        private void OnRemoveLastArrayCommandExecute()
+        {
+            (PageObject as CLPFuzzyFactorCard).RemoveLastDivision();
         }
 
         #endregion //Commands

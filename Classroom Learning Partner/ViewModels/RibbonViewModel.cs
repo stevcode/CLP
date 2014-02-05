@@ -2633,6 +2633,60 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                 }
             }
+
+            CLPArray onlyArray = null;
+            foreach(var pageObject in currentPage.PageObjects)
+            {
+                if(pageObject is CLPArray && onlyArray == null)
+                {
+                    onlyArray = pageObject as CLPArray;
+                }
+                else
+                {
+                    onlyArray = null;
+                }
+            }
+
+            var startXPosition = 0.0;
+            var startYPosition = 100.0;
+
+            //Position to not overlap with first array on page if possible
+            if(onlyArray != null)
+            {
+                if(isHorizontallyAligned)
+                {
+                    const double GAP = 35.0;
+                    if(onlyArray.XPosition + onlyArray.Width + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH + GAP <= currentPage.PageWidth
+                        && rows * initializedSquareSize + LABEL_LENGTH < currentPage.PageHeight)
+                    {
+                        startXPosition = onlyArray.XPosition + onlyArray.Width + GAP;
+                        yPosition = onlyArray.YPosition;
+                    }
+                    else if(onlyArray.XPosition + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH <= currentPage.PageWidth
+                        && onlyArray.YPosition + onlyArray.Height + rows * initializedSquareSize + LABEL_LENGTH + GAP < currentPage.PageHeight)
+                    {
+                        yPosition = onlyArray.YPosition + onlyArray.Height + GAP;
+                        startXPosition = onlyArray.XPosition;
+                    }
+                    xPosition = startXPosition;
+                }
+                else{
+                    const double GAP = 35.0;
+                    if(onlyArray.YPosition + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH <= currentPage.PageHeight
+                        && onlyArray.XPosition + onlyArray.Width + columns * initializedSquareSize + LABEL_LENGTH + GAP < currentPage.PageWidth)
+                    {
+                        xPosition = onlyArray.XPosition + onlyArray.Width + GAP;
+                        startYPosition = onlyArray.YPosition;
+                    }
+                    else if(onlyArray.YPosition + onlyArray.Height + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH + GAP <= currentPage.PageWidth
+                        && onlyArray.XPosition + rows * initializedSquareSize + LABEL_LENGTH < currentPage.PageHeight)
+                    {
+                        startYPosition = onlyArray.YPosition + onlyArray.Height + GAP;
+                        xPosition = onlyArray.XPosition;
+                    }
+                }
+            }
+
             
             var arraysToAdd = new List<CLPArray>();
             foreach(var index in Enumerable.Range(1, numberOfArrays))
@@ -2679,19 +2733,19 @@ namespace Classroom_Learning_Partner.ViewModels
                         //array.IsSnappable = false;
                         break;
                 }
-
                 if(isHorizontallyAligned)
                 {
+                    //TODO Liz
                     if(arrayStacks == 2 && index == (int)Math.Ceiling((double)numberOfArrays / 2) + 1)
                     {
-                        xPosition = 0.0;
+                        xPosition = startXPosition;
                         yPosition += LABEL_LENGTH + rows * initializedSquareSize;
                     }
                     if(arrayStacks == 3 && 
                        (index == (int)Math.Ceiling((double)numberOfArrays / 3) + 1 || 
                         index == (int)Math.Ceiling((double)numberOfArrays / 3)*2 + 1))
                     {
-                        xPosition = 0.0;
+                        xPosition = startXPosition;
                         yPosition += LABEL_LENGTH + rows * initializedSquareSize;
                     }
                     array.XPosition = xPosition;
@@ -2704,14 +2758,14 @@ namespace Classroom_Learning_Partner.ViewModels
                     if(arrayStacks == 2 && index == (int)Math.Ceiling((double)numberOfArrays / 2) + 1)
                     {
                         xPosition += LABEL_LENGTH + columns * initializedSquareSize;
-                        yPosition = 100.0;
+                        yPosition = startYPosition;
                     }
                     if(arrayStacks == 3 &&
                        (index == (int)Math.Ceiling((double)numberOfArrays / 3) + 1 ||
                         index == (int)Math.Ceiling((double)numberOfArrays / 3) * 2 + 1))
                     {
                         xPosition += LABEL_LENGTH + columns * initializedSquareSize;
-                        yPosition = 100.0;
+                        yPosition = startYPosition;
                     }
                     array.XPosition = xPosition;
                     array.YPosition = yPosition;
