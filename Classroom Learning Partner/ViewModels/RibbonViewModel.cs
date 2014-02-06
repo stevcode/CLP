@@ -2516,6 +2516,11 @@ namespace Classroom_Learning_Partner.ViewModels
                     //    array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
                     //    array.IsSnappable = true;
                     //    break;
+                    case "SNAPADORNERONRIGHT":
+                        array = new CLPArray(rows, columns, currentPage);
+                        array.IsDivisionBehaviorOn = false;
+                        array.IsSnapAdornerOnLeft = false;
+                        break;
                     default:
                         array = new CLPArray(rows, columns, currentPage);
                         array.IsDivisionBehaviorOn = false;
@@ -2579,9 +2584,10 @@ namespace Classroom_Learning_Partner.ViewModels
             var minSide = (arrayType == "FUZZYFACTORCARDTOP" || arrayType == "FUZZYFACTORCARDBOTTOM" || arrayType == "FUZZYFACTORCARDTOPNOANSWER" || arrayType == "FUZZYFACTORCARDBOTTOMNOANSWER")
                 ? MIN_FFC_SIDE:
                 MIN_SIDE;
-            var minSquareSize = (arrayType == "FUZZYFACTORCARDTOP" || arrayType == "FUZZYFACTORCARDBOTTOM" || arrayType == "FUZZYFACTORCARDTOPNOANSWER" || arrayType == "FUZZYFACTORCARDBOTTOMNOANSWER")
-                ? MIN_FFC_SIDE / Math.Min(rows, columns) :
-                45.0;
+            //var minSquareSize = (arrayType == "FUZZYFACTORCARDTOP" || arrayType == "FUZZYFACTORCARDBOTTOM" || arrayType == "FUZZYFACTORCARDTOPNOANSWER" || arrayType == "FUZZYFACTORCARDBOTTOMNOANSWER")
+            //    ? MIN_FFC_SIDE / Math.Min(rows, columns) :
+            //    45.0;
+            var minSquareSize = 45.0;
             var initializedSquareSize = (squareSize > 0) ? Math.Max(squareSize, (minSide / (Math.Min(rows, columns)))) : minSquareSize;
             var arrayStacks = 1;
             var isHorizontallyAligned = !(columns / currentPage.PageWidth > rows / currentPage.PageHeight);
@@ -2737,10 +2743,16 @@ namespace Classroom_Learning_Partner.ViewModels
                     //    array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
                     //    array.IsSnappable = true;
                     //    break;
+                    case "SNAPADORNERONRIGHT":
+                        array = new CLPArray(rows, columns, currentPage);
+                        array.IsDivisionBehaviorOn = false;
+                        array.IsSnapAdornerOnLeft = false;
+                        break;
                     default:
                         array = new CLPArray(rows, columns, currentPage);
                         array.IsDivisionBehaviorOn = false;
                         //array.IsSnappable = false;
+                        array.IsSnapAdornerOnLeft = true;
                         break;
                 }
                 if(isHorizontallyAligned)

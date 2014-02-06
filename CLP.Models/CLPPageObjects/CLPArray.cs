@@ -125,6 +125,38 @@ namespace CLP.Models
 
         #endregion //Constructors
 
+        #region A/B Testing Toggles
+
+        /// <summary>
+        /// Whether the drag and snap adorner is on the left
+        /// </summary>
+        public bool IsSnapAdornerOnLeft
+        {
+            get
+            {
+                return GetValue<bool>(IsSnapAdornerOnLeftProperty);
+            }
+            set
+            {
+                SetValue(IsSnapAdornerOnLeftProperty, value);
+            }
+        }
+
+        public static readonly PropertyData IsSnapAdornerOnLeftProperty = RegisterProperty("IsSnapAdornerOnLeft", typeof(bool), true);
+
+        /// <summary>
+        /// Whether the drag and snap adorner is on the right
+        /// </summary>
+        public bool IsSnapAdornerOnRight
+        {
+            get
+            {
+                return !IsSnapAdornerOnLeft;
+            }
+        }
+
+        #endregion //A/B Testing Toggles
+
         #region Properties
 
         public override string PageObjectType

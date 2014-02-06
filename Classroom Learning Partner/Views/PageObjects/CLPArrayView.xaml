@@ -121,7 +121,7 @@
                     </Thumb.Template>
                 </Thumb>
 
-                <!--Drag and Snap Thumb-->
+                <!--Drag and Snap Thumb - on left-->
                 <Thumb Cursor="ScrollAll"
                        Width="40" Height="40"
                        Canvas.Left="-50" Canvas.Top="20">
@@ -129,6 +129,36 @@
                         <MultiBinding Converter="{StaticResource AllBoolToVisibilityMultiConverter}">
                             <Binding Path="IsDefaultAdornerVisible" />
                             <Binding Path="IsSnappable" />
+                            <Binding Path="IsSnapAdornerOnLeft" />
+                        </MultiBinding>
+                    </Thumb.Visibility>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="DragDelta">
+                            <catel:EventToCommand Command="{Binding DragPageObjectCommand}" PassEventArgsToCommand="True" />
+                        </i:EventTrigger>
+                        <i:EventTrigger EventName="DragStarted">
+                            <catel:EventToCommand Command="{Binding DragStartPageObjectCommand}" PassEventArgsToCommand="True" />
+                        </i:EventTrigger>
+                        <i:EventTrigger EventName="DragCompleted">
+                            <catel:EventToCommand Command="{Binding DragStopAndSnapCommand}" PassEventArgsToCommand="True" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    <Thumb.Template>
+                        <ControlTemplate>
+                            <Image Source="pack://application:,,,/Resources/Images/AdornerImages/ArraySnap64.png" Height="40" Width="40" />
+                        </ControlTemplate>
+                    </Thumb.Template>
+                </Thumb>
+
+                <!--Drag and Snap Thumb - on right-->
+                <Thumb Cursor="ScrollAll"
+                       Width="40" Height="40"
+                       Canvas.Right="-50" Canvas.Top="20">
+                    <Thumb.Visibility>
+                        <MultiBinding Converter="{StaticResource AllBoolToVisibilityMultiConverter}">
+                            <Binding Path="IsDefaultAdornerVisible" />
+                            <Binding Path="IsSnappable" />
+                            <Binding Path="PageObject.IsSnapAdornerOnRight" />
                         </MultiBinding>
                     </Thumb.Visibility>
                     <i:Interaction.Triggers>
@@ -221,12 +251,41 @@
                     </Button.Template>
                 </Button>
 
-                <!--Rotate Array Button-->
+                <!--Rotate Array Button - on right-->
                 <Button Command="{Binding RotateArrayCommand}"
                         Width="40" Height="40"
                         Canvas.Right="-50"
-                        Canvas.Top="20"
-                        Visibility="{Binding IsRotateAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        Canvas.Top="20">
+                    <Button.Visibility>
+                        <MultiBinding Converter="{StaticResource AllBoolToVisibilityMultiConverter}">
+                            <Binding Path="IsRotateAdornerVisible" />
+                            <Binding Path="IsSnapAdornerOnLeft" />
+                        </MultiBinding>
+                    </Button.Visibility>
+                    <Button.Template>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Grid>
+                                <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
+                                         VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+                                <Image Source="pack://application:,,,/Resources/Images/AdornerImages/ArrayRotate64.png"
+                                       Height="25" Width="25" Margin="6"
+                                       HorizontalAlignment="Left" VerticalAlignment="Top" />
+                            </Grid>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
+                <!--Rotate Array Button - on left-->
+                <Button Command="{Binding RotateArrayCommand}"
+                        Width="40" Height="40"
+                        Canvas.Left="-50"
+                        Canvas.Top="20">
+                    <Button.Visibility>
+                        <MultiBinding Converter="{StaticResource AllBoolToVisibilityMultiConverter}">
+                            <Binding Path="IsRotateAdornerVisible" />
+                            <Binding Path="PageObject.IsSnapAdornerOnRight" />
+                        </MultiBinding>
+                    </Button.Visibility>
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Grid>

@@ -50,6 +50,27 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Model
 
         /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public bool IsSnapAdornerOnLeft
+        {
+            get
+            {
+                return GetValue<bool>(IsSnapAdornerOnLeftProperty);
+            }
+            set
+            {
+                SetValue(IsSnapAdornerOnLeftProperty, value);
+            }
+        }
+
+        /// <summary>
+        /// Register the IsSnapAdornerOnLeft property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData IsSnapAdornerOnLeftProperty = RegisterProperty("IsSnapAdornerOnLeft", typeof(bool));
+
+        /// <summary>
         /// Turns the grid on or off.
         /// </summary>
         [ViewModelToModel("PageObject")]
@@ -437,18 +458,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 if(pageObject.PageObjectType == "CLPFuzzyFactorCard")
                 {
                     var factorCard = pageObject as CLPFuzzyFactorCard;
-                    double lastDivisionPosition = 0.0;
-                    foreach(var division in factorCard.VerticalDivisions)
-                    {
-                        if(division.Position > lastDivisionPosition)
-                        {
-                            lastDivisionPosition = division.Position;
-                        }
-                    }
-
                     if(isVerticalIntersection && snappingArray.Rows == factorCard.Rows)
                     {
-                        var diff = Math.Abs(snappingArray.XPosition + snappingArray.LabelLength - (persistingArray.XPosition + persistingArray.LabelLength + lastDivisionPosition));
+                        var diff = Math.Abs(snappingArray.XPosition + snappingArray.LabelLength - (persistingArray.XPosition + persistingArray.LabelLength + factorCard.LastDivisionPosition));
                         if(diff < 50)
                         {
                             // To Do Liz - later allow going over the edge
@@ -467,8 +479,14 @@ namespace Classroom_Learning_Partner.ViewModels
                                 continue;
                             }
 
+                            //If first division - update IsGridOn to match new array
+                            if(factorCard.LastDivisionPosition == 0)
+                            {
+                                factorCard.IsGridOn = snappingArray.IsGridOn;
+                            }
+
                             //Add a new division and remove snapping array
-                            var position = lastDivisionPosition + snappingArray.ArrayWidth * (factorCard.ArrayHeight / snappingArray.ArrayHeight);
+                            var position = factorCard.LastDivisionPosition + snappingArray.ArrayWidth * (factorCard.ArrayHeight / snappingArray.ArrayHeight);
                             factorCard.CreateVerticalDivisionAtPosition(position, snappingArray.Columns);
                             PageObject.ParentPage.PageObjects.Remove(PageObject);
 

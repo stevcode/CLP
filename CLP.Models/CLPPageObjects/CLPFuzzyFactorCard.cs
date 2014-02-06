@@ -66,7 +66,7 @@ namespace CLP.Models
 
         public static readonly PropertyData IsArrayDivisionLabelOnTopProperty = RegisterProperty("IsArrayDivisionLabelOnTop", typeof(bool), true);
 
-        #endregion
+        #endregion //A/B Testing Toggles
 
         #region Properties
         public override string PageObjectType
