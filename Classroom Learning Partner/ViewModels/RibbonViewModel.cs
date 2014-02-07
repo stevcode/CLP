@@ -2590,8 +2590,15 @@ namespace Classroom_Learning_Partner.ViewModels
             //var minSquareSize = (arrayType == "FUZZYFACTORCARDTOP" || arrayType == "FUZZYFACTORCARDBOTTOM" || arrayType == "FUZZYFACTORCARDTOPNOANSWER" || arrayType == "FUZZYFACTORCARDBOTTOMNOANSWER" || arrayType == "FFCCOMPDISPLAY")
             //    ? MIN_FFC_SIDE / Math.Min(rows, columns) :
             //    45.0;
-            var minSquareSize = 45.0;
-            var initializedSquareSize = (squareSize > 0) ? Math.Max(squareSize, (minSide / (Math.Min(rows, columns)))) : minSquareSize;
+            //var minSquareSize = 45.0;
+            //if(arrayType == "FFCCOMPDISPLAY")
+            //{
+            //    minSquareSize = 100;
+            //}
+            var defaultSquareSize = (arrayType == "FUZZYFACTORCARDTOP" || arrayType == "FUZZYFACTORCARDBOTTOM" || arrayType == "FUZZYFACTORCARDTOPNOANSWER" || arrayType == "FUZZYFACTORCARDBOTTOMNOANSWER" || arrayType == "FFCCOMPDISPLAY")?
+                Math.Max(45.0, (minSide / (Math.Min(rows, columns)))):
+                45.0;
+            var initializedSquareSize = (squareSize > 0) ? Math.Max(squareSize, (minSide / (Math.Min(rows, columns)))) : defaultSquareSize;
             var arrayStacks = 1;
             var isHorizontallyAligned = !(columns / currentPage.PageWidth > rows / currentPage.PageHeight);
 

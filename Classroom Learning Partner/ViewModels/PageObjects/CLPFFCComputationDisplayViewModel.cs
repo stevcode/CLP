@@ -149,18 +149,19 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             //TODO Liz - make min dimension depend on horizontal vs vertical alignment
-            const double MIN_SIZE = 150.0; //16.875; //11.25;
+            const double MIN_HEIGHT = 150.0; //16.875; //11.25;
+            const double MIN_WIDTH = 50.0;
 
             //Control Min Dimensions of Array.
-            if(newArrayHeight < MIN_SIZE)
+            if(newArrayHeight < MIN_HEIGHT)
             {
-                newArrayHeight = MIN_SIZE;
+                newArrayHeight = MIN_HEIGHT;
             }
             var newSquareSize = newArrayHeight / Rows;
             var newArrayWidth = newSquareSize * Columns;
-            if(newArrayWidth < MIN_SIZE)
+            if(newArrayWidth < MIN_WIDTH)
             {
-                newArrayWidth = MIN_SIZE;
+                newArrayWidth = MIN_WIDTH;
                 newSquareSize = newArrayWidth / Columns;
                 newArrayHeight = newSquareSize * Rows;
             }
@@ -172,9 +173,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 newSquareSize = newArrayHeight / Rows;
                 newArrayWidth = newSquareSize * Columns;
             }
-            if(newArrayWidth + 2 * clpArray.LabelLength + XPosition > clpArray.ParentPage.PageWidth)
+            //TODO Liz - update this when rotating is enabled
+            if(newArrayWidth + clpArray.LargeLabelLength + clpArray.LabelLength + XPosition > clpArray.ParentPage.PageWidth)
             {
-                newArrayWidth = clpArray.ParentPage.PageWidth - XPosition - 2 * clpArray.LabelLength;
+                newArrayWidth = clpArray.ParentPage.PageWidth - XPosition - clpArray.LargeLabelLength - clpArray.LabelLength;
                 newSquareSize = newArrayWidth / Columns;
                 //newArrayHeight = newSquareSize * Rows;
             }
