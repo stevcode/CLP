@@ -218,6 +218,7 @@
     <Compile Include="ViewModels\PageObjects\CLPAggregationDataTableViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPArrayViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPFactorCardViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\CLPFFCComputationDisplayViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPFuzzyFactorCardViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPRegionViewModel.cs" />
     <Compile Include="ViewModels\Panels\DisplayListPanelViewModel.cs" />
@@ -233,6 +234,9 @@
     </Compile>
     <Compile Include="Views\PageObjects\CLPFactorCardView.xaml.cs">
       <DependentUpon>CLPFactorCardView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PageObjects\CLPFFCComputationDisplayView.xaml.cs">
+      <DependentUpon>CLPFFCComputationDisplayView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\CLPFuzzyFactorCardView.xaml.cs">
       <DependentUpon>CLPFuzzyFactorCardView.xaml</DependentUpon>
@@ -425,6 +429,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PageObjects\CLPFactorCardView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PageObjects\CLPFFCComputationDisplayView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

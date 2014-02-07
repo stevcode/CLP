@@ -2394,7 +2394,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 numberOfArrays = 1;
             }
 
-            else if(arrayType == "FUZZYFACTORCARDTOP" || arrayType == "FUZZYFACTORCARDBOTTOM" || arrayType == "FUZZYFACTORCARDBOTTOMNOANSWER" || arrayType == "FUZZYFACTORCARDTOPNOANSWER")
+            else if(arrayType == "FUZZYFACTORCARDTOP" || arrayType == "FUZZYFACTORCARDBOTTOM" || arrayType == "FUZZYFACTORCARDBOTTOMNOANSWER" || arrayType == "FUZZYFACTORCARDTOPNOANSWER" || arrayType == "FFCCOMPDISPLAY")
             {
                 var factorCreationView = new FuzzyFactorCardCreationView{ Owner = Application.Current.MainWindow};
                 factorCreationView.ShowDialog();
@@ -2512,6 +2512,9 @@ namespace Classroom_Learning_Partner.ViewModels
                         (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = false;
                         (array as CLPFuzzyFactorCard).IsAnswerVisible = false;
                         break;
+                    case "FFCCOMPDISPLAY":
+                        array = new CLPFFCComputationDisplay(rows, columns, dividend, currentPage);
+                        break;
                     //case "FUZZYFACTORCARD":
                     //    array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
                     //    array.IsSnappable = true;
@@ -2581,10 +2584,10 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             //TODO Liz: clean up this code when getting rid of fuzzy factor card variations
-            var minSide = (arrayType == "FUZZYFACTORCARDTOP" || arrayType == "FUZZYFACTORCARDBOTTOM" || arrayType == "FUZZYFACTORCARDTOPNOANSWER" || arrayType == "FUZZYFACTORCARDBOTTOMNOANSWER")
+            var minSide = (arrayType == "FUZZYFACTORCARDTOP" || arrayType == "FUZZYFACTORCARDBOTTOM" || arrayType == "FUZZYFACTORCARDTOPNOANSWER" || arrayType == "FUZZYFACTORCARDBOTTOMNOANSWER" || arrayType == "FFCCOMPDISPLAY")
                 ? MIN_FFC_SIDE:
                 MIN_SIDE;
-            //var minSquareSize = (arrayType == "FUZZYFACTORCARDTOP" || arrayType == "FUZZYFACTORCARDBOTTOM" || arrayType == "FUZZYFACTORCARDTOPNOANSWER" || arrayType == "FUZZYFACTORCARDBOTTOMNOANSWER")
+            //var minSquareSize = (arrayType == "FUZZYFACTORCARDTOP" || arrayType == "FUZZYFACTORCARDBOTTOM" || arrayType == "FUZZYFACTORCARDTOPNOANSWER" || arrayType == "FUZZYFACTORCARDBOTTOMNOANSWER" || arrayType == "FFCCOMPDISPLAY")
             //    ? MIN_FFC_SIDE / Math.Min(rows, columns) :
             //    45.0;
             var minSquareSize = 45.0;
@@ -2743,6 +2746,9 @@ namespace Classroom_Learning_Partner.ViewModels
                     //    array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
                     //    array.IsSnappable = true;
                     //    break;
+                    case "FFCCOMPDISPLAY":
+                        array = new CLPFFCComputationDisplay(rows, columns, dividend, currentPage);
+                        break;
                     case "SNAPADORNERONRIGHT":
                         array = new CLPArray(rows, columns, currentPage);
                         array.IsDivisionBehaviorOn = false;

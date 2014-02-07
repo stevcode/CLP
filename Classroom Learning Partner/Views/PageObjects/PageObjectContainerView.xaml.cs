@@ -32,6 +32,7 @@ namespace Classroom_Learning_Partner.Views
             if (dataContext is CLPStampCopy) return typeof(CLPStampCopyViewModel);
             if (dataContext is CLPTextBox) return typeof(CLPTextBoxViewModel);
             if (dataContext is CLPAggregationDataTable) return typeof(CLPAggregationDataTableViewModel);
+            if (dataContext is CLPFFCComputationDisplay) return typeof(CLPFFCComputationDisplayViewModel);
             if (dataContext is CLPFuzzyFactorCard) return typeof(CLPFuzzyFactorCardViewModel);
             if (dataContext is CLPFactorCard) return typeof(CLPFactorCardViewModel);
             if (dataContext is CLPArray) return typeof(CLPArrayViewModel);

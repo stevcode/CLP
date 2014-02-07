@@ -498,6 +498,50 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                     continue;
                 }
+
+                if(pageObject.PageObjectType == "CLPFFCComputationDisplay")
+                {
+                    var factorCard = pageObject as CLPFFCComputationDisplay;
+                    if(isVerticalIntersection && snappingArray.Rows == factorCard.Rows)
+                    {
+                        var diff = Math.Abs(snappingArray.XPosition + snappingArray.LabelLength - (persistingArray.XPosition + persistingArray.LabelLength + factorCard.LastDivisionPosition));
+                        if(diff < 50)
+                        {
+                            // To Do Liz - later allow going over the edge
+                            if(factorCard.CurrentRemainder < factorCard.Rows * snappingArray.Columns)
+                            {
+                                //TODO Liz - get old position - maybe from move batch? (Steve will email about this)
+                                var oldX = 10.0;
+                                var oldY = 10.0;
+                                ACLPPageObjectBaseViewModel.ChangePageObjectPosition(snappingArray, oldX, oldY, false);
+                                //TODO Liz:
+                                //notify FFC so it can flash - only have acess to model - use method to access viewmodel (in serviceagent - get viewmodelfrommodel - might be a list, if so grab the first one)
+                                //in the viewmodel make a new method called here - FFC.RejectSnappedArray
+                                //try making the black border flash red
+                                //bind the black borders to a color in viewmodel, default black and change to red in RejectSnappedArray method
+                                //wait one second and change back (Steve will email about this)
+                                continue;
+                            }
+
+                            //If first division - update IsGridOn to match new array
+                            if(factorCard.LastDivisionPosition == 0)
+                            {
+                                factorCard.IsGridOn = snappingArray.IsGridOn;
+                            }
+
+                            //Add a new division and remove snapping array
+                            var position = factorCard.LastDivisionPosition + snappingArray.ArrayWidth * (factorCard.ArrayHeight / snappingArray.ArrayHeight);
+                            factorCard.CreateVerticalDivisionAtPosition(position, snappingArray.Columns);
+                            PageObject.ParentPage.PageObjects.Remove(PageObject);
+
+                            // To Do Liz - history
+                            //ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryArrayDivisionsChanged(PageObject.ParentPage, pageObject.UniqueID, addedDivisions, removedDivisions));
+
+                            return;
+                        }
+                    }
+                    continue;
+                }
                 //end of FFC code
 
                 if(isVerticalIntersection && snappingArray.Rows == persistingArray.Rows)

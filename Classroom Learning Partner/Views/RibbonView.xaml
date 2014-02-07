@@ -321,6 +321,12 @@
                               Command="{Binding InsertArrayCommand}"
                               CommandParameter="FUZZYFACTORCARDBOTTOMNOANSWER" />
 
+                <RibbonButton Label="FFC computation display"
+                              LargeImageSource="pack://application:,,,/Resources/Images/FactorCard32.png"
+                              SmallImageSource="pack://application:,,,/Resources/Images/FactorCard16.png"
+                              Command="{Binding InsertArrayCommand}"
+                              CommandParameter="FFCCOMPDISPLAY" />
+
                 <!--<RibbonButton Label="Stamp"
                               LargeImageSource="pack://application:,,,/Resources/Images/Stamp32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/Stamp16.png"
