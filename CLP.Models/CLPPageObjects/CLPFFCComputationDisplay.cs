@@ -143,15 +143,23 @@ namespace CLP.Models
             get
             {
                 ObservableCollection<string> computationStrings = new ObservableCollection<string>();
-                computationStrings.Add(Dividend.ToString() + "  ");
+                computationStrings.Add("  " + Rows.ToString() + "   ");
+                computationStrings.Add(Dividend.ToString() + "      ");
                 int currentVal = Dividend;
                 foreach(var division in VerticalDivisions)
                 {
                     if(division.Value > 0)
                     {
-                        computationStrings.Add("-" + (division.Value * Rows).ToString() + "     " + (division.Value).ToString());
-                        computationStrings.Add((currentVal - division.Value * Rows).ToString());
+                        if(division.Value * Rows > 10)
+                        {
+                            computationStrings.Add("-" + (division.Value * Rows).ToString() + "    " + (division.Value).ToString());
+                        }
+                        else
+                        {
+                            computationStrings.Add("-" + (division.Value * Rows).ToString() + "      " + (division.Value).ToString());
+                        }
                         computationStrings.Add("----");
+                        computationStrings.Add((currentVal - division.Value * Rows).ToString());
                         currentVal -= division.Value * Rows;
                     }
                 }
