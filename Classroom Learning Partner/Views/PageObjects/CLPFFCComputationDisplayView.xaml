@@ -271,7 +271,7 @@
             <!--Right Fuzzy Edge-->
             <Path Grid.Row="1" Grid.Column="2" 
                   Stretch="Fill" Margin="0"
-                  Stroke="Gray" StrokeThickness="3" 
+                  Stroke="{Binding FuzzyEdgeColor}" StrokeThickness="3" 
                   HorizontalAlignment="Right"
                   Visibility="{Binding IsHorizontallyAligned, Converter={StaticResource BooleanToVisibilityConverter}}"
                   SnapsToDevicePixels="True"
@@ -279,7 +279,7 @@
             <Border Grid.Row="1" Grid.Column="2"
                      Height="{Binding ArrayHeight}" Width="{Binding PageObject.LabelLength}"
                      HorizontalAlignment="Left" VerticalAlignment="Top"
-                     BorderBrush="Gray" BorderThickness="0 3 0 3" Margin="0"
+                     BorderBrush="{Binding FuzzyEdgeColor}" BorderThickness="0 3 0 3" Margin="0"
                      SnapsToDevicePixels="True"
                      Visibility="{Binding IsHorizontallyAligned, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
@@ -291,7 +291,7 @@
                   SnapsToDevicePixels="True"
                   Data="M 0,-1 L 0,0 C 0,0 1,1 2,0 C 2,0 3,-1 4,0 M 4,0 C 4,0 5,1 6,0 C 6,0 7,-1 8,0 C 8,0 9,1 10,0 C 10,0 11,-1 12,0 C 12,0 13,1 14,0 C 14,0 15,-1 16,0 C 16,0 17,1 18,0 C 18,0 19,-1 20,0 C 20,0 21,1 22,0 C 22,0 23,-1 24,0 C 24,0 25,1 26,0  M 26,0 L 26,-1"
                   Stretch="Fill" Margin="0"
-                  Stroke="Gray" StrokeThickness="3" />
+                  Stroke="{Binding FuzzyEdgeColor}" StrokeThickness="3" />
 
             <!--Grid seperated at at last divider-->
             <Grid Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2">
@@ -422,14 +422,14 @@
                            Visibility="{Binding IsAnswerVisible, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
                 <!--Black line for last divider-->
-                <Border Grid.Column="1" Background="Transparent" BorderThickness="3 0 0 0" BorderBrush="Black"/>
+                <Border Grid.Column="1" Background="Transparent" BorderThickness="3 0 0 0" BorderBrush="{Binding BorderColor}"/>
 
                 <!--Value of the remainder so far-->
                 <Ellipse Grid.Column="1" Height="30" Width="30"
                      StrokeThickness="3" Stroke ="Gray" Opacity=".9"
-                     VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin ="0 0 14 17"/>
+                     VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin ="0 0 19 17"/>
                 <TextBlock Grid.Column="1" Foreground="{StaticResource RemainderColor}"  IsHitTestVisible="False"
-                           TextAlignment="Center" Margin="0 0 15 20"
+                           TextAlignment="Center" Margin="0 0 19 20"
                            FontWeight="Bold" FontSize="18"
                            VerticalAlignment="Bottom"
                            HorizontalAlignment="Center"
@@ -440,14 +440,14 @@
             <Border  Grid.Row="1" Grid.Column="1"
                      Height="{Binding ArrayHeight}" Width="{Binding ArrayWidth}"
                      HorizontalAlignment="Left" VerticalAlignment="Top"
-                     BorderBrush="Black" BorderThickness="3 3 0 0" Margin="0"
+                     BorderBrush="{Binding BorderColor}" BorderThickness="3 3 0 0" Margin="0"
                      SnapsToDevicePixels="True"/>
 
             <!--Bottom edge-->
             <Border  Grid.Row="1" Grid.Column="1"
                      Width="{Binding ArrayWidth}" Height="{Binding ArrayHeight}"
                      HorizontalAlignment="Left" VerticalAlignment="Top"
-                     BorderBrush="Black" BorderThickness="0 0 0 3" Margin="0"
+                     BorderBrush="{Binding BorderColor}" BorderThickness="0 0 0 3" Margin="0"
                      SnapsToDevicePixels="True"
                      Visibility="{Binding IsHorizontallyAligned, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
@@ -455,7 +455,7 @@
             <Border Grid.Row="1" Grid.Column="1"
                      Height="{Binding ArrayHeight}" Width="{Binding ArrayWidth}"
                      HorizontalAlignment="Left" VerticalAlignment="Top"
-                     BorderBrush="Black" BorderThickness="0 0 3 0" Margin="0"
+                     BorderBrush="{Binding BorderColor}" BorderThickness="0 0 3 0" Margin="0"
                      SnapsToDevicePixels="True"
                      Visibility="{Binding IsHorizontallyAligned, Converter={StaticResource BooleanToOppositeVisibilityConverter}}"/>
 
@@ -483,13 +483,18 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </Rectangle>
-            
+
+            <TextBlock Grid.Column="4" Grid.Row="1"  
+                       HorizontalAlignment="Center" VerticalAlignment="Top" Margin="-80 2 0 0"
+                       Text="{Binding Rows}" FontSize="14"/>
             <ListBox Grid.Column="4" Grid.Row="1" 
                      ItemsSource="{Binding PageObject.ComputationStrings}"
-                     FontSize="14" Margin="0 -20 0 0"
+                     FontSize="14"
                      HorizontalAlignment="Center"/>
             <Border Grid.Column="4" Grid.Row="1" BorderThickness="0 2 2 0" Margin="0 0 20 0"  BorderBrush="Black" 
-                    Width="35" Height ="{Binding ArrayHeight}"  VerticalAlignment="Top" HorizontalAlignment="Center"/>
+                    Width="40" Height ="{Binding ArrayHeight}"  VerticalAlignment="Top" HorizontalAlignment="Center"/>
+            <Border Grid.Column="4" Grid.Row="1" BorderThickness="2 0 0 0" Margin="0 0 20 0"  BorderBrush="Black" 
+                    Width="40" Height ="15"  VerticalAlignment="Top" HorizontalAlignment="Center"/>
 
         </Grid>
 

@@ -113,7 +113,58 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public static readonly PropertyData DividendProperty = RegisterProperty("Dividend", typeof(int));
 
+        /// <summary>
+        /// Color of the border - usually black but flashes red when extra arrays are snapped to it.
+        /// </summary>
+        public string BorderColor
+        {
+            get
+            {
+                return GetValue< string>(BorderColorProperty);
+            }
+            set
+            {
+                SetValue(BorderColorProperty, value);
+            }
+        }
+
+        public static readonly PropertyData BorderColorProperty = RegisterProperty("BorderColor", typeof( string), "Black");
+
+
+        /// <summary>
+        /// Color of the fuzzy edge - usually gray but flashes red when extra arrays are snapped to it.
+        /// </summary>
+        public string FuzzyEdgeColor
+        {
+            get
+            {
+                return GetValue<string>(FuzzyEdgeColorProperty);
+            }
+            set
+            {
+                SetValue(FuzzyEdgeColorProperty, value);
+            }
+        }
+
+        public static readonly PropertyData FuzzyEdgeColorProperty = RegisterProperty("FuzzyEdgeColor", typeof(string), "Gray");
+
         #endregion //Properties
+
+        #region Methods
+
+        public void RejectSnappedArray()
+        {
+            BorderColor = "Red";
+            FuzzyEdgeColor = "Red";
+            System.Threading.Tasks.Task.Run(async delegate
+            {
+                await System.Threading.Tasks.Task.Delay(400);
+                BorderColor = "Black";
+                FuzzyEdgeColor = "Gray";
+            });
+        }
+
+        #endregion //Methods
 
         #region Commands
 

@@ -14,7 +14,7 @@ namespace CLP.Models
     {
 
         public double ComputationWidth  { get { return 100.0; } }
-        public double LargeLabelLength { get { return LabelLength * 2 + ComputationWidth; } }
+        public double LargeLabelLength { get { return LabelLength * 2 + 12.0 + ComputationWidth; } }
 
         #region Constructors
 
@@ -143,14 +143,13 @@ namespace CLP.Models
             get
             {
                 ObservableCollection<string> computationStrings = new ObservableCollection<string>();
-                computationStrings.Add("  " + Rows.ToString() + "   ");
                 computationStrings.Add(Dividend.ToString() + "      ");
                 int currentVal = Dividend;
                 foreach(var division in VerticalDivisions)
                 {
                     if(division.Value > 0)
                     {
-                        if(division.Value * Rows > 10)
+                        if(division.Value * Rows >= 10)
                         {
                             computationStrings.Add("-" + (division.Value * Rows).ToString() + "    " + (division.Value).ToString());
                         }
