@@ -143,7 +143,14 @@ namespace CLP.Models
             get
             {
                 ObservableCollection<string> computationStrings = new ObservableCollection<string>();
-                computationStrings.Add(Dividend.ToString() + "      ");
+                if(Dividend < 100)
+                {
+                    computationStrings.Add("  " + (Dividend).ToString());
+                }
+                else
+                {
+                    computationStrings.Add((Dividend).ToString());
+                }
                 int currentVal = Dividend;
                 foreach(var division in VerticalDivisions)
                 {
@@ -151,18 +158,49 @@ namespace CLP.Models
                     {
                         if(division.Value * Rows >= 10)
                         {
-                            computationStrings.Add("-" + (division.Value * Rows).ToString() + "    " + (division.Value).ToString());
+                            computationStrings.Add(" -" + (division.Value * Rows).ToString());
                         }
                         else
                         {
-                            computationStrings.Add("-" + (division.Value * Rows).ToString() + "      " + (division.Value).ToString());
+                            computationStrings.Add("   -" + (division.Value * Rows).ToString());
                         }
                         computationStrings.Add("----");
-                        computationStrings.Add((currentVal - division.Value * Rows).ToString());
                         currentVal -= division.Value * Rows;
+                        if(currentVal >= 100)
+                        {
+                            computationStrings.Add((currentVal).ToString());
+                            
+                        }
+                        else if(currentVal >= 10)
+                        {
+                            computationStrings.Add("  " + (currentVal).ToString());
+                        }
+                        else
+                        {
+                            computationStrings.Add("    " + (currentVal).ToString());
+                        }
                     }
                 }
                 return computationStrings;
+            }
+        }
+
+        public ObservableCollection<string> ColumnLabelStrings
+        {
+            get
+            {
+                ObservableCollection<string> strings = new ObservableCollection<string>();
+                strings.Add(" ");
+                foreach(var division in VerticalDivisions)
+                {
+                    if(division.Value > 0)
+                    {
+                        strings.Add((division.Value).ToString());
+                        strings.Add(" ");
+                        strings.Add(" ");
+                    }
+                }
+                return strings;
             }
         }
 
@@ -279,6 +317,7 @@ namespace CLP.Models
             RaisePropertyChanged("CurrentRemainder");
             RaisePropertyChanged("LastDivisionPosition");
             RaisePropertyChanged("ComputationStrings");
+            RaisePropertyChanged("ColumnLabelStrings");
 
             if(IsGridOn)
             {
@@ -340,6 +379,7 @@ namespace CLP.Models
                 RaisePropertyChanged("CurrentRemainder");
                 RaisePropertyChanged("LastDivisionPosition");
                 RaisePropertyChanged("ComputationStrings");
+                RaisePropertyChanged("ColumnLabelStrings");
 
                 CalculateGridLines();
             }

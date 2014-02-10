@@ -484,13 +484,19 @@
                 </i:Interaction.Triggers>
             </Rectangle>
 
+            <!--Computation Strings-->
             <TextBlock Grid.Column="4" Grid.Row="1"  
                        HorizontalAlignment="Center" VerticalAlignment="Top" Margin="-80 2 0 0"
                        Text="{Binding Rows}" FontSize="14"/>
-            <ListBox Grid.Column="4" Grid.Row="1" 
+            <ListBox Grid.Column="4" Grid.Row="1" Margin="-18 0 0 0"
                      ItemsSource="{Binding PageObject.ComputationStrings}"
                      FontSize="14"
                      HorizontalAlignment="Center"/>
+            <ListBox Grid.Column="4" Grid.Row="1" Margin="37 0 0 0"
+                     ItemsSource="{Binding PageObject.ColumnLabelStrings}"
+                     FontSize="14" Foreground="{StaticResource TopLabelColor}" FontWeight="Bold"
+                     HorizontalAlignment="Center" HorizontalContentAlignment="Center"/>
+            <!--Big 7 Border-->
             <Border Grid.Column="4" Grid.Row="1" BorderThickness="0 2 2 0" Margin="0 0 20 0"  BorderBrush="Black" 
                     Width="40" Height ="{Binding ArrayHeight}"  VerticalAlignment="Top" HorizontalAlignment="Center"/>
             <Border Grid.Column="4" Grid.Row="1" BorderThickness="2 0 0 0" Margin="0 0 20 0"  BorderBrush="Black" 
