@@ -359,7 +359,7 @@
                                        Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, 
                                                                       Converter={StaticResource LengthConverter}, 
                                                                       ConverterParameter=-6}"
-                                       StrokeThickness="0" Fill="{StaticResource DividerColor}" Opacity=".9"
+                                       StrokeThickness="0" Fill="{StaticResource DividerColor}" Opacity="1"
                                        Visibility="{Binding Position, Converter={StaticResource DoubleToVisibilityConverter}}"/>
 
                                 <!--The Small Label-->

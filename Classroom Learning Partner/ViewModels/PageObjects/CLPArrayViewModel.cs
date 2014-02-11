@@ -470,10 +470,10 @@ namespace Classroom_Learning_Partner.ViewModels
                                 var oldY = 10.0;
                                 ACLPPageObjectBaseViewModel.ChangePageObjectPosition(snappingArray, oldX, oldY, false);
 
-                                var factorCardModels = CLPServiceAgent.Instance.GetViewModelsFromModel(factorCard);
-                                if(factorCardModels.Any())    
+                                var factorCardViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(factorCard);
+                                foreach(var viewModel in factorCardViewModels)
                                 {
-                                    (factorCardModels.First() as CLPFuzzyFactorCardViewModel).RejectSnappedArray();
+                                    (viewModel as CLPFuzzyFactorCardViewModel).RejectSnappedArray();
                                 }
                                 continue;
                             }
@@ -513,10 +513,10 @@ namespace Classroom_Learning_Partner.ViewModels
                                 var oldY = 10.0;
                                 ACLPPageObjectBaseViewModel.ChangePageObjectPosition(snappingArray, oldX, oldY, false);
 
-                                var factorCardModels = CLPServiceAgent.Instance.GetViewModelsFromModel(factorCard);
-                                if(factorCardModels.Any())
+                                var factorCardViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(factorCard);
+                                foreach(var viewModel in factorCardViewModels)
                                 {
-                                    (factorCardModels.First() as CLPFFCComputationDisplayViewModel).RejectSnappedArray();
+                                    (viewModel as CLPFFCComputationDisplayViewModel).RejectSnappedArray();
                                 }
                                 continue;
                             }
