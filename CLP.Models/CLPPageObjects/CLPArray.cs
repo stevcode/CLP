@@ -314,7 +314,7 @@ namespace CLP.Models
 
             var halvedPageObjects = new List<ICLPPageObject>();
 
-            if(PageObjectType == "CLPFactorCard" || PageObjectType == "CLPFuzzyFactorCard")
+            if(PageObjectType == "CLPFactorCard" || PageObjectType == "CLPFuzzyFactorCard" || PageObjectType == "CLPFFCComputationDisplay")
             {
                 return halvedPageObjects;
             }
