@@ -2479,6 +2479,15 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
 
+            CLPArray onlyArray = null;
+            foreach(var pageObject in currentPage.PageObjects)
+            {
+                if(pageObject is CLPArray)
+                {
+                    onlyArray = (onlyArray == null) ? pageObject as CLPArray : null;
+                }
+            }
+
             if(numberOfArrays == 1)
             {
                 CLPArray array;
@@ -2537,6 +2546,23 @@ namespace Classroom_Learning_Partner.ViewModels
                     squareSize = Math.Max(squareSize, (arrayMinSide / (Math.Min(rows, columns))));
                     if(yPosition + squareSize * rows + 2 * LABEL_LENGTH < currentPage.PageHeight && xPosition + squareSize * columns + 2 * LABEL_LENGTH < currentPage.PageWidth)
                     {
+                        //Position to not overlap with first array on page if possible
+                        if(onlyArray != null)
+                        {
+                            const double GAP = 35.0;
+                            if(onlyArray.XPosition + onlyArray.Width + (2 * LABEL_LENGTH + columns * squareSize) + GAP <= currentPage.PageWidth
+                                && rows * squareSize + LABEL_LENGTH < currentPage.PageHeight)
+                            {
+                                array.XPosition = onlyArray.XPosition + onlyArray.Width + GAP;
+                                array.YPosition = onlyArray.YPosition;
+                            }
+                            else if(onlyArray.XPosition + (2 * LABEL_LENGTH + columns * squareSize) <= currentPage.PageWidth
+                                && onlyArray.YPosition + onlyArray.Height + rows * squareSize + LABEL_LENGTH + GAP < currentPage.PageHeight)
+                            {
+                                array.YPosition = onlyArray.YPosition + onlyArray.Height + GAP;
+                                array.XPosition = onlyArray.XPosition;
+                            }
+                        }
                         array.SizeArrayToGridLevel(squareSize);
                         ACLPPageObjectBase.ApplyDistinctPosition(array);
                         ACLPPageBaseViewModel.AddPageObjectToPage(array);
@@ -2567,6 +2593,24 @@ namespace Classroom_Learning_Partner.ViewModels
                             }
                         }
                         array.SizeArrayToGridLevel(squareSize);
+
+                        //Position to not overlap with first array on page if possible
+                        if(onlyArray != null)
+                        {
+                            const double GAP = 35.0;
+                            if(onlyArray.XPosition + onlyArray.Width + (2 * LABEL_LENGTH + columns * squareSize) + GAP <= currentPage.PageWidth
+                                && rows * squareSize + LABEL_LENGTH < currentPage.PageHeight)
+                            {
+                                array.XPosition = onlyArray.XPosition + onlyArray.Width + GAP;
+                                array.YPosition = onlyArray.YPosition;
+                            }
+                            else if(onlyArray.XPosition + (2 * LABEL_LENGTH + columns * squareSize) <= currentPage.PageWidth
+                                && onlyArray.YPosition + onlyArray.Height + rows * squareSize + LABEL_LENGTH + GAP < currentPage.PageHeight)
+                            {
+                                array.YPosition = onlyArray.YPosition + onlyArray.Height + GAP;
+                                array.XPosition = onlyArray.XPosition;
+                            }
+                        }
 
                         if(currentPage == null)
                         {
@@ -2657,19 +2701,6 @@ namespace Classroom_Learning_Partner.ViewModels
                         arrayStacks = 3;
                         break;
                     }
-                }
-            }
-
-            CLPArray onlyArray = null;
-            foreach(var pageObject in currentPage.PageObjects)
-            {
-                if(pageObject is CLPArray && onlyArray == null)
-                {
-                    onlyArray = pageObject as CLPArray;
-                }
-                else
-                {
-                    onlyArray = null;
                 }
             }
 
@@ -2770,7 +2801,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
                 if(isHorizontallyAligned)
                 {
-                    //TODO Liz
                     if(arrayStacks == 2 && index == (int)Math.Ceiling((double)numberOfArrays / 2) + 1)
                     {
                         xPosition = startXPosition;
