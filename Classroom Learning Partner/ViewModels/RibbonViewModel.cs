@@ -1055,7 +1055,13 @@ namespace Classroom_Learning_Partner.ViewModels
                 var document = new FixedDocument();
                 document.DocumentPaginator.PageSize = new Size(96 * 11, 96 * 8.5);
 
-                foreach(var page in notebook.Submissions.Keys.SelectMany(pageID => notebook.Submissions[pageID]))
+                
+                foreach(var clpPage in notebook.Pages)
+                {
+                    foreach(var page in notebook.Submissions[clpPage.UniqueID])
+                   
+               
+              //  foreach(var page in notebook.Submissions.Keys.SelectMany(pageID => notebook.Submissions[pageID]))
                 {
                     foreach(var pageObject in page.PageObjects)
                     {
@@ -1118,6 +1124,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         document.Pages.Add(pageContent);
                     } while(page.PageHeight > transformAmount);
                 }
+                     }
 
                 //Save the document
                 var xpsDocument = new XpsDocument(filePath, FileAccess.ReadWrite);
