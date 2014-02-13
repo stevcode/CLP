@@ -306,8 +306,8 @@
                     <RowDefinition Height="{Binding PageObject.LabelLength}" />
                 </Grid.RowDefinitions>
                 <!--TODO Liz: Add rows for rotating-->
-                
-                <!--Equation label on bottom-->
+
+                <!--Bottom Label (Equation)-->
                 <TextBlock Grid.Column="0" Grid.Row="1"
                     TextAlignment="Center" Margin="-50 5 0 0"
                     FontWeight="Bold" FontSize="20"
@@ -435,22 +435,7 @@
                                        StrokeThickness="0" Fill="{StaticResource DividerColor}" Opacity=".7"
                                        Visibility="{Binding Position, Converter={StaticResource DoubleToVisibilityConverter}}"/>
 
-                                <!--The Small Label-->
-                                <!--<Grid Canvas.Top="{Binding DataContext.PageObject.LabelLength, 
-                                                          RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}},
-                                                          Converter={StaticResource NegativeLengthSubtractConverter},
-                                                          ConverterParameter=0}"
-                                  Width="{Binding Length}"
-                                  Height="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
-                                    <TextBlock IsHitTestVisible="False" 
-                                           Text="{Binding Value, Converter={StaticResource ZeroToQuestionMarkConverter}}" TextAlignment="Center"
-                                           FontSize="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
-                                           Foreground="{StaticResource TopLabelColor}"
-                                           Height="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
-                                           Width="{Binding Length}" 
-                                           Visibility="{Binding DataContext.IsArrayDivisionLabelOnTop,  RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                                </Grid>-->
-                                <!--labels inside snapped in arrays-->
+                                <!--Labels Inside Snapped-in Arrays-->
                                 <Grid VerticalAlignment="Center" HorizontalAlignment="Center"
                                   Width="{Binding Length}"
                                   Height="{Binding DataContext.ArrayHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
