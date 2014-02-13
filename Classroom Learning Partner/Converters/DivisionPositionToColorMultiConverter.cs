@@ -30,7 +30,7 @@ namespace Classroom_Learning_Partner.Converters
                 }
                 else if(index % 2 == 0)
                 {
-                    return new SolidColorBrush(Colors.DarkOrchid);
+                    return new SolidColorBrush(Colors.MediumPurple);
                 }
                 return new SolidColorBrush(Colors.SpringGreen);
             }

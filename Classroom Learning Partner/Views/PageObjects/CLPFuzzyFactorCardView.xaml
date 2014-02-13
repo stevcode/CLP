@@ -52,7 +52,6 @@
         <SolidColorBrush x:Key="GridColor" Color="CornflowerBlue" />
         <SolidColorBrush x:Key="ShadingColor" Color="LightGray" />
         <SolidColorBrush x:Key="SumColor" Color="Black" />
-        <SolidColorBrush x:Key="RemainderColor" Color="Black" />
     </UserControl.Resources>
 
     <ac:AdornedControl HorizontalAlignment="Center" VerticalAlignment="Center"
@@ -309,48 +308,41 @@
 
                 <!--Bottom Label (Equation)-->
                 <TextBlock Grid.Column="0" Grid.Row="1"
-                    TextAlignment="Center" Margin="-50 5 0 0"
-                    FontWeight="Bold" FontSize="20"
+                    TextAlignment="Center" Margin="-72 8 0 0"
+                    FontWeight="Bold" FontSize="18"
                     VerticalAlignment="Top"
                     HorizontalAlignment="Center"
                     Text="{Binding Rows}" 
                     Visibility="{Binding PageObject.GroupsSubtracted, Converter={StaticResource IntToVisibilityConverter}}"/>
                 <TextBlock Grid.Column="0" Grid.Row="1"
-                    TextAlignment="Center" Margin="-25 5 0 0"
-                    FontWeight="Bold" FontSize="20"
+                    TextAlignment="Center" Margin="-40 8 0 0"
+                    FontWeight="Bold" FontSize="18"
                     VerticalAlignment="Top"
                     HorizontalAlignment="Center"
                     Text="x" 
                     Visibility="{Binding PageObject.GroupsSubtracted, Converter={StaticResource IntToVisibilityConverter}}"/>
                 <TextBlock Grid.Column="0" Grid.Row="1"
-                    TextAlignment="Center" Margin="0 5 0 0"
-                    FontWeight="Bold" FontSize="20"
+                    TextAlignment="Center" Margin="-10 8 0 0"
+                    FontWeight="Bold" FontSize="18"
                     VerticalAlignment="Top"
                     HorizontalAlignment="Center"
                     Text="{Binding PageObject.GroupsSubtracted}" 
                     Visibility="{Binding PageObject.GroupsSubtracted, Converter={StaticResource IntToVisibilityConverter}}"/>
                 <TextBlock Grid.Column="0" Grid.Row="1"
-                    TextAlignment="Center" Margin="25 5 0 0"
-                    FontWeight="Bold" FontSize="20"
+                    TextAlignment="Center" Margin="25 8 0 0"
+                    FontWeight="Bold" FontSize="18"
                     VerticalAlignment="Top"
                     HorizontalAlignment="Center"
                     Text="=" 
                     Visibility="{Binding PageObject.GroupsSubtracted, Converter={StaticResource IntToVisibilityConverter}}"/>
-                <TextBlock Grid.Column="0" Grid.Row="1"
-                    TextAlignment="Center" Margin="50 5 0 0"
-                    FontWeight="Bold" FontSize="20"
-                    VerticalAlignment="Top"
-                    HorizontalAlignment="Center"
-                    Text="{Binding PageObject}" 
-                    Visibility="{Binding PageObject.GroupsSubtracted, Converter={StaticResource IntToVisibilityConverter}}"/>
                 <Ellipse  Grid.Column="0" Grid.Row="1"
-                     Margin="60 2 0 0"
+                     Margin="74 1 0 0"
                      VerticalAlignment="Top"
-                     HorizontalAlignment="Center" Height="30" Width="30"
+                     HorizontalAlignment="Center" Height="34" Width="36"
                      StrokeThickness="3" Stroke ="Black" Fill="Transparent"/>
                 <TextBlock Grid.Column="0" Grid.Row="1"
-                    TextAlignment="Center" Margin="60 5 0 0"
-                    FontWeight="Bold" FontSize="20"
+                    TextAlignment="Center" Margin="74 8 0 0"
+                    FontWeight="Bold" FontSize="18"
                     VerticalAlignment="Top"
                     HorizontalAlignment="Center"
                     Foreground="Black"  IsHitTestVisible="False">
@@ -435,14 +427,14 @@
                                        StrokeThickness="0" Fill="{StaticResource DividerColor}" Opacity=".7"
                                        Visibility="{Binding Position, Converter={StaticResource DoubleToVisibilityConverter}}"/>
 
-                                <!--Labels Inside Snapped-in Arrays-->
+                                <!--Label Inside Snapped-in Array-->
                                 <Grid VerticalAlignment="Center" HorizontalAlignment="Center"
                                   Width="{Binding Length}"
                                   Height="{Binding DataContext.ArrayHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
-                                    <TextBlock IsHitTestVisible="False" Margin="0 26 0 0"
+                                    <TextBlock IsHitTestVisible="False" Margin="0 33 0 0"
                                            Text="{Binding Value, Converter={StaticResource ZeroToQuestionMarkConverter}}" TextAlignment="Center"
                                            FontSize="22"
-                                           Height="22" Width="{Binding Length}" 
+                                           Height="22" 
                                            Visibility="{Binding Value, Converter={StaticResource IntToVisibilityConverter}}">
                                         <TextBlock.LayoutTransform>
                                             <TransformGroup>
@@ -456,7 +448,7 @@
                                     <TextBlock IsHitTestVisible="False" 
                                            Text="x" TextAlignment="Center"
                                            FontSize="22"
-                                           Height="22" Width="{Binding Length}" 
+                                           Height="22" 
                                            Visibility="{Binding Value, Converter={StaticResource IntToVisibilityConverter}}">
                                         <TextBlock.LayoutTransform>
                                             <TransformGroup>
@@ -467,10 +459,10 @@
                                             </TransformGroup>
                                         </TextBlock.LayoutTransform>
                                     </TextBlock>
-                                    <TextBlock IsHitTestVisible="False" Margin="0 -26 0 0"
+                                    <TextBlock IsHitTestVisible="False" Margin="0 -33 0 0"
                                            Text="{Binding DataContext.Rows, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}" TextAlignment="Center"
                                            FontSize="22"
-                                           Height="22" Width="{Binding Length}" 
+                                           Height="22" 
                                            Visibility="{Binding Value, Converter={StaticResource IntToVisibilityConverter}}">
                                         <TextBlock.LayoutTransform>
                                             <TransformGroup>
@@ -491,15 +483,17 @@
                 <Border Grid.Column="1" Grid.Row="0" Background="Transparent" BorderThickness="3 0 0 0" BorderBrush="{Binding BorderColor}"/>
 
                 <!--Value of the remainder so far-->
-                <Ellipse Grid.Column="1" Grid.Row="0" Height="30" Width="30"
+                <Ellipse Grid.Column="1" Grid.Row="0" Height="34" Width="36"
                      StrokeThickness="3" Stroke ="Black" Opacity="1"
-                     VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin ="0 0 19 17"/>
+                     VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin ="0 0 19 17"
+                     Visibility="{Binding PageObject.GroupsSubtracted, Converter={StaticResource IntToVisibilityConverter}}"/>
                 <TextBlock Grid.Column="1" Grid.Row="0" Foreground="Black"  IsHitTestVisible="False"
-                           TextAlignment="Center" Margin="0 0 19 20"
+                           TextAlignment="Center" Margin="0 0 19 22"
                            FontWeight="Bold" FontSize="18"
                            VerticalAlignment="Bottom"
                            HorizontalAlignment="Center"
-                           Text="{Binding PageObject.CurrentRemainder}"/>
+                           Text="{Binding PageObject.CurrentRemainder}"
+                           Visibility="{Binding PageObject.GroupsSubtracted, Converter={StaticResource IntToVisibilityConverter}}"/>
             </Grid>
 
             <!--This is the actual array-->
@@ -526,14 +520,14 @@
                      Visibility="{Binding IsHorizontallyAligned, Converter={StaticResource BooleanToOppositeVisibilityConverter}}"/>
 
             <!--Dividend-->
-            <Ellipse Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2"  Height="60" Width="60"
+            <Ellipse Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2"  Height="63" Width="63"
                      StrokeThickness="3" Stroke="Black"  Fill="Transparent" 
                      VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0 20 0 0"/>
 
             <TextBlock Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2"  IsHitTestVisible="False"
                            FontWeight="Bold" FontSize="32"
                            Foreground="Black"
-                           VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0 30 0 0"
+                           VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0 33 0 0"
                            Text="{Binding Dividend}"/>
             
             <!--Array hit box-->
