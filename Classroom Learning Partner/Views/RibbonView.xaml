@@ -297,19 +297,19 @@
                               Command="{Binding InsertArrayCommand}"
                               CommandParameter="FACTORCARD" />-->
 
-                <RibbonButton Label="FFC: labels top"
+                <!--<RibbonButton Label="FFC: labels top"
                               LargeImageSource="pack://application:,,,/Resources/Images/FactorCard32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/FactorCard16.png"
                               Command="{Binding InsertArrayCommand}"
-                              CommandParameter="FUZZYFACTORCARDTOP" />
+                              CommandParameter="FUZZYFACTORCARDTOP" />-->
                 
-                <RibbonButton Label="FFC: labels bottom"
+                <RibbonButton Label="Fuzzy Factor Card"
                               LargeImageSource="pack://application:,,,/Resources/Images/FactorCard32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/FactorCard16.png"
                               Command="{Binding InsertArrayCommand}"
                               CommandParameter="FUZZYFACTORCARDBOTTOM" />
 
-                <RibbonButton Label="FFC: labels top, no answer"
+                <!--<RibbonButton Label="FFC: labels top, no answer"
                               LargeImageSource="pack://application:,,,/Resources/Images/FactorCard32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/FactorCard16.png"
                               Command="{Binding InsertArrayCommand}"
@@ -325,7 +325,7 @@
                               LargeImageSource="pack://application:,,,/Resources/Images/FactorCard32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/FactorCard16.png"
                               Command="{Binding InsertArrayCommand}"
-                              CommandParameter="FFCCOMPDISPLAY" />
+                              CommandParameter="FFCCOMPDISPLAY" />-->
 
                 <!--<RibbonButton Label="Stamp"
                               LargeImageSource="pack://application:,,,/Resources/Images/Stamp32.png"

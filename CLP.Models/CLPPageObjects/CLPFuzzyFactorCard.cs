@@ -13,6 +13,7 @@ namespace CLP.Models
     public class CLPFuzzyFactorCard : CLPArray
     {
 
+        public double LabelLength { get { return 35; } }
         public double LargeLabelLength { get { return LabelLength * 2 + 12.0; } }
 
         #region Constructors

@@ -18,6 +18,8 @@
         <conv:MultiplyAllIntToTextMultiConverter x:Key="MultiplyAllIntToTextMultiConverter" />
         <conv:BooleanToOppositeVisibilityConverter x:Key="BooleanToOppositeVisibilityConverter" />
         <conv:BoolToAlignmentConverter x:Key="BoolToAlignmentConverter" />
+        <conv:DivisionPositionToColorMultiConverter x:Key="DivisionPositionToColorMultiConverter" />
+        <conv:IntToVisibilityConverter x:Key="IntToVisibilityConverter" />
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <Style x:Key="HorizontalGridLineStyle">
             <Setter Property="Canvas.Left"
@@ -51,7 +53,6 @@
         <SolidColorBrush x:Key="ShadingColor" Color="LightGray" />
         <SolidColorBrush x:Key="SumColor" Color="Black" />
         <SolidColorBrush x:Key="RemainderColor" Color="Black" />
-        <SolidColorBrush x:Key="DividendColor" Color="Yellow" />
     </UserControl.Resources>
 
     <ac:AdornedControl HorizontalAlignment="Center" VerticalAlignment="Center"
@@ -236,9 +237,9 @@
             <!--Left Labels-->
             <TextBlock Grid.Column="0" Grid.Row="1" IsHitTestVisible="False"
                        Text="{Binding Rows}" TextAlignment="Center"
-                       FontWeight="Bold" FontSize="{Binding PageObject.LabelLength}"
+                       FontWeight="Bold" FontSize="22"
                        Foreground="{StaticResource LeftLabelColor}"
-                       Height="{Binding PageObject.LabelLength}"
+                       Height="22"
                        Width="{Binding ArrayHeight}"
                        Visibility="{Binding IsHorizontallyAligned, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <TextBlock.LayoutTransform>
@@ -295,18 +296,74 @@
 
 
             <!--Grid seperated at at last divider-->
-            <Grid Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2">
+            <Grid Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" Grid.RowSpan="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="{Binding PageObject.LastDivisionPosition}" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="{Binding ArrayHeight}" />
+                    <RowDefinition Height="{Binding PageObject.LabelLength}" />
+                </Grid.RowDefinitions>
                 <!--TODO Liz: Add rows for rotating-->
-
-                <!--Shading of subtracted arrays-->
-                <Rectangle Grid.Column="0" Fill="{StaticResource ShadingColor}" Opacity=".5" />
-
+                
+                <!--Equation label on bottom-->
+                <TextBlock Grid.Column="0" Grid.Row="1"
+                    TextAlignment="Center" Margin="-50 5 0 0"
+                    FontWeight="Bold" FontSize="20"
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="Center"
+                    Text="{Binding Rows}" 
+                    Visibility="{Binding PageObject.GroupsSubtracted, Converter={StaticResource IntToVisibilityConverter}}"/>
+                <TextBlock Grid.Column="0" Grid.Row="1"
+                    TextAlignment="Center" Margin="-25 5 0 0"
+                    FontWeight="Bold" FontSize="20"
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="Center"
+                    Text="x" 
+                    Visibility="{Binding PageObject.GroupsSubtracted, Converter={StaticResource IntToVisibilityConverter}}"/>
+                <TextBlock Grid.Column="0" Grid.Row="1"
+                    TextAlignment="Center" Margin="0 5 0 0"
+                    FontWeight="Bold" FontSize="20"
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="Center"
+                    Text="{Binding PageObject.GroupsSubtracted}" 
+                    Visibility="{Binding PageObject.GroupsSubtracted, Converter={StaticResource IntToVisibilityConverter}}"/>
+                <TextBlock Grid.Column="0" Grid.Row="1"
+                    TextAlignment="Center" Margin="25 5 0 0"
+                    FontWeight="Bold" FontSize="20"
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="Center"
+                    Text="=" 
+                    Visibility="{Binding PageObject.GroupsSubtracted, Converter={StaticResource IntToVisibilityConverter}}"/>
+                <TextBlock Grid.Column="0" Grid.Row="1"
+                    TextAlignment="Center" Margin="50 5 0 0"
+                    FontWeight="Bold" FontSize="20"
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="Center"
+                    Text="{Binding PageObject}" 
+                    Visibility="{Binding PageObject.GroupsSubtracted, Converter={StaticResource IntToVisibilityConverter}}"/>
+                <Ellipse  Grid.Column="0" Grid.Row="1"
+                     Margin="60 2 0 0"
+                     VerticalAlignment="Top"
+                     HorizontalAlignment="Center" Height="30" Width="30"
+                     StrokeThickness="3" Stroke ="Black" Fill="Transparent"/>
+                <TextBlock Grid.Column="0" Grid.Row="1"
+                    TextAlignment="Center" Margin="60 5 0 0"
+                    FontWeight="Bold" FontSize="20"
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="Center"
+                    Foreground="Black"  IsHitTestVisible="False">
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource MultiplyAllIntToTextMultiConverter}">
+                            <Binding Path="Rows" />
+                            <Binding Path="PageObject.GroupsSubtracted" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+              
                 <!--Grid Lines-->
-                <ItemsControl Grid.Column="0" 
+                <ItemsControl Grid.Column="0" Grid.Row="0"
                           ItemsSource="{Binding HorizontalGridLines}"
                           ItemContainerStyle="{StaticResource HorizontalGridLineStyle}"
                           Visibility="{Binding IsGridOn, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -323,7 +380,7 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
 
-                <ItemsControl Grid.Column="0"
+                <ItemsControl Grid.Column="0" Grid.Row="0"
                           ItemsSource="{Binding VerticalGridLines}"
                           ItemContainerStyle="{StaticResource VerticalGridLineStyle}"
                           Visibility="{Binding IsGridOn, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -341,7 +398,7 @@
                 </ItemsControl>
 
                 <!--Vertical Divisions-->
-                <ItemsControl Grid.Column="0"
+                <ItemsControl Grid.Column="0" Grid.Row="0"
                           ItemsSource="{Binding VerticalDivisions}"
                           ItemContainerStyle="{StaticResource VerticalDivisionStyle}">
                     <ItemsControl.ItemsPanel>
@@ -353,17 +410,33 @@
                         <DataTemplate>
                             <Canvas Width="{Binding Length}"
                                 Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
+                                
+                                <!--Array Shading-->
+                                <Rectangle 
+                                       Width="{Binding Length}" Margin="0 3" 
+                                       Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, 
+                                                                      Converter={StaticResource LengthConverter}, 
+                                                                      ConverterParameter=-6}"
+                                       StrokeThickness="0" Opacity=".3">
+                                    <Rectangle.Fill>
+                                        <MultiBinding Converter="{StaticResource DivisionPositionToColorMultiConverter}">
+                                            <Binding Path="Position" />
+                                            <Binding Path="DataContext.VerticalDivisions" RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}" />
+                                        </MultiBinding>
+                                    </Rectangle.Fill>
+                                </Rectangle>
+                                
                                 <!--The Visible Division Line-->
                                 <Rectangle Tag="DivisionHitBox"
                                        Width="3" Margin="0 3"
                                        Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, 
                                                                       Converter={StaticResource LengthConverter}, 
                                                                       ConverterParameter=-6}"
-                                       StrokeThickness="0" Fill="{StaticResource DividerColor}" Opacity="1"
+                                       StrokeThickness="0" Fill="{StaticResource DividerColor}" Opacity=".7"
                                        Visibility="{Binding Position, Converter={StaticResource DoubleToVisibilityConverter}}"/>
 
                                 <!--The Small Label-->
-                                <Grid Canvas.Top="{Binding DataContext.PageObject.LabelLength, 
+                                <!--<Grid Canvas.Top="{Binding DataContext.PageObject.LabelLength, 
                                                           RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}},
                                                           Converter={StaticResource NegativeLengthSubtractConverter},
                                                           ConverterParameter=0}"
@@ -376,60 +449,67 @@
                                            Height="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
                                            Width="{Binding Length}" 
                                            Visibility="{Binding DataContext.IsArrayDivisionLabelOnTop,  RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                                </Grid>
-                                <Grid Canvas.Bottom="{Binding DataContext.PageObject.LabelLength, 
-                                                          RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}},
-                                                          Converter={StaticResource NegativeLengthSubtractConverter},
-                                                          ConverterParameter=0}"
+                                </Grid>-->
+                                <!--labels inside snapped in arrays-->
+                                <Grid VerticalAlignment="Center" HorizontalAlignment="Center"
                                   Width="{Binding Length}"
-                                  Height="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
-                                    <TextBlock IsHitTestVisible="False" 
+                                  Height="{Binding DataContext.ArrayHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
+                                    <TextBlock IsHitTestVisible="False" Margin="0 26 0 0"
                                            Text="{Binding Value, Converter={StaticResource ZeroToQuestionMarkConverter}}" TextAlignment="Center"
-                                           FontSize="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
-                                           Foreground="{StaticResource TopLabelColor}"
-                                           Height="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
-                                           Width="{Binding Length}" 
-                                           Visibility="{Binding DataContext.IsArrayDivisionLabelOnTop, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, Converter={StaticResource BooleanToOppositeVisibilityConverter}}"/>
+                                           FontSize="22"
+                                           Height="22" Width="{Binding Length}" 
+                                           Visibility="{Binding Value, Converter={StaticResource IntToVisibilityConverter}}">
+                                        <TextBlock.LayoutTransform>
+                                            <TransformGroup>
+                                                <ScaleTransform />
+                                                <SkewTransform />
+                                                <RotateTransform Angle="-90" />
+                                                <TranslateTransform />
+                                            </TransformGroup>
+                                        </TextBlock.LayoutTransform>
+                                    </TextBlock>
+                                    <TextBlock IsHitTestVisible="False" 
+                                           Text="x" TextAlignment="Center"
+                                           FontSize="22"
+                                           Height="22" Width="{Binding Length}" 
+                                           Visibility="{Binding Value, Converter={StaticResource IntToVisibilityConverter}}">
+                                        <TextBlock.LayoutTransform>
+                                            <TransformGroup>
+                                                <ScaleTransform />
+                                                <SkewTransform />
+                                                <RotateTransform Angle="-90" />
+                                                <TranslateTransform />
+                                            </TransformGroup>
+                                        </TextBlock.LayoutTransform>
+                                    </TextBlock>
+                                    <TextBlock IsHitTestVisible="False" Margin="0 -26 0 0"
+                                           Text="{Binding DataContext.Rows, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}" TextAlignment="Center"
+                                           FontSize="22"
+                                           Height="22" Width="{Binding Length}" 
+                                           Visibility="{Binding Value, Converter={StaticResource IntToVisibilityConverter}}">
+                                        <TextBlock.LayoutTransform>
+                                            <TransformGroup>
+                                                <ScaleTransform />
+                                                <SkewTransform />
+                                                <RotateTransform Angle="-90" />
+                                                <TranslateTransform />
+                                            </TransformGroup>
+                                        </TextBlock.LayoutTransform>
+                                    </TextBlock>
                                 </Grid>
                             </Canvas>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
 
-                <!--Value of the total product subtracted so far-->
-                <Ellipse Grid.Column="0" Height="30" Width="30"
-                     StrokeThickness="3" Fill="DimGray" Opacity=".7"
-                     VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin ="0 0 0 17"/>
-                <TextBlock Grid.Column="0" Foreground="{StaticResource SumColor}"  IsHitTestVisible="False"
-                           TextAlignment="Center" Margin ="0 0 0 20"
-                           FontWeight="Bold" FontSize="18"
-                           VerticalAlignment="Bottom"
-                           HorizontalAlignment="Center">
-                    <TextBlock.Text>
-                        <MultiBinding Converter="{StaticResource MultiplyAllIntToTextMultiConverter}">
-                            <Binding Path="Rows" />
-                            <Binding Path="PageObject.GroupsSubtracted" />
-                        </MultiBinding>
-                    </TextBlock.Text>
-                </TextBlock>
-
-                <!--Value of the answer so far-->
-                <TextBlock Grid.Column="0" Foreground="DarkOrange"  IsHitTestVisible="False"
-                           TextAlignment="Center" Margin="0 -25"
-                           FontWeight="Bold" FontSize="20"
-                           VerticalAlignment="{Binding IsArrayDivisionLabelOnTop, Converter={StaticResource BoolToAlignmentConverter}}"
-                           HorizontalAlignment="Center"
-                           Text="{Binding PageObject.GroupsSubtracted}"
-                           Visibility="{Binding IsAnswerVisible, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-
                 <!--Black line for last divider-->
-                <Border Grid.Column="1" Background="Transparent" BorderThickness="3 0 0 0" BorderBrush="{Binding BorderColor}"/>
+                <Border Grid.Column="1" Grid.Row="0" Background="Transparent" BorderThickness="3 0 0 0" BorderBrush="{Binding BorderColor}"/>
 
                 <!--Value of the remainder so far-->
-                <Ellipse Grid.Column="1" Height="30" Width="30"
-                     StrokeThickness="3" Stroke ="Gray" Opacity=".9"
+                <Ellipse Grid.Column="1" Grid.Row="0" Height="30" Width="30"
+                     StrokeThickness="3" Stroke ="Black" Opacity="1"
                      VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin ="0 0 19 17"/>
-                <TextBlock Grid.Column="1" Foreground="{StaticResource RemainderColor}"  IsHitTestVisible="False"
+                <TextBlock Grid.Column="1" Grid.Row="0" Foreground="Black"  IsHitTestVisible="False"
                            TextAlignment="Center" Margin="0 0 19 20"
                            FontWeight="Bold" FontSize="18"
                            VerticalAlignment="Bottom"
@@ -462,15 +542,13 @@
 
             <!--Dividend-->
             <Ellipse Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2"  Height="60" Width="60"
-                     StrokeThickness="3" Fill="{StaticResource DividendColor}" Opacity=".5"
-                     VerticalAlignment="Center" HorizontalAlignment="Center" />
+                     StrokeThickness="3" Stroke="Black"  Fill="Transparent" 
+                     VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0 20 0 0"/>
 
             <TextBlock Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2"  IsHitTestVisible="False"
-                           TextAlignment="Center" 
                            FontWeight="Bold" FontSize="32"
                            Foreground="Black"
-                           VerticalAlignment="Center"
-                           HorizontalAlignment="Center"
+                           VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0 30 0 0"
                            Text="{Binding Dividend}"/>
             
             <!--Array hit box-->
