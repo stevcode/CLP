@@ -24,6 +24,19 @@ namespace Classroom_Learning_Partner.ViewModels
 
        public override string Title { get { return "AnimationPageVM"; } }
 
+       #region Overrides of ViewModelBase
+
+       protected override void OnClosing()
+       {
+           _isClosing = true;
+           StopAnimation();
+           base.OnClosing();
+       }
+
+       private bool _isClosing = false;
+
+       #endregion
+
        #endregion //Constructor
 
        #region Properties
@@ -201,7 +214,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
        private void OnSliderChangedCommandExecute(RoutedPropertyChangedEventArgs<double> e)
        {
-           if(IsPlaying || IsRecording)
+           if(IsPlaying || IsRecording || _isClosing)
            {
                return;
            }
