@@ -128,12 +128,12 @@ namespace CLP.Models
                                   clpHistoryItem =>
                                   clpHistoryItem is CLPAnimationIndicator &&
                                   (clpHistoryItem as CLPAnimationIndicator).AnimationIndicatorType ==
-                                  AnimationIndicatorType.Record) ||
+                                  AnimationIndicatorType.Stop) ||
                     RedoItems.Any(
                                   clpHistoryItem =>
                                   clpHistoryItem is CLPAnimationIndicator &&
                                   (clpHistoryItem as CLPAnimationIndicator).AnimationIndicatorType ==
-                                  AnimationIndicatorType.Record);
+                                  AnimationIndicatorType.Stop);
             }
         }
 
