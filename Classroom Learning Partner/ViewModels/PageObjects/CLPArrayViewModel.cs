@@ -466,9 +466,9 @@ namespace Classroom_Learning_Partner.ViewModels
                             if(factorCard.CurrentRemainder < factorCard.Rows * snappingArray.Columns)
                             {
                                 //TODO Liz - get old position - maybe from move batch? (Steve will email about this)
-                                var oldX = 10.0;
-                                var oldY = 10.0;
-                                ACLPPageObjectBaseViewModel.ChangePageObjectPosition(snappingArray, oldX, oldY, false);
+                                //var oldX = 10.0;
+                                //var oldY = 10.0;
+                                //ACLPPageObjectBaseViewModel.ChangePageObjectPosition(snappingArray, oldX, oldY, false);
 
                                 var factorCardViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(factorCard);
                                 foreach(var viewModel in factorCardViewModels)
@@ -738,7 +738,9 @@ namespace Classroom_Learning_Partner.ViewModels
 	        }
 
             closestPersistingArray.SizeArrayToGridLevel(squareSize, false);
-            closestPersistingArray.IsDivisionBehaviorOn = true;
+
+            //TODO Liz: uncomment this line
+            //closestPersistingArray.IsDivisionBehaviorOn = true;
 
             var extraPageObjects = PageObject.GetPageObjectsOverPageObject();
             PageObject.ParentPage.PageObjects.Remove(PageObject);

@@ -270,15 +270,15 @@
             <RibbonGroup Header="Insert"
                          Visibility="{Binding InstructorVisibility, Converter={StaticResource BooleanToOppositeBooleanConverter}}">
 
-                <!--Array + Divider-->
-                <RibbonButton Label="Array"
+                <!--Array + Divider - Left-Handed-->
+                <!--<RibbonButton Label="Array"
                               LargeImageSource="pack://application:,,,/Resources/Images/Array32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/Array16.png"
                               Command="{Binding InsertArrayCommand}"
-                              CommandParameter="DEFAULT" />
+                              CommandParameter="DEFAULT" />-->
 
-                <!--Array with Drag+Snap on Right -->
-                <RibbonButton Label="Array with adorner on right"
+                <!--Array + Divider - Right-handed -->
+                <RibbonButton Label="Array"
                               LargeImageSource="pack://application:,,,/Resources/Images/Array32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/Array16.png"
                               Command="{Binding InsertArrayCommand}"

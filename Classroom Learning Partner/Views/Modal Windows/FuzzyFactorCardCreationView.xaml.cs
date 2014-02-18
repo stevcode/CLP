@@ -98,6 +98,10 @@ namespace Classroom_Learning_Partner.Views
             {
                 MessageBox.Show("Oops, it looks like one of the values you entered is not a positive integer", "Oops");
             }
+            else if(productNum >= 1000)
+            {
+                MessageBox.Show("Your product is too big a number. Please keep it below " + 1000 + ".", "Oops");
+            }
             else if(factorNum >= MAX_ARRAY_ROWSCOLUMNS)
             {
                 MessageBox.Show("Your factor is too big a number. Please keep it below " + MAX_ARRAY_ROWSCOLUMNS + ".", "Oops");
