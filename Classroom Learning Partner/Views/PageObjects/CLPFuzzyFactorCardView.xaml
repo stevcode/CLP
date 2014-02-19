@@ -47,8 +47,8 @@
                     Value="0" />
         </Style>
 
-        <SolidColorBrush x:Key="TopLabelColor" Color="SeaGreen" />
-        <SolidColorBrush x:Key="LeftLabelColor" Color="SteelBlue" />
+        <SolidColorBrush x:Key="TopLabelColor" Color="DarkOrange" />
+        <SolidColorBrush x:Key="LeftLabelColor" Color="Blue" />
         <SolidColorBrush x:Key="DividerColor" Color="DimGray" />
         <SolidColorBrush x:Key="GridColor" Color="CornflowerBlue" />
         <SolidColorBrush x:Key="ShadingColor" Color="LightGray" />
@@ -466,28 +466,28 @@
                 
                         <!--Bottom Label (Equation)-->
                         <TextBlock
-                                TextAlignment="Center" Margin="0 5 0 0"
+                                TextAlignment="Center" Margin="1 7 1 0" 
                                 FontWeight="Bold" FontSize="18" Foreground="{StaticResource LeftLabelColor}"
                                 Text="{Binding Rows}" />
                         <TextBlock 
-                                TextAlignment="Center" Margin="0 5 0 0"
+                                TextAlignment="Center" Margin="1 7 1 0" 
                                 FontWeight="Bold" FontSize="18"
                                 Text="x" />
                         <TextBlock
-                                TextAlignment="Center" Margin="0 5 0 0"
+                                TextAlignment="Center" Margin="1 7 1 0"
                                 FontWeight="Bold" FontSize="18" Foreground="{StaticResource TopLabelColor}"
                                 Text="{Binding PageObject.GroupsSubtracted}" />
                         <TextBlock 
-                                TextAlignment="Center" Margin="0 5 0 0"
+                                TextAlignment="Center" Margin="1 7 1 0" 
                                 FontWeight="Bold" FontSize="18"
                                 VerticalAlignment="Top"
                                 HorizontalAlignment="Center"
                                 Text="=" />
                         <Grid>
-                            <Ellipse Height="34" Width="36"
+                            <Ellipse Height="34" Width="36" Margin="1 0"
                                         StrokeThickness="3" Stroke ="Black" Fill="Transparent"/>
                             <TextBlock
-                                    TextAlignment="Center" Margin="0 5 0 0"
+                                    TextAlignment="Center" Margin="1 7 1 0"
                                     FontWeight="Bold" FontSize="18"
                                     Foreground="Black"  IsHitTestVisible="False">
                                 <TextBlock.Text>
