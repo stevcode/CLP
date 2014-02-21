@@ -102,7 +102,13 @@ namespace CLP.Models
         /// </summary>
         protected override void RedoAction(bool isAnimationRedo)
         {
-            SnappedInArray = ParentPage.GetPageObjectByUniqueID(SnappedInArrayUniqueID) as CLPArray;
+            var array = ParentPage.GetPageObjectByUniqueID(SnappedInArrayUniqueID);
+            if(array == null)
+            {
+                Logger.Instance.WriteToLog("Array not found on page for RedoAction in HistoryFFCArraySnappedIn.");
+                return;
+            }
+            SnappedInArray = array as CLPArray;
             var ffc = ParentPage.GetPageObjectByUniqueID(FFCUniqueID) as CLPFuzzyFactorCard;
             if(ffc != null)
             {
@@ -126,16 +132,16 @@ namespace CLP.Models
         {
             var clonedHistoryItem = Clone() as CLPHistoryFFCArraySnappedIn;
 
-            var snappedInArray = ParentPage.GetPageObjectByUniqueID(SnappedInArrayUniqueID);
-            if(snappedInArray == null)
+            if(clonedHistoryItem == null)
             {
-                Logger.Instance.WriteToLog("Failed to get snappedInArray by ID during UndoRedoComplete in HistoryFFCArraySnappedIn.");
                 return null;
             }
-            clonedHistoryItem.SnappedInArray = snappedInArray as CLPArray;
+
+            clonedHistoryItem.SnappedInArray = null;
 
             return clonedHistoryItem;
         }
+
 
         #endregion //Methods
     }

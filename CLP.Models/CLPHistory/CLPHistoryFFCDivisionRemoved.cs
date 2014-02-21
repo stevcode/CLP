@@ -116,6 +116,10 @@ namespace CLP.Models
         public override ICLPHistoryItem UndoRedoCompleteClone()
         {
             var clonedHistoryItem = Clone() as CLPHistoryFFCDivisionRemoved;
+            if(clonedHistoryItem == null)
+            {
+                Logger.Instance.WriteToLog("Cloned history item was null in CLPHistoryFFCDivisionRemoved UndoRedoCompleteClone");
+            }
             return clonedHistoryItem;
         }
 
