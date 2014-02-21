@@ -360,7 +360,8 @@ namespace CLP.Models
                         ArrayHeight = ArrayHeight,
                         IsLabelOn = IsLabelOn,
                         BackgroundColor = BackgroundColor,
-                        IsSnappable = IsSnappable
+                        IsSnappable = IsSnappable,
+                        IsSnapAdornerOnLeft = IsSnapAdornerOnLeft
                     };
                     leftArray.EnforceAspectRatio(leftArray.Columns * 1.0 / leftArray.Rows);
                     leftArray.CalculateGridLines();
@@ -375,7 +376,8 @@ namespace CLP.Models
                         ArrayHeight = ArrayHeight,
                         IsLabelOn = IsLabelOn,
                         BackgroundColor = BackgroundColor,
-                        IsSnappable = IsSnappable
+                        IsSnappable = IsSnappable,
+                        IsSnapAdornerOnLeft = IsSnapAdornerOnLeft
                     };
                     rightArray.EnforceAspectRatio(rightArray.Columns * 1.0 / rightArray.Rows);
                     rightArray.CalculateGridLines();
@@ -420,7 +422,8 @@ namespace CLP.Models
                         ArrayWidth = ArrayWidth,
                         IsLabelOn = IsLabelOn,
                         BackgroundColor = BackgroundColor,
-                        IsSnappable = IsSnappable
+                        IsSnappable = IsSnappable,
+                        IsSnapAdornerOnLeft = IsSnapAdornerOnLeft 
                     };
                     topArray.ArrayHeight = ArrayWidth / (topArray.Columns * 1.0 / topArray.Rows);
                     topArray.EnforceAspectRatio(topArray.Columns * 1.0 / topArray.Rows);
@@ -436,7 +439,8 @@ namespace CLP.Models
                         ArrayWidth = ArrayWidth,
                         IsLabelOn = IsLabelOn,
                         BackgroundColor = BackgroundColor,
-                        IsSnappable = IsSnappable
+                        IsSnappable = IsSnappable,
+                        IsSnapAdornerOnLeft = IsSnapAdornerOnLeft 
                     };
                     bottomArray.ArrayHeight = ArrayWidth / (bottomArray.Columns * 1.0 / bottomArray.Rows);
                     bottomArray.EnforceAspectRatio(bottomArray.Columns * 1.0 / bottomArray.Rows);
