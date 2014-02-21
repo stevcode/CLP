@@ -263,7 +263,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnRemoveLastArrayCommandExecute()
         {
-            (PageObject as CLPFuzzyFactorCard).RemoveLastDivision();
+            var divisionValue = (VerticalDivisions[VerticalDivisions.Count - 2]).Value;
+            (PageObject as CLPFuzzyFactorCard).RemoveLastDivision();    
+
+            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryFFCDivisionRemoved(PageObject.ParentPage, PageObject.UniqueID, divisionValue));        
         }
 
         #endregion //Commands

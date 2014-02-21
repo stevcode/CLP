@@ -485,13 +485,11 @@ namespace Classroom_Learning_Partner.ViewModels
                             }
 
                             //Add a new division and remove snapping array
-                            var position = factorCard.LastDivisionPosition + snappingArray.ArrayWidth * (factorCard.ArrayHeight / snappingArray.ArrayHeight);
-                            factorCard.CreateVerticalDivisionAtPosition(position, snappingArray.Columns);
+                            if(factorCard.IsHorizontallyAligned) { factorCard.SnapInArray(snappingArray.Columns);}
+                            else { factorCard.SnapInArray(snappingArray.Rows); }
                             PageObject.ParentPage.PageObjects.Remove(PageObject);
 
-                            // To Do Liz - history
-                            //ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryArrayDivisionsChanged(PageObject.ParentPage, pageObject.UniqueID, addedDivisions, removedDivisions));
-
+                            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryFFCArraySnappedIn(PageObject.ParentPage, pageObject.UniqueID, snappingArray));
                             return;
                         }
                     }

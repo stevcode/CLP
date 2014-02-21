@@ -111,6 +111,8 @@
     <Compile Include="CLPHistory\CLPHistoryArrayMassAddMassResize.cs" />
     <Compile Include="CLPHistory\CLPHistoryArrayRotate.cs" />
     <Compile Include="CLPHistory\CLPHistoryArraySnap.cs" />
+    <Compile Include="CLPHistory\CLPHistoryFFCArraySnappedIn.cs" />
+    <Compile Include="CLPHistory\CLPHistoryFFCDivisionRemoved.cs" />
     <Compile Include="CLPHistory\CLPHistoryPageObjectCut.cs" />
     <Compile Include="CLPHistory\CLPHistoryPageObjectAdd.cs" />
     <Compile Include="CLPHistory\CLPHistoryPageObjectMoveBatch.cs" />

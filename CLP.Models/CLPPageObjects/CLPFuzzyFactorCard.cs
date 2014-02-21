@@ -208,40 +208,40 @@ namespace CLP.Models
             ArrayWidth = Width - LabelLength - rightLabelLength;
         }
 
-        public void CreateVerticalDivisionAtPosition(double position, int value)
+        public void SnapInArray(int value)
         {
-            CLPArrayDivision divAbove = FindDivisionAbove(position, VerticalDivisions);
-            CLPArrayDivision divBelow = FindDivisionBelow(position, VerticalDivisions);
-
-            var addedDivisions = new List<CLPArrayDivision>();
-            var removedDivisions = new List<CLPArrayDivision>();
-
-            CLPArrayDivision topDiv;
-            if(divAbove == null)
+            if(IsHorizontallyAligned)
             {
-                topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, 0, position, value);
-            }
-            else
-            {
-                topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, divAbove.Position, position - divAbove.Position, value);
-                VerticalDivisions.Remove(divAbove);
-                removedDivisions.Add(divAbove);
-            }
-            VerticalDivisions.Add(topDiv);
-            addedDivisions.Add(topDiv);
+                double position = LastDivisionPosition + (double)value * (ArrayHeight / Rows);
+                CLPArrayDivision divAbove = FindDivisionAbove(position, VerticalDivisions);
+                CLPArrayDivision divBelow = FindDivisionBelow(position, VerticalDivisions);
 
-            CLPArrayDivision bottomDiv;
-            if(divBelow == null)
-            {
-                bottomDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, position, ArrayWidth - position, 0);
-            }
-            else
-            {
-                bottomDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, position, divBelow.Position - position, 0);
+                CLPArrayDivision topDiv;
+                if(divAbove == null)
+                {
+                    topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, 0, position, value);
+                }
+                else
+                {
+                    topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, divAbove.Position, position - divAbove.Position, value);
+                    VerticalDivisions.Remove(divAbove);
+                }
+                VerticalDivisions.Add(topDiv);
+
+                CLPArrayDivision bottomDiv;
+                if(divBelow == null)
+                {
+                    bottomDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, position, ArrayWidth - position, 0);
+                }
+                else
+                {
+                    bottomDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, position, divBelow.Position - position, 0);
+                }
+
+                VerticalDivisions.Add(bottomDiv);
             }
 
-            VerticalDivisions.Add(bottomDiv);
-            addedDivisions.Add(bottomDiv);
+            //TODO Liz: Add ability to snap in arrays when rotated
 
             //To Do Liz: Add this to any division removal code and history items
             RaisePropertyChanged("GroupsSubtracted");
