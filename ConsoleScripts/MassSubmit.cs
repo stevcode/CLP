@@ -52,7 +52,7 @@ namespace ConsoleScripts
             try
             {     
                 ModelBase.GlobalLeanAndMeanModel = true;
-                notebook = CLPNotebook.Load(filePath);
+                notebook = ModelBase.Load<CLPNotebook>(filePath, SerializationMode.Binary);
                 ModelBase.GlobalLeanAndMeanModel = false;
             }
             catch(Exception ex)

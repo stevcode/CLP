@@ -10,6 +10,7 @@ using Catel.Data;
 using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Models;
+using Catel.Collections;
 using Catel.MVVM;
 using Catel.MVVM.Views;
 using Catel.IoC;
@@ -346,7 +347,7 @@ namespace Classroom_Learning_Partner
             {
                     
                 ModelBase.GlobalLeanAndMeanModel = true;
-                notebook = CLPNotebook.Load(filePath);
+                notebook = ModelBase.Load<CLPNotebook>(filePath, SerializationMode.Binary);
                 ModelBase.GlobalLeanAndMeanModel = false;
             }
             catch(Exception ex)

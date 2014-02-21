@@ -13,7 +13,6 @@ namespace CLP.Models
     }
 
     [Serializable]
-    [AllowNonSerializableMembers]
     abstract public class ACLPHistoryItemBase : ModelBase, ICLPHistoryItem
     {
         #region Constructors

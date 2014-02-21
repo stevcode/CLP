@@ -7,7 +7,6 @@ using Catel.Data;
 namespace CLP.Models
 {
     [Serializable]
-    [AllowNonSerializableMembers]
     abstract public class ACLPDisplayBase : ModelBase, ICLPDisplay
     {
         #region Constructors

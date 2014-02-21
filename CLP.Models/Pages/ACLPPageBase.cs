@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Ink;
 using System.Xml.Serialization;
 using Catel.Data;
+using Catel.Runtime.Serialization;
 
 namespace CLP.Models
 {
@@ -17,24 +18,7 @@ namespace CLP.Models
     /// KnownTypes allow ICLPPageObjects to be (de)serialized via DataContracts
     /// for transmission over network calls.
     /// </summary>
-    [Serializable,
-    KnownType(typeof(CLPAggregationDataTable)),
-    KnownType(typeof(CLPArray)),
-    KnownType(typeof(CLPAudio)),
-    KnownType(typeof(CLPImage)),
-    KnownType(typeof(CLPShape)),
-    KnownType(typeof(CLPStamp)),
-    KnownType(typeof(CLPStampCopy)),
-    KnownType(typeof(CLPTextBox)),
-    KnownType(typeof(CLPDataTable)),
-    KnownType(typeof(CLPGroupingRegion)),
-    KnownType(typeof(CLPHandwritingRegion)),
-    KnownType(typeof(CLPInkShapeRegion)),
-    KnownType(typeof(CLPShadingRegion)),
-    KnownType(typeof(StrokeDTO)),
-    KnownType(typeof(StylusPointDTO)),
-    KnownType(typeof(DrawingAttributesDTO))]
-    [AllowNonSerializableMembers]
+    [Serializable]
     abstract public class ACLPPageBase : ModelBase, ICLPPage
     {
         #region Variables
@@ -82,10 +66,6 @@ namespace CLP.Models
         /// <param name="context"><see cref="StreamingContext"/>.</param>
         protected ACLPPageBase(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
-
-        #region Overrides of ModelBase
-
-        #endregion
 
         #endregion //Constructors
 
@@ -308,6 +288,7 @@ namespace CLP.Models
         /// Deserialized Ink Strokes.
         /// </summary>
         [XmlIgnore]
+        [ExcludeFromSerialization]
         public StrokeCollection InkStrokes
         {
             get { return GetValue<StrokeCollection>(InkStrokesProperty); }

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Runtime.Serialization;
 using Catel.Data;
+using Catel.Runtime.Serialization;
 
 namespace CLP.Models
 {
     [Serializable]
-    [AllowNonSerializableMembers]
     public class CLPMirrorDisplay : ACLPDisplayBase
     {
         #region Constructors
@@ -31,6 +31,7 @@ namespace CLP.Models
         /// <summary>
         /// The page currently displayed on the MirrorDisplay.
         /// </summary>
+        [ExcludeFromSerialization]
         public ICLPPage CurrentPage
         {
             get { return GetValue<ICLPPage>(CurrentPageProperty); }

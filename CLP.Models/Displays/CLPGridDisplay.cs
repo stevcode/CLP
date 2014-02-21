@@ -2,11 +2,11 @@
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using Catel.Data;
+using Catel.Runtime.Serialization;
 
 namespace CLP.Models
 {
     [Serializable]
-    [AllowNonSerializableMembers]
     public class CLPGridDisplay : ACLPDisplayBase
     {
         #region Constructors
@@ -44,6 +44,7 @@ namespace CLP.Models
         /// <summary>
         /// Pages on the GridDisplay.
         /// </summary>
+        [ExcludeFromSerialization]
         public ObservableCollection<ICLPPage> Pages
         {
             get { return GetValue<ObservableCollection<ICLPPage>>(PagesProperty); }

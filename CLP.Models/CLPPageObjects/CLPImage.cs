@@ -8,7 +8,6 @@ namespace CLP.Models
     /// 
     /// </summary>
     [Serializable]
-    [AllowNonSerializableMembers]
     public sealed class CLPImage : ACLPPageObjectBase
     {
         #region Constructor & destructor
@@ -76,6 +75,5 @@ namespace CLP.Models
         }
 
         #endregion
-
     }
 }

@@ -643,7 +643,6 @@ namespace Classroom_Learning_Partner.ViewModels
                     break;
                 default:
                     return;
-                    break;
 	        }
 
             closestPersistingArray.SizeArrayToGridLevel(squareSize, false);
