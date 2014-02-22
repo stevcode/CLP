@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Ink;
 using System.Windows.Media;
 using Catel.Data;
+using Catel.Runtime.Serialization;
 
 namespace CLP.Models
 {
@@ -42,6 +43,7 @@ namespace CLP.Models
         /// <summary>
         /// The page the pageObject is on.
         /// </summary>
+        [ExcludeFromSerialization]
         public ICLPPage ParentPage
         {
             get { return GetValue<ICLPPage>(ParentPageProperty); }

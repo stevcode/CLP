@@ -31,11 +31,11 @@ namespace CLP.Models
         /// <summary>
         /// The page currently displayed on the MirrorDisplay.
         /// </summary>
-        [ExcludeFromSerialization]
+   //     [ExcludeFromSerialization]
         public ICLPPage CurrentPage
         {
             get { return GetValue<ICLPPage>(CurrentPageProperty); }
-            private set { SetValue(CurrentPageProperty, value); }
+            set { SetValue(CurrentPageProperty, value); }
         }
 
         public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(ICLPPage), includeInSerialization:false);

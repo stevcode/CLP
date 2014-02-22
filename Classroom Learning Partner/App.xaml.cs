@@ -2,8 +2,10 @@ using System;
 using System.Windows;
 using System.Windows.Threading;
 using Catel.Logging;
+using Catel.Runtime.Serialization;
 using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Views;
+using CLP.Models;
 
 namespace Classroom_Learning_Partner
 {
@@ -37,6 +39,11 @@ namespace Classroom_Learning_Partner
 
             Logger.Instance.InitializeLog();
             CLPServiceAgent.Instance.Initialize();
+
+            //Warm up Serializer to make loading of notebook faster.
+            var typesToWarmup = new[] {  typeof(CLPNotebook) };
+            var binarySerializer = SerializationFactory.GetBinarySerializer();
+            binarySerializer.Warmup(typesToWarmup);
 
             _mainWindowViewModel = new MainWindowViewModel();
             var window = new MainWindowView {DataContext = MainWindowViewModel};
