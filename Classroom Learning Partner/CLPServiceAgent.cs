@@ -345,10 +345,7 @@ namespace Classroom_Learning_Partner
 
             try
             {
-                    
-                ModelBase.GlobalLeanAndMeanModel = true;
                 notebook = ModelBase.Load<CLPNotebook>(filePath, SerializationMode.Binary);
-                ModelBase.GlobalLeanAndMeanModel = false;
             }
             catch(Exception ex)
             {

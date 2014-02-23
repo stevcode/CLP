@@ -331,7 +331,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 newY = parentPage.PageHeight - PageObject.Height;
             }
 
-            Console.WriteLine("X: " + newX + ", Y: " + newY);
             ChangePageObjectPosition(PageObject, newX, newY);
         }
 
