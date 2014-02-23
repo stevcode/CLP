@@ -120,9 +120,21 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>External Libraries\Catel.Extensions.Controls.dll</HintPath>
     </Reference>
+    <Reference Include="Catel.Extensions.EntityFramework6, Version=3.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>External Libraries\Catel.Extensions.EntityFramework6.dll</HintPath>
+    </Reference>
     <Reference Include="Catel.MVVM, Version=3.9.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>External Libraries\Catel.MVVM.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>External Libraries\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>External Libraries\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="IACore, Version=1.7.6223.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
       <SpecificVersion>False</SpecificVersion>
@@ -710,8 +722,12 @@
     <Content Include="External Libraries\Catel.Core.pdb" />
     <Content Include="External Libraries\Catel.Extensions.Controls.dll" />
     <Content Include="External Libraries\Catel.Extensions.Controls.pdb" />
+    <Content Include="External Libraries\Catel.Extensions.EntityFramework6.dll" />
+    <Content Include="External Libraries\Catel.Extensions.EntityFramework6.pdb" />
     <Content Include="External Libraries\Catel.MVVM.dll" />
     <Content Include="External Libraries\Catel.MVVM.pdb" />
+    <Content Include="External Libraries\EntityFramework.dll" />
+    <Content Include="External Libraries\EntityFramework.SqlServer.dll" />
     <Content Include="External Libraries\lame.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

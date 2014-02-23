@@ -81,6 +81,15 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Classroom Learning Partner\External Libraries\Catel.Core.dll</HintPath>
     </Reference>
+    <Reference Include="Catel.Extensions.EntityFramework6">
+      <HintPath>..\Classroom Learning Partner\External Libraries\Catel.Extensions.EntityFramework6.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework">
+      <HintPath>..\Classroom Learning Partner\External Libraries\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\Classroom Learning Partner\External Libraries\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
     <Reference Include="IAWinFX">
       <HintPath>..\Classroom Learning Partner\External Libraries\IAWinFX.dll</HintPath>
     </Reference>
