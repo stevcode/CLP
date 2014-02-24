@@ -295,20 +295,13 @@
             </TextBlock>
 
             <!--Right Fuzzy Edge-->
-            <Path Grid.Row="1" Grid.Column="2"
+            <!--<Path Grid.Row="1" Grid.Column="2"
                   Stretch="Fill" Margin="0"
                   Stroke="{Binding FuzzyEdgeColor}" StrokeThickness="3" 
                   HorizontalAlignment="Right"
                   Visibility="{Binding IsHorizontallyAligned, Converter={StaticResource BooleanToVisibilityConverter}}"
                   SnapsToDevicePixels="True"
                   Data="M -1,0 L 1,0 C 1,0 2,1 1,2 C 1,2 0,3 1,4 C 1,4 2,5 1,6 C 1,6 0,7 1,8 C 1,8 2,9 1,10 C 1,10 0,11 1,12 C 1,12 2,13 1,14 C 1,14 0,15 1,16 C 1,16 2,17 1,18 C 1,18 0,19 1,20 C 1,20 2,21 1,22 C 1,22 0,23 1,24 C 1,24 2,25 1,26 M 1,26 L -1,26" />
-            <!--<Border Grid.Row="1" Grid.Column="2"
-                     Height="{Binding ArrayHeight}" Width="{Binding PageObject.LargeLabelLength}"
-                     HorizontalAlignment="Right" VerticalAlignment="Top"
-                     BorderThickness="0 0 3 0" Margin="0"
-                     SnapsToDevicePixels="True"
-                     BorderBrush="LightGray"
-                     Visibility="{Binding IsHorizontallyAligned, Converter={StaticResource BooleanToVisibilityConverter}}"/>-->
 
             <Border Grid.Row="1" Grid.Column="2"
                      Height="{Binding ArrayHeight}" Width="{Binding PageObject.LabelLength}"
@@ -329,9 +322,15 @@
                         <GradientStop Color="Transparent" Offset="1.0" />
                     </LinearGradientBrush>
                 </Border.BorderBrush>
-            </Border>
-           
-                <!--Bottom Fuzzy Edge-->
+            </Border>-->
+            
+            <Border Grid.Row="1" Grid.Column="1"
+                     Height="{Binding ArrayHeight}" Width="{Binding ArrayWidth}"
+                     HorizontalAlignment="Left" VerticalAlignment="Top"
+                     BorderBrush="{Binding FuzzyEdgeColor}"  BorderThickness="0 0 3 0" Margin="0"
+                     SnapsToDevicePixels="True"/>
+
+            <!--Bottom Fuzzy Edge-->
             <!-- TODO Liz - make fixes as in right fuzzy edge-->
             <Path Grid.Row="2" Grid.Column="1"
                   Visibility="{Binding IsHorizontallyAligned, Converter={StaticResource BooleanToOppositeVisibilityConverter}}"
@@ -341,6 +340,22 @@
                   Stretch="Fill" Margin="0"
                   Stroke="{Binding FuzzyEdgeColor}" StrokeThickness="3" />
 
+            <!--Array top and bottom edges-->
+            <Border Grid.Row="1" Grid.Column="1"
+                     Height="{Binding ArrayHeight}" Width="{Binding ArrayWidth}"
+                     HorizontalAlignment="Left" VerticalAlignment="Top"
+                     BorderThickness="0 3 0 3" Margin="0"
+                     SnapsToDevicePixels="True"
+                     Visibility="{Binding IsHorizontallyAligned, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Border.BorderBrush>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                        <GradientStop Color="{Binding BorderColor}" Offset="0.0" />
+                        <GradientStop Color="{Binding BorderColor}" Offset="0.5" />
+                        <GradientStop Color="{Binding FuzzyEdgeColor}" Offset="1.0" />
+                    </LinearGradientBrush>
+                </Border.BorderBrush>
+            </Border>
+            
             <!--Grid seperated at at last divider-->
             <Grid Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" Grid.RowSpan="2">
                 <Grid.ColumnDefinitions>
@@ -464,6 +479,11 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
 
+                <Border Grid.Column="0" Grid.Row="0"
+                    Height="{Binding ArrayHeight}"  Width="{Binding PageObject.LastDivisionPosition}"
+                    HorizontalAlignment="Left" VerticalAlignment="Top"
+                    BorderBrush="{Binding BorderColor}" BorderThickness="0 3 0 3" SnapsToDevicePixels="True"/>
+
                 <!--Black line for last divider-->
                 <Border Grid.Column="1" Grid.Row="0" Background="Transparent" BorderThickness="3 0 0 0" BorderBrush="{Binding BorderColor}"/>
 
@@ -481,20 +501,20 @@
                            Visibility="{Binding PageObject.GroupsSubtracted, Converter={StaticResource IntToVisibilityConverter}}"/>
             </Grid>
 
-            <!--This is the actual array-->
+            <!--Array Left edge-->
             <Border  Grid.Row="1" Grid.Column="1"
                      Height="{Binding ArrayHeight}" Width="{Binding ArrayWidth}"
                      HorizontalAlignment="Left" VerticalAlignment="Top"
-                     BorderBrush="{Binding BorderColor}" BorderThickness="3 3 0 0" Margin="0"
+                     BorderBrush="{Binding BorderColor}" BorderThickness="3 0 0 0" Margin="0"
                      SnapsToDevicePixels="True"/>
 
             <!--Bottom edge-->
-            <Border  Grid.Row="1" Grid.Column="1"
+            <!--<Border  Grid.Row="1" Grid.Column="1"
                      Width="{Binding ArrayWidth}" Height="{Binding ArrayHeight}"
                      HorizontalAlignment="Left" VerticalAlignment="Top"
                      BorderBrush="{Binding BorderColor}" BorderThickness="0 0 0 3" Margin="0"
                      SnapsToDevicePixels="True"
-                     Visibility="{Binding IsHorizontallyAligned, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                     Visibility="{Binding IsHorizontallyAligned, Converter={StaticResource BooleanToVisibilityConverter}}"/>-->
 
             <!--Right edge-->
             <Border Grid.Row="1" Grid.Column="1"
@@ -503,11 +523,6 @@
                      BorderBrush="{Binding BorderColor}" BorderThickness="0 0 3 0" Margin="0"
                      SnapsToDevicePixels="True"
                      Visibility="{Binding IsHorizontallyAligned, Converter={StaticResource BooleanToOppositeVisibilityConverter}}"/>
-            <!--<Border Grid.Row="1" Grid.Column="1"
-                     Height="{Binding ArrayHeight}" Width="{Binding ArrayWidth}"
-                     HorizontalAlignment="Left" VerticalAlignment="Top"
-                     BorderBrush="Gray" Opacity=".5"  BorderThickness="0 0 3 0" Margin="0"
-                     SnapsToDevicePixels="True"/>-->
 
             <!--Dividend-->
             <Ellipse Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" Height="63" Width="63"
