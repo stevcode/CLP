@@ -14,7 +14,8 @@ namespace CLP.Models
     {
 
         public double LabelLength { get { return 35; } }
-        public double LargeLabelLength { get { return LabelLength * 2 + 12.0; } }
+        //public double LargeLabelLength { get { return LabelLength * 2 + 12.0; } }
+        public double LargeLabelLength { get { return LabelLength + 10.0; } }
 
         #region Constructors
 
