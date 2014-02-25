@@ -21,8 +21,12 @@ namespace Classroom_Learning_Partner.ViewModels
             LinkedPanel = new SubmissionsPanelViewModel(notebook); //TODO staging panel
             PanelWidth = InitialWidth;
 
+            NotebookNames = new ObservableCollection<String>();
+            NotebookNames.Add("This would have subchapter names");
             PageNumberList = GetPageNumbers();
             StudentList = GetStudentNames();
+
+            PanelResizeDragCommand = new Command<DragDeltaEventArgs>(OnPanelResizeDragCommandExecute);
         }
 
          /// <summary>
@@ -165,14 +169,49 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData PageNumberListProperty = RegisterProperty("PageNumberList", typeof(ObservableCollection<int>));
 
+         public ObservableCollection<String> NotebookNames
+        {
+            get { return GetValue<ObservableCollection<String>>(NotebookNamesProperty); }
+            set { SetValue(NotebookNamesProperty, value); }
+        }
+
+        public static readonly PropertyData NotebookNamesProperty = RegisterProperty("NotebookNames", typeof(ObservableCollection<String>));
+
 
         #endregion //Bindings
 
+        #region Commands
+
+        /// <summary>
+        /// Resizes the panel.
+        /// </summary>
+        public Command<DragDeltaEventArgs> PanelResizeDragCommand
+        {
+            get;
+            private set;
+        }
+
+        private void OnPanelResizeDragCommandExecute(DragDeltaEventArgs e)
+        {
+            var newWidth = PanelWidth + e.HorizontalChange;
+            if(newWidth < 50)
+            {
+                newWidth = 50;
+            }
+            if(newWidth > Application.Current.MainWindow.ActualWidth - 100)
+            {
+                newWidth = Application.Current.MainWindow.ActualWidth - 100;
+            }
+            PanelWidth = newWidth;
+        }
+
+        #endregion
         //This is copied over from SubmissionsPanelViewModel, it wants to be 
         //database-agnostic when stuff's finalized
         public ObservableCollection<StudentProgressInfo> GetStudentNames()
         {
             var userNames = new ObservableCollection<StudentProgressInfo>();
+            userNames.Add(new StudentProgressInfo("Original", 0));
             var filePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\StudentNames.txt";
 
             if(File.Exists(filePath))

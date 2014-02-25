@@ -24,18 +24,41 @@
     <Border Background="{StaticResource GrayBackgroundColor}"
             BorderBrush="{StaticResource GrayEdgeColor}" BorderThickness="0,0,5,0">
         <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <!-- unit selector-->
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <ComboBox x:Name="NotebookComboBox" Grid.Row="0" SelectedIndex="0" /> <!-- this is to switch between units -->
-            <DataGrid x:Name="ProgressDataGrid" Grid.Row="1" ItemsSource="{Binding StudentList}"
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <ComboBox x:Name="NotebookComboBox" Grid.Row="0" SelectedIndex="0" 
+                      ItemsSource="{Binding NotebookNames}"/>
+
+                <DataGrid x:Name="ProgressDataGrid" Grid.Row="1" ItemsSource="{Binding StudentList}"
                       AutoGenerateColumns="False" FrozenColumnCount="1">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Binding="{Binding Name}"/>
-                </DataGrid.Columns>
-            </DataGrid>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Binding="{Binding Name}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+            <Thumb Cursor="ScrollWE" Width="5" 
+                   Margin="0 0 -5 0" VerticalAlignment="Stretch" HorizontalAlignment="Right">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="DragDelta">
+                        <catel:EventToCommand Command="{Binding PanelResizeDragCommand}" PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                <Thumb.Template>
+                    <ControlTemplate>
+                        <UniformGrid Height="30" VerticalAlignment="Center"  Columns="1" Background="Transparent">
+                            <Ellipse StrokeThickness="0" Fill="{StaticResource HighlightColor}" Height="3" Width="3" />
+                            <Ellipse StrokeThickness="0" Fill="{StaticResource HighlightColor}" Height="3" Width="3" />
+                            <Ellipse StrokeThickness="0" Fill="{StaticResource HighlightColor}" Height="3" Width="3" />
+                        </UniformGrid>
+                    </ControlTemplate>
+                </Thumb.Template>
+            </Thumb>
         </Grid>
     </Border>
 </catel:UserControl>
