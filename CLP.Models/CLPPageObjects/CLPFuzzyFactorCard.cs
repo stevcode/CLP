@@ -41,6 +41,115 @@ namespace CLP.Models
         #region A/B Testing Toggles
 
         /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool IsCurlyEdge
+        {
+            get
+            {
+                return GetValue<bool>(IsCurlyEdgeProperty);
+            }
+            set
+            {
+                SetValue(IsCurlyEdgeProperty, value);
+            }
+        }
+
+        /// <summary>
+        /// Register the IsCurlyEdge property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData IsCurlyEdgeProperty = RegisterProperty("IsCurlyEdge", typeof(bool), false);
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool IsStraightEdge
+        {
+            get
+            {
+                return GetValue<bool>(IsStraightEdgeProperty);
+            }
+            set
+            {
+                SetValue(IsStraightEdgeProperty, value);
+            }
+        }
+
+        /// <summary>
+        /// Register the IsStraightEdge property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData IsStraightEdgeProperty = RegisterProperty("IsStraightEdge", typeof(bool), false);
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool IsNoRightEdge
+        {
+            get
+            {
+                return GetValue<bool>(IsNoRightEdgeProperty);
+            }
+            set
+            {
+                SetValue(IsNoRightEdgeProperty, value);
+            }
+        }
+
+        /// <summary>
+        /// Register the IsNoRightEdge property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData IsNoRightEdgeProperty = RegisterProperty("IsNoRightEdge", typeof(bool), false);
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public string DefaultFuzzyEdgeColor
+        {
+            get
+            {
+                return GetValue<string>(DefaultFuzzyEdgeColorProperty);
+            }
+            set
+            {
+                SetValue(DefaultFuzzyEdgeColorProperty, value);
+            }
+        }
+
+        //TODO Liz: update name to start with Is
+        public bool HasRemainder
+        {
+            get
+            {
+                if((double)Dividend % (double)Rows == 0)
+                {
+                    return false;
+                }
+                return true;
+            }
+        }
+
+        public bool NoRemainder
+        {
+            get
+            {
+                return !HasRemainder;
+            }
+        }
+
+        public bool IsStraightEdgeRemainder
+        {
+            get
+            {
+                return ((double)Dividend % (double)Rows != 0 && IsStraightEdge);
+            }
+        }
+
+        /// <summary>
+        /// Register the DefaultFuzzyEdgeColor property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData DefaultFuzzyEdgeColorProperty = RegisterProperty("DefaultFuzzyEdgeColor", typeof(string), "Gray");
+
+        /// <summary>
         /// Whether or not the answer is displayed.
         /// </summary>
         public bool IsAnswerVisible

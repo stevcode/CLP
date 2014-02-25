@@ -13,7 +13,7 @@ namespace CLP.Models
     public class CLPFFCComputationDisplay : CLPArray
     {
 
-        public double ComputationWidth  { get { return 100.0; } }
+        public double ComputationWidth  { get { return 0.0; } } //100.0; } }
         public double LargeLabelLength { get { return LabelLength * 2 + 12.0 + ComputationWidth; } }
 
         #region Constructors

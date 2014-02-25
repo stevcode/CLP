@@ -2394,7 +2394,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 numberOfArrays = 1;
             }
 
-            else if(arrayType == "FUZZYFACTORCARDTOP" || arrayType == "FUZZYFACTORCARDBOTTOM" || arrayType == "FUZZYFACTORCARDBOTTOMNOANSWER" || arrayType == "FUZZYFACTORCARDTOPNOANSWER" || arrayType == "FFCCOMPDISPLAY")
+            else if(arrayType == "FUZZYFACTORCARDTOP" || arrayType == "FUZZYFACTORCARDBOTTOM" || arrayType == "FUZZYFACTORCARDBOTTOMNOANSWER" || arrayType == "FUZZYFACTORCARDTOPNOANSWER" || arrayType == "FFCCOMPDISPLAY" || arrayType == "FFCCURLYEDGE" || arrayType == "FFCNOEDGE" || arrayType == "FFCSTRAIGHTEDGE")
             {
                 var factorCreationView = new FuzzyFactorCardCreationView{ Owner = Application.Current.MainWindow};
                 factorCreationView.ShowDialog();
@@ -2503,27 +2503,43 @@ namespace Classroom_Learning_Partner.ViewModels
                     case "FACTORCARD":
                         array = new CLPFactorCard(rows, columns, currentPage);
                         break;
-                    case "FUZZYFACTORCARDTOP":
+                    case "FFCSTRAIGHTEDGE":
                         array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
                         (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = true;
+                        (array as CLPFuzzyFactorCard).IsStraightEdge = true;
                         break;
-                    case "FUZZYFACTORCARDBOTTOM":
-                        array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
-                        (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = false;
-                        break;
-                    case "FUZZYFACTORCARDTOPNOANSWER":
+                    case "FFCCURLYEDGE":
                         array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
                         (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = true;
-                        (array as CLPFuzzyFactorCard).IsAnswerVisible = false;
+                        (array as CLPFuzzyFactorCard).IsCurlyEdge = true;
+                        (array as CLPFuzzyFactorCard).IsStraightEdge = false;
                         break;
-                    case "FUZZYFACTORCARDBOTTOMNOANSWER":
+                    case "FFCNOEDGE":
                         array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
-                        (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = false;
-                        (array as CLPFuzzyFactorCard).IsAnswerVisible = false;
+                        (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = true;
+                        (array as CLPFuzzyFactorCard).IsNoRightEdge = true;
                         break;
-                    case "FFCCOMPDISPLAY":
-                        array = new CLPFFCComputationDisplay(rows, columns, dividend, currentPage);
-                        break;
+                    //case "FUZZYFACTORCARDTOP":
+                    //    array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
+                    //    (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = true;
+                    //    break;
+                    //case "FUZZYFACTORCARDBOTTOM":
+                    //    array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
+                    //    (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = false;
+                    //    break;
+                    //case "FUZZYFACTORCARDTOPNOANSWER":
+                    //    array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
+                    //    (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = true;
+                    //    (array as CLPFuzzyFactorCard).IsAnswerVisible = false;
+                    //    break;
+                    //case "FUZZYFACTORCARDBOTTOMNOANSWER":
+                    //    array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
+                    //    (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = false;
+                    //    (array as CLPFuzzyFactorCard).IsAnswerVisible = false;
+                    //    break;
+                    //case "FFCCOMPDISPLAY":
+                    //    array = new CLPFFCComputationDisplay(rows, columns, dividend, currentPage);
+                    //    break;
                     //case "FUZZYFACTORCARD":
                     //    array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
                     //    array.IsSnappable = true;
@@ -2628,7 +2644,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             //TODO Liz: clean up this code when getting rid of fuzzy factor card variations
-            var minSide = (arrayType == "FUZZYFACTORCARDTOP" || arrayType == "FUZZYFACTORCARDBOTTOM" || arrayType == "FUZZYFACTORCARDTOPNOANSWER" || arrayType == "FUZZYFACTORCARDBOTTOMNOANSWER" || arrayType == "FFCCOMPDISPLAY")
+            var minSide = (arrayType == "FUZZYFACTORCARDTOP" || arrayType == "FUZZYFACTORCARDBOTTOM" || arrayType == "FUZZYFACTORCARDTOPNOANSWER" || arrayType == "FUZZYFACTORCARDBOTTOMNOANSWER" || arrayType == "FFCCOMPDISPLAY" || arrayType == "FFCCURLYEDGE" || arrayType == "FFCNOEDGE" || arrayType == "FFCSTRAIGHTEDGE")
                 ? MIN_FFC_SIDE:
                 MIN_SIDE;
             //var minSquareSize = (arrayType == "FUZZYFACTORCARDTOP" || arrayType == "FUZZYFACTORCARDBOTTOM" || arrayType == "FUZZYFACTORCARDTOPNOANSWER" || arrayType == "FUZZYFACTORCARDBOTTOMNOANSWER" || arrayType == "FFCCOMPDISPLAY")
@@ -2639,7 +2655,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //{
             //    minSquareSize = 100;
             //}
-            var defaultSquareSize = (arrayType == "FUZZYFACTORCARDTOP" || arrayType == "FUZZYFACTORCARDBOTTOM" || arrayType == "FUZZYFACTORCARDTOPNOANSWER" || arrayType == "FUZZYFACTORCARDBOTTOMNOANSWER" || arrayType == "FFCCOMPDISPLAY")?
+            var defaultSquareSize = (arrayType == "FUZZYFACTORCARDTOP" || arrayType == "FUZZYFACTORCARDBOTTOM" || arrayType == "FUZZYFACTORCARDTOPNOANSWER" || arrayType == "FUZZYFACTORCARDBOTTOMNOANSWER" || arrayType == "FFCCOMPDISPLAY" || arrayType == "FFCCURLYEDGE" || arrayType == "FFCNOEDGE" || arrayType == "FFCSTRAIGHTEDGE") ?
                 Math.Max(45.0, (minSide / (Math.Min(rows, columns)))):
                 45.0;
             var initializedSquareSize = (squareSize > 0) ? Math.Max(squareSize, (minSide / (Math.Min(rows, columns)))) : defaultSquareSize;
@@ -2762,31 +2778,47 @@ namespace Classroom_Learning_Partner.ViewModels
                     case "FACTORCARD":
                         array = new CLPFactorCard(rows, columns, currentPage);
                         break;
-                    case "FUZZYFACTORCARDTOP":
+                    case "FFCSTRAIGHTEDGE":
                         array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
                         (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = true;
+                        (array as CLPFuzzyFactorCard).IsStraightEdge = true;
                         break;
-                    case "FUZZYFACTORCARDBOTTOM":
-                        array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
-                        (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = false;
-                        break;
-                    case "FUZZYFACTORCARDTOPNOANSWER":
+                    case "FFCCURLYEDGE":
                         array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
                         (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = true;
-                        (array as CLPFuzzyFactorCard).IsAnswerVisible = false;
+                        (array as CLPFuzzyFactorCard).IsCurlyEdge = true;
+                        (array as CLPFuzzyFactorCard).IsStraightEdge = false;
                         break;
-                    case "FUZZYFACTORCARDBOTTOMNOANSWER":
+                    case "FFCNOEDGE":
                         array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
-                        (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = false;
-                        (array as CLPFuzzyFactorCard).IsAnswerVisible = false;
+                        (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = true;
+                        (array as CLPFuzzyFactorCard).IsNoRightEdge = true;
                         break;
+                    //case "FUZZYFACTORCARDTOP":
+                    //    array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
+                    //    (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = true;
+                    //    break;
+                    //case "FUZZYFACTORCARDBOTTOM":
+                    //    array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
+                    //    (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = false;
+                    //    break;
+                    //case "FUZZYFACTORCARDTOPNOANSWER":
+                    //    array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
+                    //    (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = true;
+                    //    (array as CLPFuzzyFactorCard).IsAnswerVisible = false;
+                    //    break;
+                    //case "FUZZYFACTORCARDBOTTOMNOANSWER":
+                    //    array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
+                    //    (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = false;
+                    //    (array as CLPFuzzyFactorCard).IsAnswerVisible = false;
+                    //    break;
                     //case "FUZZYFACTORCARD":
                     //    array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
                     //    array.IsSnappable = true;
                     //    break;
-                    case "FFCCOMPDISPLAY":
-                        array = new CLPFFCComputationDisplay(rows, columns, dividend, currentPage);
-                        break;
+                    //case "FFCCOMPDISPLAY":
+                    //    array = new CLPFFCComputationDisplay(rows, columns, dividend, currentPage);
+                    //    break;
                     case "SNAPADORNERONRIGHT":
                         array = new CLPArray(rows, columns, currentPage);
                         array.IsDivisionBehaviorOn = false;

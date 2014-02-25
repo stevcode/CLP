@@ -26,6 +26,8 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             ResizeFuzzyFactorCardCommand = new Command<DragDeltaEventArgs>(OnResizeFuzzyFactorCardCommandExecute);
             RemoveLastArrayCommand = new Command(OnRemoveLastArrayCommandExecute);
+
+            FuzzyEdgeColor = factorCard.DefaultFuzzyEdgeColor;
         }
 
         #endregion //Constructor    
@@ -146,7 +148,70 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        public static readonly PropertyData FuzzyEdgeColorProperty = RegisterProperty("FuzzyEdgeColor", typeof(string), "LightGray");
+        public static readonly PropertyData FuzzyEdgeColorProperty = RegisterProperty("FuzzyEdgeColor", typeof(string), "DarkGray");
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public bool IsCurlyEdge
+        {
+            get
+            {
+                return GetValue<bool>(IsCurlyEdgeProperty);
+            }
+            set
+            {
+                SetValue(IsCurlyEdgeProperty, value);
+            }
+        }
+
+        /// <summary>
+        /// Register the IsCurlyEdge property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData IsCurlyEdgeProperty = RegisterProperty("IsCurlyEdge", typeof(bool));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public bool IsStraightEdge
+        {
+            get
+            {
+                return GetValue<bool>(IsStraightEdgeProperty);
+            }
+            set
+            {
+                SetValue(IsStraightEdgeProperty, value);
+            }
+        }
+
+        /// <summary>
+        /// Register the IsStraightEdge property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData IsStraightEdgeProperty = RegisterProperty("IsStraightEdge", typeof(bool));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public bool IsNoRightEdge
+        {
+            get
+            {
+                return GetValue<bool>(IsNoRightEdgeProperty);
+            }
+            set
+            {
+                SetValue(IsNoRightEdgeProperty, value);
+            }
+        }
+
+        /// <summary>
+        /// Register the IsNoRightEdge property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData IsNoRightEdgeProperty = RegisterProperty("IsNoRightEdge", typeof(bool));
 
         #endregion //Properties
 
@@ -160,7 +225,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 await System.Threading.Tasks.Task.Delay(400);
                 BorderColor = "Black";
-                FuzzyEdgeColor = "Gray";
+                FuzzyEdgeColor = (PageObject as CLPFuzzyFactorCard).DefaultFuzzyEdgeColor;
             });
         }
 
