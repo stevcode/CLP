@@ -2,7 +2,8 @@
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com"
-                   xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
+                   xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters">
 
     <UserControl.Resources>
         <ResourceDictionary>
@@ -10,7 +11,9 @@
                 <ResourceDictionary Source="pack://application:,,,/Resources/CLPPageResources.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
+            <conv:AddLengthConverter x:Key="AddLengthConverter" />
             <catel:BooleanToHidingVisibilityConverter x:Key="BooleanToHidingVisibilityConverter" />
+            <catel:BooleanToOppositeBooleanConverter x:Key="BooleanToOppositeBooleanConverter" />
 
             <Style x:Key="AnimationThumbSliderStyle" TargetType="{x:Type Thumb}">
                 <Setter Property="OverridesDefaultStyle" Value="True" />
@@ -77,26 +80,64 @@
                    Background="Blue"
                    LastChildFill="False">
             
-            <!--change to toggle-->
-            <Button Content="Record"
-                    DockPanel.Dock="Left"
-                    Width="70"
-                    FontSize="12" FontWeight="Bold" Background="Red"
-                    Command="{Binding RecordAnimationCommand}" />
+            <!--Record Button-->
+            <Button DockPanel.Dock="Left"
+                    Width="70" Background="Red"
+                    Command="{Binding RecordAnimationCommand}"
+                    IsEnabled="{Binding IsPlaying, Converter={StaticResource BooleanToOppositeBooleanConverter}}">
+                <TextBlock TextAlignment="Center"
+                           FontWeight="Bold">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Text" Value="Record" />
+                            <Setter Property="FontSize" Value="12" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsRecording}"
+                                             Value="True">
+                                    <Setter Property="Text" Value="Stop Recording" />
+                                    <Setter Property="FontSize" Value="8" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Button>
 
-            <!--change to toggle-->
-            <Button Content="Play"
-                    DockPanel.Dock="Left"
-                    Width="70"
-                    FontSize="12" FontWeight="Bold" Background="Green"
-                    Command="{Binding PlayAnimationCommand}" />
+            <!--Play Button-->
+            <Button DockPanel.Dock="Left" 
+                    Width="70" Background="Green"
+                    Command="{Binding PlayAnimationCommand}"
+                    IsEnabled="{Binding IsRecording, Converter={StaticResource BooleanToOppositeBooleanConverter}}">
+                <TextBlock TextAlignment="Center"
+                           FontWeight="Bold">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Text" Value="Play" />
+                            <Setter Property="FontSize" Value="12" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsPlaying}"
+                                             Value="True">
+                                    <Setter Property="Text" Value="Pause" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Button>
+            
+            <TextBlock DockPanel.Dock="Left"
+                       Text="Playback Speed:"
+                       TextAlignment="Right"
+                       VerticalAlignment="Center"
+                       Margin="10 0 5 0"
+                       FontWeight="Bold"/>
 
             <Slider DockPanel.Dock="Left"
                     Minimum="0.25" Maximum="4"
                     IsSnapToTickEnabled="True"
                     TickFrequency="0.25"
                     TickPlacement="BottomRight"
-                    Width="200" Margin="10,0,10,0"
+                    Width="130" Margin="0 0 10 0"
                     Value="{Binding CurrentPlaybackSpeed}" />
 
             <Button Content="Clear Page"
@@ -107,21 +148,53 @@
             
         </DockPanel>
 
+        <!--Recording in Progress Indicator-->
+        <Ellipse Grid.Row="1" Visibility="{Binding IsRecording, Converter={StaticResource BooleanToHidingVisibilityConverter}}"
+                 HorizontalAlignment="Center" VerticalAlignment="Center"
+                 Height="30" Width="30"
+                 StrokeThickness="0" Fill="Transparent">
+            <Ellipse.Triggers>
+                <EventTrigger RoutedEvent="Loaded">
+                    <BeginStoryboard>
+                        <Storyboard Storyboard.TargetProperty="(Ellipse.Fill).(SolidColorBrush.Color)">
+                            <ColorAnimation To="Red" AutoReverse="True" RepeatBehavior="Forever" Duration="00:00:01" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Ellipse.Triggers>
+        </Ellipse>
+
         <!--Animation Progress Bar-->
-        <Slider Grid.Row="1" 
-                HorizontalAlignment="Center" VerticalAlignment="Center"
-                Style="{StaticResource AnimationSliderStyle}"
-                Height="20" Width="{Binding ActualWidth, ElementName=PlaybackControls}"
-                Minimum="0" Maximum="{Binding PageHistory.TotalHistoryTicks}"
-                Value="{Binding PageHistory.CurrentHistoryTick}"
-                IsSnapToTickEnabled="True" TickFrequency="1.0" IsMoveToPointEnabled="True"
-                Visibility="{Binding PageHistory.IsAnimation, Converter={StaticResource BooleanToHidingVisibilityConverter}}">
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="ValueChanged">
-                    <catel:EventToCommand Command="{Binding SliderChangedCommand}" PassEventArgsToCommand="True" />
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
-        </Slider>
+        <Grid Grid.Row="1"
+              Visibility="{Binding PageHistory.IsAnimation, Converter={StaticResource BooleanToHidingVisibilityConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <!--Rewind Button-->
+            <Button Grid.Column="0"
+                    Content="Rewind"
+                    Width="70" Background="Purple"
+                    FontSize="12" FontWeight="Bold"
+                    Margin="0 0 5 0"
+                    Command="{Binding RewindAnimationCommand}"
+                    IsEnabled="{Binding IsPlaying, Converter={StaticResource BooleanToOppositeBooleanConverter}}" />
+                
+            <Slider Grid.Column="1" 
+                    HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Style="{StaticResource AnimationSliderStyle}"
+                    Height="20" Width="{Binding ActualWidth, ElementName=PlaybackControls, Converter={StaticResource AddLengthConverter}, ConverterParameter=-75}"
+                    Minimum="0" Maximum="{Binding PageHistory.TotalHistoryTicks}"
+                    Value="{Binding PageHistory.CurrentHistoryTick}"
+                    IsSnapToTickEnabled="True" TickFrequency="1.0" IsMoveToPointEnabled="True">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="ValueChanged">
+                        <catel:EventToCommand Command="{Binding SliderChangedCommand}" PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Slider>
+        </Grid>
+        
 
     </Grid>
 </catel:UserControl>

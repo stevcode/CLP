@@ -1055,7 +1055,13 @@ namespace Classroom_Learning_Partner.ViewModels
                 var document = new FixedDocument();
                 document.DocumentPaginator.PageSize = new Size(96 * 11, 96 * 8.5);
 
-                foreach(var page in notebook.Submissions.Keys.SelectMany(pageID => notebook.Submissions[pageID]))
+                
+                foreach(var clpPage in notebook.Pages)
+                {
+                    foreach(var page in notebook.Submissions[clpPage.UniqueID])
+                   
+               
+              //  foreach(var page in notebook.Submissions.Keys.SelectMany(pageID => notebook.Submissions[pageID]))
                 {
                     foreach(var pageObject in page.PageObjects)
                     {
@@ -1118,6 +1124,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         document.Pages.Add(pageContent);
                     } while(page.PageHeight > transformAmount);
                 }
+                     }
 
                 //Save the document
                 var xpsDocument = new XpsDocument(filePath, FileAccess.ReadWrite);
@@ -2483,7 +2490,7 @@ namespace Classroom_Learning_Partner.ViewModels
             double squareSize = 0.0;
             foreach(var pageObject in currentPage.PageObjects)
             {
-                if(pageObject is CLPArray && !pageObject.IsBackground)
+                if(pageObject is CLPArray && (!pageObject.IsBackground || MainWindow.IsAuthoring))
                 {
                     squareSize = (pageObject as CLPArray).ArrayHeight / (pageObject as CLPArray).Rows;
                 }
@@ -2523,7 +2530,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         }
                         foreach(var pageObject in currentPage.PageObjects)
                         {
-                            if(pageObject is CLPArray && !pageObject.IsBackground)
+                            if(pageObject is CLPArray && (!pageObject.IsBackground || MainWindow.IsAuthoring))
                             {
                                 if((pageObject as CLPArray).Rows * squareSize > MIN_SIDE && (pageObject as CLPArray).Columns * squareSize > MIN_SIDE)
                                 {
@@ -2610,7 +2617,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 foreach(var pageObject in currentPage.PageObjects)
                 {
-                    if(pageObject is CLPArray && !pageObject.IsBackground)
+                    if(pageObject is CLPArray && (!pageObject.IsBackground || MainWindow.IsAuthoring))
                     {
                         if((pageObject as CLPArray).Rows * initializedSquareSize > MIN_SIDE && (pageObject as CLPArray).Columns * initializedSquareSize > MIN_SIDE)
                         {
