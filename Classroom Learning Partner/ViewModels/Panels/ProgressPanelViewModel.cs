@@ -205,6 +205,30 @@ namespace Classroom_Learning_Partner.ViewModels
             PanelWidth = newWidth;
         }
 
+        /// <summary>
+        /// Sets the current selected page in the listbox.
+        /// </summary>
+        public Command<ICLPPage> SetCurrentPageCommand
+        {
+            get;
+            private set;
+        }
+
+        private void OnSetCurrentPageCommandExecute(ICLPPage page)
+        {
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel != null)
+            {
+                notebookWorkspaceViewModel.SelectedDisplay.AddPageToDisplay(page);
+                var historyPanel = notebookWorkspaceViewModel.SubmissionHistoryPanel;
+                if(historyPanel != null)
+                {
+                    historyPanel.CurrentPage = null;
+                    historyPanel.IsSubmissionHistoryVisible = false;
+                }
+            }
+        }
+
         #endregion
         //This is copied over from SubmissionsPanelViewModel, it wants to be 
         //database-agnostic when stuff's finalized
