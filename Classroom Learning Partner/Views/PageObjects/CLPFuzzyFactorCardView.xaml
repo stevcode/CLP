@@ -20,7 +20,7 @@
         <conv:BoolToAlignmentConverter x:Key="BoolToAlignmentConverter" />
         <conv:DivisionPositionToColorMultiConverter x:Key="DivisionPositionToColorMultiConverter" />
         <conv:IntToVisibilityConverter x:Key="IntToVisibilityConverter" />
-        <conv:MarginSingleSideConverter x:Key="MarginSingleSideConverter" />
+        <conv:FFCMarginConverter x:Key="FFCMarginConverter" />
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <Style x:Key="HorizontalGridLineStyle">
             <Setter Property="Canvas.Left"
@@ -357,14 +357,14 @@
             </Border>
             
             <!--Grid seperated at at last divider-->
-            <Grid Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" Grid.RowSpan="2">
+            <Grid Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="{Binding PageObject.LastDivisionPosition}" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
+                <!--<Grid.RowDefinitions>
                     <RowDefinition Height="{Binding ArrayHeight}" />
-                </Grid.RowDefinitions>
+                </Grid.RowDefinitions>-->
                 <!--TODO Liz: Add rows for rotating-->
 
                 <!--Grid Lines-->
@@ -550,9 +550,9 @@
 
             <!--<Canvas Grid.Row="2" Grid.Column="1"  ClipToBounds="False" Background="Pink" >
                 <Grid>-->
-            <StackPanel Grid.Row="2" Grid.Column="1"  Orientation="Horizontal" HorizontalAlignment="Left" 
-                        Visibility="{Binding PageObject.GroupsSubtracted, Converter={StaticResource IntToVisibilityConverter}}">
-                        <!--Margin="{Binding ActualWidth, ElementName=EmptyDivisions, Converter={StaticResource MarginSingleSideConverter}, ConverterParameter=Right}">-->
+            <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Left" 
+                        Visibility="{Binding PageObject.GroupsSubtracted, Converter={StaticResource IntToVisibilityConverter}}"
+                        Margin="{Binding PageObject.LastDivisionPosition, Converter={StaticResource FFCMarginConverter}}">
                 
                         <!--Bottom Label (Equation)-->
                         <TextBlock

@@ -16,7 +16,7 @@ namespace Classroom_Learning_Partner.Converters
             {
                 return new Thickness(0, 0, 0, 0);
             }
-
+        //    margin += 45;
             switch(marginSide)
             {
                 case "Left":
