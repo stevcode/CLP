@@ -30,6 +30,9 @@
                 <ControlTemplate x:Key="NotebookPagesPanelTemplate">
                     <views:NotebookPagesPanelView DataContext="{Binding LeftPanel}" />
                 </ControlTemplate>
+                <ControlTemplate x:Key="ProgressPanelTemplate">
+                    <views:ProgressPanelView DataContext="{Binding LeftPanel}" />
+                </ControlTemplate>
 
             </Control.Resources>
 
@@ -40,6 +43,11 @@
                         <!--NotebookPagesPanel trigger-->
                         <DataTrigger Binding="{Binding LeftPanel, Converter={StaticResource TypeToStringConverter}}" Value="NotebookPagesPanelViewModel">
                             <Setter Property="Template" Value="{StaticResource NotebookPagesPanelTemplate}" />
+                        </DataTrigger>
+
+                        <!--ProgressPanel trigger-->
+                        <DataTrigger Binding="{Binding LeftPanel, Converter={StaticResource TypeToStringConverter}}" Value="ProgressPanelViewModel">
+                            <Setter Property="Template" Value="{StaticResource ProgressPanelTemplate}" />
                         </DataTrigger>
 
                     </Style.Triggers>

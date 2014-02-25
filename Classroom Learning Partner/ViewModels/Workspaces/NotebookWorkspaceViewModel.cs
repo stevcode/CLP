@@ -25,8 +25,10 @@ namespace Classroom_Learning_Partner.ViewModels
             Notebook = notebook;
             SelectedDisplay = MirrorDisplay;
 
+            ProgressPanel = new ProgressPanelViewModel(notebook);
             NotebookPagesPanel = new NotebookPagesPanelViewModel(notebook);
-            LeftPanel = NotebookPagesPanel;
+            LeftPanel = ProgressPanel; //NotebookPagesPanel;
+            ProgressPanel.IsVisible = true;
             DisplayListPanel = new DisplayListPanelViewModel(notebook);
             RightPanel = DisplayListPanel;
 
@@ -166,6 +168,17 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData NotebookPagesPanelProperty = RegisterProperty("NotebookPagesPanel", typeof(NotebookPagesPanelViewModel));
 
         /// <summary>
+        /// ProgressPanel.
+        /// </summary>
+        public ProgressPanelViewModel ProgressPanel
+        {
+            get { return GetValue<ProgressPanelViewModel>(ProgressPanelProperty); }
+            set { SetValue(ProgressPanelProperty, value); }
+        }
+
+        public static readonly PropertyData ProgressPanelProperty = RegisterProperty("ProgressPanel", typeof(ProgressPanelViewModel));
+
+        /// <summary>
         /// DisplayPanel.
         /// </summary>
         public DisplayListPanelViewModel DisplayListPanel
@@ -212,7 +225,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if (propertyName == "SideBarVisibility")
             {
-                LeftPanel = NotebookPagesPanel;
+                LeftPanel = ProgressPanel; //NotebookPagesPanel;
                 LeftPanel.IsVisible = (viewModel as RibbonViewModel).SideBarVisibility;
             }
 

@@ -23,6 +23,7 @@ namespace Classroom_Learning_Partner.ViewModels
             SetCurrentPageCommand = new Command<ICLPPage>(OnSetCurrentPageCommandExecute);
             ShowSubmissionsCommand = new Command<ICLPPage>(OnShowSubmissionsCommandExecute);
             PanelResizeDragCommand = new Command<DragDeltaEventArgs>(OnPanelResizeDragCommandExecute);
+            IsVisible = true;
         }
 
         /// <summary>
