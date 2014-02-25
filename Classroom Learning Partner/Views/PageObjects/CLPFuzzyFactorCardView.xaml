@@ -459,7 +459,7 @@
             <!--Array top and bottom edges for no right edge-->
             <Border Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
                      Height="{Binding ArrayHeight}" 
-                     Width="{Binding ArrayWidth, Converter={StaticResource LengthConverter}, ConverterParameter=40}"
+                     Width="{Binding ArrayWidth, Converter={StaticResource LengthConverter}, ConverterParameter=100}"
                      HorizontalAlignment="Left" VerticalAlignment="Top"
                      BorderThickness="0 3 0 3" Margin="0"
                      SnapsToDevicePixels="True"
@@ -607,10 +607,10 @@
                 <!--Value of the remainder so far-->
                 <Ellipse Grid.Column="1" Grid.Row="0" Height="34" Width="36"
                      StrokeThickness="3" Stroke ="Black" Opacity="1"
-                     VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin ="5 0 23 17"
+                     VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin ="0 0 32 17"
                      Visibility="{Binding PageObject.GroupsSubtracted, Converter={StaticResource IntToVisibilityConverter}}"/>
                 <TextBlock Grid.Column="1" Grid.Row="0" Foreground="Black"  IsHitTestVisible="False"
-                           TextAlignment="Center" Margin="5 0 23 22"
+                           TextAlignment="Center" Margin="0 0 32 22"
                            FontWeight="Bold" FontSize="18"
                            VerticalAlignment="Bottom"
                            HorizontalAlignment="Center"
