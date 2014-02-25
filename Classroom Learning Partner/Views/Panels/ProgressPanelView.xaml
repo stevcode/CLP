@@ -13,20 +13,25 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/Resources/CLPBrushes.xaml" />
+                <ResourceDictionary>
+                    <DataTemplate x:Key="ButtonBox">
+                        <Button></Button>
+                    </DataTemplate>
+                </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
-
     <Border Background="{StaticResource GrayBackgroundColor}"
             BorderBrush="{StaticResource GrayEdgeColor}" BorderThickness="0,0,5,0">
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" /> <!-- unit selector-->
+                <RowDefinition Height="Auto" />
+                <!-- unit selector-->
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <!--ListBox x:Name="PageNumbers" ItemsSource="{Binding PageNumberList}"/-->
             <ComboBox x:Name="NotebookComboBox" Grid.Row="0" SelectedIndex="0" /> <!-- this is to switch between units -->
-            <DataGrid x:Name="ProgressDataGrid" Grid.Row="1" ItemsSource="{Binding StudentList}" AutoGenerateColumns="False" FrozenColumnCount="1">
+            <DataGrid x:Name="ProgressDataGrid" Grid.Row="1" ItemsSource="{Binding StudentList}"
+                      AutoGenerateColumns="False" FrozenColumnCount="1">
                 <DataGrid.Columns>
                     <DataGridTextColumn Binding="{Binding Name}"/>
                 </DataGrid.Columns>
