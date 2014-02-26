@@ -213,6 +213,27 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public static readonly PropertyData IsNoRightEdgeProperty = RegisterProperty("IsNoRightEdge", typeof(bool));
 
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public bool IsDividendOnEdge
+        {
+            get
+            {
+                return GetValue<bool>(IsDividendOnEdgeProperty);
+            }
+            set
+            {
+                SetValue(IsDividendOnEdgeProperty, value);
+            }
+        }
+
+        /// <summary>
+        /// Register the IsDividendOnEdge property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData IsDividendOnEdgeProperty = RegisterProperty("IsDividendOnEdge", typeof(bool));
+
         #endregion //Properties
 
         #region Methods

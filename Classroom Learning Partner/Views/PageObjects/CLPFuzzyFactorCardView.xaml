@@ -299,9 +299,15 @@
                   Stretch="Fill" Margin="0"
                   Stroke="{Binding FuzzyEdgeColor}" StrokeThickness="3" 
                   HorizontalAlignment="Right"
-                  Visibility="{Binding IsCurlyEdge, Converter={StaticResource BooleanToVisibilityConverter}}"
                   SnapsToDevicePixels="True"
-                  Data="M -1,0 L 1,0 C 1,0 2,1 1,2 C 1,2 0,3 1,4 C 1,4 2,5 1,6 C 1,6 0,7 1,8 C 1,8 2,9 1,10 C 1,10 0,11 1,12 C 1,12 2,13 1,14 C 1,14 0,15 1,16 C 1,16 2,17 1,18 C 1,18 0,19 1,20 C 1,20 2,21 1,22 C 1,22 0,23 1,24 C 1,24 2,25 1,26 M 1,26 L -1,26" />
+                  Data="M -1,0 L 1,0 C 1,0 2,1 1,2 C 1,2 0,3 1,4 C 1,4 2,5 1,6 C 1,6 0,7 1,8 C 1,8 2,9 1,10 C 1,10 0,11 1,12 C 1,12 2,13 1,14 C 1,14 0,15 1,16 C 1,16 2,17 1,18 C 1,18 0,19 1,20 C 1,20 2,21 1,22 C 1,22 0,23 1,24 C 1,24 2,25 1,26 M 1,26 L -1,26" >
+              <Path.Visibility>
+                <MultiBinding Converter="{StaticResource AllBoolToVisibilityMultiConverter}">
+                    <Binding Path="IsCurlyEdge" />
+                    <Binding Path="PageObject.IsFuzzyEdgeVisible" />
+                </MultiBinding>
+              </Path.Visibility>
+            </Path>
 
             <!--<Border Grid.Row="1" Grid.Column="2"
                      Height="{Binding ArrayHeight}" Width="{Binding PageObject.LabelLength}"
@@ -590,6 +596,7 @@
                                            VerticalAlignment="Center" HorizontalAlignment="Left"
                                            FontSize="22" FontWeight="Bold" Foreground="{StaticResource TopLabelColor}"
                                            Height="22" />
+
                                 </Grid>
                             </Canvas>
                         </DataTemplate>
@@ -616,14 +623,36 @@
                            HorizontalAlignment="Center"
                            Text="{Binding PageObject.CurrentRemainder}"
                            Visibility="{Binding PageObject.GroupsSubtracted, Converter={StaticResource IntToVisibilityConverter}}"/>
-            </Grid>
 
-            <!--Array Left edge-->
-            <Border  Grid.Row="1" Grid.Column="1"
+                <!--Array Left edge-->
+                <Border  Grid.Row="0" Grid.Column="0"
                      Height="{Binding ArrayHeight}" Width="{Binding ArrayWidth}"
                      HorizontalAlignment="Left" VerticalAlignment="Top"
                      BorderBrush="{Binding BorderColor}" BorderThickness="3 0 0 0" Margin="0"
                      SnapsToDevicePixels="True"/>
+
+                <!--Dividend in option 4-->
+                <Ellipse Grid.Column="1" Grid.Row="0" Height="63" Width="63"
+                     StrokeThickness="3" Stroke="Black"  Fill="White" 
+                     VerticalAlignment="Top" HorizontalAlignment="Left" Margin="-32 20 0 0"
+                     Visibility="{Binding IsDividendOnEdge, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                <TextBlock Grid.Column="1" Grid.Row="0" 
+                       IsHitTestVisible="False"
+                           FontWeight="Bold" FontSize="32"
+                           Foreground="Black"
+                           VerticalAlignment="Top" HorizontalAlignment="Left" Margin="-17 33 0 0"
+                           Text="{Binding Dividend}"
+                           Visibility="{Binding IsDividendOnEdge, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+            </Grid>
+
+            <!--Array Left edge--><!--
+            <Border  Grid.Row="1" Grid.Column="1"
+                     Height="{Binding ArrayHeight}" Width="{Binding ArrayWidth}"
+                     HorizontalAlignment="Left" VerticalAlignment="Top"
+                     BorderBrush="{Binding BorderColor}" BorderThickness="3 0 0 0" Margin="0"
+                     SnapsToDevicePixels="True"/>-->
 
             <!--Bottom edge-->
             <!--<Border  Grid.Row="1" Grid.Column="1"
@@ -644,14 +673,16 @@
             <!--Dividend-->
             <Ellipse Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="1" Height="63" Width="63"
                      StrokeThickness="3" Stroke="Black"  Fill="Transparent" 
-                     VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0 20 0 0"/>
+                     VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0 20 0 0"
+                     Visibility="{Binding IsDividendOnEdge, Converter={StaticResource BooleanToOppositeVisibilityConverter}}"/>
 
             <TextBlock Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="1"
                        IsHitTestVisible="False"
-                           FontWeight="Bold" FontSize="32"
-                           Foreground="Black"
-                           VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0 33 0 0"
-                           Text="{Binding Dividend}"/>
+                       FontWeight="Bold" FontSize="32"
+                       Foreground="Black"
+                       VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0 33 0 0"
+                       Visibility="{Binding IsDividendOnEdge, Converter={StaticResource BooleanToOppositeVisibilityConverter}}"
+                       Text="{Binding Dividend}"/>
 
             <!--Array hit box-->
             <Rectangle x:Name="Array" Grid.Row="1" Grid.Column="1"

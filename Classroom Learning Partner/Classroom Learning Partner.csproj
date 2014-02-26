@@ -743,6 +743,8 @@
     <Content Include="External Libraries\NRtfTree.dll" />
     <Content Include="External Libraries\ServiceModelEx.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
+    <Resource Include="Resources\Images\dividendonedge32.png" />
+    <Resource Include="Resources\Images\dividendonedge16.png" />
     <Resource Include="Resources\Images\straightedge32.png" />
     <Resource Include="Resources\Images\straightedge16.png" />
     <Resource Include="Resources\Images\noedge32.png" />

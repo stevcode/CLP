@@ -327,6 +327,12 @@
                               Command="{Binding InsertArrayCommand}"
                               CommandParameter="FFCNOEDGE" />
 
+                <RibbonButton Label="Division Tool 4"
+                              LargeImageSource="pack://application:,,,/Resources/Images/dividendonedge32.png"
+                              SmallImageSource="pack://application:,,,/Resources/Images/dividendonedge16.png"
+                              Command="{Binding InsertArrayCommand}"
+                              CommandParameter="FFCDIVIDENDONEDGE" />
+
                 <!--<RibbonButton Label="FFC: labels top, no answer"
                               LargeImageSource="pack://application:,,,/Resources/Images/FactorCard32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/FactorCard16.png"

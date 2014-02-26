@@ -145,6 +145,34 @@ namespace CLP.Models
         }
 
         /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool IsDividendOnEdge
+        {
+            get
+            {
+                return GetValue<bool>(IsDividendOnEdgeProperty);
+            }
+            set
+            {
+                SetValue(IsDividendOnEdgeProperty, value);
+            }
+        }
+
+        public static readonly PropertyData IsDividendOnEdgeProperty = RegisterProperty("IsDividendOnEdge", typeof(bool), false);
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool IsFuzzyEdgeVisible
+        {
+            get
+            {
+                return !(IsDividendOnEdge && CurrentRemainder == 0);
+            }
+        }
+
+        /// <summary>
         /// Register the DefaultFuzzyEdgeColor property so it is known in the class.
         /// </summary>
         public static readonly PropertyData DefaultFuzzyEdgeColorProperty = RegisterProperty("DefaultFuzzyEdgeColor", typeof(string), "Gray");
@@ -318,6 +346,12 @@ namespace CLP.Models
             ArrayWidth = Width - LabelLength - rightLabelLength;
         }
 
+        public override void OnResized()
+        {
+            base.OnResized();
+            RaisePropertyChanged("LastDivisionPosition");
+        }
+
         public void SnapInArray(int value)
         {
             if(IsHorizontallyAligned)
@@ -357,6 +391,7 @@ namespace CLP.Models
             RaisePropertyChanged("GroupsSubtracted");
             RaisePropertyChanged("CurrentRemainder");
             RaisePropertyChanged("LastDivisionPosition");
+            RaisePropertyChanged("IsFuzzyEdgeVisible");
 
             if(IsGridOn)
             {
@@ -417,6 +452,7 @@ namespace CLP.Models
                 RaisePropertyChanged("GroupsSubtracted");
                 RaisePropertyChanged("CurrentRemainder");
                 RaisePropertyChanged("LastDivisionPosition");
+                RaisePropertyChanged("IsFuzzyEdgeVisible");
 
                 CalculateGridLines();
             }

@@ -2394,7 +2394,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 numberOfArrays = 1;
             }
 
-            else if(arrayType == "FUZZYFACTORCARDTOP" || arrayType == "FUZZYFACTORCARDBOTTOM" || arrayType == "FUZZYFACTORCARDBOTTOMNOANSWER" || arrayType == "FUZZYFACTORCARDTOPNOANSWER" || arrayType == "FFCCOMPDISPLAY" || arrayType == "FFCCURLYEDGE" || arrayType == "FFCNOEDGE" || arrayType == "FFCSTRAIGHTEDGE" || arrayType == "FFCCURLYEDGELIGHT")
+            else if(arrayType == "FUZZYFACTORCARDTOP" || arrayType == "FUZZYFACTORCARDBOTTOM" || arrayType == "FUZZYFACTORCARDBOTTOMNOANSWER" || arrayType == "FUZZYFACTORCARDTOPNOANSWER" || arrayType == "FFCCOMPDISPLAY" || arrayType == "FFCCURLYEDGE" || arrayType == "FFCNOEDGE" || arrayType == "FFCSTRAIGHTEDGE" || arrayType == "FFCCURLYEDGELIGHT" || arrayType == "FFCDIVIDENDONEDGE")
             {
                 var factorCreationView = new FuzzyFactorCardCreationView{ Owner = Application.Current.MainWindow};
                 factorCreationView.ShowDialog();
@@ -2526,6 +2526,13 @@ namespace Classroom_Learning_Partner.ViewModels
                         (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = true;
                         (array as CLPFuzzyFactorCard).IsNoRightEdge = true;
                         break;
+                    case "FFCDIVIDENDONEDGE":
+                        array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
+                        (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = true;
+                        (array as CLPFuzzyFactorCard).IsCurlyEdge = true;
+                        (array as CLPFuzzyFactorCard).IsStraightEdge = false;
+                        (array as CLPFuzzyFactorCard).IsDividendOnEdge = true;
+                        break;
                     //case "FUZZYFACTORCARDTOP":
                     //    array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
                     //    (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = true;
@@ -2651,7 +2658,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             //TODO Liz: clean up this code when getting rid of fuzzy factor card variations
-            var minSide = (arrayType == "FUZZYFACTORCARDTOP" || arrayType == "FUZZYFACTORCARDBOTTOM" || arrayType == "FUZZYFACTORCARDTOPNOANSWER" || arrayType == "FUZZYFACTORCARDBOTTOMNOANSWER" || arrayType == "FFCCOMPDISPLAY" || arrayType == "FFCCURLYEDGE" || arrayType == "FFCNOEDGE" || arrayType == "FFCSTRAIGHTEDGE" || arrayType == "FFCCURLYEDGELIGHT")
+            var minSide = (arrayType == "FUZZYFACTORCARDTOP" || arrayType == "FUZZYFACTORCARDBOTTOM" || arrayType == "FUZZYFACTORCARDTOPNOANSWER" || arrayType == "FUZZYFACTORCARDBOTTOMNOANSWER" || arrayType == "FFCCOMPDISPLAY" || arrayType == "FFCCURLYEDGE" || arrayType == "FFCNOEDGE" || arrayType == "FFCSTRAIGHTEDGE" || arrayType == "FFCCURLYEDGELIGHT" || arrayType == "FFCDIVIDENDONEDGE")
                 ? MIN_FFC_SIDE:
                 MIN_SIDE;
             //var minSquareSize = (arrayType == "FUZZYFACTORCARDTOP" || arrayType == "FUZZYFACTORCARDBOTTOM" || arrayType == "FUZZYFACTORCARDTOPNOANSWER" || arrayType == "FUZZYFACTORCARDBOTTOMNOANSWER" || arrayType == "FFCCOMPDISPLAY")
@@ -2662,7 +2669,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //{
             //    minSquareSize = 100;
             //}
-            var defaultSquareSize = (arrayType == "FUZZYFACTORCARDTOP" || arrayType == "FUZZYFACTORCARDBOTTOM" || arrayType == "FUZZYFACTORCARDTOPNOANSWER" || arrayType == "FUZZYFACTORCARDBOTTOMNOANSWER" || arrayType == "FFCCOMPDISPLAY" || arrayType == "FFCCURLYEDGE" || arrayType == "FFCNOEDGE" || arrayType == "FFCSTRAIGHTEDGE" || arrayType == "FFCCURLYEDGELIGHT") ?
+            var defaultSquareSize = (arrayType == "FUZZYFACTORCARDTOP" || arrayType == "FUZZYFACTORCARDBOTTOM" || arrayType == "FUZZYFACTORCARDTOPNOANSWER" || arrayType == "FUZZYFACTORCARDBOTTOMNOANSWER" || arrayType == "FFCCOMPDISPLAY" || arrayType == "FFCCURLYEDGE" || arrayType == "FFCNOEDGE" || arrayType == "FFCSTRAIGHTEDGE" || arrayType == "FFCCURLYEDGELIGHT" || arrayType == "FFCDIVIDENDONEDGE") ?
                 Math.Max(45.0, (minSide / (Math.Min(rows, columns)))):
                 45.0;
             var initializedSquareSize = (squareSize > 0) ? Math.Max(squareSize, (minSide / (Math.Min(rows, columns)))) : defaultSquareSize;
@@ -2807,6 +2814,13 @@ namespace Classroom_Learning_Partner.ViewModels
                         array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
                         (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = true;
                         (array as CLPFuzzyFactorCard).IsNoRightEdge = true;
+                        break;
+                    case "FFCDIVIDENDONEDGE":
+                        array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
+                        (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = true;
+                        (array as CLPFuzzyFactorCard).IsCurlyEdge = true;
+                        (array as CLPFuzzyFactorCard).IsStraightEdge = false;
+                        (array as CLPFuzzyFactorCard).IsDividendOnEdge = true;
                         break;
                     //case "FUZZYFACTORCARDTOP":
                     //    array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
