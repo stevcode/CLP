@@ -20,7 +20,8 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type Thumb}">
-                            <Rectangle Fill="Black" Stroke="Black" Height="15" Width="15" />
+                            <!--<Rectangle Fill="Black" Stroke="Black" Height="15" Width="15" />-->
+                            <Polygon Points="0,0 15,0 15,20 7.5,25 0,20" Fill="LightGray" StrokeThickness="1" Stroke="Black" />
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
@@ -183,7 +184,7 @@
             <Slider Grid.Column="1" 
                     HorizontalAlignment="Center" VerticalAlignment="Center"
                     Style="{StaticResource AnimationSliderStyle}"
-                    Height="20" Width="{Binding ActualWidth, ElementName=PlaybackControls, Converter={StaticResource AddLengthConverter}, ConverterParameter=-75}"
+                    Height="25" Width="{Binding ActualWidth, ElementName=PlaybackControls, Converter={StaticResource AddLengthConverter}, ConverterParameter=-75}"
                     Minimum="0" Maximum="{Binding PageHistory.TotalHistoryTicks}"
                     Value="{Binding PageHistory.CurrentHistoryTick}"
                     IsSnapToTickEnabled="True" TickFrequency="1.0" IsMoveToPointEnabled="True">
