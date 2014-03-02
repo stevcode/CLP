@@ -94,8 +94,7 @@ namespace Classroom_Learning_Partner.ViewModels
             ConvertAllSubmissionsToXPSCommand = new Command(OnConvertAllSubmissionsToXPSCommandExecute);
             RefreshNetworkCommand = new Command(OnRefreshNetworkCommandExecute);
             ToggleThumbnailsCommand = new Command(OnToggleThumbnailsCommandExecute);
-            ClearHistoryCommand = new Command(OnClearHistoryCommandExecute);
-            ClearPageHistoryCommand = new Command(OnClearPageHistoryCommandExecute);
+            
             DisableHistoryCommand = new Command(OnDisableHistoryCommandExecute);
             ExitCommand = new Command(OnExitCommandExecute);
 
@@ -115,6 +114,10 @@ namespace Classroom_Learning_Partner.ViewModels
             ReplayCommand = new Command(OnReplayCommandExecute);
             UndoCommand = new Command(OnUndoCommandExecute, OnUndoCanExecute);
             RedoCommand = new Command(OnRedoCommandExecute, OnRedoCanExecute);
+            ClearHistoryCommand = new Command(OnClearHistoryCommandExecute);
+            ClearNonAnimationHistoryCommand = new Command(OnClearNonAnimationHistoryCommandExecute);
+            ClearPageHistoryCommand = new Command(OnClearPageHistoryCommandExecute);
+            ClearPageNonAnimationHistoryCommand = new Command(OnClearPageNonAnimationHistoryCommandExecute);
 
             //Insert
             ToggleWebcamPanelCommand = new Command<bool>(OnToggleWebcamPanelCommandExecute);
@@ -145,7 +148,8 @@ namespace Classroom_Learning_Partner.ViewModels
             ReplacePageCommand = new Command(OnReplacePageCommandExecute);
             RemoveAllSubmissionsCommand = new Command(OnRemoveAllSubmissionsCommandExecute);
             RemoveAllPageSubmissionsCommand = new Command(OnRemoveAllPageSubmissionsCommandExecute);
-            
+            ShowTagsCommand = new Command(OnShowTagsCommandExecute);
+
             //Page
             AddNewPageCommand = new Command<string>(OnAddNewPageCommandExecute);
             AddNewProofPageCommand = new Command<string>(OnAddNewProofPageCommandExecute);
@@ -1147,36 +1151,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
-        /// Completely clears all histories in a notebook.
-        /// </summary>
-        public Command ClearHistoryCommand { get; private set; }
-
-        private void OnClearHistoryCommandExecute()
-        {
-            if(App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
-            {
-                CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
-                foreach(var page in notebook.Pages)
-                {
-                    page.PageHistory.ClearHistory();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Completely clears the history for the current page.
-        /// </summary>
-        public Command ClearPageHistoryCommand { get; private set; }
-
-        private void OnClearPageHistoryCommandExecute()
-        {
-            var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
-            if(currentPage == null) { return; }
-
-            currentPage.PageHistory.ClearHistory();
-        }
-
-        /// <summary>
         /// Prevents history from storing actions.
         /// </summary>
         public Command DisableHistoryCommand { get; private set; }
@@ -1594,6 +1568,66 @@ namespace Classroom_Learning_Partner.ViewModels
             return page.PageHistory.CanRedo;
         }
 
+        /// <summary>
+        /// Completely clears all histories in a notebook.
+        /// </summary>
+        public Command ClearHistoryCommand { get; private set; }
+
+        private void OnClearHistoryCommandExecute()
+        {
+            if(App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
+            {
+                CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
+                foreach(var page in notebook.Pages)
+                {
+                    page.PageHistory.ClearHistory();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Completely clears all non-animation histories in a notebook.
+        /// </summary>
+        public Command ClearNonAnimationHistoryCommand { get; private set; }
+
+        private void OnClearNonAnimationHistoryCommandExecute()
+        {
+            if(App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
+            {
+                CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
+                foreach(var page in notebook.Pages)
+                {
+                    page.PageHistory.ClearNonAnimationHistory();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Completely clears the history for the current page.
+        /// </summary>
+        public Command ClearPageHistoryCommand { get; private set; }
+
+        private void OnClearPageHistoryCommandExecute()
+        {
+            var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
+            if(currentPage == null) { return; }
+
+            currentPage.PageHistory.ClearHistory();
+        }
+
+        /// <summary>
+        /// Completely clears the non-animation history for the current page.
+        /// </summary>
+        public Command ClearPageNonAnimationHistoryCommand { get; private set; }
+
+        private void OnClearPageNonAnimationHistoryCommandExecute()
+        {
+            var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
+            if(currentPage == null) { return; }
+
+            currentPage.PageHistory.ClearNonAnimationHistory();
+        }
+
         #endregion //History Commands
 
         #region Testing
@@ -1745,6 +1779,28 @@ namespace Classroom_Learning_Partner.ViewModels
             panel.Notebook.Submissions[page.UniqueID].Clear();
             page.NumberOfSubmissions = 0;
             page.NumberOfGroupSubmissions = 0;
+        }
+
+        public Command ShowTagsCommand { get; private set; }
+
+        private void OnShowTagsCommandExecute()
+        {
+            var page = NotebookPagesPanelViewModel.GetCurrentPage();
+
+            string tags = "";
+            foreach(Tag t in page.PageTags) 
+            {
+                string values = "";
+                foreach(TagOptionValue v in t.Value)
+                {
+                    values = values + v.Value.ToString() + ", ";
+                }
+                tags = tags + t.TagType.Name + " = " + values + "\n";
+            }
+
+            var tagsView = new SimpleTextWindowView("Tags for this page", tags);
+            tagsView.Owner = Application.Current.MainWindow;
+            tagsView.ShowDialog();
         }
 
         #endregion //Testing

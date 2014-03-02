@@ -12,7 +12,7 @@ namespace CLP.Models
     [Serializable]
     public class CLPHistoryPageObjectCut : ACLPHistoryItemBase
     {
-        private readonly int STROKE_CUT_DELAY = 750;
+        private const int STROKE_CUT_DELAY = 375;
 
         #region Constructors
 
@@ -120,6 +120,7 @@ namespace CLP.Models
             if(isAnimationUndo)
             {
                 ParentPage.InkStrokes.Add(cuttingStroke);
+             //   Wait(STROKE_CUT_DELAY);
             }
             var halvedPageObjects = new List<ICLPPageObject>();
             foreach(var pageObject in HalvedPageObjectIDs.Select(halvedPageObjectID => ParentPage.GetPageObjectByUniqueID(halvedPageObjectID))) 
@@ -137,15 +138,7 @@ namespace CLP.Models
             CutPageObjects = null;
             if(isAnimationUndo)
             {
-                //TODO: refactor this into a method: Wait(int milliseconds);
-                var frame = new DispatcherFrame();
-                new Thread(() =>
-                {
-                    Thread.Sleep(STROKE_CUT_DELAY);
-                    frame.Continue = false;
-                }).Start();
-                Dispatcher.PushFrame(frame);
-
+            //    Wait(STROKE_CUT_DELAY);
                 ParentPage.InkStrokes.Remove(cuttingStroke);
             }
         }
@@ -164,6 +157,7 @@ namespace CLP.Models
             if(isAnimationRedo)
             {
                 ParentPage.InkStrokes.Add(cuttingStroke);
+                Wait(STROKE_CUT_DELAY);
             }
             var cutPageObjects = new List<ICLPPageObject>();
             foreach(var pageObject in CutPageObjectIDs.Select(cutPageObjectID => ParentPage.GetPageObjectByUniqueID(cutPageObjectID)))
@@ -182,15 +176,7 @@ namespace CLP.Models
             HalvedPageObjects = null;
             if(isAnimationRedo)
             {
-                //TODO: refactor this into a method: Wait(int milliseconds);
-                var frame = new DispatcherFrame();
-                new Thread(() =>
-                {
-                    Thread.Sleep(STROKE_CUT_DELAY);
-                    frame.Continue = false;
-                }).Start();
-                Dispatcher.PushFrame(frame);
-
+                Wait(STROKE_CUT_DELAY);
                 ParentPage.InkStrokes.Remove(cuttingStroke);
             }
         }
@@ -213,6 +199,22 @@ namespace CLP.Models
             clonedHistoryItem.HalvedPageObjects = halvedPageObjects;
 
             return clonedHistoryItem;
+        }
+
+        //TODO: Move to helper class and make public
+        /// <summary>
+        /// Forces the UI Thread to sleep for the given number of milliseconds.
+        /// </summary>
+        /// <param name="timeToWait"></param>
+        private static void Wait(int timeToWait)
+        {
+            var frame = new DispatcherFrame();
+            new Thread(() =>
+            {
+                Thread.Sleep(timeToWait);
+                frame.Continue = false;
+            }).Start();
+            Dispatcher.PushFrame(frame);
         }
 
         #endregion //Methods

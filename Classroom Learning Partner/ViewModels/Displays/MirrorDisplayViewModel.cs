@@ -100,6 +100,17 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData DisplayWidthHeightProperty = RegisterProperty("DisplayWidthHeight", typeof(Tuple<double, double>), new Tuple<double, double>(0.0, 0.0));
 
         /// <summary>
+        /// Height of the toolbar for the current page.
+        /// </summary>
+        public double ToolBarHeight
+        {
+            get { return GetValue<double>(ToolBarHeightProperty); }
+            set { SetValue(ToolBarHeightProperty, value); }
+        }
+
+        public static readonly PropertyData ToolBarHeightProperty = RegisterProperty("ToolBarHeight", typeof(double), 0.0);
+
+        /// <summary>
         /// Thickness of the border around the page.
         /// </summary>
         public double BorderThickness
@@ -215,9 +226,9 @@ namespace Classroom_Learning_Partner.ViewModels
             var borderWidth = DisplayWidthHeight.Item1 - PAGE_MARGIN - 20;
             var borderHeight = borderWidth / pageAspectRatio;
 
-            if(borderHeight > DisplayWidthHeight.Item2 - PAGE_MARGIN)
+            if(borderHeight > DisplayWidthHeight.Item2 - PAGE_MARGIN - ToolBarHeight)
             {
-                borderHeight = DisplayWidthHeight.Item2 - PAGE_MARGIN;
+                borderHeight = DisplayWidthHeight.Item2 - PAGE_MARGIN - ToolBarHeight;
                 borderWidth = borderHeight * pageAspectRatio;
             }
 

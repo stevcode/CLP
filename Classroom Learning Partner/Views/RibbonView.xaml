@@ -799,6 +799,10 @@
 
             <RibbonGroup Header="Page Analysis">
 
+                <RibbonButton Label="Show Tags"
+                              LargeImageSource="..\Images\Array.png"
+                              Command="{Binding ShowTagsCommand}" />
+                
                 <RibbonButton Label="Page Definition"
                               LargeImageSource="..\Images\Array.png"
                               Command="{Binding EditPageDefinitionCommand}" />
@@ -1165,6 +1169,10 @@
                               LargeImageSource="..\Images\LargeIcon.png"
                               Command="{Binding ClearHistoryCommand}" />
                 
+                <RibbonButton Label="Clear NonAnimation History"
+                              LargeImageSource="..\Images\LargeIcon.png"
+                              Command="{Binding ClearNonAnimationHistoryCommand}" />
+                
                 <RibbonButton Label="Clear Page"
                               LargeImageSource="..\Images\LargeIcon.png"
                               Command="{Binding ClearPageCommand}" />
@@ -1188,6 +1196,10 @@
                 <RibbonButton Label="Clear History From Page"
                               LargeImageSource="..\Images\LargeIcon.png"
                               Command="{Binding ClearPageHistoryCommand}" />
+                
+                <RibbonButton Label="Clear NonAnimation History From Page"
+                              LargeImageSource="..\Images\LargeIcon.png"
+                              Command="{Binding ClearPageNonAnimationHistoryCommand}" />
             </RibbonGroup>
 
         </RibbonTab>

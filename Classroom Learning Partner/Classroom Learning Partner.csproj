@@ -214,8 +214,8 @@
     <Compile Include="Network\StudentService.cs" />
     <Compile Include="Resources\Converters.cs" />
     <Compile Include="Resources\InkInterpretation.cs" />
-    <Compile Include="ViewModels\CLPAnimationPageViewModel.cs" />
-    <Compile Include="ViewModels\CLPPageViewModel.cs" />
+    <Compile Include="ViewModels\Pages\CLPAnimationPageViewModel.cs" />
+    <Compile Include="ViewModels\Pages\CLPPageViewModel.cs" />
     <Compile Include="ViewModels\Displays\MirrorDisplayViewModel.cs" />
     <Compile Include="ViewModels\HoverBoxViewModel.cs" />
     <Compile Include="ViewModels\Math\ProductRelationViewModel.cs" />
@@ -230,7 +230,13 @@
     <Compile Include="ViewModels\Panels\SubmissionHistoryPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\SubmissionsPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\WebcamPanelViewModel.cs" />
-    <Compile Include="Views\CLPAnimationPageView.xaml.cs">
+    <Compile Include="Views\Modal Windows\SimpleTextWindowView.xaml.cs">
+      <DependentUpon>SimpleTextWindowView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Pages\AnimationPageToolBar.xaml.cs">
+      <DependentUpon>AnimationPageToolBar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Pages\CLPAnimationPageView.xaml.cs">
       <DependentUpon>CLPAnimationPageView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Modal Windows\FuzzyFactorCardCreationView.xaml.cs">
@@ -263,7 +269,7 @@
     <Compile Include="ViewModels\PageObjects\Ink Regions\CLPGroupingRegionViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Ink Regions\CLPHandwritingRegionViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\ACLPPageObjectBaseViewModel.cs" />
-    <Compile Include="ViewModels\ACLPPageBaseViewModel.cs" />
+    <Compile Include="ViewModels\Pages\ACLPPageBaseViewModel.cs" />
     <Compile Include="ViewModels\Displays\GridDisplayViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Ink Regions\CLPInkShapeRegionViewModel.cs" />
@@ -332,10 +338,10 @@
     <Compile Include="Views\Modal Windows\KeypadWindowView.xaml.cs">
       <DependentUpon>KeypadWindowView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\CLPPagePreviewView.xaml.cs">
+    <Compile Include="Views\Pages\CLPPagePreviewView.xaml.cs">
       <DependentUpon>CLPPagePreviewView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\CLPPageView.xaml.cs">
+    <Compile Include="Views\Pages\CLPPageView.xaml.cs">
       <DependentUpon>CLPPageView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Displays\GridDisplayView.xaml.cs">
@@ -424,7 +430,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\CLPAnimationPageView.xaml">
+    <Page Include="Views\Modal Windows\SimpleTextWindowView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Pages\AnimationPageToolBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Pages\CLPAnimationPageView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -532,11 +546,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\CLPPagePreviewView.xaml">
+    <Page Include="Views\Pages\CLPPagePreviewView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\CLPPageView.xaml">
+    <Page Include="Views\Pages\CLPPageView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

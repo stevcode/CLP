@@ -18,52 +18,12 @@
     </UserControl.Resources>
 
     <Grid>
-
-        <Viewbox Stretch="Uniform" Grid.Row="0">
-            <Canvas x:Name="TopCanvas" Width="{Binding PageWidth}" Height="{Binding PageHeight}" Background="White">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="PreviewMouseMove">
-                        <catel:EventToCommand Command="{Binding MouseMoveCommand}" PassEventArgsToCommand="True" />
-                    </i:EventTrigger>
-                    <i:EventTrigger EventName="PreviewMouseLeftButtonDown">
-                        <catel:EventToCommand Command="{Binding MouseDownCommand}" PassEventArgsToCommand="True" />
-                    </i:EventTrigger>
-                    <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
-                        <catel:EventToCommand Command="{Binding MouseUpCommand}" PassEventArgsToCommand="True" />
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-
-                <ItemsControl ItemsSource="{Binding PageObjects}" 
-                              ItemContainerStyle="{StaticResource ContainerStyle}"
-                              HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <Canvas x:Name="PageObjectCanvas" Background="Transparent" Cursor="{Binding PageCursor}"
-                                    Width="{Binding PageWidth}" Height="{Binding PageHeight}" />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <views:PageObjectContainerView DataContext="{Binding}" />
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-
-                </ItemsControl>
-
-                <InkCanvas Strokes="{Binding InkStrokes}" Background="Transparent"
-                       IsHitTestVisible="{Binding IsInkCanvasHitTestVisible}"
-                       Width="{Binding PageWidth}" Height="{Binding PageHeight}"
-                       EditingMode="{Binding EditingMode}"
-                       EditingModeInverted="{Binding EraserMode}"
-                       DefaultDrawingAttributes="{Binding DefaultDA}"
-                       Cursor="{Binding PageCursor}" ForceCursor="{Binding IsUsingCustomCursors}" />
-
-            </Canvas>
-        </Viewbox>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
         
-        <Grid VerticalAlignment="Bottom" Background="LightGray">
+        <Grid Grid.Row="0" Background="LightGray">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -124,6 +84,50 @@
             </StackPanel>
             
         </Grid>
+
+        <Viewbox Stretch="Uniform" Grid.Row="1">
+            <Canvas x:Name="TopCanvas" Width="{Binding PageWidth}" Height="{Binding PageHeight}" Background="White">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="PreviewMouseMove">
+                        <catel:EventToCommand Command="{Binding MouseMoveCommand}" PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="PreviewMouseLeftButtonDown">
+                        <catel:EventToCommand Command="{Binding MouseDownCommand}" PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                        <catel:EventToCommand Command="{Binding MouseUpCommand}" PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+
+                <ItemsControl ItemsSource="{Binding PageObjects}" 
+                              ItemContainerStyle="{StaticResource ContainerStyle}"
+                              HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas x:Name="PageObjectCanvas" Background="Transparent" Cursor="{Binding PageCursor}"
+                                    Width="{Binding PageWidth}" Height="{Binding PageHeight}" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <views:PageObjectContainerView DataContext="{Binding}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+
+                </ItemsControl>
+
+                <InkCanvas Strokes="{Binding InkStrokes}" Background="Transparent"
+                       IsHitTestVisible="{Binding IsInkCanvasHitTestVisible}"
+                       Width="{Binding PageWidth}" Height="{Binding PageHeight}"
+                       EditingMode="{Binding EditingMode}"
+                       EditingModeInverted="{Binding EraserMode}"
+                       DefaultDrawingAttributes="{Binding DefaultDA}"
+                       Cursor="{Binding PageCursor}" ForceCursor="{Binding IsUsingCustomCursors}" />
+
+            </Canvas>
+        </Viewbox>
 
     </Grid>
 
