@@ -25,6 +25,8 @@ namespace CLP.Models
             ValueOptions.Add(new TagOptionValue("one array")); // Only one array snapped in
             ValueOptions.Add(new TagOptionValue("none")); // No arrays snapped in
             ValueOptions.Add(new TagOptionValue("not enough")); // Not enough arrays snapped in
+            //TODO Liz - add "too many" as seperate tag type
+            ValueOptions.Add(new TagOptionValue("too many")); 
             ValueOptions.Add(new TagOptionValue("other")); // None of the above*
 
         }

@@ -488,9 +488,8 @@ namespace CLP.Models
                     tag.TagType.Name == RepresentationCorrectnessTagType.Instance.Name ||
                     tag.TagType.Name == FuzzyFactorCardStrategyTagType.Instance.Name)
                 {
-                    // TODO Liz
+                    //TODO Liz - uncomment this after making seperate tag for going over edge
                     //tags.Remove(tag);
-                    Logger.Instance.WriteToLog("Tag added: " + tag.TagType.Name + " -> " + tag.Value[0].Value);
                 }
             }
 
@@ -603,6 +602,7 @@ namespace CLP.Models
             }
 
             Logger.Instance.WriteToLog("Tag added: " + strategyTag.TagType.Name + " -> " + strategyTag.Value[0].Value);
+            tags.Add(strategyTag);
 
             //// Add an array divider correctness tag
             //Tag divisionCorrectnessTag = CheckArrayDivisionCorrectness(array);

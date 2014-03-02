@@ -469,6 +469,24 @@ namespace Classroom_Learning_Partner.ViewModels
                                 //var oldX = 10.0;
                                 //var oldY = 10.0;
                                 //ACLPPageObjectBaseViewModel.ChangePageObjectPosition(snappingArray, oldX, oldY, false);
+                                
+                                bool hasTag = false;
+                                foreach(Tag tag in PageObject.ParentPage.PageTags.ToList())
+                                {
+                                    if(tag.TagType.Name == FuzzyFactorCardStrategyTagType.Instance.Name && tag.Value.Contains(new TagOptionValue("too many")))
+                                    {
+                                        hasTag = true;
+                                        continue;
+                                    }
+                                }
+
+                                //Apply tag to note that the student tried to snap too many
+                                if(!hasTag)
+                                {
+                                    Tag strategyTag = new Tag(Tag.Origins.Generated, FuzzyFactorCardStrategyTagType.Instance);
+                                    strategyTag.AddTagOptionValue(new TagOptionValue("too many"));
+                                    PageObject.ParentPage.PageTags.Add(strategyTag);
+                                }
 
                                 var factorCardViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(factorCard);
                                 foreach(var viewModel in factorCardViewModels)
