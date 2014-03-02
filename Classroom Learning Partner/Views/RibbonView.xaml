@@ -807,6 +807,10 @@
                               LargeImageSource="..\Images\Array.png"
                               Command="{Binding AnalyzeArrayCommand}" />
 
+                <RibbonButton Label="Analyze Division Tool"
+                              LargeImageSource="pack://application:,,,/Resources/Images/curlyedge32.png"
+                              Command="{Binding AnalyzeFuzzyFactorCardCommand}" />
+
                 <RibbonButton Label="Analyze Stamps"
                               LargeImageSource="..\Images\AddPathStamp.png"
                               Command="{Binding AnalyzeStampsCommand}" />

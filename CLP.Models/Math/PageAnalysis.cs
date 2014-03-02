@@ -423,6 +423,209 @@ namespace CLP.Models
         }
 
         /// <summary>
+        /// Method to invoke when the AnalyzeFuzzyFactorCardCommand command is executed.
+        /// </summary>
+        public static void AnalyzeFuzzyFactorCard(ICLPPage page)
+        {
+            Logger.Instance.WriteToLog("Start of PageAnalysis.AnalyzeFuzzyFactorCard");
+            ObservableCollection<Tag> tags = page.PageTags;
+            ProductRelation relation = null;
+            foreach(Tag tag in tags)
+            {
+                if(tag.TagType.Name == PageDefinitionTagType.Instance.Name)
+                {
+                    relation = (ProductRelation)tag.Value[0].Value;
+                    break;
+                }
+            }
+
+            if(relation == null)
+            {
+                // No definition for the page!
+                Logger.Instance.WriteToLog("No page definition found! :(");
+                return;
+            }
+
+
+            // Find FFC object on the page (just use the first one we find), or be sad if we don't find one
+            ObservableCollection<ICLPPageObject> objects = page.PageObjects;
+            CLPFuzzyFactorCard ffc = null;
+
+            foreach(ICLPPageObject pageObject in objects)
+            {
+                if(pageObject.GetType() == typeof(CLPFuzzyFactorCard))
+                {
+                    ffc = (CLPFuzzyFactorCard)pageObject;
+                    break;
+                }
+            }
+
+            if(ffc == null)
+            {
+                // No FFC on the page!
+                Logger.Instance.WriteToLog("No fuzzy factor card found! :(");
+                return;
+            }
+
+            //TODO Liz: make work for rotated FFCs
+
+            // We have a page definition and an array, so we're good to go!
+            Logger.Instance.WriteToLog("FuzzyFactorCard found! Product: " + ffc.Dividend + " Factor: " + ffc.Rows);
+
+            int ffcWidth = ffc.Columns;
+            int ffcHeight = ffc.Rows;
+            int ffcDividend = ffc.Dividend;
+
+            // TODO: Add handling for variables in math relation
+            int factor1 = Convert.ToInt32(relation.Factor1);
+            int factor2 = Convert.ToInt32(relation.Factor2);
+            int product = Convert.ToInt32(relation.Product);
+
+            // First, clear out any old FFC TagTypes
+            foreach(Tag tag in tags.ToList())
+            {
+                if(tag.TagType == null ||
+                    tag.TagType.Name == RepresentationCorrectnessTagType.Instance.Name ||
+                    tag.TagType.Name == FuzzyFactorCardStrategyTagType.Instance.Name)
+                {
+                    // TODO Liz
+                    //tags.Remove(tag);
+                    Logger.Instance.WriteToLog("Tag added: " + tag.TagType.Name + " -> " + tag.Value[0].Value);
+                }
+            }
+
+            // Apply a representation correctness tag
+            Tag correctnessTag = new Tag(Tag.Origins.Generated, RepresentationCorrectnessTagType.Instance);
+            correctnessTag.AddTagOptionValue(new TagOptionValue("Error: Other"));
+
+            if(product == ffcDividend && ( factor1 == ffcHeight || factor2 == ffcHeight) )
+            {
+                correctnessTag.AddTagOptionValue(new TagOptionValue("Correct"));
+            }
+            else
+            {
+                // One more possibility: The representation uses the givens in the problem, but in the wrong way
+                ObservableCollection<int> givens = new ObservableCollection<int>();
+                if(relation.Factor1Given)
+                {
+                    givens.Add(factor1);
+                }
+                if(relation.Factor2Given)
+                {
+                    givens.Add(factor2);
+                }
+                if(relation.ProductGiven)
+                {
+                    givens.Add(product);
+                }
+
+                ObservableCollection<int> numbersUsed = new ObservableCollection<int>();
+                numbersUsed.Add(ffcWidth);
+                numbersUsed.Add(ffcHeight);
+                numbersUsed.Add(ffcDividend);
+
+                if(givens.Count == 2 && numbersUsed.Contains(givens[0]) && numbersUsed.Contains(givens[1]))
+                {
+                    correctnessTag.AddTagOptionValue(new TagOptionValue("Error: Misused Givens"));
+                }
+            }
+
+            tags.Add(correctnessTag);
+
+            // Apply an orientation tag
+            //Tag orientationTag = new Tag(Tag.Origins.Generated, ArrayOrientationTagType.Instance);
+            //if(arrayWidth == factor1 && arrayHeight == factor2)
+            //{
+            //    orientationTag.AddTagOptionValue(new TagOptionValue("First factor is width"));
+            //}
+            //else if(arrayWidth == factor2 && arrayHeight == factor1)
+            //{
+            //    orientationTag.AddTagOptionValue(new TagOptionValue("First factor is height"));
+            //}
+            //else
+            //{
+            //    orientationTag.AddTagOptionValue(new TagOptionValue("unknown"));
+            //}
+            //tags.Add(orientationTag);
+            //Logger.Instance.WriteToLog("Tag added: " + orientationTag.TagType.Name + " -> " + orientationTag.Value[0].Value);
+
+            // Apply a strategy tag
+            Tag strategyTag = new Tag(Tag.Origins.Generated, FuzzyFactorCardStrategyTagType.Instance);
+
+            // First check the horizontal divisions
+            // Create a sorted list of the divisions' labels (as entered by the student)
+            List<int> divs = new List<int>();
+            foreach(CLPArrayDivision div in ffc.VerticalDivisions)
+            {
+                divs.Add(div.Value);
+            }
+            divs.Sort();
+
+            // special case where no dividers have been added to axis
+            //if(ffc.VerticalDivisions.Count == 0)
+            //{
+            //    divs.Add(ffc.Rows);
+            //}
+
+            /*String horizDivsString = "";
+            foreach(int x in horizDivs)
+            {
+                horizDivsString += (x.ToString() + " ");
+            }
+            Logger.Instance.WriteToLog("Number of horizontal regions: " + horizDivs.Count);
+            Logger.Instance.WriteToLog("Student's horizontal divisions (sorted): " + horizDivsString);*/
+
+            // Now check the student's divisions against known strategies
+            if(ffc.VerticalDivisions.Count == 0)
+            {
+                strategyTag.AddTagOptionValue(new TagOptionValue("none"));
+            }
+            if(divs.Sum() != ffcWidth)
+            {
+                strategyTag.AddTagOptionValue(new TagOptionValue("not enough"));
+            }
+            else if (ffc.VerticalDivisions.Count == 2 && divs.Last() == ffcWidth)
+            {
+                strategyTag.AddTagOptionValue(new TagOptionValue("one array"));
+            }
+            else if(ffc.VerticalDivisions.Count == ffcWidth  + 1)
+            {
+                strategyTag.AddTagOptionValue(new TagOptionValue("1's"));
+            }
+            else if(ffcWidth >= 10 && divs.SequenceEqual(TensStrategyDivisions(ffcWidth)))
+            {
+                // TODO Liz: verify works for ffcWidth between 10 and 20
+                strategyTag.AddTagOptionValue(new TagOptionValue("10's"));
+            }
+            else
+            {
+                strategyTag.AddTagOptionValue(new TagOptionValue("other"));
+            }
+
+            Logger.Instance.WriteToLog("Tag added: " + strategyTag.TagType.Name + " -> " + strategyTag.Value[0].Value);
+
+            //// Add an array divider correctness tag
+            //Tag divisionCorrectnessTag = CheckArrayDivisionCorrectness(array);
+            //tags.Add(divisionCorrectnessTag);
+
+            //Logger.Instance.WriteToLog("Tag added: " + divisionCorrectnessTag.TagType.Name + " -> " + divisionCorrectnessTag.Value[0].Value);
+
+            //// Add tags for the number of horizontal and vertical divisions
+            //Tag horizDivsTag = new Tag(Tag.Origins.Generated, ArrayHorizontalDivisionsTagType.Instance);
+            //int horizRegions = array.HorizontalDivisions.Count == 0 ? 1 : array.HorizontalDivisions.Count;
+            //horizDivsTag.Value.Add(new TagOptionValue(horizRegions.ToString() + " region" + (horizRegions == 1 ? "" : "s")));
+            //tags.Add(horizDivsTag);
+
+            //Tag vertDivsTag = new Tag(Tag.Origins.Generated, ArrayVerticalDivisionsTagType.Instance);
+            //int vertRegions = array.VerticalDivisions.Count == 0 ? 1 : array.VerticalDivisions.Count;
+            //vertDivsTag.Value.Add(new TagOptionValue(vertRegions.ToString() + " region" + (horizRegions == 1 ? "" : "s")));
+            //tags.Add(vertDivsTag);
+
+            //Logger.Instance.WriteToLog("Tag added: " + horizDivsTag.TagType.Name + " -> " + horizDivsTag.Value[0].Value);
+            //Logger.Instance.WriteToLog("Tag added: " + vertDivsTag.TagType.Name + " -> " + vertDivsTag.Value[0].Value);
+        }
+
+        /// <summary>
         /// Method to invoke when the AnalyzeStampsCommand command is executed.
         /// </summary>
         public static void AnalyzeStamps(ICLPPage page)

@@ -168,6 +168,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Analysis
             AnalyzeArrayCommand = new Command(OnAnalyzeArrayCommandExecute);
+            AnalyzeFuzzyFactorCardCommand = new Command(OnAnalyzeFuzzyFactorCardCommandExecute);
             AnalyzeStampsCommand = new Command(OnAnalyzeStampsCommandExecute);
         }
 
@@ -3038,6 +3039,28 @@ namespace Classroom_Learning_Partner.ViewModels
             var page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage;
 
             PageAnalysis.AnalyzeArray(page);
+        }
+
+        /// <summary>
+        /// Gets the AnalyzeFuzzyFactorCardCommand command.
+        /// </summary>
+        public Command AnalyzeFuzzyFactorCardCommand
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Method to invoke when the AnalyzeFuzzyFactorCardCommand command is executed.
+        /// </summary>
+        private void OnAnalyzeFuzzyFactorCardCommandExecute()
+        {
+            Logger.Instance.WriteToLog("Start of OnAnalyzeFuzzyFactorCardCommandExecute()");
+
+            // Get the page's math definition, or be sad if it doesn't have one
+            var page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage;
+
+            PageAnalysis.AnalyzeFuzzyFactorCard(page);
         }
 
         /// <summary>
