@@ -63,6 +63,10 @@
                 <Views:CLPFuzzyFactorCardView DataContext="{Binding}" />
             </ControlTemplate>
 
+            <ControlTemplate x:Key="CLPFuzzyFactorCardRemainderTemplate">
+                <Views:CLPFuzzyFactorCardRemainderView DataContext="{Binding}" />
+            </ControlTemplate>
+
             <ControlTemplate x:Key="CLPFactorCardTemplate">
                 <Views:CLPFactorCardView DataContext="{Binding}" />
             </ControlTemplate>
@@ -149,6 +153,11 @@
                     <!-- CLPFuzzyFactorCard trigger -->
                     <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPFuzzyFactorCard">
                         <Setter Property="Template" Value="{StaticResource CLPFuzzyFactorCardTemplate}" />
+                    </DataTrigger>
+                    
+                    <!-- CLPFuzzyFactorCardRemainder trigger -->
+                    <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPFuzzyFactorCardRemainder">
+                        <Setter Property="Template" Value="{StaticResource CLPFuzzyFactorCardRemainderTemplate}" />
                     </DataTrigger>
 
                     <!-- CLPFactorCard trigger -->

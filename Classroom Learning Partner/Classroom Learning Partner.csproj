@@ -196,6 +196,7 @@
     <Compile Include="Converters\EnumToBoolConverter.cs" />
     <Compile Include="Converters\FFCMarginConverter.cs" />
     <Compile Include="Converters\HeightToWidthAspectRatioMultiConverter.cs" />
+    <Compile Include="Converters\IntToOppositeVisibilityConverter.cs" />
     <Compile Include="Converters\IntToVisibilityConverter.cs" />
     <Compile Include="Converters\ItemsControlItemIndexConverter.cs" />
     <Compile Include="Converters\ItemSelectedToColorConverter.cs" />
@@ -214,6 +215,7 @@
     <Compile Include="Network\StudentService.cs" />
     <Compile Include="Resources\Converters.cs" />
     <Compile Include="Resources\InkInterpretation.cs" />
+    <Compile Include="ViewModels\PageObjects\CLPFuzzyFactorCardRemainderViewModel.cs" />
     <Compile Include="ViewModels\Pages\CLPAnimationPageViewModel.cs" />
     <Compile Include="ViewModels\Pages\CLPPageViewModel.cs" />
     <Compile Include="ViewModels\Displays\MirrorDisplayViewModel.cs" />
@@ -232,6 +234,9 @@
     <Compile Include="ViewModels\Panels\WebcamPanelViewModel.cs" />
     <Compile Include="Views\Modal Windows\SimpleTextWindowView.xaml.cs">
       <DependentUpon>SimpleTextWindowView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PageObjects\CLPFuzzyFactorCardRemainderView.xaml.cs">
+      <DependentUpon>CLPFuzzyFactorCardRemainderView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Pages\AnimationPageToolBar.xaml.cs">
       <DependentUpon>AnimationPageToolBar.xaml</DependentUpon>
@@ -433,6 +438,10 @@
     <Page Include="Views\Modal Windows\SimpleTextWindowView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\PageObjects\CLPFuzzyFactorCardRemainderView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Pages\AnimationPageToolBar.xaml">
       <SubType>Designer</SubType>

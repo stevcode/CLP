@@ -270,6 +270,10 @@
             <RibbonGroup Header="Insert"
                          Visibility="{Binding InstructorVisibility, Converter={StaticResource BooleanToOppositeBooleanConverter}}">
 
+                <RibbonButton Label="Stamp"
+                              LargeImageSource="..\Images\AddPathStamp.png"
+                              Command="{Binding InsertBlankStampCommand}" />
+                
                 <!--Array + Divider - Left-Handed-->
                 <!--<RibbonButton Label="Array"
                               LargeImageSource="pack://application:,,,/Resources/Images/Array32.png"
@@ -303,7 +307,7 @@
                               Command="{Binding InsertArrayCommand}"
                               CommandParameter="FUZZYFACTORCARDTOP" />-->
                 
-                <RibbonButton Label="Division Tool 1a"
+                <!--<RibbonButton Label="Division Tool 1a"
                               LargeImageSource="pack://application:,,,/Resources/Images/curlyedge32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/curlyedge16.png"
                               Command="{Binding InsertArrayCommand}"
@@ -325,13 +329,19 @@
                               LargeImageSource="pack://application:,,,/Resources/Images/noedge32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/noedge16.png"
                               Command="{Binding InsertArrayCommand}"
-                              CommandParameter="FFCNOEDGE" />
+                              CommandParameter="FFCNOEDGE" />-->
 
-                <RibbonButton Label="Division Tool 4"
+                <RibbonButton Label="Division Tool"
                               LargeImageSource="pack://application:,,,/Resources/Images/dividendonedge32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/dividendonedge16.png"
                               Command="{Binding InsertArrayCommand}"
                               CommandParameter="FFCDIVIDENDONEDGE" />
+
+                <RibbonButton Label="Division Tool With Remainder"
+                              LargeImageSource="pack://application:,,,/Resources/Images/dividendonedge32.png"
+                              SmallImageSource="pack://application:,,,/Resources/Images/dividendonedge16.png"
+                              Command="{Binding InsertArrayCommand}"
+                              CommandParameter="FFCREMAINDER" />
 
                 <!--<RibbonButton Label="FFC: labels top, no answer"
                               LargeImageSource="pack://application:,,,/Resources/Images/FactorCard32.png"
@@ -599,9 +609,9 @@
 
             <RibbonGroup Header="Stamps">
 
-                <RibbonButton Label="Stamp"
+                <!--<RibbonButton Label="Stamp"
                               LargeImageSource="..\Images\AddPathStamp.png"
-                              Command="{Binding InsertBlankStampCommand}" />
+                              Command="{Binding InsertBlankStampCommand}" />-->
 
                 <RibbonButton Label="Collection Stamp"
                               LargeImageSource="..\Images\AddPathStamp.png"

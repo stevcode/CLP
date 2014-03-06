@@ -458,23 +458,52 @@ namespace Classroom_Learning_Partner.ViewModels
                 if(pageObject.PageObjectType == "CLPFuzzyFactorCard")
                 {
                     var factorCard = pageObject as CLPFuzzyFactorCard;
-                    if(isVerticalIntersection && snappingArray.Rows == factorCard.Rows)
+                    if(isVerticalIntersection)
                     {
                         var diff = Math.Abs(snappingArray.XPosition + snappingArray.LabelLength - (persistingArray.XPosition + persistingArray.LabelLength + factorCard.LastDivisionPosition));
                         if(diff < 50)
                         {
+                            if(snappingArray.Rows != factorCard.Rows)
+                            {
+                                bool hasTag = false;
+                                foreach(Tag tag in PageObject.ParentPage.PageTags.ToList())
+                                {
+                                    if(tag.TagType.Name == FuzzyFactorCardFailedSnapTagType.Instance.Name)
+                                    {
+                                        if(!tag.Value.Contains(new TagOptionValue("snapped incorrect dimension")))
+                                        {
+                                            tag.Value.Add(new TagOptionValue("snapped incorrect dimension"));
+                                        }
+                                        hasTag = true;
+                                        continue;
+                                    }
+                                }
+
+                                //Apply tag to note that the student tried to snap mismatched array
+                                if(!hasTag)
+                                {
+                                    Tag tag = new Tag(Tag.Origins.Generated, FuzzyFactorCardFailedSnapTagType.Instance);
+                                    tag.AddTagOptionValue(new TagOptionValue("snapped incorrect dimension"));
+                                    PageObject.ParentPage.PageTags.Add(tag);
+                                }
+                                continue;
+                            }
                             if(factorCard.CurrentRemainder < factorCard.Rows * snappingArray.Columns)
                             {
                                 //TODO Liz - get old position - maybe from move batch? (Steve will email about this)
                                 //var oldX = 10.0;
                                 //var oldY = 10.0;
                                 //ACLPPageObjectBaseViewModel.ChangePageObjectPosition(snappingArray, oldX, oldY, false);
-                                
+
                                 bool hasTag = false;
                                 foreach(Tag tag in PageObject.ParentPage.PageTags.ToList())
                                 {
-                                    if(tag.TagType.Name == FuzzyFactorCardStrategyTagType.Instance.Name && tag.Value.Contains(new TagOptionValue("too many")))
+                                    if(tag.TagType.Name == FuzzyFactorCardFailedSnapTagType.Instance.Name)
                                     {
+                                        if(!tag.Value.Contains(new TagOptionValue("too many")))
+                                        {
+                                            tag.Value.Add(new TagOptionValue("too many"));
+                                        }
                                         hasTag = true;
                                         continue;
                                     }
@@ -483,9 +512,9 @@ namespace Classroom_Learning_Partner.ViewModels
                                 //Apply tag to note that the student tried to snap too many
                                 if(!hasTag)
                                 {
-                                    Tag strategyTag = new Tag(Tag.Origins.Generated, FuzzyFactorCardStrategyTagType.Instance);
-                                    strategyTag.AddTagOptionValue(new TagOptionValue("too many"));
-                                    PageObject.ParentPage.PageTags.Add(strategyTag);
+                                    Tag tag = new Tag(Tag.Origins.Generated, FuzzyFactorCardFailedSnapTagType.Instance);
+                                    tag.AddTagOptionValue(new TagOptionValue("too many"));
+                                    PageObject.ParentPage.PageTags.Add(tag);
                                 }
 
                                 var factorCardViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(factorCard);
@@ -503,8 +532,14 @@ namespace Classroom_Learning_Partner.ViewModels
                             }
 
                             //Add a new division and remove snapping array
-                            if(factorCard.IsHorizontallyAligned) { factorCard.SnapInArray(snappingArray.Columns);}
-                            else { factorCard.SnapInArray(snappingArray.Rows); }
+                            if(factorCard.IsHorizontallyAligned)
+                            {
+                                factorCard.SnapInArray(snappingArray.Columns);
+                            }
+                            else
+                            {
+                                factorCard.SnapInArray(snappingArray.Rows);
+                            }
                             PageObject.ParentPage.PageObjects.Remove(PageObject);
 
                             ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryFFCArraySnappedIn(PageObject.ParentPage, pageObject.UniqueID, snappingArray));

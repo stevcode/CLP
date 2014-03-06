@@ -19,13 +19,24 @@ namespace CLP.Models
 
         #region Constructors
 
-        public CLPFuzzyFactorCard(int rows, int columns, int dividend, ICLPPage page)
+        public CLPFuzzyFactorCard(int rows, int columns, int dividend, ICLPPage page, bool displayRemainderRegion=false)
             : base(rows, columns, page)
         {
             Dividend = dividend;
             IsGridOn = rows < 45 && columns < 45;
             IsAnswerVisible = true;
             IsArrayDivisionLabelOnTop = true;
+
+            if(displayRemainderRegion)
+            {
+                CLPFuzzyFactorCardRemainder remainderRegion = new CLPFuzzyFactorCardRemainder(this, dividend, page);
+                page.PageObjects.Add(remainderRegion);
+                RemainderRegionUniqueID = remainderRegion.UniqueID;
+                Console.Write("Unique ID here: ");
+                Console.WriteLine(RemainderRegionUniqueID);
+            }
+            Console.Write("Unique ID here2: ");
+            Console.WriteLine(RemainderRegionUniqueID);
         }
         
         /// <summary>
@@ -273,6 +284,26 @@ namespace CLP.Models
             }
         }
 
+        /// <summary>
+        /// UniqueID of the region of remainder tiles. Null if not displaying remainder tiles.
+        /// </summary>
+        public string RemainderRegionUniqueID
+        {
+            get
+            {
+                return GetValue<string>(RemainderRegionUniqueIDProperty);
+            }
+            set
+            {
+                SetValue(RemainderRegionUniqueIDProperty, value);
+            }
+        }
+
+        /// <summary>
+        /// Register the RemainderRegionUniqueID property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData RemainderRegionUniqueIDProperty = RegisterProperty("RemainderRegionUniqueID", typeof(string), null);
+
         #endregion //Properties
 
         #region Methods
@@ -352,6 +383,13 @@ namespace CLP.Models
             RaisePropertyChanged("LastDivisionPosition");
         }
 
+        public override void OnRemoved()
+        {
+            CLPFuzzyFactorCardRemainder remainderRegion = ParentPage.GetPageObjectByUniqueID(RemainderRegionUniqueID) as CLPFuzzyFactorCardRemainder;
+            ParentPage.PageObjects.Remove(remainderRegion);
+            base.OnRemoved();
+        }
+
         public void SnapInArray(int value)
         {
             if(IsHorizontallyAligned)
@@ -383,6 +421,13 @@ namespace CLP.Models
                 }
 
                 VerticalDivisions.Add(bottomDiv);
+
+                //Update Remainder Region
+                if(RemainderRegionUniqueID != null)
+                {
+                    CLPFuzzyFactorCardRemainder remainderRegion = ParentPage.GetPageObjectByUniqueID(RemainderRegionUniqueID) as CLPFuzzyFactorCardRemainder;
+                    remainderRegion.RemoveTiles(value * Rows);
+                }
             }
 
             //TODO Liz: Add ability to snap in arrays when rotated

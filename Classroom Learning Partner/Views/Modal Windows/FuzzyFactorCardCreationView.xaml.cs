@@ -106,7 +106,7 @@ namespace Classroom_Learning_Partner.Views
             {
                 MessageBox.Show("Your factor is too big a number. Please keep it below " + MAX_ARRAY_ROWSCOLUMNS + ".", "Oops");
             }
-            else if(productNum / (factorNum * factorNum) > 6 || (factorNum * factorNum) / productNum > 8)
+            else if(productNum / (factorNum * factorNum) > 5 || (factorNum * factorNum) / productNum > 8)
             {
                 MessageBox.Show("The ratio between the dimensions for the numbers you entered is too large. Please try again.", "Okay");
             }

@@ -591,11 +591,11 @@ namespace CLP.Models
             {
                 strategyTag.AddTagOptionValue(new TagOptionValue("1's"));
             }
-            else if(ffcWidth >= 10 && divs.SequenceEqual(TensStrategyDivisions(ffcWidth)))
-            {
-                // TODO Liz: verify works for ffcWidth between 10 and 20
-                strategyTag.AddTagOptionValue(new TagOptionValue("10's"));
-            }
+            //else if(ffcWidth >= 10 && divs.SequenceEqual(TensStrategyDivisions(ffcWidth)))
+            //{
+            //    // TODO Liz: verify works for ffcWidth between 10 and 20
+            //    strategyTag.AddTagOptionValue(new TagOptionValue("10's"));
+            //}
             else
             {
                 strategyTag.AddTagOptionValue(new TagOptionValue("other"));

@@ -20,6 +20,7 @@
         <conv:BoolToAlignmentConverter x:Key="BoolToAlignmentConverter" />
         <conv:DivisionPositionToColorMultiConverter x:Key="DivisionPositionToColorMultiConverter" />
         <conv:IntToVisibilityConverter x:Key="IntToVisibilityConverter" />
+        <conv:IntToOppositeVisibilityConverter x:Key="IntToOppositeVisibilityConverter" />
         <conv:FFCMarginConverter x:Key="FFCMarginConverter" />
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <Style x:Key="HorizontalGridLineStyle">
@@ -634,17 +635,16 @@
                 <!--Dividend in option 4-->
                 <Ellipse Grid.Column="1" Grid.Row="0" Height="63" Width="63"
                      StrokeThickness="3" Stroke="Black"  Fill="White" 
-                     VerticalAlignment="Top" HorizontalAlignment="Left" Margin="-32 20 0 0"
-                     Visibility="{Binding IsDividendOnEdge, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                     VerticalAlignment="Top" HorizontalAlignment="Left" Margin="-32 15 0 0"
+                     Visibility="{Binding PageObject.GroupsSubtracted, Converter={StaticResource IntToVisibilityConverter}}"/>
 
                 <TextBlock Grid.Column="1" Grid.Row="0" Height="63" Width="63"
                        IsHitTestVisible="False"
                            FontWeight="Bold" FontSize="32"
                            Foreground="Black"
-                           VerticalAlignment="Top" HorizontalAlignment="Left" Margin="-32 33 0 0"
+                           VerticalAlignment="Top" HorizontalAlignment="Left" Margin="-32 28 0 0"
                            Text="{Binding Dividend}" TextAlignment="Center"
-                           Visibility="{Binding IsDividendOnEdge, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-
+                          Visibility="{Binding PageObject.GroupsSubtracted, Converter={StaticResource IntToVisibilityConverter}}"/>
             </Grid>
 
             <!--Array Left edge--><!--
@@ -673,15 +673,15 @@
             <!--Dividend-->
             <Ellipse Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="1" Height="63" Width="63"
                      StrokeThickness="3" Stroke="Black"  Fill="Transparent" 
-                     VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0 20 0 0"
-                     Visibility="{Binding IsDividendOnEdge, Converter={StaticResource BooleanToOppositeVisibilityConverter}}"/>
+                     VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0 15 0 0"
+                     Visibility="{Binding PageObject.GroupsSubtracted, Converter={StaticResource IntToOppositeVisibilityConverter}}"/>
 
             <TextBlock Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="1"
                        IsHitTestVisible="False"
                        FontWeight="Bold" FontSize="32"
                        Foreground="Black"
-                       VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0 33 0 0"
-                       Visibility="{Binding IsDividendOnEdge, Converter={StaticResource BooleanToOppositeVisibilityConverter}}"
+                       VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0 28 0 0"
+                       Visibility="{Binding PageObject.GroupsSubtracted, Converter={StaticResource IntToOppositeVisibilityConverter}}"
                        Text="{Binding Dividend}"/>
 
             <!--Array hit box-->

@@ -308,8 +308,8 @@
                 <!--Toggle Division Adorners Button-->
                 <!--<Button Command="{Binding ToggleDivisionAdornersCommand}"
                         Width="40" Height="40"
-                        Canvas.Left="20"
-                        Canvas.Top="-50"
+                        Canvas.Left="-50"
+                        Canvas.Top="20"
                         Visibility="{Binding IsToggleDivisionAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">

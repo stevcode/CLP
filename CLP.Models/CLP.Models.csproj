@@ -127,6 +127,7 @@
     <Compile Include="CLPPageObjects\CLPFactorCard.cs" />
     <Compile Include="CLPPageObjects\CLPFFCComputationDisplay.cs" />
     <Compile Include="CLPPageObjects\CLPFuzzyFactorCard.cs" />
+    <Compile Include="CLPPageObjects\CLPFuzzyFactorCardRemainder.cs" />
     <Compile Include="CLPPageObjects\CLPRegion.cs" />
     <Compile Include="Displays\ICLPDisplay.cs" />
     <Compile Include="Extension Methods\SolidColorBrushExtension.cs" />
@@ -186,6 +187,7 @@
     <Compile Include="Tags\ArrayYAxisStrategyTagType.cs" />
     <Compile Include="Tags\CorrectnessTagType.cs" />
     <Compile Include="Tags\DomainInterpretationTagType.cs" />
+    <Compile Include="Tags\FuzzyFactorCardFailedSnapTagType.cs" />
     <Compile Include="Tags\FuzzyFactorCardStrategyTagType.cs" />
     <Compile Include="Tags\PageDefinitionTagType.cs" />
     <Compile Include="Tags\PageTopicTagType.cs" />
