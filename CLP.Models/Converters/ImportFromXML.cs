@@ -195,27 +195,21 @@ namespace CLP.Models
                     reader.MoveToContent();
                     array.IsGridOn = reader.ReadElementContentAsBoolean();
 
-                    reader.Read();
                     reader.MoveToContent();
                     array.IsDivisionBehaviorOn = reader.ReadElementContentAsBoolean();
 
-                    reader.Read();
                     reader.MoveToContent();
                     array.ArrayHeight = reader.ReadElementContentAsDouble();
 
-                    reader.Read();
                     reader.MoveToContent();
                     array.ArrayWidth = reader.ReadElementContentAsDouble();
 
-                    reader.Read();
                     reader.MoveToContent();
                     array.Rows = reader.ReadElementContentAsInt();
 
-                    reader.Read();
                     reader.MoveToContent();
                     array.Columns = reader.ReadElementContentAsInt();
 
-                    reader.Read();
                     reader.MoveToContent();
                     if(!reader.IsEmptyElement)
                     {
@@ -225,8 +219,11 @@ namespace CLP.Models
                             array.HorizontalGridLines.Add(Convert.ToDouble(position));
                         }
                     }
+                    else
+                    {
+                        reader.Read();
+                    }
 
-                    reader.Read();
                     reader.MoveToContent();
                     if(!reader.IsEmptyElement)
                     {
@@ -236,19 +233,29 @@ namespace CLP.Models
                             array.VerticalGridLines.Add(Convert.ToDouble(position));
                         }
                     }
+                    else
+                    {
+                        reader.Read();
+                    }
 
-                    reader.Read();
                     reader.MoveToContent();
                     if(!reader.IsEmptyElement)
                     {
                         //horiz divisions
                     }
+                    else
+                    {
+                        reader.Read();
+                    }
 
-                    reader.Read();
                     reader.MoveToContent();
                     if(!reader.IsEmptyElement)
                     {
                         //vert divisions
+                    }
+                    else
+                    {
+                        reader.Read();
                     }
                     break;
                 case "CLPShape":
