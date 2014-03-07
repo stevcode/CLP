@@ -41,6 +41,11 @@
                                            KeyTip="O"
                                            ImageSource="pack://application:,,,/Resources/Images/OpenNotebook32.png"
                                            Command="{Binding OpenNotebookCommand}" />
+                
+                <RibbonApplicationMenuItem Header="Load Notebook From XML"
+                                           KeyTip="L"
+                                           ImageSource="pack://application:,,,/Resources/Images/OpenNotebook32.png"
+                                           Command="{Binding LoadNotebookFromXMLCommand}" />
 
                 <RibbonApplicationMenuItem Header="Edit Notebook"
                                            KeyTip="E"

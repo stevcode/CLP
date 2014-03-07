@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Xml;
 using Catel.Data;
 
 namespace CLP.Models
@@ -36,6 +37,32 @@ namespace CLP.Models
         protected CLPNotebook(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
+        }
+
+        public CLPNotebook(string notebookXMLFilePath)
+        {
+            var reader = new XmlTextReader(notebookXMLFilePath);
+
+            while(reader.Read())
+            {
+                if(reader.NodeType != XmlNodeType.Element)
+                {
+                    continue;
+                }
+
+                switch(reader.Name)
+                {
+                    case "CreationDate":
+                        CreationDate = Convert.ToDateTime(reader.Value);
+                        break;
+                    case "UniqueID":
+                        UniqueID = reader.Value;
+                        break;
+                    case "NotebookName":
+                        NotebookName = reader.Value + " - From XML";
+                        break;
+                }
+            }
         }
 
         public void InitializeAfterDeserialize()

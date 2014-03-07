@@ -14,12 +14,15 @@ using System.Windows.Ink;
 using System.Windows.Media;
 using System.Windows.Xps.Packaging;
 using Catel.Data;
+using Catel.IoC;
 using Catel.MVVM;
+using Catel.MVVM.Services;
 using Classroom_Learning_Partner.Views;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Models;
 using System.Windows.Threading;
 using System.ServiceModel;
+using CLP.Models.Converters;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -83,6 +86,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //File Menu
             NewNotebookCommand = new Command(OnNewNotebookCommandExecute);
             OpenNotebookCommand = new Command(OnOpenNotebookCommandExecute);
+            LoadNotebookFromXMLCommand = new Command(OnLoadNotebookFromXMLCommandExecute);
             EditNotebookCommand = new Command(OnEditNotebookCommandExecute);
             DoneEditingNotebookCommand = new Command(OnDoneEditingNotebookCommandExecute);
             SaveNotebookCommand = new Command(OnSaveNotebookCommandExecute);
@@ -629,12 +633,27 @@ namespace Classroom_Learning_Partner.ViewModels
             MainWindow.SelectedWorkspace = new NotebookChooserWorkspaceViewModel();
         }
 
+        /// <summary>
+        /// Opens a notebook from the Notebooks folder.
+        /// </summary>
+        public Command LoadNotebookFromXMLCommand { get; private set; }
+
+        private void OnLoadNotebookFromXMLCommandExecute()
+        {
+            var selectDirectoryService = Catel.IoC.ServiceLocator.Default.ResolveType<ISelectDirectoryService>();
+            selectDirectoryService.InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "NotebookXML");
+            if(selectDirectoryService.DetermineDirectory())
+            {
+                var notebook = ImportFromXML.ImportNotebook(selectDirectoryService.DirectoryName);
+            }  
+        }
+
         //TODO: Steve - Combine with DoneEditing to make ToggleEditingMode
         /// <summary>
         /// Puts current notebook in Authoring Mode.
         /// </summary>
         public Command EditNotebookCommand { get; private set; }
-
+        
         private void OnEditNotebookCommandExecute()
         {
             MainWindow.IsAuthoring = true;

@@ -1,19 +1,19 @@
 ﻿using System.Xml;
+using Catel.IO;
 
 namespace CLP.Models.Converters
 {
     public static class ImportFromXML
     {
-        public static CLPNotebook ImportNotebook(string initialFilePath)
+        public static CLPNotebook ImportNotebook(string rootXMLFolderPath)
         {
-            var notebook = new CLPNotebook();
+            var pagesXMLFolderPath = Path.Combine(rootXMLFolderPath, "Pages");
+            var submissionsXMLFolderPath = Path.Combine(rootXMLFolderPath, "Submissions");
+            var notebookXMLFilePath = Path.Combine(rootXMLFolderPath, "Notebook.xml");
 
-            var reader = new XmlTextReader(initialFilePath);
+            var notebook = new CLPNotebook(notebookXMLFilePath);
 
-            while(reader.Read())
-            {
-                
-            }
+            
 
 
 
