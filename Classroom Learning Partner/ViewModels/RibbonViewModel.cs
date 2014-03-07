@@ -99,6 +99,8 @@ namespace Classroom_Learning_Partner.ViewModels
             ExitCommand = new Command(OnExitCommandExecute);
 
             //Notebook
+            ShowNotebookPagesPanelViewCommand = new Command(OnShowNotebookPagesPanelViewCommandExecute);
+            ShowProgressPanelViewCommand = new Command(OnShowProgressPanelViewCommandExecute);
             HideSubmissionsPanelCommand = new Command(OnHideSubmissionsPanelCommandExecute, OnHideSubmissionsPanelCanExecute);
             PreviousPageCommand = new Command(OnPreviousPageCommandExecute, OnPreviousPageCanExecute);
             NextPageCommand = new Command(OnNextPageCommandExecute, OnNextPageCanExecute);
@@ -1189,6 +1191,36 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //File Menu
 
         #region Notebook Commands
+
+        /// <summary>
+        /// Switches to the Notebook Pages panel
+        /// </summary>
+        public Command ShowNotebookPagesPanelViewCommand { get; private set; }
+
+        private void OnShowNotebookPagesPanelViewCommandExecute()
+        {
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel != null)
+            {
+                notebookWorkspaceViewModel.LeftPanel = notebookWorkspaceViewModel.NotebookPagesPanel;
+                notebookWorkspaceViewModel.NotebookPagesPanel.IsVisible = true;
+            }
+        }
+
+        /// <summary>
+        /// Switches to the Progress panel
+        /// </summary>
+        public Command ShowProgressPanelViewCommand { get; private set; }
+
+        private void OnShowProgressPanelViewCommandExecute()
+        {
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel != null)
+            {
+                notebookWorkspaceViewModel.LeftPanel = notebookWorkspaceViewModel.ProgressPanel;
+                notebookWorkspaceViewModel.ProgressPanel.IsVisible = true;
+            }
+        }
 
         /// <summary>
         /// Hides the Submissions Panel.

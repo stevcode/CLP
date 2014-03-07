@@ -146,6 +146,15 @@
                     </RibbonToggleButton.Style>
                 </RibbonToggleButton>
 
+                <RibbonButton Label="Notebook Pages" 
+                              LargeImageSource="pack://application:,,,/Resources/Images/HideSubmissionsButton50x25.png" 
+                              Command="{Binding ShowNotebookPagesPanelViewCommand}"
+                              Visibility="{Binding InstructorVisibility}" />
+                <RibbonButton Label="Progress Panel" 
+                              LargeImageSource="pack://application:,,,/Resources/Images/HideSubmissionsButton50x25.png" 
+                              Command="{Binding ShowProgressPanelViewCommand}"
+                              Visibility="{Binding InstructorVisibility}" />
+                
                 <RibbonButton Label="Hide Submissions" 
                               LargeImageSource="pack://application:,,,/Resources/Images/HideSubmissionsButton50x25.png" 
                               Command="{Binding HideSubmissionsPanelCommand}"
