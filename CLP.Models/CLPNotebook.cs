@@ -63,6 +63,8 @@ namespace CLP.Models
                         break;
                 }
             }
+
+            MirrorDisplay = new CLPMirrorDisplay {ParentNotebookID = UniqueID};
         }
 
         public void InitializeAfterDeserialize()

@@ -646,6 +646,19 @@ namespace Classroom_Learning_Partner.ViewModels
             if(selectDirectoryService.DetermineDirectory())
             {
                 var notebook = ImportFromXML.ImportNotebook(selectDirectoryService.DirectoryName);
+
+                App.MainWindowViewModel.OpenNotebooks.Add(notebook);
+                if(App.CurrentUserMode == App.UserMode.Instructor ||
+                   App.CurrentUserMode == App.UserMode.Student ||
+                   App.CurrentUserMode == App.UserMode.Projector)
+                {
+                    App.MainWindowViewModel.SelectedWorkspace = new NotebookWorkspaceViewModel(notebook);
+                }
+
+                if(notebook.LastSavedTime != null)
+                {
+                    App.MainWindowViewModel.LastSavedTime = notebook.LastSavedTime.ToString("yyyy/MM/dd - HH:mm:ss");
+                }
             }  
         }
 

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Ink;
+using System.Xml;
 using System.Xml.Serialization;
 using Catel.Data;
 
@@ -83,9 +84,127 @@ namespace CLP.Models
         protected ACLPPageBase(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
-        #region Overrides of ModelBase
+        protected ACLPPageBase(string pageXMLFilePath)
+        {
+            var reader = new XmlTextReader(pageXMLFilePath);
 
-        #endregion
+            while(reader.Read())
+            {
+                if(reader.NodeType != XmlNodeType.Element)
+                {
+                    continue;
+                }
+
+                switch(reader.Name)
+                {
+                    case "CreationDate":
+                        CreationDate = Convert.ToDateTime(reader.ReadString());
+                        break;
+                    case "UniqueID":
+                        UniqueID = reader.ReadString();
+                        break;
+                    case "ParentNotebookID":
+                        ParentNotebookID = reader.ReadString();
+                        break;
+                    case "SubmissionType":
+                        var submissionType = reader.ReadString();
+                        switch(submissionType)
+                        {
+                            case "None":
+                                SubmissionType = SubmissionType.None;
+                                break;
+                            case "Single":
+                                SubmissionType = SubmissionType.Single;
+                                break;
+                            case "Group":
+                                SubmissionType = SubmissionType.Group;
+                                break;
+                        }
+                        break;
+                    case "SubmissionTime":
+                        if(reader.ReadString() != "")
+                        {
+                            SubmissionTime = Convert.ToDateTime(reader.ReadString());
+                        }
+                        break;
+                    case "SubmissionID":
+                        SubmissionID = reader.ReadString();
+                        break;
+                    case "PageIndex":
+                        PageIndex = Convert.ToInt32(reader.ReadString());
+                        break;
+                    case "NumberOfSubmissions":
+                        NumberOfSubmissions = Convert.ToInt32(reader.ReadString());
+                        break;
+                    case "NumberOfGroupSubmissions":
+                        NumberOfGroupSubmissions = Convert.ToInt32(reader.ReadString());
+                        break;
+                    //case "Tag":
+                    //    Tag tag = null;
+                    //    TagType tagTypeInstance = null;
+                    //    var tagType = reader.GetAttribute("TagType");
+                    //    switch(tagType)
+                    //    {
+                    //        case "Correctness":
+                    //            tagTypeInstance = CorrectnessTagType.Instance;
+                    //            break;
+                    //        case "Starred":
+                    //            tagTypeInstance = StarredTagType.Instance;
+                    //            break;
+                    //        case "PageTopic":
+                    //            tagTypeInstance = PageTopicTagType.Instance;
+                    //            break;
+                    //    }
+                    //    var originType = reader.GetAttribute("Origin");
+                    //    switch(originType)
+                    //    {
+                    //        case "Author":
+                    //            tag = new Tag(Tag.Origins.Author, tagTypeInstance);
+                    //            break;
+                    //        case "Generated":
+                    //            tag = new Tag(Tag.Origins.Generated, tagTypeInstance);
+                    //            break;
+                    //        case "Teacher":
+                    //            tag = new Tag(Tag.Origins.Teacher, tagTypeInstance);
+                    //            break;
+                    //    }
+                    //    break;
+                    case "GroupSubmitType":
+                        var groupSubmitType = reader.ReadString();
+                        switch(groupSubmitType)
+                        {
+                            case "Deny":
+                                GroupSubmitType = GroupSubmitType.Deny;
+                                break;
+                            case "Allow":
+                                GroupSubmitType = GroupSubmitType.Allow;
+                                break;
+                            case "Force":
+                                GroupSubmitType = GroupSubmitType.Force;
+                                break;
+                        }
+                        break;
+                    case "PageHeight":
+                        PageHeight = Convert.ToDouble(reader.ReadString());
+                        break;
+                    case "PageWidth":
+                        PageWidth = Convert.ToDouble(reader.ReadString());
+                        break;
+                    case "InitialAspectRatio":
+                        InitialPageAspectRatio = Convert.ToDouble(reader.ReadString());
+                        break;
+                    case "ImagePool":
+                        //TODO ***********************
+                        break;
+                    case "Strokes":
+                        //TODO ***********************
+                        break;
+                    case "PageObjects":
+                        //TODO ***********************
+                        break;
+                }
+            }
+        }
 
         #endregion //Constructors
 
