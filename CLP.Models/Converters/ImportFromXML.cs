@@ -189,7 +189,67 @@ namespace CLP.Models
                     (pageObject as CLPTextBox).Text = reader.ReadElementContentAsString();
                     break;
                 case "CLPArray":
-                    
+                    var array = pageObject as CLPArray;
+
+                    reader.Read();
+                    reader.MoveToContent();
+                    array.IsGridOn = reader.ReadElementContentAsBoolean();
+
+                    reader.Read();
+                    reader.MoveToContent();
+                    array.IsDivisionBehaviorOn = reader.ReadElementContentAsBoolean();
+
+                    reader.Read();
+                    reader.MoveToContent();
+                    array.ArrayHeight = reader.ReadElementContentAsDouble();
+
+                    reader.Read();
+                    reader.MoveToContent();
+                    array.ArrayWidth = reader.ReadElementContentAsDouble();
+
+                    reader.Read();
+                    reader.MoveToContent();
+                    array.Rows = reader.ReadElementContentAsInt();
+
+                    reader.Read();
+                    reader.MoveToContent();
+                    array.Columns = reader.ReadElementContentAsInt();
+
+                    reader.Read();
+                    reader.MoveToContent();
+                    if(!reader.IsEmptyElement)
+                    {
+                        var horizontalGridLinePositions = reader.ReadElementContentAsString();
+                        foreach(var position in horizontalGridLinePositions.Split(','))
+                        {
+                            array.HorizontalGridLines.Add(Convert.ToDouble(position));
+                        }
+                    }
+
+                    reader.Read();
+                    reader.MoveToContent();
+                    if(!reader.IsEmptyElement)
+                    {
+                        var verticalGridLinePositions = reader.ReadElementContentAsString();
+                        foreach(var position in verticalGridLinePositions.Split(','))
+                        {
+                            array.VerticalGridLines.Add(Convert.ToDouble(position));
+                        }
+                    }
+
+                    reader.Read();
+                    reader.MoveToContent();
+                    if(!reader.IsEmptyElement)
+                    {
+                        //horiz divisions
+                    }
+
+                    reader.Read();
+                    reader.MoveToContent();
+                    if(!reader.IsEmptyElement)
+                    {
+                        //vert divisions
+                    }
                     break;
                 case "CLPShape":
                     reader.Read();
