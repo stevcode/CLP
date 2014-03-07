@@ -53,13 +53,13 @@ namespace CLP.Models
                 switch(reader.Name)
                 {
                     case "CreationDate":
-                        CreationDate = Convert.ToDateTime(reader.Value);
+                        CreationDate = Convert.ToDateTime(reader.ReadString());
                         break;
                     case "UniqueID":
-                        UniqueID = reader.Value;
+                        UniqueID = reader.ReadString();
                         break;
                     case "NotebookName":
-                        NotebookName = reader.Value + " - From XML";
+                        NotebookName = reader.ReadString() + " - From XML";
                         break;
                 }
             }

@@ -641,7 +641,8 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnLoadNotebookFromXMLCommandExecute()
         {
             var selectDirectoryService = Catel.IoC.ServiceLocator.Default.ResolveType<ISelectDirectoryService>();
-            selectDirectoryService.InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "NotebookXML");
+            selectDirectoryService.InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "NotebookXML/");
+
             if(selectDirectoryService.DetermineDirectory())
             {
                 var notebook = ImportFromXML.ImportNotebook(selectDirectoryService.DirectoryName);
