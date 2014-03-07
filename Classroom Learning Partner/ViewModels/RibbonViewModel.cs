@@ -356,13 +356,25 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public bool SideBarVisibility
+        public bool NotebookPagesPanelVisibility
         {
-            get { return GetValue<bool>(SideBarVisibilityProperty); }
-            set { SetValue(SideBarVisibilityProperty, value); }
+            get { return GetValue<bool>(NotebookPagesPanelVisibilityProperty); }
+            set { SetValue(NotebookPagesPanelVisibilityProperty, value); }
         }
 
-        public static readonly PropertyData SideBarVisibilityProperty = RegisterProperty("SideBarVisibility", typeof(bool), true);
+        public static readonly PropertyData NotebookPagesPanelVisibilityProperty = RegisterProperty("NotebookPagesPanelVisibility", typeof(bool), true);
+
+         /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool ProgressPanelVisibility
+        {
+            get { return GetValue<bool>(ProgressPanelVisibilityProperty); }
+            set { SetValue(ProgressPanelVisibilityProperty, value); }
+        }
+
+        public static readonly PropertyData ProgressPanelVisibilityProperty = RegisterProperty("ProgressPanelVisibility", typeof(bool), false);
+
 
         /// <summary>
         /// Gets or sets the property value.

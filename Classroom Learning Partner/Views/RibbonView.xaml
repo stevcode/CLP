@@ -127,7 +127,7 @@
 
             <RibbonGroup Header="Notebook">
 
-                <RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/OpenNotebook32.png"
+                <!--RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/OpenNotebook32.png"
                                     SmallImageSource="pack://application:,,,/Resources/Images/OpenNotebook16.png"
                                     IsChecked="{Binding SideBarVisibility}"
                                     IsEnabled="{Binding MainWindow.SelectedWorkspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}">
@@ -144,15 +144,16 @@
                             </Style.Triggers>
                         </Style>
                     </RibbonToggleButton.Style>
-                </RibbonToggleButton>
+                </RibbonToggleButton-->
 
-                <RibbonButton Label="Notebook Pages" 
-                              LargeImageSource="pack://application:,,,/Resources/Images/HideSubmissionsButton50x25.png" 
-                              Command="{Binding ShowNotebookPagesPanelViewCommand}"
+                <RibbonToggleButton Label="Notebook Pages" 
+                              LargeImageSource="pack://application:,,,/Resources/Images/OpenNotebook32.png"
+                              SmallImageSource="pack://application:,,,/Resources/Images/OpenNotebook16.png"
+                              IsChecked="{Binding NotebookPagesPanelVisibility}"
                               Visibility="{Binding InstructorVisibility}" />
-                <RibbonButton Label="Progress Panel" 
+                <RibbonToggleButton Label="Progress Panel" 
                               LargeImageSource="pack://application:,,,/Resources/Images/HideSubmissionsButton50x25.png" 
-                              Command="{Binding ShowProgressPanelViewCommand}"
+                              IsChecked="{Binding ProgressPanelVisibility}"
                               Visibility="{Binding InstructorVisibility}" />
                 
                 <RibbonButton Label="Hide Submissions" 
@@ -163,12 +164,14 @@
                 <RibbonButton Label="Previous Page"
                               LargeImageSource="pack://application:,,,/Resources/Images/PreviousPage32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/PreviousPage16.png"
-                              Command="{Binding PreviousPageCommand}" />
+                              Command="{Binding PreviousPageCommand}" 
+                              Visibility="{Binding StudentVisibility}"/>
 
                 <RibbonButton Label="Next Page"
                               LargeImageSource="pack://application:,,,/Resources/Images/NextPage32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/NextPage16.png"
-                              Command="{Binding NextPageCommand}" />
+                              Command="{Binding NextPageCommand}"
+                              Visibility="{Binding StudentVisibility}"/>
 
             </RibbonGroup>
 

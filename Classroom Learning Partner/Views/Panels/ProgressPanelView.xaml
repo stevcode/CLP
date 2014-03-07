@@ -16,14 +16,14 @@
                 <ResourceDictionary>
                     <DataTemplate x:Key="ButtonBox">
                         <Border Margin="3" BorderBrush="{StaticResource GrayEdgeColor}" BorderThickness="1,1,1,1">
-                            <i:Interaction.Triggers>
+                            <!--i:Interaction.Triggers>
                                 <i:EventTrigger EventName="MouseUp">
                                     <catel:EventToCommand
                                            Command="{Binding DataContext.SetCurrentPageCommand, 
                                            RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
                                            PassEventArgsToCommand="False" CommandParameter="{Binding}" />
                                 </i:EventTrigger>
-                            </i:Interaction.Triggers>
+                            </-->
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition/>
