@@ -99,8 +99,6 @@ namespace Classroom_Learning_Partner.ViewModels
             ExitCommand = new Command(OnExitCommandExecute);
 
             //Notebook
-            ShowNotebookPagesPanelViewCommand = new Command(OnShowNotebookPagesPanelViewCommandExecute);
-            ShowProgressPanelViewCommand = new Command(OnShowProgressPanelViewCommandExecute);
             HideSubmissionsPanelCommand = new Command(OnHideSubmissionsPanelCommandExecute, OnHideSubmissionsPanelCanExecute);
             PreviousPageCommand = new Command(OnPreviousPageCommandExecute, OnPreviousPageCanExecute);
             NextPageCommand = new Command(OnNextPageCommandExecute, OnNextPageCanExecute);
@@ -364,7 +362,18 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData NotebookPagesPanelVisibilityProperty = RegisterProperty("NotebookPagesPanelVisibility", typeof(bool), true);
 
-         /// <summary>
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool StudentWorkPanelVisibility
+        {
+            get { return GetValue<bool>(StudentWorkPanelVisibilityProperty); }
+            set { SetValue(StudentWorkPanelVisibilityProperty, value); }
+        }
+
+        public static readonly PropertyData StudentWorkPanelVisibilityProperty = RegisterProperty("StudentWorkPanelVisibility", typeof(bool), false);
+
+        /// <summary>
         /// Gets or sets the property value.
         /// </summary>
         public bool ProgressPanelVisibility
@@ -374,7 +383,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData ProgressPanelVisibilityProperty = RegisterProperty("ProgressPanelVisibility", typeof(bool), false);
-
 
         /// <summary>
         /// Gets or sets the property value.

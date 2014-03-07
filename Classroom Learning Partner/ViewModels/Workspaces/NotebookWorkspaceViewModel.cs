@@ -25,8 +25,11 @@ namespace Classroom_Learning_Partner.ViewModels
             Notebook = notebook;
             SelectedDisplay = MirrorDisplay;
 
-            ProgressPanel = new ProgressPanelViewModel(notebook);
+
             NotebookPagesPanel = new NotebookPagesPanelViewModel(notebook);
+            StudentWorkPanel = new StudentWorkPanelViewModel(notebook);
+            ProgressPanel = new ProgressPanelViewModel(notebook);
+
             LeftPanel = NotebookPagesPanel;
             NotebookPagesPanel.IsVisible = true;
             DisplayListPanel = new DisplayListPanelViewModel(notebook);
@@ -168,6 +171,17 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData NotebookPagesPanelProperty = RegisterProperty("NotebookPagesPanel", typeof(NotebookPagesPanelViewModel));
 
         /// <summary>
+        /// StudentWorkPanel.
+        /// </summary>
+        public StudentWorkPanelViewModel StudentWorkPanel
+        {
+            get { return GetValue<StudentWorkPanelViewModel>(StudentWorkPanelProperty); }
+            set { SetValue(StudentWorkPanelProperty, value); }
+        }
+
+        public static readonly PropertyData StudentWorkPanelProperty = RegisterProperty("StudentWorkPanel", typeof(StudentWorkPanelViewModel));
+
+        /// <summary>
         /// ProgressPanel.
         /// </summary>
         public ProgressPanelViewModel ProgressPanel
@@ -230,6 +244,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     LeftPanel = NotebookPagesPanel;
                     LeftPanel.IsVisible = true;
+                    (viewModel as RibbonViewModel).StudentWorkPanelVisibility = false;
                     (viewModel as RibbonViewModel).ProgressPanelVisibility = false;
                 }
                 else
@@ -237,7 +252,23 @@ namespace Classroom_Learning_Partner.ViewModels
                     NotebookPagesPanel.IsVisible = false;
                 }
             }
-            
+
+            if(propertyName == "StudentWorkPanelVisibility")
+            {
+                var visible = (viewModel as RibbonViewModel).StudentWorkPanelVisibility;
+                if(visible)
+                {
+                    LeftPanel = StudentWorkPanel;
+                    LeftPanel.IsVisible = true;
+                    (viewModel as RibbonViewModel).NotebookPagesPanelVisibility = false;
+                    (viewModel as RibbonViewModel).ProgressPanelVisibility = false;
+                }
+                else
+                {
+                    StudentWorkPanel.IsVisible = false;
+                }
+            }
+
             if(propertyName == "ProgressPanelVisibility")
             {
                 var visible = (viewModel as RibbonViewModel).ProgressPanelVisibility;
@@ -246,6 +277,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     LeftPanel = ProgressPanel;
                     LeftPanel.IsVisible = true;
                     (viewModel as RibbonViewModel).NotebookPagesPanelVisibility = false;
+                    (viewModel as RibbonViewModel).StudentWorkPanelVisibility = false;
                 }
                 else
                 {
@@ -259,7 +291,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 RightPanel.IsVisible = (viewModel as RibbonViewModel).DisplayPanelVisibility;
             }
 
-            base.OnViewModelPropertyChanged(viewModel, propertyName); 
+            base.OnViewModelPropertyChanged(viewModel, propertyName);
         }
 
         #endregion //Methods

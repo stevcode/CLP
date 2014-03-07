@@ -220,6 +220,7 @@
     <Compile Include="ViewModels\PageObjects\CLPRegionViewModel.cs" />
     <Compile Include="ViewModels\Panels\DisplayListPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\NotebookPagesPanelViewModel.cs" />
+    <Compile Include="ViewModels\Panels\StudentWorkPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\ProgressPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\StudentProgressInfo.cs" />
     <Compile Include="ViewModels\Panels\SubmissionHistoryPanelViewModel.cs" />
@@ -377,6 +378,9 @@
     </Compile>
     <Compile Include="Views\Panels\NotebookPagesPanelView.xaml.cs">
       <DependentUpon>NotebookPagesPanelView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Panels\StudentWorkPanelView.xaml.cs">
+      <DependentUpon>StudentWorkPanelView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Panels\ProgressPanelView.xaml.cs">
       <DependentUpon>ProgressPanelView.xaml</DependentUpon>
@@ -589,6 +593,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Panels\StudentWorkPanelView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Panels\ProgressPanelView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -724,6 +732,9 @@
     <Content Include="External Libraries\NRtfTree.dll" />
     <Content Include="External Libraries\ServiceModelEx.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
+    <Resource Include="Resources\Images\Clipboard32.png" />
+    <Resource Include="Resources\Images\BlueStar16.png" />
+    <Resource Include="Resources\Images\BlueEnvelope16.png" />
     <Resource Include="Resources\Images\HideSubmissionsButton50x25.png" />
     <Resource Include="Resources\Images\Check16.png" />
     <Resource Include="Resources\Images\GrayPlus16.png" />

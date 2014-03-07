@@ -30,9 +30,13 @@
                 <ControlTemplate x:Key="NotebookPagesPanelTemplate">
                     <views:NotebookPagesPanelView DataContext="{Binding LeftPanel}" />
                 </ControlTemplate>
+                <ControlTemplate x:Key="StudentWorkPanelTemplate">
+                    <views:StudentWorkPanelView DataContext="{Binding LeftPanel}" />
+                </ControlTemplate>
                 <ControlTemplate x:Key="ProgressPanelTemplate">
                     <views:ProgressPanelView DataContext="{Binding LeftPanel}" />
                 </ControlTemplate>
+                
 
             </Control.Resources>
 
@@ -45,6 +49,11 @@
                             <Setter Property="Template" Value="{StaticResource NotebookPagesPanelTemplate}" />
                         </DataTrigger>
 
+                        <!--StudentWorkPanel trigger-->
+                        <DataTrigger Binding="{Binding LeftPanel, Converter={StaticResource TypeToStringConverter}}" Value="StudentWorkPanelViewModel">
+                            <Setter Property="Template" Value="{StaticResource StudentWorkPanelTemplate}" />
+                        </DataTrigger>
+                        
                         <!--ProgressPanel trigger-->
                         <DataTrigger Binding="{Binding LeftPanel, Converter={StaticResource TypeToStringConverter}}" Value="ProgressPanelViewModel">
                             <Setter Property="Template" Value="{StaticResource ProgressPanelTemplate}" />
