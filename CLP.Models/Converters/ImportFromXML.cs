@@ -71,7 +71,6 @@ namespace CLP.Models
 
 
 
-
             notebook.MirrorDisplay.AddPageToDisplay(notebook.Pages.First());
 
             return notebook;
@@ -118,6 +117,90 @@ namespace CLP.Models
                                                                                                                      }
 
             return stroke;
+        }
+
+        public static ICLPPageObject ParsePageObject(XmlTextReader reader, ICLPPage page)
+        {
+            ICLPPageObject pageObject = null;
+
+            var pageObjectType = reader.GetAttribute("Type");
+
+            switch(pageObjectType)
+            {
+                case "CLPTextBox":
+                    pageObject = new CLPTextBox(page);
+                    break;
+                case "CLPArray":
+                    pageObject = new CLPArray(0, 0, page);
+                    break;
+                case "CLPShape":
+                    pageObject = new CLPShape(CLPShape.CLPShapeType.Ellipse, page);
+                    break;
+            }
+
+            if(pageObject == null)
+            {
+                return pageObject;
+            }
+
+            pageObject.ParentPageID = reader.GetAttribute("ParentPageID");
+            pageObject.ParentID = reader.GetAttribute("ParentID");
+            pageObject.CreationDate = Convert.ToDateTime(reader.GetAttribute("CreationDate"));
+            pageObject.UniqueID = reader.GetAttribute("UniqueID");
+            pageObject.CanAcceptStrokes = Convert.ToBoolean(reader.GetAttribute("CanAcceptStrokes"));
+            pageObject.CanAcceptPageObjects = Convert.ToBoolean(reader.GetAttribute("CanAcceptPageObjects"));
+            pageObject.XPosition = Convert.ToDouble(reader.GetAttribute("XPosition"));
+            pageObject.YPosition = Convert.ToDouble(reader.GetAttribute("YPosition"));
+            pageObject.Height = Convert.ToDouble(reader.GetAttribute("Height"));
+            pageObject.Width = Convert.ToDouble(reader.GetAttribute("Width"));
+            pageObject.IsBackground = Convert.ToBoolean(reader.GetAttribute("IsBackground"));
+            pageObject.CanAdornersShow = Convert.ToBoolean(reader.GetAttribute("CanAdornersShow"));
+            pageObject.Parts = Convert.ToInt32(reader.GetAttribute("Parts"));
+            pageObject.IsInternalPageObject = Convert.ToBoolean(reader.GetAttribute("IsInternalPageObject"));
+
+            switch(pageObjectType)
+            {
+                case "CLPTextBox":
+                    reader.Read();
+                    reader.MoveToContent();
+                    (pageObject as CLPTextBox).Text = reader.ReadElementContentAsString();
+                    break;
+                case "CLPArray":
+                    
+                    break;
+                case "CLPShape":
+                    reader.Read();
+                    reader.MoveToContent();
+                    var shapeType = reader.ReadElementContentAsString();
+                    switch(shapeType)
+                    {
+                        case "Rectangle":
+                            (pageObject as CLPShape).ShapeType = CLPShape.CLPShapeType.Rectangle;
+                            break;
+                        case "Ellipse":
+                            (pageObject as CLPShape).ShapeType = CLPShape.CLPShapeType.Ellipse;
+                            break;
+                        case "Triangle":
+                            (pageObject as CLPShape).ShapeType = CLPShape.CLPShapeType.Triangle;
+                            break;
+                        case "HorizontalLine":
+                            (pageObject as CLPShape).ShapeType = CLPShape.CLPShapeType.HorizontalLine;
+                            break;
+                        case "VerticalLine":
+                            (pageObject as CLPShape).ShapeType = CLPShape.CLPShapeType.VerticalLine;
+                            break;
+                        case "Protractor":
+                            (pageObject as CLPShape).ShapeType = CLPShape.CLPShapeType.Protractor;
+                            break;
+                        default:
+                            Console.WriteLine("Unknown Shape Type for CLPShape, defaulting to Rectangle.");
+                            (pageObject as CLPShape).ShapeType = CLPShape.CLPShapeType.Rectangle;
+                            break;
+                    }
+                    break;
+            }
+
+            return pageObject;
         }
     }
 }

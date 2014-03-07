@@ -210,7 +210,11 @@ namespace CLP.Models
                         }
                         break;  
                     case "PageObject":
-                        //TODO ***********************
+                        var pageObject = ImportFromXML.ParsePageObject(reader, this);
+                        if(pageObject != null)
+                        {
+                            PageObjects.Add(pageObject);
+                        }
                         break;
                 }
             }
