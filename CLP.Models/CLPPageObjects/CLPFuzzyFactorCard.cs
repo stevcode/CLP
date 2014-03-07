@@ -27,16 +27,12 @@ namespace CLP.Models
             IsAnswerVisible = true;
             IsArrayDivisionLabelOnTop = true;
 
-            if(displayRemainderRegion)
-            {
-                CLPFuzzyFactorCardRemainder remainderRegion = new CLPFuzzyFactorCardRemainder(this, dividend, page);
-                page.PageObjects.Add(remainderRegion);
-                RemainderRegionUniqueID = remainderRegion.UniqueID;
-                Console.Write("Unique ID here: ");
-                Console.WriteLine(RemainderRegionUniqueID);
-            }
-            Console.Write("Unique ID here2: ");
-            Console.WriteLine(RemainderRegionUniqueID);
+            //if(displayRemainderRegion)
+            //{
+            //    CLPFuzzyFactorCardRemainder remainderRegion = new CLPFuzzyFactorCardRemainder(this, dividend, page);
+            //    page.PageObjects.Add(remainderRegion);
+            //    RemainderRegionUniqueID = remainderRegion.UniqueID;
+            //}
         }
         
         /// <summary>
@@ -500,6 +496,13 @@ namespace CLP.Models
                 RaisePropertyChanged("IsFuzzyEdgeVisible");
 
                 CalculateGridLines();
+
+                //Update Remainder Region
+                if(RemainderRegionUniqueID != null)
+                {
+                    CLPFuzzyFactorCardRemainder remainderRegion = ParentPage.GetPageObjectByUniqueID(RemainderRegionUniqueID) as CLPFuzzyFactorCardRemainder;
+                    remainderRegion.AddTiles(prevDiv.Value * Rows);
+                }
             }
         }
 

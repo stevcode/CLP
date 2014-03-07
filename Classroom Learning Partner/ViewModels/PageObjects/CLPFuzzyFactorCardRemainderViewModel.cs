@@ -37,11 +37,11 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Gets or sets the property value.
         /// </summary>
         [ViewModelToModel("PageObject")]
-        public ObservableCollection<double> TileOffsets
+        public ObservableCollection<string> TileOffsets
         {
             get
             {
-                return GetValue<ObservableCollection<double>>(TileOffsetsProperty);
+                return GetValue<ObservableCollection<string>>(TileOffsetsProperty);
             }
             set
             {
@@ -52,7 +52,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Register the TileOffsets property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData TileOffsetsProperty = RegisterProperty("TileOffsets", typeof(ObservableCollection<double>));
+        public static readonly PropertyData TileOffsetsProperty = RegisterProperty("TileOffsets", typeof(ObservableCollection<string>));
 
         #endregion //Model
 

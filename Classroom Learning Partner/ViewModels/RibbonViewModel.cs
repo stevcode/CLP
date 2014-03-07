@@ -2596,6 +2596,11 @@ namespace Classroom_Learning_Partner.ViewModels
                         (array as CLPFuzzyFactorCard).IsCurlyEdge = true;
                         (array as CLPFuzzyFactorCard).IsStraightEdge = false;
                         (array as CLPFuzzyFactorCard).IsDividendOnEdge = true;
+                        //CLPFuzzyFactorCardRemainder remainderRegion = new CLPFuzzyFactorCardRemainder((array as CLPFuzzyFactorCard), dividend, currentPage);
+                        //currentPage.PageObjects.Add(remainderRegion);
+                        //(array as CLPFuzzyFactorCard).RemainderRegionUniqueID = remainderRegion.UniqueID;
+                        //Console.Write("unique ID: ");
+                        //Console.WriteLine((array as CLPFuzzyFactorCard).RemainderRegionUniqueID);
                         break;
                     //case "FUZZYFACTORCARDTOP":
                     //    array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
@@ -2896,6 +2901,11 @@ namespace Classroom_Learning_Partner.ViewModels
                         (array as CLPFuzzyFactorCard).IsCurlyEdge = true;
                         (array as CLPFuzzyFactorCard).IsStraightEdge = false;
                         (array as CLPFuzzyFactorCard).IsDividendOnEdge = true;
+                        CLPFuzzyFactorCardRemainder remainderRegion = new CLPFuzzyFactorCardRemainder((array as CLPFuzzyFactorCard), dividend, currentPage);
+                        currentPage.PageObjects.Add(remainderRegion);
+                        (array as CLPFuzzyFactorCard).RemainderRegionUniqueID = remainderRegion.UniqueID;
+                        Console.Write("unique ID 2: ");
+                        Console.WriteLine((array as CLPFuzzyFactorCard).RemainderRegionUniqueID);
                         break;
                     //case "FUZZYFACTORCARDTOP":
                     //    array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);

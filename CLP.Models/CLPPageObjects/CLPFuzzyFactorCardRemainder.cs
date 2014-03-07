@@ -22,15 +22,23 @@ namespace CLP.Models
         {
             FuzzyFactorCardUniqueID = fuzzyFactorCard.UniqueID;
 
-            XPosition = fuzzyFactorCard.XPosition + fuzzyFactorCard.LabelLength;
-            YPosition = fuzzyFactorCard.YPosition + fuzzyFactorCard.Height + 10.0;
+            XPosition = fuzzyFactorCard.XPosition + fuzzyFactorCard.LabelLength + 20.0;
+            YPosition = fuzzyFactorCard.YPosition + fuzzyFactorCard.Height + 20.0;
 
-            Height = 5.0 * (SquareSize + 5.0); //TODO Liz Change this
-            Width = 5.0 * (SquareSize + 5.0);
+            Height = Math.Ceiling((double)remainderValue / 5.0) * (SquareSize + 16.0); // +20.0;
+            Width = 5.0 * (SquareSize + 16.0); // +20.0;
 
+            //TODO Liz Change to random number
             for(int i = 0; i < remainderValue; i++)
             {
-                TileOffsets.Add(0.0); //TODO Liz Change to random number
+                if(i % 2 == 0)
+                {
+                    TileOffsets.Add("-3 7 7 -3"); 
+                }
+                else
+                {
+                    TileOffsets.Add("7 -3 -3 7");
+                }
             }
         }
 
@@ -77,11 +85,11 @@ namespace CLP.Models
         /// <summary>
         /// Offsets of each tile    
         /// </summary>
-        public ObservableCollection<double> TileOffsets
+        public ObservableCollection<string> TileOffsets
         {
             get
             {
-                return GetValue<ObservableCollection<double>>(TileOffsetsProperty);
+                return GetValue<ObservableCollection<string>>(TileOffsetsProperty);
             }
             set
             {
@@ -92,7 +100,7 @@ namespace CLP.Models
         /// <summary>
         /// Register the TileOffsets property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData TileOffsetsProperty = RegisterProperty("TileOffsets", typeof(ObservableCollection<double>), () => new ObservableCollection<double>());
+        public static readonly PropertyData TileOffsetsProperty = RegisterProperty("TileOffsets", typeof(ObservableCollection<string>), () => new ObservableCollection<string>());
 
         #endregion //Properties
 
@@ -116,16 +124,30 @@ namespace CLP.Models
             {
                 TileOffsets.RemoveAt(TileOffsets.Count - 1);
             }
-            
-            Console.Write("number of tiles: ");
-            Console.WriteLine(TileOffsets.Count);
+
+            if((TileOffsets.Count + numberOfTiles) % 5 <= numberOfTiles && (TileOffsets.Count + numberOfTiles) % 5 > 0)
+            {
+                Height -= SquareSize + 16.0;
+            }
         }
 
         public void AddTiles(int numberOfTiles)
         {
             for(int i = 0; i < numberOfTiles; i++)
             {
-                TileOffsets.Add(0.0);
+                //TODO Liz Change to random number
+                if(TileOffsets.Count % 2 == 0)
+                {
+                    TileOffsets.Add("-3 7 7 -3");
+                }
+                else
+                {
+                    TileOffsets.Add("7 -3 -3 7");
+                }
+            }
+            if(TileOffsets.Count % 5 <= numberOfTiles && TileOffsets.Count % 5 > 0)
+            {
+                Height += SquareSize + 16.0;
             }
         }
 

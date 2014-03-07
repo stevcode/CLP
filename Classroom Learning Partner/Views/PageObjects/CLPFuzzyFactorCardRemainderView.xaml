@@ -17,6 +17,10 @@
         <conv:AllBoolToVisibilityMultiConverter x:Key="AllBoolToVisibilityMultiConverter" />
         <conv:MultiplyAllIntToTextMultiConverter x:Key="MultiplyAllIntToTextMultiConverter" />
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <Style x:Key="TileStyle">
+            <Setter Property="UniformGrid.Margin"
+                    Value="{Binding}" />
+        </Style>
     </UserControl.Resources>
 
     <ac:AdornedControl HorizontalAlignment="Center" VerticalAlignment="Center"
@@ -75,20 +79,36 @@
             </Canvas>
         </ac:AdornedControl.AdornerContent>
 
-        <ItemsControl ItemsSource="{Binding TileOffsets}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <UniformGrid Columns="5" />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Rectangle Height="45" Width="45"
-                               Stroke="LightBlue" StrokeThickness="3" Margin="5"/>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-            
+        <Grid>
+            <!--Hit Box-->
+            <Rectangle Tag="RemainderRegionHitBox"
+                       Width="{Binding Width}" Height="{Binding Height}"
+                       Fill="Transparent" Stroke="Transparent">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseUp">
+                        <catel:EventToCommand Command="{Binding ToggleMainAdornersCommand}" PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Rectangle>
+
+            <!--The Tiles-->
+            <ItemsControl ItemsSource="{Binding TileOffsets}"
+                          ItemContainerStyle="{StaticResource TileStyle}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="5" 
+                                     Height="{Binding Height, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Rectangle Height="45" Width="45"
+                                   Stroke="DodgerBlue" StrokeThickness="1.5"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+       </Grid>
+
     </ac:AdornedControl>
 
 </catel:UserControl>
