@@ -105,7 +105,8 @@ namespace CLP.Models
                 return null;
             }
 
-            var strokePointsString = Regex.Replace(reader.ReadElementContentAsString(), @"\{|\}|\s*", string.Empty);
+           // var strokePointsString = Regex.Replace(reader.ReadElementContentAsString(), @"\{|\}|\s*", string.Empty);
+            var strokePointsString = reader.ReadElementContentAsString();
             var pointGroups = strokePointsString.Split(',');
             foreach(var stylusPoint in pointGroups.Select(pointGroup => pointGroup.Split(':')).Select(pointValues => new StylusPointDTO
                                                                                                                      {
@@ -157,6 +158,28 @@ namespace CLP.Models
             pageObject.CanAdornersShow = Convert.ToBoolean(reader.GetAttribute("CanAdornersShow"));
             pageObject.Parts = Convert.ToInt32(reader.GetAttribute("Parts"));
             pageObject.IsInternalPageObject = Convert.ToBoolean(reader.GetAttribute("IsInternalPageObject"));
+
+            reader.Read();
+            reader.MoveToContent();
+            if(!reader.IsEmptyElement)
+            {
+                var pageObjectStrokeParentIDs = reader.ReadElementContentAsString();
+                foreach(var pageObjectStrokeParentID in pageObjectStrokeParentIDs.Split(','))
+                {
+                    pageObject.PageObjectStrokeParentIDs.Add(pageObjectStrokeParentID);
+                }
+            }
+
+            reader.Read();
+            reader.MoveToContent();
+            if(!reader.IsEmptyElement)
+            {
+                var pageObjectObjectParentIDs = reader.ReadElementContentAsString();
+                foreach(var pageObjectObjectParentID in pageObjectObjectParentIDs.Split(','))
+                {
+                    pageObject.PageObjectObjectParentIDs.Add(pageObjectObjectParentID);
+                }
+            }
 
             switch(pageObjectType)
             {
