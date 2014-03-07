@@ -38,6 +38,11 @@ namespace CLP.Models
             }
         }
 
+        public DrawingAttributesDTO()
+        {
+            
+        }
+
         #endregion //Constructors
 
         #region Properties

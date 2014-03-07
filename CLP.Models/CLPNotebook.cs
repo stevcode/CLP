@@ -41,7 +41,10 @@ namespace CLP.Models
 
         public CLPNotebook(string notebookXMLFilePath)
         {
-            var reader = new XmlTextReader(notebookXMLFilePath);
+            var reader = new XmlTextReader(notebookXMLFilePath)
+                         {
+                             WhitespaceHandling = WhitespaceHandling.None
+                         };
 
             while(reader.Read())
             {
@@ -53,13 +56,13 @@ namespace CLP.Models
                 switch(reader.Name)
                 {
                     case "CreationDate":
-                        CreationDate = Convert.ToDateTime(reader.ReadString());
+                        CreationDate = Convert.ToDateTime(reader.ReadElementContentAsString());
                         break;
                     case "UniqueID":
-                        UniqueID = reader.ReadString();
+                        UniqueID = reader.ReadElementContentAsString();
                         break;
                     case "NotebookName":
-                        NotebookName = reader.ReadString() + " - From XML";
+                        NotebookName = reader.ReadElementContentAsString() + " - From XML";
                         break;
                 }
             }

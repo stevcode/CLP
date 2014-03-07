@@ -86,7 +86,10 @@ namespace CLP.Models
 
         protected ACLPPageBase(string pageXMLFilePath)
         {
-            var reader = new XmlTextReader(pageXMLFilePath);
+            var reader = new XmlTextReader(pageXMLFilePath)
+                         {
+                             WhitespaceHandling = WhitespaceHandling.None
+                         };
 
             while(reader.Read())
             {
@@ -98,16 +101,16 @@ namespace CLP.Models
                 switch(reader.Name)
                 {
                     case "CreationDate":
-                        CreationDate = Convert.ToDateTime(reader.ReadString());
+                        CreationDate = Convert.ToDateTime(reader.ReadElementContentAsString());
                         break;
                     case "UniqueID":
-                        UniqueID = reader.ReadString();
+                        UniqueID = reader.ReadElementContentAsString();
                         break;
                     case "ParentNotebookID":
-                        ParentNotebookID = reader.ReadString();
+                        ParentNotebookID = reader.ReadElementContentAsString();
                         break;
                     case "SubmissionType":
-                        var submissionType = reader.ReadString();
+                        var submissionType = reader.ReadElementContentAsString();
                         switch(submissionType)
                         {
                             case "None":
@@ -122,22 +125,25 @@ namespace CLP.Models
                         }
                         break;
                     case "SubmissionTime":
-                        if(reader.ReadString() != "")
+                        if(!reader.IsEmptyElement)
                         {
-                            SubmissionTime = Convert.ToDateTime(reader.ReadString());
+                            SubmissionTime = Convert.ToDateTime(reader.ReadElementContentAsString());
                         }
                         break;
                     case "SubmissionID":
-                        SubmissionID = reader.ReadString();
+                        if(!reader.IsEmptyElement)
+                        {
+                            SubmissionID = reader.ReadElementContentAsString();
+                        }
                         break;
                     case "PageIndex":
-                        PageIndex = Convert.ToInt32(reader.ReadString());
+                        PageIndex = reader.ReadElementContentAsInt();        //Convert.ToInt32(reader.ReadString());
                         break;
                     case "NumberOfSubmissions":
-                        NumberOfSubmissions = Convert.ToInt32(reader.ReadString());
+                        NumberOfSubmissions = reader.ReadElementContentAsInt();
                         break;
                     case "NumberOfGroupSubmissions":
-                        NumberOfGroupSubmissions = Convert.ToInt32(reader.ReadString());
+                        NumberOfGroupSubmissions = reader.ReadElementContentAsInt();
                         break;
                     //case "Tag":
                     //    Tag tag = null;
@@ -170,7 +176,7 @@ namespace CLP.Models
                     //    }
                     //    break;
                     case "GroupSubmitType":
-                        var groupSubmitType = reader.ReadString();
+                        var groupSubmitType = reader.ReadElementContentAsString();
                         switch(groupSubmitType)
                         {
                             case "Deny":
@@ -185,25 +191,32 @@ namespace CLP.Models
                         }
                         break;
                     case "PageHeight":
-                        PageHeight = Convert.ToDouble(reader.ReadString());
+                        PageHeight = reader.ReadElementContentAsDouble();             // Convert.ToDouble(reader.ReadString());
                         break;
                     case "PageWidth":
-                        PageWidth = Convert.ToDouble(reader.ReadString());
+                        PageWidth = reader.ReadElementContentAsDouble(); 
                         break;
                     case "InitialAspectRatio":
-                        InitialPageAspectRatio = Convert.ToDouble(reader.ReadString());
+                        InitialPageAspectRatio = reader.ReadElementContentAsDouble(); 
                         break;
                     case "ImagePool":
                         //TODO ***********************
                         break;
-                    case "Strokes":
-                        //TODO ***********************
-                        break;
-                    case "PageObjects":
+                    case "Stroke":
+                        var stroke = ImportFromXML.ParseStroke(reader);
+                        if(stroke != null)
+                        {
+                            SerializedStrokes.Add(stroke);
+                        }
+                        break;  
+                    case "PageObject":
                         //TODO ***********************
                         break;
                 }
             }
+
+            PageHistory = new CLPHistory();
+            InkStrokes = StrokeDTO.LoadInkStrokes(SerializedStrokes);
         }
 
         #endregion //Constructors

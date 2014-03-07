@@ -22,7 +22,6 @@ using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Models;
 using System.Windows.Threading;
 using System.ServiceModel;
-using CLP.Models.Converters;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
