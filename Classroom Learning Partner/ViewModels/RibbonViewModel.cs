@@ -698,10 +698,10 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 return;
             }
-            foreach(var page in notebookPanel.Pages)
-            {
-                page.PageHistory.ClearNonAnimationHistory();
-            }
+            //foreach(var page in notebookPanel.Pages)
+            //{
+            //    page.PageHistory.ClearNonAnimationHistory();
+            //}
         }
 
         /// <summary>
