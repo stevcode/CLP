@@ -49,7 +49,7 @@ namespace CLP.Models
         public string UniqueID
         {
             get { return GetValue<string>(UniqueIDProperty); }
-            private set { SetValue(UniqueIDProperty, value); }
+            set { SetValue(UniqueIDProperty, value); }
         }
 
         public static readonly PropertyData UniqueIDProperty = RegisterProperty("UniqueID", typeof(string));

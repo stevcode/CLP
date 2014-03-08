@@ -138,6 +138,41 @@ namespace CLP.Models
                             SubmissionID = reader.ReadString();
                         }
                         break;
+                    case "Submitter":
+                        if(!reader.IsEmptyElement)
+                        {
+                            var submitter = new Person();
+                            reader.Read();
+                            reader.MoveToContent();
+                            submitter.UniqueID = reader.ReadElementContentAsString();
+
+                            reader.MoveToContent();
+                            submitter.FullName = reader.ReadElementContentAsString();
+
+                            reader.MoveToContent();
+                            submitter.GroupName = reader.ReadElementContentAsString();
+
+                            reader.MoveToContent();
+                            submitter.CurrentMachineName = reader.ReadElementContentAsString();
+
+                            reader.MoveToContent();
+                            submitter.CurrentMachineAddress = reader.ReadElementContentAsString();
+                            Submitter = submitter;
+                        }
+                        break;
+                    case "GroupSubmitter":
+                        if(!reader.IsEmptyElement)
+                        {
+                            var group = new Group();
+                            reader.Read();
+                            reader.MoveToContent();
+                            group.GroupName = reader.ReadElementContentAsString();
+
+                            reader.MoveToContent();
+                            group.GroupID = reader.ReadElementContentAsString();
+                            GroupSubmitter = group;
+                        }
+                        break;
                     case "PageIndex":
                         PageIndex = reader.ReadElementContentAsInt();        //Convert.ToInt32(reader.ReadString());
                         break;

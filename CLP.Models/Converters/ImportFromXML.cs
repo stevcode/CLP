@@ -26,6 +26,7 @@ namespace CLP.Models
                                where !file.ToLower().Contains("history")
                                select file;
 
+            var notebookPages = new List<ICLPPage>();
             foreach(var pageXMLFilePath in pageXMLFiles)
             {
                 ICLPPage page = null;
@@ -68,7 +69,62 @@ namespace CLP.Models
                 }
 
                 ACLPPageBase.Deserialize(page);
-                notebook.AddPage(page);  //files read in alphbetical order: page 1, page 10, page 2, page 3, etc...
+                notebookPages.Add(page);  //files read in alphbetical order: page 1, page 10, page 2, page 3, etc...
+            }
+
+            notebookPages = notebookPages.OrderBy(x => x.PageIndex).ToList();
+            foreach(var page in notebookPages)
+            {
+                notebook.AddPage(page);
+            }
+
+            var submissionXMLFiles = from file in Directory.EnumerateFiles(submissionsXMLFolderPath, "*.xml")
+                                     where !file.ToLower().Contains("history")
+                                     select file;
+
+            foreach(var submissionXMLFilePath in submissionXMLFiles)
+            {
+                ICLPPage submission = null;
+
+                var reader = new XmlTextReader(submissionXMLFilePath)
+                                {
+                                    WhitespaceHandling = WhitespaceHandling.None
+                                };
+
+                while(reader.Read())
+                {
+                    if(reader.NodeType != XmlNodeType.Element)
+                    {
+                        continue;
+                    }
+
+                    switch(reader.Name)
+                    {
+                        case "Page":
+                            var pageType = reader.GetAttribute("PageType");
+                            switch(pageType)
+                            {
+                                case "CLPPage":
+                                    submission = new CLPPage(submissionXMLFilePath);
+                                    reader.Close();
+                                    break;
+                                case "CLPAnimationPage":
+                                    submission = new CLPAnimationPage(submissionXMLFilePath);
+                                    reader.Close();
+                                    break;
+                            }
+                            break;
+                    }
+                }
+
+                if(submission == null)
+                {
+                    Console.WriteLine("Failed to convert submission to XML");
+                    continue;
+                }
+
+                ACLPPageBase.Deserialize(submission);
+                notebook.Submissions[submission.UniqueID].Add(submission);
             }
 
             notebook.MirrorDisplay.DisplayPageIDs.Add(notebook.Pages.First().UniqueID);
@@ -170,8 +226,11 @@ namespace CLP.Models
                     pageObject.PageObjectStrokeParentIDs.Add(pageObjectStrokeParentID);
                 }
             }
+            else
+            {
+                reader.Read();
+            }
 
-            reader.Read();
             reader.MoveToContent();
             if(!reader.IsEmptyElement)
             {
@@ -181,23 +240,25 @@ namespace CLP.Models
                     pageObject.PageObjectObjectParentIDs.Add(pageObjectObjectParentID);
                 }
             }
+            else
+            {
+                reader.Read();
+            }
+
+            reader.MoveToContent();
 
             switch(pageObjectType)
             {
                 case "CLPTextBox":
-                    reader.Read();
-                    reader.MoveToContent();
                     (pageObject as CLPTextBox).Text = reader.ReadElementContentAsString();
                     break;
                 case "CLPArray":
                     var array = pageObject as CLPArray;
 
-                    reader.Read();
-                    reader.MoveToContent();
-                    array.IsGridOn = reader.ReadElementContentAsBoolean();
+                    array.IsGridOn = Convert.ToBoolean(reader.ReadElementContentAsString());
 
                     reader.MoveToContent();
-                    array.IsDivisionBehaviorOn = reader.ReadElementContentAsBoolean();
+                    array.IsDivisionBehaviorOn = Convert.ToBoolean(reader.ReadElementContentAsString());
 
                     reader.MoveToContent();
                     array.ArrayHeight = reader.ReadElementContentAsDouble();
@@ -260,8 +321,6 @@ namespace CLP.Models
                     }
                     break;
                 case "CLPShape":
-                    reader.Read();
-                    reader.MoveToContent();
                     var shapeType = reader.ReadElementContentAsString();
                     switch(shapeType)
                     {
