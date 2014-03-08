@@ -306,7 +306,7 @@
                 </Button>
 
                 <!--Toggle Division Adorners Button-->
-                <!--<Button Command="{Binding ToggleDivisionAdornersCommand}"
+                <Button Command="{Binding ToggleDivisionAdornersCommand}"
                         Width="40" Height="40"
                         Canvas.Left="-50"
                         Canvas.Top="20"
@@ -326,7 +326,7 @@
                             </Grid>
                         </ControlTemplate>
                     </Button.Template>
-                </Button>-->
+                </Button>
 
                 <!--Rotate Array Button - on right-->
                 <Button Command="{Binding RotateArrayCommand}"

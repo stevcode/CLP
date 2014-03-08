@@ -196,6 +196,7 @@
     <Compile Include="Converters\EnumToBoolConverter.cs" />
     <Compile Include="Converters\FFCMarginConverter.cs" />
     <Compile Include="Converters\HeightToWidthAspectRatioMultiConverter.cs" />
+    <Compile Include="Converters\IndexToMarginConverter.cs" />
     <Compile Include="Converters\IntToOppositeVisibilityConverter.cs" />
     <Compile Include="Converters\IntToVisibilityConverter.cs" />
     <Compile Include="Converters\ItemsControlItemIndexConverter.cs" />

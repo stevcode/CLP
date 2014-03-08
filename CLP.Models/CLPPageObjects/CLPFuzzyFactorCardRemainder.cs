@@ -31,14 +31,7 @@ namespace CLP.Models
             //TODO Liz Change to random number
             for(int i = 0; i < remainderValue; i++)
             {
-                if(i % 2 == 0)
-                {
-                    TileOffsets.Add("-3 7 7 -3"); 
-                }
-                else
-                {
-                    TileOffsets.Add("7 -3 -3 7");
-                }
+                TileOffsets.Add("DodgerBlue"); 
             }
         }
 
@@ -135,20 +128,51 @@ namespace CLP.Models
         {
             for(int i = 0; i < numberOfTiles; i++)
             {
-                //TODO Liz Change to random number
-                if(TileOffsets.Count % 2 == 0)
-                {
-                    TileOffsets.Add("-3 7 7 -3");
-                }
-                else
-                {
-                    TileOffsets.Add("7 -3 -3 7");
-                }
+                //TODO Liz update to set appropriate tiles to black
+                TileOffsets.Add("DodgerBlue");
             }
             if(TileOffsets.Count % 5 <= numberOfTiles && TileOffsets.Count % 5 > 0)
             {
                 Height += SquareSize + 16.0;
             }
+        }
+
+        //public void FadeTiles(int numberOfTiles)
+        //{
+        //    for(int i = 0; i < numberOfTiles; i++)
+        //    {
+        //        TileOffsets.RemoveAt(TileOffsets.Count - 1);
+        //    }
+        //    for(int i = 0; i < numberOfTiles; i++)
+        //    {
+        //        TileOffsets.Add("Black");
+        //    }
+        //}
+
+        public void UpdateTiles()
+        {
+            CLPFuzzyFactorCard ffc = ParentPage.GetPageObjectByUniqueID(FuzzyFactorCardUniqueID) as CLPFuzzyFactorCard;
+            int numberOfBlackTiles = 0;
+            foreach(var pageObject in ParentPage.PageObjects)
+            {
+                //TO DO Liz - update for rotating FFC
+                if(pageObject.PageObjectType == "CLPArray" && (pageObject as CLPArray).Rows == ffc.Rows)
+                {
+                    numberOfBlackTiles += (pageObject as CLPArray).Rows * (pageObject as CLPArray).Columns;
+                }
+            }
+
+            TileOffsets.Clear();
+            for(int i = 0; i < ffc.CurrentRemainder - numberOfBlackTiles; i++)
+            {
+                TileOffsets.Add("DodgerBlue");
+            }
+            for(int i = 0; i < numberOfBlackTiles; i++)
+            {
+                TileOffsets.Add("Black");
+            }
+
+            Height = Math.Ceiling((double)TileOffsets.Count / 5.0) * (SquareSize + 16.0);
         }
 
         #endregion //Methods

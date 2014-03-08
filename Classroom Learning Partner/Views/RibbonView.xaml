@@ -270,9 +270,9 @@
             <RibbonGroup Header="Insert"
                          Visibility="{Binding InstructorVisibility, Converter={StaticResource BooleanToOppositeBooleanConverter}}">
 
-                <RibbonButton Label="Stamp"
+                <!--<RibbonButton Label="Stamp"
                               LargeImageSource="..\Images\AddPathStamp.png"
-                              Command="{Binding InsertBlankStampCommand}" />
+                              Command="{Binding InsertBlankStampCommand}" />-->
                 
                 <!--Array + Divider - Left-Handed-->
                 <!--<RibbonButton Label="Array"
@@ -337,11 +337,11 @@
                               Command="{Binding InsertArrayCommand}"
                               CommandParameter="FFCDIVIDENDONEDGE" />
 
-                <RibbonButton Label="Division Tool With Remainder"
+                <!--<RibbonButton Label="Division Tool With Remainder"
                               LargeImageSource="pack://application:,,,/Resources/Images/dividendonedge32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/dividendonedge16.png"
                               Command="{Binding InsertArrayCommand}"
-                              CommandParameter="FFCREMAINDER" />
+                              CommandParameter="FFCREMAINDER" />-->
 
                 <!--<RibbonButton Label="FFC: labels top, no answer"
                               LargeImageSource="pack://application:,,,/Resources/Images/FactorCard32.png"
@@ -361,10 +361,10 @@
                               Command="{Binding InsertArrayCommand}"
                               CommandParameter="FFCCOMPDISPLAY" />-->
 
-                <!--<RibbonButton Label="Stamp"
+                <RibbonButton Label="Stamp"
                               LargeImageSource="pack://application:,,,/Resources/Images/Stamp32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/Stamp16.png"
-                              Command="{Binding InsertBlankStampCommand}" />-->
+                              Command="{Binding InsertBlankStampCommand}" />
 
                 <!--<RibbonButton Label="Collection Stamp"
                               LargeImageSource="pack://application:,,,/Resources/Images/CollectionStamp32.png"

@@ -133,6 +133,20 @@ namespace CLP.Models
                 }
             }
             OldDimensions = newDimensions;
+
+            //If FFC with remainder on page, update
+            foreach(var pageObject in ParentPage.PageObjects)
+            {
+                if(pageObject is CLPFuzzyFactorCard)
+                {
+                    if((pageObject as CLPFuzzyFactorCard).RemainderRegionUniqueID != null)
+                    {
+                        CLPFuzzyFactorCardRemainder remainderRegion = ParentPage.GetPageObjectByUniqueID((pageObject as CLPFuzzyFactorCard).RemainderRegionUniqueID) as CLPFuzzyFactorCardRemainder;
+                        remainderRegion.UpdateTiles();
+                        break;
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -169,6 +183,20 @@ namespace CLP.Models
                 }
             }
             OldDimensions = newDimensions;
+
+            //If FFC with remainder on page, update
+            foreach(var pageObject in ParentPage.PageObjects)
+            {
+                if(pageObject is CLPFuzzyFactorCard)
+                {
+                    if((pageObject as CLPFuzzyFactorCard).RemainderRegionUniqueID != null)
+                    {
+                        CLPFuzzyFactorCardRemainder remainderRegion = ParentPage.GetPageObjectByUniqueID((pageObject as CLPFuzzyFactorCard).RemainderRegionUniqueID) as CLPFuzzyFactorCardRemainder;
+                        remainderRegion.UpdateTiles();
+                        break;
+                    }
+                }
+            }
         }
 
         public override ICLPHistoryItem UndoRedoCompleteClone()

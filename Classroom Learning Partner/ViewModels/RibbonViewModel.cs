@@ -2665,6 +2665,20 @@ namespace Classroom_Learning_Partner.ViewModels
                         array.SizeArrayToGridLevel(squareSize);
                         ACLPPageObjectBase.ApplyDistinctPosition(array);
                         ACLPPageBaseViewModel.AddPageObjectToPage(array);
+
+                        //If FFC with remainder on page, update
+                        foreach(var pageObject in currentPage.PageObjects)
+                        {
+                            if(pageObject is CLPFuzzyFactorCard)
+                            {
+                                if((pageObject as CLPFuzzyFactorCard).RemainderRegionUniqueID != null)
+                                {
+                                    CLPFuzzyFactorCardRemainder remainderRegion = currentPage.GetPageObjectByUniqueID((pageObject as CLPFuzzyFactorCard).RemainderRegionUniqueID) as CLPFuzzyFactorCardRemainder;
+                                    remainderRegion.UpdateTiles();
+                                }
+                            }
+                        }
+
                         return;
                     }
                     // If it doesn't fit, resize all other non-background arrays on page to match new array grid size
@@ -2716,11 +2730,25 @@ namespace Classroom_Learning_Partner.ViewModels
                             Logger.Instance.WriteToLog("ParentPage for pageObject not set in AddPageObjectToPage().");
                             return;
                         }
+
                         array.IsBackground = App.MainWindowViewModel.IsAuthoring;
                         ACLPPageObjectBase.ApplyDistinctPosition(array);
                         currentPage.PageObjects.Add(array);
                         ACLPPageBaseViewModel.AddHistoryItemToPage(currentPage, new CLPHistoryArrayAddMassResize(currentPage, array.UniqueID, currentPage.PageObjects.Count - 1, oldDimensions));
                         App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.Select;
+
+                        //If FFC with remainder on page, update
+                        foreach(var pageObject in currentPage.PageObjects)
+                        {
+                            if(pageObject is CLPFuzzyFactorCard)
+                            {
+                                if((pageObject as CLPFuzzyFactorCard).RemainderRegionUniqueID != null)
+                                {
+                                    CLPFuzzyFactorCardRemainder remainderRegion = currentPage.GetPageObjectByUniqueID((pageObject as CLPFuzzyFactorCard).RemainderRegionUniqueID) as CLPFuzzyFactorCardRemainder;
+                                    remainderRegion.UpdateTiles();
+                                }
+                            }
+                        }
                         return;
                     }
                 }
@@ -2904,8 +2932,6 @@ namespace Classroom_Learning_Partner.ViewModels
                         CLPFuzzyFactorCardRemainder remainderRegion = new CLPFuzzyFactorCardRemainder((array as CLPFuzzyFactorCard), dividend, currentPage);
                         currentPage.PageObjects.Add(remainderRegion);
                         (array as CLPFuzzyFactorCard).RemainderRegionUniqueID = remainderRegion.UniqueID;
-                        Console.Write("unique ID 2: ");
-                        Console.WriteLine((array as CLPFuzzyFactorCard).RemainderRegionUniqueID);
                         break;
                     //case "FUZZYFACTORCARDTOP":
                     //    array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
@@ -3015,6 +3041,19 @@ namespace Classroom_Learning_Partner.ViewModels
                     currentPage.PageObjects.Add(array);
                     ACLPPageBaseViewModel.AddHistoryItemToPage(currentPage, new CLPHistoryArrayAddMassResize(currentPage, array.UniqueID, currentPage.PageObjects.Count - 1, oldDimensions));
                     App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.Select;
+
+                    //If FFC with remainder on page, update
+                    foreach(var pageObject in currentPage.PageObjects)
+                    {
+                        if(pageObject is CLPFuzzyFactorCard)
+                        {
+                            if((pageObject as CLPFuzzyFactorCard).RemainderRegionUniqueID != null)
+                            {
+                                CLPFuzzyFactorCardRemainder remainderRegion = currentPage.GetPageObjectByUniqueID((pageObject as CLPFuzzyFactorCard).RemainderRegionUniqueID) as CLPFuzzyFactorCardRemainder;
+                                remainderRegion.UpdateTiles();
+                            }
+                        }
+                    }
                     return;
                 }
                 else
@@ -3026,6 +3065,19 @@ namespace Classroom_Learning_Partner.ViewModels
                         pageObjectIDs.Add(array.UniqueID);
                         currentPage.PageObjects.Add(array);
                     }
+                    //If FFC with remainder on page, update
+                    foreach(var pageObject in currentPage.PageObjects)
+                    {
+                        if(pageObject is CLPFuzzyFactorCard)
+                        {
+                            if((pageObject as CLPFuzzyFactorCard).RemainderRegionUniqueID != null)
+                            {
+                                CLPFuzzyFactorCardRemainder remainderRegion = currentPage.GetPageObjectByUniqueID((pageObject as CLPFuzzyFactorCard).RemainderRegionUniqueID) as CLPFuzzyFactorCardRemainder;
+                                remainderRegion.UpdateTiles();
+                            }
+                        }
+                    }
+
                     ACLPPageBaseViewModel.AddHistoryItemToPage(currentPage, new CLPHistoryArrayMassAddMassResize(currentPage, pageObjectIDs, oldDimensions));
                     App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.Select;
                     return;
@@ -3039,6 +3091,19 @@ namespace Classroom_Learning_Partner.ViewModels
             else
             {
                 ACLPPageBaseViewModel.AddPageObjectsToPage(currentPage, arraysToAdd);
+            }
+
+            //If FFC with remainder on page, update
+            foreach(var pageObject in currentPage.PageObjects)
+            {
+                if(pageObject is CLPFuzzyFactorCard)
+                {
+                    if((pageObject as CLPFuzzyFactorCard).RemainderRegionUniqueID != null)
+                    {
+                        CLPFuzzyFactorCardRemainder remainderRegion = currentPage.GetPageObjectByUniqueID((pageObject as CLPFuzzyFactorCard).RemainderRegionUniqueID) as CLPFuzzyFactorCardRemainder;
+                        remainderRegion.UpdateTiles();
+                    }
+                }
             }
         }
 

@@ -16,11 +16,8 @@
         <conv:DoubleToVisibilityConverter x:Key="DoubleToVisibilityConverter" />
         <conv:AllBoolToVisibilityMultiConverter x:Key="AllBoolToVisibilityMultiConverter" />
         <conv:MultiplyAllIntToTextMultiConverter x:Key="MultiplyAllIntToTextMultiConverter" />
+        <conv:IndexToMarginConverter x:Key="IndexToMarginConverter" />
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-        <Style x:Key="TileStyle">
-            <Setter Property="UniformGrid.Margin"
-                    Value="{Binding}" />
-        </Style>
     </UserControl.Resources>
 
     <ac:AdornedControl HorizontalAlignment="Center" VerticalAlignment="Center"
@@ -93,7 +90,7 @@
 
             <!--The Tiles-->
             <ItemsControl ItemsSource="{Binding TileOffsets}"
-                          ItemContainerStyle="{StaticResource TileStyle}">
+                          AlternationCount="100">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <UniformGrid Columns="5" 
@@ -103,7 +100,8 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Rectangle Height="45" Width="45"
-                                   Stroke="DodgerBlue" StrokeThickness="1.5"/>
+                                   StrokeThickness="1.5" Stroke="{Binding}"
+                                   Margin="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(ItemsControl.AlternationIndex), Converter={StaticResource IndexToMarginConverter}}"/>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

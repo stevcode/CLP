@@ -90,6 +90,23 @@ namespace CLP.Models
             {
                 Logger.Instance.WriteErrorToLog("Undo AddPageObject Error.", ex);
             }
+
+            //If page object was array and FFC with remainder on page, update
+            if(PageObject.PageObjectType == "CLPArray")
+            {
+                foreach(var pageObject in ParentPage.PageObjects)
+                {
+                    if(pageObject is CLPFuzzyFactorCard)
+                    {
+                        if((pageObject as CLPFuzzyFactorCard).RemainderRegionUniqueID != null)
+                        {
+                            CLPFuzzyFactorCardRemainder remainderRegion = ParentPage.GetPageObjectByUniqueID((pageObject as CLPFuzzyFactorCard).RemainderRegionUniqueID) as CLPFuzzyFactorCardRemainder;
+                            remainderRegion.UpdateTiles();
+                            break;
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -113,6 +130,24 @@ namespace CLP.Models
             {
                 ParentPage.PageObjects.Insert(Index, PageObject);
             }
+            
+            //If page object was array and FFC with remainder on page, update
+            if(PageObject.PageObjectType == "CLPArray")
+            {
+                foreach(var pageObject in ParentPage.PageObjects)
+                {
+                    if(pageObject is CLPFuzzyFactorCard)
+                    {
+                        if((pageObject as CLPFuzzyFactorCard).RemainderRegionUniqueID != null)
+                        {
+                            CLPFuzzyFactorCardRemainder remainderRegion = ParentPage.GetPageObjectByUniqueID((pageObject as CLPFuzzyFactorCard).RemainderRegionUniqueID) as CLPFuzzyFactorCardRemainder;
+                            remainderRegion.UpdateTiles();
+                            break;
+                        }
+                    }
+                }
+            }
+
             PageObject = null; //no sense storing the actual pageObject for serialization if it's on the page.
         }
 
