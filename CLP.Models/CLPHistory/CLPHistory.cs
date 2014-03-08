@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Xml;
 using Catel.Collections;
 using Catel.Data;
 
@@ -31,6 +32,63 @@ namespace CLP.Models
         protected CLPHistory(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
+        }
+
+        public CLPHistory(string xmlHistoryFilePath, ICLPPage page, bool isLegacyHistoryCode = true)
+        {
+            var reader = new XmlTextReader(xmlHistoryFilePath)
+                         {
+                             WhitespaceHandling = WhitespaceHandling.None
+                         };
+
+            if(isLegacyHistoryCode && page is CLPAnimationPage)
+            {
+                UndoItems.Insert(0, new CLPAnimationIndicator(page, AnimationIndicatorType.Record));
+            }
+
+            var isUndoItem = false;
+            while(reader.Read())
+            {
+                if(reader.NodeType != XmlNodeType.Element)
+                {
+                    continue;
+                }
+
+                switch(reader.Name)
+                {
+                    case "PageHistory":
+                        UseHistory = Convert.ToBoolean(reader.GetAttribute("UseHistory"));
+                        break;
+                    case "UndoItems":
+                        isUndoItem = true;
+                        break;
+                    case "RedoItems":
+                        isUndoItem = false;
+                        break;
+                    case "HistoryItem":
+                        var historyItem = ImportFromXML.ParseHistoryItem(reader, page);
+                        if(historyItem == null)
+                        {
+                            Console.WriteLine("Null History item in Parse HistoryItem from XML.");
+                            break;
+                        }
+                        if(isUndoItem)
+                        {
+                            UndoItems.Insert(0, historyItem);
+                        }
+                        else
+                        {
+                            RedoItems.Add(historyItem);
+                        }
+                        break;
+                }
+            }
+
+            if(isLegacyHistoryCode && page is CLPAnimationPage)
+            {
+                RedoItems.Add(new CLPAnimationIndicator(page, AnimationIndicatorType.Stop));
+            }
+            UpdateTicks();
         }
 
         #endregion //Constructors

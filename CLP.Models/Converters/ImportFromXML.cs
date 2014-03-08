@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
+using System.Windows;
 using System.Windows.Ink;
 using System.Windows.Media;
 using System.Xml;
@@ -65,13 +67,12 @@ namespace CLP.Models
                     continue;
                 }
 
+                ACLPPageBase.Deserialize(page);
                 notebook.AddPage(page);  //files read in alphbetical order: page 1, page 10, page 2, page 3, etc...
             }
 
-
-
-
-            notebook.MirrorDisplay.AddPageToDisplay(notebook.Pages.First());
+            notebook.MirrorDisplay.DisplayPageIDs.Add(notebook.Pages.First().UniqueID);
+            notebook.InitializeAfterDeserialize();
 
             return notebook;
         }
@@ -141,7 +142,7 @@ namespace CLP.Models
 
             if(pageObject == null)
             {
-                return pageObject;
+                return null;
             }
 
             pageObject.ParentPageID = reader.GetAttribute("ParentPageID");
@@ -291,6 +292,102 @@ namespace CLP.Models
             }
 
             return pageObject;
+        }
+
+        public static ICLPHistoryItem ParseHistoryItem(XmlTextReader reader, ICLPPage page)
+        {
+            ICLPHistoryItem historyItem = null;
+            
+            var historyItemType = reader.GetAttribute("Type");
+
+            switch(historyItemType)
+            {
+                //case "HistoryStrokesChanged":
+                //    historyItem = new CLPHistoryStrokesChanged();
+                //    break;
+                //case "HistoryPageObjectAdded":
+                //    historyItem = new CLPArray(0, 0, page);
+                //    break;
+                //case "HistoryPageObjectRemove":
+                //    historyItem = new CLPShape(CLPShape.CLPShapeType.Ellipse, page);
+                //    break;
+                case "HistoryPageObjectResizeBatch":
+                {
+                    var uniqueID = reader.GetAttribute("PageObjectUniqueID");
+                    var currentBatchTickIndex = Convert.ToInt32(reader.GetAttribute("CurrentBatchTickIndex"));
+
+                    reader.Read();
+                    reader.MoveToContent();
+                    var dimensionsReader = reader.ReadSubtree();
+                    dimensionsReader.Read();
+                    dimensionsReader.MoveToContent();
+                    var stretchedDimensions = new ObservableCollection<Point>();
+                    while(dimensionsReader.Read())
+                    {
+                        if(reader.NodeType != XmlNodeType.Element)
+                        {
+                            continue;
+                        }
+
+                        if(reader.Name != "Point")
+                        {
+                            continue;
+                        }
+
+                        var x = Convert.ToDouble(dimensionsReader.GetAttribute("X"));
+                        var y = Convert.ToDouble(dimensionsReader.GetAttribute("Y"));
+                        stretchedDimensions.Add(new Point(x,y));
+                    }
+
+                    historyItem = new CLPHistoryPageObjectResizeBatch(page, uniqueID, new Point(0,0));
+                    (historyItem as CLPHistoryPageObjectResizeBatch).StretchedDimensions = stretchedDimensions;
+                    (historyItem as IHistoryBatch).CurrentBatchTickIndex = currentBatchTickIndex;
+                }
+                    break;
+                case "HistoryPageObjectMoveBatch":
+                {
+                    var uniqueID = reader.GetAttribute("PageObjectUniqueID");
+                    var currentBatchTickIndex = Convert.ToInt32(reader.GetAttribute("CurrentBatchTickIndex"));
+
+                    reader.Read();
+                    reader.MoveToContent();
+                    var positionsReader = reader.ReadSubtree();
+                    positionsReader.Read();
+                    positionsReader.MoveToContent();
+                    var travelledPositions = new List<Point>();
+                    while(positionsReader.Read())
+                    {
+                        if(reader.NodeType != XmlNodeType.Element)
+                        {
+                            continue;
+                        }
+
+                        if(reader.Name != "Point")
+                        {
+                            continue;
+                        }
+
+                        var x = Convert.ToDouble(positionsReader.GetAttribute("X"));
+                        var y = Convert.ToDouble(positionsReader.GetAttribute("Y"));
+                        travelledPositions.Add(new Point(x,y));
+                    }
+
+                    historyItem = new CLPHistoryPageObjectMoveBatch(page, uniqueID, new Point(0,0));
+                    (historyItem as CLPHistoryPageObjectMoveBatch).TravelledPositions = travelledPositions;
+                    (historyItem as IHistoryBatch).CurrentBatchTickIndex = currentBatchTickIndex;
+                }
+                    break;
+            }
+
+            if(historyItem == null)
+            {
+                return null;
+            }
+
+
+
+
+            return historyItem;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows;
@@ -8,6 +9,7 @@ using System.Windows.Ink;
 using System.Xml;
 using System.Xml.Serialization;
 using Catel.Data;
+using Path = Catel.IO.Path;
 
 namespace CLP.Models
 {
@@ -101,16 +103,16 @@ namespace CLP.Models
                 switch(reader.Name)
                 {
                     case "CreationDate":
-                        CreationDate = Convert.ToDateTime(reader.ReadElementContentAsString());
+                        CreationDate = Convert.ToDateTime(reader.ReadString());
                         break;
                     case "UniqueID":
-                        UniqueID = reader.ReadElementContentAsString();
+                        UniqueID = reader.ReadString();
                         break;
                     case "ParentNotebookID":
-                        ParentNotebookID = reader.ReadElementContentAsString();
+                        ParentNotebookID = reader.ReadString();
                         break;
                     case "SubmissionType":
-                        var submissionType = reader.ReadElementContentAsString();
+                        var submissionType = reader.ReadString();
                         switch(submissionType)
                         {
                             case "None":
@@ -127,23 +129,23 @@ namespace CLP.Models
                     case "SubmissionTime":
                         if(!reader.IsEmptyElement)
                         {
-                            SubmissionTime = Convert.ToDateTime(reader.ReadElementContentAsString());
+                            SubmissionTime = Convert.ToDateTime(reader.ReadString());
                         }
                         break;
                     case "SubmissionID":
                         if(!reader.IsEmptyElement)
                         {
-                            SubmissionID = reader.ReadElementContentAsString();
+                            SubmissionID = reader.ReadString();
                         }
                         break;
                     case "PageIndex":
                         PageIndex = reader.ReadElementContentAsInt();        //Convert.ToInt32(reader.ReadString());
                         break;
                     case "NumberOfSubmissions":
-                        NumberOfSubmissions = reader.ReadElementContentAsInt();
+                        NumberOfSubmissions = Convert.ToInt32(reader.ReadString());
                         break;
                     case "NumberOfGroupSubmissions":
-                        NumberOfGroupSubmissions = reader.ReadElementContentAsInt();
+                        NumberOfGroupSubmissions = Convert.ToInt32(reader.ReadString());
                         break;
                     //case "Tag":
                     //    Tag tag = null;
@@ -176,7 +178,7 @@ namespace CLP.Models
                     //    }
                     //    break;
                     case "GroupSubmitType":
-                        var groupSubmitType = reader.ReadElementContentAsString();
+                        var groupSubmitType = reader.ReadString();
                         switch(groupSubmitType)
                         {
                             case "Deny":
@@ -191,13 +193,13 @@ namespace CLP.Models
                         }
                         break;
                     case "PageHeight":
-                        PageHeight = reader.ReadElementContentAsDouble();             // Convert.ToDouble(reader.ReadString());
+                        PageHeight = Convert.ToDouble(reader.ReadString());
                         break;
                     case "PageWidth":
-                        PageWidth = reader.ReadElementContentAsDouble(); 
+                        PageWidth = Convert.ToDouble(reader.ReadString());
                         break;
                     case "InitialAspectRatio":
-                        InitialPageAspectRatio = reader.ReadElementContentAsDouble(); 
+                        InitialPageAspectRatio = Convert.ToDouble(reader.ReadString());
                         break;
                     case "ImagePool":
                         //TODO ***********************
@@ -218,8 +220,13 @@ namespace CLP.Models
                         break;
                 }
             }
+            reader.Close();
 
-            PageHistory = new CLPHistory();
+            var pageHistoryXMLDirectory = Path.GetDirectoryName(pageXMLFilePath);
+            var pageHistoryXMLFileName = System.IO.Path.GetFileNameWithoutExtension(pageXMLFilePath) + " History.xml";
+            var pageHistoryXMLFilePath = Path.Combine(pageHistoryXMLDirectory, pageHistoryXMLFileName);
+
+            PageHistory = File.Exists(pageHistoryXMLFilePath) ? new CLPHistory(pageHistoryXMLFilePath, this) : new CLPHistory();
             InkStrokes = StrokeDTO.LoadInkStrokes(SerializedStrokes);
         }
 
