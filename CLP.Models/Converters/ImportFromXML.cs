@@ -406,12 +406,41 @@ namespace CLP.Models
                     (historyItem as CLPHistoryStrokesChanged).SerializedStrokesRemoved = strokesRemoved;
                 }
                     break;
-                //case "HistoryPageObjectAdded":
-                //    historyItem = new CLPArray(0, 0, page);
-                //    break;
-                //case "HistoryPageObjectRemove":
-                //    historyItem = new CLPShape(CLPShape.CLPShapeType.Ellipse, page);
-                //    break;
+                case "HistoryPageObjectAdd":
+                {
+                    var uniqueID = reader.GetAttribute("PageObjectUniqueID");
+                    historyItem = new CLPHistoryPageObjectAdd(page, uniqueID, 0);
+
+                    reader.Read();
+                    reader.MoveToContent();
+
+                    if(!reader.IsEmptyElement)
+                    {
+                        reader.Read();
+                        reader.MoveToContent();
+                        (historyItem as CLPHistoryPageObjectAdd).PageObject = ParsePageObject(reader, page);;
+                    }
+                }
+                    break;
+                case "HistoryPageObjectRemove":
+                {
+                    var uniqueID = reader.GetAttribute("PageObjectUniqueID");
+
+                    reader.Read();
+                    reader.MoveToContent();
+
+                    ICLPPageObject pageObject = null;
+                    if(!reader.IsEmptyElement)
+                    {
+                        reader.Read();
+                        reader.MoveToContent();
+                        pageObject = ParsePageObject(reader, page);
+                    }
+
+                    historyItem = new CLPHistoryPageObjectRemove(page, uniqueID, 0);
+                    (historyItem as CLPHistoryPageObjectRemove).PageObject = pageObject;
+                }
+                    break;
                 case "HistoryPageObjectResizeBatch":
                 {
                     var uniqueID = reader.GetAttribute("PageObjectUniqueID");
