@@ -77,7 +77,7 @@ namespace CLP.Models
             return notebook;
         }
 
-        public static StrokeDTO ParseStroke(XmlTextReader reader)
+        public static StrokeDTO ParseStroke(XmlReader reader)
         {
             var stroke = new StrokeDTO
                          {
@@ -302,9 +302,110 @@ namespace CLP.Models
 
             switch(historyItemType)
             {
-                //case "HistoryStrokesChanged":
-                //    historyItem = new CLPHistoryStrokesChanged();
-                //    break;
+                case "HistoryStrokesChanged":
+                {
+                    reader.Read();
+                    reader.MoveToContent();
+                    var strokeIdsAdded = new List<string>();
+                    if(!reader.IsEmptyElement)
+                    {
+                        var strokeIDsAddedReader = reader.ReadSubtree();
+                        strokeIDsAddedReader.Read();
+                        strokeIDsAddedReader.MoveToContent();
+                        while(strokeIDsAddedReader.Read())
+                        {
+                            if(reader.NodeType != XmlNodeType.Element)
+                            {
+                                continue;
+                            }
+
+                            if(reader.Name != "StrokeID")
+                            {
+                                continue;
+                            }
+                            strokeIdsAdded.Add(strokeIDsAddedReader.GetAttribute("ID"));
+                        }
+                    }
+
+                    reader.Read();
+                    reader.MoveToContent();
+                    var strokesAdded = new List<StrokeDTO>();
+                    if(!reader.IsEmptyElement)
+                    {
+                        var strokesAddedReader = reader.ReadSubtree();
+                        strokesAddedReader.Read();
+                        strokesAddedReader.MoveToContent();
+                        while(strokesAddedReader.Read())
+                        {
+                            if(reader.NodeType != XmlNodeType.Element)
+                            {
+                                continue;
+                            }
+
+                            if(reader.Name != "Stroke")
+                            {
+                                continue;
+                            }
+
+                            var stroke = ParseStroke(strokesAddedReader);
+                            strokesAdded.Add(stroke);
+                        }
+                    }
+
+                    reader.Read();
+                    reader.MoveToContent();
+                    var strokeIdsRemoved = new List<string>();
+                    if(!reader.IsEmptyElement)
+                    {
+                        var strokeIDsRemovedReader = reader.ReadSubtree();
+                        strokeIDsRemovedReader.Read();
+                        strokeIDsRemovedReader.MoveToContent();
+                        while(strokeIDsRemovedReader.Read())
+                        {
+                            if(reader.NodeType != XmlNodeType.Element)
+                            {
+                                continue;
+                            }
+
+                            if(reader.Name != "StrokeID")
+                            {
+                                continue;
+                            }
+                            strokeIdsRemoved.Add(strokeIDsRemovedReader.GetAttribute("ID"));
+                        }
+                    }
+
+                    reader.Read();
+                    reader.MoveToContent();
+                    var strokesRemoved = new List<StrokeDTO>();
+                    if(!reader.IsEmptyElement)
+                    {
+                        var strokesRemovedReader = reader.ReadSubtree();
+                        strokesRemovedReader.Read();
+                        strokesRemovedReader.MoveToContent();
+                        while(strokesRemovedReader.Read())
+                        {
+                            if(reader.NodeType != XmlNodeType.Element)
+                            {
+                                continue;
+                            }
+
+                            if(reader.Name != "Stroke")
+                            {
+                                continue;
+                            }
+
+                            var stroke = ParseStroke(strokesRemovedReader);
+                            strokesRemoved.Add(stroke);
+                        }
+                    }
+
+                    historyItem = new CLPHistoryStrokesChanged(page, strokeIdsAdded, new List<Stroke>());
+                    (historyItem as CLPHistoryStrokesChanged).StrokeIDsRemoved = strokeIdsRemoved;
+                    (historyItem as CLPHistoryStrokesChanged).SerializedStrokesAdded = strokesAdded;
+                    (historyItem as CLPHistoryStrokesChanged).SerializedStrokesRemoved = strokesRemoved;
+                }
+                    break;
                 //case "HistoryPageObjectAdded":
                 //    historyItem = new CLPArray(0, 0, page);
                 //    break;
@@ -378,14 +479,6 @@ namespace CLP.Models
                 }
                     break;
             }
-
-            if(historyItem == null)
-            {
-                return null;
-            }
-
-
-
 
             return historyItem;
         }

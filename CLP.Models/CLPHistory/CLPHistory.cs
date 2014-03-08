@@ -86,7 +86,14 @@ namespace CLP.Models
 
             if(isLegacyHistoryCode && page is CLPAnimationPage)
             {
-                RedoItems.Add(new CLPAnimationIndicator(page, AnimationIndicatorType.Stop));
+                if(UndoItems.Count == 1)
+                {
+                    UndoItems.Clear();
+                }
+                else
+                {
+                    RedoItems.Add(new CLPAnimationIndicator(page, AnimationIndicatorType.Stop));
+                }
             }
             UpdateTicks();
         }
