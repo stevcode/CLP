@@ -715,6 +715,10 @@
     <Content Include="External Libraries\NRtfTree.dll" />
     <Content Include="External Libraries\ServiceModelEx.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
+    <Resource Include="Images\video.png" />
+    <Resource Include="Resources\Images\AnimationIndicator16.png" />
+    <Resource Include="Resources\Images\AnimationIndicator32.png" />
+    <Resource Include="Resources\Images\AnimationIndicator64.png" />
     <Resource Include="Resources\Images\HideSubmissionsButton50x25.png" />
     <Resource Include="Resources\Images\Check16.png" />
     <Resource Include="Resources\Images\GrayPlus16.png" />
@@ -847,7 +851,6 @@
     <Resource Include="Images\record.png" />
     <Resource Include="Images\stop.png" />
     <Resource Include="Images\stop_record.png" />
-    <Resource Include="Images\video.png" />
     <Resource Include="Images\SnapTileIcon.png" />
     <Content Include="External Libraries\IACore.dll" />
     <Content Include="External Libraries\IALoader.dll" />
