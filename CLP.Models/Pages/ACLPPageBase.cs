@@ -156,7 +156,7 @@ namespace CLP.Models
                             submitter.CurrentMachineName = reader.ReadElementContentAsString();
 
                             reader.MoveToContent();
-                            submitter.CurrentMachineAddress = reader.ReadElementContentAsString();
+                            submitter.CurrentMachineAddress = reader.ReadString();
                             Submitter = submitter;
                         }
                         break;
@@ -169,12 +169,12 @@ namespace CLP.Models
                             group.GroupName = reader.ReadElementContentAsString();
 
                             reader.MoveToContent();
-                            group.GroupID = reader.ReadElementContentAsString();
+                            group.GroupID = reader.ReadString();
                             GroupSubmitter = group;
                         }
                         break;
                     case "PageIndex":
-                        PageIndex = reader.ReadElementContentAsInt();        //Convert.ToInt32(reader.ReadString());
+                        PageIndex = Convert.ToInt32(reader.ReadString());
                         break;
                     case "NumberOfSubmissions":
                         NumberOfSubmissions = Convert.ToInt32(reader.ReadString());
