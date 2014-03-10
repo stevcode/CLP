@@ -16,6 +16,7 @@
         <res:TimeToBooleanConverter x:Key="timeConverter" />
         <res:TagToBooleanConverter x:Key="tagConverter" />
         <conv:BytesToImageSourceConverter x:Key="BytesToImageSourceConverter" />
+        <conv:ByteArrayToBoolConverter x:Key="ByteArrayToBoolConverter" />
 
         <!-- Submissions with the Trigger for Selected -->
         <Style x:Key="SubmissionsSidebarContainer" TargetType="{x:Type ListBoxItem}">
@@ -369,11 +370,40 @@
                                     <RowDefinition Height="*" />
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
-
-                                <!--<views:CLPPagePreviewView x:Name="PagePreviewView" Grid.Row="0" Margin="5 5 5 0"
-                                                          DataContext="{Binding}" />-->
-
-                                <Image Margin="5 5 5 0" Source="{Binding PageThumbnail, Converter={StaticResource BytesToImageSourceConverter}, IsAsync=True}" />
+                                
+                                <Control Grid.Row="0" Margin="5 5 5 0">
+                                    <Control.Resources>
+                    
+                                        <ControlTemplate x:Key="PagePreviewTemplate">
+                                            <views:CLPPagePreviewView DataContext="{Binding}" />
+                                        </ControlTemplate>
+                                        
+                                        <ControlTemplate x:Key="ThumbnailTemplate">
+                                            <Image Source="{Binding PageThumbnail, Converter={StaticResource BytesToImageSourceConverter}, IsAsync=True}" />
+                                        </ControlTemplate>
+                    
+                                    </Control.Resources>
+                
+                                    <Control.Style>
+                    
+                                        <Style TargetType="{x:Type Control}">
+                                            <Style.Triggers>
+                                                
+                                                <!--CLPPagePreviewView Fallback if Thumbnail is absent-->
+                                                <DataTrigger Binding="{Binding PageThumbnail, Converter={StaticResource ByteArrayToBoolConverter}}" Value="False">
+                                                    <Setter Property="Template" Value="{StaticResource PagePreviewTemplate}" />
+                                                </DataTrigger>
+                                                
+                                                <!--Thumbnail-->
+                                                <DataTrigger Binding="{Binding PageThumbnail, Converter={StaticResource ByteArrayToBoolConverter}}" Value="True">
+                                                    <Setter Property="Template" Value="{StaticResource ThumbnailTemplate}" />
+                                                </DataTrigger>
+                                                
+                                            </Style.Triggers>
+                                        </Style>
+                    
+                                    </Control.Style>
+                                </Control>
 
                                 <Rectangle Grid.Row="0" Margin="5 5 5 0"
                                            Stroke="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"

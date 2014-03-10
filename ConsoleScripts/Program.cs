@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ConsoleScripts
 {
@@ -40,6 +36,14 @@ namespace ConsoleScripts
             else if(command.Equals("strip"))
             {
                 stripHistory();
+            }
+            else if(command.Equals("combine"))
+            {
+                NotebookMerge.Combine();
+            }
+            else if(command.Equals("xml"))
+            {
+                XMLImporter.Import();
             }
             else if(command.Equals("exit"))
             {

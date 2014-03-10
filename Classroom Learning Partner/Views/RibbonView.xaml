@@ -41,6 +41,11 @@
                                            KeyTip="O"
                                            ImageSource="pack://application:,,,/Resources/Images/OpenNotebook32.png"
                                            Command="{Binding OpenNotebookCommand}" />
+                
+                <RibbonApplicationMenuItem Header="Load Notebook From XML"
+                                           KeyTip="L"
+                                           ImageSource="pack://application:,,,/Resources/Images/OpenNotebook32.png"
+                                           Command="{Binding LoadNotebookFromXMLCommand}" />
 
                 <RibbonApplicationMenuItem Header="Edit Notebook"
                                            KeyTip="E"
@@ -94,15 +99,6 @@
                 <RibbonApplicationMenuItem Header="Reconnect to Network"
                                            ImageSource="pack://application:,,,/Resources/Images/ReconnectToNetwork32.png"
                                            Command="{Binding RefreshNetworkCommand}" />
-
-                <RibbonApplicationMenuItem Header="Clear History"
-                                           ImageSource="pack://application:,,,/Resources/Images/TempIcon32.png"
-                                           Command="{Binding ClearHistoryCommand}"
-                                           Visibility="{Binding InstructorVisibility}" />
-
-                <RibbonApplicationMenuItem Header="DisableHistory"
-                                           ImageSource="pack://application:,,,/Resources/Images/TempIcon32.png"
-                                           Command="{Binding DisableHistoryCommand}" />
 
                 <RibbonApplicationMenu.FooterPaneContent>
                     <DockPanel LastChildFill="False">
@@ -733,6 +729,56 @@
 
             </RibbonGroup>
 
+        </RibbonTab>
+        
+        <!--Histories Tab-->
+        <RibbonTab Header="Histories"
+                   Visibility="{Binding InstructorVisibility}">
+            
+            <RibbonGroup Header="Misc.">
+
+                <RibbonButton Label="Disable History"
+                              LargeImageSource="pack://application:,,,/Resources/Images/TempIcon32.png"
+                              Command="{Binding DisableHistoryCommand}" />
+
+            </RibbonGroup>
+            
+            <RibbonGroup Header="Clear For Current Page">
+
+                <RibbonButton Label="Clear All"
+                              LargeImageSource="pack://application:,,,/Resources/Images/TempIcon32.png"
+                              Command="{Binding ClearPageHistoryCommand}" />
+
+                <RibbonButton Label="Clear Non-Animation"
+                              LargeImageSource="pack://application:,,,/Resources/Images/TempIcon32.png"
+                              Command="{Binding ClearPageNonAnimationHistoryCommand}" />
+
+            </RibbonGroup>
+            
+            <RibbonGroup Header="Clear For Notebook Pages">
+
+                <RibbonButton Label="Clear All"
+                              LargeImageSource="pack://application:,,,/Resources/Images/TempIcon32.png"
+                              Command="{Binding ClearPagesHistoryCommand}" />
+
+                <RibbonButton Label="Clear Non-Animation"
+                              LargeImageSource="pack://application:,,,/Resources/Images/TempIcon32.png"
+                              Command="{Binding ClearPagesNonAnimationHistoryCommand}" />
+
+            </RibbonGroup>
+            
+            <RibbonGroup Header="Clear For Submissions">
+
+                <RibbonButton Label="Clear All"
+                              LargeImageSource="pack://application:,,,/Resources/Images/TempIcon32.png"
+                              Command="{Binding ClearSubmissionsHistoryCommand}" />
+
+                <RibbonButton Label="Clear Non-Animation"
+                              LargeImageSource="pack://application:,,,/Resources/Images/TempIcon32.png"
+                              Command="{Binding ClearSubmissionsNonAnimationHistoryCommand}" />
+
+            </RibbonGroup>
+            
         </RibbonTab>
 
         <!--Test Tab-->

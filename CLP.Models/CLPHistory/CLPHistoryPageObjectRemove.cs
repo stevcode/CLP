@@ -17,6 +17,14 @@ namespace CLP.Models
             Index = index;
         }
 
+        //Used by XML importer to create this history item inside RedoItems
+        public CLPHistoryPageObjectRemove(ICLPPage parentPage, string pageObjectUniqueID, int index)
+            : base(parentPage)
+        {
+            PageObjectUniqueID = pageObjectUniqueID;
+            Index = index;
+        }
+
         /// <summary>
         /// Initializes a new object based on <see cref="SerializationInfo"/>.
         /// </summary>

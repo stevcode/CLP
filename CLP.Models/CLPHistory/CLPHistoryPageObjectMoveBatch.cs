@@ -105,6 +105,7 @@ namespace CLP.Models
             }
 
             var pageObject = ParentPage.GetPageObjectByUniqueID(PageObjectUniqueID);
+            pageObject.ParentPage = ParentPage; //Hack, ParentPage should already be there and not null. See Dutch-Investigation4-Page4, array with no parent page.
 
             if(isAnimationUndo && CurrentBatchTickIndex > 0)
             {

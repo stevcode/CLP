@@ -14,7 +14,9 @@ using System.Windows.Ink;
 using System.Windows.Media;
 using System.Windows.Xps.Packaging;
 using Catel.Data;
+using Catel.IoC;
 using Catel.MVVM;
+using Catel.MVVM.Services;
 using Classroom_Learning_Partner.Views;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Models;
@@ -83,6 +85,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //File Menu
             NewNotebookCommand = new Command(OnNewNotebookCommandExecute);
             OpenNotebookCommand = new Command(OnOpenNotebookCommandExecute);
+            LoadNotebookFromXMLCommand = new Command(OnLoadNotebookFromXMLCommandExecute);
             EditNotebookCommand = new Command(OnEditNotebookCommandExecute);
             DoneEditingNotebookCommand = new Command(OnDoneEditingNotebookCommandExecute);
             SaveNotebookCommand = new Command(OnSaveNotebookCommandExecute);
@@ -94,8 +97,6 @@ namespace Classroom_Learning_Partner.ViewModels
             ConvertAllSubmissionsToXPSCommand = new Command(OnConvertAllSubmissionsToXPSCommandExecute);
             RefreshNetworkCommand = new Command(OnRefreshNetworkCommandExecute);
             ToggleThumbnailsCommand = new Command(OnToggleThumbnailsCommandExecute);
-            
-            DisableHistoryCommand = new Command(OnDisableHistoryCommandExecute);
             ExitCommand = new Command(OnExitCommandExecute);
 
             //Notebook
@@ -111,13 +112,16 @@ namespace Classroom_Learning_Partner.ViewModels
             GroupSubmitPageCommand = new Command(OnGroupSubmitPageCommandExecute, OnInsertPageObjectCanExecute);
 
             //History
+            DisableHistoryCommand = new Command(OnDisableHistoryCommandExecute, OnClearHistoryCommandCanExecute);
             ReplayCommand = new Command(OnReplayCommandExecute);
             UndoCommand = new Command(OnUndoCommandExecute, OnUndoCanExecute);
             RedoCommand = new Command(OnRedoCommandExecute, OnRedoCanExecute);
-            ClearHistoryCommand = new Command(OnClearHistoryCommandExecute);
-            ClearNonAnimationHistoryCommand = new Command(OnClearNonAnimationHistoryCommandExecute);
-            ClearPageHistoryCommand = new Command(OnClearPageHistoryCommandExecute);
-            ClearPageNonAnimationHistoryCommand = new Command(OnClearPageNonAnimationHistoryCommandExecute);
+            ClearPageHistoryCommand = new Command(OnClearPageHistoryCommandExecute, OnClearHistoryCommandCanExecute);
+            ClearPageNonAnimationHistoryCommand = new Command(OnClearPageNonAnimationHistoryCommandExecute, OnClearHistoryCommandCanExecute);
+            ClearPagesHistoryCommand = new Command(OnClearPagesHistoryCommandExecute, OnClearHistoryCommandCanExecute);
+            ClearPagesNonAnimationHistoryCommand = new Command(OnClearPagesNonAnimationHistoryCommandExecute, OnClearHistoryCommandCanExecute);
+            ClearSubmissionsHistoryCommand = new Command(OnClearSubmissionsHistoryCommandExecute, OnClearHistoryCommandCanExecute);
+            ClearSubmissionsNonAnimationHistoryCommand = new Command(OnClearSubmissionsNonAnimationHistoryCommandExecute, OnClearHistoryCommandCanExecute);
 
             //Insert
             ToggleWebcamPanelCommand = new Command<bool>(OnToggleWebcamPanelCommandExecute);
@@ -631,12 +635,41 @@ namespace Classroom_Learning_Partner.ViewModels
             MainWindow.SelectedWorkspace = new NotebookChooserWorkspaceViewModel();
         }
 
+        /// <summary>
+        /// Opens a notebook from the Notebooks folder.
+        /// </summary>
+        public Command LoadNotebookFromXMLCommand { get; private set; }
+
+        private void OnLoadNotebookFromXMLCommandExecute()
+        {
+            var selectDirectoryService = Catel.IoC.ServiceLocator.Default.ResolveType<ISelectDirectoryService>();
+            selectDirectoryService.InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "NotebookXML/");
+
+            if(selectDirectoryService.DetermineDirectory())
+            {
+                var notebook = ImportFromXML.ImportNotebook(selectDirectoryService.DirectoryName);
+
+                App.MainWindowViewModel.OpenNotebooks.Add(notebook);
+                if(App.CurrentUserMode == App.UserMode.Instructor ||
+                   App.CurrentUserMode == App.UserMode.Student ||
+                   App.CurrentUserMode == App.UserMode.Projector)
+                {
+                    App.MainWindowViewModel.SelectedWorkspace = new NotebookWorkspaceViewModel(notebook);
+                }
+
+                if(notebook.LastSavedTime != null)
+                {
+                    App.MainWindowViewModel.LastSavedTime = notebook.LastSavedTime.ToString("yyyy/MM/dd - HH:mm:ss");
+                }
+            }  
+        }
+
         //TODO: Steve - Combine with DoneEditing to make ToggleEditingMode
         /// <summary>
         /// Puts current notebook in Authoring Mode.
         /// </summary>
         public Command EditNotebookCommand { get; private set; }
-
+        
         private void OnEditNotebookCommandExecute()
         {
             MainWindow.IsAuthoring = true;
@@ -661,16 +694,6 @@ namespace Classroom_Learning_Partner.ViewModels
             if(currentPage != null)
             {
                 ACLPPageBaseViewModel.ClearAdorners(currentPage);
-            }
-
-            var notebookPanel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
-            if(notebookPanel == null)
-            {
-                return;
-            }
-            foreach(var page in notebookPanel.Pages)
-            {
-                page.PageHistory.ClearNonAnimationHistory();
             }
         }
 
@@ -1057,7 +1080,13 @@ namespace Classroom_Learning_Partner.ViewModels
                 var document = new FixedDocument();
                 document.DocumentPaginator.PageSize = new Size(96 * 11, 96 * 8.5);
 
-                foreach(var page in notebook.Submissions.Keys.SelectMany(pageID => notebook.Submissions[pageID]))
+                
+                foreach(var clpPage in notebook.Pages)
+                {
+                    foreach(var page in notebook.Submissions[clpPage.UniqueID])
+                   
+               
+              //  foreach(var page in notebook.Submissions.Keys.SelectMany(pageID => notebook.Submissions[pageID]))
                 {
                     foreach(var pageObject in page.PageObjects)
                     {
@@ -1120,6 +1149,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         document.Pages.Add(pageContent);
                     } while(page.PageHeight > transformAmount);
                 }
+                     }
 
                 //Save the document
                 var xpsDocument = new XpsDocument(filePath, FileAccess.ReadWrite);
@@ -1148,23 +1178,6 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnToggleThumbnailsCommandExecute()
         {
             ThumbnailsTop = (ThumbnailsTop == false);
-        }
-
-        /// <summary>
-        /// Prevents history from storing actions.
-        /// </summary>
-        public Command DisableHistoryCommand { get; private set; }
-
-        private void OnDisableHistoryCommandExecute()
-        {
-            if(App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
-            {
-                CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
-                foreach(var page in notebook.Pages)
-                {
-                    page.PageHistory.UseHistory = false;
-                }
-            }
         }
 
         /// <summary>
@@ -1453,6 +1466,37 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region HistoryCommands
 
+        private bool OnClearHistoryCommandCanExecute()
+        {
+            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null)
+            {
+                return false;
+            }
+
+            return notebookWorkspaceViewModel.SelectedDisplay is CLPMirrorDisplay;
+        }
+
+        /// <summary>
+        /// Prevents history from storing actions.
+        /// </summary>
+        public Command DisableHistoryCommand { get; private set; }
+
+        private void OnDisableHistoryCommandExecute()
+        {
+            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null)
+            {
+                return;
+            }
+
+            var notebook = notebookWorkspaceViewModel.Notebook;
+            foreach(var page in notebook.Pages)
+            {
+                page.PageHistory.UseHistory = false;
+            }
+        }
+
         /// <summary>
         /// Replays the entire history of the current page.
         /// </summary>
@@ -1569,40 +1613,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
-        /// Completely clears all histories in a notebook.
-        /// </summary>
-        public Command ClearHistoryCommand { get; private set; }
-
-        private void OnClearHistoryCommandExecute()
-        {
-            if(App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
-            {
-                CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
-                foreach(var page in notebook.Pages)
-                {
-                    page.PageHistory.ClearHistory();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Completely clears all non-animation histories in a notebook.
-        /// </summary>
-        public Command ClearNonAnimationHistoryCommand { get; private set; }
-
-        private void OnClearNonAnimationHistoryCommandExecute()
-        {
-            if(App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
-            {
-                CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
-                foreach(var page in notebook.Pages)
-                {
-                    page.PageHistory.ClearNonAnimationHistory();
-                }
-            }
-        }
-
-        /// <summary>
         /// Completely clears the history for the current page.
         /// </summary>
         public Command ClearPageHistoryCommand { get; private set; }
@@ -1626,6 +1636,86 @@ namespace Classroom_Learning_Partner.ViewModels
             if(currentPage == null) { return; }
 
             currentPage.PageHistory.ClearNonAnimationHistory();
+        }
+
+        /// <summary>
+        /// Completely clears all histories for regular pages in a notebook.
+        /// </summary>
+        public Command ClearPagesHistoryCommand { get; private set; }
+
+        private void OnClearPagesHistoryCommandExecute()
+        {
+            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null)
+            {
+                return;
+            }
+
+            var notebook = notebookWorkspaceViewModel.Notebook;
+            foreach(var page in notebook.Pages)
+            {
+                page.PageHistory.ClearHistory();
+            }
+        }
+
+        /// <summary>
+        /// Completely clears all non-animation histories for regular pages in a notebook.
+        /// </summary>
+        public Command ClearPagesNonAnimationHistoryCommand { get; private set; }
+
+        private void OnClearPagesNonAnimationHistoryCommandExecute()
+        {
+            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null)
+            {
+                return;
+            }
+
+            var notebook = notebookWorkspaceViewModel.Notebook;
+            foreach(var page in notebook.Pages)
+            {
+                page.PageHistory.ClearNonAnimationHistory();
+            }
+        }
+
+        /// <summary>
+        /// Completely clears all histories for submissions in a notebook.
+        /// </summary>
+        public Command ClearSubmissionsHistoryCommand { get; private set; }
+
+        private void OnClearSubmissionsHistoryCommandExecute()
+        {
+            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null)
+            {
+                return;
+            }
+
+            var notebook = notebookWorkspaceViewModel.Notebook;
+            foreach(var submission in notebook.Submissions.Keys.SelectMany(pageID => notebook.Submissions[pageID])) 
+            {
+                submission.PageHistory.ClearHistory();
+            }
+        }
+
+        /// <summary>
+        /// Completely clears all non-animation histories for regular pages in a notebook.
+        /// </summary>
+        public Command ClearSubmissionsNonAnimationHistoryCommand { get; private set; }
+
+        private void OnClearSubmissionsNonAnimationHistoryCommandExecute()
+        {
+            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null)
+            {
+                return;
+            }
+
+            var notebook = notebookWorkspaceViewModel.Notebook;
+            foreach(var submission in notebook.Submissions.Keys.SelectMany(pageID => notebook.Submissions[pageID])) 
+            {
+                submission.PageHistory.ClearNonAnimationHistory();
+            }
         }
 
         #endregion //History Commands

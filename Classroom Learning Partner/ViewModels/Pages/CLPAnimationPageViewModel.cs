@@ -19,11 +19,23 @@ namespace Classroom_Learning_Partner.ViewModels
            RecordAnimationCommand = new Command(OnRecordAnimationCommandExecute);
            RewindAnimationCommand = new Command(OnRewindAnimationCommandExecute);
            PlayAnimationCommand = new Command(OnPlayAnimationCommandExecute);
-           StopAnimationCommand = new Command(OnStopAnimationCommandExecute);
            SliderChangedCommand = new Command<RoutedPropertyChangedEventArgs<double>>(OnSliderChangedCommandExecute);
        }
 
        public override string Title { get { return "AnimationPageVM"; } }
+
+       #region Overrides of ViewModelBase
+
+       protected override void OnClosing()
+       {
+           _isClosing = true;
+           StopAnimation();
+           base.OnClosing();
+       }
+
+       private bool _isClosing = false;
+
+       #endregion
 
        #endregion //Constructor
 
@@ -40,13 +52,33 @@ namespace Classroom_Learning_Partner.ViewModels
 
        public static readonly PropertyData CurrentPlaybackSpeedProperty = RegisterProperty("CurrentPlaybackSpeed", typeof(double), 1.0);      
 
+       /// <summary>
+       /// If an animation is currently recording or not.
+       /// </summary>
+       public bool IsRecording
+       {
+           get { return GetValue<bool>(IsRecordingProperty); }
+           set { SetValue(IsRecordingProperty, value); }
+       }
+
+       public static readonly PropertyData IsRecordingProperty = RegisterProperty("IsRecording", typeof(bool), false);
+
+       /// <summary>
+       /// If an animation is currently playing or not.
+       /// </summary>
+       public bool IsPlaying
+       {
+           get { return GetValue<bool>(IsPlayingProperty); }
+           set { SetValue(IsPlayingProperty, value); }
+       }
+
+       public static readonly PropertyData IsPlayingProperty = RegisterProperty("IsPlaying", typeof(bool), false);
+
        #endregion //Properties
 
        #region Commands
 
        private PageInteractionMode _oldPageInteractionMode = PageInteractionMode.Pen;
-       private bool _isPaused = true;
-       private bool _isRecording = false;
 
        /// <summary>
        /// Begins recording page interations for use in an animation.
@@ -55,12 +87,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
        private void OnRecordAnimationCommandExecute()
        {
-           if(_isRecording)
+           IsPlaying = false;
+           if(IsRecording)
            {
+               StopAnimation();
                return;
            }
 
-           _isRecording = true;
+           IsRecording = true;
            if(PageHistory.IsAnimation)
            {
                var eraseRedoAnimation = MessageBox.Show("Do you wish to Record from this spot? If you do, any animation after this point will be erased!",
@@ -85,15 +119,15 @@ namespace Classroom_Learning_Partner.ViewModels
        }
 
        /// <summary>
-       /// Stops Recording, if recording, then rewinds animation to beginning.
+       /// Stops Recording, if recording. Stops Playing, if playing. Then rewinds animation to beginning.
        /// </summary>
        public Command RewindAnimationCommand { get; private set; }
 
        private void OnRewindAnimationCommandExecute()
        {
-           if(!_isPaused || _isRecording)
+           if(IsPlaying || IsRecording)
            {
-               OnStopAnimationCommandExecute();
+               StopAnimation();
            }
 
            if(!PageHistory.IsAnimation) 
@@ -104,7 +138,7 @@ namespace Classroom_Learning_Partner.ViewModels
            _oldPageInteractionMode = PageInteractionMode;
            PageInteractionMode = PageInteractionMode.None;
 
-           _isPaused = false;
+           IsPlaying = true;
            while(PageHistory.UndoItems.Any())
            {
                var clpAnimationIndicator = PageHistory.UndoItems.First() as CLPAnimationIndicator;
@@ -114,7 +148,7 @@ namespace Classroom_Learning_Partner.ViewModels
                    break;
                }
            }
-           _isPaused = true;
+           IsPlaying = false;
            PageInteractionMode = _oldPageInteractionMode;
        }
 
@@ -125,19 +159,25 @@ namespace Classroom_Learning_Partner.ViewModels
 
        private void OnPlayAnimationCommandExecute()
        {
-           if(_isRecording || !_isPaused)
+           if(IsRecording)
            {
+               return;
+           }
+
+           if(IsPlaying)
+           {
+               IsPlaying = false;
                return;
            }
 
            var t = new Thread(() =>
                                   {
                                       InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
-                                      _isPaused = false;
+                                      IsPlaying = true;
                                       _oldPageInteractionMode = (PageInteractionMode == PageInteractionMode.None) ? PageInteractionMode.Pen : PageInteractionMode;
                                       PageInteractionMode = PageInteractionMode.None;
 
-                                      while(PageHistory.RedoItems.Any() && !_isPaused)
+                                      while(PageHistory.RedoItems.Any() && IsPlaying)
                                       {
                                           var historyItemAnimationDelay = Convert.ToInt32(Math.Round(Page.PageHistory.CurrentAnimationDelay / CurrentPlaybackSpeed));
                                           Application.Current.Dispatcher.Invoke(DispatcherPriority.DataBind,
@@ -148,7 +188,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                                                  }, null);
                                           Thread.Sleep(historyItemAnimationDelay);
                                       }
-                                      _isPaused = true;
+                                      IsPlaying = false;
                                       PageInteractionMode = _oldPageInteractionMode;
                                       InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
                                   });
@@ -156,20 +196,15 @@ namespace Classroom_Learning_Partner.ViewModels
            t.Start();
        }
 
-       /// <summary>
-       /// Stops the animation in the History.
-       /// </summary>
-       public Command StopAnimationCommand { get; private set; }
-
-       private void OnStopAnimationCommandExecute()
+       private void StopAnimation()
        {
            PageInteractionMode = _oldPageInteractionMode;
-           if(_isRecording)
+           if(IsRecording)
            {
                PageHistory.AddHistoryItem(new CLPAnimationIndicator(Page, AnimationIndicatorType.Stop)); 
            }
-           _isPaused = true;
-           _isRecording = false;
+           IsPlaying = false;
+           IsRecording = false;
        }
 
        /// <summary>
@@ -179,7 +214,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
        private void OnSliderChangedCommandExecute(RoutedPropertyChangedEventArgs<double> e)
        {
-           if(!_isPaused || _isRecording)
+           if(IsPlaying || IsRecording || _isClosing)
            {
                return;
            }
