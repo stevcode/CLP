@@ -15,6 +15,8 @@ namespace CLP.Models
             PressureFactor = source.PressureFactor;
         }
 
+        public StylusPointDTO() { }
+
         /// <summary>
         /// X coordinate of the point.
         /// </summary>

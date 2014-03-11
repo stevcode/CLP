@@ -18,7 +18,6 @@ namespace CLP.Models
     [Serializable]
     public class CLPArrayDivision : ModelBase
     {
-
         #region Constructors
 
         public CLPArrayDivision(ArrayDivisionOrientation orientation, double position, double length, int value)
@@ -30,14 +29,12 @@ namespace CLP.Models
         }
 
         /// <summary>
-        /// Initializes a new object based on <see cref="SerializationInfo"/>.
+        /// Initializes a new object based on <see cref="SerializationInfo" />.
         /// </summary>
-        /// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext"/>.</param>
+        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
+        /// <param name="context"><see cref="StreamingContext" />.</param>
         protected CLPArrayDivision(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
+            : base(info, context) { }
 
         #endregion //Constructors
 
@@ -93,7 +90,10 @@ namespace CLP.Models
     [Serializable]
     public class CLPArray : ACLPPageObjectBase
     {
-        public double LabelLength { get { return 22; } }
+        public double LabelLength
+        {
+            get { return 22; }
+        }
 
         #region Constructors
 
@@ -107,23 +107,43 @@ namespace CLP.Models
             Rows = rows;
             Columns = columns;
 
-            XPosition = 0;
-            YPosition = 150;
-
             SizeArrayToGridLevel();
 
             ApplyDistinctPosition(this);
         }
 
         /// <summary>
-        /// Initializes a new object based on <see cref="SerializationInfo"/>.
+        /// Initializes a new object based on <see cref="SerializationInfo" />.
         /// </summary>
-        /// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext"/>.</param>
+        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
+        /// <param name="context"><see cref="StreamingContext" />.</param>
         protected CLPArray(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
         #endregion //Constructors
+
+        #region A/B Testing Toggles
+
+        /// <summary>
+        /// Whether the drag and snap adorner is on the left
+        /// </summary>
+        public bool IsSnapAdornerOnLeft
+        {
+            get { return GetValue<bool>(IsSnapAdornerOnLeftProperty); }
+            set { SetValue(IsSnapAdornerOnLeftProperty, value); }
+        }
+
+        public static readonly PropertyData IsSnapAdornerOnLeftProperty = RegisterProperty("IsSnapAdornerOnLeft", typeof(bool), true);
+
+        /// <summary>
+        /// Whether the drag and snap adorner is on the right
+        /// </summary>
+        public bool IsSnapAdornerOnRight
+        {
+            get { return !IsSnapAdornerOnLeft; }
+        }
+
+        #endregion //A/B Testing Toggles
 
         #region Properties
 
@@ -175,17 +195,6 @@ namespace CLP.Models
         }
 
         public static readonly PropertyData IsLabelOnProperty = RegisterProperty("IsLabelOn", typeof(bool), true);
-
-        /// <summary>
-        /// Sets whether or not the array is a factor card
-        /// </summary>
-        public bool IsProductVisible
-        {
-            get { return GetValue<bool>(IsProductVisibleProperty); }
-            set { SetValue(IsProductVisibleProperty, value); }
-        }
-
-        public static readonly PropertyData IsProductVisibleProperty = RegisterProperty("IsProductVisible", typeof(bool), false);
 
         /// <summary>
         /// The Height of the Array.
@@ -262,7 +271,9 @@ namespace CLP.Models
             set { SetValue(HorizontalDivisionsProperty, value); }
         }
 
-        public static readonly PropertyData HorizontalDivisionsProperty = RegisterProperty("HorizontalDivisions", typeof(ObservableCollection<CLPArrayDivision>), () => new ObservableCollection<CLPArrayDivision>());
+        public static readonly PropertyData HorizontalDivisionsProperty = RegisterProperty("HorizontalDivisions",
+                                                                                           typeof(ObservableCollection<CLPArrayDivision>),
+                                                                                           () => new ObservableCollection<CLPArrayDivision>());
 
         /// <summary>
         /// List of vertical divisions in the array.
@@ -273,7 +284,9 @@ namespace CLP.Models
             set { SetValue(VerticalDivisionsProperty, value); }
         }
 
-        public static readonly PropertyData VerticalDivisionsProperty = RegisterProperty("VerticalDivisions", typeof(ObservableCollection<CLPArrayDivision>), () => new ObservableCollection<CLPArrayDivision>());
+        public static readonly PropertyData VerticalDivisionsProperty = RegisterProperty("VerticalDivisions",
+                                                                                         typeof(ObservableCollection<CLPArrayDivision>),
+                                                                                         () => new ObservableCollection<CLPArrayDivision>());
 
         #endregion //Properties
 
@@ -293,17 +306,19 @@ namespace CLP.Models
 
             var halvedPageObjects = new List<ICLPPageObject>();
 
-            if(IsProductVisible)
+            if(PageObjectType == "CLPFactorCard" ||
+               PageObjectType == "CLPFuzzyFactorCard" ||
+               PageObjectType == "CLPFFCComputationDisplay")
             {
                 return halvedPageObjects;
             }
 
-            //TODO: Tim - This is fine for now, but you could have an instance where a really wide, but short rectangle is made
+            //TODO: This is fine for now, but you could have an instance where a really wide, but short rectangle is made
             // and a stroke could be made that was only a few pixels high, and quite wide, that would try to make a horizontal
             // cut instead of the vertical cut that was intended. See Also Shape.Cut().
             if(Math.Abs(strokeLeft - strokeRight) < Math.Abs(strokeTop - strokeBottom))
             {
-                var average = (strokeRight + strokeLeft)/2;
+                var average = (strokeRight + strokeLeft) / 2;
 
                 if((cuttableLeft <= strokeLeft && cuttableRight >= strokeRight) &&
                    (strokeTop - cuttableTop < 15 && cuttableBottom - strokeBottom < 15))
@@ -318,7 +333,7 @@ namespace CLP.Models
                     var minDistance = ArrayWidth;
                     var closestLinePosition = 0.0;
                     var closestLineIndex = 0;
-                    foreach(var line in VerticalGridLines)
+                    foreach(double line in VerticalGridLines)
                     {
                         var distance = Math.Abs(relativeAverage - line);
                         if(distance >= minDistance)
@@ -331,31 +346,33 @@ namespace CLP.Models
                     }
 
                     var leftArray = new CLPArray(Rows, closestLineIndex + 1, ParentPage)
-                    {
-                        IsGridOn = IsGridOn,
-                        IsDivisionBehaviorOn = IsDivisionBehaviorOn,
-                        XPosition = XPosition,
-                        YPosition = YPosition,
-                        ArrayHeight = ArrayHeight,
-                        IsLabelOn = IsLabelOn,
-                        BackgroundColor = BackgroundColor,
-                        IsSnappable = IsSnappable
-                    };
+                                    {
+                                        IsGridOn = IsGridOn,
+                                        IsDivisionBehaviorOn = IsDivisionBehaviorOn,
+                                        XPosition = XPosition,
+                                        YPosition = YPosition,
+                                        ArrayHeight = ArrayHeight,
+                                        IsLabelOn = IsLabelOn,
+                                        BackgroundColor = BackgroundColor,
+                                        IsSnappable = IsSnappable,
+                                        IsSnapAdornerOnLeft = IsSnapAdornerOnLeft
+                                    };
                     leftArray.EnforceAspectRatio(leftArray.Columns * 1.0 / leftArray.Rows);
                     leftArray.CalculateGridLines();
                     halvedPageObjects.Add(leftArray);
 
                     var rightArray = new CLPArray(Rows, Columns - closestLineIndex - 1, ParentPage)
-                    {
-                        IsGridOn = IsGridOn,
-                        IsDivisionBehaviorOn = IsDivisionBehaviorOn,
-                        XPosition = XPosition + closestLinePosition,
-                        YPosition = YPosition,
-                        ArrayHeight = ArrayHeight,
-                        IsLabelOn = IsLabelOn,
-                        BackgroundColor = BackgroundColor,
-                        IsSnappable = IsSnappable
-                    };
+                                     {
+                                         IsGridOn = IsGridOn,
+                                         IsDivisionBehaviorOn = IsDivisionBehaviorOn,
+                                         XPosition = XPosition + closestLinePosition,
+                                         YPosition = YPosition,
+                                         ArrayHeight = ArrayHeight,
+                                         IsLabelOn = IsLabelOn,
+                                         BackgroundColor = BackgroundColor,
+                                         IsSnappable = IsSnappable,
+                                         IsSnapAdornerOnLeft = IsSnapAdornerOnLeft
+                                     };
                     rightArray.EnforceAspectRatio(rightArray.Columns * 1.0 / rightArray.Rows);
                     rightArray.CalculateGridLines();
                     halvedPageObjects.Add(rightArray);
@@ -378,7 +395,7 @@ namespace CLP.Models
                     var minDistance = ArrayHeight;
                     var closestLinePosition = 0.0;
                     var closestLineIndex = 0;
-                    foreach(var line in HorizontalGridLines)
+                    foreach(double line in HorizontalGridLines)
                     {
                         var distance = Math.Abs(relativeAverage - line);
                         if(distance >= minDistance)
@@ -391,32 +408,34 @@ namespace CLP.Models
                     }
 
                     var topArray = new CLPArray(closestLineIndex + 1, Columns, ParentPage)
-                    {
-                        IsGridOn = IsGridOn,
-                        IsDivisionBehaviorOn = IsDivisionBehaviorOn,
-                        XPosition = XPosition,
-                        YPosition = YPosition,
-                        ArrayWidth = ArrayWidth,
-                        IsLabelOn = IsLabelOn,
-                        BackgroundColor = BackgroundColor,
-                        IsSnappable = IsSnappable
-                    };
+                                   {
+                                       IsGridOn = IsGridOn,
+                                       IsDivisionBehaviorOn = IsDivisionBehaviorOn,
+                                       XPosition = XPosition,
+                                       YPosition = YPosition,
+                                       ArrayWidth = ArrayWidth,
+                                       IsLabelOn = IsLabelOn,
+                                       BackgroundColor = BackgroundColor,
+                                       IsSnappable = IsSnappable,
+                                       IsSnapAdornerOnLeft = IsSnapAdornerOnLeft
+                                   };
                     topArray.ArrayHeight = ArrayWidth / (topArray.Columns * 1.0 / topArray.Rows);
                     topArray.EnforceAspectRatio(topArray.Columns * 1.0 / topArray.Rows);
                     topArray.CalculateGridLines();
                     halvedPageObjects.Add(topArray);
 
                     var bottomArray = new CLPArray(Rows - closestLineIndex - 1, Columns, ParentPage)
-                    {
-                        IsGridOn = IsGridOn,
-                        IsDivisionBehaviorOn = IsDivisionBehaviorOn,
-                        XPosition = XPosition,
-                        YPosition = YPosition + closestLinePosition,
-                        ArrayWidth = ArrayWidth,
-                        IsLabelOn = IsLabelOn,
-                        BackgroundColor = BackgroundColor,
-                        IsSnappable = IsSnappable
-                    };
+                                      {
+                                          IsGridOn = IsGridOn,
+                                          IsDivisionBehaviorOn = IsDivisionBehaviorOn,
+                                          XPosition = XPosition,
+                                          YPosition = YPosition + closestLinePosition,
+                                          ArrayWidth = ArrayWidth,
+                                          IsLabelOn = IsLabelOn,
+                                          BackgroundColor = BackgroundColor,
+                                          IsSnappable = IsSnappable,
+                                          IsSnapAdornerOnLeft = IsSnapAdornerOnLeft
+                                      };
                     bottomArray.ArrayHeight = ArrayWidth / (bottomArray.Columns * 1.0 / bottomArray.Rows);
                     bottomArray.EnforceAspectRatio(bottomArray.Columns * 1.0 / bottomArray.Rows);
                     bottomArray.CalculateGridLines();
@@ -430,7 +449,8 @@ namespace CLP.Models
         public override ICLPPageObject Duplicate()
         {
             var newArray = Clone() as CLPArray;
-            if(newArray != null) {
+            if(newArray != null)
+            {
                 newArray.UniqueID = Guid.NewGuid().ToString();
                 newArray.ParentPage = ParentPage;
                 return newArray;
@@ -448,15 +468,15 @@ namespace CLP.Models
                 ArrayWidth = 30;
                 ArrayHeight = ArrayWidth / aspectRatio;
             }
-            if(ArrayWidth + 2*LabelLength + XPosition > ParentPage.PageWidth)
+            if(ArrayWidth + 2 * LabelLength + XPosition > ParentPage.PageWidth)
             {
-                ArrayWidth = ParentPage.PageWidth - XPosition - 2*LabelLength;
+                ArrayWidth = ParentPage.PageWidth - XPosition - 2 * LabelLength;
                 ArrayHeight = ArrayWidth / aspectRatio;
             }
 
-            if (ArrayHeight + 2*LabelLength + YPosition > ParentPage.PageHeight)
+            if(ArrayHeight + 2 * LabelLength + YPosition > ParentPage.PageHeight)
             {
-                ArrayHeight = ParentPage.PageHeight - YPosition - 2*LabelLength;
+                ArrayHeight = ParentPage.PageHeight - YPosition - 2 * LabelLength;
                 ArrayWidth = ArrayHeight * aspectRatio;
             }
 
@@ -476,6 +496,19 @@ namespace CLP.Models
                 //TODO: Steve - Make CLPPage level method RemovePageObject to guarantee OnRemoved() is called.
                 po.OnRemoved();
                 ParentPage.PageObjects.Remove(po);
+            }
+
+            //If FFC with remainder on page, update
+            foreach(ICLPPageObject pageObject in ParentPage.PageObjects)
+            {
+                if(pageObject is CLPFuzzyFactorCard)
+                {
+                    if((pageObject as CLPFuzzyFactorCard).RemainderRegionUniqueID != null)
+                    {
+                        var remainderRegion = ParentPage.GetPageObjectByUniqueID((pageObject as CLPFuzzyFactorCard).RemainderRegionUniqueID) as CLPFuzzyFactorCardRemainder;
+                        remainderRegion.UpdateTiles();
+                    }
+                }
             }
         }
 
@@ -525,18 +558,19 @@ namespace CLP.Models
 
             //var rect = new Rect(XPosition + LabelLength, YPosition + LabelLength, ArrayWidth, ArrayHeight);
             var rect = new Rect(XPosition, YPosition, Width, Height);
-            foreach(var stroke in addedStrokes.Where(stroke => stroke.HitTest(rect, 50))) 
+            foreach(var stroke in addedStrokes.Where(stroke => stroke.HitTest(rect, 50)))
             {
                 PageObjectStrokeParentIDs.Add(stroke.GetStrokeUniqueID());
             }
         }
 
-        public void SizeArrayToGridLevel(double toSquareSize = -1, bool recalculateDivisions = true)
+        public virtual void SizeArrayToGridLevel(double toSquareSize = -1, bool recalculateDivisions = true)
         {
             var initialSquareSize = 45.0;
             if(toSquareSize <= 0)
             {
-                while(XPosition + 2*LabelLength + initialSquareSize * Columns >= ParentPage.PageWidth || YPosition + 2*LabelLength + initialSquareSize * Rows >= ParentPage.PageHeight)
+                while(XPosition + 2 * LabelLength + initialSquareSize * Columns >= ParentPage.PageWidth ||
+                      YPosition + 2 * LabelLength + initialSquareSize * Rows >= ParentPage.PageHeight)
                 {
                     initialSquareSize = Math.Abs(initialSquareSize - 45.0) < .0001 ? 22.5 : initialSquareSize / 4 * 3;
                 }
@@ -549,8 +583,8 @@ namespace CLP.Models
             ArrayHeight = initialSquareSize * Rows;
             ArrayWidth = initialSquareSize * Columns;
 
-            Height = ArrayHeight + 2*LabelLength;
-            Width = ArrayWidth + 2*LabelLength;
+            Height = ArrayHeight + 2 * LabelLength;
+            Width = ArrayWidth + 2 * LabelLength;
             if(IsGridOn)
             {
                 CalculateGridLines();
@@ -558,25 +592,25 @@ namespace CLP.Models
             if(recalculateDivisions)
             {
                 ResizeDivisions();
-            }  
+            }
         }
 
-        public void RefreshArrayDimensions()
+        public virtual void RefreshArrayDimensions()
         {
-            ArrayHeight = Height - 2*LabelLength;
-            ArrayWidth = Width - 2*LabelLength;
+            ArrayHeight = Height - 2 * LabelLength;
+            ArrayWidth = Width - 2 * LabelLength;
         }
 
-        public void CalculateGridLines()
+        public virtual void CalculateGridLines()
         {
             HorizontalGridLines.Clear();
             VerticalGridLines.Clear();
             var squareSize = ArrayWidth / Columns;
-            for(int i = 1; i < Rows; i++)
+            for(var i = 1; i < Rows; i++)
             {
                 HorizontalGridLines.Add(i * squareSize);
             }
-            for(int i = 1; i < Columns; i++)
+            for(var i = 1; i < Columns; i++)
             {
                 VerticalGridLines.Add(i * squareSize);
             }
@@ -585,14 +619,14 @@ namespace CLP.Models
         public void ResizeDivisions()
         {
             var oldHeight = HorizontalDivisions.Aggregate<CLPArrayDivision, double>(0, (current, division) => current + division.Length);
-            foreach(var division in HorizontalDivisions)
+            foreach(CLPArrayDivision division in HorizontalDivisions)
             {
                 division.Position = division.Position * ArrayHeight / oldHeight;
                 division.Length = division.Length * ArrayHeight / oldHeight;
             }
 
             var oldWidth = VerticalDivisions.Aggregate<CLPArrayDivision, double>(0, (current, division) => current + division.Length);
-            foreach(var division in VerticalDivisions)
+            foreach(CLPArrayDivision division in VerticalDivisions)
             {
                 division.Position = division.Position * ArrayWidth / oldWidth;
                 division.Length = division.Length * ArrayWidth / oldWidth;
@@ -611,7 +645,8 @@ namespace CLP.Models
                         divAbove = div;
                     }
                 }
-                else if(divAbove.Position < div.Position && div.Position < position)
+                else if(divAbove.Position < div.Position &&
+                        div.Position < position)
                 {
                     divAbove = div;
                 }
@@ -631,7 +666,8 @@ namespace CLP.Models
                         divBelow = div;
                     }
                 }
-                else if(divBelow.Position > div.Position && div.Position > position)
+                else if(divBelow.Position > div.Position &&
+                        div.Position > position)
                 {
                     divBelow = div;
                 }
@@ -641,8 +677,9 @@ namespace CLP.Models
 
         public ObservableCollection<int> GetHorizontalRegionLabels()
         {
-            ObservableCollection<int> labels = new ObservableCollection<int>();
-            foreach(CLPArrayDivision div in HorizontalDivisions){
+            var labels = new ObservableCollection<int>();
+            foreach(CLPArrayDivision div in HorizontalDivisions)
+            {
                 labels.Add(div.Value);
             }
             return labels;
@@ -650,8 +687,9 @@ namespace CLP.Models
 
         public ObservableCollection<int> GetVerticalRegionLabels()
         {
-            ObservableCollection<int> labels = new ObservableCollection<int>();
-            foreach(CLPArrayDivision div in VerticalDivisions){
+            var labels = new ObservableCollection<int>();
+            foreach(CLPArrayDivision div in VerticalDivisions)
+            {
                 labels.Add(div.Value);
             }
             return labels;
@@ -659,26 +697,25 @@ namespace CLP.Models
 
         public int[,] GetPartialProducts()
         {
-            int horizDivs = Math.Max(HorizontalDivisions.Count, 1);
-            int vertDivs = Math.Max(VerticalDivisions.Count, 1);
-            int[,] partialProducts = new int[horizDivs, vertDivs];
+            var horizDivs = Math.Max(HorizontalDivisions.Count, 1);
+            var vertDivs = Math.Max(VerticalDivisions.Count, 1);
+            var partialProducts = new int[horizDivs, vertDivs];
 
-            for(int i = 0; i < horizDivs; i++)
+            for(var i = 0; i < horizDivs; i++)
             {
-                for(int j = 0; j < vertDivs; j++)
+                for(var j = 0; j < vertDivs; j++)
                 {
-                    int yAxisValue = (horizDivs > 1 ? HorizontalDivisions[i].Value : Rows);
-                    int xAxisValue = (vertDivs > 1 ? VerticalDivisions[j].Value : Columns);
+                    var yAxisValue = (horizDivs > 1 ? HorizontalDivisions[i].Value : Rows);
+                    var xAxisValue = (vertDivs > 1 ? VerticalDivisions[j].Value : Columns);
 
                     partialProducts[i, j] = yAxisValue * xAxisValue;
                 }
             }
 
-
             return partialProducts;
         }
 
-        public void RotateArray()
+        public virtual void RotateArray()
         {
             var tempCols = Columns;
             Columns = Rows;
@@ -686,18 +723,18 @@ namespace CLP.Models
             var tempArrayHeight = ArrayHeight;
             ArrayHeight = ArrayWidth;
             ArrayWidth = tempArrayHeight;
-            Height = ArrayHeight + 2*LabelLength;
-            Width = ArrayWidth + 2*LabelLength;
+            Height = ArrayHeight + 2 * LabelLength;
+            Width = ArrayWidth + 2 * LabelLength;
             CalculateGridLines();
             var tempHorizontalDivisions = HorizontalDivisions;
             HorizontalDivisions = VerticalDivisions;
             VerticalDivisions = tempHorizontalDivisions;
             ResizeDivisions();
-            foreach(var verticalDivision in VerticalDivisions) 
+            foreach(var verticalDivision in VerticalDivisions)
             {
                 verticalDivision.Orientation = ArrayDivisionOrientation.Vertical;
             }
-            foreach(var horizontalDivision in HorizontalDivisions) 
+            foreach(var horizontalDivision in HorizontalDivisions)
             {
                 horizontalDivision.Orientation = ArrayDivisionOrientation.Horizontal;
             }
@@ -716,18 +753,22 @@ namespace CLP.Models
 
         public double GetClosestGridLine(ArrayDivisionOrientation orientation, double pos)
         {
-            ObservableCollection<double> gridlines = this.HorizontalGridLines;
-            if (orientation == ArrayDivisionOrientation.Vertical)
+            var gridlines = HorizontalGridLines;
+            if(orientation == ArrayDivisionOrientation.Vertical)
             {
-                gridlines = this.VerticalGridLines;
+                gridlines = VerticalGridLines;
             }
-            double prev = 0.0;
-            foreach(double line in gridlines)
+            var prev = 0.0;
+            foreach(var line in gridlines)
             {
                 if(line > pos)
                 {
-                    if (prev == 0.0 || line - pos < pos - prev) { return line; }
-                    else { return prev; }
+                    if(prev == 0.0 ||
+                       line - pos < pos - prev)
+                    {
+                        return line;
+                    }
+                    return prev;
                 }
                 prev = line;
             }

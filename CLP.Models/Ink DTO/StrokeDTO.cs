@@ -47,6 +47,13 @@ namespace CLP.Models
             }
         }
 
+        public StrokeDTO()
+        {
+            StrokePoints = new List<StylusPointDTO>();
+            ExtendedProperties = new Dictionary<StrokeProperty, object>();
+            StrokeDrawingAttributes = new DrawingAttributesDTO();
+        }
+
         #endregion //Constructors
 
         #region Properties

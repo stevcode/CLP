@@ -25,6 +25,10 @@ namespace CLP.Models
         {
         }
 
+        public CLPPage(string pageXMLFilePath)
+            : base(pageXMLFilePath)
+        {}
+
         #endregion //Constructor
 
         #region ICLPPage Methods

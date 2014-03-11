@@ -55,6 +55,22 @@
                 <Views:CLPTextBoxView DataContext="{Binding}" />
             </ControlTemplate>
 
+            <ControlTemplate x:Key="CLPFFCComputationDisplayTemplate">
+                <Views:CLPFFCComputationDisplayView DataContext="{Binding}" />
+            </ControlTemplate>
+
+            <ControlTemplate x:Key="CLPFuzzyFactorCardTemplate">
+                <Views:CLPFuzzyFactorCardView DataContext="{Binding}" />
+            </ControlTemplate>
+
+            <ControlTemplate x:Key="CLPFuzzyFactorCardRemainderTemplate">
+                <Views:CLPFuzzyFactorCardRemainderView DataContext="{Binding}" />
+            </ControlTemplate>
+
+            <ControlTemplate x:Key="CLPFactorCardTemplate">
+                <Views:CLPFactorCardView DataContext="{Binding}" />
+            </ControlTemplate>
+
             <ControlTemplate x:Key="CLPArrayTemplate">
                 <Views:CLPArrayView DataContext="{Binding}" />
             </ControlTemplate>
@@ -127,6 +143,26 @@
                     <!-- CLPTextBox trigger -->
                     <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPTextBox">
                         <Setter Property="Template" Value="{StaticResource CLPTextBoxTemplate}" />
+                    </DataTrigger>
+
+                    <!-- CLPFFCComputationDisplay trigger -->
+                    <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPFFCComputationDisplay">
+                        <Setter Property="Template" Value="{StaticResource CLPFFCComputationDisplayTemplate}" />
+                    </DataTrigger>
+
+                    <!-- CLPFuzzyFactorCard trigger -->
+                    <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPFuzzyFactorCard">
+                        <Setter Property="Template" Value="{StaticResource CLPFuzzyFactorCardTemplate}" />
+                    </DataTrigger>
+                    
+                    <!-- CLPFuzzyFactorCardRemainder trigger -->
+                    <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPFuzzyFactorCardRemainder">
+                        <Setter Property="Template" Value="{StaticResource CLPFuzzyFactorCardRemainderTemplate}" />
+                    </DataTrigger>
+
+                    <!-- CLPFactorCard trigger -->
+                    <DataTrigger Binding="{Binding PageObject.PageObjectType}" Value="CLPFactorCard">
+                        <Setter Property="Template" Value="{StaticResource CLPFactorCardTemplate}" />
                     </DataTrigger>
 
                     <!-- CLPArray trigger -->

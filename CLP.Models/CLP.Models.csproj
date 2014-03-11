@@ -106,11 +106,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CLPHistory\ACLPHistoryItemBase.cs" />
+    <Compile Include="CLPHistory\CLPHistoryArrayAddMassResize.cs" />
     <Compile Include="CLPHistory\CLPAnimationIndicator.cs" />
     <Compile Include="CLPHistory\CLPHistoryArrayDivisionValueChanged.cs" />
     <Compile Include="CLPHistory\CLPHistoryArrayGridToggle.cs" />
+    <Compile Include="CLPHistory\CLPHistoryArrayMassAddMassResize.cs" />
     <Compile Include="CLPHistory\CLPHistoryArrayRotate.cs" />
     <Compile Include="CLPHistory\CLPHistoryArraySnap.cs" />
+    <Compile Include="CLPHistory\CLPHistoryFFCArraySnappedIn.cs" />
+    <Compile Include="CLPHistory\CLPHistoryFFCDivisionRemoved.cs" />
     <Compile Include="CLPHistory\CLPHistoryPageObjectCut.cs" />
     <Compile Include="CLPHistory\CLPHistoryPageObjectAdd.cs" />
     <Compile Include="CLPHistory\CLPHistoryPageObjectMoveBatch.cs" />
@@ -122,7 +126,12 @@
     <Compile Include="CLPHistory\CLPHistoryStrokesChanged.cs" />
     <Compile Include="CLPHistory\ICLPHistoryItem.cs" />
     <Compile Include="CLPHistory\IHistoryBatch.cs" />
+    <Compile Include="CLPPageObjects\CLPFactorCard.cs" />
+    <Compile Include="CLPPageObjects\CLPFFCComputationDisplay.cs" />
+    <Compile Include="CLPPageObjects\CLPFuzzyFactorCard.cs" />
+    <Compile Include="CLPPageObjects\CLPFuzzyFactorCardRemainder.cs" />
     <Compile Include="CLPPageObjects\CLPRegion.cs" />
+    <Compile Include="Converters\ImportFromXML.cs" />
     <Compile Include="Displays\ICLPDisplay.cs" />
     <Compile Include="Extension Methods\SolidColorBrushExtension.cs" />
     <Compile Include="Math\PageAnalysis.cs" />
@@ -182,6 +191,8 @@
     <Compile Include="Tags\ArrayYAxisStrategyTagType.cs" />
     <Compile Include="Tags\CorrectnessTagType.cs" />
     <Compile Include="Tags\DomainInterpretationTagType.cs" />
+    <Compile Include="Tags\FuzzyFactorCardFailedSnapTagType.cs" />
+    <Compile Include="Tags\FuzzyFactorCardStrategyTagType.cs" />
     <Compile Include="Tags\PageDefinitionTagType.cs" />
     <Compile Include="Tags\PageTopicTagType.cs" />
     <Compile Include="Tags\RepresentationCorrectnessTagType.cs" />
