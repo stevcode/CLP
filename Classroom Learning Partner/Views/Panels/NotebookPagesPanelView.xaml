@@ -19,6 +19,7 @@
             <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
             <conv:ProjectedDisplayBackgroundConverter x:Key="ProjectedDisplayBackgroundConverter" />
             <conv:ItemSelectedToColorConverter x:Key="PageOrDisplaySelectionColorConverter" />
+            <conv:TypeToStringConverter x:Key="TypeToStringConverter" />
 
             <!-- Style to override ListBoxItem selection visuals for Pages -->
             <Style x:Key="PageSidebarContainer" TargetType="{x:Type ListBoxItem}">
@@ -91,8 +92,22 @@
                                 </Rectangle>
 
                                 <Image Grid.Column="1" Height="16" Width="16" VerticalAlignment="Bottom" HorizontalAlignment="Right" IsHitTestVisible="False"
-                                        Source="pack://application:,,,/Resources/Images/Check16.png"
-                                        Visibility="{Binding ViewModel.HasSubmissions, ElementName=PagePreviewView, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
+                                       Source="pack://application:,,,/Resources/Images/Check16.png"
+                                       Visibility="{Binding ViewModel.HasSubmissions, ElementName=PagePreviewView, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
+                                </Image>
+                                
+                                <Image Grid.Column="1" Height="16" Width="16" VerticalAlignment="Bottom" HorizontalAlignment="Left" IsHitTestVisible="False"
+                                       Source="pack://application:,,,/Resources/Images/AnimationIndicator16.png">
+                                    <Image.Style>
+                                        <Style TargetType="Image">
+                                            <Setter Property="Visibility" Value="Hidden" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding ViewModel, ElementName=PagePreviewView, Converter={StaticResource TypeToStringConverter}}" Value="CLPAnimationPageViewModel">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Image.Style>
                                 </Image>
 
                                 <Grid Grid.Column="2" VerticalAlignment="Center" Margin="0 0 5 0"

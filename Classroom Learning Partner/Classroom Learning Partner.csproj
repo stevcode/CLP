@@ -198,6 +198,8 @@
     <Compile Include="Converters\AddLengthConverter.cs" />
     <Compile Include="Converters\AllBoolToColorMultiConverter.cs" />
     <Compile Include="Converters\AllBoolToVisibilityMultiConverter.cs" />
+    <Compile Include="Converters\BooleanToOppositeVisibilityConverter.cs" />
+    <Compile Include="Converters\BoolToAlignmentConverter.cs" />
     <Compile Include="Converters\BoolToHighlighterConverter.cs" />
     <Compile Include="Converters\BoolZeroToQuestionMarkMultiConverter.cs" />
     <Compile Include="CLPServiceAgent.cs" />
@@ -205,11 +207,17 @@
     <Compile Include="Converters\ByteArrayToBoolConverter.cs" />
     <Compile Include="Converters\BytesToImageSourceConverter.cs" />
     <Compile Include="Converters\CurrentWorkspaceToButtonEnabledConverter.cs" />
+    <Compile Include="Converters\DivisionPositionToColorMultiConverter.cs" />
     <Compile Include="Converters\DoubleToVisibilityConverter.cs" />
     <Compile Include="Converters\EnumToBoolConverter.cs" />
+    <Compile Include="Converters\FFCMarginConverter.cs" />
     <Compile Include="Converters\HeightToWidthAspectRatioMultiConverter.cs" />
+    <Compile Include="Converters\IndexToMarginConverter.cs" />
+    <Compile Include="Converters\IntToOppositeVisibilityConverter.cs" />
+    <Compile Include="Converters\IntToVisibilityConverter.cs" />
     <Compile Include="Converters\ItemsControlItemIndexConverter.cs" />
     <Compile Include="Converters\ItemSelectedToColorConverter.cs" />
+    <Compile Include="Converters\MarginSingleSideConverter.cs" />
     <Compile Include="Converters\MultiplyAllIntToTextMultiConverter.cs" />
     <Compile Include="Converters\ProjectedDisplayBackgroundConverter.cs" />
     <Compile Include="Converters\TypeToStringConverter.cs" />
@@ -224,6 +232,7 @@
     <Compile Include="Network\StudentService.cs" />
     <Compile Include="Resources\Converters.cs" />
     <Compile Include="Resources\InkInterpretation.cs" />
+    <Compile Include="ViewModels\PageObjects\CLPFuzzyFactorCardRemainderViewModel.cs" />
     <Compile Include="ViewModels\Pages\CLPAnimationPageViewModel.cs" />
     <Compile Include="ViewModels\Pages\CLPPageViewModel.cs" />
     <Compile Include="ViewModels\Displays\MirrorDisplayViewModel.cs" />
@@ -231,17 +240,38 @@
     <Compile Include="ViewModels\Math\ProductRelationViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPAggregationDataTableViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPArrayViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\CLPFactorCardViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\CLPFFCComputationDisplayViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\CLPFuzzyFactorCardViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPRegionViewModel.cs" />
     <Compile Include="ViewModels\Panels\DisplayListPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\NotebookPagesPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\SubmissionHistoryPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\SubmissionsPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\WebcamPanelViewModel.cs" />
+    <Compile Include="Views\Modal Windows\SimpleTextWindowView.xaml.cs">
+      <DependentUpon>SimpleTextWindowView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PageObjects\CLPFuzzyFactorCardRemainderView.xaml.cs">
+      <DependentUpon>CLPFuzzyFactorCardRemainderView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Pages\AnimationPageToolBar.xaml.cs">
       <DependentUpon>AnimationPageToolBar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Pages\CLPAnimationPageView.xaml.cs">
       <DependentUpon>CLPAnimationPageView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Modal Windows\FuzzyFactorCardCreationView.xaml.cs">
+      <DependentUpon>FuzzyFactorCardCreationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PageObjects\CLPFactorCardView.xaml.cs">
+      <DependentUpon>CLPFactorCardView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PageObjects\CLPFFCComputationDisplayView.xaml.cs">
+      <DependentUpon>CLPFFCComputationDisplayView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PageObjects\CLPFuzzyFactorCardView.xaml.cs">
+      <DependentUpon>CLPFuzzyFactorCardView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\CLPRegionView.xaml.cs">
       <DependentUpon>CLPRegionView.xaml</DependentUpon>
@@ -422,11 +452,35 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Modal Windows\SimpleTextWindowView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\PageObjects\CLPFuzzyFactorCardRemainderView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Pages\AnimationPageToolBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Pages\CLPAnimationPageView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Modal Windows\FuzzyFactorCardCreationView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PageObjects\CLPFactorCardView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PageObjects\CLPFFCComputationDisplayView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PageObjects\CLPFuzzyFactorCardView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -735,6 +789,18 @@
     <Content Include="External Libraries\NRtfTree.dll" />
     <Content Include="External Libraries\ServiceModelEx.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
+    <Resource Include="Resources\Images\dividendonedge32.png" />
+    <Resource Include="Resources\Images\dividendonedge16.png" />
+    <Resource Include="Resources\Images\straightedge32.png" />
+    <Resource Include="Resources\Images\straightedge16.png" />
+    <Resource Include="Images\video.png" />
+    <Resource Include="Resources\Images\AnimationIndicator16.png" />
+    <Resource Include="Resources\Images\AnimationIndicator32.png" />
+    <Resource Include="Resources\Images\AnimationIndicator64.png" />
+    <Resource Include="Resources\Images\noedge32.png" />
+    <Resource Include="Resources\Images\noedge16.png" />
+    <Resource Include="Resources\Images\curlyedge32.png" />
+    <Resource Include="Resources\Images\curlyedge16.png" />
     <Resource Include="Resources\Images\HideSubmissionsButton50x25.png" />
     <Resource Include="Resources\Images\Check16.png" />
     <Resource Include="Resources\Images\GrayPlus16.png" />
@@ -867,7 +933,6 @@
     <Resource Include="Images\record.png" />
     <Resource Include="Images\stop.png" />
     <Resource Include="Images\stop_record.png" />
-    <Resource Include="Images\video.png" />
     <Resource Include="Images\SnapTileIcon.png" />
     <Content Include="External Libraries\IACore.dll" />
     <Content Include="External Libraries\IALoader.dll" />
