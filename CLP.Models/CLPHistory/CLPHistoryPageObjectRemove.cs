@@ -107,7 +107,7 @@ namespace CLP.Models
 
             //If page object was array and FFC with remainder on page, update
             //TODO: This shouldn't be here, find more appropriate place.
-            if(PageObject.PageObjectType == "CLPArray")
+            if(PageObject != null && PageObject.PageObjectType == "CLPArray")
             {
                 foreach(var pageObject in ParentPage.PageObjects)
                 {
@@ -144,7 +144,7 @@ namespace CLP.Models
 
             //If page object was array and FFC with remainder on page, update
             //TODO: This shouldn't be here, find more appropriate place.
-            if(PageObject.PageObjectType == "CLPArray")
+            if(PageObject != null && PageObject.PageObjectType == "CLPArray")
             {
                 foreach(var pageObject in ParentPage.PageObjects)
                 {

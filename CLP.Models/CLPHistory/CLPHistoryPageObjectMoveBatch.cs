@@ -105,6 +105,13 @@ namespace CLP.Models
             }
 
             var pageObject = ParentPage.GetPageObjectByUniqueID(PageObjectUniqueID);
+            if(pageObject == null)
+            {
+                Console.WriteLine("ERROR: PageObject not  found on page for UNDO of PageObjectMoveBatch.");
+                CurrentBatchTickIndex = -1;
+                return;
+            }
+
             pageObject.ParentPage = ParentPage; //Hack, ParentPage should already be there and not null. See Dutch-Investigation4-Page4, array with no parent page.
 
             if(isAnimationUndo && CurrentBatchTickIndex > 0)
@@ -171,6 +178,12 @@ namespace CLP.Models
             }
 
             var pageObject = ParentPage.GetPageObjectByUniqueID(PageObjectUniqueID);
+            if(pageObject == null)
+            {
+                Console.WriteLine("ERROR: PageObject not  found on page for REDO of PageObjectMoveBatch.");
+                CurrentBatchTickIndex = NumberOfBatchTicks;
+                return;
+            }
 
             if(isAnimationRedo)
             {
