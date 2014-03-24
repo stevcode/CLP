@@ -3,7 +3,7 @@ using Catel.Data;
 
 namespace CLP.Entities
 {
-    public class EntityBase : ModelBase
+    public abstract class EntityBase : ModelBase
     {
         protected EntityBase() { }
 

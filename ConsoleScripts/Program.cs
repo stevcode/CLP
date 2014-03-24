@@ -26,10 +26,20 @@ namespace ConsoleScripts
             {
                 var notebook = new Notebook
                                {
-                                   Name = "Test",
-                                   CreationDate = DateTime.Now
+                                   Name = "Blarg"
                                };
                 notebook.ClearDirtyFlag();
+
+                for(var i = 0; i < 6; i++)
+                {
+                    var page = new CLPPage();
+                    page.ClearDirtyFlag();
+                    notebook.AddCLPPageToNotebook(page);
+
+                    var page2 = new CLPPage();
+                    page2.ClearDirtyFlag();
+                    notebook.AddCLPPageToNotebook(page2);
+                }
 
                 context.Notebooks.Add(notebook);
                 context.SaveChanges();
@@ -41,7 +51,10 @@ namespace ConsoleScripts
                 foreach(var notebook1 in query)
                 {
                     Console.WriteLine(notebook1.Name);
+                    Console.WriteLine("number of pages: {0}", notebook1.CLPPages.Count);
                 }
+
+                Console.ReadLine();
             }
         }
 

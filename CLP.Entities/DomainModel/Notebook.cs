@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using Catel.Data;
 
@@ -6,13 +7,31 @@ namespace CLP.Entities
 {
     public class Notebook : EntityBase
     {
-        public Notebook() { }
+        #region Constructors
 
+        /// <summary>
+        /// Initializes <see cref="Notebook" /> from scratch.
+        /// </summary>
+        public Notebook()
+        {
+            CreationDate = DateTime.Now;
+            ID = Guid.NewGuid().ToString();
+        }
+
+        /// <summary>
+        /// Initializes <see cref="Notebook" /> based on <see cref="SerializationInfo" />.
+        /// </summary>
+        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
+        /// <param name="context"><see cref="StreamingContext" />.</param>
         public Notebook(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
+        #endregion //Constructors
+
+        #region Properties
+
         /// <summary>
-        /// Unique Identifier for the Notebook.
+        /// Unique Identifier for the <see cref="Notebook" />.
         /// </summary>
         public string ID
         {
@@ -20,10 +39,10 @@ namespace CLP.Entities
             set { SetValue(IDProperty, value); }
         }
 
-        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string), Guid.NewGuid().ToString());
+        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string));
 
         /// <summary>
-        /// Date and Time the Notebook was created.
+        /// Date and Time the <see cref="Notebook" /> was created.
         /// </summary>
         public DateTime CreationDate
         {
@@ -34,7 +53,7 @@ namespace CLP.Entities
         public static readonly PropertyData CreationDateProperty = RegisterProperty("CreationDate", typeof(DateTime));
 
         /// <summary>
-        /// Date and Time the Notebook was last saved.
+        /// Date and Time the <see cref="Notebook" /> was last saved.
         /// </summary>
         /// <remarks>
         /// Type set to DateTime? (i.e. nullable DateTime) to allow NULL in database if LastSavedDate hasn't been set yet.
@@ -48,7 +67,7 @@ namespace CLP.Entities
         public static readonly PropertyData LastSavedDateProperty = RegisterProperty("LastSavedDate", typeof(DateTime?));
 
         /// <summary>
-        /// Name of the Notebook.
+        /// Name of the <see cref="Notebook" />.
         /// </summary>
         public string Name
         {
@@ -57,5 +76,31 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData NameProperty = RegisterProperty("Name", typeof(string), string.Empty);
+
+        /// <summary>
+        /// Collection of all the <see cref="CLPPage" />s in the <see cref="Notebook" />.
+        /// </summary>
+        /// <remarks>
+        /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
+        /// </remarks>
+        public virtual ObservableCollection<CLPPage> CLPPages
+        {
+            get { return GetValue<ObservableCollection<CLPPage>>(CLPPagesProperty); }
+            set { SetValue(CLPPagesProperty, value); }
+        }
+
+        public static readonly PropertyData CLPPagesProperty = RegisterProperty("CLPPages", typeof(ObservableCollection<CLPPage>), () => new ObservableCollection<CLPPage>());
+
+        #endregion //Properties
+
+        #region Methods
+
+        public void AddCLPPageToNotebook(CLPPage page)
+        {
+            page.NotebookID = ID;
+            CLPPages.Add(page);
+        }
+
+        #endregion //Methods
     }
 }
