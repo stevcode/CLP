@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using CLP.Entities;
 
 namespace ConsoleScripts
 {
@@ -6,13 +8,39 @@ namespace ConsoleScripts
     {
         static void Main(string[] args)
         {
-            while(true)
+            DatabaseTesting();
+            //while(true)
+            //{
+            //    Console.Write("> ");
+            //    string command = Console.ReadLine();
+            //    if(!processCommand(command))
+            //    {
+            //        break;
+            //    }
+            //}
+        }
+
+        static void DatabaseTesting()
+        {
+            using(var context = new NotebookContext())
             {
-                Console.Write("> ");
-                string command = Console.ReadLine();
-                if(!processCommand(command))
+                var notebook = new Notebook
+                               {
+                                   Name = "Test",
+                                   CreationDate = DateTime.Now
+                               };
+                notebook.ClearDirtyFlag();
+
+                context.Notebooks.Add(notebook);
+                context.SaveChanges();
+
+                var query = from n in context.Notebooks
+                            orderby n.Name
+                            select n;
+
+                foreach(var notebook1 in query)
                 {
-                    break;
+                    Console.WriteLine(notebook1.Name);
                 }
             }
         }
