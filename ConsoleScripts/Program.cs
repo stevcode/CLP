@@ -22,8 +22,22 @@ namespace ConsoleScripts
 
         static void DatabaseTesting()
         {
-            using(var context = new NotebookContext())
+            using(var context = new ClassPeriodContext())
             {
+                var classSubject = new ClassSubject
+                                   {
+                                       Name = "Math",
+                                       TeacherName = "Emily Sparks",
+                                       GradeLevel = "4",
+                                       StartDate = new DateTime(2014, 1, 1),
+                                       EndDate = new DateTime(2014, 7, 1),
+                                       SchoolName = "King Open School",
+                                       SchoolDistrict = "Cambridge Public Schools",
+                                       City = "Cambridge",
+                                       State = "Massachusetts"
+                                   };
+                classSubject.ClearDirtyFlag();
+
                 var notebook = new Notebook
                                {
                                    Name = "Blarg"
@@ -33,6 +47,7 @@ namespace ConsoleScripts
                 for(var i = 0; i < 6; i++)
                 {
                     var page = new CLPPage();
+                    page.PageType = PageTypes.Animation;
                     page.ClearDirtyFlag();
                     notebook.AddCLPPageToNotebook(page);
 

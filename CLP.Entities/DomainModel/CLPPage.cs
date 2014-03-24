@@ -4,6 +4,13 @@ using Catel.Data;
 
 namespace CLP.Entities
 {
+    public enum PageTypes
+    {
+        Default,
+        Animation
+    }
+
+
     public class CLPPage : EntityBase
     {
         #region Fields
@@ -59,6 +66,17 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string));
+
+        /// <summary>
+        /// The type of page.
+        /// </summary>
+        public PageTypes PageType
+        {
+            get { return GetValue<PageTypes>(PageTypeProperty); }
+            set { SetValue(PageTypeProperty, value); }
+        }
+
+        public static readonly PropertyData PageTypeProperty = RegisterProperty("PageType", typeof(PageTypes), PageTypes.Default);
 
         /// <summary>
         /// Date and Time the <see cref="CLPPage" /> was created.
@@ -117,6 +135,76 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData NotebookIDProperty = RegisterProperty("NotebookID", typeof(string));
+
+        #region Navigation Parameters
+
+        /// <summary>
+        /// Title of the chapter the <see cref="CLPPage" /> is part of within the <see cref="Notebook" />.
+        /// </summary>
+        public string ChapterTitle
+        {
+            get { return GetValue<string>(ChapterTitleProperty); }
+            set { SetValue(ChapterTitleProperty, value); }
+        }
+
+        public static readonly PropertyData ChapterTitleProperty = RegisterProperty("ChapterTitle", typeof(string), string.Empty);
+
+        /// <summary>
+        /// Title of the section the <see cref="CLPPage" /> is part of within the <see cref="Notebook" />.
+        /// </summary>
+        public string SectionTitle
+        {
+            get { return GetValue<string>(SectionTitleProperty); }
+            set { SetValue(SectionTitleProperty, value); }
+        }
+
+        public static readonly PropertyData SectionTitleProperty = RegisterProperty("SectionTitle", typeof(string), string.Empty);
+
+        /// <summary>
+        /// Page Number of the <see cref="CLPPage" /> within the <see cref="Notebook" />.
+        /// </summary>
+        public int PageNumber
+        {
+            get { return GetValue<int>(PageNumberProperty); }
+            set { SetValue(PageNumberProperty, value); }
+        }
+
+        public static readonly PropertyData PageNumberProperty = RegisterProperty("PageNumber", typeof(int), 1);
+
+        /// <summary>
+        /// Page Number of the <see cref="CLPPage" />'s corresponding page in the Student Workbook.
+        /// </summary>
+        public string StudentWorkbookPageNumber
+        {
+            get { return GetValue<string>(StudentWorkbookPageNumberProperty); }
+            set { SetValue(StudentWorkbookPageNumberProperty, value); }
+        }
+
+        public static readonly PropertyData StudentWorkbookPageNumberProperty = RegisterProperty("StudentWorkbookPageNumber", typeof(string), string.Empty);
+
+        /// <summary>
+        /// Page Number of the <see cref="CLPPage" />'s corresponding page in the Teacher Workbook.
+        /// </summary>
+        public string TeacherWorkbookPageNumber
+        {
+            get { return GetValue<string>(TeacherWorkbookPageNumberProperty); }
+            set { SetValue(TeacherWorkbookPageNumberProperty, value); }
+        }
+
+        public static readonly PropertyData TeacherWorkbookPageNumberProperty = RegisterProperty("TeacherWorkbookPageNumber", typeof(string), string.Empty);
+
+        /// <summary>
+        /// Curriculum the <see cref="CLPPage" /> employs.
+        /// </summary>
+        public string Curriculum
+        {
+            get { return GetValue<string>(CurriculumProperty); }
+            set { SetValue(CurriculumProperty, value); }
+        }
+
+        public static readonly PropertyData CurriculumProperty = RegisterProperty("Curriculum", typeof(string), string.Empty);
+
+        #endregion //Navigation Parameters
 
         #endregion //Properties
 

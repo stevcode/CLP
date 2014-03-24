@@ -78,6 +78,17 @@ namespace CLP.Entities
         public static readonly PropertyData NameProperty = RegisterProperty("Name", typeof(string), string.Empty);
 
         /// <summary>
+        /// Overall Curriculum the <see cref="Notebook" /> employs. Curriculum of individual pages may vary.
+        /// </summary>
+        public string Curriculum
+        {
+            get { return GetValue<string>(CurriculumProperty); }
+            set { SetValue(CurriculumProperty, value); }
+        }
+
+        public static readonly PropertyData CurriculumProperty = RegisterProperty("Curriculum", typeof(string), string.Empty);
+
+        /// <summary>
         /// Collection of all the <see cref="CLPPage" />s in the <see cref="Notebook" />.
         /// </summary>
         /// <remarks>

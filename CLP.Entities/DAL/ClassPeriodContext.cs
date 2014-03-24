@@ -2,7 +2,7 @@
 
 namespace CLP.Entities
 {
-    public class NotebookContext : DbContext
+    public class ClassPeriodContext : DbContext
     {
         public DbSet<Notebook> Notebooks { get; set; }
         public DbSet<CLPPage> CLPPages { get; set; }
@@ -17,13 +17,25 @@ namespace CLP.Entities
             base.OnModelCreating(modelBuilder);
         }
 
+        #endregion
+
+        #region Methods
+
         /// <summary>
         /// Prevents the 3 ModelBase Catel Properties from appearing in the database. Must have an entry for every new EntityBase created.
         /// </summary>
-        /// <param name="modelBuilder"><see cref="DbModelBuilder" /> from the <see cref="NotebookContext" />.</param>
+        /// <param name="modelBuilder"><see cref="DbModelBuilder" /> from the <see cref="ClassPeriodContext" />.</param>
         private void CatelModelBaseSanitizer(DbModelBuilder modelBuilder)
         {
             modelBuilder.Ignore<EntityBase>();
+
+            modelBuilder.Entity<ClassSubject>().Ignore(t => t.IsDirty);
+            modelBuilder.Entity<ClassSubject>().Ignore(t => t.IsReadOnly);
+            modelBuilder.Entity<ClassSubject>().Ignore(t => t.Mode);
+
+            modelBuilder.Entity<ClassPeriod>().Ignore(t => t.IsDirty);
+            modelBuilder.Entity<ClassPeriod>().Ignore(t => t.IsReadOnly);
+            modelBuilder.Entity<ClassPeriod>().Ignore(t => t.Mode);
 
             modelBuilder.Entity<Notebook>().Ignore(t => t.IsDirty);
             modelBuilder.Entity<Notebook>().Ignore(t => t.IsReadOnly);
@@ -34,6 +46,6 @@ namespace CLP.Entities
             modelBuilder.Entity<CLPPage>().Ignore(t => t.Mode);
         }
 
-        #endregion
+        #endregion //Methods
     }
 }

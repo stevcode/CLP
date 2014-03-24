@@ -13,7 +13,7 @@ namespace CLP.Entities
     {
         public DatabaseConfiguration()
         {
-            SetDatabaseInitializer(new DropCreateDatabaseIfModelChanges<NotebookContext>());
+            SetDatabaseInitializer(new DropCreateDatabaseIfModelChanges<ClassPeriodContext>());
             SetProviderServices(SqlProviderServices.ProviderInvariantName, SqlProviderServices.Instance);
             SetDefaultConnectionFactory(new LocalDbConnectionFactory("v11.0"));
         }
