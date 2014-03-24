@@ -78,6 +78,7 @@
     <Reference Include="EntityFramework.SqlServer">
       <HintPath>..\Classroom Learning Partner\External Libraries\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -94,9 +95,16 @@
     <Compile Include="DomainModel\CLPPage.cs" />
     <Compile Include="DomainModel\EntityBase.cs" />
     <Compile Include="DomainModel\Notebook.cs" />
+    <Compile Include="DomainModel\Person.cs" />
+    <Compile Include="DomainModel\Strokes\Extensions\StrokeExtension.cs" />
+    <Compile Include="DomainModel\Strokes\StrokeDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="DomainModel\Displays\" />
+    <Folder Include="DomainModel\History\" />
+    <Folder Include="DomainModel\PageObjects\" />
+    <Folder Include="DomainModel\Tags\" />
     <Folder Include="Repositories\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

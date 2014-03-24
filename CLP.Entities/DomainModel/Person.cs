@@ -1,0 +1,73 @@
+﻿using System;
+using System.Runtime.Serialization;
+using Catel.Data;
+
+namespace CLP.Entities
+{
+    public enum Handedness
+    {
+        Right,
+        Left
+    }
+
+    public class Person : EntityBase
+    {
+        #region Constructors
+
+        /// <summary>
+        /// Initializes <see cref="Person" /> from scratch.
+        /// </summary>
+        public Person() { ID = Guid.NewGuid().ToString(); }
+
+        /// <summary>
+        /// Initializes <see cref="Person" /> based on <see cref="SerializationInfo" />.
+        /// </summary>
+        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
+        /// <param name="context"><see cref="StreamingContext" />.</param>
+        public Person(SerializationInfo info, StreamingContext context)
+            : base(info, context) { }
+
+        #endregion //Constructors
+
+        #region Properties
+
+        /// <summary>
+        /// Unique Identifier for the <see cref="Person" />.
+        /// </summary>
+        public string ID
+        {
+            get { return GetValue<string>(IDProperty); }
+            set { SetValue(IDProperty, value); }
+        }
+
+        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string));
+
+        /// <summary>
+        /// Full Name of the <see cref="Person" />, delimited by spaces.
+        /// </summary>
+        public string FullName
+        {
+            get { return GetValue<string>(FullNameProperty); }
+            set { SetValue(FullNameProperty, value); }
+        }
+
+        public static readonly PropertyData FullNameProperty = RegisterProperty("FullName", typeof(string), string.Empty);
+
+        /// <summary>
+        /// Left or Right Handed.
+        /// </summary>
+        public Handedness Handedness
+        {
+            get { return GetValue<Handedness>(HandednessProperty); }
+            set { SetValue(HandednessProperty, value); }
+        }
+
+        public static readonly PropertyData HandednessProperty = RegisterProperty("Handedness", typeof(Handedness), Handedness.Right);
+
+        #endregion //Properties
+
+        #region Methods
+
+        #endregion //Methods
+    }
+}

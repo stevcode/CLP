@@ -37,6 +37,10 @@ namespace CLP.Entities
             modelBuilder.Entity<ClassPeriod>().Ignore(t => t.IsReadOnly);
             modelBuilder.Entity<ClassPeriod>().Ignore(t => t.Mode);
 
+            modelBuilder.Entity<Person>().Ignore(t => t.IsDirty);
+            modelBuilder.Entity<Person>().Ignore(t => t.IsReadOnly);
+            modelBuilder.Entity<Person>().Ignore(t => t.Mode);
+
             modelBuilder.Entity<Notebook>().Ignore(t => t.IsDirty);
             modelBuilder.Entity<Notebook>().Ignore(t => t.IsReadOnly);
             modelBuilder.Entity<Notebook>().Ignore(t => t.Mode);

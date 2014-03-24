@@ -61,6 +61,19 @@ namespace CLP.Entities
 
         public static readonly PropertyData ClassSubjectProperty = RegisterProperty("ClassSubject", typeof(ClassSubject));
 
+        /// <summary>
+        /// Start Time and Date of the <see cref="ClassPeriod" />.
+        /// </summary>
+        public DateTime StartTime
+        {
+            get { return GetValue<DateTime>(StartTimeProperty); }
+            set { SetValue(StartTimeProperty, value); }
+        }
+
+        public static readonly PropertyData StartTimeProperty = RegisterProperty("StartTime", typeof(DateTime));
+
+        //expected pages and actual pages??
+
         #endregion //Properties
 
         #region Methods
