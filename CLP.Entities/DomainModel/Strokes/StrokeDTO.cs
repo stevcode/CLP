@@ -35,6 +35,9 @@ namespace CLP.Entities
         /// <summary>
         /// Unique Identifier of the <see cref="Person" /> that made the <see cref="StrokeDTO" />.
         /// </summary>
+        /// <remarks>
+        /// Foreign Key.
+        /// </remarks>
         public string PersonID { get; set; }
 
         /// <summary>
@@ -123,7 +126,7 @@ namespace CLP.Entities
         public static ObservableCollection<StrokeDTO> SaveInkStrokes(IEnumerable<Stroke> strokes)
         {
             var serializedStrokes = new ObservableCollection<StrokeDTO>();
-            foreach(Stroke stroke in strokes)
+            foreach(var stroke in strokes)
             {
                 serializedStrokes.Add(stroke.ToStrokeDTO());
             }
@@ -134,7 +137,7 @@ namespace CLP.Entities
         public static StrokeCollection LoadInkStrokes(IEnumerable<StrokeDTO> serializedStrokes)
         {
             var strokes = new StrokeCollection();
-            foreach(Stroke stroke in serializedStrokes.Where(strokeDTO => strokeDTO.StrokePoints.Any()).Select(strokeDTO => strokeDTO.ToStroke()).Where(stroke => stroke != null))
+            foreach(var stroke in serializedStrokes.Where(strokeDTO => strokeDTO.StrokePoints.Any()).Select(strokeDTO => strokeDTO.ToStroke()).Where(stroke => stroke != null))
             {
                 strokes.Add(stroke);
             }

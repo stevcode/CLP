@@ -6,7 +6,7 @@ namespace CLP.Models
     public interface IInkStrokeAccepter
     {
         bool CanAcceptStrokes { get; set; }
-        ObservableCollection<string> AcceptedStrokeParentIDs { get; set; }
+        ObservableCollection<string> AcceptedStrokeIDs { get; set; }
         
         void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes);
         void RefreshStrokeParentIDs();

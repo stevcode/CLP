@@ -136,7 +136,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData NotebookIDProperty = RegisterProperty("NotebookID", typeof(string));
 
-        #region Navigation Parameters
+        #region MetaData
 
         /// <summary>
         /// Title of the chapter the <see cref="CLPPage" /> is part of within the <see cref="Notebook" />.
@@ -204,7 +204,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData CurriculumProperty = RegisterProperty("Curriculum", typeof(string), string.Empty);
 
-        #endregion //Navigation Parameters
+        #endregion //MetaData
 
         #endregion //Properties
 

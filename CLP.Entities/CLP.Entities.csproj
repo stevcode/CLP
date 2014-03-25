@@ -95,6 +95,12 @@
     <Compile Include="DomainModel\CLPPage.cs" />
     <Compile Include="DomainModel\EntityBase.cs" />
     <Compile Include="DomainModel\Notebook.cs" />
+    <Compile Include="DomainModel\PageObjects\PageObject Interfaces\ICountable.cs" />
+    <Compile Include="DomainModel\PageObjects\PageObject Interfaces\ICuttable.cs" />
+    <Compile Include="DomainModel\PageObjects\PageObject Interfaces\IPageObject.cs" />
+    <Compile Include="DomainModel\PageObjects\PageObject Interfaces\IPageObjectAccepter.cs" />
+    <Compile Include="DomainModel\PageObjects\PageObject Interfaces\IStrokeAccepter.cs" />
+    <Compile Include="DomainModel\PageObjects\PageObject Interfaces\ISubmittablePageObject.cs" />
     <Compile Include="DomainModel\Person.cs" />
     <Compile Include="DomainModel\Strokes\Extensions\StrokeExtension.cs" />
     <Compile Include="DomainModel\Strokes\StrokeDTO.cs" />
@@ -103,7 +109,6 @@
   <ItemGroup>
     <Folder Include="DomainModel\Displays\" />
     <Folder Include="DomainModel\History\" />
-    <Folder Include="DomainModel\PageObjects\" />
     <Folder Include="DomainModel\Tags\" />
     <Folder Include="Repositories\" />
   </ItemGroup>
