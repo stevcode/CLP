@@ -29,6 +29,7 @@ namespace CLP.Entities
         {
             modelBuilder.Ignore<AEntityBase>();
             modelBuilder.Ignore<APageObjectBase>();
+            modelBuilder.Ignore<ATagBase>();
 
             modelBuilder.Entity<ClassSubject>().Ignore(t => t.IsDirty);
             modelBuilder.Entity<ClassSubject>().Ignore(t => t.IsReadOnly);
@@ -50,9 +51,27 @@ namespace CLP.Entities
             modelBuilder.Entity<CLPPage>().Ignore(t => t.IsReadOnly);
             modelBuilder.Entity<CLPPage>().Ignore(t => t.Mode);
 
+            //PageObjects
             modelBuilder.Entity<Shape>().Ignore(t => t.IsDirty);
             modelBuilder.Entity<Shape>().Ignore(t => t.IsReadOnly);
             modelBuilder.Entity<Shape>().Ignore(t => t.Mode);
+
+            modelBuilder.Entity<TextBox>().Ignore(t => t.IsDirty);
+            modelBuilder.Entity<TextBox>().Ignore(t => t.IsReadOnly);
+            modelBuilder.Entity<TextBox>().Ignore(t => t.Mode);
+
+            //Tags
+            modelBuilder.Entity<CorrectnessTag>().Ignore(t => t.IsDirty);
+            modelBuilder.Entity<CorrectnessTag>().Ignore(t => t.IsReadOnly);
+            modelBuilder.Entity<CorrectnessTag>().Ignore(t => t.Mode);
+
+            modelBuilder.Entity<PageTopicTag>().Ignore(t => t.IsDirty);
+            modelBuilder.Entity<PageTopicTag>().Ignore(t => t.IsReadOnly);
+            modelBuilder.Entity<PageTopicTag>().Ignore(t => t.Mode);
+
+            modelBuilder.Entity<StarredTag>().Ignore(t => t.IsDirty);
+            modelBuilder.Entity<StarredTag>().Ignore(t => t.IsReadOnly);
+            modelBuilder.Entity<StarredTag>().Ignore(t => t.Mode);
         }
 
         #endregion //Methods

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Runtime.Serialization;
 using Catel.Data;
 
@@ -221,9 +222,38 @@ namespace CLP.Entities
 
         public static readonly PropertyData PageObjectsProperty = RegisterProperty("PageObjects", typeof(ObservableCollection<IPageObject>), () => new ObservableCollection<IPageObject>());
 
+        /// <summary>
+        /// <see cref="ATagBase" />s for the <see cref="CLPPage" />.
+        /// </summary>
+        /// <remarks>
+        /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
+        /// </remarks>
+        public virtual ObservableCollection<ATagBase> Tags
+        {
+            get { return GetValue<ObservableCollection<ATagBase>>(TagsProperty); }
+            set { SetValue(TagsProperty, value); }
+        }
+
+        public static readonly PropertyData TagsProperty = RegisterProperty("Tags", typeof(ObservableCollection<ATagBase>), () => new ObservableCollection<ATagBase>());
+
         #endregion //Properties
 
         #region Methods
+
+        public void AddTag(ATagBase newTag)
+        {
+            if(newTag.IsSingleValueTag)
+            {
+                var toRemove = Tags.Where(t => t.GetType() == newTag.GetType()).ToList();
+                foreach(var tag in toRemove)
+                {
+                    Tags.Remove(tag);
+                }
+            }
+
+            newTag.ParentPageID = ID;
+            Tags.Add(newTag);
+        }
 
         #endregion //Methods
     }
