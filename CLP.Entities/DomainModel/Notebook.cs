@@ -5,7 +5,7 @@ using Catel.Data;
 
 namespace CLP.Entities
 {
-    public class Notebook : EntityBase
+    public class Notebook : AEntityBase
     {
         #region Constructors
 

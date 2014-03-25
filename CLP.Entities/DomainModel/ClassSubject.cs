@@ -4,7 +4,7 @@ using Catel.Data;
 
 namespace CLP.Entities
 {
-    public class ClassSubject : EntityBase
+    public class ClassSubject : AEntityBase
     {
         #region Constructors
 
@@ -48,26 +48,32 @@ namespace CLP.Entities
         public static readonly PropertyData NameProperty = RegisterProperty("Name", typeof(string), string.Empty);
 
         /// <summary>
-        /// Name of the teacher teaching the <see cref="ClassSubject" />.
+        /// Unique Identifier of the <see cref="Person" /> teaching the <see cref="ClassSubject" />.
         /// </summary>
-        public string TeacherName
+        /// <remarks>
+        /// Foreign Key.
+        /// </remarks>
+        public string TeacherID
         {
-            get { return GetValue<string>(TeacherNameProperty); }
-            set { SetValue(TeacherNameProperty, value); }
+            get { return GetValue<string>(TeacherIDProperty); }
+            set { SetValue(TeacherIDProperty, value); }
         }
 
-        public static readonly PropertyData TeacherNameProperty = RegisterProperty("TeacherName", typeof(string), string.Empty);
+        public static readonly PropertyData TeacherIDProperty = RegisterProperty("TeacherID", typeof(string), string.Empty);
 
         /// <summary>
-        /// Alternate <see cref="TeacherName" />.
+        /// The <see cref="Person" /> teaching the <see cref="ClassSubject" />.
         /// </summary>
-        public string TeacherAlias
+        /// <remarks>
+        /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
+        /// </remarks>
+        public virtual Person Teacher
         {
-            get { return GetValue<string>(TeacherAliasProperty); }
-            set { SetValue(TeacherAliasProperty, value); }
+            get { return GetValue<Person>(TeacherProperty); }
+            set { SetValue(TeacherProperty, value); }
         }
 
-        public static readonly PropertyData TeacherAliasProperty = RegisterProperty("TeacherAlias", typeof(string), string.Empty);
+        public static readonly PropertyData TeacherProperty = RegisterProperty("Teacher", typeof(Person));
 
         /// <summary>
         /// Grade Level to which the <see cref="ClassSubject" /> is taught.

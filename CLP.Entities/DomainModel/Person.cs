@@ -10,7 +10,7 @@ namespace CLP.Entities
         Left
     }
 
-    public class Person : EntityBase
+    public class Person : AEntityBase
     {
         #region Constructors
 
@@ -52,6 +52,17 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData FullNameProperty = RegisterProperty("FullName", typeof(string), string.Empty);
+
+        /// <summary>
+        /// Alternate name for the <see cref="Person" />, delimited by spaces.
+        /// </summary>
+        public string Alias
+        {
+            get { return GetValue<string>(AliasProperty); }
+            set { SetValue(AliasProperty, value); }
+        }
+
+        public static readonly PropertyData AliasProperty = RegisterProperty("Alias", typeof(string), string.Empty);
 
         /// <summary>
         /// Left or Right Handed.

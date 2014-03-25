@@ -4,7 +4,7 @@ using Catel.Data;
 
 namespace CLP.Entities
 {
-    public class ClassPeriod : EntityBase
+    public class ClassPeriod : AEntityBase
     {
         #region Constructors
 

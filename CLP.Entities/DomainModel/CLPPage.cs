@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using Catel.Data;
 
@@ -11,7 +12,7 @@ namespace CLP.Entities
     }
 
 
-    public class CLPPage : EntityBase
+    public class CLPPage : AEntityBase
     {
         #region Fields
 
@@ -205,6 +206,20 @@ namespace CLP.Entities
         public static readonly PropertyData CurriculumProperty = RegisterProperty("Curriculum", typeof(string), string.Empty);
 
         #endregion //MetaData
+
+        /// <summary>
+        /// Authored <see cref="IPageObject" />s for the <see cref="CLPPage" />.
+        /// </summary>
+        /// <remarks>
+        /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
+        /// </remarks>
+        public virtual ObservableCollection<IPageObject> PageObjects
+        {
+            get { return GetValue<ObservableCollection<IPageObject>>(PageObjectsProperty); }
+            set { SetValue(PageObjectsProperty, value); }
+        }
+
+        public static readonly PropertyData PageObjectsProperty = RegisterProperty("PageObjects", typeof(ObservableCollection<IPageObject>), () => new ObservableCollection<IPageObject>());
 
         #endregion //Properties
 

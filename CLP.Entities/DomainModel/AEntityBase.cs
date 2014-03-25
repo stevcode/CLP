@@ -3,11 +3,11 @@ using Catel.Data;
 
 namespace CLP.Entities
 {
-    public abstract class EntityBase : ModelBase
+    public abstract class AEntityBase : ModelBase
     {
-        protected EntityBase() { }
+        protected AEntityBase() { }
 
-        protected EntityBase(SerializationInfo info, StreamingContext context)
+        protected AEntityBase(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
         public void ClearDirtyFlag() { IsDirty = false; }

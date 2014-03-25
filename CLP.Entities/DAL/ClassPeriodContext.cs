@@ -22,12 +22,13 @@ namespace CLP.Entities
         #region Methods
 
         /// <summary>
-        /// Prevents the 3 ModelBase Catel Properties from appearing in the database. Must have an entry for every new EntityBase created.
+        /// Prevents the 3 ModelBase Catel Properties from appearing in the database. Must have an entry for every new AEntityBase created.
         /// </summary>
         /// <param name="modelBuilder"><see cref="DbModelBuilder" /> from the <see cref="ClassPeriodContext" />.</param>
         private void CatelModelBaseSanitizer(DbModelBuilder modelBuilder)
         {
-            modelBuilder.Ignore<EntityBase>();
+            modelBuilder.Ignore<AEntityBase>();
+            modelBuilder.Ignore<APageObjectBase>();
 
             modelBuilder.Entity<ClassSubject>().Ignore(t => t.IsDirty);
             modelBuilder.Entity<ClassSubject>().Ignore(t => t.IsReadOnly);
@@ -48,6 +49,10 @@ namespace CLP.Entities
             modelBuilder.Entity<CLPPage>().Ignore(t => t.IsDirty);
             modelBuilder.Entity<CLPPage>().Ignore(t => t.IsReadOnly);
             modelBuilder.Entity<CLPPage>().Ignore(t => t.Mode);
+
+            modelBuilder.Entity<Shape>().Ignore(t => t.IsDirty);
+            modelBuilder.Entity<Shape>().Ignore(t => t.IsReadOnly);
+            modelBuilder.Entity<Shape>().Ignore(t => t.Mode);
         }
 
         #endregion //Methods

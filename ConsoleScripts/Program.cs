@@ -27,7 +27,6 @@ namespace ConsoleScripts
                 var classSubject = new ClassSubject
                                    {
                                        Name = "Math",
-                                       TeacherName = "Emily Sparks",
                                        GradeLevel = "4",
                                        StartDate = new DateTime(2013, 9, 3),
                                        EndDate = new DateTime(2014, 6, 20),
@@ -36,6 +35,14 @@ namespace ConsoleScripts
                                        City = "Cambridge",
                                        State = "Massachusetts"
                                    };
+                var teacher = new Person
+                              {
+                                  FullName = "Emily Sparks"
+                              };
+                teacher.ClearDirtyFlag();
+                
+                classSubject.Teacher = teacher;
+                classSubject.TeacherID = teacher.ID;
                 classSubject.ClearDirtyFlag();
 
                 var notebook = new Notebook
