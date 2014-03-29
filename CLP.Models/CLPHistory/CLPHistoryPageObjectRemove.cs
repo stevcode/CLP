@@ -113,10 +113,9 @@ namespace CLP.Models
                 {
                     if(pageObject is CLPFuzzyFactorCard)
                     {
-                        if((pageObject as CLPFuzzyFactorCard).RemainderRegionUniqueID != null)
+                        if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
                         {
-                            CLPFuzzyFactorCardRemainder remainderRegion = ParentPage.GetPageObjectByUniqueID((pageObject as CLPFuzzyFactorCard).RemainderRegionUniqueID) as CLPFuzzyFactorCardRemainder;
-                            remainderRegion.UpdateTiles();
+                            (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
                             break;
                         }
                     }
@@ -150,10 +149,9 @@ namespace CLP.Models
                 {
                     if(pageObject is CLPFuzzyFactorCard)
                     {
-                        if((pageObject as CLPFuzzyFactorCard).RemainderRegionUniqueID != null)
+                        if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
                         {
-                            CLPFuzzyFactorCardRemainder remainderRegion = ParentPage.GetPageObjectByUniqueID((pageObject as CLPFuzzyFactorCard).RemainderRegionUniqueID) as CLPFuzzyFactorCardRemainder;
-                            remainderRegion.UpdateTiles();
+                            (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
                             break;
                         }
                     }

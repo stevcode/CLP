@@ -26,54 +26,11 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             ResizeFuzzyFactorCardCommand = new Command<DragDeltaEventArgs>(OnResizeFuzzyFactorCardCommandExecute);
             RemoveLastArrayCommand = new Command(OnRemoveLastArrayCommandExecute);
-
-            FuzzyEdgeColor = factorCard.DefaultFuzzyEdgeColor;
         }
 
         #endregion //Constructor    
 
         #region Properties
-
-        /// <summary>
-        /// Whether or not the answer is displayed.
-        /// </summary>
-        [ViewModelToModel("PageObject")]
-        public bool IsAnswerVisible
-        {
-            get
-            {
-                return GetValue<bool>(IsAnswerVisibleProperty);
-            }
-            set
-            {
-                SetValue(IsAnswerVisibleProperty, value);
-            }
-        }
-
-        /// <summary>
-        /// True if division labels are on top and answer (if shown) is on bottom.
-        /// </summary>
-        [ViewModelToModel("PageObject")]
-        public bool IsArrayDivisionLabelOnTop
-        {
-            get
-            {
-                return GetValue<bool>(IsArrayDivisionLabelOnTopProperty);
-            }
-            set
-            {
-                SetValue(IsArrayDivisionLabelOnTopProperty, value);
-            }
-        }
-
-        public static readonly PropertyData IsArrayDivisionLabelOnTopProperty = RegisterProperty("IsArrayDivisionLabelOnTop", typeof(bool));
-
-
-        /// <summary>
-        /// Register the IsAnswerVisible property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData IsAnswerVisibleProperty = RegisterProperty("IsAnswerVisible", typeof(bool));
-
 
         /// <summary>
         /// True if FFC is aligned so that fuzzy edge is on the right
@@ -92,7 +49,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData IsHorizontallyAlignedProperty = RegisterProperty("IsHorizontallyAligned", typeof(bool));
-
 
         /// <summary>
         /// Value of the Dividend.
@@ -150,90 +106,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData FuzzyEdgeColorProperty = RegisterProperty("FuzzyEdgeColor", typeof(string), "DarkGray");
 
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        [ViewModelToModel("PageObject")]
-        public bool IsCurlyEdge
-        {
-            get
-            {
-                return GetValue<bool>(IsCurlyEdgeProperty);
-            }
-            set
-            {
-                SetValue(IsCurlyEdgeProperty, value);
-            }
-        }
-
-        /// <summary>
-        /// Register the IsCurlyEdge property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData IsCurlyEdgeProperty = RegisterProperty("IsCurlyEdge", typeof(bool));
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        [ViewModelToModel("PageObject")]
-        public bool IsStraightEdge
-        {
-            get
-            {
-                return GetValue<bool>(IsStraightEdgeProperty);
-            }
-            set
-            {
-                SetValue(IsStraightEdgeProperty, value);
-            }
-        }
-
-        /// <summary>
-        /// Register the IsStraightEdge property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData IsStraightEdgeProperty = RegisterProperty("IsStraightEdge", typeof(bool));
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        [ViewModelToModel("PageObject")]
-        public bool IsNoRightEdge
-        {
-            get
-            {
-                return GetValue<bool>(IsNoRightEdgeProperty);
-            }
-            set
-            {
-                SetValue(IsNoRightEdgeProperty, value);
-            }
-        }
-
-        /// <summary>
-        /// Register the IsNoRightEdge property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData IsNoRightEdgeProperty = RegisterProperty("IsNoRightEdge", typeof(bool));
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        [ViewModelToModel("PageObject")]
-        public bool IsDividendOnEdge
-        {
-            get
-            {
-                return GetValue<bool>(IsDividendOnEdgeProperty);
-            }
-            set
-            {
-                SetValue(IsDividendOnEdgeProperty, value);
-            }
-        }
-
-        /// <summary>
-        /// Register the IsDividendOnEdge property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData IsDividendOnEdgeProperty = RegisterProperty("IsDividendOnEdge", typeof(bool));
-
         #endregion //Properties
 
         #region Methods
@@ -246,7 +118,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 await System.Threading.Tasks.Task.Delay(400);
                 BorderColor = "Black";
-                FuzzyEdgeColor = (PageObject as CLPFuzzyFactorCard).DefaultFuzzyEdgeColor;
+                FuzzyEdgeColor = "Gray";
             });
         }
 
@@ -285,7 +157,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             //TODO Liz - make min dimension depend on horizontal vs vertical alignment
-            const double MIN_HEIGHT = 150.0; //16.875; //11.25;
+            const double MIN_HEIGHT = 150.0; 
             const double MIN_WIDTH = 50.0;
 
             //Control Min Dimensions of Array.
@@ -314,7 +186,6 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 newArrayWidth = clpArray.ParentPage.PageWidth - XPosition - clpArray.LargeLabelLength - clpArray.LabelLength;
                 newSquareSize = newArrayWidth / Columns;
-                //newArrayHeight = newSquareSize * Rows;
             }
 
             clpArray.SizeArrayToGridLevel(newSquareSize);

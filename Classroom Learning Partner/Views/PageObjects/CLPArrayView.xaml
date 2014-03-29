@@ -65,7 +65,7 @@
                            Visibility="{Binding IsDefaultAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                 <!--Close Button - on left-->
-                <Button Command="{Binding RemovePageObjectCommand}"
+                <Button Command="{Binding RemoveArrayCommand}"
                         Cursor="Hand"
                         Width="40" Height="40"
                         Canvas.Left="-40" Canvas.Top="-40">
@@ -89,7 +89,7 @@
                 </Button>
 
                 <!--Close Button - on right-->
-                <Button Command="{Binding RemovePageObjectCommand}"
+                <Button Command="{Binding RemoveArrayCommand}"
                         Cursor="Hand"
                         Width="40" Height="40"
                         Canvas.Right="-40" Canvas.Top="-40">
@@ -306,7 +306,7 @@
                 </Button>
 
                 <!--Toggle Division Adorners Button-->
-                <Button Command="{Binding ToggleDivisionAdornersCommand}"
+                <!--<Button Command="{Binding ToggleDivisionAdornersCommand}"
                         Width="40" Height="40"
                         Canvas.Left="-50"
                         Canvas.Top="20"
@@ -326,7 +326,7 @@
                             </Grid>
                         </ControlTemplate>
                     </Button.Template>
-                </Button>
+                </Button>-->
 
                 <!--Rotate Array Button - on right-->
                 <Button Command="{Binding RotateArrayCommand}"

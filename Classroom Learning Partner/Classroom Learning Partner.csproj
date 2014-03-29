@@ -227,7 +227,6 @@
     <Compile Include="ViewModels\PageObjects\CLPAggregationDataTableViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPArrayViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPFactorCardViewModel.cs" />
-    <Compile Include="ViewModels\PageObjects\CLPFFCComputationDisplayViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPFuzzyFactorCardViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPRegionViewModel.cs" />
     <Compile Include="ViewModels\Panels\DisplayListPanelViewModel.cs" />
@@ -235,6 +234,9 @@
     <Compile Include="ViewModels\Panels\SubmissionHistoryPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\SubmissionsPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\WebcamPanelViewModel.cs" />
+    <Compile Include="Views\Modal Windows\FuzzyFactorCardWithTiles.xaml.cs">
+      <DependentUpon>FuzzyFactorCardWithTiles.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Modal Windows\SimpleTextWindowView.xaml.cs">
       <DependentUpon>SimpleTextWindowView.xaml</DependentUpon>
     </Compile>
@@ -252,9 +254,6 @@
     </Compile>
     <Compile Include="Views\PageObjects\CLPFactorCardView.xaml.cs">
       <DependentUpon>CLPFactorCardView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\PageObjects\CLPFFCComputationDisplayView.xaml.cs">
-      <DependentUpon>CLPFFCComputationDisplayView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\CLPFuzzyFactorCardView.xaml.cs">
       <DependentUpon>CLPFuzzyFactorCardView.xaml</DependentUpon>
@@ -438,6 +437,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Modal Windows\FuzzyFactorCardWithTiles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Modal Windows\SimpleTextWindowView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -459,10 +462,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PageObjects\CLPFactorCardView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\PageObjects\CLPFFCComputationDisplayView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -769,18 +768,14 @@
     <Content Include="External Libraries\NRtfTree.dll" />
     <Content Include="External Libraries\ServiceModelEx.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
+    <Resource Include="Resources\Images\FuzzyFactorCard16.png" />
+    <Resource Include="Resources\Images\FuzzyFactorCard32.png" />
     <Resource Include="Resources\Images\dividendonedge32.png" />
     <Resource Include="Resources\Images\dividendonedge16.png" />
-    <Resource Include="Resources\Images\straightedge32.png" />
-    <Resource Include="Resources\Images\straightedge16.png" />
     <Resource Include="Images\video.png" />
     <Resource Include="Resources\Images\AnimationIndicator16.png" />
     <Resource Include="Resources\Images\AnimationIndicator32.png" />
     <Resource Include="Resources\Images\AnimationIndicator64.png" />
-    <Resource Include="Resources\Images\noedge32.png" />
-    <Resource Include="Resources\Images\noedge16.png" />
-    <Resource Include="Resources\Images\curlyedge32.png" />
-    <Resource Include="Resources\Images\curlyedge16.png" />
     <Resource Include="Resources\Images\HideSubmissionsButton50x25.png" />
     <Resource Include="Resources\Images\Check16.png" />
     <Resource Include="Resources\Images\GrayPlus16.png" />
