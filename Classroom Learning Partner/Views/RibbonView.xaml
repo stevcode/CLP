@@ -297,65 +297,17 @@
                               Command="{Binding InsertArrayCommand}"
                               CommandParameter="FACTORCARD" />
 
-                <!--<RibbonButton Label="FFC: labels top"
-                              LargeImageSource="pack://application:,,,/Resources/Images/FactorCard32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/FactorCard16.png"
-                              Command="{Binding InsertArrayCommand}"
-                              CommandParameter="FUZZYFACTORCARDTOP" />-->
-                
-                <!--<RibbonButton Label="Division Tool 1a"
-                              LargeImageSource="pack://application:,,,/Resources/Images/curlyedge32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/curlyedge16.png"
-                              Command="{Binding InsertArrayCommand}"
-                              CommandParameter="FFCCURLYEDGE" />
-
-                <RibbonButton Label="Division Tool 1b"
-                              LargeImageSource="pack://application:,,,/Resources/Images/curlyedge32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/curlyedge16.png"
-                              Command="{Binding InsertArrayCommand}"
-                              CommandParameter="FFCCURLYEDGELIGHT" />
-
-                <RibbonButton Label="Division Tool 2"
-                              LargeImageSource="pack://application:,,,/Resources/Images/straightedge32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/straightedge16.png"
-                              Command="{Binding InsertArrayCommand}"
-                              CommandParameter="FFCSTRAIGHTEDGE" />
-                
-                <RibbonButton Label="Division Tool 3"
-                              LargeImageSource="pack://application:,,,/Resources/Images/noedge32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/noedge16.png"
-                              Command="{Binding InsertArrayCommand}"
-                              CommandParameter="FFCNOEDGE" />-->
-
                 <RibbonButton Label="Division Tool"
-                              LargeImageSource="pack://application:,,,/Resources/Images/dividendonedge32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/dividendonedge16.png"
+                              LargeImageSource="pack://application:,,,/Resources/Images/FuzzyFactorCard32.png"
+                              SmallImageSource="pack://application:,,,/Resources/Images/FuzzyFactorCard16.png"
                               Command="{Binding InsertArrayCommand}"
-                              CommandParameter="FFCDIVIDENDONEDGE" />
+                              CommandParameter="FUZZYFACTORCARD" />
 
-                <!--<RibbonButton Label="Division Tool With Remainder"
-                              LargeImageSource="pack://application:,,,/Resources/Images/dividendonedge32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/dividendonedge16.png"
+                <RibbonButton Label="Division Tool With Tiles"
+                              LargeImageSource="pack://application:,,,/Resources/Images/FuzzyFactorCard32.png"
+                              SmallImageSource="pack://application:,,,/Resources/Images/FuzzyFactorCard16.png"
                               Command="{Binding InsertArrayCommand}"
-                              CommandParameter="FFCREMAINDER" />-->
-
-                <!--<RibbonButton Label="FFC: labels top, no answer"
-                              LargeImageSource="pack://application:,,,/Resources/Images/FactorCard32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/FactorCard16.png"
-                              Command="{Binding InsertArrayCommand}"
-                              CommandParameter="FUZZYFACTORCARDTOPNOANSWER" />
-
-                <RibbonButton Label="FFC: labels bottom, no answer"
-                              LargeImageSource="pack://application:,,,/Resources/Images/FactorCard32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/FactorCard16.png"
-                              Command="{Binding InsertArrayCommand}"
-                              CommandParameter="FUZZYFACTORCARDBOTTOMNOANSWER" />
-
-                <RibbonButton Label="FFC computation display"
-                              LargeImageSource="pack://application:,,,/Resources/Images/FactorCard32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/FactorCard16.png"
-                              Command="{Binding InsertArrayCommand}"
-                              CommandParameter="FFCCOMPDISPLAY" />-->
+                              CommandParameter="FFCREMAINDER" />
 
                 <RibbonButton Label="Stamp"
                               LargeImageSource="pack://application:,,,/Resources/Images/Stamp32.png"
@@ -868,13 +820,12 @@
                               Command="{Binding AnalyzeArrayCommand}" />
 
                 <RibbonButton Label="Analyze Division Tool"
-                              LargeImageSource="pack://application:,,,/Resources/Images/curlyedge32.png"
+                              LargeImageSource="pack://application:,,,/Resources/Images/FuzzyFactorCard32.png"
                               Command="{Binding AnalyzeFuzzyFactorCardCommand}" />
 
                 <RibbonButton Label="Analyze Stamps"
                               LargeImageSource="..\Images\AddPathStamp.png"
                               Command="{Binding AnalyzeStampsCommand}" />
-
             </RibbonGroup>
             
             <RibbonGroup Header="History">

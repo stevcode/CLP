@@ -125,7 +125,6 @@
     <Compile Include="CLPHistory\ICLPHistoryItem.cs" />
     <Compile Include="CLPHistory\IHistoryBatch.cs" />
     <Compile Include="CLPPageObjects\CLPFactorCard.cs" />
-    <Compile Include="CLPPageObjects\CLPFFCComputationDisplay.cs" />
     <Compile Include="CLPPageObjects\CLPFuzzyFactorCard.cs" />
     <Compile Include="CLPPageObjects\CLPFuzzyFactorCardRemainder.cs" />
     <Compile Include="CLPPageObjects\CLPRegion.cs" />
