@@ -218,13 +218,6 @@ namespace CLP.Models
             RaisePropertyChanged("LastDivisionPosition");
         }
 
-        public override void OnRemoved()
-        {
-            CLPFuzzyFactorCardRemainder remainderRegion = ParentPage.GetPageObjectByUniqueID(RemainderRegionUniqueID) as CLPFuzzyFactorCardRemainder;
-            ParentPage.PageObjects.Remove(remainderRegion);
-            base.OnRemoved();
-        }
-
         public void SnapInArray(int value)
         {
             if(IsHorizontallyAligned)
