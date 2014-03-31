@@ -2693,12 +2693,12 @@ namespace Classroom_Learning_Partner.ViewModels
                         break;
                     case "SNAPADORNERONRIGHT":
                         array = new CLPArray(rows, columns, currentPage);
-                        array.IsDivisionBehaviorOn = false;
+                        array.IsDivisionBehaviorOn = true;
                         array.IsSnapAdornerOnLeft = false;
                         break;
                     default:
                         array = new CLPArray(rows, columns, currentPage);
-                        array.IsDivisionBehaviorOn = false;
+                        array.IsDivisionBehaviorOn = true;
                         break;
                 }
 
@@ -2971,12 +2971,12 @@ namespace Classroom_Learning_Partner.ViewModels
                         break;
                     case "SNAPADORNERONRIGHT":
                         array = new CLPArray(rows, columns, currentPage);
-                        array.IsDivisionBehaviorOn = false;
+                        array.IsDivisionBehaviorOn = true;
                         array.IsSnapAdornerOnLeft = false;
                         break;
                     default:
                         array = new CLPArray(rows, columns, currentPage);
-                        array.IsDivisionBehaviorOn = false;
+                        array.IsDivisionBehaviorOn = true;
                         array.IsSnapAdornerOnLeft = true;
                         break;
                 }
