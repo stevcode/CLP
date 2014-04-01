@@ -26,12 +26,12 @@ namespace Classroom_Learning_Partner.ViewModels
             SelectedDisplay = MirrorDisplay;
 
 
-            NotebookPagesPanel = new NotebookPagesPanelViewModel(notebook);
-            StudentWorkPanel = new StudentWorkPanelViewModel(notebook);
-            ProgressPanel = new ProgressPanelViewModel(notebook);
+            //NotebookPagesPanel = new NotebookPagesPanelViewModel(notebook);
+            //StudentWorkPanel = new StudentWorkPanelViewModel(notebook);
+            //ProgressPanel = new ProgressPanelViewModel(notebook);
 
-            LeftPanel = NotebookPagesPanel;
-            NotebookPagesPanel.IsVisible = true;
+            LeftPanel = new NotebookPagesPanelViewModel(notebook);
+            LeftPanel.IsVisible = true;
             DisplayListPanel = new DisplayListPanelViewModel(notebook);
             RightPanel = DisplayListPanel;
 
@@ -242,14 +242,17 @@ namespace Classroom_Learning_Partner.ViewModels
                 var visible = (viewModel as RibbonViewModel).NotebookPagesPanelVisibility;
                 if(visible)
                 {
-                    LeftPanel = NotebookPagesPanel;
+                    LeftPanel = new NotebookPagesPanelViewModel(Notebook);
                     LeftPanel.IsVisible = true;
                     (viewModel as RibbonViewModel).StudentWorkPanelVisibility = false;
                     (viewModel as RibbonViewModel).ProgressPanelVisibility = false;
                 }
                 else
                 {
-                    NotebookPagesPanel.IsVisible = false;
+                    if(LeftPanel is NotebookPagesPanelViewModel)
+                    {
+                        LeftPanel.IsVisible = false;
+                    }
                 }
             }
 
@@ -258,14 +261,17 @@ namespace Classroom_Learning_Partner.ViewModels
                 var visible = (viewModel as RibbonViewModel).StudentWorkPanelVisibility;
                 if(visible)
                 {
-                    LeftPanel = StudentWorkPanel;
+                    LeftPanel = new StudentWorkPanelViewModel(Notebook);
                     LeftPanel.IsVisible = true;
                     (viewModel as RibbonViewModel).NotebookPagesPanelVisibility = false;
                     (viewModel as RibbonViewModel).ProgressPanelVisibility = false;
                 }
                 else
                 {
-                    StudentWorkPanel.IsVisible = false;
+                    if(LeftPanel is StudentWorkPanelViewModel)
+                    {
+                        LeftPanel.IsVisible = false;
+                    }
                 }
             }
 
@@ -274,14 +280,16 @@ namespace Classroom_Learning_Partner.ViewModels
                 var visible = (viewModel as RibbonViewModel).ProgressPanelVisibility;
                 if(visible)
                 {
-                    LeftPanel = ProgressPanel;
+                    LeftPanel = new ProgressPanelViewModel(Notebook);
                     LeftPanel.IsVisible = true;
                     (viewModel as RibbonViewModel).NotebookPagesPanelVisibility = false;
                     (viewModel as RibbonViewModel).StudentWorkPanelVisibility = false;
                 }
                 else
                 {
-                    ProgressPanel.IsVisible = false;
+                    if (LeftPanel is ProgressPanelViewModel) {
+                        LeftPanel.IsVisible = false;
+                    }
                 }
             }
 

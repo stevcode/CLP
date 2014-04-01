@@ -14,10 +14,10 @@ namespace Classroom_Learning_Partner.ViewModels
 {
     public class StudentProgressInfo : ViewModelBase
     {
-        public StudentProgressInfo(String name, int numPages)
+        public StudentProgressInfo(String name, ObservableCollection<ICLPPage> pages)
         {
             Name = name;
-            NumPages = numPages;
+            Pages = pages;
         }
 
         /// <summary>
@@ -34,13 +34,13 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// The number of pages in the notebook.
         /// </summary>
-        public int NumPages
+        public ObservableCollection<ICLPPage> Pages
         {
-            get { return GetValue<int>(NumPagesProperty); }
-            set { SetValue(NumPagesProperty, value); }
+            get { return GetValue<ObservableCollection<ICLPPage>>(PagesProperty); }
+            set { SetValue(PagesProperty, value); }
         }
 
-        public static readonly PropertyData NumPagesProperty = RegisterProperty("NumPages", typeof(int), 0);
+        public static readonly PropertyData PagesProperty = RegisterProperty("Pages", typeof(ObservableCollection<ICLPPage>));
 
 
     }

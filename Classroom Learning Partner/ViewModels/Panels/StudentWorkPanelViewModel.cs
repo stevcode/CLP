@@ -20,7 +20,6 @@ namespace Classroom_Learning_Partner.ViewModels
             Notebook = notebook;
             LinkedPanel = new SubmissionsPanelViewModel(notebook); //TODO staging panel
             PanelWidth = InitialWidth;
-
             StudentList = GetStudentNames();
 
             PanelResizeDragCommand = new Command<DragDeltaEventArgs>(OnPanelResizeDragCommandExecute);
@@ -215,6 +214,8 @@ namespace Classroom_Learning_Partner.ViewModels
         public ObservableCollection<StudentProgressInfo> GetStudentNames()
         {
             var userNames = new ObservableCollection<StudentProgressInfo>();
+            //userNames.Add(new StudentProgressInfo("Original", Pages));
+
             var filePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\StudentNames.txt";
 
             if(File.Exists(filePath))
@@ -224,7 +225,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 while((name = reader.ReadLine()) != null)
                 {
                     var user = name.Split(new[] { ',' })[0];
-                    userNames.Add(new StudentProgressInfo(user, 0));
+                    userNames.Add(new StudentProgressInfo(user, Pages));
                 }
                 reader.Dispose();
             }
