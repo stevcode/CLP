@@ -3101,8 +3101,18 @@ namespace Classroom_Learning_Partner.ViewModels
                     CLPFuzzyFactorCardRemainder remainderRegion = new CLPFuzzyFactorCardRemainder((arraysToAdd.First() as CLPFuzzyFactorCard), currentPage);
                     currentPage.PageObjects.Add(remainderRegion);
                     (arraysToAdd.First() as CLPFuzzyFactorCard).RemainderRegionUniqueID = remainderRegion.UniqueID;
+                    currentPage.PageObjects.Add(arraysToAdd.First());
+
+                    var pageObjectIDs = new List<string>();
+                    pageObjectIDs.Add(arraysToAdd.First().UniqueID);
+                    pageObjectIDs.Add(remainderRegion.UniqueID);
+
+                    ACLPPageBaseViewModel.AddHistoryItemToPage(currentPage, new CLPHistoryPageObjectsMassAdd(currentPage, pageObjectIDs));
                 }
-                ACLPPageBaseViewModel.AddPageObjectToPage(arraysToAdd.First());
+                else
+                {
+                    ACLPPageBaseViewModel.AddPageObjectToPage(arraysToAdd.First());
+                }
             }
             else
             {

@@ -73,7 +73,7 @@
                            Visibility="{Binding IsDefaultAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                 <!--Close Button-->
-                <Button Command="{Binding RemovePageObjectCommand}"
+                <Button Command="{Binding RemoveFuzzyFactorCardCommand}"
                         Cursor="Hand"
                         Width="40" Height="40"
                         Canvas.Left="-40" Canvas.Top="-40"

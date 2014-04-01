@@ -24,6 +24,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public CLPFuzzyFactorCardViewModel(CLPFuzzyFactorCard factorCard) : base(factorCard)
         {
+            RemoveFuzzyFactorCardCommand = new Command(OnRemoveFuzzyFactorCardCommandExecute);
             ResizeFuzzyFactorCardCommand = new Command<DragDeltaEventArgs>(OnResizeFuzzyFactorCardCommandExecute);
             RemoveLastArrayCommand = new Command(OnRemoveLastArrayCommandExecute);
         }
@@ -106,6 +107,27 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData FuzzyEdgeColorProperty = RegisterProperty("FuzzyEdgeColor", typeof(string), "DarkGray");
 
+        /// <summary>
+        /// ID of remainder region if it exists.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public string RemainderRegionUniqueID
+        {
+            get
+            {
+                return GetValue<string>(RemainderRegionUniqueIDProperty);
+            }
+            set
+            {
+                SetValue(RemainderRegionUniqueIDProperty, value);
+            }
+        }
+
+        /// <summary>
+        /// Register the RemainderRegionUniqueID property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData RemainderRegionUniqueIDProperty = RegisterProperty("RemainderRegionUniqueID", typeof(string));
+
         #endregion //Properties
 
         #region Methods
@@ -125,6 +147,28 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Methods
 
         #region Commands
+
+        /// <summary>
+        /// Removes pageObject from page when Delete button is pressed.
+        /// </summary>
+        public new Command RemoveFuzzyFactorCardCommand
+        {
+            get;
+            set;
+        }
+
+        private void OnRemoveFuzzyFactorCardCommandExecute()
+        {
+            if(RemainderRegionUniqueID != null)
+            {
+                CLPFuzzyFactorCardRemainder remainderRegion = PageObject.ParentPage.GetPageObjectByUniqueID(RemainderRegionUniqueID) as CLPFuzzyFactorCardRemainder;
+                var currentIndex = PageObject.ParentPage.PageObjects.IndexOf(remainderRegion);
+                ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryPageObjectRemove(PageObject.ParentPage, remainderRegion, currentIndex));
+                PageObject.ParentPage.PageObjects.Remove(remainderRegion);
+            }
+            ACLPPageBaseViewModel.RemovePageObjectFromPage(PageObject);
+
+        }
 
         /// <summary>
         /// Gets the ResizePageObjectCommand command.
