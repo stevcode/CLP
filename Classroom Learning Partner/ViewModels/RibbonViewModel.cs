@@ -2739,6 +2739,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         {
                             if(pageObject is CLPFuzzyFactorCard)
                             {
+                                (pageObject as CLPFuzzyFactorCard).AnalyzeArrays();
                                 if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
                                 {
                                     (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
@@ -2815,6 +2816,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         {
                             if(pageObject is CLPFuzzyFactorCard)
                             {
+                                (pageObject as CLPFuzzyFactorCard).AnalyzeArrays();
                                 if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
                                 {
                                     (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
@@ -3057,6 +3059,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         if(pageObject is CLPFuzzyFactorCard)
                         {
+                            (pageObject as CLPFuzzyFactorCard).AnalyzeArrays();
                             if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
                             {
                                 (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
@@ -3080,6 +3083,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         if(pageObject is CLPFuzzyFactorCard)
                         {
+                            (pageObject as CLPFuzzyFactorCard).AnalyzeArrays();
                             if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
                             {
                                 (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
@@ -3124,6 +3128,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 if(pageObject is CLPFuzzyFactorCard)
                 {
+                    (pageObject as CLPFuzzyFactorCard).AnalyzeArrays();
                     if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
                     {
                         (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();

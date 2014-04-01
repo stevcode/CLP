@@ -481,9 +481,17 @@ namespace Classroom_Learning_Partner.ViewModels
                                 {
                                     if(tag.TagType.Name == FuzzyFactorCardFailedSnapTagType.Instance.Name)
                                     {
-                                        if(!tag.Value.Contains(new TagOptionValue("snapped incorrect dimension")))
+                                        if(!tag.Value.Contains(new TagOptionValue("snapped incorrect dimension multiple times")))
                                         {
-                                            tag.Value.Add(new TagOptionValue("snapped incorrect dimension"));
+                                            if(tag.Value.Contains(new TagOptionValue("snapped incorrect dimension")))
+                                            {
+                                                tag.Value.Remove(new TagOptionValue("snapped incorrect dimension"));
+                                                tag.Value.Add(new TagOptionValue("snapped incorrect dimension multiple times"));
+                                            }
+                                            else
+                                            {
+                                                tag.Value.Add(new TagOptionValue("snapped incorrect dimension"));
+                                            }
                                         }
                                         hasTag = true;
                                         continue;
@@ -517,9 +525,17 @@ namespace Classroom_Learning_Partner.ViewModels
                                 {
                                     if(tag.TagType.Name == FuzzyFactorCardFailedSnapTagType.Instance.Name)
                                     {
-                                        if(!tag.Value.Contains(new TagOptionValue("too many")))
+                                        if(!tag.Value.Contains(new TagOptionValue("too many multiple times")))
                                         {
-                                            tag.Value.Add(new TagOptionValue("too many"));
+                                            if(tag.Value.Contains(new TagOptionValue("too many")))
+                                            {
+                                                tag.Value.Remove(new TagOptionValue("too many"));
+                                                tag.Value.Add(new TagOptionValue("too many multiple times"));
+                                            }
+                                            else
+                                            {
+                                                tag.Value.Add(new TagOptionValue("too many"));
+                                            }
                                         }
                                         hasTag = true;
                                         continue;
