@@ -425,6 +425,26 @@
             </RibbonGroup>
 
             <RibbonGroup Header="Displays" Visibility="{Binding InstructorVisibility}">
+                
+                <RibbonToggleButton IsChecked="{Binding IsBroadcastHistoryDisabled}">
+                    <RibbonToggleButton.Style>
+                        <Style TargetType="{x:Type RibbonToggleButton}">
+                            <Setter Property="Label"
+                                    Value="Ink On" />
+                            <Setter Property="LargeImageSource"
+                                    Value="pack://application:,,,/Images/InkToStudentsOff.png" />
+                            <Style.Triggers>
+                                <Trigger Property="IsChecked"
+                                         Value="True">
+                                    <Setter Property="Label"
+                                            Value="Ink Off" />
+                                    <Setter Property="LargeImageSource"
+                                            Value="pack://application:,,,/Images/InkToStudentsOn.png" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </RibbonToggleButton.Style>
+                </RibbonToggleButton>
 
                 <RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/Displays32.png"
                                     IsChecked="{Binding DisplayPanelVisibility}"
@@ -445,35 +465,14 @@
                 </RibbonToggleButton>
 
                 <RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/Projector32.png"
-                                    SmallImageSource="pack://application:,,,/Resources/Images/Projector16.png"
-                                    IsChecked="{Binding IsProjectorOn}"
-                                    IsEnabled="{Binding MainWindow.SelectedWorkspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}">
+                        SmallImageSource="pack://application:,,,/Resources/Images/Projector16.png" IsChecked="{Binding IsProjectorOn}"
+                        IsEnabled="{Binding MainWindow.SelectedWorkspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}">
                     <RibbonToggleButton.Style>
                         <Style TargetType="{x:Type RibbonToggleButton}">
                             <Setter Property="Label" Value="Go Public" />
                             <Style.Triggers>
                                 <Trigger Property="IsChecked" Value="True">
                                     <Setter Property="Label" Value="Go Private" />
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </RibbonToggleButton.Style>
-                </RibbonToggleButton>
-                
-                <RibbonToggleButton IsChecked="{Binding IsBroadcastHistoryDisabled}">
-                    <RibbonToggleButton.Style>
-                        <Style TargetType="{x:Type RibbonToggleButton}">
-                            <Setter Property="Label"
-                                    Value="Broadcast History Enabled" />
-                            <Setter Property="LargeImageSource"
-                                    Value="pack://application:,,,/Images/LargeIcon.png" />
-                            <Style.Triggers>
-                                <Trigger Property="IsChecked"
-                                         Value="True">
-                                    <Setter Property="Label"
-                                            Value="Broadcast History Disabled" />
-                                    <Setter Property="LargeImageSource"
-                                            Value="pack://application:,,,/Images/LargeIcon.png" />
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
