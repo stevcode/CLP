@@ -1,0 +1,19 @@
+﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.StagingPanelView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:catel="http://catel.codeplex.com"
+             xmlns:resources="clr-namespace:Classroom_Learning_Partner.Resources"
+             xmlns:converters="clr-namespace:Classroom_Learning_Partner.Converters"
+                   Width="{Binding Width}"
+                   MinWidth="{Binding MinWidth}">
+    
+    <UserControl.Resources>
+        
+
+    </UserControl.Resources>
+    
+    <Border Background="{StaticResource GrayBackgroundColor}"
+            BorderBrush="{StaticResource GrayEdgeColor}" BorderThickness="0,0,5,0">
+        
+    </Border>
+</catel:UserControl>

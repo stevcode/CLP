@@ -4,6 +4,9 @@ namespace CLP.Entities
 {
     public class ClassPeriodContext : DbContext
     {
+        public DbSet<ClassSubject> ClassSubjects { get; set; }
+
+        public DbSet<ClassPeriod> ClassPeriods { get; set; }
         public DbSet<Notebook> Notebooks { get; set; }
         public DbSet<CLPPage> CLPPages { get; set; }
 

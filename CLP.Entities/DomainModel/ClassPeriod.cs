@@ -72,7 +72,8 @@ namespace CLP.Entities
 
         public static readonly PropertyData StartTimeProperty = RegisterProperty("StartTime", typeof(DateTime));
 
-        //expected pages and actual pages??
+        //NotebookID, Start Page Index, End Page Index (these will be expected. Actual can be an SQL Query for existence of submissions
+        
 
         #endregion //Properties
 

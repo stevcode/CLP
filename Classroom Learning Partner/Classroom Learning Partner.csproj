@@ -245,6 +245,7 @@
     <Compile Include="ViewModels\PageObjects\CLPRegionViewModel.cs" />
     <Compile Include="ViewModels\Panels\DisplayListPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\NotebookPagesPanelViewModel.cs" />
+    <Compile Include="ViewModels\Panels\StagingPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\SubmissionHistoryPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\SubmissionsPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\WebcamPanelViewModel.cs" />
@@ -418,6 +419,9 @@
     </Compile>
     <Compile Include="Views\Panels\NotebookPagesPanelView.xaml.cs">
       <DependentUpon>NotebookPagesPanelView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Panels\StagingPanelView.xaml.cs">
+      <DependentUpon>StagingPanelView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Panels\SubmissionHistoryPanelView.xaml.cs">
       <DependentUpon>SubmissionHistoryPanelView.xaml</DependentUpon>
@@ -648,6 +652,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Panels\NotebookPagesPanelView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Panels\StagingPanelView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
