@@ -17,6 +17,14 @@ namespace CLP.Models
             Index = index;
         }
 
+        //Used by XML importer to create this history item inside RedoItems
+        public CLPHistoryPageObjectRemove(ICLPPage parentPage, string pageObjectUniqueID, int index)
+            : base(parentPage)
+        {
+            PageObjectUniqueID = pageObjectUniqueID;
+            Index = index;
+        }
+
         /// <summary>
         /// Initializes a new object based on <see cref="SerializationInfo"/>.
         /// </summary>
@@ -96,6 +104,24 @@ namespace CLP.Models
             {
                 ParentPage.PageObjects.Insert(Index, PageObject);
             }
+
+            //If page object was array and FFC with remainder on page, update
+            //TODO: This shouldn't be here, find more appropriate place.
+            if(PageObject != null && PageObject.PageObjectType == "CLPArray")
+            {
+                foreach(var pageObject in ParentPage.PageObjects)
+                {
+                    if(pageObject is CLPFuzzyFactorCard)
+                    {
+                        if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
+                        {
+                            (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
+                            break;
+                        }
+                    }
+                }
+            }
+
             PageObject = null; //no sense storing the actual pageObject for serialization if it's on the page.
         }
 
@@ -113,6 +139,23 @@ namespace CLP.Models
             catch(Exception ex)
             {
                 Logger.Instance.WriteErrorToLog("Undo AddPageObject Error.", ex);
+            }
+
+            //If page object was array and FFC with remainder on page, update
+            //TODO: This shouldn't be here, find more appropriate place.
+            if(PageObject != null && PageObject.PageObjectType == "CLPArray")
+            {
+                foreach(var pageObject in ParentPage.PageObjects)
+                {
+                    if(pageObject is CLPFuzzyFactorCard)
+                    {
+                        if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
+                        {
+                            (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
+                            break;
+                        }
+                    }
+                }
             }
         }
 

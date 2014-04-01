@@ -20,6 +20,10 @@ namespace CLP.Models
         {
         }
 
+        public CLPAnimationPage(string pageXMLFilePath)
+            : base(pageXMLFilePath)
+        {}
+
         #endregion //Constructors
 
         #region ICLPPage Methods

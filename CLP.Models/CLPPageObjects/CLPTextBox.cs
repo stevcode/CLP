@@ -7,7 +7,7 @@ namespace CLP.Models
     [Serializable]
     public class CLPTextBox : ACLPPageObjectBase
     {
-        #region Constructor & destructor
+        #region Constructor
         /// <summary>
         /// Initializes a new object from scratch.
         /// </summary>

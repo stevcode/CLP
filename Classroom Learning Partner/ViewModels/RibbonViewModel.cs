@@ -14,7 +14,9 @@ using System.Windows.Ink;
 using System.Windows.Media;
 using System.Windows.Xps.Packaging;
 using Catel.Data;
+using Catel.IoC;
 using Catel.MVVM;
+using Catel.MVVM.Services;
 using Classroom_Learning_Partner.Views;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Models;
@@ -83,6 +85,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //File Menu
             NewNotebookCommand = new Command(OnNewNotebookCommandExecute);
             OpenNotebookCommand = new Command(OnOpenNotebookCommandExecute);
+            LoadNotebookFromXMLCommand = new Command(OnLoadNotebookFromXMLCommandExecute);
             EditNotebookCommand = new Command(OnEditNotebookCommandExecute);
             DoneEditingNotebookCommand = new Command(OnDoneEditingNotebookCommandExecute);
             SaveNotebookCommand = new Command(OnSaveNotebookCommandExecute);
@@ -94,8 +97,6 @@ namespace Classroom_Learning_Partner.ViewModels
             ConvertAllSubmissionsToXPSCommand = new Command(OnConvertAllSubmissionsToXPSCommandExecute);
             RefreshNetworkCommand = new Command(OnRefreshNetworkCommandExecute);
             ToggleThumbnailsCommand = new Command(OnToggleThumbnailsCommandExecute);
-            
-            DisableHistoryCommand = new Command(OnDisableHistoryCommandExecute);
             ExitCommand = new Command(OnExitCommandExecute);
 
             //Notebook
@@ -111,13 +112,16 @@ namespace Classroom_Learning_Partner.ViewModels
             GroupSubmitPageCommand = new Command(OnGroupSubmitPageCommandExecute, OnInsertPageObjectCanExecute);
 
             //History
+            DisableHistoryCommand = new Command(OnDisableHistoryCommandExecute, OnClearHistoryCommandCanExecute);
             ReplayCommand = new Command(OnReplayCommandExecute);
             UndoCommand = new Command(OnUndoCommandExecute, OnUndoCanExecute);
             RedoCommand = new Command(OnRedoCommandExecute, OnRedoCanExecute);
-            ClearHistoryCommand = new Command(OnClearHistoryCommandExecute);
-            ClearNonAnimationHistoryCommand = new Command(OnClearNonAnimationHistoryCommandExecute);
-            ClearPageHistoryCommand = new Command(OnClearPageHistoryCommandExecute);
-            ClearPageNonAnimationHistoryCommand = new Command(OnClearPageNonAnimationHistoryCommandExecute);
+            ClearPageHistoryCommand = new Command(OnClearPageHistoryCommandExecute, OnClearHistoryCommandCanExecute);
+            ClearPageNonAnimationHistoryCommand = new Command(OnClearPageNonAnimationHistoryCommandExecute, OnClearHistoryCommandCanExecute);
+            ClearPagesHistoryCommand = new Command(OnClearPagesHistoryCommandExecute, OnClearHistoryCommandCanExecute);
+            ClearPagesNonAnimationHistoryCommand = new Command(OnClearPagesNonAnimationHistoryCommandExecute, OnClearHistoryCommandCanExecute);
+            ClearSubmissionsHistoryCommand = new Command(OnClearSubmissionsHistoryCommandExecute, OnClearHistoryCommandCanExecute);
+            ClearSubmissionsNonAnimationHistoryCommand = new Command(OnClearSubmissionsNonAnimationHistoryCommandExecute, OnClearHistoryCommandCanExecute);
 
             //Insert
             ToggleWebcamPanelCommand = new Command<bool>(OnToggleWebcamPanelCommandExecute);
@@ -148,7 +152,8 @@ namespace Classroom_Learning_Partner.ViewModels
             ReplacePageCommand = new Command(OnReplacePageCommandExecute);
             RemoveAllSubmissionsCommand = new Command(OnRemoveAllSubmissionsCommandExecute);
             RemoveAllPageSubmissionsCommand = new Command(OnRemoveAllPageSubmissionsCommandExecute);
-            
+            ShowTagsCommand = new Command(OnShowTagsCommandExecute);
+
             //Page
             AddNewPageCommand = new Command<string>(OnAddNewPageCommandExecute);
             AddNewProofPageCommand = new Command<string>(OnAddNewProofPageCommandExecute);
@@ -171,6 +176,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Analysis
             AnalyzeArrayCommand = new Command(OnAnalyzeArrayCommandExecute);
+            AnalyzeFuzzyFactorCardCommand = new Command(OnAnalyzeFuzzyFactorCardCommandExecute);
             AnalyzeStampsCommand = new Command(OnAnalyzeStampsCommandExecute);
         }
 
@@ -651,12 +657,41 @@ namespace Classroom_Learning_Partner.ViewModels
             MainWindow.SelectedWorkspace = new NotebookChooserWorkspaceViewModel();
         }
 
+        /// <summary>
+        /// Opens a notebook from the Notebooks folder.
+        /// </summary>
+        public Command LoadNotebookFromXMLCommand { get; private set; }
+
+        private void OnLoadNotebookFromXMLCommandExecute()
+        {
+            var selectDirectoryService = Catel.IoC.ServiceLocator.Default.ResolveType<ISelectDirectoryService>();
+            selectDirectoryService.InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "NotebookXML/");
+
+            if(selectDirectoryService.DetermineDirectory())
+            {
+                var notebook = ImportFromXML.ImportNotebook(selectDirectoryService.DirectoryName);
+
+                App.MainWindowViewModel.OpenNotebooks.Add(notebook);
+                if(App.CurrentUserMode == App.UserMode.Instructor ||
+                   App.CurrentUserMode == App.UserMode.Student ||
+                   App.CurrentUserMode == App.UserMode.Projector)
+                {
+                    App.MainWindowViewModel.SelectedWorkspace = new NotebookWorkspaceViewModel(notebook);
+                }
+
+                if(notebook.LastSavedTime != null)
+                {
+                    App.MainWindowViewModel.LastSavedTime = notebook.LastSavedTime.ToString("yyyy/MM/dd - HH:mm:ss");
+                }
+            }  
+        }
+
         //TODO: Steve - Combine with DoneEditing to make ToggleEditingMode
         /// <summary>
         /// Puts current notebook in Authoring Mode.
         /// </summary>
         public Command EditNotebookCommand { get; private set; }
-
+        
         private void OnEditNotebookCommandExecute()
         {
             MainWindow.IsAuthoring = true;
@@ -681,16 +716,6 @@ namespace Classroom_Learning_Partner.ViewModels
             if(currentPage != null)
             {
                 ACLPPageBaseViewModel.ClearAdorners(currentPage);
-            }
-
-            var notebookPanel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
-            if(notebookPanel == null)
-            {
-                return;
-            }
-            foreach(var page in notebookPanel.Pages)
-            {
-                page.PageHistory.ClearNonAnimationHistory();
             }
         }
 
@@ -1178,23 +1203,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
-        /// Prevents history from storing actions.
-        /// </summary>
-        public Command DisableHistoryCommand { get; private set; }
-
-        private void OnDisableHistoryCommandExecute()
-        {
-            if(App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
-            {
-                CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
-                foreach(var page in notebook.Pages)
-                {
-                    page.PageHistory.UseHistory = false;
-                }
-            }
-        }
-
-        /// <summary>
         /// Exits the program.
         /// </summary>
         public Command ExitCommand { get; private set; }
@@ -1510,6 +1518,37 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region HistoryCommands
 
+        private bool OnClearHistoryCommandCanExecute()
+        {
+            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null)
+            {
+                return false;
+            }
+
+            return notebookWorkspaceViewModel.SelectedDisplay is CLPMirrorDisplay;
+        }
+
+        /// <summary>
+        /// Prevents history from storing actions.
+        /// </summary>
+        public Command DisableHistoryCommand { get; private set; }
+
+        private void OnDisableHistoryCommandExecute()
+        {
+            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null)
+            {
+                return;
+            }
+
+            var notebook = notebookWorkspaceViewModel.Notebook;
+            foreach(var page in notebook.Pages)
+            {
+                page.PageHistory.UseHistory = false;
+            }
+        }
+
         /// <summary>
         /// Replays the entire history of the current page.
         /// </summary>
@@ -1626,40 +1665,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
-        /// Completely clears all histories in a notebook.
-        /// </summary>
-        public Command ClearHistoryCommand { get; private set; }
-
-        private void OnClearHistoryCommandExecute()
-        {
-            if(App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
-            {
-                CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
-                foreach(var page in notebook.Pages)
-                {
-                    page.PageHistory.ClearHistory();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Completely clears all non-animation histories in a notebook.
-        /// </summary>
-        public Command ClearNonAnimationHistoryCommand { get; private set; }
-
-        private void OnClearNonAnimationHistoryCommandExecute()
-        {
-            if(App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
-            {
-                CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
-                foreach(var page in notebook.Pages)
-                {
-                    page.PageHistory.ClearNonAnimationHistory();
-                }
-            }
-        }
-
-        /// <summary>
         /// Completely clears the history for the current page.
         /// </summary>
         public Command ClearPageHistoryCommand { get; private set; }
@@ -1683,6 +1688,86 @@ namespace Classroom_Learning_Partner.ViewModels
             if(currentPage == null) { return; }
 
             currentPage.PageHistory.ClearNonAnimationHistory();
+        }
+
+        /// <summary>
+        /// Completely clears all histories for regular pages in a notebook.
+        /// </summary>
+        public Command ClearPagesHistoryCommand { get; private set; }
+
+        private void OnClearPagesHistoryCommandExecute()
+        {
+            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null)
+            {
+                return;
+            }
+
+            var notebook = notebookWorkspaceViewModel.Notebook;
+            foreach(var page in notebook.Pages)
+            {
+                page.PageHistory.ClearHistory();
+            }
+        }
+
+        /// <summary>
+        /// Completely clears all non-animation histories for regular pages in a notebook.
+        /// </summary>
+        public Command ClearPagesNonAnimationHistoryCommand { get; private set; }
+
+        private void OnClearPagesNonAnimationHistoryCommandExecute()
+        {
+            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null)
+            {
+                return;
+            }
+
+            var notebook = notebookWorkspaceViewModel.Notebook;
+            foreach(var page in notebook.Pages)
+            {
+                page.PageHistory.ClearNonAnimationHistory();
+            }
+        }
+
+        /// <summary>
+        /// Completely clears all histories for submissions in a notebook.
+        /// </summary>
+        public Command ClearSubmissionsHistoryCommand { get; private set; }
+
+        private void OnClearSubmissionsHistoryCommandExecute()
+        {
+            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null)
+            {
+                return;
+            }
+
+            var notebook = notebookWorkspaceViewModel.Notebook;
+            foreach(var submission in notebook.Submissions.Keys.SelectMany(pageID => notebook.Submissions[pageID])) 
+            {
+                submission.PageHistory.ClearHistory();
+            }
+        }
+
+        /// <summary>
+        /// Completely clears all non-animation histories for regular pages in a notebook.
+        /// </summary>
+        public Command ClearSubmissionsNonAnimationHistoryCommand { get; private set; }
+
+        private void OnClearSubmissionsNonAnimationHistoryCommandExecute()
+        {
+            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null)
+            {
+                return;
+            }
+
+            var notebook = notebookWorkspaceViewModel.Notebook;
+            foreach(var submission in notebook.Submissions.Keys.SelectMany(pageID => notebook.Submissions[pageID])) 
+            {
+                submission.PageHistory.ClearNonAnimationHistory();
+            }
         }
 
         #endregion //History Commands
@@ -1836,6 +1921,28 @@ namespace Classroom_Learning_Partner.ViewModels
             panel.Notebook.Submissions[page.UniqueID].Clear();
             page.NumberOfSubmissions = 0;
             page.NumberOfGroupSubmissions = 0;
+        }
+
+        public Command ShowTagsCommand { get; private set; }
+
+        private void OnShowTagsCommandExecute()
+        {
+            var page = NotebookPagesPanelViewModel.GetCurrentPage();
+
+            string tags = "";
+            foreach(Tag t in page.PageTags) 
+            {
+                string values = "";
+                foreach(TagOptionValue v in t.Value)
+                {
+                    values = values + v.Value.ToString() + ", ";
+                }
+                tags = tags + t.TagType.Name + " = " + values + "\n";
+            }
+
+            var tagsView = new SimpleTextWindowView("Tags for this page", tags);
+            tagsView.Owner = Application.Current.MainWindow;
+            tagsView.ShowDialog();
         }
 
         #endregion //Testing
@@ -2453,87 +2560,144 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             var currentPage = clpMirrorDisplay.CurrentPage;
 
+            int rows, columns, dividend, numberOfArrays;
+            dividend = 0;
             if(arrayType == "FACTORCARD")
             {
-                var factorCreationView = new FactorCardCreationView {Owner = Application.Current.MainWindow};
+                var factorCreationView = new FactorCardCreationView{ Owner = Application.Current.MainWindow};
                 factorCreationView.ShowDialog();
                 if(factorCreationView.DialogResult != true)
                 {
                     return;
                 }
 
-                int product;
                 try
                 {
-                    product = Convert.ToInt32(factorCreationView.Product.Text);
+                    dividend = Convert.ToInt32(factorCreationView.Product.Text);
                 }
                 catch(FormatException)
                 {
                     return;
                 }
 
-                int factor;
                 try
                 {
-                    factor = Convert.ToInt32(factorCreationView.Factor.Text);
+                    rows = Convert.ToInt32(factorCreationView.Factor.Text);
                 }
                 catch(FormatException)
                 {
                     return;
                 }
 
-                var otherFactor = product / factor;
-                var array = new CLPArray(factor, otherFactor, currentPage)
-                            {
-                                IsDivisionBehaviorOn = false,
-                                IsSnappable = false,
-                                IsGridOn = false,
-                                IsProductVisible = true
-                            };
-
-                ACLPPageBaseViewModel.AddPageObjectToPage(array);
-                return;
-            }
-
-            var arrayCreationView = new ArrayCreationView {Owner = Application.Current.MainWindow};
-            arrayCreationView.ShowDialog();
-
-            if(arrayCreationView.DialogResult != true)
-            {
-                return;
-            }
-
-            int rows;
-            try
-            {
-                rows = Convert.ToInt32(arrayCreationView.Rows.Text);
-            }
-            catch(FormatException)
-            {
-                rows = 1;
-            }
-
-            int columns;
-            try
-            {
-                columns = Convert.ToInt32(arrayCreationView.Columns.Text);
-            }
-            catch(FormatException)
-            {
-                columns = 1;
-            }
-
-            int numberOfArrays;
-            try
-            {
-                numberOfArrays = Convert.ToInt32(arrayCreationView.NumberOfArrays.Text);
-            }
-            catch(FormatException)
-            {
+                columns = dividend / rows;
                 numberOfArrays = 1;
             }
 
+            else if(arrayType == "FUZZYFACTORCARD")
+            {
+                var factorCreationView = new FuzzyFactorCardCreationView{ Owner = Application.Current.MainWindow};
+                factorCreationView.ShowDialog();
+                if(factorCreationView.DialogResult != true)
+                {
+                    return;
+                }
+
+                try
+                {
+                    dividend = Convert.ToInt32(factorCreationView.Product.Text);
+                }
+                catch(FormatException)
+                {
+                    return;
+                }
+
+                try
+                {
+                    rows = Convert.ToInt32(factorCreationView.Factor.Text);
+                }
+                catch(FormatException)
+                {
+                    return;
+                }
+
+                columns = dividend / rows;
+                numberOfArrays = 1;
+            }
+
+            else if(arrayType == "FFCREMAINDER")
+            {
+                var factorCreationView = new FuzzyFactorCardWithTilesCreationView
+                {
+                    Owner = Application.Current.MainWindow
+                };
+                factorCreationView.ShowDialog();
+                if(factorCreationView.DialogResult != true)
+                {
+                    return;
+                }
+
+                try
+                {
+                    dividend = Convert.ToInt32(factorCreationView.Product.Text);
+                }
+                catch(FormatException)
+                {
+                    return;
+                }
+
+                try
+                {
+                    rows = Convert.ToInt32(factorCreationView.Factor.Text);
+                }
+                catch(FormatException)
+                {
+                    return;
+                }
+
+                columns = dividend / rows;
+                numberOfArrays = 1;
+            }
+
+            else
+            {
+                var arrayCreationView = new ArrayCreationView {Owner = Application.Current.MainWindow};
+                arrayCreationView.ShowDialog();
+
+                if(arrayCreationView.DialogResult != true)
+                {
+                    return;
+                }
+
+                try
+                {
+                    rows = Convert.ToInt32(arrayCreationView.Rows.Text);
+                }
+                catch(FormatException)
+                {
+                    rows = 1;
+                }
+
+                try
+                {
+                    columns = Convert.ToInt32(arrayCreationView.Columns.Text);
+                }
+                catch(FormatException)
+                {
+                    columns = 1;
+                }
+
+                try
+                {
+                    numberOfArrays = Convert.ToInt32(arrayCreationView.NumberOfArrays.Text);
+                }
+                catch(FormatException)
+                {
+                    numberOfArrays = 1;
+                }
+            }
+
             const double MIN_SIDE = 25.0;
+            const double MIN_FFC_SIDE = 185.0;
             const double LABEL_LENGTH = 22.0;
             var xPosition = 0.0;
             var yPosition = 150.0;
@@ -2548,34 +2712,100 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
 
+            CLPArray onlyArray = null;
+            foreach(var pageObject in currentPage.PageObjects)
+            {
+                if(pageObject is CLPArray)
+                {
+                    onlyArray = (onlyArray == null) ? pageObject as CLPArray : null;
+                }
+            }
+
             if(numberOfArrays == 1)
             {
-                var array = new CLPArray(rows, columns, currentPage);
-
+                CLPArray array;
                 switch(arrayType)
                 {
-                    case "DEFAULT":
-                        array.IsDivisionBehaviorOn = false;
-                        //array.IsSnappable = false;
-                        break;
                     case "CARD":
+                        array = new CLPArray(rows, columns, currentPage);
                         array.IsDivisionBehaviorOn = false;
                         array.IsLabelOn = false;
                         array.IsSnappable = false;
                         array.BackgroundColor = Colors.SkyBlue.ToString();
                         break;
+                    case "FACTORCARD":
+                        array = new CLPFactorCard(rows, columns, currentPage);
+                        break;
+                    case "FUZZYFACTORCARD":
+                        array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
+                        break;
+                    case "FFCREMAINDER":
+                        array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
+                        (array as CLPFuzzyFactorCard).IsRemainderRegionDisplayed = true;
+                        break;
+                    case "SNAPADORNERONRIGHT":
+                        array = new CLPArray(rows, columns, currentPage);
+                        array.IsDivisionBehaviorOn = true;
+                        array.IsSnapAdornerOnLeft = false;
+                        break;
+                    default:
+                        array = new CLPArray(rows, columns, currentPage);
+                        array.IsDivisionBehaviorOn = true;
+                        break;
                 }
 
+                var arrayMinSide = (array is CLPFuzzyFactorCard) ? MIN_FFC_SIDE : MIN_SIDE;
                 if(squareSize > 0)
                 {
-                    squareSize = Math.Max(squareSize, (MIN_SIDE / (Math.Min(rows, columns))));
+                    squareSize = Math.Max(squareSize, (arrayMinSide / (Math.Min(rows, columns))));
                     if(yPosition + squareSize * rows + 2 * LABEL_LENGTH < currentPage.PageHeight && xPosition + squareSize * columns + 2 * LABEL_LENGTH < currentPage.PageWidth)
                     {
+                        //Position to not overlap with first array on page if possible
+                        if(onlyArray != null)
+                        {
+                            const double GAP = 35.0;
+                            if(!(onlyArray is CLPFuzzyFactorCard) && onlyArray.XPosition + onlyArray.Width + (2 * LABEL_LENGTH + columns * squareSize) + GAP <= currentPage.PageWidth
+                                && rows * squareSize + LABEL_LENGTH < currentPage.PageHeight)
+                            {
+                                array.XPosition = onlyArray.XPosition + onlyArray.Width + GAP;
+                                array.YPosition = onlyArray.YPosition;
+                            }
+                            else if(onlyArray.XPosition + (2 * LABEL_LENGTH + columns * squareSize) <= currentPage.PageWidth
+                                && onlyArray.YPosition + onlyArray.Height + rows * squareSize + LABEL_LENGTH + GAP < currentPage.PageHeight)
+                            {
+                                array.YPosition = onlyArray.YPosition + onlyArray.Height + GAP;
+                                array.XPosition = onlyArray.XPosition;
+                            }
+                            else
+                            {
+                                array.YPosition = currentPage.PageHeight - array.Height;
+                                array.XPosition = onlyArray.XPosition;
+                            }
+                        }
                         array.SizeArrayToGridLevel(squareSize);
+                        ACLPPageObjectBase.ApplyDistinctPosition(array);
+                        ACLPPageBaseViewModel.AddPageObjectToPage(array);
+
+                        //If FFC with remainder on page, update
+                        foreach(var pageObject in currentPage.PageObjects)
+                        {
+                            if(pageObject is CLPFuzzyFactorCard)
+                            {
+                                (pageObject as CLPFuzzyFactorCard).AnalyzeArrays();
+                                if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
+                                {
+                                    (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
+                                    break;
+                                }
+                            }
+                        }
+
+                        return;
                     }
                     // If it doesn't fit, resize all other non-background arrays on page to match new array grid size
                     else
                     {
+                        Dictionary<string, Point> oldDimensions = new Dictionary<string, Point>();
                         while(xPosition + 2 * LABEL_LENGTH + squareSize * columns >= currentPage.PageWidth || yPosition + 2 * LABEL_LENGTH + squareSize * rows >= currentPage.PageHeight)
                         {
                             squareSize = Math.Abs(squareSize - 45.0) < .0001 ? 22.5 : squareSize / 4 * 3;
@@ -2584,25 +2814,84 @@ namespace Classroom_Learning_Partner.ViewModels
                         {
                             if(pageObject is CLPArray && (!pageObject.IsBackground || MainWindow.IsAuthoring))
                             {
-                                if((pageObject as CLPArray).Rows * squareSize > MIN_SIDE && (pageObject as CLPArray).Columns * squareSize > MIN_SIDE)
+                                var pageObjectMinSide = (pageObject is CLPFuzzyFactorCard) ? MIN_FFC_SIDE : MIN_SIDE;
+                                oldDimensions.Add(pageObject.UniqueID, new Point(pageObject.Width, pageObject.Height));
+                                if((pageObject as CLPArray).Rows * squareSize > pageObjectMinSide && (pageObject as CLPArray).Columns * squareSize > pageObjectMinSide)
                                 {
                                     (pageObject as CLPArray).SizeArrayToGridLevel(squareSize);
                                 }
                                 else
                                 {
-                                    (pageObject as CLPArray).SizeArrayToGridLevel(MIN_SIDE / Math.Min((pageObject as CLPArray).Rows, (pageObject as CLPArray).Columns));
+                                    (pageObject as CLPArray).SizeArrayToGridLevel(pageObjectMinSide / Math.Min((pageObject as CLPArray).Rows, (pageObject as CLPArray).Columns));
                                 }
                             }
                         }
                         array.SizeArrayToGridLevel(squareSize);
+
+                        //Position to not overlap with first array on page if possible
+                        if(onlyArray != null)
+                        {
+                            const double GAP = 35.0;
+                            if(!(onlyArray is CLPFuzzyFactorCard) && onlyArray.XPosition + onlyArray.Width + (2 * LABEL_LENGTH + columns * squareSize) + GAP <= currentPage.PageWidth
+                                && rows * squareSize + LABEL_LENGTH < currentPage.PageHeight)
+                            {
+                                array.XPosition = onlyArray.XPosition + onlyArray.Width + GAP;
+                                array.YPosition = onlyArray.YPosition;
+                            }
+                            else if(onlyArray.XPosition + (2 * LABEL_LENGTH + columns * squareSize) <= currentPage.PageWidth
+                                && onlyArray.YPosition + onlyArray.Height + rows * squareSize + LABEL_LENGTH + GAP < currentPage.PageHeight)
+                            {
+                                array.YPosition = onlyArray.YPosition + onlyArray.Height + GAP;
+                                array.XPosition = onlyArray.XPosition;
+                            }
+                            else
+                            {
+                                array.YPosition = currentPage.PageHeight - array.Height;
+                                array.XPosition = onlyArray.XPosition;
+                            }
+                        }
+
+                        if(currentPage == null)
+                        {
+                            Logger.Instance.WriteToLog("ParentPage for pageObject not set in AddPageObjectToPage().");
+                            return;
+                        }
+
+                        array.IsBackground = App.MainWindowViewModel.IsAuthoring;
+                        ACLPPageObjectBase.ApplyDistinctPosition(array);
+                        currentPage.PageObjects.Add(array);
+                        ACLPPageBaseViewModel.AddHistoryItemToPage(currentPage, new CLPHistoryArrayAddMassResize(currentPage, array.UniqueID, currentPage.PageObjects.Count - 1, oldDimensions));
+                        App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.Select;
+
+                        //If FFC with remainder on page, update
+                        foreach(var pageObject in currentPage.PageObjects)
+                        {
+                            if(pageObject is CLPFuzzyFactorCard)
+                            {
+                                (pageObject as CLPFuzzyFactorCard).AnalyzeArrays();
+                                if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
+                                {
+                                    (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
+                                    break;
+                                }
+                            }
+                        }
+                        return;
                     }
                 }
-                ACLPPageObjectBase.ApplyDistinctPosition(array);
-                ACLPPageBaseViewModel.AddPageObjectToPage(array);
-                return;
             }
 
-            var initializedSquareSize = (squareSize > 0) ? Math.Max(squareSize, (MIN_SIDE / (Math.Min(rows, columns)))) : 45.0;
+            var minSide = ((arrayType == "FUZZYFACTORCARD" || arrayType == "FFCREMAINDER"))
+                ? MIN_FFC_SIDE:
+                MIN_SIDE;
+            var defaultSquareSize = ((arrayType == "FUZZYFACTORCARD" || arrayType == "FFCREMAINDER")) ?
+                Math.Max(45.0, (minSide / (Math.Min(rows, columns)))):
+                45.0;
+            var initializedSquareSize = (squareSize > 0) ? Math.Max(squareSize, (minSide / (Math.Min(rows, columns)))) : defaultSquareSize;
+            if((arrayType == "FUZZYFACTORCARD" || arrayType == "FFCREMAINDER") && xPosition + initializedSquareSize * columns + LABEL_LENGTH * 3.0 + 12.0 > currentPage.PageWidth)
+            {
+                initializedSquareSize = minSide / (Math.Min(rows, columns));
+            }
             var arrayStacks = 1;
             var isHorizontallyAligned = !(columns / currentPage.PageWidth > rows / currentPage.PageHeight);
 
@@ -2663,26 +2952,53 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                 }
             }
-            
-            // If it doesn't fit, resize all other non-background arrays on page to match new array grid size
-            if(squareSize > 0.0 && initializedSquareSize != squareSize)
+
+            var startXPosition = 0.0;
+            var startYPosition = 100.0;
+
+            //Position to not overlap with first array on page if possible
+            if(onlyArray != null)
             {
-                foreach(var pageObject in currentPage.PageObjects)
+                if(isHorizontallyAligned)
                 {
-                    if(pageObject is CLPArray && (!pageObject.IsBackground || MainWindow.IsAuthoring))
+                    const double GAP = 35.0;
+                    if(!(onlyArray is CLPFuzzyFactorCard) && onlyArray.XPosition + onlyArray.Width + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH + GAP <= currentPage.PageWidth
+                        && rows * initializedSquareSize + LABEL_LENGTH < currentPage.PageHeight)
                     {
-                        if((pageObject as CLPArray).Rows * initializedSquareSize > MIN_SIDE && (pageObject as CLPArray).Columns * initializedSquareSize > MIN_SIDE)
-                        {
-                            (pageObject as CLPArray).SizeArrayToGridLevel(initializedSquareSize);
-                        }
-                        else
-                        {
-                            (pageObject as CLPArray).SizeArrayToGridLevel(MIN_SIDE / Math.Min((pageObject as CLPArray).Rows, (pageObject as CLPArray).Columns));
-                        }
+                        startXPosition = onlyArray.XPosition + onlyArray.Width + GAP;
+                        yPosition = onlyArray.YPosition;
+                    }
+                    else if(onlyArray.XPosition + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH <= currentPage.PageWidth
+                        && onlyArray.YPosition + onlyArray.Height + rows * initializedSquareSize + LABEL_LENGTH + GAP < currentPage.PageHeight)
+                    {
+                        yPosition = onlyArray.YPosition + onlyArray.Height + GAP;
+                        startXPosition = onlyArray.XPosition;
+                    }
+                    else
+                    {
+                        yPosition = currentPage.PageHeight - rows * initializedSquareSize - 2 * LABEL_LENGTH;
+                        startXPosition = onlyArray.XPosition;
+                    }
+                    xPosition = startXPosition;
+                }
+                else{
+                    const double GAP = 35.0;
+                    if(!(onlyArray is CLPFuzzyFactorCard) && onlyArray.YPosition + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH <= currentPage.PageHeight
+                        && onlyArray.XPosition + onlyArray.Width + columns * initializedSquareSize + LABEL_LENGTH + GAP < currentPage.PageWidth)
+                    {
+                        xPosition = onlyArray.XPosition + onlyArray.Width + GAP;
+                        startYPosition = onlyArray.YPosition;
+                    }
+                    else if(onlyArray.YPosition + onlyArray.Height + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH + GAP <= currentPage.PageWidth
+                        && onlyArray.XPosition + rows * initializedSquareSize + LABEL_LENGTH < currentPage.PageHeight)
+                    {
+                        startYPosition = onlyArray.YPosition + onlyArray.Height + GAP;
+                        xPosition = onlyArray.XPosition;
                     }
                 }
             }
 
+            
             var arraysToAdd = new List<CLPArray>();
             foreach(var index in Enumerable.Range(1, numberOfArrays))
             {
@@ -2690,30 +3006,46 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 switch(arrayType)
                 {
-                    case "DEFAULT":
-                        array.IsDivisionBehaviorOn = false;
-                        //array.IsSnappable = false;
-                        break;
                     case "CARD":
+                        array = new CLPArray(rows, columns, currentPage);
                         array.IsDivisionBehaviorOn = false;
                         array.IsLabelOn = false;
                         array.IsSnappable = false;
                         array.BackgroundColor = Colors.SkyBlue.ToString();
                         break;
+                    case "FACTORCARD":
+                        array = new CLPFactorCard(rows, columns, currentPage);
+                        break;
+                    case "FUZZYFACTORCARD":
+                        array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
+                        break;
+                    case "FFCREMAINDER":
+                        array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
+                        (array as CLPFuzzyFactorCard).IsRemainderRegionDisplayed = true;
+                        break;
+                    case "SNAPADORNERONRIGHT":
+                        array = new CLPArray(rows, columns, currentPage);
+                        array.IsDivisionBehaviorOn = true;
+                        array.IsSnapAdornerOnLeft = false;
+                        break;
+                    default:
+                        array = new CLPArray(rows, columns, currentPage);
+                        array.IsDivisionBehaviorOn = true;
+                        array.IsSnapAdornerOnLeft = true;
+                        break;
                 }
-
                 if(isHorizontallyAligned)
                 {
                     if(arrayStacks == 2 && index == (int)Math.Ceiling((double)numberOfArrays / 2) + 1)
                     {
-                        xPosition = 0.0;
+                        xPosition = startXPosition;
                         yPosition += LABEL_LENGTH + rows * initializedSquareSize;
                     }
                     if(arrayStacks == 3 && 
                        (index == (int)Math.Ceiling((double)numberOfArrays / 3) + 1 || 
                         index == (int)Math.Ceiling((double)numberOfArrays / 3)*2 + 1))
                     {
-                        xPosition = 0.0;
+                        xPosition = startXPosition;
                         yPosition += LABEL_LENGTH + rows * initializedSquareSize;
                     }
                     array.XPosition = xPosition;
@@ -2726,14 +3058,14 @@ namespace Classroom_Learning_Partner.ViewModels
                     if(arrayStacks == 2 && index == (int)Math.Ceiling((double)numberOfArrays / 2) + 1)
                     {
                         xPosition += LABEL_LENGTH + columns * initializedSquareSize;
-                        yPosition = 100.0;
+                        yPosition = startYPosition;
                     }
                     if(arrayStacks == 3 &&
                        (index == (int)Math.Ceiling((double)numberOfArrays / 3) + 1 ||
                         index == (int)Math.Ceiling((double)numberOfArrays / 3) * 2 + 1))
                     {
                         xPosition += LABEL_LENGTH + columns * initializedSquareSize;
-                        yPosition = 100.0;
+                        yPosition = startYPosition;
                     }
                     array.XPosition = xPosition;
                     array.YPosition = yPosition;
@@ -2744,13 +3076,117 @@ namespace Classroom_Learning_Partner.ViewModels
                 arraysToAdd.Add(array);
             }
 
+            // If it doesn't fit, resize all other non-background arrays on page to match new array grid size
+            if(squareSize > 0.0 && initializedSquareSize != squareSize)
+            {
+                Dictionary<string, Point> oldDimensions = new Dictionary<string, Point>();
+                foreach(var pageObject in currentPage.PageObjects)
+                {
+                    var pageObjectMinSide = (pageObject is CLPFuzzyFactorCard) ? MIN_FFC_SIDE : MIN_SIDE;
+                    if(pageObject is CLPArray && (!pageObject.IsBackground || MainWindow.IsAuthoring))
+                    {
+                        oldDimensions.Add(pageObject.UniqueID, new Point(pageObject.Width, pageObject.Height));
+                        if((pageObject as CLPArray).Rows * initializedSquareSize > pageObjectMinSide && (pageObject as CLPArray).Columns * initializedSquareSize > pageObjectMinSide)
+                        {
+                            (pageObject as CLPArray).SizeArrayToGridLevel(initializedSquareSize);
+                        }
+                        else
+                        {
+                            (pageObject as CLPArray).SizeArrayToGridLevel(pageObjectMinSide / Math.Min((pageObject as CLPArray).Rows, (pageObject as CLPArray).Columns));
+                        }
+                    }
+                }
+
+                if(arraysToAdd.Count == 1)
+                {
+                    var array = arraysToAdd.First();
+                    array.IsBackground = App.MainWindowViewModel.IsAuthoring;
+                    ACLPPageObjectBase.ApplyDistinctPosition(array);
+                    currentPage.PageObjects.Add(array);
+                    ACLPPageBaseViewModel.AddHistoryItemToPage(currentPage, new CLPHistoryArrayAddMassResize(currentPage, array.UniqueID, currentPage.PageObjects.Count - 1, oldDimensions));
+                    App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.Select;
+
+                    //If FFC with remainder on page, update
+                    foreach(var pageObject in currentPage.PageObjects)
+                    {
+                        if(pageObject is CLPFuzzyFactorCard)
+                        {
+                            (pageObject as CLPFuzzyFactorCard).AnalyzeArrays();
+                            if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
+                            {
+                                (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
+                                break;
+                            }
+                        }
+                    }
+                    return;
+                }
+                else
+                {
+                    var pageObjectIDs = new List<string>();
+                    foreach(var array in arraysToAdd)
+                    {
+                        array.IsBackground = App.MainWindowViewModel.IsAuthoring;
+                        pageObjectIDs.Add(array.UniqueID);
+                        currentPage.PageObjects.Add(array);
+                    }
+                    //If FFC with remainder on page, update
+                    foreach(var pageObject in currentPage.PageObjects)
+                    {
+                        if(pageObject is CLPFuzzyFactorCard)
+                        {
+                            (pageObject as CLPFuzzyFactorCard).AnalyzeArrays();
+                            if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
+                            {
+                                (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
+                                break;
+                            }
+                        }
+                    }
+
+                    ACLPPageBaseViewModel.AddHistoryItemToPage(currentPage, new CLPHistoryArrayMassAddMassResize(currentPage, pageObjectIDs, oldDimensions));
+                    App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.Select;
+                    return;
+                }
+            }
+
             if(arraysToAdd.Count == 1)
             {
-                ACLPPageBaseViewModel.AddPageObjectToPage(arraysToAdd.First());
+                if(arrayType == "FFCREMAINDER")
+                {
+                    CLPFuzzyFactorCardRemainder remainderRegion = new CLPFuzzyFactorCardRemainder((arraysToAdd.First() as CLPFuzzyFactorCard), currentPage);
+                    currentPage.PageObjects.Add(remainderRegion);
+                    (arraysToAdd.First() as CLPFuzzyFactorCard).RemainderRegionUniqueID = remainderRegion.UniqueID;
+                    currentPage.PageObjects.Add(arraysToAdd.First());
+
+                    var pageObjectIDs = new List<string>();
+                    pageObjectIDs.Add(arraysToAdd.First().UniqueID);
+                    pageObjectIDs.Add(remainderRegion.UniqueID);
+
+                    ACLPPageBaseViewModel.AddHistoryItemToPage(currentPage, new CLPHistoryPageObjectsMassAdd(currentPage, pageObjectIDs));
+                }
+                else
+                {
+                    ACLPPageBaseViewModel.AddPageObjectToPage(arraysToAdd.First());
+                }
             }
             else
             {
                 ACLPPageBaseViewModel.AddPageObjectsToPage(currentPage, arraysToAdd);
+            }
+
+            //If FFC with remainder on page, update
+            foreach(var pageObject in currentPage.PageObjects)
+            {
+                if(pageObject is CLPFuzzyFactorCard)
+                {
+                    (pageObject as CLPFuzzyFactorCard).AnalyzeArrays();
+                    if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
+                    {
+                        (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
+                        break;
+                    }
+                }
             }
         }
 
@@ -2835,6 +3271,28 @@ namespace Classroom_Learning_Partner.ViewModels
             var page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage;
 
             PageAnalysis.AnalyzeArray(page);
+        }
+
+        /// <summary>
+        /// Gets the AnalyzeFuzzyFactorCardCommand command.
+        /// </summary>
+        public Command AnalyzeFuzzyFactorCardCommand
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Method to invoke when the AnalyzeFuzzyFactorCardCommand command is executed.
+        /// </summary>
+        private void OnAnalyzeFuzzyFactorCardCommandExecute()
+        {
+            Logger.Instance.WriteToLog("Start of OnAnalyzeFuzzyFactorCardCommandExecute()");
+
+            // Get the page's math definition, or be sad if it doesn't have one
+            var page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage;
+
+            PageAnalysis.AnalyzeFuzzyFactorCard(page);
         }
 
         /// <summary>

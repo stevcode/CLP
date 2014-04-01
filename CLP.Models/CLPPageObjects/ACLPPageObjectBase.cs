@@ -173,7 +173,7 @@ namespace CLP.Models
             set { SetValue(YPositionProperty, value); }
         }
 
-        public static readonly PropertyData YPositionProperty = RegisterProperty("YPosition", typeof(double), 10.0);
+        public static readonly PropertyData YPositionProperty = RegisterProperty("YPosition", typeof(double), 250.0);
 
         /// <summary>
         /// Height of pageObject.

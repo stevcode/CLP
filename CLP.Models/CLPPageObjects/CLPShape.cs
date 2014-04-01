@@ -26,8 +26,6 @@ namespace CLP.Models
             : base(page)
         {
             ShapeType = shapeType;
-            XPosition = 10;
-            YPosition = 10;
             Height = shapeType == CLPShapeType.HorizontalLine? 20 : 200;
             Width = shapeType == CLPShapeType.VerticalLine ? 20 : 200;
             Parts = 1;

@@ -83,6 +83,23 @@ namespace CLP.Models
                     Logger.Instance.WriteErrorToLog("Undo PageObjectsMassAdd Error.", ex);
                 }
             }
+
+            //If page object was array and FFC with remainder on page, update
+            //TODO: This shouldn't be here, find more appropriate place.
+            if(PageObjects.First().PageObjectType == "CLPArray")
+            {
+                foreach(var pageObject in ParentPage.PageObjects)
+                {
+                    if(pageObject is CLPFuzzyFactorCard)
+                    {
+                        if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
+                        {
+                            (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
+                            break;
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -100,6 +117,23 @@ namespace CLP.Models
             {
                 pageObject.ParentPage = ParentPage;
                 ParentPage.PageObjects.Add(pageObject);
+            }
+
+            //If page object was array and FFC with remainder on page, update
+            //TODO: This shouldn't be here, find more appropriate place.
+            if(PageObjects.First().PageObjectType == "CLPArray")
+            {
+                foreach(var pageObject in ParentPage.PageObjects)
+                {
+                    if(pageObject is CLPFuzzyFactorCard)
+                    {
+                        if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
+                        {
+                            (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
+                            break;
+                        }
+                    }
+                }
             }
 
             PageObjects.Clear(); //no sense storing the actual pageObjects for serialization if it's on the page.
