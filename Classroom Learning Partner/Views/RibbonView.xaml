@@ -302,11 +302,11 @@
                               Command="{Binding InsertArrayCommand}"
                               CommandParameter="FUZZYFACTORCARD" />
 
-                <!--<RibbonButton Label="Division Tool With Tiles"
+                <RibbonButton Label="Division Tool With Tiles"
                               LargeImageSource="pack://application:,,,/Resources/Images/FuzzyFactorCard32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/FuzzyFactorCard16.png"
                               Command="{Binding InsertArrayCommand}"
-                              CommandParameter="FFCREMAINDER" />-->
+                              CommandParameter="FFCREMAINDER" />
 
                 <!--<RibbonButton Label="Stamp"
                               LargeImageSource="pack://application:,,,/Resources/Images/Stamp32.png"
@@ -454,6 +454,26 @@
                             <Style.Triggers>
                                 <Trigger Property="IsChecked" Value="True">
                                     <Setter Property="Label" Value="Go Private" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </RibbonToggleButton.Style>
+                </RibbonToggleButton>
+                
+                <RibbonToggleButton IsChecked="{Binding IsBroadcastHistoryDisabled}">
+                    <RibbonToggleButton.Style>
+                        <Style TargetType="{x:Type RibbonToggleButton}">
+                            <Setter Property="Label"
+                                    Value="Broadcast History Enabled" />
+                            <Setter Property="LargeImageSource"
+                                    Value="pack://application:,,,/Images/LargeIcon.png" />
+                            <Style.Triggers>
+                                <Trigger Property="IsChecked"
+                                         Value="True">
+                                    <Setter Property="Label"
+                                            Value="Broadcast History Disabled" />
+                                    <Setter Property="LargeImageSource"
+                                            Value="pack://application:,,,/Images/LargeIcon.png" />
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
