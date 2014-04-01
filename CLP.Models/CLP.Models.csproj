@@ -199,7 +199,9 @@
     <Compile Include="Tags\ArrayYAxisStrategyTagType.cs" />
     <Compile Include="Tags\CorrectnessTagType.cs" />
     <Compile Include="Tags\DomainInterpretationTagType.cs" />
+    <Compile Include="Tags\FuzzyFactorCardCorrectnessTagType.cs" />
     <Compile Include="Tags\FuzzyFactorCardFailedSnapTagType.cs" />
+    <Compile Include="Tags\FuzzyFactorCardIncorrectArrayTagType.cs" />
     <Compile Include="Tags\FuzzyFactorCardStrategyTagType.cs" />
     <Compile Include="Tags\PageDefinitionTagType.cs" />
     <Compile Include="Tags\PageTopicTagType.cs" />

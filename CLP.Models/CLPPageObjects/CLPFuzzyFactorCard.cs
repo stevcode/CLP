@@ -391,6 +391,91 @@ namespace CLP.Models
             }
         }
 
+        //Called when arrays are added to place appropriate tags
+        public void AnalyzeArrays()
+        {
+            int arrayArea = 0;
+            foreach(var pageObject in ParentPage.PageObjects)
+            {
+                if(pageObject.PageObjectType == "CLPArray")
+                {
+                    if((pageObject as CLPArray).Rows == Rows)
+                    {
+                        arrayArea += (pageObject as CLPArray).Rows * (pageObject as CLPArray).Columns;
+                    }
+                    if((pageObject as CLPArray).Columns == Dividend || ((pageObject as CLPArray).Rows == Dividend))
+                    {
+                        //Array with product as array dimension added
+                        var hasTag = false;
+                        foreach(Tag tag in ParentPage.PageTags.ToList())
+                        {
+                            if(tag.TagType.Name == FuzzyFactorCardIncorrectArrayTagType.Instance.Name)
+                            {
+                                if(!tag.Value.Contains(new TagOptionValue("product as dimension")))
+                                {
+                                    tag.Value.Add(new TagOptionValue("product as dimension"));
+                                }
+                                hasTag = true;
+                                continue;
+                            }
+                        }
+                        if(!hasTag)
+                        {
+                            var tag = new Tag(Tag.Origins.Generated, FuzzyFactorCardIncorrectArrayTagType.Instance);
+                            tag.AddTagOptionValue(new TagOptionValue("product as dimension"));
+                            ParentPage.PageTags.Add(tag);
+                        }
+                    }
+                    if((pageObject as CLPArray).Rows != Rows)
+                    {
+                        //Array with incorrect dimension added
+                        var hasTag = false;
+                        foreach(Tag tag in ParentPage.PageTags.ToList())
+                        {
+                            if(tag.TagType.Name == FuzzyFactorCardIncorrectArrayTagType.Instance.Name)
+                            {
+                                if(!tag.Value.Contains(new TagOptionValue("incorrect dimension")))
+                                {
+                                    tag.Value.Add(new TagOptionValue("incorrect dimension"));
+                                }
+                                hasTag = true;
+                                continue;
+                            }
+                        }
+                        if(!hasTag)
+                        {
+                            var tag = new Tag(Tag.Origins.Generated, FuzzyFactorCardIncorrectArrayTagType.Instance);
+                            tag.AddTagOptionValue(new TagOptionValue("incorrect dimension"));
+                            ParentPage.PageTags.Add(tag);
+                        }
+                    }
+                }
+            }
+            if(arrayArea > CurrentRemainder)
+            {
+                //Too many arrays added
+                var hasTag = false;
+                foreach(Tag tag in ParentPage.PageTags.ToList())
+                {
+                    if(tag.TagType.Name == FuzzyFactorCardIncorrectArrayTagType.Instance.Name)
+                    {
+                        if(!tag.Value.Contains(new TagOptionValue("too many")))
+                        {
+                            tag.Value.Add(new TagOptionValue("too many"));
+                        }
+                        hasTag = true;
+                        continue;
+                    }
+                }
+                if(!hasTag)
+                {
+                    var tag = new Tag(Tag.Origins.Generated, FuzzyFactorCardIncorrectArrayTagType.Instance);
+                    tag.AddTagOptionValue(new TagOptionValue("too many"));
+                    ParentPage.PageTags.Add(tag);
+                }
+            }
+        }
+
         #endregion //Methods
     }
 }

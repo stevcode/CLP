@@ -486,10 +486,10 @@ namespace CLP.Models
             {
                 if(tag.TagType == null ||
                     tag.TagType.Name == RepresentationCorrectnessTagType.Instance.Name ||
-                    tag.TagType.Name == FuzzyFactorCardStrategyTagType.Instance.Name)
+                    tag.TagType.Name == FuzzyFactorCardStrategyTagType.Instance.Name ||
+                    tag.TagType.Name == FuzzyFactorCardCorrectnessTagType.Instance.Name)
                 {
-                    //TODO Liz - uncomment this after making seperate tag for going over edge
-                    //tags.Remove(tag);
+                    tags.Remove(tag);
                 }
             }
 
@@ -531,25 +531,7 @@ namespace CLP.Models
 
             tags.Add(correctnessTag);
 
-            // Apply an orientation tag
-            //Tag orientationTag = new Tag(Tag.Origins.Generated, ArrayOrientationTagType.Instance);
-            //if(arrayWidth == factor1 && arrayHeight == factor2)
-            //{
-            //    orientationTag.AddTagOptionValue(new TagOptionValue("First factor is width"));
-            //}
-            //else if(arrayWidth == factor2 && arrayHeight == factor1)
-            //{
-            //    orientationTag.AddTagOptionValue(new TagOptionValue("First factor is height"));
-            //}
-            //else
-            //{
-            //    orientationTag.AddTagOptionValue(new TagOptionValue("unknown"));
-            //}
-            //tags.Add(orientationTag);
-            //Logger.Instance.WriteToLog("Tag added: " + orientationTag.TagType.Name + " -> " + orientationTag.Value[0].Value);
-
-            // Apply a strategy tag
-            Tag strategyTag = new Tag(Tag.Origins.Generated, FuzzyFactorCardStrategyTagType.Instance);
+            
 
             // First check the horizontal divisions
             // Create a sorted list of the divisions' labels (as entered by the student)
@@ -560,30 +542,31 @@ namespace CLP.Models
             }
             divs.Sort();
 
-            // special case where no dividers have been added to axis
-            //if(ffc.VerticalDivisions.Count == 0)
-            //{
-            //    divs.Add(ffc.Rows);
-            //}
+            // Apply a correctness tag
+            Tag ffcCorrectnessTag = new Tag(Tag.Origins.Generated, FuzzyFactorCardCorrectnessTagType.Instance);
 
-            /*String horizDivsString = "";
-            foreach(int x in horizDivs)
-            {
-                horizDivsString += (x.ToString() + " ");
-            }
-            Logger.Instance.WriteToLog("Number of horizontal regions: " + horizDivs.Count);
-            Logger.Instance.WriteToLog("Student's horizontal divisions (sorted): " + horizDivsString);*/
-
-            // Now check the student's divisions against known strategies
+            // Check FFC for
             if(ffc.VerticalDivisions.Count == 0)
             {
-                strategyTag.AddTagOptionValue(new TagOptionValue("none"));
+                ffcCorrectnessTag.AddTagOptionValue(new TagOptionValue("no arrays"));
             }
-            if(divs.Sum() != ffcWidth)
+            if(divs.Sum() == ffcWidth)
             {
-                strategyTag.AddTagOptionValue(new TagOptionValue("not enough"));
+                ffcCorrectnessTag.AddTagOptionValue(new TagOptionValue("complete"));
             }
-            else if (ffc.VerticalDivisions.Count == 2 && divs.Last() == ffcWidth)
+            else
+            {
+                ffcCorrectnessTag.AddTagOptionValue(new TagOptionValue("not enough arrays"));
+            }
+
+            Logger.Instance.WriteToLog("Tag added: " + ffcCorrectnessTag.TagType.Name + " -> " + ffcCorrectnessTag.Value[0].Value);
+            tags.Add(ffcCorrectnessTag);
+
+            // Apply a strategy tag
+            Tag strategyTag = new Tag(Tag.Origins.Generated, FuzzyFactorCardStrategyTagType.Instance);
+
+            // Now check the student's divisions against known strategies
+            if(ffc.VerticalDivisions.Count == 2 && divs.Last() == ffcWidth)
             {
                 strategyTag.AddTagOptionValue(new TagOptionValue("one array"));
             }
