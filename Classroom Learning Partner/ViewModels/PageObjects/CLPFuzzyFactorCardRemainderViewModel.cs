@@ -56,10 +56,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Model
 
-        #region Commands
-
-        #endregion //Commands
-
         #region Methods
 
         public override bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown)

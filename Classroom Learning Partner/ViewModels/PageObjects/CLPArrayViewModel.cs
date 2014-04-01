@@ -31,6 +31,7 @@ namespace Classroom_Learning_Partner.ViewModels
             CloseAdornerTimeOut = 0.15;
 
             //Commands
+            RemoveArrayCommand = new Command(OnRemoveArrayCommandExecute);
             ResizeArrayCommand = new Command<DragDeltaEventArgs>(OnResizeArrayCommandExecute);
             DragStopAndSnapCommand = new Command<DragCompletedEventArgs>(OnDragStopAndSnapCommandExecute);
             ToggleGridCommand = new Command(OnToggleGridCommandExecute);
@@ -303,6 +304,33 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Commands
 
         /// <summary>
+        /// Removes pageObject from page when Delete button is pressed.
+        /// </summary>
+        public new Command RemoveArrayCommand
+        {
+            get;
+            set;
+        }
+
+        private void OnRemoveArrayCommandExecute()
+        {
+            ACLPPageBaseViewModel.RemovePageObjectFromPage(PageObject);
+
+            //If FFC with remainder on page, update
+            foreach(var pageObject in PageObject.ParentPage.PageObjects)
+            {
+                if(pageObject is CLPFuzzyFactorCard)
+                {
+                    if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
+                    {
+                        (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
+                        break;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Gets the ResizePageObjectCommand command.
         /// </summary>
         public Command<DragDeltaEventArgs> ResizeArrayCommand { get; set; }
@@ -469,6 +497,12 @@ namespace Classroom_Learning_Partner.ViewModels
                                     tag.AddTagOptionValue(new TagOptionValue("snapped incorrect dimension"));
                                     PageObject.ParentPage.PageTags.Add(tag);
                                 }
+
+                                var factorCardViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(factorCard);
+                                foreach(IViewModel viewModel in factorCardViewModels)
+                                {
+                                    (viewModel as CLPFuzzyFactorCardViewModel).RejectSnappedArray();
+                                }
                                 continue;
                             }
                             if(factorCard.CurrentRemainder < factorCard.Rows * snappingArray.Columns)
@@ -515,6 +549,7 @@ namespace Classroom_Learning_Partner.ViewModels
                             }
 
                             //Add a new division and remove snapping array
+                            PageObject.ParentPage.PageObjects.Remove(PageObject);
                             if(factorCard.IsHorizontallyAligned)
                             {
                                 factorCard.SnapInArray(snappingArray.Columns);
@@ -523,52 +558,8 @@ namespace Classroom_Learning_Partner.ViewModels
                             {
                                 factorCard.SnapInArray(snappingArray.Rows);
                             }
-                            PageObject.ParentPage.PageObjects.Remove(PageObject);
 
                             ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryFFCArraySnappedIn(PageObject.ParentPage, pageObject.UniqueID, snappingArray));
-                            return;
-                        }
-                    }
-                    continue;
-                }
-
-                if(pageObject.PageObjectType == "CLPFFCComputationDisplay")
-                {
-                    var factorCard = pageObject as CLPFFCComputationDisplay;
-                    if(isVerticalIntersection && snappingArray.Rows == factorCard.Rows)
-                    {
-                        var diff = Math.Abs(snappingArray.XPosition + snappingArray.LabelLength - (persistingArray.XPosition + persistingArray.LabelLength + factorCard.LastDivisionPosition));
-                        if(diff < 50)
-                        {
-                            if(factorCard.CurrentRemainder < factorCard.Rows * snappingArray.Columns)
-                            {
-                                //TODO Liz - get old position - maybe from move batch? (Steve will email about this)
-                                var oldX = 10.0;
-                                var oldY = 10.0;
-                                ChangePageObjectPosition(snappingArray, oldX, oldY, false);
-
-                                var factorCardViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(factorCard);
-                                foreach(IViewModel viewModel in factorCardViewModels)
-                                {
-                                    (viewModel as CLPFFCComputationDisplayViewModel).RejectSnappedArray();
-                                }
-                                continue;
-                            }
-
-                            //If first division - update IsGridOn to match new array
-                            if(factorCard.LastDivisionPosition == 0)
-                            {
-                                factorCard.IsGridOn = snappingArray.IsGridOn;
-                            }
-
-                            //Add a new division and remove snapping array
-                            var position = factorCard.LastDivisionPosition + snappingArray.ArrayWidth * (factorCard.ArrayHeight / snappingArray.ArrayHeight);
-                            factorCard.CreateVerticalDivisionAtPosition(position, snappingArray.Columns);
-                            PageObject.ParentPage.PageObjects.Remove(PageObject);
-
-                            // To Do Liz - history
-                            //ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryArrayDivisionsChanged(PageObject.ParentPage, pageObject.UniqueID, addedDivisions, removedDivisions));
-
                             return;
                         }
                     }
@@ -1167,6 +1158,19 @@ namespace Classroom_Learning_Partner.ViewModels
             else
             {
                 ACLPPageBaseViewModel.AddPageObjectsToPage(PageObject.ParentPage, arraysToAdd);
+            }
+
+            //If FFC with remainder on page, update
+            foreach(var pageObject in PageObject.ParentPage.PageObjects)
+            {
+                if(pageObject is CLPFuzzyFactorCard)
+                {
+                    if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
+                    {
+                        (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
+                        break;
+                    }
+                }
             }
         }
 

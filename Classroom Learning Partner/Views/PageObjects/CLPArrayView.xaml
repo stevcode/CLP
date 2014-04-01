@@ -65,7 +65,7 @@
                            Visibility="{Binding IsDefaultAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                 <!--Close Button - on left-->
-                <Button Command="{Binding RemovePageObjectCommand}"
+                <Button Command="{Binding RemoveArrayCommand}"
                         Cursor="Hand"
                         Width="40" Height="40"
                         Canvas.Left="-40" Canvas.Top="-40">
@@ -89,7 +89,7 @@
                 </Button>
 
                 <!--Close Button - on right-->
-                <Button Command="{Binding RemovePageObjectCommand}"
+                <Button Command="{Binding RemoveArrayCommand}"
                         Cursor="Hand"
                         Width="40" Height="40"
                         Canvas.Right="-40" Canvas.Top="-40">
@@ -309,7 +309,7 @@
                 <Button Command="{Binding ToggleDivisionAdornersCommand}"
                         Width="40" Height="40"
                         Canvas.Left="-50"
-                        Canvas.Top="20"
+                        Canvas.Bottom="20"
                         Visibility="{Binding IsToggleDivisionAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">

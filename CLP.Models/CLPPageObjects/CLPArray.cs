@@ -497,19 +497,6 @@ namespace CLP.Models
                 po.OnRemoved();
                 ParentPage.PageObjects.Remove(po);
             }
-
-            //If FFC with remainder on page, update
-            foreach(ICLPPageObject pageObject in ParentPage.PageObjects)
-            {
-                if(pageObject is CLPFuzzyFactorCard)
-                {
-                    if((pageObject as CLPFuzzyFactorCard).RemainderRegionUniqueID != null)
-                    {
-                        var remainderRegion = ParentPage.GetPageObjectByUniqueID((pageObject as CLPFuzzyFactorCard).RemainderRegionUniqueID) as CLPFuzzyFactorCardRemainder;
-                        remainderRegion.UpdateTiles();
-                    }
-                }
-            }
         }
 
         public override void OnResized()

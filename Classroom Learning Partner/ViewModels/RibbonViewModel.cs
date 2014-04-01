@@ -2541,9 +2541,43 @@ namespace Classroom_Learning_Partner.ViewModels
                 numberOfArrays = 1;
             }
 
-            else if(IsFuzzyFactorCard(arrayType))
+            else if(arrayType == "FUZZYFACTORCARD")
             {
                 var factorCreationView = new FuzzyFactorCardCreationView{ Owner = Application.Current.MainWindow};
+                factorCreationView.ShowDialog();
+                if(factorCreationView.DialogResult != true)
+                {
+                    return;
+                }
+
+                try
+                {
+                    dividend = Convert.ToInt32(factorCreationView.Product.Text);
+                }
+                catch(FormatException)
+                {
+                    return;
+                }
+
+                try
+                {
+                    rows = Convert.ToInt32(factorCreationView.Factor.Text);
+                }
+                catch(FormatException)
+                {
+                    return;
+                }
+
+                columns = dividend / rows;
+                numberOfArrays = 1;
+            }
+
+            else if(arrayType == "FFCREMAINDER")
+            {
+                var factorCreationView = new FuzzyFactorCardWithTilesCreationView
+                {
+                    Owner = Application.Current.MainWindow
+                };
                 factorCreationView.ShowDialog();
                 if(factorCreationView.DialogResult != true)
                 {
@@ -2650,82 +2684,21 @@ namespace Classroom_Learning_Partner.ViewModels
                     case "FACTORCARD":
                         array = new CLPFactorCard(rows, columns, currentPage);
                         break;
-                    case "FFCSTRAIGHTEDGE":
+                    case "FUZZYFACTORCARD":
                         array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
-                        (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = true;
-                        (array as CLPFuzzyFactorCard).IsStraightEdge = true;
-                        break;
-                    case "FFCCURLYEDGE":
-                        array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
-                        (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = true;
-                        (array as CLPFuzzyFactorCard).IsCurlyEdge = true;
-                        (array as CLPFuzzyFactorCard).IsStraightEdge = false;
-                        break;
-                    case "FFCCURLYEDGELIGHT":
-                        array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
-                        (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = true;
-                        (array as CLPFuzzyFactorCard).IsCurlyEdge = true;
-                        (array as CLPFuzzyFactorCard).IsStraightEdge = false;
-                        (array as CLPFuzzyFactorCard).DefaultFuzzyEdgeColor = "LightGray";
-                        break;
-                    case "FFCNOEDGE":
-                        array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
-                        (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = true;
-                        (array as CLPFuzzyFactorCard).IsNoRightEdge = true;
-                        break;
-                    case "FFCDIVIDENDONEDGE":
-                        array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
-                        (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = true;
-                        (array as CLPFuzzyFactorCard).IsCurlyEdge = true;
-                        (array as CLPFuzzyFactorCard).IsStraightEdge = false;
-                        (array as CLPFuzzyFactorCard).IsDividendOnEdge = true;
                         break;
                     case "FFCREMAINDER":
-                        array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage, true);
-                        (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = true;
-                        (array as CLPFuzzyFactorCard).IsCurlyEdge = true;
-                        (array as CLPFuzzyFactorCard).IsStraightEdge = false;
-                        (array as CLPFuzzyFactorCard).IsDividendOnEdge = true;
-                        //CLPFuzzyFactorCardRemainder remainderRegion = new CLPFuzzyFactorCardRemainder((array as CLPFuzzyFactorCard), dividend, currentPage);
-                        //currentPage.PageObjects.Add(remainderRegion);
-                        //(array as CLPFuzzyFactorCard).RemainderRegionUniqueID = remainderRegion.UniqueID;
-                        //Console.Write("unique ID: ");
-                        //Console.WriteLine((array as CLPFuzzyFactorCard).RemainderRegionUniqueID);
+                        array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
+                        (array as CLPFuzzyFactorCard).IsRemainderRegionDisplayed = true;
                         break;
-                    //case "FUZZYFACTORCARDTOP":
-                    //    array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
-                    //    (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = true;
-                    //    break;
-                    //case "FUZZYFACTORCARDBOTTOM":
-                    //    array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
-                    //    (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = false;
-                    //    break;
-                    //case "FUZZYFACTORCARDTOPNOANSWER":
-                    //    array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
-                    //    (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = true;
-                    //    (array as CLPFuzzyFactorCard).IsAnswerVisible = false;
-                    //    break;
-                    //case "FUZZYFACTORCARDBOTTOMNOANSWER":
-                    //    array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
-                    //    (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = false;
-                    //    (array as CLPFuzzyFactorCard).IsAnswerVisible = false;
-                    //    break;
-                    //case "FFCCOMPDISPLAY":
-                    //    array = new CLPFFCComputationDisplay(rows, columns, dividend, currentPage);
-                    //    break;
-                    //case "FUZZYFACTORCARD":
-                    //    array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
-                    //    array.IsSnappable = true;
-                    //    break;
                     case "SNAPADORNERONRIGHT":
                         array = new CLPArray(rows, columns, currentPage);
-                        array.IsDivisionBehaviorOn = false;
+                        array.IsDivisionBehaviorOn = true;
                         array.IsSnapAdornerOnLeft = false;
                         break;
                     default:
                         array = new CLPArray(rows, columns, currentPage);
-                        array.IsDivisionBehaviorOn = false;
-                        //array.IsSnappable = false;
+                        array.IsDivisionBehaviorOn = true;
                         break;
                 }
 
@@ -2739,7 +2712,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         if(onlyArray != null)
                         {
                             const double GAP = 35.0;
-                            if(onlyArray.XPosition + onlyArray.Width + (2 * LABEL_LENGTH + columns * squareSize) + GAP <= currentPage.PageWidth
+                            if(!(onlyArray is CLPFuzzyFactorCard) && onlyArray.XPosition + onlyArray.Width + (2 * LABEL_LENGTH + columns * squareSize) + GAP <= currentPage.PageWidth
                                 && rows * squareSize + LABEL_LENGTH < currentPage.PageHeight)
                             {
                                 array.XPosition = onlyArray.XPosition + onlyArray.Width + GAP;
@@ -2749,6 +2722,11 @@ namespace Classroom_Learning_Partner.ViewModels
                                 && onlyArray.YPosition + onlyArray.Height + rows * squareSize + LABEL_LENGTH + GAP < currentPage.PageHeight)
                             {
                                 array.YPosition = onlyArray.YPosition + onlyArray.Height + GAP;
+                                array.XPosition = onlyArray.XPosition;
+                            }
+                            else
+                            {
+                                array.YPosition = currentPage.PageHeight - array.Height;
                                 array.XPosition = onlyArray.XPosition;
                             }
                         }
@@ -2761,10 +2739,10 @@ namespace Classroom_Learning_Partner.ViewModels
                         {
                             if(pageObject is CLPFuzzyFactorCard)
                             {
-                                if((pageObject as CLPFuzzyFactorCard).RemainderRegionUniqueID != null)
+                                if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
                                 {
-                                    CLPFuzzyFactorCardRemainder remainderRegion = currentPage.GetPageObjectByUniqueID((pageObject as CLPFuzzyFactorCard).RemainderRegionUniqueID) as CLPFuzzyFactorCardRemainder;
-                                    remainderRegion.UpdateTiles();
+                                    (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
+                                    break;
                                 }
                             }
                         }
@@ -2801,7 +2779,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         if(onlyArray != null)
                         {
                             const double GAP = 35.0;
-                            if(onlyArray.XPosition + onlyArray.Width + (2 * LABEL_LENGTH + columns * squareSize) + GAP <= currentPage.PageWidth
+                            if(!(onlyArray is CLPFuzzyFactorCard) && onlyArray.XPosition + onlyArray.Width + (2 * LABEL_LENGTH + columns * squareSize) + GAP <= currentPage.PageWidth
                                 && rows * squareSize + LABEL_LENGTH < currentPage.PageHeight)
                             {
                                 array.XPosition = onlyArray.XPosition + onlyArray.Width + GAP;
@@ -2811,6 +2789,11 @@ namespace Classroom_Learning_Partner.ViewModels
                                 && onlyArray.YPosition + onlyArray.Height + rows * squareSize + LABEL_LENGTH + GAP < currentPage.PageHeight)
                             {
                                 array.YPosition = onlyArray.YPosition + onlyArray.Height + GAP;
+                                array.XPosition = onlyArray.XPosition;
+                            }
+                            else
+                            {
+                                array.YPosition = currentPage.PageHeight - array.Height;
                                 array.XPosition = onlyArray.XPosition;
                             }
                         }
@@ -2832,10 +2815,10 @@ namespace Classroom_Learning_Partner.ViewModels
                         {
                             if(pageObject is CLPFuzzyFactorCard)
                             {
-                                if((pageObject as CLPFuzzyFactorCard).RemainderRegionUniqueID != null)
+                                if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
                                 {
-                                    CLPFuzzyFactorCardRemainder remainderRegion = currentPage.GetPageObjectByUniqueID((pageObject as CLPFuzzyFactorCard).RemainderRegionUniqueID) as CLPFuzzyFactorCardRemainder;
-                                    remainderRegion.UpdateTiles();
+                                    (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
+                                    break;
                                 }
                             }
                         }
@@ -2844,23 +2827,14 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
 
-            //TODO Liz: clean up this code when getting rid of fuzzy factor card variations
-            var minSide = (IsFuzzyFactorCard(arrayType))
+            var minSide = ((arrayType == "FUZZYFACTORCARD" || arrayType == "FFCREMAINDER"))
                 ? MIN_FFC_SIDE:
                 MIN_SIDE;
-            //var minSquareSize = (arrayType == "FUZZYFACTORCARDTOP" || arrayType == "FUZZYFACTORCARDBOTTOM" || arrayType == "FUZZYFACTORCARDTOPNOANSWER" || arrayType == "FUZZYFACTORCARDBOTTOMNOANSWER" || arrayType == "FFCCOMPDISPLAY")
-            //    ? MIN_FFC_SIDE / Math.Min(rows, columns) :
-            //    45.0;
-            //var minSquareSize = 45.0;
-            //if(arrayType == "FFCCOMPDISPLAY")
-            //{
-            //    minSquareSize = 100;
-            //}
-            var defaultSquareSize = (IsFuzzyFactorCard(arrayType)) ?
+            var defaultSquareSize = ((arrayType == "FUZZYFACTORCARD" || arrayType == "FFCREMAINDER")) ?
                 Math.Max(45.0, (minSide / (Math.Min(rows, columns)))):
                 45.0;
             var initializedSquareSize = (squareSize > 0) ? Math.Max(squareSize, (minSide / (Math.Min(rows, columns)))) : defaultSquareSize;
-            if(IsFuzzyFactorCard(arrayType) && xPosition + initializedSquareSize * columns + LABEL_LENGTH * 3.0 + 12.0 > currentPage.PageWidth)
+            if((arrayType == "FUZZYFACTORCARD" || arrayType == "FFCREMAINDER") && xPosition + initializedSquareSize * columns + LABEL_LENGTH * 3.0 + 12.0 > currentPage.PageWidth)
             {
                 initializedSquareSize = minSide / (Math.Min(rows, columns));
             }
@@ -2934,7 +2908,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 if(isHorizontallyAligned)
                 {
                     const double GAP = 35.0;
-                    if(onlyArray.XPosition + onlyArray.Width + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH + GAP <= currentPage.PageWidth
+                    if(!(onlyArray is CLPFuzzyFactorCard) && onlyArray.XPosition + onlyArray.Width + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH + GAP <= currentPage.PageWidth
                         && rows * initializedSquareSize + LABEL_LENGTH < currentPage.PageHeight)
                     {
                         startXPosition = onlyArray.XPosition + onlyArray.Width + GAP;
@@ -2946,11 +2920,16 @@ namespace Classroom_Learning_Partner.ViewModels
                         yPosition = onlyArray.YPosition + onlyArray.Height + GAP;
                         startXPosition = onlyArray.XPosition;
                     }
+                    else
+                    {
+                        yPosition = currentPage.PageHeight - rows * initializedSquareSize - 2 * LABEL_LENGTH;
+                        startXPosition = onlyArray.XPosition;
+                    }
                     xPosition = startXPosition;
                 }
                 else{
                     const double GAP = 35.0;
-                    if(onlyArray.YPosition + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH <= currentPage.PageHeight
+                    if(!(onlyArray is CLPFuzzyFactorCard) && onlyArray.YPosition + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH <= currentPage.PageHeight
                         && onlyArray.XPosition + onlyArray.Width + columns * initializedSquareSize + LABEL_LENGTH + GAP < currentPage.PageWidth)
                     {
                         xPosition = onlyArray.XPosition + onlyArray.Width + GAP;
@@ -2983,80 +2962,21 @@ namespace Classroom_Learning_Partner.ViewModels
                     case "FACTORCARD":
                         array = new CLPFactorCard(rows, columns, currentPage);
                         break;
-                    case "FFCSTRAIGHTEDGE":
+                    case "FUZZYFACTORCARD":
                         array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
-                        (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = true;
-                        (array as CLPFuzzyFactorCard).IsStraightEdge = true;
-                        break;
-                    case "FFCCURLYEDGE":
-                        array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
-                        (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = true;
-                        (array as CLPFuzzyFactorCard).IsCurlyEdge = true;
-                        (array as CLPFuzzyFactorCard).IsStraightEdge = false;
-                        break;
-                    case "FFCCURLYEDGELIGHT":
-                        array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
-                        (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = true;
-                        (array as CLPFuzzyFactorCard).IsCurlyEdge = true;
-                        (array as CLPFuzzyFactorCard).IsStraightEdge = false;
-                        (array as CLPFuzzyFactorCard).DefaultFuzzyEdgeColor = "LightGray";
-                        break;
-                    case "FFCNOEDGE":
-                        array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
-                        (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = true;
-                        (array as CLPFuzzyFactorCard).IsNoRightEdge = true;
-                        break;
-                    case "FFCDIVIDENDONEDGE":
-                        array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
-                        (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = true;
-                        (array as CLPFuzzyFactorCard).IsCurlyEdge = true;
-                        (array as CLPFuzzyFactorCard).IsStraightEdge = false;
-                        (array as CLPFuzzyFactorCard).IsDividendOnEdge = true;
                         break;
                     case "FFCREMAINDER":
-                        array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage, true);
-                        (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = true;
-                        (array as CLPFuzzyFactorCard).IsCurlyEdge = true;
-                        (array as CLPFuzzyFactorCard).IsStraightEdge = false;
-                        (array as CLPFuzzyFactorCard).IsDividendOnEdge = true;
-                        CLPFuzzyFactorCardRemainder remainderRegion = new CLPFuzzyFactorCardRemainder((array as CLPFuzzyFactorCard), dividend, currentPage);
-                        currentPage.PageObjects.Add(remainderRegion);
-                        (array as CLPFuzzyFactorCard).RemainderRegionUniqueID = remainderRegion.UniqueID;
+                        array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
+                        (array as CLPFuzzyFactorCard).IsRemainderRegionDisplayed = true;
                         break;
-                    //case "FUZZYFACTORCARDTOP":
-                    //    array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
-                    //    (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = true;
-                    //    break;
-                    //case "FUZZYFACTORCARDBOTTOM":
-                    //    array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
-                    //    (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = false;
-                    //    break;
-                    //case "FUZZYFACTORCARDTOPNOANSWER":
-                    //    array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
-                    //    (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = true;
-                    //    (array as CLPFuzzyFactorCard).IsAnswerVisible = false;
-                    //    break;
-                    //case "FUZZYFACTORCARDBOTTOMNOANSWER":
-                    //    array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
-                    //    (array as CLPFuzzyFactorCard).IsArrayDivisionLabelOnTop = false;
-                    //    (array as CLPFuzzyFactorCard).IsAnswerVisible = false;
-                    //    break;
-                    //case "FUZZYFACTORCARD":
-                    //    array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
-                    //    array.IsSnappable = true;
-                    //    break;
-                    //case "FFCCOMPDISPLAY":
-                    //    array = new CLPFFCComputationDisplay(rows, columns, dividend, currentPage);
-                    //    break;
                     case "SNAPADORNERONRIGHT":
                         array = new CLPArray(rows, columns, currentPage);
-                        array.IsDivisionBehaviorOn = false;
+                        array.IsDivisionBehaviorOn = true;
                         array.IsSnapAdornerOnLeft = false;
                         break;
                     default:
                         array = new CLPArray(rows, columns, currentPage);
-                        array.IsDivisionBehaviorOn = false;
-                        //array.IsSnappable = false;
+                        array.IsDivisionBehaviorOn = true;
                         array.IsSnapAdornerOnLeft = true;
                         break;
                 }
@@ -3137,10 +3057,10 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         if(pageObject is CLPFuzzyFactorCard)
                         {
-                            if((pageObject as CLPFuzzyFactorCard).RemainderRegionUniqueID != null)
+                            if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
                             {
-                                CLPFuzzyFactorCardRemainder remainderRegion = currentPage.GetPageObjectByUniqueID((pageObject as CLPFuzzyFactorCard).RemainderRegionUniqueID) as CLPFuzzyFactorCardRemainder;
-                                remainderRegion.UpdateTiles();
+                                (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
+                                break;
                             }
                         }
                     }
@@ -3160,10 +3080,10 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         if(pageObject is CLPFuzzyFactorCard)
                         {
-                            if((pageObject as CLPFuzzyFactorCard).RemainderRegionUniqueID != null)
+                            if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
                             {
-                                CLPFuzzyFactorCardRemainder remainderRegion = currentPage.GetPageObjectByUniqueID((pageObject as CLPFuzzyFactorCard).RemainderRegionUniqueID) as CLPFuzzyFactorCardRemainder;
-                                remainderRegion.UpdateTiles();
+                                (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
+                                break;
                             }
                         }
                     }
@@ -3176,7 +3096,23 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if(arraysToAdd.Count == 1)
             {
-                ACLPPageBaseViewModel.AddPageObjectToPage(arraysToAdd.First());
+                if(arrayType == "FFCREMAINDER")
+                {
+                    CLPFuzzyFactorCardRemainder remainderRegion = new CLPFuzzyFactorCardRemainder((arraysToAdd.First() as CLPFuzzyFactorCard), currentPage);
+                    currentPage.PageObjects.Add(remainderRegion);
+                    (arraysToAdd.First() as CLPFuzzyFactorCard).RemainderRegionUniqueID = remainderRegion.UniqueID;
+                    currentPage.PageObjects.Add(arraysToAdd.First());
+
+                    var pageObjectIDs = new List<string>();
+                    pageObjectIDs.Add(arraysToAdd.First().UniqueID);
+                    pageObjectIDs.Add(remainderRegion.UniqueID);
+
+                    ACLPPageBaseViewModel.AddHistoryItemToPage(currentPage, new CLPHistoryPageObjectsMassAdd(currentPage, pageObjectIDs));
+                }
+                else
+                {
+                    ACLPPageBaseViewModel.AddPageObjectToPage(arraysToAdd.First());
+                }
             }
             else
             {
@@ -3188,10 +3124,10 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 if(pageObject is CLPFuzzyFactorCard)
                 {
-                    if((pageObject as CLPFuzzyFactorCard).RemainderRegionUniqueID != null)
+                    if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
                     {
-                        CLPFuzzyFactorCardRemainder remainderRegion = currentPage.GetPageObjectByUniqueID((pageObject as CLPFuzzyFactorCard).RemainderRegionUniqueID) as CLPFuzzyFactorCardRemainder;
-                        remainderRegion.UpdateTiles();
+                        (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
+                        break;
                     }
                 }
             }
@@ -3547,10 +3483,5 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Debug Commands
 
         #endregion //Commands
-
-        public bool IsFuzzyFactorCard(string arrayType)
-        {
-            return (arrayType == "FUZZYFACTORCARDTOP" || arrayType == "FUZZYFACTORCARDBOTTOM" || arrayType == "FUZZYFACTORCARDTOPNOANSWER" || arrayType == "FUZZYFACTORCARDBOTTOMNOANSWER" || arrayType == "FFCCOMPDISPLAY" || arrayType == "FFCCURLYEDGE" || arrayType == "FFCNOEDGE" || arrayType == "FFCSTRAIGHTEDGE" || arrayType == "FFCCURLYEDGELIGHT" || arrayType == "FFCDIVIDENDONEDGE" || arrayType == "FFCREMAINDER");
-        }
     }
 }

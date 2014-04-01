@@ -86,10 +86,10 @@ namespace CLP.Models
             var ffc = ParentPage.GetPageObjectByUniqueID(FFCUniqueID) as CLPFuzzyFactorCard;
             if(ffc != null)
             {
-                ffc.RemoveLastDivision();
                 SnappedInArray.ParentPage = ParentPage;
                 ParentPage.PageObjects.Add(SnappedInArray);
                 SnappedInArray = null;
+                ffc.RemoveLastDivision();
             }
             else
             {
@@ -112,6 +112,7 @@ namespace CLP.Models
             var ffc = ParentPage.GetPageObjectByUniqueID(FFCUniqueID) as CLPFuzzyFactorCard;
             if(ffc != null)
             {
+                ParentPage.PageObjects.Remove(SnappedInArray);
                 if(ffc.IsHorizontallyAligned)
                 {
                     ffc.SnapInArray(SnappedInArray.Columns);
@@ -120,7 +121,6 @@ namespace CLP.Models
                 {
                     ffc.SnapInArray(SnappedInArray.Rows);
                 }
-                ParentPage.PageObjects.Remove(SnappedInArray);
             }
             else
             {

@@ -13,26 +13,15 @@ namespace CLP.Models
     public class CLPFuzzyFactorCard : CLPArray
     {
 
-        public double LabelLength { get { return 35; } }
+        public new double LabelLength { get { return 35; } }
         public double LargeLabelLength { get { return LabelLength * 2 + 12.0; } }
-        //public double LargeLabelLength { get { return LabelLength + 10.0; } }
 
         #region Constructors
 
-        public CLPFuzzyFactorCard(int rows, int columns, int dividend, ICLPPage page, bool displayRemainderRegion=false)
+        public CLPFuzzyFactorCard(int rows, int columns, int dividend, ICLPPage page)
             : base(rows, columns, page)
         {
             Dividend = dividend;
-            IsGridOn = rows < 45 && columns < 45;
-            IsAnswerVisible = true;
-            IsArrayDivisionLabelOnTop = true;
-
-            //if(displayRemainderRegion)
-            //{
-            //    CLPFuzzyFactorCardRemainder remainderRegion = new CLPFuzzyFactorCardRemainder(this, dividend, page);
-            //    page.PageObjects.Add(remainderRegion);
-            //    RemainderRegionUniqueID = remainderRegion.UniqueID;
-            //}
         }
         
         /// <summary>
@@ -44,175 +33,6 @@ namespace CLP.Models
             : base(info, context) { }
 
         #endregion //Constructors
-
-        #region A/B Testing Toggles
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public bool IsCurlyEdge
-        {
-            get
-            {
-                return GetValue<bool>(IsCurlyEdgeProperty);
-            }
-            set
-            {
-                SetValue(IsCurlyEdgeProperty, value);
-            }
-        }
-
-        /// <summary>
-        /// Register the IsCurlyEdge property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData IsCurlyEdgeProperty = RegisterProperty("IsCurlyEdge", typeof(bool), false);
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public bool IsStraightEdge
-        {
-            get
-            {
-                return GetValue<bool>(IsStraightEdgeProperty);
-            }
-            set
-            {
-                SetValue(IsStraightEdgeProperty, value);
-            }
-        }
-
-        /// <summary>
-        /// Register the IsStraightEdge property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData IsStraightEdgeProperty = RegisterProperty("IsStraightEdge", typeof(bool), false);
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public bool IsNoRightEdge
-        {
-            get
-            {
-                return GetValue<bool>(IsNoRightEdgeProperty);
-            }
-            set
-            {
-                SetValue(IsNoRightEdgeProperty, value);
-            }
-        }
-
-        /// <summary>
-        /// Register the IsNoRightEdge property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData IsNoRightEdgeProperty = RegisterProperty("IsNoRightEdge", typeof(bool), false);
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public string DefaultFuzzyEdgeColor
-        {
-            get
-            {
-                return GetValue<string>(DefaultFuzzyEdgeColorProperty);
-            }
-            set
-            {
-                SetValue(DefaultFuzzyEdgeColorProperty, value);
-            }
-        }
-
-        //TODO Liz: update name to start with Is
-        public bool HasRemainder
-        {
-            get
-            {
-                if((double)Dividend % (double)Rows == 0)
-                {
-                    return false;
-                }
-                return true;
-            }
-        }
-
-        public bool NoRemainder
-        {
-            get
-            {
-                return !HasRemainder;
-            }
-        }
-
-        public bool IsStraightEdgeRemainder
-        {
-            get
-            {
-                return ((double)Dividend % (double)Rows != 0 && IsStraightEdge);
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public bool IsDividendOnEdge
-        {
-            get
-            {
-                return GetValue<bool>(IsDividendOnEdgeProperty);
-            }
-            set
-            {
-                SetValue(IsDividendOnEdgeProperty, value);
-            }
-        }
-
-        public static readonly PropertyData IsDividendOnEdgeProperty = RegisterProperty("IsDividendOnEdge", typeof(bool), false);
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public bool IsFuzzyEdgeVisible
-        {
-            get
-            {
-                return !(IsDividendOnEdge && CurrentRemainder == 0);
-            }
-        }
-
-        /// <summary>
-        /// Register the DefaultFuzzyEdgeColor property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData DefaultFuzzyEdgeColorProperty = RegisterProperty("DefaultFuzzyEdgeColor", typeof(string), "Gray");
-
-        /// <summary>
-        /// Whether or not the answer is displayed.
-        /// </summary>
-        public bool IsAnswerVisible
-        {
-            get
-            {
-                return GetValue<bool>(IsAnswerVisibleProperty);
-            }
-            set
-            {
-                SetValue(IsAnswerVisibleProperty, value);
-            }
-        }
-
-        public static readonly PropertyData IsAnswerVisibleProperty = RegisterProperty("IsAnswerVisible", typeof(bool), true);
-
-        /// <summary>
-        /// True if division labels are on top and answer (if shown) is on bottom.
-        /// </summary>
-        public bool IsArrayDivisionLabelOnTop
-        {
-	        get { return GetValue<bool>(IsArrayDivisionLabelOnTopProperty); }
-	        set { SetValue(IsArrayDivisionLabelOnTopProperty, value); }
-        }
-
-        public static readonly PropertyData IsArrayDivisionLabelOnTopProperty = RegisterProperty("IsArrayDivisionLabelOnTop", typeof(bool), true);
-
-        #endregion //A/B Testing Toggles
 
         #region Properties
         public override string PageObjectType
@@ -281,6 +101,26 @@ namespace CLP.Models
         }
 
         /// <summary>
+        /// Whether or not to display the Remainder Region.
+        /// </summary>
+        public bool IsRemainderRegionDisplayed
+        {
+            get
+            {
+                return GetValue<bool>(IsRemainderRegionDisplayedProperty);
+            }
+            set
+            {
+                SetValue(IsRemainderRegionDisplayedProperty, value);
+            }
+        }
+
+        /// <summary>
+        /// Register the IsRemainderRegionDisplayed property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData IsRemainderRegionDisplayedProperty = RegisterProperty("IsRemainderRegionDisplayed", typeof(bool), false);
+
+        /// <summary>
         /// UniqueID of the region of remainder tiles. Null if not displaying remainder tiles.
         /// </summary>
         public string RemainderRegionUniqueID
@@ -318,7 +158,6 @@ namespace CLP.Models
 
         public override void SizeArrayToGridLevel(double toSquareSize = -1, bool recalculateDivisions = true)
         {
-            // TODO Liz: add a min size for FFC
             var rightLabelLength = IsHorizontallyAligned ? LargeLabelLength : LabelLength;
             var bottomLabelLength = IsHorizontallyAligned ? LabelLength : LargeLabelLength;
             var initialSquareSize = 45.0;
@@ -379,13 +218,6 @@ namespace CLP.Models
             RaisePropertyChanged("LastDivisionPosition");
         }
 
-        public override void OnRemoved()
-        {
-            CLPFuzzyFactorCardRemainder remainderRegion = ParentPage.GetPageObjectByUniqueID(RemainderRegionUniqueID) as CLPFuzzyFactorCardRemainder;
-            ParentPage.PageObjects.Remove(remainderRegion);
-            base.OnRemoved();
-        }
-
         public void SnapInArray(int value)
         {
             if(IsHorizontallyAligned)
@@ -419,16 +251,14 @@ namespace CLP.Models
                 VerticalDivisions.Add(bottomDiv);
 
                 //Update Remainder Region
-                if(RemainderRegionUniqueID != null)
+                if(IsRemainderRegionDisplayed)
                 {
-                    CLPFuzzyFactorCardRemainder remainderRegion = ParentPage.GetPageObjectByUniqueID(RemainderRegionUniqueID) as CLPFuzzyFactorCardRemainder;
-                    remainderRegion.RemoveTiles(value * Rows);
+                    UpdateRemainderRegion();
                 }
             }
 
             //TODO Liz: Add ability to snap in arrays when rotated
 
-            //To Do Liz: Add this to any division removal code and history items
             RaisePropertyChanged("GroupsSubtracted");
             RaisePropertyChanged("CurrentRemainder");
             RaisePropertyChanged("LastDivisionPosition");
@@ -498,11 +328,66 @@ namespace CLP.Models
                 CalculateGridLines();
 
                 //Update Remainder Region
-                if(RemainderRegionUniqueID != null)
+                if(IsRemainderRegionDisplayed)
                 {
-                    CLPFuzzyFactorCardRemainder remainderRegion = ParentPage.GetPageObjectByUniqueID(RemainderRegionUniqueID) as CLPFuzzyFactorCardRemainder;
-                    remainderRegion.AddTiles(prevDiv.Value * Rows);
+                    UpdateRemainderRegion();
                 }
+            }
+        }
+
+        public void UpdateRemainderRegion()
+        {
+            if(!IsRemainderRegionDisplayed)
+            {
+                return;
+            }
+            if(CurrentRemainder > 0)
+            {
+                CLPFuzzyFactorCardRemainder remainderRegion;
+                if(RemainderRegionUniqueID == null)
+                {
+                    remainderRegion = new CLPFuzzyFactorCardRemainder(this, ParentPage);
+                    ParentPage.PageObjects.Add(remainderRegion);
+                    RemainderRegionUniqueID = remainderRegion.UniqueID;
+                }
+                else
+                {
+                    remainderRegion = ParentPage.GetPageObjectByUniqueID(RemainderRegionUniqueID) as CLPFuzzyFactorCardRemainder;
+                    if(remainderRegion == null)
+                    {
+                        Console.WriteLine("Couldn't find FFC Remainder Region");
+                        return;
+                    }
+                }
+                int numberOfBlackTiles = 0;
+                foreach(var pageObject in ParentPage.PageObjects)
+                {
+                    //TO DO Liz - update for rotating FFC
+                    if(pageObject.PageObjectType == "CLPArray" && (pageObject as CLPArray).Rows == Rows)
+                    {
+                        numberOfBlackTiles += (pageObject as CLPArray).Rows * (pageObject as CLPArray).Columns;
+                    }
+                }
+                numberOfBlackTiles = Math.Min(numberOfBlackTiles, CurrentRemainder);
+
+                remainderRegion.TileOffsets.Clear();
+                for(int i = 0; i < CurrentRemainder - numberOfBlackTiles; i++)
+                {
+                    remainderRegion.TileOffsets.Add("DodgerBlue");
+                }
+                for(int i = 0; i < numberOfBlackTiles; i++)
+                {
+                    remainderRegion.TileOffsets.Add("Black");
+                }
+
+                remainderRegion.Height = Math.Ceiling((double)remainderRegion.TileOffsets.Count / 5.0) * (remainderRegion.SquareSize + 16.0);
+                remainderRegion.Width = 5.0 * (remainderRegion.SquareSize + 16.0);
+            }
+            else if(RemainderRegionUniqueID != null)
+            {
+                CLPFuzzyFactorCardRemainder remainderRegion = ParentPage.GetPageObjectByUniqueID(RemainderRegionUniqueID) as CLPFuzzyFactorCardRemainder;
+                ParentPage.PageObjects.Remove(remainderRegion);
+                RemainderRegionUniqueID = null;
             }
         }
 

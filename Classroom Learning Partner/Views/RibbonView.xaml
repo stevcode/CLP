@@ -150,12 +150,14 @@
                 <RibbonButton Label="Previous Page"
                               LargeImageSource="pack://application:,,,/Resources/Images/PreviousPage32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/PreviousPage16.png"
-                              Command="{Binding PreviousPageCommand}" />
+                              Command="{Binding PreviousPageCommand}"
+                              Visibility="{Binding StudentVisibility}" />
 
                 <RibbonButton Label="Next Page"
                               LargeImageSource="pack://application:,,,/Resources/Images/NextPage32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/NextPage16.png"
-                              Command="{Binding NextPageCommand}" />
+                              Command="{Binding NextPageCommand}"
+                              Visibility="{Binding StudentVisibility}" />
 
             </RibbonGroup>
 
@@ -219,7 +221,8 @@
                     </RibbonGallery>
                 </RibbonMenuButton>
 
-                <RibbonMenuButton Label="Eraser Type">
+                <RibbonMenuButton Label="Eraser Type"
+                                  Visibility="{Binding InstructorVisibility}">
                     <RibbonMenuButton.Style>
                         <Style TargetType="{x:Type RibbonMenuButton}">
                             <Setter Property="LargeImageSource"
@@ -265,10 +268,6 @@
 
             <RibbonGroup Header="Insert"
                          Visibility="{Binding InstructorVisibility, Converter={StaticResource BooleanToOppositeBooleanConverter}}">
-
-                <!--<RibbonButton Label="Stamp"
-                              LargeImageSource="..\Images\AddPathStamp.png"
-                              Command="{Binding InsertBlankStampCommand}" />-->
                 
                 <!--Array + Divider - Left-Handed-->
                 <!--<RibbonButton Label="Array"
@@ -289,80 +288,32 @@
                               LargeImageSource="pack://application:,,,/Resources/Images/ArrayCard32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/ArrayCard16.png"
                               Command="{Binding InsertArrayCommand}"
-                              CommandParameter="CARD" />
+                              CommandParameter="CARD" />-->
 
-                <RibbonButton Label="Factor Card"
+                <!--<RibbonButton Label="Factor Card"
                               LargeImageSource="pack://application:,,,/Resources/Images/FactorCard32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/FactorCard16.png"
                               Command="{Binding InsertArrayCommand}"
                               CommandParameter="FACTORCARD" />-->
 
-                <!--<RibbonButton Label="FFC: labels top"
-                              LargeImageSource="pack://application:,,,/Resources/Images/FactorCard32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/FactorCard16.png"
-                              Command="{Binding InsertArrayCommand}"
-                              CommandParameter="FUZZYFACTORCARDTOP" />-->
-                
-                <!--<RibbonButton Label="Division Tool 1a"
-                              LargeImageSource="pack://application:,,,/Resources/Images/curlyedge32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/curlyedge16.png"
-                              Command="{Binding InsertArrayCommand}"
-                              CommandParameter="FFCCURLYEDGE" />
-
-                <RibbonButton Label="Division Tool 1b"
-                              LargeImageSource="pack://application:,,,/Resources/Images/curlyedge32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/curlyedge16.png"
-                              Command="{Binding InsertArrayCommand}"
-                              CommandParameter="FFCCURLYEDGELIGHT" />
-
-                <RibbonButton Label="Division Tool 2"
-                              LargeImageSource="pack://application:,,,/Resources/Images/straightedge32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/straightedge16.png"
-                              Command="{Binding InsertArrayCommand}"
-                              CommandParameter="FFCSTRAIGHTEDGE" />
-                
-                <RibbonButton Label="Division Tool 3"
-                              LargeImageSource="pack://application:,,,/Resources/Images/noedge32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/noedge16.png"
-                              Command="{Binding InsertArrayCommand}"
-                              CommandParameter="FFCNOEDGE" />-->
-
                 <RibbonButton Label="Division Tool"
-                              LargeImageSource="pack://application:,,,/Resources/Images/dividendonedge32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/dividendonedge16.png"
+                              LargeImageSource="pack://application:,,,/Resources/Images/FuzzyFactorCard32.png"
+                              SmallImageSource="pack://application:,,,/Resources/Images/FuzzyFactorCard16.png"
                               Command="{Binding InsertArrayCommand}"
-                              CommandParameter="FFCDIVIDENDONEDGE" />
+                              CommandParameter="FUZZYFACTORCARD" />
 
-                <!--<RibbonButton Label="Division Tool With Remainder"
-                              LargeImageSource="pack://application:,,,/Resources/Images/dividendonedge32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/dividendonedge16.png"
+                <RibbonButton Label="Division Tool With Tiles"
+                              LargeImageSource="pack://application:,,,/Resources/Images/FuzzyFactorCard32.png"
+                              SmallImageSource="pack://application:,,,/Resources/Images/FuzzyFactorCard16.png"
                               Command="{Binding InsertArrayCommand}"
-                              CommandParameter="FFCREMAINDER" />-->
+                              CommandParameter="FFCREMAINDER" />
 
-                <!--<RibbonButton Label="FFC: labels top, no answer"
-                              LargeImageSource="pack://application:,,,/Resources/Images/FactorCard32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/FactorCard16.png"
-                              Command="{Binding InsertArrayCommand}"
-                              CommandParameter="FUZZYFACTORCARDTOPNOANSWER" />
-
-                <RibbonButton Label="FFC: labels bottom, no answer"
-                              LargeImageSource="pack://application:,,,/Resources/Images/FactorCard32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/FactorCard16.png"
-                              Command="{Binding InsertArrayCommand}"
-                              CommandParameter="FUZZYFACTORCARDBOTTOMNOANSWER" />
-
-                <RibbonButton Label="FFC computation display"
-                              LargeImageSource="pack://application:,,,/Resources/Images/FactorCard32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/FactorCard16.png"
-                              Command="{Binding InsertArrayCommand}"
-                              CommandParameter="FFCCOMPDISPLAY" />-->
-
-                <RibbonButton Label="Stamp"
+                <!--<RibbonButton Label="Stamp"
                               LargeImageSource="pack://application:,,,/Resources/Images/Stamp32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/Stamp16.png"
                               Command="{Binding InsertBlankStampCommand}" />
 
-                <!--<RibbonButton Label="Collection Stamp"
+                <RibbonButton Label="Collection Stamp"
                               LargeImageSource="pack://application:,,,/Resources/Images/CollectionStamp32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/CollectionStamp16.png"
                               Command="{Binding InsertBlankContainerStampCommand}" />-->
@@ -499,10 +450,30 @@
                                     IsEnabled="{Binding MainWindow.SelectedWorkspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}">
                     <RibbonToggleButton.Style>
                         <Style TargetType="{x:Type RibbonToggleButton}">
-                            <Setter Property="Label" Value="OFF" />
+                            <Setter Property="Label" Value="Go Public" />
                             <Style.Triggers>
                                 <Trigger Property="IsChecked" Value="True">
-                                    <Setter Property="Label" Value="ON" />
+                                    <Setter Property="Label" Value="Go Private" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </RibbonToggleButton.Style>
+                </RibbonToggleButton>
+                
+                <RibbonToggleButton IsChecked="{Binding IsBroadcastHistoryDisabled}">
+                    <RibbonToggleButton.Style>
+                        <Style TargetType="{x:Type RibbonToggleButton}">
+                            <Setter Property="Label"
+                                    Value="Broadcast History Enabled" />
+                            <Setter Property="LargeImageSource"
+                                    Value="pack://application:,,,/Images/LargeIcon.png" />
+                            <Style.Triggers>
+                                <Trigger Property="IsChecked"
+                                         Value="True">
+                                    <Setter Property="Label"
+                                            Value="Broadcast History Disabled" />
+                                    <Setter Property="LargeImageSource"
+                                            Value="pack://application:,,,/Images/LargeIcon.png" />
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
@@ -604,13 +575,15 @@
             </RibbonGroup>
 
             <RibbonGroup Header="Stamps">
-
-                <!--<RibbonButton Label="Stamp"
-                              LargeImageSource="..\Images\AddPathStamp.png"
-                              Command="{Binding InsertBlankStampCommand}" />-->
+                
+                <RibbonButton Label="Stamp"
+                              LargeImageSource="pack://application:,,,/Resources/Images/Stamp32.png"
+                              SmallImageSource="pack://application:,,,/Resources/Images/Stamp16.png"
+                              Command="{Binding InsertBlankStampCommand}" />
 
                 <RibbonButton Label="Collection Stamp"
-                              LargeImageSource="..\Images\AddPathStamp.png"
+                              LargeImageSource="pack://application:,,,/Resources/Images/CollectionStamp32.png"
+                              SmallImageSource="pack://application:,,,/Resources/Images/CollectionStamp16.png"
                               Command="{Binding InsertBlankContainerStampCommand}" />
 
                 <RibbonButton Label="Image Stamp"
@@ -630,13 +603,31 @@
                               LargeImageSource="pack://application:,,,/Resources/Images/Array32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/Array16.png"
                               Command="{Binding InsertArrayCommand}"
-                              CommandParameter="DEFAULT" />
+                              CommandParameter="SNAPADORNERONRIGHT" />
 
                 <RibbonButton Label="Array Card"
                               LargeImageSource="pack://application:,,,/Resources/Images/ArrayCard32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/ArrayCard16.png"
                               Command="{Binding InsertArrayCommand}"
                               CommandParameter="CARD" />
+                
+                <RibbonButton Label="Factor Card"
+                              LargeImageSource="pack://application:,,,/Resources/Images/FactorCard32.png"
+                              SmallImageSource="pack://application:,,,/Resources/Images/FactorCard16.png"
+                              Command="{Binding InsertArrayCommand}"
+                              CommandParameter="FACTORCARD" />
+
+                <RibbonButton Label="Division Tool"
+                              LargeImageSource="pack://application:,,,/Resources/Images/FuzzyFactorCard32.png"
+                              SmallImageSource="pack://application:,,,/Resources/Images/FuzzyFactorCard16.png"
+                              Command="{Binding InsertArrayCommand}"
+                              CommandParameter="FUZZYFACTORCARD" />
+
+                <RibbonButton Label="Division Tool With Tiles"
+                              LargeImageSource="pack://application:,,,/Resources/Images/FuzzyFactorCard32.png"
+                              SmallImageSource="pack://application:,,,/Resources/Images/FuzzyFactorCard16.png"
+                              Command="{Binding InsertArrayCommand}"
+                              CommandParameter="FFCREMAINDER" />
 
             </RibbonGroup>
 
@@ -868,13 +859,12 @@
                               Command="{Binding AnalyzeArrayCommand}" />
 
                 <RibbonButton Label="Analyze Division Tool"
-                              LargeImageSource="pack://application:,,,/Resources/Images/curlyedge32.png"
+                              LargeImageSource="pack://application:,,,/Resources/Images/FuzzyFactorCard32.png"
                               Command="{Binding AnalyzeFuzzyFactorCardCommand}" />
 
                 <RibbonButton Label="Analyze Stamps"
                               LargeImageSource="..\Images\AddPathStamp.png"
                               Command="{Binding AnalyzeStampsCommand}" />
-
             </RibbonGroup>
             
             <RibbonGroup Header="History">

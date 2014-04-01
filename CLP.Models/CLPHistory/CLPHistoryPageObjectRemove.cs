@@ -107,16 +107,15 @@ namespace CLP.Models
 
             //If page object was array and FFC with remainder on page, update
             //TODO: This shouldn't be here, find more appropriate place.
-            if(PageObject.PageObjectType == "CLPArray")
+            if(PageObject != null && PageObject.PageObjectType == "CLPArray")
             {
                 foreach(var pageObject in ParentPage.PageObjects)
                 {
                     if(pageObject is CLPFuzzyFactorCard)
                     {
-                        if((pageObject as CLPFuzzyFactorCard).RemainderRegionUniqueID != null)
+                        if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
                         {
-                            CLPFuzzyFactorCardRemainder remainderRegion = ParentPage.GetPageObjectByUniqueID((pageObject as CLPFuzzyFactorCard).RemainderRegionUniqueID) as CLPFuzzyFactorCardRemainder;
-                            remainderRegion.UpdateTiles();
+                            (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
                             break;
                         }
                     }
@@ -144,16 +143,15 @@ namespace CLP.Models
 
             //If page object was array and FFC with remainder on page, update
             //TODO: This shouldn't be here, find more appropriate place.
-            if(PageObject.PageObjectType == "CLPArray")
+            if(PageObject != null && PageObject.PageObjectType == "CLPArray")
             {
                 foreach(var pageObject in ParentPage.PageObjects)
                 {
                     if(pageObject is CLPFuzzyFactorCard)
                     {
-                        if((pageObject as CLPFuzzyFactorCard).RemainderRegionUniqueID != null)
+                        if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
                         {
-                            CLPFuzzyFactorCardRemainder remainderRegion = ParentPage.GetPageObjectByUniqueID((pageObject as CLPFuzzyFactorCard).RemainderRegionUniqueID) as CLPFuzzyFactorCardRemainder;
-                            remainderRegion.UpdateTiles();
+                            (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
                             break;
                         }
                     }
