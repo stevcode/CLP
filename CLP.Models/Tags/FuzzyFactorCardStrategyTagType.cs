@@ -21,10 +21,10 @@ namespace CLP.Models
             ExclusiveValue = false;
             ValueOptions = new ObservableCollection<TagOptionValue>();
             ValueOptions.Add(new TagOptionValue("1's")); // e.g. 43 / 4 -> 4 x 1 | 4 x 1 | ... | 4 x 1
-            //ValueOptions.Add(new TagOptionValue("10's")); // e.g. 93 / 4 -> 4 x 10 | 4 x 10 | 4 x 3
+            ValueOptions.Add(new TagOptionValue("10's")); // e.g. 93 / 4 -> 4 x 10 | 4 x 10 | 4 x 3
+            ValueOptions.Add(new TagOptionValue("5's")); // e.g. 44 / 4 -> 4 x 5 | 4 x 5 | 4 x 1
+            ValueOptions.Add(new TagOptionValue("repeat")); // e.g. 28 / 4 -> 4 x 3 | 4 x 3 | 4 x 1 
             ValueOptions.Add(new TagOptionValue("one array")); // Only one array snapped in
-            ValueOptions.Add(new TagOptionValue("none")); // No arrays snapped in
-            ValueOptions.Add(new TagOptionValue("not enough")); // Not enough arrays snapped in
             ValueOptions.Add(new TagOptionValue("other")); // None of the above*
         }
 

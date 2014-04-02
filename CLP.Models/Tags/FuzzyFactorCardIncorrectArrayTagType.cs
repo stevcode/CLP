@@ -12,7 +12,7 @@ namespace CLP.Models
 
         private FuzzyFactorCardIncorrectArrayTagType()
         {
-            Name = "Fuzzy Factor Card Incorrect Array";
+            Name = "Fuzzy Factor Card Created Incorrect Array";
             InElevatedMenu = false;
             AccessLevels = new ObservableCollection<Tag.AccessLevels>();
             AccessLevels.Add(Tag.AccessLevels.Teacher);
@@ -52,7 +52,7 @@ namespace CLP.Models
             }
         }
 
-        public static readonly PropertyData NameProperty = RegisterProperty("Name", typeof(string), "Fuzzy Factor Card Incorrect Array");
+        public static readonly PropertyData NameProperty = RegisterProperty("Name", typeof(string), "Fuzzy Factor Card Created Incorrect Array");
 
         public bool InElevatedMenu
         {

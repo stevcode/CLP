@@ -422,6 +422,18 @@ namespace CLP.Models
             }
         }
 
+        public static bool FFCUsedOnesStrategy(List<int> divs)
+        {
+            foreach(int div in divs)
+            {
+                if(div > 1)
+                {
+                    return false;
+                }
+            }
+            return (divs.First() == 1);
+        }
+
         /// <summary>
         /// Method to invoke when the AnalyzeFuzzyFactorCardCommand command is executed.
         /// </summary>
@@ -540,17 +552,16 @@ namespace CLP.Models
             {
                 divs.Add(div.Value);
             }
-            divs.Sort();
+            //divs.Sort();
 
             // Apply a correctness tag
             Tag ffcCorrectnessTag = new Tag(Tag.Origins.Generated, FuzzyFactorCardCorrectnessTagType.Instance);
 
-            // Check FFC for
             if(ffc.VerticalDivisions.Count == 0)
             {
                 ffcCorrectnessTag.AddTagOptionValue(new TagOptionValue("no arrays"));
             }
-            if(divs.Sum() == ffcWidth)
+            else if(divs.Sum() == ffcWidth)
             {
                 ffcCorrectnessTag.AddTagOptionValue(new TagOptionValue("complete"));
             }
@@ -562,30 +573,48 @@ namespace CLP.Models
             Logger.Instance.WriteToLog("Tag added: " + ffcCorrectnessTag.TagType.Name + " -> " + ffcCorrectnessTag.Value[0].Value);
             tags.Add(ffcCorrectnessTag);
 
-            // Apply a strategy tag
-            Tag strategyTag = new Tag(Tag.Origins.Generated, FuzzyFactorCardStrategyTagType.Instance);
+            if(ffc.VerticalDivisions.Count > 0)
+            {
+                // Apply a strategy tag
+                Tag strategyTag = new Tag(Tag.Origins.Generated, FuzzyFactorCardStrategyTagType.Instance);
 
-            // Now check the student's divisions against known strategies
-            if(ffc.VerticalDivisions.Count == 2 && divs.Last() == ffcWidth)
-            {
-                strategyTag.AddTagOptionValue(new TagOptionValue("one array"));
-            }
-            else if(ffc.VerticalDivisions.Count == ffcWidth  + 1)
-            {
-                strategyTag.AddTagOptionValue(new TagOptionValue("1's"));
-            }
-            //else if(ffcWidth >= 10 && divs.SequenceEqual(TensStrategyDivisions(ffcWidth)))
-            //{
-            //    // TODO Liz: verify works for ffcWidth between 10 and 20
-            //    strategyTag.AddTagOptionValue(new TagOptionValue("10's"));
-            //}
-            else
-            {
-                strategyTag.AddTagOptionValue(new TagOptionValue("other"));
-            }
+                Console.Write("Divisions: ");
+                foreach(int div in divs)
+                {
+                    Console.Write(div);
+                    Console.Write(" ");
+                }
+                Console.WriteLine(" ");
 
-            Logger.Instance.WriteToLog("Tag added: " + strategyTag.TagType.Name + " -> " + strategyTag.Value[0].Value);
-            tags.Add(strategyTag);
+                // Now check the student's divisions against known strategies
+                if(ffc.VerticalDivisions.Count == 2)
+                {
+                    strategyTag.AddTagOptionValue(new TagOptionValue("one array"));
+                }
+                if(FFCUsedOnesStrategy(divs))
+                {
+                    strategyTag.AddTagOptionValue(new TagOptionValue("1's"));
+                }
+                else if(divs.First() == 10)
+                {
+                    strategyTag.AddTagOptionValue(new TagOptionValue("10's"));
+                }
+                else if(divs.First() == 5)
+                {
+                    strategyTag.AddTagOptionValue(new TagOptionValue("5's"));
+                }
+                else if(divs.Count > 1 && divs.First() == divs.ElementAt(1))
+                {
+                    strategyTag.AddTagOptionValue(new TagOptionValue("repeat"));
+                }
+                else
+                {
+                    strategyTag.AddTagOptionValue(new TagOptionValue("other"));
+                }
+
+                Logger.Instance.WriteToLog("Tag added: " + strategyTag.TagType.Name + " -> " + strategyTag.Value[0].Value);
+                tags.Add(strategyTag);
+            }
 
             //// Add an array divider correctness tag
             //Tag divisionCorrectnessTag = CheckArrayDivisionCorrectness(array);

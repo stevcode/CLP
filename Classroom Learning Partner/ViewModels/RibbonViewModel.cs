@@ -2693,7 +2693,9 @@ namespace Classroom_Learning_Partner.ViewModels
                         break;
                     case "SNAPADORNERONRIGHT":
                         array = new CLPArray(rows, columns, currentPage);
-                        array.IsDivisionBehaviorOn = true;
+                        array.IsDivisionBehaviorOn = false;
+                        //TODO Liz - uncomment and delete above after trial
+                        //array.IsDivisionBehaviorOn = !(onlyArray is CLPFuzzyFactorCard);
                         array.IsSnapAdornerOnLeft = false;
                         break;
                     default:
@@ -2973,7 +2975,9 @@ namespace Classroom_Learning_Partner.ViewModels
                         break;
                     case "SNAPADORNERONRIGHT":
                         array = new CLPArray(rows, columns, currentPage);
-                        array.IsDivisionBehaviorOn = true;
+                        array.IsDivisionBehaviorOn = false;
+                        //TODO Liz - uncomment and delete above after trial
+                        //array.IsDivisionBehaviorOn = !(onlyArray is CLPFuzzyFactorCard);
                         array.IsSnapAdornerOnLeft = false;
                         break;
                     default:
