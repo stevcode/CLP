@@ -269,19 +269,12 @@
             <RibbonGroup Header="Insert"
                          Visibility="{Binding InstructorVisibility, Converter={StaticResource BooleanToOppositeBooleanConverter}}">
                 
-                <!--Array + Divider - Left-Handed-->
-                <!--<RibbonButton Label="Array"
-                              LargeImageSource="pack://application:,,,/Resources/Images/Array32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/Array16.png"
-                              Command="{Binding InsertArrayCommand}"
-                              CommandParameter="DEFAULT" />-->
-
-                <!--Array + Divider - Right-handed -->
+                <!--Array + Divider-->
                 <RibbonButton Label="Array"
                               LargeImageSource="pack://application:,,,/Resources/Images/Array32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/Array16.png"
                               Command="{Binding InsertArrayCommand}"
-                              CommandParameter="SNAPADORNERONRIGHT" />
+                              CommandParameter="DEFAULT" />
 
                 <!--TODO Liz: Uncomment array card, factor card and stamp buttons when done demoing-->
                 <!--<RibbonButton Label="Array Card"

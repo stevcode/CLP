@@ -543,16 +543,12 @@ namespace CLP.Models
 
             tags.Add(correctnessTag);
 
-            
-
-            // First check the horizontal divisions
-            // Create a sorted list of the divisions' labels (as entered by the student)
+            // Create a list of the divisions' values
             List<int> divs = new List<int>();
             foreach(CLPArrayDivision div in ffc.VerticalDivisions)
             {
                 divs.Add(div.Value);
             }
-            //divs.Sort();
 
             // Apply a correctness tag
             Tag ffcCorrectnessTag = new Tag(Tag.Origins.Generated, FuzzyFactorCardCorrectnessTagType.Instance);
@@ -577,14 +573,6 @@ namespace CLP.Models
             {
                 // Apply a strategy tag
                 Tag strategyTag = new Tag(Tag.Origins.Generated, FuzzyFactorCardStrategyTagType.Instance);
-
-                Console.Write("Divisions: ");
-                foreach(int div in divs)
-                {
-                    Console.Write(div);
-                    Console.Write(" ");
-                }
-                Console.WriteLine(" ");
 
                 // Now check the student's divisions against known strategies
                 if(ffc.VerticalDivisions.Count == 2)
@@ -615,26 +603,6 @@ namespace CLP.Models
                 Logger.Instance.WriteToLog("Tag added: " + strategyTag.TagType.Name + " -> " + strategyTag.Value[0].Value);
                 tags.Add(strategyTag);
             }
-
-            //// Add an array divider correctness tag
-            //Tag divisionCorrectnessTag = CheckArrayDivisionCorrectness(array);
-            //tags.Add(divisionCorrectnessTag);
-
-            //Logger.Instance.WriteToLog("Tag added: " + divisionCorrectnessTag.TagType.Name + " -> " + divisionCorrectnessTag.Value[0].Value);
-
-            //// Add tags for the number of horizontal and vertical divisions
-            //Tag horizDivsTag = new Tag(Tag.Origins.Generated, ArrayHorizontalDivisionsTagType.Instance);
-            //int horizRegions = array.HorizontalDivisions.Count == 0 ? 1 : array.HorizontalDivisions.Count;
-            //horizDivsTag.Value.Add(new TagOptionValue(horizRegions.ToString() + " region" + (horizRegions == 1 ? "" : "s")));
-            //tags.Add(horizDivsTag);
-
-            //Tag vertDivsTag = new Tag(Tag.Origins.Generated, ArrayVerticalDivisionsTagType.Instance);
-            //int vertRegions = array.VerticalDivisions.Count == 0 ? 1 : array.VerticalDivisions.Count;
-            //vertDivsTag.Value.Add(new TagOptionValue(vertRegions.ToString() + " region" + (horizRegions == 1 ? "" : "s")));
-            //tags.Add(vertDivsTag);
-
-            //Logger.Instance.WriteToLog("Tag added: " + horizDivsTag.TagType.Name + " -> " + horizDivsTag.Value[0].Value);
-            //Logger.Instance.WriteToLog("Tag added: " + vertDivsTag.TagType.Name + " -> " + vertDivsTag.Value[0].Value);
         }
 
         /// <summary>
