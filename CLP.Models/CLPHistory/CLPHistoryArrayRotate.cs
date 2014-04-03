@@ -83,6 +83,20 @@ namespace CLP.Models
         protected override void UndoAction(bool isAnimationUndo)
         {
             RotateArray();
+
+            //If FFC with remainder on page, update
+            //TODO: This shouldn't be here, find more appropriate place.
+            foreach(var pageObject in ParentPage.PageObjects)
+            {
+                if(pageObject is CLPFuzzyFactorCard)
+                {
+                    if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
+                    {
+                        (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
+                        break;
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -91,6 +105,20 @@ namespace CLP.Models
         protected override void RedoAction(bool isAnimationRedo)
         {
             RotateArray();
+
+            //If FFC with remainder on page, update
+            //TODO: This shouldn't be here, find more appropriate place.
+            foreach(var pageObject in ParentPage.PageObjects)
+            {
+                if(pageObject is CLPFuzzyFactorCard)
+                {
+                    if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
+                    {
+                        (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
+                        break;
+                    }
+                }
+            }
         }
 
         private void RotateArray()

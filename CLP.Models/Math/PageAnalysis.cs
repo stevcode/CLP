@@ -553,7 +553,7 @@ namespace CLP.Models
             // Apply a correctness tag
             Tag ffcCorrectnessTag = new Tag(Tag.Origins.Generated, FuzzyFactorCardCorrectnessTagType.Instance);
 
-            if(ffc.VerticalDivisions.Count == 0)
+            if(ffc.VerticalDivisions.Count < 2)
             {
                 ffcCorrectnessTag.AddTagOptionValue(new TagOptionValue("no arrays"));
             }
@@ -579,7 +579,7 @@ namespace CLP.Models
                 {
                     strategyTag.AddTagOptionValue(new TagOptionValue("one array"));
                 }
-                if(FFCUsedOnesStrategy(divs))
+                else if(FFCUsedOnesStrategy(divs))
                 {
                     strategyTag.AddTagOptionValue(new TagOptionValue("1's"));
                 }
