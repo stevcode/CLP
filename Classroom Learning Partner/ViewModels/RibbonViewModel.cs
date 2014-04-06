@@ -19,7 +19,7 @@ using Catel.MVVM;
 using Catel.MVVM.Services;
 using Classroom_Learning_Partner.Views;
 using Classroom_Learning_Partner.Views.Modal_Windows;
-using CLP.Models;
+using CLP.Entities;
 using System.Windows.Threading;
 using System.ServiceModel;
 
@@ -2239,7 +2239,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnInsertTextBoxCommandExecute()
         {
-            CLPTextBox textBox = new CLPTextBox(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage);
+            var textBox = new CLP.Entities.TextBox(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage);
             ACLPPageBaseViewModel.AddPageObjectToPage(textBox);
         }
 
@@ -2250,8 +2250,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnInsertAggregationDataTableCommandExecute()
         {
-            CLPAggregationDataTable dataTable = new CLPAggregationDataTable(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage);
-            ACLPPageBaseViewModel.AddPageObjectToPage(dataTable);
+            // TODO: Entities
+            //CLPAggregationDataTable dataTable = new CLPAggregationDataTable(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage);
+            //ACLPPageBaseViewModel.AddPageObjectToPage(dataTable);
         }
 
         /// <summary>
@@ -2261,54 +2262,55 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnInsertStaticImageCommandExecute(string fileName)
         {
-            var uri = new Uri("pack://application:,,,/Classroom Learning Partner;component/Images/Money/" + fileName);
-            var info = Application.GetResourceStream(uri);
-            var memoryStream = new MemoryStream();
-            info.Stream.CopyTo(memoryStream);
+            // TODO: Entities
+            //var uri = new Uri("pack://application:,,,/Classroom Learning Partner;component/Images/Money/" + fileName);
+            //var info = Application.GetResourceStream(uri);
+            //var memoryStream = new MemoryStream();
+            //info.Stream.CopyTo(memoryStream);
 
-            byte[] byteSource = memoryStream.ToArray();
+            //byte[] byteSource = memoryStream.ToArray();
 
-            var ByteSource = new List<byte>(byteSource);
+            //var ByteSource = new List<byte>(byteSource);
 
-            MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
-            byte[] hash = md5.ComputeHash(byteSource);
-            string imageID = Convert.ToBase64String(hash);
+            //MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
+            //byte[] hash = md5.ComputeHash(byteSource);
+            //string imageID = Convert.ToBase64String(hash);
 
-            var page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage;
+            //var page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage;
 
 
-            if(!page.ImagePool.ContainsKey(imageID))
-            {
-                page.ImagePool.Add(imageID, ByteSource);
-            }
+            //if(!page.ImagePool.ContainsKey(imageID))
+            //{
+            //    page.ImagePool.Add(imageID, ByteSource);
+            //}
 
-            var image = new CLPImage(imageID, page, 10, 10);
+            //var image = new CLPImage(imageID, page, 10, 10);
 
-            switch(fileName)
-            {
-                case "penny.png":
-                    image.Height = 90;
-                    image.Width = 90;
-                    break;
-                case "dime.png":
-                    image.Height = 80;
-                    image.Width = 80;
-                    break;
-                case "nickel.png":
-                    image.Height = 100;
-                    image.Width = 100;
-                    break;
-                case "quarter.png":
-                    image.Height = 120;
-                    image.Width = 120;
-                    break;
-                default:
-                    image.Height = 128;
-                    image.Width = 300;
-                    break;
-            }
+            //switch(fileName)
+            //{
+            //    case "penny.png":
+            //        image.Height = 90;
+            //        image.Width = 90;
+            //        break;
+            //    case "dime.png":
+            //        image.Height = 80;
+            //        image.Width = 80;
+            //        break;
+            //    case "nickel.png":
+            //        image.Height = 100;
+            //        image.Width = 100;
+            //        break;
+            //    case "quarter.png":
+            //        image.Height = 120;
+            //        image.Width = 120;
+            //        break;
+            //    default:
+            //        image.Height = 128;
+            //        image.Width = 300;
+            //        break;
+            //}
 
-            ACLPPageBaseViewModel.AddPageObjectToPage(image);
+            //ACLPPageBaseViewModel.AddPageObjectToPage(image);
         }
 
         /// <summary>
@@ -3465,14 +3467,15 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnInterpretPageCommandExecute()
         {
-            var currentPage = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage;
-            foreach (ICLPPageObject pageObject in currentPage.PageObjects)
-            {
-                if (pageObject.GetType().IsSubclassOf(typeof(ACLPInkRegion)))
-                {
-                    CLPServiceAgent.Instance.InterpretRegion(pageObject as ACLPInkRegion);
-                }
-            }
+            // TODO: Entities
+            //var currentPage = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage;
+            //foreach (IPageObject pageObject in currentPage.PageObjects)
+            //{
+            //    if (pageObject.GetType().IsSubclassOf(typeof(ACLPInkRegion)))
+            //    {
+            //        CLPServiceAgent.Instance.InterpretRegion(pageObject as ACLPInkRegion);
+            //    }
+            //}
         }
 
         /// <summary>

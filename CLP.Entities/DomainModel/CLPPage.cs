@@ -92,6 +92,17 @@ namespace CLP.Entities
         public static readonly PropertyData CreationDateProperty = RegisterProperty("CreationDate", typeof(DateTime));
 
         /// <summary>
+        /// Index of the <see cref="CLPPage" /> in the notebook.
+        /// </summary>
+        public int Index
+        {
+            get { return GetValue<int>(IndexProperty); }
+            set { SetValue(IndexProperty, value); }
+        }
+
+        public static readonly PropertyData IndexProperty = RegisterProperty("Index", typeof(int), 0);
+
+        /// <summary>
         /// Height of the <see cref="CLPPage" />.
         /// </summary>
         public double Height

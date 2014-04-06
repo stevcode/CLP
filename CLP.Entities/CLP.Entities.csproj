@@ -94,6 +94,10 @@
     <Compile Include="DomainModel\ClassSubject.cs" />
     <Compile Include="DomainModel\CLPPage.cs" />
     <Compile Include="DomainModel\AEntityBase.cs" />
+    <Compile Include="DomainModel\Displays\ADisplayBase.cs" />
+    <Compile Include="DomainModel\Displays\GridDisplay.cs" />
+    <Compile Include="DomainModel\Displays\IDisplay.cs" />
+    <Compile Include="DomainModel\Displays\SingleDisplay.cs" />
     <Compile Include="DomainModel\Notebook.cs" />
     <Compile Include="DomainModel\PageObjects\APageObjectBase.cs" />
     <Compile Include="DomainModel\PageObjects\PageObject Interfaces\ICountable.cs" />
@@ -114,7 +118,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="DomainModel\Displays\" />
     <Folder Include="DomainModel\History\" />
     <Folder Include="Repositories\" />
   </ItemGroup>

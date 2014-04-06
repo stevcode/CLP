@@ -764,9 +764,9 @@
     <Resource Include="Images\Trash.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CLP.Models\CLP.Models.csproj">
-      <Project>{60ee5162-e7ae-4af6-b497-a7861ec25c25}</Project>
-      <Name>CLP.Models</Name>
+    <ProjectReference Include="..\CLP.Entities\CLP.Entities.csproj">
+      <Project>{c6b95a31-7045-4c7e-a72d-c03468e20b20}</Project>
+      <Name>CLP.Entities</Name>
     </ProjectReference>
     <ProjectReference Include="..\ServiceModelEx\ServiceModelEx.csproj">
       <Project>{0858c710-af53-4049-b98e-cfe3638d1228}</Project>

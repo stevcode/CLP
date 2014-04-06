@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Windows;
 using Catel.Data;
 using Catel.MVVM;
-using CLP.Models;
+using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -21,7 +20,7 @@ namespace Classroom_Learning_Partner.ViewModels
             InitializeCommands();
             IsAuthoring = false;
             
-            OpenNotebooks = new ObservableCollection<CLPNotebook>();
+            OpenNotebooks = new ObservableCollection<Notebook>();
         }
 
         private void InitializeCommands()
@@ -147,16 +146,16 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public ObservableCollection<CLPNotebook> OpenNotebooks
+        public ObservableCollection<Notebook> OpenNotebooks
         {
-            get { return GetValue<ObservableCollection<CLPNotebook>>(OpenNotebooksProperty); }
+            get { return GetValue<ObservableCollection<Notebook>>(OpenNotebooksProperty); }
             private set { SetValue(OpenNotebooksProperty, value); }
         }
 
         /// <summary>
         /// Register the OpenNotebooks property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData OpenNotebooksProperty = RegisterProperty("OpenNotebooks", typeof(ObservableCollection<CLPNotebook>));
+        public static readonly PropertyData OpenNotebooksProperty = RegisterProperty("OpenNotebooks", typeof(ObservableCollection<Notebook>));
 
         /// <summary>
         /// Gets or sets the Authoring flag.
