@@ -48,14 +48,13 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Pages of the Notebook.
         /// </summary>
-        [ViewModelToModel("Notebook")]
-        public ObservableCollection<ICLPPage> Pages
+        public ObservableCollection<ICLPPage> CurrentPages
         {
-            get { return GetValue<ObservableCollection<ICLPPage>>(PagesProperty); }
-            set { SetValue(PagesProperty, value); }
+            get { return GetValue<ObservableCollection<ICLPPage>>(CurrentPagesProperty); }
+            set { SetValue(CurrentPagesProperty, value); }
         }
 
-        public static readonly PropertyData PagesProperty = RegisterProperty("Pages", typeof(ObservableCollection<ICLPPage>));
+        public static readonly PropertyData CurrentPagesProperty = RegisterProperty("CurrentPages", typeof(ObservableCollection<ICLPPage>));
 
         #endregion //Model
         
@@ -225,7 +224,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 while((name = reader.ReadLine()) != null)
                 {
                     var user = name.Split(new[] { ',' })[0];
-                    userNames.Add(new StudentProgressInfo(user, Pages));
+                    userNames.Add(new StudentProgressInfo(user, CurrentPages));
                 }
                 reader.Dispose();
             }

@@ -25,12 +25,11 @@ namespace Classroom_Learning_Partner.ViewModels
             Notebook = notebook;
             SelectedDisplay = MirrorDisplay;
 
-
-            //NotebookPagesPanel = new NotebookPagesPanelViewModel(notebook);
             //StudentWorkPanel = new StudentWorkPanelViewModel(notebook);
             //ProgressPanel = new ProgressPanelViewModel(notebook);
 
             LeftPanel = new NotebookPagesPanelViewModel(notebook);
+            NotebookPagesPanel = (NotebookPagesPanelViewModel)LeftPanel;
             LeftPanel.IsVisible = true;
             DisplayListPanel = new DisplayListPanelViewModel(notebook);
             RightPanel = DisplayListPanel;
@@ -243,6 +242,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 if(visible)
                 {
                     LeftPanel = new NotebookPagesPanelViewModel(Notebook);
+                    NotebookPagesPanel = (NotebookPagesPanelViewModel)LeftPanel;
                     LeftPanel.IsVisible = true;
                     (viewModel as RibbonViewModel).StudentWorkPanelVisibility = false;
                     (viewModel as RibbonViewModel).ProgressPanelVisibility = false;

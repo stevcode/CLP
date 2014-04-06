@@ -18,15 +18,17 @@ namespace Classroom_Learning_Partner.ViewModels
         public ProgressPanelViewModel(CLPNotebook notebook)
         {
             Notebook = notebook;
-            LinkedPanel = new SubmissionsPanelViewModel(notebook); //TODO staging panel
+
+            CurrentPages = new ObservableCollection<ICLPPage>();
+            CurrentPages.Add(Notebook.Pages[2]);
+            CurrentPages.Add(Notebook.Pages[3]);
+            CurrentPages.Add(Notebook.Pages[4]);
+            CurrentPages.Add(Notebook.Pages[5]);
+
             PanelWidth = InitialWidth;
-
-            NotebookNames = new ObservableCollection<String>();
-            NotebookNames.Add("This would have subchapter names");
-            PageNumberList = GetPageNumbers();
             StudentList = GetStudentNames();
-
             PanelResizeDragCommand = new Command<DragDeltaEventArgs>(OnPanelResizeDragCommandExecute);
+            SetCurrentPageCommand = new Command<ICLPPage>(OnSetCurrentPageCommandExecute);
         }
 
          /// <summary>
@@ -52,14 +54,13 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Pages of the Notebook.
         /// </summary>
-        [ViewModelToModel("Notebook")]
-        public ObservableCollection<ICLPPage> Pages
+        public ObservableCollection<ICLPPage> CurrentPages
         {
-            get { return GetValue<ObservableCollection<ICLPPage>>(PagesProperty); }
-            set { SetValue(PagesProperty, value); }
+            get { return GetValue<ObservableCollection<ICLPPage>>(CurrentPagesProperty); }
+            set { SetValue(CurrentPagesProperty, value); }
         }
 
-        public static readonly PropertyData PagesProperty = RegisterProperty("Pages", typeof(ObservableCollection<ICLPPage>));
+        public static readonly PropertyData CurrentPagesProperty = RegisterProperty("CurrentPages", typeof(ObservableCollection<ICLPPage>));
 
         #endregion //Model
         
@@ -153,30 +154,13 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(ICLPPage));
 
-        public ObservableCollection<StudentProgressInfo> StudentList
+        public ObservableCollection<string> StudentList
         {
-            get { return GetValue<ObservableCollection<StudentProgressInfo>>(StudentListProperty); }
+            get { return GetValue<ObservableCollection<string>>(StudentListProperty); }
             set { SetValue(StudentListProperty, value); }
         }
 
-        public static readonly PropertyData StudentListProperty = RegisterProperty("StudentList", typeof(ObservableCollection<StudentProgressInfo>));
-
-        public ObservableCollection<int> PageNumberList
-        {
-            get { return GetValue<ObservableCollection<int>>(PageNumberListProperty); }
-            set { SetValue(PageNumberListProperty, value); }
-        }
-
-        public static readonly PropertyData PageNumberListProperty = RegisterProperty("PageNumberList", typeof(ObservableCollection<int>));
-
-         public ObservableCollection<String> NotebookNames
-        {
-            get { return GetValue<ObservableCollection<String>>(NotebookNamesProperty); }
-            set { SetValue(NotebookNamesProperty, value); }
-        }
-
-        public static readonly PropertyData NotebookNamesProperty = RegisterProperty("NotebookNames", typeof(ObservableCollection<String>));
-
+        public static readonly PropertyData StudentListProperty = RegisterProperty("StudentList", typeof(ObservableCollection<string>));
 
         #endregion //Bindings
 
@@ -216,6 +200,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnSetCurrentPageCommandExecute(ICLPPage page)
         {
+            Logger.Instance.WriteToLog("hey this is a thing");
             var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel != null)
             {
@@ -232,10 +217,9 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion
         //This is copied over from SubmissionsPanelViewModel, it wants to be 
         //database-agnostic when stuff's finalized
-        public ObservableCollection<StudentProgressInfo> GetStudentNames()
+        public ObservableCollection<string> GetStudentNames()
         {
-            var userNames = new ObservableCollection<StudentProgressInfo>();
-            userNames.Add(new StudentProgressInfo("Original", Pages));
+            var userNames = new ObservableCollection<string>();
             var filePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\StudentNames.txt";
 
             if(File.Exists(filePath))
@@ -245,26 +229,11 @@ namespace Classroom_Learning_Partner.ViewModels
                 while((name = reader.ReadLine()) != null)
                 {
                     var user = name.Split(new[] { ',' })[0];
-                    userNames.Add(new StudentProgressInfo(user, Pages));
+                    userNames.Add(user);
                 }
                 reader.Dispose();
             }
             return userNames;
         }
-
-        public ObservableCollection<int> GetPageNumbers()
-        {
-            var pageNumbers = new ObservableCollection<int>();
-            foreach(CLPPage p in Notebook.Pages)
-            {
-                pageNumbers.Add(p.PageIndex);
-            }
-            return pageNumbers;
-        }
-    }
-
-    public class StudentInfo
-    {
-        public String Name;
     }
 }
