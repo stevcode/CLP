@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Windows.Data;
 using System.Collections;
-using CLP.Models;
+using CLP.Entities;
 using System.Collections.ObjectModel;
 
 namespace Classroom_Learning_Partner.Converters
@@ -13,28 +13,29 @@ namespace Classroom_Learning_Partner.Converters
         {
             var submissionsforpage = ((IDictionary)values[0])[values[3]];
             var studentslist = (IList)values[1];
-            var blankpage = ((CLPNotebook)values[2]).GetNotebookPageByID((string)values[3]);
-            ObservableCollection<ICLPPage> submissionswithblanks = new ObservableCollection<ICLPPage>();
-            foreach(string student in studentslist)
-            {
-                ICLPPage foundPage = null;
-                foreach(ICLPPage submission in (IList)submissionsforpage)
-                {
-                    if(submission.Submitter.FullName == student &&
-                       (foundPage == null || foundPage.SubmissionTime.CompareTo(submission.SubmissionTime) < 0))
-                    {
-                        foundPage = submission;
-                    }
-                }
-                if(foundPage == null)
-                {
-                    submissionswithblanks.Add(blankpage);
-                }
-                else
-                {
-                    submissionswithblanks.Add(foundPage);
-                }
-            }
+            // TODO: Entities
+            //var blankpage = ((Notebook)values[2]).GetNotebookPageByID((string)values[3]);
+            ObservableCollection<CLPPage> submissionswithblanks = new ObservableCollection<CLPPage>();
+            //foreach(string student in studentslist)
+            //{
+            //    ICLPPage foundPage = null;
+            //    foreach(ICLPPage submission in (IList)submissionsforpage)
+            //    {
+            //        if(submission.Submitter.FullName == student &&
+            //           (foundPage == null || foundPage.SubmissionTime.CompareTo(submission.SubmissionTime) < 0))
+            //        {
+            //            foundPage = submission;
+            //        }
+            //    }
+            //    if(foundPage == null)
+            //    {
+            //        submissionswithblanks.Add(blankpage);
+            //    }
+            //    else
+            //    {
+            //        submissionswithblanks.Add(foundPage);
+            //    }
+            //}
             return submissionswithblanks;
         }
 

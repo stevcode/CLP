@@ -9,7 +9,7 @@ using System.Windows.Threading;
 using Catel.Data;
 using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Views.Modal_Windows;
-using CLP.Models;
+using CLP.Entities;
 using Catel.Collections;
 using Catel.MVVM;
 using Catel.MVVM.Views;
@@ -238,7 +238,7 @@ namespace Classroom_Learning_Partner
 
         #region Notebook
 
-        public void SubmitPage(ICLPPage page, string notebookID, bool isGroupSubmission)
+        public void SubmitPage(CLPPage page, string notebookID, bool isGroupSubmission)
         {
             if(App.Network.InstructorProxy == null)
             {
@@ -247,72 +247,73 @@ namespace Classroom_Learning_Partner
             }
 
             page.TrimPage();
-            var pageViewModels = GetViewModelsFromModel(page as ACLPPageBase);
+            var pageViewModels = GetViewModelsFromModel(page);
             var currentPageViewModel = pageViewModels.Select(pageViewModel => pageViewModel as ACLPPageBaseViewModel).FirstOrDefault(pageVM => !pageVM.IsPagePreview);
 
             var pageView = GetViewFromViewModel(currentPageViewModel);
-            page.PageThumbnail = GetJpgImage(pageView as UIElement);
+            // TODO: Entities
+            //page.PageThumbnail = GetJpgImage(pageView as UIElement);
 
-            var t = new Thread(() =>
-                               {
-                                   try
-                                   {
-                                       page.SerializedStrokes = StrokeDTO.SaveInkStrokes(page.InkStrokes);
-                                       // Perform analysis (syntactic and semantic interpretation) of the page here, on the student machine
-                                       PageAnalysis.AnalyzeArray(page);
-                                       PageAnalysis.AnalyzeStamps(page);
-                                       page.SubmissionID = Guid.NewGuid().ToString();
-                                       page.SubmissionTime = DateTime.Now; 
+            //var t = new Thread(() =>
+            //                   {
+            //                       try
+            //                       {
+            //                           page.SerializedStrokes = StrokeDTO.SaveInkStrokes(page.InkStrokes);
+            //                           // Perform analysis (syntactic and semantic interpretation) of the page here, on the student machine
+            //                           PageAnalysis.AnalyzeArray(page);
+            //                           PageAnalysis.AnalyzeStamps(page);
+            //                           page.SubmissionID = Guid.NewGuid().ToString();
+            //                           page.SubmissionTime = DateTime.Now; 
 
-                                       var sPage = ObjectSerializer.ToString(page);
-                                       var zippedPage = Zip(sPage);
+            //                           var sPage = ObjectSerializer.ToString(page);
+            //                           var zippedPage = Zip(sPage);
 
-                                       var sSubmitter = ObjectSerializer.ToString(App.Network.CurrentUser);
-                                       var zippedSubmitter = Zip(sSubmitter);
+            //                           var sSubmitter = ObjectSerializer.ToString(App.Network.CurrentUser);
+            //                           var zippedSubmitter = Zip(sSubmitter);
 
-                                       App.Network.InstructorProxy.AddSerializedSubmission(zippedPage, page.SubmissionID, page.SubmissionTime, notebookID, zippedSubmitter);
+            //                           App.Network.InstructorProxy.AddSerializedSubmission(zippedPage, page.SubmissionID, page.SubmissionTime, notebookID, zippedSubmitter);
 
-                                       ICLPPage submission = null;
-                                       if(page is CLPPage)
-                                       {
-                                           submission = (page as CLPPage).Clone() as CLPPage;
-                                       }
-                                       else if(page is CLPAnimationPage)
-                                       {
-                                           submission = (page as CLPAnimationPage).Clone() as CLPAnimationPage;
-                                       }
+            //                           ICLPPage submission = null;
+            //                           if(page is CLPPage)
+            //                           {
+            //                               submission = (page as CLPPage).Clone() as CLPPage;
+            //                           }
+            //                           else if(page is CLPAnimationPage)
+            //                           {
+            //                               submission = (page as CLPAnimationPage).Clone() as CLPAnimationPage;
+            //                           }
 
-                                       var notebookPagesPanel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
-                                       if(submission == null || notebookPagesPanel == null)
-                                       {
-                                           return;
-                                       }
+            //                           var notebookPagesPanel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
+            //                           if(submission == null || notebookPagesPanel == null)
+            //                           {
+            //                               return;
+            //                           }
 
-                                       ACLPPageBase.Deserialize(submission);
-                                       submission.SubmissionType = isGroupSubmission ? SubmissionType.Group : SubmissionType.Single;
-                                       submission.Submitter = App.Network.CurrentUser;
+            //                           ACLPPageBase.Deserialize(submission);
+            //                           submission.SubmissionType = isGroupSubmission ? SubmissionType.Group : SubmissionType.Single;
+            //                           submission.Submitter = App.Network.CurrentUser;
                                        
-                                       Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                                                                        (DispatcherOperationCallback)delegate
-                                                                        {
-                                                                            notebookPagesPanel.Notebook.AddStudentSubmission(submission.UniqueID, submission);
-                                                                            return null;
-                                                                        }, null);
-                                   }
-                                   catch(Exception ex)
-                                   {
-                                       Logger.Instance.WriteToLog("Error Sending Submission: " + ex.Message);
-                                   }
-                               })
-                    {
-                        IsBackground = true
-                    };
-            t.Start();
+            //                           Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+            //                                                            (DispatcherOperationCallback)delegate
+            //                                                            {
+            //                                                                notebookPagesPanel.Notebook.AddStudentSubmission(submission.UniqueID, submission);
+            //                                                                return null;
+            //                                                            }, null);
+            //                       }
+            //                       catch(Exception ex)
+            //                       {
+            //                           Logger.Instance.WriteToLog("Error Sending Submission: " + ex.Message);
+            //                       }
+            //                   })
+            //        {
+            //            IsBackground = true
+            //        };
+            //t.Start();
         }
 
-        public void AddSubmission(CLPNotebook notebook, ICLPPage page)
+        public void AddSubmission(Notebook notebook, CLPPage page)
         {
-            notebook.AddStudentSubmission(page.UniqueID, page);
+           // notebook.AddStudentSubmission(page.UniqueID, page);
         }
 
         public void GetNotebookNames(NotebookChooserWorkspaceViewModel notebookChooserVM)
@@ -341,85 +342,86 @@ namespace Classroom_Learning_Partner
 
             var stopWatch = new Stopwatch();
             stopWatch.Start();
-            CLPNotebook notebook = null;
+            Notebook notebook = null;
 
-            try
-            {
-                notebook = ModelBase.Load<CLPNotebook>(filePath, SerializationMode.Binary);
-            }
-            catch(Exception ex)
-            {
-                Logger.Instance.WriteToLog("[ERROR] - Notebook could not be loaded: " + ex.Message);
-            }
+            // TODO: Entities
+            //try
+            //{
+            //    notebook = ModelBase.Load<CLPNotebook>(filePath, SerializationMode.Binary);
+            //}
+            //catch(Exception ex)
+            //{
+            //    Logger.Instance.WriteToLog("[ERROR] - Notebook could not be loaded: " + ex.Message);
+            //}
 
-            stopWatch.Stop();
-            Logger.Instance.WriteToLog("Time to OPEN notebook (In Seconds): " + stopWatch.ElapsedMilliseconds / 1000.0);
+            //stopWatch.Stop();
+            //Logger.Instance.WriteToLog("Time to OPEN notebook (In Seconds): " + stopWatch.ElapsedMilliseconds / 1000.0);
 
-            if(notebook == null)
-            {
-                MessageBox.Show("Notebook could not be opened. Check error log.");
-                return;
-            }
+            //if(notebook == null)
+            //{
+            //    MessageBox.Show("Notebook could not be opened. Check error log.");
+            //    return;
+            //}
 
 
-            var stopWatch2 = new Stopwatch();
-            stopWatch2.Start();
+            //var stopWatch2 = new Stopwatch();
+            //stopWatch2.Start();
 
-            notebook.NotebookName = notebookName;
-            App.MainWindowViewModel.CurrentNotebookName = notebookName;
+            //notebook.NotebookName = notebookName;
+            //App.MainWindowViewModel.CurrentNotebookName = notebookName;
 
-            foreach(var page in notebook.Pages)
-            {
-                ACLPPageBase.Deserialize(page);
-                if(!notebook.Submissions.ContainsKey(page.UniqueID))
-                {
-                    continue;
-                }
-                foreach(var submission in notebook.Submissions[page.UniqueID])
-                {
-                    ACLPPageBase.Deserialize(submission);
-                }
-            }
+            //foreach(var page in notebook.Pages)
+            //{
+            //    ACLPPageBase.Deserialize(page);
+            //    if(!notebook.Submissions.ContainsKey(page.UniqueID))
+            //    {
+            //        continue;
+            //    }
+            //    foreach(var submission in notebook.Submissions[page.UniqueID])
+            //    {
+            //        ACLPPageBase.Deserialize(submission);
+            //    }
+            //}
 
-            stopWatch2.Stop();
-            Logger.Instance.WriteToLog("Time to DESERIALIZE PAGES in notebook (In Seconds): " + stopWatch2.ElapsedMilliseconds / 1000.0);
+            //stopWatch2.Stop();
+            //Logger.Instance.WriteToLog("Time to DESERIALIZE PAGES in notebook (In Seconds): " + stopWatch2.ElapsedMilliseconds / 1000.0);
 
-            var stopWatch3 = new Stopwatch();
-            stopWatch3.Start();
+            //var stopWatch3 = new Stopwatch();
+            //stopWatch3.Start();
 
-            notebook.InitializeAfterDeserialize();
+            //notebook.InitializeAfterDeserialize();
 
-            stopWatch3.Stop();
-            Logger.Instance.WriteToLog("Time to INITIALIZE notebook (In Seconds): " + stopWatch3.ElapsedMilliseconds / 1000.0);
+            //stopWatch3.Stop();
+            //Logger.Instance.WriteToLog("Time to INITIALIZE notebook (In Seconds): " + stopWatch3.ElapsedMilliseconds / 1000.0);
 
-            var count = 0;
-            foreach(var otherNotebook in App.MainWindowViewModel.OpenNotebooks.Where(otherNotebook => otherNotebook.UniqueID == notebook.UniqueID && otherNotebook.NotebookName == notebook.NotebookName)) 
-            {
-                App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(otherNotebook);
-                count++;
-                break;
-            }
+            //var count = 0;
+            //foreach(var otherNotebook in App.MainWindowViewModel.OpenNotebooks.Where(otherNotebook => otherNotebook.UniqueID == notebook.UniqueID && otherNotebook.NotebookName == notebook.NotebookName)) 
+            //{
+            //    App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(otherNotebook);
+            //    count++;
+            //    break;
+            //}
 
-            if(count == 0)
-            {
-                App.MainWindowViewModel.OpenNotebooks.Add(notebook);
-                if(App.CurrentUserMode == App.UserMode.Instructor ||
-                   App.CurrentUserMode == App.UserMode.Student ||
-                   App.CurrentUserMode == App.UserMode.Projector)
-                {
-                    App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(notebook);
-                }
-            }
+            //if(count == 0)
+            //{
+            //    App.MainWindowViewModel.OpenNotebooks.Add(notebook);
+            //    if(App.CurrentUserMode == App.UserMode.Instructor ||
+            //       App.CurrentUserMode == App.UserMode.Student ||
+            //       App.CurrentUserMode == App.UserMode.Projector)
+            //    {
+            //        App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(notebook);
+            //    }
+            //}
 
-            if(notebook.LastSavedTime != null)
-            {
-                App.MainWindowViewModel.LastSavedTime = notebook.LastSavedTime.ToString("yyyy/MM/dd - HH:mm:ss");
-            }
+            //if(notebook.LastSavedTime != null)
+            //{
+            //    App.MainWindowViewModel.LastSavedTime = notebook.LastSavedTime.ToString("yyyy/MM/dd - HH:mm:ss");
+            //}
 
-            if(App.CurrentUserMode == App.UserMode.Student)
-            {
-                // _autoSaveTimer.Start();
-            }
+            //if(App.CurrentUserMode == App.UserMode.Student)
+            //{
+            //    // _autoSaveTimer.Start();
+            //}
         }
 
         private bool _isAutoSaving;
@@ -432,37 +434,38 @@ namespace Classroom_Learning_Partner
 
         public void QuickSaveNotebook(string appendedFileName)
         {
-            string filePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\AutoSavedNotebooks";
+            // TODO: Entities?
+            //string filePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\AutoSavedNotebooks";
 
-            if(!Directory.Exists(filePath))
-            {
-                Directory.CreateDirectory(filePath);
-            }
+            //if(!Directory.Exists(filePath))
+            //{
+            //    Directory.CreateDirectory(filePath);
+            //}
 
-            var saveTime = DateTime.Now;
+            //var saveTime = DateTime.Now;
 
-            var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel != null)
-            {
-                var notebook = notebookWorkspaceViewModel.Notebook.Clone() as CLPNotebook;
+            //var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
+            //if(notebookWorkspaceViewModel != null)
+            //{
+            //    var notebook = notebookWorkspaceViewModel.Notebook.Clone() as CLPNotebook;
 
-                string time = saveTime.Year + "." + saveTime.Month + "." + saveTime.Day + "." +
-                              saveTime.Hour + "." + saveTime.Minute + "." + saveTime.Second;
+            //    string time = saveTime.Year + "." + saveTime.Month + "." + saveTime.Day + "." +
+            //                  saveTime.Hour + "." + saveTime.Minute + "." + saveTime.Second;
 
-                if(notebook != null)
-                {
-                    string filePathName = filePath + @"\" + time + "-" + appendedFileName + "-" + notebook.NotebookName + @".clp";
-                    notebook.Save(filePathName);
-                }
-                else
-                {
-                    Logger.Instance.WriteToLog("FAILED TO CLONE NOTEBOOK FOR AUTOSAVE!");
-                }
-            }
-            else
-            {
-                Logger.Instance.WriteToLog("***NOTEBOOK WORKSPACE VIEWMODEL BECAME NULL***");
-            }
+            //    if(notebook != null)
+            //    {
+            //        string filePathName = filePath + @"\" + time + "-" + appendedFileName + "-" + notebook.NotebookName + @".clp";
+            //        notebook.Save(filePathName);
+            //    }
+            //    else
+            //    {
+            //        Logger.Instance.WriteToLog("FAILED TO CLONE NOTEBOOK FOR AUTOSAVE!");
+            //    }
+            //}
+            //else
+            //{
+            //    Logger.Instance.WriteToLog("***NOTEBOOK WORKSPACE VIEWMODEL BECAME NULL***");
+            //}
         }
 
         public void OpenNewNotebook()
@@ -480,7 +483,7 @@ namespace Classroom_Learning_Partner
 
                     if(!File.Exists(filePath))
                     {
-                        var newNotebook = new CLPNotebook {NotebookName = notebookName};
+                        var newNotebook = new Notebook {Name = notebookName};
                         App.MainWindowViewModel.OpenNotebooks.Add(newNotebook);
                         App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(newNotebook);
                         App.MainWindowViewModel.IsAuthoring = true;
@@ -502,9 +505,9 @@ namespace Classroom_Learning_Partner
             }
         }
 
-        public void SaveNotebook(CLPNotebook notebook)
+        public void SaveNotebook(Notebook notebook)
         {
-            string filePath = App.NotebookDirectory + @"\" + notebook.NotebookName + @".clp";
+            string filePath = App.NotebookDirectory + @"\" + notebook.Name + @".clp";
             //if(App.CurrentUserMode ==; App.UserMode.Student)
             //{
             //    notebook.Submissions.Clear();
@@ -517,9 +520,9 @@ namespace Classroom_Learning_Partner
             //}
 
             var saveTime = DateTime.Now;
-            notebook.LastSavedTime = saveTime;
+            notebook.LastSavedDate = saveTime;
             
-            notebook.Save(filePath);
+          //  notebook.Save(filePath);
 
             App.MainWindowViewModel.LastSavedTime = saveTime.ToString("yyyy/MM/dd - HH:mm:ss");
 
@@ -530,18 +533,18 @@ namespace Classroom_Learning_Partner
 
         #region Page
 
-        public void InterpretRegion(ACLPInkRegion inkRegion) {
-            inkRegion.DoInterpretation();
+        //public void InterpretRegion(ACLPInkRegion inkRegion) {
+        //    inkRegion.DoInterpretation();
 
-            Logger.Instance.WriteToLog(inkRegion.ParentPage.Submitter.FullName);
-            var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel != null)
-            {
-                Logger.Instance.WriteToLog(notebookWorkspaceViewModel.Notebook.NotebookName);
-            }
-            Logger.Instance.WriteToLog(inkRegion.ParentPage.PageIndex.ToString());
-            Logger.Instance.WriteToLog(inkRegion.StoredAnswer);
-        }
+        //    Logger.Instance.WriteToLog(inkRegion.ParentPage.Submitter.FullName);
+        //    var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
+        //    if(notebookWorkspaceViewModel != null)
+        //    {
+        //        Logger.Instance.WriteToLog(notebookWorkspaceViewModel.Notebook.NotebookName);
+        //    }
+        //    Logger.Instance.WriteToLog(inkRegion.ParentPage.PageIndex.ToString());
+        //    Logger.Instance.WriteToLog(inkRegion.StoredAnswer);
+        //}
 
         #endregion //Page
 
@@ -562,11 +565,15 @@ namespace Classroom_Learning_Partner
             _networkThread = null;
 
             var tempPerson = App.Network.CurrentUser;
-            var tempGroup = App.Network.CurrentGroup;
+            //var tempGroup = App.Network.CurrentGroup;
 
             App.Network.Dispose();
             App.Network = null;
-            App.Network = new CLPNetwork {CurrentUser = tempPerson, CurrentGroup = tempGroup};
+            App.Network = new CLPNetwork
+                          {
+                              CurrentUser = tempPerson 
+                              //CurrentGroup = tempGroup
+                          };
             _networkThread = new Thread(App.Network.Run) { IsBackground = true };
             _networkThread.Start();
         }

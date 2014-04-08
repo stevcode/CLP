@@ -228,9 +228,9 @@ namespace Classroom_Learning_Partner.ViewModels
             //  CLPNotebook notebook = (App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).Notebook;
             //  notebook.Submissions.Remove(Page.UniqueID);
             //notebook.AddStudentSubmission(Page.UniqueID, Page);
-            var submissionsPanel = NotebookPagesPanelViewModel.GetSubmissionsPanelViewModel();
-            submissionsPanel.SubmissionPages.Remove(Page);
-            submissionsPanel.SubmissionPages.Add(Page);
+            //var submissionsPanel = NotebookPagesPanelViewModel.GetSubmissionsPanelViewModel();
+            //submissionsPanel.SubmissionPages.Remove(Page);
+            //submissionsPanel.SubmissionPages.Add(Page);
         }
 
         /// <summary>
@@ -260,9 +260,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 //    }
                 //}
             }
-            var submissionsPanel = NotebookPagesPanelViewModel.GetSubmissionsPanelViewModel();
-            submissionsPanel.SubmissionPages.Remove(Page);
-            submissionsPanel.SubmissionPages.Add(Page);
+            //var submissionsPanel = NotebookPagesPanelViewModel.GetSubmissionsPanelViewModel();
+            //submissionsPanel.SubmissionPages.Remove(Page);
+            //submissionsPanel.SubmissionPages.Add(Page);
         }
 
         /// <summary>
@@ -293,9 +293,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 //    }
                 //}
             }
-            var submissionsPanel = NotebookPagesPanelViewModel.GetSubmissionsPanelViewModel();
-            submissionsPanel.SubmissionPages.Remove(Page);
-            submissionsPanel.SubmissionPages.Add(Page);
+            //var submissionsPanel = NotebookPagesPanelViewModel.GetSubmissionsPanelViewModel();
+            //submissionsPanel.SubmissionPages.Remove(Page);
+            //submissionsPanel.SubmissionPages.Add(Page);
         }
 
         /// <summary>
@@ -329,9 +329,9 @@ namespace Classroom_Learning_Partner.ViewModels
             //        }
             //    }
             //}
-            var submissionsPanel = NotebookPagesPanelViewModel.GetSubmissionsPanelViewModel();
-            submissionsPanel.SubmissionPages.Remove(Page);
-            submissionsPanel.SubmissionPages.Add(Page);
+            //var submissionsPanel = NotebookPagesPanelViewModel.GetSubmissionsPanelViewModel();
+            //submissionsPanel.SubmissionPages.Remove(Page);
+            //submissionsPanel.SubmissionPages.Add(Page);
         }
 
         /// <summary>

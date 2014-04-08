@@ -7,7 +7,7 @@
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
                    xmlns:resources="clr-namespace:Classroom_Learning_Partner.Resources"
-                   xmlns:model="clr-namespace:CLP.Models;assembly=CLP.Models">
+                   xmlns:model="clr-namespace:CLP.Entities;assembly=CLP.Entities">
     
     <UserControl.Resources>
         <catel:BooleanToHidingVisibilityConverter x:Key="BooleanToHidingVisibilityConverter" />
@@ -146,6 +146,7 @@
                 <RowDefinition />
             </Grid.RowDefinitions>
             
+            <!--TODO: Entities
             <Thumb Grid.Row="0" 
                    MouseEnter="StampHandleHitBox_MouseEnter"
                    MouseLeave="StampHandleHitBox_MouseLeave">
@@ -175,7 +176,7 @@
                         <catel:EventToCommand Command="{Binding ErasePageObjectCommand}" PassEventArgsToCommand="True" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
-            </Thumb>
+            </Thumb>-->
             
             <Border Grid.Row="1" 
                     Height="{Binding StampCopy.Height}" 
@@ -201,12 +202,13 @@
             
             <Grid Grid.Row="2" Visibility="{Binding PartsRegionVisibility}">
 
+                <!--TODO: Entities
                 <Border IsHitTestVisible="False"
                         BorderBrush="Black" BorderThickness="0,0,0,2"
                         Height="{Binding Source={x:Static model:CLPStamp.PartsHeight}}"
                         Width="{Binding Width}"
                         HorizontalAlignment="Center" Margin="0"
-                        Visibility="{Binding IsCollectionStamp, Converter={StaticResource BooleanToHidingVisibilityConverter}, ConverterParameter=False}" />
+                        Visibility="{Binding IsCollectionStamp, Converter={StaticResource BooleanToHidingVisibilityConverter}, ConverterParameter=False}" />-->
 
                 <TextBlock Text="collection"
                            FontFamily="pack://application:,,,/Resources/Fonts/#SketchFlow Print" FontSize="16"
@@ -225,6 +227,7 @@
                     </TextBlock.Text>
                 </TextBlock>
                 
+                <!--TODO: Entities
                 <Rectangle Tag="PartsHitBox" IsHitTestVisible="{Binding IsCollectionStamp, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
                            StrokeThickness="0" Fill="Transparent"
                            Height="{Binding Source={x:Static model:CLPStamp.PartsHeight}}"
@@ -234,7 +237,7 @@
                             <catel:EventToCommand Command="{Binding ShowKeyPadCommand}" />
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
-                </Rectangle>
+                </Rectangle>-->
                 
             </Grid>
             

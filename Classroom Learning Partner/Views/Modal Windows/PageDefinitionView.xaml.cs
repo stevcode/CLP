@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Catel.Windows;
 using Classroom_Learning_Partner.ViewModels;
-using CLP.Models;
+using CLP.Entities;
 
 // TODO (someday): Automatically populate combobox with all possible relation types
 
@@ -22,21 +22,21 @@ namespace Classroom_Learning_Partner.Views.Modal_Windows
         {
             InitializeComponent();
 
-            ProductRelation.ProductRelationTypes type = viewModel.RelationType;
-            switch(type)
-            {
-                case ProductRelation.ProductRelationTypes.GenericProduct:
-                    TypeComboBox.SelectedValue = "Generic Product";
-                    break;
-                case ProductRelation.ProductRelationTypes.EqualGroups:
-                    TypeComboBox.SelectedValue = "Equal Groups";
-                    break;
-                case ProductRelation.ProductRelationTypes.Area:
-                    TypeComboBox.SelectedValue = "Area";
-                    break;
-                default:
-                    break;
-            }
+            //ProductRelation.ProductRelationTypes type = viewModel.RelationType;
+            //switch(type)
+            //{
+            //    case ProductRelation.ProductRelationTypes.GenericProduct:
+            //        TypeComboBox.SelectedValue = "Generic Product";
+            //        break;
+            //    case ProductRelation.ProductRelationTypes.EqualGroups:
+            //        TypeComboBox.SelectedValue = "Equal Groups";
+            //        break;
+            //    case ProductRelation.ProductRelationTypes.Area:
+            //        TypeComboBox.SelectedValue = "Area";
+            //        break;
+            //    default:
+            //        break;
+            //}
         }
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
@@ -48,25 +48,24 @@ namespace Classroom_Learning_Partner.Views.Modal_Windows
             // This condition will fire when the dialog is first loaded
             if(TypeComboBox.SelectedValue == null) { return; }
 
-            String newType = TypeComboBox.SelectedValue.ToString();
+            var newType = TypeComboBox.SelectedValue.ToString();
 
-            if (newType.Equals("Generic Product"))
-            {
-                ((ProductRelationViewModel)this.ViewModel).RelationType = ProductRelation.ProductRelationTypes.GenericProduct;
-            }
-            else if(newType.Equals("Equal Groups"))
-            {
-                ((ProductRelationViewModel)this.ViewModel).RelationType = ProductRelation.ProductRelationTypes.EqualGroups;
-            }
-            else if(newType.Equals("Area"))
-            {
-                ((ProductRelationViewModel)this.ViewModel).RelationType = ProductRelation.ProductRelationTypes.Area;
-            }
-            else
-            {
-                Logger.Instance.WriteToLog("Something went horribly wrong");
-            }
-
+            //if (newType.Equals("Generic Product"))
+            //{
+            //    ((ProductRelationViewModel)this.ViewModel).RelationType = ProductRelation.ProductRelationTypes.GenericProduct;
+            //}
+            //else if(newType.Equals("Equal Groups"))
+            //{
+            //    ((ProductRelationViewModel)this.ViewModel).RelationType = ProductRelation.ProductRelationTypes.EqualGroups;
+            //}
+            //else if(newType.Equals("Area"))
+            //{
+            //    ((ProductRelationViewModel)this.ViewModel).RelationType = ProductRelation.ProductRelationTypes.Area;
+            //}
+            //else
+            //{
+            //    Logger.Instance.WriteToLog("Something went horribly wrong");
+            //}
         }
     }
 }

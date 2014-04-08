@@ -5,7 +5,7 @@ using System.Linq;
 using System.ServiceModel;
 using System.Threading;
 using Classroom_Learning_Partner.ViewModels;
-using CLP.Models;
+using CLP.Entities;
 using ServiceModelEx;
 
 namespace Classroom_Learning_Partner
@@ -13,7 +13,7 @@ namespace Classroom_Learning_Partner
     public sealed class CLPNetwork : IDisposable
     {
         public Person CurrentUser { get; set; }
-        public Group CurrentGroup { get; set; }
+       // public Group CurrentGroup { get; set; }
         public ObservableCollection<Person> ClassList { get; set; }
 
         public ObservableCollection<ServiceHost> RunningServices { get; set; }
@@ -29,7 +29,7 @@ namespace Classroom_Learning_Partner
         public CLPNetwork()
         {
             CurrentUser = new Person();
-            CurrentGroup = new Group();
+        //    CurrentGroup = new Group();
             ClassList = new ObservableCollection<Person>();
             DiscoveredProjectors = new DiscoveredServices<IProjectorContract>();
             DiscoveredInstructors = new DiscoveredServices<IInstructorContract>();
@@ -66,7 +66,7 @@ namespace Classroom_Learning_Partner
                     {
                         if(endpoint.Name == "NetTcpBinding_IStudentContract")
                         {
-                            CurrentUser.CurrentMachineAddress = endpoint.Address.ToString();
+                     //       CurrentUser.CurrentMachineAddress = endpoint.Address.ToString();
                             break;
                         }
                     }

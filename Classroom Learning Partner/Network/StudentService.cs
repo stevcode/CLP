@@ -7,7 +7,7 @@ using System.Windows;
 using System.Windows.Ink;
 using System.Windows.Threading;
 using Catel.Windows;
-using CLP.Models;
+using CLP.Entities;
 using Classroom_Learning_Partner.ViewModels;
 using System.Security.Cryptography;
 
@@ -47,30 +47,30 @@ namespace Classroom_Learning_Partner
 
         public void AddWebcamImage(List<byte> image)
         {
-            var page = (App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).Notebook.GetPageAt(24, -1);
+            //var page = (App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).Notebook.GetPageAt(24, -1);
 
-            MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
-            byte[] hash = md5.ComputeHash(image.ToArray());
-            string imageID = Convert.ToBase64String(hash);
+            //MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
+            //byte[] hash = md5.ComputeHash(image.ToArray());
+            //string imageID = Convert.ToBase64String(hash);
 
-            if(!page.ImagePool.ContainsKey(imageID))
-            {
-                page.ImagePool.Add(imageID, image);
-            }
-            CLPImage imagePO = new CLPImage(imageID, page, 10, 10);
-            imagePO.IsBackground = true;
-            imagePO.Height = 450;
-            imagePO.Width = 600;
-            imagePO.YPosition = 225;
-            imagePO.XPosition = 108;
+            //if(!page.ImagePool.ContainsKey(imageID))
+            //{
+            //    page.ImagePool.Add(imageID, image);
+            //}
+            //CLPImage imagePO = new CLPImage(imageID, page, 10, 10);
+            //imagePO.IsBackground = true;
+            //imagePO.Height = 450;
+            //imagePO.Width = 600;
+            //imagePO.YPosition = 225;
+            //imagePO.XPosition = 108;
 
-            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                    (DispatcherOperationCallback)delegate(object arg)
-                    {
-                        page.PageObjects.Add(imagePO);
+            //Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+            //        (DispatcherOperationCallback)delegate(object arg)
+            //        {
+            //            page.PageObjects.Add(imagePO);
 
-                        return null;
-                    }, null);
+            //            return null;
+            //        }, null);
         }
 
         #endregion
@@ -79,36 +79,36 @@ namespace Classroom_Learning_Partner
 
         public void ModifyPageInkStrokes(List<StrokeDTO> strokesAdded, List<StrokeDTO> strokesRemoved, string pageID)
         {
-            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                (DispatcherOperationCallback)delegate
-                                             {
-                    foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
-                    {
-                        var page = notebook.GetNotebookPageByID(pageID);
+            //Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+            //    (DispatcherOperationCallback)delegate
+            //                                 {
+            //        foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
+            //        {
+            //            var page = notebook.GetNotebookPageByID(pageID);
 
-                        if(page == null)
-                        {
-                            continue;
-                        }
+            //            if(page == null)
+            //            {
+            //                continue;
+            //            }
 
-                        var strokesToRemove = StrokeDTO.LoadInkStrokes(new ObservableCollection<StrokeDTO>(strokesRemoved));
+            //            var strokesToRemove = StrokeDTO.LoadInkStrokes(new ObservableCollection<StrokeDTO>(strokesRemoved));
 
-                        var strokes =
-                            from externalStroke in strokesToRemove
-                            from stroke in page.InkStrokes
-                            where stroke.GetStrokeUniqueID() == externalStroke.GetStrokeUniqueID()
-                            select stroke;
+            //            var strokes =
+            //                from externalStroke in strokesToRemove
+            //                from stroke in page.InkStrokes
+            //                where stroke.GetStrokeUniqueID() == externalStroke.GetStrokeUniqueID()
+            //                select stroke;
 
-                        var actualStrokesToRemove = new StrokeCollection(strokes.ToList());
+            //            var actualStrokesToRemove = new StrokeCollection(strokes.ToList());
 
-                        page.InkStrokes.Remove(actualStrokesToRemove);
+            //            page.InkStrokes.Remove(actualStrokesToRemove);
 
-                        var strokesToAdd = StrokeDTO.LoadInkStrokes(new ObservableCollection<StrokeDTO>(strokesAdded));
-                        page.InkStrokes.Add(strokesToAdd);
-                        break;
-                    }
-                    return null;
-                }, null);
+            //            var strokesToAdd = StrokeDTO.LoadInkStrokes(new ObservableCollection<StrokeDTO>(strokesAdded));
+            //            page.InkStrokes.Add(strokesToAdd);
+            //            break;
+            //        }
+            //        return null;
+            //    }, null);
         }
 
         public void AddHistoryItem(string pageID, string zippedHistoryItem)
@@ -119,7 +119,7 @@ namespace Classroom_Learning_Partner
         public void AddNewPage(string zippedPage, int index)
         {
             var unZippedPage = CLPServiceAgent.Instance.UnZip(zippedPage);
-            var page = ObjectSerializer.ToObject(unZippedPage) as ICLPPage;
+            var page = ObjectSerializer.ToObject(unZippedPage) as CLPPage;
 
             var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel == null ||
@@ -137,7 +137,7 @@ namespace Classroom_Learning_Partner
                                                                                         }
                                                                                         else
                                                                                         {
-                                                                                            notebookWorkspaceViewModel.Notebook.AddPage(page);
+                                                                                            notebookWorkspaceViewModel.Notebook.AddCLPPageToNotebook(page);
                                                                                         }
 
                                                                                         return null;
@@ -148,7 +148,7 @@ namespace Classroom_Learning_Partner
         public void ReplacePage(string zippedPage, int index)
         {
             var unZippedPage = CLPServiceAgent.Instance.UnZip(zippedPage);
-            var page = ObjectSerializer.ToObject(unZippedPage) as ICLPPage;
+            var page = ObjectSerializer.ToObject(unZippedPage) as CLPPage;
 
             var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel == null ||

@@ -7,7 +7,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
-using CLP.Models;
+using CLP.Entities;
 using Net.Sgoliver.NRtfTree.Core;
 
 namespace Classroom_Learning_Partner.Resources
@@ -43,19 +43,19 @@ namespace Classroom_Learning_Partner.Resources
         {
             CLPPage page = value as CLPPage;
             string val = "Unknown";
-            if(page.PageTags != null)
-            {
-                foreach(Tag t in page.PageTags)
-                {
-                    if(t.TagType.Name == CorrectnessTagType.Instance.Name)
-                    {
-                        if(t.Value.Count > 0)
-                        {
-                            val = (String)t.Value.ElementAt(0).Value;
-                        }
-                    }
-                }
-            }
+            //if(page.PageTags != null)
+            //{
+            //    foreach(Tag t in page.PageTags)
+            //    {
+            //        if(t.TagType.Name == CorrectnessTagType.Instance.Name)
+            //        {
+            //            if(t.Value.Count > 0)
+            //            {
+            //                val = (String)t.Value.ElementAt(0).Value;
+            //            }
+            //        }
+            //    }
+            //}
             return val;
         }
 
@@ -68,19 +68,19 @@ namespace Classroom_Learning_Partner.Resources
         {
             CLPPage page = value as CLPPage;
             string val = "Unstarred";
-            if(page.PageTags != null)
-            {
-                foreach(Tag t in page.PageTags)
-                {
-                    if(t.TagType.Name == StarredTagType.Instance.Name)
-                    {
-                        if(t.Value.Count > 0)
-                        {
-                            val = (String)t.Value.ElementAt(0).Value;
-                        }
-                    }
-                }
-            }
+            //if(page.PageTags != null)
+            //{
+            //    foreach(Tag t in page.PageTags)
+            //    {
+            //        if(t.TagType.Name == StarredTagType.Instance.Name)
+            //        {
+            //            if(t.Value.Count > 0)
+            //            {
+            //                val = (String)t.Value.ElementAt(0).Value;
+            //            }
+            //        }
+            //    }
+            //}
             return val;
         }
 
@@ -97,23 +97,23 @@ namespace Classroom_Learning_Partner.Resources
         {
             CLPPage page = value as CLPPage;
             string val = "No tag";
-            if(page.PageTags != null)
-            {
-                foreach(Tag t in page.PageTags)
-                {
-                    if(t.TagType == null)
-                    {
-                        continue;
-                    } // Skip tags that somehow didn't get a TagType, to avoid an exception in the next line
-                    if(t.TagType.Name == TagName)
-                    {
-                        if(t.Value.Count > 0)
-                        {
-                            val = t.Value.ElementAt(0).Value.ToString();
-                        }
-                    }
-                }
-            }
+            //if(page.PageTags != null)
+            //{
+            //    foreach(Tag t in page.PageTags)
+            //    {
+            //        if(t.TagType == null)
+            //        {
+            //            continue;
+            //        } // Skip tags that somehow didn't get a TagType, to avoid an exception in the next line
+            //        if(t.TagType.Name == TagName)
+            //        {
+            //            if(t.Value.Count > 0)
+            //            {
+            //                val = t.Value.ElementAt(0).Value.ToString();
+            //            }
+            //        }
+            //    }
+            //}
             return val;
         }
 

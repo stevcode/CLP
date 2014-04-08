@@ -121,11 +121,11 @@
             <Control.Resources>
 
                 <ControlTemplate x:Key="SingleDisplayTemplate">
-                    <views:SingleDisplayView DataContext="{Binding SelectedDisplay}" />
+                    <views:SingleDisplayView DataContext="{Binding CurrentDisplay}" />
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="GridDisplayTemplate">
-                    <views:GridDisplayView DataContext="{Binding SelectedDisplay}" />
+                    <views:GridDisplayView DataContext="{Binding CurrentDisplay}" />
                 </ControlTemplate>
 
             </Control.Resources>
@@ -135,12 +135,12 @@
                     <Style.Triggers>
 
                         <!-- SingleDisplay trigger -->
-                        <DataTrigger Binding="{Binding SelectedDisplay, Converter={StaticResource TypeToStringConverter}}" Value="CLPMirrorDisplay">
+                        <DataTrigger Binding="{Binding CurrentDisplay, Converter={StaticResource TypeToStringConverter}}" Value="SingleDisplay">
                             <Setter Property="Template" Value="{StaticResource SingleDisplayTemplate}" />
                         </DataTrigger>
 
                         <!-- GridDisplay trigger -->
-                        <DataTrigger Binding="{Binding SelectedDisplay, Converter={StaticResource TypeToStringConverter}}" Value="CLPGridDisplay">
+                        <DataTrigger Binding="{Binding CurrentDisplay, Converter={StaticResource TypeToStringConverter}}" Value="GridDisplay">
                             <Setter Property="Template" Value="{StaticResource GridDisplayTemplate}" />
                         </DataTrigger>
 

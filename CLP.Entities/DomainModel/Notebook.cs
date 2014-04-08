@@ -153,7 +153,7 @@ namespace CLP.Entities
         public void AddCLPPageToNotebook(CLPPage page)
         {
             page.NotebookID = ID;
-            CLPPages.Add(page);
+            Pages.Add(page);
             //GenerateSubmissionViews(page.ID);
             //GeneratePageIndexes();
         }
@@ -163,6 +163,28 @@ namespace CLP.Entities
             display.NotebookID = ID;
             Displays.Add(display);
             //GenerageDisplayIndexes();
+        }
+
+        public void InsertPageAt(int index, CLPPage page)
+        {
+            page.NotebookID = ID;
+            Pages.Insert(index, page);
+            //GenerateSubmissionViews(page.UniqueID);
+            //GeneratePageIndexes();
+        }
+
+        public void RemovePageAt(int index)
+        {
+            if(Pages.Count > index && index >= 0)
+            {
+                //Submissions.Remove(Pages[index].UniqueID);
+                Pages.RemoveAt(index);
+            }
+            if(Pages.Count == 0)
+            {
+                AddCLPPageToNotebook(new CLPPage());
+            }
+            //GeneratePageIndexes();
         }
 
         #endregion //Methods

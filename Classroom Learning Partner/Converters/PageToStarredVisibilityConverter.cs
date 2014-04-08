@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Data;
-using CLP.Models;
+using CLP.Entities;
 
 namespace Classroom_Learning_Partner.Converters
 {
@@ -9,18 +9,19 @@ namespace Classroom_Learning_Partner.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var page = (ICLPPage)value;
-            foreach(Tag t in page.PageTags) 
-            {
-                if(t.TagType.Name == "Starred")
-                {
-                    if(((string)t.Value[0].Value) == "Starred")
-                    {
-                        return "Visible";
-                    }
-                    return "Hidden";
-                }
-            }
+            // TODO: Entities
+            //var page = (ICLPPage)value;
+            //foreach(Tag t in page.PageTags) 
+            //{
+            //    if(t.TagType.Name == "Starred")
+            //    {
+            //        if(((string)t.Value[0].Value) == "Starred")
+            //        {
+            //            return "Visible";
+            //        }
+            //        return "Hidden";
+            //    }
+            //}
             return "Hidden";
         }
 

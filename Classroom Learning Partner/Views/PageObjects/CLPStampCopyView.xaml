@@ -6,7 +6,7 @@
                    xmlns:oldconv="clr-namespace:Classroom_Learning_Partner.Resources"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-                   xmlns:model="clr-namespace:CLP.Models;assembly=CLP.Models">
+                   xmlns:model="clr-namespace:CLP.Entities;assembly=CLP.Entities">
 
     <UserControl.Resources>
         <ResourceDictionary>
@@ -119,6 +119,7 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
 
+            <!--TODO: Entities
             <TextBlock TextAlignment="Center" Margin="0 -18"
                        Height="{Binding Source={x:Static model:CLPStampCopy.PartsHeight}}"
                        HorizontalAlignment="Center" VerticalAlignment="Bottom"
@@ -126,7 +127,7 @@
                        Visibility="{Binding IsCollectionCopy, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
                 <Run Text="collection " />
                 <Run Text="{Binding Parts}" />
-            </TextBlock>
+            </TextBlock>-->
 
             <Rectangle Tag="PageObjectHitBox" Fill="Transparent" Stretch="Fill"
                        Width="{Binding Width}" Height="{Binding Height}">

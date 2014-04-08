@@ -11,24 +11,24 @@ namespace Classroom_Learning_Partner.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if(!(parameter is double) ||
-               !(value is PanelLocation))
+               !(value is PanelLocations))
             {
                 return new Thickness(0, 0, 0, 0);
             }
 
             var thickness = (double)parameter;
-            var location = (PanelLocation)value;
+            var location = (PanelLocations)value;
             switch(location)
             {
-                case PanelLocation.Left:
+                case PanelLocations.Left:
                     return new Thickness(thickness, 0, 0, 0);
-                case PanelLocation.Right:
+                case PanelLocations.Right:
                     return new Thickness(0, 0, thickness, 0);
-                case PanelLocation.Top:
+                case PanelLocations.Top:
                     return new Thickness(0, thickness, 0, 0);
-                case PanelLocation.Bottom:
+                case PanelLocations.Bottom:
                     return new Thickness(0, 0, 0, thickness);
-                case PanelLocation.Floating:
+                case PanelLocations.Floating:
                     return new Thickness(0, 0, 0, 0);
                 default:
                     return new Thickness(0, 0, 0, 0);

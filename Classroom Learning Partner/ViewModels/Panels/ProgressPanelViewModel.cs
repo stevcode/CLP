@@ -20,10 +20,10 @@ namespace Classroom_Learning_Partner.ViewModels
             InitialLength = 400;
             Length = InitialLength;
 
-            CurrentPages.Add(Notebook.Pages[2]);
-            CurrentPages.Add(Notebook.Pages[3]);
-            CurrentPages.Add(Notebook.Pages[4]);
-            CurrentPages.Add(Notebook.Pages[5]);
+            //CurrentPages.Add(Notebook.Pages[2]);
+            //CurrentPages.Add(Notebook.Pages[3]);
+            //CurrentPages.Add(Notebook.Pages[4]);
+            //CurrentPages.Add(Notebook.Pages[5]);
 
             StudentList = GetStudentNames();
             SetCurrentPageCommand = new Command<CLPPage>(OnSetCurrentPageCommandExecute);

@@ -45,7 +45,7 @@
                 BorderBrush="{StaticResource GrayEdgeColor}"
                 BorderThickness="{Binding Location, Converter={StaticResource PanelLocationToThicknessConverter}, ConverterParameter=7.0}"
                 Grid.Column="0"
-                Width="{Binding PanelLength}">
+                Width="{Binding Length}">
 
             <Grid>
                 <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled"

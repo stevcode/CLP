@@ -73,7 +73,7 @@ namespace ConsoleScripts
                 foreach(var notebook1 in query)
                 {
                     Console.WriteLine(notebook1.Name);
-                    Console.WriteLine("number of pages: {0}", notebook1.CLPPages.Count);
+                    Console.WriteLine("number of pages: {0}", notebook1.Pages.Count);
                 }
 
                 Console.ReadLine();

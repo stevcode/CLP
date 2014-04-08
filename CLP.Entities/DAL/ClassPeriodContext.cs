@@ -8,7 +8,7 @@ namespace CLP.Entities
 
         public DbSet<ClassPeriod> ClassPeriods { get; set; }
         public DbSet<Notebook> Notebooks { get; set; }
-        public DbSet<CLPPage> CLPPages { get; set; }
+        public DbSet<CLPPage> Pages { get; set; }
 
         #region Overrides of DbContext
 
@@ -59,9 +59,9 @@ namespace CLP.Entities
             modelBuilder.Entity<Shape>().Ignore(t => t.IsReadOnly);
             modelBuilder.Entity<Shape>().Ignore(t => t.Mode);
 
-            modelBuilder.Entity<TextBox>().Ignore(t => t.IsDirty);
-            modelBuilder.Entity<TextBox>().Ignore(t => t.IsReadOnly);
-            modelBuilder.Entity<TextBox>().Ignore(t => t.Mode);
+            modelBuilder.Entity<CLPTextBox>().Ignore(t => t.IsDirty);
+            modelBuilder.Entity<CLPTextBox>().Ignore(t => t.IsReadOnly);
+            modelBuilder.Entity<CLPTextBox>().Ignore(t => t.Mode);
 
             //Tags
             modelBuilder.Entity<CorrectnessTag>().Ignore(t => t.IsDirty);

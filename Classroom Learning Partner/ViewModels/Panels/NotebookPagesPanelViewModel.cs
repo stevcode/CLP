@@ -156,12 +156,6 @@ namespace Classroom_Learning_Partner.ViewModels
             return notebookWorkspaceViewModel == null ? null : notebookWorkspaceViewModel.NotebookPagesPanel;
         }
 
-        public static SubmissionsPanelViewModel GetSubmissionsPanelViewModel()
-        {
-            var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
-            return notebookWorkspaceViewModel == null ? null : notebookWorkspaceViewModel.NotebookPagesPanel.LinkedPanel as SubmissionsPanelViewModel;
-        }
-
         public static SubmissionHistoryPanelViewModel GetSubmissionHistoryPanelViewModel()
         {
             var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;

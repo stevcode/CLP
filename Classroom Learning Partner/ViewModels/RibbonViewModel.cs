@@ -102,7 +102,6 @@ namespace Classroom_Learning_Partner.ViewModels
             ExitCommand = new Command(OnExitCommandExecute);
 
             //Notebook
-            HideSubmissionsPanelCommand = new Command(OnHideSubmissionsPanelCommandExecute, OnHideSubmissionsPanelCanExecute);
             PreviousPageCommand = new Command(OnPreviousPageCommandExecute, OnPreviousPageCanExecute);
             NextPageCommand = new Command(OnNextPageCommandExecute, OnNextPageCanExecute);
 
@@ -1263,34 +1262,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
-        /// Hides the Submissions Panel.
-        /// </summary>
-        public Command HideSubmissionsPanelCommand { get; private set; }
-
-        private void OnHideSubmissionsPanelCommandExecute()
-        {
-            var panel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
-            if(panel == null) { return; }
-
-            var submissionsPanel = panel.LinkedPanel as SubmissionsPanelViewModel;
-            if(submissionsPanel == null) { return; }
-
-            submissionsPanel.IsVisible = false;
-        }
-
-        private bool OnHideSubmissionsPanelCanExecute()
-        {
-            var panel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
-            if(panel == null)
-            {
-                return false;
-            }
-
-            var submissionsPanel = panel.LinkedPanel as SubmissionsPanelViewModel;
-            return submissionsPanel != null && submissionsPanel.IsVisible;
-        }
-
-        /// <summary>
         /// Navigates to previous page in the notebook.
         /// </summary>
         public Command PreviousPageCommand { get; private set; }
@@ -1414,7 +1385,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            CLPServiceAgent.Instance.SubmitPage(page, notebookPagesPanel.Notebook.UniqueID, false);
+            CLPServiceAgent.Instance.SubmitPage(page, notebookPagesPanel.Notebook.ID, false);
             
             CanSendToTeacher = false;
         }
@@ -1441,7 +1412,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            CLPServiceAgent.Instance.SubmitPage(page, notebookPagesPanel.Notebook.UniqueID, true);
+            CLPServiceAgent.Instance.SubmitPage(page, notebookPagesPanel.Notebook.ID, true);
             CanGroupSendToTeacher = false;
         }
 
@@ -1538,7 +1509,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return false;
             }
 
-            return notebookWorkspaceViewModel.CurrentDisplay is CLPMirrorDisplay;
+            return notebookWorkspaceViewModel.CurrentDisplay is SingleDisplay;
         }
 
         /// <summary>
@@ -1557,7 +1528,8 @@ namespace Classroom_Learning_Partner.ViewModels
             var notebook = notebookWorkspaceViewModel.Notebook;
             foreach(var page in notebook.Pages)
             {
-                page.PageHistory.UseHistory = false;
+                // TODO: Entities
+              //  page.PageHistory.UseHistory = false;
             }
         }
 
@@ -1568,32 +1540,33 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnReplayCommandExecute()
         {
-            var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
-            if(currentPage == null) { return; }
+            // TODO: Entities
+            //var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
+            //if(currentPage == null) { return; }
 
-            var oldPageInteractionMode = (PageInteractionMode == PageInteractionMode.None) ? PageInteractionMode.Pen : PageInteractionMode;
-            PageInteractionMode = PageInteractionMode.None;
+            //var oldPageInteractionMode = (PageInteractionMode == PageInteractionMode.None) ? PageInteractionMode.Pen : PageInteractionMode;
+            //PageInteractionMode = PageInteractionMode.None;
 
-            while(currentPage.PageHistory.UndoItems.Any()) { currentPage.PageHistory.Undo(); }
+            //while(currentPage.PageHistory.UndoItems.Any()) { currentPage.PageHistory.Undo(); }
 
-            var t = new Thread(() =>
-                               {
-                                   while(currentPage.PageHistory.RedoItems.Any())
-                                   {
-                                       var historyItemAnimationDelay = Convert.ToInt32(Math.Round(currentPage.PageHistory.CurrentAnimationDelay / 2.0));
-                                       Application.Current.Dispatcher.Invoke(DispatcherPriority.DataBind,
-                                                                             (DispatcherOperationCallback)delegate
-                                                                                                          {
-                                                                                                              currentPage.PageHistory.Redo(true);
-                                                                                                              return null;
-                                                                                                          },
-                                                                             null);
-                                       Thread.Sleep(historyItemAnimationDelay);
-                                   }
-                                   PageInteractionMode = oldPageInteractionMode;
-                               });
+            //var t = new Thread(() =>
+            //                   {
+            //                       while(currentPage.PageHistory.RedoItems.Any())
+            //                       {
+            //                           var historyItemAnimationDelay = Convert.ToInt32(Math.Round(currentPage.PageHistory.CurrentAnimationDelay / 2.0));
+            //                           Application.Current.Dispatcher.Invoke(DispatcherPriority.DataBind,
+            //                                                                 (DispatcherOperationCallback)delegate
+            //                                                                                              {
+            //                                                                                                  currentPage.PageHistory.Redo(true);
+            //                                                                                                  return null;
+            //                                                                                              },
+            //                                                                 null);
+            //                           Thread.Sleep(historyItemAnimationDelay);
+            //                       }
+            //                       PageInteractionMode = oldPageInteractionMode;
+            //                   });
 
-            t.Start();
+            //t.Start();
         }
 
         /// <summary>
@@ -1608,12 +1581,13 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 return;
             }
-            var mirrorDisplay = notebookWorkspaceViewModel.CurrentDisplay as CLPMirrorDisplay;
-            if(mirrorDisplay == null)
+            var singleDisplay = notebookWorkspaceViewModel.CurrentDisplay as SingleDisplay;
+            if(singleDisplay == null)
             {
                 return;
             }
-            mirrorDisplay.CurrentPage.PageHistory.Undo();
+            // TODO: Entities
+            //singleDisplay.CurrentPage.PageHistory.Undo();
         }
 
         private bool OnUndoCanExecute()
@@ -1623,20 +1597,22 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 return false;
             }
-            var mirrorDisplay = notebookWorkspaceViewModel.CurrentDisplay as CLPMirrorDisplay;
+            var mirrorDisplay = notebookWorkspaceViewModel.CurrentDisplay as SingleDisplay;
             if(mirrorDisplay == null)
             {
                 return false;
             }
             var page = mirrorDisplay.CurrentPage;
 
-            var recordIndicator = page.PageHistory.RedoItems.FirstOrDefault() as CLPAnimationIndicator;
-            if(recordIndicator != null && recordIndicator.AnimationIndicatorType == AnimationIndicatorType.Record)
-            {
-                return false;
-            }
+            // TODO: Entities
+            //var recordIndicator = page.PageHistory.RedoItems.FirstOrDefault() as CLPAnimationIndicator;
+            //if(recordIndicator != null && recordIndicator.AnimationIndicatorType == AnimationIndicatorType.Record)
+            //{
+            //    return false;
+            //}
 
-            return page.PageHistory.CanUndo;
+            //return page.PageHistory.CanUndo;
+            return false;
         }
 
         /// <summary>
@@ -1651,12 +1627,13 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 return;
             }
-            var mirrorDisplay = notebookWorkspaceViewModel.CurrentDisplay as CLPMirrorDisplay;
-            if(mirrorDisplay == null)
+            var singleDisplay = notebookWorkspaceViewModel.CurrentDisplay as SingleDisplay;
+            if(singleDisplay == null)
             {
                 return;
             }
-            mirrorDisplay.CurrentPage.PageHistory.Redo();
+            // TODO: Entities
+//            singleDisplay.CurrentPage.PageHistory.Redo();
         }
 
         private bool OnRedoCanExecute()
@@ -1666,14 +1643,16 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 return false;
             }
-            var mirrorDisplay = notebookWorkspaceViewModel.CurrentDisplay as CLPMirrorDisplay;
-            if(mirrorDisplay == null)
+            var singleDisplay = notebookWorkspaceViewModel.CurrentDisplay as SingleDisplay;
+            if(singleDisplay == null)
             {
                 return false;
             }
-            var page = mirrorDisplay.CurrentPage;
+            var page = singleDisplay.CurrentPage;
 
-            return page.PageHistory.CanRedo;
+            // TODO: Entities
+//            return page.PageHistory.CanRedo;
+            return false;
         }
 
         /// <summary>
@@ -1686,7 +1665,8 @@ namespace Classroom_Learning_Partner.ViewModels
             var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
             if(currentPage == null) { return; }
 
-            currentPage.PageHistory.ClearHistory();
+            // TODO: Entities
+            //currentPage.PageHistory.ClearHistory();
         }
 
         /// <summary>
@@ -1699,7 +1679,8 @@ namespace Classroom_Learning_Partner.ViewModels
             var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
             if(currentPage == null) { return; }
 
-            currentPage.PageHistory.ClearNonAnimationHistory();
+            // TODO: Entities
+          //  currentPage.PageHistory.ClearNonAnimationHistory();
         }
 
         /// <summary>
@@ -1718,7 +1699,8 @@ namespace Classroom_Learning_Partner.ViewModels
             var notebook = notebookWorkspaceViewModel.Notebook;
             foreach(var page in notebook.Pages)
             {
-                page.PageHistory.ClearHistory();
+                // TODO: Entities
+              //  page.PageHistory.ClearHistory();
             }
         }
 
@@ -1738,7 +1720,8 @@ namespace Classroom_Learning_Partner.ViewModels
             var notebook = notebookWorkspaceViewModel.Notebook;
             foreach(var page in notebook.Pages)
             {
-                page.PageHistory.ClearNonAnimationHistory();
+                // TODO: Entities
+            //    page.PageHistory.ClearNonAnimationHistory();
             }
         }
 
@@ -1756,10 +1739,11 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             var notebook = notebookWorkspaceViewModel.Notebook;
-            foreach(var submission in notebook.Submissions.Keys.SelectMany(pageID => notebook.Submissions[pageID])) 
-            {
-                submission.PageHistory.ClearHistory();
-            }
+            // TODO: Entities
+            //foreach(var submission in notebook.Submissions.Keys.SelectMany(pageID => notebook.Submissions[pageID])) 
+            //{
+            //    submission.PageHistory.ClearHistory();
+            //}
         }
 
         /// <summary>
@@ -1776,10 +1760,11 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             var notebook = notebookWorkspaceViewModel.Notebook;
-            foreach(var submission in notebook.Submissions.Keys.SelectMany(pageID => notebook.Submissions[pageID])) 
-            {
-                submission.PageHistory.ClearNonAnimationHistory();
-            }
+            // TODO: Entities
+            //foreach(var submission in notebook.Submissions.Keys.SelectMany(pageID => notebook.Submissions[pageID])) 
+            //{
+            //    submission.PageHistory.ClearNonAnimationHistory();
+            //}
         }
 
         #endregion //History Commands
@@ -1803,47 +1788,48 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnBroadcastPageCommandExecute()
         {
-            //TODO: Steve - also broadcast to Projector
-            var page = NotebookPagesPanelViewModel.GetCurrentPage();
-            page.SerializedStrokes = StrokeDTO.SaveInkStrokes(page.InkStrokes);
-            var sPage = ObjectSerializer.ToString(page);
-            var zippedPage = CLPServiceAgent.Instance.Zip(sPage);
-            int index = (App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).Notebook.Pages.IndexOf(page);
+            // TODO: Entities
+            ////TODO: Steve - also broadcast to Projector
+            //var page = NotebookPagesPanelViewModel.GetCurrentPage();
+            //page.SerializedStrokes = StrokeDTO.SaveInkStrokes(page.InkStrokes);
+            //var sPage = ObjectSerializer.ToString(page);
+            //var zippedPage = CLPServiceAgent.Instance.Zip(sPage);
+            //int index = (App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).Notebook.Pages.IndexOf(page);
 
-            if(App.Network.ClassList.Any())
-            {
-                foreach(var student in App.Network.ClassList)
-                {
-                    try
-                    {
-                        var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(App.Network.DefaultBinding, new EndpointAddress(student.CurrentMachineAddress));
-                        studentProxy.AddNewPage(zippedPage, index);
-                        (studentProxy as ICommunicationObject).Close();
-                    }
-                    catch(Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                    }
-                }
-                if(App.Network.ProjectorProxy != null)
-                {
-                    try
-                    {
-                        App.Network.ProjectorProxy.AddNewPage(zippedPage, index);
-                    }
-                    catch(Exception)
-                    {
-                    }
-                }
-                else
-                {
-                    Logger.Instance.WriteToLog("No Projector Found");
-                }
-            }
-            else
-            {
-                Logger.Instance.WriteToLog("No Students Found");
-            }
+            //if(App.Network.ClassList.Any())
+            //{
+            //    foreach(var student in App.Network.ClassList)
+            //    {
+            //        try
+            //        {
+            //            var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(App.Network.DefaultBinding, new EndpointAddress(student.CurrentMachineAddress));
+            //            studentProxy.AddNewPage(zippedPage, index);
+            //            (studentProxy as ICommunicationObject).Close();
+            //        }
+            //        catch(Exception ex)
+            //        {
+            //            Console.WriteLine(ex.Message);
+            //        }
+            //    }
+            //    if(App.Network.ProjectorProxy != null)
+            //    {
+            //        try
+            //        {
+            //            App.Network.ProjectorProxy.AddNewPage(zippedPage, index);
+            //        }
+            //        catch(Exception)
+            //        {
+            //        }
+            //    }
+            //    else
+            //    {
+            //        Logger.Instance.WriteToLog("No Projector Found");
+            //    }
+            //}
+            //else
+            //{
+            //    Logger.Instance.WriteToLog("No Students Found");
+            //}
         }
 
         /// <summary>
@@ -1853,47 +1839,48 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnReplacePageCommandExecute()
         {
-            //TODO: Steve - also broadcast to Projector
-            var page = NotebookPagesPanelViewModel.GetCurrentPage();
-            page.SerializedStrokes = StrokeDTO.SaveInkStrokes(page.InkStrokes);
-            var sPage = ObjectSerializer.ToString(page);
-            var zippedPage = CLPServiceAgent.Instance.Zip(sPage);
-            var index = (App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).Notebook.Pages.IndexOf(page);
+            // TODO: Entities
+            ////TODO: Steve - also broadcast to Projector
+            //var page = NotebookPagesPanelViewModel.GetCurrentPage();
+            //page.SerializedStrokes = StrokeDTO.SaveInkStrokes(page.InkStrokes);
+            //var sPage = ObjectSerializer.ToString(page);
+            //var zippedPage = CLPServiceAgent.Instance.Zip(sPage);
+            //var index = (App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).Notebook.Pages.IndexOf(page);
 
-            if(App.Network.ClassList.Count > 0)
-            {
-                foreach(Person student in App.Network.ClassList)
-                {
-                    try
-                    {
-                        var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(App.Network.DefaultBinding, new EndpointAddress(student.CurrentMachineAddress));
-                        studentProxy.ReplacePage(zippedPage, index);
-                        (studentProxy as ICommunicationObject).Close();
-                    }
-                    catch(Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                    }
-                }
-                if(App.Network.ProjectorProxy != null)
-                {
-                    try
-                    {
-                        App.Network.ProjectorProxy.ReplacePage(zippedPage, index);
-                    }
-                    catch(Exception)
-                    {
-                    }
-                }
-                else
-                {
-                    Logger.Instance.WriteToLog("No Projector Found");
-                }
-            }
-            else
-            {
-                Logger.Instance.WriteToLog("No Students Found");
-            }
+            //if(App.Network.ClassList.Count > 0)
+            //{
+            //    foreach(Person student in App.Network.ClassList)
+            //    {
+            //        try
+            //        {
+            //            var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(App.Network.DefaultBinding, new EndpointAddress(student.CurrentMachineAddress));
+            //            studentProxy.ReplacePage(zippedPage, index);
+            //            (studentProxy as ICommunicationObject).Close();
+            //        }
+            //        catch(Exception ex)
+            //        {
+            //            Console.WriteLine(ex.Message);
+            //        }
+            //    }
+            //    if(App.Network.ProjectorProxy != null)
+            //    {
+            //        try
+            //        {
+            //            App.Network.ProjectorProxy.ReplacePage(zippedPage, index);
+            //        }
+            //        catch(Exception)
+            //        {
+            //        }
+            //    }
+            //    else
+            //    {
+            //        Logger.Instance.WriteToLog("No Projector Found");
+            //    }
+            //}
+            //else
+            //{
+            //    Logger.Instance.WriteToLog("No Students Found");
+            //}
         }
 
         /// <summary>
@@ -1903,16 +1890,17 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnRemoveAllSubmissionsCommandExecute()
         {
-            CLPNotebook notebook = (App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).Notebook;
-            foreach(var pages in notebook.Submissions.Values)
-            {
-                pages.Clear();
-            }
-            foreach(var page in notebook.Pages)
-            {
-                page.NumberOfSubmissions = 0;
-                page.NumberOfGroupSubmissions = 0;
-            }
+            var notebook = (App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).Notebook;
+            // TODO: Entities
+            //foreach(var pages in notebook.Submissions.Values)
+            //{
+            //    pages.Clear();
+            //}
+            //foreach(var page in notebook.Pages)
+            //{
+            //    page.NumberOfSubmissions = 0;
+            //    page.NumberOfGroupSubmissions = 0;
+            //}
         }
 
         /// <summary>
@@ -1922,39 +1910,41 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnRemoveAllPageSubmissionsCommandExecute()
         {
-            var page = NotebookPagesPanelViewModel.GetCurrentPage();
-            var panel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
-            if(page == null || panel == null || page.SubmissionType != SubmissionType.None)
-            {
-                MessageBox.Show("You can't be on a submission page. Please select the notebook page you want to delete the submissions from.");
-                return;
-            }
+            // TODO: Entities
+            //var page = NotebookPagesPanelViewModel.GetCurrentPage();
+            //var panel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
+            //if(page == null || panel == null || page.SubmissionType != SubmissionType.None)
+            //{
+            //    MessageBox.Show("You can't be on a submission page. Please select the notebook page you want to delete the submissions from.");
+            //    return;
+            //}
 
-            panel.Notebook.Submissions[page.UniqueID].Clear();
-            page.NumberOfSubmissions = 0;
-            page.NumberOfGroupSubmissions = 0;
+            //panel.Notebook.Submissions[page.UniqueID].Clear();
+            //page.NumberOfSubmissions = 0;
+            //page.NumberOfGroupSubmissions = 0;
         }
 
         public Command ShowTagsCommand { get; private set; }
 
         private void OnShowTagsCommandExecute()
         {
-            var page = NotebookPagesPanelViewModel.GetCurrentPage();
+            // TODO: Entities
+            //var page = NotebookPagesPanelViewModel.GetCurrentPage();
 
-            string tags = "";
-            foreach(Tag t in page.PageTags) 
-            {
-                string values = "";
-                foreach(TagOptionValue v in t.Value)
-                {
-                    values = values + v.Value.ToString() + ", ";
-                }
-                tags = tags + t.TagType.Name + " = " + values + "\n";
-            }
+            //string tags = "";
+            //foreach(Tag t in page.PageTags) 
+            //{
+            //    string values = "";
+            //    foreach(TagOptionValue v in t.Value)
+            //    {
+            //        values = values + v.Value.ToString() + ", ";
+            //    }
+            //    tags = tags + t.TagType.Name + " = " + values + "\n";
+            //}
 
-            var tagsView = new SimpleTextWindowView("Tags for this page", tags);
-            tagsView.Owner = Application.Current.MainWindow;
-            tagsView.ShowDialog();
+            //var tagsView = new SimpleTextWindowView("Tags for this page", tags);
+            //tagsView.Owner = Application.Current.MainWindow;
+            //tagsView.ShowDialog();
         }
 
         #endregion //Testing
@@ -1979,11 +1969,11 @@ namespace Classroom_Learning_Partner.ViewModels
             var page = new CLPPage();
             if(pageOrientation == "Portrait")
             {
-                page.PageHeight = ACLPPageBase.PORTRAIT_HEIGHT;
-                page.PageWidth = ACLPPageBase.PORTRAIT_WIDTH;
-                page.InitialPageAspectRatio = page.PageWidth / page.PageHeight;
+                page.Height = CLPPage.PORTRAIT_HEIGHT;
+                page.Width = CLPPage.PORTRAIT_WIDTH;
+                page.InitialAspectRatio = page.Width / page.Height;
             }
-            page.ParentNotebookID = notebookPanel.Notebook.UniqueID;
+            page.NotebookID = notebookPanel.Notebook.ID;
             notebookPanel.Notebook.InsertPageAt(index, page);
         }
 
@@ -1999,15 +1989,16 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             var index = notebookPanel.Pages.IndexOf(currentPage);
             index++;
-            var page = new CLPAnimationPage();
-            if(pageOrientation == "Portrait")
-            {
-                page.PageHeight = ACLPPageBase.PORTRAIT_HEIGHT;
-                page.PageWidth = ACLPPageBase.PORTRAIT_WIDTH;
-                page.InitialPageAspectRatio = page.PageWidth / page.PageHeight;
-            }
-            page.ParentNotebookID = notebookPanel.Notebook.UniqueID;
-            notebookPanel.Notebook.InsertPageAt(index, page);
+            // TODO: Entities
+            //var page = new CLPAnimationPage();
+            //if(pageOrientation == "Portrait")
+            //{
+            //    page.PageHeight = ACLPPageBase.PORTRAIT_HEIGHT;
+            //    page.PageWidth = ACLPPageBase.PORTRAIT_WIDTH;
+            //    page.InitialPageAspectRatio = page.PageWidth / page.PageHeight;
+            //}
+            //page.ParentNotebookID = notebookPanel.Notebook.UniqueID;
+            //notebookPanel.Notebook.InsertPageAt(index, page);
         }
 
         /// <summary>
@@ -2017,11 +2008,11 @@ namespace Classroom_Learning_Partner.ViewModels
        
         private void OnSwitchPageLayoutCommandExecute()
         {
-            var page = ((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as CLPMirrorDisplay).CurrentPage;
+            var page = ((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as SingleDisplay).CurrentPage;
 
-            if(page.InitialPageAspectRatio == CLPPage.LANDSCAPE_WIDTH / CLPPage.LANDSCAPE_HEIGHT)
+            if(page.InitialAspectRatio == CLPPage.LANDSCAPE_WIDTH / CLPPage.LANDSCAPE_HEIGHT)
             {
-                foreach(ICLPPageObject pageObject in page.PageObjects)
+                foreach(IPageObject pageObject in page.PageObjects)
                 {
                     if (pageObject.XPosition + pageObject.Width > CLPPage.PORTRAIT_WIDTH)
                     {
@@ -2033,13 +2024,13 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                 }
 
-                page.PageWidth = CLPPage.PORTRAIT_WIDTH;
-                page.PageHeight = CLPPage.PORTRAIT_HEIGHT;
-                page.InitialPageAspectRatio = page.PageWidth / page.PageHeight;
+                page.Width = CLPPage.PORTRAIT_WIDTH;
+                page.Height = CLPPage.PORTRAIT_HEIGHT;
+                page.InitialAspectRatio = page.Width / page.Height;
             }
-            else if(page.InitialPageAspectRatio == CLPPage.PORTRAIT_WIDTH / CLPPage.PORTRAIT_HEIGHT)
+            else if(page.InitialAspectRatio == CLPPage.PORTRAIT_WIDTH / CLPPage.PORTRAIT_HEIGHT)
             {
-                foreach(ICLPPageObject pageObject in page.PageObjects)
+                foreach(IPageObject pageObject in page.PageObjects)
                 {
                     if(pageObject.XPosition + pageObject.Width > CLPPage.LANDSCAPE_WIDTH)
                     {
@@ -2051,9 +2042,9 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                 }
 
-                page.PageWidth = CLPPage.LANDSCAPE_WIDTH;
-                page.PageHeight = CLPPage.LANDSCAPE_HEIGHT;
-                page.InitialPageAspectRatio = page.PageWidth / page.PageHeight;
+                page.Width = CLPPage.LANDSCAPE_WIDTH;
+                page.Height = CLPPage.LANDSCAPE_HEIGHT;
+                page.InitialAspectRatio = page.Width / page.Height;
             }
         }
 
@@ -2079,18 +2070,19 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            if(page.SubmissionType != SubmissionType.None) 
-            {
-                if(MessageBoxResult.Yes != MessageBox.Show("This is a submission page, are you sure you want to delete it?", "Delete Student Submission?", MessageBoxButton.YesNo)) 
-                {
-                    return;
-                }
+            // TODO: Entities
+            //if(page.SubmissionType != SubmissionType.None) 
+            //{
+            //    if(MessageBoxResult.Yes != MessageBox.Show("This is a submission page, are you sure you want to delete it?", "Delete Student Submission?", MessageBoxButton.YesNo)) 
+            //    {
+            //        return;
+            //    }
 
-                var submissionIndex = panel.Notebook.GetSubmissionIndex(page);
-                if(submissionIndex == -1) { return; }
-                panel.Notebook.Submissions[page.UniqueID].RemoveAt(submissionIndex);
-                panel.CurrentPage = panel.Notebook.Pages[0];
-            }
+            //    var submissionIndex = panel.Notebook.GetSubmissionIndex(page);
+            //    if(submissionIndex == -1) { return; }
+            //    panel.Notebook.Submissions[page.UniqueID].RemoveAt(submissionIndex);
+            //    panel.CurrentPage = panel.Notebook.Pages[0];
+            //}
 
             var index = panel.Notebook.Pages.IndexOf(page);
             if(index == -1)
@@ -2154,17 +2146,17 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnMakePageLongerCommandExecute()
         {
             var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel != null && !(notebookWorkspaceViewModel.CurrentDisplay is CLPMirrorDisplay))
+            if(notebookWorkspaceViewModel != null && !(notebookWorkspaceViewModel.CurrentDisplay is SingleDisplay))
             {
                 return;
             }
-            var page = (notebookWorkspaceViewModel.CurrentDisplay as CLPMirrorDisplay).CurrentPage;
-            var initialHeight = page.PageWidth / page.InitialPageAspectRatio;
+            var page = (notebookWorkspaceViewModel.CurrentDisplay as SingleDisplay).CurrentPage;
+            var initialHeight = page.Width / page.InitialAspectRatio;
             const int MAX_INCREASE_TIMES = 2;
             const double PAGE_INCREASE_AMOUNT = 200.0;
-            if(page.PageHeight < initialHeight + PAGE_INCREASE_AMOUNT * MAX_INCREASE_TIMES)
+            if(page.Height < initialHeight + PAGE_INCREASE_AMOUNT * MAX_INCREASE_TIMES)
             {
-                page.PageHeight += PAGE_INCREASE_AMOUNT;
+                page.Height += PAGE_INCREASE_AMOUNT;
             }
         }
 
@@ -2175,9 +2167,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnTrimPageCommandExecute()
         {
-            if((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay is CLPMirrorDisplay)
+            if((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay is SingleDisplay)
             {
-                var page = ((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as CLPMirrorDisplay).CurrentPage;
+                var page = ((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as SingleDisplay).CurrentPage;
                 page.TrimPage();
             }
         }
@@ -2191,15 +2183,16 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel == null ||
-               !(notebookWorkspaceViewModel.CurrentDisplay is CLPMirrorDisplay))
+               !(notebookWorkspaceViewModel.CurrentDisplay is SingleDisplay))
             {
                 return;
             }
-            var page = (notebookWorkspaceViewModel.CurrentDisplay as CLPMirrorDisplay).CurrentPage;
-            page.PageHistory.ClearHistory();
-            page.PageObjects.Clear();
-            page.InkStrokes.Clear();
-            page.SerializedStrokes.Clear();
+            var page = (notebookWorkspaceViewModel.CurrentDisplay as SingleDisplay).CurrentPage;
+            // TODO: Entities
+            //page.PageHistory.ClearHistory();
+            //page.PageObjects.Clear();
+            //page.InkStrokes.Clear();
+            //page.SerializedStrokes.Clear();
         }
 
         #endregion //Page Commands

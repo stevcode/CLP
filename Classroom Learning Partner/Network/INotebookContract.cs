@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ServiceModel;
-using CLP.Models;
+using CLP.Entities;
 
 namespace Classroom_Learning_Partner
 {

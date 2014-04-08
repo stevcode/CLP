@@ -3,22 +3,23 @@ using System.Windows;
 using System.Windows.Controls.Primitives;
 using Catel.Data;
 using Catel.MVVM;
-using CLP.Models;
+using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    public class SubmissionHistoryPanelViewModel : ViewModelBase, IPanel
+    public class SubmissionHistoryPanelViewModel : APanelBaseViewModel
     {
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NotebookPagesPanelViewModel"/> class.
         /// </summary>
-        public SubmissionHistoryPanelViewModel(CLPNotebook notebook)
+        public SubmissionHistoryPanelViewModel(Notebook notebook)
         {
             Notebook = notebook;
+            Location = PanelLocations.Bottom;
 
             TogglePanelCommand = new Command<RoutedEventArgs>(OnTogglePanelCommandExecute);
-            SetCurrentPageCommand = new Command<ICLPPage>(OnSetCurrentPageCommandExecute);
+            SetCurrentPageCommand = new Command<CLPPage>(OnSetCurrentPageCommandExecute);
         }
 
         /// <summary>
@@ -30,110 +31,38 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Notebook associated with the panel.
         /// </summary>
-        [Model(SupportIEditableObject = false)]
-        public CLPNotebook Notebook
+        [Model]
+        public Notebook Notebook
         {
-            get { return GetValue<CLPNotebook>(NotebookProperty); }
+            get { return GetValue<Notebook>(NotebookProperty); }
             set { SetValue(NotebookProperty, value); }
         }
 
-        public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof(CLPNotebook));
-
-        #region IPanel Members
-
-        public string PanelName
-        {
-            get
-            {
-                return "SubmissionHistoryPanel";
-            }
-        }
-
-        /// <summary>
-        /// Whether the Panel is pinned to the same Z-Index as the Workspace.
-        /// </summary>
-        public bool IsPinned
-        {
-            get { return GetValue<bool>(IsPinnedProperty); }
-            set { SetValue(IsPinnedProperty, value); }
-        }
-
-        public static readonly PropertyData IsPinnedProperty = RegisterProperty("IsPinned", typeof(bool), true);
-
-        /// <summary>
-        /// Visibility of Panel, True for Visible, False for Collapsed.
-        /// </summary>
-        public bool IsVisible
-        {
-            get { return GetValue<bool>(IsVisibleProperty); }
-            set { SetValue(IsVisibleProperty, value); }
-        }
-
-        public static readonly PropertyData IsVisibleProperty = RegisterProperty("IsVisible", typeof(bool), true);
-
-        /// <summary>
-        /// Can the Panel be resized.
-        /// </summary>
-        public bool IsResizable
-        {
-            get { return GetValue<bool>(IsResizableProperty); }
-            set { SetValue(IsResizableProperty, value); }
-        }
-
-        public static readonly PropertyData IsResizableProperty = RegisterProperty("IsResizable", typeof(bool), true);
-
-        /// <summary>
-        /// Initial Width of the Panel, before any resizing.
-        /// </summary>
-        public double InitialWidth { get { return 250; } }
-
-        /// <summary>
-        /// The Panel's Location relative to the Workspace.
-        /// </summary>
-        public PanelLocation Location
-        {
-            get { return GetValue<PanelLocation>(LocationProperty); }
-            set { SetValue(LocationProperty, value); }
-        }
-
-        public static readonly PropertyData LocationProperty = RegisterProperty("Location", typeof(PanelLocation), PanelLocation.Bottom);
-
-        /// <summary>
-        /// A Linked IPanel if more than one IPanel is to be used in the same Location.
-        /// </summary>
-        public IPanel LinkedPanel
-        {
-            get { return GetValue<IPanel>(LinkedPanelProperty); }
-            set { SetValue(LinkedPanelProperty, value); }
-        }
-
-        public static readonly PropertyData LinkedPanelProperty = RegisterProperty("LinkedPanel", typeof(IPanel));
-
-        #endregion
+        public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof(Notebook));
 
         #region Bindings
 
         /// <summary>
         /// Current, selected submission.
         /// </summary>
-        public ICLPPage CurrentPage
+        public CLPPage CurrentPage
         {
-            get { return GetValue<ICLPPage>(CurrentPageProperty); }
+            get { return GetValue<CLPPage>(CurrentPageProperty); }
             set { SetValue(CurrentPageProperty, value); }
         }
 
-        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(ICLPPage));
+        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage));
 
         /// <summary>
         /// All the submissions for the desired page.
         /// </summary>
-        public ObservableCollection<ICLPPage> SubmissionPages
+        public ObservableCollection<CLPPage> SubmissionPages
         {
-            get { return GetValue<ObservableCollection<ICLPPage>>(SubmissionPagesProperty); }
+            get { return GetValue<ObservableCollection<CLPPage>>(SubmissionPagesProperty); }
             set { SetValue(SubmissionPagesProperty, value); }
         }
 
-        public static readonly PropertyData SubmissionPagesProperty = RegisterProperty("SubmissionPages", typeof(ObservableCollection<ICLPPage>), () => new ObservableCollection<ICLPPage>());
+        public static readonly PropertyData SubmissionPagesProperty = RegisterProperty("SubmissionPages", typeof(ObservableCollection<CLPPage>), () => new ObservableCollection<CLPPage>());
 
         /// <summary>
         /// Whether or not the submission history listbox is visible.
@@ -172,10 +101,11 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            if(currentPage.UniqueID != _currentNotebookPageID)
+            if(currentPage.ID != _currentNotebookPageID)
             {
-                _currentNotebookPageID = currentPage.UniqueID;
-                SubmissionPages = notebookPagesPanel.Notebook.Submissions[_currentNotebookPageID];
+                _currentNotebookPageID = currentPage.ID;
+                // TODO: Entities
+               // SubmissionPages = notebookPagesPanel.Notebook.Submissions[_currentNotebookPageID];
             }
 
             IsSubmissionHistoryVisible = true;
@@ -184,9 +114,9 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Sets the current selected page in the listbox.
         /// </summary>
-        public Command<ICLPPage> SetCurrentPageCommand { get; private set; }
+        public Command<CLPPage> SetCurrentPageCommand { get; private set; }
 
-        private void OnSetCurrentPageCommandExecute(ICLPPage page)
+        private void OnSetCurrentPageCommandExecute(CLPPage page)
         {
             var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel != null)

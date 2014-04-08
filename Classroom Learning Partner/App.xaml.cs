@@ -5,7 +5,7 @@ using Catel.Logging;
 using Catel.Runtime.Serialization;
 using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Views;
-using CLP.Models;
+using CLP.Entities;
 
 namespace Classroom_Learning_Partner
 {
@@ -35,13 +35,13 @@ namespace Classroom_Learning_Partner
             Catel.Windows.Controls.UserControl.DefaultSkipSearchingForInfoBarMessageControlValue = true;
             Catel.Windows.Controls.UserControl.DefaultCreateWarningAndErrorValidatorForViewModelValue = false;
 
-            _currentUserMode = UserMode.Student;
+            _currentUserMode = UserMode.Instructor;
 
             Logger.Instance.InitializeLog();
             CLPServiceAgent.Instance.Initialize();
 
             //Warm up Serializer to make loading of notebook faster.
-            var typesToWarmup = new[] {  typeof(CLPNotebook) };
+            var typesToWarmup = new[] {  typeof(Notebook) };
             var binarySerializer = SerializationFactory.GetBinarySerializer();
             binarySerializer.Warmup(typesToWarmup);
 
@@ -131,7 +131,7 @@ namespace Classroom_Learning_Partner
             }
         }
 
-        private static UserMode _currentUserMode = UserMode.Student;
+        private static UserMode _currentUserMode = UserMode.Instructor;
         public static UserMode CurrentUserMode
         {
             get

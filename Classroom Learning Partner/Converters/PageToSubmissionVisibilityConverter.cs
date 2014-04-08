@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Data;
-using CLP.Models;
+using CLP.Entities;
 
 namespace Classroom_Learning_Partner.Converters
 {
@@ -9,7 +9,7 @@ namespace Classroom_Learning_Partner.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var page = (ICLPPage)value;
+            var page = (CLPPage)value;
             if(page.Submitter == null)
             {
                 return "Hidden";

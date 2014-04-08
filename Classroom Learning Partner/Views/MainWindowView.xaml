@@ -50,19 +50,19 @@
             <ContentControl.Resources>
 
                 <ControlTemplate x:Key="BlankWorkspaceTemplate">
-                    <views:BlankWorkspaceView DataContext="{Binding SelectedWorkspace}" />
+                    <views:BlankWorkspaceView DataContext="{Binding Workspace}" />
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="NotebookChooserWorkspaceTemplate">
-                    <views:NotebookChooserWorkspaceView DataContext="{Binding SelectedWorkspace}" />
+                    <views:NotebookChooserWorkspaceView DataContext="{Binding Workspace}" />
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="NotebookWorkspaceTemplate">
-                    <views:NotebookWorkspaceView DataContext="{Binding SelectedWorkspace}" />
+                    <views:NotebookWorkspaceView DataContext="{Binding Workspace}" />
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="UserLoginWorkspaceTemplate">
-                    <views:UserLoginWorkspaceView DataContext="{Binding SelectedWorkspace}" />
+                    <views:UserLoginWorkspaceView DataContext="{Binding Workspace}" />
                 </ControlTemplate>
 
             </ContentControl.Resources>
@@ -72,28 +72,28 @@
                     <Style.Triggers>
 
                         <!-- BlankWorkspace trigger -->
-                        <DataTrigger Binding="{Binding SelectedWorkspace, Converter={StaticResource TypeToStringConverter}}"
+                        <DataTrigger Binding="{Binding Workspace, Converter={StaticResource TypeToStringConverter}}"
                                      Value="BlankWorkspaceViewModel">
                             <Setter Property="Template"
                                     Value="{StaticResource BlankWorkspaceTemplate}" />
                         </DataTrigger>
 
                         <!-- NotebookChooserWorkspace trigger -->
-                        <DataTrigger Binding="{Binding SelectedWorkspace, Converter={StaticResource TypeToStringConverter}}"
+                        <DataTrigger Binding="{Binding Workspace, Converter={StaticResource TypeToStringConverter}}"
                                      Value="NotebookChooserWorkspaceViewModel">
                             <Setter Property="Template"
                                     Value="{StaticResource NotebookChooserWorkspaceTemplate}" />
                         </DataTrigger>
 
                         <!-- NotebookWorkspace trigger -->
-                        <DataTrigger Binding="{Binding SelectedWorkspace, Converter={StaticResource TypeToStringConverter}}"
+                        <DataTrigger Binding="{Binding Workspace, Converter={StaticResource TypeToStringConverter}}"
                                      Value="NotebookWorkspaceViewModel">
                             <Setter Property="Template"
                                     Value="{StaticResource NotebookWorkspaceTemplate}" />
                         </DataTrigger>
 
                         <!-- UserLoginWorkspace trigger -->
-                        <DataTrigger Binding="{Binding SelectedWorkspace, Converter={StaticResource TypeToStringConverter}}"
+                        <DataTrigger Binding="{Binding Workspace, Converter={StaticResource TypeToStringConverter}}"
                                      Value="UserLoginWorkspaceViewModel">
                             <Setter Property="Template"
                                     Value="{StaticResource UserLoginWorkspaceTemplate}" />

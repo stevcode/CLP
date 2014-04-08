@@ -311,6 +311,65 @@ namespace CLP.Entities
 
         #region Methods
 
+         public CLPPage DuplicatePage()
+        {
+             // TODO: Entities
+            var newPage = new CLPPage
+                          {
+                              NotebookID = NotebookID,
+                             // PageTags = PageTags,
+                              //GroupSubmitType = GroupSubmitType,
+                              Height = Height,
+                              Width = Width,
+                              InitialAspectRatio = InitialAspectRatio
+                           //   ImagePool = ImagePool
+                          };
+
+            //foreach(var s in InkStrokes.Select(stroke => stroke.Clone())) 
+            //{
+            //    s.RemovePropertyData(StrokeIDKey);
+
+            //    var newUniqueID = Guid.NewGuid().ToString();
+            //    s.AddPropertyData(StrokeIDKey, newUniqueID);
+
+            //    newPage.InkStrokes.Add(s);
+            //}
+            //newPage.SerializedStrokes = StrokeDTO.SaveInkStrokes(newPage.InkStrokes);
+
+            foreach(var clonedPageObject in PageObjects.Select(pageObject => pageObject.Duplicate()))
+            {
+                clonedPageObject.ParentPage = newPage;
+                clonedPageObject.ParentPageID = newPage.ID;
+                newPage.PageObjects.Add(clonedPageObject);
+               // clonedPageObject.RefreshStrokeParentIDs();
+            }
+
+            return newPage;
+        }
+
+        public void TrimPage()
+        {
+            double lowestY = PageObjects.Select(pageObject => pageObject.YPosition + pageObject.Height).Concat(new double[] { 0 }).Max();
+            // TODO: Entities
+            //foreach(var bounds in InkStrokes.Select(s => s.GetBounds()))
+            //{
+            //    if(bounds.Bottom >= Height)
+            //    {
+            //        lowestY = Math.Max(lowestY, Height);
+            //        break;
+            //    }
+            //    lowestY = Math.Max(lowestY, bounds.Bottom);
+            //}
+
+            //double defaultHeight = Math.Abs(Width - LANDSCAPE_WIDTH) < .000001 ? LANDSCAPE_HEIGHT : PORTRAIT_HEIGHT;
+
+            //double newHeight = Math.Max(defaultHeight, lowestY);
+            //if(newHeight < Height)
+            //{
+            //    Height = newHeight;
+            //}   
+        }
+
         public void AddTag(ATagBase newTag)
         {
             if(newTag.IsSingleValueTag)
