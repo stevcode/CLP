@@ -147,11 +147,11 @@
                               SmallImageSource="pack://application:,,,/Resources/Images/OpenNotebook16.png"
                               IsChecked="{Binding NotebookPagesPanelVisibility}"
                               Visibility="{Binding InstructorVisibility}" />
-                <RibbonToggleButton Label="Student Work" 
+                <!--RibbonToggleButton Label="Student Work" 
                               LargeImageSource="pack://application:,,,/Resources/Images/GroupSubmit32.png" 
                               SmallImageSource="pack://application:,,,/Resources/Images/GroupSubmit16.png" 
                               IsChecked="{Binding StudentWorkPanelVisibility}"
-                              Visibility="{Binding InstructorVisibility}" />
+                              Visibility="{Binding InstructorVisibility}" /-->
                 <RibbonToggleButton Label="Progress Panel" 
                               LargeImageSource="pack://application:,,,/Resources/Images/Clipboard32.png" 
                               IsChecked="{Binding ProgressPanelVisibility}"

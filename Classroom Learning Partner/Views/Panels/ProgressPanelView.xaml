@@ -52,73 +52,80 @@
                     <ColumnDefinition Width="60" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <ListBox Grid.Column="0" ItemsSource="{Binding StudentList}">
-                    <!--ListBox.ItemTemplate>
+                <ItemsControl Grid.Column="0" ItemsSource="{Binding StudentList}" Margin="5 30 0 0">
+                    <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Grid.Row="0" FontWeight="Bold" VerticalAlignment="Bottom" 
-                                   HorizontalAlignment="Center">
-                                <Run Text="{Binding}" />
+                            <TextBlock FontWeight="Bold" Height="24">
+                                <Run Text="{Binding Mode=OneWay}" />
                             </TextBlock>
                         </DataTemplate>
-                    </-->
-                </ListBox>
-                <ListBox Name="Pages" Grid.Column="1" ItemsSource="{Binding CurrentPages}">
-                    <ListBox.ItemsPanel>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <ItemsControl Name="Pages" Grid.Column="1" ItemsSource="{Binding CurrentPages}">
+                    <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal"/>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Top"/>
                         </ItemsPanelTemplate>
-                    </ListBox.ItemsPanel>
-                    <ListBox.ItemTemplate> 
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate> 
                         <DataTemplate>
                             <Grid>
                                 <Grid.RowDefinitions>
-                                    <RowDefinition/>
-                                    <RowDefinition/>
+                                    <RowDefinition Height="24"/>
+                                    <RowDefinition Height="*"/>
                                 </Grid.RowDefinitions>
                                 <TextBlock Grid.Row="0" FontWeight="Bold" VerticalAlignment="Center" 
                                    HorizontalAlignment="Center">
                                     <Run Text="{Binding PageIndex}" />
                                 </TextBlock>
-                                <ListBox Grid.Row="1">
-                                    <ListBox.ItemsSource>
+                                <ItemsControl Grid.Row="1">
+                                    <ItemsControl.ItemsSource>
                                         <MultiBinding Converter="{StaticResource SubmissionsListForPageByStudentConverter}">
                                             <Binding ElementName="Pages" Path="DataContext.Notebook.Submissions"/>
-                                            <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ListBox}}" 
+                                            <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}" 
                                                  Path="DataContext.StudentList"/>
-                                            <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ListBox}}" 
+                                            <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}" 
                                                  Path="DataContext.Notebook"/>
                                             <Binding Path="UniqueID"/>
                                         </MultiBinding>
-                                    </ListBox.ItemsSource>
-                                    <ListBox.ItemTemplate>
+                                    </ItemsControl.ItemsSource>
+                                    <ItemsControl.ItemTemplate>
                                         <DataTemplate>
                                             <Border Margin="3" BorderBrush="{StaticResource GrayEdgeColor}" BorderThickness="1,1,1,1">
-                                                <i:Interaction.Triggers>
-                                                    <i:EventTrigger EventName="MouseUp">
-                                                        <catel:EventToCommand
-                                                        Command="{Binding DataContext.SetCurrentPageCommand, ElementName=Pages}"
-                                                        PassEventArgsToCommand="False" CommandParameter="{Binding}" />
-                                                    </i:EventTrigger>
-                                                </i:Interaction.Triggers>
                                                 <Grid>
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition/>
-                                                        <ColumnDefinition/>
-                                                    </Grid.ColumnDefinitions>
-                                                    <Image Grid.Column="0" Source="pack://application:,,,/Resources/Images/BlueStar16.png"
-                                                   Visibility="{Binding Converter={StaticResource PageToStarredVisibilityConverter}}"/>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition/>
+                                                    </Grid.RowDefinitions>
+                                                    
+                                                    <Grid Grid.Row="0">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition/>
+                                                            <ColumnDefinition/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <Image Grid.Column="0" Source="pack://application:,,,/Resources/Images/BlueStar16.png"
+                                                        Visibility="{Binding Converter={StaticResource PageToStarredVisibilityConverter}}"/>
 
-                                                    <Image Grid.Column="1" Source="pack://application:,,,/Resources/Images/BlueEnvelope16.png"
-                                                   Visibility="{Binding Converter={StaticResource PageToSubmissionVisibilityConverter}}"/>
+                                                        <Image Grid.Column="1" Source="pack://application:,,,/Resources/Images/BlueEnvelope16.png"
+                                                        Visibility="{Binding Converter={StaticResource PageToSubmissionVisibilityConverter}}"/>
+                                                    </Grid>
+                                                    <Rectangle Grid.Row="0" Margin="0" Fill="Transparent">
+                                                        <i:Interaction.Triggers>
+                                                            <i:EventTrigger EventName="MouseUp">
+                                                                <catel:EventToCommand
+                                                                Command="{Binding DataContext.SetCurrentPageCommand, ElementName=Pages}"
+                                                                PassEventArgsToCommand="False" CommandParameter="{Binding}" />
+                                                            </i:EventTrigger>
+                                                        </i:Interaction.Triggers>
+                                                    </Rectangle>
                                                 </Grid>
                                             </Border>
                                         </DataTemplate>
-                                    </ListBox.ItemTemplate>
-                                </ListBox>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
                             </Grid>
                         </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
             </Grid>
             <Thumb Cursor="ScrollWE" Width="5" 
                    Margin="0 0 -5 0" VerticalAlignment="Stretch" HorizontalAlignment="Right">

@@ -14,23 +14,25 @@ namespace Classroom_Learning_Partner.Converters
             var submissionsforpage = ((IDictionary)values[0])[values[3]];
             var studentslist = (IList)values[1];
             var blankpage = ((CLPNotebook)values[2]).GetNotebookPageByID((string)values[3]);
-
             ObservableCollection<ICLPPage> submissionswithblanks = new ObservableCollection<ICLPPage>();
-            foreach(var student in studentslist)
+            foreach(string student in studentslist)
             {
-                bool found = false;
-                foreach(var submission in (IList)submissionsforpage)
+                ICLPPage foundPage = null;
+                foreach(ICLPPage submission in (IList)submissionsforpage)
                 {
-                    if(((string)((ICLPPage)submission).Submitter.FullName) == ((string)student))
+                    if(submission.Submitter.FullName == student &&
+                       (foundPage == null || foundPage.SubmissionTime.CompareTo(submission.SubmissionTime) < 0))
                     {
-                        submissionswithblanks.Add((ICLPPage)submission);
-                        found = true;
-                        break;
+                        foundPage = submission;
                     }
                 }
-                if(!found)
+                if(foundPage == null)
                 {
                     submissionswithblanks.Add(blankpage);
+                }
+                else
+                {
+                    submissionswithblanks.Add(foundPage);
                 }
             }
             return submissionswithblanks;

@@ -200,7 +200,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnSetCurrentPageCommandExecute(ICLPPage page)
         {
-            Logger.Instance.WriteToLog("hey this is a thing");
             var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel != null)
             {
@@ -221,7 +220,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             var userNames = new ObservableCollection<string>();
             var filePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\StudentNames.txt";
-
+            userNames.Add("Original");
             if(File.Exists(filePath))
             {
                 var reader = new StreamReader(filePath);
