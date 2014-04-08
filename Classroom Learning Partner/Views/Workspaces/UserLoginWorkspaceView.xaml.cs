@@ -1,4 +1,5 @@
-﻿using Classroom_Learning_Partner.ViewModels;
+﻿using System;
+using Classroom_Learning_Partner.ViewModels;
 
 namespace Classroom_Learning_Partner.Views
 {
@@ -7,13 +8,7 @@ namespace Classroom_Learning_Partner.Views
     /// </summary>
     public partial class UserLoginWorkspaceView
     {
-        public UserLoginWorkspaceView()
-        {
-            InitializeComponent();
-        }
-        protected override System.Type GetViewModelType()
-        {
-            return typeof(UserLoginWorkspaceViewModel);
-        }
+        public UserLoginWorkspaceView() { InitializeComponent(); }
+        protected override Type GetViewModelType() { return typeof(UserLoginWorkspaceViewModel); }
     }
 }

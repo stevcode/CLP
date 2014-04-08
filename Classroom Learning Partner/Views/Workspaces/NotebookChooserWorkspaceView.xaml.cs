@@ -1,4 +1,5 @@
-﻿using Classroom_Learning_Partner.ViewModels;
+﻿using System;
+using Classroom_Learning_Partner.ViewModels;
 
 namespace Classroom_Learning_Partner.Views
 {
@@ -7,14 +8,8 @@ namespace Classroom_Learning_Partner.Views
     /// </summary>
     public partial class NotebookChooserWorkspaceView
     {
-        public NotebookChooserWorkspaceView()
-        {
-            InitializeComponent();
-        }
+        public NotebookChooserWorkspaceView() { InitializeComponent(); }
 
-        protected override System.Type GetViewModelType()
-        {
-            return typeof(NotebookChooserWorkspaceViewModel);
-        }
+        protected override Type GetViewModelType() { return typeof(NotebookChooserWorkspaceViewModel); }
     }
 }

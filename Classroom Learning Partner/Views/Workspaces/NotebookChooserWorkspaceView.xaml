@@ -6,15 +6,6 @@
                    Background="{StaticResource GrayBackgroundColor}"
                    x:Name="NotebookChooserControl">
 
-    <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Resources/MainWindowResources.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/Resources/CLPBrushes.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </UserControl.Resources>
-
     <ListBox ItemsSource="{Binding NotebookNames}"
              ScrollViewer.HorizontalScrollBarVisibility="Hidden">
         <ListBox.ItemTemplate>
