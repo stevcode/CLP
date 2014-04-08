@@ -7,7 +7,6 @@
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views">
     <UserControl.Resources>
-        <conv:TypeToStringConverter x:Key="TypeToStringConverter" />
         <conv:ProjectedDisplayBackgroundConverter x:Key="ProjectedDisplayBackgroundConverter" />
     </UserControl.Resources>
 

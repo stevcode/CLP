@@ -7,23 +7,28 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Resources/CLPPageResources.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Resources/CLPPageResources.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
 
     <Viewbox Stretch="Uniform">
 
-        <Canvas Width="{Binding PageWidth}" Height="{Binding PageHeight}" Background="White">
+        <Canvas Width="{Binding Width}"
+                Height="{Binding Height}"
+                Background="White">
 
             <ItemsControl IsHitTestVisible="False"
-                          ItemsSource="{Binding Path=PageObjects}"
+                          ItemsSource="{Binding PageObjects}"
                           ItemContainerStyle="{StaticResource ContainerStyle}"
-                          HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch">
 
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <Canvas Width="{Binding PageWidth}" Height="{Binding PageHeight}" Background="Transparent" />
+                        <Canvas Width="{Binding Width}"
+                                Height="{Binding Height}"
+                                Background="Transparent" />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
 
@@ -35,8 +40,10 @@
 
             </ItemsControl>
 
-            <InkPresenter Strokes="{Binding InkStrokes}" ClipToBounds="True"
-                          Width="{Binding PageWidth}" Height="{Binding PageHeight}" />
+            <InkPresenter Strokes="{Binding InkStrokes}"
+                          ClipToBounds="True"
+                          Width="{Binding Width}"
+                          Height="{Binding Height}" />
 
         </Canvas>
 
