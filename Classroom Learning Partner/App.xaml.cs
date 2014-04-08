@@ -47,7 +47,7 @@ namespace Classroom_Learning_Partner
 
             _mainWindowViewModel = new MainWindowViewModel();
             var window = new MainWindowView {DataContext = MainWindowViewModel};
-            MainWindowViewModel.SelectedWorkspace = new BlankWorkspaceViewModel();
+            MainWindowViewModel.Workspace = new BlankWorkspaceViewModel();
             window.Show();
             
 

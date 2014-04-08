@@ -395,7 +395,7 @@ namespace Classroom_Learning_Partner
             var count = 0;
             foreach(var otherNotebook in App.MainWindowViewModel.OpenNotebooks.Where(otherNotebook => otherNotebook.UniqueID == notebook.UniqueID && otherNotebook.NotebookName == notebook.NotebookName)) 
             {
-                App.MainWindowViewModel.SelectedWorkspace = new NotebookWorkspaceViewModel(otherNotebook);
+                App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(otherNotebook);
                 count++;
                 break;
             }
@@ -407,7 +407,7 @@ namespace Classroom_Learning_Partner
                    App.CurrentUserMode == App.UserMode.Student ||
                    App.CurrentUserMode == App.UserMode.Projector)
                 {
-                    App.MainWindowViewModel.SelectedWorkspace = new NotebookWorkspaceViewModel(notebook);
+                    App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(notebook);
                 }
             }
 
@@ -441,7 +441,7 @@ namespace Classroom_Learning_Partner
 
             var saveTime = DateTime.Now;
 
-            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel != null)
             {
                 var notebook = notebookWorkspaceViewModel.Notebook.Clone() as CLPNotebook;
@@ -482,7 +482,7 @@ namespace Classroom_Learning_Partner
                     {
                         var newNotebook = new CLPNotebook {NotebookName = notebookName};
                         App.MainWindowViewModel.OpenNotebooks.Add(newNotebook);
-                        App.MainWindowViewModel.SelectedWorkspace = new NotebookWorkspaceViewModel(newNotebook);
+                        App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(newNotebook);
                         App.MainWindowViewModel.IsAuthoring = true;
                         App.MainWindowViewModel.Ribbon.AuthoringTabVisibility = Visibility.Visible;
 
@@ -534,7 +534,7 @@ namespace Classroom_Learning_Partner
             inkRegion.DoInterpretation();
 
             Logger.Instance.WriteToLog(inkRegion.ParentPage.Submitter.FullName);
-            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel != null)
             {
                 Logger.Instance.WriteToLog(notebookWorkspaceViewModel.Notebook.NotebookName);

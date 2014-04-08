@@ -8,14 +8,8 @@ namespace Classroom_Learning_Partner.Views
     /// </summary>
     public partial class SubmissionHistoryPanelView
     {
-        public SubmissionHistoryPanelView()
-        {
-            InitializeComponent();
-        }
+        public SubmissionHistoryPanelView() { InitializeComponent(); }
 
-        protected override Type GetViewModelType()
-        {
-            return typeof(SubmissionHistoryPanelViewModel);
-        }
+        protected override Type GetViewModelType() { return typeof(SubmissionHistoryPanelViewModel); }
     }
 }

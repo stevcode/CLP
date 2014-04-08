@@ -215,7 +215,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         linkedTable.AggregationType = AggregationType.Group;
                     }
 
-                    CLPNotebook currentNotebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
+                    CLPNotebook currentNotebook = (App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).Notebook;
 
                     int currentPageIndex = currentNotebook.GetNotebookPageIndex(PageObject.ParentPage);
                     currentPageIndex++;

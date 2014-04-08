@@ -104,7 +104,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }).Start();
 
-            App.MainWindowViewModel.SelectedWorkspace = new NotebookChooserWorkspaceViewModel();
+            App.MainWindowViewModel.Workspace = new NotebookChooserWorkspaceViewModel();
         }
 
         public string WorkspaceName

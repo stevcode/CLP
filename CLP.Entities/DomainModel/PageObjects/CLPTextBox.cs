@@ -4,21 +4,21 @@ using Catel.Data;
 
 namespace CLP.Entities
 {
-    public class TextBox : APageObjectBase
+    public class CLPTextBox : APageObjectBase
     {
         #region Constructors
 
         /// <summary>
         /// Initializes <see cref="TextBox" /> from scratch.
         /// </summary>
-        public TextBox() { }
+        public CLPTextBox() { }
 
         /// <summary>
         /// Initializes <see cref="TextBox" /> from <see cref="string" />.
         /// </summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="TextBox" /> belongs to.</param>
         /// <param name="text">The RTF formatted text of the <see cref="TextBox" /></param>
-        public TextBox(CLPPage parentPage, string text)
+        public CLPTextBox(CLPPage parentPage, string text)
             : base(parentPage)
         {
             Text = text;
@@ -33,7 +33,7 @@ namespace CLP.Entities
         /// </summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext" />.</param>
-        public TextBox(SerializationInfo info, StreamingContext context)
+        public CLPTextBox(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
         #endregion //Constructors
@@ -57,7 +57,7 @@ namespace CLP.Entities
 
         public override IPageObject Duplicate()
         {
-            var newTextBox = Clone() as TextBox;
+            var newTextBox = Clone() as CLPTextBox;
             if(newTextBox == null)
             {
                 return null;

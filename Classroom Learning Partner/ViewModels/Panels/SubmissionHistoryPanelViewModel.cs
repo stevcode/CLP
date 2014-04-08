@@ -188,10 +188,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnSetCurrentPageCommandExecute(ICLPPage page)
         {
-            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel != null)
             {
-                notebookWorkspaceViewModel.SelectedDisplay.AddPageToDisplay(page);
+                notebookWorkspaceViewModel.CurrentDisplay.AddPageToDisplay(page);
             }
         }
 

@@ -315,7 +315,7 @@ namespace Classroom_Learning_Partner.ViewModels
             try
             {
                 var leftBehindStamp = PageObject.Duplicate() as CLPStamp;
-                var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+                var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
                 if(notebookWorkspaceViewModel == null || leftBehindStamp == null)
                 {
                     return;
@@ -428,7 +428,7 @@ namespace Classroom_Learning_Partner.ViewModels
             StampCopy.CanAcceptPageObjects = IsCollectionStamp;
             StampCopy.PageObjectObjectParentIDs = PageObject.PageObjectObjectParentIDs;
 
-            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel != null)
             {
                 var parentPage = notebookWorkspaceViewModel.Notebook.GetNotebookPageByID(PageObject.ParentPageID);
@@ -558,7 +558,7 @@ namespace Classroom_Learning_Partner.ViewModels
             
             if(hitBoxName == "StampHandleHitBox")
             {
-                var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+                var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
                 if(notebookWorkspaceViewModel != null)
                 {
                     var parentPage = notebookWorkspaceViewModel.Notebook.GetNotebookPageByID(PageObject.ParentPageID);

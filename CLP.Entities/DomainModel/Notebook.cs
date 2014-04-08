@@ -96,13 +96,13 @@ namespace CLP.Entities
         /// <remarks>
         /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
         /// </remarks>
-        public ObservableCollection<CLPPage> CLPPages
+        public virtual ObservableCollection<CLPPage> Pages
         {
-            get { return GetValue<ObservableCollection<CLPPage>>(CLPPagesProperty); }
-            set { SetValue(CLPPagesProperty, value); }
+            get { return GetValue<ObservableCollection<CLPPage>>(PagesProperty); }
+            set { SetValue(PagesProperty, value); }
         }
 
-        public static readonly PropertyData CLPPagesProperty = RegisterProperty("CLPPages", typeof(ObservableCollection<CLPPage>), () => new ObservableCollection<CLPPage>());
+        public static readonly PropertyData PagesProperty = RegisterProperty("Pages", typeof(ObservableCollection<CLPPage>), () => new ObservableCollection<CLPPage>());
 
         /// <summary>
         /// Unique Identifier of the <see cref="Notebook" />'s <see cref="SingleDisplay" />.
@@ -154,6 +154,15 @@ namespace CLP.Entities
         {
             page.NotebookID = ID;
             CLPPages.Add(page);
+            //GenerateSubmissionViews(page.ID);
+            //GeneratePageIndexes();
+        }
+
+        public void AddDisplayToNotebook(IDisplay display)
+        {
+            display.NotebookID = ID;
+            Displays.Add(display);
+            //GenerageDisplayIndexes();
         }
 
         #endregion //Methods

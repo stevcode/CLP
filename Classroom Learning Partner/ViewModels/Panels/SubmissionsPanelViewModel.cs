@@ -2,26 +2,27 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using Catel.Data;
 using Catel.MVVM;
-using CLP.Models;
+using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
     [InterestedIn(typeof(HoverBoxViewModel))]
-    public class SubmissionsPanelViewModel : ViewModelBase, IPanel
+    public class SubmissionsPanelViewModel : APanelBaseViewModel
     {
+        #region Constructor
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="DisplayListPanelViewModel"/> class.
+        /// Initializes a new instance of the <see cref="DisplayListPanelViewModel" /> class.
         /// </summary>
-        public SubmissionsPanelViewModel(CLPNotebook notebook)
+        public SubmissionsPanelViewModel(Notebook notebook)
         {
             Notebook = notebook;
-            PanelWidth = InitialWidth;
+            Length = InitialLength;
 
             #region Tag Stuff
 
@@ -33,54 +34,56 @@ namespace Classroom_Learning_Partner.ViewModels
             FilterTypes.Add("Time In - Ascending");
             FilterTypes.Add("Time In - Descending");
 
-            ObservableCollection<Tag> tags = getAllTags(Notebook.Pages);
+            // TODO: Entities
+            //ObservableCollection<Tag> tags = getAllTags(Notebook.Pages);
 
-            foreach(Tag t in tags)
-            {
-                if(t.TagType != null)
-                {
-                    FilterTypes.Add(t.TagType.Name);
-                }
-            }
+            //foreach(Tag t in tags)
+            //{
+            //    if(t.TagType != null)
+            //    {
+            //        FilterTypes.Add(t.TagType.Name);
+            //    }
+            //}
 
             // Just hardcode in some tag types for now
-            FilterTypes.Add(RepresentationCorrectnessTagType.Instance.Name);
-            FilterTypes.Add(ArrayXAxisStrategyTagType.Instance.Name);
-            FilterTypes.Add(ArrayYAxisStrategyTagType.Instance.Name);
-            FilterTypes.Add(ArrayPartialProductsStrategyTagType.Instance.Name);
-            FilterTypes.Add(ArrayDivisionCorrectnessTagType.Instance.Name);
-            FilterTypes.Add(ArrayHorizontalDivisionsTagType.Instance.Name);
-            FilterTypes.Add(ArrayVerticalDivisionsTagType.Instance.Name);
-            FilterTypes.Add(ArrayOrientationTagType.Instance.Name);
-            FilterTypes.Add(StampPartsPerStampTagType.Instance.Name);
-            FilterTypes.Add(StampGroupingTypeTagType.Instance.Name);
+            // TODO: Entities
+            //FilterTypes.Add(RepresentationCorrectnessTagType.Instance.Name);
+            //FilterTypes.Add(ArrayXAxisStrategyTagType.Instance.Name);
+            //FilterTypes.Add(ArrayYAxisStrategyTagType.Instance.Name);
+            //FilterTypes.Add(ArrayPartialProductsStrategyTagType.Instance.Name);
+            //FilterTypes.Add(ArrayDivisionCorrectnessTagType.Instance.Name);
+            //FilterTypes.Add(ArrayHorizontalDivisionsTagType.Instance.Name);
+            //FilterTypes.Add(ArrayVerticalDivisionsTagType.Instance.Name);
+            //FilterTypes.Add(ArrayOrientationTagType.Instance.Name);
+            //FilterTypes.Add(StampPartsPerStampTagType.Instance.Name);
+            //FilterTypes.Add(StampGroupingTypeTagType.Instance.Name);
 
             #endregion //Tag Stuff
 
             ToggleNoSubmissionsCommand = new Command<RoutedEventArgs>(OnToggleNoSubmissionsCommandExecute);
-            SetCurrentPageCommand = new Command<ICLPPage>(OnSetCurrentPageCommandExecute);
-            PanelResizeDragCommand = new Command<DragDeltaEventArgs>(OnPanelResizeDragCommandExecute);
+            SetCurrentPageCommand = new Command<CLPPage>(OnSetCurrentPageCommandExecute);
         }
 
-        /// <summary>
-        /// Gets the title of the view model.
-        /// </summary>
-        /// <value>The title.</value>
-        public override string Title { get { return "SubmissionsPanelVM"; } }
+        public override string Title
+        {
+            get { return "SubmissionsPanelVM"; }
+        }
+
+        #endregion //Constructor
 
         #region Model
 
         /// <summary>
         /// The Model for this ViewModel.
         /// </summary>
-        [Model(SupportIEditableObject = false)]
-        public CLPNotebook Notebook
+        [Model]
+        public Notebook Notebook
         {
-            get { return GetValue<CLPNotebook>(NotebookProperty); }
+            get { return GetValue<Notebook>(NotebookProperty); }
             set { SetValue(NotebookProperty, value); }
         }
 
-        public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof(CLPNotebook));
+        public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof(Notebook));
 
         #endregion //Model
 
@@ -89,13 +92,13 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Current, selected submission.
         /// </summary>
-        public ICLPPage CurrentPage
+        public CLPPage CurrentPage
         {
-            get { return GetValue<ICLPPage>(CurrentPageProperty); }
+            get { return GetValue<CLPPage>(CurrentPageProperty); }
             set { SetValue(CurrentPageProperty, value); }
         }
 
-        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(ICLPPage));
+        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage));
 
         /// <summary>
         /// List of student names who don't have submissions for the CurrentPage.
@@ -106,7 +109,9 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(StudentsWithNoSubmissionsProperty, value); }
         }
 
-        public static readonly PropertyData StudentsWithNoSubmissionsProperty = RegisterProperty("StudentsWithNoSubmissions", typeof(ObservableCollection<string>), () => new ObservableCollection<string>());
+        public static readonly PropertyData StudentsWithNoSubmissionsProperty = RegisterProperty("StudentsWithNoSubmissions",
+                                                                                                 typeof(ObservableCollection<string>),
+                                                                                                 () => new ObservableCollection<string>());
 
         /// <summary>
         /// Whether the panel showing students with no submissions is visible.
@@ -126,9 +131,9 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// All the submissions for the desired page.
         /// </summary>
-        public ObservableCollection<ICLPPage> SubmissionPages
+        public ObservableCollection<CLPPage> SubmissionPages
         {
-            get { return GetValue<ObservableCollection<ICLPPage>>(SubmissionPagesProperty); }
+            get { return GetValue<ObservableCollection<CLPPage>>(SubmissionPagesProperty); }
             set
             {
                 SetValue(SubmissionPagesProperty, value);
@@ -136,7 +141,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        public static readonly PropertyData SubmissionPagesProperty = RegisterProperty("SubmissionPages", typeof(ObservableCollection<ICLPPage>), () => new ObservableCollection<ICLPPage>());
+        public static readonly PropertyData SubmissionPagesProperty = RegisterProperty("SubmissionPages", typeof(ObservableCollection<CLPPage>), () => new ObservableCollection<CLPPage>());
 
         /// <summary>
         /// Gets or sets the property value.
@@ -158,7 +163,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public ObservableCollection<string> FilterTypes
         {
             get { return GetValue<ObservableCollection<string>>(FilterTypesProperty); }
-            set {  SetValue(FilterTypesProperty, value); }
+            set { SetValue(FilterTypesProperty, value); }
         }
 
         public static readonly PropertyData FilterTypesProperty = RegisterProperty("FilterTypes", typeof(ObservableCollection<string>));
@@ -180,106 +185,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Propertes
 
-        #region IPanel Members
-
-        public string PanelName
-        {
-            get
-            {
-                return "SubmissionsPanel";
-            }
-        }
-
-        /// <summary>
-        /// Whether the Panel is pinned to the same Z-Index as the Workspace.
-        /// </summary>
-        public bool IsPinned
-        {
-            get { return GetValue<bool>(IsPinnedProperty); }
-            set { SetValue(IsPinnedProperty, value); }
-        }
-
-        public static readonly PropertyData IsPinnedProperty = RegisterProperty("IsPinned", typeof(bool), true);
-
-        /// <summary>
-        /// Visibility of Panel, True for Visible, False for Collapsed.
-        /// </summary>
-        public bool IsVisible
-        {
-            get { return GetValue<bool>(IsVisibleProperty); }
-            set { SetValue(IsVisibleProperty, value); }
-        }
-
-        public static readonly PropertyData IsVisibleProperty = RegisterProperty("IsVisible", typeof(bool), false);
-
-        /// <summary>
-        /// Can the Panel be resized.
-        /// </summary>
-        public bool IsResizable
-        {
-            get { return GetValue<bool>(IsResizableProperty); }
-            set { SetValue(IsResizableProperty, value); }
-        }
-
-        public static readonly PropertyData IsResizableProperty = RegisterProperty("IsResizable", typeof(bool), false);
-
-        /// <summary>
-        /// Initial Width of the Panel, before any resizing.
-        /// </summary>
-        public double InitialWidth
-        {
-            get { return 250; }
-        }
-
-        public double PanelWidth
-        {
-            get { return GetValue<double>(PanelWidthProperty); }
-            set { SetValue(PanelWidthProperty, value); }
-        }
-
-        public static readonly PropertyData PanelWidthProperty = RegisterProperty("PanelWidth", typeof(double), 250);
-
-        /// <summary>
-        /// The Panel's Location relative to the Workspace.
-        /// </summary>
-        public PanelLocation Location
-        {
-            get { return GetValue<PanelLocation>(LocationProperty); }
-            set { SetValue(LocationProperty, value); }
-        }
-
-        public static readonly PropertyData LocationProperty = RegisterProperty("Location", typeof(PanelLocation), PanelLocation.Right);
-
-        /// <summary>
-        /// A Linked IPanel if more than one IPanel is to be used in the same Location.
-        /// </summary>
-        public IPanel LinkedPanel
-        {
-            get { return GetValue<IPanel>(LinkedPanelProperty); }
-            set { SetValue(LinkedPanelProperty, value); }
-        }
-
-        public static readonly PropertyData LinkedPanelProperty = RegisterProperty("LinkedPanel", typeof(IPanel));
-
-        #endregion
-
         #region Commands
-
-        /// <summary>
-        /// Resizes the panel.
-        /// </summary>
-        public Command<DragDeltaEventArgs> PanelResizeDragCommand { get; private set; }
-
-        private void OnPanelResizeDragCommandExecute(DragDeltaEventArgs e)
-        {
-            var newWidth = PanelWidth + e.HorizontalChange;
-            if(newWidth < 50) { newWidth = 50; }
-
-            var notebookPagesPanel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
-            var notebookPagesPanelWidth = notebookPagesPanel != null ? notebookPagesPanel.PanelWidth : 0;
-            if(newWidth > Application.Current.MainWindow.ActualWidth - 100 - notebookPagesPanelWidth) { newWidth = Application.Current.MainWindow.ActualWidth - 100 - notebookPagesPanelWidth; }
-            PanelWidth = newWidth;
-        }
 
         /// <summary>
         /// Toggles the panel that shows the student names who haven't submitted.
@@ -293,25 +199,26 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 return;
             }
-            if(toggleButton.IsChecked != null && !(bool)toggleButton.IsChecked)
+            if(toggleButton.IsChecked != null &&
+               !(bool)toggleButton.IsChecked)
             {
                 return;
             }
 
             StudentsWithNoSubmissions = GetStudentsWithNoSubmissions();
-        }      
+        }
 
         /// <summary>
         /// Sets the current selected page in the listbox.
         /// </summary>
-        public Command<ICLPPage> SetCurrentPageCommand { get; private set; }
+        public Command<CLPPage> SetCurrentPageCommand { get; private set; }
 
-        private void OnSetCurrentPageCommandExecute(ICLPPage page)
+        private void OnSetCurrentPageCommandExecute(CLPPage page)
         {
-            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel != null)
             {
-                notebookWorkspaceViewModel.SelectedDisplay.AddPageToDisplay(page);
+                notebookWorkspaceViewModel.CurrentDisplay.AddPageToDisplay(page);
             }
         }
 
@@ -331,7 +238,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 string name;
                 while((name = reader.ReadLine()) != null)
                 {
-                    var user = name.Split(new[] { ',' })[0];
+                    var user = name.Split(new[] {','})[0];
                     userNames.Add(user);
                 }
                 reader.Dispose();
@@ -341,61 +248,68 @@ namespace Classroom_Learning_Partner.ViewModels
                 return userNames;
             }
 
-            foreach(var p in SubmissionPages.Where(p => userNames.Contains(p.Submitter.FullName))) 
-            {
-                userNames.Remove(p.Submitter.FullName);
-            }
+            // TODO: Entities
+            //foreach(var p in SubmissionPages.Where(p => userNames.Contains(p.Submitter.FullName))) 
+            //{
+            //    userNames.Remove(p.Submitter.FullName);
+            //}
             return userNames;
         }
 
         public void OnlyGroupSubmissionsFilter(object sender, FilterEventArgs e)
         {
-            CLPPage page = e.Item as CLPPage;
-            if(page != null)
+            var page = e.Item as CLPPage;
+            if(page == null)
             {
-                if(page.SubmissionType == SubmissionType.Group)
-                {
-                    e.Accepted = true;
-                }
-                else
-                {
-                    e.Accepted = false;
-                }
+                return;
             }
+
+            // TODO: Entities
+            //if(page.SubmissionType == SubmissionType.Group)
+            //{
+            //    e.Accepted = true;
+            //}
+            //else
+            //{
+            //    e.Accepted = false;
+            //}
         }
 
         public void OnlyIndividualSubmissionsFilter(object sender, FilterEventArgs e)
         {
-            CLPPage page = e.Item as CLPPage;
-            if(page != null)
+            var page = e.Item as CLPPage;
+            if(page == null)
             {
-                if(page.SubmissionType == SubmissionType.Group)
-                {
-                    e.Accepted = false;
-                }
-                else
-                {
-                    e.Accepted = true;
-                }
+                return;
             }
+
+            // TODO: Entities
+            //if(page.SubmissionType == SubmissionType.Group)
+            //{
+            //    e.Accepted = false;
+            //}
+            //else
+            //{
+            //    e.Accepted = true;
+            //}
         }
 
-        public ObservableCollection<Tag> getAllTags(ObservableCollection<ICLPPage> pages)
-        {
-            ObservableCollection<Tag> tags = new ObservableCollection<Tag>();
-            foreach(var page in pages)
-            {
-                foreach(Tag tag in page.PageTags)
-                {
-                    if(!tags.Contains(tag))
-                    {
-                        tags.Add(tag);
-
-                    }
-                }
-            }
-            return tags;
-        }
+        // TODO: Entities
+        //public ObservableCollection<Tag> getAllTags(ObservableCollection<ICLPPage> pages)
+        //{
+        //    var tags = new ObservableCollection<Tag>();
+        //    foreach(var page in pages)
+        //    {
+        //        foreach(Tag tag in page.PageTags)
+        //        {
+        //            if(!tags.Contains(tag))
+        //            {
+        //                tags.Add(tag);
+        //            }
+        //        }
+        //    }
+        //    return tags;
+        //}
 
         public void FilterSubmissions(string Sort)
         {
@@ -438,7 +352,6 @@ namespace Classroom_Learning_Partner.ViewModels
             //    FilteredSubmissions.GroupDescriptions.Add(submitterNameDescription);
             //    FilteredSubmissions.SortDescriptions.Add(submitterNameSort);
 
-
             //}
             //else if(Sort == "Submissions By Group Name")
             //{
@@ -463,7 +376,6 @@ namespace Classroom_Learning_Partner.ViewModels
             //{
             //    FilteredSubmissions.GroupDescriptions.Add(timeDescription);
             //    FilteredSubmissions.GroupDescriptions.Add(submitterNameDescription);
-
 
             //    FilteredSubmissions.SortDescriptions.Add(timeDescendingSort);
             //}

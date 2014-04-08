@@ -5,24 +5,23 @@
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
-                   xmlns:system="clr-namespace:System;assembly=mscorlib"
                    xmlns:extenders="clr-namespace:Classroom_Learning_Partner.Views.Extenders">
 
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/Resources/MainWindowResources.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/Resources/CLPBrushes.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <!-- Converters -->
             <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
-            <conv:ProjectedDisplayBackgroundConverter x:Key="ProjectedDisplayBackgroundConverter" />
             <conv:ItemSelectedToColorConverter x:Key="PageOrDisplaySelectionColorConverter" />
             <conv:TypeToStringConverter x:Key="TypeToStringConverter" />
+            <conv:PanelLocationToThicknessConverter x:Key="PanelLocationToThicknessConverter" />
 
             <!-- Style to override ListBoxItem selection visuals for Pages -->
-            <Style x:Key="PageSidebarContainer" TargetType="{x:Type ListBoxItem}">
+            <Style x:Key="PageSidebarContainer"
+                   TargetType="{x:Type ListBoxItem}">
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type ListBoxItem}">
@@ -43,18 +42,23 @@
         </Grid.ColumnDefinitions>
 
         <Border Background="{StaticResource GrayBackgroundColor}"
-                BorderBrush="{StaticResource GrayEdgeColor}" BorderThickness="0,0,5,0"
+                BorderBrush="{StaticResource GrayEdgeColor}"
+                BorderThickness="{Binding Location, Converter={StaticResource PanelLocationToThicknessConverter}, ConverterParameter=7.0}"
                 Grid.Column="0"
-                Width="{Binding PanelWidth}">
+                Width="{Binding PanelLength}">
 
             <Grid>
-                <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding Pages}" SelectedValue="{Binding CurrentPage}"
-                        ItemContainerStyle="{StaticResource PageSidebarContainer}" SelectionMode="Single" extenders:ListBoxExtenders.AutoScrollToCurrentItem="True">
+                <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         ItemsSource="{Binding Pages}"
+                         SelectedValue="{Binding CurrentPage}"
+                         ItemContainerStyle="{StaticResource PageSidebarContainer}"
+                         SelectionMode="Single"
+                         extenders:ListBoxExtenders.AutoScrollToCurrentItem="True">
 
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <!--TODO: Write background converter for pages w/ purple background...or make converter parameter = color
-                        Background="{Binding ViewModel.IsShowingSubmissions, ElementName=PagePreviewView, Converter={StaticResource ProjectedDisplayBackgroundConverter}}"-->
+                            Background="{Binding ViewModel.IsShowingSubmissions, ElementName=PagePreviewView, Converter={StaticResource ProjectedDisplayBackgroundConverter}}"-->
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
@@ -62,11 +66,13 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
 
-                                <TextBlock Grid.Column="0" Margin="5 15 0 0"
-                                        Foreground="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
-                                        FontWeight="Bold" VerticalAlignment="Top">
+                                <TextBlock Grid.Column="0"
+                                           Margin="5 15 0 0"
+                                           Foreground="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
+                                           FontWeight="Bold"
+                                           VerticalAlignment="Top">
                                     <Run Text="Page " />
-                                    <Run Text="{Binding PageIndex}" />
+                                    <Run Text="{Binding PageNumber}" />
                                     <TextBlock.LayoutTransform>
                                         <TransformGroup>
                                             <ScaleTransform />
@@ -77,51 +83,77 @@
                                     </TextBlock.LayoutTransform>
                                 </TextBlock>
 
-                                <views:CLPPagePreviewView x:Name="PagePreviewView" Grid.Column="1" Margin="5" DataContext="{Binding}" ClipToBounds="True" />
+                                <views:CLPPagePreviewView x:Name="PagePreviewView"
+                                                          Grid.Column="1"
+                                                          Margin="5"
+                                                          DataContext="{Binding}"
+                                                          ClipToBounds="True" />
 
-                                <Rectangle Grid.Column="1" Margin="5"
-                                        Stroke="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
-                                        StrokeThickness="2" Fill="Transparent">
+                                <Rectangle Grid.Column="1"
+                                           Margin="5"
+                                           Stroke="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
+                                           StrokeThickness="2"
+                                           Fill="Transparent">
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="MouseUp">
                                             <catel:EventToCommand
-                                                    Command="{Binding DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
-                                                    PassEventArgsToCommand="False" CommandParameter="{Binding}" />
+                                                Command="{Binding DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                                PassEventArgsToCommand="False"
+                                                CommandParameter="{Binding}" />
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
                                 </Rectangle>
 
-                                <Image Grid.Column="1" Height="16" Width="16" VerticalAlignment="Bottom" HorizontalAlignment="Right" IsHitTestVisible="False"
+                                <Image Grid.Column="1"
+                                       Height="16"
+                                       Width="16"
+                                       VerticalAlignment="Bottom"
+                                       HorizontalAlignment="Right"
+                                       IsHitTestVisible="False"
                                        Source="pack://application:,,,/Resources/Images/Check16.png"
-                                       Visibility="{Binding ViewModel.HasSubmissions, ElementName=PagePreviewView, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
-                                </Image>
-                                
-                                <Image Grid.Column="1" Height="16" Width="16" VerticalAlignment="Bottom" HorizontalAlignment="Left" IsHitTestVisible="False"
+                                       Visibility="{Binding ViewModel.HasSubmissions, ElementName=PagePreviewView, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />
+
+                                <Image Grid.Column="1"
+                                       Height="16"
+                                       Width="16"
+                                       VerticalAlignment="Bottom"
+                                       HorizontalAlignment="Left"
+                                       IsHitTestVisible="False"
                                        Source="pack://application:,,,/Resources/Images/AnimationIndicator16.png">
                                     <Image.Style>
                                         <Style TargetType="Image">
-                                            <Setter Property="Visibility" Value="Hidden" />
+                                            <Setter Property="Visibility"
+                                                    Value="Hidden" />
                                             <Style.Triggers>
-                                                <DataTrigger Binding="{Binding ViewModel, ElementName=PagePreviewView, Converter={StaticResource TypeToStringConverter}}" Value="CLPAnimationPageViewModel">
-                                                    <Setter Property="Visibility" Value="Visible" />
+                                                <DataTrigger Binding="{Binding ViewModel, ElementName=PagePreviewView, Converter={StaticResource TypeToStringConverter}}"
+                                                             Value="CLPAnimationPageViewModel">
+                                                    <Setter Property="Visibility"
+                                                            Value="Visible" />
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
                                     </Image.Style>
                                 </Image>
 
-                                <Grid Grid.Column="2" VerticalAlignment="Center" Margin="0 0 5 0"
-                                        Visibility="{Binding MainWindowViewModel.Ribbon.InstructorVisibility, Source={x:Static Application.Current}}">
+                                <Grid Grid.Column="2"
+                                      VerticalAlignment="Center"
+                                      Margin="0 0 5 0"
+                                      Visibility="{Binding MainWindowViewModel.Ribbon.InstructorVisibility, Source={x:Static Application.Current}}">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
-                                    <Button Grid.Row="0" Height="50" Width="25"
+                                    <Button Grid.Row="0"
+                                            Height="50"
+                                            Width="25"
                                             Command="{Binding DataContext.ShowSubmissionsCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
                                             CommandParameter="{Binding}">
                                         <Image Source="pack://application:,,,/Resources/Images/DisplaySubmissionsButton50x25.png" />
                                     </Button>
-                                    <TextBlock Grid.Row="1" Text="{Binding ViewModel.NumberOfSubmissions, ElementName=PagePreviewView}" TextAlignment="Center" Width="25" />
+                                    <TextBlock Grid.Row="1"
+                                               Text="{Binding ViewModel.NumberOfSubmissions, ElementName=PagePreviewView}"
+                                               TextAlignment="Center"
+                                               Width="25" />
                                 </Grid>
 
                             </Grid>
@@ -129,29 +161,46 @@
                     </ListBox.ItemTemplate>
                 </ListBox>
 
-                <Thumb Cursor="ScrollWE" Width="5" Height="30" Margin="0 0 -5 0" VerticalAlignment="Center" HorizontalAlignment="Right">
+                <Thumb Cursor="ScrollWE"
+                       Width="5"
+                       Height="30"
+                       Margin="0 0 -5 0"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Right">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="DragDelta">
-                            <catel:EventToCommand Command="{Binding PanelResizeDragCommand}" PassEventArgsToCommand="True" />
+                            <catel:EventToCommand Command="{Binding PanelResizeDragCommand}"
+                                                  PassEventArgsToCommand="True" />
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                     <Thumb.Template>
                         <ControlTemplate>
-                            <UniformGrid Columns="1" Background="Transparent">
-                                <Ellipse StrokeThickness="0" Fill="{StaticResource HighlightColor}" Height="3" Width="3" />
-                                <Ellipse StrokeThickness="0" Fill="{StaticResource HighlightColor}" Height="3" Width="3" />
-                                <Ellipse StrokeThickness="0" Fill="{StaticResource HighlightColor}" Height="3" Width="3" />
+                            <UniformGrid Columns="1"
+                                         Background="Transparent">
+                                <Ellipse StrokeThickness="0"
+                                         Fill="{StaticResource HighlightColor}"
+                                         Height="3"
+                                         Width="3" />
+                                <Ellipse StrokeThickness="0"
+                                         Fill="{StaticResource HighlightColor}"
+                                         Height="3"
+                                         Width="3" />
+                                <Ellipse StrokeThickness="0"
+                                         Fill="{StaticResource HighlightColor}"
+                                         Height="3"
+                                         Width="3" />
                             </UniformGrid>
                         </ControlTemplate>
                     </Thumb.Template>
                 </Thumb>
             </Grid>
-            
+
         </Border>
 
+        <!--TODO: Entities, StagingPanel
         <views:SubmissionsPanelView DataContext="{Binding LinkedPanel}"
                                     Grid.Column="1"
-                                    Visibility="{Binding IsVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />
+                                    Visibility="{Binding IsVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />-->
 
     </Grid>
 

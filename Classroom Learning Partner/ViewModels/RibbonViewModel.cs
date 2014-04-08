@@ -324,28 +324,29 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private static void IsProjectorOn_Changed(object sender, AdvancedPropertyChangedEventArgs args)
         {
-            var displayList = DisplayListPanelViewModel.GetDisplayListPanelViewModel();
-            if(App.Network.ProjectorProxy == null || displayList == null)
-            {
-                return;
-            }
+            // TODO: Entities
+            //var displayList = DisplayListPanelViewModel.GetDisplayListPanelViewModel();
+            //if(App.Network.ProjectorProxy == null || displayList == null)
+            //{
+            //    return;
+            //}
 
-            var isCurrentDisplayASingleDisplay = displayList.CurrentDisplay == null;
-            var displayID = isCurrentDisplayASingleDisplay ? "MirrorDisplay" : displayList.CurrentDisplay.UniqueID;
-            var currentPage = displayList.MirrorDisplay.CurrentPage;
-            var currentPageID = currentPage.SubmissionType != SubmissionType.None ? currentPage.SubmissionID : currentPage.UniqueID;
-            var pageIDs = isCurrentDisplayASingleDisplay
-                              ? new List<string> { currentPageID }
-                              : displayList.CurrentDisplay.DisplayPageIDs.ToList();
+            //var isCurrentDisplayASingleDisplay = displayList.CurrentDisplay == null;
+            //var displayID = isCurrentDisplayASingleDisplay ? "SingleDisplay" : displayList.CurrentDisplay.UniqueID;
+            //var currentPage = displayList.SingleDisplay.CurrentPage;
+            //var currentPageID = currentPage.SubmissionType != SubmissionType.None ? currentPage.SubmissionID : currentPage.UniqueID;
+            //var pageIDs = isCurrentDisplayASingleDisplay
+            //                  ? new List<string> { currentPageID }
+            //                  : displayList.CurrentDisplay.DisplayPageIDs.ToList();
 
-            try
-            {
-                App.Network.ProjectorProxy.SwitchProjectorDisplay(displayID, pageIDs);
-            }
-            catch(Exception)
-            {
+            //try
+            //{
+            //    App.Network.ProjectorProxy.SwitchProjectorDisplay(displayID, pageIDs);
+            //}
+            //catch(Exception)
+            //{
 
-            }         
+            //}         
         }
 
         /// <summary>
@@ -424,28 +425,29 @@ namespace Classroom_Learning_Partner.ViewModels
             { 
                 SetValue(BlockStudentPenInputProperty, value); 
             
-                if(App.Network.ClassList.Count > 0)
-                {
-                    foreach(Person student in App.Network.ClassList)
-                    {
-                        try
-                        {
-                            NetTcpBinding binding = new NetTcpBinding();
-                            binding.Security.Mode = SecurityMode.None;
-                            IStudentContract StudentProxy = ChannelFactory<IStudentContract>.CreateChannel(binding, new EndpointAddress(student.CurrentMachineAddress));
-                            StudentProxy.TogglePenDownMode(value);
-                            (StudentProxy as ICommunicationObject).Close();
-                        }
-                        catch(System.Exception ex)
-                        {
-                            Console.WriteLine(ex.Message);
-                        }
-                    }
-                }
-                else
-                {
-                    Logger.Instance.WriteToLog("No Students Found");
-                }
+                // TODO: Entities
+                //if(App.Network.ClassList.Count > 0)
+                //{
+                //    foreach(Person student in App.Network.ClassList)
+                //    {
+                //        try
+                //        {
+                //            NetTcpBinding binding = new NetTcpBinding();
+                //            binding.Security.Mode = SecurityMode.None;
+                //            IStudentContract StudentProxy = ChannelFactory<IStudentContract>.CreateChannel(binding, new EndpointAddress(student.CurrentMachineAddress));
+                //            StudentProxy.TogglePenDownMode(value);
+                //            (StudentProxy as ICommunicationObject).Close();
+                //        }
+                //        catch(System.Exception ex)
+                //        {
+                //            Console.WriteLine(ex.Message);
+                //        }
+                //    }
+                //}
+                //else
+                //{
+                //    Logger.Instance.WriteToLog("No Students Found");
+                //}
             }
         }
 
@@ -656,7 +658,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnOpenNotebookCommandExecute()
         {
-            MainWindow.SelectedWorkspace = new NotebookChooserWorkspaceViewModel();
+            MainWindow.Workspace = new NotebookChooserWorkspaceViewModel();
         }
 
         /// <summary>
@@ -666,26 +668,27 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnLoadNotebookFromXMLCommandExecute()
         {
-            var selectDirectoryService = Catel.IoC.ServiceLocator.Default.ResolveType<ISelectDirectoryService>();
-            selectDirectoryService.InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "NotebookXML/");
+            // TODO: Entities?
+            //var selectDirectoryService = Catel.IoC.ServiceLocator.Default.ResolveType<ISelectDirectoryService>();
+            //selectDirectoryService.InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "NotebookXML/");
 
-            if(selectDirectoryService.DetermineDirectory())
-            {
-                var notebook = ImportFromXML.ImportNotebook(selectDirectoryService.DirectoryName);
+            //if(selectDirectoryService.DetermineDirectory())
+            //{
+            //    var notebook = ImportFromXML.ImportNotebook(selectDirectoryService.DirectoryName);
 
-                App.MainWindowViewModel.OpenNotebooks.Add(notebook);
-                if(App.CurrentUserMode == App.UserMode.Instructor ||
-                   App.CurrentUserMode == App.UserMode.Student ||
-                   App.CurrentUserMode == App.UserMode.Projector)
-                {
-                    App.MainWindowViewModel.SelectedWorkspace = new NotebookWorkspaceViewModel(notebook);
-                }
+            //    App.MainWindowViewModel.OpenNotebooks.Add(notebook);
+            //    if(App.CurrentUserMode == App.UserMode.Instructor ||
+            //       App.CurrentUserMode == App.UserMode.Student ||
+            //       App.CurrentUserMode == App.UserMode.Projector)
+            //    {
+            //        App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(notebook);
+            //    }
 
-                if(notebook.LastSavedTime != null)
-                {
-                    App.MainWindowViewModel.LastSavedTime = notebook.LastSavedTime.ToString("yyyy/MM/dd - HH:mm:ss");
-                }
-            }  
+            //    if(notebook.LastSavedTime != null)
+            //    {
+            //        App.MainWindowViewModel.LastSavedTime = notebook.LastSavedTime.ToString("yyyy/MM/dd - HH:mm:ss");
+            //    }
+            //}  
         }
 
         //TODO: Steve - Combine with DoneEditing to make ToggleEditingMode
@@ -728,11 +731,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnSaveNotebookCommandExecute()
         {
-            if(App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
-            {
-                Catel.Windows.PleaseWaitHelper.Show(() =>
-                    CLPServiceAgent.Instance.SaveNotebook((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook), null, "Saving Notebook", 0.0 / 0.0);
-            }
+            // TODO: Entities
+            //if(App.MainWindowViewModel.Workspace is NotebookWorkspaceViewModel)
+            //{
+            //    Catel.Windows.PleaseWaitHelper.Show(() =>
+            //        CLPServiceAgent.Instance.SaveNotebook((App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).Notebook), null, "Saving Notebook", 0.0 / 0.0);
+            //}
         }
 
         /// <summary>
@@ -742,10 +746,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnSaveAllNotebooksCommandExecute()
         {
-            foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
-            {
-                CLPServiceAgent.Instance.SaveNotebook(notebook);
-            }
+            // TODO: Entities
+            //foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
+            //{
+            //    CLPServiceAgent.Instance.SaveNotebook(notebook);
+            //}
         }
 
         /// <summary>
@@ -755,29 +760,30 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnSubmitNotebookToTeacherCommandExecute()
         {
-            if(App.MainWindowViewModel.SelectedWorkspace is NotebookWorkspaceViewModel)
-            {
-                CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
+            // TODO: Entities? Probably not necessary with Database
+            //if(App.MainWindowViewModel.Workspace is NotebookWorkspaceViewModel)
+            //{
+            //    CLPNotebook notebook = (App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).Notebook;
 
-                if(App.Network.InstructorProxy != null)
-                {
-                    try
-                    {
-                        var sNotebook = ObjectSerializer.ToString(notebook);
-                        var zippedNotebook = CLPServiceAgent.Instance.Zip(sNotebook);
+            //    if(App.Network.InstructorProxy != null)
+            //    {
+            //        try
+            //        {
+            //            var sNotebook = ObjectSerializer.ToString(notebook);
+            //            var zippedNotebook = CLPServiceAgent.Instance.Zip(sNotebook);
 
-                        App.Network.InstructorProxy.CollectStudentNotebook(zippedNotebook, App.Network.CurrentUser.FullName);
-                    }
-                    catch(Exception)
-                    {
+            //            App.Network.InstructorProxy.CollectStudentNotebook(zippedNotebook, App.Network.CurrentUser.FullName);
+            //        }
+            //        catch(Exception)
+            //        {
 
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("Instructor NOT Available");
-                }
-            }
+            //        }
+            //    }
+            //    else
+            //    {
+            //        Console.WriteLine("Instructor NOT Available");
+            //    }
+            //}
         }
 
         /// <summary>
@@ -787,80 +793,81 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnConvertDisplaysToXPSCommandExecute()
         {
-            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel == null)
-            {
-                return;
-            }
+            // TODO: Entities
+            //var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
+            //if(notebookWorkspaceViewModel == null)
+            //{
+            //    return;
+            //}
 
-            Catel.Windows.PleaseWaitHelper.Show(() =>
-            {
-                var notebook = notebookWorkspaceViewModel.Notebook;
-                var directoryPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Displays - XPS\";
-                if(!Directory.Exists(directoryPath))
-                {
-                    Directory.CreateDirectory(directoryPath);
-                }
+            //Catel.Windows.PleaseWaitHelper.Show(() =>
+            //{
+            //    var notebook = notebookWorkspaceViewModel.Notebook;
+            //    var directoryPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Displays - XPS\";
+            //    if(!Directory.Exists(directoryPath))
+            //    {
+            //        Directory.CreateDirectory(directoryPath);
+            //    }
 
-                var fileName = notebook.NotebookName + " - Displays.xps";
-                var filePath = directoryPath + fileName;
-                if(File.Exists(filePath))
-                {
-                    File.Delete(filePath);
-                }
+            //    var fileName = notebook.Name + " - Displays.xps";
+            //    var filePath = directoryPath + fileName;
+            //    if(File.Exists(filePath))
+            //    {
+            //        File.Delete(filePath);
+            //    }
 
-                var document = new FixedDocument();
-                document.DocumentPaginator.PageSize = new Size(96 * 11, 96 * 8.5);
+            //    var document = new FixedDocument();
+            //    document.DocumentPaginator.PageSize = new Size(96 * 11, 96 * 8.5);
 
-                foreach(var display in notebook.Displays)
-                {
-                    var currentDisplayView = new GridDisplayPreviewView
-                                             {
-                                                 DataContext = display,
-                                                 Height = 96 * 8.5,
-                                                 Width = 96 * 11
-                                             };
-                    currentDisplayView.UpdateLayout();
-                    var gridDisplay = display as CLPGridDisplay;
-                    var displayIndex = gridDisplay != null ? gridDisplay.DisplayIndex : 0;
+            //    foreach(var display in notebook.Displays)
+            //    {
+            //        var currentDisplayView = new GridDisplayPreviewView
+            //                                 {
+            //                                     DataContext = display,
+            //                                     Height = 96 * 8.5,
+            //                                     Width = 96 * 11
+            //                                 };
+            //        currentDisplayView.UpdateLayout();
+            //        var gridDisplay = display as CLPGridDisplay;
+            //        var displayIndex = gridDisplay != null ? gridDisplay.DisplayIndex : 0;
 
-                    var grid = new Grid();
-                    grid.Children.Add(currentDisplayView);
-                    var pageIndexlabel = new Label
-                    {
-                        FontSize = 20,
-                        FontWeight = FontWeights.Bold,
-                        FontStyle = FontStyles.Oblique,
-                        HorizontalAlignment = HorizontalAlignment.Right,
-                        VerticalAlignment = VerticalAlignment.Top,
-                        Content = "Display " + displayIndex,
-                        Margin = new Thickness(0, 5, 5, 0)
-                    };
-                    grid.Children.Add(pageIndexlabel);
-                    grid.UpdateLayout();
+            //        var grid = new Grid();
+            //        grid.Children.Add(currentDisplayView);
+            //        var pageIndexlabel = new Label
+            //        {
+            //            FontSize = 20,
+            //            FontWeight = FontWeights.Bold,
+            //            FontStyle = FontStyles.Oblique,
+            //            HorizontalAlignment = HorizontalAlignment.Right,
+            //            VerticalAlignment = VerticalAlignment.Top,
+            //            Content = "Display " + displayIndex,
+            //            Margin = new Thickness(0, 5, 5, 0)
+            //        };
+            //        grid.Children.Add(pageIndexlabel);
+            //        grid.UpdateLayout();
 
-                    var transform = new TransformGroup();
-                    var rotate = new RotateTransform(90.0);
-                    var translate = new TranslateTransform(816, 0);
-                    transform.Children.Add(rotate);
-                    transform.Children.Add(translate);
-                    grid.RenderTransform = transform;
+            //        var transform = new TransformGroup();
+            //        var rotate = new RotateTransform(90.0);
+            //        var translate = new TranslateTransform(816, 0);
+            //        transform.Children.Add(rotate);
+            //        transform.Children.Add(translate);
+            //        grid.RenderTransform = transform;
 
-                    var pageContent = new PageContent();
-                    var fixedPage = new FixedPage();
-                    fixedPage.Children.Add(grid);
+            //        var pageContent = new PageContent();
+            //        var fixedPage = new FixedPage();
+            //        fixedPage.Children.Add(grid);
 
-                    ((System.Windows.Markup.IAddChild)pageContent).AddChild(fixedPage);
-                    document.Pages.Add(pageContent);
-                }
+            //        ((System.Windows.Markup.IAddChild)pageContent).AddChild(fixedPage);
+            //        document.Pages.Add(pageContent);
+            //    }
 
-                //Save the document
-                var xpsDocument = new XpsDocument(filePath, FileAccess.ReadWrite);
-                var documentWriter = XpsDocument.CreateXpsDocumentWriter(xpsDocument);
-                documentWriter.Write(document);
-                xpsDocument.Close();
+            //    //Save the document
+            //    var xpsDocument = new XpsDocument(filePath, FileAccess.ReadWrite);
+            //    var documentWriter = XpsDocument.CreateXpsDocumentWriter(xpsDocument);
+            //    documentWriter.Write(document);
+            //    xpsDocument.Close();
 
-            }, null, "Converting Notebook Displays to XPS", 0.0 / 0.0);
+            //}, null, "Converting Notebook Displays to XPS", 0.0 / 0.0);
         }
 
         /// <summary>
@@ -870,91 +877,92 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnConvertToXPSCommandExecute()
         {
-            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel == null)
-            {
-                return;
-            }
+            // TODO: Entities
+            //var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
+            //if(notebookWorkspaceViewModel == null)
+            //{
+            //    return;
+            //}
 
-            Catel.Windows.PleaseWaitHelper.Show(() =>
-            {
-                var notebook = notebookWorkspaceViewModel.Notebook;
-                string directoryPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\";
-                if(!Directory.Exists(directoryPath))
-                {
-                    Directory.CreateDirectory(directoryPath);
-                }
+            //Catel.Windows.PleaseWaitHelper.Show(() =>
+            //{
+            //    var notebook = notebookWorkspaceViewModel.Notebook;
+            //    string directoryPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\";
+            //    if(!Directory.Exists(directoryPath))
+            //    {
+            //        Directory.CreateDirectory(directoryPath);
+            //    }
 
-                string fileName = notebook.NotebookName + ".xps";
-                string filePath = directoryPath + fileName;
-                if(File.Exists(filePath))
-                {
-                    File.Delete(filePath);
-                }
+            //    string fileName = notebook.NotebookName + ".xps";
+            //    string filePath = directoryPath + fileName;
+            //    if(File.Exists(filePath))
+            //    {
+            //        File.Delete(filePath);
+            //    }
 
-                var document = new FixedDocument();
-                document.DocumentPaginator.PageSize = new Size(96 * 11, 96 * 8.5);
+            //    var document = new FixedDocument();
+            //    document.DocumentPaginator.PageSize = new Size(96 * 11, 96 * 8.5);
 
-                foreach(var page in notebook.Pages)
-                {
-                    foreach(var pageObject in page.PageObjects)
-                    {
-                        pageObject.ParentPage = page;
-                    }
+            //    foreach(var page in notebook.Pages)
+            //    {
+            //        foreach(var pageObject in page.PageObjects)
+            //        {
+            //            pageObject.ParentPage = page;
+            //        }
 
-                    page.TrimPage();
-                    double printHeight = page.PageWidth / page.InitialPageAspectRatio;
+            //        page.TrimPage();
+            //        double printHeight = page.PageWidth / page.InitialPageAspectRatio;
 
-                    double transformAmount = 0;
-                    do
-                    {
-                        var currentPageView = new CLPPagePreviewView { DataContext = page };
-                        currentPageView.UpdateLayout();
+            //        double transformAmount = 0;
+            //        do
+            //        {
+            //            var currentPageView = new CLPPagePreviewView { DataContext = page };
+            //            currentPageView.UpdateLayout();
 
-                        var grid = new Grid();
-                        grid.Children.Add(currentPageView);
-                        var pageIndexlabel = new Label
-                        {
-                            FontSize = 20,
-                            FontWeight = FontWeights.Bold,
-                            FontStyle = FontStyles.Oblique,
-                            HorizontalAlignment = HorizontalAlignment.Right,
-                            VerticalAlignment = VerticalAlignment.Top,
-                            Content = "Page " + page.PageIndex,
-                            Margin = new Thickness(0, transformAmount + 5, 5, 0)
-                        };
-                        grid.Children.Add(pageIndexlabel);
-                        grid.UpdateLayout();
+            //            var grid = new Grid();
+            //            grid.Children.Add(currentPageView);
+            //            var pageIndexlabel = new Label
+            //            {
+            //                FontSize = 20,
+            //                FontWeight = FontWeights.Bold,
+            //                FontStyle = FontStyles.Oblique,
+            //                HorizontalAlignment = HorizontalAlignment.Right,
+            //                VerticalAlignment = VerticalAlignment.Top,
+            //                Content = "Page " + page.PageIndex,
+            //                Margin = new Thickness(0, transformAmount + 5, 5, 0)
+            //            };
+            //            grid.Children.Add(pageIndexlabel);
+            //            grid.UpdateLayout();
 
-                        var transform = new TransformGroup();
-                        var translate = new TranslateTransform(0, -transformAmount);
-                        transform.Children.Add(translate);
-                        if(page.PageWidth == CLPPage.LANDSCAPE_WIDTH)
-                        {
-                            var rotate = new RotateTransform(90.0);
-                            var translate2 = new TranslateTransform(816, 0);
-                            transform.Children.Add(rotate);
-                            transform.Children.Add(translate2);
-                        }
-                        grid.RenderTransform = transform;
-                        transformAmount += printHeight;
+            //            var transform = new TransformGroup();
+            //            var translate = new TranslateTransform(0, -transformAmount);
+            //            transform.Children.Add(translate);
+            //            if(page.PageWidth == CLPPage.LANDSCAPE_WIDTH)
+            //            {
+            //                var rotate = new RotateTransform(90.0);
+            //                var translate2 = new TranslateTransform(816, 0);
+            //                transform.Children.Add(rotate);
+            //                transform.Children.Add(translate2);
+            //            }
+            //            grid.RenderTransform = transform;
+            //            transformAmount += printHeight;
 
-                        var pageContent = new PageContent();
-                        var fixedPage = new FixedPage();
-                        fixedPage.Children.Add(grid);
+            //            var pageContent = new PageContent();
+            //            var fixedPage = new FixedPage();
+            //            fixedPage.Children.Add(grid);
 
-                        ((System.Windows.Markup.IAddChild)pageContent).AddChild(fixedPage);
-                        document.Pages.Add(pageContent);
-                    } while(page.PageHeight > transformAmount);
-                }
+            //            ((System.Windows.Markup.IAddChild)pageContent).AddChild(fixedPage);
+            //            document.Pages.Add(pageContent);
+            //        } while(page.PageHeight > transformAmount);
+            //    }
 
-                //Save the document
-                var xpsDocument = new XpsDocument(filePath, FileAccess.ReadWrite);
-                var documentWriter = XpsDocument.CreateXpsDocumentWriter(xpsDocument);
-                documentWriter.Write(document);
-                xpsDocument.Close();
+            //    //Save the document
+            //    var xpsDocument = new XpsDocument(filePath, FileAccess.ReadWrite);
+            //    var documentWriter = XpsDocument.CreateXpsDocumentWriter(xpsDocument);
+            //    documentWriter.Write(document);
+            //    xpsDocument.Close();
 
-            }, null, "Converting Notebook to XPS", 0.0 / 0.0);
+            //}, null, "Converting Notebook to XPS", 0.0 / 0.0);
         }
 
         /// <summary>
@@ -964,112 +972,113 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnConvertPageSubmissionToXPSCommandExecute()
         {
-            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel == null)
-            {
-                return;
-            }
+            // TODO: Entities
+            //var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
+            //if(notebookWorkspaceViewModel == null)
+            //{
+            //    return;
+            //}
 
-            Catel.Windows.PleaseWaitHelper.Show(() =>
-            {
-                var notebook = notebookWorkspaceViewModel.Notebook;
-                string directoryPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\";
-                if(!Directory.Exists(directoryPath))
-                {
-                    Directory.CreateDirectory(directoryPath);
-                }
+            //Catel.Windows.PleaseWaitHelper.Show(() =>
+            //{
+            //    var notebook = notebookWorkspaceViewModel.Notebook;
+            //    string directoryPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\";
+            //    if(!Directory.Exists(directoryPath))
+            //    {
+            //        Directory.CreateDirectory(directoryPath);
+            //    }
 
-                var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
-                if(currentPage == null)
-                {
-                    return;
-                }
+            //    var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
+            //    if(currentPage == null)
+            //    {
+            //        return;
+            //    }
 
-                string fileName = notebook.NotebookName + " - Page " + currentPage.PageIndex + " Submissions.xps";
-                string filePath = directoryPath + fileName;
-                if(File.Exists(filePath))
-                {
-                    File.Delete(filePath);
-                }
+            //    string fileName = notebook.NotebookName + " - Page " + currentPage.PageIndex + " Submissions.xps";
+            //    string filePath = directoryPath + fileName;
+            //    if(File.Exists(filePath))
+            //    {
+            //        File.Delete(filePath);
+            //    }
 
-                if(!notebook.Submissions[currentPage.UniqueID].Any())
-                {
-                    return;
-                }
+            //    if(!notebook.Submissions[currentPage.UniqueID].Any())
+            //    {
+            //        return;
+            //    }
 
-                var document = new FixedDocument();
-                document.DocumentPaginator.PageSize = new Size(96 * 11, 96 * 8.5);
+            //    var document = new FixedDocument();
+            //    document.DocumentPaginator.PageSize = new Size(96 * 11, 96 * 8.5);
 
-                foreach(var page in notebook.Submissions[currentPage.UniqueID])
-                {
-                    foreach(var pageObject in page.PageObjects)
-                    {
-                        pageObject.ParentPage = page;
-                    }
+            //    foreach(var page in notebook.Submissions[currentPage.UniqueID])
+            //    {
+            //        foreach(var pageObject in page.PageObjects)
+            //        {
+            //            pageObject.ParentPage = page;
+            //        }
 
-                    page.TrimPage();
-                    double printHeight = page.PageWidth / page.InitialPageAspectRatio;
+            //        page.TrimPage();
+            //        double printHeight = page.PageWidth / page.InitialPageAspectRatio;
 
-                    double transformAmount = 0;
-                    do
-                    {
-                        var currentPageView = new CLPPagePreviewView { DataContext = page };
-                        currentPageView.UpdateLayout();
+            //        double transformAmount = 0;
+            //        do
+            //        {
+            //            var currentPageView = new CLPPagePreviewView { DataContext = page };
+            //            currentPageView.UpdateLayout();
 
-                        var grid = new Grid();
-                        grid.Children.Add(currentPageView);
-                        var label = new Label
-                        {
-                            FontSize = 20,
-                            FontWeight = FontWeights.Bold,
-                            FontStyle = FontStyles.Oblique,
-                            HorizontalAlignment = HorizontalAlignment.Right,
-                            VerticalAlignment = VerticalAlignment.Top,
-                            Content = page.Submitter.FullName,
-                            Margin = new Thickness(0, transformAmount + 5, 5, 0)
-                        };
-                        grid.Children.Add(label);
-                        var pageIndexlabel = new Label
-                        {
-                            FontSize = 20,
-                            FontWeight = FontWeights.Bold,
-                            FontStyle = FontStyles.Oblique,
-                            HorizontalAlignment = HorizontalAlignment.Right,
-                            VerticalAlignment = VerticalAlignment.Top,
-                            Content = "Page " + page.PageIndex,
-                            Margin = new Thickness(0, transformAmount + 30, 5, 0)
-                        };
-                        grid.Children.Add(pageIndexlabel);
-                        grid.UpdateLayout();
+            //            var grid = new Grid();
+            //            grid.Children.Add(currentPageView);
+            //            var label = new Label
+            //            {
+            //                FontSize = 20,
+            //                FontWeight = FontWeights.Bold,
+            //                FontStyle = FontStyles.Oblique,
+            //                HorizontalAlignment = HorizontalAlignment.Right,
+            //                VerticalAlignment = VerticalAlignment.Top,
+            //                Content = page.Submitter.FullName,
+            //                Margin = new Thickness(0, transformAmount + 5, 5, 0)
+            //            };
+            //            grid.Children.Add(label);
+            //            var pageIndexlabel = new Label
+            //            {
+            //                FontSize = 20,
+            //                FontWeight = FontWeights.Bold,
+            //                FontStyle = FontStyles.Oblique,
+            //                HorizontalAlignment = HorizontalAlignment.Right,
+            //                VerticalAlignment = VerticalAlignment.Top,
+            //                Content = "Page " + page.PageIndex,
+            //                Margin = new Thickness(0, transformAmount + 30, 5, 0)
+            //            };
+            //            grid.Children.Add(pageIndexlabel);
+            //            grid.UpdateLayout();
 
-                        var transform = new TransformGroup();
-                        var translate = new TranslateTransform(0, -transformAmount);
-                        transform.Children.Add(translate);
-                        if(page.PageWidth == CLPPage.LANDSCAPE_WIDTH)
-                        {
-                            var rotate = new RotateTransform(90.0);
-                            var translate2 = new TranslateTransform(816, 0);
-                            transform.Children.Add(rotate);
-                            transform.Children.Add(translate2);
-                        }
-                        grid.RenderTransform = transform;
-                        transformAmount += printHeight;
+            //            var transform = new TransformGroup();
+            //            var translate = new TranslateTransform(0, -transformAmount);
+            //            transform.Children.Add(translate);
+            //            if(page.PageWidth == CLPPage.LANDSCAPE_WIDTH)
+            //            {
+            //                var rotate = new RotateTransform(90.0);
+            //                var translate2 = new TranslateTransform(816, 0);
+            //                transform.Children.Add(rotate);
+            //                transform.Children.Add(translate2);
+            //            }
+            //            grid.RenderTransform = transform;
+            //            transformAmount += printHeight;
 
-                        var pageContent = new PageContent();
-                        var fixedPage = new FixedPage();
-                        fixedPage.Children.Add(grid);
+            //            var pageContent = new PageContent();
+            //            var fixedPage = new FixedPage();
+            //            fixedPage.Children.Add(grid);
 
-                        ((System.Windows.Markup.IAddChild)pageContent).AddChild(fixedPage);
-                        document.Pages.Add(pageContent);
-                    } while(page.PageHeight > transformAmount);
-                }
+            //            ((System.Windows.Markup.IAddChild)pageContent).AddChild(fixedPage);
+            //            document.Pages.Add(pageContent);
+            //        } while(page.PageHeight > transformAmount);
+            //    }
 
-                //Save the document
-                var xpsDocument = new XpsDocument(filePath, FileAccess.ReadWrite);
-                var documentWriter = XpsDocument.CreateXpsDocumentWriter(xpsDocument);
-                documentWriter.Write(document);
-                xpsDocument.Close();
-            }, null, "Converting Submissions for this page to XPS", 0.0 / 0.0);
+            //    //Save the document
+            //    var xpsDocument = new XpsDocument(filePath, FileAccess.ReadWrite);
+            //    var documentWriter = XpsDocument.CreateXpsDocumentWriter(xpsDocument);
+            //    documentWriter.Write(document);
+            //    xpsDocument.Close();
+            //}, null, "Converting Submissions for this page to XPS", 0.0 / 0.0);
         }
 
         /// <summary>
@@ -1079,108 +1088,109 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnConvertAllSubmissionsToXPSCommandExecute()
         {
-            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel == null)
-            {
-                return;
-            }
+            // TODO: Entities
+            //var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
+            //if(notebookWorkspaceViewModel == null)
+            //{
+            //    return;
+            //}
 
-            Catel.Windows.PleaseWaitHelper.Show(() =>
-            {
-                var notebook = notebookWorkspaceViewModel.Notebook;
-                string directoryPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\";
-                if(!Directory.Exists(directoryPath))
-                {
-                    Directory.CreateDirectory(directoryPath);
-                }
+            //Catel.Windows.PleaseWaitHelper.Show(() =>
+            //{
+            //    var notebook = notebookWorkspaceViewModel.Notebook;
+            //    string directoryPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\";
+            //    if(!Directory.Exists(directoryPath))
+            //    {
+            //        Directory.CreateDirectory(directoryPath);
+            //    }
 
-                string fileName = notebook.NotebookName + " - All Submissions.xps";
-                string filePath = directoryPath + fileName;
-                if(File.Exists(filePath))
-                {
-                    File.Delete(filePath);
-                }
+            //    string fileName = notebook.NotebookName + " - All Submissions.xps";
+            //    string filePath = directoryPath + fileName;
+            //    if(File.Exists(filePath))
+            //    {
+            //        File.Delete(filePath);
+            //    }
 
-                var document = new FixedDocument();
-                document.DocumentPaginator.PageSize = new Size(96 * 11, 96 * 8.5);
+            //    var document = new FixedDocument();
+            //    document.DocumentPaginator.PageSize = new Size(96 * 11, 96 * 8.5);
 
                 
-                foreach(var clpPage in notebook.Pages)
-                {
-                    foreach(var page in notebook.Submissions[clpPage.UniqueID])
+            //    foreach(var clpPage in notebook.Pages)
+            //    {
+            //        foreach(var page in notebook.Submissions[clpPage.UniqueID])
                    
                
-              //  foreach(var page in notebook.Submissions.Keys.SelectMany(pageID => notebook.Submissions[pageID]))
-                {
-                    foreach(var pageObject in page.PageObjects)
-                    {
-                        pageObject.ParentPage = page;
-                    }
+            //  //  foreach(var page in notebook.Submissions.Keys.SelectMany(pageID => notebook.Submissions[pageID]))
+            //    {
+            //        foreach(var pageObject in page.PageObjects)
+            //        {
+            //            pageObject.ParentPage = page;
+            //        }
 
-                    page.TrimPage();
-                    double printHeight = page.PageWidth / page.InitialPageAspectRatio;
+            //        page.TrimPage();
+            //        double printHeight = page.PageWidth / page.InitialPageAspectRatio;
 
-                    double transformAmount = 0;
-                    do
-                    {
-                        var currentPageView = new CLPPagePreviewView { DataContext = page };
-                        currentPageView.UpdateLayout();
+            //        double transformAmount = 0;
+            //        do
+            //        {
+            //            var currentPageView = new CLPPagePreviewView { DataContext = page };
+            //            currentPageView.UpdateLayout();
 
-                        var grid = new Grid();
-                        grid.Children.Add(currentPageView);
-                        var label = new Label
-                        {
-                            FontSize = 20,
-                            FontWeight = FontWeights.Bold,
-                            FontStyle = FontStyles.Oblique,
-                            HorizontalAlignment = HorizontalAlignment.Right,
-                            VerticalAlignment = VerticalAlignment.Top,
-                            Content = page.Submitter.FullName,
-                            Margin = new Thickness(0, transformAmount + 5, 5, 0)
-                        };
-                        grid.Children.Add(label);
-                        var pageIndexlabel = new Label
-                        {
-                            FontSize = 20,
-                            FontWeight = FontWeights.Bold,
-                            FontStyle = FontStyles.Oblique,
-                            HorizontalAlignment = HorizontalAlignment.Right,
-                            VerticalAlignment = VerticalAlignment.Top,
-                            Content = "Page " + page.PageIndex,
-                            Margin = new Thickness(0, transformAmount + 30, 5, 0)
-                        };
-                        grid.Children.Add(pageIndexlabel);
-                        grid.UpdateLayout();
+            //            var grid = new Grid();
+            //            grid.Children.Add(currentPageView);
+            //            var label = new Label
+            //            {
+            //                FontSize = 20,
+            //                FontWeight = FontWeights.Bold,
+            //                FontStyle = FontStyles.Oblique,
+            //                HorizontalAlignment = HorizontalAlignment.Right,
+            //                VerticalAlignment = VerticalAlignment.Top,
+            //                Content = page.Submitter.FullName,
+            //                Margin = new Thickness(0, transformAmount + 5, 5, 0)
+            //            };
+            //            grid.Children.Add(label);
+            //            var pageIndexlabel = new Label
+            //            {
+            //                FontSize = 20,
+            //                FontWeight = FontWeights.Bold,
+            //                FontStyle = FontStyles.Oblique,
+            //                HorizontalAlignment = HorizontalAlignment.Right,
+            //                VerticalAlignment = VerticalAlignment.Top,
+            //                Content = "Page " + page.PageIndex,
+            //                Margin = new Thickness(0, transformAmount + 30, 5, 0)
+            //            };
+            //            grid.Children.Add(pageIndexlabel);
+            //            grid.UpdateLayout();
 
-                        var transform = new TransformGroup();
-                        var translate = new TranslateTransform(0, -transformAmount);
-                        transform.Children.Add(translate);
-                        if(page.PageWidth == CLPPage.LANDSCAPE_WIDTH)
-                        {
-                            var rotate = new RotateTransform(90.0);
-                            var translate2 = new TranslateTransform(816, 0);
-                            transform.Children.Add(rotate);
-                            transform.Children.Add(translate2);
-                        }
-                        grid.RenderTransform = transform;
-                        transformAmount += printHeight;
+            //            var transform = new TransformGroup();
+            //            var translate = new TranslateTransform(0, -transformAmount);
+            //            transform.Children.Add(translate);
+            //            if(page.PageWidth == CLPPage.LANDSCAPE_WIDTH)
+            //            {
+            //                var rotate = new RotateTransform(90.0);
+            //                var translate2 = new TranslateTransform(816, 0);
+            //                transform.Children.Add(rotate);
+            //                transform.Children.Add(translate2);
+            //            }
+            //            grid.RenderTransform = transform;
+            //            transformAmount += printHeight;
 
-                        var pageContent = new PageContent();
-                        var fixedPage = new FixedPage();
-                        fixedPage.Children.Add(grid);
+            //            var pageContent = new PageContent();
+            //            var fixedPage = new FixedPage();
+            //            fixedPage.Children.Add(grid);
 
-                        ((System.Windows.Markup.IAddChild)pageContent).AddChild(fixedPage);
-                        document.Pages.Add(pageContent);
-                    } while(page.PageHeight > transformAmount);
-                }
-                     }
+            //            ((System.Windows.Markup.IAddChild)pageContent).AddChild(fixedPage);
+            //            document.Pages.Add(pageContent);
+            //        } while(page.PageHeight > transformAmount);
+            //    }
+            //         }
 
-                //Save the document
-                var xpsDocument = new XpsDocument(filePath, FileAccess.ReadWrite);
-                var documentWriter = XpsDocument.CreateXpsDocumentWriter(xpsDocument);
-                documentWriter.Write(document);
-                xpsDocument.Close();
-            }, null, "Converting All Submissions to XPS", 0.0 / 0.0);
+            //    //Save the document
+            //    var xpsDocument = new XpsDocument(filePath, FileAccess.ReadWrite);
+            //    var documentWriter = XpsDocument.CreateXpsDocumentWriter(xpsDocument);
+            //    documentWriter.Write(document);
+            //    xpsDocument.Close();
+            //}, null, "Converting All Submissions to XPS", 0.0 / 0.0);
         }
 
         /// <summary>
@@ -1229,7 +1239,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnShowNotebookPagesPanelViewCommandExecute()
         {
-            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel != null)
             {
                 notebookWorkspaceViewModel.LeftPanel = notebookWorkspaceViewModel.NotebookPagesPanel;
@@ -1244,7 +1254,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnShowProgressPanelViewCommandExecute()
         {
-            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel != null)
             {
                 notebookWorkspaceViewModel.LeftPanel = notebookWorkspaceViewModel.ProgressPanel;
@@ -1522,13 +1532,13 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private bool OnClearHistoryCommandCanExecute()
         {
-            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+            var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel == null)
             {
                 return false;
             }
 
-            return notebookWorkspaceViewModel.SelectedDisplay is CLPMirrorDisplay;
+            return notebookWorkspaceViewModel.CurrentDisplay is CLPMirrorDisplay;
         }
 
         /// <summary>
@@ -1538,7 +1548,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnDisableHistoryCommandExecute()
         {
-            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+            var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel == null)
             {
                 return;
@@ -1593,12 +1603,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnUndoCommandExecute()
         {
-            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+            var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel == null)
             {
                 return;
             }
-            var mirrorDisplay = notebookWorkspaceViewModel.SelectedDisplay as CLPMirrorDisplay;
+            var mirrorDisplay = notebookWorkspaceViewModel.CurrentDisplay as CLPMirrorDisplay;
             if(mirrorDisplay == null)
             {
                 return;
@@ -1608,12 +1618,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private bool OnUndoCanExecute()
         {
-            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+            var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel == null)
             {
                 return false;
             }
-            var mirrorDisplay = notebookWorkspaceViewModel.SelectedDisplay as CLPMirrorDisplay;
+            var mirrorDisplay = notebookWorkspaceViewModel.CurrentDisplay as CLPMirrorDisplay;
             if(mirrorDisplay == null)
             {
                 return false;
@@ -1636,12 +1646,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnRedoCommandExecute()
         {
-            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+            var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel == null)
             {
                 return;
             }
-            var mirrorDisplay = notebookWorkspaceViewModel.SelectedDisplay as CLPMirrorDisplay;
+            var mirrorDisplay = notebookWorkspaceViewModel.CurrentDisplay as CLPMirrorDisplay;
             if(mirrorDisplay == null)
             {
                 return;
@@ -1651,12 +1661,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private bool OnRedoCanExecute()
         {
-            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+            var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel == null)
             {
                 return false;
             }
-            var mirrorDisplay = notebookWorkspaceViewModel.SelectedDisplay as CLPMirrorDisplay;
+            var mirrorDisplay = notebookWorkspaceViewModel.CurrentDisplay as CLPMirrorDisplay;
             if(mirrorDisplay == null)
             {
                 return false;
@@ -1699,7 +1709,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnClearPagesHistoryCommandExecute()
         {
-            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+            var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel == null)
             {
                 return;
@@ -1719,7 +1729,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnClearPagesNonAnimationHistoryCommandExecute()
         {
-            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+            var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel == null)
             {
                 return;
@@ -1739,7 +1749,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnClearSubmissionsHistoryCommandExecute()
         {
-            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+            var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel == null)
             {
                 return;
@@ -1759,7 +1769,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnClearSubmissionsNonAnimationHistoryCommandExecute()
         {
-            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+            var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel == null)
             {
                 return;
@@ -1787,7 +1797,7 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
-        /// Broadcast the current page of a MirrorDisplay to all connected Students.
+        /// Broadcast the current page of a SingleDisplay to all connected Students.
         /// </summary>
         public Command BroadcastPageCommand { get; private set; }
 
@@ -1798,7 +1808,7 @@ namespace Classroom_Learning_Partner.ViewModels
             page.SerializedStrokes = StrokeDTO.SaveInkStrokes(page.InkStrokes);
             var sPage = ObjectSerializer.ToString(page);
             var zippedPage = CLPServiceAgent.Instance.Zip(sPage);
-            int index = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.Pages.IndexOf(page);
+            int index = (App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).Notebook.Pages.IndexOf(page);
 
             if(App.Network.ClassList.Any())
             {
@@ -1848,7 +1858,7 @@ namespace Classroom_Learning_Partner.ViewModels
             page.SerializedStrokes = StrokeDTO.SaveInkStrokes(page.InkStrokes);
             var sPage = ObjectSerializer.ToString(page);
             var zippedPage = CLPServiceAgent.Instance.Zip(sPage);
-            var index = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.Pages.IndexOf(page);
+            var index = (App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).Notebook.Pages.IndexOf(page);
 
             if(App.Network.ClassList.Count > 0)
             {
@@ -1893,7 +1903,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnRemoveAllSubmissionsCommandExecute()
         {
-            CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
+            CLPNotebook notebook = (App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).Notebook;
             foreach(var pages in notebook.Submissions.Values)
             {
                 pages.Clear();
@@ -2007,7 +2017,7 @@ namespace Classroom_Learning_Partner.ViewModels
        
         private void OnSwitchPageLayoutCommandExecute()
         {
-            var page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage;
+            var page = ((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as CLPMirrorDisplay).CurrentPage;
 
             if(page.InitialPageAspectRatio == CLPPage.LANDSCAPE_WIDTH / CLPPage.LANDSCAPE_HEIGHT)
             {
@@ -2051,73 +2061,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public void OnSwitchPageTypeCommandExecute()
         {
-            var page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage;
-            int index = page.PageIndex;
-            double pageheight = page.PageHeight;
-            double pagewidth = page.PageWidth;
-            double pageaspectratio = page.InitialPageAspectRatio;
-
-            //TODO: reimplement
-            //if(page.PageType == PageTypeEnum.CLPProofPage) {
-            //    CLPAnimationPage proofpage = (CLPAnimationPage)page;
-            //    CLPProofHistory proofhistory = (CLPProofHistory)page.PageHistory;
-            //    if(proofhistory.Future.Count > 0 || proofhistory.MetaPast.Count > 0)
-            //    {
-            //        if(MessageBox.Show("Are you sure you want to switch to a different page type? Your animation will be lost!",
-            //                       "Warning!", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
-            //        {
-            //            return;
-            //        }
-            //    }
-            //    CLPPage newpage = new CLPPage();
-            //    CLPHistory newpagehistory = (CLPHistory)newpage.PageHistory;
-
-            //    newpage.PageHeight = pageheight;
-            //    newpage.PageWidth = pagewidth;
-            //    newpage.InitialPageAspectRatio = pageaspectratio;
-
-            //    newpagehistory.Past = proofhistory.Past;
-            //    newpagehistory.MetaPast = proofhistory.MetaPast;
-            //    newpagehistory.Future = proofhistory.Future;
-
-            //    newpage.PageObjects = proofpage.PageObjects;
-            //    newpage.InkStrokes = proofpage.InkStrokes;
-            //    foreach(ICLPPageObject po in newpage.PageObjects)
-            //    {
-            //        po.ParentPage = newpage;
-            //    }
-
-            //    page.ParentNotebookID = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.UniqueID;
-            //    CLPNotebook nb = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
-            //                nb.InsertPageAt(index, newpage);
-            //                nb.Submissions.Remove(nb.Pages[index - 1].UniqueID);
-            //                nb.Pages.RemoveAt(index - 1);
-            //                nb.GeneratePageIndexes();
-            //                (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage = newpage;      
-            //}else{
-            //    CLPHistory pagehistory = (CLPHistory)page.PageHistory;
-
-            //    CLPAnimationPage newproofpage = new CLPAnimationPage();
-            //    CLPProofHistory newproofpagehistory = (CLPProofHistory)newproofpage.PageHistory;
-
-            //    newproofpage.PageHeight = pageheight;
-            //    newproofpage.PageWidth = pagewidth;
-            //    newproofpage.InitialPageAspectRatio = pageaspectratio;
-
-            //    newproofpage.PageObjects = page.PageObjects;
-            //    newproofpage.InkStrokes =  page.InkStrokes;
-            //    foreach(ICLPPageObject po in newproofpage.PageObjects)
-            //    {
-            //        po.ParentPage = newproofpage;
-            //    }
-            //    page.ParentNotebookID = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.UniqueID;
-            //    CLPNotebook nb = (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
-            //                nb.InsertPageAt(index, newproofpage);
-            //                nb.Submissions.Remove(nb.Pages[index - 1].UniqueID);
-            //                nb.Pages.RemoveAt(index - 1);
-            //                nb.GeneratePageIndexes();
-            //                (MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).CurrentPage = newproofpage; 
-            //}
+            var page = ((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as SingleDisplay).CurrentPage;
+            page.PageType = page.PageType == PageTypes.Animation ? PageTypes.Default : PageTypes.Animation;
         }
 
         /// <summary>
@@ -2185,7 +2130,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnAddPageTopicCommandExecute()
         {
             //TODO: PageTopics gone, convert to Tags
-            //var page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as LinkedDisplayViewModel).DisplayedPage;
+            //var page = ((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as LinkedDisplayViewModel).DisplayedPage;
 
             //PageTopicWindowView pageTopicWindow = new PageTopicWindowView();
             //pageTopicWindow.Owner = Application.Current.MainWindow;
@@ -2208,12 +2153,12 @@ namespace Classroom_Learning_Partner.ViewModels
         
         private void OnMakePageLongerCommandExecute()
         {
-            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel != null && !(notebookWorkspaceViewModel.SelectedDisplay is CLPMirrorDisplay))
+            var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel != null && !(notebookWorkspaceViewModel.CurrentDisplay is CLPMirrorDisplay))
             {
                 return;
             }
-            var page = (notebookWorkspaceViewModel.SelectedDisplay as CLPMirrorDisplay).CurrentPage;
+            var page = (notebookWorkspaceViewModel.CurrentDisplay as CLPMirrorDisplay).CurrentPage;
             var initialHeight = page.PageWidth / page.InitialPageAspectRatio;
             const int MAX_INCREASE_TIMES = 2;
             const double PAGE_INCREASE_AMOUNT = 200.0;
@@ -2230,9 +2175,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnTrimPageCommandExecute()
         {
-            if((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay is CLPMirrorDisplay)
+            if((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay is CLPMirrorDisplay)
             {
-                var page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage;
+                var page = ((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as CLPMirrorDisplay).CurrentPage;
                 page.TrimPage();
             }
         }
@@ -2244,13 +2189,13 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnClearPageCommandExecute()
         {
-            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+            var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel == null ||
-               !(notebookWorkspaceViewModel.SelectedDisplay is CLPMirrorDisplay))
+               !(notebookWorkspaceViewModel.CurrentDisplay is CLPMirrorDisplay))
             {
                 return;
             }
-            var page = (notebookWorkspaceViewModel.SelectedDisplay as CLPMirrorDisplay).CurrentPage;
+            var page = (notebookWorkspaceViewModel.CurrentDisplay as CLPMirrorDisplay).CurrentPage;
             page.PageHistory.ClearHistory();
             page.PageObjects.Clear();
             page.InkStrokes.Clear();
@@ -2263,24 +2208,24 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private bool OnInsertPageObjectCanExecute()
         {
-            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+            var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel == null)
             {
                 return false;
             }
 
-            return notebookWorkspaceViewModel.SelectedDisplay is CLPMirrorDisplay;
+            return notebookWorkspaceViewModel.CurrentDisplay is SingleDisplay;
         }
 
         private bool OnInsertPageObjectCanExecute(string s)
         {
-            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
+            var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel == null)
             {
                 return false;
             }
 
-            return notebookWorkspaceViewModel.SelectedDisplay is CLPMirrorDisplay;
+            return notebookWorkspaceViewModel.CurrentDisplay is SingleDisplay;
         }
 
         /// <summary>
@@ -2293,8 +2238,9 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnInsertTextBoxCommandExecute()
         {
-            var textBox = new CLP.Entities.TextBox(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage);
-            ACLPPageBaseViewModel.AddPageObjectToPage(textBox);
+            // TODO: Entities
+            //var textBox = new CLPTextBox(((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as SingleDisplay).CurrentPage);
+            //ACLPPageBaseViewModel.AddPageObjectToPage(textBox);
         }
 
         /// <summary>
@@ -2305,7 +2251,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnInsertAggregationDataTableCommandExecute()
         {
             // TODO: Entities
-            //CLPAggregationDataTable dataTable = new CLPAggregationDataTable(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage);
+            //CLPAggregationDataTable dataTable = new CLPAggregationDataTable(((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as CLPMirrorDisplay).CurrentPage);
             //ACLPPageBaseViewModel.AddPageObjectToPage(dataTable);
         }
 
@@ -2330,7 +2276,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //byte[] hash = md5.ComputeHash(byteSource);
             //string imageID = Convert.ToBase64String(hash);
 
-            //var page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage;
+            //var page = ((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as CLPMirrorDisplay).CurrentPage;
 
 
             //if(!page.ImagePool.ContainsKey(imageID))
@@ -2374,44 +2320,45 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnInsertImageCommandExecute()
         {
-            // Configure open file dialog box
-            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
-            dlg.Filter = "Images|*.png;*.jpg;*.jpeg;*.gif"; // Filter files by extension
+            // TODO: Entities
+            //// Configure open file dialog box
+            //Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+            //dlg.Filter = "Images|*.png;*.jpg;*.jpeg;*.gif"; // Filter files by extension
 
-            // Show open file dialog box
-            Nullable<bool> result = dlg.ShowDialog();
+            //// Show open file dialog box
+            //Nullable<bool> result = dlg.ShowDialog();
 
-            // Process open file dialog box results
-            if(result == true)
-            {
-                // Open document
-                string filename = dlg.FileName;
-                if(File.Exists(filename))
-                {
-                    var bytes = File.ReadAllBytes(filename);
-                    var byteSource = new List<byte>(bytes);
+            //// Process open file dialog box results
+            //if(result == true)
+            //{
+            //    // Open document
+            //    string filename = dlg.FileName;
+            //    if(File.Exists(filename))
+            //    {
+            //        var bytes = File.ReadAllBytes(filename);
+            //        var byteSource = new List<byte>(bytes);
 
-                    var md5 = new MD5CryptoServiceProvider();
-                    var hash = md5.ComputeHash(bytes);
-                    var imageID = Convert.ToBase64String(hash);
+            //        var md5 = new MD5CryptoServiceProvider();
+            //        var hash = md5.ComputeHash(bytes);
+            //        var imageID = Convert.ToBase64String(hash);
 
-                    var page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage;
+            //        var page = ((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as SingleDisplay).CurrentPage;
 
 
-                    if(!page.ImagePool.ContainsKey(imageID))
-                    {
-                        page.ImagePool.Add(imageID, byteSource);
-                    }
-                    var visualImage = System.Drawing.Image.FromFile(filename);
-                    var image = new CLPImage(imageID, page, visualImage.Height, visualImage.Width);
+            //        if(!page.ImagePool.ContainsKey(imageID))
+            //        {
+            //            page.ImagePool.Add(imageID, byteSource);
+            //        }
+            //        var visualImage = System.Drawing.Image.FromFile(filename);
+            //        var image = new CLPImage(imageID, page, visualImage.Height, visualImage.Width);
 
-                    ACLPPageBaseViewModel.AddPageObjectToPage(image);
-                }
-                else
-                {
-                    MessageBox.Show("Error opening image file. Please try again.");
-                }
-            }
+            //        ACLPPageBaseViewModel.AddPageObjectToPage(image);
+            //    }
+            //    else
+            //    {
+            //        MessageBox.Show("Error opening image file. Please try again.");
+            //    }
+            //}
         }
 
         /// <summary>
@@ -2425,27 +2372,27 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             if(!isButtonChecked) //ClosePanel
             {
-                ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).RightPanel as IPanel).IsVisible = false;
-                ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).RightPanel as ViewModelBase).SaveAndCloseViewModel();
-                (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).RightPanel = null;
+                ((App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).RightPanel).IsVisible = false;
+                ((App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).RightPanel as ViewModelBase).SaveAndCloseViewModel();
+                (App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).RightPanel = null;
             }
             else //OpenPanel
             {
-                if((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).RightPanel == null)
+                if((App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).RightPanel == null)
                 {
-                    (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).RightPanel = new WebcamPanelViewModel();
+                    (App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).RightPanel = new WebcamPanelViewModel();
                 }
 
-                ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).RightPanel as IPanel).IsVisible = true;
+                ((App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).RightPanel).IsVisible = true;
             }
         }
 
         void panelCloserTimer_Tick(object sender, EventArgs e)
         {
-            if((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).RightPanel != null)
+            if((App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).RightPanel != null)
             {
-                ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).RightPanel as ViewModelBase).SaveAndCloseViewModel();
-                (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).RightPanel = null;
+                ((App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).RightPanel as ViewModelBase).SaveAndCloseViewModel();
+                (App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).RightPanel = null;
                 panelCloserTimer.Stop();
             }
         }
@@ -2472,43 +2419,44 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void CreateImageStamp(bool isCollectionStamp)
         {
-            // Configure open file dialog box
-            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
-            dlg.Filter = "Images|*.png;*.jpg;*.jpeg;*.gif"; // Filter files by extension
+            // TODO: Entities
+            //// Configure open file dialog box
+            //Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+            //dlg.Filter = "Images|*.png;*.jpg;*.jpeg;*.gif"; // Filter files by extension
 
-            // Show open file dialog box
-            Nullable<bool> result = dlg.ShowDialog();
+            //// Show open file dialog box
+            //Nullable<bool> result = dlg.ShowDialog();
 
-            // Process open file dialog box results
-            if(result == true)
-            {
-                // Open document
-                string filename = dlg.FileName;
-                if(File.Exists(filename))
-                {
-                    byte[] bytes = File.ReadAllBytes(filename);
-                    var byteSource = new List<byte>(bytes);
+            //// Process open file dialog box results
+            //if(result == true)
+            //{
+            //    // Open document
+            //    string filename = dlg.FileName;
+            //    if(File.Exists(filename))
+            //    {
+            //        byte[] bytes = File.ReadAllBytes(filename);
+            //        var byteSource = new List<byte>(bytes);
 
-                    var md5 = new MD5CryptoServiceProvider();
-                    var hash = md5.ComputeHash(bytes);
-                    var imageID = Convert.ToBase64String(hash);
+            //        var md5 = new MD5CryptoServiceProvider();
+            //        var hash = md5.ComputeHash(bytes);
+            //        var imageID = Convert.ToBase64String(hash);
 
-                    var page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage;
+            //        var page = ((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as CLPMirrorDisplay).CurrentPage;
 
-                    if(!page.ImagePool.ContainsKey(imageID))
-                    {
-                        page.ImagePool.Add(imageID, byteSource);
-                    }
+            //        if(!page.ImagePool.ContainsKey(imageID))
+            //        {
+            //            page.ImagePool.Add(imageID, byteSource);
+            //        }
 
-                    var stamp = new CLPStamp(page, imageID, isCollectionStamp);
+            //        var stamp = new CLPStamp(page, imageID, isCollectionStamp);
 
-                    ACLPPageBaseViewModel.AddPageObjectToPage(stamp);
-                }
-                else
-                {
-                    MessageBox.Show("Error opening image file. Please try again.");
-                }
-            }
+            //        ACLPPageBaseViewModel.AddPageObjectToPage(stamp);
+            //    }
+            //    else
+            //    {
+            //        MessageBox.Show("Error opening image file. Please try again.");
+            //    }
+            //}
         }
 
         /// <summary>
@@ -2521,8 +2469,9 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnInsertBlankStampCommandExecute()
         {
-            CLPStamp stamp = new CLPStamp(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage, string.Empty);
-            ACLPPageBaseViewModel.AddPageObjectToPage(stamp);
+            // TODO: Entities
+            //CLPStamp stamp = new CLPStamp(((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as CLPMirrorDisplay).CurrentPage, string.Empty);
+            //ACLPPageBaseViewModel.AddPageObjectToPage(stamp);
         }
 
         /// <summary>
@@ -2539,10 +2488,11 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnInsertBlankContainerStampCommandExecute()
         {
-            var stamp = new CLPStamp(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage,
-                string.Empty,
-                true);
-            ACLPPageBaseViewModel.AddPageObjectToPage(stamp);
+            // TODO: Entities
+            //var stamp = new CLPStamp(((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as CLPMirrorDisplay).CurrentPage,
+            //    string.Empty,
+            //    true);
+            //ACLPPageBaseViewModel.AddPageObjectToPage(stamp);
         }
 
         /// <summary>
@@ -2552,641 +2502,642 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnInsertArrayCommandExecute(string arrayType)
         {
-            var notebookWorkspaceViewModel = MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel == null)
-            {
-                return;
-            }
-            var clpMirrorDisplay = notebookWorkspaceViewModel.SelectedDisplay as CLPMirrorDisplay;
-            if(clpMirrorDisplay == null)
-            {
-                return;
-            }
-            var currentPage = clpMirrorDisplay.CurrentPage;
+            // TODO: Entities
+            //var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
+            //if(notebookWorkspaceViewModel == null)
+            //{
+            //    return;
+            //}
+            //var clpMirrorDisplay = notebookWorkspaceViewModel.CurrentDisplay as SingleDisplay;
+            //if(clpMirrorDisplay == null)
+            //{
+            //    return;
+            //}
+            //var currentPage = clpMirrorDisplay.CurrentPage;
 
-            int rows, columns, dividend, numberOfArrays;
-            dividend = 0;
-            if(arrayType == "FACTORCARD")
-            {
-                var factorCreationView = new FactorCardCreationView{ Owner = Application.Current.MainWindow};
-                factorCreationView.ShowDialog();
-                if(factorCreationView.DialogResult != true)
-                {
-                    return;
-                }
+            //int rows, columns, dividend, numberOfArrays;
+            //dividend = 0;
+            //if(arrayType == "FACTORCARD")
+            //{
+            //    var factorCreationView = new FactorCardCreationView{ Owner = Application.Current.MainWindow};
+            //    factorCreationView.ShowDialog();
+            //    if(factorCreationView.DialogResult != true)
+            //    {
+            //        return;
+            //    }
 
-                try
-                {
-                    dividend = Convert.ToInt32(factorCreationView.Product.Text);
-                }
-                catch(FormatException)
-                {
-                    return;
-                }
+            //    try
+            //    {
+            //        dividend = Convert.ToInt32(factorCreationView.Product.Text);
+            //    }
+            //    catch(FormatException)
+            //    {
+            //        return;
+            //    }
 
-                try
-                {
-                    rows = Convert.ToInt32(factorCreationView.Factor.Text);
-                }
-                catch(FormatException)
-                {
-                    return;
-                }
+            //    try
+            //    {
+            //        rows = Convert.ToInt32(factorCreationView.Factor.Text);
+            //    }
+            //    catch(FormatException)
+            //    {
+            //        return;
+            //    }
 
-                columns = dividend / rows;
-                numberOfArrays = 1;
-            }
+            //    columns = dividend / rows;
+            //    numberOfArrays = 1;
+            //}
 
-            else if(arrayType == "FUZZYFACTORCARD")
-            {
-                var factorCreationView = new FuzzyFactorCardCreationView{ Owner = Application.Current.MainWindow};
-                factorCreationView.ShowDialog();
-                if(factorCreationView.DialogResult != true)
-                {
-                    return;
-                }
+            //else if(arrayType == "FUZZYFACTORCARD")
+            //{
+            //    var factorCreationView = new FuzzyFactorCardCreationView{ Owner = Application.Current.MainWindow};
+            //    factorCreationView.ShowDialog();
+            //    if(factorCreationView.DialogResult != true)
+            //    {
+            //        return;
+            //    }
 
-                try
-                {
-                    dividend = Convert.ToInt32(factorCreationView.Product.Text);
-                }
-                catch(FormatException)
-                {
-                    return;
-                }
+            //    try
+            //    {
+            //        dividend = Convert.ToInt32(factorCreationView.Product.Text);
+            //    }
+            //    catch(FormatException)
+            //    {
+            //        return;
+            //    }
 
-                try
-                {
-                    rows = Convert.ToInt32(factorCreationView.Factor.Text);
-                }
-                catch(FormatException)
-                {
-                    return;
-                }
+            //    try
+            //    {
+            //        rows = Convert.ToInt32(factorCreationView.Factor.Text);
+            //    }
+            //    catch(FormatException)
+            //    {
+            //        return;
+            //    }
 
-                columns = dividend / rows;
-                numberOfArrays = 1;
-            }
+            //    columns = dividend / rows;
+            //    numberOfArrays = 1;
+            //}
 
-            else if(arrayType == "FFCREMAINDER")
-            {
-                var factorCreationView = new FuzzyFactorCardWithTilesCreationView
-                {
-                    Owner = Application.Current.MainWindow
-                };
-                factorCreationView.ShowDialog();
-                if(factorCreationView.DialogResult != true)
-                {
-                    return;
-                }
+            //else if(arrayType == "FFCREMAINDER")
+            //{
+            //    var factorCreationView = new FuzzyFactorCardWithTilesCreationView
+            //    {
+            //        Owner = Application.Current.MainWindow
+            //    };
+            //    factorCreationView.ShowDialog();
+            //    if(factorCreationView.DialogResult != true)
+            //    {
+            //        return;
+            //    }
 
-                try
-                {
-                    dividend = Convert.ToInt32(factorCreationView.Product.Text);
-                }
-                catch(FormatException)
-                {
-                    return;
-                }
+            //    try
+            //    {
+            //        dividend = Convert.ToInt32(factorCreationView.Product.Text);
+            //    }
+            //    catch(FormatException)
+            //    {
+            //        return;
+            //    }
 
-                try
-                {
-                    rows = Convert.ToInt32(factorCreationView.Factor.Text);
-                }
-                catch(FormatException)
-                {
-                    return;
-                }
+            //    try
+            //    {
+            //        rows = Convert.ToInt32(factorCreationView.Factor.Text);
+            //    }
+            //    catch(FormatException)
+            //    {
+            //        return;
+            //    }
 
-                columns = dividend / rows;
-                numberOfArrays = 1;
-            }
+            //    columns = dividend / rows;
+            //    numberOfArrays = 1;
+            //}
 
-            else
-            {
-                var arrayCreationView = new ArrayCreationView {Owner = Application.Current.MainWindow};
-                arrayCreationView.ShowDialog();
+            //else
+            //{
+            //    var arrayCreationView = new ArrayCreationView {Owner = Application.Current.MainWindow};
+            //    arrayCreationView.ShowDialog();
 
-                if(arrayCreationView.DialogResult != true)
-                {
-                    return;
-                }
+            //    if(arrayCreationView.DialogResult != true)
+            //    {
+            //        return;
+            //    }
 
-                try
-                {
-                    rows = Convert.ToInt32(arrayCreationView.Rows.Text);
-                }
-                catch(FormatException)
-                {
-                    rows = 1;
-                }
+            //    try
+            //    {
+            //        rows = Convert.ToInt32(arrayCreationView.Rows.Text);
+            //    }
+            //    catch(FormatException)
+            //    {
+            //        rows = 1;
+            //    }
 
-                try
-                {
-                    columns = Convert.ToInt32(arrayCreationView.Columns.Text);
-                }
-                catch(FormatException)
-                {
-                    columns = 1;
-                }
+            //    try
+            //    {
+            //        columns = Convert.ToInt32(arrayCreationView.Columns.Text);
+            //    }
+            //    catch(FormatException)
+            //    {
+            //        columns = 1;
+            //    }
 
-                try
-                {
-                    numberOfArrays = Convert.ToInt32(arrayCreationView.NumberOfArrays.Text);
-                }
-                catch(FormatException)
-                {
-                    numberOfArrays = 1;
-                }
-            }
+            //    try
+            //    {
+            //        numberOfArrays = Convert.ToInt32(arrayCreationView.NumberOfArrays.Text);
+            //    }
+            //    catch(FormatException)
+            //    {
+            //        numberOfArrays = 1;
+            //    }
+            //}
 
-            const double MIN_SIDE = 25.0;
-            const double MIN_FFC_SIDE = 185.0;
-            const double LABEL_LENGTH = 22.0;
-            var xPosition = 0.0;
-            var yPosition = 150.0;
+            //const double MIN_SIDE = 25.0;
+            //const double MIN_FFC_SIDE = 185.0;
+            //const double LABEL_LENGTH = 22.0;
+            //var xPosition = 0.0;
+            //var yPosition = 150.0;
 
-            //squareSize will be the grid size of the most recently placed array, or 0 if there are no non-background arrays
-            double squareSize = 0.0;
-            foreach(var pageObject in currentPage.PageObjects)
-            {
-                if(pageObject is CLPArray && (!pageObject.IsBackground || MainWindow.IsAuthoring))
-                {
-                    squareSize = (pageObject as CLPArray).ArrayHeight / (pageObject as CLPArray).Rows;
-                }
-            }
+            ////squareSize will be the grid size of the most recently placed array, or 0 if there are no non-background arrays
+            //double squareSize = 0.0;
+            //foreach(var pageObject in currentPage.PageObjects)
+            //{
+            //    if(pageObject is CLPArray && (!pageObject.IsBackground || MainWindow.IsAuthoring))
+            //    {
+            //        squareSize = (pageObject as CLPArray).ArrayHeight / (pageObject as CLPArray).Rows;
+            //    }
+            //}
 
-            CLPArray onlyArray = null;
-            foreach(var pageObject in currentPage.PageObjects)
-            {
-                if(pageObject is CLPArray)
-                {
-                    onlyArray = (onlyArray == null) ? pageObject as CLPArray : null;
-                }
-            }
+            //CLPArray onlyArray = null;
+            //foreach(var pageObject in currentPage.PageObjects)
+            //{
+            //    if(pageObject is CLPArray)
+            //    {
+            //        onlyArray = (onlyArray == null) ? pageObject as CLPArray : null;
+            //    }
+            //}
 
-            if(numberOfArrays == 1)
-            {
-                CLPArray array;
-                switch(arrayType)
-                {
-                    case "CARD":
-                        array = new CLPArray(rows, columns, currentPage);
-                        array.IsDivisionBehaviorOn = false;
-                        array.IsLabelOn = false;
-                        array.IsSnappable = false;
-                        array.BackgroundColor = Colors.SkyBlue.ToString();
-                        break;
-                    case "FACTORCARD":
-                        array = new CLPFactorCard(rows, columns, currentPage);
-                        break;
-                    case "FUZZYFACTORCARD":
-                        array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
-                        break;
-                    case "FFCREMAINDER":
-                        array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
-                        (array as CLPFuzzyFactorCard).IsRemainderRegionDisplayed = true;
-                        break;
-                    default:
-                        array = new CLPArray(rows, columns, currentPage);
-                        array.IsDivisionBehaviorOn = false;
-                        //TODO Liz - uncomment and delete above after trial
-                        //array.IsDivisionBehaviorOn = !(onlyArray is CLPFuzzyFactorCard);
-                        array.IsSnapAdornerOnLeft = !IsRightHanded;
-                        break;
-                }
+            //if(numberOfArrays == 1)
+            //{
+            //    CLPArray array;
+            //    switch(arrayType)
+            //    {
+            //        case "CARD":
+            //            array = new CLPArray(rows, columns, currentPage);
+            //            array.IsDivisionBehaviorOn = false;
+            //            array.IsLabelOn = false;
+            //            array.IsSnappable = false;
+            //            array.BackgroundColor = Colors.SkyBlue.ToString();
+            //            break;
+            //        case "FACTORCARD":
+            //            array = new CLPFactorCard(rows, columns, currentPage);
+            //            break;
+            //        case "FUZZYFACTORCARD":
+            //            array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
+            //            break;
+            //        case "FFCREMAINDER":
+            //            array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
+            //            (array as CLPFuzzyFactorCard).IsRemainderRegionDisplayed = true;
+            //            break;
+            //        default:
+            //            array = new CLPArray(rows, columns, currentPage);
+            //            array.IsDivisionBehaviorOn = false;
+            //            //TODO Liz - uncomment and delete above after trial
+            //            //array.IsDivisionBehaviorOn = !(onlyArray is CLPFuzzyFactorCard);
+            //            array.IsSnapAdornerOnLeft = !IsRightHanded;
+            //            break;
+            //    }
 
-                var arrayMinSide = (array is CLPFuzzyFactorCard) ? MIN_FFC_SIDE : MIN_SIDE;
-                if(squareSize > 0)
-                {
-                    squareSize = Math.Max(squareSize, (arrayMinSide / (Math.Min(rows, columns))));
-                    if(yPosition + squareSize * rows + 2 * LABEL_LENGTH < currentPage.PageHeight && xPosition + squareSize * columns + 2 * LABEL_LENGTH < currentPage.PageWidth)
-                    {
-                        //Position to not overlap with first array on page if possible
-                        if(onlyArray != null)
-                        {
-                            const double GAP = 35.0;
-                            if(!(onlyArray is CLPFuzzyFactorCard) && onlyArray.XPosition + onlyArray.Width + (2 * LABEL_LENGTH + columns * squareSize) + GAP <= currentPage.PageWidth
-                                && rows * squareSize + LABEL_LENGTH < currentPage.PageHeight)
-                            {
-                                array.XPosition = onlyArray.XPosition + onlyArray.Width + GAP;
-                                array.YPosition = onlyArray.YPosition;
-                            }
-                            else if(onlyArray.XPosition + (2 * LABEL_LENGTH + columns * squareSize) <= currentPage.PageWidth
-                                && onlyArray.YPosition + onlyArray.Height + rows * squareSize + LABEL_LENGTH + GAP < currentPage.PageHeight)
-                            {
-                                array.YPosition = onlyArray.YPosition + onlyArray.Height + GAP;
-                                array.XPosition = onlyArray.XPosition;
-                            }
-                            else
-                            {
-                                array.YPosition = currentPage.PageHeight - array.Height;
-                                array.XPosition = onlyArray.XPosition;
-                            }
-                        }
-                        array.SizeArrayToGridLevel(squareSize);
-                        ACLPPageObjectBase.ApplyDistinctPosition(array);
-                        ACLPPageBaseViewModel.AddPageObjectToPage(array);
+            //    var arrayMinSide = (array is CLPFuzzyFactorCard) ? MIN_FFC_SIDE : MIN_SIDE;
+            //    if(squareSize > 0)
+            //    {
+            //        squareSize = Math.Max(squareSize, (arrayMinSide / (Math.Min(rows, columns))));
+            //        if(yPosition + squareSize * rows + 2 * LABEL_LENGTH < currentPage.PageHeight && xPosition + squareSize * columns + 2 * LABEL_LENGTH < currentPage.PageWidth)
+            //        {
+            //            //Position to not overlap with first array on page if possible
+            //            if(onlyArray != null)
+            //            {
+            //                const double GAP = 35.0;
+            //                if(!(onlyArray is CLPFuzzyFactorCard) && onlyArray.XPosition + onlyArray.Width + (2 * LABEL_LENGTH + columns * squareSize) + GAP <= currentPage.PageWidth
+            //                    && rows * squareSize + LABEL_LENGTH < currentPage.PageHeight)
+            //                {
+            //                    array.XPosition = onlyArray.XPosition + onlyArray.Width + GAP;
+            //                    array.YPosition = onlyArray.YPosition;
+            //                }
+            //                else if(onlyArray.XPosition + (2 * LABEL_LENGTH + columns * squareSize) <= currentPage.PageWidth
+            //                    && onlyArray.YPosition + onlyArray.Height + rows * squareSize + LABEL_LENGTH + GAP < currentPage.PageHeight)
+            //                {
+            //                    array.YPosition = onlyArray.YPosition + onlyArray.Height + GAP;
+            //                    array.XPosition = onlyArray.XPosition;
+            //                }
+            //                else
+            //                {
+            //                    array.YPosition = currentPage.PageHeight - array.Height;
+            //                    array.XPosition = onlyArray.XPosition;
+            //                }
+            //            }
+            //            array.SizeArrayToGridLevel(squareSize);
+            //            ACLPPageObjectBase.ApplyDistinctPosition(array);
+            //            ACLPPageBaseViewModel.AddPageObjectToPage(array);
 
-                        //If FFC with remainder on page, update
-                        foreach(var pageObject in currentPage.PageObjects)
-                        {
-                            if(pageObject is CLPFuzzyFactorCard)
-                            {
-                                (pageObject as CLPFuzzyFactorCard).AnalyzeArrays();
-                                if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
-                                {
-                                    (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
-                                    break;
-                                }
-                            }
-                        }
+            //            //If FFC with remainder on page, update
+            //            foreach(var pageObject in currentPage.PageObjects)
+            //            {
+            //                if(pageObject is CLPFuzzyFactorCard)
+            //                {
+            //                    (pageObject as CLPFuzzyFactorCard).AnalyzeArrays();
+            //                    if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
+            //                    {
+            //                        (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
+            //                        break;
+            //                    }
+            //                }
+            //            }
 
-                        return;
-                    }
-                    // If it doesn't fit, resize all other non-background arrays on page to match new array grid size
-                    else
-                    {
-                        Dictionary<string, Point> oldDimensions = new Dictionary<string, Point>();
-                        while(xPosition + 2 * LABEL_LENGTH + squareSize * columns >= currentPage.PageWidth || yPosition + 2 * LABEL_LENGTH + squareSize * rows >= currentPage.PageHeight)
-                        {
-                            squareSize = Math.Abs(squareSize - 45.0) < .0001 ? 22.5 : squareSize / 4 * 3;
-                        }
-                        foreach(var pageObject in currentPage.PageObjects)
-                        {
-                            if(pageObject is CLPArray && (!pageObject.IsBackground || MainWindow.IsAuthoring))
-                            {
-                                var pageObjectMinSide = (pageObject is CLPFuzzyFactorCard) ? MIN_FFC_SIDE : MIN_SIDE;
-                                oldDimensions.Add(pageObject.UniqueID, new Point(pageObject.Width, pageObject.Height));
-                                if((pageObject as CLPArray).Rows * squareSize > pageObjectMinSide && (pageObject as CLPArray).Columns * squareSize > pageObjectMinSide)
-                                {
-                                    (pageObject as CLPArray).SizeArrayToGridLevel(squareSize);
-                                }
-                                else
-                                {
-                                    (pageObject as CLPArray).SizeArrayToGridLevel(pageObjectMinSide / Math.Min((pageObject as CLPArray).Rows, (pageObject as CLPArray).Columns));
-                                }
-                            }
-                        }
-                        array.SizeArrayToGridLevel(squareSize);
+            //            return;
+            //        }
+            //        // If it doesn't fit, resize all other non-background arrays on page to match new array grid size
+            //        else
+            //        {
+            //            Dictionary<string, Point> oldDimensions = new Dictionary<string, Point>();
+            //            while(xPosition + 2 * LABEL_LENGTH + squareSize * columns >= currentPage.PageWidth || yPosition + 2 * LABEL_LENGTH + squareSize * rows >= currentPage.PageHeight)
+            //            {
+            //                squareSize = Math.Abs(squareSize - 45.0) < .0001 ? 22.5 : squareSize / 4 * 3;
+            //            }
+            //            foreach(var pageObject in currentPage.PageObjects)
+            //            {
+            //                if(pageObject is CLPArray && (!pageObject.IsBackground || MainWindow.IsAuthoring))
+            //                {
+            //                    var pageObjectMinSide = (pageObject is CLPFuzzyFactorCard) ? MIN_FFC_SIDE : MIN_SIDE;
+            //                    oldDimensions.Add(pageObject.UniqueID, new Point(pageObject.Width, pageObject.Height));
+            //                    if((pageObject as CLPArray).Rows * squareSize > pageObjectMinSide && (pageObject as CLPArray).Columns * squareSize > pageObjectMinSide)
+            //                    {
+            //                        (pageObject as CLPArray).SizeArrayToGridLevel(squareSize);
+            //                    }
+            //                    else
+            //                    {
+            //                        (pageObject as CLPArray).SizeArrayToGridLevel(pageObjectMinSide / Math.Min((pageObject as CLPArray).Rows, (pageObject as CLPArray).Columns));
+            //                    }
+            //                }
+            //            }
+            //            array.SizeArrayToGridLevel(squareSize);
 
-                        //Position to not overlap with first array on page if possible
-                        if(onlyArray != null)
-                        {
-                            const double GAP = 35.0;
-                            if(!(onlyArray is CLPFuzzyFactorCard) && onlyArray.XPosition + onlyArray.Width + (2 * LABEL_LENGTH + columns * squareSize) + GAP <= currentPage.PageWidth
-                                && rows * squareSize + LABEL_LENGTH < currentPage.PageHeight)
-                            {
-                                array.XPosition = onlyArray.XPosition + onlyArray.Width + GAP;
-                                array.YPosition = onlyArray.YPosition;
-                            }
-                            else if(onlyArray.XPosition + (2 * LABEL_LENGTH + columns * squareSize) <= currentPage.PageWidth
-                                && onlyArray.YPosition + onlyArray.Height + rows * squareSize + LABEL_LENGTH + GAP < currentPage.PageHeight)
-                            {
-                                array.YPosition = onlyArray.YPosition + onlyArray.Height + GAP;
-                                array.XPosition = onlyArray.XPosition;
-                            }
-                            else
-                            {
-                                array.YPosition = currentPage.PageHeight - array.Height;
-                                array.XPosition = onlyArray.XPosition;
-                            }
-                        }
+            //            //Position to not overlap with first array on page if possible
+            //            if(onlyArray != null)
+            //            {
+            //                const double GAP = 35.0;
+            //                if(!(onlyArray is CLPFuzzyFactorCard) && onlyArray.XPosition + onlyArray.Width + (2 * LABEL_LENGTH + columns * squareSize) + GAP <= currentPage.PageWidth
+            //                    && rows * squareSize + LABEL_LENGTH < currentPage.PageHeight)
+            //                {
+            //                    array.XPosition = onlyArray.XPosition + onlyArray.Width + GAP;
+            //                    array.YPosition = onlyArray.YPosition;
+            //                }
+            //                else if(onlyArray.XPosition + (2 * LABEL_LENGTH + columns * squareSize) <= currentPage.PageWidth
+            //                    && onlyArray.YPosition + onlyArray.Height + rows * squareSize + LABEL_LENGTH + GAP < currentPage.PageHeight)
+            //                {
+            //                    array.YPosition = onlyArray.YPosition + onlyArray.Height + GAP;
+            //                    array.XPosition = onlyArray.XPosition;
+            //                }
+            //                else
+            //                {
+            //                    array.YPosition = currentPage.PageHeight - array.Height;
+            //                    array.XPosition = onlyArray.XPosition;
+            //                }
+            //            }
 
-                        if(currentPage == null)
-                        {
-                            Logger.Instance.WriteToLog("ParentPage for pageObject not set in AddPageObjectToPage().");
-                            return;
-                        }
+            //            if(currentPage == null)
+            //            {
+            //                Logger.Instance.WriteToLog("ParentPage for pageObject not set in AddPageObjectToPage().");
+            //                return;
+            //            }
 
-                        array.IsBackground = App.MainWindowViewModel.IsAuthoring;
-                        ACLPPageObjectBase.ApplyDistinctPosition(array);
-                        currentPage.PageObjects.Add(array);
-                        ACLPPageBaseViewModel.AddHistoryItemToPage(currentPage, new CLPHistoryArrayAddMassResize(currentPage, array.UniqueID, currentPage.PageObjects.Count - 1, oldDimensions));
-                        App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.Select;
+            //            array.IsBackground = App.MainWindowViewModel.IsAuthoring;
+            //            ACLPPageObjectBase.ApplyDistinctPosition(array);
+            //            currentPage.PageObjects.Add(array);
+            //            ACLPPageBaseViewModel.AddHistoryItemToPage(currentPage, new CLPHistoryArrayAddMassResize(currentPage, array.UniqueID, currentPage.PageObjects.Count - 1, oldDimensions));
+            //            App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.Select;
 
-                        //If FFC with remainder on page, update
-                        foreach(var pageObject in currentPage.PageObjects)
-                        {
-                            if(pageObject is CLPFuzzyFactorCard)
-                            {
-                                (pageObject as CLPFuzzyFactorCard).AnalyzeArrays();
-                                if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
-                                {
-                                    (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
-                                    break;
-                                }
-                            }
-                        }
-                        return;
-                    }
-                }
-            }
+            //            //If FFC with remainder on page, update
+            //            foreach(var pageObject in currentPage.PageObjects)
+            //            {
+            //                if(pageObject is CLPFuzzyFactorCard)
+            //                {
+            //                    (pageObject as CLPFuzzyFactorCard).AnalyzeArrays();
+            //                    if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
+            //                    {
+            //                        (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
+            //                        break;
+            //                    }
+            //                }
+            //            }
+            //            return;
+            //        }
+            //    }
+            //}
 
-            var minSide = ((arrayType == "FUZZYFACTORCARD" || arrayType == "FFCREMAINDER"))
-                ? MIN_FFC_SIDE:
-                MIN_SIDE;
-            var defaultSquareSize = ((arrayType == "FUZZYFACTORCARD" || arrayType == "FFCREMAINDER")) ?
-                Math.Max(45.0, (minSide / (Math.Min(rows, columns)))):
-                45.0;
-            var initializedSquareSize = (squareSize > 0) ? Math.Max(squareSize, (minSide / (Math.Min(rows, columns)))) : defaultSquareSize;
-            if((arrayType == "FUZZYFACTORCARD" || arrayType == "FFCREMAINDER") && xPosition + initializedSquareSize * columns + LABEL_LENGTH * 3.0 + 12.0 > currentPage.PageWidth)
-            {
-                initializedSquareSize = minSide / (Math.Min(rows, columns));
-            }
-            var arrayStacks = 1;
-            var isHorizontallyAligned = !(columns / currentPage.PageWidth > rows / currentPage.PageHeight);
+            //var minSide = ((arrayType == "FUZZYFACTORCARD" || arrayType == "FFCREMAINDER"))
+            //    ? MIN_FFC_SIDE:
+            //    MIN_SIDE;
+            //var defaultSquareSize = ((arrayType == "FUZZYFACTORCARD" || arrayType == "FFCREMAINDER")) ?
+            //    Math.Max(45.0, (minSide / (Math.Min(rows, columns)))):
+            //    45.0;
+            //var initializedSquareSize = (squareSize > 0) ? Math.Max(squareSize, (minSide / (Math.Min(rows, columns)))) : defaultSquareSize;
+            //if((arrayType == "FUZZYFACTORCARD" || arrayType == "FFCREMAINDER") && xPosition + initializedSquareSize * columns + LABEL_LENGTH * 3.0 + 12.0 > currentPage.PageWidth)
+            //{
+            //    initializedSquareSize = minSide / (Math.Min(rows, columns));
+            //}
+            //var arrayStacks = 1;
+            //var isHorizontallyAligned = !(columns / currentPage.PageWidth > rows / currentPage.PageHeight);
 
-            while(xPosition + 2 * LABEL_LENGTH + initializedSquareSize * columns >= currentPage.PageWidth || yPosition + 2 * LABEL_LENGTH + initializedSquareSize * rows >= currentPage.PageHeight)
-            {
-                initializedSquareSize = Math.Abs(initializedSquareSize - 45.0) < .0001 ? 22.5 : initializedSquareSize / 4 * 3;
-            }
-            if(isHorizontallyAligned)
-            {
-                while(xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH >= currentPage.PageWidth)
-                {
-                    initializedSquareSize = Math.Abs(initializedSquareSize - 45.0) < .0001 ? 22.5 : initializedSquareSize / 4 * 3;
+            //while(xPosition + 2 * LABEL_LENGTH + initializedSquareSize * columns >= currentPage.PageWidth || yPosition + 2 * LABEL_LENGTH + initializedSquareSize * rows >= currentPage.PageHeight)
+            //{
+            //    initializedSquareSize = Math.Abs(initializedSquareSize - 45.0) < .0001 ? 22.5 : initializedSquareSize / 4 * 3;
+            //}
+            //if(isHorizontallyAligned)
+            //{
+            //    while(xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH >= currentPage.PageWidth)
+            //    {
+            //        initializedSquareSize = Math.Abs(initializedSquareSize - 45.0) < .0001 ? 22.5 : initializedSquareSize / 4 * 3;
 
-                    if(numberOfArrays < 5 || xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH < currentPage.PageWidth)
-                    {
-                        continue;
-                    }
+            //        if(numberOfArrays < 5 || xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH < currentPage.PageWidth)
+            //        {
+            //            continue;
+            //        }
 
-                    if(xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 2) + LABEL_LENGTH < currentPage.PageWidth &&
-                       yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * 2 + LABEL_LENGTH < currentPage.PageHeight)
-                    {
-                        arrayStacks = 2;
-                        break;
-                    }
+            //        if(xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 2) + LABEL_LENGTH < currentPage.PageWidth &&
+            //           yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * 2 + LABEL_LENGTH < currentPage.PageHeight)
+            //        {
+            //            arrayStacks = 2;
+            //            break;
+            //        }
 
-                    if(xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 3) + LABEL_LENGTH < currentPage.PageWidth &&
-                       yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * 3 + LABEL_LENGTH < currentPage.PageHeight)
-                    {
-                        arrayStacks = 3;
-                        break;
-                    }
-                }
-            }
-            else
-            {
-                yPosition = 100;
-                while(yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH >= currentPage.PageHeight)
-                {
-                    initializedSquareSize = Math.Abs(initializedSquareSize - 45.0) < .0001 ? 22.5 : initializedSquareSize / 4 * 3;
+            //        if(xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 3) + LABEL_LENGTH < currentPage.PageWidth &&
+            //           yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * 3 + LABEL_LENGTH < currentPage.PageHeight)
+            //        {
+            //            arrayStacks = 3;
+            //            break;
+            //        }
+            //    }
+            //}
+            //else
+            //{
+            //    yPosition = 100;
+            //    while(yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH >= currentPage.PageHeight)
+            //    {
+            //        initializedSquareSize = Math.Abs(initializedSquareSize - 45.0) < .0001 ? 22.5 : initializedSquareSize / 4 * 3;
 
-                    if(numberOfArrays < 5 || yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH < currentPage.PageHeight)
-                    {
-                        continue;
-                    }
+            //        if(numberOfArrays < 5 || yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH < currentPage.PageHeight)
+            //        {
+            //            continue;
+            //        }
 
-                    if(yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 2) + LABEL_LENGTH < currentPage.PageHeight &&
-                       xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * 2 + LABEL_LENGTH < currentPage.PageWidth)
-                    {
-                        arrayStacks = 2;
-                        break;
-                    }
+            //        if(yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 2) + LABEL_LENGTH < currentPage.PageHeight &&
+            //           xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * 2 + LABEL_LENGTH < currentPage.PageWidth)
+            //        {
+            //            arrayStacks = 2;
+            //            break;
+            //        }
 
-                    if(yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 3) + LABEL_LENGTH < currentPage.PageHeight &&
-                       xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * 3 + LABEL_LENGTH < currentPage.PageWidth)
-                    {
-                        arrayStacks = 3;
-                        break;
-                    }
-                }
-            }
+            //        if(yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 3) + LABEL_LENGTH < currentPage.PageHeight &&
+            //           xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * 3 + LABEL_LENGTH < currentPage.PageWidth)
+            //        {
+            //            arrayStacks = 3;
+            //            break;
+            //        }
+            //    }
+            //}
 
-            var startXPosition = 0.0;
-            var startYPosition = 100.0;
+            //var startXPosition = 0.0;
+            //var startYPosition = 100.0;
 
-            //Position to not overlap with first array on page if possible
-            if(onlyArray != null)
-            {
-                if(isHorizontallyAligned)
-                {
-                    const double GAP = 35.0;
-                    if(!(onlyArray is CLPFuzzyFactorCard) && onlyArray.XPosition + onlyArray.Width + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH + GAP <= currentPage.PageWidth
-                        && rows * initializedSquareSize + LABEL_LENGTH < currentPage.PageHeight)
-                    {
-                        startXPosition = onlyArray.XPosition + onlyArray.Width + GAP;
-                        yPosition = onlyArray.YPosition;
-                    }
-                    else if(onlyArray.XPosition + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH <= currentPage.PageWidth
-                        && onlyArray.YPosition + onlyArray.Height + rows * initializedSquareSize + LABEL_LENGTH + GAP < currentPage.PageHeight)
-                    {
-                        yPosition = onlyArray.YPosition + onlyArray.Height + GAP;
-                        startXPosition = onlyArray.XPosition;
-                    }
-                    else
-                    {
-                        yPosition = currentPage.PageHeight - rows * initializedSquareSize - 2 * LABEL_LENGTH;
-                        startXPosition = onlyArray.XPosition;
-                    }
-                    xPosition = startXPosition;
-                }
-                else{
-                    const double GAP = 35.0;
-                    if(!(onlyArray is CLPFuzzyFactorCard) && onlyArray.YPosition + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH <= currentPage.PageHeight
-                        && onlyArray.XPosition + onlyArray.Width + columns * initializedSquareSize + LABEL_LENGTH + GAP < currentPage.PageWidth)
-                    {
-                        xPosition = onlyArray.XPosition + onlyArray.Width + GAP;
-                        startYPosition = onlyArray.YPosition;
-                    }
-                    else if(onlyArray.YPosition + onlyArray.Height + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH + GAP <= currentPage.PageWidth
-                        && onlyArray.XPosition + rows * initializedSquareSize + LABEL_LENGTH < currentPage.PageHeight)
-                    {
-                        startYPosition = onlyArray.YPosition + onlyArray.Height + GAP;
-                        xPosition = onlyArray.XPosition;
-                    }
-                }
-            }
+            ////Position to not overlap with first array on page if possible
+            //if(onlyArray != null)
+            //{
+            //    if(isHorizontallyAligned)
+            //    {
+            //        const double GAP = 35.0;
+            //        if(!(onlyArray is CLPFuzzyFactorCard) && onlyArray.XPosition + onlyArray.Width + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH + GAP <= currentPage.PageWidth
+            //            && rows * initializedSquareSize + LABEL_LENGTH < currentPage.PageHeight)
+            //        {
+            //            startXPosition = onlyArray.XPosition + onlyArray.Width + GAP;
+            //            yPosition = onlyArray.YPosition;
+            //        }
+            //        else if(onlyArray.XPosition + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH <= currentPage.PageWidth
+            //            && onlyArray.YPosition + onlyArray.Height + rows * initializedSquareSize + LABEL_LENGTH + GAP < currentPage.PageHeight)
+            //        {
+            //            yPosition = onlyArray.YPosition + onlyArray.Height + GAP;
+            //            startXPosition = onlyArray.XPosition;
+            //        }
+            //        else
+            //        {
+            //            yPosition = currentPage.PageHeight - rows * initializedSquareSize - 2 * LABEL_LENGTH;
+            //            startXPosition = onlyArray.XPosition;
+            //        }
+            //        xPosition = startXPosition;
+            //    }
+            //    else{
+            //        const double GAP = 35.0;
+            //        if(!(onlyArray is CLPFuzzyFactorCard) && onlyArray.YPosition + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH <= currentPage.PageHeight
+            //            && onlyArray.XPosition + onlyArray.Width + columns * initializedSquareSize + LABEL_LENGTH + GAP < currentPage.PageWidth)
+            //        {
+            //            xPosition = onlyArray.XPosition + onlyArray.Width + GAP;
+            //            startYPosition = onlyArray.YPosition;
+            //        }
+            //        else if(onlyArray.YPosition + onlyArray.Height + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH + GAP <= currentPage.PageWidth
+            //            && onlyArray.XPosition + rows * initializedSquareSize + LABEL_LENGTH < currentPage.PageHeight)
+            //        {
+            //            startYPosition = onlyArray.YPosition + onlyArray.Height + GAP;
+            //            xPosition = onlyArray.XPosition;
+            //        }
+            //    }
+            //}
 
             
-            var arraysToAdd = new List<CLPArray>();
-            foreach(var index in Enumerable.Range(1, numberOfArrays))
-            {
-                var array = new CLPArray(rows, columns, currentPage);
+            //var arraysToAdd = new List<CLPArray>();
+            //foreach(var index in Enumerable.Range(1, numberOfArrays))
+            //{
+            //    var array = new CLPArray(rows, columns, currentPage);
 
-                switch(arrayType)
-                {
-                    case "CARD":
-                        array = new CLPArray(rows, columns, currentPage);
-                        array.IsDivisionBehaviorOn = false;
-                        array.IsLabelOn = false;
-                        array.IsSnappable = false;
-                        array.BackgroundColor = Colors.SkyBlue.ToString();
-                        break;
-                    case "FACTORCARD":
-                        array = new CLPFactorCard(rows, columns, currentPage);
-                        break;
-                    case "FUZZYFACTORCARD":
-                        array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
-                        break;
-                    case "FFCREMAINDER":
-                        array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
-                        (array as CLPFuzzyFactorCard).IsRemainderRegionDisplayed = true;
-                        break;
-                    default:
-                        array = new CLPArray(rows, columns, currentPage);
-                        array.IsDivisionBehaviorOn = false;
-                        //TODO Liz - uncomment and delete above after trial
-                        //array.IsDivisionBehaviorOn = !(onlyArray is CLPFuzzyFactorCard);
-                        array.IsSnapAdornerOnLeft = !IsRightHanded;
-                        break;
-                }
-                if(isHorizontallyAligned)
-                {
-                    if(arrayStacks == 2 && index == (int)Math.Ceiling((double)numberOfArrays / 2) + 1)
-                    {
-                        xPosition = startXPosition;
-                        yPosition += LABEL_LENGTH + rows * initializedSquareSize;
-                    }
-                    if(arrayStacks == 3 && 
-                       (index == (int)Math.Ceiling((double)numberOfArrays / 3) + 1 || 
-                        index == (int)Math.Ceiling((double)numberOfArrays / 3)*2 + 1))
-                    {
-                        xPosition = startXPosition;
-                        yPosition += LABEL_LENGTH + rows * initializedSquareSize;
-                    }
-                    array.XPosition = xPosition;
-                    array.YPosition = yPosition;
-                    xPosition += LABEL_LENGTH + columns * initializedSquareSize;
-                    array.SizeArrayToGridLevel(initializedSquareSize);
-                }
-                else
-                {
-                    if(arrayStacks == 2 && index == (int)Math.Ceiling((double)numberOfArrays / 2) + 1)
-                    {
-                        xPosition += LABEL_LENGTH + columns * initializedSquareSize;
-                        yPosition = startYPosition;
-                    }
-                    if(arrayStacks == 3 &&
-                       (index == (int)Math.Ceiling((double)numberOfArrays / 3) + 1 ||
-                        index == (int)Math.Ceiling((double)numberOfArrays / 3) * 2 + 1))
-                    {
-                        xPosition += LABEL_LENGTH + columns * initializedSquareSize;
-                        yPosition = startYPosition;
-                    }
-                    array.XPosition = xPosition;
-                    array.YPosition = yPosition;
-                    yPosition += LABEL_LENGTH + rows * initializedSquareSize;
-                    array.SizeArrayToGridLevel(initializedSquareSize);
-                }
+            //    switch(arrayType)
+            //    {
+            //        case "CARD":
+            //            array = new CLPArray(rows, columns, currentPage);
+            //            array.IsDivisionBehaviorOn = false;
+            //            array.IsLabelOn = false;
+            //            array.IsSnappable = false;
+            //            array.BackgroundColor = Colors.SkyBlue.ToString();
+            //            break;
+            //        case "FACTORCARD":
+            //            array = new CLPFactorCard(rows, columns, currentPage);
+            //            break;
+            //        case "FUZZYFACTORCARD":
+            //            array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
+            //            break;
+            //        case "FFCREMAINDER":
+            //            array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
+            //            (array as CLPFuzzyFactorCard).IsRemainderRegionDisplayed = true;
+            //            break;
+            //        default:
+            //            array = new CLPArray(rows, columns, currentPage);
+            //            array.IsDivisionBehaviorOn = false;
+            //            //TODO Liz - uncomment and delete above after trial
+            //            //array.IsDivisionBehaviorOn = !(onlyArray is CLPFuzzyFactorCard);
+            //            array.IsSnapAdornerOnLeft = !IsRightHanded;
+            //            break;
+            //    }
+            //    if(isHorizontallyAligned)
+            //    {
+            //        if(arrayStacks == 2 && index == (int)Math.Ceiling((double)numberOfArrays / 2) + 1)
+            //        {
+            //            xPosition = startXPosition;
+            //            yPosition += LABEL_LENGTH + rows * initializedSquareSize;
+            //        }
+            //        if(arrayStacks == 3 && 
+            //           (index == (int)Math.Ceiling((double)numberOfArrays / 3) + 1 || 
+            //            index == (int)Math.Ceiling((double)numberOfArrays / 3)*2 + 1))
+            //        {
+            //            xPosition = startXPosition;
+            //            yPosition += LABEL_LENGTH + rows * initializedSquareSize;
+            //        }
+            //        array.XPosition = xPosition;
+            //        array.YPosition = yPosition;
+            //        xPosition += LABEL_LENGTH + columns * initializedSquareSize;
+            //        array.SizeArrayToGridLevel(initializedSquareSize);
+            //    }
+            //    else
+            //    {
+            //        if(arrayStacks == 2 && index == (int)Math.Ceiling((double)numberOfArrays / 2) + 1)
+            //        {
+            //            xPosition += LABEL_LENGTH + columns * initializedSquareSize;
+            //            yPosition = startYPosition;
+            //        }
+            //        if(arrayStacks == 3 &&
+            //           (index == (int)Math.Ceiling((double)numberOfArrays / 3) + 1 ||
+            //            index == (int)Math.Ceiling((double)numberOfArrays / 3) * 2 + 1))
+            //        {
+            //            xPosition += LABEL_LENGTH + columns * initializedSquareSize;
+            //            yPosition = startYPosition;
+            //        }
+            //        array.XPosition = xPosition;
+            //        array.YPosition = yPosition;
+            //        yPosition += LABEL_LENGTH + rows * initializedSquareSize;
+            //        array.SizeArrayToGridLevel(initializedSquareSize);
+            //    }
 
-                arraysToAdd.Add(array);
-            }
+            //    arraysToAdd.Add(array);
+            //}
 
-            // If it doesn't fit, resize all other non-background arrays on page to match new array grid size
-            if(squareSize > 0.0 && initializedSquareSize != squareSize)
-            {
-                Dictionary<string, Point> oldDimensions = new Dictionary<string, Point>();
-                foreach(var pageObject in currentPage.PageObjects)
-                {
-                    var pageObjectMinSide = (pageObject is CLPFuzzyFactorCard) ? MIN_FFC_SIDE : MIN_SIDE;
-                    if(pageObject is CLPArray && (!pageObject.IsBackground || MainWindow.IsAuthoring))
-                    {
-                        oldDimensions.Add(pageObject.UniqueID, new Point(pageObject.Width, pageObject.Height));
-                        if((pageObject as CLPArray).Rows * initializedSquareSize > pageObjectMinSide && (pageObject as CLPArray).Columns * initializedSquareSize > pageObjectMinSide)
-                        {
-                            (pageObject as CLPArray).SizeArrayToGridLevel(initializedSquareSize);
-                        }
-                        else
-                        {
-                            (pageObject as CLPArray).SizeArrayToGridLevel(pageObjectMinSide / Math.Min((pageObject as CLPArray).Rows, (pageObject as CLPArray).Columns));
-                        }
-                    }
-                }
+            //// If it doesn't fit, resize all other non-background arrays on page to match new array grid size
+            //if(squareSize > 0.0 && initializedSquareSize != squareSize)
+            //{
+            //    Dictionary<string, Point> oldDimensions = new Dictionary<string, Point>();
+            //    foreach(var pageObject in currentPage.PageObjects)
+            //    {
+            //        var pageObjectMinSide = (pageObject is CLPFuzzyFactorCard) ? MIN_FFC_SIDE : MIN_SIDE;
+            //        if(pageObject is CLPArray && (!pageObject.IsBackground || MainWindow.IsAuthoring))
+            //        {
+            //            oldDimensions.Add(pageObject.UniqueID, new Point(pageObject.Width, pageObject.Height));
+            //            if((pageObject as CLPArray).Rows * initializedSquareSize > pageObjectMinSide && (pageObject as CLPArray).Columns * initializedSquareSize > pageObjectMinSide)
+            //            {
+            //                (pageObject as CLPArray).SizeArrayToGridLevel(initializedSquareSize);
+            //            }
+            //            else
+            //            {
+            //                (pageObject as CLPArray).SizeArrayToGridLevel(pageObjectMinSide / Math.Min((pageObject as CLPArray).Rows, (pageObject as CLPArray).Columns));
+            //            }
+            //        }
+            //    }
 
-                if(arraysToAdd.Count == 1)
-                {
-                    var array = arraysToAdd.First();
-                    array.IsBackground = App.MainWindowViewModel.IsAuthoring;
-                    ACLPPageObjectBase.ApplyDistinctPosition(array);
-                    currentPage.PageObjects.Add(array);
-                    ACLPPageBaseViewModel.AddHistoryItemToPage(currentPage, new CLPHistoryArrayAddMassResize(currentPage, array.UniqueID, currentPage.PageObjects.Count - 1, oldDimensions));
-                    App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.Select;
+            //    if(arraysToAdd.Count == 1)
+            //    {
+            //        var array = arraysToAdd.First();
+            //        array.IsBackground = App.MainWindowViewModel.IsAuthoring;
+            //        ACLPPageObjectBase.ApplyDistinctPosition(array);
+            //        currentPage.PageObjects.Add(array);
+            //        ACLPPageBaseViewModel.AddHistoryItemToPage(currentPage, new CLPHistoryArrayAddMassResize(currentPage, array.UniqueID, currentPage.PageObjects.Count - 1, oldDimensions));
+            //        App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.Select;
 
-                    //If FFC with remainder on page, update
-                    foreach(var pageObject in currentPage.PageObjects)
-                    {
-                        if(pageObject is CLPFuzzyFactorCard)
-                        {
-                            (pageObject as CLPFuzzyFactorCard).AnalyzeArrays();
-                            if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
-                            {
-                                (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
-                                break;
-                            }
-                        }
-                    }
-                    return;
-                }
-                else
-                {
-                    var pageObjectIDs = new List<string>();
-                    foreach(var array in arraysToAdd)
-                    {
-                        array.IsBackground = App.MainWindowViewModel.IsAuthoring;
-                        pageObjectIDs.Add(array.UniqueID);
-                        currentPage.PageObjects.Add(array);
-                    }
-                    //If FFC with remainder on page, update
-                    foreach(var pageObject in currentPage.PageObjects)
-                    {
-                        if(pageObject is CLPFuzzyFactorCard)
-                        {
-                            (pageObject as CLPFuzzyFactorCard).AnalyzeArrays();
-                            if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
-                            {
-                                (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
-                                break;
-                            }
-                        }
-                    }
+            //        //If FFC with remainder on page, update
+            //        foreach(var pageObject in currentPage.PageObjects)
+            //        {
+            //            if(pageObject is CLPFuzzyFactorCard)
+            //            {
+            //                (pageObject as CLPFuzzyFactorCard).AnalyzeArrays();
+            //                if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
+            //                {
+            //                    (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
+            //                    break;
+            //                }
+            //            }
+            //        }
+            //        return;
+            //    }
+            //    else
+            //    {
+            //        var pageObjectIDs = new List<string>();
+            //        foreach(var array in arraysToAdd)
+            //        {
+            //            array.IsBackground = App.MainWindowViewModel.IsAuthoring;
+            //            pageObjectIDs.Add(array.UniqueID);
+            //            currentPage.PageObjects.Add(array);
+            //        }
+            //        //If FFC with remainder on page, update
+            //        foreach(var pageObject in currentPage.PageObjects)
+            //        {
+            //            if(pageObject is CLPFuzzyFactorCard)
+            //            {
+            //                (pageObject as CLPFuzzyFactorCard).AnalyzeArrays();
+            //                if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
+            //                {
+            //                    (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
+            //                    break;
+            //                }
+            //            }
+            //        }
 
-                    ACLPPageBaseViewModel.AddHistoryItemToPage(currentPage, new CLPHistoryArrayMassAddMassResize(currentPage, pageObjectIDs, oldDimensions));
-                    App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.Select;
-                    return;
-                }
-            }
+            //        ACLPPageBaseViewModel.AddHistoryItemToPage(currentPage, new CLPHistoryArrayMassAddMassResize(currentPage, pageObjectIDs, oldDimensions));
+            //        App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.Select;
+            //        return;
+            //    }
+            //}
 
-            if(arraysToAdd.Count == 1)
-            {
-                if(arrayType == "FFCREMAINDER")
-                {
-                    CLPFuzzyFactorCardRemainder remainderRegion = new CLPFuzzyFactorCardRemainder((arraysToAdd.First() as CLPFuzzyFactorCard), currentPage);
-                    currentPage.PageObjects.Add(remainderRegion);
-                    (arraysToAdd.First() as CLPFuzzyFactorCard).RemainderRegionUniqueID = remainderRegion.UniqueID;
-                    currentPage.PageObjects.Add(arraysToAdd.First());
+            //if(arraysToAdd.Count == 1)
+            //{
+            //    if(arrayType == "FFCREMAINDER")
+            //    {
+            //        CLPFuzzyFactorCardRemainder remainderRegion = new CLPFuzzyFactorCardRemainder((arraysToAdd.First() as CLPFuzzyFactorCard), currentPage);
+            //        currentPage.PageObjects.Add(remainderRegion);
+            //        (arraysToAdd.First() as CLPFuzzyFactorCard).RemainderRegionUniqueID = remainderRegion.UniqueID;
+            //        currentPage.PageObjects.Add(arraysToAdd.First());
 
-                    var pageObjectIDs = new List<string>();
-                    pageObjectIDs.Add(arraysToAdd.First().UniqueID);
-                    pageObjectIDs.Add(remainderRegion.UniqueID);
+            //        var pageObjectIDs = new List<string>();
+            //        pageObjectIDs.Add(arraysToAdd.First().UniqueID);
+            //        pageObjectIDs.Add(remainderRegion.UniqueID);
 
-                    ACLPPageBaseViewModel.AddHistoryItemToPage(currentPage, new CLPHistoryPageObjectsMassAdd(currentPage, pageObjectIDs));
-                }
-                else
-                {
-                    ACLPPageBaseViewModel.AddPageObjectToPage(arraysToAdd.First());
-                }
-            }
-            else
-            {
-                ACLPPageBaseViewModel.AddPageObjectsToPage(currentPage, arraysToAdd);
-            }
+            //        ACLPPageBaseViewModel.AddHistoryItemToPage(currentPage, new CLPHistoryPageObjectsMassAdd(currentPage, pageObjectIDs));
+            //    }
+            //    else
+            //    {
+            //        ACLPPageBaseViewModel.AddPageObjectToPage(arraysToAdd.First());
+            //    }
+            //}
+            //else
+            //{
+            //    ACLPPageBaseViewModel.AddPageObjectsToPage(currentPage, arraysToAdd);
+            //}
 
-            //If FFC with remainder on page, update
-            foreach(var pageObject in currentPage.PageObjects)
-            {
-                if(pageObject is CLPFuzzyFactorCard)
-                {
-                    (pageObject as CLPFuzzyFactorCard).AnalyzeArrays();
-                    if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
-                    {
-                        (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
-                        break;
-                    }
-                }
-            }
+            ////If FFC with remainder on page, update
+            //foreach(var pageObject in currentPage.PageObjects)
+            //{
+            //    if(pageObject is CLPFuzzyFactorCard)
+            //    {
+            //        (pageObject as CLPFuzzyFactorCard).AnalyzeArrays();
+            //        if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
+            //        {
+            //            (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
+            //            break;
+            //        }
+            //    }
+            //}
         }
 
         /// <summary>
@@ -3199,59 +3150,60 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnEditPageDefinitionCommandExecute()
         {
-            // Get the tags on this page
-            Logger.Instance.WriteToLog("Page Definition");
-            var page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage;
-            ObservableCollection<Tag> tags = page.PageTags;
+            // TODO: Entities
+            //// Get the tags on this page
+            //Logger.Instance.WriteToLog("Page Definition");
+            //var page = ((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as CLPMirrorDisplay).CurrentPage;
+            //ObservableCollection<Tag> tags = page.PageTags;
 
-            // If the page already has a Page Definition tag, use that one
-            Tag oldTag = null;
-            ProductRelation oldRelation = null;
-            foreach(Tag tag in tags)
-            {
-                if(tag.TagType.Name == PageDefinitionTagType.Instance.Name)
-                {
-                    oldTag = tag;
-                    oldRelation = (ProductRelation) oldTag.Value[0].Value;
-                    break;
-                }
-            }
+            //// If the page already has a Page Definition tag, use that one
+            //Tag oldTag = null;
+            //ProductRelation oldRelation = null;
+            //foreach(Tag tag in tags)
+            //{
+            //    if(tag.TagType.Name == PageDefinitionTagType.Instance.Name)
+            //    {
+            //        oldTag = tag;
+            //        oldRelation = (ProductRelation) oldTag.Value[0].Value;
+            //        break;
+            //    }
+            //}
 
-            // Otherwise, create a new page definition tag
-            if(oldTag == null)
-            {
-                oldRelation = new ProductRelation();
-            }
+            //// Otherwise, create a new page definition tag
+            //if(oldTag == null)
+            //{
+            //    oldRelation = new ProductRelation();
+            //}
 
-            ProductRelationViewModel viewModel = new ProductRelationViewModel(oldRelation);
-            PageDefinitionView definitionView = new PageDefinitionView(viewModel);
-            definitionView.Owner = Application.Current.MainWindow;
-            definitionView.ShowDialog();
+            //ProductRelationViewModel viewModel = new ProductRelationViewModel(oldRelation);
+            //PageDefinitionView definitionView = new PageDefinitionView(viewModel);
+            //definitionView.Owner = Application.Current.MainWindow;
+            //definitionView.ShowDialog();
 
-            if(definitionView.DialogResult == true)
-            {
-                // Update this page's definition tag
+            //if(definitionView.DialogResult == true)
+            //{
+            //    // Update this page's definition tag
 
-                if(oldTag != null)
-                {
-                    tags.Remove(oldTag);
-                }
+            //    if(oldTag != null)
+            //    {
+            //        tags.Remove(oldTag);
+            //    }
 
-                Tag newTag = new Tag(Tag.Origins.Author, PageDefinitionTagType.Instance);
-                newTag.Value.Add(new TagOptionValue(viewModel.Model));
+            //    Tag newTag = new Tag(Tag.Origins.Author, PageDefinitionTagType.Instance);
+            //    newTag.Value.Add(new TagOptionValue(viewModel.Model));
 
-                tags.Add(newTag);
-            }
+            //    tags.Add(newTag);
+            //}
 
-            // Logs the currently tagged relation. TODO: Remove after testing
-            foreach(Tag tag in tags)
-            {
-                if(tag.TagType.Name == PageDefinitionTagType.Instance.Name)
-                {
-                    Logger.Instance.WriteToLog(((ProductRelation) tag.Value[0].Value).GetExampleNumberSentence());
-                }
-            }
-            Logger.Instance.WriteToLog("End of OnEditPageDefinitionCommandExecute()");
+            //// Logs the currently tagged relation. TODO: Remove after testing
+            //foreach(Tag tag in tags)
+            //{
+            //    if(tag.TagType.Name == PageDefinitionTagType.Instance.Name)
+            //    {
+            //        Logger.Instance.WriteToLog(((ProductRelation) tag.Value[0].Value).GetExampleNumberSentence());
+            //    }
+            //}
+            //Logger.Instance.WriteToLog("End of OnEditPageDefinitionCommandExecute()");
         }
 
         /// <summary>
@@ -3264,12 +3216,13 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnAnalyzeArrayCommandExecute()
         {
-            Logger.Instance.WriteToLog("Start of OnAnalyzeArrayCommandExecute()");
+            // TODO: Entities
+            //Logger.Instance.WriteToLog("Start of OnAnalyzeArrayCommandExecute()");
 
-            // Get the page's math definition, or be sad if it doesn't have one
-            var page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage;
+            //// Get the page's math definition, or be sad if it doesn't have one
+            //var page = ((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as CLPMirrorDisplay).CurrentPage;
 
-            PageAnalysis.AnalyzeArray(page);
+            //PageAnalysis.AnalyzeArray(page);
         }
 
         /// <summary>
@@ -3286,12 +3239,13 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnAnalyzeFuzzyFactorCardCommandExecute()
         {
-            Logger.Instance.WriteToLog("Start of OnAnalyzeFuzzyFactorCardCommandExecute()");
+            // TODO: Entities
+            //Logger.Instance.WriteToLog("Start of OnAnalyzeFuzzyFactorCardCommandExecute()");
 
-            // Get the page's math definition, or be sad if it doesn't have one
-            var page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage;
+            //// Get the page's math definition, or be sad if it doesn't have one
+            //var page = ((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as CLPMirrorDisplay).CurrentPage;
 
-            PageAnalysis.AnalyzeFuzzyFactorCard(page);
+            //PageAnalysis.AnalyzeFuzzyFactorCard(page);
         }
 
         /// <summary>
@@ -3304,11 +3258,11 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnAnalyzeStampsCommandExecute()
         {
+            // TODO: Entities
+            //// Get the page's math definition, or be sad if it doesn't have one
+            //var page = ((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as CLPMirrorDisplay).CurrentPage;
 
-            // Get the page's math definition, or be sad if it doesn't have one
-            var page = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage;
-
-            PageAnalysis.AnalyzeStamps(page);
+            //PageAnalysis.AnalyzeStamps(page);
         }
 
         /// <summary>
@@ -3321,8 +3275,9 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnInsertAudioCommandExecute()
         {
-            CLPAudio audio = new CLPAudio(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage);
-            ACLPPageBaseViewModel.AddPageObjectToPage(audio);
+            // TODO: Entities
+            //CLPAudio audio = new CLPAudio(((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as CLPMirrorDisplay).CurrentPage);
+            //ACLPPageBaseViewModel.AddPageObjectToPage(audio);
         }
 
         /// <summary>
@@ -3332,11 +3287,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnInsertProtractorCommandExecute()
         {
-            CLPShape square = new CLPShape(CLPShape.CLPShapeType.Protractor, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage);
-            square.Height = 200;
-            square.Width = 2.0*square.Height;
+            // TODO: Entities
+            //var square = new Shape(((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as SingleDisplay).CurrentPage, ShapeType.Protractor);
+            //square.Height = 200;
+            //square.Width = 2.0*square.Height;
             
-            ACLPPageBaseViewModel.AddPageObjectToPage(square);
+            //ACLPPageBaseViewModel.AddPageObjectToPage(square);
         }
 
         /// <summary>
@@ -3349,8 +3305,9 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnInsertSquareShapeCommandExecute()
         {
-            CLPShape square = new CLPShape(CLPShape.CLPShapeType.Rectangle, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage);
-            ACLPPageBaseViewModel.AddPageObjectToPage(square);
+            // TODO: Entities
+            //var square = new Shape(((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as SingleDisplay).CurrentPage, ShapeType.Rectangle);
+            //ACLPPageBaseViewModel.AddPageObjectToPage(square);
         }
 
         /// <summary>
@@ -3363,8 +3320,9 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnInsertCircleShapeCommandExecute()
         {
-            CLPShape circle = new CLPShape(CLPShape.CLPShapeType.Ellipse, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage);
-            ACLPPageBaseViewModel.AddPageObjectToPage(circle);
+            // TODO: Entities
+            //var circle = new Shape(((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as SingleDisplay).CurrentPage, ShapeType.Ellipse);
+            //ACLPPageBaseViewModel.AddPageObjectToPage(circle);
         }
 
         /// <summary>
@@ -3377,8 +3335,9 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnInsertHorizontalLineShapeCommandExecute()
         {
-            CLPShape line = new CLPShape(CLPShape.CLPShapeType.HorizontalLine, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage);
-            ACLPPageBaseViewModel.AddPageObjectToPage(line);
+            // TODO: Entities
+            //var line = new Shape(((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as SingleDisplay).CurrentPage, ShapeType.HorizontalLine);
+            //ACLPPageBaseViewModel.AddPageObjectToPage(line);
         }
 
         /// <summary>
@@ -3391,8 +3350,9 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnInsertVerticalLineShapeCommandExecute()
         {
-            CLPShape line = new CLPShape(CLPShape.CLPShapeType.VerticalLine, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage);
-            ACLPPageBaseViewModel.AddPageObjectToPage(line);
+            // TODO: Entities
+            //var line = new Shape(((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as SingleDisplay).CurrentPage, ShapeType.VerticalLine);
+            //ACLPPageBaseViewModel.AddPageObjectToPage(line);
         }
 
         /// <summary>
@@ -3405,15 +3365,16 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnInsertHandwritingRegionCommandExecute()
         {
-            CustomizeInkRegionView optionChooser = new CustomizeInkRegionView();
-            optionChooser.Owner = Application.Current.MainWindow;
-            optionChooser.ShowDialog();
-            if(optionChooser.DialogResult == true)
-            {
-                CLPHandwritingAnalysisType selected_type = (CLPHandwritingAnalysisType)optionChooser.ExpectedType.SelectedIndex;
-                CLPHandwritingRegion region = new CLPHandwritingRegion(selected_type, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage);
-                ACLPPageBaseViewModel.AddPageObjectToPage(region);
-            }
+            // TODO: Entities
+            //CustomizeInkRegionView optionChooser = new CustomizeInkRegionView();
+            //optionChooser.Owner = Application.Current.MainWindow;
+            //optionChooser.ShowDialog();
+            //if(optionChooser.DialogResult == true)
+            //{
+            //    CLPHandwritingAnalysisType selected_type = (CLPHandwritingAnalysisType)optionChooser.ExpectedType.SelectedIndex;
+            //    CLPHandwritingRegion region = new CLPHandwritingRegion(selected_type, ((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as CLPMirrorDisplay).CurrentPage);
+            //    ACLPPageBaseViewModel.AddPageObjectToPage(region);
+            //}
         }
 
         /// <summary>
@@ -3426,8 +3387,9 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnInsertInkShapeRegionCommandExecute()
         {
-            CLPInkShapeRegion region = new CLPInkShapeRegion(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage);
-            ACLPPageBaseViewModel.AddPageObjectToPage(region);
+            // TODO: Entities
+            //CLPInkShapeRegion region = new CLPInkShapeRegion(((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as CLPMirrorDisplay).CurrentPage);
+            //ACLPPageBaseViewModel.AddPageObjectToPage(region);
         }
 
         /// <summary>
@@ -3440,8 +3402,9 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnInsertGroupingRegionCommandExecute()
         {
-            CLPGroupingRegion region = new CLPGroupingRegion(((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage);
-            ACLPPageBaseViewModel.AddPageObjectToPage(region);
+            // TODO: Entities
+            //CLPGroupingRegion region = new CLPGroupingRegion(((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as CLPMirrorDisplay).CurrentPage);
+            //ACLPPageBaseViewModel.AddPageObjectToPage(region);
         }
 
         /// <summary>
@@ -3454,25 +3417,26 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnInsertDataTableCommandExecute()
         {
-            CustomizeDataTableView optionChooser = new CustomizeDataTableView();
-            optionChooser.Owner = Application.Current.MainWindow;
-            optionChooser.ShowDialog();
-            if(optionChooser.DialogResult == true)
-            {
-                CLPHandwritingAnalysisType selected_type = (CLPHandwritingAnalysisType)optionChooser.ExpectedType.SelectedIndex;
+            // TODO: Entities
+            //CustomizeDataTableView optionChooser = new CustomizeDataTableView();
+            //optionChooser.Owner = Application.Current.MainWindow;
+            //optionChooser.ShowDialog();
+            //if(optionChooser.DialogResult == true)
+            //{
+            //    CLPHandwritingAnalysisType selected_type = (CLPHandwritingAnalysisType)optionChooser.ExpectedType.SelectedIndex;
 
-                int rows = 1;
-                try { rows = Convert.ToInt32(optionChooser.Rows.Text); }
-                catch(FormatException) { rows = 1; }
+            //    int rows = 1;
+            //    try { rows = Convert.ToInt32(optionChooser.Rows.Text); }
+            //    catch(FormatException) { rows = 1; }
 
-                int cols = 1;
-                try { cols = Convert.ToInt32(optionChooser.Cols.Text); }
-                catch(FormatException) { cols = 1; }
+            //    int cols = 1;
+            //    try { cols = Convert.ToInt32(optionChooser.Cols.Text); }
+            //    catch(FormatException) { cols = 1; }
 
-                CLPDataTable region = new CLPDataTable(rows, cols, selected_type, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage);
+            //    CLPDataTable region = new CLPDataTable(rows, cols, selected_type, ((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as CLPMirrorDisplay).CurrentPage);
                
-                ACLPPageBaseViewModel.AddPageObjectToPage(region);
-            }
+            //    ACLPPageBaseViewModel.AddPageObjectToPage(region);
+            //}
         }
 
         /// <summary>
@@ -3485,24 +3449,25 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnInsertShadingRegionCommandExecute()
         {
-            CustomizeShadingRegionView optionChooser = new CustomizeShadingRegionView();
-            optionChooser.Owner = Application.Current.MainWindow;
-            optionChooser.ShowDialog();
-            if(optionChooser.DialogResult == true)
-            {
-                //CLPHandwritingAnalysisType selected_type = (CLPHandwritingAnalysisType)optionChooser.ExpectedType.SelectedIndex;
+            // TODO: Entities
+            //CustomizeShadingRegionView optionChooser = new CustomizeShadingRegionView();
+            //optionChooser.Owner = Application.Current.MainWindow;
+            //optionChooser.ShowDialog();
+            //if(optionChooser.DialogResult == true)
+            //{
+            //    //CLPHandwritingAnalysisType selected_type = (CLPHandwritingAnalysisType)optionChooser.ExpectedType.SelectedIndex;
 
-                int rows = 0;
-                try { rows = Convert.ToInt32(optionChooser.Rows.Text); }
-                catch(FormatException) { rows = 0; }
+            //    int rows = 0;
+            //    try { rows = Convert.ToInt32(optionChooser.Rows.Text); }
+            //    catch(FormatException) { rows = 0; }
 
-                int cols = 0;
-                try { cols = Convert.ToInt32(optionChooser.Cols.Text); }
-                catch(FormatException) { cols = 0; }
+            //    int cols = 0;
+            //    try { cols = Convert.ToInt32(optionChooser.Cols.Text); }
+            //    catch(FormatException) { cols = 0; }
 
-                CLPShadingRegion region = new CLPShadingRegion(rows, cols, ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage);
-                ACLPPageBaseViewModel.AddPageObjectToPage(region);
-            }
+            //    CLPShadingRegion region = new CLPShadingRegion(rows, cols, ((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as CLPMirrorDisplay).CurrentPage);
+            //    ACLPPageBaseViewModel.AddPageObjectToPage(region);
+            //}
         }
 
         #endregion //Insert Commands
@@ -3517,7 +3482,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnInterpretPageCommandExecute()
         {
             // TODO: Entities
-            //var currentPage = ((MainWindow.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage;
+            //var currentPage = ((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as CLPMirrorDisplay).CurrentPage;
             //foreach (IPageObject pageObject in currentPage.PageObjects)
             //{
             //    if (pageObject.GetType().IsSubclassOf(typeof(ACLPInkRegion)))

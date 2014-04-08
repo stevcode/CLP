@@ -9,22 +9,10 @@ namespace Classroom_Learning_Partner.Views
     public partial class NotebookPagesPanelView
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="NotebookPagesPanelView"/> class.
+        /// Initializes a new instance of the <see cref="NotebookPagesPanelView" /> class.
         /// </summary>
-        public NotebookPagesPanelView()
-        {
-            InitializeComponent();
-            DataContextChanged += NotebookPagesPanelView_DataContextChanged;
-        }
+        public NotebookPagesPanelView() { InitializeComponent(); }
 
-        void NotebookPagesPanelView_DataContextChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
-        {
-            Console.WriteLine("notebookpagespanelview datacontext changed.");
-        }
-
-        protected override System.Type GetViewModelType()
-        {
-            return typeof(NotebookPagesPanelViewModel);
-        }
+        protected override Type GetViewModelType() { return typeof(NotebookPagesPanelViewModel); }
     }
 }

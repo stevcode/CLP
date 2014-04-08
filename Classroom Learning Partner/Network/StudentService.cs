@@ -47,7 +47,7 @@ namespace Classroom_Learning_Partner
 
         public void AddWebcamImage(List<byte> image)
         {
-            var page = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetPageAt(24, -1);
+            var page = (App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).Notebook.GetPageAt(24, -1);
 
             MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
             byte[] hash = md5.ComputeHash(image.ToArray());
@@ -121,7 +121,7 @@ namespace Classroom_Learning_Partner
             var unZippedPage = CLPServiceAgent.Instance.UnZip(zippedPage);
             var page = ObjectSerializer.ToObject(unZippedPage) as ICLPPage;
 
-            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel == null ||
                page == null)
             {
@@ -150,7 +150,7 @@ namespace Classroom_Learning_Partner
             var unZippedPage = CLPServiceAgent.Instance.UnZip(zippedPage);
             var page = ObjectSerializer.ToObject(unZippedPage) as ICLPPage;
 
-            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel == null ||
                page == null)
             {

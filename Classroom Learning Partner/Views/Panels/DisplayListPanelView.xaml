@@ -6,8 +6,7 @@
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
                    xmlns:system="clr-namespace:System;assembly=mscorlib"
-                   xmlns:extenders="clr-namespace:Classroom_Learning_Partner.Views.Extenders"
-                   Width="{Binding PanelWidth}">
+                   xmlns:extenders="clr-namespace:Classroom_Learning_Partner.Views.Extenders">
 
     <UserControl.Resources>
         <ResourceDictionary>
@@ -17,14 +16,15 @@
 
             <!-- Converters -->
             <catel:BooleanToCollapsingVisibilityConverter x:Key="OppositeBooleanToCollapsingVisibilityConverter" />
-
+            <conv:PanelLocationToThicknessConverter x:Key="PanelLocationToThicknessConverter" />
             <conv:ItemSelectedToColorConverter x:Key="PageOrDisplaySelectionColorConverter" />
             <conv:HeightToWidthAspectRatioMultiConverter x:Key="HeightToWidthAspectRatioMultiConverter" />
             <conv:WidthToHeightAspectRatioMultiConverter x:Key="WidthToHeightAspectRatioMultiConverter" />
             <conv:AllBoolToColorMultiConverter x:Key="AllBoolToColorMultiConverter" />
 
             <!-- Style to override ListBoxItem selection visuals for Displays -->
-            <Style x:Key="DisplaySidebarContainer" TargetType="{x:Type ListBoxItem}">
+            <Style x:Key="DisplaySidebarContainer"
+                   TargetType="{x:Type ListBoxItem}">
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type ListBoxItem}">
@@ -38,7 +38,9 @@
     </UserControl.Resources>
 
     <Border Background="{StaticResource GrayBackgroundColor}"
-            BorderBrush="{StaticResource GrayEdgeColor}" BorderThickness="5,0,0,0">
+            BorderBrush="{StaticResource GrayEdgeColor}"
+            BorderThickness="{Binding Location, Converter={StaticResource PanelLocationToThicknessConverter}, ConverterParameter=7.0}"
+            Width="{Binding PanelWidth}">
 
         <Grid>
             <Grid.RowDefinitions>
@@ -49,28 +51,49 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            
-            <Border Grid.Row="0" Margin="15 0 0 0" Height="140" Background="PaleGreen" BorderThickness="2" BorderBrush="Black">
-                <Grid>
-                    <Rectangle Margin="15" Height="120" Width="120" Fill="White" Stroke="Gray" />
-                    <TextBlock Text="Projected Display" Foreground="Black" FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Center" FontSize="10" />
-                </Grid>
-                
-            </Border>
-            
-            <Rectangle Grid.Row="1" Height="3" Stroke="{StaticResource GrayEdgeColor}" Fill="{StaticResource GrayEdgeColor}" />
 
-            <Grid Grid.Row="2" Height="140" Background="{Binding MirrorDisplaySelectedBackgroundColor}">
+            <Border Grid.Row="0"
+                    Margin="15 0 0 0"
+                    Height="140"
+                    Background="PaleGreen"
+                    BorderThickness="2"
+                    BorderBrush="Black">
+                <Grid>
+                    <Rectangle Margin="15"
+                               Height="120"
+                               Width="120"
+                               Fill="White"
+                               Stroke="Gray" />
+                    <TextBlock Text="Projected Display"
+                               Foreground="Black"
+                               FontWeight="Bold"
+                               VerticalAlignment="Bottom"
+                               HorizontalAlignment="Center"
+                               FontSize="10" />
+                </Grid>
+
+            </Border>
+
+            <Rectangle Grid.Row="1"
+                       Height="3"
+                       Stroke="{StaticResource GrayEdgeColor}"
+                       Fill="{StaticResource GrayEdgeColor}" />
+
+            <Grid Grid.Row="2"
+                  Height="140"
+                  Background="{Binding SingleDisplaySelectedBackgroundColor}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Grid.Column="0" Margin="5 0 0 5"
+                <TextBlock Grid.Column="0"
+                           Margin="5 0 0 5"
                            Text="Single Display"
-                           Foreground="{Binding MirrorDisplaySelectedColor}"
-                           FontWeight="Bold" VerticalAlignment="Bottom">
+                           Foreground="{Binding SingleDisplaySelectedColor}"
+                           FontWeight="Bold"
+                           VerticalAlignment="Bottom">
                     <TextBlock.LayoutTransform>
                         <TransformGroup>
                             <ScaleTransform />
@@ -81,36 +104,42 @@
                     </TextBlock.LayoutTransform>
                 </TextBlock>
 
-                <views:CLPPagePreviewView x:Name="MirrorDisplayPreview" Grid.Column="1" Margin="5"
+                <views:CLPPagePreviewView x:Name="MirrorDisplayPreview"
+                                          Grid.Column="1"
+                                          Margin="5"
                                           HorizontalAlignment="Left"
-                                          DataContext="{Binding MirrorDisplay.CurrentPage}">
+                                          DataContext="{Binding SingleDisplay.CurrentPage}">
                     <views:CLPPagePreviewView.Width>
                         <MultiBinding Converter="{StaticResource HeightToWidthAspectRatioMultiConverter}">
-                            <Binding ElementName="MirrorDisplayPreview" Path="ActualHeight" />
+                            <Binding ElementName="MirrorDisplayPreview"
+                                     Path="ActualHeight" />
                             <Binding Path="InitialPageAspectRatio" />
                         </MultiBinding>
                     </views:CLPPagePreviewView.Width>
                 </views:CLPPagePreviewView>
 
-                <Rectangle Grid.Column="1" Margin="5"
+                <Rectangle Grid.Column="1"
+                           Margin="5"
                            HorizontalAlignment="Left"
-                           Stroke="{Binding MirrorDisplaySelectedColor}"
+                           Stroke="{Binding SingleDisplaySelectedColor}"
                            StrokeThickness="3"
                            Fill="Transparent"
                            Width="{Binding ElementName=MirrorDisplayPreview, Path=ActualWidth}"
                            Height="{Binding ElementName=MirrorDisplayPreview, Path=ActualHeight}">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="MouseDown">
-                            <catel:EventToCommand Command="{Binding SetMirrorDisplayCommand}"
+                            <catel:EventToCommand Command="{Binding SetSingleDisplayCommand}"
                                                   PassEventArgsToCommand="False" />
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </Rectangle>
 
-                <Button Grid.Column="2" Margin="5 0 5 15"
+                <Button Grid.Column="2"
+                        Margin="5 0 5 15"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Bottom"
-                        Width="32" Height="32"
+                        Width="32"
+                        Height="32"
                         Command="{Binding AddPageToNewGridDisplayCommand}">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
@@ -122,12 +151,16 @@
                 </Button>
             </Grid>
 
-            <Rectangle Grid.Row="3" Height="3" Stroke="{StaticResource GrayEdgeColor}" Fill="{StaticResource GrayEdgeColor}" />
+            <Rectangle Grid.Row="3"
+                       Height="3"
+                       Stroke="{StaticResource GrayEdgeColor}"
+                       Fill="{StaticResource GrayEdgeColor}" />
 
-            <Button Grid.Row="4" VerticalAlignment="Bottom"
+            <Button Grid.Row="4"
+                    VerticalAlignment="Bottom"
                     Height="32"
                     Command="{Binding AddGridDisplayCommand}">
-                New Grid Display
+            New Grid Display
             </Button>
 
             <ListBox Grid.Row="5"
@@ -143,7 +176,8 @@
                     <DataTemplate>
                         <Grid Visibility="{Binding IsTrashed, Converter={StaticResource OppositeBooleanToCollapsingVisibilityConverter}, ConverterParameter=False}">
                             <Grid.Background>
-                                <MultiBinding Converter="{StaticResource AllBoolToColorMultiConverter}" ConverterParameter="Colors.PaleGreen">
+                                <MultiBinding Converter="{StaticResource AllBoolToColorMultiConverter}"
+                                              ConverterParameter="Colors.PaleGreen">
                                     <Binding Path="IsSelected"
                                              RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}" />
                                     <Binding Path="MainWindowViewModel.Ribbon.IsProjectorOn"
@@ -156,11 +190,14 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
 
-                            <TextBlock x:Name="DisplayLabel" Grid.Column="0" Margin="5 15 0 0"
+                            <TextBlock x:Name="DisplayLabel"
+                                       Grid.Column="0"
+                                       Margin="5 15 0 0"
                                        Foreground="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
-                                       FontWeight="Bold" VerticalAlignment="Top">
+                                       FontWeight="Bold"
+                                       VerticalAlignment="Top">
                                 <Run Text="Grid Display " />
-                                <Run Text="{Binding DisplayIndex}" />
+                                <Run Text="{Binding DisplayNumber}" />
                                 <TextBlock.LayoutTransform>
                                     <TransformGroup>
                                         <ScaleTransform />
@@ -171,11 +208,14 @@
                                 </TextBlock.LayoutTransform>
                             </TextBlock>
 
-                            <views:GridDisplayPreviewView x:Name="DisplayPreviewView" Grid.Column="1" Margin="5"
+                            <views:GridDisplayPreviewView x:Name="DisplayPreviewView"
+                                                          Grid.Column="1"
+                                                          Margin="5"
                                                           DataContext="{Binding}">
                                 <views:GridDisplayPreviewView.Height>
                                     <MultiBinding Converter="{StaticResource WidthToHeightAspectRatioMultiConverter}">
-                                        <Binding ElementName="DisplayPreviewView" Path="ActualWidth" />
+                                        <Binding ElementName="DisplayPreviewView"
+                                                 Path="ActualWidth" />
                                         <Binding>
                                             <Binding.Source>
                                                 <system:Double>1.29</system:Double>
@@ -186,14 +226,17 @@
 
                             </views:GridDisplayPreviewView>
 
-                            <Rectangle Grid.Column="1" Margin="5"
+                            <Rectangle Grid.Column="1"
+                                       Margin="5"
                                        Stroke="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
                                        StrokeThickness="3"
                                        Fill="Transparent" />
 
-                            <Button Grid.Column="2" Margin="0 0 5 20"
+                            <Button Grid.Column="2"
+                                    Margin="0 0 5 20"
                                     VerticalAlignment="Bottom"
-                                    Width="25" Height="25"
+                                    Width="25"
+                                    Height="25"
                                     Command="{Binding DataContext.RemoveDisplayCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBox}}}"
                                     CommandParameter="{Binding}">
                                 <Button.Template>
@@ -208,24 +251,42 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-            
-            <Thumb Grid.Row="0" Grid.RowSpan="4" Cursor="ScrollWE" Width="5" Height="30" Margin="-5 0 0 0" VerticalAlignment="Center" HorizontalAlignment="Left">
+
+            <Thumb Grid.Row="0"
+                   Grid.RowSpan="4"
+                   Cursor="ScrollWE"
+                   Width="5"
+                   Height="30"
+                   Margin="-5 0 0 0"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Left">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="DragDelta">
-                        <catel:EventToCommand Command="{Binding PanelResizeDragCommand}" PassEventArgsToCommand="True" />
+                        <catel:EventToCommand Command="{Binding PanelResizeDragCommand}"
+                                              PassEventArgsToCommand="True" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
                 <Thumb.Template>
                     <ControlTemplate>
-                        <UniformGrid Columns="1" Background="Transparent">
-                            <Ellipse StrokeThickness="0" Fill="{StaticResource HighlightColor}" Height="3" Width="3" />
-                            <Ellipse StrokeThickness="0" Fill="{StaticResource HighlightColor}" Height="3" Width="3" />
-                            <Ellipse StrokeThickness="0" Fill="{StaticResource HighlightColor}" Height="3" Width="3" />
+                        <UniformGrid Columns="1"
+                                     Background="Transparent">
+                            <Ellipse StrokeThickness="0"
+                                     Fill="{StaticResource HighlightColor}"
+                                     Height="3"
+                                     Width="3" />
+                            <Ellipse StrokeThickness="0"
+                                     Fill="{StaticResource HighlightColor}"
+                                     Height="3"
+                                     Width="3" />
+                            <Ellipse StrokeThickness="0"
+                                     Fill="{StaticResource HighlightColor}"
+                                     Height="3"
+                                     Width="3" />
                         </UniformGrid>
                     </ControlTemplate>
                 </Thumb.Template>
             </Thumb>
-            
+
         </Grid>
 
     </Border>

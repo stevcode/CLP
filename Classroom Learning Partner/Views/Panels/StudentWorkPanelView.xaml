@@ -7,41 +7,45 @@
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
                    xmlns:res="clr-namespace:Classroom_Learning_Partner.Resources"
                    xmlns:system="clr-namespace:System;assembly=mscorlib"
-                   xmlns:extenders="clr-namespace:Classroom_Learning_Partner.Views.Extenders"
-                   Width="{Binding PanelWidth}">
+                   xmlns:extenders="clr-namespace:Classroom_Learning_Partner.Views.Extenders">
     <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Resources/CLPBrushes.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-            <!-- Style to override ListBoxItem selection visuals for Pages -->
-            <Style x:Key="PageSidebarContainer" TargetType="{x:Type ListBoxItem}">
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                            <ContentPresenter />
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-        </ResourceDictionary>
+
+        <conv:PanelLocationToThicknessConverter x:Key="PanelLocationToThicknessConverter" />
+        <!-- Style to override ListBoxItem selection visuals for Pages -->
+        <Style x:Key="PageSidebarContainer"
+               TargetType="{x:Type ListBoxItem}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                        <ContentPresenter />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
     <Border Background="{StaticResource GrayBackgroundColor}"
-            BorderBrush="{StaticResource GrayEdgeColor}" BorderThickness="0,0,5,0">
+            BorderBrush="{StaticResource GrayEdgeColor}"
+            BorderThickness="{Binding Location, Converter={StaticResource PanelLocationToThicknessConverter}, ConverterParameter=7.0}"
+            Width="{Binding PanelWidth}">
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
+                <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <Grid Grid.Column="0">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="200"/>
-                    <RowDefinition/>
+                    <RowDefinition Height="200" />
+                    <RowDefinition />
                 </Grid.RowDefinitions>
-                <ListBox Margin="62 0 0 0" Grid.Row="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding Pages}"
-                        ItemContainerStyle="{StaticResource PageSidebarContainer}" SelectionMode="Single" Height="200">
+                <ListBox Margin="62 0 0 0"
+                         Grid.Row="0"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         ItemsSource="{Binding Pages}"
+                         ItemContainerStyle="{StaticResource PageSidebarContainer}"
+                         SelectionMode="Single"
+                         Height="200">
                     <ListBox.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal"/>
+                            <StackPanel Orientation="Horizontal" />
                         </ItemsPanelTemplate>
                     </ListBox.ItemsPanel>
                     <ListBox.ItemTemplate>
@@ -51,11 +55,18 @@
                                     <ColumnDefinition />
                                 </Grid.ColumnDefinitions>
 
-                                <views:CLPPagePreviewView x:Name="PagePreviewView" Grid.Column="1" Margin="5" DataContext="{Binding}" ClipToBounds="True" Height="190"/>
-                                <TextBlock Grid.Column="1" Margin="5"
-                                         FontWeight="Bold" VerticalAlignment="Bottom">
+                                <views:CLPPagePreviewView x:Name="PagePreviewView"
+                                                          Grid.Column="1"
+                                                          Margin="5"
+                                                          DataContext="{Binding}"
+                                                          ClipToBounds="True"
+                                                          Height="190" />
+                                <TextBlock Grid.Column="1"
+                                           Margin="5"
+                                           FontWeight="Bold"
+                                           VerticalAlignment="Bottom">
                                     <Run Text="Page " />
-                                    <Run Text="{Binding PageIndex}" />
+                                    <Run Text="{Binding PageNumber}" />
                                     <TextBlock.LayoutTransform>
                                         <TransformGroup>
                                             <ScaleTransform />
@@ -65,12 +76,15 @@
                                         </TransformGroup>
                                     </TextBlock.LayoutTransform>
                                 </TextBlock>
-                                <Rectangle Grid.Column="1" Margin="5" Fill="Transparent">
+                                <Rectangle Grid.Column="1"
+                                           Margin="5"
+                                           Fill="Transparent">
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="MouseUp">
                                             <catel:EventToCommand
-                                                    Command="{Binding DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
-                                                    PassEventArgsToCommand="False" CommandParameter="{Binding}" />
+                                                Command="{Binding DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                                PassEventArgsToCommand="False"
+                                                CommandParameter="{Binding}" />
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
                                 </Rectangle>
@@ -83,25 +97,37 @@
                         <DataTemplate>-->
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="60" />
                         <!--Name-->
-                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*" />
                         <!--First Displayed Page-->
-                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*" />
                         <!--Second Displayed Page-->
                     </Grid.ColumnDefinitions>
-                    <ListBox x:Name="StudentNames" Grid.Column="1" ItemsSource="{Binding StudentList}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                    <ListBox x:Name="StudentNames"
+                             Grid.Column="1"
+                             ItemsSource="{Binding StudentList}"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <Grid Grid.Column="0">
                                     <Grid.RowDefinitions>
-                                        <RowDefinition/>
-                                        <RowDefinition/>
+                                        <RowDefinition />
+                                        <RowDefinition />
                                     </Grid.RowDefinitions>
-                                    <TextBlock Grid.Row="0" FontWeight="Bold" VerticalAlignment="Bottom" HorizontalAlignment="Center">
-                                <Run Text="{Binding Name}" />
+                                    <TextBlock Grid.Row="0"
+                                               FontWeight="Bold"
+                                               VerticalAlignment="Bottom"
+                                               HorizontalAlignment="Center">
+                                        <Run Text="{Binding Name}" />
                                     </TextBlock>
-                                    <Border Grid.Row="1"  Margin="3" Width="36" Height="36" VerticalAlignment="Top"  BorderBrush="{StaticResource GrayEdgeColor}" BorderThickness="1,1,1,1">
+                                    <Border Grid.Row="1"
+                                            Margin="3"
+                                            Width="36"
+                                            Height="36"
+                                            VerticalAlignment="Top"
+                                            BorderBrush="{StaticResource GrayEdgeColor}"
+                                            BorderThickness="1,1,1,1">
                                         <!--i:Interaction.Triggers>
                                 <i:EventTrigger EventName="MouseUp">
                                     <catel:EventToCommand
@@ -110,14 +136,16 @@
                                             PassEventArgsToCommand="False" CommandParameter="{Binding}" />
                                 </i:EventTrigger>
                             </-->
-                                        <Image Source="pack://application:,,,/Resources/Images/OpenNotebook32.png"></Image>
+                                        <Image Source="pack://application:,,,/Resources/Images/OpenNotebook32.png" />
                                     </Border>
                                 </Grid>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-                    <ListBox Grid.Column="1" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding StudentsFirstPage}"
-                        ItemContainerStyle="{StaticResource PageSidebarContainer}">
+                    <ListBox Grid.Column="1"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                             ItemsSource="{Binding StudentsFirstPage}"
+                             ItemContainerStyle="{StaticResource PageSidebarContainer}">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <Grid>
@@ -125,14 +153,22 @@
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
 
-                                    <views:CLPPagePreviewView x:Name="PagePreviewView" Grid.Column="0" Margin="5" DataContext="{Binding}" ClipToBounds="True" Height="190"/>
+                                    <views:CLPPagePreviewView x:Name="PagePreviewView"
+                                                              Grid.Column="0"
+                                                              Margin="5"
+                                                              DataContext="{Binding}"
+                                                              ClipToBounds="True"
+                                                              Height="190" />
 
-                                    <Rectangle Grid.Column="0" Margin="5" Fill="Transparent">
+                                    <Rectangle Grid.Column="0"
+                                               Margin="5"
+                                               Fill="Transparent">
                                         <i:Interaction.Triggers>
                                             <i:EventTrigger EventName="MouseUp">
                                                 <catel:EventToCommand
-                                                Command="{Binding DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
-                                                PassEventArgsToCommand="False" CommandParameter="{Binding}" />
+                                                    Command="{Binding DataContext.SetCurrentPageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                                    PassEventArgsToCommand="False"
+                                                    CommandParameter="{Binding}" />
                                             </i:EventTrigger>
                                         </i:Interaction.Triggers>
                                     </Rectangle>
@@ -141,19 +177,35 @@
                         </ListBox.ItemTemplate>
                     </ListBox>
                 </Grid>
-                <Thumb Cursor="ScrollWE" Width="5" 
-                   Margin="0 0 -5 0" VerticalAlignment="Stretch" HorizontalAlignment="Right">
+                <Thumb Cursor="ScrollWE"
+                       Width="5"
+                       Margin="0 0 -5 0"
+                       VerticalAlignment="Stretch"
+                       HorizontalAlignment="Right">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="DragDelta">
-                            <catel:EventToCommand Command="{Binding PanelResizeDragCommand}" PassEventArgsToCommand="True" />
+                            <catel:EventToCommand Command="{Binding PanelResizeDragCommand}"
+                                                  PassEventArgsToCommand="True" />
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                     <Thumb.Template>
                         <ControlTemplate>
-                            <UniformGrid Height="30" VerticalAlignment="Center"  Columns="1" Background="Transparent">
-                                <Ellipse StrokeThickness="0" Fill="{StaticResource HighlightColor}" Height="3" Width="3" />
-                                <Ellipse StrokeThickness="0" Fill="{StaticResource HighlightColor}" Height="3" Width="3" />
-                                <Ellipse StrokeThickness="0" Fill="{StaticResource HighlightColor}" Height="3" Width="3" />
+                            <UniformGrid Height="30"
+                                         VerticalAlignment="Center"
+                                         Columns="1"
+                                         Background="Transparent">
+                                <Ellipse StrokeThickness="0"
+                                         Fill="{StaticResource HighlightColor}"
+                                         Height="3"
+                                         Width="3" />
+                                <Ellipse StrokeThickness="0"
+                                         Fill="{StaticResource HighlightColor}"
+                                         Height="3"
+                                         Width="3" />
+                                <Ellipse StrokeThickness="0"
+                                         Fill="{StaticResource HighlightColor}"
+                                         Height="3"
+                                         Width="3" />
                             </UniformGrid>
                         </ControlTemplate>
                     </Thumb.Template>

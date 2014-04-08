@@ -2,22 +2,12 @@
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com"
-                   xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views">
-    
+
     <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Resources/MainWindowResources.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-
-            <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter"/>
-            <catel:IntToStringConverter x:Key="IntToString" />
-            <conv:TypeToStringConverter x:Key="TypeToStringConverter" />
-            <conv:ProjectedDisplayBackgroundConverter x:Key="BackgroundConverter" />     
-
-        </ResourceDictionary>
+        <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
+        <conv:TypeToStringConverter x:Key="TypeToStringConverter" />
     </UserControl.Resources>
 
     <DockPanel Background="{Binding WorkspaceBackgroundColor}" LastChildFill="True">
@@ -28,15 +18,16 @@
             <Control.Resources>
 
                 <ControlTemplate x:Key="NotebookPagesPanelTemplate">
-                    <views:NotebookPagesPanelView DataContext="{Binding LeftPanel}" />
+                    <views:NotebookPagesPanelView DataContext="{Binding NotebookPagesPanel}" />
                 </ControlTemplate>
+
                 <ControlTemplate x:Key="StudentWorkPanelTemplate">
-                    <views:StudentWorkPanelView DataContext="{Binding LeftPanel}" />
+                    <views:StudentWorkPanelView DataContext="{Binding StudentWorkPanel}" />
                 </ControlTemplate>
+
                 <ControlTemplate x:Key="ProgressPanelTemplate">
-                    <views:ProgressPanelView DataContext="{Binding LeftPanel}" />
+                    <views:ProgressPanelView DataContext="{Binding ProgressPanel}" />
                 </ControlTemplate>
-                
 
             </Control.Resources>
 
@@ -53,7 +44,7 @@
                         <DataTrigger Binding="{Binding LeftPanel, Converter={StaticResource TypeToStringConverter}}" Value="StudentWorkPanelViewModel">
                             <Setter Property="Template" Value="{StaticResource StudentWorkPanelTemplate}" />
                         </DataTrigger>
-                        
+
                         <!--ProgressPanel trigger-->
                         <DataTrigger Binding="{Binding LeftPanel, Converter={StaticResource TypeToStringConverter}}" Value="ProgressPanelViewModel">
                             <Setter Property="Template" Value="{StaticResource ProgressPanelTemplate}" />
@@ -74,7 +65,7 @@
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="DisplayListPanelTemplate">
-                    <views:DisplayListPanelView DataContext="{Binding RightPanel}" />
+                    <views:DisplayListPanelView DataContext="{Binding DisplaysPanel}" />
                 </ControlTemplate>
 
             </Control.Resources>
@@ -89,7 +80,7 @@
                         </DataTrigger>
 
                         <!--DisplayListPanel trigger-->
-                        <DataTrigger Binding="{Binding RightPanel, Converter={StaticResource TypeToStringConverter}}" Value="DisplayListPanelViewModel">
+                        <DataTrigger Binding="{Binding RightPanel, Converter={StaticResource TypeToStringConverter}}" Value="DisplaysPanelViewModel">
                             <Setter Property="Template" Value="{StaticResource DisplayListPanelTemplate}" />
                         </DataTrigger>
 
@@ -105,7 +96,7 @@
 
                 <ControlTemplate x:Key="SubmissionHistoryPanelTemplate">
                     <views:SubmissionHistoryPanelView DataContext="{Binding BottomPanel}"
-                                                      Visibility="{Binding MainWindowViewModel.Ribbon.StudentVisibility, Source={x:Static Application.Current}}"/>
+                                                      Visibility="{Binding MainWindowViewModel.Ribbon.StudentVisibility, Source={x:Static Application.Current}}" />
                 </ControlTemplate>
 
             </Control.Resources>
@@ -129,12 +120,12 @@
 
             <Control.Resources>
 
-                <ControlTemplate x:Key="MirrorDisplayTemplate">
-                    <views:MirrorDisplayView DataContext="{Binding SelectedDisplay}"/>
+                <ControlTemplate x:Key="SingleDisplayTemplate">
+                    <views:MirrorDisplayView DataContext="{Binding SelectedDisplay}" />
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="GridDisplayTemplate">
-                    <views:GridDisplayView DataContext="{Binding SelectedDisplay}"/>
+                    <views:GridDisplayView DataContext="{Binding SelectedDisplay}" />
                 </ControlTemplate>
 
             </Control.Resources>
@@ -143,9 +134,9 @@
                 <Style TargetType="{x:Type Control}">
                     <Style.Triggers>
 
-                        <!-- MirrorDisplay trigger -->
+                        <!-- SingleDisplay trigger -->
                         <DataTrigger Binding="{Binding SelectedDisplay, Converter={StaticResource TypeToStringConverter}}" Value="CLPMirrorDisplay">
-                            <Setter Property="Template" Value="{StaticResource MirrorDisplayTemplate}" />
+                            <Setter Property="Template" Value="{StaticResource SingleDisplayTemplate}" />
                         </DataTrigger>
 
                         <!-- GridDisplay trigger -->

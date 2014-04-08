@@ -1,20 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Collections.ObjectModel;
-using System.Windows;
-using System.Windows.Controls.Primitives;
+﻿using System.Collections.ObjectModel;
 using Catel.Data;
 using Catel.MVVM;
-using CLP.Models;
-using Classroom_Learning_Partner.ViewModels;
+using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
     public class StudentProgressInfo : ViewModelBase
     {
-        public StudentProgressInfo(String name, ObservableCollection<ICLPPage> pages)
+        public StudentProgressInfo(string name, ObservableCollection<CLPPage> pages)
         {
             Name = name;
             Pages = pages;
@@ -23,25 +16,23 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// The student's name.
         /// </summary>
-        public String Name
+        public string Name
         {
-            get { return GetValue<String>(NameProperty); }
+            get { return GetValue<string>(NameProperty); }
             set { SetValue(NameProperty, value); }
         }
 
-        public static readonly PropertyData NameProperty = RegisterProperty("Name", typeof(String), "Nobody");
+        public static readonly PropertyData NameProperty = RegisterProperty("Name", typeof(string), "Nobody");
 
         /// <summary>
         /// The number of pages in the notebook.
         /// </summary>
-        public ObservableCollection<ICLPPage> Pages
+        public ObservableCollection<CLPPage> Pages
         {
-            get { return GetValue<ObservableCollection<ICLPPage>>(PagesProperty); }
+            get { return GetValue<ObservableCollection<CLPPage>>(PagesProperty); }
             set { SetValue(PagesProperty, value); }
         }
 
-        public static readonly PropertyData PagesProperty = RegisterProperty("Pages", typeof(ObservableCollection<ICLPPage>));
-
-
+        public static readonly PropertyData PagesProperty = RegisterProperty("Pages", typeof(ObservableCollection<CLPPage>));
     }
 }

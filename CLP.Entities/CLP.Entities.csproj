@@ -107,7 +107,7 @@
     <Compile Include="DomainModel\PageObjects\PageObject Interfaces\IStrokeAccepter.cs" />
     <Compile Include="DomainModel\PageObjects\PageObject Interfaces\ISubmittablePageObject.cs" />
     <Compile Include="DomainModel\PageObjects\Shape.cs" />
-    <Compile Include="DomainModel\PageObjects\TextBox.cs" />
+    <Compile Include="DomainModel\PageObjects\CLPTextBox.cs" />
     <Compile Include="DomainModel\Person.cs" />
     <Compile Include="DomainModel\Strokes\Extensions\StrokeExtension.cs" />
     <Compile Include="DomainModel\Strokes\StrokeDTO.cs" />

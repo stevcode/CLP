@@ -3,11 +3,7 @@
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
-                   xmlns:res="clr-namespace:Classroom_Learning_Partner.Resources"
-                   xmlns:system="clr-namespace:System;assembly=mscorlib"
-                   xmlns:extenders="clr-namespace:Classroom_Learning_Partner.Views.Extenders"
                    Width="{Binding PanelWidth}">
     <UserControl.Resources>
         <ResourceDictionary>
@@ -42,78 +38,96 @@
         </ResourceDictionary>
     </UserControl.Resources>
     <Border Background="{StaticResource GrayBackgroundColor}"
-            BorderBrush="{StaticResource GrayEdgeColor}" BorderThickness="0,0,5,0">
-        <Grid> <!-- content and resizing thumb-->
+            BorderBrush="{StaticResource GrayEdgeColor}"
+            BorderThickness="0,0,5,0">
+        <Grid>
+            <!-- content and resizing thumb-->
             <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
+                <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <Grid Grid.Column="0"> <!-- names and pages -->
+            <Grid Grid.Column="0">
+                <!-- names and pages -->
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="60" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <ItemsControl Grid.Column="0" ItemsSource="{Binding StudentList}" Margin="5 30 0 0">
+                <ItemsControl Grid.Column="0"
+                              ItemsSource="{Binding StudentList}"
+                              Margin="5 30 0 0">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock FontWeight="Bold" Height="24">
+                            <TextBlock FontWeight="Bold"
+                                       Height="24">
                                 <Run Text="{Binding Mode=OneWay}" />
                             </TextBlock>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-                <ItemsControl Name="Pages" Grid.Column="1" ItemsSource="{Binding CurrentPages}">
+                <ItemsControl Name="Pages"
+                              Grid.Column="1"
+                              ItemsSource="{Binding CurrentPages}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Top"/>
+                            <StackPanel Orientation="Horizontal"
+                                        VerticalAlignment="Top" />
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate> 
+                    <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Grid>
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="24"/>
-                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="24" />
+                                    <RowDefinition Height="*" />
                                 </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0" FontWeight="Bold" VerticalAlignment="Center" 
-                                   HorizontalAlignment="Center">
-                                    <Run Text="{Binding PageIndex}" />
+                                <TextBlock Grid.Row="0"
+                                           FontWeight="Bold"
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Center">
+                                    <Run Text="{Binding PageNumber}" />
                                 </TextBlock>
                                 <ItemsControl Grid.Row="1">
                                     <ItemsControl.ItemsSource>
                                         <MultiBinding Converter="{StaticResource SubmissionsListForPageByStudentConverter}">
-                                            <Binding ElementName="Pages" Path="DataContext.Notebook.Submissions"/>
-                                            <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}" 
-                                                 Path="DataContext.StudentList"/>
-                                            <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}" 
-                                                 Path="DataContext.Notebook"/>
-                                            <Binding Path="UniqueID"/>
+                                            <Binding ElementName="Pages"
+                                                     Path="DataContext.Notebook.Submissions" />
+                                            <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}"
+                                                     Path="DataContext.StudentList" />
+                                            <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}"
+                                                     Path="DataContext.Notebook" />
+                                            <Binding Path="UniqueID" />
                                         </MultiBinding>
                                     </ItemsControl.ItemsSource>
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <Border Margin="3" BorderBrush="{StaticResource GrayEdgeColor}" BorderThickness="1,1,1,1">
+                                            <Border Margin="3"
+                                                    BorderBrush="{StaticResource GrayEdgeColor}"
+                                                    BorderThickness="1,1,1,1">
                                                 <Grid>
                                                     <Grid.RowDefinitions>
-                                                        <RowDefinition/>
+                                                        <RowDefinition />
                                                     </Grid.RowDefinitions>
-                                                    
+
                                                     <Grid Grid.Row="0">
                                                         <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition/>
-                                                            <ColumnDefinition/>
+                                                            <ColumnDefinition />
+                                                            <ColumnDefinition />
                                                         </Grid.ColumnDefinitions>
-                                                        <Image Grid.Column="0" Source="pack://application:,,,/Resources/Images/BlueStar16.png"
-                                                        Visibility="{Binding Converter={StaticResource PageToStarredVisibilityConverter}}"/>
+                                                        <Image Grid.Column="0"
+                                                               Source="pack://application:,,,/Resources/Images/BlueStar16.png"
+                                                               Visibility="{Binding Converter={StaticResource PageToStarredVisibilityConverter}}" />
 
-                                                        <Image Grid.Column="1" Source="pack://application:,,,/Resources/Images/BlueEnvelope16.png"
-                                                        Visibility="{Binding Converter={StaticResource PageToSubmissionVisibilityConverter}}"/>
+                                                        <Image Grid.Column="1"
+                                                               Source="pack://application:,,,/Resources/Images/BlueEnvelope16.png"
+                                                               Visibility="{Binding Converter={StaticResource PageToSubmissionVisibilityConverter}}" />
                                                     </Grid>
-                                                    <Rectangle Grid.Row="0" Margin="0" Fill="Transparent">
+                                                    <Rectangle Grid.Row="0"
+                                                               Margin="0"
+                                                               Fill="Transparent">
                                                         <i:Interaction.Triggers>
                                                             <i:EventTrigger EventName="MouseUp">
-                                                                <catel:EventToCommand
-                                                                Command="{Binding DataContext.SetCurrentPageCommand, ElementName=Pages}"
-                                                                PassEventArgsToCommand="False" CommandParameter="{Binding}" />
+                                                                <catel:EventToCommand Command="{Binding DataContext.SetCurrentPageCommand, ElementName=Pages}"
+                                                                                      PassEventArgsToCommand="False"
+                                                                                      CommandParameter="{Binding}" />
                                                             </i:EventTrigger>
                                                         </i:Interaction.Triggers>
                                                     </Rectangle>
@@ -127,23 +141,41 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
             </Grid>
-            <Thumb Cursor="ScrollWE" Width="5" 
-                   Margin="0 0 -5 0" VerticalAlignment="Stretch" HorizontalAlignment="Right">
+            
+            <Thumb Cursor="ScrollWE"
+                   Width="5"
+                   Margin="0 0 -5 0"
+                   VerticalAlignment="Stretch"
+                   HorizontalAlignment="Right">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="DragDelta">
-                        <catel:EventToCommand Command="{Binding PanelResizeDragCommand}" PassEventArgsToCommand="True" />
+                        <catel:EventToCommand Command="{Binding PanelResizeDragCommand}"
+                                              PassEventArgsToCommand="True" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
                 <Thumb.Template>
                     <ControlTemplate>
-                        <UniformGrid Height="30" VerticalAlignment="Center"  Columns="1" Background="Transparent">
-                            <Ellipse StrokeThickness="0" Fill="{StaticResource HighlightColor}" Height="3" Width="3" />
-                            <Ellipse StrokeThickness="0" Fill="{StaticResource HighlightColor}" Height="3" Width="3" />
-                            <Ellipse StrokeThickness="0" Fill="{StaticResource HighlightColor}" Height="3" Width="3" />
+                        <UniformGrid Height="30"
+                                     VerticalAlignment="Center"
+                                     Columns="1"
+                                     Background="Transparent">
+                            <Ellipse StrokeThickness="0"
+                                     Fill="{StaticResource HighlightColor}"
+                                     Height="3"
+                                     Width="3" />
+                            <Ellipse StrokeThickness="0"
+                                     Fill="{StaticResource HighlightColor}"
+                                     Height="3"
+                                     Width="3" />
+                            <Ellipse StrokeThickness="0"
+                                     Fill="{StaticResource HighlightColor}"
+                                     Height="3"
+                                     Width="3" />
                         </UniformGrid>
                     </ControlTemplate>
                 </Thumb.Template>
             </Thumb>
+            
         </Grid>
     </Border>
 </catel:UserControl>

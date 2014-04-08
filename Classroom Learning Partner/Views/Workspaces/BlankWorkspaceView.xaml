@@ -1,17 +1,6 @@
 ﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.BlankWorkspaceView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:catel="http://catel.codeplex.com">
-    
-    <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Resources/MainWindowResources.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </UserControl.Resources>
-    
-    <Grid Background="#F3F3F3">
-
-    </Grid>
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:catel="http://catel.codeplex.com">
+    <Grid Background="{StaticResource GrayBackgroundColor}" />
 </catel:UserControl>

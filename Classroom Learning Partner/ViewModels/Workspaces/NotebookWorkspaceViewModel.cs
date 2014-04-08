@@ -1,10 +1,9 @@
 ﻿using System.Collections.ObjectModel;
-using System.Drawing;
 using System.Windows;
 using System.Windows.Media;
 using Catel.Data;
 using Catel.MVVM;
-using CLP.Models;
+using CLP.Entities;
 using Brush = System.Windows.Media.Brush;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -12,86 +11,86 @@ namespace Classroom_Learning_Partner.ViewModels
     /// <summary>
     /// UserControl view model.
     /// </summary>
-    [InterestedIn(typeof(MainWindowViewModel))]
     [InterestedIn(typeof(RibbonViewModel))]
-    
-    public class NotebookWorkspaceViewModel : ViewModelBase, IWorkspaceViewModel
+    [InterestedIn(typeof(MainWindowViewModel))]
+    public class NotebookWorkspaceViewModel : ViewModelBase
     {
+
+        #region Constructor
+
         /// <summary>
         /// Initializes a new instance of the <see cref="NotebookWorkspaceViewModel"/> class.
         /// </summary>
-        public NotebookWorkspaceViewModel(CLPNotebook notebook)
+        public NotebookWorkspaceViewModel(Notebook notebook)
         {
             Notebook = notebook;
-            SelectedDisplay = MirrorDisplay;
+            CurrentDisplay = SingleDisplay;
 
-            //StudentWorkPanel = new StudentWorkPanelViewModel(notebook);
-            //ProgressPanel = new ProgressPanelViewModel(notebook);
+            NotebookPagesPanel = new NotebookPagesPanelViewModel(notebook);
+            StudentWorkPanel = new StudentWorkPanelViewModel(notebook);
+            ProgressPanel = new ProgressPanelViewModel(notebook);
+            LeftPanel = NotebookPagesPanel;
 
-            LeftPanel = new NotebookPagesPanelViewModel(notebook);
-            NotebookPagesPanel = (NotebookPagesPanelViewModel)LeftPanel;
-            LeftPanel.IsVisible = true;
-            DisplayListPanel = new DisplayListPanelViewModel(notebook);
-            RightPanel = DisplayListPanel;
+            DisplaysPanel = new DisplayListPanelViewModel(notebook);
+            RightPanel = DisplaysPanel;
 
-            if(App.CurrentUserMode == App.UserMode.Student)
-            {
-                SubmissionHistoryPanel = new SubmissionHistoryPanelViewModel(notebook);
-                BottomPanel = SubmissionHistoryPanel;
-            }
+            // TODO: Use StagingPanel instead?
+            //if(App.CurrentUserMode == App.UserMode.Student)
+            //{
+            //    SubmissionHistoryPanel = new SubmissionHistoryPanelViewModel(notebook);
+            //    BottomPanel = SubmissionHistoryPanel;
+            //}
 
             if(App.CurrentUserMode == App.UserMode.Projector)
             {
                 NotebookPagesPanel.IsVisible = false;
             }
 
+            // TODO: Convert this to string, see DisplayListPanelViewModel to pull from CLPBrushes.xaml
             WorkspaceBackgroundColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#F3F3F3"));
         }
 
-        public string WorkspaceName
-        {
-            get { return "NotebookWorkspace"; }
-        }
-
         public override string Title { get { return "NotebookWorkspaceVM"; } }
+
+        #endregion //Constructor
 
         #region Model
 
         /// <summary>
         /// Model
         /// </summary>
-        [Model(SupportIEditableObject = false)]
-        public CLPNotebook Notebook
+        [Model]
+        public Notebook Notebook
         {
-            get { return GetValue<CLPNotebook>(NotebookProperty); }
+            get { return GetValue<Notebook>(NotebookProperty); }
             set { SetValue(NotebookProperty, value); }
         }
 
-        public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof(CLPNotebook));
+        public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof(Notebook));
 
         /// <summary>
         /// A property mapped to a property on the Model Notebook.
         /// </summary>
         [ViewModelToModel("Notebook")]
-        public CLPMirrorDisplay MirrorDisplay
+        public SingleDisplay SingleDisplay
         {
-            get { return GetValue<CLPMirrorDisplay>(MirrorDisplayProperty); }
-            set { SetValue(MirrorDisplayProperty, value); }
+            get { return GetValue<SingleDisplay>(SingleDisplayProperty); }
+            set { SetValue(SingleDisplayProperty, value); }
         }
 
-        public static readonly PropertyData MirrorDisplayProperty = RegisterProperty("MirrorDisplay", typeof(CLPMirrorDisplay));
+        public static readonly PropertyData SingleDisplayProperty = RegisterProperty("SingleDisplay", typeof(SingleDisplay));
 
         /// <summary>
         /// A property mapped to a property on the Model Notebook.
         /// </summary>
         [ViewModelToModel("Notebook")]
-        public ObservableCollection<ICLPDisplay> Displays
+        public ObservableCollection<IDisplay> Displays
         {
-            get { return GetValue<ObservableCollection<ICLPDisplay>>(DisplaysProperty); }
+            get { return GetValue<ObservableCollection<IDisplay>>(DisplaysProperty); }
             set { SetValue(DisplaysProperty, value); }
         }
 
-        public static readonly PropertyData DisplaysProperty = RegisterProperty("Displays", typeof(ObservableCollection<ICLPDisplay>));
+        public static readonly PropertyData DisplaysProperty = RegisterProperty("Displays", typeof(ObservableCollection<IDisplay>));
 
         #endregion //Model
 
@@ -113,13 +112,13 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// The Currently Selected Display.
         /// </summary>
-        public ICLPDisplay SelectedDisplay
+        public IDisplay CurrentDisplay
         {
-            get { return GetValue<ICLPDisplay>(SelectedDisplayProperty); }
-            set { SetValue(SelectedDisplayProperty, value); }
+            get { return GetValue<IDisplay>(CurrentDisplayProperty); }
+            set { SetValue(CurrentDisplayProperty, value); }
         }
 
-        public static readonly PropertyData SelectedDisplayProperty = RegisterProperty("SelectedDisplay", typeof(ICLPDisplay));
+        public static readonly PropertyData CurrentDisplayProperty = RegisterProperty("CurrentDisplay", typeof(IDisplay));
 
         #endregion //Displays
 
@@ -192,19 +191,20 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData ProgressPanelProperty = RegisterProperty("ProgressPanel", typeof(ProgressPanelViewModel));
 
         /// <summary>
-        /// DisplayPanel.
+        /// DisplaysPanel.
         /// </summary>
-        public DisplayListPanelViewModel DisplayListPanel
+        public DisplayListPanelViewModel DisplaysPanel
         {
-            get { return GetValue<DisplayListPanelViewModel>(DisplayListPanelProperty); }
-            set { SetValue(DisplayListPanelProperty, value); }
+            get { return GetValue<DisplayListPanelViewModel>(DisplaysPanelProperty); }
+            set { SetValue(DisplaysPanelProperty, value); }
         }
 
-        public static readonly PropertyData DisplayListPanelProperty = RegisterProperty("DisplayListPanel", typeof(DisplayListPanelViewModel));
+        public static readonly PropertyData DisplaysPanelProperty = RegisterProperty("DisplaysPanel", typeof(DisplayListPanelViewModel));
 
         /// <summary>
         /// SubmissionHistoryPanel.
         /// </summary>
+        // TODO: Replace with StagingPanel?
         public SubmissionHistoryPanelViewModel SubmissionHistoryPanel
         {
             get { return GetValue<SubmissionHistoryPanelViewModel>(SubmissionHistoryPanelProperty); }
@@ -221,83 +221,57 @@ namespace Classroom_Learning_Partner.ViewModels
 
         protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
         {
-            if (propertyName == "IsAuthoring")
-            {                
-                SelectedDisplay = MirrorDisplay;
-                if((viewModel as MainWindowViewModel).IsAuthoring)
+            if(viewModel == null)
+            {
+                return;
+            }
+
+            if(viewModel is RibbonViewModel)
+            {
+                var ribbon = viewModel as RibbonViewModel;
+                if(propertyName == "DisplayPanelVisibility")
                 {
-                    WorkspaceBackgroundColor = new SolidColorBrush(Colors.Salmon);
-                    App.MainWindowViewModel.Ribbon.AuthoringTabVisibility = Visibility.Visible;
+                    RightPanel = DisplaysPanel;
+                    RightPanel.IsVisible = ribbon.DisplayPanelVisibility;
                 }
-                else
+
+                if(propertyName == "NotebookPagesPanelVisibility")
                 {
-                    WorkspaceBackgroundColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#F3F3F3"));
-                    App.MainWindowViewModel.Ribbon.AuthoringTabVisibility = Visibility.Collapsed;
+                    LeftPanel = NotebookPagesPanel;
+                    LeftPanel.IsVisible = ribbon.NotebookPagesPanelVisibility;
+                }
+
+                if(propertyName == "StudentWorkPanelVisibility")
+                {
+                    LeftPanel = StudentWorkPanel;
+                    LeftPanel.IsVisible = ribbon.StudentWorkPanelVisibility;
+                }
+
+                if(propertyName == "ProgressPanelVisibility")
+                {
+                    LeftPanel = ProgressPanel;
+                    LeftPanel.IsVisible = ribbon.ProgressPanelVisibility;
                 }
             }
 
-            if (propertyName == "NotebookPagesPanelVisibility")
+            if(viewModel is MainWindowViewModel)
             {
-                var visible = (viewModel as RibbonViewModel).NotebookPagesPanelVisibility;
-                if(visible)
+                var mainWindow = viewModel as MainWindowViewModel;
+                if(propertyName == "IsAuthoring")
                 {
-                    LeftPanel = new NotebookPagesPanelViewModel(Notebook);
-                    NotebookPagesPanel = (NotebookPagesPanelViewModel)LeftPanel;
-                    LeftPanel.IsVisible = true;
-                    (viewModel as RibbonViewModel).StudentWorkPanelVisibility = false;
-                    (viewModel as RibbonViewModel).ProgressPanelVisibility = false;
-                }
-                else
-                {
-                    if(LeftPanel is NotebookPagesPanelViewModel)
+                    CurrentDisplay = SingleDisplay;
+                    if(mainWindow.IsAuthoring)
                     {
-                        LeftPanel.IsVisible = false;
+                        WorkspaceBackgroundColor = new SolidColorBrush(Colors.Salmon);
+                        mainWindow.Ribbon.AuthoringTabVisibility = Visibility.Visible;
                     }
-                }
-            }
-
-            if(propertyName == "StudentWorkPanelVisibility")
-            {
-                var visible = (viewModel as RibbonViewModel).StudentWorkPanelVisibility;
-                if(visible)
-                {
-                    LeftPanel = new StudentWorkPanelViewModel(Notebook);
-                    LeftPanel.IsVisible = true;
-                    (viewModel as RibbonViewModel).NotebookPagesPanelVisibility = false;
-                    (viewModel as RibbonViewModel).ProgressPanelVisibility = false;
-                }
-                else
-                {
-                    if(LeftPanel is StudentWorkPanelViewModel)
+                    else
                     {
-                        LeftPanel.IsVisible = false;
+                        WorkspaceBackgroundColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#F3F3F3"));
+                        mainWindow.Ribbon.AuthoringTabVisibility = Visibility.Collapsed;
                     }
                 }
-            }
-
-            if(propertyName == "ProgressPanelVisibility")
-            {
-                var visible = (viewModel as RibbonViewModel).ProgressPanelVisibility;
-                if(visible)
-                {
-                    LeftPanel = new ProgressPanelViewModel(Notebook);
-                    LeftPanel.IsVisible = true;
-                    (viewModel as RibbonViewModel).NotebookPagesPanelVisibility = false;
-                    (viewModel as RibbonViewModel).StudentWorkPanelVisibility = false;
-                }
-                else
-                {
-                    if (LeftPanel is ProgressPanelViewModel) {
-                        LeftPanel.IsVisible = false;
-                    }
-                }
-            }
-
-            if(propertyName == "DisplayPanelVisibility")
-            {
-                RightPanel = DisplayListPanel;
-                RightPanel.IsVisible = (viewModel as RibbonViewModel).DisplayPanelVisibility;
-            }
+            }           
 
             base.OnViewModelPropertyChanged(viewModel, propertyName);
         }

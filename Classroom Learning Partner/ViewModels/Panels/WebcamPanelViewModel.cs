@@ -1,31 +1,27 @@
-﻿using CLP.Models;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Windows.Media.Imaging;
 using Catel.Data;
 using Catel.MVVM;
 using Classroom_Learning_Partner.ViewModels.Controls.WebcamPlayer;
-using System.Collections.Generic;
-using System.Security.Cryptography;
-using System;
-using System.IO;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-
     /// <summary>
     /// UserControl view model.
     /// </summary>
-    public class WebcamPanelViewModel : ViewModelBase, IPanel
+    public class WebcamPanelViewModel : APanelBaseViewModel
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="WebcamPanelViewModel"/> class.
+        /// Initializes a new instance of the <see cref="WebcamPanelViewModel" /> class.
         /// </summary>
         public WebcamPanelViewModel()
         {
+            Location = PanelLocations.Right;
+            Length = InitialLength;
             SelectedWebcam = new CapDevice("");
             SelectedWebcam.MonikerString = CapDevice.DeviceMonikers[0].MonikerString;
 
-            foreach(var device in CapDevice.DeviceMonikers)
+            foreach(FilterInfo device in CapDevice.DeviceMonikers)
             {
                 if(device.Name.ToUpper().Contains("V"))
                 {
@@ -42,7 +38,10 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Gets the title of the view model.
         /// </summary>
         /// <value>The title.</value>
-        public override string Title { get { return "WebcamPanelVM"; } }
+        public override string Title
+        {
+            get { return "WebcamPanelVM"; }
+        }
 
         protected override void Close()
         {
@@ -110,10 +109,10 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnCaptureImageCommandExecute(CapPlayer webcamPlayer)
         {
             //// Store current image in the webcam
-            BitmapSource bitmap = webcamPlayer.CurrentBitmap;
+            var bitmap = webcamPlayer.CurrentBitmap;
             if(bitmap != null)
             {
-                CapturedImages.Insert(0,bitmap);
+                CapturedImages.Insert(0, bitmap);
                 SelectedImage = CapturedImages[0];
             }
         }
@@ -125,134 +124,60 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnAddImageCommandExecute()
         {
-            var currentPage = ((App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).SelectedDisplay as CLPMirrorDisplay).CurrentPage;
+            // TODO: Entities
+            //var currentPage = ((App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as CLPMirrorDisplay).CurrentPage;
 
-            JpegBitmapEncoder encoder = new JpegBitmapEncoder();
-            encoder.Frames.Add(BitmapFrame.Create(SelectedImage));
-            encoder.QualityLevel = 100;
-            byte[] byteSource = new byte[0];
-            using (MemoryStream stream = new MemoryStream())
-            {               
-                encoder.Frames.Add(BitmapFrame.Create(SelectedImage));
-                encoder.Save(stream);
-                byteSource = stream.ToArray(); 
-                stream.Close();               
-            }
+            //JpegBitmapEncoder encoder = new JpegBitmapEncoder();
+            //encoder.Frames.Add(BitmapFrame.Create(SelectedImage));
+            //encoder.QualityLevel = 100;
+            //byte[] byteSource = new byte[0];
+            //using (MemoryStream stream = new MemoryStream())
+            //{               
+            //    encoder.Frames.Add(BitmapFrame.Create(SelectedImage));
+            //    encoder.Save(stream);
+            //    byteSource = stream.ToArray(); 
+            //    stream.Close();               
+            //}
 
-            List<byte> ByteSource = new List<byte>(byteSource);
+            //List<byte> ByteSource = new List<byte>(byteSource);
 
-            MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
-            byte[] hash = md5.ComputeHash(byteSource);
-            string imageID = Convert.ToBase64String(hash);
+            //MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
+            //byte[] hash = md5.ComputeHash(byteSource);
+            //string imageID = Convert.ToBase64String(hash);
 
-            if(!currentPage.ImagePool.ContainsKey(imageID))
-            {
-                currentPage.ImagePool.Add(imageID, ByteSource);
-            }
-            CLPImage image = new CLPImage(imageID, currentPage, SelectedImage.Height, SelectedImage.Width);
+            //if(!currentPage.ImagePool.ContainsKey(imageID))
+            //{
+            //    currentPage.ImagePool.Add(imageID, ByteSource);
+            //}
+            //CLPImage image = new CLPImage(imageID, currentPage, SelectedImage.Height, SelectedImage.Width);
 
-            //TODO: Steve - All this is a hack for science webcam usage. Fix to be generalized.
-            int pageObjectIndex = -1;
-            if (currentPage.PageIndex == 25)
-            {
-                foreach(ICLPPageObject pageObject in currentPage.PageObjects)
-                {
-                    if(pageObject is CLPImage && pageObject.YPosition == 225 && pageObject.XPosition == 108)
-                    {
-                        pageObjectIndex = currentPage.PageObjects.IndexOf(pageObject);
-                        break;
-                    }
-                }
+            ////TODO: Steve - All this is a hack for science webcam usage. Fix to be generalized.
+            //int pageObjectIndex = -1;
+            //if (currentPage.PageIndex == 25)
+            //{
+            //    foreach(ICLPPageObject pageObject in currentPage.PageObjects)
+            //    {
+            //        if(pageObject is CLPImage && pageObject.YPosition == 225 && pageObject.XPosition == 108)
+            //        {
+            //            pageObjectIndex = currentPage.PageObjects.IndexOf(pageObject);
+            //            break;
+            //        }
+            //    }
 
-                if(pageObjectIndex >= 0)
-                {
-                    currentPage.PageObjects.RemoveAt(pageObjectIndex);
-                }
+            //    if(pageObjectIndex >= 0)
+            //    {
+            //        currentPage.PageObjects.RemoveAt(pageObjectIndex);
+            //    }
 
-                ACLPPageBaseViewModel.AddPageObjectToPage(image);
-                image.IsBackground = true;
-                image.Height = 450;
-                image.Width = 600;
-                image.YPosition = 225;
-                image.XPosition = 108;
-            }
+            //    ACLPPageBaseViewModel.AddPageObjectToPage(image);
+            //    image.IsBackground = true;
+            //    image.Height = 450;
+            //    image.Width = 600;
+            //    image.YPosition = 225;
+            //    image.XPosition = 108;
+            //}
         }
 
         #endregion //Commands
-
-        #region IPanel Members
-
-        public string PanelName
-        {
-            get
-            {
-                return "WebcamPanel";
-            }
-        }
-
-        /// <summary>
-        /// Whether the Panel is pinned to the same Z-Index as the Workspace.
-        /// </summary>
-        public bool IsPinned
-        {
-            get { return GetValue<bool>(IsPinnedProperty); }
-            set { SetValue(IsPinnedProperty, value); }
-        }
-
-        public static readonly PropertyData IsPinnedProperty = RegisterProperty("IsPinned", typeof(bool), true);
-
-        /// <summary>
-        /// Visibility of Panel, True for Visible, False for Collapsed.
-        /// </summary>
-        public bool IsVisible
-        {
-            get { return GetValue<bool>(IsVisibleProperty); }
-            set { SetValue(IsVisibleProperty, value); }
-        }
-
-        public static readonly PropertyData IsVisibleProperty = RegisterProperty("IsVisible", typeof(bool), true);
-
-        /// <summary>
-        /// Can the Panel be resized.
-        /// </summary>
-        public bool IsResizable
-        {
-            get { return GetValue<bool>(IsResizableProperty); }
-            set { SetValue(IsResizableProperty, value); }
-        }
-
-        public static readonly PropertyData IsResizableProperty = RegisterProperty("IsResizable", typeof(bool), false);
-
-        /// <summary>
-        /// Initial Width of the Panel, before any resizing.
-        /// </summary>
-        public double InitialWidth
-        {
-            get { return 250; }
-        }
-
-        /// <summary>
-        /// The Panel's Location relative to the Workspace.
-        /// </summary>
-        public PanelLocation Location
-        {
-            get { return GetValue<PanelLocation>(LocationProperty); }
-            set { SetValue(LocationProperty, value); }
-        }
-
-        public static readonly PropertyData LocationProperty = RegisterProperty("Location", typeof(PanelLocation), PanelLocation.Right);
-
-        /// <summary>
-        /// A Linked IPanel if more than one IPanel is to be used in the same Location.
-        /// </summary>
-        public IPanel LinkedPanel
-        {
-            get { return GetValue<IPanel>(LinkedPanelProperty); }
-            set { SetValue(LinkedPanelProperty, value); }
-        }
-
-        public static readonly PropertyData LinkedPanelProperty = RegisterProperty("LinkedPanel", typeof(IPanel), null);
-
-        #endregion
     }
 }

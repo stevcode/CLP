@@ -247,6 +247,7 @@
     <Compile Include="ViewModels\PageObjects\CLPFactorCardViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPFuzzyFactorCardViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPRegionViewModel.cs" />
+    <Compile Include="ViewModels\Panels\APanelBaseViewModel.cs" />
     <Compile Include="ViewModels\Panels\DisplayListPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\NotebookPagesPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\StagingPanelViewModel.cs" />
@@ -314,7 +315,6 @@
     <Compile Include="ViewModels\Panels\IPanel.cs" />
     <Compile Include="ViewModels\RibbonViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\BlankWorkspaceViewModel.cs" />
-    <Compile Include="ViewModels\Workspaces\IWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\NotebookChooserWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\NotebookWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\UserLoginWorkspaceViewModel.cs" />

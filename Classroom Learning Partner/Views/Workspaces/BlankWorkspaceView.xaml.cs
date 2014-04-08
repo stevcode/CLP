@@ -1,20 +1,15 @@
-﻿using Classroom_Learning_Partner.ViewModels;
+﻿using System;
+using Classroom_Learning_Partner.ViewModels;
 
 namespace Classroom_Learning_Partner.Views
 {
     /// <summary>
     /// Interaction logic for BlankWorkspaceView.xaml
     /// </summary>
-    public partial class BlankWorkspaceView : Catel.Windows.Controls.UserControl
+    public partial class BlankWorkspaceView
     {
-        public BlankWorkspaceView()
-        {
-            InitializeComponent();
-        }
+        public BlankWorkspaceView() { InitializeComponent(); }
 
-        protected override System.Type GetViewModelType()
-        {
-            return typeof(BlankWorkspaceViewModel);
-        }
+        protected override Type GetViewModelType() { return typeof(BlankWorkspaceViewModel); }
     }
 }

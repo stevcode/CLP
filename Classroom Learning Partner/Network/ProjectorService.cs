@@ -39,17 +39,17 @@ namespace Classroom_Learning_Partner
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                 (DispatcherOperationCallback)delegate
                                              {
-                                                 var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+                                                 var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
                                                  if(notebookWorkspaceViewModel == null)
                                                  {
                                                      return null;
                                                  }
                     if(App.CurrentUserMode == App.UserMode.Projector)
                     {
-                        if(displayType == "MirrorDisplay")
+                        if(displayType == "SingleDisplay")
                         {
 
-                                notebookWorkspaceViewModel.SelectedDisplay = notebookWorkspaceViewModel.MirrorDisplay;
+                                notebookWorkspaceViewModel.CurrentDisplay = notebookWorkspaceViewModel.MirrorDisplay;
 
 
                             AddPageToDisplay(displayPages[0]);
@@ -60,7 +60,7 @@ namespace Classroom_Learning_Partner
                             foreach(var gridDisplay in notebookWorkspaceViewModel.Displays.Where(gridDisplay => gridDisplay.UniqueID == displayType && gridDisplay is CLPGridDisplay)) 
                             {
                                 (gridDisplay as CLPGridDisplay).Pages.Clear();
-                                notebookWorkspaceViewModel.SelectedDisplay = gridDisplay;
+                                notebookWorkspaceViewModel.CurrentDisplay = gridDisplay;
 
                                 isNewDisplay = false;
                                 break;
@@ -75,7 +75,7 @@ namespace Classroom_Learning_Partner
                                 newGridDisplay.Pages.Clear();
                                 notebookWorkspaceViewModel.Notebook.Displays.Add(newGridDisplay);
                                 notebookWorkspaceViewModel.Notebook.GenerageDisplayIndexes();
-                                notebookWorkspaceViewModel.SelectedDisplay = newGridDisplay;
+                                notebookWorkspaceViewModel.CurrentDisplay = newGridDisplay;
                             }
 
                             foreach(var pageID in displayPages)
@@ -104,10 +104,10 @@ namespace Classroom_Learning_Partner
                                 continue;
                             }
 
-                            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+                            var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
                             if(notebookWorkspaceViewModel != null)
                             {
-                                notebookWorkspaceViewModel.SelectedDisplay.AddPageToDisplay(page);
+                                notebookWorkspaceViewModel.CurrentDisplay.AddPageToDisplay(page);
                             }
                             break;
                         }
@@ -132,10 +132,10 @@ namespace Classroom_Learning_Partner
                                 continue;
                             }
 
-                            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+                            var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
                             if(notebookWorkspaceViewModel != null)
                             {
-                                notebookWorkspaceViewModel.SelectedDisplay.RemovePageFromDisplay(page);
+                                notebookWorkspaceViewModel.CurrentDisplay.RemovePageFromDisplay(page);
                             }
                             break;
                         }
@@ -209,13 +209,13 @@ namespace Classroom_Learning_Partner
                 return;
             }
 
-            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel == null)
             {
                 return;
             }
 
-            var mirrorDisplay = notebookWorkspaceViewModel.SelectedDisplay as CLPMirrorDisplay;
+            var mirrorDisplay = notebookWorkspaceViewModel.CurrentDisplay as CLPMirrorDisplay;
             var mirrorDisplayViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(mirrorDisplay);
             var mirrorDisplayView = CLPServiceAgent.Instance.GetViewFromViewModel(mirrorDisplayViewModels.FirstOrDefault()) as MirrorDisplayView;
 
@@ -307,7 +307,7 @@ namespace Classroom_Learning_Partner
             var page = ObjectSerializer.ToObject(unZippedPage) as ICLPPage;
             ACLPPageBase.Deserialize(page);
 
-            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel == null ||
                page == null)
             {
@@ -336,7 +336,7 @@ namespace Classroom_Learning_Partner
             var page = ObjectSerializer.ToObject(unZippedPage) as ICLPPage;
             ACLPPageBase.Deserialize(page);
 
-            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel == null ||
                page == null)
             {

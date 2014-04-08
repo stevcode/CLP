@@ -9,32 +9,31 @@ namespace Classroom_Learning_Partner.ViewModels
 
     public class MainWindowViewModel : ViewModelBase
     {
-        public const string clpText = "Classroom Learning Partner";
+        private const string CLP_TEXT = "Classroom Learning Partner";
+
+        #region Constructor
 
         /// <summary>
         /// Initializes a new instance of the MainWindowViewModel class.
         /// </summary>
         public MainWindowViewModel()
         {
-            TitleBarText = clpText;
             InitializeCommands();
+            TitleBarText = CLP_TEXT;
             IsAuthoring = false;
-            
-            OpenNotebooks = new ObservableCollection<Notebook>();
         }
+
+        public override string Title { get { return "MainWindowVM"; } }
 
         private void InitializeCommands()
         {
-            SetInstructorCommand = new Command(OnSetInstructorCommandExecute);
-            SetStudentCommand = new Command(OnSetStudentCommandExecute);
-            SetProjectorCommand = new Command(OnSetProjectorCommandExecute);
-            SetServerCommand = new Command(OnSetServerCommandExecute);
+            SetUserModeCommand = new Command<string>(OnSetUserModeCommandExecute);
 
             ToggleDebugCommand = new Command(OnToggleDebugCommandExecute);
             ToggleExtrasCommand = new Command(OnToggleExtrasCommandExecute);
         }
 
-        public override string Title { get { return "MainWindowVM"; } }
+        #endregion //Constructor
 
         #region Bindings
 
@@ -44,12 +43,9 @@ namespace Classroom_Learning_Partner.ViewModels
         public string TitleBarText
         {
             get { return GetValue<string>(TitleBarTextProperty); }
-            private set { SetValue(TitleBarTextProperty, value); }
+            set { SetValue(TitleBarTextProperty, value); }
         }
 
-        /// <summary>
-        /// Register the TitleBarText property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData TitleBarTextProperty = RegisterProperty("TitleBarText", typeof(string));
 
         /// <summary>
@@ -61,24 +57,18 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(RibbonProperty, value); }
         }
 
-        /// <summary>
-        /// Register the Ribbon property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData RibbonProperty = RegisterProperty("Ribbon", typeof(RibbonViewModel), new RibbonViewModel());
 
         /// <summary>
-        /// Gets or sets the current Workspace.
+        /// The Workspace of the <see cref="MainWindowViewModel" />.
         /// </summary>
-        public IWorkspaceViewModel SelectedWorkspace
+        public ViewModelBase Workspace
         {
-            get { return GetValue<IWorkspaceViewModel>(SelectedWorkspaceProperty); }
-            set { SetValue(SelectedWorkspaceProperty, value); }
+            get { return GetValue<ViewModelBase>(WorkspaceProperty); }
+            set { SetValue(WorkspaceProperty, value); }
         }
 
-        /// <summary>
-        /// Register the SelectedWorkspace property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData SelectedWorkspaceProperty = RegisterProperty("SelectedWorkspace", typeof(IWorkspaceViewModel));
+        public static readonly PropertyData WorkspaceProperty = RegisterProperty("Workspace", typeof(ViewModelBase));
 
         #region Status Bar Bindings
 
@@ -103,28 +93,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData LastSavedTimeProperty = RegisterProperty("LastSavedTime", typeof(string), string.Empty);
-
-        /// <summary>
-        /// Number of pages in the current notebook.
-        /// </summary>
-        public int NotebookPageCount
-        {
-            get { return GetValue<int>(NotebookPageCountProperty); }
-            set { SetValue(NotebookPageCountProperty, value); }
-        }
-
-        public static readonly PropertyData NotebookPageCountProperty = RegisterProperty("NotebookPageCount", typeof(int));
-
-        /// <summary>
-        /// Index of the currently displayed page.
-        /// </summary>
-        public int CurrentPageIndex
-        {
-            get { return GetValue<int>(CurrentPageIndexProperty); }
-            set { SetValue(CurrentPageIndexProperty, value); }
-        }
-
-        public static readonly PropertyData CurrentPageIndexProperty = RegisterProperty("CurrentPageIndex", typeof(int));
 
         /// <summary>
         /// Gets or sets the property value.
@@ -152,10 +120,7 @@ namespace Classroom_Learning_Partner.ViewModels
             private set { SetValue(OpenNotebooksProperty, value); }
         }
 
-        /// <summary>
-        /// Register the OpenNotebooks property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData OpenNotebooksProperty = RegisterProperty("OpenNotebooks", typeof(ObservableCollection<Notebook>));
+        public static readonly PropertyData OpenNotebooksProperty = RegisterProperty("OpenNotebooks", typeof(ObservableCollection<Notebook>), () => new ObservableCollection<Notebook>());
 
         /// <summary>
         /// Gets or sets the Authoring flag.
@@ -166,9 +131,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(IsAuthoringProperty, value); }
         }
 
-        /// <summary>
-        /// Register the IsAuthoring property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData IsAuthoringProperty = RegisterProperty("IsAuthoring", typeof(bool));
 
         #endregion //Properties
@@ -176,17 +138,7 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Methods
 
         //Sets the text in the title bar of the window to inform the name of the open Notebook.
-        public void SetTitleBarText(string notebookName)
-        {
-            if(notebookName == null || notebookName == "")
-            {
-                TitleBarText = clpText;
-            }
-            else
-            {
-                TitleBarText = notebookName + " - " + clpText;
-            }
-        }
+        public void SetTitleBarText(string notebookName) { TitleBarText = string.IsNullOrEmpty(notebookName) ? CLP_TEXT : notebookName + " - " + CLP_TEXT; }
 
         public void SetWorkspace()
         {
@@ -196,13 +148,13 @@ namespace Classroom_Learning_Partner.ViewModels
                 case App.UserMode.Server:
                     break;
                 case App.UserMode.Instructor:
-                    SelectedWorkspace = new NotebookChooserWorkspaceViewModel();
+                    Workspace = new NotebookChooserWorkspaceViewModel();
                     break;
                 case App.UserMode.Projector:
-                    SelectedWorkspace = new NotebookChooserWorkspaceViewModel();
+                    Workspace = new NotebookChooserWorkspaceViewModel();
                     break;
                 case App.UserMode.Student:
-                    SelectedWorkspace = new UserLoginWorkspaceViewModel();
+                    Workspace = new UserLoginWorkspaceViewModel();
                     break;
             }
         }
@@ -212,76 +164,43 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Commands
 
         /// <summary>
-        /// Gets the SetInstructorCommand command.
+        /// Sets the UserMode of the program.
         /// </summary>
-        public Command SetInstructorCommand { get; private set; }
+        public Command<string> SetUserModeCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the SetInstructorCommand command is executed.
-        /// </summary>
-        private void OnSetInstructorCommandExecute()
+        private void OnSetUserModeCommandExecute(string userMode)
         {
-            App.CurrentUserMode = App.UserMode.Instructor;
+            switch (userMode)
+            {
+                case "INSTRUCTOR":
+                    App.CurrentUserMode = App.UserMode.Instructor;
+                    break;
+                case "PROJECTOR":
+                    App.CurrentUserMode = App.UserMode.Projector;
+                    break;
+                case "STUDENT":
+                    App.CurrentUserMode = App.UserMode.Student;
+                    break;
+                default:
+                    App.CurrentUserMode = App.UserMode.Instructor;
+                    break;
+            }
+
             SetWorkspace();
         }
 
         /// <summary>
-        /// Gets the SetStudentCommand command.
-        /// </summary>
-        public Command SetStudentCommand { get; private set; }
-
-        /// <summary>
-        /// Method to invoke when the SetStudentCommand command is executed.
-        /// </summary>
-        private void OnSetStudentCommandExecute()
-        {
-            App.CurrentUserMode = App.UserMode.Student;
-            SetWorkspace();
-        }
-
-        /// <summary>
-        /// Gets the SetProjectorCommand command.
-        /// </summary>
-        public Command SetProjectorCommand { get; private set; }
-
-        /// <summary>
-        /// Method to invoke when the SetProjectorCommand command is executed.
-        /// </summary>
-        private void OnSetProjectorCommandExecute()
-        {
-            App.CurrentUserMode = App.UserMode.Projector;
-            SetWorkspace();
-        }
-
-        /// <summary>
-        /// Gets the SetServerCommand command.
-        /// </summary>
-        public Command SetServerCommand { get; private set; }
-
-        /// <summary>
-        /// Method to invoke when the SetServerCommand command is executed.
-        /// </summary>
-        private void OnSetServerCommandExecute()
-        {
-            App.CurrentUserMode = App.UserMode.Server;
-            SetWorkspace();
-        }
-
-        /// <summary>
-        /// Gets the ToggleDebugCommand command.
+        /// Toggles Debug Tab.
         /// </summary>
         public Command ToggleDebugCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the ToggleDebugCommand command is executed.
-        /// </summary>
         private void OnToggleDebugCommandExecute()
         {
             Ribbon.DebugTabVisibility = Ribbon.DebugTabVisibility == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
         }
 
         /// <summary>
-        /// Gets the ToggleExtrasCommand command.
+        /// Toggles Extras Tab.
         /// </summary>
         public Command ToggleExtrasCommand { get; private set; }
 

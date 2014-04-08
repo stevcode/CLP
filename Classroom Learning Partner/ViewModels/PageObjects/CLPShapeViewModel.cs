@@ -44,7 +44,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnResizeShapeCommandExecute(DragDeltaEventArgs e)
         {
-            var parentPage = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
+            var parentPage = (App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
 
             double newHeight = PageObject.Height + e.VerticalChange;
             double newWidth = PageObject.Width + e.HorizontalChange;

@@ -33,12 +33,12 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(MirrorDisplayProperty, value); }
         }
 
-        public static readonly PropertyData MirrorDisplayProperty = RegisterProperty("MirrorDisplay", typeof(CLPMirrorDisplay));
+        public static readonly PropertyData MirrorDisplayProperty = RegisterProperty("SingleDisplay", typeof(CLPMirrorDisplay));
 
         /// <summary>
-        /// A property mapped to a property on the Model MirrorDisplay.
+        /// A property mapped to a property on the Model SingleDisplay.
         /// </summary>
-        [ViewModelToModel("MirrorDisplay")]
+        [ViewModelToModel("SingleDisplay")]
         public ICLPPage CurrentPage
         {
             get { return GetValue<ICLPPage>(CurrentPageProperty); }
@@ -80,7 +80,7 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Page Resizing Bindings
 
         /// <summary>
-        /// Tuple that stores the ActualWidth and ActualHeight, repsectively, of the entire MirrorDisplay.
+        /// Tuple that stores the ActualWidth and ActualHeight, repsectively, of the entire SingleDisplay.
         /// DataBinding done from Dependency Property in the View.
         /// </summary>
         public Tuple<double, double> DisplayWidthHeight

@@ -2,36 +2,36 @@
               xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
               xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
+              xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
               Icon="..\Images\InkWell.ico"
               Height="800"
               Width="1280"
               WindowStartupLocation="CenterScreen"
               WindowStyle="None"
               WindowState="Maximized"
-              Closing="RibbonWindow_Closing"
-              Title="{Binding Path=TitleBarText}">
+              Title="{Binding TitleBarText}"
+              Closing="RibbonWindow_Closing">
 
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/Resources/MainWindowResources.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/Resources/CLPBrushes.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <conv:TypeToStringConverter x:Key="TypeToStringConverter" />
         </ResourceDictionary>
     </Window.Resources>
 
     <Window.InputBindings>
-        <KeyBinding Command="{Binding Path=SetInstructorCommand}"
+        <!--<KeyBinding Command="{Binding SetUserModeCommand}"
                     Gesture="CTRL+SHIFT+I" />
-        <KeyBinding Command="{Binding Path=SetStudentCommand}"
+        <KeyBinding Command="{Binding SetUserModeCommand}"
                     Gesture="CTRL+SHIFT+S" />
-        <KeyBinding Command="{Binding Path=SetProjectorCommand}"
-                    Gesture="CTRL+SHIFT+P" />
-        <!--<KeyBinding Command="{Binding Path=SetDebugCommand}"
-                    Gesture="CTRL+SHIFT+D" />-->
-        <KeyBinding Command="{Binding Path=ToggleDebugCommand}"
+        <KeyBinding Command="{Binding SetUserModeCommand}"
+                    Gesture="CTRL+SHIFT+P" />-->
+        <KeyBinding Command="{Binding ToggleDebugCommand}"
                     Gesture="CTRL+SHIFT+K" />
-        <KeyBinding Command="{Binding Path=ToggleExtrasCommand}"
+        <KeyBinding Command="{Binding ToggleExtrasCommand}"
                     Gesture="CTRL+SHIFT+E" />
     </Window.InputBindings>
 
@@ -46,28 +46,23 @@
                           DataContext="{Binding Ribbon}" />
 
         <!-- Control that dynamically determines what Workspace to show -->
-        <ContentControl Grid.Row="1"
-                        DataContext="{Binding SelectedWorkspace}">
+        <ContentControl Grid.Row="1">
             <ContentControl.Resources>
 
                 <ControlTemplate x:Key="BlankWorkspaceTemplate">
-                    <views:BlankWorkspaceView DataContext="{Binding }" />
+                    <views:BlankWorkspaceView DataContext="{Binding SelectedWorkspace}" />
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="NotebookChooserWorkspaceTemplate">
-                    <views:NotebookChooserWorkspaceView DataContext="{Binding }" />
+                    <views:NotebookChooserWorkspaceView DataContext="{Binding SelectedWorkspace}" />
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="NotebookWorkspaceTemplate">
-                    <views:NotebookWorkspaceView DataContext="{Binding }" />
-                </ControlTemplate>
-
-                <ControlTemplate x:Key="ProjectorWorkspaceTemplate">
-                    <views:NotebookWorkspaceView DataContext="{Binding }" />
+                    <views:NotebookWorkspaceView DataContext="{Binding SelectedWorkspace}" />
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="UserLoginWorkspaceTemplate">
-                    <views:UserLoginWorkspaceView DataContext="{Binding }" />
+                    <views:UserLoginWorkspaceView DataContext="{Binding SelectedWorkspace}" />
                 </ControlTemplate>
 
             </ContentControl.Resources>
@@ -77,36 +72,29 @@
                     <Style.Triggers>
 
                         <!-- BlankWorkspace trigger -->
-                        <DataTrigger Binding="{Binding WorkspaceName}"
-                                     Value="BlankWorkspace">
+                        <DataTrigger Binding="{Binding SelectedWorkspace, Converter={StaticResource TypeToStringConverter}}"
+                                     Value="BlankWorkspaceViewModel">
                             <Setter Property="Template"
                                     Value="{StaticResource BlankWorkspaceTemplate}" />
                         </DataTrigger>
 
                         <!-- NotebookChooserWorkspace trigger -->
-                        <DataTrigger Binding="{Binding WorkspaceName}"
-                                     Value="NotebookChooserWorkspace">
+                        <DataTrigger Binding="{Binding SelectedWorkspace, Converter={StaticResource TypeToStringConverter}}"
+                                     Value="NotebookChooserWorkspaceViewModel">
                             <Setter Property="Template"
                                     Value="{StaticResource NotebookChooserWorkspaceTemplate}" />
                         </DataTrigger>
 
                         <!-- NotebookWorkspace trigger -->
-                        <DataTrigger Binding="{Binding WorkspaceName}"
-                                     Value="NotebookWorkspace">
+                        <DataTrigger Binding="{Binding SelectedWorkspace, Converter={StaticResource TypeToStringConverter}}"
+                                     Value="NotebookWorkspaceViewModel">
                             <Setter Property="Template"
                                     Value="{StaticResource NotebookWorkspaceTemplate}" />
                         </DataTrigger>
 
-                        <!-- ProjectorWorkspace trigger -->
-                        <DataTrigger Binding="{Binding WorkspaceName}"
-                                     Value="ProjectorWorkspace">
-                            <Setter Property="Template"
-                                    Value="{StaticResource ProjectorWorkspaceTemplate}" />
-                        </DataTrigger>
-
                         <!-- UserLoginWorkspace trigger -->
-                        <DataTrigger Binding="{Binding WorkspaceName}"
-                                     Value="UserLoginWorkspace">
+                        <DataTrigger Binding="{Binding SelectedWorkspace, Converter={StaticResource TypeToStringConverter}}"
+                                     Value="UserLoginWorkspaceViewModel">
                             <Setter Property="Template"
                                     Value="{StaticResource UserLoginWorkspaceTemplate}" />
                         </DataTrigger>
@@ -141,15 +129,6 @@
                     <Run Text="{Binding LastSavedTime}" />
                 </TextBlock>
             </StatusBarItem>
-
-            <!--<StatusBarItem>
-                <TextBlock>
-                    <Run Text="PAGE " />
-                    <Run Text="{Binding CurrentPageIndex}" />
-                    <Run Text=" OF " />
-                    <Run Text="{Binding NotebookPageCount}" />
-                </TextBlock>
-            </StatusBarItem>-->
 
             <StatusBarItem HorizontalAlignment="Right">
                 <TextBlock>

@@ -221,7 +221,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 IsIncorrect = false;
                 IsUnknown = false;
             }
-            //  CLPNotebook notebook = (App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel).Notebook;
+            //  CLPNotebook notebook = (App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).Notebook;
             //  notebook.Submissions.Remove(Page.UniqueID);
             //notebook.AddStudentSubmission(Page.UniqueID, Page);
             var submissionsPanel = NotebookPagesPanelViewModel.GetSubmissionsPanelViewModel();

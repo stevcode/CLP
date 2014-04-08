@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
 using Classroom_Learning_Partner.ViewModels;
 
 namespace Classroom_Learning_Partner.Views
@@ -11,14 +8,8 @@ namespace Classroom_Learning_Partner.Views
     /// </summary>
     public partial class StudentWorkPanelView
     {
-        public StudentWorkPanelView()
-        {
-            InitializeComponent();
-        }
+        public StudentWorkPanelView() { InitializeComponent(); }
 
-        protected override Type GetViewModelType()
-        {
-            return typeof(StudentWorkPanelViewModel);
-        }
+        protected override Type GetViewModelType() { return typeof(StudentWorkPanelViewModel); }
     }
 }
