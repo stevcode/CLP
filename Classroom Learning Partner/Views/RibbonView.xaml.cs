@@ -1,4 +1,5 @@
-﻿using Classroom_Learning_Partner.ViewModels;
+﻿using System;
+using Classroom_Learning_Partner.ViewModels;
 
 namespace Classroom_Learning_Partner.Views
 {
@@ -8,16 +9,10 @@ namespace Classroom_Learning_Partner.Views
     public partial class RibbonView
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="RibbonView"/> class.
+        /// Initializes a new instance of the <see cref="RibbonView" /> class.
         /// </summary>
-        public RibbonView()
-        {
-            InitializeComponent();
-        }
+        public RibbonView() { InitializeComponent(); }
 
-        protected override System.Type GetViewModelType()
-        {
-            return typeof(RibbonViewModel);
-        }
+        protected override Type GetViewModelType() { return typeof(RibbonViewModel); }
     }
 }

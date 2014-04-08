@@ -1,6 +1,6 @@
 ﻿using System.Timers;
 using System.Windows.Input;
-using CLP.Models;
+using CLP.Entities;
 using Classroom_Learning_Partner.ViewModels;
 
 namespace Classroom_Learning_Partner.Views
