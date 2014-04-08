@@ -12,6 +12,12 @@ namespace CLP.Entities
         public GridDisplay() { }
 
         /// <summary>
+        /// Initializes <see cref="GridDisplay" /> from parent <see cref="Notebook" />.
+        /// </summary>
+        public GridDisplay(Notebook notebook)
+            : base(notebook) { }
+
+        /// <summary>
         /// Initializes <see cref="GridDisplay" /> based on <see cref="SerializationInfo" />.
         /// </summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
@@ -25,14 +31,11 @@ namespace CLP.Entities
 
         public override void AddPageToDisplay(CLPPage page)
         {
-            var pageID = page.SubmissionType != SubmissionType.None ? page.SubmissionID : page.UniqueID;
-            PageIDs.Add(pageID);
             Pages.Add(page);
         }
 
         public override void RemovePageFromDisplay(CLPPage page)
         {
-            PageIDs.Remove(page.ID);
             Pages.Remove(page);
         }
 

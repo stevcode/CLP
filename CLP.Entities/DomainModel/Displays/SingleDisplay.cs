@@ -12,6 +12,12 @@ namespace CLP.Entities
         public SingleDisplay() { }
 
         /// <summary>
+        /// Initializes <see cref="SingleDisplay" /> from parent <see cref="Notebook" />.
+        /// </summary>
+        public SingleDisplay(Notebook notebook)
+            : base(notebook) { }
+
+        /// <summary>
         /// Initializes <see cref="SingleDisplay" /> based on <see cref="SerializationInfo" />.
         /// </summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
@@ -25,9 +31,6 @@ namespace CLP.Entities
 
         public override void AddPageToDisplay(CLPPage page)
         {
-            var pageID = page.SubmissionType != SubmissionType.None ? page.SubmissionID : page.UniqueID;
-            PageIDs.Clear();
-            PageIDs.Add(pageID);
             Pages.Clear();
             Pages.Add(page);
             CurrentPage = page;

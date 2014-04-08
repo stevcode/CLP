@@ -16,6 +16,8 @@ namespace CLP.Entities
         {
             CreationDate = DateTime.Now;
             ID = Guid.NewGuid().ToString();
+            SingleDisplay = new SingleDisplay(this);
+            SingleDisplayID = SingleDisplay.ID;
         }
 
         /// <summary>
@@ -94,13 +96,55 @@ namespace CLP.Entities
         /// <remarks>
         /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
         /// </remarks>
-        public virtual ObservableCollection<CLPPage> CLPPages
+        public ObservableCollection<CLPPage> CLPPages
         {
             get { return GetValue<ObservableCollection<CLPPage>>(CLPPagesProperty); }
             set { SetValue(CLPPagesProperty, value); }
         }
 
         public static readonly PropertyData CLPPagesProperty = RegisterProperty("CLPPages", typeof(ObservableCollection<CLPPage>), () => new ObservableCollection<CLPPage>());
+
+        /// <summary>
+        /// Unique Identifier of the <see cref="Notebook" />'s <see cref="SingleDisplay" />.
+        /// </summary>
+        /// <remarks>
+        /// Foreign Key.
+        /// </remarks>
+        public string SingleDisplayID
+        {
+            get { return GetValue<string>(SingleDisplayIDProperty); }
+            set { SetValue(SingleDisplayIDProperty, value); }
+        }
+
+        public static readonly PropertyData SingleDisplayIDProperty = RegisterProperty("SingleDisplayID", typeof(string));
+
+        /// <summary>
+        /// The <see cref="SingleDisplay" /> of the <see cref="Notebook" />.
+        /// </summary>
+        /// <remarks>
+        /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
+        /// </remarks>
+        public virtual SingleDisplay SingleDisplay
+        {
+            get { return GetValue<SingleDisplay>(SingleDisplayProperty); }
+            set { SetValue(SingleDisplayProperty, value); }
+        }
+
+        public static readonly PropertyData SingleDisplayProperty = RegisterProperty("SingleDisplay", typeof(SingleDisplay));
+
+        /// <summary>
+        /// List of the <see cref="IDisplay" />s in the <see cref="Notebook" />.
+        /// </summary>
+        /// <remarks>
+        /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
+        /// </remarks>
+        public virtual ObservableCollection<IDisplay> Displays
+        {
+            get { return GetValue<ObservableCollection<IDisplay>>(DisplaysProperty); }
+            set { SetValue(DisplaysProperty, value); }
+        }
+
+        public static readonly PropertyData DisplaysProperty = RegisterProperty("Displays", typeof(ObservableCollection<IDisplay>), () => new ObservableCollection<IDisplay>());
 
         #endregion //Properties
 

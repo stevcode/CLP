@@ -19,6 +19,12 @@ namespace CLP.Entities
         }
 
         /// <summary>
+        /// Initializes <see cref="ADisplayBase" /> from parent <see cref="Notebook" />.
+        /// </summary>
+        public ADisplayBase(Notebook notebook)
+            : this() { NotebookID = notebook.ID; }
+
+        /// <summary>
         /// Initializes <see cref="ADisplayBase" /> based on <see cref="SerializationInfo" />.
         /// </summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
@@ -30,7 +36,7 @@ namespace CLP.Entities
 
         #region Properties
 
-         /// <summary>
+        /// <summary>
         /// Unique Identifier for the <see cref="IDisplay" />.
         /// </summary>
         public string ID
@@ -55,13 +61,24 @@ namespace CLP.Entities
         /// <summary>
         /// Index of the <see cref="IDisplay" /> in the notebook.
         /// </summary>
-        public int Index
+        public int DisplayNumber
         {
-            get { return GetValue<int>(IndexProperty); }
-            set { SetValue(IndexProperty, value); }
+            get { return GetValue<int>(DisplayNumberProperty); }
+            set { SetValue(DisplayNumberProperty, value); }
         }
 
-        public static readonly PropertyData IndexProperty = RegisterProperty("Index", typeof(int), 0);
+        public static readonly PropertyData DisplayNumberProperty = RegisterProperty("DisplayNumber", typeof(int), 0);
+
+        /// <summary>
+        /// Unique Identifier of the <see cref="IDisplay" />'s parent <see cref="Notebook" />.
+        /// </summary>
+        public string NotebookID
+        {
+            get { return GetValue<string>(NotebookIDProperty); }
+            set { SetValue(NotebookIDProperty, value); }
+        }
+
+        public static readonly PropertyData NotebookIDProperty = RegisterProperty("NotebookID", typeof(string), string.Empty);
 
         /// <summary>
         /// Unique Identifier of the currently selected <see cref="CLPPage" />.
@@ -84,17 +101,6 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage));
-
-        /// <summary>
-        /// List of <see cref="CLPPage" /> IDs in the <see cref="IDisplay" />.
-        /// </summary>
-        public ObservableCollection<string> PageIDs
-        {
-            get { return GetValue<ObservableCollection<string>>(PageIDsProperty); }
-            set { SetValue(PageIDsProperty, value); }
-        }
-
-        public static readonly PropertyData PageIDsProperty = RegisterProperty("PageIDs", typeof(ObservableCollection<string>), () => new ObservableCollection<string>());
 
         /// <summary>
         /// List of the <see cref="CLPPage" />s in the <see cref="IDisplay" />.

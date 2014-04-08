@@ -12,6 +12,12 @@ namespace CLP.Entities
         Animation
     }
 
+    public enum SubmissionTypes
+    {
+        Unsubmitted,
+        Single,
+        Group
+    }
 
     public class CLPPage : AEntityBase
     {
@@ -92,17 +98,6 @@ namespace CLP.Entities
         public static readonly PropertyData CreationDateProperty = RegisterProperty("CreationDate", typeof(DateTime));
 
         /// <summary>
-        /// Index of the <see cref="CLPPage" /> in the notebook.
-        /// </summary>
-        public int Index
-        {
-            get { return GetValue<int>(IndexProperty); }
-            set { SetValue(IndexProperty, value); }
-        }
-
-        public static readonly PropertyData IndexProperty = RegisterProperty("Index", typeof(int), 0);
-
-        /// <summary>
         /// Height of the <see cref="CLPPage" />.
         /// </summary>
         public double Height
@@ -148,6 +143,71 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData NotebookIDProperty = RegisterProperty("NotebookID", typeof(string));
+
+        #region Submission Data
+
+        /// <summary>
+        /// Unique Identifier for the the <see cref="CLPPage" /> when it is a Submission.
+        /// </summary>
+        public string SubmissionID
+        {
+            get { return GetValue<string>(SubmissionIDProperty); }
+            set { SetValue(SubmissionIDProperty, value); }
+        }
+
+        public static readonly PropertyData SubmissionIDProperty = RegisterProperty("SubmissionID", typeof(string), string.Empty);
+ 
+        /// <summary>
+        /// Type of Submission for the <see cref="CLPPage" />.
+        /// </summary>
+        public SubmissionTypes SubmissionType
+        {
+            get { return GetValue<SubmissionTypes>(SubmissionTypeProperty); }
+            set { SetValue(SubmissionTypeProperty, value); }
+        }
+
+        public static readonly PropertyData SubmissionTypeProperty = RegisterProperty("SubmissionType", typeof(SubmissionTypes), SubmissionTypes.Unsubmitted);
+
+        /// <summary>
+        /// Date and Time the <see cref="CLPPage" /> was submitted.
+        /// </summary>
+        public DateTime? SubmissionTime
+        {
+            get { return GetValue<DateTime?>(SubmissionTimeProperty); }
+            set { SetValue(SubmissionTimeProperty, value); }
+        }
+
+        public static readonly PropertyData SubmissionTimeProperty = RegisterProperty("SubmissionTime", typeof(DateTime?));
+
+        /// <summary>
+        /// Unique Identifier of the <see cref="Person" /> who submitted the <see cref="CLPPage" />.
+        /// </summary>
+        /// <remarks>
+        /// Foreign Key.
+        /// </remarks>
+        public string SubmitterID
+        {
+            get { return GetValue<string>(SubmitterIDProperty); }
+            set { SetValue(SubmitterIDProperty, value); }
+        }
+
+        public static readonly PropertyData SubmitterIDProperty = RegisterProperty("SubmitterID", typeof(string), string.Empty);
+
+        /// <summary>
+        /// <see cref="Person" /> who submitted the <see cref="CLPPage" />.
+        /// </summary>
+        /// <remarks>
+        /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
+        /// </remarks>
+        public virtual Person Submitter
+        {
+            get { return GetValue<Person>(SubmitterProperty); }
+            set { SetValue(SubmitterProperty, value); }
+        }
+
+        public static readonly PropertyData SubmitterProperty = RegisterProperty("Submitter", typeof(Person));
+
+        #endregion //Submission Data
 
         #region MetaData
 

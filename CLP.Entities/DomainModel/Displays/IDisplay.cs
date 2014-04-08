@@ -7,10 +7,10 @@ namespace CLP.Entities
     {
         string ID { get; set; }
         DateTime CreationDate { get; set; }
-        int Index { get; set; }
+        int DisplayNumber { get; set; }
+        string NotebookID { get; set; }
         string CurrentPageID { get; set; }
         CLPPage CurrentPage { get; set; }
-        ObservableCollection<string> PageIDs { get; set; } 
         ObservableCollection<CLPPage> Pages { get; set; } 
 
         void AddPageToDisplay(CLPPage page);
