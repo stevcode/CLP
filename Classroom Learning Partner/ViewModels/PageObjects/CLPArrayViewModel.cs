@@ -373,15 +373,15 @@ namespace Classroom_Learning_Partner.ViewModels
         //    }
 
         //    //Control Max Dimensions of Array.
-        //    if(newArrayHeight + 2 * clpArray.LabelLength + YPosition > clpArray.ParentPage.PageHeight)
+        //    if(newArrayHeight + 2 * clpArray.LabelLength + YPosition > clpArray.ParentPage.Height)
         //    {
-        //        newArrayHeight = clpArray.ParentPage.PageHeight - YPosition - 2 * clpArray.LabelLength;
+        //        newArrayHeight = clpArray.ParentPage.Height - YPosition - 2 * clpArray.LabelLength;
         //        newSquareSize = newArrayHeight / Rows;
         //        newArrayWidth = newSquareSize * Columns;
         //    }
-        //    if(newArrayWidth + 2 * clpArray.LabelLength + XPosition > clpArray.ParentPage.PageWidth)
+        //    if(newArrayWidth + 2 * clpArray.LabelLength + XPosition > clpArray.ParentPage.Width)
         //    {
-        //        newArrayWidth = clpArray.ParentPage.PageWidth - XPosition - 2 * clpArray.LabelLength;
+        //        newArrayWidth = clpArray.ParentPage.Width - XPosition - 2 * clpArray.LabelLength;
         //        newSquareSize = newArrayWidth / Columns;
         //        //newArrayHeight = newSquareSize * Rows;
         //    }
@@ -872,8 +872,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         //protected void OnRotateArrayCommandExecute()
         //{
-        //    if((PageObject as CLPArray).ArrayHeight > PageObject.ParentPage.PageWidth ||
-        //       (PageObject as CLPArray).ArrayWidth > PageObject.ParentPage.PageHeight)
+        //    if((PageObject as CLPArray).ArrayHeight > PageObject.ParentPage.Width ||
+        //       (PageObject as CLPArray).ArrayWidth > PageObject.ParentPage.Height)
         //    {
         //        return;
         //    }
@@ -1163,11 +1163,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         //    var xPosition = 10.0;
         //    var yPosition = 160.0;
-        //    if(YPosition + 2 * Height + 10.0 < PageObject.ParentPage.PageHeight)
+        //    if(YPosition + 2 * Height + 10.0 < PageObject.ParentPage.Height)
         //    {
         //        yPosition = YPosition + Height + 10.0;
         //    }
-        //    else if(XPosition + 2 * Width + 10.0 < PageObject.ParentPage.PageWidth)
+        //    else if(XPosition + 2 * Width + 10.0 < PageObject.ParentPage.Width)
         //    {
         //        yPosition = YPosition;
         //        xPosition = XPosition + Width + 10.0;
@@ -1181,13 +1181,13 @@ namespace Classroom_Learning_Partner.ViewModels
         //        array.XPosition = xPosition;
         //        array.YPosition = yPosition;
 
-        //        if(xPosition + 2 * (ArrayWidth + LABEL_LENGTH) <= PageObject.ParentPage.PageWidth)
+        //        if(xPosition + 2 * (ArrayWidth + LABEL_LENGTH) <= PageObject.ParentPage.Width)
         //        {
         //            xPosition += ArrayWidth + LABEL_LENGTH;
         //        }
         //            //If there isn't room, diagonally pile the rest
-        //        else if((xPosition + ArrayWidth + LABEL_LENGTH + 20.0 <= PageObject.ParentPage.PageWidth) &&
-        //                (yPosition + ArrayHeight + LABEL_LENGTH + 20.0 <= PageObject.ParentPage.PageHeight))
+        //        else if((xPosition + ArrayWidth + LABEL_LENGTH + 20.0 <= PageObject.ParentPage.Width) &&
+        //                (yPosition + ArrayHeight + LABEL_LENGTH + 20.0 <= PageObject.ParentPage.Height))
         //        {
         //            xPosition += 20.0;
         //            yPosition += 20.0;

@@ -13,8 +13,7 @@
     </UserControl.Resources>
 
     <!--Ribbon-->
-    <Ribbon x:Name="Ribbon"
-            IsMinimized="{Binding IsMinimized}">
+    <Ribbon IsMinimized="{Binding IsMinimized}">
 
         <!--Contextual Tab Definitions-->
         <Ribbon.ContextualTabGroups>
@@ -126,7 +125,7 @@
                 <!--RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/OpenNotebook32.png"
                                     SmallImageSource="pack://application:,,,/Resources/Images/OpenNotebook16.png"
                                     IsChecked="{Binding SideBarVisibility}"
-                                    IsEnabled="{Binding MainWindow.SelectedWorkspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}">
+                                    IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}">
                     <RibbonToggleButton.Style>
                         <Style TargetType="{x:Type RibbonToggleButton}">
                             <Setter Property="Label"
@@ -142,25 +141,25 @@
                     </RibbonToggleButton.Style>
                 </RibbonToggleButton-->
 
-                <RibbonToggleButton Label="Notebook Pages" 
-                              LargeImageSource="pack://application:,,,/Resources/Images/OpenNotebook32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/OpenNotebook16.png"
-                              IsChecked="{Binding NotebookPagesPanelVisibility}"
-                              Visibility="{Binding InstructorVisibility}" />
-                <!--RibbonToggleButton Label="Student Work" 
-                              LargeImageSource="pack://application:,,,/Resources/Images/GroupSubmit32.png" 
-                              SmallImageSource="pack://application:,,,/Resources/Images/GroupSubmit16.png" 
-                              IsChecked="{Binding StudentWorkPanelVisibility}"
-                              Visibility="{Binding InstructorVisibility}" /-->
-                <RibbonToggleButton Label="Progress Panel" 
-                              LargeImageSource="pack://application:,,,/Resources/Images/Clipboard32.png" 
-                              IsChecked="{Binding ProgressPanelVisibility}"
-                              Visibility="{Binding InstructorVisibility}" />
-                
-                <RibbonButton Label="Hide Submissions" 
-                              LargeImageSource="pack://application:,,,/Resources/Images/HideSubmissionsButton50x25.png" 
-                              Command="{Binding HideSubmissionsPanelCommand}"
-                              Visibility="{Binding InstructorVisibility}" />
+                <RibbonToggleButton Label="Notebook Pages"
+                                    LargeImageSource="pack://application:,,,/Resources/Images/OpenNotebook32.png"
+                                    SmallImageSource="pack://application:,,,/Resources/Images/OpenNotebook16.png"
+                                    IsChecked="{Binding CurrentLeftPanel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.NotebookPages}}"
+                                    IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
+                                    Visibility="{Binding InstructorVisibility}" />
+
+                <RibbonToggleButton Label="Student Work"
+                                    LargeImageSource="pack://application:,,,/Resources/Images/GroupSubmit32.png"
+                                    SmallImageSource="pack://application:,,,/Resources/Images/GroupSubmit16.png"
+                                    IsChecked="{Binding CurrentLeftPanel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.StudentWork}}"
+                                    IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
+                                    Visibility="{Binding InstructorVisibility}" />
+
+                <RibbonToggleButton Label="Progress Panel"
+                                    LargeImageSource="pack://application:,,,/Resources/Images/Clipboard32.png"
+                                    IsChecked="{Binding CurrentLeftPanel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.Progress}}"
+                                    IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
+                                    Visibility="{Binding InstructorVisibility}" />
 
                 <RibbonButton Label="Previous Page"
                               LargeImageSource="pack://application:,,,/Resources/Images/PreviousPage32.png"
@@ -198,8 +197,7 @@
 
                 <RibbonMenuButton Label="Pen Size"
                                   LargeImageSource="pack://application:,,,/Resources/Images/PenSize32.png"
-                                  SmallImageSource="pack://application:,,,/Resources/Images/PenSize16.png"
-                                  >
+                                  SmallImageSource="pack://application:,,,/Resources/Images/PenSize16.png">
                     <RibbonGallery SelectedValuePath="Content.Height"
                                    SelectedValue="{Binding PenSize, Mode=TwoWay}"
                                    ScrollViewer.VerticalScrollBarVisibility="Hidden">
@@ -218,14 +216,16 @@
                                            Height="3"
                                            Width="150" />
                             </RibbonGalleryItem>
-                            <RibbonGalleryItem Height="30" Visibility="{Binding InstructorVisibility}">
+                            <RibbonGalleryItem Height="30"
+                                               Visibility="{Binding InstructorVisibility}">
                                 <Rectangle VerticalAlignment="Center"
                                            StrokeThickness="0"
                                            Fill="Black"
                                            Height="5"
                                            Width="150" />
                             </RibbonGalleryItem>
-                            <RibbonGalleryItem Height="30" Visibility="{Binding InstructorVisibility}">
+                            <RibbonGalleryItem Height="30"
+                                               Visibility="{Binding InstructorVisibility}">
                                 <Rectangle VerticalAlignment="Center"
                                            StrokeThickness="0"
                                            Fill="Black"
@@ -283,7 +283,7 @@
 
             <RibbonGroup Header="Insert"
                          Visibility="{Binding InstructorVisibility, Converter={StaticResource BooleanToOppositeBooleanConverter}}">
-                
+
                 <!--Array + Divider-->
                 <RibbonButton Label="Array"
                               LargeImageSource="pack://application:,,,/Resources/Images/Array32.png"
@@ -386,9 +386,10 @@
                 </Border>
             </RibbonGroup>
 
-            <RibbonGroup Header="Page" Visibility="{Binding StudentVisibility}">
+            <RibbonGroup Header="Page"
+                         Visibility="{Binding StudentVisibility}">
 
-                <RibbonButton Label="Longer Page" 
+                <RibbonButton Label="Longer Page"
                               LargeImageSource="pack://application:,,,/Resources/Images/MakePageLonger32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/MakePageLonger16.png"
                               Command="{Binding MakePageLongerCommand}" />
@@ -432,31 +433,12 @@
 
             </RibbonGroup>
 
-            <RibbonGroup Header="Displays" Visibility="{Binding InstructorVisibility}">
-                
-                <RibbonToggleButton IsChecked="{Binding IsBroadcastHistoryDisabled}">
-                    <RibbonToggleButton.Style>
-                        <Style TargetType="{x:Type RibbonToggleButton}">
-                            <Setter Property="Label"
-                                    Value="Ink On" />
-                            <Setter Property="LargeImageSource"
-                                    Value="pack://application:,,,/Images/InkToStudentsOff.png" />
-                            <Style.Triggers>
-                                <Trigger Property="IsChecked"
-                                         Value="True">
-                                    <Setter Property="Label"
-                                            Value="Ink Off" />
-                                    <Setter Property="LargeImageSource"
-                                            Value="pack://application:,,,/Images/InkToStudentsOn.png" />
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </RibbonToggleButton.Style>
-                </RibbonToggleButton>
+            <RibbonGroup Header="Displays"
+                         Visibility="{Binding InstructorVisibility}">
 
                 <RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/Displays32.png"
                                     IsChecked="{Binding DisplayPanelVisibility}"
-                                    IsEnabled="{Binding MainWindow.SelectedWorkspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}">
+                                    IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}">
                     <RibbonToggleButton.Style>
                         <Style TargetType="{x:Type RibbonToggleButton}">
                             <Setter Property="Label"
@@ -473,14 +455,18 @@
                 </RibbonToggleButton>
 
                 <RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/Projector32.png"
-                        SmallImageSource="pack://application:,,,/Resources/Images/Projector16.png" IsChecked="{Binding IsProjectorOn}"
-                        IsEnabled="{Binding MainWindow.SelectedWorkspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}">
+                                    SmallImageSource="pack://application:,,,/Resources/Images/Projector16.png"
+                                    IsChecked="{Binding IsProjectorOn}"
+                                    IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}">
                     <RibbonToggleButton.Style>
                         <Style TargetType="{x:Type RibbonToggleButton}">
-                            <Setter Property="Label" Value="Go Public" />
+                            <Setter Property="Label"
+                                    Value="Go Public" />
                             <Style.Triggers>
-                                <Trigger Property="IsChecked" Value="True">
-                                    <Setter Property="Label" Value="Go Private" />
+                                <Trigger Property="IsChecked"
+                                         Value="True">
+                                    <Setter Property="Label"
+                                            Value="Go Private" />
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
@@ -490,60 +476,6 @@
             </RibbonGroup>
 
         </RibbonTab>
-
-        <!--Insert Tab-->
-        <!--<RibbonTab Header="Insert Money">
-
-            <RibbonGroup Header="Money Images">
-
-                <RibbonButton Label="Penny"
-                              LargeImageSource="..\Images\Money\penny.png"
-                              Command="{Binding Path=InsertStaticImageCommand}"
-                              CommandParameter="penny.png" />
-
-                <RibbonButton Label="Nickel"
-                              LargeImageSource="..\Images\Money\nickel.png"
-                              Command="{Binding Path=InsertStaticImageCommand}"
-                              CommandParameter="nickel.png" />
-
-                <RibbonButton Label="Dime"
-                              LargeImageSource="..\Images\Money\dime.png"
-                              Command="{Binding Path=InsertStaticImageCommand}"
-                              CommandParameter="dime.png" />
-
-                <RibbonButton Label="Quarter"
-                              LargeImageSource="..\Images\Money\quarter.png"
-                              Command="{Binding Path=InsertStaticImageCommand}"
-                              CommandParameter="quarter.png" />
-
-                <RibbonButton Label="1 Dollar"
-                              LargeImageSource="..\Images\Money\1dollar.png"
-                              Command="{Binding Path=InsertStaticImageCommand}"
-                              CommandParameter="1dollar.png" />
-
-                <RibbonButton Label="5 Dollars"
-                              LargeImageSource="..\Images\Money\5dollars.png"
-                              Command="{Binding Path=InsertStaticImageCommand}"
-                              CommandParameter="5dollars.png" />
-
-                <RibbonButton Label="10 Dollars"
-                              LargeImageSource="..\Images\Money\10dollars.png"
-                              Command="{Binding Path=InsertStaticImageCommand}"
-                              CommandParameter="10dollars.png" />
-
-                <RibbonButton Label="20 Dollars"
-                              LargeImageSource="..\Images\Money\20dollars.png"
-                              Command="{Binding Path=InsertStaticImageCommand}"
-                              CommandParameter="20dollars.png" />
-
-                <RibbonButton Label="50 Dollars"
-                              LargeImageSource="..\Images\Money\50dollars.png"
-                              Command="{Binding Path=InsertStaticImageCommand}"
-                              CommandParameter="50dollars.png" />
-
-            </RibbonGroup>
-
-        </RibbonTab>-->
 
         <!--Insert Tab-->
         <RibbonTab Header="Insert"
@@ -789,16 +721,16 @@
                     <RibbonToggleButton.Style>
                         <Style TargetType="{x:Type RibbonToggleButton}">
                             <Setter Property="Label"
-                                    Value="Broadcast History Enabled" />
+                                    Value="Ink On" />
                             <Setter Property="LargeImageSource"
-                                    Value="pack://application:,,,/Images/LargeIcon.png" />
+                                    Value="pack://application:,,,/Images/InkToStudentsOff.png" />
                             <Style.Triggers>
                                 <Trigger Property="IsChecked"
                                          Value="True">
                                     <Setter Property="Label"
-                                            Value="Broadcast History Disabled" />
+                                            Value="Ink Off" />
                                     <Setter Property="LargeImageSource"
-                                            Value="pack://application:,,,/Images/LargeIcon.png" />
+                                            Value="pack://application:,,,/Images/InkToStudentsOn.png" />
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
@@ -1257,13 +1189,13 @@
 
         </RibbonTab>
 
-        <Ribbon.HelpPaneContent>
+        <!--<Ribbon.HelpPaneContent>
             <ToggleButton Content="^"
                           VerticalContentAlignment="Center"
                           Height="22" Width="40"
                           Background="{StaticResource MainColor}"
                           IsChecked="{Binding ElementName=Ribbon, Path=IsMinimized}" />
-        </Ribbon.HelpPaneContent>
+        </Ribbon.HelpPaneContent>-->
 
     </Ribbon>
 

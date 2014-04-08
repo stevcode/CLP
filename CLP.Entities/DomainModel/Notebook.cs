@@ -154,6 +154,7 @@ namespace CLP.Entities
         {
             page.NotebookID = ID;
             Pages.Add(page);
+            SingleDisplay.AddPageToDisplay(page);
             //GenerateSubmissionViews(page.ID);
             //GeneratePageIndexes();
         }
@@ -169,6 +170,7 @@ namespace CLP.Entities
         {
             page.NotebookID = ID;
             Pages.Insert(index, page);
+            SingleDisplay.AddPageToDisplay(page);
             //GenerateSubmissionViews(page.UniqueID);
             //GeneratePageIndexes();
         }

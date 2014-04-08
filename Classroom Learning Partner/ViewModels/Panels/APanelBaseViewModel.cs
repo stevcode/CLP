@@ -46,18 +46,15 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(IsResizableProperty, value); }
         }
 
-        public static readonly PropertyData IsResizableProperty = RegisterProperty("IsResizable", typeof(bool), false);
+        public static readonly PropertyData IsResizableProperty = RegisterProperty("IsResizable", typeof(bool), true);
 
         /// <summary>
         /// Initial Length of the Panel, before any resizing.
         /// </summary>
-        public double InitialLength
+        public virtual double InitialLength
         {
-            get { return GetValue<double>(InitialLengthProperty); }
-            set { SetValue(InitialLengthProperty, value); }
+            get { return 250.0; }
         }
-
-        public static readonly PropertyData InitialLengthProperty = RegisterProperty("InitialLength", typeof(double), 250);
 
         /// <summary>
         /// Minimum Length of the Panel.
@@ -68,7 +65,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(MinLengthProperty, value); }
         }
 
-        public static readonly PropertyData MinLengthProperty = RegisterProperty("MinLength", typeof(double), 50);
+        public static readonly PropertyData MinLengthProperty = RegisterProperty("MinLength", typeof(double), 100.0);
 
         public double Length
         {
@@ -76,7 +73,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(LengthProperty, value); }
         }
 
-        public static readonly PropertyData LengthProperty = RegisterProperty("Length", typeof(double), 250);
+        public static readonly PropertyData LengthProperty = RegisterProperty("Length", typeof(double), 250.0);
 
         /// <summary>
         /// The Panel's Location relative to the Workspace.
@@ -112,7 +109,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 newLength = MinLength;
             }
 
-            var maxLength = isLeftOrTop ? Application.Current.MainWindow.ActualHeight - 100 : Application.Current.MainWindow.ActualWidth - 100;
+            var isLeftOrRight = Location == PanelLocations.Left || Location == PanelLocations.Right;
+            var maxLength = isLeftOrRight ? Application.Current.MainWindow.ActualWidth - 100.0 : Application.Current.MainWindow.ActualHeight - 250.0;
             if(newLength > maxLength)
             {
                 newLength = maxLength;

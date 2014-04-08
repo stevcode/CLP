@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Media;
 using Catel.Data;
@@ -31,7 +32,7 @@ namespace Classroom_Learning_Partner.ViewModels
             ProgressPanel = new ProgressPanelViewModel(notebook);
             LeftPanel = NotebookPagesPanel;
 
-            DisplaysPanel = new DisplayListPanelViewModel(notebook);
+            DisplaysPanel = new DisplaysPanelViewModel(notebook);
             RightPanel = DisplaysPanel;
 
             // TODO: Use StagingPanel instead?
@@ -46,7 +47,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 NotebookPagesPanel.IsVisible = false;
             }
 
-            // TODO: Convert this to string, see DisplayListPanelViewModel to pull from CLPBrushes.xaml
+            // TODO: Convert this to string, see DisplaysPanelViewModel to pull from CLPBrushes.xaml
             WorkspaceBackgroundColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#F3F3F3"));
         }
 
@@ -193,13 +194,13 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// DisplaysPanel.
         /// </summary>
-        public DisplayListPanelViewModel DisplaysPanel
+        public DisplaysPanelViewModel DisplaysPanel
         {
-            get { return GetValue<DisplayListPanelViewModel>(DisplaysPanelProperty); }
+            get { return GetValue<DisplaysPanelViewModel>(DisplaysPanelProperty); }
             set { SetValue(DisplaysPanelProperty, value); }
         }
 
-        public static readonly PropertyData DisplaysPanelProperty = RegisterProperty("DisplaysPanel", typeof(DisplayListPanelViewModel));
+        public static readonly PropertyData DisplaysPanelProperty = RegisterProperty("DisplaysPanel", typeof(DisplaysPanelViewModel));
 
         /// <summary>
         /// SubmissionHistoryPanel.
@@ -235,22 +236,26 @@ namespace Classroom_Learning_Partner.ViewModels
                     RightPanel.IsVisible = ribbon.DisplayPanelVisibility;
                 }
 
-                if(propertyName == "NotebookPagesPanelVisibility")
+                if(propertyName == "CurrentLeftPanel")
                 {
-                    LeftPanel = NotebookPagesPanel;
-                    LeftPanel.IsVisible = ribbon.NotebookPagesPanelVisibility;
-                }
-
-                if(propertyName == "StudentWorkPanelVisibility")
-                {
-                    LeftPanel = StudentWorkPanel;
-                    LeftPanel.IsVisible = ribbon.StudentWorkPanelVisibility;
-                }
-
-                if(propertyName == "ProgressPanelVisibility")
-                {
-                    LeftPanel = ProgressPanel;
-                    LeftPanel.IsVisible = ribbon.ProgressPanelVisibility;
+                    switch(ribbon.CurrentLeftPanel)
+                    {
+                        case Panels.NotebookPages:
+                            LeftPanel = NotebookPagesPanel;
+                            LeftPanel.IsVisible = true;
+                            break;
+                        case Panels.StudentWork:
+                            LeftPanel = StudentWorkPanel;
+                            LeftPanel.IsVisible = true;
+                            break;
+                        case Panels.Progress:
+                            LeftPanel = ProgressPanel;
+                            LeftPanel.IsVisible = true;
+                            break;
+                        default:
+                            LeftPanel.IsVisible = false;
+                            break;
+                    }
                 }
             }
 

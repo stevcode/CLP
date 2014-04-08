@@ -76,14 +76,14 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        [ViewModelToModel("Page")]
+    //TODO: Entities    [ViewModelToModel("Page")]
         public StrokeCollection InkStrokes
         {
             get { return GetValue<StrokeCollection>(InkStrokesProperty); }
             set { SetValue(InkStrokesProperty, value); }
         }
 
-        public static readonly PropertyData InkStrokesProperty = RegisterProperty("InkStrokes", typeof(StrokeCollection));
+        public static readonly PropertyData InkStrokesProperty = RegisterProperty("InkStrokes", typeof(StrokeCollection), () => new StrokeCollection());
 
         /// <summary>
         /// Gets or sets the property value.
@@ -114,43 +114,43 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Gets or sets the property value.
         /// </summary>
         [ViewModelToModel("Page")]
-        public double PageHeight
+        public double Height
         {
-            get { return GetValue<double>(PageHeightProperty); }
-            set { SetValue(PageHeightProperty, value); }
+            get { return GetValue<double>(HeightProperty); }
+            set { SetValue(HeightProperty, value); }
         }
 
-        public static readonly PropertyData PageHeightProperty = RegisterProperty("PageHeight", typeof(double));
+        public static readonly PropertyData HeightProperty = RegisterProperty("Height", typeof(double));
 
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
         [ViewModelToModel("Page")]
-        public double PageWidth
+        public double Width
         {
-            get { return GetValue<double>(PageWidthProperty); }
-            set { SetValue(PageWidthProperty, value); }
+            get { return GetValue<double>(WidthProperty); }
+            set { SetValue(WidthProperty, value); }
         }
 
-        public static readonly PropertyData PageWidthProperty = RegisterProperty("PageWidth", typeof(double));
+        public static readonly PropertyData WidthProperty = RegisterProperty("Width", typeof(double));
 
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
         [ViewModelToModel("Page")]
-        public double InitialPageAspectRatio
+        public double InitialAspectRatio
         {
-            get { return GetValue<double>(InitialPageAspectRatioProperty); }
-            set { SetValue(InitialPageAspectRatioProperty, value); }
+            get { return GetValue<double>(InitialAspectRatioProperty); }
+            set { SetValue(InitialAspectRatioProperty, value); }
         }
 
-        public static readonly PropertyData InitialPageAspectRatioProperty = RegisterProperty("InitialPageAspectRatio", typeof(double));
+        public static readonly PropertyData InitialAspectRatioProperty = RegisterProperty("InitialAspectRatio", typeof(double));
 
         /// <summary>
         /// Number of submissions associated with this page.
         /// This property is automatically mapped to the corresponding property in Page.
         /// </summary>
-        [ViewModelToModel("Page")]
+    // TODO: Entities    [ViewModelToModel("Page")]
         public int NumberOfSubmissions
         {
             get { return GetValue<int>(NumberOfSubmissionsProperty); }

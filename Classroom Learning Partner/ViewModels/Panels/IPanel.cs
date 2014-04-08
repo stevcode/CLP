@@ -14,7 +14,7 @@
         bool IsPinned { get; set; }
         bool IsVisible { get; set; }
         bool IsResizable { get; set; }
-        double InitialLength { get; set; }
+        double InitialLength { get; }
         double MinLength { get; set; }
         double Length { get; set; }
         PanelLocations Location { get; set; }

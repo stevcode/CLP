@@ -26,7 +26,7 @@
     <Border Background="{StaticResource GrayBackgroundColor}"
             BorderBrush="{StaticResource GrayEdgeColor}"
             BorderThickness="{Binding Location, Converter={StaticResource PanelLocationToThicknessConverter}, ConverterParameter=7.0}"
-            Width="{Binding PanelWidth}">
+            Width="{Binding Length}">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
@@ -178,8 +178,8 @@
                     </ListBox>
                 </Grid>
                 <Thumb Cursor="ScrollWE"
-                       Width="5"
-                       Margin="0 0 -5 0"
+                       Width="7"
+                       Margin="0 0 -7 0"
                        VerticalAlignment="Stretch"
                        HorizontalAlignment="Right">
                     <i:Interaction.Triggers>
@@ -190,23 +190,25 @@
                     </i:Interaction.Triggers>
                     <Thumb.Template>
                         <ControlTemplate>
-                            <UniformGrid Height="30"
-                                         VerticalAlignment="Center"
-                                         Columns="1"
-                                         Background="Transparent">
-                                <Ellipse StrokeThickness="0"
-                                         Fill="{StaticResource HighlightColor}"
-                                         Height="3"
-                                         Width="3" />
-                                <Ellipse StrokeThickness="0"
-                                         Fill="{StaticResource HighlightColor}"
-                                         Height="3"
-                                         Width="3" />
-                                <Ellipse StrokeThickness="0"
-                                         Fill="{StaticResource HighlightColor}"
-                                         Height="3"
-                                         Width="3" />
-                            </UniformGrid>
+                            <Grid VerticalAlignment="Stretch"
+                                  Background="Transparent">
+                                <UniformGrid Columns="1"
+                                             Height="30"
+                                             Background="Transparent">
+                                    <Ellipse StrokeThickness="0"
+                                             Fill="{StaticResource HighlightColor}"
+                                             Height="3"
+                                             Width="3" />
+                                    <Ellipse StrokeThickness="0"
+                                             Fill="{StaticResource HighlightColor}"
+                                             Height="3"
+                                             Width="3" />
+                                    <Ellipse StrokeThickness="0"
+                                             Fill="{StaticResource HighlightColor}"
+                                             Height="3"
+                                             Width="3" />
+                                </UniformGrid>
+                            </Grid>
                         </ControlTemplate>
                     </Thumb.Template>
                 </Thumb>

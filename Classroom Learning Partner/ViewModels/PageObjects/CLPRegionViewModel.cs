@@ -72,8 +72,8 @@ namespace Classroom_Learning_Partner.ViewModels
         //    double xPosition = 50.0;
         //    double yPosition = YPosition;
         //    const double GAP = 35.0;
-        //    if(XPosition + Width * (numberOfCopies + 1) + GAP * numberOfCopies <= PageObject.ParentPage.PageWidth) { xPosition = XPosition + Width + GAP; }
-        //    else if(YPosition + 2 * Height < PageObject.ParentPage.PageHeight) { yPosition = YPosition + Height; }
+        //    if(XPosition + Width * (numberOfCopies + 1) + GAP * numberOfCopies <= PageObject.ParentPage.Width) { xPosition = XPosition + Width + GAP; }
+        //    else if(YPosition + 2 * Height < PageObject.ParentPage.Height) { yPosition = YPosition + Height; }
         //    foreach(var lassoedPageObject in PageObject.GetPageObjectsOverPageObject())
         //    {
         //        for(int i = 0; i < numberOfCopies; i++)
@@ -82,7 +82,7 @@ namespace Classroom_Learning_Partner.ViewModels
         //            double xOffset = lassoedPageObject.XPosition - XPosition;
         //            double yOffset = lassoedPageObject.YPosition - YPosition;
 
-        //            if(xPosition + Width * (i + 1) + GAP * i <= PageObject.ParentPage.PageWidth)
+        //            if(xPosition + Width * (i + 1) + GAP * i <= PageObject.ParentPage.Width)
         //            {
         //                duplicatePageObject.XPosition = xPosition + xOffset + i * (Width + GAP);
         //                duplicatePageObject.YPosition = yPosition + yOffset;

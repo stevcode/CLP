@@ -15,11 +15,16 @@ namespace Classroom_Learning_Partner.ViewModels
         public NotebookPagesPanelViewModel(Notebook notebook)
         {
             Notebook = notebook;
-            Length = InitialLength;
             CurrentPage = notebook.SingleDisplay.CurrentPage;
-
+            Initialized += NotebookPagesPanelViewModel_Initialized;
+            
             SetCurrentPageCommand = new Command<CLPPage>(OnSetCurrentPageCommandExecute);
             ShowSubmissionsCommand = new Command<CLPPage>(OnShowSubmissionsCommandExecute);
+        }
+
+        void NotebookPagesPanelViewModel_Initialized(object sender, System.EventArgs e)
+        {
+            Length = InitialLength;
         }
 
         public override string Title

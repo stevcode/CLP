@@ -13,18 +13,18 @@ namespace Classroom_Learning_Partner.ViewModels
     /// UserControl view model.
     /// </summary>
     [InterestedIn(typeof(RibbonViewModel))]
-    public class DisplayListPanelViewModel : APanelBaseViewModel
+    public class DisplaysPanelViewModel : APanelBaseViewModel
     {
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DisplayListPanelViewModel" /> class.
+        /// Initializes a new instance of the <see cref="DisplaysPanelViewModel" /> class.
         /// </summary>
-        public DisplayListPanelViewModel(Notebook notebook)
+        public DisplaysPanelViewModel(Notebook notebook)
         {
             InitializeCommands();
             Notebook = notebook;
-            Length = InitialLength;
+            Initialized += DisplaysPanelViewModel_Initialized;
             IsVisible = false;
             OnSetSingleDisplayCommandExecute();
 
@@ -36,9 +36,15 @@ namespace Classroom_Learning_Partner.ViewModels
             App.MainWindowViewModel.Ribbon.IsProjectorOn = true;
         }
 
+        void DisplaysPanelViewModel_Initialized(object sender, EventArgs e)
+        {
+            Length = InitialLength;
+            Location = PanelLocations.Right;
+        }
+
         public override string Title
         {
-            get { return "DisplayListPanelVM"; }
+            get { return "DisplaysPanelVM"; }
         }
 
         private void InitializeCommands()
@@ -128,7 +134,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private static void OnCurrentDisplayChanged(object sender, AdvancedPropertyChangedEventArgs args)
         {
-            var displayListPanelViewModel = sender as DisplayListPanelViewModel;
+            var displayListPanelViewModel = sender as DisplaysPanelViewModel;
             var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
             if(displayListPanelViewModel == null ||
                notebookWorkspaceViewModel == null ||
@@ -282,7 +288,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Static Methods
 
-        public static DisplayListPanelViewModel GetDisplayListPanelViewModel()
+        public static DisplaysPanelViewModel GetDisplayListPanelViewModel()
         {
             var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
             return notebookWorkspaceViewModel == null ? null : notebookWorkspaceViewModel.DisplaysPanel;

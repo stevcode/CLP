@@ -65,7 +65,7 @@
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="DisplayListPanelTemplate">
-                    <views:DisplayListPanelView DataContext="{Binding DisplaysPanel}" />
+                    <views:DisplaysPanelView DataContext="{Binding DisplaysPanel}" />
                 </ControlTemplate>
 
             </Control.Resources>

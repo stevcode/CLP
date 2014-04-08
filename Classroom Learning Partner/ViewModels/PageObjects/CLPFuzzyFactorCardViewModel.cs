@@ -219,16 +219,16 @@ namespace Classroom_Learning_Partner.ViewModels
         //    }
 
         //    //Control Max Dimensions of Array.
-        //    if(newArrayHeight + 2 * clpArray.LabelLength + YPosition > clpArray.ParentPage.PageHeight)
+        //    if(newArrayHeight + 2 * clpArray.LabelLength + YPosition > clpArray.ParentPage.Height)
         //    {
-        //        newArrayHeight = clpArray.ParentPage.PageHeight - YPosition - 2 * clpArray.LabelLength;
+        //        newArrayHeight = clpArray.ParentPage.Height - YPosition - 2 * clpArray.LabelLength;
         //        newSquareSize = newArrayHeight / Rows;
         //        newArrayWidth = newSquareSize * Columns;
         //    }
         //    //TODO Liz - update this when rotating is enabled
-        //    if(newArrayWidth + clpArray.LargeLabelLength + clpArray.LabelLength + XPosition > clpArray.ParentPage.PageWidth)
+        //    if(newArrayWidth + clpArray.LargeLabelLength + clpArray.LabelLength + XPosition > clpArray.ParentPage.Width)
         //    {
-        //        newArrayWidth = clpArray.ParentPage.PageWidth - XPosition - clpArray.LargeLabelLength - clpArray.LabelLength;
+        //        newArrayWidth = clpArray.ParentPage.Width - XPosition - clpArray.LargeLabelLength - clpArray.LabelLength;
         //        newSquareSize = newArrayWidth / Columns;
         //    }
 

@@ -129,11 +129,11 @@ namespace Classroom_Learning_Partner.ViewModels
         //    {
         //        newWidth = minWidth;
         //    }
-        //    if(newHeight + PageObject.YPosition > parentPage.PageHeight)
+        //    if(newHeight + PageObject.YPosition > parentPage.Height)
         //    {
         //        newHeight = PageObject.Height;
         //    }
-        //    if(newWidth + PageObject.XPosition > parentPage.PageWidth)
+        //    if(newWidth + PageObject.XPosition > parentPage.Width)
         //    {
         //        newWidth = PageObject.Width;
         //    }
@@ -154,7 +154,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         //    double newHeight = PageObject.Height + e.VerticalChange;
         //    double newHeaderHeight = (PageObject as CLPAggregationDataTable).ColumnHeaderHeight + e.VerticalChange;
-        //    if(newHeight + PageObject.YPosition < parentPage.PageHeight && newHeaderHeight > 20)
+        //    if(newHeight + PageObject.YPosition < parentPage.Height && newHeaderHeight > 20)
         //    {
         //        (PageObject as CLPAggregationDataTable).ColumnHeaderHeight = newHeaderHeight;
         //        ChangePageObjectDimensions(PageObject, newHeight, PageObject.Width);
@@ -173,7 +173,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         //    double newWidth = PageObject.Width + e.HorizontalChange;
         //    double newHeaderWidth = (PageObject as CLPAggregationDataTable).RowHeaderWidth + e.HorizontalChange;
-        //    if(newWidth + PageObject.XPosition < parentPage.PageWidth && newHeaderWidth > 20)
+        //    if(newWidth + PageObject.XPosition < parentPage.Width && newHeaderWidth > 20)
         //    {
         //        (PageObject as CLPAggregationDataTable).RowHeaderWidth = newHeaderWidth;
         //        ChangePageObjectDimensions(PageObject, PageObject.Height, newWidth);
@@ -221,18 +221,18 @@ namespace Classroom_Learning_Partner.ViewModels
         //            int currentPageIndex = currentNotebook.GetNotebookPageIndex(PageObject.ParentPage);
         //            currentPageIndex++;
         //            CLPPage newPage = new CLPPage();
-        //            if(PageObject.ParentPage.PageWidth == CLPPage.PORTRAIT_WIDTH)
+        //            if(PageObject.ParentPage.Width == CLPPage.PORTRAIT_WIDTH)
         //            {
-        //                newPage.PageHeight = CLPPage.PORTRAIT_HEIGHT;
-        //                newPage.PageWidth = CLPPage.PORTRAIT_WIDTH;
-        //                newPage.InitialPageAspectRatio = newPage.PageWidth / newPage.PageHeight;
+        //                newPage.Height = CLPPage.PORTRAIT_HEIGHT;
+        //                newPage.Width = CLPPage.PORTRAIT_WIDTH;
+        //                newPage.InitialAspectRatio = newPage.Width / newPage.Height;
         //            }
         //            currentNotebook.InsertPageAt(currentPageIndex, newPage);
 
         //            linkedTable.ParentPage = newPage;
         //            linkedTable.ParentPageID = newPage.UniqueID;
         //            linkedTable.YPosition = 100;
-        //            linkedTable.XPosition = (newPage.PageWidth / 2) - (linkedTable.Width / 2);
+        //            linkedTable.XPosition = (newPage.Width / 2) - (linkedTable.Width / 2);
         //            ACLPPageBaseViewModel.AddPageObjectToPage(newPage, linkedTable, forceSelectMode:false);
         //        }
         //    }

@@ -3,43 +3,19 @@
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
-                   Width="{Binding PanelWidth}">
+                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters">
+    
     <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Resources/CLPBrushes.xaml" />
-                <!--ResourceDictionary>
-                    <DataTemplate x:Key="ButtonBox">
-                        <Border Margin="3" BorderBrush="{StaticResource GrayEdgeColor}" BorderThickness="1,1,1,1">
-                            <i:Interaction.Triggers>
-                                <i:EventTrigger EventName="MouseUp">
-                                    <catel:EventToCommand
-                                           Command="{Binding DataContext.SetCurrentPageCommand, 
-                                           RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
-                                           PassEventArgsToCommand="False" CommandParameter="{Binding}" />
-                                </i:EventTrigger>
-                            </i:Interaction.Triggers>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-                                <Image Grid.Column="0" Source="pack://application:,,,/Resources/Images/BlueStar16.png"></Image>
-                                <Image Grid.Column="1" Source="pack://application:,,,/Resources/Images/BlueEnvelope16.png"></Image>
-                            </Grid>
-                        </Border>
-                    </DataTemplate>
-                -->
-            </ResourceDictionary.MergedDictionaries>
-            <conv:SubmissionsListForPageByStudentConverter x:Key="SubmissionsListForPageByStudentConverter" />
-            <conv:PageToStarredVisibilityConverter x:Key="PageToStarredVisibilityConverter" />
-            <conv:PageToSubmissionVisibilityConverter x:Key="PageToSubmissionVisibilityConverter" />
-        </ResourceDictionary>
+        <conv:SubmissionsListForPageByStudentConverter x:Key="SubmissionsListForPageByStudentConverter" />
+        <conv:PageToStarredVisibilityConverter x:Key="PageToStarredVisibilityConverter" />
+        <conv:PageToSubmissionVisibilityConverter x:Key="PageToSubmissionVisibilityConverter" />
+        <conv:PanelLocationToThicknessConverter x:Key="PanelLocationToThicknessConverter" />
     </UserControl.Resources>
+    
     <Border Background="{StaticResource GrayBackgroundColor}"
             BorderBrush="{StaticResource GrayEdgeColor}"
-            BorderThickness="0,0,5,0">
+            BorderThickness="{Binding Location, Converter={StaticResource PanelLocationToThicknessConverter}, ConverterParameter=7.0}"
+            Width="{Binding Length}">
         <Grid>
             <!-- content and resizing thumb-->
             <Grid.ColumnDefinitions>
@@ -141,10 +117,10 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
             </Grid>
-            
+
             <Thumb Cursor="ScrollWE"
-                   Width="5"
-                   Margin="0 0 -5 0"
+                   Width="7"
+                   Margin="0 0 -7 0"
                    VerticalAlignment="Stretch"
                    HorizontalAlignment="Right">
                 <i:Interaction.Triggers>
@@ -155,27 +131,29 @@
                 </i:Interaction.Triggers>
                 <Thumb.Template>
                     <ControlTemplate>
-                        <UniformGrid Height="30"
-                                     VerticalAlignment="Center"
-                                     Columns="1"
-                                     Background="Transparent">
-                            <Ellipse StrokeThickness="0"
-                                     Fill="{StaticResource HighlightColor}"
-                                     Height="3"
-                                     Width="3" />
-                            <Ellipse StrokeThickness="0"
-                                     Fill="{StaticResource HighlightColor}"
-                                     Height="3"
-                                     Width="3" />
-                            <Ellipse StrokeThickness="0"
-                                     Fill="{StaticResource HighlightColor}"
-                                     Height="3"
-                                     Width="3" />
-                        </UniformGrid>
+                        <Grid VerticalAlignment="Stretch"
+                              Background="Transparent">
+                            <UniformGrid Columns="1"
+                                         Height="30"
+                                         Background="Transparent">
+                                <Ellipse StrokeThickness="0"
+                                         Fill="{StaticResource HighlightColor}"
+                                         Height="3"
+                                         Width="3" />
+                                <Ellipse StrokeThickness="0"
+                                         Fill="{StaticResource HighlightColor}"
+                                         Height="3"
+                                         Width="3" />
+                                <Ellipse StrokeThickness="0"
+                                         Fill="{StaticResource HighlightColor}"
+                                         Height="3"
+                                         Width="3" />
+                            </UniformGrid>
+                        </Grid>
                     </ControlTemplate>
                 </Thumb.Template>
             </Thumb>
-            
+
         </Grid>
     </Border>
 </catel:UserControl>

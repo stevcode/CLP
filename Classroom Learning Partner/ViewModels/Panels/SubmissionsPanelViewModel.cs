@@ -17,7 +17,7 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DisplayListPanelViewModel" /> class.
+        /// Initializes a new instance of the <see cref="DisplaysPanelViewModel" /> class.
         /// </summary>
         public SubmissionsPanelViewModel(Notebook notebook)
         {

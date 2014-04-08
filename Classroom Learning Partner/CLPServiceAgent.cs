@@ -484,6 +484,8 @@ namespace Classroom_Learning_Partner
                     if(!File.Exists(filePath))
                     {
                         var newNotebook = new Notebook {Name = notebookName};
+                        var newPage = new CLPPage();
+                        newNotebook.AddCLPPageToNotebook(newPage);
                         App.MainWindowViewModel.OpenNotebooks.Add(newNotebook);
                         App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(newNotebook);
                         App.MainWindowViewModel.IsAuthoring = true;

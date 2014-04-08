@@ -56,7 +56,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private static void OnCurrentPageChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
         {
-            var displayPanel = DisplayListPanelViewModel.GetDisplayListPanelViewModel();
+            var displayPanel = DisplaysPanelViewModel.GetDisplayListPanelViewModel();
             var mirrorDisplayViewModel = sender as SingleDisplayViewModel;
             if(mirrorDisplayViewModel == null ||
                displayPanel == null)
@@ -155,7 +155,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData BorderHeightProperty = RegisterProperty("BorderHeight", typeof(double));
 
         /// <summary>
-        /// Physical Width of Page. Differs from the PageWidth because PageWidth is inside a ViewBox.
+        /// Physical Width of Page. Differs from the Width because Width is inside a ViewBox.
         /// </summary>
         public double DimensionWidth
         {
@@ -166,7 +166,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData DimensionWidthProperty = RegisterProperty("DimensionWidth", typeof(double));
 
         /// <summary>
-        /// Physical Height of Page. Differs from the PageHeight because PageHeight is inside a ViewBox.
+        /// Physical Height of Page. Differs from the Height because Height is inside a ViewBox.
         /// </summary>
         public double DimensionHeight
         {

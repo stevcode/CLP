@@ -248,7 +248,7 @@
     <Compile Include="ViewModels\PageObjects\CLPFuzzyFactorCardViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPRegionViewModel.cs" />
     <Compile Include="ViewModels\Panels\APanelBaseViewModel.cs" />
-    <Compile Include="ViewModels\Panels\DisplayListPanelViewModel.cs" />
+    <Compile Include="ViewModels\Panels\DisplaysPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\NotebookPagesPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\StagingPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\StudentWorkPanelViewModel.cs" />
@@ -418,8 +418,8 @@
     <Compile Include="Views\PageObjects\CLPTextBoxView.xaml.cs">
       <DependentUpon>CLPTextBoxView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Panels\DisplayListPanelView.xaml.cs">
-      <DependentUpon>DisplayListPanelView.xaml</DependentUpon>
+    <Compile Include="Views\Panels\DisplaysPanelView.xaml.cs">
+      <DependentUpon>DisplaysPanelView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Panels\NotebookPagesPanelView.xaml.cs">
       <DependentUpon>NotebookPagesPanelView.xaml</DependentUpon>
@@ -653,7 +653,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Panels\DisplayListPanelView.xaml">
+    <Page Include="Views\Panels\DisplaysPanelView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

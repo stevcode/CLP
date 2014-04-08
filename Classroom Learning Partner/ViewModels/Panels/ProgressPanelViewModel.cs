@@ -17,8 +17,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public ProgressPanelViewModel(Notebook notebook)
         {
             Notebook = notebook;
-            InitialLength = 400;
-            Length = InitialLength;
+            Initialized += ProgressPanelViewModel_Initialized;
 
             //CurrentPages.Add(Notebook.Pages[2]);
             //CurrentPages.Add(Notebook.Pages[3]);
@@ -27,6 +26,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
             StudentList = GetStudentNames();
             SetCurrentPageCommand = new Command<CLPPage>(OnSetCurrentPageCommandExecute);
+        }
+
+        void ProgressPanelViewModel_Initialized(object sender, EventArgs e)
+        {
+            Length = InitialLength;
         }
 
         public override string Title
@@ -85,6 +89,22 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData StudentListProperty = RegisterProperty("StudentList", typeof(ObservableCollection<string>), () => new ObservableCollection<string>());
 
         #endregion //Bindings
+
+        #region IPanel Override
+
+        #region Overrides of APanelBaseViewModel
+
+        /// <summary>
+        /// Initial Length of the Panel, before any resizing.
+        /// </summary>
+        public override double InitialLength
+        {
+            get { return 400; }
+        }
+
+        #endregion
+
+        #endregion //IPanel Override
 
         #region Commands
 

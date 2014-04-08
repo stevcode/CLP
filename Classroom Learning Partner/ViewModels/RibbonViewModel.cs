@@ -25,6 +25,15 @@ using System.ServiceModel;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
+    public enum Panels
+    {
+        NotebookPages,
+        StudentWork,
+        Progress,
+        Displays,
+        Webcam
+    }
+
     /// <summary>
     /// UserControl view model.
     /// </summary>
@@ -80,6 +89,7 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentFontFamily = Fonts[0];
 
             PageInteractionMode = PageInteractionMode.Pen;
+            CurrentLeftPanel = Panels.NotebookPages;
         }
 
         private void InitializeCommands()
@@ -285,17 +295,6 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData EditingModeProperty = RegisterProperty("EditingMode", typeof(InkCanvasEditingMode));
 
         /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public PageInteractionMode PageInteractionMode
-        {
-            get { return GetValue<PageInteractionMode>(PageInteractionModeProperty); }
-            set { SetValue(PageInteractionModeProperty, value); }
-        }
-
-        public static readonly PropertyData PageInteractionModeProperty = RegisterProperty("PageInteractionMode", typeof(PageInteractionMode));
-
-        /// <summary>
         /// Enables pictures taken with Webcam to be shared with Group Members.
         /// </summary>
         public bool AllowWebcamShare
@@ -311,6 +310,28 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Bindings
 
         /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public PageInteractionMode PageInteractionMode
+        {
+            get { return GetValue<PageInteractionMode>(PageInteractionModeProperty); }
+            set { SetValue(PageInteractionModeProperty, value); }
+        }
+
+        public static readonly PropertyData PageInteractionModeProperty = RegisterProperty("PageInteractionMode", typeof(PageInteractionMode));
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public Panels? CurrentLeftPanel
+        {
+            get { return GetValue<Panels?>(CurrentLeftPanelProperty); }
+            set { SetValue(CurrentLeftPanelProperty, value); }
+        }
+
+        public static readonly PropertyData CurrentLeftPanelProperty = RegisterProperty("CurrentLeftPanel", typeof(Panels?));
+
+        /// <summary>
         /// Whether or not to mirror the displays to the projector.
         /// </summary>
         public bool IsProjectorOn
@@ -324,7 +345,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private static void IsProjectorOn_Changed(object sender, AdvancedPropertyChangedEventArgs args)
         {
             // TODO: Entities
-            //var displayList = DisplayListPanelViewModel.GetDisplayListPanelViewModel();
+            //var displayList = DisplaysPanelViewModel.GetDisplayListPanelViewModel();
             //if(App.Network.ProjectorProxy == null || displayList == null)
             //{
             //    return;
@@ -358,39 +379,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData IsBroadcastHistoryDisabledProperty = RegisterProperty("IsBroadcastHistoryDisabled", typeof(bool), false);
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public bool NotebookPagesPanelVisibility
-        {
-            get { return GetValue<bool>(NotebookPagesPanelVisibilityProperty); }
-            set { SetValue(NotebookPagesPanelVisibilityProperty, value); }
-        }
-
-        public static readonly PropertyData NotebookPagesPanelVisibilityProperty = RegisterProperty("NotebookPagesPanelVisibility", typeof(bool), true);
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public bool StudentWorkPanelVisibility
-        {
-            get { return GetValue<bool>(StudentWorkPanelVisibilityProperty); }
-            set { SetValue(StudentWorkPanelVisibilityProperty, value); }
-        }
-
-        public static readonly PropertyData StudentWorkPanelVisibilityProperty = RegisterProperty("StudentWorkPanelVisibility", typeof(bool), false);
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public bool ProgressPanelVisibility
-        {
-            get { return GetValue<bool>(ProgressPanelVisibilityProperty); }
-            set { SetValue(ProgressPanelVisibilityProperty, value); }
-        }
-
-        public static readonly PropertyData ProgressPanelVisibilityProperty = RegisterProperty("ProgressPanelVisibility", typeof(bool), false);
 
         /// <summary>
         /// Gets or sets the property value.
@@ -910,7 +898,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //        }
 
             //        page.TrimPage();
-            //        double printHeight = page.PageWidth / page.InitialPageAspectRatio;
+            //        double printHeight = page.Width / page.InitialAspectRatio;
 
             //        double transformAmount = 0;
             //        do
@@ -936,7 +924,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //            var transform = new TransformGroup();
             //            var translate = new TranslateTransform(0, -transformAmount);
             //            transform.Children.Add(translate);
-            //            if(page.PageWidth == CLPPage.LANDSCAPE_WIDTH)
+            //            if(page.Width == CLPPage.LANDSCAPE_WIDTH)
             //            {
             //                var rotate = new RotateTransform(90.0);
             //                var translate2 = new TranslateTransform(816, 0);
@@ -952,7 +940,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //            ((System.Windows.Markup.IAddChild)pageContent).AddChild(fixedPage);
             //            document.Pages.Add(pageContent);
-            //        } while(page.PageHeight > transformAmount);
+            //        } while(page.Height > transformAmount);
             //    }
 
             //    //Save the document
@@ -1016,7 +1004,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //        }
 
             //        page.TrimPage();
-            //        double printHeight = page.PageWidth / page.InitialPageAspectRatio;
+            //        double printHeight = page.Width / page.InitialAspectRatio;
 
             //        double transformAmount = 0;
             //        do
@@ -1053,7 +1041,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //            var transform = new TransformGroup();
             //            var translate = new TranslateTransform(0, -transformAmount);
             //            transform.Children.Add(translate);
-            //            if(page.PageWidth == CLPPage.LANDSCAPE_WIDTH)
+            //            if(page.Width == CLPPage.LANDSCAPE_WIDTH)
             //            {
             //                var rotate = new RotateTransform(90.0);
             //                var translate2 = new TranslateTransform(816, 0);
@@ -1069,7 +1057,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //            ((System.Windows.Markup.IAddChild)pageContent).AddChild(fixedPage);
             //            document.Pages.Add(pageContent);
-            //        } while(page.PageHeight > transformAmount);
+            //        } while(page.Height > transformAmount);
             //    }
 
             //    //Save the document
@@ -1127,7 +1115,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //        }
 
             //        page.TrimPage();
-            //        double printHeight = page.PageWidth / page.InitialPageAspectRatio;
+            //        double printHeight = page.Width / page.InitialAspectRatio;
 
             //        double transformAmount = 0;
             //        do
@@ -1164,7 +1152,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //            var transform = new TransformGroup();
             //            var translate = new TranslateTransform(0, -transformAmount);
             //            transform.Children.Add(translate);
-            //            if(page.PageWidth == CLPPage.LANDSCAPE_WIDTH)
+            //            if(page.Width == CLPPage.LANDSCAPE_WIDTH)
             //            {
             //                var rotate = new RotateTransform(90.0);
             //                var translate2 = new TranslateTransform(816, 0);
@@ -1180,7 +1168,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //            ((System.Windows.Markup.IAddChild)pageContent).AddChild(fixedPage);
             //            document.Pages.Add(pageContent);
-            //        } while(page.PageHeight > transformAmount);
+            //        } while(page.Height > transformAmount);
             //    }
             //         }
 
@@ -1230,36 +1218,6 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //File Menu
 
         #region Notebook Commands
-
-        /// <summary>
-        /// Switches to the Notebook Pages panel
-        /// </summary>
-        public Command ShowNotebookPagesPanelViewCommand { get; private set; }
-
-        private void OnShowNotebookPagesPanelViewCommandExecute()
-        {
-            var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel != null)
-            {
-                notebookWorkspaceViewModel.LeftPanel = notebookWorkspaceViewModel.NotebookPagesPanel;
-                notebookWorkspaceViewModel.NotebookPagesPanel.IsVisible = true;
-            }
-        }
-
-        /// <summary>
-        /// Switches to the Progress panel
-        /// </summary>
-        public Command ShowProgressPanelViewCommand { get; private set; }
-
-        private void OnShowProgressPanelViewCommandExecute()
-        {
-            var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel != null)
-            {
-                notebookWorkspaceViewModel.LeftPanel = notebookWorkspaceViewModel.ProgressPanel;
-                notebookWorkspaceViewModel.ProgressPanel.IsVisible = true;
-            }
-        }
 
         /// <summary>
         /// Navigates to previous page in the notebook.
@@ -1993,9 +1951,9 @@ namespace Classroom_Learning_Partner.ViewModels
             //var page = new CLPAnimationPage();
             //if(pageOrientation == "Portrait")
             //{
-            //    page.PageHeight = ACLPPageBase.PORTRAIT_HEIGHT;
-            //    page.PageWidth = ACLPPageBase.PORTRAIT_WIDTH;
-            //    page.InitialPageAspectRatio = page.PageWidth / page.PageHeight;
+            //    page.Height = ACLPPageBase.PORTRAIT_HEIGHT;
+            //    page.Width = ACLPPageBase.PORTRAIT_WIDTH;
+            //    page.InitialAspectRatio = page.Width / page.Height;
             //}
             //page.ParentNotebookID = notebookPanel.Notebook.UniqueID;
             //notebookPanel.Notebook.InsertPageAt(index, page);
@@ -2704,27 +2662,27 @@ namespace Classroom_Learning_Partner.ViewModels
             //    if(squareSize > 0)
             //    {
             //        squareSize = Math.Max(squareSize, (arrayMinSide / (Math.Min(rows, columns))));
-            //        if(yPosition + squareSize * rows + 2 * LABEL_LENGTH < currentPage.PageHeight && xPosition + squareSize * columns + 2 * LABEL_LENGTH < currentPage.PageWidth)
+            //        if(yPosition + squareSize * rows + 2 * LABEL_LENGTH < currentPage.Height && xPosition + squareSize * columns + 2 * LABEL_LENGTH < currentPage.Width)
             //        {
             //            //Position to not overlap with first array on page if possible
             //            if(onlyArray != null)
             //            {
             //                const double GAP = 35.0;
-            //                if(!(onlyArray is CLPFuzzyFactorCard) && onlyArray.XPosition + onlyArray.Width + (2 * LABEL_LENGTH + columns * squareSize) + GAP <= currentPage.PageWidth
-            //                    && rows * squareSize + LABEL_LENGTH < currentPage.PageHeight)
+            //                if(!(onlyArray is CLPFuzzyFactorCard) && onlyArray.XPosition + onlyArray.Width + (2 * LABEL_LENGTH + columns * squareSize) + GAP <= currentPage.Width
+            //                    && rows * squareSize + LABEL_LENGTH < currentPage.Height)
             //                {
             //                    array.XPosition = onlyArray.XPosition + onlyArray.Width + GAP;
             //                    array.YPosition = onlyArray.YPosition;
             //                }
-            //                else if(onlyArray.XPosition + (2 * LABEL_LENGTH + columns * squareSize) <= currentPage.PageWidth
-            //                    && onlyArray.YPosition + onlyArray.Height + rows * squareSize + LABEL_LENGTH + GAP < currentPage.PageHeight)
+            //                else if(onlyArray.XPosition + (2 * LABEL_LENGTH + columns * squareSize) <= currentPage.Width
+            //                    && onlyArray.YPosition + onlyArray.Height + rows * squareSize + LABEL_LENGTH + GAP < currentPage.Height)
             //                {
             //                    array.YPosition = onlyArray.YPosition + onlyArray.Height + GAP;
             //                    array.XPosition = onlyArray.XPosition;
             //                }
             //                else
             //                {
-            //                    array.YPosition = currentPage.PageHeight - array.Height;
+            //                    array.YPosition = currentPage.Height - array.Height;
             //                    array.XPosition = onlyArray.XPosition;
             //                }
             //            }
@@ -2752,7 +2710,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //        else
             //        {
             //            Dictionary<string, Point> oldDimensions = new Dictionary<string, Point>();
-            //            while(xPosition + 2 * LABEL_LENGTH + squareSize * columns >= currentPage.PageWidth || yPosition + 2 * LABEL_LENGTH + squareSize * rows >= currentPage.PageHeight)
+            //            while(xPosition + 2 * LABEL_LENGTH + squareSize * columns >= currentPage.Width || yPosition + 2 * LABEL_LENGTH + squareSize * rows >= currentPage.Height)
             //            {
             //                squareSize = Math.Abs(squareSize - 45.0) < .0001 ? 22.5 : squareSize / 4 * 3;
             //            }
@@ -2778,21 +2736,21 @@ namespace Classroom_Learning_Partner.ViewModels
             //            if(onlyArray != null)
             //            {
             //                const double GAP = 35.0;
-            //                if(!(onlyArray is CLPFuzzyFactorCard) && onlyArray.XPosition + onlyArray.Width + (2 * LABEL_LENGTH + columns * squareSize) + GAP <= currentPage.PageWidth
-            //                    && rows * squareSize + LABEL_LENGTH < currentPage.PageHeight)
+            //                if(!(onlyArray is CLPFuzzyFactorCard) && onlyArray.XPosition + onlyArray.Width + (2 * LABEL_LENGTH + columns * squareSize) + GAP <= currentPage.Width
+            //                    && rows * squareSize + LABEL_LENGTH < currentPage.Height)
             //                {
             //                    array.XPosition = onlyArray.XPosition + onlyArray.Width + GAP;
             //                    array.YPosition = onlyArray.YPosition;
             //                }
-            //                else if(onlyArray.XPosition + (2 * LABEL_LENGTH + columns * squareSize) <= currentPage.PageWidth
-            //                    && onlyArray.YPosition + onlyArray.Height + rows * squareSize + LABEL_LENGTH + GAP < currentPage.PageHeight)
+            //                else if(onlyArray.XPosition + (2 * LABEL_LENGTH + columns * squareSize) <= currentPage.Width
+            //                    && onlyArray.YPosition + onlyArray.Height + rows * squareSize + LABEL_LENGTH + GAP < currentPage.Height)
             //                {
             //                    array.YPosition = onlyArray.YPosition + onlyArray.Height + GAP;
             //                    array.XPosition = onlyArray.XPosition;
             //                }
             //                else
             //                {
-            //                    array.YPosition = currentPage.PageHeight - array.Height;
+            //                    array.YPosition = currentPage.Height - array.Height;
             //                    array.XPosition = onlyArray.XPosition;
             //                }
             //            }
@@ -2834,37 +2792,37 @@ namespace Classroom_Learning_Partner.ViewModels
             //    Math.Max(45.0, (minSide / (Math.Min(rows, columns)))):
             //    45.0;
             //var initializedSquareSize = (squareSize > 0) ? Math.Max(squareSize, (minSide / (Math.Min(rows, columns)))) : defaultSquareSize;
-            //if((arrayType == "FUZZYFACTORCARD" || arrayType == "FFCREMAINDER") && xPosition + initializedSquareSize * columns + LABEL_LENGTH * 3.0 + 12.0 > currentPage.PageWidth)
+            //if((arrayType == "FUZZYFACTORCARD" || arrayType == "FFCREMAINDER") && xPosition + initializedSquareSize * columns + LABEL_LENGTH * 3.0 + 12.0 > currentPage.Width)
             //{
             //    initializedSquareSize = minSide / (Math.Min(rows, columns));
             //}
             //var arrayStacks = 1;
-            //var isHorizontallyAligned = !(columns / currentPage.PageWidth > rows / currentPage.PageHeight);
+            //var isHorizontallyAligned = !(columns / currentPage.Width > rows / currentPage.Height);
 
-            //while(xPosition + 2 * LABEL_LENGTH + initializedSquareSize * columns >= currentPage.PageWidth || yPosition + 2 * LABEL_LENGTH + initializedSquareSize * rows >= currentPage.PageHeight)
+            //while(xPosition + 2 * LABEL_LENGTH + initializedSquareSize * columns >= currentPage.Width || yPosition + 2 * LABEL_LENGTH + initializedSquareSize * rows >= currentPage.Height)
             //{
             //    initializedSquareSize = Math.Abs(initializedSquareSize - 45.0) < .0001 ? 22.5 : initializedSquareSize / 4 * 3;
             //}
             //if(isHorizontallyAligned)
             //{
-            //    while(xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH >= currentPage.PageWidth)
+            //    while(xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH >= currentPage.Width)
             //    {
             //        initializedSquareSize = Math.Abs(initializedSquareSize - 45.0) < .0001 ? 22.5 : initializedSquareSize / 4 * 3;
 
-            //        if(numberOfArrays < 5 || xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH < currentPage.PageWidth)
+            //        if(numberOfArrays < 5 || xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH < currentPage.Width)
             //        {
             //            continue;
             //        }
 
-            //        if(xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 2) + LABEL_LENGTH < currentPage.PageWidth &&
-            //           yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * 2 + LABEL_LENGTH < currentPage.PageHeight)
+            //        if(xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 2) + LABEL_LENGTH < currentPage.Width &&
+            //           yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * 2 + LABEL_LENGTH < currentPage.Height)
             //        {
             //            arrayStacks = 2;
             //            break;
             //        }
 
-            //        if(xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 3) + LABEL_LENGTH < currentPage.PageWidth &&
-            //           yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * 3 + LABEL_LENGTH < currentPage.PageHeight)
+            //        if(xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 3) + LABEL_LENGTH < currentPage.Width &&
+            //           yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * 3 + LABEL_LENGTH < currentPage.Height)
             //        {
             //            arrayStacks = 3;
             //            break;
@@ -2874,24 +2832,24 @@ namespace Classroom_Learning_Partner.ViewModels
             //else
             //{
             //    yPosition = 100;
-            //    while(yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH >= currentPage.PageHeight)
+            //    while(yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH >= currentPage.Height)
             //    {
             //        initializedSquareSize = Math.Abs(initializedSquareSize - 45.0) < .0001 ? 22.5 : initializedSquareSize / 4 * 3;
 
-            //        if(numberOfArrays < 5 || yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH < currentPage.PageHeight)
+            //        if(numberOfArrays < 5 || yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH < currentPage.Height)
             //        {
             //            continue;
             //        }
 
-            //        if(yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 2) + LABEL_LENGTH < currentPage.PageHeight &&
-            //           xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * 2 + LABEL_LENGTH < currentPage.PageWidth)
+            //        if(yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 2) + LABEL_LENGTH < currentPage.Height &&
+            //           xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * 2 + LABEL_LENGTH < currentPage.Width)
             //        {
             //            arrayStacks = 2;
             //            break;
             //        }
 
-            //        if(yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 3) + LABEL_LENGTH < currentPage.PageHeight &&
-            //           xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * 3 + LABEL_LENGTH < currentPage.PageWidth)
+            //        if(yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 3) + LABEL_LENGTH < currentPage.Height &&
+            //           xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * 3 + LABEL_LENGTH < currentPage.Width)
             //        {
             //            arrayStacks = 3;
             //            break;
@@ -2908,35 +2866,35 @@ namespace Classroom_Learning_Partner.ViewModels
             //    if(isHorizontallyAligned)
             //    {
             //        const double GAP = 35.0;
-            //        if(!(onlyArray is CLPFuzzyFactorCard) && onlyArray.XPosition + onlyArray.Width + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH + GAP <= currentPage.PageWidth
-            //            && rows * initializedSquareSize + LABEL_LENGTH < currentPage.PageHeight)
+            //        if(!(onlyArray is CLPFuzzyFactorCard) && onlyArray.XPosition + onlyArray.Width + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH + GAP <= currentPage.Width
+            //            && rows * initializedSquareSize + LABEL_LENGTH < currentPage.Height)
             //        {
             //            startXPosition = onlyArray.XPosition + onlyArray.Width + GAP;
             //            yPosition = onlyArray.YPosition;
             //        }
-            //        else if(onlyArray.XPosition + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH <= currentPage.PageWidth
-            //            && onlyArray.YPosition + onlyArray.Height + rows * initializedSquareSize + LABEL_LENGTH + GAP < currentPage.PageHeight)
+            //        else if(onlyArray.XPosition + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH <= currentPage.Width
+            //            && onlyArray.YPosition + onlyArray.Height + rows * initializedSquareSize + LABEL_LENGTH + GAP < currentPage.Height)
             //        {
             //            yPosition = onlyArray.YPosition + onlyArray.Height + GAP;
             //            startXPosition = onlyArray.XPosition;
             //        }
             //        else
             //        {
-            //            yPosition = currentPage.PageHeight - rows * initializedSquareSize - 2 * LABEL_LENGTH;
+            //            yPosition = currentPage.Height - rows * initializedSquareSize - 2 * LABEL_LENGTH;
             //            startXPosition = onlyArray.XPosition;
             //        }
             //        xPosition = startXPosition;
             //    }
             //    else{
             //        const double GAP = 35.0;
-            //        if(!(onlyArray is CLPFuzzyFactorCard) && onlyArray.YPosition + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH <= currentPage.PageHeight
-            //            && onlyArray.XPosition + onlyArray.Width + columns * initializedSquareSize + LABEL_LENGTH + GAP < currentPage.PageWidth)
+            //        if(!(onlyArray is CLPFuzzyFactorCard) && onlyArray.YPosition + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH <= currentPage.Height
+            //            && onlyArray.XPosition + onlyArray.Width + columns * initializedSquareSize + LABEL_LENGTH + GAP < currentPage.Width)
             //        {
             //            xPosition = onlyArray.XPosition + onlyArray.Width + GAP;
             //            startYPosition = onlyArray.YPosition;
             //        }
-            //        else if(onlyArray.YPosition + onlyArray.Height + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH + GAP <= currentPage.PageWidth
-            //            && onlyArray.XPosition + rows * initializedSquareSize + LABEL_LENGTH < currentPage.PageHeight)
+            //        else if(onlyArray.YPosition + onlyArray.Height + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH + GAP <= currentPage.Width
+            //            && onlyArray.XPosition + rows * initializedSquareSize + LABEL_LENGTH < currentPage.Height)
             //        {
             //            startYPosition = onlyArray.YPosition + onlyArray.Height + GAP;
             //            xPosition = onlyArray.XPosition;
