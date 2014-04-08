@@ -2,7 +2,7 @@
 using System.Windows.Controls.Primitives;
 using Catel.Data;
 using Catel.MVVM;
-using CLP.Models;
+using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -11,7 +11,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Initializes a new instance of the CLPShapeViewModel class.
         /// </summary>
-        public CLPShapeViewModel(CLPShape shape)
+        public CLPShapeViewModel(Shape shape)
         {
             hoverTimer.Interval = 2300;
             CloseAdornerTimeOut = 0.15;
@@ -24,16 +24,13 @@ namespace Classroom_Learning_Partner.ViewModels
         /// Gets or sets the property value.
         /// </summary>
         [ViewModelToModel("PageObject")]
-        public CLPShape.CLPShapeType ShapeType
+        public ShapeType ShapeType
         {
-            get { return GetValue<CLPShape.CLPShapeType>(ShapeTypeProperty); }
+            get { return GetValue<ShapeType>(ShapeTypeProperty); }
             set { SetValue(ShapeTypeProperty, value); }
         }
 
-        /// <summary>
-        /// Register the ShapeType property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData ShapeTypeProperty = RegisterProperty("ShapeType", typeof(CLPShape.CLPShapeType));
+        public static readonly PropertyData ShapeTypeProperty = RegisterProperty("ShapeType", typeof(ShapeType));
 
         public override string Title { get { return "ShapeVM"; } }
 
@@ -44,50 +41,51 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnResizeShapeCommandExecute(DragDeltaEventArgs e)
         {
-            var parentPage = (App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
+            // TODO: Entities
+            //var parentPage = (App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).Notebook.GetNotebookPageByID(PageObject.ParentPageID);
 
-            double newHeight = PageObject.Height + e.VerticalChange;
-            double newWidth = PageObject.Width + e.HorizontalChange;
-            if((PageObject as CLPShape).ShapeType == CLP.Models.CLPShape.CLPShapeType.VerticalLine)
-            {
-                newWidth = 20;
-                if(PageObject.YPosition + newHeight > parentPage.PageHeight)
-                {
-                    newHeight = PageObject.Height;
-                }
+            //double newHeight = PageObject.Height + e.VerticalChange;
+            //double newWidth = PageObject.Width + e.HorizontalChange;
+            //if((PageObject as Shape).ShapeType == ShapeType.VerticalLine)
+            //{
+            //    newWidth = 20;
+            //    if(PageObject.YPosition + newHeight > parentPage.Height)
+            //    {
+            //        newHeight = PageObject.Height;
+            //    }
 
-            }
-            if((PageObject as CLPShape).ShapeType == CLP.Models.CLPShape.CLPShapeType.HorizontalLine)
-            {
-                newHeight = 20;
-                if(PageObject.XPosition + newWidth > parentPage.PageWidth)
-                {
-                    newWidth = PageObject.Width;
-                }
-            }
-            if(newHeight < 20)
-            {
-                newHeight = 20;
-            }
-            if(newWidth < 20)
-            {
-                newWidth = 20;
-            }
-            if(newHeight + PageObject.YPosition > parentPage.PageHeight)
-            {
-                newHeight = PageObject.Height;
-            }
-            if(newWidth + PageObject.XPosition > parentPage.PageWidth)
-            {
-                newWidth = PageObject.Width;
-            }
+            //}
+            //if((PageObject as Shape).ShapeType == ShapeType.HorizontalLine)
+            //{
+            //    newHeight = 20;
+            //    if(PageObject.XPosition + newWidth > parentPage.Width)
+            //    {
+            //        newWidth = PageObject.Width;
+            //    }
+            //}
+            //if(newHeight < 20)
+            //{
+            //    newHeight = 20;
+            //}
+            //if(newWidth < 20)
+            //{
+            //    newWidth = 20;
+            //}
+            //if(newHeight + PageObject.YPosition > parentPage.Height)
+            //{
+            //    newHeight = PageObject.Height;
+            //}
+            //if(newWidth + PageObject.XPosition > parentPage.Width)
+            //{
+            //    newWidth = PageObject.Width;
+            //}
 
-            if((PageObject as CLPShape).ShapeType == CLPShape.CLPShapeType.Protractor)
-            {
-                newWidth = 2.0*newHeight;
-            }
+            //if((PageObject as Shape).ShapeType == ShapeType.Protractor)
+            //{
+            //    newWidth = 2.0*newHeight;
+            //}
 
-            ChangePageObjectDimensions(PageObject, newHeight, newWidth);
+            //ChangePageObjectDimensions(PageObject, newHeight, newWidth);
         }
 
     }

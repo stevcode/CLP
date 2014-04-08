@@ -9,7 +9,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Catel.Data;
 using Catel.MVVM;
-using CLP.Models;
+using CLP.Entities;
 using NAudio;
 using NAudio.Wave;
 
@@ -33,26 +33,26 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private AudioState currentAudioState;
 
-        /// <summary>
-        /// Initializes a new instance of the CLPImageViewModel class.
-        /// </summary>
-        public CLPAudioViewModel(CLPAudio audio)
-            : base()
-        {
-            AudioCommand = new Command(OnAudioCommandExecute);
+        ///// <summary>
+        ///// Initializes a new instance of the CLPImageViewModel class.
+        ///// </summary>
+        //public CLPAudioViewModel(CLPAudio audio)
+        //    : base()
+        //{
+        //    AudioCommand = new Command(OnAudioCommandExecute);
 
-            PageObject = audio;
-            if(audio.ByteSource.Length == 0)
-            {
-                AudioImage = new BitmapImage(new Uri("..\\..\\Images\\mic_start.png", UriKind.Relative));
-                currentAudioState = AudioState.Blank;
-            }
-            else
-            {
-                AudioImage = new BitmapImage(new Uri("..\\..\\Images\\play2.png", UriKind.Relative));
-                currentAudioState = AudioState.HasAudio;
-            }
-        }
+        //    PageObject = audio;
+        //    if(audio.ByteSource.Length == 0)
+        //    {
+        //        AudioImage = new BitmapImage(new Uri("..\\..\\Images\\mic_start.png", UriKind.Relative));
+        //        currentAudioState = AudioState.Blank;
+        //    }
+        //    else
+        //    {
+        //        AudioImage = new BitmapImage(new Uri("..\\..\\Images\\play2.png", UriKind.Relative));
+        //        currentAudioState = AudioState.HasAudio;
+        //    }
+        //}
 
         public override string Title { get { return "AudioVM"; } }
 
@@ -104,14 +104,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void Play()
         {
-            waveOutDevice = new WaveOut();
+            //waveOutDevice = new WaveOut();
 
-            MemoryStream m_stream = new MemoryStream((PageObject as CLPAudio).ByteSource);
-            WaveStream mp3Reader = new Mp3FileReader(m_stream);
-            volumeStream = new WaveChannel32(mp3Reader);
-            mainOutputStream = volumeStream;
-            waveOutDevice.Init(mainOutputStream);
-            waveOutDevice.Play();
+            //MemoryStream m_stream = new MemoryStream((PageObject as CLPAudio).ByteSource);
+            //WaveStream mp3Reader = new Mp3FileReader(m_stream);
+            //volumeStream = new WaveChannel32(mp3Reader);
+            //mainOutputStream = volumeStream;
+            //waveOutDevice.Init(mainOutputStream);
+            //waveOutDevice.Play();
         }
 
         #endregion //Methods

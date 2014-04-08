@@ -4,30 +4,31 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Catel.Data;
 using Catel.MVVM;
-using CLP.Models;
+using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
     public class CLPImageViewModel : ACLPPageObjectBaseViewModel
     {
-        /// <summary>
-        /// Initializes a new instance of the CLPImageViewModel class.
-        /// </summary>
-        public CLPImageViewModel(CLPImage image)
-        {
-            PageObject = image;
-            try
-            {
-                var byteSource = image.ParentPage.ImagePool[image.ImageID];
-                SourceImage = LoadImageFromByteSource(byteSource.ToArray());
-            }
-            catch(System.Exception ex)
-            {
-                Logger.Instance.WriteToLog("ImageVM failed to load Image from ByteSource, image.ParentPage likely null. Error: " + ex.Message);
-            }
+        // TODO: Entities
+        ///// <summary>
+        ///// Initializes a new instance of the CLPImageViewModel class.
+        ///// </summary>
+        //public CLPImageViewModel(CLPImage image)
+        //{
+        //    PageObject = image;
+        //    try
+        //    {
+        //        var byteSource = image.ParentPage.ImagePool[image.ImageID];
+        //        SourceImage = LoadImageFromByteSource(byteSource.ToArray());
+        //    }
+        //    catch(System.Exception ex)
+        //    {
+        //        Logger.Instance.WriteToLog("ImageVM failed to load Image from ByteSource, image.ParentPage likely null. Error: " + ex.Message);
+        //    }
 
-            ResizeImageCommand = new Command<DragDeltaEventArgs>(OnResizeImageCommandExecute);
-        }
+        //    ResizeImageCommand = new Command<DragDeltaEventArgs>(OnResizeImageCommandExecute);
+        //}
 
         public override string Title { get { return "ImageVM"; } }
 
@@ -82,11 +83,11 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 PageObject.Width = 10;
             }
-            if(PageObject.Height + PageObject.YPosition > parentPage.PageHeight)
+            if(PageObject.Height + PageObject.YPosition > parentPage.Height)
             {
                 PageObject.Height = PageObject.Height;
             }
-            if(PageObject.Width + PageObject.XPosition > parentPage.PageWidth)
+            if(PageObject.Width + PageObject.XPosition > parentPage.Width)
             {
                 PageObject.Width = PageObject.Width;
             }
@@ -96,7 +97,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 aspectRatio = SourceImage.Width / SourceImage.Height;
             }
-            PageObject.EnforceAspectRatio(aspectRatio);
+            //PageObject.EnforceAspectRatio(aspectRatio);
 
             ChangePageObjectDimensions(PageObject, PageObject.Height, PageObject.Width);
         }

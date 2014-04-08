@@ -10,68 +10,68 @@ using System.Windows.Shapes;
 using Catel.Data;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Views.Modal_Windows;
-using CLP.Models;
+using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
 
     public class CLPFactorCardViewModel : CLPArrayViewModel
     {
-        #region Constructor
+        //#region Constructor
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CLPFactorCardViewModel"/> class.
-        /// </summary>
-        public CLPFactorCardViewModel(CLPFactorCard factorCard) : base(factorCard)
-        {
-            RotateArrayCommand = new Command(OnRotateArrayCommandExecute);
-        }
+        ///// <summary>
+        ///// Initializes a new instance of the <see cref="CLPFactorCardViewModel"/> class.
+        ///// </summary>
+        //public CLPFactorCardViewModel(CLPFactorCard factorCard) : base(factorCard)
+        //{
+        //    RotateArrayCommand = new Command(OnRotateArrayCommandExecute);
+        //}
 
-        #endregion //Constructor    
+        //#endregion //Constructor    
 
-        #region Properties
+        //#region Properties
 
-        /// <summary>
-        /// Whether the top label is displayed or shown as a "?".
-        /// </summary>
-        [ViewModelToModel("PageObject")]
-        public bool IsTopLabelVisible
-        {
-            get
-            {
-                return GetValue<bool>(IsTopLabelVisibleProperty);
-            }
-            set
-            {
-                SetValue(IsTopLabelVisibleProperty, value);
-            }
-        }
+        ///// <summary>
+        ///// Whether the top label is displayed or shown as a "?".
+        ///// </summary>
+        //[ViewModelToModel("PageObject")]
+        //public bool IsTopLabelVisible
+        //{
+        //    get
+        //    {
+        //        return GetValue<bool>(IsTopLabelVisibleProperty);
+        //    }
+        //    set
+        //    {
+        //        SetValue(IsTopLabelVisibleProperty, value);
+        //    }
+        //}
 
-        /// <summary>
-        /// Register the IsTopLabelVisible property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData IsTopLabelVisibleProperty = RegisterProperty("IsTopLabelVisible", typeof(bool));
+        ///// <summary>
+        ///// Register the IsTopLabelVisible property so it is known in the class.
+        ///// </summary>
+        //public static readonly PropertyData IsTopLabelVisibleProperty = RegisterProperty("IsTopLabelVisible", typeof(bool));
 
-        #endregion //Properties
+        //#endregion //Properties
 
-        #region Commands
+        //#region Commands
 
-        /// <summary>
-        /// Rotates the array 90 degrees
-        /// </summary>
-        new public Command RotateArrayCommand
-        {
-            get;
-            private set;
-        }
+        ///// <summary>
+        ///// Rotates the array 90 degrees
+        ///// </summary>
+        //new public Command RotateArrayCommand
+        //{
+        //    get;
+        //    private set;
+        //}
 
-        new protected void OnRotateArrayCommandExecute()
-        {
-            IsTopLabelVisible = !IsTopLabelVisible; 
-            base.OnRotateArrayCommandExecute();
-        }
+        //new protected void OnRotateArrayCommandExecute()
+        //{
+        //    IsTopLabelVisible = !IsTopLabelVisible; 
+        //    base.OnRotateArrayCommandExecute();
+        //}
 
-        #endregion
+        //#endregion
 
     }
 }

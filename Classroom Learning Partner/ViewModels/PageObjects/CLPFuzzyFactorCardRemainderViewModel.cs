@@ -10,59 +10,59 @@ using System.Windows.Shapes;
 using Catel.Data;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Views.Modal_Windows;
-using CLP.Models;
+using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
     class CLPFuzzyFactorCardRemainderViewModel : ACLPPageObjectBaseViewModel
     {
 
-        #region Constructor
+        //#region Constructor
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CLPFuzzyFactorCardRemainderViewModel"/> class.
-        /// </summary>
-        public CLPFuzzyFactorCardRemainderViewModel(CLPFuzzyFactorCardRemainder ffcRemainder)
-        {
-            PageObject = ffcRemainder;
-            hoverTimer.Interval = 2300;
-            CloseAdornerTimeOut = 0.15;
-        }
+        ///// <summary>
+        ///// Initializes a new instance of the <see cref="CLPFuzzyFactorCardRemainderViewModel"/> class.
+        ///// </summary>
+        //public CLPFuzzyFactorCardRemainderViewModel(CLPFuzzyFactorCardRemainder ffcRemainder)
+        //{
+        //    PageObject = ffcRemainder;
+        //    hoverTimer.Interval = 2300;
+        //    CloseAdornerTimeOut = 0.15;
+        //}
 
-        #endregion //Constructor
+        //#endregion //Constructor
 
-        #region Model
+        //#region Model
 
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        [ViewModelToModel("PageObject")]
-        public ObservableCollection<string> TileOffsets
-        {
-            get
-            {
-                return GetValue<ObservableCollection<string>>(TileOffsetsProperty);
-            }
-            set
-            {
-                SetValue(TileOffsetsProperty, value);
-            }
-        }
+        ///// <summary>
+        ///// Gets or sets the property value.
+        ///// </summary>
+        //[ViewModelToModel("PageObject")]
+        //public ObservableCollection<string> TileOffsets
+        //{
+        //    get
+        //    {
+        //        return GetValue<ObservableCollection<string>>(TileOffsetsProperty);
+        //    }
+        //    set
+        //    {
+        //        SetValue(TileOffsetsProperty, value);
+        //    }
+        //}
 
-        /// <summary>
-        /// Register the TileOffsets property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData TileOffsetsProperty = RegisterProperty("TileOffsets", typeof(ObservableCollection<string>));
+        ///// <summary>
+        ///// Register the TileOffsets property so it is known in the class.
+        ///// </summary>
+        //public static readonly PropertyData TileOffsetsProperty = RegisterProperty("TileOffsets", typeof(ObservableCollection<string>));
 
-        #endregion //Model
+        //#endregion //Model
 
-        #region Methods
+        //#region Methods
 
-        public override bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown)
-        {
-            return false;
-        }
+        //public override bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown)
+        //{
+        //    return false;
+        //}
 
-        #endregion //Methods
+        //#endregion //Methods
     }
 }

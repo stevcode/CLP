@@ -6,7 +6,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Catel.Data;
 using Catel.MVVM;
-using CLP.Models;
+using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -17,31 +17,31 @@ namespace Classroom_Learning_Partner.ViewModels
     {
         #region Constructor
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CLPStampCopyViewModel"/> class.
-        /// </summary>
-        public CLPStampCopyViewModel(CLPStampCopy container)
-        {
-            PageObject = container;
+        ///// <summary>
+        ///// Initializes a new instance of the <see cref="CLPStampCopyViewModel"/> class.
+        ///// </summary>
+        //public CLPStampCopyViewModel(CLPStampCopy container)
+        //{
+        //    PageObject = container;
 
-            if(container.ImageID != string.Empty)
-            {
-                try
-                {
-                    var byteSource = container.ParentPage.ImagePool[container.ImageID];
-                    LoadImageFromByteSource(byteSource.ToArray());
-                }
-                catch(Exception ex)
-                {
-                    Logger.Instance.WriteToLog("ImageVM failed to load Image from ByteSource, container.ParentPage likely null. Error: " + ex.Message);
-                }
-            }
+        //    if(container.ImageID != string.Empty)
+        //    {
+        //        try
+        //        {
+        //            var byteSource = container.ParentPage.ImagePool[container.ImageID];
+        //            LoadImageFromByteSource(byteSource.ToArray());
+        //        }
+        //        catch(Exception ex)
+        //        {
+        //            Logger.Instance.WriteToLog("ImageVM failed to load Image from ByteSource, container.ParentPage likely null. Error: " + ex.Message);
+        //        }
+        //    }
 
-            if(container.IsStamped)
-            {
-                ScribblesToStrokePaths();
-            }
-        }
+        //    if(container.IsStamped)
+        //    {
+        //        ScribblesToStrokePaths();
+        //    }
+        //}
 
         /// <summary>
         /// Gets the title of the view model.
@@ -149,36 +149,36 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void ScribblesToStrokePaths()
         {
-            var clpStampCopy = PageObject as CLPStampCopy;
-            if(clpStampCopy == null)
-            {
-                return;
-            }
-            StrokePathViewModels.Clear();
+            //var clpStampCopy = PageObject as CLPStampCopy;
+            //if(clpStampCopy == null)
+            //{
+            //    return;
+            //}
+            //StrokePathViewModels.Clear();
 
-            var inkStrokes = StrokeDTO.LoadInkStrokes(clpStampCopy.SerializedStrokes);
+            //var inkStrokes = StrokeDTO.LoadInkStrokes(clpStampCopy.SerializedStrokes);
 
-            foreach (var stroke in inkStrokes)
-            {
-                var firstPoint = stroke.StylusPoints[0];
+            //foreach (var stroke in inkStrokes)
+            //{
+            //    var firstPoint = stroke.StylusPoints[0];
 
-                var geometry = new StreamGeometry();
-                using (var geometryContext = geometry.Open())
-                {
-                    geometryContext.BeginFigure(new Point(firstPoint.X, firstPoint.Y), true, false);
-                    foreach (var point in stroke.StylusPoints)
-                    {
-                        geometryContext.LineTo(new Point(point.X, point.Y), true, true);
-                    }
-                }
-                geometry.Freeze();
+            //    var geometry = new StreamGeometry();
+            //    using (var geometryContext = geometry.Open())
+            //    {
+            //        geometryContext.BeginFigure(new Point(firstPoint.X, firstPoint.Y), true, false);
+            //        foreach (var point in stroke.StylusPoints)
+            //        {
+            //            geometryContext.LineTo(new Point(point.X, point.Y), true, true);
+            //        }
+            //    }
+            //    geometry.Freeze();
 
-                var strokePathViewModel = new StrokePathViewModel(geometry, 
-                                                                  (SolidColorBrush)new BrushConverter().ConvertFromString(stroke.DrawingAttributes.Color.ToString()), 
-                                                                  stroke.DrawingAttributes.Width,
-                                                                  stroke.DrawingAttributes.IsHighlighter);
-                StrokePathViewModels.Add(strokePathViewModel);
-            }
+            //    var strokePathViewModel = new StrokePathViewModel(geometry, 
+            //                                                      (SolidColorBrush)new BrushConverter().ConvertFromString(stroke.DrawingAttributes.Color.ToString()), 
+            //                                                      stroke.DrawingAttributes.Width,
+            //                                                      stroke.DrawingAttributes.IsHighlighter);
+            //    StrokePathViewModels.Add(strokePathViewModel);
+            //}
         }
 
         #endregion //Methods

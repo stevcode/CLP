@@ -7,7 +7,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Catel.Data;
 using Catel.MVVM;
-using CLP.Models;
+using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -34,60 +34,62 @@ namespace Classroom_Learning_Partner.ViewModels
             //        Topics += "Page Topic: " + topic + "\n";
             //    }
             //}
-            if(Page.PageTags != null)
-            {
-                foreach(Tag tag in Page.PageTags)
-                {
-                    if(tag.TagType == null)
-                    {
-                        continue;
-                    } // Skip tags that somehow didn't get a TagType, to avoid an exception in the next line
-                    if(tag.TagType.Name == CorrectnessTagType.Instance.Name)
-                    {
-                        if(tag.Value.Count > 0)
-                        {
-                            String correct = (String)tag.Value.ElementAt(0).Value;
-                            if(correct == "Correct")
-                            {
-                                Topics += "Correctness: Correct \n";
-                                IsCorrect = true;
-                                IsIncorrect = false;
-                                IsUnknown = false;
-                            }
-                            else if(correct == "Incorrect")
-                            {
-                                Topics += "Correctness: Incorrect \n";
-                                IsIncorrect = true;
-                                IsCorrect = false;
-                                IsUnknown = false;
-                            }
-                            else
-                            {
-                                Topics += "Correctness: Unknown \n";
-                                IsUnknown = true;
-                                IsCorrect = false;
-                                IsIncorrect = false;
-                            }
-                        }
-                    }
-                    if(tag.TagType.Name == StarredTagType.Instance.Name)
-                    {
-                        if(tag.Value.Count > 0)
-                        {
-                            String star = (String)tag.Value.ElementAt(0).Value;
-                            if(star == "Starred")
-                            {
-                                Topics += "Starred: True \n";
-                                IsStarred = true;
-                            }
-                            else
-                            {
-                                Topics += "Starred: False \n";
-                            }
-                        }
-                    }
-                }
-            }
+
+            // TODO: Entities
+            //if(Page.PageTags != null)
+            //{
+            //    foreach(Tag tag in Page.PageTags)
+            //    {
+            //        if(tag.TagType == null)
+            //        {
+            //            continue;
+            //        } // Skip tags that somehow didn't get a TagType, to avoid an exception in the next line
+            //        if(tag.TagType.Name == CorrectnessTagType.Instance.Name)
+            //        {
+            //            if(tag.Value.Count > 0)
+            //            {
+            //                String correct = (String)tag.Value.ElementAt(0).Value;
+            //                if(correct == "Correct")
+            //                {
+            //                    Topics += "Correctness: Correct \n";
+            //                    IsCorrect = true;
+            //                    IsIncorrect = false;
+            //                    IsUnknown = false;
+            //                }
+            //                else if(correct == "Incorrect")
+            //                {
+            //                    Topics += "Correctness: Incorrect \n";
+            //                    IsIncorrect = true;
+            //                    IsCorrect = false;
+            //                    IsUnknown = false;
+            //                }
+            //                else
+            //                {
+            //                    Topics += "Correctness: Unknown \n";
+            //                    IsUnknown = true;
+            //                    IsCorrect = false;
+            //                    IsIncorrect = false;
+            //                }
+            //            }
+            //        }
+            //        if(tag.TagType.Name == StarredTagType.Instance.Name)
+            //        {
+            //            if(tag.Value.Count > 0)
+            //            {
+            //                String star = (String)tag.Value.ElementAt(0).Value;
+            //                if(star == "Starred")
+            //                {
+            //                    Topics += "Starred: True \n";
+            //                    IsStarred = true;
+            //                }
+            //                else
+            //                {
+            //                    Topics += "Starred: False \n";
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
 
             MarkCorrectCommand = new Command<MouseEventArgs>(OnMarkCorrectCommandExecute);
             MarkIncorrectCommand = new Command<MouseEventArgs>(OnMarkIncorrectCommandExecute);
@@ -105,7 +107,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        [Model(SupportIEditableObject = false)]
+        [Model]
         public CLPPage Page
         {
             get { return GetValue<CLPPage>(PageProperty); } 
@@ -114,17 +116,18 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData PageProperty = RegisterProperty("Page", typeof(CLPPage));
 
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        [ViewModelToModel("Page")]
-        public ObservableCollection<Tag> PageTags
-        {
-            get { return GetValue<ObservableCollection<Tag>>(PageTagsProperty); } 
-            set { SetValue(PageTagsProperty, value); }
-        }
+        // TODO: Entities
+        ///// <summary>
+        ///// Gets or sets the property value.
+        ///// </summary>
+        //[ViewModelToModel("Page")]
+        //public ObservableCollection<Tag> PageTags
+        //{
+        //    get { return GetValue<ObservableCollection<Tag>>(PageTagsProperty); } 
+        //    set { SetValue(PageTagsProperty, value); }
+        //}
 
-        public static readonly PropertyData PageTagsProperty = RegisterProperty("PageTags", typeof(ObservableCollection<Tag>));
+        //public static readonly PropertyData PageTagsProperty = RegisterProperty("PageTags", typeof(ObservableCollection<Tag>));
 
         public bool IsStarred
         {
@@ -207,19 +210,20 @@ namespace Classroom_Learning_Partner.ViewModels
             IsCorrect = !IsCorrect;
             if(IsCorrect == true)
             {
-                if(Page.PageTags != null)
-                {
-                    foreach(Tag tag in Page.PageTags)
-                    {
-                        if(tag.TagType.Name == CorrectnessTagType.Instance.Name)
-                        {
-                            tag.Value.Clear();
-                            tag.Value.Add(new TagOptionValue("Correct", "..\\Images\\Correct.png"));
-                        }
-                    }
-                }
-                IsIncorrect = false;
-                IsUnknown = false;
+                // TODO: Entities
+                //if(Page.PageTags != null)
+                //{
+                //    foreach(Tag tag in Page.PageTags)
+                //    {
+                //        if(tag.TagType.Name == CorrectnessTagType.Instance.Name)
+                //        {
+                //            tag.Value.Clear();
+                //            tag.Value.Add(new TagOptionValue("Correct", "..\\Images\\Correct.png"));
+                //        }
+                //    }
+                //}
+                //IsIncorrect = false;
+                //IsUnknown = false;
             }
             //  CLPNotebook notebook = (App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).Notebook;
             //  notebook.Submissions.Remove(Page.UniqueID);
@@ -242,18 +246,19 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 IsCorrect = false;
                 IsUnknown = false;
-                if(Page.PageTags != null)
-                {
-                    Console.WriteLine("[age tags:" + Page.PageTags.Count);
-                    foreach(Tag tag in Page.PageTags)
-                    {
-                        if(tag.TagType.Name == CorrectnessTagType.Instance.Name)
-                        {
-                            tag.Value.Clear();
-                            tag.Value.Add(new TagOptionValue("Incorrect", "..\\Images\\Incorrect.png"));
-                        }
-                    }
-                }
+                // TODO: Entities
+                //if(Page.PageTags != null)
+                //{
+                //    Console.WriteLine("[age tags:" + Page.PageTags.Count);
+                //    foreach(Tag tag in Page.PageTags)
+                //    {
+                //        if(tag.TagType.Name == CorrectnessTagType.Instance.Name)
+                //        {
+                //            tag.Value.Clear();
+                //            tag.Value.Add(new TagOptionValue("Incorrect", "..\\Images\\Incorrect.png"));
+                //        }
+                //    }
+                //}
             }
             var submissionsPanel = NotebookPagesPanelViewModel.GetSubmissionsPanelViewModel();
             submissionsPanel.SubmissionPages.Remove(Page);
@@ -274,18 +279,19 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 IsCorrect = false;
                 IsIncorrect = false;
-                if(Page.PageTags != null)
-                {
-                    Console.WriteLine("in unknown:" + Page.PageTags.Count);
-                    foreach(Tag tag in Page.PageTags)
-                    {
-                        if(tag.TagType.Name == CorrectnessTagType.Instance.Name)
-                        {
-                            tag.Value.Clear();
-                            tag.Value.Add(new TagOptionValue("Unknown", ""));
-                        }
-                    }
-                }
+                // TODO: Entities
+                //if(Page.PageTags != null)
+                //{
+                //    Console.WriteLine("in unknown:" + Page.PageTags.Count);
+                //    foreach(Tag tag in Page.PageTags)
+                //    {
+                //        if(tag.TagType.Name == CorrectnessTagType.Instance.Name)
+                //        {
+                //            tag.Value.Clear();
+                //            tag.Value.Add(new TagOptionValue("Unknown", ""));
+                //        }
+                //    }
+                //}
             }
             var submissionsPanel = NotebookPagesPanelViewModel.GetSubmissionsPanelViewModel();
             submissionsPanel.SubmissionPages.Remove(Page);
@@ -300,28 +306,29 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnToggleStarCommandExecute(MouseEventArgs e)
         {
             IsStarred = !IsStarred;
-            if(Page.PageTags != null)
-            {
-                foreach(Tag tag in Page.PageTags)
-                {
-                    if(tag.TagType.Name == StarredTagType.Instance.Name)
-                    {
-                        Console.WriteLine("Name: " + tag.TagType.Name + " value" + tag.Value.ElementAt(0).Value);
+            // TODO: Entities
+            //if(Page.PageTags != null)
+            //{
+            //    foreach(Tag tag in Page.PageTags)
+            //    {
+            //        if(tag.TagType.Name == StarredTagType.Instance.Name)
+            //        {
+            //            Console.WriteLine("Name: " + tag.TagType.Name + " value" + tag.Value.ElementAt(0).Value);
 
-                        tag.Value.Clear();
-                        if(IsStarred)
-                        {
-                            Topics.Replace("Starred: True", "Starred: False");
-                            tag.Value.Add(new TagOptionValue("Starred", "..\\Images\\Starred.png"));
-                        }
-                        else
-                        {
-                            Topics.Replace("Starred: False", "Starred: True");
-                            tag.Value.Add(new TagOptionValue("Unstarred", "..\\Images\\Unstarred.png"));
-                        }
-                    }
-                }
-            }
+            //            tag.Value.Clear();
+            //            if(IsStarred)
+            //            {
+            //                Topics.Replace("Starred: True", "Starred: False");
+            //                tag.Value.Add(new TagOptionValue("Starred", "..\\Images\\Starred.png"));
+            //            }
+            //            else
+            //            {
+            //                Topics.Replace("Starred: False", "Starred: True");
+            //                tag.Value.Add(new TagOptionValue("Unstarred", "..\\Images\\Unstarred.png"));
+            //            }
+            //        }
+            //    }
+            //}
             var submissionsPanel = NotebookPagesPanelViewModel.GetSubmissionsPanelViewModel();
             submissionsPanel.SubmissionPages.Remove(Page);
             submissionsPanel.SubmissionPages.Add(Page);
@@ -335,11 +342,5 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnShowTagsCommandExecute(MouseEventArgs e) { }
 
         #endregion //Commands
-
-        #region Methods
-
-        public void initializeTags() { }
-
-        #endregion //Methods
     }
 }
