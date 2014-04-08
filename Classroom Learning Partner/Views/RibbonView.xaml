@@ -123,7 +123,7 @@
 
             <RibbonGroup Header="Notebook">
 
-                <RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/OpenNotebook32.png"
+                <!--RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/OpenNotebook32.png"
                                     SmallImageSource="pack://application:,,,/Resources/Images/OpenNotebook16.png"
                                     IsChecked="{Binding SideBarVisibility}"
                                     IsEnabled="{Binding MainWindow.SelectedWorkspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}">
@@ -140,8 +140,23 @@
                             </Style.Triggers>
                         </Style>
                     </RibbonToggleButton.Style>
-                </RibbonToggleButton>
+                </RibbonToggleButton-->
 
+                <RibbonToggleButton Label="Notebook Pages" 
+                              LargeImageSource="pack://application:,,,/Resources/Images/OpenNotebook32.png"
+                              SmallImageSource="pack://application:,,,/Resources/Images/OpenNotebook16.png"
+                              IsChecked="{Binding NotebookPagesPanelVisibility}"
+                              Visibility="{Binding InstructorVisibility}" />
+                <!--RibbonToggleButton Label="Student Work" 
+                              LargeImageSource="pack://application:,,,/Resources/Images/GroupSubmit32.png" 
+                              SmallImageSource="pack://application:,,,/Resources/Images/GroupSubmit16.png" 
+                              IsChecked="{Binding StudentWorkPanelVisibility}"
+                              Visibility="{Binding InstructorVisibility}" /-->
+                <RibbonToggleButton Label="Progress Panel" 
+                              LargeImageSource="pack://application:,,,/Resources/Images/Clipboard32.png" 
+                              IsChecked="{Binding ProgressPanelVisibility}"
+                              Visibility="{Binding InstructorVisibility}" />
+                
                 <RibbonButton Label="Hide Submissions" 
                               LargeImageSource="pack://application:,,,/Resources/Images/HideSubmissionsButton50x25.png" 
                               Command="{Binding HideSubmissionsPanelCommand}"

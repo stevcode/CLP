@@ -360,13 +360,35 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public bool SideBarVisibility
+        public bool NotebookPagesPanelVisibility
         {
-            get { return GetValue<bool>(SideBarVisibilityProperty); }
-            set { SetValue(SideBarVisibilityProperty, value); }
+            get { return GetValue<bool>(NotebookPagesPanelVisibilityProperty); }
+            set { SetValue(NotebookPagesPanelVisibilityProperty, value); }
         }
 
-        public static readonly PropertyData SideBarVisibilityProperty = RegisterProperty("SideBarVisibility", typeof(bool), true);
+        public static readonly PropertyData NotebookPagesPanelVisibilityProperty = RegisterProperty("NotebookPagesPanelVisibility", typeof(bool), true);
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool StudentWorkPanelVisibility
+        {
+            get { return GetValue<bool>(StudentWorkPanelVisibilityProperty); }
+            set { SetValue(StudentWorkPanelVisibilityProperty, value); }
+        }
+
+        public static readonly PropertyData StudentWorkPanelVisibilityProperty = RegisterProperty("StudentWorkPanelVisibility", typeof(bool), false);
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public bool ProgressPanelVisibility
+        {
+            get { return GetValue<bool>(ProgressPanelVisibilityProperty); }
+            set { SetValue(ProgressPanelVisibilityProperty, value); }
+        }
+
+        public static readonly PropertyData ProgressPanelVisibilityProperty = RegisterProperty("ProgressPanelVisibility", typeof(bool), false);
 
         /// <summary>
         /// Gets or sets the property value.
@@ -1197,6 +1219,36 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //File Menu
 
         #region Notebook Commands
+
+        /// <summary>
+        /// Switches to the Notebook Pages panel
+        /// </summary>
+        public Command ShowNotebookPagesPanelViewCommand { get; private set; }
+
+        private void OnShowNotebookPagesPanelViewCommandExecute()
+        {
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel != null)
+            {
+                notebookWorkspaceViewModel.LeftPanel = notebookWorkspaceViewModel.NotebookPagesPanel;
+                notebookWorkspaceViewModel.NotebookPagesPanel.IsVisible = true;
+            }
+        }
+
+        /// <summary>
+        /// Switches to the Progress panel
+        /// </summary>
+        public Command ShowProgressPanelViewCommand { get; private set; }
+
+        private void OnShowProgressPanelViewCommandExecute()
+        {
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel != null)
+            {
+                notebookWorkspaceViewModel.LeftPanel = notebookWorkspaceViewModel.ProgressPanel;
+                notebookWorkspaceViewModel.ProgressPanel.IsVisible = true;
+            }
+        }
 
         /// <summary>
         /// Hides the Submissions Panel.

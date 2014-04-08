@@ -1,4 +1,5 @@
-﻿using Classroom_Learning_Partner.ViewModels;
+﻿using System;
+using Classroom_Learning_Partner.ViewModels;
 
 namespace Classroom_Learning_Partner.Views
 {
@@ -13,6 +14,12 @@ namespace Classroom_Learning_Partner.Views
         public NotebookPagesPanelView()
         {
             InitializeComponent();
+            DataContextChanged += NotebookPagesPanelView_DataContextChanged;
+        }
+
+        void NotebookPagesPanelView_DataContextChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
+        {
+            Console.WriteLine("notebookpagespanelview datacontext changed.");
         }
 
         protected override System.Type GetViewModelType()
