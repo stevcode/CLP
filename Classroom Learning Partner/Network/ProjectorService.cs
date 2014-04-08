@@ -217,7 +217,7 @@ namespace Classroom_Learning_Partner
 
             var mirrorDisplay = notebookWorkspaceViewModel.CurrentDisplay as CLPMirrorDisplay;
             var mirrorDisplayViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(mirrorDisplay);
-            var mirrorDisplayView = CLPServiceAgent.Instance.GetViewFromViewModel(mirrorDisplayViewModels.FirstOrDefault()) as MirrorDisplayView;
+            var mirrorDisplayView = CLPServiceAgent.Instance.GetViewFromViewModel(mirrorDisplayViewModels.FirstOrDefault()) as SingleDisplayView;
 
             if(mirrorDisplayView == null)
             {

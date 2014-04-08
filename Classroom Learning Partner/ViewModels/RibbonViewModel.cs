@@ -829,7 +829,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //                                 };
             //        currentDisplayView.UpdateLayout();
             //        var gridDisplay = display as CLPGridDisplay;
-            //        var displayIndex = gridDisplay != null ? gridDisplay.DisplayIndex : 0;
+            //        var displayIndex = gridDisplay != null ? gridDisplay.DisplayNumber : 0;
 
             //        var grid = new Grid();
             //        grid.Children.Add(currentDisplayView);

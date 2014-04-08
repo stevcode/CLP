@@ -8,14 +8,8 @@ namespace Classroom_Learning_Partner.Views
     /// </summary>
     public partial class GridDisplayView
     {
-        public GridDisplayView()
-        {
-            InitializeComponent();
-        }
+        public GridDisplayView() { InitializeComponent(); }
 
-        protected override Type GetViewModelType()
-        {
-            return typeof(GridDisplayViewModel);
-        }
+        protected override Type GetViewModelType() { return typeof(GridDisplayViewModel); }
     }
 }

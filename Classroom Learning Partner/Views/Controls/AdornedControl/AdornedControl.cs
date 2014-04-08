@@ -502,7 +502,7 @@ namespace AdornedControl
             {
                 if(_adornerLayer == null)
                 {
-                    UserControl linkedDisplay = this.GetAncestorObject<MirrorDisplayView>(); //GetLinkedDisplayView(this);
+                    UserControl linkedDisplay = this.GetAncestorObject<SingleDisplayView>(); //GetLinkedDisplayView(this);
                     if (linkedDisplay != null)
                     {
                         _adornerLayer = AdornerLayer.GetAdornerLayer(linkedDisplay);

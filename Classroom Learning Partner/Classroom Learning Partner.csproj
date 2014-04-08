@@ -239,7 +239,7 @@
     <Compile Include="ViewModels\PageObjects\CLPFuzzyFactorCardRemainderViewModel.cs" />
     <Compile Include="ViewModels\Pages\CLPAnimationPageViewModel.cs" />
     <Compile Include="ViewModels\Pages\CLPPageViewModel.cs" />
-    <Compile Include="ViewModels\Displays\MirrorDisplayViewModel.cs" />
+    <Compile Include="ViewModels\Displays\SingleDisplayViewModel.cs" />
     <Compile Include="ViewModels\HoverBoxViewModel.cs" />
     <Compile Include="ViewModels\Math\ProductRelationViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPAggregationDataTableViewModel.cs" />
@@ -325,11 +325,11 @@
     <Compile Include="Views\Displays\GridDisplayPreviewView.xaml.cs">
       <DependentUpon>GridDisplayPreviewView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Displays\MirrorDisplayPreviewView.xaml.cs">
-      <DependentUpon>MirrorDisplayPreviewView.xaml</DependentUpon>
+    <Compile Include="Views\Displays\SingleDisplayPreviewView.xaml.cs">
+      <DependentUpon>SingleDisplayPreviewView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Displays\MirrorDisplayView.xaml.cs">
-      <DependentUpon>MirrorDisplayView.xaml</DependentUpon>
+    <Compile Include="Views\Displays\SingleDisplayView.xaml.cs">
+      <DependentUpon>SingleDisplayView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\HoverBoxView.xaml.cs">
       <DependentUpon>HoverBoxView.xaml</DependentUpon>
@@ -512,11 +512,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Displays\MirrorDisplayPreviewView.xaml">
+    <Page Include="Views\Displays\SingleDisplayPreviewView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Displays\MirrorDisplayView.xaml">
+    <Page Include="Views\Displays\SingleDisplayView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

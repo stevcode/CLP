@@ -3,15 +3,9 @@
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views">
-    <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Resources/CLPBrushes.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </UserControl.Resources>
 
-    <ItemsControl Background="{StaticResource GrayBackgroundColor}" ItemsSource="{Binding Pages}">
+    <ItemsControl Background="{StaticResource GrayBackgroundColor}"
+                  ItemsSource="{Binding Pages}">
 
         <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
@@ -21,10 +15,14 @@
 
         <ItemsControl.ItemTemplate>
             <DataTemplate>
-                <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <Border BorderThickness="1" BorderBrush="{StaticResource GrayBorderColor}" Margin="2">
+                <Grid HorizontalAlignment="Center"
+                      VerticalAlignment="Center">
+                    <Border BorderThickness="1"
+                            BorderBrush="{StaticResource GrayBorderColor}"
+                            Margin="2">
                         <views:CLPPagePreviewView DataContext="{Binding}"
-                                                  HorizontalAlignment="Right" VerticalAlignment="Top" />
+                                                  HorizontalAlignment="Right"
+                                                  VerticalAlignment="Top" />
                     </Border>
                 </Grid>
             </DataTemplate>

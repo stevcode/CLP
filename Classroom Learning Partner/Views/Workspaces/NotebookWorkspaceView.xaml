@@ -121,7 +121,7 @@
             <Control.Resources>
 
                 <ControlTemplate x:Key="SingleDisplayTemplate">
-                    <views:MirrorDisplayView DataContext="{Binding SelectedDisplay}" />
+                    <views:SingleDisplayView DataContext="{Binding SelectedDisplay}" />
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="GridDisplayTemplate">

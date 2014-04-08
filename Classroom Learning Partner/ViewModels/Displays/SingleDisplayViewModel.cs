@@ -2,24 +2,31 @@
 using System.Windows.Controls;
 using Catel.Data;
 using Catel.MVVM;
-using CLP.Models;
+using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
     [InterestedIn(typeof(CLPPageViewModel))]
     [InterestedIn(typeof(CLPAnimationPageViewModel))]
-    public class MirrorDisplayViewModel : ViewModelBase
+    public class SingleDisplayViewModel : ViewModelBase
     {
+        #region Constructor
+
         /// <summary>
-        /// Initializes a new instance of the MirrorDisplayViewModel class.
+        /// Initializes a new instance of the SingleDisplayViewModel class.
         /// </summary>
-        public MirrorDisplayViewModel(CLPMirrorDisplay mirrorDisplay)
+        public SingleDisplayViewModel(SingleDisplay singleDisplay)
         {
-            MirrorDisplay = mirrorDisplay;
+            SingleDisplay = singleDisplay;
             PageScrollCommand = new Command<ScrollChangedEventArgs>(OnPageScrollCommandExecute);
         }
 
-        public override string Title { get { return "MirrorDisplayVM"; } }
+        public override string Title
+        {
+            get { return "SingleDisplayVM"; }
+        }
+
+        #endregion //Constructor
 
         #region Model
 
@@ -27,52 +34,54 @@ namespace Classroom_Learning_Partner.ViewModels
         /// The Model for this ViewModel.
         /// </summary>
         [Model(SupportIEditableObject = false)]
-        public CLPMirrorDisplay MirrorDisplay
+        public SingleDisplay SingleDisplay
         {
-            get { return GetValue<CLPMirrorDisplay>(MirrorDisplayProperty); }
-            set { SetValue(MirrorDisplayProperty, value); }
+            get { return GetValue<SingleDisplay>(SingleDisplayProperty); }
+            set { SetValue(SingleDisplayProperty, value); }
         }
 
-        public static readonly PropertyData MirrorDisplayProperty = RegisterProperty("SingleDisplay", typeof(CLPMirrorDisplay));
+        public static readonly PropertyData SingleDisplayProperty = RegisterProperty("SingleDisplay", typeof(SingleDisplay));
 
         /// <summary>
         /// A property mapped to a property on the Model SingleDisplay.
         /// </summary>
         [ViewModelToModel("SingleDisplay")]
-        public ICLPPage CurrentPage
+        public CLPPage CurrentPage
         {
-            get { return GetValue<ICLPPage>(CurrentPageProperty); }
+            get { return GetValue<CLPPage>(CurrentPageProperty); }
             set { SetValue(CurrentPageProperty, value); }
         }
 
-        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(ICLPPage), null, OnCurrentPageChanged);
+        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage), null, OnCurrentPageChanged);
 
         private static void OnCurrentPageChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
         {
             var displayPanel = DisplayListPanelViewModel.GetDisplayListPanelViewModel();
-            var mirrorDisplayViewModel = sender as MirrorDisplayViewModel;
-            if(mirrorDisplayViewModel == null || displayPanel == null)
+            var mirrorDisplayViewModel = sender as SingleDisplayViewModel;
+            if(mirrorDisplayViewModel == null ||
+               displayPanel == null)
             {
                 return;
             }
 
             mirrorDisplayViewModel.OnPageResize();
 
-            if(!App.MainWindowViewModel.Ribbon.IsProjectorOn || App.Network.ProjectorProxy == null)
-            {
-                return;
-            }
+            // TODO: Entities
+            //if(!App.MainWindowViewModel.Ribbon.IsProjectorOn || App.Network.ProjectorProxy == null)
+            //{
+            //    return;
+            //}
 
-            var pageID = mirrorDisplayViewModel.CurrentPage.SubmissionType != SubmissionType.None ? mirrorDisplayViewModel.CurrentPage.SubmissionID : mirrorDisplayViewModel.CurrentPage.UniqueID;
+            //var pageID = mirrorDisplayViewModel.CurrentPage.SubmissionType != SubmissionType.None ? mirrorDisplayViewModel.CurrentPage.SubmissionID : mirrorDisplayViewModel.CurrentPage.UniqueID;
 
-            try
-            {
-                App.Network.ProjectorProxy.AddPageToDisplay(pageID);
-            }
-            catch(Exception)
-            {
+            //try
+            //{
+            //    App.Network.ProjectorProxy.AddPageToDisplay(pageID);
+            //}
+            //catch(Exception)
+            //{
 
-            }
+            //}
         }
 
         #endregion //Model
@@ -178,23 +187,24 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnPageScrollCommandExecute(ScrollChangedEventArgs e)
         {
-            if(App.CurrentUserMode != App.UserMode.Instructor || App.Network.ProjectorProxy == null || !App.MainWindowViewModel.Ribbon.IsProjectorOn)
-            {
-                return;
-            }
+            // TODO: Entities
+            //if(App.CurrentUserMode != App.UserMode.Instructor || App.Network.ProjectorProxy == null || !App.MainWindowViewModel.Ribbon.IsProjectorOn)
+            //{
+            //    return;
+            //}
 
-            var submissionID = CurrentPage.SubmissionType != SubmissionType.None ? CurrentPage.SubmissionID : "";
-            try
-            {
-                //TODO: Steve - Make the offset a percentage and convert back on receive. If
-                //Instructor and Projector are on different screen sizes, they don't have the
-                //same vertical offsets.
-                App.Network.ProjectorProxy.ScrollPage(CurrentPage.UniqueID, submissionID, e.VerticalOffset);
-            }
-            catch(Exception)
-            {
+            //var submissionID = CurrentPage.SubmissionType != SubmissionType.None ? CurrentPage.SubmissionID : "";
+            //try
+            //{
+            //    //TODO: Steve - Make the offset a percentage and convert back on receive. If
+            //    //Instructor and Projector are on different screen sizes, they don't have the
+            //    //same vertical offsets.
+            //    App.Network.ProjectorProxy.ScrollPage(CurrentPage.UniqueID, submissionID, e.VerticalOffset);
+            //}
+            //catch(Exception)
+            //{
 
-            }
+            //}
         }
 
         #endregion //Commands
@@ -203,10 +213,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
         {
-            if(propertyName == "PageHeight")
+            if(propertyName == "Height")
             {
                 var pageViewModel = viewModel as ACLPPageBaseViewModel;
-                if(pageViewModel != null && pageViewModel.Page.UniqueID == CurrentPage.UniqueID)
+                if(pageViewModel != null &&
+                   pageViewModel.Page.ID == CurrentPage.ID)
                 {
                     OnPageResize();
                 }
@@ -217,9 +228,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnPageResize()
         {
-            var pageAspectRatio = CurrentPage.InitialPageAspectRatio;
-            var pageHeight = CurrentPage.PageHeight;
-            var pageWidth = CurrentPage.PageWidth;
+            var pageAspectRatio = CurrentPage.InitialAspectRatio;
+            var pageHeight = CurrentPage.Height;
+            var pageWidth = CurrentPage.Width;
             var scrolledAspectRatio = pageWidth / pageHeight;
             const double PAGE_MARGIN = 10.0;
 
