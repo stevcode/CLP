@@ -30,6 +30,8 @@ namespace Classroom_Learning_Partner.ViewModels
     /// </summary>
     public class RibbonViewModel : ViewModelBase
     {
+        //TODO Liz Move handedness variable somewhere else
+        public bool IsRightHanded { get { return true; } }
         public MainWindowViewModel MainWindow
         {
             get { return App.MainWindowViewModel; }
@@ -2745,14 +2747,12 @@ namespace Classroom_Learning_Partner.ViewModels
                         array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
                         (array as CLPFuzzyFactorCard).IsRemainderRegionDisplayed = true;
                         break;
-                    case "SNAPADORNERONRIGHT":
-                        array = new CLPArray(rows, columns, currentPage);
-                        array.IsDivisionBehaviorOn = true;
-                        array.IsSnapAdornerOnLeft = false;
-                        break;
                     default:
                         array = new CLPArray(rows, columns, currentPage);
-                        array.IsDivisionBehaviorOn = true;
+                        array.IsDivisionBehaviorOn = false;
+                        //TODO Liz - uncomment and delete above after trial
+                        //array.IsDivisionBehaviorOn = !(onlyArray is CLPFuzzyFactorCard);
+                        array.IsSnapAdornerOnLeft = !IsRightHanded;
                         break;
                 }
 
@@ -3025,15 +3025,12 @@ namespace Classroom_Learning_Partner.ViewModels
                         array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
                         (array as CLPFuzzyFactorCard).IsRemainderRegionDisplayed = true;
                         break;
-                    case "SNAPADORNERONRIGHT":
-                        array = new CLPArray(rows, columns, currentPage);
-                        array.IsDivisionBehaviorOn = true;
-                        array.IsSnapAdornerOnLeft = false;
-                        break;
                     default:
                         array = new CLPArray(rows, columns, currentPage);
-                        array.IsDivisionBehaviorOn = true;
-                        array.IsSnapAdornerOnLeft = true;
+                        array.IsDivisionBehaviorOn = false;
+                        //TODO Liz - uncomment and delete above after trial
+                        //array.IsDivisionBehaviorOn = !(onlyArray is CLPFuzzyFactorCard);
+                        array.IsSnapAdornerOnLeft = !IsRightHanded;
                         break;
                 }
                 if(isHorizontallyAligned)

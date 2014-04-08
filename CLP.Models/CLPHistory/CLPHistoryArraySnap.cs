@@ -183,6 +183,20 @@ namespace CLP.Models
 
             persistingArray.IsDivisionBehaviorOn = PersistingArrayDivisionBehavior;
             persistingArray.SizeArrayToGridLevel(persistingArraySquareSize, false);
+
+            //If FFC with remainder on page, update
+            //TODO: This shouldn't be here, find more appropriate place.
+            foreach(var pageObject in ParentPage.PageObjects)
+            {
+                if(pageObject is CLPFuzzyFactorCard)
+                {
+                    if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
+                    {
+                        (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
+                        break;
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -213,6 +227,20 @@ namespace CLP.Models
 
             persistingArray.IsDivisionBehaviorOn = true;
             persistingArray.SizeArrayToGridLevel(persistingArraySquareSize, false);
+
+            //If FFC with remainder on page, update
+            //TODO: This shouldn't be here, find more appropriate place.
+            foreach(var pageObject in ParentPage.PageObjects)
+            {
+                if(pageObject is CLPFuzzyFactorCard)
+                {
+                    if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
+                    {
+                        (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
+                        break;
+                    }
+                }
+            }
         }
 
         private void RestoreDivisions(CLPArray persistingArray)

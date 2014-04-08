@@ -823,6 +823,20 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
             closestPersistingArray.AcceptObjects(addObjects, removeObjects);
+
+            //If FFC with remainder on page, update
+            foreach(var pageObject in PageObject.ParentPage.PageObjects)
+            {
+                if(pageObject is CLPFuzzyFactorCard)
+                {
+                    (pageObject as CLPFuzzyFactorCard).AnalyzeArrays();
+                    if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
+                    {
+                        (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
+                        break;
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -868,6 +882,20 @@ namespace Classroom_Learning_Partner.ViewModels
             var initYPos = PageObject.YPosition;
             (PageObject as CLPArray).RotateArray();
             ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryArrayRotate(PageObject.ParentPage, PageObject.UniqueID, initXPos, initYPos));
+
+            //If FFC with remainder on page, update
+            foreach(var pageObject in PageObject.ParentPage.PageObjects)
+            {
+                if(pageObject is CLPFuzzyFactorCard)
+                {
+                    (pageObject as CLPFuzzyFactorCard).AnalyzeArrays();
+                    if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
+                    {
+                        (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
+                        break;
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -1181,6 +1209,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 if(pageObject is CLPFuzzyFactorCard)
                 {
+                    (pageObject as CLPFuzzyFactorCard).AnalyzeArrays();
                     if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
                     {
                         (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
