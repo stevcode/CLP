@@ -2182,14 +2182,10 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command InsertTextBoxCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the InsertTextBoxCommand command is executed.
-        /// </summary>
         private void OnInsertTextBoxCommandExecute()
         {
-            // TODO: Entities
-            //var textBox = new CLPTextBox(((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as SingleDisplay).CurrentPage);
-            //ACLPPageBaseViewModel.AddPageObjectToPage(textBox);
+            var textBox = new CLPTextBox(((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as SingleDisplay).CurrentPage, string.Empty);
+            ACLPPageBaseViewModel.AddPageObjectToPage(textBox);
         }
 
         /// <summary>

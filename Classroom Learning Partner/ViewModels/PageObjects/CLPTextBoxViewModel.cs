@@ -1,5 +1,4 @@
-﻿using System.Windows;
-using Catel.Data;
+﻿using Catel.Data;
 using Catel.MVVM;
 using CLP.Entities;
 
@@ -7,12 +6,12 @@ namespace Classroom_Learning_Partner.ViewModels
 {
     public class CLPTextBoxViewModel : APageObjectBaseViewModel
     {
-        public CLPTextBoxViewModel(CLPTextBox textBox)
-        {
-            PageObject = textBox;
-        }
+        public CLPTextBoxViewModel(CLPTextBox textBox) { PageObject = textBox; }
 
-        public override string Title { get { return "TextBoxVM"; } }
+        public override string Title
+        {
+            get { return "TextBoxVM"; }
+        }
 
         /// <summary>
         /// Gets or sets the property value.
@@ -33,11 +32,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 IsMouseOverShowEnabled = true;
                 return false;
             }
-            else
-            {
-                IsMouseOverShowEnabled = false;
-                return true;
-            }
+            IsMouseOverShowEnabled = false;
+            return true;
         }
     }
 }

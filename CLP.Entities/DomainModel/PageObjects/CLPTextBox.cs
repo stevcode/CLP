@@ -9,15 +9,15 @@ namespace CLP.Entities
         #region Constructors
 
         /// <summary>
-        /// Initializes <see cref="TextBox" /> from scratch.
+        /// Initializes <see cref="CLPTextBox" /> from scratch.
         /// </summary>
         public CLPTextBox() { }
 
         /// <summary>
-        /// Initializes <see cref="TextBox" /> from <see cref="string" />.
+        /// Initializes <see cref="CLPTextBox" /> from <see cref="string" />.
         /// </summary>
-        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="TextBox" /> belongs to.</param>
-        /// <param name="text">The RTF formatted text of the <see cref="TextBox" /></param>
+        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="CLPTextBox" /> belongs to.</param>
+        /// <param name="text">The RTF formatted text of the <see cref="CLPTextBox" /></param>
         public CLPTextBox(CLPPage parentPage, string text)
             : base(parentPage)
         {
@@ -29,7 +29,7 @@ namespace CLP.Entities
         }
 
         /// <summary>
-        /// Initializes <see cref="TextBox" /> based on <see cref="SerializationInfo" />.
+        /// Initializes <see cref="CLPTextBox" /> based on <see cref="SerializationInfo" />.
         /// </summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext" />.</param>
@@ -41,7 +41,7 @@ namespace CLP.Entities
         #region Properties
 
         /// <summary>
-        /// The RTF formatted text of the <see cref="TextBox" />.
+        /// The RTF formatted text of the <see cref="CLPTextBox" />.
         /// </summary>
         public string Text
         {
