@@ -1,5 +1,8 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using Catel.Data;
 using Catel.MVVM;
@@ -219,6 +222,16 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Static Methods
 
+        public static List<string> AvailableNotebookNames
+        {
+            get
+            {
+                // TODO: DATABASE - Attempt to grab names from database
+                var directoryInfo = new DirectoryInfo(App.NotebookCacheDirectory);
+                return directoryInfo.GetDirectories().Select(directory => directory.Name).ToList();
+            }
+        }
+
         public static void CreateNewNotebook()
         {
             var nameChooserLoop = true;
@@ -258,6 +271,99 @@ namespace Classroom_Learning_Partner.ViewModels
                     nameChooserLoop = false;
                 }
             }
+        }
+
+        public static void OpenNotebook(string notebookName, bool forceCache = false, bool forceDatabase = false)
+        {
+
+            var filePath = App.LocalCacheDirectory + @"\" + notebookName + @".clp";
+            if(!File.Exists(filePath))
+            {
+                return;
+            }
+
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
+            Notebook notebook = null;
+
+            // TODO: Entities
+            //try
+            //{
+            //    notebook = ModelBase.Load<CLPNotebook>(filePath, SerializationMode.Binary);
+            //}
+            //catch(Exception ex)
+            //{
+            //    Logger.Instance.WriteToLog("[ERROR] - Notebook could not be loaded: " + ex.Message);
+            //}
+
+            //stopWatch.Stop();
+            //Logger.Instance.WriteToLog("Time to OPEN notebook (In Seconds): " + stopWatch.ElapsedMilliseconds / 1000.0);
+
+            //if(notebook == null)
+            //{
+            //    MessageBox.Show("Notebook could not be opened. Check error log.");
+            //    return;
+            //}
+
+
+            //var stopWatch2 = new Stopwatch();
+            //stopWatch2.Start();
+
+            //notebook.NotebookName = notebookName;
+            //App.MainWindowViewModel.CurrentNotebookName = notebookName;
+
+            //foreach(var page in notebook.Pages)
+            //{
+            //    ACLPPageBase.Deserialize(page);
+            //    if(!notebook.Submissions.ContainsKey(page.UniqueID))
+            //    {
+            //        continue;
+            //    }
+            //    foreach(var submission in notebook.Submissions[page.UniqueID])
+            //    {
+            //        ACLPPageBase.Deserialize(submission);
+            //    }
+            //}
+
+            //stopWatch2.Stop();
+            //Logger.Instance.WriteToLog("Time to DESERIALIZE PAGES in notebook (In Seconds): " + stopWatch2.ElapsedMilliseconds / 1000.0);
+
+            //var stopWatch3 = new Stopwatch();
+            //stopWatch3.Start();
+
+            //notebook.InitializeAfterDeserialize();
+
+            //stopWatch3.Stop();
+            //Logger.Instance.WriteToLog("Time to INITIALIZE notebook (In Seconds): " + stopWatch3.ElapsedMilliseconds / 1000.0);
+
+            //var count = 0;
+            //foreach(var otherNotebook in App.MainWindowViewModel.OpenNotebooks.Where(otherNotebook => otherNotebook.UniqueID == notebook.UniqueID && otherNotebook.NotebookName == notebook.NotebookName)) 
+            //{
+            //    App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(otherNotebook);
+            //    count++;
+            //    break;
+            //}
+
+            //if(count == 0)
+            //{
+            //    App.MainWindowViewModel.OpenNotebooks.Add(notebook);
+            //    if(App.CurrentUserMode == App.UserMode.Instructor ||
+            //       App.CurrentUserMode == App.UserMode.Student ||
+            //       App.CurrentUserMode == App.UserMode.Projector)
+            //    {
+            //        App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(notebook);
+            //    }
+            //}
+
+            //if(notebook.LastSavedTime != null)
+            //{
+            //    App.MainWindowViewModel.LastSavedTime = notebook.LastSavedTime.ToString("yyyy/MM/dd - HH:mm:ss");
+            //}
+
+            //if(App.CurrentUserMode == App.UserMode.Student)
+            //{
+            //    // _autoSaveTimer.Start();
+            //}
         }
 
         #endregion //Static Methods

@@ -10,10 +10,11 @@
              ScrollViewer.HorizontalScrollBarVisibility="Hidden">
         <ListBox.ItemTemplate>
             <DataTemplate>
-                <Button Command="{Binding DataContext.SelectNotebookCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:NotebookChooserWorkspaceView}}}"
-                        CommandParameter="{Binding}"
-                        Height="90"
-                        Width="200">
+                <Button
+                    Command="{Binding DataContext.SelectNotebookCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:NotebookChooserWorkspaceView}}}"
+                    CommandParameter="{Binding}"
+                    Height="90"
+                    Width="200">
                     <DockPanel LastChildFill="True">
                         <Label DockPanel.Dock="Bottom"
                                Height="30"
@@ -30,8 +31,8 @@
         </ListBox.ItemTemplate>
         <ListBox.ItemsPanel>
             <ItemsPanelTemplate>
-                <WrapPanel  Margin="20"
-                            Width="{Binding ElementName=NotebookChooserControl,Path=ActualWidth}" />
+                <WrapPanel Margin="20"
+                           Width="{Binding ElementName=NotebookChooserControl,Path=ActualWidth}" />
             </ItemsPanelTemplate>
         </ListBox.ItemsPanel>
     </ListBox>

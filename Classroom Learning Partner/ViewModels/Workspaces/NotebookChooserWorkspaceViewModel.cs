@@ -15,7 +15,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             SelectNotebookCommand = new Command<string>(OnSelectNotebookCommandExecute);
 
-            CLPServiceAgent.Instance.GetNotebookNames(this);
+            NotebookNames = new ObservableCollection<string>(MainWindowViewModel.AvailableNotebookNames);
         }
 
         public override string Title
@@ -26,6 +26,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
+        // TODO: DATABASE - Use List of some Class that includes creation date, last saved date, whether it's from Cache or Database
         public ObservableCollection<string> NotebookNames
         {
             get { return GetValue<ObservableCollection<string>>(NotebookNamesProperty); }
@@ -43,7 +44,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             var stopWatch = new Stopwatch();
             stopWatch.Start();
-            PleaseWaitHelper.Show(() => CLPServiceAgent.Instance.OpenNotebook(notebookName), null, "Loading Notebook");
+            PleaseWaitHelper.Show(() => MainWindowViewModel.OpenNotebook(notebookName), null, "Loading Notebook");
             stopWatch.Stop();
             Logger.Instance.WriteToLog("Time to LOAD notebook (In Seconds): " + stopWatch.ElapsedMilliseconds / 1000.0);
         }

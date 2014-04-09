@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using Catel.Data;
@@ -160,26 +161,43 @@ namespace CLP.Entities
         public void AddCLPPageToNotebook(CLPPage page)
         {
             page.NotebookID = ID;
+            page.PageNumber = Pages.Any() ? Pages.Last().PageNumber + 1 : 1;
+
             Pages.Add(page);
             SingleDisplay.AddPageToDisplay(page);
             //GenerateSubmissionViews(page.ID);
-            //GeneratePageIndexes();
         }
 
         public void AddDisplayToNotebook(IDisplay display)
         {
             display.NotebookID = ID;
+            display.DisplayNumber = Displays.Any() ? Displays.Last().DisplayNumber + 1 : 1;
             Displays.Add(display);
-            //GenerageDisplayIndexes();
         }
 
         public void InsertPageAt(int index, CLPPage page)
         {
             page.NotebookID = ID;
+
+            if(index != 0)
+            {
+                var previousPage = Pages.ElementAtOrDefault(index - 1);
+                if(previousPage != null)
+                {
+                    page.PageNumber = previousPage.PageNumber + 1;
+                }
+            }
+            // TODO: Else Load previous page from Cache/Database if exists
+
             Pages.Insert(index, page);
             SingleDisplay.AddPageToDisplay(page);
             //GenerateSubmissionViews(page.UniqueID);
             //GeneratePageIndexes();
+
+            for(var i = index + 1; i < Pages.Count; i++)
+            {
+                Pages[i].PageNumber++;
+            }
         }
 
         public void RemovePageAt(int index)
