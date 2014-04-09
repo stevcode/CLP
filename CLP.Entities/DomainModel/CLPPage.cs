@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
@@ -390,5 +391,25 @@ namespace CLP.Entities
         }
 
         #endregion //Methods
+
+        #region Cache
+
+        public void ToXML(string fileName)
+        {
+            var fileInfo = new FileInfo(fileName);
+            if (!Directory.Exists(fileInfo.DirectoryName))
+            {
+                Directory.CreateDirectory(fileInfo.DirectoryName);
+            }
+
+            using (Stream stream = new FileStream(fileName, FileMode.Create))
+            {
+                var xmlSerializer = SerializationFactory.GetXmlSerializer();
+                xmlSerializer.Serialize(this, stream);
+                ClearIsDirtyOnAllChilds();
+            }
+        }
+
+        #endregion //Cache
     }
 }

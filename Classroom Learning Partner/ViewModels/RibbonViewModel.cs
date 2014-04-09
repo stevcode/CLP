@@ -716,12 +716,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnSaveNotebookCommandExecute()
         {
-            // TODO: Entities
-            //if(App.MainWindowViewModel.Workspace is NotebookWorkspaceViewModel)
-            //{
-            //    Catel.Windows.PleaseWaitHelper.Show(() =>
-            //        CLPServiceAgent.Instance.SaveNotebook((App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).Notebook), null, "Saving Notebook", 0.0 / 0.0);
-            //}
+            if(App.MainWindowViewModel.Workspace is NotebookWorkspaceViewModel)
+            {
+                Catel.Windows.PleaseWaitHelper.Show(() =>
+                    MainWindowViewModel.SaveNotebook((App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).Notebook), null, "Saving Notebook");
+            }
         }
 
         /// <summary>

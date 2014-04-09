@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
@@ -35,7 +36,10 @@ namespace Classroom_Learning_Partner.ViewModels
             TitleBarText = CLP_TEXT;
         }
 
-        public override string Title { get { return "MainWindowVM"; } }
+        public override string Title
+        {
+            get { return "MainWindowVM"; }
+        }
 
         private void InitializeCommands()
         {
@@ -152,7 +156,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public void SetWorkspace()
         {
             IsAuthoring = false;
-            switch (App.CurrentUserMode)
+            switch(App.CurrentUserMode)
             {
                 case App.UserMode.Server:
                     break;
@@ -179,7 +183,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnSetUserModeCommandExecute(string userMode)
         {
-            switch (userMode)
+            switch(userMode)
             {
                 case "INSTRUCTOR":
                     App.CurrentUserMode = App.UserMode.Instructor;
@@ -203,20 +207,14 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command ToggleDebugCommand { get; private set; }
 
-        private void OnToggleDebugCommandExecute()
-        {
-            Ribbon.DebugTabVisibility = Ribbon.DebugTabVisibility == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
-        }
+        private void OnToggleDebugCommandExecute() { Ribbon.DebugTabVisibility = Ribbon.DebugTabVisibility == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed; }
 
         /// <summary>
         /// Toggles Extras Tab.
         /// </summary>
         public Command ToggleExtrasCommand { get; private set; }
 
-        private void OnToggleExtrasCommandExecute()
-        {
-            Ribbon.ExtrasTabVisibility = Ribbon.ExtrasTabVisibility == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
-        }
+        private void OnToggleExtrasCommandExecute() { Ribbon.ExtrasTabVisibility = Ribbon.ExtrasTabVisibility == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed; }
 
         #endregion //Commands
 
@@ -238,7 +236,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
             while(nameChooserLoop)
             {
-                var nameChooser = new NotebookNamerWindowView {Owner = Application.Current.MainWindow};
+                var nameChooser = new NotebookNamerWindowView
+                                  {
+                                      Owner = Application.Current.MainWindow
+                                  };
                 nameChooser.ShowDialog();
                 if(nameChooser.DialogResult == true)
                 {
@@ -247,12 +248,14 @@ namespace Classroom_Learning_Partner.ViewModels
                     var folderPath = Path.Combine(App.NotebookCacheDirectory, notebookName);
                     if(!Directory.Exists(folderPath))
                     {
-                        Directory.CreateDirectory(folderPath);
-                        var newNotebook = new Notebook {Name = notebookName};
+                      //  Directory.CreateDirectory(folderPath);
+                        var newNotebook = new Notebook
+                                          {
+                                              Name = notebookName
+                                          };
                         var newPage = new CLPPage();
                         newNotebook.AddCLPPageToNotebook(newPage);
-                        var filePath = Path.Combine(folderPath, "notebook.xml");
-                        newNotebook.ToXML(filePath);
+                        SaveNotebook(newNotebook);
 
                         App.MainWindowViewModel.OpenNotebooks.Add(newNotebook);
                         App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(newNotebook);
@@ -275,8 +278,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static void OpenNotebook(string notebookName, bool forceCache = false, bool forceDatabase = false)
         {
-
-            var filePath = App.LocalCacheDirectory + @"\" + notebookName + @".clp";
+            var filePath = Path.Combine(App.NotebookCacheDirectory, notebookName, "notebook.xml");
             if(!File.Exists(filePath))
             {
                 return;
@@ -286,31 +288,32 @@ namespace Classroom_Learning_Partner.ViewModels
             stopWatch.Start();
             Notebook notebook = null;
 
-            // TODO: Entities
-            //try
-            //{
-            //    notebook = ModelBase.Load<CLPNotebook>(filePath, SerializationMode.Binary);
-            //}
-            //catch(Exception ex)
-            //{
-            //    Logger.Instance.WriteToLog("[ERROR] - Notebook could not be loaded: " + ex.Message);
-            //}
+            try
+            {
+                notebook = Load<Notebook>(filePath, SerializationMode.Xml);
+            }
+            catch(Exception ex)
+            {
+                Logger.Instance.WriteToLog("[ERROR] - Notebook could not be loaded: " + ex.Message);
+            }
 
-            //stopWatch.Stop();
-            //Logger.Instance.WriteToLog("Time to OPEN notebook (In Seconds): " + stopWatch.ElapsedMilliseconds / 1000.0);
+            stopWatch.Stop();
+            Logger.Instance.WriteToLog("Time to OPEN notebook (In Seconds): " + stopWatch.ElapsedMilliseconds / 1000.0);
 
-            //if(notebook == null)
-            //{
-            //    MessageBox.Show("Notebook could not be opened. Check error log.");
-            //    return;
-            //}
-
+            if(notebook == null)
+            {
+                MessageBox.Show("Notebook could not be opened. Check error log.");
+                return;
+            }
 
             //var stopWatch2 = new Stopwatch();
             //stopWatch2.Start();
 
-            //notebook.NotebookName = notebookName;
-            //App.MainWindowViewModel.CurrentNotebookName = notebookName;
+            App.MainWindowViewModel.CurrentNotebookName = notebookName;
+            if(notebook.LastSavedDate != null)
+            {
+                App.MainWindowViewModel.LastSavedTime = notebook.LastSavedDate.Value.ToString("yyyy/MM/dd - HH:mm:ss");
+            }
 
             //foreach(var page in notebook.Pages)
             //{
@@ -336,34 +339,39 @@ namespace Classroom_Learning_Partner.ViewModels
             //stopWatch3.Stop();
             //Logger.Instance.WriteToLog("Time to INITIALIZE notebook (In Seconds): " + stopWatch3.ElapsedMilliseconds / 1000.0);
 
-            //var count = 0;
-            //foreach(var otherNotebook in App.MainWindowViewModel.OpenNotebooks.Where(otherNotebook => otherNotebook.UniqueID == notebook.UniqueID && otherNotebook.NotebookName == notebook.NotebookName)) 
-            //{
-            //    App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(otherNotebook);
-            //    count++;
-            //    break;
-            //}
+            foreach(var otherNotebook in App.MainWindowViewModel.OpenNotebooks.Where(otherNotebook => otherNotebook.ID == notebook.ID))
+            {
+                App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(otherNotebook);
+                return;
+            }
 
-            //if(count == 0)
-            //{
-            //    App.MainWindowViewModel.OpenNotebooks.Add(notebook);
-            //    if(App.CurrentUserMode == App.UserMode.Instructor ||
-            //       App.CurrentUserMode == App.UserMode.Student ||
-            //       App.CurrentUserMode == App.UserMode.Projector)
-            //    {
-            //        App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(notebook);
-            //    }
-            //}
-
-            //if(notebook.LastSavedTime != null)
-            //{
-            //    App.MainWindowViewModel.LastSavedTime = notebook.LastSavedTime.ToString("yyyy/MM/dd - HH:mm:ss");
-            //}
+            App.MainWindowViewModel.OpenNotebooks.Add(notebook);
+            if(App.CurrentUserMode == App.UserMode.Instructor ||
+               App.CurrentUserMode == App.UserMode.Student ||
+               App.CurrentUserMode == App.UserMode.Projector)
+            {
+                App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(notebook);
+            }
 
             //if(App.CurrentUserMode == App.UserMode.Student)
             //{
             //    // _autoSaveTimer.Start();
             //}
+        }
+
+        public static void SaveNotebook(Notebook notebook)
+        {
+            var folderPath = Path.Combine(App.NotebookCacheDirectory, notebook.Name);
+            if(!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+
+            notebook.SaveNotebook(folderPath);
+            if(notebook.LastSavedDate != null)
+            {
+                App.MainWindowViewModel.LastSavedTime = notebook.LastSavedDate.Value.ToString("yyyy/MM/dd - HH:mm:ss");
+            }
         }
 
         #endregion //Static Methods

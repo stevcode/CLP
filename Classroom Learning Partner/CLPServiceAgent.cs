@@ -364,29 +364,7 @@ namespace Classroom_Learning_Partner
             //}
         }
 
-        public void SaveNotebook(Notebook notebook)
-        {
-            string filePath = App.LocalCacheDirectory + @"\" + notebook.Name + @".clp";
-            //if(App.CurrentUserMode ==; App.UserMode.Student)
-            //{
-            //    notebook.Submissions.Clear();
-            //}
-
-            //_autoSaveTimer.Stop();
-
-            //while(_isAutoSaving)
-            //{
-            //}
-
-            var saveTime = DateTime.Now;
-            notebook.LastSavedDate = saveTime;
-            
-          //  notebook.Save(filePath);
-
-            App.MainWindowViewModel.LastSavedTime = saveTime.ToString("yyyy/MM/dd - HH:mm:ss");
-
-            //_autoSaveTimer.Start();
-        }
+        
 
         #endregion //Notebook
 

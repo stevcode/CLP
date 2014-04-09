@@ -6,6 +6,7 @@ using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
+using Path = Catel.IO.Path;
 
 namespace CLP.Entities
 {
@@ -216,8 +217,11 @@ namespace CLP.Entities
 
         #endregion //Methods
 
+        #region Cache
+
         public void ToXML(string fileName)
         {
+            LastSavedDate = DateTime.Now;
             var fileInfo = new FileInfo(fileName);
             if (!Directory.Exists(fileInfo.DirectoryName))
             {
@@ -231,5 +235,30 @@ namespace CLP.Entities
                 ClearIsDirtyOnAllChilds();
             }
         }
+
+        public void SaveNotebook(string folderPath)
+        {
+            var fileName = Path.Combine(folderPath, "notebook.xml");
+            ToXML(fileName);
+
+            var pagesFolderPath = Path.Combine(folderPath, "Pages");
+            if(!Directory.Exists(pagesFolderPath))
+            {
+                Directory.CreateDirectory(pagesFolderPath);
+            }
+            foreach(var page in Pages)
+            {
+                var pageFilePath = Path.Combine(pagesFolderPath, "Page " + page.PageNumber + " - " + page.ID + ".xml");
+                page.ToXML(pageFilePath);
+            }
+
+            var displaysFolderPath = Path.Combine(folderPath, "Displays");
+            if(!Directory.Exists(displaysFolderPath))
+            {
+                Directory.CreateDirectory(displaysFolderPath);
+            }
+        }
+
+        #endregion //Cache
     }
 }
