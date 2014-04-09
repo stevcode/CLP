@@ -13,7 +13,7 @@ namespace Classroom_Learning_Partner.ViewModels
     /// <summary>
     /// UserControl view model.
     /// </summary>
-    public class CLPStampCopyViewModel : ACLPPageObjectBaseViewModel
+    public class CLPStampCopyViewModel : APageObjectBaseViewModel
     {
         #region Constructor
 

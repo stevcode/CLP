@@ -8,7 +8,7 @@ using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    public class CLPImageViewModel : ACLPPageObjectBaseViewModel
+    public class CLPImageViewModel : APageObjectBaseViewModel
     {
         // TODO: Entities
         ///// <summary>

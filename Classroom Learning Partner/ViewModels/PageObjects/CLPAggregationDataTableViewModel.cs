@@ -10,7 +10,7 @@ using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    public class CLPAggregationDataTableViewModel : ACLPPageObjectBaseViewModel
+    public class CLPAggregationDataTableViewModel : APageObjectBaseViewModel
     {
         /// <summary>
         /// Initializes a new instance of the CLPImageViewModel class.

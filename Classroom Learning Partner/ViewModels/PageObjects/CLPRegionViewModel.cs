@@ -10,7 +10,7 @@ namespace Classroom_Learning_Partner.ViewModels
     /// <summary>
     /// UserControl view model.
     /// </summary>
-    public class CLPRegionViewModel : ACLPPageObjectBaseViewModel
+    public class CLPRegionViewModel : APageObjectBaseViewModel
     {
         #region Constructor 
 

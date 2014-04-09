@@ -527,7 +527,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public void ClearAdorners()
         {
             if(PageObjects == null) { return; }
-            foreach(var aclpPageObjectBaseViewModel in PageObjects.SelectMany(pageObject => ViewModelManager.GetViewModelsOfModel(pageObject)).OfType<ACLPPageObjectBaseViewModel>().ToList()) 
+            foreach(var aclpPageObjectBaseViewModel in PageObjects.SelectMany(pageObject => ViewModelManager.GetViewModelsOfModel(pageObject)).OfType<APageObjectBaseViewModel>().ToList()) 
             {
                 aclpPageObjectBaseViewModel.ClearAdorners();
             }

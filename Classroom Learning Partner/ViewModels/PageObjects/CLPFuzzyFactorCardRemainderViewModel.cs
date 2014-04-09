@@ -14,7 +14,7 @@ using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    class CLPFuzzyFactorCardRemainderViewModel : ACLPPageObjectBaseViewModel
+    class CLPFuzzyFactorCardRemainderViewModel : APageObjectBaseViewModel
     {
 
         //#region Constructor

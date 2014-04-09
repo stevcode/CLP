@@ -3236,12 +3236,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnInsertProtractorCommandExecute()
         {
-            // TODO: Entities
-            //var square = new Shape(((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as SingleDisplay).CurrentPage, ShapeType.Protractor);
-            //square.Height = 200;
-            //square.Width = 2.0*square.Height;
+            var square = new Shape(((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as SingleDisplay).CurrentPage, ShapeType.Protractor);
+            square.Height = 200;
+            square.Width = 2.0*square.Height;
             
-            //ACLPPageBaseViewModel.AddPageObjectToPage(square);
+            ACLPPageBaseViewModel.AddPageObjectToPage(square);
         }
 
         /// <summary>
@@ -3249,14 +3248,10 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command InsertSquareShapeCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the InsertSquareShapeCommand command is executed.
-        /// </summary>
         private void OnInsertSquareShapeCommandExecute()
         {
-            // TODO: Entities
-            //var square = new Shape(((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as SingleDisplay).CurrentPage, ShapeType.Rectangle);
-            //ACLPPageBaseViewModel.AddPageObjectToPage(square);
+            var square = new Shape(((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as SingleDisplay).CurrentPage, ShapeType.Rectangle);
+            ACLPPageBaseViewModel.AddPageObjectToPage(square);
         }
 
         /// <summary>
@@ -3269,9 +3264,8 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnInsertCircleShapeCommandExecute()
         {
-            // TODO: Entities
-            //var circle = new Shape(((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as SingleDisplay).CurrentPage, ShapeType.Ellipse);
-            //ACLPPageBaseViewModel.AddPageObjectToPage(circle);
+            var circle = new Shape(((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as SingleDisplay).CurrentPage, ShapeType.Ellipse);
+            ACLPPageBaseViewModel.AddPageObjectToPage(circle);
         }
 
         /// <summary>
@@ -3279,14 +3273,10 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command InsertHorizontalLineShapeCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the InsertHorizontalLineShapeCommand command is executed.
-        /// </summary>
         private void OnInsertHorizontalLineShapeCommandExecute()
         {
-            // TODO: Entities
-            //var line = new Shape(((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as SingleDisplay).CurrentPage, ShapeType.HorizontalLine);
-            //ACLPPageBaseViewModel.AddPageObjectToPage(line);
+            var line = new Shape(((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as SingleDisplay).CurrentPage, ShapeType.HorizontalLine);
+            ACLPPageBaseViewModel.AddPageObjectToPage(line);
         }
 
         /// <summary>
@@ -3294,14 +3284,10 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command InsertVerticalLineShapeCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the InsertHorizontalLineShapeCommand command is executed.
-        /// </summary>
         private void OnInsertVerticalLineShapeCommandExecute()
         {
-            // TODO: Entities
-            //var line = new Shape(((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as SingleDisplay).CurrentPage, ShapeType.VerticalLine);
-            //ACLPPageBaseViewModel.AddPageObjectToPage(line);
+            var line = new Shape(((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as SingleDisplay).CurrentPage, ShapeType.VerticalLine);
+            ACLPPageBaseViewModel.AddPageObjectToPage(line);
         }
 
         /// <summary>

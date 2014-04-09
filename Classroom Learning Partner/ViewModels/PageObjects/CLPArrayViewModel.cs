@@ -17,7 +17,7 @@ namespace Classroom_Learning_Partner.ViewModels
     /// <summary>
     /// UserControl view model.
     /// </summary>
-    public class CLPArrayViewModel : ACLPPageObjectBaseViewModel
+    public class CLPArrayViewModel : APageObjectBaseViewModel
     {
         //#region Constructor
 
@@ -518,7 +518,7 @@ namespace Classroom_Learning_Partner.ViewModels
         //                        //TODO Liz - get old position - maybe from move batch? (Steve will email about this)
         //                        //var oldX = 10.0;
         //                        //var oldY = 10.0;
-        //                        //ACLPPageObjectBaseViewModel.ChangePageObjectPosition(snappingArray, oldX, oldY, false);
+        //                        //APageObjectBaseViewModel.ChangePageObjectPosition(snappingArray, oldX, oldY, false);
 
         //                        var hasTag = false;
         //                        foreach(Tag tag in PageObject.ParentPage.PageTags.ToList())

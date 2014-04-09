@@ -15,9 +15,21 @@ using System.Timers;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    abstract public class ACLPPageObjectBaseViewModel : ViewModelBase, IPageObjectAdorners
+    abstract public class APageObjectBaseViewModel : ViewModelBase, IPageObjectAdorners
     {
-        protected ACLPPageObjectBaseViewModel()
+        #region Constructor
+
+        protected APageObjectBaseViewModel()
+        {
+            InitializeCommands();
+
+            //TODO: Steve - move this to Adorner.cs and expand adorner API
+            hoverTimer = new Timer();
+            hoverTimer.Interval = 800;
+            hoverTimer.Elapsed += hoverTimer_Elapsed;
+        }
+
+        private void InitializeCommands()
         {
             RemovePageObjectCommand = new Command(OnRemovePageObjectCommandExecute);
             ErasePageObjectCommand = new Command<MouseEventArgs>(OnErasePageObjectCommandExecute);
@@ -31,27 +43,11 @@ namespace Classroom_Learning_Partner.ViewModels
             ResizeStopPageObjectCommand = new Command<DragCompletedEventArgs>(OnResizeStopPageObjectCommandExecute);
 
             ToggleMainAdornersCommand = new Command<MouseButtonEventArgs>(OnToggleMainAdornersCommandExecute);
-
-            //TODO: Steve - move this to Adorner.cs and expand adorner API
-            hoverTimer = new Timer();
-            hoverTimer.Interval = 800;
-            hoverTimer.Elapsed += hoverTimer_Elapsed;
         }
 
         public override string Title { get { return "APageObjectBaseVM"; } }
 
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        [ViewModelToModel("PageObject")]
-        public bool IsInternalPageObject
-        {
-            get { return GetValue<bool>(IsInternalPageObjectProperty); }
-            set { SetValue(IsInternalPageObjectProperty, value); }
-        }
-
-        public static readonly PropertyData IsInternalPageObjectProperty = RegisterProperty("IsInternalPageObject", typeof(bool));
-
+        #endregion //Constructor
 
         #region Model
 
@@ -118,7 +114,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        [ViewModelToModel("PageObject")]
+     //TODO: Entities, remove?   [ViewModelToModel("PageObject")]
         public bool IsBackground
         {
             get { return GetValue<bool>(IsBackgroundProperty); }
@@ -130,7 +126,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        [ViewModelToModel("PageObject")]
+   //TODO: Entities, remove     [ViewModelToModel("PageObject")]
         public bool CanAdornersShow
         {
             get { return GetValue<bool>(CanAdornersShowProperty); }
@@ -140,8 +136,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Register the CanAdornersShow property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData CanAdornersShowProperty = RegisterProperty("CanAdornersShow", typeof(bool));
-
+        public static readonly PropertyData CanAdornersShowProperty = RegisterProperty("CanAdornersShow", typeof(bool), true);
 
         #endregion //Model
 
@@ -312,24 +307,10 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             var parentPage = PageObject.ParentPage;
 
-            var newX = PageObject.XPosition + e.HorizontalChange;
-            var newY = PageObject.YPosition + e.VerticalChange;
-            if(newX < 0)
-            {
-                newX = 0;
-            }
-            if(newY < 0)
-            {
-                newY = 0;
-            }
-            if(newX > parentPage.Width - PageObject.Width)
-            {
-                newX = parentPage.Width - PageObject.Width;
-            }
-            if(newY > parentPage.Height - PageObject.Height)
-            {
-                newY = parentPage.Height - PageObject.Height;
-            }
+            var newX = Math.Max(0, PageObject.XPosition + e.HorizontalChange);
+            newX = Math.Min(newX, parentPage.Width - PageObject.Width);
+            var newY = Math.Max(0, PageObject.YPosition + e.VerticalChange);
+            newY = Math.Min(newY, parentPage.Height - PageObject.Height);
 
             ChangePageObjectPosition(PageObject, newX, newY);
         }
@@ -379,26 +360,14 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnResizePageObjectCommandExecute(DragDeltaEventArgs e)
         {
             var parentPage = PageObject.ParentPage;
+            const int MIN_WIDTH = 20;
+            const int MIN_HEIGHT = 20;
 
-            var newHeight = PageObject.Height + e.VerticalChange;
-            var newWidth = PageObject.Width + e.HorizontalChange;
-            if (newHeight < 10)
-            {
-                newHeight = 10;
-            }
-            if (newWidth < 10)
-            {
-                newWidth = 10;
-            }
-            if (newHeight + PageObject.YPosition > parentPage.Height)
-            {
-                newHeight = PageObject.Height;
-            }
-            if (newWidth + PageObject.XPosition > parentPage.Width)
-            {
-                newWidth = PageObject.Width;
-            }
-
+            var newWidth = Math.Max(MIN_WIDTH, PageObject.Width + e.HorizontalChange);
+            newWidth = Math.Min(newWidth, parentPage.Width - PageObject.XPosition);
+            var newHeight = Math.Max(MIN_HEIGHT, PageObject.Height + e.VerticalChange);
+            newHeight = Math.Min(newHeight, parentPage.Height - PageObject.YPosition);
+            
             ChangePageObjectDimensions(PageObject, newHeight, newWidth);
         }
 
@@ -463,6 +432,8 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Control Adorners
 
         #endregion //Commands
+
+        #region Static Methods
 
         public static void ChangePageObjectPosition(IPageObject pageObject, double newX, double newY, bool useHistory = true)
         {
@@ -540,5 +511,7 @@ namespace Classroom_Learning_Partner.ViewModels
             pageObject.Height = height;
             pageObject.Width = width;
         }
+
+        #endregion //Static Methods
     }
 }

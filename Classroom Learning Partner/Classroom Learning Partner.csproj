@@ -295,14 +295,14 @@
     <Compile Include="ViewModels\PageObjects\CLPAudioViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Ink Regions\CLPGroupingRegionViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Ink Regions\CLPHandwritingRegionViewModel.cs" />
-    <Compile Include="ViewModels\PageObjects\ACLPPageObjectBaseViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\APageObjectBaseViewModel.cs" />
     <Compile Include="ViewModels\Pages\ACLPPageBaseViewModel.cs" />
     <Compile Include="ViewModels\Displays\GridDisplayViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Ink Regions\CLPInkShapeRegionViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Ink Regions\CLPDataTableViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Ink Regions\CLPShadingRegionViewModel.cs" />
-    <Compile Include="ViewModels\PageObjects\CLPShapeViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\ShapeViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPImageViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPStampViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPStampCopyViewModel.cs" />
@@ -388,8 +388,8 @@
     <Compile Include="Views\PageObjects\Regions\CLPHandwritingRegionView.xaml.cs">
       <DependentUpon>CLPHandwritingRegionView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PageObjects\CLPShapeView.xaml.cs">
-      <DependentUpon>CLPShapeView.xaml</DependentUpon>
+    <Compile Include="Views\PageObjects\ShapeView.xaml.cs">
+      <DependentUpon>ShapeView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\CLPStampView.xaml.cs">
       <DependentUpon>CLPStampView.xaml</DependentUpon>
@@ -613,7 +613,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PageObjects\CLPShapeView.xaml">
+    <Page Include="Views\PageObjects\ShapeView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -5,7 +5,7 @@ using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    public class CLPTextBoxViewModel : ACLPPageObjectBaseViewModel
+    public class CLPTextBoxViewModel : APageObjectBaseViewModel
     {
         public CLPTextBoxViewModel(CLPTextBox textBox)
         {

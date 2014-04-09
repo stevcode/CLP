@@ -24,7 +24,7 @@ namespace Classroom_Learning_Partner.ViewModels
         Paused
     }
 
-    public class CLPAudioViewModel : ACLPPageObjectBaseViewModel, IDisposable
+    public class CLPAudioViewModel : APageObjectBaseViewModel, IDisposable
     {
         //Declarations required for audio out and the MP3 stream
         private IWavePlayer waveOutDevice;

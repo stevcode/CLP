@@ -1,4 +1,5 @@
-﻿using Classroom_Learning_Partner.ViewModels;
+﻿using System;
+using Classroom_Learning_Partner.ViewModels;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.Views
@@ -8,17 +9,11 @@ namespace Classroom_Learning_Partner.Views
     /// </summary>
     public partial class PageObjectContainerView
     {
-        public PageObjectContainerView()
-        {
-            InitializeComponent();
-        }
+        public PageObjectContainerView() { InitializeComponent(); }
 
-        protected override System.Type GetViewModelType()
-        {
-            return typeof(ACLPPageObjectBaseViewModel);
-        }
+        protected override Type GetViewModelType() { return typeof(APageObjectBaseViewModel); }
 
-        protected override System.Type GetViewModelType(object dataContext)
+        protected override Type GetViewModelType(object dataContext)
         {
             //if (dataContext is CLPAudio) return typeof(CLPAudioViewModel);
             //if (dataContext is CLPDataTable) return typeof(CLPDataTableViewModel);
@@ -27,10 +22,16 @@ namespace Classroom_Learning_Partner.Views
             //if (dataContext is CLPImage) return typeof(CLPImageViewModel);
             //if (dataContext is CLPInkShapeRegion) return typeof(CLPInkShapeRegionViewModel);
             //if (dataContext is CLPShadingRegion) return typeof(CLPShadingRegionViewModel);
-            if (dataContext is Shape) return typeof(CLPShapeViewModel);
+            if(dataContext is Shape)
+            {
+                return typeof(ShapeViewModel);
+            }
             //if (dataContext is CLPStamp) return typeof(CLPStampViewModel);
             //if (dataContext is CLPStampCopy) return typeof(CLPStampCopyViewModel);
-            if (dataContext is CLPTextBox) return typeof(CLPTextBoxViewModel);
+            if(dataContext is CLPTextBox)
+            {
+                return typeof(CLPTextBoxViewModel);
+            }
             //if (dataContext is CLPAggregationDataTable) return typeof(CLPAggregationDataTableViewModel);
             //if (dataContext is CLPFuzzyFactorCard) return typeof(CLPFuzzyFactorCardViewModel);
             //if (dataContext is CLPFuzzyFactorCardRemainder) return typeof(CLPFuzzyFactorCardRemainderViewModel);

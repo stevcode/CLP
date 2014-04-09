@@ -93,7 +93,7 @@ namespace CLP.Entities
             set { SetValue(HeightProperty, value); }
         }
 
-        public static readonly PropertyData HeightProperty = RegisterProperty("Height", typeof(double), 10.0);
+        public static readonly PropertyData HeightProperty = RegisterProperty("Height", typeof(double), 20.0);
 
         /// <summary>
         /// Width of the <see cref="IPageObject" />.
@@ -104,7 +104,7 @@ namespace CLP.Entities
             set { SetValue(WidthProperty, value); }
         }
 
-        public static readonly PropertyData WidthProperty = RegisterProperty("Width", typeof(double), 10.0);
+        public static readonly PropertyData WidthProperty = RegisterProperty("Width", typeof(double), 20.0);
 
         /// <summary>
         /// Determines whether the <see cref="IPageObject" />'s properties can be changed by a <see cref="Person" /> other than the Creator.
