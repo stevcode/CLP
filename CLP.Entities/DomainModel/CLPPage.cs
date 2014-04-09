@@ -2,7 +2,9 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using Catel.Data;
+using Catel.Runtime.Serialization;
 
 namespace CLP.Entities
 {
@@ -199,6 +201,8 @@ namespace CLP.Entities
         /// <remarks>
         /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
         /// </remarks>
+        [XmlIgnore]
+        [ExcludeFromSerialization]
         public virtual Person Submitter
         {
             get { return GetValue<Person>(SubmitterProperty); }

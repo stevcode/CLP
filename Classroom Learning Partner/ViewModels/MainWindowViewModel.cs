@@ -1,11 +1,21 @@
 ﻿using System.Collections.ObjectModel;
+using System.IO;
 using System.Windows;
 using Catel.Data;
 using Catel.MVVM;
+using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
+    public enum ProgramModes
+    {
+        Author,
+        Instructor,
+        Student,
+        Projector,
+        Database
+    }
 
     public class MainWindowViewModel : ViewModelBase
     {
@@ -20,7 +30,6 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             InitializeCommands();
             TitleBarText = CLP_TEXT;
-            IsAuthoring = false;
         }
 
         public override string Title { get { return "MainWindowVM"; } }
@@ -68,7 +77,18 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(WorkspaceProperty, value); }
         }
 
-        public static readonly PropertyData WorkspaceProperty = RegisterProperty("Workspace", typeof(ViewModelBase));
+        public static readonly PropertyData WorkspaceProperty = RegisterProperty("Workspace", typeof(ViewModelBase), new BlankWorkspaceViewModel());
+
+        /// <summary>
+        /// Gets or sets the Authoring flag.
+        /// </summary>
+        public bool IsAuthoring
+        {
+            get { return GetValue<bool>(IsAuthoringProperty); }
+            set { SetValue(IsAuthoringProperty, value); }
+        }
+
+        public static readonly PropertyData IsAuthoringProperty = RegisterProperty("IsAuthoring", typeof(bool), false);
 
         #region Status Bar Bindings
 
@@ -117,28 +137,14 @@ namespace Classroom_Learning_Partner.ViewModels
         public ObservableCollection<Notebook> OpenNotebooks
         {
             get { return GetValue<ObservableCollection<Notebook>>(OpenNotebooksProperty); }
-            private set { SetValue(OpenNotebooksProperty, value); }
+            set { SetValue(OpenNotebooksProperty, value); }
         }
 
         public static readonly PropertyData OpenNotebooksProperty = RegisterProperty("OpenNotebooks", typeof(ObservableCollection<Notebook>), () => new ObservableCollection<Notebook>());
 
-        /// <summary>
-        /// Gets or sets the Authoring flag.
-        /// </summary>
-        public bool IsAuthoring
-        {
-            get { return GetValue<bool>(IsAuthoringProperty); }
-            set { SetValue(IsAuthoringProperty, value); }
-        }
-
-        public static readonly PropertyData IsAuthoringProperty = RegisterProperty("IsAuthoring", typeof(bool));
-
         #endregion //Properties
 
         #region Methods
-
-        //Sets the text in the title bar of the window to inform the name of the open Notebook.
-        public void SetTitleBarText(string notebookName) { TitleBarText = string.IsNullOrEmpty(notebookName) ? CLP_TEXT : notebookName + " - " + CLP_TEXT; }
 
         public void SetWorkspace()
         {
@@ -210,5 +216,50 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //Commands
+
+        #region Static Methods
+
+        public static void CreateNewNotebook()
+        {
+            var nameChooserLoop = true;
+
+            while(nameChooserLoop)
+            {
+                var nameChooser = new NotebookNamerWindowView {Owner = Application.Current.MainWindow};
+                nameChooser.ShowDialog();
+                if(nameChooser.DialogResult == true)
+                {
+                    var notebookName = nameChooser.NotebookName.Text;
+                    // TODO: Steve - sanitize notebook name
+                    var folderPath = Path.Combine(App.NotebookCacheDirectory, notebookName);
+                    if(!Directory.Exists(folderPath))
+                    {
+                        Directory.CreateDirectory(folderPath);
+                        var newNotebook = new Notebook {Name = notebookName};
+                        var newPage = new CLPPage();
+                        newNotebook.AddCLPPageToNotebook(newPage);
+                        var filePath = Path.Combine(folderPath, "notebook.xml");
+                        newNotebook.ToXML(filePath);
+
+                        App.MainWindowViewModel.OpenNotebooks.Add(newNotebook);
+                        App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(newNotebook);
+                        App.MainWindowViewModel.IsAuthoring = true;
+                        App.MainWindowViewModel.Ribbon.AuthoringTabVisibility = Visibility.Visible;
+
+                        nameChooserLoop = false;
+                    }
+                    else
+                    {
+                        MessageBox.Show("A Notebook with that name already exists. Please choose a different name.");
+                    }
+                }
+                else
+                {
+                    nameChooserLoop = false;
+                }
+            }
+        }
+
+        #endregion //Static Methods
     }
 }

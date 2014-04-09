@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using Catel.Data;
+using Catel.Runtime.Serialization;
 
 namespace CLP.Entities
 {
@@ -96,6 +99,8 @@ namespace CLP.Entities
         /// <remarks>
         /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
         /// </remarks>
+        [XmlIgnore]
+        [ExcludeFromSerialization]
         public virtual ObservableCollection<CLPPage> Pages
         {
             get { return GetValue<ObservableCollection<CLPPage>>(PagesProperty); }
@@ -138,6 +143,8 @@ namespace CLP.Entities
         /// <remarks>
         /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
         /// </remarks>
+        [XmlIgnore]
+        [ExcludeFromSerialization]
         public virtual ObservableCollection<IDisplay> Displays
         {
             get { return GetValue<ObservableCollection<IDisplay>>(DisplaysProperty); }
@@ -190,5 +197,21 @@ namespace CLP.Entities
         }
 
         #endregion //Methods
+
+        public void ToXML(string fileName)
+        {
+            var fileInfo = new FileInfo(fileName);
+            if (!Directory.Exists(fileInfo.DirectoryName))
+            {
+                Directory.CreateDirectory(fileInfo.DirectoryName);
+            }
+
+            using (Stream stream = new FileStream(fileName, FileMode.Create))
+            {
+                var xmlSerializer = SerializationFactory.GetXmlSerializer();
+                xmlSerializer.Serialize(this, stream);
+                ClearIsDirtyOnAllChilds();
+            }
+        }
     }
 }

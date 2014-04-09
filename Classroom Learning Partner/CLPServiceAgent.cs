@@ -318,12 +318,12 @@ namespace Classroom_Learning_Partner
 
         public void GetNotebookNames(NotebookChooserWorkspaceViewModel notebookChooserVM)
         {
-            if(!Directory.Exists(App.NotebookDirectory))
+            if(!Directory.Exists(App.LocalCacheDirectory))
             {
-                Directory.CreateDirectory(App.NotebookDirectory);
+                Directory.CreateDirectory(App.LocalCacheDirectory);
             }
             //normal operation - take what is already available
-            foreach(string fullFile in Directory.GetFiles(App.NotebookDirectory, "*.clp"))
+            foreach(string fullFile in Directory.GetFiles(App.LocalCacheDirectory, "*.clp"))
             {
                 string notebookName = Path.GetFileNameWithoutExtension(fullFile);
                 notebookChooserVM.NotebookNames.Add(notebookName);
@@ -334,7 +334,7 @@ namespace Classroom_Learning_Partner
         public void OpenNotebook(string notebookName)
         {
 
-            var filePath = App.NotebookDirectory + @"\" + notebookName + @".clp";
+            var filePath = App.LocalCacheDirectory + @"\" + notebookName + @".clp";
             if(!File.Exists(filePath))
             {
                 return;
@@ -470,7 +470,7 @@ namespace Classroom_Learning_Partner
 
         public void SaveNotebook(Notebook notebook)
         {
-            string filePath = App.NotebookDirectory + @"\" + notebook.Name + @".clp";
+            string filePath = App.LocalCacheDirectory + @"\" + notebook.Name + @".clp";
             //if(App.CurrentUserMode ==; App.UserMode.Student)
             //{
             //    notebook.Submissions.Clear();

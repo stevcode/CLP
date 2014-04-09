@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using Catel.Data;
+using Catel.Runtime.Serialization;
 
 namespace CLP.Entities
 {
@@ -94,6 +96,8 @@ namespace CLP.Entities
         /// <summary>
         /// Currently selected <see cref="CLPPage" /> of the <see cref="IDisplay" />.
         /// </summary>
+        [XmlIgnore]
+        [ExcludeFromSerialization]
         public virtual CLPPage CurrentPage
         {
             get { return GetValue<CLPPage>(CurrentPageProperty); }
@@ -105,6 +109,8 @@ namespace CLP.Entities
         /// <summary>
         /// List of the <see cref="CLPPage" />s in the <see cref="IDisplay" />.
         /// </summary>
+        [XmlIgnore]
+        [ExcludeFromSerialization]
         public virtual ObservableCollection<CLPPage> Pages
         {
             get { return GetValue<ObservableCollection<CLPPage>>(PagesProperty); }

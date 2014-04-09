@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Threading;
 using Catel.Logging;
@@ -6,6 +7,7 @@ using Catel.Runtime.Serialization;
 using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Views;
 using CLP.Entities;
+using Path = Catel.IO.Path;
 
 namespace Classroom_Learning_Partner
 {
@@ -27,6 +29,25 @@ namespace Classroom_Learning_Partner
             Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
             base.OnStartup(e);
 
+            InitializeCatelSettings();
+            InitializeLocalCache();
+
+            Logger.Instance.InitializeLog();
+            CLPServiceAgent.Instance.Initialize();
+
+            _currentUserMode = UserMode.Instructor;
+
+            MainWindowViewModel = new MainWindowViewModel();
+            var window = new MainWindowView {DataContext = MainWindowViewModel};
+            MainWindowViewModel.Workspace = new BlankWorkspaceViewModel();
+            window.Show();
+
+            CLPServiceAgent.Instance.NetworkSetup();
+            MainWindowViewModel.SetWorkspace();
+        }
+
+        private static void InitializeCatelSettings()
+        { 
             //Uncomment this to enable Catel Logging
             //Comment out to speed up program, all the consoles write are very taxing.
             //LogManager.RegisterDebugListener();
@@ -35,26 +56,25 @@ namespace Classroom_Learning_Partner
             Catel.Windows.Controls.UserControl.DefaultSkipSearchingForInfoBarMessageControlValue = true;
             Catel.Windows.Controls.UserControl.DefaultCreateWarningAndErrorValidatorForViewModelValue = false;
 
-            _currentUserMode = UserMode.Instructor;
-
-            Logger.Instance.InitializeLog();
-            CLPServiceAgent.Instance.Initialize();
-
             //Warm up Serializer to make loading of notebook faster.
             var typesToWarmup = new[] {  typeof(Notebook) };
-            var binarySerializer = SerializationFactory.GetBinarySerializer();
-            binarySerializer.Warmup(typesToWarmup);
+            var xmlSerializer = SerializationFactory.GetXmlSerializer();
+            xmlSerializer.Warmup(typesToWarmup);
+        }
 
-            _mainWindowViewModel = new MainWindowViewModel();
-            var window = new MainWindowView {DataContext = MainWindowViewModel};
-            MainWindowViewModel.Workspace = new BlankWorkspaceViewModel();
-            window.Show();
-            
+        private static void InitializeLocalCache()
+        {
+            LocalCacheDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "LocalCache");
+            if(!Directory.Exists(LocalCacheDirectory))
+            {
+                Directory.CreateDirectory(LocalCacheDirectory);
+            }
 
-            _notebookDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks";
-
-            CLPServiceAgent.Instance.NetworkSetup();
-            MainWindowViewModel.SetWorkspace();
+            NotebookCacheDirectory = Path.Combine(LocalCacheDirectory, "Notebooks");
+            if(!Directory.Exists(NotebookCacheDirectory))
+            {
+                Directory.CreateDirectory(NotebookCacheDirectory);
+            }
         }
 
         #region Methods
@@ -111,37 +131,18 @@ namespace Classroom_Learning_Partner
             {
                 _network = value;
             }
-        }     
-
-        private static MainWindowViewModel _mainWindowViewModel;
-        public static MainWindowViewModel MainWindowViewModel
-        {
-            get
-            {
-                return _mainWindowViewModel;
-            }
         }
 
-        private static string _notebookDirectory;
-        public static string NotebookDirectory
-        {
-            get
-            {
-                return _notebookDirectory;
-            }
-        }
+        public static MainWindowViewModel MainWindowViewModel { get; private set; }
+
+        public static string LocalCacheDirectory { get; private set; }
+        public static string NotebookCacheDirectory { get; private set; }
 
         private static UserMode _currentUserMode = UserMode.Instructor;
         public static UserMode CurrentUserMode
         {
-            get
-            {
-                return _currentUserMode;
-            }
-            set
-            {
-                _currentUserMode = value;
-            }
+            get { return _currentUserMode; }
+            set { _currentUserMode = value; }
         }
 
         #endregion //Properties

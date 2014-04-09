@@ -243,11 +243,11 @@ namespace Classroom_Learning_Partner.ViewModels
                 borderWidth = borderHeight * pageAspectRatio;
             }
 
-            BorderHeight = borderHeight;
-            BorderWidth = borderWidth;
+            BorderHeight = Math.Max(0.0, borderHeight);
+            BorderWidth = Math.Max(0.0, borderWidth);
 
-            DimensionWidth = BorderWidth - 2 * BorderThickness;
-            DimensionHeight = DimensionWidth / scrolledAspectRatio;
+            DimensionWidth = Math.Max(0.0, BorderWidth - 2 * BorderThickness);
+            DimensionHeight = Math.Max(0.0, DimensionWidth / scrolledAspectRatio);
         }
 
         #endregion //Methods
