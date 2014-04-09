@@ -468,45 +468,6 @@ namespace Classroom_Learning_Partner
             //}
         }
 
-        public void OpenNewNotebook()
-        {
-            bool nameChooserLoop = true;
-
-            while(nameChooserLoop)
-            {
-                var nameChooser = new NotebookNamerWindowView {Owner = Application.Current.MainWindow};
-                nameChooser.ShowDialog();
-                if(nameChooser.DialogResult == true)
-                {
-                    string notebookName = nameChooser.NotebookName.Text;
-                    string filePath = App.NotebookDirectory + @"\" + notebookName + @".clp";
-
-                    if(!File.Exists(filePath))
-                    {
-                        var newNotebook = new Notebook {Name = notebookName};
-                        var newPage = new CLPPage();
-                        newNotebook.AddCLPPageToNotebook(newPage);
-                        App.MainWindowViewModel.OpenNotebooks.Add(newNotebook);
-                        App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(newNotebook);
-                        App.MainWindowViewModel.IsAuthoring = true;
-                        App.MainWindowViewModel.Ribbon.AuthoringTabVisibility = Visibility.Visible;
-
-                        nameChooserLoop = false;
-                        //Send empty notebook to db
-                        //ObjectSerializer.ToString(newNotebookViewModel)
-                    }
-                    else
-                    {
-                        MessageBox.Show("A Notebook with that name already exists. Please choose a different name.");
-                    }
-                }
-                else
-                {
-                    nameChooserLoop = false;
-                }
-            }
-        }
-
         public void SaveNotebook(Notebook notebook)
         {
             string filePath = App.NotebookDirectory + @"\" + notebook.Name + @".clp";

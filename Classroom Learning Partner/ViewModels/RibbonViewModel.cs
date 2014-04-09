@@ -39,8 +39,6 @@ namespace Classroom_Learning_Partner.ViewModels
     /// </summary>
     public class RibbonViewModel : ViewModelBase
     {
-        //TODO Liz Move handedness variable somewhere else
-        public bool IsRightHanded { get { return true; } }
         public MainWindowViewModel MainWindow
         {
             get { return App.MainWindowViewModel; }
@@ -635,7 +633,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnNewNotebookCommandExecute()
         {
-            CLPServiceAgent.Instance.OpenNewNotebook();
+            NotebookWorkspaceViewModel.CreateNewNotebook();
         }
 
         /// <summary>

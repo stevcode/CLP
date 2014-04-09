@@ -40,21 +40,14 @@
                                            KeyTip="O"
                                            ImageSource="pack://application:,,,/Resources/Images/OpenNotebook32.png"
                                            Command="{Binding OpenNotebookCommand}" />
-                
-                <RibbonApplicationMenuItem Header="Load Notebook From XML"
-                                           KeyTip="L"
-                                           ImageSource="pack://application:,,,/Resources/Images/OpenNotebook32.png"
-                                           Command="{Binding LoadNotebookFromXMLCommand}" />
 
                 <RibbonApplicationMenuItem Header="Edit Notebook"
-                                           KeyTip="E"
                                            ImageSource="pack://application:,,,/Resources/Images/EditNotebook32.png"
                                            Command="{Binding EditNotebookCommand}"
                                            Visibility="{Binding InstructorVisibility}" />
 
                 <!--TODO: Steve - Make this a toggle with Edit Notebook above-->
                 <RibbonApplicationMenuItem Header="Done Editing Notebook"
-                                           KeyTip="D"
                                            ImageSource="pack://application:,,,/Resources/Images/DoneEditingNotebook32.png"
                                            Command="{Binding DoneEditingNotebookCommand}"
                                            Visibility="{Binding InstructorVisibility}" />
@@ -64,18 +57,7 @@
                                            ImageSource="pack://application:,,,/Resources/Images/SaveNotebook32.png"
                                            Command="{Binding SaveNotebookCommand}" />
 
-                <RibbonApplicationMenuItem Header="Save All Notebooks"
-                                           KeyTip="A"
-                                           ImageSource="pack://application:,,,/Resources/Images/SaveAllNotebooks32.png"
-                                           Command="{Binding SaveAllNotebooksCommand}"
-                                           Visibility="{Binding InstructorVisibility}" />
-
-                <RibbonApplicationMenuItem Header="Submit Whole Notebook"
-                                           ImageSource="pack://application:,,,/Resources/Images/TempIcon32.png"
-                                           Command="{Binding SubmitNotebookToTeacherCommand}"
-                                           Visibility="{Binding StudentVisibility}" />
-
-                <RibbonApplicationMenuItem Header="Convert To XPS"
+                <!--<RibbonApplicationMenuItem Header="Convert To XPS"
                                            ImageSource="pack://application:,,,/Resources/Images/ConvertToXPS32.png"
                                            Command="{Binding ConvertToXPSCommand}" />
 
@@ -87,10 +69,10 @@
                 <RibbonApplicationMenuItem Header="Convert All Submissions To XPS"
                                            ImageSource="pack://application:,,,/Resources/Images/ConvertToXPS32.png"
                                            Command="{Binding ConvertAllSubmissionsToXPSCommand}" />
-                
+
                 <RibbonApplicationMenuItem Header="Convert Displays To XPS"
                                            ImageSource="pack://application:,,,/Resources/Images/ConvertToXPS32.png"
-                                           Command="{Binding ConvertDisplaysToXPSCommand}" />
+                                           Command="{Binding ConvertDisplaysToXPSCommand}" />-->
 
                 <RibbonSeparator />
 
@@ -122,10 +104,11 @@
 
             <RibbonGroup Header="Notebook">
 
-                <!--RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/OpenNotebook32.png"
+                <RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/OpenNotebook32.png"
                                     SmallImageSource="pack://application:,,,/Resources/Images/OpenNotebook16.png"
-                                    IsChecked="{Binding SideBarVisibility}"
-                                    IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}">
+                                    IsChecked="{Binding CurrentLeftPanel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.NotebookPages}}"
+                                    IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
+                                    Visibility="{Binding StudentVisibility}">
                     <RibbonToggleButton.Style>
                         <Style TargetType="{x:Type RibbonToggleButton}">
                             <Setter Property="Label"
@@ -139,7 +122,7 @@
                             </Style.Triggers>
                         </Style>
                     </RibbonToggleButton.Style>
-                </RibbonToggleButton-->
+                </RibbonToggleButton>
 
                 <RibbonToggleButton Label="Notebook Pages"
                                     LargeImageSource="pack://application:,,,/Resources/Images/OpenNotebook32.png"
@@ -159,6 +142,12 @@
                                     LargeImageSource="pack://application:,,,/Resources/Images/Clipboard32.png"
                                     IsChecked="{Binding CurrentLeftPanel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.Progress}}"
                                     IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
+                                    Visibility="{Binding InstructorVisibility}" />
+                
+                <RibbonToggleButton Label="Staging Panel"
+                                    LargeImageSource="pack://application:,,,/Resources/Images/DisplaySubmissionsButton50x25.png"
+                                    IsChecked="{Binding CurrentLeftPanel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.Progress}}"
+                                    IsEnabled="False"
                                     Visibility="{Binding InstructorVisibility}" />
 
                 <RibbonButton Label="Previous Page"
@@ -281,8 +270,7 @@
 
             </RibbonGroup>
 
-            <RibbonGroup Header="Insert"
-                         Visibility="{Binding InstructorVisibility, Converter={StaticResource BooleanToOppositeBooleanConverter}}">
+            <RibbonGroup Header="Insert">
 
                 <!--Array + Divider-->
                 <RibbonButton Label="Array"
@@ -367,9 +355,11 @@
                 <RibbonButton Background="Blue" />
                 <RibbonButton Background="HotPink" />
                 <RibbonButton Background="BlueViolet" />
-                <RibbonButton Background="Aquamarine" />
+                <RibbonButton Background="Aquamarine"
+                              Visibility="{Binding StudentVisibility}" />
                 <RibbonButton Background="SlateGray" />
-                <RibbonButton Background="SkyBlue" />
+                <RibbonButton Background="SkyBlue"
+                              Visibility="{Binding StudentVisibility}" />
                 <RibbonButton Background="Turquoise"
                               Visibility="{Binding InstructorVisibility}" />
                 <Border BorderBrush="Black"
@@ -410,12 +400,6 @@
                               LargeImageSource="pack://application:,,,/Resources/Images/Happy32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/Happy16.png"
                               Visibility="{Binding IsSentInfoVisibility}" />
-
-                <!--<RibbonButton Label="Group Send" Margin="35,0,0,0"
-                              LargeImageSource="pack://application:,,,/Resources/Images/GroupSubmit32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/GroupSubmit16.png"
-                              Command="{Binding GroupSubmitPageCommand}"
-                              Visibility="{Binding SendButtonVisibility}" />-->
 
             </RibbonGroup>
 
@@ -514,7 +498,7 @@
             </RibbonGroup>
 
             <RibbonGroup Header="Stamps">
-                
+
                 <RibbonButton Label="Stamp"
                               LargeImageSource="pack://application:,,,/Resources/Images/Stamp32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/Stamp16.png"
@@ -549,7 +533,7 @@
                               SmallImageSource="pack://application:,,,/Resources/Images/ArrayCard16.png"
                               Command="{Binding InsertArrayCommand}"
                               CommandParameter="CARD" />
-                
+
                 <RibbonButton Label="Factor Card"
                               LargeImageSource="pack://application:,,,/Resources/Images/FactorCard32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/FactorCard16.png"
@@ -660,11 +644,11 @@
             </RibbonGroup>
 
         </RibbonTab>
-        
+
         <!--Histories Tab-->
         <RibbonTab Header="Histories"
                    Visibility="{Binding InstructorVisibility}">
-            
+
             <RibbonGroup Header="Misc.">
 
                 <RibbonButton Label="Disable History"
@@ -672,7 +656,7 @@
                               Command="{Binding DisableHistoryCommand}" />
 
             </RibbonGroup>
-            
+
             <RibbonGroup Header="Clear For Current Page">
 
                 <RibbonButton Label="Clear All"
@@ -684,7 +668,7 @@
                               Command="{Binding ClearPageNonAnimationHistoryCommand}" />
 
             </RibbonGroup>
-            
+
             <RibbonGroup Header="Clear For Notebook Pages">
 
                 <RibbonButton Label="Clear All"
@@ -696,7 +680,7 @@
                               Command="{Binding ClearPagesNonAnimationHistoryCommand}" />
 
             </RibbonGroup>
-            
+
             <RibbonGroup Header="Clear For Submissions">
 
                 <RibbonButton Label="Clear All"
@@ -708,7 +692,7 @@
                               Command="{Binding ClearSubmissionsNonAnimationHistoryCommand}" />
 
             </RibbonGroup>
-            
+
         </RibbonTab>
 
         <!--Test Tab-->
@@ -776,7 +760,7 @@
                 <RibbonButton Label="Remove All Submissions"
                               LargeImageSource="..\Images\LargeIcon.png"
                               Command="{Binding RemoveAllSubmissionsCommand}" />
-                
+
                 <RibbonButton Label="Remove Submissions For This Page"
                               LargeImageSource="..\Images\LargeIcon.png"
                               Command="{Binding RemoveAllPageSubmissionsCommand}" />
@@ -788,7 +772,7 @@
                 <RibbonButton Label="Show Tags"
                               LargeImageSource="..\Images\Array.png"
                               Command="{Binding ShowTagsCommand}" />
-                
+
                 <RibbonButton Label="Page Definition"
                               LargeImageSource="..\Images\Array.png"
                               Command="{Binding EditPageDefinitionCommand}" />
@@ -805,7 +789,7 @@
                               LargeImageSource="..\Images\AddPathStamp.png"
                               Command="{Binding AnalyzeStampsCommand}" />
             </RibbonGroup>
-            
+
             <RibbonGroup Header="History">
 
                 <RibbonButton Label="Replay"
@@ -1153,11 +1137,11 @@
                 <RibbonButton Label="Clear History"
                               LargeImageSource="..\Images\LargeIcon.png"
                               Command="{Binding ClearHistoryCommand}" />
-                
+
                 <RibbonButton Label="Clear NonAnimation History"
                               LargeImageSource="..\Images\LargeIcon.png"
                               Command="{Binding ClearNonAnimationHistoryCommand}" />
-                
+
                 <RibbonButton Label="Clear Page"
                               LargeImageSource="..\Images\LargeIcon.png"
                               Command="{Binding ClearPageCommand}" />
@@ -1177,11 +1161,11 @@
                 <RibbonButton Label="Trim Page"
                               LargeImageSource="..\Images\LargeIcon.png"
                               Command="{Binding TrimPageCommand}" />
-                
+
                 <RibbonButton Label="Clear History From Page"
                               LargeImageSource="..\Images\LargeIcon.png"
                               Command="{Binding ClearPageHistoryCommand}" />
-                
+
                 <RibbonButton Label="Clear NonAnimation History From Page"
                               LargeImageSource="..\Images\LargeIcon.png"
                               Command="{Binding ClearPageNonAnimationHistoryCommand}" />
