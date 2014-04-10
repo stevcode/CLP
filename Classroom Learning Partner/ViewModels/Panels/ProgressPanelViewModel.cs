@@ -20,12 +20,12 @@ namespace Classroom_Learning_Partner.ViewModels
             Notebook = notebook;
 
             CurrentPages = new ObservableCollection<ICLPPage>();
-            CurrentPages.Add(Notebook.Pages[2]);
-            CurrentPages.Add(Notebook.Pages[3]);
-            CurrentPages.Add(Notebook.Pages[4]);
-            CurrentPages.Add(Notebook.Pages[5]);
+            for(int page = 0; page < Notebook.Pages.Count && page < 10; page++)
+            {
+                CurrentPages.Add(Notebook.Pages[page]);
+            }
 
-            PanelWidth = InitialWidth;
+            PanelWidth = CurrentPages.Count * 40 + 65;
             StudentList = GetStudentNames();
             PanelResizeDragCommand = new Command<DragDeltaEventArgs>(OnPanelResizeDragCommandExecute);
             SetCurrentPageCommand = new Command<ICLPPage>(OnSetCurrentPageCommandExecute);

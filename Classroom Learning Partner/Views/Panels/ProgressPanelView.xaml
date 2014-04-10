@@ -112,7 +112,7 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
             </Grid>
-            <Thumb Cursor="ScrollWE" Width="5" 
+            <!--Thumb Cursor="ScrollWE" Width="5" 
                    Margin="0 0 -5 0" VerticalAlignment="Stretch" HorizontalAlignment="Right">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="DragDelta">
@@ -128,7 +128,7 @@
                         </UniformGrid>
                     </ControlTemplate>
                 </Thumb.Template>
-            </Thumb>
+            </-->
         </Grid>
     </Border>
 </catel:UserControl>
