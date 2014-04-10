@@ -47,6 +47,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             ToggleDebugCommand = new Command(OnToggleDebugCommandExecute);
             ToggleExtrasCommand = new Command(OnToggleExtrasCommandExecute);
+            TogglePenDownCommand = new Command(OnTogglePenDownCommandExecute);
         }
 
         #endregion //Constructor
@@ -134,6 +135,17 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Status Bar Bindings
 
+        /// <summary>
+        /// Whether or not the Pens Down Screen has been activated.
+        /// </summary>
+        public bool IsPenDownActivated
+        {
+            get { return GetValue<bool>(IsPenDownActivatedProperty); }
+            set { SetValue(IsPenDownActivatedProperty, value); }
+        }
+
+        public static readonly PropertyData IsPenDownActivatedProperty = RegisterProperty("IsPenDownActivated", typeof(bool), false);
+
         #endregion //Bindings
 
         #region Properties
@@ -215,6 +227,13 @@ namespace Classroom_Learning_Partner.ViewModels
         public Command ToggleExtrasCommand { get; private set; }
 
         private void OnToggleExtrasCommandExecute() { Ribbon.ExtrasTabVisibility = Ribbon.ExtrasTabVisibility == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed; }
+
+        /// <summary>
+        /// Toggles the Pen Down screen.
+        /// </summary>
+        public Command TogglePenDownCommand { get; private set; }
+
+        private void OnTogglePenDownCommandExecute() { IsPenDownActivated = !IsPenDownActivated; }
 
         #endregion //Commands
 
