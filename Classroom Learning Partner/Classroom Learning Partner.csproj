@@ -788,6 +788,7 @@
     <Content Include="External Libraries\NRtfTree.dll" />
     <Content Include="External Libraries\ServiceModelEx.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
+    <Resource Include="Resources\Images\YellowStar16.png" />
     <Resource Include="Resources\Images\Clipboard32.png" />
     <Resource Include="Resources\Images\BlueStar16.png" />
     <Resource Include="Resources\Images\BlueEnvelope16.png" />

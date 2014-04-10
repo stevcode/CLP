@@ -13,28 +13,6 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/Resources/CLPBrushes.xaml" />
-                <!--ResourceDictionary>
-                    <DataTemplate x:Key="ButtonBox">
-                        <Border Margin="3" BorderBrush="{StaticResource GrayEdgeColor}" BorderThickness="1,1,1,1">
-                            <i:Interaction.Triggers>
-                                <i:EventTrigger EventName="MouseUp">
-                                    <catel:EventToCommand
-                                           Command="{Binding DataContext.SetCurrentPageCommand, 
-                                           RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
-                                           PassEventArgsToCommand="False" CommandParameter="{Binding}" />
-                                </i:EventTrigger>
-                            </i:Interaction.Triggers>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-                                <Image Grid.Column="0" Source="pack://application:,,,/Resources/Images/BlueStar16.png"></Image>
-                                <Image Grid.Column="1" Source="pack://application:,,,/Resources/Images/BlueEnvelope16.png"></Image>
-                            </Grid>
-                        </Border>
-                    </DataTemplate>
-                -->
             </ResourceDictionary.MergedDictionaries>
             <conv:SubmissionsListForPageByStudentConverter x:Key="SubmissionsListForPageByStudentConverter" />
             <conv:PageToStarredVisibilityConverter x:Key="PageToStarredVisibilityConverter" />
@@ -102,7 +80,7 @@
                                                             <ColumnDefinition/>
                                                             <ColumnDefinition/>
                                                         </Grid.ColumnDefinitions>
-                                                        <Image Grid.Column="0" Source="pack://application:,,,/Resources/Images/BlueStar16.png"
+                                                        <Image Grid.Column="0" Source="pack://application:,,,/Resources/Images/YellowStar16.png"
                                                         Visibility="{Binding Converter={StaticResource PageToStarredVisibilityConverter}}"/>
 
                                                         <Image Grid.Column="1" Source="pack://application:,,,/Resources/Images/BlueEnvelope16.png"
