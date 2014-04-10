@@ -107,8 +107,7 @@
                 <RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/OpenNotebook32.png"
                                     SmallImageSource="pack://application:,,,/Resources/Images/OpenNotebook16.png"
                                     IsChecked="{Binding CurrentLeftPanel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.NotebookPages}}"
-                                    IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
-                                    Visibility="{Binding StudentVisibility}">
+                                    IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}">
                     <RibbonToggleButton.Style>
                         <Style TargetType="{x:Type RibbonToggleButton}">
                             <Setter Property="Label"
@@ -122,39 +121,33 @@
                             </Style.Triggers>
                         </Style>
                     </RibbonToggleButton.Style>
-                </RibbonToggleButton>
-
-                <RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/OpenNotebook32.png"
-                                    SmallImageSource="pack://application:,,,/Resources/Images/OpenNotebook16.png"
-                                    IsChecked="{Binding CurrentLeftPanel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.NotebookPages}}"
+                </RibbonToggleButton>               
+                
+                <!--<RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/GroupSubmit32.png"
+                                    SmallImageSource="pack://application:,,,/Resources/Images/GroupSubmit16.png"
+                                    IsChecked="{Binding CurrentLeftPanel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.StudentWork}}"
                                     IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
                                     Visibility="{Binding InstructorVisibility}">
                     <RibbonToggleButton.Style>
                         <Style TargetType="{x:Type RibbonToggleButton}">
                             <Setter Property="Label"
-                                    Value="Show Pages" />
+                                    Value="Show Work" />
                             <Style.Triggers>
                                 <Trigger Property="IsChecked"
                                          Value="True">
                                     <Setter Property="Label"
-                                            Value="Hide Pages" />
+                                            Value="Hide Work" />
                                 </Trigger>
                             </Style.Triggers>
                         </Style>
                     </RibbonToggleButton.Style>
-                </RibbonToggleButton>
-                                    LargeImageSource="pack://application:,,,/Resources/Images/GroupSubmit32.png"
-                                    SmallImageSource="pack://application:,,,/Resources/Images/GroupSubmit16.png"
-                                    IsChecked="{Binding CurrentLeftPanel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.StudentWork}}"
-                                    IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
-                                    Visibility="{Binding InstructorVisibility}" />
-                <RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/Clipboard32.png" 
+                </RibbonToggleButton>-->
 
-                <RibbonToggleButton Label="Progress Panel"
-                                    LargeImageSource="pack://application:,,,/Resources/Images/Clipboard32.png"
+                <RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/Clipboard32.png"
                                     IsChecked="{Binding CurrentLeftPanel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.Progress}}"
                                     IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
-                                    Visibility="{Binding InstructorVisibility}" />
+                                    Visibility="{Binding InstructorVisibility}">
+                    <RibbonToggleButton.Style>
                         <Style TargetType="{x:Type RibbonToggleButton}">
                             <Setter Property="Label"
                                     Value="Show Progress" />
