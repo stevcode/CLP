@@ -8,6 +8,7 @@
     <UserControl.Resources>
         <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
         <conv:TypeToStringConverter x:Key="TypeToStringConverter" />
+        <conv:IsNullConverter x:Key="IsNullConverter" />
     </UserControl.Resources>
 
     <DockPanel Background="{Binding WorkspaceBackgroundColor}"
@@ -135,7 +136,7 @@
             <Control.Resources>
 
                 <ControlTemplate x:Key="SingleDisplayTemplate">
-                    <views:SingleDisplayView DataContext="{Binding Notebook}" />
+                    <views:SingleDisplayView DataContext="{Binding SingleDisplay}" />
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="GridDisplayTemplate">
@@ -147,15 +148,16 @@
             <Control.Style>
                 <Style TargetType="{x:Type Control}">
 
-                    <Setter Property="Template"
-                            Value="{StaticResource SingleDisplayTemplate}" />
-
                     <Style.Triggers>
 
-                        <!-- SingleDisplay trigger -->
-                        <!--<DataTrigger Binding="{Binding CurrentDisplay}" Value="{x:Null}">
+                        <!-- SingleDisplay triggers -->
+                        <DataTrigger Binding="{Binding SingleDisplay, Converter={StaticResource IsNullConverter}}" Value="false">
                             <Setter Property="Template" Value="{StaticResource SingleDisplayTemplate}" />
-                        </DataTrigger>-->
+                        </DataTrigger>
+                        
+                        <DataTrigger Binding="{Binding CurrentDisplay, Converter={StaticResource IsNullConverter}}" Value="true">
+                            <Setter Property="Template" Value="{StaticResource SingleDisplayTemplate}" />
+                        </DataTrigger>
 
                         <!-- GridDisplay trigger -->
                         <DataTrigger Binding="{Binding CurrentDisplay, Converter={StaticResource TypeToStringConverter}}"

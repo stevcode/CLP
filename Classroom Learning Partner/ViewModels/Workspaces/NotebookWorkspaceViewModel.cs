@@ -33,6 +33,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void InitializePanels(Notebook notebook)
         {
+            SingleDisplay = new SingleDisplayViewModel(notebook);
+
             NotebookPagesPanel = new NotebookPagesPanelViewModel(notebook);
             StudentWorkPanel = new StudentWorkPanelViewModel(notebook);
             ProgressPanel = new ProgressPanelViewModel(notebook);
@@ -100,6 +102,17 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData WorkspaceBackgroundColorProperty = RegisterProperty("WorkspaceBackgroundColor", typeof(Brush));
 
         #region Displays
+
+        /// <summary>
+        /// The Single Display.
+        /// </summary>
+        public SingleDisplayViewModel SingleDisplay
+        {
+            get { return GetValue<SingleDisplayViewModel>(SingleDisplayProperty); }
+            set { SetValue(SingleDisplayProperty, value); }
+        }
+
+        public static readonly PropertyData SingleDisplayProperty = RegisterProperty("SingleDisplay", typeof(SingleDisplayViewModel));
 
         /// <summary>
         /// The Currently Selected Display.
