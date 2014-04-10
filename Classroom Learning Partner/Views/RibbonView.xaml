@@ -142,21 +142,47 @@
                     </RibbonToggleButton.Style>
                 </RibbonToggleButton-->
 
-                <RibbonToggleButton Label="Notebook Pages" 
-                              LargeImageSource="pack://application:,,,/Resources/Images/OpenNotebook32.png"
+                <RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/OpenNotebook32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/OpenNotebook16.png"
                               IsChecked="{Binding NotebookPagesPanelVisibility}"
-                              Visibility="{Binding InstructorVisibility}" />
+                              Visibility="{Binding InstructorVisibility}">
+                    <RibbonToggleButton.Style>
+                        <Style TargetType="{x:Type RibbonToggleButton}">
+                            <Setter Property="Label"
+                                    Value="Show Pages" />
+                            <Style.Triggers>
+                                <Trigger Property="IsChecked"
+                                         Value="True">
+                                    <Setter Property="Label"
+                                            Value="Hide Pages" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </RibbonToggleButton.Style>
+                </RibbonToggleButton>
                 <!--RibbonToggleButton Label="Student Work" 
                               LargeImageSource="pack://application:,,,/Resources/Images/GroupSubmit32.png" 
                               SmallImageSource="pack://application:,,,/Resources/Images/GroupSubmit16.png" 
                               IsChecked="{Binding StudentWorkPanelVisibility}"
                               Visibility="{Binding InstructorVisibility}" /-->
-                <RibbonToggleButton Label="Progress Panel" 
-                              LargeImageSource="pack://application:,,,/Resources/Images/Clipboard32.png" 
+                <RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/Clipboard32.png" 
                               IsChecked="{Binding ProgressPanelVisibility}"
-                              Visibility="{Binding InstructorVisibility}" />
-                
+                              Visibility="{Binding InstructorVisibility}" >
+                    <RibbonToggleButton.Style>
+                        <Style TargetType="{x:Type RibbonToggleButton}">
+                            <Setter Property="Label"
+                                    Value="Show Progress" />
+                            <Style.Triggers>
+                                <Trigger Property="IsChecked"
+                                         Value="True">
+                                    <Setter Property="Label"
+                                            Value="Hide Progress" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </RibbonToggleButton.Style>
+                </RibbonToggleButton>
+
                 <RibbonButton Label="Hide Submissions" 
                               LargeImageSource="pack://application:,,,/Resources/Images/HideSubmissionsButton50x25.png" 
                               Command="{Binding HideSubmissionsPanelCommand}"
@@ -441,7 +467,7 @@
 
             <RibbonGroup Header="Displays" Visibility="{Binding InstructorVisibility}">
                 
-                <RibbonToggleButton IsChecked="{Binding IsBroadcastHistoryDisabled}">
+                <!--RibbonToggleButton IsChecked="{Binding IsBroadcastHistoryDisabled}">
                     <RibbonToggleButton.Style>
                         <Style TargetType="{x:Type RibbonToggleButton}">
                             <Setter Property="Label"
@@ -459,7 +485,7 @@
                             </Style.Triggers>
                         </Style>
                     </RibbonToggleButton.Style>
-                </RibbonToggleButton>
+                </-->
 
                 <RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/Displays32.png"
                                     IsChecked="{Binding DisplayPanelVisibility}"
