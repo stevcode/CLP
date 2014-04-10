@@ -15,7 +15,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             LogInCommand = new Command<string>(OnLogInCommandExecute);
 
-            //Steve - move to CLPService and grab from database
+            // TODO: DATABASE - inject IPersonService that can grab the available student names?
             var filePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\StudentNames.txt";
 
             if(File.Exists(filePath))

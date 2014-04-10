@@ -248,6 +248,10 @@ namespace CLP.Entities
             }
             foreach(var page in Pages)
             {
+                if(page.IsDirty)
+                {
+                    Console.WriteLine("Page " + page.PageNumber + " - " + page.ID + ": IsDirty == true during Notebook Save");
+                }
                 var pageFilePath = Path.Combine(pagesFolderPath, "Page " + page.PageNumber + " - " + page.ID + ".xml");
                 page.ToXML(pageFilePath);
             }

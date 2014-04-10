@@ -33,11 +33,11 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// The Model for this ViewModel.
         /// </summary>
-        [Model]
+        [Model(SupportIEditableObject = false)]
         public SingleDisplay SingleDisplay
         {
             get { return GetValue<SingleDisplay>(SingleDisplayProperty); }
-            set { SetValue(SingleDisplayProperty, value); }
+            private set { SetValue(SingleDisplayProperty, value); }
         }
 
         public static readonly PropertyData SingleDisplayProperty = RegisterProperty("SingleDisplay", typeof(SingleDisplay));

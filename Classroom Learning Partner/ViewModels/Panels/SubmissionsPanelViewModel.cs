@@ -76,11 +76,11 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// The Model for this ViewModel.
         /// </summary>
-        [Model]
+        [Model(SupportIEditableObject = false)]
         public Notebook Notebook
         {
             get { return GetValue<Notebook>(NotebookProperty); }
-            set { SetValue(NotebookProperty, value); }
+            private set { SetValue(NotebookProperty, value); }
         }
 
         public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof(Notebook));

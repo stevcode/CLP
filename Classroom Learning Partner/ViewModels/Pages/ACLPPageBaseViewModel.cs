@@ -64,7 +64,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        [Model]
+        [Model(SupportIEditableObject = false)]
         public CLPPage Page
         {
             get { return GetValue<CLPPage>(PageProperty); }

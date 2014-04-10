@@ -39,7 +39,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Notebook associated with the panel.
         /// </summary>
-        [Model]
+        [Model(SupportIEditableObject = false)]
         public Notebook Notebook
         {
             get { return GetValue<Notebook>(NotebookProperty); }

@@ -15,6 +15,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             SelectNotebookCommand = new Command<string>(OnSelectNotebookCommandExecute);
 
+            // TODO: DATABASE - inject INotebookService that can grab the available notebook names?
             NotebookNames = new ObservableCollection<string>(MainWindowViewModel.AvailableNotebookNames);
         }
 

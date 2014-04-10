@@ -54,7 +54,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        [Model]
+        [Model(SupportIEditableObject = false)]
         public IPageObject PageObject
         {
             get { return GetValue<IPageObject>(PageObjectProperty); }

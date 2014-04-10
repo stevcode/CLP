@@ -17,9 +17,16 @@ namespace Classroom_Learning_Partner.ViewModels
         public StudentWorkPanelViewModel(Notebook notebook)
         {
             Notebook = notebook;
+            Initialized += StudentWorkPanelViewModel_Initialized;
             //    LinkedPanel = new SubmissionsPanelViewModel(notebook); // TODO: Entities, staging panel
-            Length = InitialLength;
+            
+            // TODO: DATABASE - inject IPersonService to grab student names
             StudentList = GetStudentNames();
+        }
+
+        void StudentWorkPanelViewModel_Initialized(object sender, EventArgs e)
+        {
+            Length = InitialLength;
         }
 
         /// <summary>
@@ -38,7 +45,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Notebook associated with the panel.
         /// </summary>
-        [Model]
+        [Model(SupportIEditableObject = false)]
         public Notebook Notebook
         {
             get { return GetValue<Notebook>(NotebookProperty); }

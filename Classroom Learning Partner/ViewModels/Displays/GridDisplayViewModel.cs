@@ -33,11 +33,11 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// The Model for this ViewModel.
         /// </summary>
-        [Model]
+        [Model(SupportIEditableObject = false)]
         public GridDisplay GridDisplay
         {
             get { return GetValue<GridDisplay>(GridDisplayProperty); }
-            set { SetValue(GridDisplayProperty, value); }
+            private set { SetValue(GridDisplayProperty, value); }
         }
 
         public static readonly PropertyData GridDisplayProperty = RegisterProperty("GridDisplay", typeof(GridDisplay));

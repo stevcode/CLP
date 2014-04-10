@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    class StagingPanelViewModel
+    public class StagingPanelViewModel
     {
     }
 }
