@@ -19,12 +19,6 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             Notebook = notebook;
             PageScrollCommand = new Command<ScrollChangedEventArgs>(OnPageScrollCommandExecute);
-            Initialized += SingleDisplayViewModel_Initialized;
-        }
-
-        void SingleDisplayViewModel_Initialized(object sender, EventArgs e)
-        {
-            OnPageResize();
         }
 
         public override string Title
