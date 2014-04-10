@@ -72,16 +72,16 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof(Notebook));
 
         /// <summary>
-        /// A property mapped to a property on the Model Notebook.
+        /// Currently selected <see cref="CLPPage" /> of the <see cref="Notebook" />.
         /// </summary>
         [ViewModelToModel("Notebook")]
-        public SingleDisplay SingleDisplay
+        public CLPPage CurrentPage
         {
-            get { return GetValue<SingleDisplay>(SingleDisplayProperty); }
-            set { SetValue(SingleDisplayProperty, value); }
+            get { return GetValue<CLPPage>(CurrentPageProperty); }
+            set { SetValue(CurrentPageProperty, value); }
         }
 
-        public static readonly PropertyData SingleDisplayProperty = RegisterProperty("SingleDisplay", typeof(SingleDisplay));
+        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage));
 
         /// <summary>
         /// A property mapped to a property on the Model Notebook.
@@ -191,7 +191,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnAddPageToNewGridDisplayCommandExecute()
         {
             var newGridDisplay = new GridDisplay();
-            newGridDisplay.AddPageToDisplay(SingleDisplay.CurrentPage);
+            newGridDisplay.AddPageToDisplay(Notebook.CurrentPage);
             Notebook.AddDisplayToNotebook(newGridDisplay);
             CurrentDisplay = newGridDisplay;
         }
@@ -216,7 +216,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 return;
             }
-            notebookWorkspaceViewModel.CurrentDisplay = SingleDisplay;
+            notebookWorkspaceViewModel.CurrentDisplay = null;
 
             // TODO: Entities
             //if(App.Network.ProjectorProxy == null ||

@@ -21,8 +21,6 @@ namespace CLP.Entities
         {
             CreationDate = DateTime.Now;
             ID = Guid.NewGuid().ToString();
-            SingleDisplay = new SingleDisplay(this);
-            SingleDisplayID = SingleDisplay.ID;
         }
 
         /// <summary>
@@ -96,6 +94,37 @@ namespace CLP.Entities
         public static readonly PropertyData CurriculumProperty = RegisterProperty("Curriculum", typeof(string), string.Empty);
 
         /// <summary>
+        /// Unique Identifier of the currently selected <see cref="CLPPage" />.
+        /// </summary>
+        public string CurrentPageID
+        {
+            get { return GetValue<string>(CurrentPageIDProperty); }
+            set { SetValue(CurrentPageIDProperty, value); }
+        }
+
+        public static readonly PropertyData CurrentPageIDProperty = RegisterProperty("CurrentPageID", typeof(string), string.Empty);
+
+        /// <summary>
+        /// Currently selected <see cref="CLPPage" />.
+        /// </summary>
+        /// <remarks>
+        /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
+        /// </remarks>
+        [XmlIgnore]
+        [ExcludeFromSerialization]
+        public virtual CLPPage CurrentPage
+        {
+            get { return GetValue<CLPPage>(CurrentPageProperty); }
+            set
+            {
+                SetValue(CurrentPageProperty, value);
+                CurrentPageID = value.ID;
+            }
+        }
+
+        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage));
+
+        /// <summary>
         /// Collection of all the <see cref="CLPPage" />s in the <see cref="Notebook" />.
         /// </summary>
         /// <remarks>
@@ -110,34 +139,6 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData PagesProperty = RegisterProperty("Pages", typeof(ObservableCollection<CLPPage>), () => new ObservableCollection<CLPPage>());
-
-        /// <summary>
-        /// Unique Identifier of the <see cref="Notebook" />'s <see cref="SingleDisplay" />.
-        /// </summary>
-        /// <remarks>
-        /// Foreign Key.
-        /// </remarks>
-        public string SingleDisplayID
-        {
-            get { return GetValue<string>(SingleDisplayIDProperty); }
-            set { SetValue(SingleDisplayIDProperty, value); }
-        }
-
-        public static readonly PropertyData SingleDisplayIDProperty = RegisterProperty("SingleDisplayID", typeof(string));
-
-        /// <summary>
-        /// The <see cref="SingleDisplay" /> of the <see cref="Notebook" />.
-        /// </summary>
-        /// <remarks>
-        /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
-        /// </remarks>
-        public virtual SingleDisplay SingleDisplay
-        {
-            get { return GetValue<SingleDisplay>(SingleDisplayProperty); }
-            set { SetValue(SingleDisplayProperty, value); }
-        }
-
-        public static readonly PropertyData SingleDisplayProperty = RegisterProperty("SingleDisplay", typeof(SingleDisplay));
 
         /// <summary>
         /// List of the <see cref="IDisplay" />s in the <see cref="Notebook" />.
@@ -165,7 +166,7 @@ namespace CLP.Entities
             page.PageNumber = Pages.Any() ? Pages.Last().PageNumber + 1 : 1;
 
             Pages.Add(page);
-            SingleDisplay.AddPageToDisplay(page);
+            CurrentPage = page;
             //GenerateSubmissionViews(page.ID);
         }
 
@@ -191,7 +192,7 @@ namespace CLP.Entities
             // TODO: Else Load previous page from Cache/Database if exists
 
             Pages.Insert(index, page);
-            SingleDisplay.AddPageToDisplay(page);
+            CurrentPage = page;
             //GenerateSubmissionViews(page.UniqueID);
             //GeneratePageIndexes();
 

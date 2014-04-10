@@ -104,16 +104,16 @@
                     </TextBlock.LayoutTransform>
                 </TextBlock>
 
-                <views:CLPPagePreviewView x:Name="MirrorDisplayPreview"
+                <views:CLPPagePreviewView x:Name="SingleDisplayPreview"
                                           Grid.Column="1"
                                           Margin="5"
                                           HorizontalAlignment="Left"
-                                          DataContext="{Binding SingleDisplay.CurrentPage}">
+                                          DataContext="{Binding CurrentPage}">
                     <views:CLPPagePreviewView.Width>
                         <MultiBinding Converter="{StaticResource HeightToWidthAspectRatioMultiConverter}">
-                            <Binding ElementName="MirrorDisplayPreview"
+                            <Binding ElementName="SingleDisplayPreview"
                                      Path="ActualHeight" />
-                            <Binding Path="InitialPageAspectRatio" />
+                            <Binding Path="InitialAspectRatio" />
                         </MultiBinding>
                     </views:CLPPagePreviewView.Width>
                 </views:CLPPagePreviewView>
@@ -124,8 +124,8 @@
                            Stroke="{Binding SingleDisplaySelectedColor}"
                            StrokeThickness="3"
                            Fill="Transparent"
-                           Width="{Binding ElementName=MirrorDisplayPreview, Path=ActualWidth}"
-                           Height="{Binding ElementName=MirrorDisplayPreview, Path=ActualHeight}">
+                           Width="{Binding ElementName=SingleDisplayPreview, Path=ActualWidth}"
+                           Height="{Binding ElementName=SingleDisplayPreview, Path=ActualHeight}">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="MouseDown">
                             <catel:EventToCommand Command="{Binding SetSingleDisplayCommand}"

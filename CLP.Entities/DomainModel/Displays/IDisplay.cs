@@ -9,8 +9,6 @@ namespace CLP.Entities
         DateTime CreationDate { get; set; }
         int DisplayNumber { get; set; }
         string NotebookID { get; set; }
-        string CurrentPageID { get; set; }
-        CLPPage CurrentPage { get; set; }
         ObservableCollection<CLPPage> Pages { get; set; } 
 
         void AddPageToDisplay(CLPPage page);

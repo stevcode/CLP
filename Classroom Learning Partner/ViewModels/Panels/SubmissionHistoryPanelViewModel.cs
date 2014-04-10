@@ -40,8 +40,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof(Notebook));
 
-        #region Bindings
-
         /// <summary>
         /// Current, selected submission.
         /// </summary>
@@ -52,6 +50,8 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage));
+
+        #region Bindings
 
         /// <summary>
         /// All the submissions for the desired page.

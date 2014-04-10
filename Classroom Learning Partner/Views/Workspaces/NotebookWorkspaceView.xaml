@@ -10,7 +10,8 @@
         <conv:TypeToStringConverter x:Key="TypeToStringConverter" />
     </UserControl.Resources>
 
-    <DockPanel Background="{Binding WorkspaceBackgroundColor}" LastChildFill="True">
+    <DockPanel Background="{Binding WorkspaceBackgroundColor}"
+               LastChildFill="True">
 
         <!--Left Panel-->
         <Control DockPanel.Dock="Left"
@@ -36,18 +37,24 @@
                     <Style.Triggers>
 
                         <!--NotebookPagesPanel trigger-->
-                        <DataTrigger Binding="{Binding LeftPanel, Converter={StaticResource TypeToStringConverter}}" Value="NotebookPagesPanelViewModel">
-                            <Setter Property="Template" Value="{StaticResource NotebookPagesPanelTemplate}" />
+                        <DataTrigger Binding="{Binding LeftPanel, Converter={StaticResource TypeToStringConverter}}"
+                                     Value="NotebookPagesPanelViewModel">
+                            <Setter Property="Template"
+                                    Value="{StaticResource NotebookPagesPanelTemplate}" />
                         </DataTrigger>
 
                         <!--StudentWorkPanel trigger-->
-                        <DataTrigger Binding="{Binding LeftPanel, Converter={StaticResource TypeToStringConverter}}" Value="StudentWorkPanelViewModel">
-                            <Setter Property="Template" Value="{StaticResource StudentWorkPanelTemplate}" />
+                        <DataTrigger Binding="{Binding LeftPanel, Converter={StaticResource TypeToStringConverter}}"
+                                     Value="StudentWorkPanelViewModel">
+                            <Setter Property="Template"
+                                    Value="{StaticResource StudentWorkPanelTemplate}" />
                         </DataTrigger>
 
                         <!--ProgressPanel trigger-->
-                        <DataTrigger Binding="{Binding LeftPanel, Converter={StaticResource TypeToStringConverter}}" Value="ProgressPanelViewModel">
-                            <Setter Property="Template" Value="{StaticResource ProgressPanelTemplate}" />
+                        <DataTrigger Binding="{Binding LeftPanel, Converter={StaticResource TypeToStringConverter}}"
+                                     Value="ProgressPanelViewModel">
+                            <Setter Property="Template"
+                                    Value="{StaticResource ProgressPanelTemplate}" />
                         </DataTrigger>
 
                     </Style.Triggers>
@@ -75,13 +82,17 @@
                     <Style.Triggers>
 
                         <!--WebcamPanel trigger-->
-                        <DataTrigger Binding="{Binding RightPanel, Converter={StaticResource TypeToStringConverter}}" Value="WebcamPanelViewModel">
-                            <Setter Property="Template" Value="{StaticResource WebcamPanelTemplate}" />
+                        <DataTrigger Binding="{Binding RightPanel, Converter={StaticResource TypeToStringConverter}}"
+                                     Value="WebcamPanelViewModel">
+                            <Setter Property="Template"
+                                    Value="{StaticResource WebcamPanelTemplate}" />
                         </DataTrigger>
 
                         <!--DisplayListPanel trigger-->
-                        <DataTrigger Binding="{Binding RightPanel, Converter={StaticResource TypeToStringConverter}}" Value="DisplaysPanelViewModel">
-                            <Setter Property="Template" Value="{StaticResource DisplayListPanelTemplate}" />
+                        <DataTrigger Binding="{Binding RightPanel, Converter={StaticResource TypeToStringConverter}}"
+                                     Value="DisplaysPanelViewModel">
+                            <Setter Property="Template"
+                                    Value="{StaticResource DisplayListPanelTemplate}" />
                         </DataTrigger>
 
                     </Style.Triggers>
@@ -106,8 +117,10 @@
                     <Style.Triggers>
 
                         <!--SubmissionHistoryPanel trigger-->
-                        <DataTrigger Binding="{Binding BottomPanel, Converter={StaticResource TypeToStringConverter}}" Value="SubmissionHistoryPanelViewModel">
-                            <Setter Property="Template" Value="{StaticResource SubmissionHistoryPanelTemplate}" />
+                        <DataTrigger Binding="{Binding BottomPanel, Converter={StaticResource TypeToStringConverter}}"
+                                     Value="SubmissionHistoryPanelViewModel">
+                            <Setter Property="Template"
+                                    Value="{StaticResource SubmissionHistoryPanelTemplate}" />
                         </DataTrigger>
 
                     </Style.Triggers>
@@ -116,12 +129,13 @@
         </Control>
 
         <!-- Control that dynamically determines what Display to show -->
-        <Control HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Control HorizontalAlignment="Stretch"
+                 VerticalAlignment="Stretch">
 
             <Control.Resources>
 
                 <ControlTemplate x:Key="SingleDisplayTemplate">
-                    <views:SingleDisplayView DataContext="{Binding CurrentDisplay}" />
+                    <views:SingleDisplayView DataContext="{Binding Notebook}" />
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="GridDisplayTemplate">
@@ -132,16 +146,22 @@
 
             <Control.Style>
                 <Style TargetType="{x:Type Control}">
+
+                    <Setter Property="Template"
+                            Value="{StaticResource SingleDisplayTemplate}" />
+
                     <Style.Triggers>
 
                         <!-- SingleDisplay trigger -->
-                        <DataTrigger Binding="{Binding CurrentDisplay, Converter={StaticResource TypeToStringConverter}}" Value="SingleDisplay">
+                        <!--<DataTrigger Binding="{Binding CurrentDisplay}" Value="{x:Null}">
                             <Setter Property="Template" Value="{StaticResource SingleDisplayTemplate}" />
-                        </DataTrigger>
+                        </DataTrigger>-->
 
                         <!-- GridDisplay trigger -->
-                        <DataTrigger Binding="{Binding CurrentDisplay, Converter={StaticResource TypeToStringConverter}}" Value="GridDisplay">
-                            <Setter Property="Template" Value="{StaticResource GridDisplayTemplate}" />
+                        <DataTrigger Binding="{Binding CurrentDisplay, Converter={StaticResource TypeToStringConverter}}"
+                                     Value="GridDisplay">
+                            <Setter Property="Template"
+                                    Value="{StaticResource GridDisplayTemplate}" />
                         </DataTrigger>
 
                     </Style.Triggers>

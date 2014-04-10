@@ -44,6 +44,11 @@ namespace Classroom_Learning_Partner.ViewModels
             get { return App.MainWindowViewModel; }
         }
 
+        private static CLPPage CurrentPage 
+        {
+            get { return NotebookPagesPanelViewModel.GetCurrentPage(); }
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="RibbonViewModel"/> class.
         /// </summary>
@@ -1236,7 +1241,6 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 var page = panel.Notebook.Pages[index - 1];
                 panel.CurrentPage = page;
-                panel.SetCurrentPage(page);
             }
         }
 
@@ -1272,7 +1276,6 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 var page = panel.Notebook.Pages[index + 1];
                 panel.CurrentPage = page;
-                panel.SetCurrentPage(page);
             }
         }
 
@@ -1464,7 +1467,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return false;
             }
 
-            return notebookWorkspaceViewModel.CurrentDisplay is SingleDisplay;
+            return notebookWorkspaceViewModel.CurrentDisplay == null;
         }
 
         /// <summary>
@@ -1531,35 +1534,26 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnUndoCommandExecute()
         {
-            var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel == null)
-            {
-                return;
-            }
-            var singleDisplay = notebookWorkspaceViewModel.CurrentDisplay as SingleDisplay;
-            if(singleDisplay == null)
-            {
-                return;
-            }
             // TODO: Entities
-            //singleDisplay.CurrentPage.PageHistory.Undo();
+            //CurrentPage.PageHistory.Undo();
         }
 
         private bool OnUndoCanExecute()
         {
-            var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel == null)
-            {
-                return false;
-            }
-            var mirrorDisplay = notebookWorkspaceViewModel.CurrentDisplay as SingleDisplay;
-            if(mirrorDisplay == null)
-            {
-                return false;
-            }
-            var page = mirrorDisplay.CurrentPage;
-
             // TODO: Entities
+            //var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
+            //if(notebookWorkspaceViewModel == null)
+            //{
+            //    return false;
+            //}
+            //var mirrorDisplay = notebookWorkspaceViewModel.CurrentDisplay as SingleDisplay;
+            //if(mirrorDisplay == null)
+            //{
+            //    return false;
+            //}
+            //var page = mirrorDisplay.CurrentPage;
+
+            
             //var recordIndicator = page.PageHistory.RedoItems.FirstOrDefault() as CLPAnimationIndicator;
             //if(recordIndicator != null && recordIndicator.AnimationIndicatorType == AnimationIndicatorType.Record)
             //{
@@ -1577,33 +1571,23 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnRedoCommandExecute()
         {
-            var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel == null)
-            {
-                return;
-            }
-            var singleDisplay = notebookWorkspaceViewModel.CurrentDisplay as SingleDisplay;
-            if(singleDisplay == null)
-            {
-                return;
-            }
             // TODO: Entities
-//            singleDisplay.CurrentPage.PageHistory.Redo();
+//            CurrentPage.PageHistory.Redo();
         }
 
         private bool OnRedoCanExecute()
         {
-            var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel == null)
-            {
-                return false;
-            }
-            var singleDisplay = notebookWorkspaceViewModel.CurrentDisplay as SingleDisplay;
-            if(singleDisplay == null)
-            {
-                return false;
-            }
-            var page = singleDisplay.CurrentPage;
+            //var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
+            //if(notebookWorkspaceViewModel == null)
+            //{
+            //    return false;
+            //}
+            //var singleDisplay = notebookWorkspaceViewModel.CurrentDisplay as SingleDisplay;
+            //if(singleDisplay == null)
+            //{
+            //    return false;
+            //}
+            //var page = singleDisplay.CurrentPage;
 
             // TODO: Entities
 //            return page.PageHistory.CanRedo;
@@ -1963,9 +1947,9 @@ namespace Classroom_Learning_Partner.ViewModels
        
         private void OnSwitchPageLayoutCommandExecute()
         {
-            var page = ((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as SingleDisplay).CurrentPage;
+            var page = CurrentPage;
 
-            if(page.InitialAspectRatio == CLPPage.LANDSCAPE_WIDTH / CLPPage.LANDSCAPE_HEIGHT)
+            if(Math.Abs(page.InitialAspectRatio - CLPPage.LANDSCAPE_WIDTH / CLPPage.LANDSCAPE_HEIGHT) < 0.01)
             {
                 foreach(IPageObject pageObject in page.PageObjects)
                 {
@@ -1983,7 +1967,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 page.Height = CLPPage.PORTRAIT_HEIGHT;
                 page.InitialAspectRatio = page.Width / page.Height;
             }
-            else if(page.InitialAspectRatio == CLPPage.PORTRAIT_WIDTH / CLPPage.PORTRAIT_HEIGHT)
+            else if(Math.Abs(page.InitialAspectRatio - CLPPage.PORTRAIT_WIDTH / CLPPage.PORTRAIT_HEIGHT) < 0.01)
             {
                 foreach(IPageObject pageObject in page.PageObjects)
                 {
@@ -2007,7 +1991,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public void OnSwitchPageTypeCommandExecute()
         {
-            var page = ((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as SingleDisplay).CurrentPage;
+            var page = CurrentPage;
             page.PageType = page.PageType == PageTypes.Animation ? PageTypes.Default : PageTypes.Animation;
         }
 
@@ -2101,11 +2085,11 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnMakePageLongerCommandExecute()
         {
             var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel != null && !(notebookWorkspaceViewModel.CurrentDisplay is SingleDisplay))
+            if(notebookWorkspaceViewModel != null && notebookWorkspaceViewModel.CurrentDisplay == null)
             {
                 return;
             }
-            var page = (notebookWorkspaceViewModel.CurrentDisplay as SingleDisplay).CurrentPage;
+            var page = CurrentPage;
             var initialHeight = page.Width / page.InitialAspectRatio;
             const int MAX_INCREASE_TIMES = 2;
             const double PAGE_INCREASE_AMOUNT = 200.0;
@@ -2122,9 +2106,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnTrimPageCommandExecute()
         {
-            if((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay is SingleDisplay)
+            if((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay == null)
             {
-                var page = ((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as SingleDisplay).CurrentPage;
+                var page = CurrentPage;
                 page.TrimPage();
             }
         }
@@ -2138,11 +2122,11 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel == null ||
-               !(notebookWorkspaceViewModel.CurrentDisplay is SingleDisplay))
+               notebookWorkspaceViewModel.CurrentDisplay != null)
             {
                 return;
             }
-            var page = (notebookWorkspaceViewModel.CurrentDisplay as SingleDisplay).CurrentPage;
+            var page = CurrentPage;
             // TODO: Entities
             //page.PageHistory.ClearHistory();
             //page.PageObjects.Clear();
@@ -2162,7 +2146,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return false;
             }
 
-            return notebookWorkspaceViewModel.CurrentDisplay is SingleDisplay;
+            return notebookWorkspaceViewModel.CurrentDisplay == null;
         }
 
         private bool OnInsertPageObjectCanExecute(string s)
@@ -2173,7 +2157,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return false;
             }
 
-            return notebookWorkspaceViewModel.CurrentDisplay is SingleDisplay;
+            return notebookWorkspaceViewModel.CurrentDisplay == null;
         }
 
         /// <summary>
@@ -2183,7 +2167,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnInsertTextBoxCommandExecute()
         {
-            var textBox = new CLPTextBox(((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as SingleDisplay).CurrentPage, string.Empty);
+            var textBox = new CLPTextBox(CurrentPage, string.Empty);
             ACLPPageBaseViewModel.AddPageObjectToPage(textBox);
         }
 
@@ -3231,7 +3215,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnInsertProtractorCommandExecute()
         {
-            var square = new Shape(((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as SingleDisplay).CurrentPage, ShapeType.Protractor);
+            var square = new Shape(CurrentPage, ShapeType.Protractor);
             square.Height = 200;
             square.Width = 2.0*square.Height;
             
@@ -3245,7 +3229,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnInsertSquareShapeCommandExecute()
         {
-            var square = new Shape(((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as SingleDisplay).CurrentPage, ShapeType.Rectangle);
+            var square = new Shape(CurrentPage, ShapeType.Rectangle);
             ACLPPageBaseViewModel.AddPageObjectToPage(square);
         }
 
@@ -3259,7 +3243,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnInsertCircleShapeCommandExecute()
         {
-            var circle = new Shape(((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as SingleDisplay).CurrentPage, ShapeType.Ellipse);
+            var circle = new Shape(CurrentPage, ShapeType.Ellipse);
             ACLPPageBaseViewModel.AddPageObjectToPage(circle);
         }
 
@@ -3270,7 +3254,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnInsertHorizontalLineShapeCommandExecute()
         {
-            var line = new Shape(((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as SingleDisplay).CurrentPage, ShapeType.HorizontalLine);
+            var line = new Shape(CurrentPage, ShapeType.HorizontalLine);
             ACLPPageBaseViewModel.AddPageObjectToPage(line);
         }
 
@@ -3281,7 +3265,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnInsertVerticalLineShapeCommandExecute()
         {
-            var line = new Shape(((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as SingleDisplay).CurrentPage, ShapeType.VerticalLine);
+            var line = new Shape(CurrentPage, ShapeType.VerticalLine);
             ACLPPageBaseViewModel.AddPageObjectToPage(line);
         }
 

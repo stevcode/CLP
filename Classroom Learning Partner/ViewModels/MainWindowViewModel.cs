@@ -233,7 +233,12 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command TogglePenDownCommand { get; private set; }
 
-        private void OnTogglePenDownCommandExecute() { IsPenDownActivated = !IsPenDownActivated; }
+        private void OnTogglePenDownCommandExecute()
+        {
+            // TODO: Clear all adorners when screen comes up. Move to IsPenDownActivated { set; }
+            //ACLPPageBaseViewModel.ClearAdorners(currentPage);
+            IsPenDownActivated = !IsPenDownActivated;
+        }
 
         #endregion //Commands
 

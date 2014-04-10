@@ -16,10 +16,10 @@ namespace Classroom_Learning_Partner.Views
         //AspectRatio = w / h
         protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
         {
-            var mirrorDisplayViewModel = ViewModel as SingleDisplayViewModel;
-            if(mirrorDisplayViewModel != null)
+            var singleDisplayViewModel = ViewModel as SingleDisplayViewModel;
+            if(singleDisplayViewModel != null)
             {
-                mirrorDisplayViewModel.DisplayWidthHeight = new Tuple<double, double>(ActualWidth, ActualHeight);
+                singleDisplayViewModel.DisplayWidthHeight = new Tuple<double, double>(ActualWidth, ActualHeight);
             }
 
             base.OnRenderSizeChanged(sizeInfo);

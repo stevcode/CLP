@@ -15,10 +15,16 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Initializes a new instance of the SingleDisplayViewModel class.
         /// </summary>
-        public SingleDisplayViewModel(SingleDisplay singleDisplay)
+        public SingleDisplayViewModel(Notebook notebook)
         {
-            SingleDisplay = singleDisplay;
+            Notebook = notebook;
             PageScrollCommand = new Command<ScrollChangedEventArgs>(OnPageScrollCommandExecute);
+            Initialized += SingleDisplayViewModel_Initialized;
+        }
+
+        void SingleDisplayViewModel_Initialized(object sender, EventArgs e)
+        {
+            OnPageResize();
         }
 
         public override string Title
@@ -31,21 +37,21 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Model
 
         /// <summary>
-        /// The Model for this ViewModel.
+        /// The Model of the ViewModel.
         /// </summary>
         [Model(SupportIEditableObject = false)]
-        public SingleDisplay SingleDisplay
+        public Notebook Notebook
         {
-            get { return GetValue<SingleDisplay>(SingleDisplayProperty); }
-            private set { SetValue(SingleDisplayProperty, value); }
+            get { return GetValue<Notebook>(NotebookProperty); }
+            private set { SetValue(NotebookProperty, value); }
         }
 
-        public static readonly PropertyData SingleDisplayProperty = RegisterProperty("SingleDisplay", typeof(SingleDisplay));
+        public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof(Notebook));
 
         /// <summary>
         /// A property mapped to a property on the Model SingleDisplay.
         /// </summary>
-        [ViewModelToModel("SingleDisplay")]
+        [ViewModelToModel("Notebook")]
         public CLPPage CurrentPage
         {
             get { return GetValue<CLPPage>(CurrentPageProperty); }

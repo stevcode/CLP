@@ -97,7 +97,6 @@
     <Compile Include="DomainModel\Displays\ADisplayBase.cs" />
     <Compile Include="DomainModel\Displays\GridDisplay.cs" />
     <Compile Include="DomainModel\Displays\IDisplay.cs" />
-    <Compile Include="DomainModel\Displays\SingleDisplay.cs" />
     <Compile Include="DomainModel\IConnectedPerson.cs" />
     <Compile Include="DomainModel\Notebook.cs" />
     <Compile Include="DomainModel\PageObjects\APageObjectBase.cs" />

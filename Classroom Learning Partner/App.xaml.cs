@@ -3,6 +3,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Threading;
 using Catel.Logging;
+using Catel.Reflection;
 using Catel.Runtime.Serialization;
 using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Views;
@@ -48,9 +49,13 @@ namespace Classroom_Learning_Partner
 
         private static void InitializeCatelSettings()
         { 
+            //Preload all assemblies during startup
+            var directory = typeof(MainWindowView).Assembly.GetDirectory();
+            AppDomain.CurrentDomain.PreloadAssemblies(directory);
+
             //Uncomment this to enable Catel Logging
             //Comment out to speed up program, all the consoles write are very taxing.
-            //LogManager.RegisterDebugListener();
+            LogManager.RegisterDebugListener();
 
             //Stops Catel UserControls from searching for InfoBar (not being used for this project, massive time consumer)
             Catel.Windows.Controls.UserControl.DefaultSkipSearchingForInfoBarMessageControlValue = true;

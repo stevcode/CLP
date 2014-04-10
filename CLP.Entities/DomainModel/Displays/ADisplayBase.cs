@@ -83,30 +83,6 @@ namespace CLP.Entities
         public static readonly PropertyData NotebookIDProperty = RegisterProperty("NotebookID", typeof(string), string.Empty);
 
         /// <summary>
-        /// Unique Identifier of the currently selected <see cref="CLPPage" />.
-        /// </summary>
-        public string CurrentPageID
-        {
-            get { return GetValue<string>(CurrentPageIDProperty); }
-            set { SetValue(CurrentPageIDProperty, value); }
-        }
-
-        public static readonly PropertyData CurrentPageIDProperty = RegisterProperty("CurrentPageID", typeof(string));
-
-        /// <summary>
-        /// Currently selected <see cref="CLPPage" /> of the <see cref="IDisplay" />.
-        /// </summary>
-        [XmlIgnore]
-        [ExcludeFromSerialization]
-        public virtual CLPPage CurrentPage
-        {
-            get { return GetValue<CLPPage>(CurrentPageProperty); }
-            set { SetValue(CurrentPageProperty, value); }
-        }
-
-        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage));
-
-        /// <summary>
         /// List of the <see cref="CLPPage" />s in the <see cref="IDisplay" />.
         /// </summary>
         [XmlIgnore]

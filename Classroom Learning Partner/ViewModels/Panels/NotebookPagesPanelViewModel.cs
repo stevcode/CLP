@@ -15,7 +15,6 @@ namespace Classroom_Learning_Partner.ViewModels
         public NotebookPagesPanelViewModel(Notebook notebook)
         {
             Notebook = notebook;
-            CurrentPage = notebook.SingleDisplay.CurrentPage;
             Initialized += NotebookPagesPanelViewModel_Initialized;
             
             SetCurrentPageCommand = new Command<CLPPage>(OnSetCurrentPageCommandExecute);
@@ -49,6 +48,18 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof(Notebook));
 
         /// <summary>
+        /// Current, selected page in the notebook.
+        /// </summary>
+        [ViewModelToModel("Notebook")]
+        public CLPPage CurrentPage
+        {
+            get { return GetValue<CLPPage>(CurrentPageProperty); }
+            set { SetValue(CurrentPageProperty, value); }
+        }
+
+        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage));
+
+        /// <summary>
         /// Pages of the Notebook.
         /// </summary>
         [ViewModelToModel("Notebook")]
@@ -61,21 +72,6 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData PagesProperty = RegisterProperty("Pages", typeof(ObservableCollection<CLPPage>));
 
         #endregion //Model
-
-        #region Bindings
-
-        /// <summary>
-        /// Current, selected page in the notebook.
-        /// </summary>
-        public CLPPage CurrentPage
-        {
-            get { return GetValue<CLPPage>(CurrentPageProperty); }
-            set { SetValue(CurrentPageProperty, value); }
-        }
-
-        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage));
-
-        #endregion //Bindings
 
         #region Commands
 
@@ -120,18 +116,20 @@ namespace Classroom_Learning_Partner.ViewModels
         public void SetCurrentPage(CLPPage page)
         {
             var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel != null)
+            if(notebookWorkspaceViewModel == null)
             {
-                notebookWorkspaceViewModel.CurrentDisplay.AddPageToDisplay(page);
+                return;
             }
 
-            // TODO: Entities, StagingPanel
-            //var submissionsPanel = LinkedPanel as SubmissionsPanelViewModel;
-            //if(submissionsPanel != null)
-            //{
-            //    submissionsPanel.CurrentPage = null;
-            //}
+            if(notebookWorkspaceViewModel.CurrentDisplay == null)
+            {
+                CurrentPage = page;
+                return;
+            }
 
+            notebookWorkspaceViewModel.CurrentDisplay.AddPageToDisplay(page);
+
+            // TODO: Entities, History of submissions
             //var historyPanel = GetSubmissionHistoryPanelViewModel();
             //if(historyPanel != null)
             //{
@@ -151,8 +149,8 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 return null;
             }
-            var singleDisplay = notebookWorkspaceViewModel.CurrentDisplay as SingleDisplay;
-            return singleDisplay == null ? null : singleDisplay.CurrentPage;
+
+            return notebookWorkspaceViewModel.CurrentDisplay == null ? notebookWorkspaceViewModel.Notebook.CurrentPage : null;
         }
 
         public static NotebookPagesPanelViewModel GetNotebookPagesPanelViewModel()

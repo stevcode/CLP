@@ -24,7 +24,6 @@ namespace Classroom_Learning_Partner.ViewModels
         public NotebookWorkspaceViewModel(Notebook notebook)
         {
             Notebook = notebook;
-            CurrentDisplay = SingleDisplay;
 
             InitializePanels(notebook);
 
@@ -72,18 +71,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof(Notebook));
-
-        /// <summary>
-        /// A property mapped to a property on the Model Notebook.
-        /// </summary>
-        [ViewModelToModel("Notebook")]
-        public SingleDisplay SingleDisplay
-        {
-            get { return GetValue<SingleDisplay>(SingleDisplayProperty); }
-            set { SetValue(SingleDisplayProperty, value); }
-        }
-
-        public static readonly PropertyData SingleDisplayProperty = RegisterProperty("SingleDisplay", typeof(SingleDisplay));
 
         /// <summary>
         /// A property mapped to a property on the Model Notebook.
@@ -268,7 +255,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 var mainWindow = viewModel as MainWindowViewModel;
                 if(propertyName == "IsAuthoring")
                 {
-                    CurrentDisplay = SingleDisplay;
+                    CurrentDisplay = null;
                     if(mainWindow.IsAuthoring)
                     {
                         WorkspaceBackgroundColor = new SolidColorBrush(Colors.Salmon);
