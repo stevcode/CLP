@@ -200,6 +200,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnSetCurrentPageCommandExecute(ICLPPage page)
         {
+            CurrentPage = page;
             var notebookWorkspaceViewModel = App.MainWindowViewModel.SelectedWorkspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel != null)
             {

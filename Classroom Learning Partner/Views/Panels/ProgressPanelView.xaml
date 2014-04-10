@@ -17,6 +17,7 @@
             <conv:SubmissionsListForPageByStudentConverter x:Key="SubmissionsListForPageByStudentConverter" />
             <conv:PageToStarredVisibilityConverter x:Key="PageToStarredVisibilityConverter" />
             <conv:PageToSubmissionVisibilityConverter x:Key="PageToSubmissionVisibilityConverter" />
+            <conv:PageMatchToColorConverter x:Key="PageMatchToColorConverter" />
         </ResourceDictionary>
     </UserControl.Resources>
     <Border Background="{StaticResource GrayBackgroundColor}"
@@ -86,7 +87,13 @@
                                                         <Image Grid.Column="1" Source="pack://application:,,,/Resources/Images/BlueEnvelope16.png"
                                                         Visibility="{Binding Converter={StaticResource PageToSubmissionVisibilityConverter}}"/>
                                                     </Grid>
-                                                    <Rectangle Grid.Row="0" Margin="0" Fill="Transparent">
+                                                    <Rectangle Grid.Row="0" Margin="0" Fill="Transparent" StrokeThickness="2">
+                                                        <Rectangle.Stroke>
+                                                            <MultiBinding Converter="{StaticResource PageMatchToColorConverter}">
+                                                                <Binding ElementName="Pages" Path="DataContext.CurrentPage"/>
+                                                                <Binding Path=""/>
+                                                            </MultiBinding>
+                                                        </Rectangle.Stroke>
                                                         <i:Interaction.Triggers>
                                                             <i:EventTrigger EventName="MouseUp">
                                                                 <catel:EventToCommand
