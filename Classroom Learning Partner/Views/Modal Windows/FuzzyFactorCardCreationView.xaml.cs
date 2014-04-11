@@ -13,6 +13,7 @@ namespace Classroom_Learning_Partner.Views
     {
         public FuzzyFactorCardCreationView()
         {
+            WindowStartupLocation = WindowStartupLocation.CenterOwner;
             InitializeComponent();
             _focusedTextBox = Product;
             _focusedTextBox.Focus();
