@@ -57,14 +57,15 @@ namespace Classroom_Learning_Partner.ViewModels
         private static void OnCurrentPageChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
         {
             var displayPanel = DisplaysPanelViewModel.GetDisplayListPanelViewModel();
-            var mirrorDisplayViewModel = sender as SingleDisplayViewModel;
-            if(mirrorDisplayViewModel == null ||
-               displayPanel == null)
+            var singleDisplayViewModel = sender as SingleDisplayViewModel;
+            if(singleDisplayViewModel == null ||
+               displayPanel == null ||
+               singleDisplayViewModel.CurrentPage == null)
             {
                 return;
             }
 
-            mirrorDisplayViewModel.OnPageResize();
+            singleDisplayViewModel.OnPageResize();
 
             // TODO: Entities
             //if(!App.MainWindowViewModel.Ribbon.IsProjectorOn || App.Network.ProjectorProxy == null)
@@ -72,7 +73,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //    return;
             //}
 
-            //var pageID = mirrorDisplayViewModel.CurrentPage.SubmissionType != SubmissionType.None ? mirrorDisplayViewModel.CurrentPage.SubmissionID : mirrorDisplayViewModel.CurrentPage.UniqueID;
+            //var pageID = singleDisplayViewModel.CurrentPage.SubmissionType != SubmissionType.None ? singleDisplayViewModel.CurrentPage.SubmissionID : singleDisplayViewModel.CurrentPage.UniqueID;
 
             //try
             //{

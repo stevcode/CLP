@@ -13,6 +13,7 @@ using System.Windows.Documents;
 using System.Windows.Ink;
 using System.Windows.Media;
 using System.Windows.Xps.Packaging;
+using Catel.Collections;
 using Catel.Data;
 using Catel.IoC;
 using Catel.MVVM;
@@ -171,6 +172,8 @@ namespace Classroom_Learning_Partner.ViewModels
             //Page
             AddNewPageCommand = new Command<string>(OnAddNewPageCommandExecute);
             AddNewProofPageCommand = new Command<string>(OnAddNewProofPageCommandExecute);
+            MovePageUpCommand = new Command(OnMovePageUpCommandExecute, OnMovePageUpCanExecute);
+            MovePageDownCommand = new Command(OnMovePageDownCommandExecute, OnMovePageDownCanExecute);
             SwitchPageLayoutCommand = new Command(OnSwitchPageLayoutCommandExecute);
             SwitchPageTypeCommand = new Command(OnSwitchPageTypeCommandExecute);
 
@@ -1941,6 +1944,66 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
+        /// Moves the CurrentPage Up in the notebook.
+        /// </summary>
+        public Command MovePageUpCommand { get; private set; }
+
+        private void OnMovePageUpCommandExecute()
+        {
+            var currentPage = CurrentPage;
+            var notebookPanel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
+            var currentPageIndex = notebookPanel.Pages.IndexOf(currentPage);
+            var previousPage = notebookPanel.Pages[currentPageIndex - 1];
+            currentPage.PageNumber--;
+            previousPage.PageNumber++;
+
+            notebookPanel.Pages.MoveItemUp(currentPage);
+            notebookPanel.CurrentPage = notebookPanel.Pages[currentPageIndex - 1];
+        }
+
+        private bool OnMovePageUpCanExecute()
+        {
+            var currentPage = CurrentPage;
+            var notebookPanel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
+            if(notebookPanel == null || currentPage == null)
+            {
+                return false;
+            }
+            
+            return notebookPanel.Pages.CanMoveItemUp(currentPage);
+        }
+
+        /// <summary>
+        /// Moves the CurrentPage Down in the notebook.
+        /// </summary>
+        public Command MovePageDownCommand { get; private set; }
+
+        private void OnMovePageDownCommandExecute()
+        {
+            var currentPage = CurrentPage;
+            var notebookPanel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
+            var currentPageIndex = notebookPanel.Pages.IndexOf(currentPage);
+            var nextPage = notebookPanel.Pages[currentPageIndex + 1];
+            currentPage.PageNumber++;
+            nextPage.PageNumber--;
+
+            notebookPanel.Pages.MoveItemDown(currentPage);
+            notebookPanel.CurrentPage = notebookPanel.Pages[currentPageIndex + 1];
+        }
+
+        private bool OnMovePageDownCanExecute()
+        {
+            var currentPage = CurrentPage;
+            var notebookPanel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
+            if(notebookPanel == null || currentPage == null)
+            {
+                return false;
+            }
+
+            return notebookPanel.Pages.CanMoveItemDown(currentPage);
+        }
+
+        /// <summary>
         /// Converts current page between landscape and portrait.
         /// </summary>
         public Command SwitchPageLayoutCommand { get; private set; }
@@ -1951,7 +2014,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if(Math.Abs(page.InitialAspectRatio - CLPPage.LANDSCAPE_WIDTH / CLPPage.LANDSCAPE_HEIGHT) < 0.01)
             {
-                foreach(IPageObject pageObject in page.PageObjects)
+                foreach(var pageObject in page.PageObjects)
                 {
                     if (pageObject.XPosition + pageObject.Width > CLPPage.PORTRAIT_WIDTH)
                     {
@@ -1969,7 +2032,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             else if(Math.Abs(page.InitialAspectRatio - CLPPage.PORTRAIT_WIDTH / CLPPage.PORTRAIT_HEIGHT) < 0.01)
             {
-                foreach(IPageObject pageObject in page.PageObjects)
+                foreach(var pageObject in page.PageObjects)
                 {
                     if(pageObject.XPosition + pageObject.Width > CLPPage.LANDSCAPE_WIDTH)
                     {
@@ -2002,26 +2065,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnDeletePageCommandExecute()
         {
-            var page = NotebookPagesPanelViewModel.GetCurrentPage();
+            var page = CurrentPage;
             var panel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
             if(page == null || panel == null)
             {
                 return;
             }
-
-            // TODO: Entities
-            //if(page.SubmissionType != SubmissionType.None) 
-            //{
-            //    if(MessageBoxResult.Yes != MessageBox.Show("This is a submission page, are you sure you want to delete it?", "Delete Student Submission?", MessageBoxButton.YesNo)) 
-            //    {
-            //        return;
-            //    }
-
-            //    var submissionIndex = panel.Notebook.GetSubmissionIndex(page);
-            //    if(submissionIndex == -1) { return; }
-            //    panel.Notebook.Submissions[page.UniqueID].RemoveAt(submissionIndex);
-            //    panel.CurrentPage = panel.Notebook.Pages[0];
-            //}
 
             var index = panel.Notebook.Pages.IndexOf(page);
             if(index == -1)
@@ -2029,8 +2078,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
             panel.Notebook.RemovePageAt(index);
-            var count = panel.Notebook.Pages.Count;
-            panel.CurrentPage = panel.Notebook.Pages[index == count ? index - 1 : index];
         }
 
         /// <summary>

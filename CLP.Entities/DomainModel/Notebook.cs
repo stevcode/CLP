@@ -118,7 +118,10 @@ namespace CLP.Entities
             set
             {
                 SetValue(CurrentPageProperty, value);
-                CurrentPageID = value.ID;
+                if(value != null)
+                {
+                    CurrentPageID = value.ID;
+                }
             }
         }
 
@@ -164,10 +167,9 @@ namespace CLP.Entities
         {
             page.NotebookID = ID;
             page.PageNumber = Pages.Any() ? Pages.Last().PageNumber + 1 : 1;
-
             Pages.Add(page);
+            //GenerateSubmissionViews(page.UniqueID);
             CurrentPage = page;
-            //GenerateSubmissionViews(page.ID);
         }
 
         public void AddDisplayToNotebook(IDisplay display)
@@ -180,40 +182,61 @@ namespace CLP.Entities
         public void InsertPageAt(int index, CLPPage page)
         {
             page.NotebookID = ID;
-
-            if(index != 0)
-            {
-                var previousPage = Pages.ElementAtOrDefault(index - 1);
-                if(previousPage != null)
-                {
-                    page.PageNumber = previousPage.PageNumber + 1;
-                }
-            }
-            // TODO: Else Load previous page from Cache/Database if exists
-
             Pages.Insert(index, page);
-            CurrentPage = page;
+            GeneratePageNumbers();
             //GenerateSubmissionViews(page.UniqueID);
-            //GeneratePageIndexes();
-
-            for(var i = index + 1; i < Pages.Count; i++)
-            {
-                Pages[i].PageNumber++;
-            }
+            CurrentPage = page;
         }
 
         public void RemovePageAt(int index)
         {
-            if(Pages.Count > index && index >= 0)
+            if(Pages.Count <= index ||
+               index < 0)
             {
-                //Submissions.Remove(Pages[index].UniqueID);
-                Pages.RemoveAt(index);
+                return;
             }
-            if(Pages.Count == 0)
+
+            if(Pages.Count == 1)
             {
-                AddCLPPageToNotebook(new CLPPage());
+                var newPage = new CLPPage
+                              {
+                                  NotebookID = ID,
+                                  PageNumber = Pages.Any() ? Pages.First().PageNumber : 1
+                              };
+
+                Pages.Add(newPage);
             }
-            //GeneratePageIndexes();
+
+            int newIndex;
+            if(index + 1 < Pages.Count)
+            {
+                newIndex = index + 1;
+            }
+            else
+            {
+                newIndex = index - 1;
+            }
+
+            var nextPage = Pages.ElementAt(newIndex);
+            CurrentPage = nextPage;
+            if(index == 0)
+            {
+                CurrentPage.PageNumber = Pages.First().PageNumber;
+            }
+            
+            //Submissions.Remove(Pages[index].UniqueID);
+            Pages.RemoveAt(index);
+            GeneratePageNumbers();
+        }
+
+        public void GeneratePageNumbers()
+        {
+            var initialPageNumber = Pages.Any() ? Pages.First().PageNumber : 1;
+            foreach(var page in Pages)
+            {
+                page.PageNumber = initialPageNumber;
+                initialPageNumber++;
+            }
         }
 
         #endregion //Methods

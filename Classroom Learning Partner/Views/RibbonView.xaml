@@ -872,6 +872,14 @@
 
                     </RibbonGallery>
                 </RibbonMenuButton>
+                
+                <RibbonButton Label="Move Page Up"
+                              LargeImageSource="pack://application:,,,/Resources/Images/TempIcon32.png"
+                              Command="{Binding MovePageUpCommand}" />
+                
+                <RibbonButton Label="Move Page Down"
+                              LargeImageSource="pack://application:,,,/Resources/Images/TempIcon32.png"
+                              Command="{Binding MovePageDownCommand}" />
 
                 <RibbonButton Label="Switch Page Layout"
                               LargeImageSource="..\Images\LargeIcon.png"
