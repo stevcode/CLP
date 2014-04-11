@@ -1091,6 +1091,90 @@ namespace Classroom_Learning_Partner.ViewModels
                 ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
                                                            new CLPHistoryArrayDivisionValueChanged(PageObject.ParentPage, PageObject.UniqueID, isHorizontalDivision, divisionIndex, previousValue));
             }
+
+            //Check if array labels add up to larger array dimension
+            if(division.Orientation == ArrayDivisionOrientation.Horizontal)
+            {
+                int total = 0;
+                foreach(CLPArrayDivision div in HorizontalDivisions)
+                {
+                    if(div.Value == 0)
+                    {
+                        total = Rows;
+                        break;
+                    }
+                    else
+                    {
+                        total += div.Value;
+                    }
+                }
+
+                if(total != Rows)
+                {
+                    string dimensionsString = "";
+                    if(HorizontalDivisions.Count == 2)
+                    {
+                        dimensionsString = HorizontalDivisions.First().Value.ToString() + " and " + HorizontalDivisions.Last().Value.ToString();
+                    }
+                    else
+                    {
+                        for(int i = 0; i < HorizontalDivisions.Count; i++)
+                        {
+                            dimensionsString += HorizontalDivisions.ElementAt(i).Value.ToString();
+                            if(i < HorizontalDivisions.Count - 1)
+                            {
+                                dimensionsString += ", ";
+                            }
+                            if(i == HorizontalDivisions.Count - 2)
+                            {
+                                dimensionsString += "and ";
+                            }
+                        }
+                    }
+                    MessageBox.Show("You entered " + dimensionsString + " for the dimensions. Check that the numbers sum to the larger array dimension.", "Oops");
+                }
+            }
+            else
+            {
+                int total = 0;
+                foreach(CLPArrayDivision div in VerticalDivisions)
+                {
+                    if(div.Value == 0)
+                    {
+                        total = Columns;
+                        break;
+                    }
+                    else
+                    {
+                        total += div.Value;
+                    }
+                }
+
+                if(total != Columns)
+                {
+                    string dimensionsString = "";
+                    if(VerticalDivisions.Count == 2)
+                    {
+                        dimensionsString = VerticalDivisions.First().Value.ToString() + " and " + VerticalDivisions.Last().Value.ToString();
+                    }
+                    else
+                    {
+                        for(int i = 0; i < VerticalDivisions.Count; i++)
+                        {
+                            dimensionsString += VerticalDivisions.ElementAt(i).Value.ToString();
+                            if(i < VerticalDivisions.Count - 1)
+                            {
+                                dimensionsString += ", ";
+                            }
+                            if(i == VerticalDivisions.Count - 2)
+                            {
+                                dimensionsString += "and ";
+                            }
+                        }
+                    }
+                    MessageBox.Show("You entered " + dimensionsString + " for the dimensions. Check that the numbers sum to the larger array dimension.", "Oops");
+                }
+            }
         }
 
         /// <summary>
