@@ -247,13 +247,19 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnEraserTypeChanged()
         {
-            if(EraserType == "Point Eraser")
+            switch(EraserType)
             {
-                EraserMode = InkCanvasEditingMode.EraseByPoint;
+                case "Point Eraser":
+                    EraserMode = InkCanvasEditingMode.EraseByPoint;
+                    break;
+                case "Stroke Eraser":
+                    EraserMode = InkCanvasEditingMode.EraseByStroke;
+                    break;
             }
-            else if(EraserType == "Stroke Eraser")
+            if(PageInteractionMode != PageInteractionMode.Pen &&
+               PageInteractionMode != PageInteractionMode.Highlighter)
             {
-                EraserMode = InkCanvasEditingMode.EraseByStroke;
+                PageInteractionMode = PageInteractionMode.Pen;
             }
         }
 
