@@ -850,7 +850,7 @@
                               LargeImageSource="..\Images\Array.png"
                               Command="{Binding AnalyzeArrayCommand}" />
 
-                <RibbonButton Label="Analyze Division Tool"
+                <RibbonButton Label="Analyze Division Object"
                               LargeImageSource="pack://application:,,,/Resources/Images/FuzzyFactorCard32.png"
                               Command="{Binding AnalyzeFuzzyFactorCardCommand}" />
 

@@ -25,7 +25,7 @@ namespace CLP.Models
             ValueOptions.Add(new TagOptionValue("5's")); // e.g. 44 / 4 -> 4 x 5 | 4 x 5 | 4 x 1
             ValueOptions.Add(new TagOptionValue("repeat")); // e.g. 28 / 4 -> 4 x 3 | 4 x 3 | 4 x 1 
             ValueOptions.Add(new TagOptionValue("one array")); // Only one array snapped in
-            ValueOptions.Add(new TagOptionValue("other")); // None of the above*
+            ValueOptions.Add(new TagOptionValue("other")); // None of the above
         }
 
         /// <summary>

@@ -76,6 +76,7 @@ namespace CLP.Models
                 try
                 {
                     ParentPage.PageObjects.Remove(pageObject);
+                    pageObject.OnRemoved();
                     PageObjects.Add(pageObject);
                 }
                 catch(Exception ex)

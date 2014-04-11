@@ -6,13 +6,13 @@ using Catel.Data;
 namespace CLP.Models
 {
     [Serializable]
-    public class FuzzyFactorCardFailedSnapTagType : ModelBase, TagType
+    public class FuzzyFactorCardDeletedTagType : ModelBase, TagType
     {
         #region Constructors
 
-        private FuzzyFactorCardFailedSnapTagType()
+        private FuzzyFactorCardDeletedTagType()
         {
-            Name = "Fuzzy Factor Card Failed Snap";
+            Name = "Fuzzy Factor Card Deleted";
             InElevatedMenu = false;
             AccessLevels = new ObservableCollection<Tag.AccessLevels>();
             AccessLevels.Add(Tag.AccessLevels.Teacher);
@@ -20,12 +20,8 @@ namespace CLP.Models
 
             ExclusiveValue = false;
             ValueOptions = new ObservableCollection<TagOptionValue>();
-            ValueOptions.Add(new TagOptionValue("too many"));
-            ValueOptions.Add(new TagOptionValue("too many multiple times"));
-            ValueOptions.Add(new TagOptionValue("snapped incorrect dimension"));
-            ValueOptions.Add(new TagOptionValue("snapped incorrect dimension multiple times"));
-            ValueOptions.Add(new TagOptionValue("snapped wrong orientation"));
-            ValueOptions.Add(new TagOptionValue("snapped wrong orientation multiple times"));
+            ValueOptions.Add(new TagOptionValue("deleted correct division object"));
+            ValueOptions.Add(new TagOptionValue("deleted incorrect division object"));
         }
 
         /// <summary>
@@ -33,7 +29,7 @@ namespace CLP.Models
         /// </summary>
         /// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext"/>.</param>
-        protected FuzzyFactorCardFailedSnapTagType(SerializationInfo info, StreamingContext context)
+        protected FuzzyFactorCardDeletedTagType(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }
@@ -54,7 +50,7 @@ namespace CLP.Models
             }
         }
 
-        public static readonly PropertyData NameProperty = RegisterProperty("Name", typeof(string), "Fuzzy Factor Card Failed Snap");
+        public static readonly PropertyData NameProperty = RegisterProperty("Name", typeof(string), "Fuzzy Factor Card Deleted");
 
         public bool InElevatedMenu
         {
@@ -113,6 +109,6 @@ namespace CLP.Models
         public static readonly PropertyData ExclusiveValueProperty = RegisterProperty("ExclusiveValue", typeof(bool), false);
         #endregion
 
-        public static FuzzyFactorCardFailedSnapTagType Instance = new FuzzyFactorCardFailedSnapTagType();
+        public static FuzzyFactorCardDeletedTagType Instance = new FuzzyFactorCardDeletedTagType();
     }
 }

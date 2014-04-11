@@ -509,7 +509,7 @@ namespace CLP.Models
             Tag correctnessTag = new Tag(Tag.Origins.Generated, RepresentationCorrectnessTagType.Instance);
             correctnessTag.AddTagOptionValue(new TagOptionValue("Error: Other"));
 
-            if(product == ffcDividend && ( factor1 == ffcHeight || factor2 == ffcHeight) )
+            if(product == ffcDividend && (( factor1 == ffcHeight && relation.Factor1Given) || ( factor2 == ffcHeight && relation.Factor2Given)))
             {
                 correctnessTag.AddTagOptionValue(new TagOptionValue("Correct"));
             }

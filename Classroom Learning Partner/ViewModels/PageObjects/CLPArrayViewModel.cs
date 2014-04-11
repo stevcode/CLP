@@ -477,33 +477,66 @@ namespace Classroom_Learning_Partner.ViewModels
                             if(snappingArray.Rows != factorCard.Rows)
                             {
                                 var hasTag = false;
-                                foreach(Tag tag in PageObject.ParentPage.PageTags.ToList())
+                                if(snappingArray.Columns == factorCard.Rows)
                                 {
-                                    if(tag.TagType.Name == FuzzyFactorCardFailedSnapTagType.Instance.Name)
+                                    foreach(Tag tag in PageObject.ParentPage.PageTags.ToList())
                                     {
-                                        if(!tag.Value.Contains(new TagOptionValue("snapped incorrect dimension multiple times")))
+                                        if(tag.TagType.Name == FuzzyFactorCardFailedSnapTagType.Instance.Name)
                                         {
-                                            if(tag.Value.Contains(new TagOptionValue("snapped incorrect dimension")))
+                                            if(!tag.Value.Contains(new TagOptionValue("snapped wrong orientation multiple times")))
                                             {
-                                                tag.Value.Remove(new TagOptionValue("snapped incorrect dimension"));
-                                                tag.Value.Add(new TagOptionValue("snapped incorrect dimension multiple times"));
+                                                if(tag.Value.Contains(new TagOptionValue("snapped wrong orientation")))
+                                                {
+                                                    tag.Value.Remove(new TagOptionValue("snapped wrong orientation"));
+                                                    tag.Value.Add(new TagOptionValue("snapped wrong orientation multiple times"));
+                                                }
+                                                else
+                                                {
+                                                    tag.Value.Add(new TagOptionValue("snapped wrong orientation"));
+                                                }
                                             }
-                                            else
-                                            {
-                                                tag.Value.Add(new TagOptionValue("snapped incorrect dimension"));
-                                            }
+                                            hasTag = true;
+                                            continue;
                                         }
-                                        hasTag = true;
-                                        continue;
+                                    }
+                                    //Apply tag to note that the student tried to snap array in wrong orientation
+                                    if(!hasTag)
+                                    {
+                                        var tag = new Tag(Tag.Origins.Generated, FuzzyFactorCardFailedSnapTagType.Instance);
+                                        tag.AddTagOptionValue(new TagOptionValue("snapped wrong orientation"));
+                                        PageObject.ParentPage.PageTags.Add(tag);
                                     }
                                 }
-
-                                //Apply tag to note that the student tried to snap mismatched array
-                                if(!hasTag)
+                                else
                                 {
-                                    var tag = new Tag(Tag.Origins.Generated, FuzzyFactorCardFailedSnapTagType.Instance);
-                                    tag.AddTagOptionValue(new TagOptionValue("snapped incorrect dimension"));
-                                    PageObject.ParentPage.PageTags.Add(tag);
+                                    foreach(Tag tag in PageObject.ParentPage.PageTags.ToList())
+                                    {
+                                        if(tag.TagType.Name == FuzzyFactorCardFailedSnapTagType.Instance.Name)
+                                        {
+                                            if(!tag.Value.Contains(new TagOptionValue("snapped incorrect dimension multiple times")))
+                                            {
+                                                if(tag.Value.Contains(new TagOptionValue("snapped incorrect dimension")))
+                                                {
+                                                    tag.Value.Remove(new TagOptionValue("snapped incorrect dimension"));
+                                                    tag.Value.Add(new TagOptionValue("snapped incorrect dimension multiple times"));
+                                                }
+                                                else
+                                                {
+                                                    tag.Value.Add(new TagOptionValue("snapped incorrect dimension"));
+                                                }
+                                            }
+                                            hasTag = true;
+                                            continue;
+                                        }
+                                    }
+
+                                    //Apply tag to note that the student tried to snap mismatched array
+                                    if(!hasTag)
+                                    {
+                                        var tag = new Tag(Tag.Origins.Generated, FuzzyFactorCardFailedSnapTagType.Instance);
+                                        tag.AddTagOptionValue(new TagOptionValue("snapped incorrect dimension"));
+                                        PageObject.ParentPage.PageTags.Add(tag);
+                                    }
                                 }
 
                                 var factorCardViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(factorCard);
@@ -568,6 +601,13 @@ namespace Classroom_Learning_Partner.ViewModels
                             PageObject.ParentPage.PageObjects.Remove(PageObject);
                             if(factorCard.IsHorizontallyAligned)
                             {
+                                //Update Remainder Region
+                                if(factorCard.IsRemainderRegionDisplayed && factorCard.CurrentRemainder == snappingArray.Columns * snappingArray.Rows)
+                                {
+                                    CLPFuzzyFactorCardRemainder remainderRegion = PageObject.ParentPage.GetPageObjectByUniqueID(factorCard.RemainderRegionUniqueID) as CLPFuzzyFactorCardRemainder;
+                                    var currentIndex = PageObject.ParentPage.PageObjects.IndexOf(remainderRegion);
+                                    ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryPageObjectRemove(PageObject.ParentPage, remainderRegion, currentIndex));
+                                }
                                 factorCard.SnapInArray(snappingArray.Columns);
                             }
                             else

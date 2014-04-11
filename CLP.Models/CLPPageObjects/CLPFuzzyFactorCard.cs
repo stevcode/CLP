@@ -140,6 +140,26 @@ namespace CLP.Models
         /// </summary>
         public static readonly PropertyData RemainderRegionUniqueIDProperty = RegisterProperty("RemainderRegionUniqueID", typeof(string), null);
 
+        /// <summary>
+        /// RemainderRegion object - null unless it was removed from the page
+        /// </summary>
+        public CLPFuzzyFactorCardRemainder RemainderRegion
+        {
+            get
+            {
+                return GetValue<CLPFuzzyFactorCardRemainder>(RemainderRegionProperty);
+            }
+            set
+            {
+                SetValue(RemainderRegionProperty, value);
+            }
+        }
+
+        /// <summary>
+        /// Register the RemainderRegion property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData RemainderRegionProperty = RegisterProperty("RemainderRegion", typeof(CLPFuzzyFactorCardRemainder), null);
+
         #endregion //Properties
 
         #region Methods
@@ -216,6 +236,57 @@ namespace CLP.Models
         {
             base.OnResized();
             RaisePropertyChanged("LastDivisionPosition");
+        }
+
+        public override void OnRemoved()
+        {
+            base.OnRemoved();
+
+            // FFC deleted tag
+            ObservableCollection<Tag> tags = ParentPage.PageTags;
+            ProductRelation relation = null;
+            foreach(Tag tag in tags)
+            {
+                if(tag.TagType.Name == PageDefinitionTagType.Instance.Name)
+                {
+                    relation = (ProductRelation)tag.Value[0].Value;
+                    break;
+                }
+            }
+
+            if(relation != null)
+            {
+                int factor1 = Convert.ToInt32(relation.Factor1);
+                int factor2 = Convert.ToInt32(relation.Factor2);
+                int product = Convert.ToInt32(relation.Product);
+
+                string tagValue;
+                if(product == Dividend && ((factor1 == Rows && relation.Factor1Given) || (factor2 == Rows && relation.Factor2Given)))
+                {
+                    tagValue = "deleted correct division object";
+                }
+                else
+                {
+                    tagValue = "deleted incorrect division object";
+                }
+
+                bool hasTag = false;
+                foreach(Tag tag in ParentPage.PageTags.ToList())
+                {
+                    if(tag.TagType.Name == FuzzyFactorCardDeletedTagType.Instance.Name)
+                    {
+                        tag.Value.Add(new TagOptionValue(tagValue));
+                        hasTag = true;
+                        continue;
+                    }
+                }
+                if(!hasTag)
+                {
+                    var tag = new Tag(Tag.Origins.Generated, FuzzyFactorCardDeletedTagType.Instance);
+                    tag.AddTagOptionValue(new TagOptionValue(tagValue));
+                    ParentPage.PageTags.Add(tag);
+                }
+            }
         }
 
         public void SnapInArray(int value)
@@ -346,14 +417,25 @@ namespace CLP.Models
                 CLPFuzzyFactorCardRemainder remainderRegion;
                 if(RemainderRegionUniqueID == null)
                 {
-                    remainderRegion = new CLPFuzzyFactorCardRemainder(this, ParentPage);
+                    if(RemainderRegion == null)
+                    {
+                        remainderRegion = new CLPFuzzyFactorCardRemainder(this, ParentPage);
+                    }
+                    else
+                    {
+                        remainderRegion = RemainderRegion;
+                        RemainderRegion = null;
+                    }
                     ParentPage.PageObjects.Add(remainderRegion);
                     RemainderRegionUniqueID = remainderRegion.UniqueID;
                 }
                 else
                 {
-                    remainderRegion = ParentPage.GetPageObjectByUniqueID(RemainderRegionUniqueID) as CLPFuzzyFactorCardRemainder;
-                    if(remainderRegion == null)
+                    try
+                    {
+                        remainderRegion = ParentPage.GetPageObjectByUniqueID(RemainderRegionUniqueID) as CLPFuzzyFactorCardRemainder;
+                    }
+                    catch
                     {
                         Console.WriteLine("Couldn't find FFC Remainder Region");
                         return;
@@ -388,6 +470,7 @@ namespace CLP.Models
                 CLPFuzzyFactorCardRemainder remainderRegion = ParentPage.GetPageObjectByUniqueID(RemainderRegionUniqueID) as CLPFuzzyFactorCardRemainder;
                 ParentPage.PageObjects.Remove(remainderRegion);
                 RemainderRegionUniqueID = null;
+                RemainderRegion = remainderRegion;
             }
         }
 
@@ -399,10 +482,7 @@ namespace CLP.Models
             {
                 if(pageObject.PageObjectType == "CLPArray")
                 {
-                    if((pageObject as CLPArray).Rows == Rows)
-                    {
-                        arrayArea += (pageObject as CLPArray).Rows * (pageObject as CLPArray).Columns;
-                    }
+                    arrayArea += (pageObject as CLPArray).Rows * (pageObject as CLPArray).Columns;
                     if((pageObject as CLPArray).Columns == Dividend || ((pageObject as CLPArray).Rows == Dividend))
                     {
                         //Array with product as array dimension added
@@ -426,7 +506,30 @@ namespace CLP.Models
                             ParentPage.PageTags.Add(tag);
                         }
                     }
-                    if((pageObject as CLPArray).Rows != Rows)
+                    if((pageObject as CLPArray).Rows != Rows && (pageObject as CLPArray).Columns == Rows)
+                    {
+                        //Array with wrong orientation added
+                        var hasTag = false;
+                        foreach(Tag tag in ParentPage.PageTags.ToList())
+                        {
+                            if(tag.TagType.Name == FuzzyFactorCardIncorrectArrayTagType.Instance.Name)
+                            {
+                                if(!tag.Value.Contains(new TagOptionValue("wrong orientation")))
+                                {
+                                    tag.Value.Add(new TagOptionValue("wrong orientation"));
+                                }
+                                hasTag = true;
+                                continue;
+                            }
+                        }
+                        if(!hasTag)
+                        {
+                            var tag = new Tag(Tag.Origins.Generated, FuzzyFactorCardIncorrectArrayTagType.Instance);
+                            tag.AddTagOptionValue(new TagOptionValue("wrong orientation"));
+                            ParentPage.PageTags.Add(tag);
+                        }
+                    }
+                    else if((pageObject as CLPArray).Rows != Rows)
                     {
                         //Array with incorrect dimension added
                         var hasTag = false;

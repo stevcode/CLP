@@ -22,6 +22,7 @@ namespace CLP.Models
             ValueOptions = new ObservableCollection<TagOptionValue>();
             ValueOptions.Add(new TagOptionValue("too many"));
             ValueOptions.Add(new TagOptionValue("incorrect dimension"));
+            ValueOptions.Add(new TagOptionValue("wrong orientation"));
             ValueOptions.Add(new TagOptionValue("product as dimension"));
         }
 

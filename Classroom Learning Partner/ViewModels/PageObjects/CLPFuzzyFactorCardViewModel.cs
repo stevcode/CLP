@@ -151,7 +151,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Removes pageObject from page when Delete button is pressed.
         /// </summary>
-        public new Command RemoveFuzzyFactorCardCommand
+        public Command RemoveFuzzyFactorCardCommand
         {
             get;
             set;
@@ -167,7 +167,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 PageObject.ParentPage.PageObjects.Remove(remainderRegion);
             }
             ACLPPageBaseViewModel.RemovePageObjectFromPage(PageObject);
-
         }
 
         /// <summary>
