@@ -272,7 +272,6 @@ namespace Classroom_Learning_Partner.ViewModels
                     var folderPath = Path.Combine(App.NotebookCacheDirectory, notebookName);
                     if(!Directory.Exists(folderPath))
                     {
-                      //  Directory.CreateDirectory(folderPath);
                         var newNotebook = new Notebook
                                           {
                                               Name = notebookName
@@ -285,6 +284,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(newNotebook);
                         App.MainWindowViewModel.IsAuthoring = true;
                         App.MainWindowViewModel.Ribbon.AuthoringTabVisibility = Visibility.Visible;
+                        App.MainWindowViewModel.CurrentNotebookName = notebookName;
 
                         nameChooserLoop = false;
                     }
@@ -302,24 +302,17 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static void OpenNotebook(string notebookName, bool forceCache = false, bool forceDatabase = false)
         {
-            var filePath = Path.Combine(App.NotebookCacheDirectory, notebookName, "notebook.xml");
-            if(!File.Exists(filePath))
+            var folderPath = Path.Combine(App.NotebookCacheDirectory, notebookName);
+            if(!Directory.Exists(folderPath))
             {
+                MessageBox.Show("Notebook doesn't exist");
                 return;
             }
 
             var stopWatch = new Stopwatch();
             stopWatch.Start();
-            Notebook notebook = null;
 
-            try
-            {
-                notebook = Load<Notebook>(filePath, SerializationMode.Xml);
-            }
-            catch(Exception ex)
-            {
-                Logger.Instance.WriteToLog("[ERROR] - Notebook could not be loaded: " + ex.Message);
-            }
+            var notebook = Notebook.OpenNotebook(folderPath);
 
             stopWatch.Stop();
             Logger.Instance.WriteToLog("Time to OPEN notebook (In Seconds): " + stopWatch.ElapsedMilliseconds / 1000.0);
@@ -330,38 +323,11 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            //var stopWatch2 = new Stopwatch();
-            //stopWatch2.Start();
-
             App.MainWindowViewModel.CurrentNotebookName = notebookName;
             if(notebook.LastSavedDate != null)
             {
                 App.MainWindowViewModel.LastSavedTime = notebook.LastSavedDate.Value.ToString("yyyy/MM/dd - HH:mm:ss");
             }
-
-            //foreach(var page in notebook.Pages)
-            //{
-            //    ACLPPageBase.Deserialize(page);
-            //    if(!notebook.Submissions.ContainsKey(page.UniqueID))
-            //    {
-            //        continue;
-            //    }
-            //    foreach(var submission in notebook.Submissions[page.UniqueID])
-            //    {
-            //        ACLPPageBase.Deserialize(submission);
-            //    }
-            //}
-
-            //stopWatch2.Stop();
-            //Logger.Instance.WriteToLog("Time to DESERIALIZE PAGES in notebook (In Seconds): " + stopWatch2.ElapsedMilliseconds / 1000.0);
-
-            //var stopWatch3 = new Stopwatch();
-            //stopWatch3.Start();
-
-            //notebook.InitializeAfterDeserialize();
-
-            //stopWatch3.Stop();
-            //Logger.Instance.WriteToLog("Time to INITIALIZE notebook (In Seconds): " + stopWatch3.ElapsedMilliseconds / 1000.0);
 
             foreach(var otherNotebook in App.MainWindowViewModel.OpenNotebooks.Where(otherNotebook => otherNotebook.ID == notebook.ID))
             {
@@ -376,11 +342,6 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(notebook);
             }
-
-            //if(App.CurrentUserMode == App.UserMode.Student)
-            //{
-            //    // _autoSaveTimer.Start();
-            //}
         }
 
         public static void SaveNotebook(Notebook notebook)

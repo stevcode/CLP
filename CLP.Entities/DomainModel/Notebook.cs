@@ -287,6 +287,36 @@ namespace CLP.Entities
             }
         }
 
+        public static Notebook OpenNotebook(string folderPath)
+        {
+            try
+            {
+                var filePath = Path.Combine(folderPath, "notebook.xml");
+                var notebook = Load<Notebook>(filePath, SerializationMode.Xml);
+                var pagesFolderPath = Path.Combine(folderPath, "Pages");
+                var pageFilePaths = Directory.EnumerateFiles(pagesFolderPath);
+                foreach(var pageFilePath in pageFilePaths)
+                {
+                    var page = Load<CLPPage>(pageFilePath, SerializationMode.Xml);
+                    foreach(var pageObject in page.PageObjects)
+                    {
+                        pageObject.ParentPage = page;
+                    }
+                    if(page.ID == notebook.CurrentPageID)
+                    {
+                        notebook.CurrentPage = page;
+                    }
+                    notebook.Pages.Add(page);
+                }
+
+                return notebook;
+            }
+            catch(Exception)
+            {
+                return null;
+            }
+        }
+
         #endregion //Cache
     }
 }
