@@ -104,10 +104,11 @@
 
         <TextBlock Grid.Row="1"
                    Foreground="{StaticResource MainColor}"
+                   FontSize="24"
                    TextAlignment="Right"
                    HorizontalAlignment="Right"
                    Margin="5">
-            <Run Text="Grid Display " />
+            <Run Text="Grid Display" />
             <Run Text="{Binding DisplayNumber}" />
         </TextBlock>
     </Grid>
