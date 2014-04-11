@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -44,8 +46,8 @@ namespace CLP.Entities
         /// <summary>
         /// Initializes <see cref="CLPPage" /> from page dimensions.
         /// </summary>
-        /// <param name="pageHeight">Height of the <see cref="CLPPage" />.</param>
-        /// <param name="pageWidth">Width of the <see cref="CLPPage" />.</param>
+        /// <param name="height">Height of the <see cref="CLPPage" />.</param>
+        /// <param name="width">Width of the <see cref="CLPPage" />.</param>
         public CLPPage(double height, double width)
         {
             CreationDate = DateTime.Now;
@@ -314,6 +316,32 @@ namespace CLP.Entities
 
         #endregion //Properties
 
+        #region Overrides of ObservableObject
+
+        protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
+        {
+            base.OnPropertyChanged(e);
+            IsCached = false;
+        }
+
+        #region Overrides of ModelBase
+
+        protected override void OnPropertyObjectCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            base.OnPropertyObjectCollectionChanged(sender, e);
+            IsCached = false;
+        }
+
+        protected override void OnPropertyObjectCollectionItemPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            base.OnPropertyObjectCollectionItemPropertyChanged(sender, e);
+            IsCached = false;
+        }
+
+        #endregion
+
+        #endregion
+
         #region Methods
 
          public CLPPage DuplicatePage()
@@ -394,8 +422,15 @@ namespace CLP.Entities
 
         #region Cache
 
+        public bool IsCached { get; set; }
+
         public void ToXML(string fileName)
         {
+            if(IsCached)
+            {
+                return;
+            }
+
             var fileInfo = new FileInfo(fileName);
             if (!Directory.Exists(fileInfo.DirectoryName))
             {
@@ -408,6 +443,7 @@ namespace CLP.Entities
                 xmlSerializer.Serialize(this, stream);
                 ClearIsDirtyOnAllChilds();
             }
+            IsCached = true;
         }
 
         #endregion //Cache
