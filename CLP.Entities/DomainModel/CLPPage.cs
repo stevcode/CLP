@@ -426,11 +426,6 @@ namespace CLP.Entities
 
         public void ToXML(string fileName)
         {
-            if(IsCached)
-            {
-                return;
-            }
-
             var fileInfo = new FileInfo(fileName);
             if (!Directory.Exists(fileInfo.DirectoryName))
             {

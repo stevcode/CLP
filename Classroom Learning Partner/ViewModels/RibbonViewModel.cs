@@ -105,6 +105,7 @@ namespace Classroom_Learning_Partner.ViewModels
             EditNotebookCommand = new Command(OnEditNotebookCommandExecute);
             DoneEditingNotebookCommand = new Command(OnDoneEditingNotebookCommandExecute);
             SaveNotebookCommand = new Command(OnSaveNotebookCommandExecute);
+            ForceSaveNotebookCommand = new Command(OnForceSaveNotebookCommandExecute);
             SaveAllNotebooksCommand = new Command(OnSaveAllNotebooksCommandExecute);
             SubmitNotebookToTeacherCommand = new Command(OnSubmitNotebookToTeacherCommandExecute);
             ConvertDisplaysToXPSCommand = new Command(OnConvertDisplaysToXPSCommandExecute);
@@ -728,6 +729,20 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 Catel.Windows.PleaseWaitHelper.Show(() =>
                     MainWindowViewModel.SaveNotebook((App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).Notebook), null, "Saving Notebook");
+            }
+        }
+
+        /// <summary>
+        /// Bypasses IsCached during save to fully save everything.
+        /// </summary>
+        public Command ForceSaveNotebookCommand { get; private set; }
+
+        private void OnForceSaveNotebookCommandExecute()
+        {
+            if(App.MainWindowViewModel.Workspace is NotebookWorkspaceViewModel)
+            {
+                Catel.Windows.PleaseWaitHelper.Show(() =>
+                    MainWindowViewModel.SaveNotebook((App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).Notebook, true), null, "Saving Notebook");
             }
         }
 

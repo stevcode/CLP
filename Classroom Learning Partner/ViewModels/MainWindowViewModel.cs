@@ -344,15 +344,21 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        public static void SaveNotebook(Notebook notebook)
+        public static void SaveNotebook(Notebook notebook, bool isFullSaveForced = false)
         {
             var folderPath = Path.Combine(App.NotebookCacheDirectory, notebook.Name);
+
+            if(isFullSaveForced)
+            {
+                folderPath += " - FORCED";
+            }
+
             if(!Directory.Exists(folderPath))
             {
                 Directory.CreateDirectory(folderPath);
             }
 
-            notebook.SaveNotebook(folderPath);
+            notebook.SaveNotebook(folderPath, isFullSaveForced);
             if(notebook.LastSavedDate != null)
             {
                 App.MainWindowViewModel.LastSavedTime = notebook.LastSavedDate.Value.ToString("yyyy/MM/dd - HH:mm:ss");

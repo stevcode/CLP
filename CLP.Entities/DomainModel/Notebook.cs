@@ -260,7 +260,7 @@ namespace CLP.Entities
             }
         }
 
-        public void SaveNotebook(string folderPath)
+        public void SaveNotebook(string folderPath, bool isFullSaveForced = false)
         {
             var fileName = Path.Combine(folderPath, "notebook.xml");
             ToXML(fileName);
@@ -272,9 +272,9 @@ namespace CLP.Entities
             }
             foreach(var page in Pages)
             {
-                if(page.IsDirty)
+                if(page.IsCached && !isFullSaveForced)
                 {
-                    Console.WriteLine("Page " + page.PageNumber + " - " + page.ID + ": IsDirty == true during Notebook Save");
+                    continue;
                 }
                 var pageFilePath = Path.Combine(pagesFolderPath, "Page " + page.PageNumber + " - " + page.ID + ".xml");
                 page.ToXML(pageFilePath);
@@ -306,6 +306,7 @@ namespace CLP.Entities
                     {
                         notebook.CurrentPage = page;
                     }
+                    page.IsCached = true;
                     notebook.Pages.Add(page);
                 }
 

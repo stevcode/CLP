@@ -56,6 +56,11 @@
                                            KeyTip="S"
                                            ImageSource="pack://application:,,,/Resources/Images/SaveNotebook32.png"
                                            Command="{Binding SaveNotebookCommand}" />
+                
+                <RibbonApplicationMenuItem Header="Force Full Notebook Save"
+                                           KeyTip="S"
+                                           ImageSource="pack://application:,,,/Resources/Images/SaveNotebook32.png"
+                                           Command="{Binding ForceSaveNotebookCommand}" />
 
                 <!--<RibbonApplicationMenuItem Header="Convert To XPS"
                                            ImageSource="pack://application:,,,/Resources/Images/ConvertToXPS32.png"
