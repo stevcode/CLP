@@ -1111,27 +1111,31 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 if(total != Rows)
                 {
-                    string dimensionsString = "";
+                    string labelsString = "";
+                    string labelsSummedString = "";
                     if(HorizontalDivisions.Count == 2)
                     {
-                        dimensionsString = HorizontalDivisions.First().Value.ToString() + " and " + HorizontalDivisions.Last().Value.ToString();
+                        labelsString = HorizontalDivisions.First().Value.ToString() + " and " + HorizontalDivisions.Last().Value.ToString();
+                        labelsSummedString = HorizontalDivisions.First().Value.ToString() + " + " + HorizontalDivisions.Last().Value.ToString();
                     }
                     else
                     {
                         for(int i = 0; i < HorizontalDivisions.Count; i++)
                         {
-                            dimensionsString += HorizontalDivisions.ElementAt(i).Value.ToString();
+                            labelsString += HorizontalDivisions.ElementAt(i).Value.ToString();
+                            labelsSummedString += HorizontalDivisions.ElementAt(i).Value.ToString();
                             if(i < HorizontalDivisions.Count - 1)
                             {
-                                dimensionsString += ", ";
+                                labelsString += ", ";
+                                labelsSummedString += " + ";
                             }
                             if(i == HorizontalDivisions.Count - 2)
                             {
-                                dimensionsString += "and ";
+                                labelsString += "and ";
                             }
                         }
                     }
-                    MessageBox.Show("You entered " + dimensionsString + " for the dimensions. Check that the numbers sum to the larger array dimension.", "Oops");
+                    MessageBox.Show("You entered " + labelsString + " for the parts of the side of the array that is " + Rows + " long, but " + labelsSummedString + " does not equal " + Rows + ".", "Oops");
                 }
             }
             else
@@ -1152,27 +1156,31 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 if(total != Columns)
                 {
-                    string dimensionsString = "";
+                    string labelsString = "";
+                    string labelsSummedString = "";
                     if(VerticalDivisions.Count == 2)
                     {
-                        dimensionsString = VerticalDivisions.First().Value.ToString() + " and " + VerticalDivisions.Last().Value.ToString();
+                        labelsString = VerticalDivisions.First().Value.ToString() + " and " + VerticalDivisions.Last().Value.ToString();
+                        labelsSummedString = VerticalDivisions.First().Value.ToString() + " + " + VerticalDivisions.Last().Value.ToString();
                     }
                     else
                     {
                         for(int i = 0; i < VerticalDivisions.Count; i++)
                         {
-                            dimensionsString += VerticalDivisions.ElementAt(i).Value.ToString();
+                            labelsString += VerticalDivisions.ElementAt(i).Value.ToString();
+                            labelsSummedString += VerticalDivisions.ElementAt(i).Value.ToString();
                             if(i < VerticalDivisions.Count - 1)
                             {
-                                dimensionsString += ", ";
+                                labelsString += ", ";
+                                labelsSummedString += " + ";
                             }
                             if(i == VerticalDivisions.Count - 2)
                             {
-                                dimensionsString += "and ";
+                                labelsString += "and ";
                             }
                         }
                     }
-                    MessageBox.Show("You entered " + dimensionsString + " for the dimensions. Check that the numbers sum to the larger array dimension.", "Oops");
+                    MessageBox.Show("You entered " + labelsString + " for the parts of the side of the array that is " + Columns + " long, but " + labelsSummedString + " does not equal " + Columns + ".", "Oops");
                 }
             }
         }
