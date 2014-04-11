@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -295,6 +296,7 @@ namespace CLP.Entities
                 var notebook = Load<Notebook>(filePath, SerializationMode.Xml);
                 var pagesFolderPath = Path.Combine(folderPath, "Pages");
                 var pageFilePaths = Directory.EnumerateFiles(pagesFolderPath);
+                var pages = new List<CLPPage>();
                 foreach(var pageFilePath in pageFilePaths)
                 {
                     var page = Load<CLPPage>(pageFilePath, SerializationMode.Xml);
@@ -307,7 +309,8 @@ namespace CLP.Entities
                         notebook.CurrentPage = page;
                     }
                     page.IsCached = true;
-                    notebook.Pages.Add(page);
+                    pages.Add(page);
+                    notebook.Pages = new ObservableCollection<CLPPage>(pages.OrderBy(x => x.PageNumber));
                 }
 
                 return notebook;
