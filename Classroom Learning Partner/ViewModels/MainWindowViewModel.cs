@@ -348,10 +348,10 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             var folderPath = Path.Combine(App.NotebookCacheDirectory, notebook.Name);
 
-            if(isFullSaveForced)
-            {
-                folderPath += " - FORCED";
-            }
+            //if(isFullSaveForced)
+            //{
+            //    folderPath += " - FORCED";
+            //}
 
             if(!Directory.Exists(folderPath))
             {

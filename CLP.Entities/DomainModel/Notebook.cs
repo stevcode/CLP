@@ -189,6 +189,8 @@ namespace CLP.Entities
             CurrentPage = page;
         }
 
+        private List<CLPPage> _trashedPages = new List<CLPPage>();
+
         public void RemovePageAt(int index)
         {
             if(Pages.Count <= index ||
@@ -224,7 +226,8 @@ namespace CLP.Entities
             {
                 CurrentPage.PageNumber = Pages.First().PageNumber;
             }
-            
+
+            _trashedPages.Add(Pages[index]);
             //Submissions.Remove(Pages[index].UniqueID);
             Pages.RemoveAt(index);
             GeneratePageNumbers();
@@ -233,7 +236,7 @@ namespace CLP.Entities
         public void GeneratePageNumbers()
         {
             var initialPageNumber = Pages.Any() ? Pages.First().PageNumber : 1;
-            foreach(var page in Pages)
+            foreach(CLPPage page in Pages)
             {
                 page.PageNumber = initialPageNumber;
                 initialPageNumber++;
@@ -248,12 +251,12 @@ namespace CLP.Entities
         {
             LastSavedDate = DateTime.Now;
             var fileInfo = new FileInfo(fileName);
-            if (!Directory.Exists(fileInfo.DirectoryName))
+            if(!Directory.Exists(fileInfo.DirectoryName))
             {
                 Directory.CreateDirectory(fileInfo.DirectoryName);
             }
 
-            using (Stream stream = new FileStream(fileName, FileMode.Create))
+            using(Stream stream = new FileStream(fileName, FileMode.Create))
             {
                 var xmlSerializer = SerializationFactory.GetXmlSerializer();
                 xmlSerializer.Serialize(this, stream);
@@ -271,15 +274,58 @@ namespace CLP.Entities
             {
                 Directory.CreateDirectory(pagesFolderPath);
             }
+
+            var pageFilePaths = Directory.EnumerateFiles(pagesFolderPath, "*.xml").ToList();
+            foreach(var pageFilePath in pageFilePaths)
+            {
+                File.Delete(pageFilePath);
+            }
+
             foreach(var page in Pages)
             {
-                if(page.IsCached && !isFullSaveForced)
+                if(page.IsCached &&
+                   !isFullSaveForced)
                 {
                     continue;
                 }
                 var pageFilePath = Path.Combine(pagesFolderPath, "Page " + page.PageNumber + " - " + page.ID + ".xml");
                 page.ToXML(pageFilePath);
             }
+
+            //var pageFilePaths = Directory.EnumerateFiles(pagesFolderPath, "*.xml").ToList();
+            //foreach(var pageFilePath in from trashedPage in _trashedPages
+            //                            from pageFilePath in pageFilePaths
+            //                            where pageFilePath.Contains(trashedPage.ID)
+            //                            select pageFilePath)
+            //{
+            //    File.Delete(pageFilePath);
+            //}
+            _trashedPages.Clear();
+
+            //foreach(var page in Pages)
+            //{
+            //    foreach(var pageFilePath in pageFilePaths)
+            //    {
+            //        if(pageFilePath.Contains(page.ID))
+            //        {
+            //            var pageNumberOfFile = Convert.ToInt32(Path.GetFileName(pageFilePath).Split(' ')[1]);
+            //            if(page.PageNumber != pageNumberOfFile)
+            //            {
+            //                File.Delete(pageFilePath);
+            //            }
+            //        }
+            //    }
+            //}
+
+
+            //foreach(var pageFilePath in from pageFilePath in pageFilePaths
+            //                            let pageNumberOfFile = Convert.ToInt32(Path.GetFileName(pageFilePath).Split(' ')[1])
+            //                            from page in Pages
+            //                            where pageFilePath.Contains(page.ID) && page.PageNumber != pageNumberOfFile
+            //                            select pageFilePath) 
+            //{
+            //    File.Delete(pageFilePath);
+            //}
 
             var displaysFolderPath = Path.Combine(folderPath, "Displays");
             if(!Directory.Exists(displaysFolderPath))
@@ -297,10 +343,10 @@ namespace CLP.Entities
                 var pagesFolderPath = Path.Combine(folderPath, "Pages");
                 var pageFilePaths = Directory.EnumerateFiles(pagesFolderPath);
                 var pages = new List<CLPPage>();
-                foreach(var pageFilePath in pageFilePaths)
+                foreach(string pageFilePath in pageFilePaths)
                 {
                     var page = Load<CLPPage>(pageFilePath, SerializationMode.Xml);
-                    foreach(var pageObject in page.PageObjects)
+                    foreach(IPageObject pageObject in page.PageObjects)
                     {
                         pageObject.ParentPage = page;
                     }
