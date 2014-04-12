@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using Catel.Data;
+using Catel.Runtime.Serialization;
 
 namespace CLP.Entities
 {
@@ -37,6 +39,32 @@ namespace CLP.Entities
         public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string)); 
 
         /// <summary>
+        /// Start Time and Date of the <see cref="ClassPeriod" />.
+        /// </summary>
+        public DateTime StartTime
+        {
+            get { return GetValue<DateTime>(StartTimeProperty); }
+            set { SetValue(StartTimeProperty, value); }
+        }
+
+        public static readonly PropertyData StartTimeProperty = RegisterProperty("StartTime", typeof(DateTime));
+
+        /// <summary>
+        /// Unique Identifier of the <see cref="Notebook" /> used during this <see cref="ClassPeriod" />.
+        /// </summary>
+        public string NotebookID
+        {
+            get { return GetValue<string>(NotebookIDProperty); }
+            set { SetValue(NotebookIDProperty, value); }
+        }
+
+        public static readonly PropertyData NotebookIDProperty = RegisterProperty("NotebookID", typeof(string));
+
+        //Start Page Index, End Page Index (these will be expected. Actual can be an SQL Query for existence of submissions
+
+        #region Navigation Properties
+
+        /// <summary>
         /// Unique Identifier of the <see cref="ClassSubject" /> of the <see cref="ClassPeriod" />.
         /// </summary>
         /// <remarks>
@@ -48,32 +76,33 @@ namespace CLP.Entities
             set { SetValue(ClassSubjectIDProperty, value); }
         }
 
-        public static readonly PropertyData ClassSubjectIDProperty = RegisterProperty("ClassSubjectID", typeof(string), string.Empty);
+        public static readonly PropertyData ClassSubjectIDProperty = RegisterProperty("ClassSubjectID", typeof(string));
 
         /// <summary>
         /// <see cref="ClassSubject" /> of the <see cref="ClassPeriod" />
         /// </summary>
+        /// <remarks>
+        /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
+        /// </remarks>
+        [XmlIgnore]
+        [ExcludeFromSerialization]
         public virtual ClassSubject ClassSubject
         {
             get { return GetValue<ClassSubject>(ClassSubjectProperty); }
-            set { SetValue(ClassSubjectProperty, value); }
+            set
+            {
+                SetValue(ClassSubjectProperty, value);
+                if(value == null)
+                {
+                    return;
+                }
+                ClassSubjectID = value.ID;
+            }
         }
 
         public static readonly PropertyData ClassSubjectProperty = RegisterProperty("ClassSubject", typeof(ClassSubject));
 
-        /// <summary>
-        /// Start Time and Date of the <see cref="ClassPeriod" />.
-        /// </summary>
-        public DateTime StartTime
-        {
-            get { return GetValue<DateTime>(StartTimeProperty); }
-            set { SetValue(StartTimeProperty, value); }
-        }
-
-        public static readonly PropertyData StartTimeProperty = RegisterProperty("StartTime", typeof(DateTime));
-
-        //NotebookID, Start Page Index, End Page Index (these will be expected. Actual can be an SQL Query for existence of submissions
-        
+        #endregion //Navigation Properties
 
         #endregion //Properties
 

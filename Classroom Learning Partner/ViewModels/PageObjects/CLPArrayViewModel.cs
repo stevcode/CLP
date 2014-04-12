@@ -409,67 +409,67 @@ namespace Classroom_Learning_Partner.ViewModels
         //        //TODO: log this error
         //    }
         //}
-                                if(snappingArray.Columns == factorCard.Rows)
-                                {
-                                    foreach(Tag tag in PageObject.ParentPage.PageTags.ToList())
-                                    {
-                                        if(tag.TagType.Name == FuzzyFactorCardFailedSnapTagType.Instance.Name)
-                                        {
-                                            if(!tag.Value.Contains(new TagOptionValue("snapped wrong orientation multiple times")))
-                                            {
-                                                if(tag.Value.Contains(new TagOptionValue("snapped wrong orientation")))
-                                                {
-                                                    tag.Value.Remove(new TagOptionValue("snapped wrong orientation"));
-                                                    tag.Value.Add(new TagOptionValue("snapped wrong orientation multiple times"));
-                                                }
-                                                else
-                                                {
-                                                    tag.Value.Add(new TagOptionValue("snapped wrong orientation"));
-                                                }
-                                            }
-                                            hasTag = true;
-                                            continue;
-                                        }
-                                    }
-                                    //Apply tag to note that the student tried to snap array in wrong orientation
-                                    if(!hasTag)
-                                    {
-                                        var tag = new Tag(Tag.Origins.Generated, FuzzyFactorCardFailedSnapTagType.Instance);
-                                        tag.AddTagOptionValue(new TagOptionValue("snapped wrong orientation"));
-                                        PageObject.ParentPage.PageTags.Add(tag);
-                                    }
-                                }
-                                else
-                                {
-                                    foreach(Tag tag in PageObject.ParentPage.PageTags.ToList())
-                                    {
-                                        if(tag.TagType.Name == FuzzyFactorCardFailedSnapTagType.Instance.Name)
-                                        {
-                                            if(!tag.Value.Contains(new TagOptionValue("snapped incorrect dimension multiple times")))
-                                            {
-                                                if(tag.Value.Contains(new TagOptionValue("snapped incorrect dimension")))
-                                                {
-                                                    tag.Value.Remove(new TagOptionValue("snapped incorrect dimension"));
-                                                    tag.Value.Add(new TagOptionValue("snapped incorrect dimension multiple times"));
-                                                }
-                                                else
-                                                {
-                                                    tag.Value.Add(new TagOptionValue("snapped incorrect dimension"));
-                                                }
-                                            }
-                                            hasTag = true;
-                                            continue;
-                                        }
-                                    }
+                                //if(snappingArray.Columns == factorCard.Rows)
+                                //{
+                                //    foreach(Tag tag in PageObject.ParentPage.PageTags.ToList())
+                                //    {
+                                //        if(tag.TagType.Name == FuzzyFactorCardFailedSnapTagType.Instance.Name)
+                                //        {
+                                //            if(!tag.Value.Contains(new TagOptionValue("snapped wrong orientation multiple times")))
+                                //            {
+                                //                if(tag.Value.Contains(new TagOptionValue("snapped wrong orientation")))
+                                //                {
+                                //                    tag.Value.Remove(new TagOptionValue("snapped wrong orientation"));
+                                //                    tag.Value.Add(new TagOptionValue("snapped wrong orientation multiple times"));
+                                //                }
+                                //                else
+                                //                {
+                                //                    tag.Value.Add(new TagOptionValue("snapped wrong orientation"));
+                                //                }
+                                //            }
+                                //            hasTag = true;
+                                //            continue;
+                                //        }
+                                //    }
+                                //    //Apply tag to note that the student tried to snap array in wrong orientation
+                                //    if(!hasTag)
+                                //    {
+                                //        var tag = new Tag(Tag.Origins.Generated, FuzzyFactorCardFailedSnapTagType.Instance);
+                                //        tag.AddTagOptionValue(new TagOptionValue("snapped wrong orientation"));
+                                //        PageObject.ParentPage.PageTags.Add(tag);
+                                //    }
+                                //}
+                                //else
+                                //{
+                                //    foreach(Tag tag in PageObject.ParentPage.PageTags.ToList())
+                                //    {
+                                //        if(tag.TagType.Name == FuzzyFactorCardFailedSnapTagType.Instance.Name)
+                                //        {
+                                //            if(!tag.Value.Contains(new TagOptionValue("snapped incorrect dimension multiple times")))
+                                //            {
+                                //                if(tag.Value.Contains(new TagOptionValue("snapped incorrect dimension")))
+                                //                {
+                                //                    tag.Value.Remove(new TagOptionValue("snapped incorrect dimension"));
+                                //                    tag.Value.Add(new TagOptionValue("snapped incorrect dimension multiple times"));
+                                //                }
+                                //                else
+                                //                {
+                                //                    tag.Value.Add(new TagOptionValue("snapped incorrect dimension"));
+                                //                }
+                                //            }
+                                //            hasTag = true;
+                                //            continue;
+                                //        }
+                                //    }
 
-                                    //Apply tag to note that the student tried to snap mismatched array
-                                    if(!hasTag)
-                                    {
-                                        var tag = new Tag(Tag.Origins.Generated, FuzzyFactorCardFailedSnapTagType.Instance);
-                                        tag.AddTagOptionValue(new TagOptionValue("snapped incorrect dimension"));
-                                        PageObject.ParentPage.PageTags.Add(tag);
-                                    }
-                                }
+                                //    //Apply tag to note that the student tried to snap mismatched array
+                                //    if(!hasTag)
+                                //    {
+                                //        var tag = new Tag(Tag.Origins.Generated, FuzzyFactorCardFailedSnapTagType.Instance);
+                                //        tag.AddTagOptionValue(new TagOptionValue("snapped incorrect dimension"));
+                                //        PageObject.ParentPage.PageTags.Add(tag);
+                                //    }
+                                //}
 
         //private enum SnapType
         //{
@@ -521,12 +521,12 @@ namespace Classroom_Learning_Partner.ViewModels
         //        var horizontalIntersectionLength = right - left;
         //        var isHorizontalIntersection = horizontalIntersectionLength > persistingArray.ArrayWidth / 2 || horizontalIntersectionLength > snappingArray.ArrayWidth / 2;
                                 //Update Remainder Region
-                                if(factorCard.IsRemainderRegionDisplayed && factorCard.CurrentRemainder == snappingArray.Columns * snappingArray.Rows)
-                                {
-                                    CLPFuzzyFactorCardRemainder remainderRegion = PageObject.ParentPage.GetPageObjectByUniqueID(factorCard.RemainderRegionUniqueID) as CLPFuzzyFactorCardRemainder;
-                                    var currentIndex = PageObject.ParentPage.PageObjects.IndexOf(remainderRegion);
-                                    ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryPageObjectRemove(PageObject.ParentPage, remainderRegion, currentIndex));
-                                }
+                                //if(factorCard.IsRemainderRegionDisplayed && factorCard.CurrentRemainder == snappingArray.Columns * snappingArray.Rows)
+                                //{
+                                //    CLPFuzzyFactorCardRemainder remainderRegion = PageObject.ParentPage.GetPageObjectByUniqueID(factorCard.RemainderRegionUniqueID) as CLPFuzzyFactorCardRemainder;
+                                //    var currentIndex = PageObject.ParentPage.PageObjects.IndexOf(remainderRegion);
+                                //    ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryPageObjectRemove(PageObject.ParentPage, remainderRegion, currentIndex));
+                                //}
 
         //        //Fuzzy Factor Card array snapping in - for now this will override array snapping even if an array might be closer
         //        if(pageObject.PageObjectType == "CLPFuzzyFactorCard")
@@ -1062,98 +1062,98 @@ namespace Classroom_Learning_Partner.ViewModels
         //    }
         //    VerticalDivisions.Add(topDiv);
         //    addedDivisions.Add(topDiv);
-            }
+        //    }
 
             //Check if array labels add up to larger array dimension
-            if(division.Orientation == ArrayDivisionOrientation.Horizontal)
-            {
-                int total = 0;
-                foreach(CLPArrayDivision div in HorizontalDivisions)
-                {
-                    if(div.Value == 0)
-                    {
-                        total = Rows;
-                        break;
-                    }
-                    else
-                    {
-                        total += div.Value;
-                    }
-                }
+            //if(division.Orientation == ArrayDivisionOrientation.Horizontal)
+            //{
+            //    int total = 0;
+            //    foreach(CLPArrayDivision div in HorizontalDivisions)
+            //    {
+            //        if(div.Value == 0)
+            //        {
+            //            total = Rows;
+            //            break;
+            //        }
+            //        else
+            //        {
+            //            total += div.Value;
+            //        }
+            //    }
 
-                if(total != Rows)
-                {
-                    string labelsString = "";
-                    string labelsSummedString = "";
-                    if(HorizontalDivisions.Count == 2)
-                    {
-                        labelsString = HorizontalDivisions.First().Value.ToString() + " and " + HorizontalDivisions.Last().Value.ToString();
-                        labelsSummedString = HorizontalDivisions.First().Value.ToString() + " + " + HorizontalDivisions.Last().Value.ToString();
-                    }
-                    else
-                    {
-                        for(int i = 0; i < HorizontalDivisions.Count; i++)
-                        {
-                            labelsString += HorizontalDivisions.ElementAt(i).Value.ToString();
-                            labelsSummedString += HorizontalDivisions.ElementAt(i).Value.ToString();
-                            if(i < HorizontalDivisions.Count - 1)
-                            {
-                                labelsString += ", ";
-                                labelsSummedString += " + ";
-                            }
-                            if(i == HorizontalDivisions.Count - 2)
-                            {
-                                labelsString += "and ";
-                            }
-                        }
-                    }
-                    MessageBox.Show("You entered " + labelsString + " for the parts of the side of the array that is " + Rows + " long, but " + labelsSummedString + " does not equal " + Rows + ".", "Oops");
-                }
-            }
-            else
-            {
-                int total = 0;
-                foreach(CLPArrayDivision div in VerticalDivisions)
-                {
-                    if(div.Value == 0)
-                    {
-                        total = Columns;
-                        break;
-                    }
-                    else
-                    {
-                        total += div.Value;
-                    }
-                }
+            //    if(total != Rows)
+            //    {
+            //        string labelsString = "";
+            //        string labelsSummedString = "";
+            //        if(HorizontalDivisions.Count == 2)
+            //        {
+            //            labelsString = HorizontalDivisions.First().Value.ToString() + " and " + HorizontalDivisions.Last().Value.ToString();
+            //            labelsSummedString = HorizontalDivisions.First().Value.ToString() + " + " + HorizontalDivisions.Last().Value.ToString();
+            //        }
+            //        else
+            //        {
+            //            for(int i = 0; i < HorizontalDivisions.Count; i++)
+            //            {
+            //                labelsString += HorizontalDivisions.ElementAt(i).Value.ToString();
+            //                labelsSummedString += HorizontalDivisions.ElementAt(i).Value.ToString();
+            //                if(i < HorizontalDivisions.Count - 1)
+            //                {
+            //                    labelsString += ", ";
+            //                    labelsSummedString += " + ";
+            //                }
+            //                if(i == HorizontalDivisions.Count - 2)
+            //                {
+            //                    labelsString += "and ";
+            //                }
+            //            }
+            //        }
+            //        MessageBox.Show("You entered " + labelsString + " for the parts of the side of the array that is " + Rows + " long, but " + labelsSummedString + " does not equal " + Rows + ".", "Oops");
+            //    }
+            //}
+            //else
+            //{
+            //    int total = 0;
+            //    foreach(CLPArrayDivision div in VerticalDivisions)
+            //    {
+            //        if(div.Value == 0)
+            //        {
+            //            total = Columns;
+            //            break;
+            //        }
+            //        else
+            //        {
+            //            total += div.Value;
+            //        }
+            //    }
 
-                if(total != Columns)
-                {
-                    string labelsString = "";
-                    string labelsSummedString = "";
-                    if(VerticalDivisions.Count == 2)
-                    {
-                        labelsString = VerticalDivisions.First().Value.ToString() + " and " + VerticalDivisions.Last().Value.ToString();
-                        labelsSummedString = VerticalDivisions.First().Value.ToString() + " + " + VerticalDivisions.Last().Value.ToString();
-                    }
-                    else
-                    {
-                        for(int i = 0; i < VerticalDivisions.Count; i++)
-                        {
-                            labelsString += VerticalDivisions.ElementAt(i).Value.ToString();
-                            labelsSummedString += VerticalDivisions.ElementAt(i).Value.ToString();
-                            if(i < VerticalDivisions.Count - 1)
-                            {
-                                labelsString += ", ";
-                                labelsSummedString += " + ";
-                            }
-                            if(i == VerticalDivisions.Count - 2)
-                            {
-                                labelsString += "and ";
-                            }
-                        }
-                    }
-                    MessageBox.Show("You entered " + labelsString + " for the parts of the side of the array that is " + Columns + " long, but " + labelsSummedString + " does not equal " + Columns + ".", "Oops");
-                }
+            //    if(total != Columns)
+            //    {
+            //        string labelsString = "";
+            //        string labelsSummedString = "";
+            //        if(VerticalDivisions.Count == 2)
+            //        {
+            //            labelsString = VerticalDivisions.First().Value.ToString() + " and " + VerticalDivisions.Last().Value.ToString();
+            //            labelsSummedString = VerticalDivisions.First().Value.ToString() + " + " + VerticalDivisions.Last().Value.ToString();
+            //        }
+            //        else
+            //        {
+            //            for(int i = 0; i < VerticalDivisions.Count; i++)
+            //            {
+            //                labelsString += VerticalDivisions.ElementAt(i).Value.ToString();
+            //                labelsSummedString += VerticalDivisions.ElementAt(i).Value.ToString();
+            //                if(i < VerticalDivisions.Count - 1)
+            //                {
+            //                    labelsString += ", ";
+            //                    labelsSummedString += " + ";
+            //                }
+            //                if(i == VerticalDivisions.Count - 2)
+            //                {
+            //                    labelsString += "and ";
+            //                }
+            //            }
+            //        }
+            //        MessageBox.Show("You entered " + labelsString + " for the parts of the side of the array that is " + Columns + " long, but " + labelsSummedString + " does not equal " + Columns + ".", "Oops");
+            //    }
 
         //    CLPArrayDivision bottomDiv;
         //    if(divBelow == null)

@@ -11,7 +11,7 @@ namespace CLP.Entities
         /// <summary>
         /// Initializes <see cref="APageObjectBase" /> from scratch.
         /// </summary>
-        public APageObjectBase()
+        protected APageObjectBase()
         {
             CreationDate = DateTime.Now;
             ID = Guid.NewGuid().ToString();
@@ -21,11 +21,10 @@ namespace CLP.Entities
         /// Initializes <see cref="APageObjectBase" /> using <see cref="CLPPage" />.
         /// </summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IPageObject" /> belongs to.</param>
-        public APageObjectBase(CLPPage parentPage)
+        protected APageObjectBase(CLPPage parentPage)
             : this()
         {
             ParentPage = parentPage;
-            ParentPageID = parentPage.ID;
         }
 
         /// <summary>
@@ -50,6 +49,46 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string));
+
+        /// <summary>
+        /// Unique Identifier for the <see cref="Person" /> who owns the <see cref="IPageObject" />.
+        /// </summary>
+        /// <remarks>
+        /// Composite Primary Key.
+        /// Also Foregin Key for <see cref="Person" /> who owns the <see cref="IPageObject" />.
+        /// </remarks>
+        public string OwnerID
+        {
+            get { return GetValue<string>(OwnerIDProperty); }
+            set { SetValue(OwnerIDProperty, value); }
+        }
+
+        public static readonly PropertyData OwnerIDProperty = RegisterProperty("OwnerID", typeof(string), string.Empty);
+
+        /// <summary>
+        /// Version Index of the <see cref="IPageObject" />.
+        /// </summary>
+        /// <remarks>
+        /// Composite Primary Key.
+        /// </remarks>
+        public uint VersionIndex
+        {
+            get { return GetValue<uint>(VersionIndexProperty); }
+            set { SetValue(VersionIndexProperty, value); }
+        }
+
+        public static readonly PropertyData VersionIndexProperty = RegisterProperty("VersionIndex", typeof(uint), 0);
+
+        /// <summary>
+        /// Version Index of the latest submission.
+        /// </summary>
+        public uint? LastVersionIndex
+        {
+            get { return GetValue<uint?>(LastVersionIndexProperty); }
+            set { SetValue(LastVersionIndexProperty, value); }
+        }
+
+        public static readonly PropertyData LastVersionIndexProperty = RegisterProperty("LastVersionIndex", typeof(uint?));
 
         /// <summary>
         /// Date and Time the <see cref="IPageObject" /> was created.
@@ -107,6 +146,11 @@ namespace CLP.Entities
         public static readonly PropertyData WidthProperty = RegisterProperty("Width", typeof(double), 20.0);
 
         /// <summary>
+        /// Determines whether the <see cref="IPageObject" /> has properties can be changed by a <see cref="Person" /> anyone at any time.
+        /// </summary>
+        public abstract bool IsBackgroundInteractable { get; }
+
+        /// <summary>
         /// Determines whether the <see cref="IPageObject" />'s properties can be changed by a <see cref="Person" /> other than the Creator.
         /// </summary>
         public bool IsManipulatableByNonCreator
@@ -120,9 +164,6 @@ namespace CLP.Entities
         /// <summary>
         /// Unique Identifier for the <see cref="Person" /> who created the <see cref="IPageObject" />.
         /// </summary>
-        /// <remarks>
-        /// Foreign Key.
-        /// </remarks>
         public string CreatorID
         {
             get { return GetValue<string>(CreatorIDProperty); }
@@ -131,25 +172,13 @@ namespace CLP.Entities
 
         public static readonly PropertyData CreatorIDProperty = RegisterProperty("CreatorID", typeof(string), string.Empty);
 
-        /// <summary>
-        /// The <see cref="Person" /> who created the <see cref="IPageObject" />.
-        /// </summary>
-        /// <remarks>
-        /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
-        /// </remarks>
-        public virtual Person Creator
-        {
-            get { return GetValue<Person>(CreatorProperty); }
-            set { SetValue(CreatorProperty, value); }
-        }
-
-        public static readonly PropertyData CreatorProperty = RegisterProperty("Creator", typeof(Person));
+        #region Navigation Properties
 
         /// <summary>
         /// Unique Identifier for the <see cref="IPageObject" />'s parent <see cref="CLPPage" />.
         /// </summary>
         /// <remarks>
-        /// Foreign Key.
+        /// Composite Foreign Key.
         /// </remarks>
         public string ParentPageID
         {
@@ -157,7 +186,32 @@ namespace CLP.Entities
             set { SetValue(ParentPageIDProperty, value); }
         }
 
-        public static readonly PropertyData ParentPageIDProperty = RegisterProperty("ParentPageID", typeof(string), string.Empty);
+        public static readonly PropertyData ParentPageIDProperty = RegisterProperty("ParentPageID", typeof(string));
+
+        /// <summary>
+        /// Unique Identifier of the <see cref="Person" /> who owns the parent <see cref="CLPPage" /> of the <see cref="IPageObject" />.
+        /// </summary>
+        /// <remarks>
+        /// Composite Foreign Key.
+        /// </remarks>
+        public string ParentPageOwnerID
+        {
+            get { return GetValue<string>(ParentPageOwnerIDProperty); }
+            set { SetValue(ParentPageOwnerIDProperty, value); }
+        }
+
+        public static readonly PropertyData ParentPageOwnerIDProperty = RegisterProperty("ParentPageOwnerID", typeof(string));
+
+        /// <summary>
+        /// The parent <see cref="CLPPage" />'s Version Index.
+        /// </summary>
+        public uint ParentPageVersionIndex
+        {
+            get { return GetValue<uint>(ParentPageVersionIndexProperty); }
+            set { SetValue(ParentPageVersionIndexProperty, value); }
+        }
+
+        public static readonly PropertyData ParentPageVersionIndexProperty = RegisterProperty("ParentPageVersionIndex", typeof(uint), 0);
 
         /// <summary>
         /// The <see cref="IPageObject" />'s parent <see cref="CLPPage" />.
@@ -168,10 +222,22 @@ namespace CLP.Entities
         public virtual CLPPage ParentPage
         {
             get { return GetValue<CLPPage>(ParentPageProperty); }
-            set { SetValue(ParentPageProperty, value); }
+            set
+            {
+                SetValue(ParentPageProperty, value);
+                if(value == null)
+                {
+                    return;
+                }
+                ParentPageID = value.ID;
+                ParentPageOwnerID = value.OwnerID;
+                ParentPageVersionIndex = value.VersionIndex;
+            }
         }
 
         public static readonly PropertyData ParentPageProperty = RegisterProperty("ParentPage", typeof(CLPPage));
+
+        #endregion //Navigation Properties
 
         #endregion //Properties
 

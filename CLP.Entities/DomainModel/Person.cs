@@ -12,6 +12,8 @@ namespace CLP.Entities
 
     public class Person : AEntityBase
     {
+        private const string AUTHOR_ID = "00000000-0000-0000-1111-000000000001";
+
         #region Constructors
 
         /// <summary>
@@ -77,8 +79,17 @@ namespace CLP.Entities
 
         #endregion //Properties
 
-        #region Methods
-
-        #endregion //Methods
+        public static Person Author
+        {
+            get
+            {
+                var author = new Person
+                             {
+                                 ID = AUTHOR_ID,
+                                 FullName = "AUTHOR"
+                             };
+                return author;
+            }
+        }
     }
 }

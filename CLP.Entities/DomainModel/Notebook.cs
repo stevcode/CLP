@@ -39,6 +39,9 @@ namespace CLP.Entities
         /// <summary>
         /// Unique Identifier for the <see cref="Notebook" />.
         /// </summary>
+        /// <remarks>
+        /// Composite Primary Key.
+        /// </remarks>
         public string ID
         {
             get { return GetValue<string>(IDProperty); }
@@ -46,6 +49,20 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string));
+
+        /// <summary>
+        /// Unique Identifier for the <see cref="Person" /> who owns the <see cref="Notebook" />.
+        /// </summary>
+        /// <remarks>
+        /// Composite Primary Key.
+        /// </remarks>
+        public string OwnerID
+        {
+            get { return GetValue<string>(OwnerIDProperty); }
+            set { SetValue(OwnerIDProperty, value); }
+        }
+
+        public static readonly PropertyData OwnerIDProperty = RegisterProperty("OwnerID", typeof(string), string.Empty);
 
         /// <summary>
         /// Date and Time the <see cref="Notebook" /> was created.
@@ -94,16 +111,49 @@ namespace CLP.Entities
 
         public static readonly PropertyData CurriculumProperty = RegisterProperty("Curriculum", typeof(string), string.Empty);
 
+        #region Navigation Properties
+
         /// <summary>
         /// Unique Identifier of the currently selected <see cref="CLPPage" />.
         /// </summary>
+        /// <remarks>
+        /// Composite Foreign Key for CurrentPage.
+        /// </remarks>
         public string CurrentPageID
         {
             get { return GetValue<string>(CurrentPageIDProperty); }
             set { SetValue(CurrentPageIDProperty, value); }
         }
 
-        public static readonly PropertyData CurrentPageIDProperty = RegisterProperty("CurrentPageID", typeof(string), string.Empty);
+        public static readonly PropertyData CurrentPageIDProperty = RegisterProperty("CurrentPageID", typeof(string));
+
+        /// <summary>
+        /// Unique Identifier of the <see cref="Person" /> who owns the currently selected <see cref="CLPPage" />.
+        /// </summary>
+        /// <remarks>
+        /// Composite Foreign Key for CurrentPage.
+        /// </remarks>
+        public string CurrentPageOwnerID
+        {
+            get { return GetValue<string>(CurrentPageOwnerIDProperty); }
+            set { SetValue(CurrentPageOwnerIDProperty, value); }
+        }
+
+        public static readonly PropertyData CurrentPageOwnerIDProperty = RegisterProperty("CurrentPageOwnerID", typeof(string));
+
+        /// <summary>
+        /// Version Index of the currently selected <see cref="CLPPage" />.
+        /// </summary>
+        /// <remarks>
+        /// Composite Foreign Key for CurrentPage.
+        /// </remarks>
+        public uint CurrentPageVersionIndex
+        {
+            get { return GetValue<uint>(CurrentPageVersionIndexProperty); }
+            set { SetValue(CurrentPageVersionIndexProperty, value); }
+        }
+
+        public static readonly PropertyData CurrentPageVersionIndexProperty = RegisterProperty("CurrentPageVersionIndex", typeof(uint));
 
         /// <summary>
         /// Currently selected <see cref="CLPPage" />.
@@ -119,10 +169,13 @@ namespace CLP.Entities
             set
             {
                 SetValue(CurrentPageProperty, value);
-                if(value != null)
+                if(value == null)
                 {
-                    CurrentPageID = value.ID;
+                    return;
                 }
+                CurrentPageID = value.ID;
+                CurrentPageOwnerID = value.OwnerID;
+                CurrentPageVersionIndex = value.VersionIndex;
             }
         }
 
@@ -160,13 +213,15 @@ namespace CLP.Entities
 
         public static readonly PropertyData DisplaysProperty = RegisterProperty("Displays", typeof(ObservableCollection<IDisplay>), () => new ObservableCollection<IDisplay>());
 
+        #endregion //Navigation Properties
+
         #endregion //Properties
 
         #region Methods
 
         public void AddCLPPageToNotebook(CLPPage page)
         {
-            page.NotebookID = ID;
+            page.ParentNotebookID = ID;
             page.PageNumber = Pages.Any() ? Pages.Last().PageNumber + 1 : 1;
             Pages.Add(page);
             //GenerateSubmissionViews(page.UniqueID);
@@ -182,7 +237,7 @@ namespace CLP.Entities
 
         public void InsertPageAt(int index, CLPPage page)
         {
-            page.NotebookID = ID;
+            page.ParentNotebookID = ID;
             Pages.Insert(index, page);
             GeneratePageNumbers();
             //GenerateSubmissionViews(page.UniqueID);
@@ -203,7 +258,7 @@ namespace CLP.Entities
             {
                 var newPage = new CLPPage
                               {
-                                  NotebookID = ID,
+                                  ParentNotebookID = ID,
                                   PageNumber = Pages.Any() ? Pages.First().PageNumber : 1
                               };
 

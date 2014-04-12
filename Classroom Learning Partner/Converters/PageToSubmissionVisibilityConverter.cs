@@ -10,7 +10,7 @@ namespace Classroom_Learning_Partner.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var page = (CLPPage)value;
-            if(page.Submitter == null)
+            if(page.Owner == null)
             {
                 return "Hidden";
             }

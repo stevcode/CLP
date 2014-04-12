@@ -40,6 +40,11 @@ namespace CLP.Entities
 
         #region Properties
 
+        public override bool IsBackgroundInteractable
+        {
+            get { return false; }
+        }
+
         /// <summary>
         /// The RTF formatted text of the <see cref="CLPTextBox" />.
         /// </summary>
@@ -63,7 +68,6 @@ namespace CLP.Entities
                 return null;
             }
             newTextBox.ID = Guid.NewGuid().ToString();
-            newTextBox.ParentPageID = ParentPageID;
             newTextBox.ParentPage = ParentPage;
 
             return newTextBox;

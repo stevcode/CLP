@@ -72,6 +72,9 @@ namespace CLP.Entities
         /// <summary>
         /// Unique Identifier for the <see cref="CLPPage" />.
         /// </summary>
+        /// <remarks>
+        /// Composite Primary Key.
+        /// </remarks>
         public string ID
         {
             get { return GetValue<string>(IDProperty); }
@@ -79,6 +82,46 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string));
+
+        /// <summary>
+        /// Unique Identifier for the <see cref="Person" /> who owns the <see cref="CLPPage" />.
+        /// </summary>
+        /// <remarks>
+        /// Composite Primary Key.
+        /// Also Foregin Key for <see cref="Person" /> who owns the <see cref="CLPPage" />.
+        /// </remarks>
+        public string OwnerID
+        {
+            get { return GetValue<string>(OwnerIDProperty); }
+            set { SetValue(OwnerIDProperty, value); }
+        }
+
+        public static readonly PropertyData OwnerIDProperty = RegisterProperty("OwnerID", typeof(string), string.Empty);
+
+        /// <summary>
+        /// Version Index of the <see cref="CLPPage" />.
+        /// </summary>
+        /// <remarks>
+        /// Composite Primary Key.
+        /// </remarks>
+        public uint VersionIndex
+        {
+            get { return GetValue<uint>(VersionIndexProperty); }
+            set { SetValue(VersionIndexProperty, value); }
+        }
+
+        public static readonly PropertyData VersionIndexProperty = RegisterProperty("VersionIndex", typeof(uint), 0);
+
+        /// <summary>
+        /// Version Index of the latest submission.
+        /// </summary>
+        public uint? LastVersionIndex
+        {
+            get { return GetValue<uint?>(LastVersionIndexProperty); }
+            set { SetValue(LastVersionIndexProperty, value); }
+        }
+
+        public static readonly PropertyData LastVersionIndexProperty = RegisterProperty("LastVersionIndex", typeof(uint?));
 
         /// <summary>
         /// The type of page.
@@ -136,33 +179,6 @@ namespace CLP.Entities
         public static readonly PropertyData InitialAspectRatioProperty = RegisterProperty("InitialAspectRatio", typeof(double));
 
         /// <summary>
-        /// Unique Identifier of the <see cref="CLPPage" />'s parent <see cref="Notebook" />.
-        /// </summary>
-        /// <remarks>
-        /// Foreign Key
-        /// </remarks>
-        public string NotebookID
-        {
-            get { return GetValue<string>(NotebookIDProperty); }
-            set { SetValue(NotebookIDProperty, value); }
-        }
-
-        public static readonly PropertyData NotebookIDProperty = RegisterProperty("NotebookID", typeof(string));
-
-        #region Submission Data
-
-        /// <summary>
-        /// Unique Identifier for the the <see cref="CLPPage" /> when it is a Submission.
-        /// </summary>
-        public string SubmissionID
-        {
-            get { return GetValue<string>(SubmissionIDProperty); }
-            set { SetValue(SubmissionIDProperty, value); }
-        }
-
-        public static readonly PropertyData SubmissionIDProperty = RegisterProperty("SubmissionID", typeof(string), string.Empty);
- 
-        /// <summary>
         /// Type of Submission for the <see cref="CLPPage" />.
         /// </summary>
         public SubmissionTypes SubmissionType
@@ -183,38 +199,6 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData SubmissionTimeProperty = RegisterProperty("SubmissionTime", typeof(DateTime?));
-
-        /// <summary>
-        /// Unique Identifier of the <see cref="Person" /> who submitted the <see cref="CLPPage" />.
-        /// </summary>
-        /// <remarks>
-        /// Foreign Key.
-        /// </remarks>
-        public string SubmitterID
-        {
-            get { return GetValue<string>(SubmitterIDProperty); }
-            set { SetValue(SubmitterIDProperty, value); }
-        }
-
-        public static readonly PropertyData SubmitterIDProperty = RegisterProperty("SubmitterID", typeof(string), string.Empty);
-
-        /// <summary>
-        /// <see cref="Person" /> who submitted the <see cref="CLPPage" />.
-        /// </summary>
-        /// <remarks>
-        /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
-        /// </remarks>
-        [XmlIgnore]
-        [ExcludeFromSerialization]
-        public virtual Person Submitter
-        {
-            get { return GetValue<Person>(SubmitterProperty); }
-            set { SetValue(SubmitterProperty, value); }
-        }
-
-        public static readonly PropertyData SubmitterProperty = RegisterProperty("Submitter", typeof(Person));
-
-        #endregion //Submission Data
 
         #region MetaData
 
@@ -286,6 +270,85 @@ namespace CLP.Entities
 
         #endregion //MetaData
 
+        #region Navigation Properties
+
+        /// <summary>
+        /// <see cref="Person" /> who submitted the <see cref="CLPPage" />.
+        /// </summary>
+        /// <remarks>
+        /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
+        /// </remarks>
+        [XmlIgnore]
+        [ExcludeFromSerialization]
+        public virtual Person Owner
+        {
+            get { return GetValue<Person>(OwnerProperty); }
+            set
+            {
+                SetValue(OwnerProperty, value);
+                if(value == null)
+                {
+                    return;
+                }
+                OwnerID = value.ID;
+            }
+        }
+
+        public static readonly PropertyData OwnerProperty = RegisterProperty("Owner", typeof(Person));
+
+        /// <summary>
+        /// Unique Identifier of the <see cref="CLPPage" />'s parent <see cref="Notebook" />.
+        /// </summary>
+        /// <remarks>
+        /// Composite Foreign Key.
+        /// </remarks>
+        public string ParentNotebookID
+        {
+            get { return GetValue<string>(ParentNotebookIDProperty); }
+            set { SetValue(ParentNotebookIDProperty, value); }
+        }
+
+        public static readonly PropertyData ParentNotebookIDProperty = RegisterProperty("ParentNotebookID", typeof(string));
+
+        /// <summary>
+        /// Unique Identifier of the <see cref="Person" /> who owns the parent <see cref="Notebook" />.
+        /// </summary>
+        /// <remarks>
+        /// Composite Foreign Key.
+        /// </remarks>
+        public string ParentNotebookOwnerID
+        {
+            get { return GetValue<string>(ParentNotebookOwnerIDProperty); }
+            set { SetValue(ParentNotebookOwnerIDProperty, value); }
+        }
+
+        public static readonly PropertyData ParentNotebookOwnerIDProperty = RegisterProperty("ParentNotebookOwnerID", typeof(string));
+
+        /// <summary>
+        /// Parent <see cref="Notebook" /> of the <see cref="CLPPage" />.
+        /// </summary>
+        /// <remarks>
+        /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
+        /// </remarks>
+        [XmlIgnore]
+        [ExcludeFromSerialization]
+        public virtual Notebook ParentNotebook
+        {
+            get { return GetValue<Notebook>(ParentNotebookProperty); }
+            set
+            {
+                SetValue(ParentNotebookProperty, value);
+                if(value == null)
+                {
+                    return;
+                }
+                ParentNotebookID = value.ID;
+                ParentNotebookOwnerID = value.OwnerID;
+            }
+        }
+
+        public static readonly PropertyData ParentNotebookProperty = RegisterProperty("ParentNotebook", typeof(Notebook));
+
         /// <summary>
         /// Authored <see cref="IPageObject" />s for the <see cref="CLPPage" />.
         /// </summary>
@@ -313,6 +376,8 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData TagsProperty = RegisterProperty("Tags", typeof(ObservableCollection<ATagBase>), () => new ObservableCollection<ATagBase>());
+
+        #endregion //Navigation Properties
 
         #endregion //Properties
 
@@ -349,7 +414,7 @@ namespace CLP.Entities
              // TODO: Entities
             var newPage = new CLPPage
                           {
-                              NotebookID = NotebookID,
+                              ParentNotebook = ParentNotebook,
                              // PageTags = PageTags,
                               //GroupSubmitType = GroupSubmitType,
                               Height = Height,
@@ -372,7 +437,6 @@ namespace CLP.Entities
             foreach(var clonedPageObject in PageObjects.Select(pageObject => pageObject.Duplicate()))
             {
                 clonedPageObject.ParentPage = newPage;
-                clonedPageObject.ParentPageID = newPage.ID;
                 newPage.PageObjects.Add(clonedPageObject);
                // clonedPageObject.RefreshStrokeParentIDs();
             }

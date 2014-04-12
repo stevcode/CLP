@@ -1936,7 +1936,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 page.Width = CLPPage.PORTRAIT_WIDTH;
                 page.InitialAspectRatio = page.Width / page.Height;
             }
-            page.NotebookID = notebookPanel.Notebook.ID;
+            page.ParentNotebook = notebookPanel.Notebook;
             notebookPanel.Notebook.InsertPageAt(index, page);
         }
 

@@ -21,21 +21,19 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //CurrentPages.Add(Notebook.Pages[2]);
             //CurrentPages.Add(Notebook.Pages[3]);
-            //CurrentPages.Add(Notebook.Pages[4]);
-            //CurrentPages.Add(Notebook.Pages[5]);
-            for(int page = 0; page < Notebook.Pages.Count && page < 10; page++)
-            {
-                CurrentPages.Add(Notebook.Pages[page]);
-            }
 
-            PanelWidth = CurrentPages.Count * 40 + 65;
+            //for(int page = 0; page < Notebook.Pages.Count && page < 10; page++)
+            //{
+            //    CurrentPages.Add(Notebook.Pages[page]);
+            //}
+
             StudentList = GetStudentNames();
             SetCurrentPageCommand = new Command<CLPPage>(OnSetCurrentPageCommandExecute);
         }
 
         void ProgressPanelViewModel_Initialized(object sender, EventArgs e)
         {
-            Length = InitialLength;
+            Length = CurrentPages.Count * 40 + 65;
         }
 
         public override string Title

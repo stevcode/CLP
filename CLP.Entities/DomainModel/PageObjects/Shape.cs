@@ -43,6 +43,11 @@ namespace CLP.Entities
 
         #region Properties
 
+        public override bool IsBackgroundInteractable
+        {
+            get { return false; }
+        }
+
         /// <summary>
         /// The <see cref="ShapeType" /> of the <see cref="Shape" />.
         /// </summary>
@@ -66,7 +71,6 @@ namespace CLP.Entities
                 return null;
             }
             newShape.ID = Guid.NewGuid().ToString();
-            newShape.ParentPageID = ParentPageID;
             newShape.ParentPage = ParentPage;
 
             return newShape;

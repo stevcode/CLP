@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using Catel.Data;
+using Catel.Runtime.Serialization;
 
 namespace CLP.Entities
 {
@@ -46,34 +48,6 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData NameProperty = RegisterProperty("Name", typeof(string), string.Empty);
-
-        /// <summary>
-        /// Unique Identifier of the <see cref="Person" /> teaching the <see cref="ClassSubject" />.
-        /// </summary>
-        /// <remarks>
-        /// Foreign Key.
-        /// </remarks>
-        public string TeacherID
-        {
-            get { return GetValue<string>(TeacherIDProperty); }
-            set { SetValue(TeacherIDProperty, value); }
-        }
-
-        public static readonly PropertyData TeacherIDProperty = RegisterProperty("TeacherID", typeof(string), string.Empty);
-
-        /// <summary>
-        /// The <see cref="Person" /> teaching the <see cref="ClassSubject" />.
-        /// </summary>
-        /// <remarks>
-        /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
-        /// </remarks>
-        public virtual Person Teacher
-        {
-            get { return GetValue<Person>(TeacherProperty); }
-            set { SetValue(TeacherProperty, value); }
-        }
-
-        public static readonly PropertyData TeacherProperty = RegisterProperty("Teacher", typeof(Person));
 
         /// <summary>
         /// Grade Level to which the <see cref="ClassSubject" /> is taught.
@@ -151,6 +125,48 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData StateProperty = RegisterProperty("State", typeof(string), string.Empty);
+
+        #region Navigation Properties
+
+        /// <summary>
+        /// Unique Identifier of the <see cref="Person" /> teaching the <see cref="ClassSubject" />.
+        /// </summary>
+        /// <remarks>
+        /// Foreign Key.
+        /// </remarks>
+        public string TeacherID
+        {
+            get { return GetValue<string>(TeacherIDProperty); }
+            set { SetValue(TeacherIDProperty, value); }
+        }
+
+        public static readonly PropertyData TeacherIDProperty = RegisterProperty("TeacherID", typeof(string), string.Empty);
+
+        /// <summary>
+        /// The <see cref="Person" /> teaching the <see cref="ClassSubject" />.
+        /// </summary>
+        /// <remarks>
+        /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
+        /// </remarks>
+        [XmlIgnore]
+        [ExcludeFromSerialization]
+        public virtual Person Teacher
+        {
+            get { return GetValue<Person>(TeacherProperty); }
+            set
+            {
+                SetValue(TeacherProperty, value);
+                if(value == null)
+                {
+                    return;
+                }
+                TeacherID = value.ID;
+            }
+        }
+
+        public static readonly PropertyData TeacherProperty = RegisterProperty("Teacher", typeof(Person)); 
+
+        #endregion //Navigation Properties
 
         #endregion //Properties
 
