@@ -10,6 +10,7 @@
         <conv:PageToStarredVisibilityConverter x:Key="PageToStarredVisibilityConverter" />
         <conv:PageToSubmissionVisibilityConverter x:Key="PageToSubmissionVisibilityConverter" />
         <conv:PanelLocationToThicknessConverter x:Key="PanelLocationToThicknessConverter" />
+            <conv:PageMatchToColorConverter x:Key="PageMatchToColorConverter" />
     </UserControl.Resources>
     
     <Border Background="{StaticResource GrayBackgroundColor}"
@@ -96,9 +97,13 @@
                                                                Source="pack://application:,,,/Resources/Images/BlueEnvelope16.png"
                                                                Visibility="{Binding Converter={StaticResource PageToSubmissionVisibilityConverter}}" />
                                                     </Grid>
-                                                    <Rectangle Grid.Row="0"
-                                                               Margin="0"
-                                                               Fill="Transparent">
+                                                    <Rectangle Grid.Row="0" Margin="0" Fill="Transparent" StrokeThickness="2">
+                                                        <Rectangle.Stroke>
+                                                            <MultiBinding Converter="{StaticResource PageMatchToColorConverter}">
+                                                                <Binding ElementName="Pages" Path="DataContext.CurrentPage"/>
+                                                                <Binding Path=""/>
+                                                            </MultiBinding>
+                                                        </Rectangle.Stroke>
                                                         <i:Interaction.Triggers>
                                                             <i:EventTrigger EventName="MouseUp">
                                                                 <catel:EventToCommand Command="{Binding DataContext.SetCurrentPageCommand, ElementName=Pages}"
@@ -118,6 +123,7 @@
                 </ItemsControl>
             </Grid>
 
+            <!--Thumb Cursor="ScrollWE" Width="5" 
             <Thumb Cursor="ScrollWE"
                    Width="7"
                    Margin="0 0 -7 0"
@@ -152,7 +158,7 @@
                         </Grid>
                     </ControlTemplate>
                 </Thumb.Template>
-            </Thumb>
+            </-->
 
         </Grid>
     </Border>
