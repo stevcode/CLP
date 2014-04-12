@@ -167,7 +167,6 @@ namespace Classroom_Learning_Partner.ViewModels
         //        PageObject.ParentPage.PageObjects.Remove(remainderRegion);
         //    }
         //    ACLPPageBaseViewModel.RemovePageObjectFromPage(PageObject);
-
         //}
 
         ///// <summary>

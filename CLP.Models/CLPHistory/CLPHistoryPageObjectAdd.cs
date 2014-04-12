@@ -85,6 +85,7 @@ namespace CLP.Models
             try
             {
                 ParentPage.PageObjects.Remove(PageObject);
+                PageObject.OnRemoved();
             }
             catch(Exception ex)
             {
