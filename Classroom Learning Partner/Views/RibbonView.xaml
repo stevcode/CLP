@@ -300,7 +300,7 @@
                               LargeImageSource="pack://application:,,,/Resources/Images/Array32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/Array16.png"
                               Command="{Binding InsertArrayCommand}"
-                              CommandParameter="DEFAULT" />
+                              CommandParameter="ARRAY" />
 
                 <!--TODO Liz: Uncomment array card, factor card and stamp buttons when done demoing-->
                 <!--<RibbonButton Label="Array Card"
@@ -378,11 +378,9 @@
                 <RibbonButton Background="Blue" />
                 <RibbonButton Background="HotPink" />
                 <RibbonButton Background="BlueViolet" />
-                <RibbonButton Background="Aquamarine"
-                              Visibility="{Binding StudentVisibility}" />
+                <RibbonButton Background="Aquamarine" />
                 <RibbonButton Background="SlateGray" />
-                <RibbonButton Background="SkyBlue"
-                              Visibility="{Binding StudentVisibility}" />
+                <RibbonButton Background="SkyBlue"  />
                 <RibbonButton Background="Turquoise"
                               Visibility="{Binding InstructorVisibility}" />
                 <Border BorderBrush="Black"
@@ -549,7 +547,7 @@
                               LargeImageSource="pack://application:,,,/Resources/Images/Array32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/Array16.png"
                               Command="{Binding InsertArrayCommand}"
-                              CommandParameter="SNAPADORNERONRIGHT" />
+                              CommandParameter="ARRAY" />
 
                 <RibbonButton Label="Array Card"
                               LargeImageSource="pack://application:,,,/Resources/Images/ArrayCard32.png"

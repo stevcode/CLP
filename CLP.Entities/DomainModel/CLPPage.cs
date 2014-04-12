@@ -24,6 +24,13 @@ namespace CLP.Entities
         Group
     }
 
+    public enum PageLineTypes
+    {
+        None,
+        Lined,
+        Grid
+    }
+
     public class CLPPage : AEntityBase
     {
         #region Fields
@@ -177,6 +184,28 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData InitialAspectRatioProperty = RegisterProperty("InitialAspectRatio", typeof(double));
+
+        /// <summary>
+        /// Type of lines on the background of the <see cref="CLPPage" />.
+        /// </summary>
+        public PageLineTypes PageLineType
+        {
+            get { return GetValue<PageLineTypes>(PageLineTypeProperty); }
+            set { SetValue(PageLineTypeProperty, value); }
+        }
+
+        public static readonly PropertyData PageLineTypeProperty = RegisterProperty("PageLineType", typeof(PageLineTypes), PageLineTypes.None);
+
+        /// <summary>
+        /// Amount of space between PageLines on the <see cref="CLPPage" />.
+        /// </summary>
+        public double PageLineLength
+        {
+            get { return GetValue<double>(PageLineLengthProperty); }
+            set { SetValue(PageLineLengthProperty, value); }
+        }
+
+        public static readonly PropertyData PageLineLengthProperty = RegisterProperty("PageLineLength", typeof(double), 20.0);
 
         /// <summary>
         /// Type of Submission for the <see cref="CLPPage" />.

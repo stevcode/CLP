@@ -86,6 +86,7 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DAL\DatabaseConfiguration.cs" />
@@ -100,6 +101,8 @@
     <Compile Include="DomainModel\IConnectedPerson.cs" />
     <Compile Include="DomainModel\Notebook.cs" />
     <Compile Include="DomainModel\PageObjects\APageObjectBase.cs" />
+    <Compile Include="DomainModel\PageObjects\Arrays\ACLPArrayBase.cs" />
+    <Compile Include="DomainModel\PageObjects\Arrays\CLPArray.cs" />
     <Compile Include="DomainModel\PageObjects\PageObject Interfaces\ICountable.cs" />
     <Compile Include="DomainModel\PageObjects\PageObject Interfaces\ICuttable.cs" />
     <Compile Include="DomainModel\PageObjects\PageObject Interfaces\IPageObject.cs" />

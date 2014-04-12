@@ -2206,27 +2206,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Insert Commands
 
-        private bool OnInsertPageObjectCanExecute()
-        {
-            var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel == null)
-            {
-                return false;
-            }
+        private bool OnInsertPageObjectCanExecute() { return CurrentPage != null; }
 
-            return notebookWorkspaceViewModel.CurrentDisplay == null;
-        }
-
-        private bool OnInsertPageObjectCanExecute(string s)
-        {
-            var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel == null)
-            {
-                return false;
-            }
-
-            return notebookWorkspaceViewModel.CurrentDisplay == null;
-        }
+        private bool OnInsertPageObjectCanExecute(string s) { return CurrentPage != null; }
 
         /// <summary>
         /// Gets the InsertTextBoxCommand command.
@@ -2498,18 +2480,23 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnInsertArrayCommandExecute(string arrayType)
         {
-            // TODO: Entities
-            //var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
-            //if(notebookWorkspaceViewModel == null)
-            //{
-            //    return;
-            //}
-            //var clpMirrorDisplay = notebookWorkspaceViewModel.CurrentDisplay as SingleDisplay;
-            //if(clpMirrorDisplay == null)
-            //{
-            //    return;
-            //}
-            //var currentPage = clpMirrorDisplay.CurrentPage;
+            var page = CurrentPage;
+            if(page == null)
+            {
+                return;
+            }
+
+            switch(arrayType)
+            {
+                case "ARRAY":
+                    break;
+                case "ARRAYCARD":
+                    break;
+                case "FACTORCARD":
+                    break;
+                default:
+                    return;
+            }
 
             //int rows, columns, dividend, numberOfArrays;
             //dividend = 0;
@@ -2947,7 +2934,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //    }
             //}
 
-            
+
             //var arraysToAdd = new List<CLPArray>();
             //foreach(var index in Enumerable.Range(1, numberOfArrays))
             //{
