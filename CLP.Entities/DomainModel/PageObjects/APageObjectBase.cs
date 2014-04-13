@@ -39,6 +39,9 @@ namespace CLP.Entities
         /// <summary>
         /// Unique Identifier for the <see cref="IPageObject" />.
         /// </summary>
+        /// <remarks>
+        /// Composite Primary Key.
+        /// </remarks>
         public string ID
         {
             get { return GetValue<string>(IDProperty); }

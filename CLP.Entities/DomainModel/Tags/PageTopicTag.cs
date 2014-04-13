@@ -15,7 +15,8 @@ namespace CLP.Entities
         /// Initializes <see cref="PageTopicTag" /> from a value.
         /// </summary>
         /// <param name="value">The value of the <see cref="PageTopicTag" />.</param>
-        public PageTopicTag(string value) { Value = value; }
+        public PageTopicTag(CLPPage parentPage, string value)
+            : base(parentPage) { Value = value; }
 
         /// <summary>
         /// Initializes <see cref="PageTopicTag" /> based on <see cref="SerializationInfo" />.

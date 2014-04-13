@@ -27,6 +27,7 @@ namespace CLP.Entities
             : base(parentPage, columns, rows)
         {
             Dividend = dividend;
+            IsSnappable = false;
             if(isRemainderRegionDisplayed)
             {
                 RemainderTiles = new RemainderTiles(parentPage, this);
@@ -106,7 +107,11 @@ namespace CLP.Entities
         public int Dividend
         {
             get { return GetValue<int>(DividendProperty); }
-            set { SetValue(DividendProperty, value); }
+            set
+            {
+                SetValue(DividendProperty, value);
+                RaisePropertyChanged("CurrentRemainder");
+            }
         }
 
         public static readonly PropertyData DividendProperty = RegisterProperty("Dividend", typeof(int), 1);
@@ -454,7 +459,6 @@ namespace CLP.Entities
             RaisePropertyChanged("GroupsSubtracted");
             RaisePropertyChanged("CurrentRemainder");
             RaisePropertyChanged("LastDivisionPosition");
-            RaisePropertyChanged("IsFuzzyEdgeVisible");
         }
 
         public void RemoveLastDivision()
@@ -473,7 +477,6 @@ namespace CLP.Entities
             RaisePropertyChanged("GroupsSubtracted");
             RaisePropertyChanged("CurrentRemainder");
             RaisePropertyChanged("LastDivisionPosition");
-            RaisePropertyChanged("IsFuzzyEdgeVisible");
 
             UpdateRemainderRegion();
         }

@@ -20,8 +20,10 @@ namespace CLP.Entities
         /// <summary>
         /// Initializes <see cref="StarredTag" /> from <see cref="AcceptedValues" />.
         /// </summary>
+        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="StarredTag" /> belongs to.</param>
         /// <param name="value">The value of the <see cref="StarredTag" />, parsed from <see cref="AcceptedValues" />.</param>
-        public StarredTag(AcceptedValues value)
+        public StarredTag(CLPPage parentPage, AcceptedValues value)
+            : base(parentPage)
         {
             Value = value.ToString();
             IsSingleValueTag = true;

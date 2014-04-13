@@ -557,13 +557,12 @@
                     Visibility="{Binding IsHorizontallyAligned, Converter={StaticResource BooleanToOppositeVisibilityConverter}}" />
 
             <!--Array hit box-->
-            <Rectangle x:Name="Array"
-                       Grid.Row="1"
+            <Rectangle Grid.Row="1"
                        Grid.Column="1"
                        Tag="ArrayBodyHitBox"
                        Width="{Binding ArrayWidth}"
                        Height="{Binding ArrayHeight}"
-                       Fill="Pink"
+                       Fill="Transparent"
                        Stroke="Transparent"
                        StrokeThickness="3">
                 <i:Interaction.Triggers>

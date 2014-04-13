@@ -3,29 +3,31 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    public class FuzzyFactorCardViewModel : APageObjectBaseViewModel // : CLPArrayViewModel
+    public class FuzzyFactorCardViewModel : APageObjectBaseViewModel
     {
         #region Constructor
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FuzzyFactorCardViewModel" /> class.
         /// </summary>
-        public FuzzyFactorCardViewModel(FuzzyFactorCard factorCard) //: base(factorCard)
+        public FuzzyFactorCardViewModel(FuzzyFactorCard fuzzyFactorCard)
         {
+            PageObject = fuzzyFactorCard;
+            
             RemoveFuzzyFactorCardCommand = new Command(OnRemoveFuzzyFactorCardCommandExecute);
             ResizeFuzzyFactorCardCommand = new Command<DragDeltaEventArgs>(OnResizeFuzzyFactorCardCommandExecute);
             RemoveLastArrayCommand = new Command(OnRemoveLastArrayCommandExecute);
+            ToggleMainArrayAdornersCommand = new Command<MouseButtonEventArgs>(OnToggleMainArrayAdornersCommandExecute);
         }
 
         #endregion //Constructor    
-
-
 
         #region Model
 
@@ -295,6 +297,28 @@ namespace Classroom_Learning_Partner.ViewModels
             (PageObject as FuzzyFactorCard).RemoveLastDivision();
 
           //  ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryFFCDivisionRemoved(PageObject.ParentPage, PageObject.UniqueID, divisionValue));
+        }
+
+        /// <summary>
+        /// Toggles the main adorners for the array.
+        /// </summary>
+        public Command<MouseButtonEventArgs> ToggleMainArrayAdornersCommand { get; private set; }
+
+        private void OnToggleMainArrayAdornersCommandExecute(MouseButtonEventArgs e)
+        {
+            if(!App.MainWindowViewModel.IsAuthoring && IsBackground)
+            {
+                return;
+            }
+
+            if(e.ChangedButton != MouseButton.Left ||
+               e.StylusDevice != null && e.StylusDevice.Inverted)
+            {
+                return;
+            }
+
+            ACLPPageBaseViewModel.ClearAdorners(PageObject.ParentPage);
+            IsAdornerVisible = !IsAdornerVisible;
         }
 
         #endregion //Commands
