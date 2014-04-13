@@ -22,10 +22,7 @@ namespace CLP.Entities
         /// </summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IPageObject" /> belongs to.</param>
         protected APageObjectBase(CLPPage parentPage)
-            : this()
-        {
-            ParentPage = parentPage;
-        }
+            : this() { ParentPage = parentPage; }
 
         /// <summary>
         /// Initializes <see cref="APageObjectBase" /> based on <see cref="SerializationInfo" />.
@@ -144,6 +141,22 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData WidthProperty = RegisterProperty("Width", typeof(double), 20.0);
+
+        /// <summary>
+        /// Minimum Height of the <see cref="IPageObject" />.
+        /// </summary>
+        public virtual double MinimumHeight
+        {
+            get { return 10; }
+        }
+
+        /// <summary>
+        /// Minimum Width of the <see cref="IPageObject" />.
+        /// </summary>
+        public virtual double MinimumWidth
+        {
+            get { return 10; }
+        }
 
         /// <summary>
         /// Determines whether the <see cref="IPageObject" /> has properties can be changed by a <see cref="Person" /> anyone at any time.

@@ -13,6 +13,8 @@ namespace CLP.Entities
         double YPosition { get; set; }
         double Height { get; set; }
         double Width { get; set; }
+        double MinimumHeight { get; }
+        double MinimumWidth { get; }
         bool IsBackgroundInteractable { get; }
         bool IsManipulatableByNonCreator { get; set; }
 

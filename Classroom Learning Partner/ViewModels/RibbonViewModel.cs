@@ -2486,641 +2486,289 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
+            int rows, columns, dividend = 1, numberOfArrays;
             switch(arrayType)
             {
                 case "ARRAY":
+                    var arrayCreationView = new ArrayCreationView {Owner = Application.Current.MainWindow};
+                    arrayCreationView.ShowDialog();
+
+                    if(arrayCreationView.DialogResult != true)
+                    {
+                        return;
+                    }
+
+                    try
+                    {
+                        rows = Convert.ToInt32(arrayCreationView.Rows.Text);
+                    }
+                    catch(FormatException)
+                    {
+                        rows = 1;
+                    }
+
+                    try
+                    {
+                        columns = Convert.ToInt32(arrayCreationView.Columns.Text);
+                    }
+                    catch(FormatException)
+                    {
+                        columns = 1;
+                    }
+
+                    try
+                    {
+                        numberOfArrays = Convert.ToInt32(arrayCreationView.NumberOfArrays.Text);
+                    }
+                    catch(FormatException)
+                    {
+                        numberOfArrays = 1;
+                    }
+                    break;
+                case "FUZZYFACTORCARD":
+                    var factorCreationView = new FuzzyFactorCardCreationView{ Owner = Application.Current.MainWindow};
+                    factorCreationView.ShowDialog();
+
+                    if(factorCreationView.DialogResult != true)
+                    {
+                        return;
+                    }
+
+                    try
+                    {
+                        dividend = Convert.ToInt32(factorCreationView.Product.Text);
+                    }
+                    catch(FormatException)
+                    {
+                        return;
+                    }
+
+                    try
+                    {
+                        rows = Convert.ToInt32(factorCreationView.Factor.Text);
+                    }
+                    catch(FormatException)
+                    {
+                        return;
+                    }
+
+                    columns = dividend / rows;
+                    numberOfArrays = 1;
+                    break;
+                case "FFCREMAINDER":
+                    var factorRemainderCreationView = new FuzzyFactorCardWithTilesCreationView
+                    {
+                        Owner = Application.Current.MainWindow
+                    };
+                    factorRemainderCreationView.ShowDialog();
+
+                    if(factorRemainderCreationView.DialogResult != true)
+                    {
+                        return;
+                    }
+
+                    try
+                    {
+                        dividend = Convert.ToInt32(factorRemainderCreationView.Product.Text);
+                    }
+                    catch(FormatException)
+                    {
+                        return;
+                    }
+
+                    try
+                    {
+                        rows = Convert.ToInt32(factorRemainderCreationView.Factor.Text);
+                    }
+                    catch(FormatException)
+                    {
+                        return;
+                    }
+
+                    columns = dividend / rows;
+                    numberOfArrays = 1;
                     break;
                 case "ARRAYCARD":
-                    break;
                 case "FACTORCARD":
-                    break;
+                    //    var factorCreationView = new FactorCardCreationView{ Owner = Application.Current.MainWindow};
+                    //    factorCreationView.ShowDialog();
+                    //    if(factorCreationView.DialogResult != true)
+                    //    {
+                    //        return;
+                    //    }
+
+                    //    try
+                    //    {
+                    //        dividend = Convert.ToInt32(factorCreationView.Product.Text);
+                    //    }
+                    //    catch(FormatException)
+                    //    {
+                    //        return;
+                    //    }
+
+                    //    try
+                    //    {
+                    //        rows = Convert.ToInt32(factorCreationView.Factor.Text);
+                    //    }
+                    //    catch(FormatException)
+                    //    {
+                    //        return;
+                    //    }
+
+                    //    columns = dividend / rows;
+                    //    numberOfArrays = 1;
                 default:
                     return;
             }
 
-            //int rows, columns, dividend, numberOfArrays;
-            //dividend = 0;
-            //if(arrayType == "FACTORCARD")
-            //{
-            //    var factorCreationView = new FactorCardCreationView{ Owner = Application.Current.MainWindow};
-            //    factorCreationView.ShowDialog();
-            //    if(factorCreationView.DialogResult != true)
-            //    {
-            //        return;
-            //    }
+            var arraysToAdd = new List<ACLPArrayBase>();
+            foreach(var index in Enumerable.Range(1, numberOfArrays))
+            {
+                ACLPArrayBase array;
+                switch(arrayType)
+                {
+                    case "ARRAY":
+                        array = new CLPArray(page, columns, rows, ArrayTypes.Array);
+                        break;
+                    case "FUZZYFACTORCARD":
+                        array = new FuzzyFactorCard(page, columns, rows, dividend);
+                        break;
+                    case "FFCREMAINDER":
+                        array = new FuzzyFactorCard(page, columns, rows, dividend, true);
+                        break;
+                    case "ARRAYCARD":
+                        array = new CLPArray(page, columns, rows, ArrayTypes.ArrayCard);
+                        break;
+                    case "FACTORCARD":
+                        array = new CLPArray(page, columns, rows, ArrayTypes.FactorCard);
+                        break;
+                    default:
+                        return;
+                }
 
-            //    try
-            //    {
-            //        dividend = Convert.ToInt32(factorCreationView.Product.Text);
-            //    }
-            //    catch(FormatException)
-            //    {
-            //        return;
-            //    }
+                arraysToAdd.Add(array);
+            }
 
-            //    try
-            //    {
-            //        rows = Convert.ToInt32(factorCreationView.Factor.Text);
-            //    }
-            //    catch(FormatException)
-            //    {
-            //        return;
-            //    }
+            //attempt to size newArray to lastArray
+            //if fail, resize all other arrays to newArray
+            //if other Arrays exist, ApplyDistinctPosition, position to Right unless FFC, then position below
 
-            //    columns = dividend / rows;
-            //    numberOfArrays = 1;
-            //}
+            var arrayStacks = 1;
+            var isHorizontallyAligned = page.Width / columns > page.Height / 4 * 3 / rows;            
+            var firstArray = arraysToAdd.First();
+            firstArray.SizeArrayToGridLevel();
+            var xPosition = firstArray.XPosition;
+            var yPosition = firstArray.YPosition;
+            var initialGridsquareSize = firstArray.GridSquareSize;
+            ACLPArrayBase.ApplyDistinctPosition(firstArray, App.Network.CurrentUser.ID);
+            if(arraysToAdd.Count == 1)
+            {
+                ACLPPageBaseViewModel.AddPageObjectToPage(firstArray);
+            }
+            else
+            {
+                if(isHorizontallyAligned)
+                {
+                    while(xPosition + (firstArray.LabelLength + columns * initialGridsquareSize) * numberOfArrays + firstArray.LabelLength >= page.Width)
+                    {
+                        initialGridsquareSize = Math.Abs(initialGridsquareSize - 45.0) < .0001 ? 22.5 : initialGridsquareSize / 4 * 3;
 
-            //else if(arrayType == "FUZZYFACTORCARD")
-            //{
-            //    var factorCreationView = new FuzzyFactorCardCreationView{ Owner = Application.Current.MainWindow};
-            //    factorCreationView.ShowDialog();
-            //    if(factorCreationView.DialogResult != true)
-            //    {
-            //        return;
-            //    }
+                        if(numberOfArrays < 5 ||
+                            xPosition + (firstArray.LabelLength + columns * initialGridsquareSize) * numberOfArrays + firstArray.LabelLength < page.Width)
+                        {
+                            continue;
+                        }
 
-            //    try
-            //    {
-            //        dividend = Convert.ToInt32(factorCreationView.Product.Text);
-            //    }
-            //    catch(FormatException)
-            //    {
-            //        return;
-            //    }
+                        if(xPosition + (firstArray.LabelLength + columns * initialGridsquareSize) * Math.Ceiling((double)numberOfArrays / 2) + firstArray.LabelLength < page.Width &&
+                            yPosition + (firstArray.LabelLength + rows * initialGridsquareSize) * 2 + firstArray.LabelLength < page.Height)
+                        {
+                            arrayStacks = 2;
+                            break;
+                        }
 
-            //    try
-            //    {
-            //        rows = Convert.ToInt32(factorCreationView.Factor.Text);
-            //    }
-            //    catch(FormatException)
-            //    {
-            //        return;
-            //    }
+                        if(xPosition + (firstArray.LabelLength + columns * initialGridsquareSize) * Math.Ceiling((double)numberOfArrays / 3) + firstArray.LabelLength < page.Width &&
+                            yPosition + (firstArray.LabelLength + rows * initialGridsquareSize) * 3 + firstArray.LabelLength < page.Height)
+                        {
+                            arrayStacks = 3;
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    yPosition = 100;
+                    while(yPosition + (firstArray.LabelLength + rows * initialGridsquareSize) * numberOfArrays + firstArray.LabelLength >= page.Height)
+                    {
+                        initialGridsquareSize = Math.Abs(initialGridsquareSize - 45.0) < .0001 ? 22.5 : initialGridsquareSize / 4 * 3;
 
-            //    columns = dividend / rows;
-            //    numberOfArrays = 1;
-            //}
+                        if(numberOfArrays < 5 ||
+                            yPosition + (firstArray.LabelLength + rows * initialGridsquareSize) * numberOfArrays + firstArray.LabelLength < page.Height)
+                        {
+                            continue;
+                        }
 
-            //else if(arrayType == "FFCREMAINDER")
-            //{
-            //    var factorCreationView = new FuzzyFactorCardWithTilesCreationView
-            //    {
-            //        Owner = Application.Current.MainWindow
-            //    };
-            //    factorCreationView.ShowDialog();
-            //    if(factorCreationView.DialogResult != true)
-            //    {
-            //        return;
-            //    }
+                        if(yPosition + (firstArray.LabelLength + rows * initialGridsquareSize) * Math.Ceiling((double)numberOfArrays / 2) + firstArray.LabelLength < page.Height &&
+                            xPosition + (firstArray.LabelLength + columns * initialGridsquareSize) * 2 + firstArray.LabelLength < page.Width)
+                        {
+                            arrayStacks = 2;
+                            break;
+                        }
 
-            //    try
-            //    {
-            //        dividend = Convert.ToInt32(factorCreationView.Product.Text);
-            //    }
-            //    catch(FormatException)
-            //    {
-            //        return;
-            //    }
+                        if(yPosition + (firstArray.LabelLength + rows * initialGridsquareSize) * Math.Ceiling((double)numberOfArrays / 3) + firstArray.LabelLength < page.Height &&
+                            xPosition + (firstArray.LabelLength + columns * initialGridsquareSize) * 3 + firstArray.LabelLength < page.Width)
+                        {
+                            arrayStacks = 3;
+                            break;
+                        }
+                    }
+                }
 
-            //    try
-            //    {
-            //        rows = Convert.ToInt32(factorCreationView.Factor.Text);
-            //    }
-            //    catch(FormatException)
-            //    {
-            //        return;
-            //    }
-
-            //    columns = dividend / rows;
-            //    numberOfArrays = 1;
-            //}
-
-            //else
-            //{
-            //    var arrayCreationView = new ArrayCreationView {Owner = Application.Current.MainWindow};
-            //    arrayCreationView.ShowDialog();
-
-            //    if(arrayCreationView.DialogResult != true)
-            //    {
-            //        return;
-            //    }
-
-            //    try
-            //    {
-            //        rows = Convert.ToInt32(arrayCreationView.Rows.Text);
-            //    }
-            //    catch(FormatException)
-            //    {
-            //        rows = 1;
-            //    }
-
-            //    try
-            //    {
-            //        columns = Convert.ToInt32(arrayCreationView.Columns.Text);
-            //    }
-            //    catch(FormatException)
-            //    {
-            //        columns = 1;
-            //    }
-
-            //    try
-            //    {
-            //        numberOfArrays = Convert.ToInt32(arrayCreationView.NumberOfArrays.Text);
-            //    }
-            //    catch(FormatException)
-            //    {
-            //        numberOfArrays = 1;
-            //    }
-            //}
-
-            //const double MIN_SIDE = 25.0;
-            //const double MIN_FFC_SIDE = 185.0;
-            //const double LABEL_LENGTH = 22.0;
-            //var xPosition = 0.0;
-            //var yPosition = 150.0;
-
-            ////squareSize will be the grid size of the most recently placed array, or 0 if there are no non-background arrays
-            //double squareSize = 0.0;
-            //foreach(var pageObject in currentPage.PageObjects)
-            //{
-            //    if(pageObject is CLPArray && (!pageObject.IsBackground || MainWindow.IsAuthoring))
-            //    {
-            //        squareSize = (pageObject as CLPArray).ArrayHeight / (pageObject as CLPArray).Rows;
-            //    }
-            //}
-
-            //CLPArray onlyArray = null;
-            //foreach(var pageObject in currentPage.PageObjects)
-            //{
-            //    if(pageObject is CLPArray)
-            //    {
-            //        onlyArray = (onlyArray == null) ? pageObject as CLPArray : null;
-            //    }
-            //}
-
-            //if(numberOfArrays == 1)
-            //{
-            //    CLPArray array;
-            //    switch(arrayType)
-            //    {
-            //        case "CARD":
-            //            array = new CLPArray(rows, columns, currentPage);
-            //            array.IsDivisionBehaviorOn = false;
-            //            array.IsLabelOn = false;
-            //            array.IsSnappable = false;
-            //            array.BackgroundColor = Colors.SkyBlue.ToString();
-            //            break;
-            //        case "FACTORCARD":
-            //            array = new CLPFactorCard(rows, columns, currentPage);
-            //            break;
-            //        case "FUZZYFACTORCARD":
-            //            array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
-            //            break;
-            //        case "FFCREMAINDER":
-            //            array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
-            //            (array as CLPFuzzyFactorCard).IsRemainderRegionDisplayed = true;
-            //            break;
-            //        default:
-            //            array = new CLPArray(rows, columns, currentPage);
-            //            array.IsDivisionBehaviorOn = false;
-            //            //TODO Liz - uncomment and delete above after trial
-            //            //array.IsDivisionBehaviorOn = !(onlyArray is CLPFuzzyFactorCard);
-            //            array.IsSnapAdornerOnLeft = !IsRightHanded;
-            //            break;
-            //    }
-
-            //    var arrayMinSide = (array is CLPFuzzyFactorCard) ? MIN_FFC_SIDE : MIN_SIDE;
-            //    if(squareSize > 0)
-            //    {
-            //        squareSize = Math.Max(squareSize, (arrayMinSide / (Math.Min(rows, columns))));
-            //        if(yPosition + squareSize * rows + 2 * LABEL_LENGTH < currentPage.Height && xPosition + squareSize * columns + 2 * LABEL_LENGTH < currentPage.Width)
-            //        {
-            //            //Position to not overlap with first array on page if possible
-            //            if(onlyArray != null)
-            //            {
-            //                const double GAP = 35.0;
-            //                if(!(onlyArray is CLPFuzzyFactorCard) && onlyArray.XPosition + onlyArray.Width + (2 * LABEL_LENGTH + columns * squareSize) + GAP <= currentPage.Width
-            //                    && rows * squareSize + LABEL_LENGTH < currentPage.Height)
-            //                {
-            //                    array.XPosition = onlyArray.XPosition + onlyArray.Width + GAP;
-            //                    array.YPosition = onlyArray.YPosition;
-            //                }
-            //                else if(onlyArray.XPosition + (2 * LABEL_LENGTH + columns * squareSize) <= currentPage.Width
-            //                    && onlyArray.YPosition + onlyArray.Height + rows * squareSize + LABEL_LENGTH + GAP < currentPage.Height)
-            //                {
-            //                    array.YPosition = onlyArray.YPosition + onlyArray.Height + GAP;
-            //                    array.XPosition = onlyArray.XPosition;
-            //                }
-            //                else
-            //                {
-            //                    array.YPosition = currentPage.Height - array.Height;
-            //                    array.XPosition = onlyArray.XPosition;
-            //                }
-            //            }
-            //            array.SizeArrayToGridLevel(squareSize);
-            //            ACLPPageObjectBase.ApplyDistinctPosition(array);
-            //            ACLPPageBaseViewModel.AddPageObjectToPage(array);
-
-            //            //If FFC with remainder on page, update
-            //            foreach(var pageObject in currentPage.PageObjects)
-            //            {
-            //                if(pageObject is CLPFuzzyFactorCard)
-            //                {
-            //                    (pageObject as CLPFuzzyFactorCard).AnalyzeArrays();
-            //                    if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
-            //                    {
-            //                        (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
-            //                        break;
-            //                    }
-            //                }
-            //            }
-
-            //            return;
-            //        }
-            //        // If it doesn't fit, resize all other non-background arrays on page to match new array grid size
-            //        else
-            //        {
-            //            Dictionary<string, Point> oldDimensions = new Dictionary<string, Point>();
-            //            while(xPosition + 2 * LABEL_LENGTH + squareSize * columns >= currentPage.Width || yPosition + 2 * LABEL_LENGTH + squareSize * rows >= currentPage.Height)
-            //            {
-            //                squareSize = Math.Abs(squareSize - 45.0) < .0001 ? 22.5 : squareSize / 4 * 3;
-            //            }
-            //            foreach(var pageObject in currentPage.PageObjects)
-            //            {
-            //                if(pageObject is CLPArray && (!pageObject.IsBackground || MainWindow.IsAuthoring))
-            //                {
-            //                    var pageObjectMinSide = (pageObject is CLPFuzzyFactorCard) ? MIN_FFC_SIDE : MIN_SIDE;
-            //                    oldDimensions.Add(pageObject.UniqueID, new Point(pageObject.Width, pageObject.Height));
-            //                    if((pageObject as CLPArray).Rows * squareSize > pageObjectMinSide && (pageObject as CLPArray).Columns * squareSize > pageObjectMinSide)
-            //                    {
-            //                        (pageObject as CLPArray).SizeArrayToGridLevel(squareSize);
-            //                    }
-            //                    else
-            //                    {
-            //                        (pageObject as CLPArray).SizeArrayToGridLevel(pageObjectMinSide / Math.Min((pageObject as CLPArray).Rows, (pageObject as CLPArray).Columns));
-            //                    }
-            //                }
-            //            }
-            //            array.SizeArrayToGridLevel(squareSize);
-
-            //            //Position to not overlap with first array on page if possible
-            //            if(onlyArray != null)
-            //            {
-            //                const double GAP = 35.0;
-            //                if(!(onlyArray is CLPFuzzyFactorCard) && onlyArray.XPosition + onlyArray.Width + (2 * LABEL_LENGTH + columns * squareSize) + GAP <= currentPage.Width
-            //                    && rows * squareSize + LABEL_LENGTH < currentPage.Height)
-            //                {
-            //                    array.XPosition = onlyArray.XPosition + onlyArray.Width + GAP;
-            //                    array.YPosition = onlyArray.YPosition;
-            //                }
-            //                else if(onlyArray.XPosition + (2 * LABEL_LENGTH + columns * squareSize) <= currentPage.Width
-            //                    && onlyArray.YPosition + onlyArray.Height + rows * squareSize + LABEL_LENGTH + GAP < currentPage.Height)
-            //                {
-            //                    array.YPosition = onlyArray.YPosition + onlyArray.Height + GAP;
-            //                    array.XPosition = onlyArray.XPosition;
-            //                }
-            //                else
-            //                {
-            //                    array.YPosition = currentPage.Height - array.Height;
-            //                    array.XPosition = onlyArray.XPosition;
-            //                }
-            //            }
-
-            //            if(currentPage == null)
-            //            {
-            //                Logger.Instance.WriteToLog("ParentPage for pageObject not set in AddPageObjectToPage().");
-            //                return;
-            //            }
-
-            //            array.IsBackground = App.MainWindowViewModel.IsAuthoring;
-            //            ACLPPageObjectBase.ApplyDistinctPosition(array);
-            //            currentPage.PageObjects.Add(array);
-            //            ACLPPageBaseViewModel.AddHistoryItemToPage(currentPage, new CLPHistoryArrayAddMassResize(currentPage, array.UniqueID, currentPage.PageObjects.Count - 1, oldDimensions));
-            //            App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.Select;
-
-            //            //If FFC with remainder on page, update
-            //            foreach(var pageObject in currentPage.PageObjects)
-            //            {
-            //                if(pageObject is CLPFuzzyFactorCard)
-            //                {
-            //                    (pageObject as CLPFuzzyFactorCard).AnalyzeArrays();
-            //                    if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
-            //                    {
-            //                        (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
-            //                        break;
-            //                    }
-            //                }
-            //            }
-            //            return;
-            //        }
-            //    }
-            //}
-
-            //var minSide = ((arrayType == "FUZZYFACTORCARD" || arrayType == "FFCREMAINDER"))
-            //    ? MIN_FFC_SIDE:
-            //    MIN_SIDE;
-            //var defaultSquareSize = ((arrayType == "FUZZYFACTORCARD" || arrayType == "FFCREMAINDER")) ?
-            //    Math.Max(45.0, (minSide / (Math.Min(rows, columns)))):
-            //    45.0;
-            //var initializedSquareSize = (squareSize > 0) ? Math.Max(squareSize, (minSide / (Math.Min(rows, columns)))) : defaultSquareSize;
-            //if((arrayType == "FUZZYFACTORCARD" || arrayType == "FFCREMAINDER") && xPosition + initializedSquareSize * columns + LABEL_LENGTH * 3.0 + 12.0 > currentPage.Width)
-            //{
-            //    initializedSquareSize = minSide / (Math.Min(rows, columns));
-            //}
-            //var arrayStacks = 1;
-            //var isHorizontallyAligned = !(columns / currentPage.Width > rows / currentPage.Height);
-
-            //while(xPosition + 2 * LABEL_LENGTH + initializedSquareSize * columns >= currentPage.Width || yPosition + 2 * LABEL_LENGTH + initializedSquareSize * rows >= currentPage.Height)
-            //{
-            //    initializedSquareSize = Math.Abs(initializedSquareSize - 45.0) < .0001 ? 22.5 : initializedSquareSize / 4 * 3;
-            //}
-            //if(isHorizontallyAligned)
-            //{
-            //    while(xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH >= currentPage.Width)
-            //    {
-            //        initializedSquareSize = Math.Abs(initializedSquareSize - 45.0) < .0001 ? 22.5 : initializedSquareSize / 4 * 3;
-
-            //        if(numberOfArrays < 5 || xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH < currentPage.Width)
-            //        {
-            //            continue;
-            //        }
-
-            //        if(xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 2) + LABEL_LENGTH < currentPage.Width &&
-            //           yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * 2 + LABEL_LENGTH < currentPage.Height)
-            //        {
-            //            arrayStacks = 2;
-            //            break;
-            //        }
-
-            //        if(xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 3) + LABEL_LENGTH < currentPage.Width &&
-            //           yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * 3 + LABEL_LENGTH < currentPage.Height)
-            //        {
-            //            arrayStacks = 3;
-            //            break;
-            //        }
-            //    }
-            //}
-            //else
-            //{
-            //    yPosition = 100;
-            //    while(yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH >= currentPage.Height)
-            //    {
-            //        initializedSquareSize = Math.Abs(initializedSquareSize - 45.0) < .0001 ? 22.5 : initializedSquareSize / 4 * 3;
-
-            //        if(numberOfArrays < 5 || yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH < currentPage.Height)
-            //        {
-            //            continue;
-            //        }
-
-            //        if(yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 2) + LABEL_LENGTH < currentPage.Height &&
-            //           xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * 2 + LABEL_LENGTH < currentPage.Width)
-            //        {
-            //            arrayStacks = 2;
-            //            break;
-            //        }
-
-            //        if(yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 3) + LABEL_LENGTH < currentPage.Height &&
-            //           xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * 3 + LABEL_LENGTH < currentPage.Width)
-            //        {
-            //            arrayStacks = 3;
-            //            break;
-            //        }
-            //    }
-            //}
-
-            //var startXPosition = 0.0;
-            //var startYPosition = 100.0;
-
-            ////Position to not overlap with first array on page if possible
-            //if(onlyArray != null)
-            //{
-            //    if(isHorizontallyAligned)
-            //    {
-            //        const double GAP = 35.0;
-            //        if(!(onlyArray is CLPFuzzyFactorCard) && onlyArray.XPosition + onlyArray.Width + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH + GAP <= currentPage.Width
-            //            && rows * initializedSquareSize + LABEL_LENGTH < currentPage.Height)
-            //        {
-            //            startXPosition = onlyArray.XPosition + onlyArray.Width + GAP;
-            //            yPosition = onlyArray.YPosition;
-            //        }
-            //        else if(onlyArray.XPosition + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH <= currentPage.Width
-            //            && onlyArray.YPosition + onlyArray.Height + rows * initializedSquareSize + LABEL_LENGTH + GAP < currentPage.Height)
-            //        {
-            //            yPosition = onlyArray.YPosition + onlyArray.Height + GAP;
-            //            startXPosition = onlyArray.XPosition;
-            //        }
-            //        else
-            //        {
-            //            yPosition = currentPage.Height - rows * initializedSquareSize - 2 * LABEL_LENGTH;
-            //            startXPosition = onlyArray.XPosition;
-            //        }
-            //        xPosition = startXPosition;
-            //    }
-            //    else{
-            //        const double GAP = 35.0;
-            //        if(!(onlyArray is CLPFuzzyFactorCard) && onlyArray.YPosition + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH <= currentPage.Height
-            //            && onlyArray.XPosition + onlyArray.Width + columns * initializedSquareSize + LABEL_LENGTH + GAP < currentPage.Width)
-            //        {
-            //            xPosition = onlyArray.XPosition + onlyArray.Width + GAP;
-            //            startYPosition = onlyArray.YPosition;
-            //        }
-            //        else if(onlyArray.YPosition + onlyArray.Height + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH + GAP <= currentPage.Width
-            //            && onlyArray.XPosition + rows * initializedSquareSize + LABEL_LENGTH < currentPage.Height)
-            //        {
-            //            startYPosition = onlyArray.YPosition + onlyArray.Height + GAP;
-            //            xPosition = onlyArray.XPosition;
-            //        }
-            //    }
-            //}
-
-
-            //var arraysToAdd = new List<CLPArray>();
-            //foreach(var index in Enumerable.Range(1, numberOfArrays))
-            //{
-            //    var array = new CLPArray(rows, columns, currentPage);
-
-            //    switch(arrayType)
-            //    {
-            //        case "CARD":
-            //            array = new CLPArray(rows, columns, currentPage);
-            //            array.IsDivisionBehaviorOn = false;
-            //            array.IsLabelOn = false;
-            //            array.IsSnappable = false;
-            //            array.BackgroundColor = Colors.SkyBlue.ToString();
-            //            break;
-            //        case "FACTORCARD":
-            //            array = new CLPFactorCard(rows, columns, currentPage);
-            //            break;
-            //        case "FUZZYFACTORCARD":
-            //            array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
-            //            break;
-            //        case "FFCREMAINDER":
-            //            array = new CLPFuzzyFactorCard(rows, columns, dividend, currentPage);
-            //            (array as CLPFuzzyFactorCard).IsRemainderRegionDisplayed = true;
-            //            break;
-            //        default:
-            //            array = new CLPArray(rows, columns, currentPage);
-            //            array.IsDivisionBehaviorOn = false;
-            //            //TODO Liz - uncomment and delete above after trial
-            //            //array.IsDivisionBehaviorOn = !(onlyArray is CLPFuzzyFactorCard);
-            //            array.IsSnapAdornerOnLeft = !IsRightHanded;
-            //            break;
-            //    }
-            //    if(isHorizontallyAligned)
-            //    {
-            //        if(arrayStacks == 2 && index == (int)Math.Ceiling((double)numberOfArrays / 2) + 1)
-            //        {
-            //            xPosition = startXPosition;
-            //            yPosition += LABEL_LENGTH + rows * initializedSquareSize;
-            //        }
-            //        if(arrayStacks == 3 && 
-            //           (index == (int)Math.Ceiling((double)numberOfArrays / 3) + 1 || 
-            //            index == (int)Math.Ceiling((double)numberOfArrays / 3)*2 + 1))
-            //        {
-            //            xPosition = startXPosition;
-            //            yPosition += LABEL_LENGTH + rows * initializedSquareSize;
-            //        }
-            //        array.XPosition = xPosition;
-            //        array.YPosition = yPosition;
-            //        xPosition += LABEL_LENGTH + columns * initializedSquareSize;
-            //        array.SizeArrayToGridLevel(initializedSquareSize);
-            //    }
-            //    else
-            //    {
-            //        if(arrayStacks == 2 && index == (int)Math.Ceiling((double)numberOfArrays / 2) + 1)
-            //        {
-            //            xPosition += LABEL_LENGTH + columns * initializedSquareSize;
-            //            yPosition = startYPosition;
-            //        }
-            //        if(arrayStacks == 3 &&
-            //           (index == (int)Math.Ceiling((double)numberOfArrays / 3) + 1 ||
-            //            index == (int)Math.Ceiling((double)numberOfArrays / 3) * 2 + 1))
-            //        {
-            //            xPosition += LABEL_LENGTH + columns * initializedSquareSize;
-            //            yPosition = startYPosition;
-            //        }
-            //        array.XPosition = xPosition;
-            //        array.YPosition = yPosition;
-            //        yPosition += LABEL_LENGTH + rows * initializedSquareSize;
-            //        array.SizeArrayToGridLevel(initializedSquareSize);
-            //    }
-
-            //    arraysToAdd.Add(array);
-            //}
-
-            //// If it doesn't fit, resize all other non-background arrays on page to match new array grid size
-            //if(squareSize > 0.0 && initializedSquareSize != squareSize)
-            //{
-            //    Dictionary<string, Point> oldDimensions = new Dictionary<string, Point>();
-            //    foreach(var pageObject in currentPage.PageObjects)
-            //    {
-            //        var pageObjectMinSide = (pageObject is CLPFuzzyFactorCard) ? MIN_FFC_SIDE : MIN_SIDE;
-            //        if(pageObject is CLPArray && (!pageObject.IsBackground || MainWindow.IsAuthoring))
-            //        {
-            //            oldDimensions.Add(pageObject.UniqueID, new Point(pageObject.Width, pageObject.Height));
-            //            if((pageObject as CLPArray).Rows * initializedSquareSize > pageObjectMinSide && (pageObject as CLPArray).Columns * initializedSquareSize > pageObjectMinSide)
-            //            {
-            //                (pageObject as CLPArray).SizeArrayToGridLevel(initializedSquareSize);
-            //            }
-            //            else
-            //            {
-            //                (pageObject as CLPArray).SizeArrayToGridLevel(pageObjectMinSide / Math.Min((pageObject as CLPArray).Rows, (pageObject as CLPArray).Columns));
-            //            }
-            //        }
-            //    }
-
-            //    if(arraysToAdd.Count == 1)
-            //    {
-            //        var array = arraysToAdd.First();
-            //        array.IsBackground = App.MainWindowViewModel.IsAuthoring;
-            //        ACLPPageObjectBase.ApplyDistinctPosition(array);
-            //        currentPage.PageObjects.Add(array);
-            //        ACLPPageBaseViewModel.AddHistoryItemToPage(currentPage, new CLPHistoryArrayAddMassResize(currentPage, array.UniqueID, currentPage.PageObjects.Count - 1, oldDimensions));
-            //        App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.Select;
-
-            //        //If FFC with remainder on page, update
-            //        foreach(var pageObject in currentPage.PageObjects)
-            //        {
-            //            if(pageObject is CLPFuzzyFactorCard)
-            //            {
-            //                (pageObject as CLPFuzzyFactorCard).AnalyzeArrays();
-            //                if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
-            //                {
-            //                    (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
-            //                    break;
-            //                }
-            //            }
-            //        }
-            //        return;
-            //    }
-            //    else
-            //    {
-            //        var pageObjectIDs = new List<string>();
-            //        foreach(var array in arraysToAdd)
-            //        {
-            //            array.IsBackground = App.MainWindowViewModel.IsAuthoring;
-            //            pageObjectIDs.Add(array.UniqueID);
-            //            currentPage.PageObjects.Add(array);
-            //        }
-            //        //If FFC with remainder on page, update
-            //        foreach(var pageObject in currentPage.PageObjects)
-            //        {
-            //            if(pageObject is CLPFuzzyFactorCard)
-            //            {
-            //                (pageObject as CLPFuzzyFactorCard).AnalyzeArrays();
-            //                if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
-            //                {
-            //                    (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
-            //                    break;
-            //                }
-            //            }
-            //        }
-
-            //        ACLPPageBaseViewModel.AddHistoryItemToPage(currentPage, new CLPHistoryArrayMassAddMassResize(currentPage, pageObjectIDs, oldDimensions));
-            //        App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.Select;
-            //        return;
-            //    }
-            //}
-
-            //if(arraysToAdd.Count == 1)
-            //{
-            //    if(arrayType == "FFCREMAINDER")
-            //    {
-            //        CLPFuzzyFactorCardRemainder remainderRegion = new CLPFuzzyFactorCardRemainder((arraysToAdd.First() as CLPFuzzyFactorCard), currentPage);
-            //        currentPage.PageObjects.Add(remainderRegion);
-            //        (arraysToAdd.First() as CLPFuzzyFactorCard).RemainderRegionUniqueID = remainderRegion.UniqueID;
-            //        currentPage.PageObjects.Add(arraysToAdd.First());
-
-            //        var pageObjectIDs = new List<string>();
-            //        pageObjectIDs.Add(arraysToAdd.First().UniqueID);
-            //        pageObjectIDs.Add(remainderRegion.UniqueID);
-
-            //        ACLPPageBaseViewModel.AddHistoryItemToPage(currentPage, new CLPHistoryPageObjectsMassAdd(currentPage, pageObjectIDs));
-            //    }
-            //    else
-            //    {
-            //        ACLPPageBaseViewModel.AddPageObjectToPage(arraysToAdd.First());
-            //    }
-            //}
-            //else
-            //{
-            //    ACLPPageBaseViewModel.AddPageObjectsToPage(currentPage, arraysToAdd);
-            //}
-
-            ////If FFC with remainder on page, update
-            //foreach(var pageObject in currentPage.PageObjects)
-            //{
-            //    if(pageObject is CLPFuzzyFactorCard)
-            //    {
-            //        (pageObject as CLPFuzzyFactorCard).AnalyzeArrays();
-            //        if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
-            //        {
-            //            (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
-            //            break;
-            //        }
-            //    }
-            //}
+                foreach(var array in arraysToAdd)
+                {
+                    var index = arraysToAdd.IndexOf(array) + 1;
+                    if(isHorizontallyAligned)
+                    {
+                        if(arrayStacks == 2 &&
+                            index == (int)Math.Ceiling((double)numberOfArrays / 2) + 1)
+                        {
+                            xPosition = firstArray.XPosition;
+                            yPosition += firstArray.LabelLength + rows * initialGridsquareSize;
+                        }
+                        if(arrayStacks == 3 &&
+                            (index == (int)Math.Ceiling((double)numberOfArrays / 3) + 1 || index == (int)Math.Ceiling((double)numberOfArrays / 3) * 2 + 1))
+                        {
+                            xPosition = firstArray.XPosition;
+                            yPosition += firstArray.LabelLength + rows * initialGridsquareSize;
+                        }
+                        array.XPosition += xPosition;
+                        array.YPosition = yPosition;
+                        xPosition += firstArray.LabelLength + columns * initialGridsquareSize;
+                        array.SizeArrayToGridLevel(initialGridsquareSize);
+                    }
+                    else
+                    {
+                        if(arrayStacks == 2 &&
+                            index == (int)Math.Ceiling((double)numberOfArrays / 2) + 1)
+                        {
+                            xPosition += firstArray.LabelLength + columns * initialGridsquareSize;
+                            yPosition = firstArray.YPosition;
+                        }
+                        if(arrayStacks == 3 &&
+                            (index == (int)Math.Ceiling((double)numberOfArrays / 3) + 1 || index == (int)Math.Ceiling((double)numberOfArrays / 3) * 2 + 1))
+                        {
+                            xPosition += firstArray.LabelLength + columns * initialGridsquareSize;
+                            yPosition = firstArray.YPosition;
+                        }
+                        array.XPosition = xPosition;
+                        array.YPosition = yPosition;
+                        yPosition += firstArray.LabelLength + rows * initialGridsquareSize;
+                        array.SizeArrayToGridLevel(initialGridsquareSize);
+                    }
+                }
+            }
+           
+            ACLPPageBaseViewModel.AddPageObjectsToPage(page, arraysToAdd);
+            App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.Select;
         }
 
         /// <summary>

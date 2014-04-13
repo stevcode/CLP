@@ -103,6 +103,7 @@
     <Compile Include="DomainModel\PageObjects\APageObjectBase.cs" />
     <Compile Include="DomainModel\PageObjects\Arrays\ACLPArrayBase.cs" />
     <Compile Include="DomainModel\PageObjects\Arrays\CLPArray.cs" />
+    <Compile Include="DomainModel\PageObjects\Arrays\FuzzyFactorCard.cs" />
     <Compile Include="DomainModel\PageObjects\PageObject Interfaces\ICountable.cs" />
     <Compile Include="DomainModel\PageObjects\PageObject Interfaces\ICuttable.cs" />
     <Compile Include="DomainModel\PageObjects\PageObject Interfaces\IPageObject.cs" />
