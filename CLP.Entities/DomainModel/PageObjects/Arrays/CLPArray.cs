@@ -29,6 +29,7 @@ namespace CLP.Entities
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="CLPArray" /> belongs to.</param>
         /// <param name="columns">The number of columns in the <see cref="ACLPArrayBase" />.</param>
         /// <param name="rows">The number of rows in the <see cref="ACLPArrayBase" />.</param>
+        /// <param name="arrayType">The type of <see cref="CLPArray" />.</param>
         public CLPArray(CLPPage parentPage, int columns, int rows, ArrayTypes arrayType)
             : base(parentPage, columns, rows)
         {
@@ -107,7 +108,7 @@ namespace CLP.Entities
         {
             base.OnAdded();
             // If FFC with remainder on page, update
-            foreach(FuzzyFactorCard ffc in ParentPage.PageObjects.OfType<FuzzyFactorCard>())
+            foreach(var ffc in ParentPage.PageObjects.OfType<FuzzyFactorCard>())
             {
                 ffc.AnalyzeArrays();
                 ffc.UpdateRemainderRegion();
@@ -118,7 +119,7 @@ namespace CLP.Entities
         {
             base.OnDeleted();
             // If FFC with remainder on page, update
-            foreach(FuzzyFactorCard ffc in ParentPage.PageObjects.OfType<FuzzyFactorCard>())
+            foreach(var ffc in ParentPage.PageObjects.OfType<FuzzyFactorCard>())
             {
                 ffc.AnalyzeArrays();
                 ffc.UpdateRemainderRegion();
@@ -150,6 +151,7 @@ namespace CLP.Entities
             {
                 ResizeDivisions();
             }
+            OnResized();
         }
 
         public int[,] GetPartialProducts()

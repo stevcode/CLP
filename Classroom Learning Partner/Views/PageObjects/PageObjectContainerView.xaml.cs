@@ -35,9 +35,12 @@ namespace Classroom_Learning_Partner.Views
             //if (dataContext is CLPAggregationDataTable) return typeof(CLPAggregationDataTableViewModel);
             if(dataContext is FuzzyFactorCard)
             {
-                return typeof(CLPFuzzyFactorCardViewModel);
+                return typeof(FuzzyFactorCardViewModel);
             }
-            //if (dataContext is CLPFuzzyFactorCardRemainder) return typeof(CLPFuzzyFactorCardRemainderViewModel);
+            if(dataContext is RemainderTiles)
+            {
+                return typeof(RemainderTilesViewModel);
+            }
             if(dataContext is CLPArray)
             {
                 return typeof(CLPArrayViewModel);

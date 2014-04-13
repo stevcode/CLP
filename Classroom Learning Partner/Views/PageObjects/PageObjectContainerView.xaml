@@ -60,12 +60,12 @@
                 <views:CLPTextBoxView DataContext="{Binding}" />
             </ControlTemplate>
 
-            <ControlTemplate x:Key="CLPFuzzyFactorCardTemplate">
-                <views:CLPFuzzyFactorCardView DataContext="{Binding}" />
+            <ControlTemplate x:Key="FuzzyFactorCardTemplate">
+                <views:FuzzyFactorCardView DataContext="{Binding}" />
             </ControlTemplate>
 
-            <ControlTemplate x:Key="CLPFuzzyFactorCardRemainderTemplate">
-                <views:CLPFuzzyFactorCardRemainderView DataContext="{Binding}" />
+            <ControlTemplate x:Key="RemainderTilesTemplate">
+                <views:RemainderTilesView DataContext="{Binding}" />
             </ControlTemplate>
 
             <ControlTemplate x:Key="CLPArrayTemplate">
@@ -142,14 +142,14 @@
                         <Setter Property="Template" Value="{StaticResource CLPTextBoxTemplate}" />
                     </DataTrigger>
 
-                    <!-- CLPFuzzyFactorCard trigger -->
+                    <!-- FuzzyFactorCard trigger -->
                     <DataTrigger Binding="{Binding PageObject, Converter={StaticResource TypeToStringConverter}}" Value="FuzzyFactorCard">
-                        <Setter Property="Template" Value="{StaticResource CLPFuzzyFactorCardTemplate}" />
+                        <Setter Property="Template" Value="{StaticResource FuzzyFactorCardTemplate}" />
                     </DataTrigger>
                     
-                    <!-- CLPFuzzyFactorCardRemainder trigger -->
-                    <DataTrigger Binding="{Binding PageObject, Converter={StaticResource TypeToStringConverter}}" Value="FuzzyFactorCardRemainder">
-                        <Setter Property="Template" Value="{StaticResource CLPFuzzyFactorCardRemainderTemplate}" />
+                    <!-- RemainderTiles trigger -->
+                    <DataTrigger Binding="{Binding PageObject, Converter={StaticResource TypeToStringConverter}}" Value="RemainderTiles">
+                        <Setter Property="Template" Value="{StaticResource RemainderTilesTemplate}" />
                     </DataTrigger>
 
                     <!-- CLPArray trigger -->

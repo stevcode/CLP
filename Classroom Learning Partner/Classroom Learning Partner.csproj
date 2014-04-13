@@ -239,7 +239,7 @@
     <Compile Include="Network\StudentService.cs" />
     <Compile Include="Resources\Converters.cs" />
     <Compile Include="Resources\InkInterpretation.cs" />
-    <Compile Include="ViewModels\PageObjects\CLPFuzzyFactorCardRemainderViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\RemainderTilesViewModel.cs" />
     <Compile Include="ViewModels\Pages\CLPAnimationPageViewModel.cs" />
     <Compile Include="ViewModels\Pages\CLPPageViewModel.cs" />
     <Compile Include="ViewModels\Displays\SingleDisplayViewModel.cs" />
@@ -248,7 +248,7 @@
     <Compile Include="ViewModels\PageObjects\CLPAggregationDataTableViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPArrayViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPFactorCardViewModel.cs" />
-    <Compile Include="ViewModels\PageObjects\CLPFuzzyFactorCardViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\FuzzyFactorCardViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPRegionViewModel.cs" />
     <Compile Include="ViewModels\Panels\APanelBaseViewModel.cs" />
     <Compile Include="ViewModels\Panels\DisplaysPanelViewModel.cs" />
@@ -266,8 +266,8 @@
     <Compile Include="Views\Modal Windows\SimpleTextWindowView.xaml.cs">
       <DependentUpon>SimpleTextWindowView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PageObjects\CLPFuzzyFactorCardRemainderView.xaml.cs">
-      <DependentUpon>CLPFuzzyFactorCardRemainderView.xaml</DependentUpon>
+    <Compile Include="Views\PageObjects\RemainderTilesView.xaml.cs">
+      <DependentUpon>RemainderTilesView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Pages\AnimationPageToolBar.xaml.cs">
       <DependentUpon>AnimationPageToolBar.xaml</DependentUpon>
@@ -278,8 +278,8 @@
     <Compile Include="Views\PageObjects\CLPFactorCardView.xaml.cs">
       <DependentUpon>CLPFactorCardView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PageObjects\CLPFuzzyFactorCardView.xaml.cs">
-      <DependentUpon>CLPFuzzyFactorCardView.xaml</DependentUpon>
+    <Compile Include="Views\PageObjects\FuzzyFactorCardView.xaml.cs">
+      <DependentUpon>FuzzyFactorCardView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\CLPRegionView.xaml.cs">
       <DependentUpon>CLPRegionView.xaml</DependentUpon>
@@ -476,7 +476,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\PageObjects\CLPFuzzyFactorCardRemainderView.xaml">
+    <Page Include="Views\PageObjects\RemainderTilesView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -492,7 +492,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PageObjects\CLPFuzzyFactorCardView.xaml">
+    <Page Include="Views\PageObjects\FuzzyFactorCardView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

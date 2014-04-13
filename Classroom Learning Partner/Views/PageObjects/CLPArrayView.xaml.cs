@@ -1,7 +1,7 @@
 ﻿using System.Timers;
 using System.Windows.Input;
-using CLP.Entities;
 using Classroom_Learning_Partner.ViewModels;
+using CLP.Entities;
 
 namespace Classroom_Learning_Partner.Views
 {
@@ -14,7 +14,7 @@ namespace Classroom_Learning_Partner.Views
         private readonly Timer _divisorHideTimer = new Timer();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CLPArrayView"/> class.
+        /// Initializes a new instance of the <see cref="CLPArrayView" /> class.
         /// </summary>
         public CLPArrayView()
         {
@@ -88,13 +88,15 @@ namespace Classroom_Learning_Partner.Views
         private void ArrayDivisionHitBox_MouseLeave(object sender, MouseEventArgs e)
         {
             var clpArrayViewModel = ViewModel as CLPArrayViewModel;
-            if(clpArrayViewModel != null && !clpArrayViewModel.IsDefaultAdornerVisible)
+            if(clpArrayViewModel != null &&
+               !clpArrayViewModel.IsDefaultAdornerVisible)
             {
                 _divisorHideTimer.Start();
             }
         }
 
         private bool _overDivisionAdorner;
+
         private void DivisorButton_Enter(object sender, MouseEventArgs e)
         {
             _overDivisionAdorner = true;
@@ -121,11 +123,11 @@ namespace Classroom_Learning_Partner.Views
             {
                 clpArrayViewModel.LeftArrowPosition = e.GetPosition(Array).Y;
             }
-            if (clpArrayViewModel.LeftArrowPosition < MINIMUM_DIVISION_ADORNER_GAP)
+            if(clpArrayViewModel.LeftArrowPosition < MINIMUM_DIVISION_ADORNER_GAP)
             {
                 clpArrayViewModel.LeftArrowPosition = MINIMUM_DIVISION_ADORNER_GAP;
             }
-            if (clpArrayViewModel.LeftArrowPosition > clpArrayViewModel.ArrayHeight - MINIMUM_DIVISION_ADORNER_GAP)
+            if(clpArrayViewModel.LeftArrowPosition > clpArrayViewModel.ArrayHeight - MINIMUM_DIVISION_ADORNER_GAP)
             {
                 clpArrayViewModel.LeftArrowPosition = clpArrayViewModel.ArrayHeight - MINIMUM_DIVISION_ADORNER_GAP;
             }
@@ -146,17 +148,17 @@ namespace Classroom_Learning_Partner.Views
                 return;
             }
             clpArrayViewModel.TopArrowPosition = e.GetPosition(Array).X;
-            if (clpArrayViewModel.TopArrowPosition < MINIMUM_DIVISION_ADORNER_GAP)
+            if(clpArrayViewModel.TopArrowPosition < MINIMUM_DIVISION_ADORNER_GAP)
             {
                 clpArrayViewModel.TopArrowPosition = MINIMUM_DIVISION_ADORNER_GAP;
             }
-            if (clpArrayViewModel.TopArrowPosition > clpArrayViewModel.ArrayWidth - MINIMUM_DIVISION_ADORNER_GAP)
+            if(clpArrayViewModel.TopArrowPosition > clpArrayViewModel.ArrayWidth - MINIMUM_DIVISION_ADORNER_GAP)
             {
                 clpArrayViewModel.TopArrowPosition = clpArrayViewModel.ArrayWidth - MINIMUM_DIVISION_ADORNER_GAP;
             }
         }
 
-        void _divisorHideTimer_Elapsed(object sender, ElapsedEventArgs e)
+        private void _divisorHideTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             _divisorHideTimer.Stop();
             var clpArrayViewModel = ViewModel as CLPArrayViewModel;

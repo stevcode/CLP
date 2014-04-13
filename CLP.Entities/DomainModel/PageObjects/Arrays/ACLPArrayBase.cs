@@ -348,6 +348,7 @@ namespace CLP.Entities
             }
 
             //RefreshStrokeParentIDs();
+            OnResized();
         }
 
         #endregion //Methods
@@ -384,37 +385,38 @@ namespace CLP.Entities
 
             var previousGridSquareSize = array.GridSquareSize;
             array.SizeArrayToGridLevel(lastArray.GridSquareSize);
-            if(lastArray is CLPArray)
-            {
-                array.YPosition = lastArray.YPosition;
-                array.XPosition = lastArray.YPosition + lastArray.LabelLength + lastArray.Width;
-                if(array.XPosition + array.Width >= array.ParentPage.Width ||
-                   array.YPosition + array.Height >= array.ParentPage.Height)
-                {
-                    array.XPosition = lastArray.XPosition;
-                    array.YPosition = lastArray.YPosition + lastArray.LabelLength + lastArray.Height;
-                }
-                if(array.XPosition + array.Width >= array.ParentPage.Width ||
-                   array.YPosition + array.Height >= array.ParentPage.Height)
-                {
-                    ApplyDistinctPosition(array);
-                }
-            }
-            else if(lastArray is FuzzyFactorCard)
-            {
-                array.XPosition = lastArray.XPosition;
-                array.YPosition = lastArray.YPosition + lastArray.LabelLength + lastArray.Height + (lastArray as FuzzyFactorCard).LargeLabelLength - array.LabelLength;
-                if(array.XPosition + array.Width >= array.ParentPage.Width ||
-                   array.YPosition + array.Height >= array.ParentPage.Height)
-                {
-                    array.XPosition = 0.0;
-                }
-                if(array.XPosition + array.Width >= array.ParentPage.Width ||
-                   array.YPosition + array.Height >= array.ParentPage.Height)
-                {
-                    ApplyDistinctPosition(array);
-                }
-            }
+            //if(lastArray is CLPArray)
+            //{
+            //    array.YPosition = lastArray.YPosition;
+            //    array.XPosition = lastArray.YPosition + lastArray.LabelLength + lastArray.Width;
+            //    if(array.XPosition + array.Width >= array.ParentPage.Width ||
+            //       array.YPosition + array.Height >= array.ParentPage.Height)
+            //    {
+            //        array.XPosition = lastArray.XPosition;
+            //        array.YPosition = lastArray.YPosition + lastArray.LabelLength + lastArray.Height;
+            //    }
+            //    if(array.XPosition + array.Width >= array.ParentPage.Width ||
+            //       array.YPosition + array.Height >= array.ParentPage.Height)
+            //    {
+            //        ApplyDistinctPosition(array);
+            //    }
+            //}
+            //else if(lastArray is FuzzyFactorCard)
+            //{
+            //    array.XPosition = lastArray.XPosition;
+            //    array.YPosition = lastArray.YPosition + lastArray.LabelLength + lastArray.Height + (lastArray as FuzzyFactorCard).LargeLabelLength - array.LabelLength;
+            //    if(array.XPosition + array.Width >= array.ParentPage.Width ||
+            //       array.YPosition + array.Height >= array.ParentPage.Height)
+            //    {
+            //        array.XPosition = 0.0;
+            //    }
+            //    if(array.XPosition + array.Width >= array.ParentPage.Width ||
+            //       array.YPosition + array.Height >= array.ParentPage.Height)
+            //    {
+            //        array.YPosition = 100.0;
+            //        ApplyDistinctPosition(array);
+            //    }
+            //}
         }
 
         #endregion //Static Methods
