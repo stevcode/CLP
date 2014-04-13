@@ -26,6 +26,7 @@ namespace CLP.Entities
         public FuzzyFactorCard(CLPPage parentPage, int columns, int rows, int dividend, bool isRemainderRegionDisplayed = false)
             : base(parentPage, columns, rows)
         {
+            Dividend = dividend;
             if(isRemainderRegionDisplayed)
             {
                 RemainderTiles = new RemainderTiles(parentPage, this);
