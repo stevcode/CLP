@@ -5,7 +5,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Shapes;
 using Catel.Data;
 using Catel.MVVM;
@@ -38,7 +37,7 @@ namespace Classroom_Learning_Partner.ViewModels
             RotateArrayCommand = new Command(OnRotateArrayCommandExecute);
             CreateVerticalDivisionCommand = new Command(OnCreateVerticalDivisionCommandExecute);
             CreateHorizontalDivisionCommand = new Command(OnCreateHorizontalDivisionCommandExecute);
-         //   EditLabelCommand = new Command<CLPArrayDivision>(OnEditLabelCommandExecute);
+            EditLabelCommand = new Command<CLPArrayDivision>(OnEditLabelCommandExecute);
             EraseDivisionCommand = new Command<MouseEventArgs>(OnEraseDivisionCommandExecute);
             ToggleMainArrayAdornersCommand = new Command<MouseButtonEventArgs>(OnToggleMainArrayAdornersCommandExecute);
             DuplicateArrayCommand = new Command(OnDuplicateArrayCommandExecute);
@@ -168,35 +167,29 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData GridSquareSizeProperty = RegisterProperty("GridSquareSize", typeof(double));
 
-        ///// <summary>
-        ///// Gets or sets the HorizontalDivisions value.
-        ///// </summary>
-        //[ViewModelToModel("PageObject")]
-        //public ObservableCollection<CLPArrayDivision> HorizontalDivisions
-        //{
-        //    get { return GetValue<ObservableCollection<CLPArrayDivision>>(HorizontalDivisionsProperty); }
-        //    set { SetValue(HorizontalDivisionsProperty, value); }
-        //}
+        /// <summary>
+        /// Gets or sets the HorizontalDivisions value.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public ObservableCollection<CLPArrayDivision> HorizontalDivisions
+        {
+            get { return GetValue<ObservableCollection<CLPArrayDivision>>(HorizontalDivisionsProperty); }
+            set { SetValue(HorizontalDivisionsProperty, value); }
+        }
 
-        ///// <summary>
-        ///// Register the HorizontalDivisions property so it is known in the class.
-        ///// </summary>
-        //public static readonly PropertyData HorizontalDivisionsProperty = RegisterProperty("HorizontalDivisions", typeof(ObservableCollection<CLPArrayDivision>));
+        public static readonly PropertyData HorizontalDivisionsProperty = RegisterProperty("HorizontalDivisions", typeof(ObservableCollection<CLPArrayDivision>));
 
-        ///// <summary>
-        ///// Gets or sets the VerticalDivisions value.
-        ///// </summary>
-        //[ViewModelToModel("PageObject")]
-        //public ObservableCollection<CLPArrayDivision> VerticalDivisions
-        //{
-        //    get { return GetValue<ObservableCollection<CLPArrayDivision>>(VerticalDivisionsProperty); }
-        //    set { SetValue(VerticalDivisionsProperty, value); }
-        //}
+        /// <summary>
+        /// Gets or sets the VerticalDivisions value.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public ObservableCollection<CLPArrayDivision> VerticalDivisions
+        {
+            get { return GetValue<ObservableCollection<CLPArrayDivision>>(VerticalDivisionsProperty); }
+            set { SetValue(VerticalDivisionsProperty, value); }
+        }
 
-        ///// <summary>
-        ///// Register the VerticalDivisions property so it is known in the class.
-        ///// </summary>
-        //public static readonly PropertyData VerticalDivisionsProperty = RegisterProperty("VerticalDivisions", typeof(ObservableCollection<CLPArrayDivision>));
+        public static readonly PropertyData VerticalDivisionsProperty = RegisterProperty("VerticalDivisions", typeof(ObservableCollection<CLPArrayDivision>));
 
         #endregion //Model
 
@@ -364,8 +357,8 @@ namespace Classroom_Learning_Partner.ViewModels
             //    //TODO: log this error
             //}
         }
-                               
-        public Command<DragCompletedEventArgs> DragStopAndSnapCommand {get; private set;}
+
+        public Command<DragCompletedEventArgs> DragStopAndSnapCommand { get; private set; }
 
         private enum SnapType
         {
@@ -908,54 +901,46 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnCreateHorizontalDivisionCommandExecute()
         {
-            //var position = LeftArrowPosition - 5;
-            //if(IsGridOn)
-            //{
-            //    position = (PageObject as CLPArray).GetClosestGridLine(ArrayDivisionOrientation.Horizontal, position);
-            //}
+            var position = LeftArrowPosition - 5;
+            if(IsGridOn)
+            {
+                position = (PageObject as CLPArray).GetClosestGridLine(position);
+            }
 
-            //if(HorizontalDivisions.Any(horizontalDivision => Math.Abs(horizontalDivision.Position - position) < 30.0))
-            //{
-            //    return;
-            //}
-            //if(HorizontalDivisions.Count >= (PageObject as CLPArray).Rows)
-            //{
-            //    MessageBox.Show("The number of divisions cannot be larger than the number of Rows.");
-            //    return;
-            //}
+            if(HorizontalDivisions.Any(horizontalDivision => Math.Abs(horizontalDivision.Position - position) < 30.0))
+            {
+                return;
+            }
+            if(HorizontalDivisions.Count >= (PageObject as CLPArray).Rows)
+            {
+                MessageBox.Show("The number of divisions cannot be larger than the number of Rows.");
+                return;
+            }
 
-            //var divAbove = (PageObject as CLPArray).FindDivisionAbove(position, HorizontalDivisions);
-            //var divBelow = (PageObject as CLPArray).FindDivisionBelow(position, HorizontalDivisions);
+            var divAbove = (PageObject as CLPArray).FindDivisionAbove(position, HorizontalDivisions);
+            var divBelow = (PageObject as CLPArray).FindDivisionBelow(position, HorizontalDivisions);
 
-            //var addedDivisions = new List<CLPArrayDivision>();
-            //var removedDivisions = new List<CLPArrayDivision>();
+            var addedDivisions = new List<CLPArrayDivision>();
+            var removedDivisions = new List<CLPArrayDivision>();
 
-            //CLPArrayDivision topDiv;
-            //if(divAbove == null)
-            //{
-            //    topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, 0, position, 0);
-            //}
-            //else
-            //{
-            //    topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, divAbove.Position, position - divAbove.Position, 0);
-            //    HorizontalDivisions.Remove(divAbove);
-            //    removedDivisions.Add(divAbove);
-            //}
-            //HorizontalDivisions.Add(topDiv);
-            //addedDivisions.Add(topDiv);
+            CLPArrayDivision topDiv;
+            if(divAbove == null)
+            {
+                topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, 0, position, 0);
+            }
+            else
+            {
+                topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, divAbove.Position, position - divAbove.Position, 0);
+                HorizontalDivisions.Remove(divAbove);
+                removedDivisions.Add(divAbove);
+            }
+            HorizontalDivisions.Add(topDiv);
+            addedDivisions.Add(topDiv);
 
-            //CLPArrayDivision bottomDiv;
-            //if(divBelow == null)
-            //{
-            //    bottomDiv = new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, position, ArrayHeight - position, 0);
-            //}
-            //else
-            //{
-            //    bottomDiv = new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, position, divBelow.Position - position, 0);
-            //}
+            var bottomDiv = divBelow == null ? new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, position, ArrayHeight - position, 0) : new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, position, divBelow.Position - position, 0);
 
-            //HorizontalDivisions.Add(bottomDiv);
-            //addedDivisions.Add(bottomDiv);
+            HorizontalDivisions.Add(bottomDiv);
+            addedDivisions.Add(bottomDiv);
 
             //ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryArrayDivisionsChanged(PageObject.ParentPage, PageObject.UniqueID, addedDivisions, removedDivisions));
         }
@@ -967,185 +952,179 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnCreateVerticalDivisionCommandExecute()
         {
-            //var position = TopArrowPosition - 5;
-            //if(IsGridOn)
-            //{
-            //    position = (PageObject as CLPArray).GetClosestGridLine(ArrayDivisionOrientation.Vertical, position);
-            //}
+            var position = TopArrowPosition - 5;
+            if(IsGridOn)
+            {
+                position = (PageObject as CLPArray).GetClosestGridLine(position);
+            }
 
-            //if(VerticalDivisions.Any(verticalDivision => Math.Abs(verticalDivision.Position - position) < 30.0))
-            //{
-            //    return;
-            //}
-            //if(VerticalDivisions.Count >= (PageObject as CLPArray).Columns)
-            //{
-            //    MessageBox.Show("The number of divisions cannot be larger than the number of Columns.");
-            //    return;
-            //}
+            if(VerticalDivisions.Any(verticalDivision => Math.Abs(verticalDivision.Position - position) < 30.0))
+            {
+                return;
+            }
+            if(VerticalDivisions.Count >= (PageObject as CLPArray).Columns)
+            {
+                MessageBox.Show("The number of divisions cannot be larger than the number of Columns.");
+                return;
+            }
 
-            //var divAbove = (PageObject as CLPArray).FindDivisionAbove(position, VerticalDivisions);
-            //var divBelow = (PageObject as CLPArray).FindDivisionBelow(position, VerticalDivisions);
+            var divAbove = (PageObject as CLPArray).FindDivisionAbove(position, VerticalDivisions);
+            var divBelow = (PageObject as CLPArray).FindDivisionBelow(position, VerticalDivisions);
 
-            //var addedDivisions = new List<CLPArrayDivision>();
-            //var removedDivisions = new List<CLPArrayDivision>();
+            var addedDivisions = new List<CLPArrayDivision>();
+            var removedDivisions = new List<CLPArrayDivision>();
 
-            //CLPArrayDivision topDiv;
-            //if(divAbove == null)
-            //{
-            //    topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, 0, position, 0);
-            //}
-            //else
-            //{
-            //    topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, divAbove.Position, position - divAbove.Position, 0);
-            //    VerticalDivisions.Remove(divAbove);
-            //    removedDivisions.Add(divAbove);
-            //}
-            //VerticalDivisions.Add(topDiv);
-            //addedDivisions.Add(topDiv);
-            //}
+            CLPArrayDivision topDiv;
+            if(divAbove == null)
+            {
+                topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, 0, position, 0);
+            }
+            else
+            {
+                topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, divAbove.Position, position - divAbove.Position, 0);
+                VerticalDivisions.Remove(divAbove);
+                removedDivisions.Add(divAbove);
+            }
+            VerticalDivisions.Add(topDiv);
+            addedDivisions.Add(topDiv);
 
-            //Check if array labels add up to larger array dimension
-            //if(division.Orientation == ArrayDivisionOrientation.Horizontal)
-            //{
-            //    int total = 0;
-            //    foreach(CLPArrayDivision div in HorizontalDivisions)
-            //    {
-            //        if(div.Value == 0)
-            //        {
-            //            total = Rows;
-            //            break;
-            //        }
-            //        else
-            //        {
-            //            total += div.Value;
-            //        }
-            //    }
+            var bottomDiv = divBelow == null ? new CLPArrayDivision(ArrayDivisionOrientation.Vertical, position, ArrayWidth - position, 0) : new CLPArrayDivision(ArrayDivisionOrientation.Vertical, position, divBelow.Position - position, 0);
 
-            //    if(total != Rows)
-            //    {
-            //        string labelsString = "";
-            //        string labelsSummedString = "";
-            //        if(HorizontalDivisions.Count == 2)
-            //        {
-            //            labelsString = HorizontalDivisions.First().Value.ToString() + " and " + HorizontalDivisions.Last().Value.ToString();
-            //            labelsSummedString = HorizontalDivisions.First().Value.ToString() + " + " + HorizontalDivisions.Last().Value.ToString();
-            //        }
-            //        else
-            //        {
-            //            for(int i = 0; i < HorizontalDivisions.Count; i++)
-            //            {
-            //                labelsString += HorizontalDivisions.ElementAt(i).Value.ToString();
-            //                labelsSummedString += HorizontalDivisions.ElementAt(i).Value.ToString();
-            //                if(i < HorizontalDivisions.Count - 1)
-            //                {
-            //                    labelsString += ", ";
-            //                    labelsSummedString += " + ";
-            //                }
-            //                if(i == HorizontalDivisions.Count - 2)
-            //                {
-            //                    labelsString += "and ";
-            //                }
-            //            }
-            //        }
-            //        MessageBox.Show("You entered " + labelsString + " for the parts of the side of the array that is " + Rows + " long, but " + labelsSummedString + " does not equal " + Rows + ".", "Oops");
-            //    }
-            //}
-            //else
-            //{
-            //    int total = 0;
-            //    foreach(CLPArrayDivision div in VerticalDivisions)
-            //    {
-            //        if(div.Value == 0)
-            //        {
-            //            total = Columns;
-            //            break;
-            //        }
-            //        else
-            //        {
-            //            total += div.Value;
-            //        }
-            //    }
-
-            //    if(total != Columns)
-            //    {
-            //        string labelsString = "";
-            //        string labelsSummedString = "";
-            //        if(VerticalDivisions.Count == 2)
-            //        {
-            //            labelsString = VerticalDivisions.First().Value.ToString() + " and " + VerticalDivisions.Last().Value.ToString();
-            //            labelsSummedString = VerticalDivisions.First().Value.ToString() + " + " + VerticalDivisions.Last().Value.ToString();
-            //        }
-            //        else
-            //        {
-            //            for(int i = 0; i < VerticalDivisions.Count; i++)
-            //            {
-            //                labelsString += VerticalDivisions.ElementAt(i).Value.ToString();
-            //                labelsSummedString += VerticalDivisions.ElementAt(i).Value.ToString();
-            //                if(i < VerticalDivisions.Count - 1)
-            //                {
-            //                    labelsString += ", ";
-            //                    labelsSummedString += " + ";
-            //                }
-            //                if(i == VerticalDivisions.Count - 2)
-            //                {
-            //                    labelsString += "and ";
-            //                }
-            //            }
-            //        }
-            //        MessageBox.Show("You entered " + labelsString + " for the parts of the side of the array that is " + Columns + " long, but " + labelsSummedString + " does not equal " + Columns + ".", "Oops");
-            //    }
-
-            //CLPArrayDivision bottomDiv;
-            //if(divBelow == null)
-            //{
-            //    bottomDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, position, ArrayWidth - position, 0);
-            //}
-            //else
-            //{
-            //    bottomDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, position, divBelow.Position - position, 0);
-            //}
-
-            //VerticalDivisions.Add(bottomDiv);
-            //addedDivisions.Add(bottomDiv);
+            VerticalDivisions.Add(bottomDiv);
+            addedDivisions.Add(bottomDiv);
 
             //ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryArrayDivisionsChanged(PageObject.ParentPage, PageObject.UniqueID, addedDivisions, removedDivisions));
         }
 
-        ///// <summary>
-        ///// Gets the EditLabelCommand command.
-        ///// </summary>
-        //public Command<CLPArrayDivision> EditLabelCommand { get; private set; }
+        /// <summary>
+        /// Gets the EditLabelCommand command.
+        /// </summary>
+        public Command<CLPArrayDivision> EditLabelCommand { get; private set; }
 
-        //private void OnEditLabelCommandExecute(CLPArrayDivision division)
-        //{
-        //    // Pop up numberpad and save result as value of division
-        //    var keyPad = new KeypadWindowView
-        //                 {
-        //                     Owner = Application.Current.MainWindow,
-        //                     WindowStartupLocation = WindowStartupLocation.Manual,
-        //                     Top = 100,
-        //                     Left = 100
-        //                 };
-        //    keyPad.ShowDialog();
-        //    if(keyPad.DialogResult == true &&
-        //       keyPad.NumbersEntered.Text.Length > 0)
-        //    {
-        //        var previousValue = division.Value;
-        //        var isHorizontalDivision = division.Orientation == ArrayDivisionOrientation.Horizontal;
+        private void OnEditLabelCommandExecute(CLPArrayDivision division)
+        {
+            // Pop up numberpad and save result as value of division
+            var keyPad = new KeypadWindowView
+                         {
+                             Owner = Application.Current.MainWindow,
+                             WindowStartupLocation = WindowStartupLocation.Manual,
+                             Top = 100,
+                             Left = 100
+                         };
+            keyPad.ShowDialog();
+            if(keyPad.DialogResult != true ||
+               keyPad.NumbersEntered.Text.Length <= 0)
+            {
+                return;
+            }
 
-        //        division.Value = Int32.Parse(keyPad.NumbersEntered.Text);
+            var previousValue = division.Value;
+            var isHorizontalDivision = division.Orientation == ArrayDivisionOrientation.Horizontal;
 
-        //        var array = PageObject as CLPArray;
-        //        if(array == null)
-        //        {
-        //            return;
-        //        }
-        //        var divisionIndex = isHorizontalDivision ? array.HorizontalDivisions.IndexOf(division) : array.VerticalDivisions.IndexOf(division);
+            division.Value = Int32.Parse(keyPad.NumbersEntered.Text);
 
-        //        ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
-        //                                                   new CLPHistoryArrayDivisionValueChanged(PageObject.ParentPage, PageObject.UniqueID, isHorizontalDivision, divisionIndex, previousValue));
-        //    }
-        //}
+            var array = PageObject as CLPArray;
+            if(array == null)
+            {
+                return;
+            }
+            var divisionIndex = isHorizontalDivision ? array.HorizontalDivisions.IndexOf(division) : array.VerticalDivisions.IndexOf(division);
+
+            //ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
+            //                                           new CLPHistoryArrayDivisionValueChanged(PageObject.ParentPage, PageObject.UniqueID, isHorizontalDivision, divisionIndex, previousValue));
+
+            // Check if array labels add up to larger array dimension
+            if(division.Orientation == ArrayDivisionOrientation.Horizontal)
+            {
+                var total = 0;
+                foreach(var div in HorizontalDivisions)
+                {
+                    if(div.Value == 0)
+                    {
+                        total = Rows;
+                        break;
+                    }
+                    total += div.Value;
+                }
+
+                if(total == Rows)
+                {
+                    return;
+                }
+                var labelsString = "";
+                var labelsSummedString = "";
+                if(HorizontalDivisions.Count == 2)
+                {
+                    labelsString = HorizontalDivisions.First().Value + " and " + HorizontalDivisions.Last().Value;
+                    labelsSummedString = HorizontalDivisions.First().Value + " + " + HorizontalDivisions.Last().Value;
+                }
+                else
+                {
+                    for(var i = 0; i < HorizontalDivisions.Count; i++)
+                    {
+                        labelsString += HorizontalDivisions.ElementAt(i).Value.ToString();
+                        labelsSummedString += HorizontalDivisions.ElementAt(i).Value.ToString();
+                        if(i < HorizontalDivisions.Count - 1)
+                        {
+                            labelsString += ", ";
+                            labelsSummedString += " + ";
+                        }
+                        if(i == HorizontalDivisions.Count - 2)
+                        {
+                            labelsString += "and ";
+                        }
+                    }
+                }
+                MessageBox.Show("You entered " + labelsString + " for the parts of the side of the array that is " + Rows + " long, but " + labelsSummedString + " does not equal " + Rows +
+                                ". To change on of the numbers you enetered, tap on it and the number pad will come up again.",
+                                "Oops");
+            }
+            else
+            {
+                var total = 0;
+                foreach(var div in VerticalDivisions)
+                {
+                    if(div.Value == 0)
+                    {
+                        total = Columns;
+                        break;
+                    }
+                    total += div.Value;
+                }
+
+                if(total == Columns)
+                {
+                    return;
+                }
+                var labelsString = "";
+                var labelsSummedString = "";
+                if(VerticalDivisions.Count == 2)
+                {
+                    labelsString = VerticalDivisions.First().Value + " and " + VerticalDivisions.Last().Value;
+                    labelsSummedString = VerticalDivisions.First().Value + " + " + VerticalDivisions.Last().Value;
+                }
+                else
+                {
+                    for(var i = 0; i < VerticalDivisions.Count; i++)
+                    {
+                        labelsString += VerticalDivisions.ElementAt(i).Value.ToString();
+                        labelsSummedString += VerticalDivisions.ElementAt(i).Value.ToString();
+                        if(i < VerticalDivisions.Count - 1)
+                        {
+                            labelsString += ", ";
+                            labelsSummedString += " + ";
+                        }
+                        if(i == VerticalDivisions.Count - 2)
+                        {
+                            labelsString += "and ";
+                        }
+                    }
+                }
+                MessageBox.Show("You entered " + labelsString + " for the parts of the side of the array that is " + Columns + " long, but " + labelsSummedString + " does not equal " + Columns +
+                                ".  To change on of the numbers you enetered, tap on it and the number pad will come up again.",
+                                "Oops");
+            }
+        }
 
         /// <summary>
         /// Gets the EraseDivisionCommand command.
@@ -1154,60 +1133,59 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnEraseDivisionCommandExecute(MouseEventArgs e)
         {
-            //if((e.StylusDevice != null && e.StylusDevice.Inverted && e.LeftButton == MouseButtonState.Pressed) ||
-            //   e.MiddleButton == MouseButtonState.Pressed)
-            //{
-            //    var rectangle = e.Source as Rectangle;
-            //    if(rectangle != null)
-            //    {
-            //        var division = rectangle.DataContext as CLPArrayDivision;
+            var rectangle = e.Source as Rectangle;
+            if((e.StylusDevice == null || !e.StylusDevice.Inverted || e.LeftButton != MouseButtonState.Pressed) &&
+               e.MiddleButton != MouseButtonState.Pressed || rectangle == null)
+            {
+                return;
+            }
+            
+            var division = rectangle.DataContext as CLPArrayDivision;
 
-            //        if(division == null ||
-            //           division.Position == 0.0)
-            //        {
-            //            return;
-            //        }
+            if(division == null ||
+               division.Position == 0.0)
+            {
+                return;
+            }
 
-            //        var addedDivisions = new List<CLPArrayDivision>();
-            //        var removedDivisions = new List<CLPArrayDivision>();
-            //        if(division.Orientation == ArrayDivisionOrientation.Horizontal)
-            //        {
-            //            var divAbove = (PageObject as CLPArray).FindDivisionAbove(division.Position, (PageObject as CLPArray).HorizontalDivisions);
-            //            (PageObject as CLPArray).HorizontalDivisions.Remove(divAbove);
-            //            (PageObject as CLPArray).HorizontalDivisions.Remove(division);
-            //            removedDivisions.Add(divAbove);
-            //            removedDivisions.Add(division);
+            var addedDivisions = new List<CLPArrayDivision>();
+            var removedDivisions = new List<CLPArrayDivision>();
+            if(division.Orientation == ArrayDivisionOrientation.Horizontal)
+            {
+                var divAbove = (PageObject as CLPArray).FindDivisionAbove(division.Position, (PageObject as CLPArray).HorizontalDivisions);
+                (PageObject as CLPArray).HorizontalDivisions.Remove(divAbove);
+                (PageObject as CLPArray).HorizontalDivisions.Remove(division);
+                removedDivisions.Add(divAbove);
+                removedDivisions.Add(division);
 
-            //            //Add new division unless we removed the only division line
-            //            if((PageObject as CLPArray).HorizontalDivisions.Count > 0)
-            //            {
-            //                var newLength = divAbove.Length + division.Length;
-            //                var newDivision = new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, divAbove.Position, newLength, 0);
-            //                (PageObject as CLPArray).HorizontalDivisions.Add(newDivision);
-            //                addedDivisions.Add(newDivision);
-            //            }
-            //        }
-            //        if(division.Orientation == ArrayDivisionOrientation.Vertical)
-            //        {
-            //            var divAbove = (PageObject as CLPArray).FindDivisionAbove(division.Position, (PageObject as CLPArray).VerticalDivisions);
-            //            (PageObject as CLPArray).VerticalDivisions.Remove(divAbove);
-            //            (PageObject as CLPArray).VerticalDivisions.Remove(division);
-            //            removedDivisions.Add(divAbove);
-            //            removedDivisions.Add(division);
+                //Add new division unless we removed the only division line
+                if((PageObject as CLPArray).HorizontalDivisions.Count > 0)
+                {
+                    var newLength = divAbove.Length + division.Length;
+                    var newDivision = new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, divAbove.Position, newLength, 0);
+                    (PageObject as CLPArray).HorizontalDivisions.Add(newDivision);
+                    addedDivisions.Add(newDivision);
+                }
+            }
+            if(division.Orientation == ArrayDivisionOrientation.Vertical)
+            {
+                var divAbove = (PageObject as CLPArray).FindDivisionAbove(division.Position, (PageObject as CLPArray).VerticalDivisions);
+                (PageObject as CLPArray).VerticalDivisions.Remove(divAbove);
+                (PageObject as CLPArray).VerticalDivisions.Remove(division);
+                removedDivisions.Add(divAbove);
+                removedDivisions.Add(division);
 
-            //            //Add new division unless we removed the only division line
-            //            if((PageObject as CLPArray).VerticalDivisions.Count > 0)
-            //            {
-            //                var newLength = divAbove.Length + division.Length;
-            //                var newDivision = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, divAbove.Position, newLength, 0);
-            //                (PageObject as CLPArray).VerticalDivisions.Add(newDivision);
-            //                addedDivisions.Add(newDivision);
-            //            }
-            //        }
+                //Add new division unless we removed the only division line
+                if((PageObject as CLPArray).VerticalDivisions.Count > 0)
+                {
+                    var newLength = divAbove.Length + division.Length;
+                    var newDivision = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, divAbove.Position, newLength, 0);
+                    (PageObject as CLPArray).VerticalDivisions.Add(newDivision);
+                    addedDivisions.Add(newDivision);
+                }
+            }
 
-            //        ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryArrayDivisionsChanged(PageObject.ParentPage, PageObject.UniqueID, addedDivisions, removedDivisions));
-            //    }
-            //}
+            //ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryArrayDivisionsChanged(PageObject.ParentPage, PageObject.UniqueID, addedDivisions, removedDivisions));
         }
 
         /// <summary>
@@ -1222,16 +1200,17 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            if(e.ChangedButton == MouseButton.Left &&
-               !(e.StylusDevice != null && e.StylusDevice.Inverted))
+            if(e.ChangedButton != MouseButton.Left ||
+               e.StylusDevice != null && e.StylusDevice.Inverted)
             {
-                var tempAdornerState = IsDefaultAdornerVisible;
-                ACLPPageBaseViewModel.ClearAdorners(PageObject.ParentPage);
-                IsAdornerVisible = !tempAdornerState;
-                IsDefaultAdornerVisible = !tempAdornerState;
-                IsTopAdornerVisible = tempAdornerState;
-                IsLeftAdornerVisible = tempAdornerState;
+                return;
             }
+            var tempAdornerState = IsDefaultAdornerVisible;
+            ACLPPageBaseViewModel.ClearAdorners(PageObject.ParentPage);
+            IsAdornerVisible = !tempAdornerState;
+            IsDefaultAdornerVisible = !tempAdornerState;
+            IsTopAdornerVisible = tempAdornerState;
+            IsLeftAdornerVisible = tempAdornerState;
         }
 
         /// <summary>
@@ -1304,10 +1283,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Methods
 
-        public override bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown)
-        {
-            return false;
-        }
+        public override bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown) { return false; }
 
         public override void EraserHitTest(string hitBoxName, object tag)
         {
@@ -1317,38 +1293,38 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             else if(hitBoxName == "DivisionHitBox")
             {
-                //var division = tag as CLPArrayDivision;
-                //if(division.Position != 0.0) //don't delete first division
-                //{
-                //    if(division.Orientation == ArrayDivisionOrientation.Horizontal)
-                //    {
-                //        var divAbove = (PageObject as CLPArray).FindDivisionAbove(division.Position, (PageObject as CLPArray).HorizontalDivisions);
-                //        (PageObject as CLPArray).HorizontalDivisions.Remove(divAbove);
-                //        (PageObject as CLPArray).HorizontalDivisions.Remove(division);
+                var division = tag as CLPArrayDivision;
+                if(division.Position != 0.0) //don't delete first division
+                {
+                    if(division.Orientation == ArrayDivisionOrientation.Horizontal)
+                    {
+                        var divAbove = (PageObject as CLPArray).FindDivisionAbove(division.Position, (PageObject as CLPArray).HorizontalDivisions);
+                        (PageObject as CLPArray).HorizontalDivisions.Remove(divAbove);
+                        (PageObject as CLPArray).HorizontalDivisions.Remove(division);
 
-                //        //Add new division unless we removed the only division line
-                //        if((PageObject as CLPArray).HorizontalDivisions.Count > 0)
-                //        {
-                //            var newLength = divAbove.Length + division.Length;
-                //            var newDivision = new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, divAbove.Position, newLength, 0);
-                //            (PageObject as CLPArray).HorizontalDivisions.Add(newDivision);
-                //        }
-                //    }
-                //    if(division.Orientation == ArrayDivisionOrientation.Vertical)
-                //    {
-                //        var divAbove = (PageObject as CLPArray).FindDivisionAbove(division.Position, (PageObject as CLPArray).VerticalDivisions);
-                //        (PageObject as CLPArray).VerticalDivisions.Remove(divAbove);
-                //        (PageObject as CLPArray).VerticalDivisions.Remove(division);
+                        //Add new division unless we removed the only division line
+                        if((PageObject as CLPArray).HorizontalDivisions.Count > 0)
+                        {
+                            var newLength = divAbove.Length + division.Length;
+                            var newDivision = new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, divAbove.Position, newLength, 0);
+                            (PageObject as CLPArray).HorizontalDivisions.Add(newDivision);
+                        }
+                    }
+                    if(division.Orientation == ArrayDivisionOrientation.Vertical)
+                    {
+                        var divAbove = (PageObject as CLPArray).FindDivisionAbove(division.Position, (PageObject as CLPArray).VerticalDivisions);
+                        (PageObject as CLPArray).VerticalDivisions.Remove(divAbove);
+                        (PageObject as CLPArray).VerticalDivisions.Remove(division);
 
-                //        //Add new division unless we removed the only division line
-                //        if((PageObject as CLPArray).VerticalDivisions.Count > 0)
-                //        {
-                //            var newLength = divAbove.Length + division.Length;
-                //            var newDivision = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, divAbove.Position, newLength, 0);
-                //            (PageObject as CLPArray).VerticalDivisions.Add(newDivision);
-                //        }
-                //    }
-                //}
+                        //Add new division unless we removed the only division line
+                        if((PageObject as CLPArray).VerticalDivisions.Count > 0)
+                        {
+                            var newLength = divAbove.Length + division.Length;
+                            var newDivision = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, divAbove.Position, newLength, 0);
+                            (PageObject as CLPArray).VerticalDivisions.Add(newDivision);
+                        }
+                    }
+                }
             }
         }
 

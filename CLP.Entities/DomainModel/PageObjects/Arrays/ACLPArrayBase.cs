@@ -1,9 +1,89 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Runtime.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
 {
+    public enum ArrayDivisionOrientation
+    {
+        Vertical,
+        Horizontal
+    }
+
+    public class CLPArrayDivision : ModelBase
+    {
+        #region Constructors
+
+        public CLPArrayDivision(ArrayDivisionOrientation orientation, double position, double length, int value)
+        {
+            Orientation = orientation;
+            Position = position;
+            Length = length;
+            Value = value;
+        }
+
+        /// <summary>
+        /// Initializes a new object based on <see cref="SerializationInfo" />.
+        /// </summary>
+        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
+        /// <param name="context"><see cref="StreamingContext" />.</param>
+        protected CLPArrayDivision(SerializationInfo info, StreamingContext context)
+            : base(info, context) { }
+
+        #endregion //Constructors
+
+        #region Properties
+
+        /// <summary>
+        /// Describes whether the division is horizontal or vertical.
+        /// </summary>
+        public ArrayDivisionOrientation Orientation
+        {
+            get { return GetValue<ArrayDivisionOrientation>(OrientationProperty); }
+            set { SetValue(OrientationProperty, value); }
+        }
+
+        public static readonly PropertyData OrientationProperty = RegisterProperty("Orientation", typeof(ArrayDivisionOrientation), ArrayDivisionOrientation.Horizontal);
+
+        /// <summary>
+        /// The position of the top (for horizontal) or left (for vertical) of the array division.
+        /// </summary>
+        public double Position
+        {
+            get { return GetValue<double>(PositionProperty); }
+            set { SetValue(PositionProperty, value); }
+        }
+
+        public static readonly PropertyData PositionProperty = RegisterProperty("Position", typeof(double), 0);
+
+        /// <summary>
+        /// The length of the array division.
+        /// </summary>
+        public double Length
+        {
+            get { return GetValue<double>(LengthProperty); }
+            set { SetValue(LengthProperty, value); }
+        }
+
+        public static readonly PropertyData LengthProperty = RegisterProperty("Length", typeof(double), 0);
+
+        /// <summary>
+        /// The value that was written by the student as the label on that side length. 0 if unlabelled.
+        /// </summary>
+        public int Value
+        {
+            get { return GetValue<int>(ValueProperty); }
+            set { SetValue(ValueProperty, value); }
+        }
+
+        public static readonly PropertyData ValueProperty = RegisterProperty("Value", typeof(int), 0);
+
+        #endregion //Properties
+    }
+
     public abstract class ACLPArrayBase : APageObjectBase
     {
         #region Constructors
@@ -64,6 +144,32 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData ColumnsProperty = RegisterProperty("Columns", typeof(int), 1);
+
+        /// <summary>
+        /// List of horizontal divisions in the array.
+        /// </summary>
+        public ObservableCollection<CLPArrayDivision> HorizontalDivisions
+        {
+            get { return GetValue<ObservableCollection<CLPArrayDivision>>(HorizontalDivisionsProperty); }
+            set { SetValue(HorizontalDivisionsProperty, value); }
+        }
+
+        public static readonly PropertyData HorizontalDivisionsProperty = RegisterProperty("HorizontalDivisions",
+                                                                                           typeof(ObservableCollection<CLPArrayDivision>),
+                                                                                           () => new ObservableCollection<CLPArrayDivision>());
+
+        /// <summary>
+        /// List of vertical divisions in the array.
+        /// </summary>
+        public ObservableCollection<CLPArrayDivision> VerticalDivisions
+        {
+            get { return GetValue<ObservableCollection<CLPArrayDivision>>(VerticalDivisionsProperty); }
+            set { SetValue(VerticalDivisionsProperty, value); }
+        }
+
+        public static readonly PropertyData VerticalDivisionsProperty = RegisterProperty("VerticalDivisions",
+                                                                                         typeof(ObservableCollection<CLPArrayDivision>),
+                                                                                         () => new ObservableCollection<CLPArrayDivision>());
 
         #region Behavior Properties
 
@@ -150,6 +256,50 @@ namespace CLP.Entities
         #region Methods
 
         public abstract void SizeArrayToGridLevel(double toSquareSize = -1, bool recalculateDivisions = true);
+
+        public double GetClosestGridLine(double position) { return Math.Round(position / GridSquareSize) * GridSquareSize; }
+
+        public CLPArrayDivision FindDivisionAbove(double position, IEnumerable<CLPArrayDivision> divisionList)
+        {
+            CLPArrayDivision divAbove = null;
+            foreach(var div in divisionList)
+            {
+                if(divAbove == null)
+                {
+                    if(div.Position < position)
+                    {
+                        divAbove = div;
+                    }
+                }
+                else if(divAbove.Position < div.Position &&
+                        div.Position < position)
+                {
+                    divAbove = div;
+                }
+            }
+            return divAbove;
+        }
+
+        public CLPArrayDivision FindDivisionBelow(double position, IEnumerable<CLPArrayDivision> divisionList)
+        {
+            CLPArrayDivision divBelow = null;
+            foreach(var div in divisionList)
+            {
+                if(divBelow == null)
+                {
+                    if(div.Position > position)
+                    {
+                        divBelow = div;
+                    }
+                }
+                else if(divBelow.Position > div.Position &&
+                        div.Position > position)
+                {
+                    divBelow = div;
+                }
+            }
+            return divBelow;
+        }
 
         #endregion //Methods
 

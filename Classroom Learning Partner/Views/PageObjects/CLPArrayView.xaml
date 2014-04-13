@@ -608,14 +608,6 @@
                 </TextBlock.LayoutTransform>
             </TextBlock>
 
-            <!--Background Color for Array-->
-            <Rectangle Grid.Row="1"
-                       Grid.Column="1"
-                       Width="{Binding ArrayWidth}"
-                       Height="{Binding ArrayHeight}"
-                       StrokeThickness="0" />
-            <!--Fill="{Binding PageObject.BackgroundColor}"  Opacity="0.20" />-->
-
             <!--This is the actual array-->
             <Rectangle x:Name="Array"
                        Grid.Row="1"
