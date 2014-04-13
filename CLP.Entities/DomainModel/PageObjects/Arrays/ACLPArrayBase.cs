@@ -301,6 +301,54 @@ namespace CLP.Entities
             return divBelow;
         }
 
+        public void ResizeDivisions()
+        {
+            var oldHeight = HorizontalDivisions.Aggregate<CLPArrayDivision, double>(0, (current, division) => current + division.Length);
+            foreach(var division in HorizontalDivisions)
+            {
+                division.Position = division.Position * ArrayHeight / oldHeight;
+                division.Length = division.Length * ArrayHeight / oldHeight;
+            }
+
+            var oldWidth = VerticalDivisions.Aggregate<CLPArrayDivision, double>(0, (current, division) => current + division.Length);
+            foreach(var division in VerticalDivisions)
+            {
+                division.Position = division.Position * ArrayWidth / oldWidth;
+                division.Length = division.Length * ArrayWidth / oldWidth;
+            }
+        }
+
+        public virtual void RotateArray()
+        {
+            var tempCols = Columns;
+            Columns = Rows;
+            Rows = tempCols;
+
+            var tempHorizontalDivisions = HorizontalDivisions;
+            HorizontalDivisions = VerticalDivisions;
+            VerticalDivisions = tempHorizontalDivisions;
+            foreach(var verticalDivision in VerticalDivisions)
+            {
+                verticalDivision.Orientation = ArrayDivisionOrientation.Vertical;
+            }
+            foreach(var horizontalDivision in HorizontalDivisions)
+            {
+                horizontalDivision.Orientation = ArrayDivisionOrientation.Horizontal;
+            }
+            SizeArrayToGridLevel(GridSquareSize);
+
+            if(XPosition + Width > ParentPage.Width)
+            {
+                XPosition = ParentPage.Width - Width;
+            }
+            if(YPosition + Height > ParentPage.Height)
+            {
+                YPosition = ParentPage.Height - Height;
+            }
+
+            //RefreshStrokeParentIDs();
+        }
+
         #endregion //Methods
 
         #region Overrides of ObservableObject

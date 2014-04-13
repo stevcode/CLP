@@ -377,445 +377,450 @@ namespace Classroom_Learning_Partner.ViewModels
             //}
             //var batchHistoryItem = PageObject.ParentPage.PageHistory.EndBatch();
             //ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, batchHistoryItem, true);
-            //PageObject.OnMoved();
+            PageObject.OnMoved();
 
-            //var snappingArray = PageObject as CLPArray;
-            //if(snappingArray == null)
-            //{
-            //    return;
-            //}
+            var snappingArray = PageObject as CLPArray;
+            if(snappingArray == null)
+            {
+                return;
+            }
 
-            //CLPArray closestPersistingArray = null;
-            //var closestSnappingDistance = Double.MaxValue;
-            //var snapType = SnapType.Top;
-            //foreach(ICLPPageObject pageObject in PageObject.ParentPage.PageObjects)
-            //{
-            //    var persistingArray = pageObject as CLPArray;
-            //    if(persistingArray == null ||
-            //       persistingArray.UniqueID == snappingArray.UniqueID ||
-            //       !persistingArray.IsSnappable)
-            //    {
-            //        continue;
-            //    }
+            ACLPArrayBase closestPersistingArray = null;
+            var closestSnappingDistance = Double.MaxValue;
+            var snapType = SnapType.Top;
+            foreach(var pageObject in PageObject.ParentPage.PageObjects)
+            {
+                var persistingArray = pageObject as ACLPArrayBase;
+                if(persistingArray == null ||
+                   persistingArray.ID == snappingArray.ID ||
+                   !persistingArray.IsSnappable)
+                {
+                    continue;
+                }
 
-            //    var top = Math.Max(snappingArray.YPosition + snappingArray.LabelLength, persistingArray.YPosition + persistingArray.LabelLength);
-            //    var bottom = Math.Min(snappingArray.YPosition + snappingArray.LabelLength + snappingArray.ArrayHeight,
-            //                          persistingArray.YPosition + persistingArray.LabelLength + persistingArray.ArrayHeight);
-            //    var verticalIntersectionLength = bottom - top;
-            //    var isVerticalIntersection = verticalIntersectionLength > persistingArray.ArrayHeight / 2 || verticalIntersectionLength > snappingArray.ArrayHeight / 2;
+                var top = Math.Max(snappingArray.YPosition + snappingArray.LabelLength, persistingArray.YPosition + persistingArray.LabelLength);
+                var bottom = Math.Min(snappingArray.YPosition + snappingArray.LabelLength + snappingArray.ArrayHeight,
+                                      persistingArray.YPosition + persistingArray.LabelLength + persistingArray.ArrayHeight);
+                var verticalIntersectionLength = bottom - top;
+                var isVerticalIntersection = verticalIntersectionLength > persistingArray.ArrayHeight / 2 || verticalIntersectionLength > snappingArray.ArrayHeight / 2;
 
-            //    var left = Math.Max(snappingArray.XPosition + snappingArray.LabelLength, persistingArray.XPosition + persistingArray.LabelLength);
-            //    var right = Math.Min(snappingArray.XPosition + snappingArray.LabelLength + snappingArray.ArrayWidth,
-            //                         persistingArray.XPosition + persistingArray.LabelLength + persistingArray.ArrayWidth);
-            //    var horizontalIntersectionLength = right - left;
-            //    var isHorizontalIntersection = horizontalIntersectionLength > persistingArray.ArrayWidth / 2 || horizontalIntersectionLength > snappingArray.ArrayWidth / 2;
-            //                 //   Update Remainder Region
-            //                    if(factorCard.IsRemainderRegionDisplayed && factorCard.CurrentRemainder == snappingArray.Columns * snappingArray.Rows)
-            //                    {
-            //                        CLPFuzzyFactorCardRemainder remainderRegion = PageObject.ParentPage.GetPageObjectByUniqueID(factorCard.RemainderRegionUniqueID) as CLPFuzzyFactorCardRemainder;
-            //                        var currentIndex = PageObject.ParentPage.PageObjects.IndexOf(remainderRegion);
-            //                        ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryPageObjectRemove(PageObject.ParentPage, remainderRegion, currentIndex));
-            //                    }
+                var left = Math.Max(snappingArray.XPosition + snappingArray.LabelLength, persistingArray.XPosition + persistingArray.LabelLength);
+                var right = Math.Min(snappingArray.XPosition + snappingArray.LabelLength + snappingArray.ArrayWidth,
+                                     persistingArray.XPosition + persistingArray.LabelLength + persistingArray.ArrayWidth);
+                var horizontalIntersectionLength = right - left;
+                var isHorizontalIntersection = horizontalIntersectionLength > persistingArray.ArrayWidth / 2 || horizontalIntersectionLength > snappingArray.ArrayWidth / 2;
 
-            //    //Fuzzy Factor Card array snapping in - for now this will override array snapping even if an array might be closer
-            //    if(pageObject.PageObjectType == "CLPFuzzyFactorCard")
-            //    {
-            //        var factorCard = pageObject as CLPFuzzyFactorCard;
-            //        if(isVerticalIntersection)
-            //        {
-            //            var diff = Math.Abs(snappingArray.XPosition + snappingArray.LabelLength - (persistingArray.XPosition + persistingArray.LabelLength + factorCard.LastDivisionPosition));
-            //            if(diff < 50)
-            //            {
-            //                if(snappingArray.Rows != factorCard.Rows)
-            //                {
-            //                    var hasTag = false;
-            //                     if(snappingArray.Columns == factorCard.Rows)
-            //                    {
-            //                        foreach(Tag tag in PageObject.ParentPage.PageTags.ToList())
-            //                        {
-            //                            if(tag.TagType.Name == FuzzyFactorCardFailedSnapTagType.Instance.Name)
-            //                            {
-            //                                if(!tag.Value.Contains(new TagOptionValue("snapped wrong orientation multiple times")))
-            //                                {
-            //                                    if(tag.Value.Contains(new TagOptionValue("snapped wrong orientation")))
-            //                                    {
-            //                                        tag.Value.Remove(new TagOptionValue("snapped wrong orientation"));
-            //                                        tag.Value.Add(new TagOptionValue("snapped wrong orientation multiple times"));
-            //                                    }
-            //                                    else
-            //                                    {
-            //                                        tag.Value.Add(new TagOptionValue("snapped wrong orientation"));
-            //                                    }
-            //                                }
-            //                                hasTag = true;
-            //                                continue;
-            //                            }
-            //                        }
-            //                        //Apply tag to note that the student tried to snap array in wrong orientation
-            //                        if(!hasTag)
-            //                        {
-            //                            var tag = new Tag(Tag.Origins.Generated, FuzzyFactorCardFailedSnapTagType.Instance);
-            //                            tag.AddTagOptionValue(new TagOptionValue("snapped wrong orientation"));
-            //                            PageObject.ParentPage.PageTags.Add(tag);
-            //                        }
-            //                    }
-            //                    else
-            //                    {
-            //                        foreach(Tag tag in PageObject.ParentPage.PageTags.ToList())
-            //                        {
-            //                            if(tag.TagType.Name == FuzzyFactorCardFailedSnapTagType.Instance.Name)
-            //                            {
-            //                                if(!tag.Value.Contains(new TagOptionValue("snapped incorrect dimension multiple times")))
-            //                                {
-            //                                    if(tag.Value.Contains(new TagOptionValue("snapped incorrect dimension")))
-            //                                    {
-            //                                        tag.Value.Remove(new TagOptionValue("snapped incorrect dimension"));
-            //                                        tag.Value.Add(new TagOptionValue("snapped incorrect dimension multiple times"));
-            //                                    }
-            //                                    else
-            //                                    {
-            //                                        tag.Value.Add(new TagOptionValue("snapped incorrect dimension"));
-            //                                    }
-            //                                }
-            //                                hasTag = true;
-            //                                continue;
-            //                            }
-            //                        }
 
-            //                        //Apply tag to note that the student tried to snap mismatched array
-            //                        if(!hasTag)
-            //                        {
-            //                            var tag = new Tag(Tag.Origins.Generated, FuzzyFactorCardFailedSnapTagType.Instance);
-            //                            tag.AddTagOptionValue(new TagOptionValue("snapped incorrect dimension"));
-            //                            PageObject.ParentPage.PageTags.Add(tag);
-            //                        }
-            //                    }
+                             //   Update Remainder Region
+                                //if(factorCard.IsRemainderRegionDisplayed && factorCard.CurrentRemainder == snappingArray.Columns * snappingArray.Rows)
+                                //{
+                                //    CLPFuzzyFactorCardRemainder remainderRegion = PageObject.ParentPage.GetPageObjectByUniqueID(factorCard.RemainderRegionUniqueID) as CLPFuzzyFactorCardRemainder;
+                                //    var currentIndex = PageObject.ParentPage.PageObjects.IndexOf(remainderRegion);
+                                //    ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryPageObjectRemove(PageObject.ParentPage, remainderRegion, currentIndex));
+                                //}
 
-            //                    foreach(Tag tag in PageObject.ParentPage.PageTags.ToList())
-            //                    {
-            //                        if(tag.TagType.Name == FuzzyFactorCardFailedSnapTagType.Instance.Name)
-            //                        {
-            //                            if(!tag.Value.Contains(new TagOptionValue("snapped incorrect dimension multiple times")))
-            //                            {
-            //                                if(tag.Value.Contains(new TagOptionValue("snapped incorrect dimension")))
-            //                                {
-            //                                    tag.Value.Remove(new TagOptionValue("snapped incorrect dimension"));
-            //                                    tag.Value.Add(new TagOptionValue("snapped incorrect dimension multiple times"));
-            //                                }
-            //                                else
-            //                                {
-            //                                    tag.Value.Add(new TagOptionValue("snapped incorrect dimension"));
-            //                                }
-            //                            }
-            //                            hasTag = true;
-            //                            continue;
-            //                        }
-            //                    }
+                //Fuzzy Factor Card array snapping in - for now this will override array snapping even if an array might be closer
 
-            //                    //Apply tag to note that the student tried to snap mismatched array
-            //                    if(!hasTag)
-            //                    {
-            //                        var tag = new Tag(Tag.Origins.Generated, FuzzyFactorCardFailedSnapTagType.Instance);
-            //                        tag.AddTagOptionValue(new TagOptionValue("snapped incorrect dimension"));
-            //                        PageObject.ParentPage.PageTags.Add(tag);
-            //                    }
+                #region Snap to FFC
 
-            //                    var factorCardViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(factorCard);
-            //                    foreach(IViewModel viewModel in factorCardViewModels)
-            //                    {
-            //                        (viewModel as CLPFuzzyFactorCardViewModel).RejectSnappedArray();
-            //                    }
-            //                    continue;
-            //                }
-            //                if(factorCard.CurrentRemainder < factorCard.Rows * snappingArray.Columns)
-            //                {
-            //                    //TODO Liz - get old position - maybe from move batch? (Steve will email about this)
-            //                    //var oldX = 10.0;
-            //                    //var oldY = 10.0;
-            //                    //APageObjectBaseViewModel.ChangePageObjectPosition(snappingArray, oldX, oldY, false);
+                //if(pageObject is FuzzyFactorCard)
+                //{
+                //    var factorCard = pageObject as FuzzyFactorCard;
+                //    if(isVerticalIntersection)
+                //    {
+                //        var diff = Math.Abs(snappingArray.XPosition + snappingArray.LabelLength - (persistingArray.XPosition + persistingArray.LabelLength + factorCard.LastDivisionPosition));
+                //        if(diff < 50)
+                //        {
+                //            if(snappingArray.Rows != factorCard.Rows)
+                //            {
+                //                var hasTag = false;
+                //                if(snappingArray.Columns == factorCard.Rows)
+                //                {
+                //                    foreach(Tag tag in PageObject.ParentPage.PageTags.ToList())
+                //                    {
+                //                        if(tag.TagType.Name == FuzzyFactorCardFailedSnapTagType.Instance.Name)
+                //                        {
+                //                            if(!tag.Value.Contains(new TagOptionValue("snapped wrong orientation multiple times")))
+                //                            {
+                //                                if(tag.Value.Contains(new TagOptionValue("snapped wrong orientation")))
+                //                                {
+                //                                    tag.Value.Remove(new TagOptionValue("snapped wrong orientation"));
+                //                                    tag.Value.Add(new TagOptionValue("snapped wrong orientation multiple times"));
+                //                                }
+                //                                else
+                //                                {
+                //                                    tag.Value.Add(new TagOptionValue("snapped wrong orientation"));
+                //                                }
+                //                            }
+                //                            hasTag = true;
+                //                            continue;
+                //                        }
+                //                    }
+                //                    //Apply tag to note that the student tried to snap array in wrong orientation
+                //                    if(!hasTag)
+                //                    {
+                //                        var tag = new Tag(Tag.Origins.Generated, FuzzyFactorCardFailedSnapTagType.Instance);
+                //                        tag.AddTagOptionValue(new TagOptionValue("snapped wrong orientation"));
+                //                        PageObject.ParentPage.PageTags.Add(tag);
+                //                    }
+                //                }
+                //                else
+                //                {
+                //                    foreach(Tag tag in PageObject.ParentPage.PageTags.ToList())
+                //                    {
+                //                        if(tag.TagType.Name == FuzzyFactorCardFailedSnapTagType.Instance.Name)
+                //                        {
+                //                            if(!tag.Value.Contains(new TagOptionValue("snapped incorrect dimension multiple times")))
+                //                            {
+                //                                if(tag.Value.Contains(new TagOptionValue("snapped incorrect dimension")))
+                //                                {
+                //                                    tag.Value.Remove(new TagOptionValue("snapped incorrect dimension"));
+                //                                    tag.Value.Add(new TagOptionValue("snapped incorrect dimension multiple times"));
+                //                                }
+                //                                else
+                //                                {
+                //                                    tag.Value.Add(new TagOptionValue("snapped incorrect dimension"));
+                //                                }
+                //                            }
+                //                            hasTag = true;
+                //                            continue;
+                //                        }
+                //                    }
 
-            //                    var hasTag = false;
-            //                    foreach(Tag tag in PageObject.ParentPage.PageTags.ToList())
-            //                    {
-            //                        if(tag.TagType.Name == FuzzyFactorCardFailedSnapTagType.Instance.Name)
-            //                        {
-            //                            if(!tag.Value.Contains(new TagOptionValue("too many multiple times")))
-            //                            {
-            //                                if(tag.Value.Contains(new TagOptionValue("too many")))
-            //                                {
-            //                                    tag.Value.Remove(new TagOptionValue("too many"));
-            //                                    tag.Value.Add(new TagOptionValue("too many multiple times"));
-            //                                }
-            //                                else
-            //                                {
-            //                                    tag.Value.Add(new TagOptionValue("too many"));
-            //                                }
-            //                            }
-            //                            hasTag = true;
-            //                            continue;
-            //                        }
-            //                    }
+                //                    //Apply tag to note that the student tried to snap mismatched array
+                //                    if(!hasTag)
+                //                    {
+                //                        var tag = new Tag(Tag.Origins.Generated, FuzzyFactorCardFailedSnapTagType.Instance);
+                //                        tag.AddTagOptionValue(new TagOptionValue("snapped incorrect dimension"));
+                //                        PageObject.ParentPage.PageTags.Add(tag);
+                //                    }
+                //                }
 
-            //                    //Apply tag to note that the student tried to snap too many
-            //                    if(!hasTag)
-            //                    {
-            //                        var tag = new Tag(Tag.Origins.Generated, FuzzyFactorCardFailedSnapTagType.Instance);
-            //                        tag.AddTagOptionValue(new TagOptionValue("too many"));
-            //                        PageObject.ParentPage.PageTags.Add(tag);
-            //                    }
+                //                foreach(Tag tag in PageObject.ParentPage.PageTags.ToList())
+                //                {
+                //                    if(tag.TagType.Name == FuzzyFactorCardFailedSnapTagType.Instance.Name)
+                //                    {
+                //                        if(!tag.Value.Contains(new TagOptionValue("snapped incorrect dimension multiple times")))
+                //                        {
+                //                            if(tag.Value.Contains(new TagOptionValue("snapped incorrect dimension")))
+                //                            {
+                //                                tag.Value.Remove(new TagOptionValue("snapped incorrect dimension"));
+                //                                tag.Value.Add(new TagOptionValue("snapped incorrect dimension multiple times"));
+                //                            }
+                //                            else
+                //                            {
+                //                                tag.Value.Add(new TagOptionValue("snapped incorrect dimension"));
+                //                            }
+                //                        }
+                //                        hasTag = true;
+                //                        continue;
+                //                    }
+                //                }
 
-            //                    var factorCardViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(factorCard);
-            //                    foreach(IViewModel viewModel in factorCardViewModels)
-            //                    {
-            //                        (viewModel as CLPFuzzyFactorCardViewModel).RejectSnappedArray();
-            //                    }
-            //                    continue;
-            //                }
+                //                //Apply tag to note that the student tried to snap mismatched array
+                //                if(!hasTag)
+                //                {
+                //                    var tag = new Tag(Tag.Origins.Generated, FuzzyFactorCardFailedSnapTagType.Instance);
+                //                    tag.AddTagOptionValue(new TagOptionValue("snapped incorrect dimension"));
+                //                    PageObject.ParentPage.PageTags.Add(tag);
+                //                }
 
-            //                //If first division - update IsGridOn to match new array
-            //                if(factorCard.LastDivisionPosition == 0)
-            //                {
-            //                    factorCard.IsGridOn = snappingArray.IsGridOn;
-            //                }
+                //                var factorCardViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(factorCard);
+                //                foreach(IViewModel viewModel in factorCardViewModels)
+                //                {
+                //                    (viewModel as CLPFuzzyFactorCardViewModel).RejectSnappedArray();
+                //                }
+                //                continue;
+                //            }
+                //            if(factorCard.CurrentRemainder < factorCard.Rows * snappingArray.Columns)
+                //            {
+                //                //TODO Liz - get old position - maybe from move batch? (Steve will email about this)
+                //                //var oldX = 10.0;
+                //                //var oldY = 10.0;
+                //                //APageObjectBaseViewModel.ChangePageObjectPosition(snappingArray, oldX, oldY, false);
 
-            //                //Add a new division and remove snapping array
-            //                PageObject.ParentPage.PageObjects.Remove(PageObject);
-            //                if(factorCard.IsHorizontallyAligned)
-            //                {
-            //                    factorCard.SnapInArray(snappingArray.Columns);
-            //                }
-            //                else
-            //                {
-            //                    factorCard.SnapInArray(snappingArray.Rows);
-            //                }
+                //                var hasTag = false;
+                //                foreach(Tag tag in PageObject.ParentPage.PageTags.ToList())
+                //                {
+                //                    if(tag.TagType.Name == FuzzyFactorCardFailedSnapTagType.Instance.Name)
+                //                    {
+                //                        if(!tag.Value.Contains(new TagOptionValue("too many multiple times")))
+                //                        {
+                //                            if(tag.Value.Contains(new TagOptionValue("too many")))
+                //                            {
+                //                                tag.Value.Remove(new TagOptionValue("too many"));
+                //                                tag.Value.Add(new TagOptionValue("too many multiple times"));
+                //                            }
+                //                            else
+                //                            {
+                //                                tag.Value.Add(new TagOptionValue("too many"));
+                //                            }
+                //                        }
+                //                        hasTag = true;
+                //                        continue;
+                //                    }
+                //                }
 
-            //                ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryFFCArraySnappedIn(PageObject.ParentPage, pageObject.UniqueID, snappingArray));
-            //                return;
-            //            }
-            //        }
-            //        continue;
-            //    }
-            //    //end of FFC code
+                //                //Apply tag to note that the student tried to snap too many
+                //                if(!hasTag)
+                //                {
+                //                    var tag = new Tag(Tag.Origins.Generated, FuzzyFactorCardFailedSnapTagType.Instance);
+                //                    tag.AddTagOptionValue(new TagOptionValue("too many"));
+                //                    PageObject.ParentPage.PageTags.Add(tag);
+                //                }
 
-            //    if(isVerticalIntersection && snappingArray.Rows == persistingArray.Rows)
-            //    {
-            //        var rightDiff = Math.Abs(snappingArray.XPosition + snappingArray.LabelLength - (persistingArray.XPosition + persistingArray.LabelLength + persistingArray.ArrayWidth));
-            //        if(rightDiff < 50)
-            //        {
-            //            if(closestPersistingArray == null ||
-            //               rightDiff < closestSnappingDistance)
-            //            {
-            //                closestPersistingArray = persistingArray;
-            //                closestSnappingDistance = rightDiff;
-            //                snapType = SnapType.Right;
-            //            }
-            //        }
+                //                var factorCardViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(factorCard);
+                //                foreach(IViewModel viewModel in factorCardViewModels)
+                //                {
+                //                    (viewModel as CLPFuzzyFactorCardViewModel).RejectSnappedArray();
+                //                }
+                //                continue;
+                //            }
 
-            //        var leftDiff = Math.Abs(snappingArray.XPosition + snappingArray.LabelLength + snappingArray.ArrayWidth - (persistingArray.XPosition + persistingArray.LabelLength));
-            //        if(leftDiff < 50)
-            //        {
-            //            if(closestPersistingArray == null ||
-            //               leftDiff < closestSnappingDistance)
-            //            {
-            //                closestPersistingArray = persistingArray;
-            //                closestSnappingDistance = leftDiff;
-            //                snapType = SnapType.Left;
-            //            }
-            //        }
-            //    }
+                //            //If first division - update IsGridOn to match new array
+                //            if(factorCard.LastDivisionPosition == 0)
+                //            {
+                //                factorCard.IsGridOn = snappingArray.IsGridOn;
+                //            }
 
-            //    if(isHorizontalIntersection && snappingArray.Columns == persistingArray.Columns)
-            //    {
-            //        var bottomDiff = Math.Abs(snappingArray.YPosition + snappingArray.LabelLength - (persistingArray.YPosition + persistingArray.LabelLength + persistingArray.ArrayHeight));
-            //        if(bottomDiff < 50)
-            //        {
-            //            if(closestPersistingArray == null ||
-            //               bottomDiff < closestSnappingDistance)
-            //            {
-            //                closestPersistingArray = persistingArray;
-            //                closestSnappingDistance = bottomDiff;
-            //                snapType = SnapType.Bottom;
-            //            }
-            //        }
+                //            //Add a new division and remove snapping array
+                //            PageObject.ParentPage.PageObjects.Remove(PageObject);
+                //            if(factorCard.IsHorizontallyAligned)
+                //            {
+                //                factorCard.SnapInArray(snappingArray.Columns);
+                //            }
+                //            else
+                //            {
+                //                factorCard.SnapInArray(snappingArray.Rows);
+                //            }
 
-            //        var topDiff = Math.Abs(snappingArray.YPosition + snappingArray.LabelLength + snappingArray.ArrayHeight - (persistingArray.YPosition + persistingArray.LabelLength));
-            //        if(topDiff < 50)
-            //        {
-            //            if(closestPersistingArray == null ||
-            //               topDiff < closestSnappingDistance)
-            //            {
-            //                closestPersistingArray = persistingArray;
-            //                closestSnappingDistance = topDiff;
-            //                snapType = SnapType.Top;
-            //            }
-            //        }
-            //    }
-            //}
+                //            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryFFCArraySnappedIn(PageObject.ParentPage, pageObject.UniqueID, snappingArray));
+                //            return;
+                //        }
+                //    }
+                //    continue;
+                //}
 
-            //if(closestPersistingArray == null)
-            //{
-            //    return;
-            //}
+                #endregion //Snap to FFC
 
-            //var squareSize = closestPersistingArray.ArrayWidth / closestPersistingArray.Columns;
-            //ObservableCollection<CLPArrayDivision> tempDivisions;
-            //switch(snapType)
-            //{
-            //    case SnapType.Top:
-            //        ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryArraySnap(PageObject.ParentPage, closestPersistingArray, snappingArray, true));
+                if(isVerticalIntersection && snappingArray.Rows == persistingArray.Rows)
+                {
+                    var rightDiff = Math.Abs(snappingArray.XPosition + snappingArray.LabelLength - (persistingArray.XPosition + persistingArray.LabelLength + persistingArray.ArrayWidth));
+                    if(rightDiff < 50)
+                    {
+                        if(closestPersistingArray == null ||
+                           rightDiff < closestSnappingDistance)
+                        {
+                            closestPersistingArray = persistingArray;
+                            closestSnappingDistance = rightDiff;
+                            snapType = SnapType.Right;
+                        }
+                    }
 
-            //        closestPersistingArray.VerticalDivisions.Clear();
+                    var leftDiff = Math.Abs(snappingArray.XPosition + snappingArray.LabelLength + snappingArray.ArrayWidth - (persistingArray.XPosition + persistingArray.LabelLength));
+                    if(leftDiff < 50)
+                    {
+                        if(closestPersistingArray == null ||
+                           leftDiff < closestSnappingDistance)
+                        {
+                            closestPersistingArray = persistingArray;
+                            closestSnappingDistance = leftDiff;
+                            snapType = SnapType.Left;
+                        }
+                    }
+                }
 
-            //        snappingArray.SizeArrayToGridLevel(squareSize);
+                if(isHorizontalIntersection && snappingArray.Columns == persistingArray.Columns)
+                {
+                    var bottomDiff = Math.Abs(snappingArray.YPosition + snappingArray.LabelLength - (persistingArray.YPosition + persistingArray.LabelLength + persistingArray.ArrayHeight));
+                    if(bottomDiff < 50)
+                    {
+                        if(closestPersistingArray == null ||
+                           bottomDiff < closestSnappingDistance)
+                        {
+                            closestPersistingArray = persistingArray;
+                            closestSnappingDistance = bottomDiff;
+                            snapType = SnapType.Bottom;
+                        }
+                    }
 
-            //        if(closestPersistingArray.HorizontalDivisions.Any())
-            //        {
-            //            tempDivisions = new ObservableCollection<CLPArrayDivision>(closestPersistingArray.HorizontalDivisions);
-            //            closestPersistingArray.HorizontalDivisions.Clear();
-            //        }
-            //        else
-            //        {
-            //            tempDivisions = new ObservableCollection<CLPArrayDivision>
-            //                            {
-            //                                new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, 0, closestPersistingArray.ArrayHeight, closestPersistingArray.Rows)
-            //                            };
-            //        }
+                    var topDiff = Math.Abs(snappingArray.YPosition + snappingArray.LabelLength + snappingArray.ArrayHeight - (persistingArray.YPosition + persistingArray.LabelLength));
+                    if(topDiff < 50)
+                    {
+                        if(closestPersistingArray == null ||
+                           topDiff < closestSnappingDistance)
+                        {
+                            closestPersistingArray = persistingArray;
+                            closestSnappingDistance = topDiff;
+                            snapType = SnapType.Top;
+                        }
+                    }
+                }
+            }
 
-            //        if(!snappingArray.HorizontalDivisions.Any())
-            //        {
-            //            closestPersistingArray.HorizontalDivisions.Add(new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, 0, snappingArray.ArrayHeight, snappingArray.Rows));
-            //        }
+            if(closestPersistingArray == null)
+            {
+                return;
+            }
 
-            //        foreach(CLPArrayDivision horizontalDivision in snappingArray.HorizontalDivisions)
-            //        {
-            //            closestPersistingArray.HorizontalDivisions.Add(horizontalDivision);
-            //        }
-            //        foreach(CLPArrayDivision horizontalDivision in tempDivisions)
-            //        {
-            //            closestPersistingArray.HorizontalDivisions.Add(new CLPArrayDivision(horizontalDivision.Orientation,
-            //                                                                                horizontalDivision.Position + snappingArray.ArrayHeight,
-            //                                                                                horizontalDivision.Length,
-            //                                                                                horizontalDivision.Value));
-            //        }
+            var squareSize = closestPersistingArray.GridSquareSize;
+            ObservableCollection<CLPArrayDivision> tempDivisions;
+            switch(snapType)
+            {
+                case SnapType.Top:
+                   // ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryArraySnap(PageObject.ParentPage, closestPersistingArray, snappingArray, true));
 
-            //        closestPersistingArray.Rows += snappingArray.Rows;
-            //        closestPersistingArray.YPosition -= snappingArray.ArrayHeight;
-            //        break;
-            //    case SnapType.Bottom:
-            //        ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryArraySnap(PageObject.ParentPage, closestPersistingArray, snappingArray, true));
+                    closestPersistingArray.VerticalDivisions.Clear();
 
-            //        closestPersistingArray.VerticalDivisions.Clear();
+                    snappingArray.SizeArrayToGridLevel(squareSize);
 
-            //        snappingArray.SizeArrayToGridLevel(squareSize);
+                    if(closestPersistingArray.HorizontalDivisions.Any())
+                    {
+                        tempDivisions = new ObservableCollection<CLPArrayDivision>(closestPersistingArray.HorizontalDivisions);
+                        closestPersistingArray.HorizontalDivisions.Clear();
+                    }
+                    else
+                    {
+                        tempDivisions = new ObservableCollection<CLPArrayDivision>
+                                        {
+                                            new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, 0, closestPersistingArray.ArrayHeight, closestPersistingArray.Rows)
+                                        };
+                    }
 
-            //        if(!closestPersistingArray.HorizontalDivisions.Any())
-            //        {
-            //            closestPersistingArray.HorizontalDivisions.Add(new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, 0, closestPersistingArray.ArrayHeight, closestPersistingArray.Rows));
-            //        }
+                    if(!snappingArray.HorizontalDivisions.Any())
+                    {
+                        closestPersistingArray.HorizontalDivisions.Add(new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, 0, snappingArray.ArrayHeight, snappingArray.Rows));
+                    }
 
-            //        if(!snappingArray.HorizontalDivisions.Any())
-            //        {
-            //            closestPersistingArray.HorizontalDivisions.Add(new CLPArrayDivision(ArrayDivisionOrientation.Horizontal,
-            //                                                                                closestPersistingArray.ArrayHeight,
-            //                                                                                snappingArray.ArrayHeight,
-            //                                                                                snappingArray.Rows));
-            //        }
-            //        else
-            //        {
-            //            foreach(CLPArrayDivision horizontalDivision in snappingArray.HorizontalDivisions)
-            //            {
-            //                closestPersistingArray.HorizontalDivisions.Add(new CLPArrayDivision(horizontalDivision.Orientation,
-            //                                                                                    horizontalDivision.Position + closestPersistingArray.ArrayHeight,
-            //                                                                                    horizontalDivision.Length,
-            //                                                                                    horizontalDivision.Value));
-            //            }
-            //        }
+                    foreach(CLPArrayDivision horizontalDivision in snappingArray.HorizontalDivisions)
+                    {
+                        closestPersistingArray.HorizontalDivisions.Add(horizontalDivision);
+                    }
+                    foreach(CLPArrayDivision horizontalDivision in tempDivisions)
+                    {
+                        closestPersistingArray.HorizontalDivisions.Add(new CLPArrayDivision(horizontalDivision.Orientation,
+                                                                                            horizontalDivision.Position + snappingArray.ArrayHeight,
+                                                                                            horizontalDivision.Length,
+                                                                                            horizontalDivision.Value));
+                    }
 
-            //        closestPersistingArray.Rows += snappingArray.Rows;
-            //        break;
-            //    case SnapType.Left:
-            //        ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryArraySnap(PageObject.ParentPage, closestPersistingArray, snappingArray, false));
+                    closestPersistingArray.Rows += snappingArray.Rows;
+                    closestPersistingArray.YPosition -= snappingArray.ArrayHeight;
+                    break;
+                case SnapType.Bottom:
+                 //   ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryArraySnap(PageObject.ParentPage, closestPersistingArray, snappingArray, true));
 
-            //        closestPersistingArray.HorizontalDivisions.Clear();
+                    closestPersistingArray.VerticalDivisions.Clear();
 
-            //        snappingArray.SizeArrayToGridLevel(squareSize);
+                    snappingArray.SizeArrayToGridLevel(squareSize);
 
-            //        if(closestPersistingArray.VerticalDivisions.Any())
-            //        {
-            //            tempDivisions = new ObservableCollection<CLPArrayDivision>(closestPersistingArray.VerticalDivisions);
-            //            closestPersistingArray.VerticalDivisions.Clear();
-            //        }
-            //        else
-            //        {
-            //            tempDivisions = new ObservableCollection<CLPArrayDivision>
-            //                            {
-            //                                new CLPArrayDivision(ArrayDivisionOrientation.Vertical, 0, closestPersistingArray.ArrayWidth, closestPersistingArray.Columns)
-            //                            };
-            //        }
+                    if(!closestPersistingArray.HorizontalDivisions.Any())
+                    {
+                        closestPersistingArray.HorizontalDivisions.Add(new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, 0, closestPersistingArray.ArrayHeight, closestPersistingArray.Rows));
+                    }
 
-            //        if(!snappingArray.VerticalDivisions.Any())
-            //        {
-            //            closestPersistingArray.VerticalDivisions.Add(new CLPArrayDivision(ArrayDivisionOrientation.Vertical, 0, snappingArray.ArrayWidth, snappingArray.Columns));
-            //        }
+                    if(!snappingArray.HorizontalDivisions.Any())
+                    {
+                        closestPersistingArray.HorizontalDivisions.Add(new CLPArrayDivision(ArrayDivisionOrientation.Horizontal,
+                                                                                            closestPersistingArray.ArrayHeight,
+                                                                                            snappingArray.ArrayHeight,
+                                                                                            snappingArray.Rows));
+                    }
+                    else
+                    {
+                        foreach(CLPArrayDivision horizontalDivision in snappingArray.HorizontalDivisions)
+                        {
+                            closestPersistingArray.HorizontalDivisions.Add(new CLPArrayDivision(horizontalDivision.Orientation,
+                                                                                                horizontalDivision.Position + closestPersistingArray.ArrayHeight,
+                                                                                                horizontalDivision.Length,
+                                                                                                horizontalDivision.Value));
+                        }
+                    }
 
-            //        foreach(CLPArrayDivision verticalDivision in snappingArray.VerticalDivisions)
-            //        {
-            //            closestPersistingArray.VerticalDivisions.Add(verticalDivision);
-            //        }
-            //        foreach(CLPArrayDivision verticalDivision in tempDivisions)
-            //        {
-            //            closestPersistingArray.VerticalDivisions.Add(new CLPArrayDivision(verticalDivision.Orientation,
-            //                                                                              verticalDivision.Position + snappingArray.ArrayWidth,
-            //                                                                              verticalDivision.Length,
-            //                                                                              verticalDivision.Value));
-            //        }
+                    closestPersistingArray.Rows += snappingArray.Rows;
+                    break;
+                case SnapType.Left:
+                 //   ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryArraySnap(PageObject.ParentPage, closestPersistingArray, snappingArray, false));
 
-            //        closestPersistingArray.Columns += snappingArray.Columns;
-            //        closestPersistingArray.XPosition -= snappingArray.ArrayWidth;
-            //        break;
-            //    case SnapType.Right:
-            //        ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryArraySnap(PageObject.ParentPage, closestPersistingArray, snappingArray, false));
+                    closestPersistingArray.HorizontalDivisions.Clear();
 
-            //        closestPersistingArray.HorizontalDivisions.Clear();
+                    snappingArray.SizeArrayToGridLevel(squareSize);
 
-            //        snappingArray.SizeArrayToGridLevel(squareSize);
+                    if(closestPersistingArray.VerticalDivisions.Any())
+                    {
+                        tempDivisions = new ObservableCollection<CLPArrayDivision>(closestPersistingArray.VerticalDivisions);
+                        closestPersistingArray.VerticalDivisions.Clear();
+                    }
+                    else
+                    {
+                        tempDivisions = new ObservableCollection<CLPArrayDivision>
+                                        {
+                                            new CLPArrayDivision(ArrayDivisionOrientation.Vertical, 0, closestPersistingArray.ArrayWidth, closestPersistingArray.Columns)
+                                        };
+                    }
 
-            //        if(!closestPersistingArray.VerticalDivisions.Any())
-            //        {
-            //            closestPersistingArray.VerticalDivisions.Add(new CLPArrayDivision(ArrayDivisionOrientation.Vertical, 0, closestPersistingArray.ArrayWidth, closestPersistingArray.Columns));
-            //        }
+                    if(!snappingArray.VerticalDivisions.Any())
+                    {
+                        closestPersistingArray.VerticalDivisions.Add(new CLPArrayDivision(ArrayDivisionOrientation.Vertical, 0, snappingArray.ArrayWidth, snappingArray.Columns));
+                    }
 
-            //        if(!snappingArray.VerticalDivisions.Any())
-            //        {
-            //            closestPersistingArray.VerticalDivisions.Add(new CLPArrayDivision(ArrayDivisionOrientation.Vertical,
-            //                                                                              closestPersistingArray.ArrayWidth,
-            //                                                                              snappingArray.ArrayWidth,
-            //                                                                              snappingArray.Columns));
-            //        }
-            //        else
-            //        {
-            //            foreach(CLPArrayDivision verticalDivision in snappingArray.VerticalDivisions)
-            //            {
-            //                closestPersistingArray.VerticalDivisions.Add(new CLPArrayDivision(verticalDivision.Orientation,
-            //                                                                                  verticalDivision.Position + closestPersistingArray.ArrayWidth,
-            //                                                                                  verticalDivision.Length,
-            //                                                                                  verticalDivision.Value));
-            //            }
-            //        }
+                    foreach(CLPArrayDivision verticalDivision in snappingArray.VerticalDivisions)
+                    {
+                        closestPersistingArray.VerticalDivisions.Add(verticalDivision);
+                    }
+                    foreach(CLPArrayDivision verticalDivision in tempDivisions)
+                    {
+                        closestPersistingArray.VerticalDivisions.Add(new CLPArrayDivision(verticalDivision.Orientation,
+                                                                                          verticalDivision.Position + snappingArray.ArrayWidth,
+                                                                                          verticalDivision.Length,
+                                                                                          verticalDivision.Value));
+                    }
 
-            //        closestPersistingArray.Columns += snappingArray.Columns;
-            //        break;
-            //    default:
-            //        return;
-            //}
+                    closestPersistingArray.Columns += snappingArray.Columns;
+                    closestPersistingArray.XPosition -= snappingArray.ArrayWidth;
+                    break;
+                case SnapType.Right:
+                 //   ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryArraySnap(PageObject.ParentPage, closestPersistingArray, snappingArray, false));
 
-            //closestPersistingArray.SizeArrayToGridLevel(squareSize, false);
+                    closestPersistingArray.HorizontalDivisions.Clear();
 
-            ////TODO Liz: uncomment this line
-            ////closestPersistingArray.IsDivisionBehaviorOn = true;
+                    snappingArray.SizeArrayToGridLevel(squareSize);
+
+                    if(!closestPersistingArray.VerticalDivisions.Any())
+                    {
+                        closestPersistingArray.VerticalDivisions.Add(new CLPArrayDivision(ArrayDivisionOrientation.Vertical, 0, closestPersistingArray.ArrayWidth, closestPersistingArray.Columns));
+                    }
+
+                    if(!snappingArray.VerticalDivisions.Any())
+                    {
+                        closestPersistingArray.VerticalDivisions.Add(new CLPArrayDivision(ArrayDivisionOrientation.Vertical,
+                                                                                          closestPersistingArray.ArrayWidth,
+                                                                                          snappingArray.ArrayWidth,
+                                                                                          snappingArray.Columns));
+                    }
+                    else
+                    {
+                        foreach(CLPArrayDivision verticalDivision in snappingArray.VerticalDivisions)
+                        {
+                            closestPersistingArray.VerticalDivisions.Add(new CLPArrayDivision(verticalDivision.Orientation,
+                                                                                              verticalDivision.Position + closestPersistingArray.ArrayWidth,
+                                                                                              verticalDivision.Length,
+                                                                                              verticalDivision.Value));
+                        }
+                    }
+
+                    closestPersistingArray.Columns += snappingArray.Columns;
+                    break;
+                default:
+                    return;
+            }
+
+            closestPersistingArray.SizeArrayToGridLevel(squareSize, false);
+            closestPersistingArray.IsDivisionBehaviorOn = true;
 
             //var extraPageObjects = PageObject.GetPageObjectsOverPageObject();
-            //PageObject.ParentPage.PageObjects.Remove(PageObject);
+            PageObject.ParentPage.PageObjects.Remove(PageObject);
+            PageObject.OnDeleted();
             //closestPersistingArray.RefreshStrokeParentIDs();
             //closestPersistingArray.RefreshPageObjectIDs();
 
@@ -837,20 +842,6 @@ namespace Classroom_Learning_Partner.ViewModels
             //    }
             //}
             //closestPersistingArray.AcceptObjects(addObjects, removeObjects);
-
-            ////If FFC with remainder on page, update
-            //foreach(var pageObject in PageObject.ParentPage.PageObjects)
-            //{
-            //    if(pageObject is CLPFuzzyFactorCard)
-            //    {
-            //        (pageObject as CLPFuzzyFactorCard).AnalyzeArrays();
-            //        if((pageObject as CLPFuzzyFactorCard).IsRemainderRegionDisplayed)
-            //        {
-            //            (pageObject as CLPFuzzyFactorCard).UpdateRemainderRegion();
-            //            break;
-            //        }
-            //    }
-            //}
         }
 
         /// <summary>
@@ -890,7 +881,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var initXPos = PageObject.XPosition;
             var initYPos = PageObject.YPosition;
-            //(PageObject as CLPArray).RotateArray();
+            (PageObject as CLPArray).RotateArray();
             //ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryArrayRotate(PageObject.ParentPage, PageObject.UniqueID, initXPos, initYPos));
         }
 

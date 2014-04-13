@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Windows.Ink;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -11,7 +13,7 @@ namespace CLP.Entities
         ArrayCard,
         FactorCard
     }
-    public class CLPArray : ACLPArrayBase, ICountable
+    public class CLPArray : ACLPArrayBase, ICountable, ICuttable
     {
         #region Constructors
 
@@ -145,8 +147,28 @@ namespace CLP.Entities
 
             if(recalculateDivisions)
             {
-                //ResizeDivisions();
+                ResizeDivisions();
             }
+        }
+
+        public int[,] GetPartialProducts()
+        {
+            var horizDivs = Math.Max(HorizontalDivisions.Count, 1);
+            var vertDivs = Math.Max(VerticalDivisions.Count, 1);
+            var partialProducts = new int[horizDivs, vertDivs];
+
+            for(var i = 0; i < horizDivs; i++)
+            {
+                for(var j = 0; j < vertDivs; j++)
+                {
+                    var yAxisValue = (horizDivs > 1 ? HorizontalDivisions[i].Value : Rows);
+                    var xAxisValue = (vertDivs > 1 ? VerticalDivisions[j].Value : Columns);
+
+                    partialProducts[i, j] = yAxisValue * xAxisValue;
+                }
+            }
+
+            return partialProducts;
         }
 
         #endregion //Methods
@@ -172,6 +194,109 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData IsInnerPartProperty = RegisterProperty("IsInnerPart", typeof(bool), false);
+
+        #endregion
+
+        #region Implementation of ICuttable
+
+        public List<IPageObject> Cut(Stroke cuttingStroke)
+        {
+            var strokeTop = cuttingStroke.GetBounds().Top;
+            var strokeBottom = cuttingStroke.GetBounds().Bottom;
+            var strokeLeft = cuttingStroke.GetBounds().Left;
+            var strokeRight = cuttingStroke.GetBounds().Right;
+
+            var cuttableTop = YPosition + LabelLength;
+            var cuttableBottom = cuttableTop + ArrayHeight;
+            var cuttableLeft = XPosition + LabelLength;
+            var cuttableRight = cuttableLeft + ArrayWidth;
+
+            var halvedPageObjects = new List<IPageObject>();
+
+            if(ArrayType != ArrayTypes.Array)
+            {
+                return halvedPageObjects;
+            }
+
+            const double MIN_THRESHHOLD = 5.0;
+
+            if(Math.Abs(strokeLeft - strokeRight) < Math.Abs(strokeTop - strokeBottom) &&
+               strokeRight <= cuttableRight &&
+               strokeLeft >= cuttableLeft &&
+               strokeTop - cuttableTop <= MIN_THRESHHOLD &&
+               cuttableBottom - strokeBottom <= MIN_THRESHHOLD &&
+               Columns > 1) //Vertical Cut Stroke. Stroke must be within the bounds of the pageObject
+            {
+                var average = (strokeRight + strokeLeft) / 2;
+                var relativeAverage = average - LabelLength - XPosition;
+                var closestColumn = Convert.ToInt32(Math.Round(relativeAverage / GridSquareSize)); 
+
+                var leftArray = new CLPArray(ParentPage, closestColumn, Rows, ArrayTypes.Array)
+                                {
+                                    IsGridOn = IsGridOn,
+                                    IsDivisionBehaviorOn = IsDivisionBehaviorOn,
+                                    XPosition = XPosition,
+                                    YPosition = YPosition,
+                                    IsTopLabelVisible = IsTopLabelVisible,
+                                    IsSideLabelVisible = IsSideLabelVisible,
+                                    IsSnappable = IsSnappable
+                                };
+                leftArray.SizeArrayToGridLevel(GridSquareSize);
+                halvedPageObjects.Add(leftArray);
+
+                var rightArray = new CLPArray(ParentPage, Columns - closestColumn, Rows, ArrayTypes.Array)
+                                    {
+                                        IsGridOn = IsGridOn,
+                                    IsDivisionBehaviorOn = IsDivisionBehaviorOn,
+                                    XPosition = XPosition,
+                                    YPosition = YPosition,
+                                    IsTopLabelVisible = IsTopLabelVisible,
+                                    IsSideLabelVisible = IsSideLabelVisible,
+                                    IsSnappable = IsSnappable
+                                    };
+                rightArray.SizeArrayToGridLevel(GridSquareSize);
+                halvedPageObjects.Add(rightArray);
+            }
+            else if(Math.Abs(strokeLeft - strokeRight) > Math.Abs(strokeTop - strokeBottom) &&
+                    strokeBottom <= cuttableBottom &&
+                    strokeTop >= cuttableTop &&
+                    strokeRight - cuttableRight <= MIN_THRESHHOLD &&
+                    cuttableLeft - strokeLeft <= MIN_THRESHHOLD &&
+                    Rows > 1) //Horizontal Cut Stroke. Stroke must be within the bounds of the pageObject
+            {
+                var average = (strokeRight + strokeLeft) / 2;
+                var relativeAverage = average - LabelLength - XPosition;
+                var closestRow = Convert.ToInt32(Math.Round(relativeAverage / GridSquareSize)); 
+
+                var topArray = new CLPArray(ParentPage, Columns, closestRow, ArrayTypes.Array)
+                                {
+                                    IsGridOn = IsGridOn,
+                                    IsDivisionBehaviorOn = IsDivisionBehaviorOn,
+                                    XPosition = XPosition,
+                                    YPosition = YPosition,
+                                    IsTopLabelVisible = IsTopLabelVisible,
+                                    IsSideLabelVisible = IsSideLabelVisible,
+                                    IsSnappable = IsSnappable
+                                };
+                topArray.SizeArrayToGridLevel(GridSquareSize);
+                halvedPageObjects.Add(topArray);
+
+                var bottomArray = new CLPArray(ParentPage, Columns, Rows - closestRow, ArrayTypes.Array)
+                                    {
+                                        IsGridOn = IsGridOn,
+                                    IsDivisionBehaviorOn = IsDivisionBehaviorOn,
+                                    XPosition = XPosition,
+                                    YPosition = YPosition,
+                                    IsTopLabelVisible = IsTopLabelVisible,
+                                    IsSideLabelVisible = IsSideLabelVisible,
+                                    IsSnappable = IsSnappable
+                                    };
+                bottomArray.SizeArrayToGridLevel(GridSquareSize);
+                halvedPageObjects.Add(bottomArray);
+            }
+
+            return halvedPageObjects;
+        }
 
         #endregion
     }
