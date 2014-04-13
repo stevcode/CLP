@@ -13,6 +13,7 @@ namespace CLP.Entities
         ArrayCard,
         FactorCard
     }
+
     public class CLPArray : ACLPArrayBase, ICountable, ICuttable
     {
         #region Constructors
@@ -106,7 +107,7 @@ namespace CLP.Entities
         {
             base.OnAdded();
             // If FFC with remainder on page, update
-            foreach(var ffc in ParentPage.PageObjects.OfType<FuzzyFactorCard>()) 
+            foreach(FuzzyFactorCard ffc in ParentPage.PageObjects.OfType<FuzzyFactorCard>())
             {
                 ffc.AnalyzeArrays();
                 ffc.UpdateRemainderRegion();
@@ -117,7 +118,7 @@ namespace CLP.Entities
         {
             base.OnDeleted();
             // If FFC with remainder on page, update
-            foreach(var ffc in ParentPage.PageObjects.OfType<FuzzyFactorCard>()) 
+            foreach(FuzzyFactorCard ffc in ParentPage.PageObjects.OfType<FuzzyFactorCard>())
             {
                 ffc.AnalyzeArrays();
                 ffc.UpdateRemainderRegion();
@@ -229,7 +230,7 @@ namespace CLP.Entities
             {
                 var average = (strokeRight + strokeLeft) / 2;
                 var relativeAverage = average - LabelLength - XPosition;
-                var closestColumn = Convert.ToInt32(Math.Round(relativeAverage / GridSquareSize)); 
+                var closestColumn = Convert.ToInt32(Math.Round(relativeAverage / GridSquareSize));
 
                 var leftArray = new CLPArray(ParentPage, closestColumn, Rows, ArrayTypes.Array)
                                 {
@@ -245,15 +246,15 @@ namespace CLP.Entities
                 halvedPageObjects.Add(leftArray);
 
                 var rightArray = new CLPArray(ParentPage, Columns - closestColumn, Rows, ArrayTypes.Array)
-                                    {
-                                        IsGridOn = IsGridOn,
-                                    IsDivisionBehaviorOn = IsDivisionBehaviorOn,
-                                    XPosition = XPosition,
-                                    YPosition = YPosition,
-                                    IsTopLabelVisible = IsTopLabelVisible,
-                                    IsSideLabelVisible = IsSideLabelVisible,
-                                    IsSnappable = IsSnappable
-                                    };
+                                 {
+                                     IsGridOn = IsGridOn,
+                                     IsDivisionBehaviorOn = IsDivisionBehaviorOn,
+                                     XPosition = XPosition,
+                                     YPosition = YPosition,
+                                     IsTopLabelVisible = IsTopLabelVisible,
+                                     IsSideLabelVisible = IsSideLabelVisible,
+                                     IsSnappable = IsSnappable
+                                 };
                 rightArray.SizeArrayToGridLevel(GridSquareSize);
                 halvedPageObjects.Add(rightArray);
             }
@@ -266,31 +267,31 @@ namespace CLP.Entities
             {
                 var average = (strokeRight + strokeLeft) / 2;
                 var relativeAverage = average - LabelLength - XPosition;
-                var closestRow = Convert.ToInt32(Math.Round(relativeAverage / GridSquareSize)); 
+                var closestRow = Convert.ToInt32(Math.Round(relativeAverage / GridSquareSize));
 
                 var topArray = new CLPArray(ParentPage, Columns, closestRow, ArrayTypes.Array)
-                                {
-                                    IsGridOn = IsGridOn,
-                                    IsDivisionBehaviorOn = IsDivisionBehaviorOn,
-                                    XPosition = XPosition,
-                                    YPosition = YPosition,
-                                    IsTopLabelVisible = IsTopLabelVisible,
-                                    IsSideLabelVisible = IsSideLabelVisible,
-                                    IsSnappable = IsSnappable
-                                };
+                               {
+                                   IsGridOn = IsGridOn,
+                                   IsDivisionBehaviorOn = IsDivisionBehaviorOn,
+                                   XPosition = XPosition,
+                                   YPosition = YPosition,
+                                   IsTopLabelVisible = IsTopLabelVisible,
+                                   IsSideLabelVisible = IsSideLabelVisible,
+                                   IsSnappable = IsSnappable
+                               };
                 topArray.SizeArrayToGridLevel(GridSquareSize);
                 halvedPageObjects.Add(topArray);
 
                 var bottomArray = new CLPArray(ParentPage, Columns, Rows - closestRow, ArrayTypes.Array)
-                                    {
-                                        IsGridOn = IsGridOn,
-                                    IsDivisionBehaviorOn = IsDivisionBehaviorOn,
-                                    XPosition = XPosition,
-                                    YPosition = YPosition,
-                                    IsTopLabelVisible = IsTopLabelVisible,
-                                    IsSideLabelVisible = IsSideLabelVisible,
-                                    IsSnappable = IsSnappable
-                                    };
+                                  {
+                                      IsGridOn = IsGridOn,
+                                      IsDivisionBehaviorOn = IsDivisionBehaviorOn,
+                                      XPosition = XPosition,
+                                      YPosition = YPosition,
+                                      IsTopLabelVisible = IsTopLabelVisible,
+                                      IsSideLabelVisible = IsSideLabelVisible,
+                                      IsSnappable = IsSnappable
+                                  };
                 bottomArray.SizeArrayToGridLevel(GridSquareSize);
                 halvedPageObjects.Add(bottomArray);
             }

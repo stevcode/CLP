@@ -320,6 +320,7 @@ namespace CLP.Entities
 
         public virtual void RotateArray()
         {
+            var tempGridSquareSize = GridSquareSize;
             var tempCols = Columns;
             Columns = Rows;
             Rows = tempCols;
@@ -335,7 +336,7 @@ namespace CLP.Entities
             {
                 horizontalDivision.Orientation = ArrayDivisionOrientation.Horizontal;
             }
-            SizeArrayToGridLevel(GridSquareSize);
+            SizeArrayToGridLevel(tempGridSquareSize);
 
             if(XPosition + Width > ParentPage.Width)
             {
