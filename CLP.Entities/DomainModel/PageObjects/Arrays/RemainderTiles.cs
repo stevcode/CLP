@@ -25,7 +25,7 @@ namespace CLP.Entities
             YPosition = fuzzyFactorCard.YPosition + fuzzyFactorCard.LabelLength;
 
             Height = Math.Ceiling(fuzzyFactorCard.CurrentRemainder / 5.0) * 61.0; 
-            Width = 66.0;
+            Width = 305.0; 
         }
 
         /// <summary>

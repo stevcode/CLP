@@ -27,11 +27,12 @@ namespace CLP.Entities
             : base(parentPage, columns, rows)
         {
             Dividend = dividend;
-            IsSnappable = false;
+            IsSnappable = true;
             if(isRemainderRegionDisplayed)
             {
                 RemainderTiles = new RemainderTiles(parentPage, this);
                 parentPage.PageObjects.Add(RemainderTiles);
+                UpdateRemainderRegion();
             }
         }
 
@@ -451,7 +452,7 @@ namespace CLP.Entities
             }
 
             RemainderTiles.Height = Math.Ceiling(RemainderTiles.TileOffsets.Count / 5.0) * 61.0;
-            RemainderTiles.Width = 66.0;
+            RemainderTiles.Width = 305.0;
         }
 
         public void SnapInArray(int value)
