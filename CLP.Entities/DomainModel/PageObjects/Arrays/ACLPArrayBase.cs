@@ -242,7 +242,7 @@ namespace CLP.Entities
             get { return Height - (2 * LabelLength); }
         }
 
-        public double GridSquareSize
+        public virtual double GridSquareSize
         {
             get { return ArrayWidth / Columns; }
         }

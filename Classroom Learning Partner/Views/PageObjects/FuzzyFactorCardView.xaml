@@ -240,6 +240,7 @@
             </Canvas>
         </ac:AdornedControl.AdornerContent>
 
+        <!--<ColumnDefinition Width="{Binding ArrayWidth, Converter={StaticResource LengthConverter}, ConverterParameter=3}"}" />-->
         <Grid Width="{Binding Width}"
               Height="{Binding Height}">
             <Grid.RowDefinitions>
@@ -249,7 +250,7 @@
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="{Binding PageObject.LabelLength}" />
-                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="{Binding ArrayWidth}" />
                 <!-- TODO Liz: Make this width depend on IsHorizontallyAligned -->
                 <ColumnDefinition Width="{Binding PageObject.LargeLabelLength}" />
             </Grid.ColumnDefinitions>
@@ -302,16 +303,19 @@
             </Border>
 
             <!--Right Fuzzy Edge-->
-            <Path Grid.Row="1"
-                  Grid.Column="2"
+            <Path Grid.Row="1" 
+                  Grid.Column="2" 
+                  Width="{Binding PageObject.LargeLabelLength}"
                   Stretch="Fill"
+                  HorizontalAlignment="Left"
                   Margin="0"
                   Stroke="{Binding FuzzyEdgeColor}"
                   StrokeThickness="3"
-                  HorizontalAlignment="Right"
                   SnapsToDevicePixels="True"
                   Visibility="{Binding PageObject.CurrentRemainder, Converter={StaticResource IntToVisibilityConverter}}"
                   Data="M -1,0 L 1,0 C 1,0 2,1 1,2 C 1,2 0,3 1,4 C 1,4 2,5 1,6 C 1,6 0,7 1,8 C 1,8 2,9 1,10 C 1,10 0,11 1,12 C 1,12 2,13 1,14 C 1,14 0,15 1,16 C 1,16 2,17 1,18 C 1,18 0,19 1,20 C 1,20 2,21 1,22 C 1,22 0,23 1,24 C 1,24 2,25 1,26 M 1,26 L -1,26" />
+
+            <!--Data="M -1,0 L 1,0 C 1,0 2,1 1,2 C 1,2 0,3 1,4 C 1,4 2,5 1,6 C 1,6 0,7 1,8 C 1,8 2,9 1,10 C 1,10 0,11 1,12 C 1,12 2,13 1,14 C 1,14 0,15 1,16 C 1,16 2,17 1,18 C 1,18 0,19 1,20 C 1,20 2,21 1,22 C 1,22 0,23 1,24 C 1,24 2,25 1,26 M 1,26 L -1,26" />-->
 
             <!--Bottom Fuzzy Edge-->
             <!-- TODO Liz - make fixes as in right fuzzy edge-->

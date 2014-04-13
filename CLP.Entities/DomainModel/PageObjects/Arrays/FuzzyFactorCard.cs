@@ -59,12 +59,26 @@ namespace CLP.Entities
 
         public override double ArrayWidth
         {
-            get { return Width - (LargeLabelLength + LabelLength); }
+            get
+            {
+                return Width - (LargeLabelLength + LabelLength);
+            }
         }
-
+        
         public override double ArrayHeight
         {
-            get { return Height - (2 * LabelLength); }
+            get
+            {
+                return Height - (2 * LabelLength);
+            }
+        }
+
+        public override double GridSquareSize
+        {
+            get
+            {
+                return ArrayWidth / Columns;
+            }
         }
 
         public override bool IsBackgroundInteractable
