@@ -91,7 +91,7 @@ namespace CLP.Entities
         {
             var strokePoints = new StylusPointCollection();
             var pointGroups = StrokePoints.Split(',');
-            foreach(StylusPoint stylusPoint in pointGroups.Select(pointGroup => pointGroup.Split(':')).Select(pointValues => new StylusPoint
+            foreach(var stylusPoint in pointGroups.Select(pointGroup => pointGroup.Split(':')).Select(pointValues => new StylusPoint
                                                                                                                              {
                                                                                                                                  X = Convert.ToDouble(pointValues[0]),
                                                                                                                                  Y = Convert.ToDouble(pointValues[1]),

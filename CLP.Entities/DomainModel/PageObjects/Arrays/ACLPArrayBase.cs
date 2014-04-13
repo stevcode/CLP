@@ -232,12 +232,12 @@ namespace CLP.Entities
 
         #region Calculated Properties
 
-        public double ArrayWidth
+        public virtual double ArrayWidth
         {
             get { return Width - (2 * LabelLength); }
         }
 
-        public double ArrayHeight
+        public virtual double ArrayHeight
         {
             get { return Height - (2 * LabelLength); }
         }
@@ -349,6 +349,20 @@ namespace CLP.Entities
 
             //RefreshStrokeParentIDs();
             OnResized();
+        }
+
+        public override bool PageObjectIsOver(IPageObject pageObject, double percentage)
+        {
+            var areaObject = pageObject.Height * pageObject.Width;
+            var area = ArrayHeight * ArrayWidth;
+            var top = Math.Max(YPosition + LabelLength, pageObject.YPosition);
+            var bottom = Math.Min(YPosition + LabelLength + ArrayHeight, pageObject.YPosition + pageObject.Height);
+            var left = Math.Max(XPosition + LabelLength, pageObject.XPosition);
+            var right = Math.Min(XPosition + LabelLength + ArrayWidth, pageObject.XPosition + pageObject.Width);
+            var deltaY = bottom - top;
+            var deltaX = right - left;
+            var intersectionArea = deltaY * deltaX;
+            return deltaY >= 0 && deltaX >= 0 && (intersectionArea / areaObject >= percentage || intersectionArea / area >= percentage);
         }
 
         #endregion //Methods

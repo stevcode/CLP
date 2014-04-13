@@ -31,6 +31,7 @@ namespace CLP.Entities
             if(isRemainderRegionDisplayed)
             {
                 RemainderTiles = new RemainderTiles(parentPage, this);
+                parentPage.PageObjects.Add(RemainderTiles);
             }
         }
 
@@ -54,6 +55,16 @@ namespace CLP.Entities
         public double LargeLabelLength
         {
             get { return LabelLength * 2 + 12.0; }
+        }
+
+        public override double ArrayWidth
+        {
+            get { return Width - (LargeLabelLength + LabelLength); }
+        }
+
+        public override double ArrayHeight
+        {
+            get { return Height - (2 * LabelLength); }
         }
 
         public override bool IsBackgroundInteractable

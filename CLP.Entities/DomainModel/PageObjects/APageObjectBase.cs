@@ -269,6 +269,20 @@ namespace CLP.Entities
 
         public virtual void OnResized() { }
 
+        public virtual bool PageObjectIsOver(IPageObject pageObject, double percentage)
+        {
+            var areaObject = pageObject.Height * pageObject.Width;
+            var area = Height * Width;
+            var top = Math.Max(YPosition, pageObject.YPosition);
+            var bottom = Math.Min(YPosition + Height, pageObject.YPosition + pageObject.Height);
+            var left = Math.Max(XPosition, pageObject.XPosition);
+            var right = Math.Min(XPosition + Width, pageObject.XPosition + pageObject.Width);
+            var deltaY = bottom - top;
+            var deltaX = right - left;
+            var intersectionArea = deltaY * deltaX;
+            return deltaY >= 0 && deltaX >= 0 && (intersectionArea / areaObject >= percentage || intersectionArea / area >= percentage);
+        }
+
         #endregion //Methods
 
         #region Utility Methods
