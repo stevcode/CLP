@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 
 namespace CLP.Entities
 {
-    public interface IPageObjectAccepter
+    public interface IPageObjectAccepter : IPageObject
     {
         bool CanAcceptPageObjects { get; set; }
         List<IPageObject> AcceptedPageObjects { get; }

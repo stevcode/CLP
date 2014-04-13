@@ -3,7 +3,7 @@ using System.Windows.Ink;
 
 namespace CLP.Entities
 {
-    public interface ICuttable
+    public interface ICuttable : IPageObject
     {
         List<IPageObject> Cut(Stroke cuttingStroke);
     }

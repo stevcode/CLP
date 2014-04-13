@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Windows.Ink;
 using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
@@ -406,6 +407,17 @@ namespace CLP.Entities
 
         public static readonly PropertyData TagsProperty = RegisterProperty("Tags", typeof(ObservableCollection<ATagBase>), () => new ObservableCollection<ATagBase>());
 
+        /// <summary>
+        /// Unserialized <see cref="Stroke" />s of the <see cref="CLPPage" />.
+        /// </summary>
+        public virtual StrokeCollection InkStrokes
+        {
+            get { return GetValue<StrokeCollection>(InkStrokesProperty); }
+            set { SetValue(InkStrokesProperty, value); }
+        }
+
+        public static readonly PropertyData InkStrokesProperty = RegisterProperty("InkStrokes", typeof(StrokeCollection), () => new StrokeCollection());
+
         #endregion //Navigation Properties
 
         #endregion //Properties
@@ -438,18 +450,18 @@ namespace CLP.Entities
 
         #region Methods
 
-         public CLPPage DuplicatePage()
+        public CLPPage DuplicatePage()
         {
-             // TODO: Entities
+            // TODO: Entities
             var newPage = new CLPPage
                           {
                               ParentNotebook = ParentNotebook,
-                             // PageTags = PageTags,
+                              // PageTags = PageTags,
                               //GroupSubmitType = GroupSubmitType,
                               Height = Height,
                               Width = Width,
                               InitialAspectRatio = InitialAspectRatio
-                           //   ImagePool = ImagePool
+                              //   ImagePool = ImagePool
                           };
 
             //foreach(var s in InkStrokes.Select(stroke => stroke.Clone())) 
@@ -463,11 +475,11 @@ namespace CLP.Entities
             //}
             //newPage.SerializedStrokes = StrokeDTO.SaveInkStrokes(newPage.InkStrokes);
 
-            foreach(var clonedPageObject in PageObjects.Select(pageObject => pageObject.Duplicate()))
+            foreach(IPageObject clonedPageObject in PageObjects.Select(pageObject => pageObject.Duplicate()))
             {
                 clonedPageObject.ParentPage = newPage;
                 newPage.PageObjects.Add(clonedPageObject);
-               // clonedPageObject.RefreshStrokeParentIDs();
+                // clonedPageObject.RefreshStrokeParentIDs();
             }
 
             return newPage;
@@ -475,7 +487,7 @@ namespace CLP.Entities
 
         public void TrimPage()
         {
-            double lowestY = PageObjects.Select(pageObject => pageObject.YPosition + pageObject.Height).Concat(new double[] { 0 }).Max();
+            var lowestY = PageObjects.Select(pageObject => pageObject.YPosition + pageObject.Height).Concat(new double[] {0}).Max();
             // TODO: Entities
             //foreach(var bounds in InkStrokes.Select(s => s.GetBounds()))
             //{
@@ -501,7 +513,7 @@ namespace CLP.Entities
             if(newTag.IsSingleValueTag)
             {
                 var toRemove = Tags.Where(t => t.GetType() == newTag.GetType()).ToList();
-                foreach(var tag in toRemove)
+                foreach(ATagBase tag in toRemove)
                 {
                     Tags.Remove(tag);
                 }
@@ -520,12 +532,12 @@ namespace CLP.Entities
         public void ToXML(string fileName)
         {
             var fileInfo = new FileInfo(fileName);
-            if (!Directory.Exists(fileInfo.DirectoryName))
+            if(!Directory.Exists(fileInfo.DirectoryName))
             {
                 Directory.CreateDirectory(fileInfo.DirectoryName);
             }
 
-            using (Stream stream = new FileStream(fileName, FileMode.Create))
+            using(Stream stream = new FileStream(fileName, FileMode.Create))
             {
                 var xmlSerializer = SerializationFactory.GetXmlSerializer();
                 xmlSerializer.Serialize(this, stream);

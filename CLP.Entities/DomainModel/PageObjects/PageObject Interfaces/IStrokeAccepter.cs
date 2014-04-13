@@ -3,7 +3,7 @@ using System.Windows.Ink;
 
 namespace CLP.Entities
 {
-    public interface IStrokeAccepter
+    public interface IStrokeAccepter : IPageObject
     {
         bool CanAcceptStrokes { get; set; }
         StrokeCollection AcceptedStrokes { get; }

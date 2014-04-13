@@ -12,7 +12,7 @@ namespace CLP.Entities
     public static class StrokeExtension
     {
         private static readonly Guid StrokeIDKey = new Guid("00000000-0000-0000-0000-000000000001");
-        private static readonly Guid StrokePersonIDKey = new Guid("00000000-0000-0000-0000-000000000002");
+        private static readonly Guid StrokeOwnerIDKey = new Guid("00000000-0000-0000-0000-000000000002");
 
         public static StrokeDTO ToStrokeDTO(this Stroke stroke)
         {
@@ -21,7 +21,7 @@ namespace CLP.Entities
             var strokeDTO = new StrokeDTO
                             {
                                 ID = stroke.GetStrokeID(),
-                                PersonID = stroke.GetStrokePersonID(),
+                                PersonID = stroke.GetStrokeOwnerID(),
                                 Height = stroke.DrawingAttributes.Height,
                                 Width = stroke.DrawingAttributes.Width,
                                 IsHighlighter = stroke.DrawingAttributes.IsHighlighter,
@@ -61,18 +61,18 @@ namespace CLP.Entities
             stroke.AddPropertyData(StrokeIDKey, uniqueID);
         }
 
-        public static string GetStrokePersonID(this Stroke stroke)
+        public static string GetStrokeOwnerID(this Stroke stroke)
         {
             Argument.IsNotNull("stroke", stroke);
 
-            return stroke.GetPropertyData(StrokePersonIDKey) as string;
+            return stroke.GetPropertyData(StrokeOwnerIDKey) as string;
         }
 
-        public static void SetStrokePersonID(this Stroke stroke, string uniqueID)
+        public static void SetStrokeOwnerID(this Stroke stroke, string uniqueID)
         {
             Argument.IsNotNull("stroke", stroke);
 
-            stroke.AddPropertyData(StrokePersonIDKey, uniqueID);
+            stroke.AddPropertyData(StrokeOwnerIDKey, uniqueID);
         }
     }
 }

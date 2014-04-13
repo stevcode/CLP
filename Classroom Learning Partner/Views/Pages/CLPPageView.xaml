@@ -17,8 +17,9 @@
 
         <Canvas x:Name="TopCanvas"
                 Width="{Binding Width}"
-                Height="{Binding Height}">
-            <Canvas.Background>
+                Height="{Binding Height}"
+                Background="White">
+            <!--<Canvas.Background>
                 <DrawingBrush TileMode="Tile"
                               Viewport="0 0 20 20"
                               ViewportUnits="Absolute">
@@ -37,7 +38,7 @@
                         </DrawingGroup>
                     </DrawingBrush.Drawing>
                 </DrawingBrush>
-            </Canvas.Background>
+            </Canvas.Background>-->
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="PreviewMouseMove">
                     <catel:EventToCommand Command="{Binding MouseMoveCommand}"

@@ -118,7 +118,7 @@ namespace CLP.Entities
                              DrawingAttributes = drawingAttributes
                          };
             stroke.SetStrokeID(ID);
-            stroke.SetStrokePersonID(PersonID);
+            stroke.SetStrokeOwnerID(PersonID);
 
             return stroke;
         }
