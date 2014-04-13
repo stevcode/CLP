@@ -146,6 +146,17 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData IsPenDownActivatedProperty = RegisterProperty("IsPenDownActivated", typeof(bool), false);
 
+        /// <summary>
+        /// SUMMARY
+        /// </summary>
+        public Handedness Handedness
+        {
+            get { return GetValue<Handedness>(HandednessProperty); }
+            set { SetValue(HandednessProperty, value); }
+        }
+
+        public static readonly PropertyData HandednessProperty = RegisterProperty("Handedness", typeof(Handedness), Handedness.Right);
+
         #endregion //Bindings
 
         #region Properties

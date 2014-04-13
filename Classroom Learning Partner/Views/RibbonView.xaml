@@ -553,7 +553,7 @@
                               LargeImageSource="pack://application:,,,/Resources/Images/ArrayCard32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/ArrayCard16.png"
                               Command="{Binding InsertArrayCommand}"
-                              CommandParameter="CARD" />
+                              CommandParameter="ARRAYCARD" />
 
                 <RibbonButton Label="Factor Card"
                               LargeImageSource="pack://application:,,,/Resources/Images/FactorCard32.png"

@@ -111,6 +111,17 @@ namespace CLP.Entities
             }
         }
 
+        public override void OnDeleted()
+        {
+            base.OnDeleted();
+            // If FFC with remainder on page, update
+            foreach(var ffc in ParentPage.PageObjects.OfType<FuzzyFactorCard>()) 
+            {
+                ffc.AnalyzeArrays();
+                ffc.UpdateRemainderRegion();
+            }
+        }
+
         #endregion //Overrides of APageObjectBase
 
         public override void SizeArrayToGridLevel(double toSquareSize = -1, bool recalculateDivisions = true)

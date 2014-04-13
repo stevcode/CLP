@@ -65,14 +65,14 @@
                            Visibility="{Binding IsDefaultAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                 <!--Close Button - on left-->
-                <Button Command="{Binding RemoveArrayCommand}"
+                <Button Command="{Binding RemovePageObjectCommand}"
                         Cursor="Hand"
                         Width="40" Height="40"
                         Canvas.Left="-40" Canvas.Top="-40">
                     <Button.Visibility>
                         <MultiBinding Converter="{StaticResource AllBoolToVisibilityMultiConverter}">
                             <Binding Path="IsDefaultAdornerVisible" />
-                            <Binding Path="PageObject.IsSnapAdornerOnRight" />
+                            <!--<Binding Path="MainWindowViewModel.IsRightHanded" Source="x:Static Application.Current" />-->
                         </MultiBinding>
                     </Button.Visibility>
                     <Button.Template>
@@ -89,7 +89,7 @@
                 </Button>
 
                 <!--Close Button - on right-->
-                <Button Command="{Binding RemoveArrayCommand}"
+                <!--<Button Command="{Binding RemovePageObjectCommand}"
                         Cursor="Hand"
                         Width="40" Height="40"
                         Canvas.Right="-40" Canvas.Top="-40">
@@ -110,7 +110,7 @@
                             </Grid>
                         </ControlTemplate>
                     </Button.Template>
-                </Button>
+                </Button>-->
 
                 <!--Drag Thumb - on right-->
                 <Thumb Cursor="ScrollAll"
@@ -119,7 +119,7 @@
                     <Thumb.Visibility>
                         <MultiBinding Converter="{StaticResource AllBoolToVisibilityMultiConverter}">
                             <Binding Path="IsDefaultAdornerVisible" />
-                            <Binding Path="PageObject.IsSnapAdornerOnRight" />
+                            <!--<Binding Path="PageObject.IsSnapAdornerOnRight" />-->
                         </MultiBinding>
                     </Thumb.Visibility>
                     <i:Interaction.Triggers>
@@ -156,7 +156,7 @@
                 </Thumb>
 
                 <!--Drag Thumb - on left-->
-                <Thumb Cursor="ScrollAll"
+                <!--<Thumb Cursor="ScrollAll"
                        Width="40" Height="40"
                        Canvas.Left="-40" Canvas.Top="-40">
                     <Thumb.Visibility>
@@ -196,10 +196,10 @@
                             </Grid>
                         </ControlTemplate>
                     </Thumb.Template>
-                </Thumb>
+                </Thumb>-->
 
                 <!--Drag and Snap Thumb - on left-->
-                <Thumb Cursor="ScrollAll"
+                <!--<Thumb Cursor="ScrollAll"
                        Width="40" Height="40"
                        Canvas.Left="-50" Canvas.Top="20">
                     <Thumb.Visibility>
@@ -225,7 +225,7 @@
                             <Image Source="pack://application:,,,/Resources/Images/AdornerImages/ArraySnap64.png" Height="40" Width="40" />
                         </ControlTemplate>
                     </Thumb.Template>
-                </Thumb>
+                </Thumb>-->
 
                 <!--Drag and Snap Thumb - on right-->
                 <Thumb Cursor="ScrollAll"
@@ -235,7 +235,7 @@
                         <MultiBinding Converter="{StaticResource AllBoolToVisibilityMultiConverter}">
                             <Binding Path="IsDefaultAdornerVisible" />
                             <Binding Path="IsSnappable" />
-                            <Binding Path="PageObject.IsSnapAdornerOnRight" />
+                            <!--<Binding Path="PageObject.IsSnapAdornerOnRight" />-->
                         </MultiBinding>
                     </Thumb.Visibility>
                     <i:Interaction.Triggers>
@@ -336,7 +336,7 @@
                     <Button.Visibility>
                         <MultiBinding Converter="{StaticResource AllBoolToVisibilityMultiConverter}">
                             <Binding Path="IsRotateAdornerVisible" />
-                            <Binding Path="PageObject.IsSnapAdornerOnRight" />
+                            <!--<Binding Path="PageObject.IsSnapAdornerOnRight" />-->
                         </MultiBinding>
                     </Button.Visibility>
                     <Button.Template>
@@ -353,7 +353,7 @@
                 </Button>
 
                 <!--Rotate Array Button - on left-->
-                <Button Command="{Binding RotateArrayCommand}"
+                <!--<Button Command="{Binding RotateArrayCommand}"
                         Width="40" Height="40"
                         Canvas.Left="20"
                         Canvas.Top="-50">
@@ -374,7 +374,7 @@
                             </Grid>
                         </ControlTemplate>
                     </Button.Template>
-                </Button>
+                </Button>-->
 
                 <!--Duplicate Array Button-->
                 <Button Command="{Binding DuplicateArrayCommand}"
@@ -477,7 +477,8 @@
                        FontWeight="Bold" FontSize="{Binding PageObject.LabelLength}"
                        Foreground="{StaticResource TopLabelColor}"
                        Height="{Binding PageObject.LabelLength}"
-                       Width="{Binding ArrayWidth}">
+                       Width="{Binding ArrayWidth}"
+                       Visibility="{Binding IsTopLabelVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
             </TextBlock>
 
             <TextBlock Grid.Column="0" Grid.Row="1" IsHitTestVisible="False"
@@ -486,7 +487,7 @@
                        Foreground="{StaticResource LeftLabelColor}"
                        Height="{Binding PageObject.LabelLength}"
                        Width="{Binding ArrayHeight}"
-                       Visibility="{Binding IsLabelOn, Converter={StaticResource BooleanToVisibilityConverter}}">
+                       Visibility="{Binding IsSideLabelVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <TextBlock.LayoutTransform>
                     <TransformGroup>
                         <ScaleTransform />
@@ -500,42 +501,8 @@
             <!--Background Color for Array-->
             <Rectangle Grid.Row="1" Grid.Column="1"
                        Width="{Binding ArrayWidth}" Height="{Binding ArrayHeight}"
-                       Fill="{Binding PageObject.BackgroundColor}" StrokeThickness="0" Opacity="0.20" />
-
-            <!--Grid Lines-->
-            <ItemsControl Grid.Row="1" Grid.Column="1"
-                          ItemsSource="{Binding HorizontalGridLines}"
-                          ItemContainerStyle="{StaticResource HorizontalGridLineStyle}"
-                          Visibility="{Binding IsGridOn, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <Canvas Background="Transparent" Height="Auto" Width="Auto" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Rectangle Height="1" Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
-                                   Stroke="PowderBlue" StrokeThickness="3" />
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-
-            <ItemsControl Grid.Row="1" Grid.Column="1"
-                          ItemsSource="{Binding VerticalGridLines}"
-                          ItemContainerStyle="{StaticResource VerticalGridLineStyle}"
-                          Visibility="{Binding IsGridOn, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <Canvas Background="Transparent" Height="Auto" Width="Auto" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Rectangle Width="1" Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
-                                   Stroke="PowderBlue" StrokeThickness="3" />
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+                       StrokeThickness="0" />
+                       <!--Fill="{Binding PageObject.BackgroundColor}"  Opacity="0.20" />-->
 
             <!--This is the actual array-->
             <Rectangle x:Name="Array" Grid.Row="1" Grid.Column="1"

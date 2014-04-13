@@ -2765,9 +2765,10 @@ namespace Classroom_Learning_Partner.ViewModels
                         array.SizeArrayToGridLevel(initialGridsquareSize);
                     }
                 }
+
+                ACLPPageBaseViewModel.AddPageObjectsToPage(page, arraysToAdd);
             }
            
-            ACLPPageBaseViewModel.AddPageObjectsToPage(page, arraysToAdd);
             App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.Select;
         }
 
