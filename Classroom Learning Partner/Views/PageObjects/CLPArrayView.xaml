@@ -16,6 +16,7 @@
         <conv:DoubleToVisibilityConverter x:Key="DoubleToVisibilityConverter" />
         <conv:AllBoolToVisibilityMultiConverter x:Key="AllBoolToVisibilityMultiConverter" />
         <conv:MultiplyAllIntToTextMultiConverter x:Key="MultiplyAllIntToTextMultiConverter" />
+        <conv:RatioToRectMultiConverter x:Key="RatioToRectMultiConverter" />
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <Style x:Key="HorizontalGridLineStyle">
             <Setter Property="Canvas.Left"
@@ -42,24 +43,34 @@
                     Value="0" />
         </Style>
 
-        <SolidColorBrush x:Key="TopLabelColor" Color="DarkOrange" />
-        <SolidColorBrush x:Key="LeftLabelColor" Color="Blue" />
+        <SolidColorBrush x:Key="TopLabelColor"
+                         Color="DarkOrange" />
+        <SolidColorBrush x:Key="LeftLabelColor"
+                         Color="Blue" />
     </UserControl.Resources>
 
-    <ac:AdornedControl HorizontalAlignment="Center" VerticalAlignment="Center"
-                       HorizontalAdornerPlacement="Outside" VerticalAdornerPlacement="Outside"
+    <ac:AdornedControl HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       HorizontalAdornerPlacement="Outside"
+                       VerticalAdornerPlacement="Outside"
                        IsAdornerVisible="{Binding IsAdornerVisible, Mode=TwoWay}"
                        IsMouseOverShowEnabled="{Binding IsMouseOverShowEnabled}"
                        OpenAdornerTimeOut="{Binding OpenAdornerTimeOut}"
                        CloseAdornerTimeOut="{Binding CloseAdornerTimeOut}">
         <!--This is the adorner-->
         <ac:AdornedControl.AdornerContent>
-            <Canvas HorizontalAlignment="Center" VerticalAlignment="Center"
-                    Width="{Binding Width}" Height="{Binding Height}">
+            <Canvas HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Width="{Binding Width}"
+                    Height="{Binding Height}">
 
-                <Rectangle Stroke="Black" StrokeDashArray="0.5 1.0 0.3" StrokeThickness="2"
-                           RadiusX="10" RadiusY="10"
-                           Canvas.Top="-5" Canvas.Left="-5"
+                <Rectangle Stroke="Black"
+                           StrokeDashArray="0.5 1.0 0.3"
+                           StrokeThickness="2"
+                           RadiusX="10"
+                           RadiusY="10"
+                           Canvas.Top="-5"
+                           Canvas.Left="-5"
                            Width="{Binding Width, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
                            Height="{Binding Height, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
                            Visibility="{Binding IsDefaultAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
@@ -67,8 +78,10 @@
                 <!--Close Button - on left-->
                 <Button Command="{Binding RemovePageObjectCommand}"
                         Cursor="Hand"
-                        Width="40" Height="40"
-                        Canvas.Left="-40" Canvas.Top="-40">
+                        Width="40"
+                        Height="40"
+                        Canvas.Left="-40"
+                        Canvas.Top="-40">
                     <Button.Visibility>
                         <MultiBinding Converter="{StaticResource AllBoolToVisibilityMultiConverter}">
                             <Binding Path="IsDefaultAdornerVisible" />
@@ -78,11 +91,16 @@
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Grid>
-                                <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
-                                         VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+                                <Ellipse Stroke="Black"
+                                         StrokeThickness="3"
+                                         Fill="White"
+                                         VerticalAlignment="Stretch"
+                                         HorizontalAlignment="Stretch" />
                                 <Path Data="M0,0 L1,1 M0,1 L1,0"
-                                      Stretch="Fill" Margin="5"
-                                      Stroke="Red" StrokeThickness="3" />
+                                      Stretch="Fill"
+                                      Margin="5"
+                                      Stroke="Red"
+                                      StrokeThickness="3" />
                             </Grid>
                         </ControlTemplate>
                     </Button.Template>
@@ -114,8 +132,10 @@
 
                 <!--Drag Thumb - on right-->
                 <Thumb Cursor="ScrollAll"
-                       Width="40" Height="40"
-                       Canvas.Right="-40" Canvas.Top="-40">
+                       Width="40"
+                       Height="40"
+                       Canvas.Right="-40"
+                       Canvas.Top="-40">
                     <Thumb.Visibility>
                         <MultiBinding Converter="{StaticResource AllBoolToVisibilityMultiConverter}">
                             <Binding Path="IsDefaultAdornerVisible" />
@@ -124,31 +144,49 @@
                     </Thumb.Visibility>
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="DragDelta">
-                            <catel:EventToCommand Command="{Binding DragPageObjectCommand}" PassEventArgsToCommand="True" />
+                            <catel:EventToCommand Command="{Binding DragPageObjectCommand}"
+                                                  PassEventArgsToCommand="True" />
                         </i:EventTrigger>
                         <i:EventTrigger EventName="DragStarted">
-                            <catel:EventToCommand Command="{Binding DragStartPageObjectCommand}" PassEventArgsToCommand="True" />
+                            <catel:EventToCommand Command="{Binding DragStartPageObjectCommand}"
+                                                  PassEventArgsToCommand="True" />
                         </i:EventTrigger>
                         <i:EventTrigger EventName="DragCompleted">
-                            <catel:EventToCommand Command="{Binding DragStopPageObjectCommand}" PassEventArgsToCommand="True" />
+                            <catel:EventToCommand Command="{Binding DragStopPageObjectCommand}"
+                                                  PassEventArgsToCommand="True" />
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                     <Thumb.Template>
                         <ControlTemplate>
                             <Grid>
-                                <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
-                                         VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
-                                <Path Stroke="Black" StrokeThickness="1" Fill="Black"
+                                <Ellipse Stroke="Black"
+                                         StrokeThickness="3"
+                                         Fill="White"
+                                         VerticalAlignment="Stretch"
+                                         HorizontalAlignment="Stretch" />
+                                <Path Stroke="Black"
+                                      StrokeThickness="1"
+                                      Fill="Black"
                                       Data="M 5,20 L 10,15 L 10,25 L 5,20" />
-                                <Path Stroke="Black" StrokeThickness="1" Fill="Black"
+                                <Path Stroke="Black"
+                                      StrokeThickness="1"
+                                      Fill="Black"
                                       Data="M 35,20 L 30,15 L 30,25 L 35,20" />
-                                <Path Stroke="Black" StrokeThickness="1" Fill="Black"
+                                <Path Stroke="Black"
+                                      StrokeThickness="1"
+                                      Fill="Black"
                                       Data="M 20,5 L 20,35" />
-                                <Path Stroke="Black" StrokeThickness="1" Fill="Black"
+                                <Path Stroke="Black"
+                                      StrokeThickness="1"
+                                      Fill="Black"
                                       Data="M 20,35 L 15,30 L 25,30 L 20,35" />
-                                <Path Stroke="Black" StrokeThickness="1" Fill="Black"
+                                <Path Stroke="Black"
+                                      StrokeThickness="1"
+                                      Fill="Black"
                                       Data="M 20,5 L 15,10 L 25,10 L 20,5" />
-                                <Path Stroke="Black" StrokeThickness="1" Fill="Black"
+                                <Path Stroke="Black"
+                                      StrokeThickness="1"
+                                      Fill="Black"
                                       Data="M 5,20 L 35,20" />
                             </Grid>
                         </ControlTemplate>
@@ -229,8 +267,10 @@
 
                 <!--Drag and Snap Thumb - on right-->
                 <Thumb Cursor="ScrollAll"
-                       Width="40" Height="40"
-                       Canvas.Right="-50" Canvas.Top="20">
+                       Width="40"
+                       Height="40"
+                       Canvas.Right="-50"
+                       Canvas.Top="20">
                     <Thumb.Visibility>
                         <MultiBinding Converter="{StaticResource AllBoolToVisibilityMultiConverter}">
                             <Binding Path="IsDefaultAdornerVisible" />
@@ -240,46 +280,61 @@
                     </Thumb.Visibility>
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="DragDelta">
-                            <catel:EventToCommand Command="{Binding DragPageObjectCommand}" PassEventArgsToCommand="True" />
+                            <catel:EventToCommand Command="{Binding DragPageObjectCommand}"
+                                                  PassEventArgsToCommand="True" />
                         </i:EventTrigger>
                         <i:EventTrigger EventName="DragStarted">
-                            <catel:EventToCommand Command="{Binding DragStartPageObjectCommand}" PassEventArgsToCommand="True" />
+                            <catel:EventToCommand Command="{Binding DragStartPageObjectCommand}"
+                                                  PassEventArgsToCommand="True" />
                         </i:EventTrigger>
                         <i:EventTrigger EventName="DragCompleted">
-                            <catel:EventToCommand Command="{Binding DragStopAndSnapCommand}" PassEventArgsToCommand="True" />
+                            <catel:EventToCommand Command="{Binding DragStopAndSnapCommand}"
+                                                  PassEventArgsToCommand="True" />
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                     <Thumb.Template>
                         <ControlTemplate>
-                            <Image Source="pack://application:,,,/Resources/Images/AdornerImages/ArraySnap64.png" Height="40" Width="40" />
+                            <Image Source="pack://application:,,,/Resources/Images/AdornerImages/ArraySnap64.png"
+                                   Height="40"
+                                   Width="40" />
                         </ControlTemplate>
                     </Thumb.Template>
                 </Thumb>
 
                 <!--Resize Thumb-->
                 <Thumb Cursor="SizeNWSE"
-                       Width="40" Height="40"
-                       Canvas.Right="-40" Canvas.Bottom="-40"
+                       Width="40"
+                       Height="40"
+                       Canvas.Right="-40"
+                       Canvas.Bottom="-40"
                        Visibility="{Binding IsDefaultAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="DragDelta">
-                            <catel:EventToCommand Command="{Binding ResizeArrayCommand}" PassEventArgsToCommand="True" />
+                            <catel:EventToCommand Command="{Binding ResizeArrayCommand}"
+                                                  PassEventArgsToCommand="True" />
                         </i:EventTrigger>
                         <i:EventTrigger EventName="DragStarted">
-                            <catel:EventToCommand Command="{Binding ResizeStartPageObjectCommand}" PassEventArgsToCommand="True" />
+                            <catel:EventToCommand Command="{Binding ResizeStartPageObjectCommand}"
+                                                  PassEventArgsToCommand="True" />
                         </i:EventTrigger>
                         <i:EventTrigger EventName="DragCompleted">
-                            <catel:EventToCommand Command="{Binding ResizeStopPageObjectCommand}" PassEventArgsToCommand="True" />
+                            <catel:EventToCommand Command="{Binding ResizeStopPageObjectCommand}"
+                                                  PassEventArgsToCommand="True" />
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                     <Thumb.Template>
                         <ControlTemplate>
                             <Grid>
-                                <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
-                                         VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
-                                <Path Stroke="Black" StrokeThickness="1"
+                                <Ellipse Stroke="Black"
+                                         StrokeThickness="3"
+                                         Fill="White"
+                                         VerticalAlignment="Stretch"
+                                         HorizontalAlignment="Stretch" />
+                                <Path Stroke="Black"
+                                      StrokeThickness="1"
                                       Data="M 8,23 L 23,23 L 23,8" />
-                                <Path Stroke="Black" StrokeThickness="1"
+                                <Path Stroke="Black"
+                                      StrokeThickness="1"
                                       Data="M 12,27 L 27,27 L 27,12" />
                             </Grid>
                         </ControlTemplate>
@@ -288,18 +343,24 @@
 
                 <!--Toggle Grid Button-->
                 <Button Command="{Binding ToggleGridCommand}"
-                        Width="40" Height="40"
+                        Width="40"
+                        Height="40"
                         Canvas.Left="20"
                         Canvas.Bottom="-50"
                         Visibility="{Binding IsToggleGridAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Grid>
-                                <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
-                                         VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+                                <Ellipse Stroke="Black"
+                                         StrokeThickness="3"
+                                         Fill="White"
+                                         VerticalAlignment="Stretch"
+                                         HorizontalAlignment="Stretch" />
                                 <Path Data="M.35,.25 L.35,.75 M.65,.25 L.65,.75 M.25,.35 L.75,.35 M.25,.65 L.75,.65"
-                                      Stretch="Fill" Margin="5"
-                                      Stroke="PowderBlue" StrokeThickness="3" />
+                                      Stretch="Fill"
+                                      Margin="5"
+                                      Stroke="PowderBlue"
+                                      StrokeThickness="3" />
                             </Grid>
                         </ControlTemplate>
                     </Button.Template>
@@ -307,22 +368,30 @@
 
                 <!--Toggle Division Adorners Button-->
                 <Button Command="{Binding ToggleDivisionAdornersCommand}"
-                        Width="40" Height="40"
+                        Width="40"
+                        Height="40"
                         Canvas.Left="-50"
                         Canvas.Bottom="20"
                         Visibility="{Binding IsToggleDivisionAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Grid>
-                                <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
-                                         VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+                                <Ellipse Stroke="Black"
+                                         StrokeThickness="3"
+                                         Fill="White"
+                                         VerticalAlignment="Stretch"
+                                         HorizontalAlignment="Stretch" />
                                 <Path Data="M0,1 L1,.5 L0,0 M-1,.5 L1,.5"
-                                      Stretch="Fill" Margin="5"
-                                      Stroke="{StaticResource LeftLabelColor}" StrokeThickness="3" />
+                                      Stretch="Fill"
+                                      Margin="5"
+                                      Stroke="{StaticResource LeftLabelColor}"
+                                      StrokeThickness="3" />
                                 <Path Data="M.25,.25 L.75,.75"
-                                      Stretch="Fill" Margin="5"
-                                      Stroke="Red" StrokeThickness="3"
-                                      Visibility="{Binding IsDivisionBehaviorOn, Converter={StaticResource BooleanToHidingVisibilityConverter}, ConverterParameter=False}"/>
+                                      Stretch="Fill"
+                                      Margin="5"
+                                      Stroke="Red"
+                                      StrokeThickness="3"
+                                      Visibility="{Binding IsDivisionBehaviorOn, Converter={StaticResource BooleanToHidingVisibilityConverter}, ConverterParameter=False}" />
                             </Grid>
                         </ControlTemplate>
                     </Button.Template>
@@ -330,7 +399,8 @@
 
                 <!--Rotate Array Button - on right-->
                 <Button Command="{Binding RotateArrayCommand}"
-                        Width="40" Height="40"
+                        Width="40"
+                        Height="40"
                         Canvas.Right="20"
                         Canvas.Top="-50">
                     <Button.Visibility>
@@ -342,11 +412,17 @@
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Grid>
-                                <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
-                                         VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+                                <Ellipse Stroke="Black"
+                                         StrokeThickness="3"
+                                         Fill="White"
+                                         VerticalAlignment="Stretch"
+                                         HorizontalAlignment="Stretch" />
                                 <Image Source="pack://application:,,,/Resources/Images/AdornerImages/ArrayRotate64.png"
-                                       Height="25" Width="25" Margin="6"
-                                       HorizontalAlignment="Left" VerticalAlignment="Top" />
+                                       Height="25"
+                                       Width="25"
+                                       Margin="6"
+                                       HorizontalAlignment="Left"
+                                       VerticalAlignment="Top" />
                             </Grid>
                         </ControlTemplate>
                     </Button.Template>
@@ -379,18 +455,24 @@
                 <!--Duplicate Array Button-->
                 <Button Command="{Binding DuplicateArrayCommand}"
                         Cursor="Hand"
-                        Width="40" Height="40"
+                        Width="40"
+                        Height="40"
                         Canvas.Left="-40"
                         Canvas.Bottom="-40"
                         Visibility="{Binding IsDefaultAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Grid>
-                                <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
-                                         VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
-                                <Path Data="M0.5,0 L0.5,1 M0,0.5 L1,0.5" 
-                                      Stretch="Fill" Margin="5"
-                                      Stroke="Green" StrokeThickness="3" />
+                                <Ellipse Stroke="Black"
+                                         StrokeThickness="3"
+                                         Fill="White"
+                                         VerticalAlignment="Stretch"
+                                         HorizontalAlignment="Stretch" />
+                                <Path Data="M0.5,0 L0.5,1 M0,0.5 L1,0.5"
+                                      Stretch="Fill"
+                                      Margin="5"
+                                      Stroke="Green"
+                                      StrokeThickness="3" />
                             </Grid>
                         </ControlTemplate>
                     </Button.Template>
@@ -398,8 +480,10 @@
 
                 <!--Left Divisor Line-->
                 <Rectangle IsHitTestVisible="False"
-                           StrokeDashArray="1.0 3.0" StrokeThickness="3"
-                           Stroke="{StaticResource LeftLabelColor}" Fill="Transparent"
+                           StrokeDashArray="1.0 3.0"
+                           StrokeThickness="3"
+                           Stroke="{StaticResource LeftLabelColor}"
+                           Fill="Transparent"
                            Height="3"
                            Width="{Binding ArrayWidth}"
                            Canvas.Left="22"
@@ -408,20 +492,28 @@
 
                 <!--Left Divisor Button-->
                 <Button Command="{Binding CreateHorizontalDivisionCommand}"
-                        MouseLeave="DivisorButton_Leave" MouseEnter="DivisorButton_Enter" MouseMove="LeftDivisorButton_Mouse"
+                        MouseLeave="DivisorButton_Leave"
+                        MouseEnter="DivisorButton_Enter"
+                        MouseMove="LeftDivisorButton_Mouse"
                         Cursor="SizeWE"
-                        Width="30" Height="30"
+                        Width="30"
+                        Height="30"
                         Canvas.Left="17"
                         Canvas.Top="{Binding LeftArrowPosition, Converter={StaticResource LengthConverter}, ConverterParameter=7}"
                         Visibility="{Binding IsLeftAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Grid>
-                                <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
-                                         VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+                                <Ellipse Stroke="Black"
+                                         StrokeThickness="3"
+                                         Fill="White"
+                                         VerticalAlignment="Stretch"
+                                         HorizontalAlignment="Stretch" />
                                 <Path Data="M0,1 L1,.5 L0,0 M-1,.5 L1,.5"
-                                      Stretch="Fill" Margin="5"
-                                      Stroke="{StaticResource LeftLabelColor}" StrokeThickness="3" />
+                                      Stretch="Fill"
+                                      Margin="5"
+                                      Stroke="{StaticResource LeftLabelColor}"
+                                      StrokeThickness="3" />
                             </Grid>
                         </ControlTemplate>
                     </Button.Template>
@@ -429,8 +521,10 @@
 
                 <!--Top Divisor Line-->
                 <Rectangle IsHitTestVisible="False"
-                           StrokeDashArray="1.0 3.0" StrokeThickness="3"
-                           Stroke="{StaticResource TopLabelColor}" Fill="Transparent"
+                           StrokeDashArray="1.0 3.0"
+                           StrokeThickness="3"
+                           Stroke="{StaticResource TopLabelColor}"
+                           Fill="Transparent"
                            Height="{Binding ArrayHeight}"
                            Width="3"
                            Canvas.Top="22"
@@ -439,20 +533,28 @@
 
                 <!--Top Divisor Button-->
                 <Button Command="{Binding CreateVerticalDivisionCommand}"
-                        MouseLeave="DivisorButton_Leave" MouseEnter="DivisorButton_Enter" MouseMove="TopDivisorButton_Mouse"
+                        MouseLeave="DivisorButton_Leave"
+                        MouseEnter="DivisorButton_Enter"
+                        MouseMove="TopDivisorButton_Mouse"
                         Cursor="SizeNS"
-                        Width="30" Height="30"
+                        Width="30"
+                        Height="30"
                         Canvas.Top="17"
                         Canvas.Left="{Binding TopArrowPosition, Converter={StaticResource LengthConverter}, ConverterParameter=7}"
                         Visibility="{Binding IsTopAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Grid>
-                                <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
-                                         VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+                                <Ellipse Stroke="Black"
+                                         StrokeThickness="3"
+                                         Fill="White"
+                                         VerticalAlignment="Stretch"
+                                         HorizontalAlignment="Stretch" />
                                 <Path Data="M-.5,.5 L0,1 L.5,.5 M0,0 L0,1"
-                                      Stretch="Fill" Margin="5"
-                                      Stroke="{StaticResource TopLabelColor}" StrokeThickness="3" />
+                                      Stretch="Fill"
+                                      Margin="5"
+                                      Stroke="{StaticResource TopLabelColor}"
+                                      StrokeThickness="3" />
                             </Grid>
                         </ControlTemplate>
                     </Button.Template>
@@ -461,7 +563,8 @@
             </Canvas>
         </ac:AdornedControl.AdornerContent>
 
-        <Grid Width="{Binding Width}" Height="{Binding Height}">
+        <Grid Width="{Binding Width}"
+              Height="{Binding Height}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="{Binding PageObject.LabelLength}" />
                 <RowDefinition Height="Auto" />
@@ -472,18 +575,25 @@
             </Grid.ColumnDefinitions>
 
             <!--Large Labels-->
-            <TextBlock Grid.Column="1" Grid.Row="0" IsHitTestVisible="False"
-                       Text="{Binding Columns}" TextAlignment="Center"
-                       FontWeight="Bold" FontSize="{Binding PageObject.LabelLength}"
+            <TextBlock Grid.Column="1"
+                       Grid.Row="0"
+                       IsHitTestVisible="False"
+                       Text="{Binding Columns}"
+                       TextAlignment="Center"
+                       FontWeight="Bold"
+                       FontSize="{Binding PageObject.LabelLength}"
                        Foreground="{StaticResource TopLabelColor}"
                        Height="{Binding PageObject.LabelLength}"
                        Width="{Binding ArrayWidth}"
-                       Visibility="{Binding IsTopLabelVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
-            </TextBlock>
+                       Visibility="{Binding IsTopLabelVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-            <TextBlock Grid.Column="0" Grid.Row="1" IsHitTestVisible="False"
-                       Text="{Binding Rows}" TextAlignment="Center"
-                       FontWeight="Bold" FontSize="{Binding PageObject.LabelLength}"
+            <TextBlock Grid.Column="0"
+                       Grid.Row="1"
+                       IsHitTestVisible="False"
+                       Text="{Binding Rows}"
+                       TextAlignment="Center"
+                       FontWeight="Bold"
+                       FontSize="{Binding PageObject.LabelLength}"
                        Foreground="{StaticResource LeftLabelColor}"
                        Height="{Binding PageObject.LabelLength}"
                        Width="{Binding ArrayHeight}"
@@ -499,30 +609,85 @@
             </TextBlock>
 
             <!--Background Color for Array-->
-            <Rectangle Grid.Row="1" Grid.Column="1"
-                       Width="{Binding ArrayWidth}" Height="{Binding ArrayHeight}"
+            <Rectangle Grid.Row="1"
+                       Grid.Column="1"
+                       Width="{Binding ArrayWidth}"
+                       Height="{Binding ArrayHeight}"
                        StrokeThickness="0" />
-                       <!--Fill="{Binding PageObject.BackgroundColor}"  Opacity="0.20" />-->
+            <!--Fill="{Binding PageObject.BackgroundColor}"  Opacity="0.20" />-->
 
             <!--This is the actual array-->
-            <Rectangle x:Name="Array" Grid.Row="1" Grid.Column="1"
+            <Rectangle x:Name="Array"
+                       Grid.Row="1"
+                       Grid.Column="1"
                        Tag="ArrayBodyHitBox"
-                       Width="{Binding ArrayWidth}" Height="{Binding ArrayHeight}"
-                       Fill="Transparent" Stroke="Black" StrokeThickness="3">
+                       Width="{Binding ArrayWidth}"
+                       Height="{Binding ArrayHeight}"
+                       Stroke="Black"
+                       StrokeThickness="3">
+                <Rectangle.Style>
+                    <Style TargetType="{x:Type Rectangle}">
+                        <Setter Property="Fill"
+                                Value="Transparent" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsGridOn}"
+                                         Value="True">
+                                <Setter Property="Fill">
+                                    <Setter.Value>
+
+                                        <DrawingBrush TileMode="Tile"
+                                                      ViewportUnits="RelativeToBoundingBox">
+                                            <DrawingBrush.Viewport>
+                                                <MultiBinding Converter="{StaticResource RatioToRectMultiConverter}">
+                                                    <Binding Path="ArrayWidth" />
+                                                    <Binding Path="ArrayHeight" />
+                                                    <Binding Path="GridSquareSize" />
+                                                </MultiBinding>
+                                            </DrawingBrush.Viewport>
+                                            <DrawingBrush.Drawing>
+                                                <DrawingGroup>
+                                                    <!--Horizontal Grid Line-->
+                                                    <GeometryDrawing Geometry="M0,20 L20,20">
+                                                        <GeometryDrawing.Pen>
+                                                            <Pen Thickness="1"
+                                                                 Brush="PowderBlue" />
+                                                        </GeometryDrawing.Pen>
+                                                    </GeometryDrawing>
+                                                    <!--Vertical Grid Line-->
+                                                    <GeometryDrawing Geometry="M20,0 L20,20">
+                                                        <GeometryDrawing.Pen>
+                                                            <Pen Thickness="1"
+                                                                 Brush="PowderBlue" />
+                                                        </GeometryDrawing.Pen>
+                                                    </GeometryDrawing>
+                                                </DrawingGroup>
+                                            </DrawingBrush.Drawing>
+                                        </DrawingBrush>
+
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Rectangle.Style>
+
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="PreviewMouseUp">
-                        <catel:EventToCommand Command="{Binding ToggleMainArrayAdornersCommand}" PassEventArgsToCommand="True" />
+                        <catel:EventToCommand Command="{Binding ToggleMainArrayAdornersCommand}"
+                                              PassEventArgsToCommand="True" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </Rectangle>
 
             <!--Horizontal Divisions-->
-            <ItemsControl Grid.Row="1" Grid.Column="1"
+            <ItemsControl Grid.Row="1"
+                          Grid.Column="1"
                           ItemsSource="{Binding HorizontalDivisions}"
                           ItemContainerStyle="{StaticResource HorizontalDivisionStyle}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <Canvas Height="Auto" Width="Auto" />
+                        <Canvas Height="Auto"
+                                Width="Auto" />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
@@ -531,11 +696,13 @@
                                 Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
                             <!--The Visible Division Line-->
                             <Rectangle Tag="DivisionHitBox"
-                                       Height="3" Margin="3 0"
+                                       Height="3"
+                                       Margin="3 0"
                                        Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, 
                                                                     Converter={StaticResource LengthConverter}, 
                                                                     ConverterParameter=-6}"
-                                       StrokeThickness="0" Fill="{StaticResource LeftLabelColor}"
+                                       StrokeThickness="0"
+                                       Fill="{StaticResource LeftLabelColor}"
                                        Visibility="{Binding Position, Converter={StaticResource DoubleToVisibilityConverter}}">
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="MouseEnter">
@@ -547,14 +714,16 @@
                             </Rectangle>
 
                             <!--The Small Label-->
-                            <Grid Canvas.Right="{Binding DataContext.PageObject.LabelLength, 
+                            <Grid
+                                Canvas.Right="{Binding DataContext.PageObject.LabelLength, 
                                                          RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}},
                                                          Converter={StaticResource NegativeLengthSubtractConverter},
                                                          ConverterParameter=0}"
-                                  Height="{Binding Length}"
-                                  Width="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
+                                Height="{Binding Length}"
+                                Width="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
                                 <TextBlock IsHitTestVisible="False"
-                                           Text="{Binding Value, Converter={StaticResource ZeroToQuestionMarkConverter}}" TextAlignment="Center"
+                                           Text="{Binding Value, Converter={StaticResource ZeroToQuestionMarkConverter}}"
+                                           TextAlignment="Center"
                                            FontSize="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
                                            Foreground="{StaticResource LeftLabelColor}"
                                            Height="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
@@ -568,15 +737,19 @@
                                         </TransformGroup>
                                     </TextBlock.LayoutTransform>
                                 </TextBlock>
-                                <Rectangle Tag="LeftLabelHitBox" Fill="Transparent" MouseMove="LeftDivisorButton_Mouse"
+                                <Rectangle Tag="LeftLabelHitBox"
+                                           Fill="Transparent"
+                                           MouseMove="LeftDivisorButton_Mouse"
                                            Width="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
                                            Height="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
-                                           VerticalAlignment="Center" HorizontalAlignment="Center">
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Center">
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="MouseUp">
                                             <catel:EventToCommand
                                                 Command="{Binding DataContext.EditLabelCommand, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
-                                                PassEventArgsToCommand="False" CommandParameter="{Binding}" />
+                                                PassEventArgsToCommand="False"
+                                                CommandParameter="{Binding}" />
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
                                 </Rectangle>
@@ -587,12 +760,14 @@
             </ItemsControl>
 
             <!--Vertical Divisions-->
-            <ItemsControl Grid.Row="1" Grid.Column="1"
+            <ItemsControl Grid.Row="1"
+                          Grid.Column="1"
                           ItemsSource="{Binding VerticalDivisions}"
                           ItemContainerStyle="{StaticResource VerticalDivisionStyle}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <Canvas Height="Auto" Width="Auto" />
+                        <Canvas Height="Auto"
+                                Width="Auto" />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
@@ -601,11 +776,13 @@
                                 Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
                             <!--The Visible Division Line-->
                             <Rectangle Tag="DivisionHitBox"
-                                       Width="3" Margin="0 3"
+                                       Width="3"
+                                       Margin="0 3"
                                        Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, 
                                                                       Converter={StaticResource LengthConverter}, 
                                                                       ConverterParameter=-6}"
-                                       StrokeThickness="0" Fill="{StaticResource TopLabelColor}"
+                                       StrokeThickness="0"
+                                       Fill="{StaticResource TopLabelColor}"
                                        Visibility="{Binding Position, Converter={StaticResource DoubleToVisibilityConverter}}">
                                 <i:Interaction.Triggers>
                                     <i:EventTrigger EventName="MouseEnter">
@@ -617,27 +794,33 @@
                             </Rectangle>
 
                             <!--The Small Label-->
-                            <Grid Canvas.Bottom="{Binding DataContext.PageObject.LabelLength, 
+                            <Grid
+                                Canvas.Bottom="{Binding DataContext.PageObject.LabelLength, 
                                                           RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}},
                                                           Converter={StaticResource NegativeLengthSubtractConverter},
                                                           ConverterParameter=0}"
-                                  Width="{Binding Length}"
-                                  Height="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
-                                <TextBlock IsHitTestVisible="False" 
-                                           Text="{Binding Value, Converter={StaticResource ZeroToQuestionMarkConverter}}" TextAlignment="Center"
+                                Width="{Binding Length}"
+                                Height="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
+                                <TextBlock IsHitTestVisible="False"
+                                           Text="{Binding Value, Converter={StaticResource ZeroToQuestionMarkConverter}}"
+                                           TextAlignment="Center"
                                            FontSize="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
                                            Foreground="{StaticResource TopLabelColor}"
                                            Height="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
                                            Width="{Binding Length}" />
-                                <Rectangle Tag="TopLabelHitBox" Fill="Transparent" MouseMove="TopDivisorButton_Mouse"
+                                <Rectangle Tag="TopLabelHitBox"
+                                           Fill="Transparent"
+                                           MouseMove="TopDivisorButton_Mouse"
                                            Width="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
                                            Height="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
-                                           VerticalAlignment="Center" HorizontalAlignment="Center">
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Center">
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="MouseUp">
                                             <catel:EventToCommand
                                                 Command="{Binding DataContext.EditLabelCommand, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
-                                                PassEventArgsToCommand="False" CommandParameter="{Binding}" />
+                                                PassEventArgsToCommand="False"
+                                                CommandParameter="{Binding}" />
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
                                 </Rectangle>
@@ -648,24 +831,30 @@
             </ItemsControl>
 
             <!--Divisor Hitboxes-->
-            <Rectangle Grid.Column="1" Grid.Row="1" Fill="Transparent"
+            <Rectangle Grid.Column="1"
+                       Grid.Row="1"
+                       Fill="Transparent"
                        Margin="-8 0 0 0"
                        HorizontalAlignment="Left"
                        VerticalAlignment="Top"
                        Tag="DivisionHitBox"
                        MouseMove="ArrayLeftHitBox_MouseMove"
                        MouseLeave="ArrayDivisionHitBox_MouseLeave"
-                       Width="13" Height="{Binding ArrayHeight}"
+                       Width="13"
+                       Height="{Binding ArrayHeight}"
                        IsHitTestVisible="{Binding IsDivisionBehaviorOn}" />
 
-            <Rectangle Grid.Column="1" Grid.Row="1" Fill="Transparent"
+            <Rectangle Grid.Column="1"
+                       Grid.Row="1"
+                       Fill="Transparent"
                        Margin="0 -8 0 0"
                        HorizontalAlignment="Left"
                        VerticalAlignment="Top"
                        Tag="DivisionHitBox"
                        MouseMove="ArrayTopHitBox_MouseMove"
                        MouseLeave="ArrayDivisionHitBox_MouseLeave"
-                       Height="13" Width="{Binding ArrayWidth}"
+                       Height="13"
+                       Width="{Binding ArrayWidth}"
                        IsHitTestVisible="{Binding IsDivisionBehaviorOn}" />
 
         </Grid>
