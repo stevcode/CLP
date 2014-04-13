@@ -232,17 +232,17 @@ namespace CLP.Entities
 
         #region Calculated Properties
 
-        public double ArrayWidth
+        public virtual double ArrayWidth
         {
             get { return Width - (2 * LabelLength); }
         }
 
-        public double ArrayHeight
+        public virtual double ArrayHeight
         {
             get { return Height - (2 * LabelLength); }
         }
 
-        public double GridSquareSize
+        public virtual double GridSquareSize
         {
             get { return ArrayWidth / Columns; }
         }
