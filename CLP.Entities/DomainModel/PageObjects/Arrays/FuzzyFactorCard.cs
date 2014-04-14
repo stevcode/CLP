@@ -249,50 +249,34 @@ namespace CLP.Entities
             base.OnDeleted();
 
             // FFC deleted tag
-            //ObservableCollection<Tag> tags = ParentPage.PageTags;
-            //ProductRelation relation = null;
-            //foreach(Tag tag in tags)
-            //{
-            //    if(tag.TagType.Name == PageDefinitionTagType.Instance.Name)
-            //    {
-            //        relation = (ProductRelation)tag.Value[0].Value;
-            //        break;
-            //    }
-            //}
+            ObservableCollection<ATagBase> tags = ParentPage.Tags;
+            ProductRelation relation = null;
+            foreach(ATagBase tag in tags)
+            {
+                if(tag is PageDefinitionTag)
+                {
+                    relation = ProductRelation.fromString(tag.Value);
+                    break;
+                }
+            }
 
-            //if(relation != null)
-            //{
-            //    int factor1 = Convert.ToInt32(relation.Factor1);
-            //    int factor2 = Convert.ToInt32(relation.Factor2);
-            //    int product = Convert.ToInt32(relation.Product);
+            if(relation != null)
+            {
+                int factor1 = Convert.ToInt32(relation.Factor1);
+                int factor2 = Convert.ToInt32(relation.Factor2);
+                int product = Convert.ToInt32(relation.Product);
 
-            //    string tagValue;
-            //    if(product == Dividend && ((factor1 == Rows && relation.Factor1Given) || (factor2 == Rows && relation.Factor2Given)))
-            //    {
-            //        tagValue = "deleted correct division object";
-            //    }
-            //    else
-            //    {
-            //        tagValue = "deleted incorrect division object";
-            //    }
-
-            //    bool hasTag = false;
-            //    foreach(Tag tag in ParentPage.PageTags.ToList())
-            //    {
-            //        if(tag.TagType.Name == FuzzyFactorCardDeletedTagType.Instance.Name)
-            //        {
-            //            tag.Value.Add(new TagOptionValue(tagValue));
-            //            hasTag = true;
-            //            continue;
-            //        }
-            //    }
-            //    if(!hasTag)
-            //    {
-            //        var tag = new Tag(Tag.Origins.Generated, FuzzyFactorCardDeletedTagType.Instance);
-            //        tag.AddTagOptionValue(new TagOptionValue(tagValue));
-            //        ParentPage.PageTags.Add(tag);
-            //    }
-            //}
+                if(product == Dividend && ((factor1 == Rows && relation.Factor1Given) || (factor2 == Rows && relation.Factor2Given)))
+                {
+                    var tag = new FuzzyFactorCardDeletedTag(ParentPage, ("Deleted correct division object: " + Dividend + "/" + Rows));
+                    ParentPage.Tags.Add(tag);
+                }
+                else
+                {
+                    var tag = new FuzzyFactorCardDeletedTag(ParentPage, ("Deleted incorrect division object: " + Dividend + "/" + Rows));
+                    ParentPage.Tags.Add(tag);
+                }
+            }
         }
 
         public override void SizeArrayToGridLevel(double toSquareSize = -1, bool recalculateDivisions = true)
