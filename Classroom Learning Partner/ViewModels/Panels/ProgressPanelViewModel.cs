@@ -40,7 +40,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         void ProgressPanelViewModel_Initialized(object sender, EventArgs e)
         {
-            var calculatedWidth = CurrentPages.Count * 40 + 65;
+            var calculatedWidth = CurrentPages.Count * 40 + 70;
             if(App.Current.MainWindow.ActualWidth < calculatedWidth * 2)
             {
                 Length = App.Current.MainWindow.ActualWidth / 2;
