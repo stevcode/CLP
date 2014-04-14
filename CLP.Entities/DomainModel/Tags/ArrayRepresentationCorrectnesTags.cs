@@ -1,7 +1,9 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 
 namespace CLP.Entities
 {
+    [Serializable]
     public class ArrayRepresentationCorrectnessTag : ATagBase
     {
         public enum AcceptedValues

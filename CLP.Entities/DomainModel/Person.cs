@@ -10,6 +10,7 @@ namespace CLP.Entities
         Left
     }
 
+    [Serializable]
     public class Person : AEntityBase
     {
         private const string AUTHOR_ID = "00000000-0000-0000-1111-000000000001";
@@ -77,19 +78,64 @@ namespace CLP.Entities
 
         public static readonly PropertyData HandednessProperty = RegisterProperty("Handedness", typeof(Handedness), Handedness.Right);
 
+        /// <summary>
+        /// Signifies the <see cref="Person" /> is a student.
+        /// </summary>
+        public bool IsStudent
+        {
+            get { return GetValue<bool>(IsStudentProperty); }
+            set { SetValue(IsStudentProperty, value); }
+        }
+
+        public static readonly PropertyData IsStudentProperty = RegisterProperty("IsStudent", typeof(bool), true);
+
         #endregion //Properties
 
+        private static readonly Person DefaultAuthor = new Person
+                                                       {
+                                                           ID = AUTHOR_ID,
+                                                           FullName = "AUTHOR",
+                                                           IsStudent = false
+                                                       };
         public static Person Author
         {
             get
             {
-                var author = new Person
-                             {
-                                 ID = AUTHOR_ID,
-                                 FullName = "AUTHOR"
-                             };
-                return author;
+                return DefaultAuthor;
             }
         }
+
+        //TODO: Remove once database established
+        private const string EMILY_ID = "00000000-0000-0000-2222-000000000002";
+        public static Person Emily
+        {
+            get
+            {
+                return _teacherPerson;
+            }
+        }
+        private static readonly Person _teacherPerson = new Person
+                              {
+                                  ID = EMILY_ID,
+                                  FullName = "Emily Sparks",
+                                  IsStudent = false
+                              };
+
+        private const string EMILY_PROJECTOR_ID = "00000000-0000-0000-2222-000000000003";
+        public static Person EmilyProjector
+        {
+            get
+            {
+                return _projectorPerson;
+            }
+        }
+
+        private static readonly Person _projectorPerson = new Person
+                              {
+                                  ID = EMILY_PROJECTOR_ID,
+                                  FullName = "Projector",
+                                  Alias = "Emily Sparks",
+                                  IsStudent = false
+                              };
     }
 }

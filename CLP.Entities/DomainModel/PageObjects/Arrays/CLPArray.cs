@@ -14,6 +14,7 @@ namespace CLP.Entities
         FactorCard
     }
 
+    [Serializable]
     public class CLPArray : ACLPArrayBase, ICountable, ICuttable
     {
         #region Constructors

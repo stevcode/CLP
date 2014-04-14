@@ -1,7 +1,9 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 
 namespace CLP.Entities
 {
+    [Serializable]
     public class CorrectnessTag : ATagBase
     {
         public enum AcceptedValues
@@ -9,7 +11,7 @@ namespace CLP.Entities
             Correct,
             AlmostCorrect,
             Incorrect,
-            Uknown
+            Unknown
         }
 
         #region Constructors

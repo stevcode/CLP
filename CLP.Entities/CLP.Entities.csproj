@@ -135,7 +135,10 @@
     <Compile Include="DomainModel\Tags\FuzzyFactorCardFailedSnapTag.cs" />
     <Compile Include="DomainModel\Tags\FuzzyFactorCardIncorrectArrayCreationTag.cs" />
     <Compile Include="DomainModel\Tags\FuzzyFactorCardStrategyTag.cs" />
+    <Compile Include="DomainModel\Tags\PageDefinitionTag.cs" />
     <Compile Include="DomainModel\Tags\PageTopicTag.cs" />
+    <Compile Include="DomainModel\Tags\Relations\MathRelation.cs" />
+    <Compile Include="DomainModel\Tags\Relations\ProductRelation.cs" />
     <Compile Include="DomainModel\Tags\StarredTag.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

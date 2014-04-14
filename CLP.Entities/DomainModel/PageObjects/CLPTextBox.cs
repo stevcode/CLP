@@ -4,6 +4,7 @@ using Catel.Data;
 
 namespace CLP.Entities
 {
+    [Serializable]
     public class CLPTextBox : APageObjectBase
     {
         #region Constructors

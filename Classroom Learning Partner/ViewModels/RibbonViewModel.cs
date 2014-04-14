@@ -2954,65 +2954,33 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnEditPageDefinitionCommandExecute()
         {
-            // TODO: Entities
-            // Get the tags on this page
-            //Logger.Instance.WriteToLog("Page Definition");
-            ////var page = ((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as CLPMirrorDisplay).CurrentPage;
-            //var currentPage = CurrentPage;
-            //if(currentPage == null)
-            //{
-            //    return;
-            //}
-            //ObservableCollection<ATagBase> tags = currentPage.Tags;
+            if(CurrentPage == null)
+            {
+                return;
+            }
 
-            //// If the page already has a Page Definition tag, use that one
-            //ATagBase oldTag = null;
-            //ProductRelation oldRelation = null;
-            //foreach(ATagBase tag in tags)
-            //{
-            //    if(tag is PageDefinitionTag)
-            //    {
-            //        oldTag = tag;
-            //        oldRelation = (ProductRelation)oldTag.Value;
-            //        break;
-            //    }
-            //}
+            // If the page already has a Page Definition tag, start from that one
+            ProductRelation productRelation = new ProductRelation();
+            foreach(ATagBase tag in CurrentPage.Tags)
+            {
+                if(tag is PageDefinitionTag)
+                {
+                    productRelation = ProductRelation.fromString(tag.Value);
+                    break;
+                }
+            }
 
-            //// Otherwise, create a new page definition tag
-            //if(oldTag == null)
-            //{
-            //    oldRelation = new ProductRelation();
-            //}
+            ProductRelationViewModel viewModel = new ProductRelationViewModel(productRelation);
+            PageDefinitionView definitionView = new PageDefinitionView(viewModel);
+            definitionView.Owner = Application.Current.MainWindow;
+            definitionView.ShowDialog();
 
-            //ProductRelationViewModel viewModel = new ProductRelationViewModel(oldRelation);
-            //PageDefinitionView definitionView = new PageDefinitionView(viewModel);
-            //definitionView.Owner = Application.Current.MainWindow;
-            //definitionView.ShowDialog();
-
-            //if(definitionView.DialogResult == true)
-            //{
-            //    // Update this page's definition tag
-
-            //    if(oldTag != null)
-            //    {
-            //        tags.Remove(oldTag);
-            //    }
-
-            //    Tag newTag = new Tag(Tag.Origins.Author, PageDefinitionTagType.Instance);
-            //    newTag.Value.Add(new TagOptionValue(viewModel.Model));
-
-            //    tags.Add(newTag);
-            //}
-
-            //// Logs the currently tagged relation. TODO: Remove after testing
-            //foreach(Tag tag in tags)
-            //{
-            //    if(tag.TagType.Name == PageDefinitionTagType.Instance.Name)
-            //    {
-            //        Logger.Instance.WriteToLog(((ProductRelation)tag.Value[0].Value).GetExampleNumberSentence());
-            //    }
-            //}
-            //Logger.Instance.WriteToLog("End of OnEditPageDefinitionCommandExecute()");
+            if(definitionView.DialogResult == true)
+            {
+                // Update this page's definition tag
+                PageDefinitionTag newTag = new PageDefinitionTag(CurrentPage, productRelation);
+                CurrentPage.AddTag(newTag);
+            }
         }
 
         /// <summary>

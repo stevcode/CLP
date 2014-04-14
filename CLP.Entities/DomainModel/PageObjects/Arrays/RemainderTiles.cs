@@ -5,6 +5,7 @@ using Catel.Data;
 
 namespace CLP.Entities
 {
+    [Serializable]
     public class RemainderTiles : APageObjectBase
     {
         #region Constructors
