@@ -136,6 +136,18 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData DividendProperty = RegisterProperty("Dividend", typeof(int));
 
+        /// <summary>
+        /// Whether the grid is turned on.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public bool IsGridOn
+        {
+            get { return GetValue<bool>(IsGridOnProperty); }
+            set { SetValue(IsGridOnProperty, value); }
+        }
+
+        public static readonly PropertyData IsGridOnProperty = RegisterProperty("IsGridOn", typeof(bool));
+
         #endregion //Model
 
         #region Bindings
