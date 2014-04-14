@@ -2779,9 +2779,15 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
 
+            double MAX_HEIGHT = page.Height - 400.0;
+            if(squareSize == 0.0)
+            {
+                initializedSquareSize = Math.Min(initialGridsquareSize, MAX_HEIGHT / rows);
+            }
+
             firstArray.SizeArrayToGridLevel(initializedSquareSize);
-            firstArray.XPosition = 0.0;
-            firstArray.YPosition = 150.0;
+            firstArray.XPosition = 150.0;
+            firstArray.YPosition = 250.0;
             ACLPArrayBase.ApplyDistinctPosition(firstArray, App.Network.CurrentUser.ID);
             xPosition = firstArray.XPosition;
             yPosition = firstArray.YPosition;
@@ -2833,6 +2839,16 @@ namespace Classroom_Learning_Partner.ViewModels
                 firstArray.XPosition = xPosition;
                 firstArray.YPosition = yPosition;
                 firstArray.SizeArrayToGridLevel(initializedSquareSize);
+
+                if(firstArray.XPosition + firstArray.Width >= firstArray.ParentPage.Width)
+                {
+                    firstArray.XPosition = firstArray.ParentPage.Width - firstArray.Width;
+                }
+                if(firstArray.YPosition + firstArray.Height >= firstArray.ParentPage.Height)
+                {
+                    firstArray.YPosition = firstArray.ParentPage.Height - firstArray.Height;
+                }
+
                 ACLPPageBaseViewModel.AddPageObjectToPage(firstArray);
 
                 if(arrayType == "FFCREMAINDER")

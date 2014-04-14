@@ -13,7 +13,8 @@ namespace Classroom_Learning_Partner.Views
     {
         public ArrayCreationView()
         {
-            WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            Left = 515;
+            Top = 250;
             InitializeComponent();
             _focusedTextBox = Rows;
             _focusedTextBox.Focus();
