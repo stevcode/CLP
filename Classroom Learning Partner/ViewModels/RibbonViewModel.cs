@@ -2654,11 +2654,8 @@ namespace Classroom_Learning_Partner.ViewModels
             var firstArray = arraysToAdd.First();
             firstArray.SizeArrayToGridLevel();
             var initialGridsquareSize = firstArray.GridSquareSize;
-            firstArray.XPosition = 0.0;
-            firstArray.YPosition = 150.0;
-            ACLPArrayBase.ApplyDistinctPosition(firstArray, App.Network.CurrentUser.ID);
-            var xPosition = firstArray.XPosition;
-            var yPosition = firstArray.YPosition;
+            var xPosition = 0.0;
+            var yPosition = 150.0;
 
             //if there is exactly one other array on the page, keep track of it for placement
             ACLPArrayBase onlyArray = null;
@@ -2702,56 +2699,59 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 initializedSquareSize = Math.Abs(initializedSquareSize - 45.0) < .0001 ? 22.5 : initializedSquareSize / 4 * 3;
             }
-            if(isHorizontallyAligned)
+            if(numberOfArrays > 1)
             {
-                while(xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH >= page.Width)
+                if(isHorizontallyAligned)
                 {
-                    initializedSquareSize = Math.Abs(initializedSquareSize - 45.0) < .0001 ? 22.5 : initializedSquareSize / 4 * 3;
-
-                    if(numberOfArrays < 5 || xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH < page.Width)
+                    while(xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH >= page.Width)
                     {
-                        continue;
-                    }
+                        initializedSquareSize = Math.Abs(initializedSquareSize - 45.0) < .0001 ? 22.5 : initializedSquareSize / 4 * 3;
 
-                    if(xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 2) + LABEL_LENGTH < page.Width &&
-                       yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * 2 + LABEL_LENGTH < page.Height)
-                    {
-                        arrayStacks = 2;
-                        break;
-                    }
+                        if(numberOfArrays < 5 || xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH < page.Width)
+                        {
+                            continue;
+                        }
 
-                    if(xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 3) + LABEL_LENGTH < page.Width &&
-                       yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * 3 + LABEL_LENGTH < page.Height)
-                    {
-                        arrayStacks = 3;
-                        break;
+                        if(xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 2) + LABEL_LENGTH < page.Width &&
+                           yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * 2 + LABEL_LENGTH < page.Height)
+                        {
+                            arrayStacks = 2;
+                            break;
+                        }
+
+                        if(xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 3) + LABEL_LENGTH < page.Width &&
+                           yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * 3 + LABEL_LENGTH < page.Height)
+                        {
+                            arrayStacks = 3;
+                            break;
+                        }
                     }
                 }
-            }
-            else
-            {
-                yPosition = 100;
-                while(yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH >= page.Height)
+                else
                 {
-                    initializedSquareSize = Math.Abs(initializedSquareSize - 45.0) < .0001 ? 22.5 : initializedSquareSize / 4 * 3;
-
-                    if(numberOfArrays < 5 || yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH < page.Height)
+                    yPosition = 100;
+                    while(yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH >= page.Height)
                     {
-                        continue;
-                    }
+                        initializedSquareSize = Math.Abs(initializedSquareSize - 45.0) < .0001 ? 22.5 : initializedSquareSize / 4 * 3;
 
-                    if(yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 2) + LABEL_LENGTH < page.Height &&
-                       xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * 2 + LABEL_LENGTH < page.Width)
-                    {
-                        arrayStacks = 2;
-                        break;
-                    }
+                        if(numberOfArrays < 5 || yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH < page.Height)
+                        {
+                            continue;
+                        }
 
-                    if(yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 3) + LABEL_LENGTH < page.Height &&
-                       xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * 3 + LABEL_LENGTH < page.Width)
-                    {
-                        arrayStacks = 3;
-                        break;
+                        if(yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 2) + LABEL_LENGTH < page.Height &&
+                           xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * 2 + LABEL_LENGTH < page.Width)
+                        {
+                            arrayStacks = 2;
+                            break;
+                        }
+
+                        if(yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 3) + LABEL_LENGTH < page.Height &&
+                           xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * 3 + LABEL_LENGTH < page.Width)
+                        {
+                            arrayStacks = 3;
+                            break;
+                        }
                     }
                 }
             }
@@ -2778,6 +2778,13 @@ namespace Classroom_Learning_Partner.ViewModels
                     initialGridsquareSize = initializedSquareSize;
                 }
             }
+
+            firstArray.SizeArrayToGridLevel(initializedSquareSize);
+            firstArray.XPosition = 0.0;
+            firstArray.YPosition = 150.0;
+            ACLPArrayBase.ApplyDistinctPosition(firstArray, App.Network.CurrentUser.ID);
+            xPosition = firstArray.XPosition;
+            yPosition = firstArray.YPosition;
 
             //Position to not overlap with first array on page if possible
             if(onlyArray != null)

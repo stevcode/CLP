@@ -341,6 +341,15 @@ namespace CLP.Entities
                     ApplyDistinctPosition(placedPageObject);
                 }
             }
+
+            if(placedPageObject.XPosition + placedPageObject.Width >= placedPageObject.ParentPage.Width)
+            {
+                placedPageObject.XPosition = placedPageObject.ParentPage.Width - placedPageObject.Width;
+            }
+            if(placedPageObject.YPosition + placedPageObject.Height >= placedPageObject.ParentPage.Height)
+            {
+                placedPageObject.YPosition = placedPageObject.ParentPage.Height - placedPageObject.Height;
+            }
         }
 
         #endregion //Utility Methods
