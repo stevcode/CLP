@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Runtime.Serialization;
-using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
 using Path = Catel.IO.Path;

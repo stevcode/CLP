@@ -40,7 +40,7 @@ namespace CLP.Entities
             set { SetValue(IDProperty, value); }
         }
 
-        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string)); 
+        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string));
 
         /// <summary>
         /// Start Time and Date of the <see cref="ClassPeriod" />.
@@ -137,19 +137,23 @@ namespace CLP.Entities
             }
         }
 
-        public void SaveClassSubject(string folderPath)
+        public void SaveClassPeriod(string folderPath)
         {
-            var fileName = Path.Combine(folderPath, "ClassPeriod;" + ID + ";" + StartTime + ".xml");
+            var fileName = Path.Combine(folderPath, "ClassPeriod;" + ID + ";" + StartTime.ToString("yyyy.M.dd.HH.mm") + ".xml");
             ToXML(fileName);
         }
 
-        public static ClassSubject OpenClassSubject(string filePath)
+        public static ClassPeriod OpenClassPeriod(string filePath)
         {
             try
             {
-                var classSubject = Load<ClassSubject>(filePath, SerializationMode.Xml);
+                var classPeriod = Load<ClassPeriod>(filePath, SerializationMode.Xml);
+                var classPeriodFolderPath = Path.GetDirectoryName(filePath);
+                var classSubjectFilePath = Path.Combine(classPeriodFolderPath, "ClassSubject" + ";" + classPeriod.ClassSubjectID);
+                classPeriod.ClassSubject = ClassSubject.OpenClassSubject(classSubjectFilePath);
 
-                return classSubject;
+
+                return classPeriod;
             }
             catch(Exception)
             {
@@ -161,17 +165,16 @@ namespace CLP.Entities
 
         //TODO: Remove after database established
         private const string EMILY_CLASS_PERIOD_ID = "00001111-0000-0000-0000-000000000001";
+
         public static ClassPeriod CurrentClassPeriod
         {
-            get
-            {
-                var classPeriod = new ClassPeriod
-                                  {
-                                      ID = EMILY_CLASS_PERIOD_ID,
-                                      NotebookID = "fa5045a5-4fa0-45c9-82b8-758cb3d76bc8"
-                                  };
-                return classPeriod;
-            }
+            get { return firstClassPeriod; }
         }
+
+        private static readonly ClassPeriod firstClassPeriod = new ClassPeriod
+                                                               {
+                                                                   ID = EMILY_CLASS_PERIOD_ID,
+                                                                   NotebookID = "fa5045a5-4fa0-45c9-82b8-758cb3d76bc8"
+                                                               };
     }
 }

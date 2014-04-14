@@ -55,6 +55,7 @@ namespace CLP.Entities
         /// </summary>
         /// <remarks>
         /// Composite Primary Key.
+        /// Foreign Key.
         /// </remarks>
         public string OwnerID
         {
@@ -63,6 +64,20 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData OwnerIDProperty = RegisterProperty("OwnerID", typeof(string), string.Empty);
+
+        /// <summary>
+        /// The <see cref="Person" /> who owns the <see cref="Notebook" />.
+        /// </summary>
+        /// <remarks>
+        /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
+        /// </remarks>
+        public virtual Person Owner
+        {
+            get { return GetValue<Person>(OwnerProperty); }
+            set { SetValue(OwnerProperty, value); }
+        }
+
+        public static readonly PropertyData OwnerProperty = RegisterProperty("Owner", typeof(Person));
 
         /// <summary>
         /// Date and Time the <see cref="Notebook" /> was created.
@@ -343,7 +358,7 @@ namespace CLP.Entities
                 {
                     continue;
                 }
-                var pageFilePath = Path.Combine(pagesFolderPath, "Page " + page.PageNumber + " - " + page.ID + ".xml");
+                var pageFilePath = Path.Combine(pagesFolderPath, "Page;" + page.PageNumber + ";" + page.ID + ";" + page.OwnerID + ";" + page.VersionIndex + ".xml");
                 page.ToXML(pageFilePath);
             }
 
@@ -396,10 +411,80 @@ namespace CLP.Entities
                 var filePath = Path.Combine(folderPath, "notebook.xml");
                 var notebook = Load<Notebook>(filePath, SerializationMode.Xml);
                 var pagesFolderPath = Path.Combine(folderPath, "Pages");
+                var pageAndHistoryFilePaths = Directory.EnumerateFiles(pagesFolderPath);
+                var pages = new List<CLPPage>();
+                foreach(var pageAndHistoryFilePath in pageAndHistoryFilePaths)
+                {
+                    var pageAndHistoryInfo = pageAndHistoryFilePath.Split(';');
+                    if(pageAndHistoryInfo.Length != 5 ||
+                       pageAndHistoryInfo[0] != "Page")
+                    {
+                        continue;
+                    }
+
+                    var page = Load<CLPPage>(pageAndHistoryFilePath, SerializationMode.Xml);
+                    foreach(var pageObject in page.PageObjects)
+                    {
+                        pageObject.ParentPage = page;
+                    }
+                    if(page.ID == notebook.CurrentPageID)
+                    {
+                        notebook.CurrentPage = page;
+                    }
+                    page.IsCached = true;
+                    pages.Add(page);
+                }
+
+
+
+                var notebookPages = new List<CLPPage>();
+
+                foreach(var notebookPage in pages)
+                {
+                    if(notebookPage.VersionIndex == 0)
+                    {
+                        notebookPages.Add(notebookPage);
+                        foreach(var submission in pages)
+                        {
+                            if(submission.ID == notebookPage.ID &&
+                               submission.OwnerID == notebookPage.OwnerID &&
+                               submission.VersionIndex != 0)
+                            {
+                                
+                            }
+                        }
+                    }
+                }
+
+                notebook.Pages = new ObservableCollection<CLPPage>(notebookPages.OrderBy(x => x.PageNumber));
+
+                return notebook;
+            }
+            catch(Exception)
+            {
+                return null;
+            }
+        }
+
+        public static Notebook OpenPartialNotebook(string folderPath, IEnumerable<string> pageIDs, IEnumerable<string> displayIDs, bool includeSubmissions = true)
+        {
+            try
+            {
+                var filePath = Path.Combine(folderPath, "notebook.xml");
+                var notebook = Load<Notebook>(filePath, SerializationMode.Xml);
+                var pagesFolderPath = Path.Combine(folderPath, "Pages");
                 var pageFilePaths = Directory.EnumerateFiles(pagesFolderPath);
                 var pages = new List<CLPPage>();
+
+                
+
+
+
                 foreach(string pageFilePath in pageFilePaths)
                 {
+                    var pageAndID = pageFilePath.Split(';');
+           
+
                     var page = Load<CLPPage>(pageFilePath, SerializationMode.Xml);
                     foreach(var pageObject in page.PageObjects)
                     {
