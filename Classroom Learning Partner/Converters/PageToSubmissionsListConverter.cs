@@ -25,7 +25,14 @@ namespace Classroom_Learning_Partner.Converters
                 studentList.Add(dummy);
             }
             foreach (Person student in studentList) {
-                submissions.Add(new StudentProgressInfo(student, null));
+                CLPPage foundSubmission = null;
+                foreach(CLPPage submission in page.Submissions)
+                {
+                    // TODO check same person :)
+                    foundSubmission = submission;
+                    break;
+                }
+                submissions.Add(new StudentProgressInfo(student, foundSubmission));
             }
             return submissions;
         }
