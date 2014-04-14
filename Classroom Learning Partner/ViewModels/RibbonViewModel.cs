@@ -2680,8 +2680,7 @@ namespace Classroom_Learning_Partner.ViewModels
             double squareSize = 0.0;
             foreach(var pageObject in page.PageObjects)
             {
-                //TODO Liz - exclude background arrays from this check
-                if(pageObject is CLPArray || pageObject is FuzzyFactorCard)
+                if(pageObject is CLPArray || pageObject is FuzzyFactorCard && pageObject.CreatorID != Person.Author.ID)
                 {
                     squareSize = (pageObject as ACLPArrayBase).ArrayHeight / (pageObject as ACLPArrayBase).Rows;
                 }
@@ -2764,8 +2763,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 foreach(var pageObject in page.PageObjects)
                 {
                     var pageObjectMinSide = (pageObject is FuzzyFactorCard) ? MIN_FFC_SIDE : MIN_SIDE;
-                    //TODO Liz - do not resize background arrays
-                    if(pageObject is CLPArray || pageObject is FuzzyFactorCard)
+                    if(pageObject is CLPArray || pageObject is FuzzyFactorCard && pageObject.CreatorID != Person.Author.ID)
                     {
                         oldDimensions.Add(pageObject.ID, new Point(pageObject.Width, pageObject.Height));
                         if((pageObject as ACLPArrayBase).Rows * initializedSquareSize > pageObjectMinSide && (pageObject as ACLPArrayBase).Columns * initializedSquareSize > pageObjectMinSide)
@@ -2787,7 +2785,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 if(isHorizontallyAligned)
                 {
                     const double GAP = 35.0;
-                    if(!(onlyArray is FuzzyFactorCard) && onlyArray.XPosition + onlyArray.Width + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH + GAP <= page.Width
+                    if(!(onlyArray is FuzzyFactorCard && (onlyArray as FuzzyFactorCard).RemainderTiles != null) && onlyArray.XPosition + onlyArray.Width + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH + GAP <= page.Width
                         && rows * initializedSquareSize + LABEL_LENGTH < page.Height)
                     {
                         xPosition = onlyArray.XPosition + onlyArray.Width + GAP;
@@ -2808,7 +2806,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 else
                 {
                     const double GAP = 35.0;
-                    if(!(onlyArray is FuzzyFactorCard) && onlyArray.YPosition + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH <= page.Height
+                    if(!(onlyArray is FuzzyFactorCard && (onlyArray as FuzzyFactorCard).RemainderTiles != null) && onlyArray.YPosition + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH <= page.Height
                         && onlyArray.XPosition + onlyArray.Width + columns * initializedSquareSize + LABEL_LENGTH + GAP < page.Width)
                     {
                         xPosition = onlyArray.XPosition + onlyArray.Width + GAP;
@@ -2996,10 +2994,12 @@ namespace Classroom_Learning_Partner.ViewModels
             // TODO: Entities
             //Logger.Instance.WriteToLog("Start of OnAnalyzeArrayCommandExecute()");
 
-            //// Get the page's math definition, or be sad if it doesn't have one
-            //var page = ((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as CLPMirrorDisplay).CurrentPage;
-
-            //PageAnalysis.AnalyzeArray(page);
+            // Get the page's math definition, or be sad if it doesn't have one
+            var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
+            if(currentPage != null)
+            {
+                TagAnalysis.AnalyzeArray(currentPage);
+            }
         }
 
         /// <summary>
@@ -3019,10 +3019,12 @@ namespace Classroom_Learning_Partner.ViewModels
             // TODO: Entities
             //Logger.Instance.WriteToLog("Start of OnAnalyzeFuzzyFactorCardCommandExecute()");
 
-            //// Get the page's math definition, or be sad if it doesn't have one
-            //var page = ((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as CLPMirrorDisplay).CurrentPage;
-
-            //PageAnalysis.AnalyzeFuzzyFactorCard(page);
+            // Get the page's math definition, or be sad if it doesn't have one
+            var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
+            if(currentPage != null)
+            {
+                TagAnalysis.AnalyzeFuzzyFactorCard(currentPage);
+            }
         }
 
         /// <summary>

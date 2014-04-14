@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CLP.Entities
 {
-    public static class PageAnalysis
+    public static class TagAnalysis
     {
 
         /// <summary>
@@ -20,9 +20,9 @@ namespace CLP.Entities
             ProductRelation relation = null;
             foreach(ATagBase tag in tags)
             {
-                if(tag.TagType.Name == PageDefinitionTagType.Instance.Name)
+                if(tag is PageDefinitionTag)
                 {
-                    relation = (ProductRelation)tag.Value[0].Value;
+                    relation = ProductRelation.fromString(tag.Value);
                     break;
                 }
             }
@@ -86,12 +86,10 @@ namespace CLP.Entities
             }
 
             // Apply a representation correctness tag
-            Tag correctnessTag = new Tag(Tag.Origins.Generated, RepresentationCorrectnessTagType.Instance);
-            correctnessTag.AddTagOptionValue(new TagOptionValue("Error: Other"));
-
             if(factor1 == arrayWidth && factor2 == arrayHeight)
             {
-                correctnessTag.AddTagOptionValue(new TagOptionValue("Correct"));
+                var tag = new ArrayRepresentationCorrectnessTag(page, ArrayRepresentationCorrectnessTag.AcceptedValues.Correct);
+                page.Tags.Add(tag);
             }
             else
             {
@@ -100,11 +98,13 @@ namespace CLP.Entities
                     // Are the factors swapped? Depends on whether we care about width vs. height
                     if(relation.RelationType == ProductRelation.ProductRelationTypes.Area)
                     {
-                        correctnessTag.AddTagOptionValue(new TagOptionValue("Error: Swapped Factors"));
+                        var tag = new ArrayRepresentationCorrectnessTag(page, ArrayRepresentationCorrectnessTag.AcceptedValues.ErrorSwappedFactors);
+                        page.Tags.Add(tag);
                     }
                     else
                     {
-                        correctnessTag.AddTagOptionValue(new TagOptionValue("Correct"));
+                        var tag = new ArrayRepresentationCorrectnessTag(page, ArrayRepresentationCorrectnessTag.AcceptedValues.Correct);
+                        page.Tags.Add(tag);
                     }
                 }
                 else
@@ -131,33 +131,29 @@ namespace CLP.Entities
 
                     if(givens.Count == 2 && numbersUsed.Contains(givens[0]) && numbersUsed.Contains(givens[1]))
                     {
-                        correctnessTag.AddTagOptionValue(new TagOptionValue("Error: Misused Givens"));
+                        var tag = new ArrayRepresentationCorrectnessTag(page, ArrayRepresentationCorrectnessTag.AcceptedValues.ErrorMisusedGivens);
+                        page.Tags.Add(tag);
                     }
                 }
             }
 
-            tags.Add(correctnessTag);
-
             // Apply an orientation tag
-            Tag orientationTag = new Tag(Tag.Origins.Generated, ArrayOrientationTagType.Instance);
             if(arrayWidth == factor1 && arrayHeight == factor2)
             {
-                orientationTag.AddTagOptionValue(new TagOptionValue("First factor is width"));
+                var tag = new ArrayOrientationTag(page, ArrayOrientationTag.AcceptedValues.FirstFactorWidth);
+                page.Tags.Add(tag);
             }
             else if(arrayWidth == factor2 && arrayHeight == factor1)
             {
-                orientationTag.AddTagOptionValue(new TagOptionValue("First factor is height"));
+                var tag = new ArrayOrientationTag(page, ArrayOrientationTag.AcceptedValues.FirstFactorHeight);
+                page.Tags.Add(tag);
             }
             else
             {
-                orientationTag.AddTagOptionValue(new TagOptionValue("unknown"));
+                var tag = new ArrayOrientationTag(page, ArrayOrientationTag.AcceptedValues.Unknown);
+                page.Tags.Add(tag);
             }
-            tags.Add(orientationTag);
-            Logger.Instance.WriteToLog("Tag added: " + orientationTag.TagType.Name + " -> " + orientationTag.Value[0].Value);
-
-            // Apply a strategy tag
-            Tag strategyTagY = new Tag(Tag.Origins.Generated, ArrayYAxisStrategyTagType.Instance);
-            Tag strategyTagX = new Tag(Tag.Origins.Generated, ArrayXAxisStrategyTagType.Instance);
+            //Logger.Instance.WriteToLog("Tag added: " + orientationTag.TagType.Name + " -> " + orientationTag.Value[0].Value);
 
             // First check the horizontal divisions
             // Create a sorted list of the divisions' labels (as entered by the student)
@@ -183,25 +179,30 @@ namespace CLP.Entities
             Logger.Instance.WriteToLog("Student's horizontal divisions (sorted): " + horizDivsString);*/
 
             // Now check the student's divisions against known strategies
-            if(array.HorizontalDivisions.Count == 0)
+            if(array.HorizontalDivisions.Count < 2)
             {
-                strategyTagY.AddTagOptionValue(new TagOptionValue("none"));
+                var tag = new ArrayYAxisStrategyTag(page, ArrayYAxisStrategyTag.AcceptedValues.NoDividers);
+                page.Tags.Add(tag);
             }
             else if(horizDivs.SequenceEqual(PlaceValueStrategyDivisions(arrayHeight)))
             {
-                strategyTagY.AddTagOptionValue(new TagOptionValue("place value"));
+                var tag = new ArrayYAxisStrategyTag(page, ArrayYAxisStrategyTag.AcceptedValues.PlaceValue);
+                page.Tags.Add(tag);
             }
             else if(arrayHeight > 20 && arrayHeight < 100 && horizDivs.SequenceEqual(TensStrategyDivisions(arrayHeight)))
             {
-                strategyTagY.AddTagOptionValue(new TagOptionValue("10's"));
+                var tag = new ArrayYAxisStrategyTag(page, ArrayYAxisStrategyTag.AcceptedValues.Tens);
+                page.Tags.Add(tag);
             }
             else if((arrayHeight % 2 == 0) && horizDivs.SequenceEqual(HalvingStrategyDivisions(arrayHeight)))
             {
-                strategyTagY.AddTagOptionValue(new TagOptionValue("half"));
+                var tag = new ArrayYAxisStrategyTag(page, ArrayYAxisStrategyTag.AcceptedValues.Half);
+                page.Tags.Add(tag);
             }
             else
             {
-                strategyTagY.AddTagOptionValue(new TagOptionValue("other"));
+                var tag = new ArrayYAxisStrategyTag(page, ArrayYAxisStrategyTag.AcceptedValues.Other);
+                page.Tags.Add(tag);
             }
 
             // Then the vertical divisions
@@ -219,29 +220,31 @@ namespace CLP.Entities
             }
 
             // Now check the student's divisions against known strategies
-            if(array.VerticalDivisions.Count == 0)
+            if(array.VerticalDivisions.Count < 2)
             {
-                strategyTagX.AddTagOptionValue(new TagOptionValue("none"));
+                var tag = new ArrayXAxisStrategyTag(page, ArrayXAxisStrategyTag.AcceptedValues.NoDividers);
+                page.Tags.Add(tag);
             }
             else if(vertDivs.SequenceEqual(PlaceValueStrategyDivisions(arrayWidth)))
             {
-                strategyTagX.AddTagOptionValue(new TagOptionValue("place value"));
+                var tag = new ArrayXAxisStrategyTag(page, ArrayXAxisStrategyTag.AcceptedValues.PlaceValue);
+                page.Tags.Add(tag);
             }
             else if(arrayWidth > 20 && arrayWidth < 100 && vertDivs.SequenceEqual(TensStrategyDivisions(arrayWidth)))
             {
-                strategyTagX.AddTagOptionValue(new TagOptionValue("10's"));
+                var tag = new ArrayXAxisStrategyTag(page, ArrayXAxisStrategyTag.AcceptedValues.Tens);
+                page.Tags.Add(tag);
             }
             else if((arrayWidth % 2 == 0) && vertDivs.SequenceEqual(HalvingStrategyDivisions(arrayWidth)))
             {
-                strategyTagX.AddTagOptionValue(new TagOptionValue("half"));
+                var tag = new ArrayXAxisStrategyTag(page, ArrayXAxisStrategyTag.AcceptedValues.Half);
+                page.Tags.Add(tag);
             }
             else
             {
-                strategyTagX.AddTagOptionValue(new TagOptionValue("other"));
+                var tag = new ArrayXAxisStrategyTag(page, ArrayXAxisStrategyTag.AcceptedValues.Other);
+                page.Tags.Add(tag);
             }
-
-            tags.Add(strategyTagY);
-            tags.Add(strategyTagX);
 
             //Logger.Instance.WriteToLog("Tag added: " + strategyTagY.TagType.Name + " -> " + strategyTagY.Value[0].Value);
             //Logger.Instance.WriteToLog("Tag added: " + strategyTagX.TagType.Name + " -> " + strategyTagX.Value[0].Value);
@@ -249,7 +252,6 @@ namespace CLP.Entities
             // Add a strategy tag for inner products (if applicable)
             int[,] partialProducts = array.GetPartialProducts();
 
-            Tag partialProductStrategyTag = new Tag(Tag.Origins.Generated, ArrayPartialProductsStrategyTagType.Instance);
             Boolean friendlyFound = false;
             Boolean incomplete = false;
 
@@ -264,7 +266,8 @@ namespace CLP.Entities
 
                 if(partialProduct % 100 == 0 && !friendlyFound)
                 {
-                    partialProductStrategyTag.AddTagOptionValue(new TagOptionValue("friendly numbers"));
+                    var tag = new ArrayPartialProductsStrategyTag(page, ArrayPartialProductsStrategyTag.AcceptedValues.FriendlyNumbers);
+                    page.Tags.Add(tag);
                     friendlyFound = true;
                 }
 
@@ -278,38 +281,35 @@ namespace CLP.Entities
             {
                 if(foundProducts.Count > 1 && foundProducts.Count < (horizDivs.Count * vertDivs.Count))
                 {
-                    partialProductStrategyTag.AddTagOptionValue(new TagOptionValue("some repeated"));
+                    var tag = new ArrayPartialProductsStrategyTag(page, ArrayPartialProductsStrategyTag.AcceptedValues.SomeRepeated);
+                    page.Tags.Add(tag);
                 }
                 else
                 {
                     if(foundProducts.Count == 1 && (horizDivs.Count * vertDivs.Count) > 1)
                     {
-                        partialProductStrategyTag.AddTagOptionValue(new TagOptionValue("all repeated"));
+                        var tag = new ArrayPartialProductsStrategyTag(page, ArrayPartialProductsStrategyTag.AcceptedValues.AllRepeated);
+                        page.Tags.Add(tag);
                     }
                 }
             }
 
-            if(partialProductStrategyTag.Value.Count > 0)
-            {
-                tags.Add(partialProductStrategyTag);
-            }
-
             // Add an array divider correctness tag
-            Tag divisionCorrectnessTag = CheckArrayDivisionCorrectness(array);
-            tags.Add(divisionCorrectnessTag);
+            //Tag divisionCorrectnessTag = CheckArrayDivisionCorrectness(array);
+            //tags.Add(divisionCorrectnessTag);
 
-            Logger.Instance.WriteToLog("Tag added: " + divisionCorrectnessTag.TagType.Name + " -> " + divisionCorrectnessTag.Value[0].Value);
+            //Logger.Instance.WriteToLog("Tag added: " + divisionCorrectnessTag.TagType.Name + " -> " + divisionCorrectnessTag.Value[0].Value);
 
-            // Add tags for the number of horizontal and vertical divisions
-            Tag horizDivsTag = new Tag(Tag.Origins.Generated, ArrayHorizontalDivisionsTagType.Instance);
-            int horizRegions = array.HorizontalDivisions.Count == 0 ? 1 : array.HorizontalDivisions.Count;
-            horizDivsTag.Value.Add(new TagOptionValue(horizRegions.ToString() + " region" + (horizRegions == 1 ? "" : "s")));
-            tags.Add(horizDivsTag);
+            //// Add tags for the number of horizontal and vertical divisions
+            //Tag horizDivsTag = new Tag(Tag.Origins.Generated, ArrayHorizontalDivisionsTagType.Instance);
+            //int horizRegions = array.HorizontalDivisions.Count == 0 ? 1 : array.HorizontalDivisions.Count;
+            //horizDivsTag.Value.Add(new TagOptionValue(horizRegions.ToString() + " region" + (horizRegions == 1 ? "" : "s")));
+            //tags.Add(horizDivsTag);
 
-            Tag vertDivsTag = new Tag(Tag.Origins.Generated, ArrayVerticalDivisionsTagType.Instance);
-            int vertRegions = array.VerticalDivisions.Count == 0 ? 1 : array.VerticalDivisions.Count;
-            vertDivsTag.Value.Add(new TagOptionValue(vertRegions.ToString() + " region" + (horizRegions == 1 ? "" : "s")));
-            tags.Add(vertDivsTag);
+            //Tag vertDivsTag = new Tag(Tag.Origins.Generated, ArrayVerticalDivisionsTagType.Instance);
+            //int vertRegions = array.VerticalDivisions.Count == 0 ? 1 : array.VerticalDivisions.Count;
+            //vertDivsTag.Value.Add(new TagOptionValue(vertRegions.ToString() + " region" + (horizRegions == 1 ? "" : "s")));
+            //tags.Add(vertDivsTag);
 
             //Logger.Instance.WriteToLog("Tag added: " + horizDivsTag.TagType.Name + " -> " + horizDivsTag.Value[0].Value);
             //Logger.Instance.WriteToLog("Tag added: " + vertDivsTag.TagType.Name + " -> " + vertDivsTag.Value[0].Value);
@@ -443,6 +443,18 @@ namespace CLP.Entities
             return (divs.First() == 1);
         }
 
+        public static bool FFCUsedValue(List<int> divs, int value)
+        {
+            foreach(int div in divs)
+            {
+                if(div == value)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         /// <summary>
         /// Method to invoke when the AnalyzeFuzzyFactorCardCommand command is executed.
         /// </summary>
@@ -451,11 +463,11 @@ namespace CLP.Entities
             //Logger.Instance.WriteToLog("Start of PageAnalysis.AnalyzeFuzzyFactorCard");
             ObservableCollection<ATagBase> tags = page.Tags;
             ProductRelation relation = null;
-            foreach(Tag tag in tags)
+            foreach(ATagBase tag in tags)
             {
-                if(tag.TagType.Name == PageDefinitionTagType.Instance.Name)
+                if(tag is PageDefinitionTag)
                 {
-                    relation = (ProductRelation)tag.Value[0].Value;
+                    relation = ProductRelation.fromString(tag.Value);
                     break;
                 }
             }
@@ -469,10 +481,10 @@ namespace CLP.Entities
 
 
             // Find FFC object on the page (just use the first one we find), or be sad if we don't find one
-            ObservableCollection<APageObjectBase> objects = page.PageObjects;
+            ObservableCollection<IPageObject> objects = page.PageObjects;
             FuzzyFactorCard ffc = null;
 
-            foreach(APageObjectBase pageObject in objects)
+            foreach(IPageObject pageObject in objects)
             {
                 if(pageObject.GetType() == typeof(FuzzyFactorCard))
                 {
@@ -506,7 +518,7 @@ namespace CLP.Entities
             foreach(ATagBase tag in tags.ToList())
             {
                 if(tag == null ||
-                   // tag is RepresentationCorrectnessTag ||
+                    tag is FuzzyFactorCardRepresentationCorrectnessTag ||
                     tag is FuzzyFactorCardStrategyTag ||
                     tag is FuzzyFactorCardCorrectnessTag)
                 {
@@ -583,31 +595,31 @@ namespace CLP.Entities
                     var tag = new FuzzyFactorCardStrategyTag(page, FuzzyFactorCardStrategyTag.AcceptedValues.OneArray);
                     page.Tags.Add(tag);
                 }
-                else if(FFCUsedOnesStrategy(divs))
+                if(FFCUsedOnesStrategy(divs))
                 {
                     var tag = new FuzzyFactorCardStrategyTag(page, FuzzyFactorCardStrategyTag.AcceptedValues.Singles);
                     page.Tags.Add(tag);
                 }
-                else if(divs.First() == 10)
+                if(FFCUsedValue(divs, 10))
                 {
                     var tag = new FuzzyFactorCardStrategyTag(page, FuzzyFactorCardStrategyTag.AcceptedValues.Tens);
                     page.Tags.Add(tag);
                 }
-                else if(divs.First() == 5)
+                if(FFCUsedValue(divs, 5))
                 {
                     var tag = new FuzzyFactorCardStrategyTag(page, FuzzyFactorCardStrategyTag.AcceptedValues.Fives);
                     page.Tags.Add(tag);
                 }
-                else if(divs.Count > 1 && divs.First() == divs.ElementAt(1))
+                if(divs.Count > 1 && divs.First() == divs.ElementAt(1))
                 {
                     var tag = new FuzzyFactorCardStrategyTag(page, FuzzyFactorCardStrategyTag.AcceptedValues.Repeat);
                     page.Tags.Add(tag);
                 }
-                else
-                {
-                    var tag = new FuzzyFactorCardStrategyTag(page, FuzzyFactorCardStrategyTag.AcceptedValues.Other);
-                    page.Tags.Add(tag);
-                }
+                //else
+                //{
+                //    var tag = new FuzzyFactorCardStrategyTag(page, FuzzyFactorCardStrategyTag.AcceptedValues.Other);
+                //    page.Tags.Add(tag);
+                //}
 
                 //Logger.Instance.WriteToLog("Tag added: " + strategyTag.TagType.Name + " -> " + strategyTag.Value[0].Value);
             }

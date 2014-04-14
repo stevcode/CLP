@@ -7,7 +7,6 @@ namespace CLP.Entities
         public enum AcceptedValues
         {
             Correct,
-            ErrorSwappedFactors,
             ErrorMisusedGivens,
             ErrorOther
         }
