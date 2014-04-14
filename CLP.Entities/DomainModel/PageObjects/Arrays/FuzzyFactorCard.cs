@@ -408,10 +408,20 @@ namespace CLP.Entities
 
         public void UpdateRemainderRegion()
         {
-            if(RemainderTiles == null ||
-               CurrentRemainder <= 0)
+            if(RemainderTiles == null)
             {
                 return;
+            }
+
+            if(CurrentRemainder <= 0)
+            {
+                ParentPage.PageObjects.Remove(RemainderTiles);
+                return;
+            }
+
+            if(!ParentPage.PageObjects.Contains(RemainderTiles))
+            {
+                ParentPage.PageObjects.Add(RemainderTiles);
             }
 
             var numberOfBlackTiles = ParentPage.PageObjects.Where(pageObject => pageObject is CLPArray && (pageObject as CLPArray).ArrayType == ArrayTypes.Array && (pageObject as CLPArray).Rows == Rows).Sum(pageObject =>

@@ -185,17 +185,16 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Removes pageObject from page when Delete button is pressed.
         /// </summary>
-        public new Command RemoveFuzzyFactorCardCommand { get; private set; }
+        public Command RemoveFuzzyFactorCardCommand { get; private set; }
 
         private void OnRemoveFuzzyFactorCardCommandExecute()
         {
-            //if(RemainderRegionUniqueID != null)
-            //{
-            //    CLPFuzzyFactorCardRemainder remainderRegion = PageObject.ParentPage.GetPageObjectByUniqueID(RemainderRegionUniqueID) as CLPFuzzyFactorCardRemainder;
-            //    var currentIndex = PageObject.ParentPage.PageObjects.IndexOf(remainderRegion);
-            //    ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryPageObjectRemove(PageObject.ParentPage, remainderRegion, currentIndex));
-            //    PageObject.ParentPage.PageObjects.Remove(remainderRegion);
-            //}
+            if((PageObject as FuzzyFactorCard).RemainderTiles != null)
+            {
+                //var currentIndex = PageObject.ParentPage.PageObjects.IndexOf(remainderRegion);
+                //ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryPageObjectRemove(PageObject.ParentPage, remainderRegion, currentIndex));
+                PageObject.ParentPage.PageObjects.Remove((PageObject as FuzzyFactorCard).RemainderTiles);
+            }
             ACLPPageBaseViewModel.RemovePageObjectFromPage(PageObject);
         }
 
