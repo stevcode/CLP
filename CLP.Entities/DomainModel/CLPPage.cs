@@ -379,6 +379,17 @@ namespace CLP.Entities
 
         public static readonly PropertyData ParentNotebookProperty = RegisterProperty("ParentNotebook", typeof(Notebook));
 
+        [XmlIgnore]
+        [ExcludeFromSerialization]
+        public virtual ObservableCollection<CLPPage> Submissions
+        {
+            get { return GetValue<ObservableCollection<CLPPage>>(SubmissionsProperty); }
+            set { SetValue(SubmissionsProperty, value);}  
+        }
+
+        public static readonly PropertyData SubmissionsProperty = RegisterProperty("Submissions", typeof(ObservableCollection<CLPPage>), () => new ObservableCollection<CLPPage>());
+
+
         /// <summary>
         /// Authored <see cref="IPageObject" />s for the <see cref="CLPPage" />.
         /// </summary>

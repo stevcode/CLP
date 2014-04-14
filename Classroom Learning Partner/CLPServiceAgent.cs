@@ -18,6 +18,8 @@ using Catel.Windows.Controls;
 using System.Linq;
 using System.Collections.Generic;
 using System.Windows.Media.Imaging;
+using System.Security.Cryptography;
+using System.Runtime.Serialization;
 
 namespace Classroom_Learning_Partner
 {
@@ -231,6 +233,19 @@ namespace Classroom_Learning_Partner
                 }
 
                 return System.Text.Encoding.Unicode.GetString(buffer, 0, buffer.Length);
+            }
+        }
+
+        public string Checksum(object obj)
+        {
+            // This may only work on objects with [Serializable]. -Casey
+            DataContractSerializer serializer = new DataContractSerializer(obj.GetType());
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                serializer.WriteObject(memoryStream, obj);
+                MD5CryptoServiceProvider hasher = new MD5CryptoServiceProvider();
+                hasher.ComputeHash(memoryStream.ToArray());
+                return Convert.ToBase64String(hasher.Hash);
             }
         }
 

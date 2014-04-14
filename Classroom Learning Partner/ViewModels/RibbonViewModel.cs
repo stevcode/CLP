@@ -166,6 +166,7 @@ namespace Classroom_Learning_Partner.ViewModels
             TurnOffWebcamSharing = new Command(OnTurnOffWebcamSharingExecute);
             BroadcastPageCommand = new Command(OnBroadcastPageCommandExecute);
             ReplacePageCommand = new Command(OnReplacePageCommandExecute);
+            CreatePageSubmissionCommand = new Command(OnCreatePageSubmissionCommandExecute);
             RemoveAllSubmissionsCommand = new Command(OnRemoveAllSubmissionsCommandExecute);
             RemoveAllPageSubmissionsCommand = new Command(OnRemoveAllPageSubmissionsCommandExecute);
             ShowTagsCommand = new Command(OnShowTagsCommandExecute);
@@ -1844,6 +1845,24 @@ namespace Classroom_Learning_Partner.ViewModels
             //{
             //    Logger.Instance.WriteToLog("No Students Found");
             //}
+        }
+
+
+        /// <summary>
+        /// Creates a submission for the current page.
+        /// </summary>
+        public Command CreatePageSubmissionCommand
+        {
+            get;
+            private set;
+        }
+
+        private void OnCreatePageSubmissionCommandExecute()
+        {
+            CLPPage submission = new CLPPage();
+            submission.VersionIndex = 1;
+            submission.OwnerID = Guid.NewGuid().ToString();
+            CurrentPage.Submissions.Add(submission);
         }
 
         /// <summary>

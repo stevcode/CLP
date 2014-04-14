@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Data;
+using Classroom_Learning_Partner.ViewModels;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.Converters
@@ -9,12 +10,12 @@ namespace Classroom_Learning_Partner.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var page = (CLPPage)value;
-            if(page.Owner == null)
+            var page = ((StudentProgressInfo)value).Page;
+            if(page != null)
             {
-                return "Hidden";
+                return "Visible";
             }
-            return "Visible";
+            return "Hidden";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

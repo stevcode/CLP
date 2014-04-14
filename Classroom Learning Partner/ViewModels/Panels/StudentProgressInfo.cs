@@ -7,32 +7,32 @@ namespace Classroom_Learning_Partner.ViewModels
 {
     public class StudentProgressInfo : ViewModelBase
     {
-        public StudentProgressInfo(string name, ObservableCollection<CLPPage> pages)
+        public StudentProgressInfo(Person student, CLPPage page)
         {
-            Name = name;
-            Pages = pages;
+            Student = student;
+            Page = page;
         }
 
         /// <summary>
-        /// The student's name.
+        /// The student
         /// </summary>
-        public string Name
+        public Person Student
         {
-            get { return GetValue<string>(NameProperty); }
-            set { SetValue(NameProperty, value); }
+            get { return GetValue<Person>(StudentProperty); }
+            set { SetValue(StudentProperty, value); }
         }
 
-        public static readonly PropertyData NameProperty = RegisterProperty("Name", typeof(string), "Nobody");
+        public static readonly PropertyData StudentProperty = RegisterProperty("Student", typeof(Person));
 
         /// <summary>
-        /// The number of pages in the notebook.
+        /// The page
         /// </summary>
-        public ObservableCollection<CLPPage> Pages
+        public CLPPage Page
         {
-            get { return GetValue<ObservableCollection<CLPPage>>(PagesProperty); }
-            set { SetValue(PagesProperty, value); }
+            get { return GetValue<CLPPage>(PageProperty); }
+            set { SetValue(PageProperty, value); }
         }
 
-        public static readonly PropertyData PagesProperty = RegisterProperty("Pages", typeof(ObservableCollection<CLPPage>));
+        public static readonly PropertyData PageProperty = RegisterProperty("Page", typeof(CLPPage));
     }
 }
