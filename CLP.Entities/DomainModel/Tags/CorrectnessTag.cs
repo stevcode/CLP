@@ -9,7 +9,7 @@ namespace CLP.Entities
             Correct,
             AlmostCorrect,
             Incorrect,
-            Uknown
+            Unknown
         }
 
         #region Constructors
