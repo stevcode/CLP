@@ -953,6 +953,7 @@ namespace Classroom_Learning_Partner.ViewModels
             if(index == -1)
             {
                 page.PageObjects.Add(pageObject);
+                pageObject.OnAdded();
             }
             else
             {
@@ -980,6 +981,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 //   pageObject.IsBackground = App.MainWindowViewModel.IsAuthoring;
                 pageObjectIDs.Add(pageObject.ID);
                 page.PageObjects.Add(pageObject);
+                pageObject.OnAdded();
             }
 
             //if(addToHistory)
@@ -1007,8 +1009,9 @@ namespace Classroom_Learning_Partner.ViewModels
             //    var currentIndex = page.PageObjects.IndexOf(pageObject);
             //    AddHistoryItemToPage(page, new CLPHistoryPageObjectRemove(page, pageObject, currentIndex));
             //}
-            pageObject.OnDeleted();
+            
             page.PageObjects.Remove(pageObject);
+            pageObject.OnDeleted();
         }
 
         public static void RemovePageObjectFromPage(IPageObject pageObject, bool addToHistory = true)

@@ -281,7 +281,7 @@
             <Border Grid.Row="1"
                     Grid.Column="1"
                     Grid.ColumnSpan="2"
-                    Background="Violet"
+                    Background="Transparent"
                     Height="{Binding ArrayHeight}"
                     Width="{Binding ArrayWidth, Converter={StaticResource LengthConverter}, ConverterParameter=3}"
                     HorizontalAlignment="Left"

@@ -21,11 +21,8 @@ namespace CLP.Entities
         public RemainderTiles(CLPPage parentPage, FuzzyFactorCard fuzzyFactorCard)
             : base(parentPage)
         {
-            XPosition = fuzzyFactorCard.XPosition + fuzzyFactorCard.Width + 20.0;
-            YPosition = fuzzyFactorCard.YPosition + fuzzyFactorCard.LabelLength;
-
             Height = Math.Ceiling(fuzzyFactorCard.CurrentRemainder / 5.0) * 61.0; 
-            Width = 66.0;
+            Width = 305.0; 
         }
 
         /// <summary>
