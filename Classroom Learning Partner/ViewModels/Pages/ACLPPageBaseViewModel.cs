@@ -953,6 +953,7 @@ namespace Classroom_Learning_Partner.ViewModels
             if(index == -1)
             {
                 page.PageObjects.Add(pageObject);
+                pageObject.OnAdded();
             }
             else
             {
@@ -980,6 +981,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 //   pageObject.IsBackground = App.MainWindowViewModel.IsAuthoring;
                 pageObjectIDs.Add(pageObject.ID);
                 page.PageObjects.Add(pageObject);
+                pageObject.OnAdded();
             }
 
             //if(addToHistory)

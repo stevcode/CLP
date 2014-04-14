@@ -1892,22 +1892,17 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnShowTagsCommandExecute()
         {
             // TODO: Entities
-            //var page = NotebookPagesPanelViewModel.GetCurrentPage();
+            var page = NotebookPagesPanelViewModel.GetCurrentPage();
 
-            //string tags = "";
-            //foreach(Tag t in page.PageTags) 
-            //{
-            //    string values = "";
-            //    foreach(TagOptionValue v in t.Value)
-            //    {
-            //        values = values + v.Value.ToString() + ", ";
-            //    }
-            //    tags = tags + t.TagType.Name + " = " + values + "\n";
-            //}
+            string tags = "";
+            foreach(ATagBase t in page.Tags)
+            {
+                tags = tags + t.GetType().ToString() + " = " + t.Value + "\n";
+            }
 
-            //var tagsView = new SimpleTextWindowView("Tags for this page", tags);
-            //tagsView.Owner = Application.Current.MainWindow;
-            //tagsView.ShowDialog();
+            var tagsView = new SimpleTextWindowView("Tags for this page", tags);
+            tagsView.Owner = Application.Current.MainWindow;
+            tagsView.ShowDialog();
         }
 
         #endregion //Testing
@@ -2783,20 +2778,25 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnEditPageDefinitionCommandExecute()
         {
             // TODO: Entities
-            //// Get the tags on this page
+            // Get the tags on this page
             //Logger.Instance.WriteToLog("Page Definition");
-            //var page = ((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as CLPMirrorDisplay).CurrentPage;
-            //ObservableCollection<Tag> tags = page.PageTags;
+            ////var page = ((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as CLPMirrorDisplay).CurrentPage;
+            //var currentPage = CurrentPage;
+            //if(currentPage == null)
+            //{
+            //    return;
+            //}
+            //ObservableCollection<ATagBase> tags = currentPage.Tags;
 
             //// If the page already has a Page Definition tag, use that one
-            //Tag oldTag = null;
+            //ATagBase oldTag = null;
             //ProductRelation oldRelation = null;
-            //foreach(Tag tag in tags)
+            //foreach(ATagBase tag in tags)
             //{
-            //    if(tag.TagType.Name == PageDefinitionTagType.Instance.Name)
+            //    if(tag is PageDefinitionTag)
             //    {
             //        oldTag = tag;
-            //        oldRelation = (ProductRelation) oldTag.Value[0].Value;
+            //        oldRelation = (ProductRelation)oldTag.Value;
             //        break;
             //    }
             //}
@@ -2832,7 +2832,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //{
             //    if(tag.TagType.Name == PageDefinitionTagType.Instance.Name)
             //    {
-            //        Logger.Instance.WriteToLog(((ProductRelation) tag.Value[0].Value).GetExampleNumberSentence());
+            //        Logger.Instance.WriteToLog(((ProductRelation)tag.Value[0].Value).GetExampleNumberSentence());
             //    }
             //}
             //Logger.Instance.WriteToLog("End of OnEditPageDefinitionCommandExecute()");

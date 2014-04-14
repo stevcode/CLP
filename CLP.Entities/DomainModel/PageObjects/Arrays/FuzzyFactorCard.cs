@@ -324,106 +324,86 @@ namespace CLP.Entities
 
         public void AnalyzeArrays()
         {
-            //int arrayArea = 0;
-            //foreach(var pageObject in ParentPage.PageObjects)
-            //{
-            //    if(pageObject.PageObjectType == "CLPArray")
-            //    {
-            //        arrayArea += (pageObject as CLPArray).Rows * (pageObject as CLPArray).Columns;
-            //        if((pageObject as CLPArray).Columns == Dividend || ((pageObject as CLPArray).Rows == Dividend))
-            //        {
-            //            //Array with product as array dimension added
-            //            var hasTag = false;
-            //            foreach(Tag tag in ParentPage.PageTags.ToList())
-            //            {
-            //                if(tag.TagType.Name == FuzzyFactorCardIncorrectArrayTagType.Instance.Name)
-            //                {
-            //                    if(!tag.Value.Contains(new TagOptionValue("product as dimension")))
-            //                    {
-            //                        tag.Value.Add(new TagOptionValue("product as dimension"));
-            //                    }
-            //                    hasTag = true;
-            //                    continue;
-            //                }
-            //            }
-            //            if(!hasTag)
-            //            {
-            //                var tag = new Tag(Tag.Origins.Generated, FuzzyFactorCardIncorrectArrayTagType.Instance);
-            //                tag.AddTagOptionValue(new TagOptionValue("product as dimension"));
-            //                ParentPage.PageTags.Add(tag);
-            //            }
-            //        }
-            //        if((pageObject as CLPArray).Rows != Rows && (pageObject as CLPArray).Columns == Rows)
-            //        {
-            //            //Array with wrong orientation added
-            //            var hasTag = false;
-            //            foreach(Tag tag in ParentPage.PageTags.ToList())
-            //            {
-            //                if(tag.TagType.Name == FuzzyFactorCardIncorrectArrayTagType.Instance.Name)
-            //                {
-            //                    if(!tag.Value.Contains(new TagOptionValue("wrong orientation")))
-            //                    {
-            //                        tag.Value.Add(new TagOptionValue("wrong orientation"));
-            //                    }
-            //                    hasTag = true;
-            //                    continue;
-            //                }
-            //            }
-            //            if(!hasTag)
-            //            {
-            //                var tag = new Tag(Tag.Origins.Generated, FuzzyFactorCardIncorrectArrayTagType.Instance);
-            //                tag.AddTagOptionValue(new TagOptionValue("wrong orientation"));
-            //                ParentPage.PageTags.Add(tag);
-            //            }
-            //        }
-            //        else if((pageObject as CLPArray).Rows != Rows)
-            //        {
-            //            //Array with incorrect dimension added
-            //            var hasTag = false;
-            //            foreach(Tag tag in ParentPage.PageTags.ToList())
-            //            {
-            //                if(tag.TagType.Name == FuzzyFactorCardIncorrectArrayTagType.Instance.Name)
-            //                {
-            //                    if(!tag.Value.Contains(new TagOptionValue("incorrect dimension")))
-            //                    {
-            //                        tag.Value.Add(new TagOptionValue("incorrect dimension"));
-            //                    }
-            //                    hasTag = true;
-            //                    continue;
-            //                }
-            //            }
-            //            if(!hasTag)
-            //            {
-            //                var tag = new Tag(Tag.Origins.Generated, FuzzyFactorCardIncorrectArrayTagType.Instance);
-            //                tag.AddTagOptionValue(new TagOptionValue("incorrect dimension"));
-            //                ParentPage.PageTags.Add(tag);
-            //            }
-            //        }
-            //    }
-            //}
-            //if(arrayArea > CurrentRemainder)
-            //{
-            //    //Too many arrays added
-            //    var hasTag = false;
-            //    foreach(Tag tag in ParentPage.PageTags.ToList())
-            //    {
-            //        if(tag.TagType.Name == FuzzyFactorCardIncorrectArrayTagType.Instance.Name)
-            //        {
-            //            if(!tag.Value.Contains(new TagOptionValue("too many")))
-            //            {
-            //                tag.Value.Add(new TagOptionValue("too many"));
-            //            }
-            //            hasTag = true;
-            //            continue;
-            //        }
-            //    }
-            //    if(!hasTag)
-            //    {
-            //        var tag = new Tag(Tag.Origins.Generated, FuzzyFactorCardIncorrectArrayTagType.Instance);
-            //        tag.AddTagOptionValue(new TagOptionValue("too many"));
-            //        ParentPage.PageTags.Add(tag);
-            //    }
-            //}
+            int arrayArea = 0;
+            foreach(var pageObject in ParentPage.PageObjects)
+            {
+                if(pageObject is CLPArray && !(pageObject is FuzzyFactorCard))
+                {
+                    arrayArea += (pageObject as CLPArray).Rows * (pageObject as CLPArray).Columns;
+                    if((pageObject as CLPArray).Columns == Dividend || ((pageObject as CLPArray).Rows == Dividend))
+                    {
+                        //Array with product as array dimension added
+                        var hasTag = false;
+                        foreach(ATagBase tag in ParentPage.Tags.ToList())
+                        {
+                            if(tag is FuzzyFactorCardIncorrectArrayCreationTag && tag.Value == FuzzyFactorCardIncorrectArrayCreationTag.AcceptedValues.ProductAsDimension.ToString())
+                            {
+                                hasTag = true;
+                                continue;
+                            }
+                        }
+                        if(!hasTag)
+                        {
+                            var tag = new FuzzyFactorCardIncorrectArrayCreationTag(ParentPage, FuzzyFactorCardIncorrectArrayCreationTag.AcceptedValues.ProductAsDimension);
+                            ParentPage.Tags.Add(tag);
+                        }
+                    }
+                    if((pageObject as CLPArray).Rows != Rows && (pageObject as CLPArray).Columns == Rows)
+                    {
+                        //Array with wrong orientation added
+                        var hasTag = false;
+                        foreach(ATagBase tag in ParentPage.Tags.ToList())
+                        {
+                            if(tag is FuzzyFactorCardIncorrectArrayCreationTag && tag.Value == FuzzyFactorCardIncorrectArrayCreationTag.AcceptedValues.WrongOrientation.ToString())
+                            {
+                                hasTag = true;
+                                continue;
+                            }
+                        }
+                        if(!hasTag)
+                        {
+                            var tag = new FuzzyFactorCardIncorrectArrayCreationTag(ParentPage, FuzzyFactorCardIncorrectArrayCreationTag.AcceptedValues.WrongOrientation);
+                            ParentPage.Tags.Add(tag);
+                        }
+                    }
+                    else if((pageObject as CLPArray).Rows != Rows)
+                    {
+                        //Array with incorrect dimension added
+                        var hasTag = false;
+                        foreach(ATagBase tag in ParentPage.Tags.ToList())
+                        {
+                            if(tag is FuzzyFactorCardIncorrectArrayCreationTag && tag.Value == FuzzyFactorCardIncorrectArrayCreationTag.AcceptedValues.IncorrectDimension.ToString())
+                            {
+                                hasTag = true;
+                                continue;
+                            }
+                        }
+                        if(!hasTag)
+                        {
+                            var tag = new FuzzyFactorCardIncorrectArrayCreationTag(ParentPage, FuzzyFactorCardIncorrectArrayCreationTag.AcceptedValues.IncorrectDimension);
+                            ParentPage.Tags.Add(tag);
+                        }
+                    }
+                }
+            }
+            if(arrayArea > CurrentRemainder)
+            {
+                //Too many arrays added
+                var hasTag = false;
+                foreach(ATagBase tag in ParentPage.Tags.ToList())
+                {
+                    if(tag is FuzzyFactorCardIncorrectArrayCreationTag && tag.Value == FuzzyFactorCardIncorrectArrayCreationTag.AcceptedValues.TooMany.ToString())
+                    {
+                        hasTag = true;
+                        continue;
+                    }
+                }
+                if(!hasTag)
+                {
+                    var tag = new FuzzyFactorCardIncorrectArrayCreationTag(ParentPage, FuzzyFactorCardIncorrectArrayCreationTag.AcceptedValues.TooMany);
+                    ParentPage.Tags.Add(tag);
+                }
+            }
         }
 
         public void UpdateRemainderRegion()
