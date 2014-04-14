@@ -26,12 +26,16 @@ namespace Classroom_Learning_Partner.ViewModels
             // TODO: DATABASE - inject INotebookService that can grab the available notebook names?
 
             var localNames = MainWindowViewModel.AvailableLocalNotebookNames;
-            foreach(var name in localNames.Select(localName => new NotebookName
-                                                               {
-                                                                   Name = localName.Split(';')[0],
-                                                                   ID = localName.Split(';')[1],
-                                                                   IsLocal = true
-                                                               }))
+            foreach(var name in from localName in localNames
+                                select localName.Split(';')
+                                into nameAndID
+                                where nameAndID.Length == 2
+                                select new NotebookName
+                                       {
+                                           Name = nameAndID[0],
+                                           ID = nameAndID[1],
+                                           IsLocal = true
+                                       })
             {
                 NotebookNames.Add(name);
             }

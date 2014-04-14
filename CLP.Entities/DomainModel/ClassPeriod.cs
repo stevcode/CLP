@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
+using Path = Catel.IO.Path;
 
 namespace CLP.Entities
 {
@@ -116,6 +118,46 @@ namespace CLP.Entities
         #endregion //Navigation Properties
 
         #endregion //Properties
+
+        #region Cache
+
+        public void ToXML(string fileName)
+        {
+            var fileInfo = new FileInfo(fileName);
+            if(!Directory.Exists(fileInfo.DirectoryName))
+            {
+                Directory.CreateDirectory(fileInfo.DirectoryName);
+            }
+
+            using(Stream stream = new FileStream(fileName, FileMode.Create))
+            {
+                var xmlSerializer = SerializationFactory.GetXmlSerializer();
+                xmlSerializer.Serialize(this, stream);
+                ClearIsDirtyOnAllChilds();
+            }
+        }
+
+        public void SaveClassSubject(string folderPath)
+        {
+            var fileName = Path.Combine(folderPath, "ClassPeriod;" + ID + ";" + StartTime + ".xml");
+            ToXML(fileName);
+        }
+
+        public static ClassSubject OpenClassSubject(string filePath)
+        {
+            try
+            {
+                var classSubject = Load<ClassSubject>(filePath, SerializationMode.Xml);
+
+                return classSubject;
+            }
+            catch(Exception)
+            {
+                return null;
+            }
+        }
+
+        #endregion //Cache
 
         //TODO: Remove after database established
         private const string EMILY_CLASS_PERIOD_ID = "00001111-0000-0000-0000-000000000001";

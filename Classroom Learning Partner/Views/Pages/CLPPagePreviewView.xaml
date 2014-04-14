@@ -19,7 +19,7 @@
                 Background="White">
 
             <ItemsControl IsHitTestVisible="False"
-                          ItemsSource="{Binding PageObjects}"
+                          ItemsSource="{Binding PageObjects, IsAsync=True}"
                           ItemContainerStyle="{StaticResource ContainerStyle}"
                           HorizontalAlignment="Stretch"
                           VerticalAlignment="Stretch">
@@ -40,7 +40,7 @@
 
             </ItemsControl>
 
-            <InkPresenter Strokes="{Binding InkStrokes}"
+            <InkPresenter Strokes="{Binding InkStrokes, IsAsync=True}"
                           ClipToBounds="True"
                           Width="{Binding Width}"
                           Height="{Binding Height}" />

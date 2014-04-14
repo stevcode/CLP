@@ -421,7 +421,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static void SaveNotebook(Notebook notebook, bool isFullSaveForced = false)
         {
-            var folderPath = Path.Combine(App.NotebookCacheDirectory, notebook.Name);
+            var folderPath = Path.Combine(App.NotebookCacheDirectory, notebook.Name + ";" + notebook.ID);
 
             //if(isFullSaveForced)
             //{
