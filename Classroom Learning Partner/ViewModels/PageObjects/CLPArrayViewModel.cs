@@ -1002,22 +1002,18 @@ namespace Classroom_Learning_Partner.ViewModels
                     return;
                 }
                 var labelsString = "";
-                var labelsSummedString = "";
                 if(HorizontalDivisions.Count == 2)
                 {
                     labelsString = HorizontalDivisions.First().Value + " and " + HorizontalDivisions.Last().Value;
-                    labelsSummedString = HorizontalDivisions.First().Value + " + " + HorizontalDivisions.Last().Value;
                 }
                 else
                 {
                     for(var i = 0; i < HorizontalDivisions.Count; i++)
                     {
                         labelsString += HorizontalDivisions.ElementAt(i).Value.ToString();
-                        labelsSummedString += HorizontalDivisions.ElementAt(i).Value.ToString();
                         if(i < HorizontalDivisions.Count - 1)
                         {
                             labelsString += ", ";
-                            labelsSummedString += " + ";
                         }
                         if(i == HorizontalDivisions.Count - 2)
                         {
@@ -1026,8 +1022,8 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                 }
                 MessageBox.Show(
-                                "You entered " + labelsString + " for the parts of the side of the array that is " + Rows + " long, but " + labelsSummedString + " does not equal " + Rows +
-                                ". To change on of the numbers you enetered, tap on it and the number pad will come up again.",
+                                "The side of the array is " + Rows + ". You broke the side into " + labelsString + " , which don’t add up to " + Rows + 
+                                ". To change one of the numbers you entered, tap on it and the number pad will come up again.",
                                 "Oops");
             }
             else
@@ -1048,22 +1044,18 @@ namespace Classroom_Learning_Partner.ViewModels
                     return;
                 }
                 var labelsString = "";
-                var labelsSummedString = "";
                 if(VerticalDivisions.Count == 2)
                 {
                     labelsString = VerticalDivisions.First().Value + " and " + VerticalDivisions.Last().Value;
-                    labelsSummedString = VerticalDivisions.First().Value + " + " + VerticalDivisions.Last().Value;
                 }
                 else
                 {
                     for(var i = 0; i < VerticalDivisions.Count; i++)
                     {
                         labelsString += VerticalDivisions.ElementAt(i).Value.ToString();
-                        labelsSummedString += VerticalDivisions.ElementAt(i).Value.ToString();
                         if(i < VerticalDivisions.Count - 1)
                         {
                             labelsString += ", ";
-                            labelsSummedString += " + ";
                         }
                         if(i == VerticalDivisions.Count - 2)
                         {
@@ -1072,8 +1064,8 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                 }
                 MessageBox.Show(
-                                "You entered " + labelsString + " for the parts of the side of the array that is " + Columns + " long, but " + labelsSummedString + " does not equal " + Columns +
-                                ".  To change on of the numbers you enetered, tap on it and the number pad will come up again.",
+                                "The side of the array is " + Columns + ". You broke the side into " + labelsString + " , which don’t add up to " + Columns +
+                                ". To change one of the numbers you entered, tap on it and the number pad will come up again.",
                                 "Oops");
             }
         }

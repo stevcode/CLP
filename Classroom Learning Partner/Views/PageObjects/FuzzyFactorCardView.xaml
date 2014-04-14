@@ -16,6 +16,7 @@
         <conv:IntToVisibilityConverter x:Key="IntToVisibilityConverter" />
         <conv:IntToOppositeVisibilityConverter x:Key="IntToOppositeVisibilityConverter" />
         <conv:FFCMarginConverter x:Key="FFCMarginConverter" />
+        <conv:RatioToRectMultiConverter x:Key="RatioToRectMultiConverter" />
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 
         <Style x:Key="HorizontalDivisionStyle">
@@ -340,6 +341,62 @@
                 </Grid.RowDefinitions>-->
                 <!--TODO Liz: Add rows for rotating-->
 
+                <Border Grid.Column="0"
+                        Grid.Row="0"
+                        Height="{Binding ArrayHeight}"
+                        Width="{Binding PageObject.LastDivisionPosition}"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        BorderBrush="{Binding BorderColor}"
+                        BorderThickness="0 3 0 3"
+                        SnapsToDevicePixels="True">
+                    <Border.Style>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="Background"
+                                Value="Transparent" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsGridOn}"
+                                         Value="True">
+                                    <Setter Property="Background">
+                                        <Setter.Value>
+
+                                            <DrawingBrush TileMode="Tile"
+                                                      ViewportUnits="RelativeToBoundingBox">
+                                                <DrawingBrush.Viewport>
+                                                    <MultiBinding Converter="{StaticResource RatioToRectMultiConverter}">
+                                                        <Binding Path="PageObject.LastDivisionPosition" />
+                                                        <Binding Path="ArrayHeight" />
+                                                        <Binding Path="GridSquareSize" />
+                                                    </MultiBinding>
+                                                </DrawingBrush.Viewport>
+                                                <DrawingBrush.Drawing>
+                                                    <DrawingGroup>
+                                                        <!--Horizontal Grid Line-->
+                                                        <GeometryDrawing Geometry="M0,20 L20,20">
+                                                            <GeometryDrawing.Pen>
+                                                                <Pen Thickness=".3"
+                                                                 Brush="{StaticResource GridColor}" />
+                                                            </GeometryDrawing.Pen>
+                                                        </GeometryDrawing>
+                                                        <!--Vertical Grid Line-->
+                                                        <GeometryDrawing Geometry="M20,0 L20,20">
+                                                            <GeometryDrawing.Pen>
+                                                                <Pen Thickness=".3"
+                                                                 Brush="{StaticResource GridColor}" />
+                                                            </GeometryDrawing.Pen>
+                                                        </GeometryDrawing>
+                                                    </DrawingGroup>
+                                                </DrawingBrush.Drawing>
+                                            </DrawingBrush>
+
+                                        </Setter.Value>
+                                    </Setter>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                </Border>
+
                 <!--Vertical Divisions-->
                 <ItemsControl Grid.Column="0"
                               Grid.Row="0"
@@ -452,20 +509,9 @@
                         Margin="0"
                         SnapsToDevicePixels="True" />
 
-                <Border Grid.Column="0"
-                        Grid.Row="0"
-                        Height="{Binding ArrayHeight}"
-                        Width="{Binding PageObject.LastDivisionPosition}"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Top"
-                        BorderBrush="{Binding BorderColor}"
-                        BorderThickness="0 3 0 3"
-                        SnapsToDevicePixels="True" />
-
                 <!--Black line for last divider-->
                 <Border Grid.Column="1"
                         Grid.Row="0"
-                        Background="Transparent"
                         BorderThickness="3 0 0 0"
                         BorderBrush="{Binding BorderColor}" />
 

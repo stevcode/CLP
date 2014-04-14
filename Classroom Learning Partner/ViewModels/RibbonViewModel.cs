@@ -2681,9 +2681,9 @@ namespace Classroom_Learning_Partner.ViewModels
             foreach(var pageObject in page.PageObjects)
             {
                 //TODO Liz - exclude background arrays from this check
-                if(pageObject is CLPArray)
+                if(pageObject is CLPArray || pageObject is FuzzyFactorCard)
                 {
-                    squareSize = (pageObject as CLPArray).ArrayHeight / (pageObject as CLPArray).Rows;
+                    squareSize = (pageObject as ACLPArrayBase).ArrayHeight / (pageObject as ACLPArrayBase).Rows;
                 }
             }
 
@@ -2765,16 +2765,16 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     var pageObjectMinSide = (pageObject is FuzzyFactorCard) ? MIN_FFC_SIDE : MIN_SIDE;
                     //TODO Liz - do not resize background arrays
-                    if(pageObject is CLPArray)
+                    if(pageObject is CLPArray || pageObject is FuzzyFactorCard)
                     {
                         oldDimensions.Add(pageObject.ID, new Point(pageObject.Width, pageObject.Height));
-                        if((pageObject as CLPArray).Rows * initializedSquareSize > pageObjectMinSide && (pageObject as CLPArray).Columns * initializedSquareSize > pageObjectMinSide)
+                        if((pageObject as ACLPArrayBase).Rows * initializedSquareSize > pageObjectMinSide && (pageObject as ACLPArrayBase).Columns * initializedSquareSize > pageObjectMinSide)
                         {
-                            (pageObject as CLPArray).SizeArrayToGridLevel(initializedSquareSize);
+                            (pageObject as ACLPArrayBase).SizeArrayToGridLevel(initializedSquareSize);
                         }
                         else
                         {
-                            (pageObject as CLPArray).SizeArrayToGridLevel(pageObjectMinSide / Math.Min((pageObject as CLPArray).Rows, (pageObject as CLPArray).Columns));
+                            (pageObject as ACLPArrayBase).SizeArrayToGridLevel(pageObjectMinSide / Math.Min((pageObject as ACLPArrayBase).Rows, (pageObject as ACLPArrayBase).Columns));
                         }
                     }
                     initialGridsquareSize = initializedSquareSize;
