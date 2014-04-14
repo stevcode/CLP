@@ -38,7 +38,9 @@
                     <ColumnDefinition Width="60" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <ComboBox SelectedIndex="0" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" ItemsSource="{Binding PageSets}"/>
+                <ComboBox SelectedIndex="0" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+                          HorizontalAlignment="Center" Width="150"  VerticalAlignment="Center" 
+                          ItemsSource="{Binding PageSets}"/>
                 <TextBlock Grid.Column="0" Grid.Row="2" FontWeight="Bold" Height="24" Margin="5 0 0 0">
                     <Run Text="Teacher"/>
                 </TextBlock>
