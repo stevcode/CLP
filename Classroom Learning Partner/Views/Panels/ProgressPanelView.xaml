@@ -6,11 +6,11 @@
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters">
     
     <UserControl.Resources>
-        <conv:SubmissionsListForPageByStudentConverter x:Key="SubmissionsListForPageByStudentConverter" />
+        <conv:PageToSubmissionsListConverter x:Key="PageToSubmissionsListConverter" />
         <conv:PageToStarredVisibilityConverter x:Key="PageToStarredVisibilityConverter" />
         <conv:PageToSubmissionVisibilityConverter x:Key="PageToSubmissionVisibilityConverter" />
         <conv:PanelLocationToThicknessConverter x:Key="PanelLocationToThicknessConverter" />
-            <conv:PageMatchToColorConverter x:Key="PageMatchToColorConverter" />
+        <conv:PageMatchToColorConverter x:Key="PageMatchToColorConverter" />
     </UserControl.Resources>
     
     <Border Background="{StaticResource GrayBackgroundColor}"
@@ -24,29 +24,36 @@
             </Grid.ColumnDefinitions>
             <Grid Grid.Column="0">
                 <!-- names and pages -->
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30"/> <!-- page numbers-->
+                    <RowDefinition Height="24"/> <!-- teacher pages -->
+                    <RowDefinition Height="*"/> <!-- student pages -->
+                </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="60" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <ItemsControl Grid.Column="0"
+                <TextBlock Grid.Column="0" Grid.Row="1" FontWeight="Bold" Height="24" Margin="5 0 0 0">
+                    <Run Text="Teacher"/>
+                </TextBlock>
+                <ItemsControl Grid.Column="0" Grid.Row="2"
                               ItemsSource="{Binding StudentList}"
-                              Margin="5 30 0 0">
+                              Margin="5 0 0 0">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock FontWeight="Bold"
-                                       Height="24">
-                                <Run Text="{Binding Mode=OneWay}" />
+                            <TextBlock FontWeight="Bold" Height="24">
+                                <Run Text="{Binding Path=FullName}" />
                             </TextBlock>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-                <ItemsControl Name="Pages"
-                              Grid.Column="1"
-                              ItemsSource="{Binding CurrentPages}">
+                <ScrollViewer Grid.Column="1" Grid.Row="0" Grid.RowSpan="3" 
+                              HorizontalScrollBarVisibility="Auto"
+                              VerticalScrollBarVisibility="Hidden">
+                <ItemsControl Name="Pages" ItemsSource="{Binding CurrentPages}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal"
-                                        VerticalAlignment="Top" />
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Top" />
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
@@ -54,7 +61,8 @@
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="24" />
-                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="24" />
+                                    <RowDefinition Height="*"  />
                                 </Grid.RowDefinitions>
                                 <TextBlock Grid.Row="0"
                                            FontWeight="Bold"
@@ -62,18 +70,31 @@
                                            HorizontalAlignment="Center">
                                     <Run Text="{Binding PageNumber}" />
                                 </TextBlock>
-                                <ItemsControl Grid.Row="1">
-                                    <ItemsControl.ItemsSource>
-                                        <MultiBinding Converter="{StaticResource SubmissionsListForPageByStudentConverter}">
-                                            <Binding ElementName="Pages"
-                                                     Path="DataContext.Notebook.Submissions" />
-                                            <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}"
-                                                     Path="DataContext.StudentList" />
-                                            <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}"
-                                                     Path="DataContext.Notebook" />
-                                            <Binding Path="UniqueID" />
-                                        </MultiBinding>
-                                    </ItemsControl.ItemsSource>
+                                <Border Grid.Row="1" Margin="3"
+                                        BorderBrush="{StaticResource GrayEdgeColor}"
+                                        BorderThickness="1,1,1,1">
+                                    <Rectangle Grid.Row="0" Margin="0" Fill="White" StrokeThickness="2" Height="24" Width="32">
+                                        <!--Rectangle.Stroke>
+                                            <MultiBinding Converter="{StaticResource PageMatchToColorConverter}">
+                                                <Binding ElementName="Pages" Path="DataContext.CurrentPage"/>
+                                                <Binding Path=""/>
+                                            </MultiBinding>
+                                        </-->
+                                        <!--i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="MouseUp">
+                                                <catel:EventToCommand Command="{Binding DataContext.SetCurrentPageCommand, ElementName=Pages}"
+                                                                                      PassEventArgsToCommand="False"
+                                                                                      CommandParameter="{Binding}" />
+                                            </i:EventTrigger>
+                                        </-->
+                                    </Rectangle>
+                                </Border>
+                                <ItemsControl Grid.Row="2" ItemsSource="{Binding Converter={StaticResource PageToSubmissionsListConverter}}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Vertical" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
                                             <Border Margin="3"
@@ -98,19 +119,19 @@
                                                                Visibility="{Binding Converter={StaticResource PageToSubmissionVisibilityConverter}}" />
                                                     </Grid>
                                                     <Rectangle Grid.Row="0" Margin="0" Fill="Transparent" StrokeThickness="2">
-                                                        <Rectangle.Stroke>
+                                                        <!--Rectangle.Stroke>
                                                             <MultiBinding Converter="{StaticResource PageMatchToColorConverter}">
                                                                 <Binding ElementName="Pages" Path="DataContext.CurrentPage"/>
                                                                 <Binding Path=""/>
                                                             </MultiBinding>
-                                                        </Rectangle.Stroke>
-                                                        <i:Interaction.Triggers>
+                                                        </-->
+                                                        <!--i:Interaction.Triggers>
                                                             <i:EventTrigger EventName="MouseUp">
                                                                 <catel:EventToCommand Command="{Binding DataContext.SetCurrentPageCommand, ElementName=Pages}"
                                                                                       PassEventArgsToCommand="False"
                                                                                       CommandParameter="{Binding}" />
                                                             </i:EventTrigger>
-                                                        </i:Interaction.Triggers>
+                                                        </-->
                                                     </Rectangle>
                                                 </Grid>
                                             </Border>
@@ -121,6 +142,7 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
+                </ScrollViewer>
             </Grid>
 
             <!--Thumb Cursor="ScrollWE" Width="5" 

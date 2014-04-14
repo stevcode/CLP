@@ -17,23 +17,34 @@ namespace Classroom_Learning_Partner.ViewModels
         public ProgressPanelViewModel(Notebook notebook)
         {
             Notebook = notebook;
+            CurrentPages = Notebook.Pages;
             Initialized += ProgressPanelViewModel_Initialized;
 
-            //CurrentPages.Add(Notebook.Pages[2]);
-            //CurrentPages.Add(Notebook.Pages[3]);
-
-            //for(int page = 0; page < Notebook.Pages.Count && page < 10; page++)
-            //{
-            //    CurrentPages.Add(Notebook.Pages[page]);
-            //}
-
-            StudentList = GetStudentNames();
+            if(App.MainWindowViewModel.CurrentClassPeriod != null)
+            {
+                StudentList = App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.StudentList;
+            }
+            else
+            {
+                StudentList = new ObservableCollection<Person>();
+                Person dummy = new Person();
+                dummy.FullName = "Test";
+                StudentList.Add(dummy);
+            }
             SetCurrentPageCommand = new Command<CLPPage>(OnSetCurrentPageCommandExecute);
         }
 
         void ProgressPanelViewModel_Initialized(object sender, EventArgs e)
         {
-            Length = CurrentPages.Count * 40 + 65;
+            var calculatedWidth = CurrentPages.Count * 40 + 65;
+            if(App.Current.MainWindow.ActualWidth < calculatedWidth * 2)
+            {
+                Length = App.Current.MainWindow.ActualWidth / 2;
+            }
+            else
+            {
+                Length = calculatedWidth;
+            }
         }
 
         public override string Title
@@ -83,13 +94,13 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage));
 
-        public ObservableCollection<string> StudentList
+        public ObservableCollection<Person> StudentList
         {
-            get { return GetValue<ObservableCollection<string>>(StudentListProperty); }
+            get { return GetValue<ObservableCollection<Person>>(StudentListProperty); }
             set { SetValue(StudentListProperty, value); }
         }
 
-        public static readonly PropertyData StudentListProperty = RegisterProperty("StudentList", typeof(ObservableCollection<string>), () => new ObservableCollection<string>());
+        public static readonly PropertyData StudentListProperty = RegisterProperty("StudentList", typeof(ObservableCollection<Person>), () => new ObservableCollection<Person>());
 
         #endregion //Bindings
 
@@ -128,26 +139,5 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion
 
-        //This is copied over from SubmissionsPanelViewModel, it wants to be 
-        //database-agnostic when stuff's finalized
-        public ObservableCollection<string> GetStudentNames()
-        {
-            var userNames = new ObservableCollection<string>();
-            var filePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\StudentNames.txt";
-            userNames.Add("Original");
-            if(!File.Exists(filePath))
-            {
-                return userNames;
-            }
-            var reader = new StreamReader(filePath);
-            string name;
-            while((name = reader.ReadLine()) != null)
-            {
-                var user = name.Split(new[] {','})[0];
-                userNames.Add(user);
-            }
-            reader.Dispose();
-            return userNames;
-        }
     }
 }

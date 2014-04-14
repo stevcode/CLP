@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Data;
+using Classroom_Learning_Partner.ViewModels;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.Converters
@@ -9,19 +10,21 @@ namespace Classroom_Learning_Partner.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            // TODO: Entities
-            //var page = (ICLPPage)value;
-            //foreach(Tag t in page.PageTags) 
-            //{
-            //    if(t.TagType.Name == "Starred")
-            //    {
-            //        if(((string)t.Value[0].Value) == "Starred")
-            //        {
-            //            return "Visible";
-            //        }
-            //        return "Hidden";
-            //    }
-            //}
+            var page = ((StudentProgressInfo)value).Page;
+            if(page != null)
+            {
+                foreach(ATagBase t in page.Tags)
+                {
+                    if(t is StarredTag)
+                    {
+                        if(t.Value == "Starred")
+                        {
+                            return "Visible";
+                        }
+                        return "Hidden";
+                    }
+                }
+            }
             return "Hidden";
         }
 

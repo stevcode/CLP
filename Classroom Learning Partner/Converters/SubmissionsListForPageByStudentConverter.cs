@@ -11,14 +11,14 @@ namespace Classroom_Learning_Partner.Converters
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            var submissionsforpage = ((IDictionary)values[0])[values[3]];
+            //var submissionsforpage = ((IDictionary)values[0])[values[3]];
             var studentslist = (IList)values[1];
             // TODO: Entities
             //var blankpage = ((Notebook)values[2]).GetNotebookPageByID((string)values[3]);
             ObservableCollection<CLPPage> submissionswithblanks = new ObservableCollection<CLPPage>();
-            //foreach(string student in studentslist)
-            //{
-            //    ICLPPage foundPage = null;
+            foreach(string student in studentslist)
+            {
+            //    CLPPage foundPage = null;
             //    foreach(ICLPPage submission in (IList)submissionsforpage)
             //    {
             //        if(submission.Submitter.FullName == student &&
@@ -29,13 +29,13 @@ namespace Classroom_Learning_Partner.Converters
             //    }
             //    if(foundPage == null)
             //    {
-            //        submissionswithblanks.Add(blankpage);
+                    submissionswithblanks.Add(new CLPPage());
             //    }
             //    else
             //    {
             //        submissionswithblanks.Add(foundPage);
             //    }
-            //}
+            }
             return submissionswithblanks;
         }
 

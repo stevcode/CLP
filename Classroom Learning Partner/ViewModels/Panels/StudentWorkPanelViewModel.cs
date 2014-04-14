@@ -21,7 +21,10 @@ namespace Classroom_Learning_Partner.ViewModels
             //    LinkedPanel = new SubmissionsPanelViewModel(notebook); // TODO: Entities, staging panel
             
             // TODO: DATABASE - inject IPersonService to grab student names
-            StudentList = GetStudentNames();
+            if(App.MainWindowViewModel.CurrentClassPeriod != null)
+            {
+                StudentList = App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.StudentList;
+            }
         }
 
         void StudentWorkPanelViewModel_Initialized(object sender, EventArgs e)
@@ -80,15 +83,15 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage));
 
-        public ObservableCollection<StudentProgressInfo> StudentList
+        public ObservableCollection<Person> StudentList
         {
-            get { return GetValue<ObservableCollection<StudentProgressInfo>>(StudentListProperty); }
+            get { return GetValue<ObservableCollection<Person>>(StudentListProperty); }
             set { SetValue(StudentListProperty, value); }
         }
 
         public static readonly PropertyData StudentListProperty = RegisterProperty("StudentList",
-                                                                                   typeof(ObservableCollection<StudentProgressInfo>),
-                                                                                   () => new ObservableCollection<StudentProgressInfo>());
+                                                                                   typeof(ObservableCollection<Person>),
+                                                                                   () => new ObservableCollection<Person>());
 
         #endregion //Bindings
 
@@ -118,27 +121,5 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion
 
-        //This is copied over from SubmissionsPanelViewModel, it wants to be 
-        //database-agnostic when stuff's finalized
-        public ObservableCollection<StudentProgressInfo> GetStudentNames()
-        {
-            var userNames = new ObservableCollection<StudentProgressInfo>();
-            //userNames.Add(new StudentProgressInfo("Original", Pages));
-
-            var filePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\StudentNames.txt";
-
-            if(File.Exists(filePath))
-            {
-                var reader = new StreamReader(filePath);
-                string name;
-                while((name = reader.ReadLine()) != null)
-                {
-                    var user = name.Split(new[] {','})[0];
-                    userNames.Add(new StudentProgressInfo(user, CurrentPages));
-                }
-                reader.Dispose();
-            }
-            return userNames;
-        }
     }
 }

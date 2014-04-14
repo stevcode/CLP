@@ -221,6 +221,7 @@
     <Compile Include="Converters\ItemSelectedToColorConverter.cs" />
     <Compile Include="Converters\MarginSingleSideConverter.cs" />
     <Compile Include="Converters\MultiplyAllIntToTextMultiConverter.cs" />
+    <Compile Include="Converters\PageToSubmissionsListConverter.cs" />
     <Compile Include="Converters\Panel Converters\PanelLocationToThicknessConverter.cs" />
     <Compile Include="Converters\PageToStarredVisibilityConverter.cs" />
     <Compile Include="Converters\PageToSubmissionVisibilityConverter.cs" />
