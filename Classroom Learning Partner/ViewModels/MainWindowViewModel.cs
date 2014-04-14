@@ -33,7 +33,6 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             InitializeCommands();
             TitleBarText = CLP_TEXT;
-            CreateStudentListSeed();
         }
 
         public override string Title
