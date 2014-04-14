@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
@@ -259,10 +258,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command TogglePenDownCommand { get; private set; }
 
-        private void OnTogglePenDownCommandExecute()
-        {
-            IsPenDownActivated = !IsPenDownActivated;
-        }
+        private void OnTogglePenDownCommandExecute() { IsPenDownActivated = !IsPenDownActivated; }
 
         #endregion //Commands
 
