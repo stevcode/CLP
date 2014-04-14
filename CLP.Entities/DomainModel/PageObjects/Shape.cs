@@ -16,6 +16,7 @@ namespace CLP.Entities
         Protractor
     }
 
+    [Serializable]
     public class Shape : APageObjectBase, ICuttable, ICountable
     {
         #region Constructors

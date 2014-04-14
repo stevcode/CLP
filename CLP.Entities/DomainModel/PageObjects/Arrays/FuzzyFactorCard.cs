@@ -6,6 +6,7 @@ using Catel.Data;
 
 namespace CLP.Entities
 {
+    [Serializable]
     public class FuzzyFactorCard : ACLPArrayBase
     {
         #region Constructors
