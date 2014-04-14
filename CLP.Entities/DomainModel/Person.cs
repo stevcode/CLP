@@ -10,6 +10,7 @@ namespace CLP.Entities
         Left
     }
 
+    [Serializable]
     public class Person : AEntityBase
     {
         private const string AUTHOR_ID = "00000000-0000-0000-1111-000000000001";
@@ -110,32 +111,31 @@ namespace CLP.Entities
         {
             get
             {
-                var teacher = new Person
+                return _teacherPerson;
+            }
+        }
+        private static readonly Person _teacherPerson = new Person
                               {
                                   ID = EMILY_ID,
                                   FullName = "Emily Sparks",
                                   IsStudent = false
                               };
 
-                return teacher;
-            }
-        }
-
         private const string EMILY_PROJECTOR_ID = "00000000-0000-0000-2222-000000000003";
         public static Person EmilyProjector
         {
             get
             {
-                var teacher = new Person
+                return _projectorPerson;
+            }
+        }
+
+        private static readonly Person _projectorPerson = new Person
                               {
                                   ID = EMILY_PROJECTOR_ID,
                                   FullName = "Projector",
                                   Alias = "Emily Sparks",
                                   IsStudent = false
                               };
-
-                return teacher;
-            }
-        }
     }
 }

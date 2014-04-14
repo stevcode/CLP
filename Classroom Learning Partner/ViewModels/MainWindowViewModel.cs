@@ -33,6 +33,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             InitializeCommands();
             TitleBarText = CLP_TEXT;
+            CreateStudentListSeed();
         }
 
         public override string Title
@@ -170,6 +171,17 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData CurrentUserProperty = RegisterProperty("CurrentUser", typeof(Person));
+
+        /// <summary>
+        /// List of all available <see cref="Person" />s.
+        /// </summary>
+        public ObservableCollection<Person> AvailableUsers
+        {
+            get { return GetValue<ObservableCollection<Person>>(AvailableUsersProperty); }
+            set { SetValue(AvailableUsersProperty, value); }
+        }
+
+        public static readonly PropertyData AvailableUsersProperty = RegisterProperty("AvailableUsers", typeof(ObservableCollection<Person>), () => new ObservableCollection<Person>());
 
         /// <summary>
         /// Gets or sets the property value.
@@ -386,5 +398,46 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //Static Methods
+
+        #region Temp Methods
+
+        public static void CreateStudentListSeed()
+        {
+            var namesList = new List<string>
+                            {
+                                "Ivanoshka",
+                                "Adam",
+                                "Serenity",
+                                "Sarisha",
+                                "Selma",
+                                "Fadi",
+                                "Keaton",
+                                "Renata",
+                                "Deven",
+                                "Ruggero",
+                                "Isabel",
+                                "Trishyn",
+                                "Miles",
+                                "Satyri",
+                                "Julio",
+                                "Tyler",
+                                "Katherine",
+                                "Antinoe"
+                            };
+
+            foreach(var name in namesList)
+            {
+                var student = new Person
+                              {
+                                  FullName = name,
+                                  IsStudent = true
+                              };
+                ClassSubject.EmilyClass.StudentList.Add(student);
+            }
+
+            ClassSubject.EmilyClass.SaveClassSubject(App.ClassCacheDirectory);
+        }
+
+        #endregion //Temp Methods
     }
 }

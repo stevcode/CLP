@@ -80,6 +80,12 @@ namespace Classroom_Learning_Partner
             {
                 Directory.CreateDirectory(NotebookCacheDirectory);
             }
+
+            ClassCacheDirectory = Path.Combine(LocalCacheDirectory, "Classes");
+            if(!Directory.Exists(ClassCacheDirectory))
+            {
+                Directory.CreateDirectory(ClassCacheDirectory);
+            }
         }
 
         #region Methods
@@ -142,6 +148,8 @@ namespace Classroom_Learning_Partner
 
         public static string LocalCacheDirectory { get; private set; }
         public static string NotebookCacheDirectory { get; private set; }
+
+        public static string ClassCacheDirectory { get; private set; }
 
         private static UserMode _currentUserMode = UserMode.Instructor;
         public static UserMode CurrentUserMode

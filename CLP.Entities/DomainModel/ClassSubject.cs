@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
+using Path = Catel.IO.Path;
 
 namespace CLP.Entities
 {
@@ -148,8 +151,6 @@ namespace CLP.Entities
         /// <remarks>
         /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
         /// </remarks>
-        [XmlIgnore]
-        [ExcludeFromSerialization]
         public virtual Person Teacher
         {
             get { return GetValue<Person>(TeacherProperty); }
@@ -164,33 +165,123 @@ namespace CLP.Entities
             }
         }
 
-        public static readonly PropertyData TeacherProperty = RegisterProperty("Teacher", typeof(Person)); 
+        public static readonly PropertyData TeacherProperty = RegisterProperty("Teacher", typeof(Person));
+
+        /// <summary>
+        /// Unique Identifier of the <see cref="Person" /> projector in the <see cref="ClassSubject" />.
+        /// </summary>
+        /// <remarks>
+        /// Foreign Key.
+        /// </remarks>
+        public string ProjectorID
+        {
+            get { return GetValue<string>(ProjectorIDProperty); }
+            set { SetValue(ProjectorIDProperty, value); }
+        }
+
+        public static readonly PropertyData ProjectorIDProperty = RegisterProperty("ProjectorID", typeof(string), string.Empty);
+
+        /// <summary>
+        /// The <see cref="Person" /> projector in the <see cref="ClassSubject" />.
+        /// </summary>
+        /// <remarks>
+        /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
+        /// </remarks>
+        public virtual Person Projector
+        {
+            get { return GetValue<Person>(ProjectorProperty); }
+            set
+            {
+                SetValue(ProjectorProperty, value);
+                if(value == null)
+                {
+                    return;
+                }
+                ProjectorID = value.ID;
+            }
+        }
+
+        public static readonly PropertyData ProjectorProperty = RegisterProperty("Projector", typeof(Person));
+
+        /// <summary>
+        /// List of all the Students in the <see cref="ClassSubject" />.
+        /// </summary>
+        /// <remarks>
+        /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
+        /// </remarks>
+        public virtual ObservableCollection<Person> StudentList
+        {
+            get { return GetValue<ObservableCollection<Person>>(StudentListProperty); }
+            set { SetValue(StudentListProperty, value); }
+        }
+
+        public static readonly PropertyData StudentListProperty = RegisterProperty("StudentList", typeof(ObservableCollection<Person>), () => new ObservableCollection<Person>());
 
         #endregion //Navigation Properties
 
         #endregion //Properties
 
-        //TODO: Remove after database established
-        private const string EMILY_CLASS_SUBJECT_ID = "00000000-1111-0000-0000-000000000001";
-        public static ClassSubject EmilyClass
+        #region Cache
+
+        public void ToXML(string fileName)
         {
-            get
+            var fileInfo = new FileInfo(fileName);
+            if(!Directory.Exists(fileInfo.DirectoryName))
             {
-                var subject = new ClassSubject
-                              {
-                                  ID = EMILY_CLASS_SUBJECT_ID,
-                                  Name = "Math",
-                                  GradeLevel = "4",
-                                  SchoolName = "King Open School",
-                                  SchoolDistrict = "Cambridge Public Schools",
-                                  City = "Cambridge",
-                                  State = "MA",
-                                  Teacher = Person.Emily,
-                                  StartDate = new DateTime(2013, 9, 1),
-                                  EndDate = new DateTime(2014, 6, 15)
-                              };
-                return subject;
+                Directory.CreateDirectory(fileInfo.DirectoryName);
+            }
+
+            using(Stream stream = new FileStream(fileName, FileMode.Create))
+            {
+                var xmlSerializer = SerializationFactory.GetXmlSerializer();
+                xmlSerializer.Serialize(this, stream);
+                ClearIsDirtyOnAllChilds();
             }
         }
+
+        public void SaveClassSubject(string folderPath)
+        {
+            var fileName = Path.Combine(folderPath, "ClassSubject;" + ID + ".xml");
+            ToXML(fileName);
+        }
+
+        public static ClassSubject OpenClassSubject(string filePath)
+        {
+            try
+            {
+                var classSubject = Load<ClassSubject>(filePath, SerializationMode.Xml);
+
+                return classSubject;
+            }
+            catch(Exception)
+            {
+                return null;
+            }
+        }
+
+        #endregion //Cache
+
+        //TODO: Remove after database established
+        private const string EMILY_CLASS_SUBJECT_ID = "00000000-1111-0000-0000-000000000001";
+
+        public static ClassSubject EmilyClass
+        {
+            get { return _emilyClass; }
+        }
+
+        private static readonly ClassSubject _emilyClass = new ClassSubject
+                                                           {
+                                                               ID = EMILY_CLASS_SUBJECT_ID,
+                                                               Name = "Math",
+                                                               GradeLevel = "4",
+                                                               SchoolName = "King Open School",
+                                                               SchoolDistrict = "Cambridge Public Schools",
+                                                               City = "Cambridge",
+                                                               State = "MA",
+                                                               Teacher = Person.Emily,
+                                                               Projector = Person.EmilyProjector,
+                                                               StartDate = new DateTime(2013, 9, 1),
+                                                               EndDate = new DateTime(2014, 6, 15)
+                                                           };
     }
 }
