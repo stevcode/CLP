@@ -162,6 +162,17 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Properties
 
         /// <summary>
+        /// The <see cref="Person" /> using the program.
+        /// </summary>
+        public Person CurrentUser
+        {
+            get { return GetValue<Person>(CurrentUserProperty); }
+            set { SetValue(CurrentUserProperty, value); }
+        }
+
+        public static readonly PropertyData CurrentUserProperty = RegisterProperty("CurrentUser", typeof(Person));
+
+        /// <summary>
         /// Gets or sets the property value.
         /// </summary>
         public ObservableCollection<Notebook> OpenNotebooks
@@ -184,9 +195,13 @@ namespace Classroom_Learning_Partner.ViewModels
                 case App.UserMode.Server:
                     break;
                 case App.UserMode.Instructor:
+                    //TODO: Remove after database established
+                    CurrentUser = Person.Emily;
                     Workspace = new NotebookChooserWorkspaceViewModel();
                     break;
                 case App.UserMode.Projector:
+                    //TODO: Remove after database established
+                    CurrentUser = Person.EmilyProjector;
                     Workspace = new NotebookChooserWorkspaceViewModel();
                     break;
                 case App.UserMode.Student:
@@ -246,8 +261,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnTogglePenDownCommandExecute()
         {
-            // TODO: Clear all adorners when screen comes up. Move to IsPenDownActivated { set; }
-            //ACLPPageBaseViewModel.ClearAdorners(currentPage);
             IsPenDownActivated = !IsPenDownActivated;
         }
 

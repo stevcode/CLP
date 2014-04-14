@@ -401,7 +401,7 @@ namespace CLP.Entities
                 foreach(string pageFilePath in pageFilePaths)
                 {
                     var page = Load<CLPPage>(pageFilePath, SerializationMode.Xml);
-                    foreach(IPageObject pageObject in page.PageObjects)
+                    foreach(var pageObject in page.PageObjects)
                     {
                         pageObject.ParentPage = page;
                     }

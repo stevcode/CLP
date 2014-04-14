@@ -106,8 +106,19 @@ namespace CLP.Entities
 
         #endregion //Properties
 
-        #region Methods
-
-        #endregion //Methods
+        //TODO: Remove after database established
+        private const string EMILY_CLASS_PERIOD_ID = "00001111-0000-0000-0000-000000000001";
+        public static ClassPeriod CurrentClassPeriod
+        {
+            get
+            {
+                var classPeriod = new ClassPeriod
+                                  {
+                                      ID = EMILY_CLASS_PERIOD_ID,
+                                      NotebookID = "fa5045a5-4fa0-45c9-82b8-758cb3d76bc8"
+                                  };
+                return classPeriod;
+            }
+        }
     }
 }

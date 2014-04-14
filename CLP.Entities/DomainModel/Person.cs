@@ -77,6 +77,17 @@ namespace CLP.Entities
 
         public static readonly PropertyData HandednessProperty = RegisterProperty("Handedness", typeof(Handedness), Handedness.Right);
 
+        /// <summary>
+        /// Signifies the <see cref="Person" /> is a student.
+        /// </summary>
+        public bool IsStudent
+        {
+            get { return GetValue<bool>(IsStudentProperty); }
+            set { SetValue(IsStudentProperty, value); }
+        }
+
+        public static readonly PropertyData IsStudentProperty = RegisterProperty("IsStudent", typeof(bool), true);
+
         #endregion //Properties
 
         public static Person Author
@@ -86,9 +97,44 @@ namespace CLP.Entities
                 var author = new Person
                              {
                                  ID = AUTHOR_ID,
-                                 FullName = "AUTHOR"
+                                 FullName = "AUTHOR",
+                                 IsStudent = false
                              };
                 return author;
+            }
+        }
+
+        //TODO: Remove once database established
+        private const string EMILY_ID = "00000000-0000-0000-2222-000000000002";
+        public static Person Emily
+        {
+            get
+            {
+                var teacher = new Person
+                              {
+                                  ID = EMILY_ID,
+                                  FullName = "Emily Sparks",
+                                  IsStudent = false
+                              };
+
+                return teacher;
+            }
+        }
+
+        private const string EMILY_PROJECTOR_ID = "00000000-0000-0000-2222-000000000003";
+        public static Person EmilyProjector
+        {
+            get
+            {
+                var teacher = new Person
+                              {
+                                  ID = EMILY_PROJECTOR_ID,
+                                  FullName = "Projector",
+                                  Alias = "Emily Sparks",
+                                  IsStudent = false
+                              };
+
+                return teacher;
             }
         }
     }
