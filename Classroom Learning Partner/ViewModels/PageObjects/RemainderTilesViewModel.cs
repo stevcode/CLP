@@ -5,7 +5,7 @@ using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    internal class RemainderTilesViewModel : APageObjectBaseViewModel
+    public class RemainderTilesViewModel : APageObjectBaseViewModel
     {
         #region Constructor
 

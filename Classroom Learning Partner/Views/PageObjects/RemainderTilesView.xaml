@@ -101,7 +101,7 @@
             <Rectangle Tag="RemainderRegionHitBox"
                        Width="{Binding Width}"
                        Height="{Binding Height}"
-                       Fill="Transparent"
+                       Fill="Transparent" 
                        Stroke="Transparent">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="MouseUp">
