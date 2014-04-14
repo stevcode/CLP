@@ -92,8 +92,25 @@ namespace Classroom_Learning_Partner.ViewModels
         public bool IsAuthoring
         {
             get { return GetValue<bool>(IsAuthoringProperty); }
-            set { SetValue(IsAuthoringProperty, value); }
+            set
+            {
+                if(value != IsAuthoring)
+                {
+                    if(value)
+                    {
+                        _tempCurrentUser = CurrentUser;
+                        CurrentUser = Person.Author;
+                    }
+                    else
+                    {
+                        CurrentUser = _tempCurrentUser;
+                    }
+                }
+                SetValue(IsAuthoringProperty, value);
+            }
         }
+
+        private Person _tempCurrentUser;
 
         public static readonly PropertyData IsAuthoringProperty = RegisterProperty("IsAuthoring", typeof(bool), false);
 
@@ -156,6 +173,17 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData HandednessProperty = RegisterProperty("Handedness", typeof(Handedness), Handedness.Right);
 
+        /// <summary>
+        /// Signifies navigation through the notebook is disabled and can only  be ahieved through network commands.
+        /// </summary>
+        public bool IsLinked
+        {
+            get { return GetValue<bool>(IsLinkedProperty); }
+            set { SetValue(IsLinkedProperty, value); }
+        }
+
+        public static readonly PropertyData IsLinkedProperty = RegisterProperty("IsLinked", typeof(bool), false);
+
         #endregion //Bindings
 
         #region Properties
@@ -192,6 +220,17 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData OpenNotebooksProperty = RegisterProperty("OpenNotebooks", typeof(ObservableCollection<Notebook>), () => new ObservableCollection<Notebook>());
+
+        /// <summary>
+        /// The current <see cref="ClassPeriod" /> the program will attemp to use to load the day's <see cref="CLPPage" />s.
+        /// </summary>
+        public ClassPeriod CurrentClassPeriod
+        {
+            get { return GetValue<ClassPeriod>(CurrentClassPeriodProperty); }
+            set { SetValue(CurrentClassPeriodProperty, value); }
+        }
+
+        public static readonly PropertyData CurrentClassPeriodProperty = RegisterProperty("CurrentClassPeriod", typeof(ClassPeriod));
 
         #endregion //Properties
 
@@ -275,13 +314,21 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Static Methods
 
-        public static List<string> AvailableNotebookNames
+        public static List<string> AvailableLocalNotebookNames
+        {
+            get
+            {
+                var directoryInfo = new DirectoryInfo(App.NotebookCacheDirectory);
+                return directoryInfo.GetDirectories().Select(directory => directory.Name).ToList();
+            }
+        }
+
+        public static List<string> AvailableDatabaseNotebookNames
         {
             get
             {
                 // TODO: DATABASE - Attempt to grab names from database
-                var directoryInfo = new DirectoryInfo(App.NotebookCacheDirectory);
-                return directoryInfo.GetDirectories().Select(directory => directory.Name).ToList();
+                return new List<string>();
             }
         }
 
@@ -298,17 +345,19 @@ namespace Classroom_Learning_Partner.ViewModels
                 nameChooser.ShowDialog();
                 if(nameChooser.DialogResult == true)
                 {
-                    var notebookName = nameChooser.NotebookName.Text;
                     // TODO: Steve - sanitize notebook name
-                    var folderPath = Path.Combine(App.NotebookCacheDirectory, notebookName);
-                    if(!Directory.Exists(folderPath))
-                    {
-                        var newNotebook = new Notebook
+                    var notebookName = nameChooser.NotebookName.Text;
+                    var newNotebook = new Notebook
                                           {
                                               Name = notebookName
                                           };
-                        var newPage = new CLPPage();
-                        newNotebook.AddCLPPageToNotebook(newPage);
+                    var newPage = new CLPPage();
+                    newNotebook.AddCLPPageToNotebook(newPage);
+
+                    var folderName = newNotebook.Name + ";" + newNotebook.ID;
+                    var folderPath = Path.Combine(App.NotebookCacheDirectory, folderName);
+                    if(!Directory.Exists(folderPath))
+                    {
                         SaveNotebook(newNotebook);
 
                         App.MainWindowViewModel.OpenNotebooks.Add(newNotebook);
@@ -331,9 +380,15 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        public static void OpenNotebook(string notebookName, bool forceCache = false, bool forceDatabase = false)
+        public static void OpenNotebook(string notebookFolderName, bool forceCache = false, bool forceDatabase = false)
         {
-            var folderPath = Path.Combine(App.NotebookCacheDirectory, notebookName);
+            foreach(var otherNotebook in App.MainWindowViewModel.OpenNotebooks.Where(otherNotebook => otherNotebook.ID == notebookFolderName.Split(';')[1]))
+            {
+                App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(otherNotebook);
+                return;
+            }
+
+            var folderPath = Path.Combine(App.NotebookCacheDirectory, notebookFolderName);
             if(!Directory.Exists(folderPath))
             {
                 MessageBox.Show("Notebook doesn't exist");
@@ -354,25 +409,14 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            App.MainWindowViewModel.CurrentNotebookName = notebookName;
+            App.MainWindowViewModel.CurrentNotebookName = notebook.Name;
             if(notebook.LastSavedDate != null)
             {
                 App.MainWindowViewModel.LastSavedTime = notebook.LastSavedDate.Value.ToString("yyyy/MM/dd - HH:mm:ss");
             }
 
-            foreach(var otherNotebook in App.MainWindowViewModel.OpenNotebooks.Where(otherNotebook => otherNotebook.ID == notebook.ID))
-            {
-                App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(otherNotebook);
-                return;
-            }
-
             App.MainWindowViewModel.OpenNotebooks.Add(notebook);
-            if(App.CurrentUserMode == App.UserMode.Instructor ||
-               App.CurrentUserMode == App.UserMode.Student ||
-               App.CurrentUserMode == App.UserMode.Projector)
-            {
-                App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(notebook);
-            }
+            App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(notebook);
         }
 
         public static void SaveNotebook(Notebook notebook, bool isFullSaveForced = false)

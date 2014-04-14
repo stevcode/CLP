@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using Catel.Data;
@@ -6,6 +7,7 @@ using Catel.Runtime.Serialization;
 
 namespace CLP.Entities
 {
+    [Serializable]
     public class ClassPeriod : AEntityBase
     {
         #region Constructors
@@ -60,7 +62,16 @@ namespace CLP.Entities
 
         public static readonly PropertyData NotebookIDProperty = RegisterProperty("NotebookID", typeof(string));
 
-        //Start Page Index, End Page Index (these will be expected. Actual can be an SQL Query for existence of submissions
+        /// <summary>
+        /// List of the <see cref="CLPPage" /> IDs for the <see cref="ClassPeriod" />.
+        /// </summary>
+        public List<string> PageIDs
+        {
+            get { return GetValue<List<string>>(PageIDsProperty); }
+            set { SetValue(PageIDsProperty, value); }
+        }
+
+        public static readonly PropertyData PageIDsProperty = RegisterProperty("PageIDs", typeof(List<string>), () => new List<string>());
 
         #region Navigation Properties
 

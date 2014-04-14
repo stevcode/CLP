@@ -91,17 +91,17 @@ namespace CLP.Entities
 
         #endregion //Properties
 
+        private static readonly Person DefaultAuthor = new Person
+                                                       {
+                                                           ID = AUTHOR_ID,
+                                                           FullName = "AUTHOR",
+                                                           IsStudent = false
+                                                       };
         public static Person Author
         {
             get
             {
-                var author = new Person
-                             {
-                                 ID = AUTHOR_ID,
-                                 FullName = "AUTHOR",
-                                 IsStudent = false
-                             };
-                return author;
+                return DefaultAuthor;
             }
         }
 

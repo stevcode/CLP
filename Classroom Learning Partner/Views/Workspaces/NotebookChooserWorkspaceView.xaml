@@ -6,6 +6,10 @@
                    Background="{StaticResource GrayBackgroundColor}"
                    x:Name="NotebookChooserControl">
 
+    <UserControl.Resources>
+        <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
+    </UserControl.Resources>
+    
     <ListBox ItemsSource="{Binding NotebookNames}"
              ScrollViewer.HorizontalScrollBarVisibility="Hidden">
         <ListBox.ItemTemplate>
@@ -16,13 +20,19 @@
                     Height="90"
                     Width="200">
                     <DockPanel LastChildFill="True">
-                        <Label DockPanel.Dock="Bottom"
-                               Height="30"
-                               Content="{Binding}"
-                               FontWeight="Bold"
-                               FontSize="12"
-                               HorizontalContentAlignment="Center"
-                               VerticalContentAlignment="Bottom" />
+                        <TextBlock DockPanel.Dock="Bottom"
+                                   Height="30"
+                                   FontWeight="Bold"
+                                   FontSize="12"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Bottom">
+                            <Run Text="{Binding Name}" />
+                            <TextBlock Visibility="{Binding IsLocal, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}"
+                                       Text=" (Local)"
+                                       FontSize="12"
+                                       Foreground="LightSkyBlue" />
+                        </TextBlock>
+
                         <Image Margin="5"
                                Source="..\..\Images\NotebookImage.png" />
                     </DockPanel>
