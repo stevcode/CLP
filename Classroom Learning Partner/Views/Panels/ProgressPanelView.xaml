@@ -3,14 +3,18 @@
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters">
+                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
+                   xmlns:sys="clr-namespace:System;assembly=mscorlib">
     
     <UserControl.Resources>
-        <conv:PageToSubmissionsListConverter x:Key="PageToSubmissionsListConverter" />
-        <conv:PageToStarredVisibilityConverter x:Key="PageToStarredVisibilityConverter" />
-        <conv:PageToSubmissionVisibilityConverter x:Key="PageToSubmissionVisibilityConverter" />
-        <conv:PanelLocationToThicknessConverter x:Key="PanelLocationToThicknessConverter" />
-        <conv:PageMatchToColorConverter x:Key="PageMatchToColorConverter" />
+        <ResourceDictionary>
+
+            <conv:PageToSubmissionsListConverter x:Key="PageToSubmissionsListConverter" />
+            <conv:PageToStarredVisibilityConverter x:Key="PageToStarredVisibilityConverter" />
+            <conv:PageToSubmissionVisibilityConverter x:Key="PageToSubmissionVisibilityConverter" />
+            <conv:PanelLocationToThicknessConverter x:Key="PanelLocationToThicknessConverter" />
+            <conv:PageMatchToColorConverter x:Key="PageMatchToColorConverter" />
+        </ResourceDictionary>
     </UserControl.Resources>
     
     <Border Background="{StaticResource GrayBackgroundColor}"
@@ -25,6 +29,7 @@
             <Grid Grid.Column="0">
                 <!-- names and pages -->
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="24"/> <!-- combobox-->
                     <RowDefinition Height="30"/> <!-- page numbers-->
                     <RowDefinition Height="24"/> <!-- teacher pages -->
                     <RowDefinition Height="*"/> <!-- student pages -->
@@ -33,10 +38,11 @@
                     <ColumnDefinition Width="60" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Grid.Row="1" FontWeight="Bold" Height="24" Margin="5 0 0 0">
+                <ComboBox SelectedIndex="0" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Center" ItemsSource="{Binding PageSets}"/>
+                <TextBlock Grid.Column="0" Grid.Row="2" FontWeight="Bold" Height="24" Margin="5 0 0 0">
                     <Run Text="Teacher"/>
                 </TextBlock>
-                <ItemsControl Grid.Column="0" Grid.Row="2"
+                <ItemsControl Grid.Column="0" Grid.Row="3"
                               ItemsSource="{Binding StudentList}"
                               Margin="5 0 0 0">
                     <ItemsControl.ItemTemplate>
@@ -47,10 +53,13 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-                <ScrollViewer Grid.Column="1" Grid.Row="0" Grid.RowSpan="3" 
+                <ScrollViewer Grid.Column="1" Grid.Row="1" Grid.RowSpan="3" 
                               HorizontalScrollBarVisibility="Auto"
                               VerticalScrollBarVisibility="Hidden">
-                <ItemsControl Name="Pages" ItemsSource="{Binding CurrentPages}">
+                    <ScrollViewer.Resources>
+                        <sys:Double x:Key="{x:Static SystemParameters.HorizontalScrollBarHeightKey}">25</sys:Double>
+                    </ScrollViewer.Resources>
+                    <ItemsControl Name="Pages" ItemsSource="{Binding CurrentPages}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Top" />

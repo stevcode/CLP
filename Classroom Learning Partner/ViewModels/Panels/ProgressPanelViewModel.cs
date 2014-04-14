@@ -16,8 +16,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public ProgressPanelViewModel(Notebook notebook)
         {
-            Notebook = notebook;
-            CurrentPages = Notebook.Pages;
+            CurrentPages = notebook.Pages;
             Initialized += ProgressPanelViewModel_Initialized;
 
             if(App.MainWindowViewModel.CurrentClassPeriod != null)
@@ -31,6 +30,11 @@ namespace Classroom_Learning_Partner.ViewModels
                 dummy.FullName = "Test";
                 StudentList.Add(dummy);
             }
+
+            PageSets = new ObservableCollection<string>();
+            PageSets.Add("Current Class Period");
+            PageSets.Add("Full Notebook");
+
             SetCurrentPageCommand = new Command<CLPPage>(OnSetCurrentPageCommandExecute);
         }
 
@@ -55,18 +59,6 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Constructor
 
         #region Model
-
-        /// <summary>
-        /// Notebook associated with the panel.
-        /// </summary>
-        [Model(SupportIEditableObject = false)]
-        public Notebook Notebook
-        {
-            get { return GetValue<Notebook>(NotebookProperty); }
-            private set { SetValue(NotebookProperty, value); }
-        }
-
-        public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof(Notebook));
 
         /// <summary>
         /// Pages of the Notebook.
@@ -101,6 +93,15 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData StudentListProperty = RegisterProperty("StudentList", typeof(ObservableCollection<Person>), () => new ObservableCollection<Person>());
+
+        public ObservableCollection<String> PageSets
+        {
+            get { return GetValue<ObservableCollection<String>>(PageSetsProperty); }
+            set { SetValue(PageSetsProperty, value); }
+        }
+
+        public static readonly PropertyData PageSetsProperty = RegisterProperty("PageSets", typeof(ObservableCollection<String>), () => new ObservableCollection<String>());
+
 
         #endregion //Bindings
 

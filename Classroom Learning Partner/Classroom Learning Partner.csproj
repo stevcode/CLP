@@ -227,7 +227,6 @@
     <Compile Include="Converters\PageToSubmissionVisibilityConverter.cs" />
     <Compile Include="Converters\ProjectedDisplayBackgroundConverter.cs" />
     <Compile Include="Converters\RatioToRectMultiConverter.cs" />
-    <Compile Include="Converters\SubmissionsListForPageByStudentConverter.cs" />
     <Compile Include="Converters\TypeToStringConverter.cs" />
     <Compile Include="Converters\WidthToHeightAspectRatioMultiConverter.cs" />
     <Compile Include="Converters\ZeroToQuestionMarkConverter.cs" />
