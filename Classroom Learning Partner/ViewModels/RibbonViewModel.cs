@@ -2954,34 +2954,20 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnEditPageDefinitionCommandExecute()
         {
-            // TODO: Entities
-            // Get the tags on this page
-            //Logger.Instance.WriteToLog("Page Definition");
-            //var page = ((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as CLPMirrorDisplay).CurrentPage;
-            var currentPage = CurrentPage;
-            if(currentPage == null)
+            if(CurrentPage == null)
             {
                 return;
             }
-            ObservableCollection<ATagBase> tags = currentPage.Tags;
 
-            // If the page already has a Page Definition tag, use that one
-            ATagBase oldTag = null;
-            ProductRelation productRelation = null;
-            foreach(ATagBase tag in tags)
+            // If the page already has a Page Definition tag, start from that one
+            ProductRelation productRelation = new ProductRelation();
+            foreach(ATagBase tag in CurrentPage.Tags)
             {
                 if(tag is PageDefinitionTag)
                 {
-                    oldTag = tag;
-                    productRelation = ProductRelation.fromString(oldTag.Value);
+                    productRelation = ProductRelation.fromString(tag.Value);
                     break;
                 }
-            }
-
-            // Otherwise, create a new page definition tag
-            if(oldTag == null)
-            {
-                productRelation = new ProductRelation();
             }
 
             ProductRelationViewModel viewModel = new ProductRelationViewModel(productRelation);
@@ -2992,15 +2978,8 @@ namespace Classroom_Learning_Partner.ViewModels
             if(definitionView.DialogResult == true)
             {
                 // Update this page's definition tag
-
-                if(oldTag != null)
-                {
-                    tags.Remove(oldTag);
-                }
-
-                PageDefinitionTag newTag = new PageDefinitionTag(currentPage, productRelation);
-
-                tags.Add(newTag);
+                PageDefinitionTag newTag = new PageDefinitionTag(CurrentPage, productRelation);
+                CurrentPage.AddTag(newTag);
             }
         }
 
