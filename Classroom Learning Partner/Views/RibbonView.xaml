@@ -78,6 +78,10 @@
                 <RibbonApplicationMenuItem Header="Convert Displays To XPS"
                                            ImageSource="pack://application:,,,/Resources/Images/ConvertToXPS32.png"
                                            Command="{Binding ConvertDisplaysToXPSCommand}" />-->
+                
+                <RibbonApplicationMenuItem Header="Start Current Class Period"
+                                           ImageSource="pack://application:,,,/Resources/Images/GroupSubmit32.png"
+                                           Command="{Binding StartClassPeriodCommand}" />
 
                 <RibbonSeparator />
 
@@ -820,6 +824,15 @@
                 <RibbonButton Label="Replay"
                               LargeImageSource="..\Images\video.png"
                               Command="{Binding ReplayCommand}" />
+
+            </RibbonGroup>
+            
+            <RibbonGroup Header="Class Period">
+
+                <RibbonButton Label="Create Class Period Using Staging Panel"
+                              LargeImageSource="pack://application:,,,/Resources/Images/GroupSubmit32.png"
+                              Command="{Binding CreateClassPeriodCommand}"
+                              IsEnabled="False" />
 
             </RibbonGroup>
 

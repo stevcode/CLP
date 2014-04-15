@@ -431,16 +431,19 @@ namespace CLP.Entities
                 foreach(var pageAndHistoryFilePath in pageAndHistoryFilePaths)
                 {
                     var pageAndHistoryFileName = System.IO.Path.GetFileNameWithoutExtension(pageAndHistoryFilePath);
-                    var pageAndHistoryInfo = pageAndHistoryFileName.Split(';');
-                    if(pageAndHistoryInfo.Length != 5 ||
-                       pageAndHistoryInfo[0] != "Page")
+                    if(pageAndHistoryFileName != null)
                     {
-                        continue;
-                    }
-                    if(!includeSubmissions &&
-                       pageAndHistoryInfo[4] != "0")
-                    {
-                        continue;
+                        var pageAndHistoryInfo = pageAndHistoryFileName.Split(';');
+                        if(pageAndHistoryInfo.Length != 5 ||
+                           pageAndHistoryInfo[0] != "Page")
+                        {
+                            continue;
+                        }
+                        if(!includeSubmissions &&
+                           pageAndHistoryInfo[4] != "0")
+                        {
+                            continue;
+                        }
                     }
 
                     var page = Load<CLPPage>(pageAndHistoryFilePath, SerializationMode.Xml);

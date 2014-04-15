@@ -12,10 +12,6 @@ namespace Classroom_Learning_Partner
 {
     public sealed class CLPNetwork : IDisposable
     {
-        public Person CurrentUser { get; set; }
-       // public Group CurrentGroup { get; set; }
-        public ObservableCollection<Person> ClassList { get; set; }
-
         public ObservableCollection<ServiceHost> RunningServices { get; set; }
         public DiscoveredServices<IInstructorContract> DiscoveredInstructors { get; set; }
         public DiscoveredServices<IProjectorContract> DiscoveredProjectors { get; set; }
@@ -28,9 +24,6 @@ namespace Classroom_Learning_Partner
 
         public CLPNetwork()
         {
-            CurrentUser = new Person();
-        //    CurrentGroup = new Group();
-            ClassList = new ObservableCollection<Person>();
             DiscoveredProjectors = new DiscoveredServices<IProjectorContract>();
             DiscoveredInstructors = new DiscoveredServices<IInstructorContract>();
             RunningServices = new ObservableCollection<ServiceHost>();
@@ -127,7 +120,7 @@ namespace Classroom_Learning_Partner
                         try
                         {
                             InstructorProxy = ChannelFactory<IInstructorContract>.CreateChannel(DefaultBinding, DiscoveredInstructors.Addresses[0]);
-                            App.MainWindowViewModel.OnlineStatus = "CONNECTED - As " + CurrentUser.FullName;
+                            App.MainWindowViewModel.OnlineStatus = "CONNECTED - As " + App.MainWindowViewModel.CurrentUser.FullName;
                         }
                         catch(Exception)
                         {

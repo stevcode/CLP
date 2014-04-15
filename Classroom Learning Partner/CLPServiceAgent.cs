@@ -416,16 +416,9 @@ namespace Classroom_Learning_Partner
             _networkThread.Join();
             _networkThread = null;
 
-            var tempPerson = App.Network.CurrentUser;
-            //var tempGroup = App.Network.CurrentGroup;
-
             App.Network.Dispose();
             App.Network = null;
-            App.Network = new CLPNetwork
-                          {
-                              CurrentUser = tempPerson 
-                              //CurrentGroup = tempGroup
-                          };
+            App.Network = new CLPNetwork();
             _networkThread = new Thread(App.Network.Run) { IsBackground = true };
             _networkThread.Start();
         }

@@ -143,7 +143,7 @@ namespace CLP.Entities
             ToXML(fileName);
         }
 
-        public static ClassPeriod OpenClassPeriod(string filePath, string ownerID)
+        public static ClassPeriod OpenClassPeriod(string filePath)
         {
             try
             {

@@ -112,6 +112,7 @@ namespace Classroom_Learning_Partner.ViewModels
             ConvertToXPSCommand = new Command(OnConvertToXPSCommandExecute);
             ConvertPageSubmissionToXPSCommand = new Command(OnConvertPageSubmissionToXPSCommandExecute);
             ConvertAllSubmissionsToXPSCommand = new Command(OnConvertAllSubmissionsToXPSCommandExecute);
+            StartClassPeriodCommand = new Command(OnStartClassPeriodCommandExecute);
             RefreshNetworkCommand = new Command(OnRefreshNetworkCommandExecute);
             ToggleThumbnailsCommand = new Command(OnToggleThumbnailsCommandExecute);
             ExitCommand = new Command(OnExitCommandExecute);
@@ -1209,6 +1210,16 @@ namespace Classroom_Learning_Partner.ViewModels
             //    documentWriter.Write(document);
             //    xpsDocument.Close();
             //}, null, "Converting All Submissions to XPS", 0.0 / 0.0);
+        }
+
+        /// <summary>
+        /// Starts the closest <see cref="ClassPeriod" />.
+        /// </summary>
+        public Command StartClassPeriodCommand { get; private set; }
+
+        private void OnStartClassPeriodCommandExecute()
+        {
+            MainWindowViewModel.OpenClassPeriod();
         }
 
         /// <summary>
@@ -2870,7 +2881,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 firstArray.YPosition = page.Height - firstArray.Height;
             }
-            ACLPArrayBase.ApplyDistinctPosition(firstArray, App.Network.CurrentUser.ID);
+            ACLPArrayBase.ApplyDistinctPosition(firstArray, App.MainWindowViewModel.CurrentUser.ID);
             xPosition = firstArray.XPosition;
             yPosition = firstArray.YPosition;
 

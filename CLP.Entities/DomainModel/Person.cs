@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using Catel.Data;
+using Catel.Runtime.Serialization;
 
 namespace CLP.Entities
 {
@@ -11,7 +13,7 @@ namespace CLP.Entities
     }
 
     [Serializable]
-    public class Person : AEntityBase
+    public class Person : AEntityBase, IConnectedPerson
     {
         private const string AUTHOR_ID = "00000000-0000-0000-1111-000000000001";
 
@@ -153,5 +155,48 @@ namespace CLP.Entities
             FullName = "TestSubmitter",
             IsStudent = true
         };
+
+        #region IConnectedPerson Members
+
+        /// <summary>
+        /// Friendly Name of the computer the <see cref="Person" /> is currently using.
+        /// </summary>
+        [XmlIgnore]
+        [ExcludeFromSerialization]
+        public string CurrentMachineName
+        {
+            get { return GetValue<string>(CurrentMachineNameProperty); }
+            set { SetValue(CurrentMachineNameProperty, value); }
+        }
+
+        public static readonly PropertyData CurrentMachineNameProperty = RegisterProperty("CurrentMachineName", typeof(string), string.Empty);
+
+        /// <summary>
+        /// TCP address of the computer the <see cref="Person" /> is currently using.
+        /// </summary>
+        [XmlIgnore]
+        [ExcludeFromSerialization]
+        public string CurrentMachineAddress
+        {
+            get { return GetValue<string>(CurrentMachineAddressProperty); }
+            set { SetValue(CurrentMachineAddressProperty, value); }
+        }
+
+        public static readonly PropertyData CurrentMachineAddressProperty = RegisterProperty("CurrentMachineAddress", typeof(string), string.Empty);
+
+        /// <summary>
+        /// Whether or not this <see cref="Person" /> currently has an established connection with CurrentUser.
+        /// </summary>
+        [XmlIgnore]
+        [ExcludeFromSerialization]
+        public bool IsConnected
+        {
+            get { return GetValue<bool>(IsConnectedProperty); }
+            set { SetValue(IsConnectedProperty, value); }
+        }
+
+        public static readonly PropertyData IsConnectedProperty = RegisterProperty("IsConnected", typeof(bool), false);
+
+        #endregion
     }
 }

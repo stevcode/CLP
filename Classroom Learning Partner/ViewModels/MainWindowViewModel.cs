@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
@@ -438,6 +439,46 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 App.MainWindowViewModel.LastSavedTime = notebook.LastSavedDate.Value.ToString("yyyy/MM/dd - HH:mm:ss");
             }
+        }
+
+        public static void OpenClassPeriod()
+        {
+            var classPeriodFilePaths = Directory.GetFiles(App.ClassCacheDirectory);
+            foreach(var classPeriodFilePath in classPeriodFilePaths)
+            {
+                var classFileName = Path.GetFileNameWithoutExtension(classPeriodFilePath);
+                var classInfo = classFileName.Split(';');
+                if(classInfo.Length != 3)
+                {
+                    continue;
+                }
+                var time = classInfo[2];
+                var timeParts = time.Split('.');
+                var year = Int32.Parse(timeParts[0]);
+                var month = Int32.Parse(timeParts[1]);
+                var day = Int32.Parse(timeParts[2]);
+                var hour = Int32.Parse(timeParts[3]);
+                var minute = Int32.Parse(timeParts[4]);
+                var dateTime = new DateTime(year,month,day,hour, minute, 0);
+                var now = DateTime.Now;
+                var timeSpan = now - dateTime;
+                if(timeSpan >= new TimeSpan(3))
+                {
+                    continue;
+                }
+                var classPeriod = ClassPeriod.OpenClassPeriod(classPeriodFilePath);
+                if(classPeriod != null)
+                {
+                    App.MainWindowViewModel.CurrentClassPeriod = classPeriod;
+                    break;
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+
         }
 
         #endregion //Static Methods

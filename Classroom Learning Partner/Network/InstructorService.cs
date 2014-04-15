@@ -142,7 +142,7 @@ namespace Classroom_Learning_Partner
                 return;
             }
             Logger.Instance.WriteToLog("Student Logged In: " + student.FullName);
-            App.Network.ClassList.Add(student);
+            App.MainWindowViewModel.AvailableUsers.Add(student);
         }
 
         public void StudentLogout(string zippedStudent)
