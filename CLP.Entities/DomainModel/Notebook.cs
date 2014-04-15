@@ -513,7 +513,7 @@ namespace CLP.Entities
                     {
                         continue;
                     }
-                    var isFilePartOfPartialPages = pageIds.Any(pageID => pageID == pageAndHistoryInfo[4]);
+                    var isFilePartOfPartialPages = pageIds.Any(pageID => pageID == pageAndHistoryInfo[2]);
 
                     if(!isFilePartOfPartialPages)
                     {
