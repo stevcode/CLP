@@ -2732,20 +2732,6 @@ namespace Classroom_Learning_Partner.ViewModels
             var xPosition = 0.0;
             var yPosition = 150.0;
 
-            //if there is exactly one other array on the page, keep track of it for placement
-            ACLPArrayBase onlyArray = null;
-            foreach(var pageObject in page.PageObjects)
-            {
-                if(pageObject is CLPArray)
-                {
-                    onlyArray = (onlyArray == null) ? pageObject as CLPArray : null;
-                }
-                else if(pageObject is FuzzyFactorCard)
-                {
-                    onlyArray = (onlyArray == null) ? pageObject as FuzzyFactorCard : null;
-                }
-            }
-
             //attempt to size newArray to lastArray
             //if fail, resize all other arrays to newArray
             //squareSize will be the grid size of the most recently placed array, or 0 if there are no non-background arrays
@@ -2873,6 +2859,20 @@ namespace Classroom_Learning_Partner.ViewModels
             ACLPArrayBase.ApplyDistinctPosition(firstArray, App.Network.CurrentUser.ID);
             xPosition = firstArray.XPosition;
             yPosition = firstArray.YPosition;
+
+            //if there is exactly one other array on the page, keep track of it for placement
+            ACLPArrayBase onlyArray = null;
+            foreach(var pageObject in page.PageObjects)
+            {
+                if(pageObject is CLPArray)
+                {
+                    onlyArray = (onlyArray == null) ? pageObject as CLPArray : null;
+                }
+                else if(pageObject is FuzzyFactorCard)
+                {
+                    onlyArray = (onlyArray == null) ? pageObject as FuzzyFactorCard : null;
+                }
+            }
 
             //Position to not overlap with first array on page if possible
             if(onlyArray != null)
