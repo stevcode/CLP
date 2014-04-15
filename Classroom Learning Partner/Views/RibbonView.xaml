@@ -52,10 +52,10 @@
                                            Command="{Binding DoneEditingNotebookCommand}"
                                            Visibility="{Binding InstructorVisibility}" />
 
-                <RibbonApplicationMenuItem Header="Save Notebook"
+                <!--<RibbonApplicationMenuItem Header="Save Notebook"
                                            KeyTip="S"
                                            ImageSource="pack://application:,,,/Resources/Images/SaveNotebook32.png"
-                                           Command="{Binding SaveNotebookCommand}" />
+                                           Command="{Binding SaveNotebookCommand}" />-->
                 
                 <RibbonApplicationMenuItem Header="Force Full Notebook Save"
                                            KeyTip="S"
