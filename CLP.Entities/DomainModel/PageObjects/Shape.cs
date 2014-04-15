@@ -140,8 +140,8 @@ namespace CLP.Entities
             else if(Math.Abs(strokeLeft - strokeRight) > Math.Abs(strokeTop - strokeBottom) &&
                     strokeBottom <= cuttableBottom &&
                     strokeTop >= cuttableTop &&
-                    strokeRight - cuttableRight <= MIN_THRESHHOLD &&
-                    cuttableLeft - strokeLeft <= MIN_THRESHHOLD) //Horizontal Cut Stroke. Stroke must be within the bounds of the pageObject
+                    cuttableRight - strokeRight <= MIN_THRESHHOLD &&
+                    strokeLeft - cuttableLeft <= MIN_THRESHHOLD) //Horizontal Cut Stroke. Stroke must be within the bounds of the pageObject
             {
                 var average = (strokeTop + strokeBottom) / 2;
 
