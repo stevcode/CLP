@@ -143,7 +143,7 @@ namespace CLP.Entities
             ToXML(fileName);
         }
 
-        public static ClassPeriod OpenClassPeriod(string filePath)
+        public static ClassPeriod OpenClassPeriod(string filePath, string ownerID)
         {
             try
             {
@@ -151,7 +151,6 @@ namespace CLP.Entities
                 var classPeriodFolderPath = Path.GetDirectoryName(filePath);
                 var classSubjectFilePath = Path.Combine(classPeriodFolderPath, "ClassSubject" + ";" + classPeriod.ClassSubjectID);
                 classPeriod.ClassSubject = ClassSubject.OpenClassSubject(classSubjectFilePath);
-
 
                 return classPeriod;
             }

@@ -8,7 +8,11 @@ namespace Classroom_Learning_Partner.Views
     /// </summary>
     public partial class ProgressPanelView
     {
-        public ProgressPanelView() { InitializeComponent(); }
+        public ProgressPanelView()
+        {
+            InitializeComponent();
+            CloseViewModelOnUnloaded = false;
+        }
 
         protected override Type GetViewModelType() { return typeof(ProgressPanelViewModel); }
     }

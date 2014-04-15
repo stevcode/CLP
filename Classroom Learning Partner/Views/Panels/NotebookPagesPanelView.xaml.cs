@@ -11,7 +11,11 @@ namespace Classroom_Learning_Partner.Views
         /// <summary>
         /// Initializes a new instance of the <see cref="NotebookPagesPanelView" /> class.
         /// </summary>
-        public NotebookPagesPanelView() { InitializeComponent(); }
+        public NotebookPagesPanelView()
+        {
+            InitializeComponent();
+            CloseViewModelOnUnloaded = false;
+        }
 
         protected override Type GetViewModelType() { return typeof(NotebookPagesPanelViewModel); }
     }

@@ -8,7 +8,11 @@ namespace Classroom_Learning_Partner.Views
     /// </summary>
     public partial class StagingPanelView
     {
-        public StagingPanelView() { InitializeComponent(); }
+        public StagingPanelView()
+        {
+            InitializeComponent();
+            CloseViewModelOnUnloaded = false;
+        }
 
         protected override Type GetViewModelType() { return typeof(StagingPanelViewModel); }
     }

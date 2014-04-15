@@ -234,6 +234,11 @@ namespace CLP.Entities
                 var average = (strokeRight + strokeLeft) / 2;
                 var relativeAverage = average - LabelLength - XPosition;
                 var closestColumn = Convert.ToInt32(Math.Round(relativeAverage / GridSquareSize));
+                
+                if(closestColumn == Columns)
+                {
+                    return halvedPageObjects;
+                }
 
                 var leftArray = new CLPArray(ParentPage, closestColumn, Rows, ArrayTypes.Array)
                                 {
@@ -252,7 +257,7 @@ namespace CLP.Entities
                                  {
                                      IsGridOn = IsGridOn,
                                      IsDivisionBehaviorOn = IsDivisionBehaviorOn,
-                                     XPosition = XPosition,
+                                     XPosition = XPosition + leftArray.ArrayWidth,
                                      YPosition = YPosition,
                                      IsTopLabelVisible = IsTopLabelVisible,
                                      IsSideLabelVisible = IsSideLabelVisible,

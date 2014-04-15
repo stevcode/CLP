@@ -2861,8 +2861,15 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             firstArray.SizeArrayToGridLevel(initializedSquareSize);
-            firstArray.XPosition = 150.0;
-            firstArray.YPosition = 250.0;
+            firstArray.XPosition = 0.0;
+            if(275.0 + firstArray.Height < page.Height)
+            {
+                firstArray.YPosition = 275.0;
+            }
+            else
+            {
+                firstArray.YPosition = page.Height - firstArray.Height;
+            }
             ACLPArrayBase.ApplyDistinctPosition(firstArray, App.Network.CurrentUser.ID);
             xPosition = firstArray.XPosition;
             yPosition = firstArray.YPosition;
@@ -2928,8 +2935,22 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 if(arrayType == "FFCREMAINDER")
                 {
-                    (firstArray as FuzzyFactorCard).RemainderTiles.XPosition = xPosition + firstArray.Width + 20.0;
-                    (firstArray as FuzzyFactorCard).RemainderTiles.YPosition = yPosition + (firstArray as FuzzyFactorCard).LabelLength;
+                    if(xPosition + firstArray.Width + 20.0 + (firstArray as FuzzyFactorCard).RemainderTiles.Width <= page.Width)
+                    {
+                        (firstArray as FuzzyFactorCard).RemainderTiles.XPosition = xPosition + firstArray.Width + 20.0;
+                    }
+                    else
+                    {
+                        (firstArray as FuzzyFactorCard).RemainderTiles.XPosition = page.Width - (firstArray as FuzzyFactorCard).RemainderTiles.Width;
+                    }
+                    if(yPosition + (firstArray as FuzzyFactorCard).LabelLength + (firstArray as FuzzyFactorCard).RemainderTiles.Height <= page.Height)
+                    {
+                        (firstArray as FuzzyFactorCard).RemainderTiles.YPosition = yPosition + (firstArray as FuzzyFactorCard).LabelLength;
+                    }
+                    else
+                    {
+                        (firstArray as FuzzyFactorCard).RemainderTiles.YPosition = page.Height - (firstArray as FuzzyFactorCard).RemainderTiles.Height;
+                    }
                 }
             }
             else

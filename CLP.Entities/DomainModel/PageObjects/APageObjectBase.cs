@@ -22,7 +22,11 @@ namespace CLP.Entities
         /// </summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IPageObject" /> belongs to.</param>
         protected APageObjectBase(CLPPage parentPage)
-            : this() { ParentPage = parentPage; }
+            : this()
+        {
+            ParentPage = parentPage;
+            OwnerID = parentPage.OwnerID;
+        }
 
         /// <summary>
         /// Initializes <see cref="APageObjectBase" /> based on <see cref="SerializationInfo" />.
