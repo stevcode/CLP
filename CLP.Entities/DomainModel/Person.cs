@@ -137,5 +137,21 @@ namespace CLP.Entities
                                   Alias = "Emily Sparks",
                                   IsStudent = false
                               };
+
+        private const string TEST_SUBMITTER_ID = "00000000-0000-0000-5555-000000000005";
+        public static Person TestSubmitter
+        {
+            get
+            {
+                return _testSubmitterPerson;
+            }
+        }
+
+        private static readonly Person _testSubmitterPerson = new Person
+        {
+            ID = TEST_SUBMITTER_ID,
+            FullName = "TestSubmitter",
+            IsStudent = true
+        };
     }
 }

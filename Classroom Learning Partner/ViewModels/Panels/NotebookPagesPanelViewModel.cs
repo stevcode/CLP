@@ -98,16 +98,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //submissionsPanel.IsVisible = true;
 
-            //if(_currentDisplaySubmissionsPageID == page.ID)
-            //{
-            //    return;
-            //}
-
-            //_currentDisplaySubmissionsPageID = page.ID;
-            //submissionsPanel.SubmissionPages = Notebook.Submissions[_currentDisplaySubmissionsPageID];
+            //submissionsPanel.SubmissionPages = page.Submissions;
         }
-
-        private string _currentDisplaySubmissionsPageID;
 
         #endregion //Commands
 
