@@ -10,6 +10,12 @@ namespace Classroom_Learning_Partner
     public interface INotebookContract
     {
         [OperationContract]
+        void OpenClassPeriod(string zippedClassPeriod, string zippedClassSubject);
+
+        [OperationContract]
+        void OpenPartialNotebook(string zippedNotebook);
+
+        [OperationContract]
         void ModifyPageInkStrokes(List<StrokeDTO> strokesAdded, List<StrokeDTO> strokesRemoved, string pageID);
 
         [OperationContract]

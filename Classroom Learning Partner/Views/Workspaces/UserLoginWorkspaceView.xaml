@@ -10,7 +10,7 @@
     </UserControl.Resources>
 
     <Grid x:Name="grid">
-        <ListBox ItemsSource="{Binding Path=UserNames}"
+        <ListBox ItemsSource="{Binding MainWindowViewModel.AvailableUsers, Source={x:Static Application.Current}}"
                  ScrollViewer.HorizontalScrollBarVisibility="Hidden">
             <ListBox.ItemTemplate>
                 <DataTemplate>
@@ -19,7 +19,7 @@
                             Margin="10"
                             Height="125"
                             Width="125"
-                            Content="{Binding Converter={StaticResource UserNameGroupTrimConverter}}" />
+                            Content="{Binding FullName}" />
                 </DataTemplate>
             </ListBox.ItemTemplate>
             <ListBox.ItemsPanel>

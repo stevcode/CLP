@@ -11,6 +11,7 @@ using Path = Catel.IO.Path;
 
 namespace CLP.Entities
 {
+    [Serializable]
     public class Notebook : AEntityBase
     {
         #region Constructors
@@ -197,7 +198,7 @@ namespace CLP.Entities
         /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
         /// </remarks>
         [XmlIgnore]
-        [ExcludeFromSerialization]
+      //  [ExcludeFromSerialization]
         public virtual CLPPage CurrentPage
         {
             get { return GetValue<CLPPage>(CurrentPageProperty); }
@@ -223,7 +224,7 @@ namespace CLP.Entities
         /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
         /// </remarks>
         [XmlIgnore]
-        [ExcludeFromSerialization]
+     //   [ExcludeFromSerialization]
         public virtual ObservableCollection<CLPPage> Pages
         {
             get { return GetValue<ObservableCollection<CLPPage>>(PagesProperty); }
@@ -327,6 +328,24 @@ namespace CLP.Entities
                 page.PageNumber = initialPageNumber;
                 initialPageNumber++;
             }
+        }
+
+        public Notebook CopyForNewOwner(Person owner)
+        {
+            var newNotebook = Clone() as Notebook;
+            if(newNotebook == null)
+            {
+                return null;
+            }
+            newNotebook.Owner = owner;
+            newNotebook.CurrentPage = CurrentPage.CopyForNewOwner(owner);
+            foreach(var page in Pages)
+            {
+                var newPage = page.CopyForNewOwner(owner);
+                newNotebook.Pages.Add(newPage);
+            }
+
+            return newNotebook;
         }
 
         #endregion //Methods

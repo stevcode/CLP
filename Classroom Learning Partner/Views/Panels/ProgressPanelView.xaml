@@ -8,7 +8,7 @@
     
     <UserControl.Resources>
         <ResourceDictionary>
-
+            <catel:BooleanToHidingVisibilityConverter x:Key="BooleanToHidingVisibilityConverter" />
             <conv:PageToSubmissionsListConverter x:Key="PageToSubmissionsListConverter" />
             <conv:PageToStarredVisibilityConverter x:Key="PageToStarredVisibilityConverter" />
             <conv:PageToSubmissionVisibilityConverter x:Key="PageToSubmissionVisibilityConverter" />
@@ -49,9 +49,15 @@
                               Margin="5 0 0 0">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock FontWeight="Bold" Height="24">
-                                <Run Text="{Binding Path=FullName}" />
-                            </TextBlock>
+                            <StackPanel Orientation="Horizontal">
+                                <Ellipse Height="3"
+                                         Width="3"
+                                         Fill="LawnGreen"
+                                         Visibility="{Binding IsConnected, Converter={StaticResource BooleanToHidingVisibilityConverter}}"/>
+                                <TextBlock FontWeight="Bold" Height="24">
+                                    <Run Text="{Binding FullName}" />
+                                </TextBlock>
+                            </StackPanel>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

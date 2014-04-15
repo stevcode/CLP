@@ -383,7 +383,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static void OpenNotebook(string notebookFolderName, bool forceCache = false, bool forceDatabase = false)
         {
-            foreach(var otherNotebook in App.MainWindowViewModel.OpenNotebooks.Where(otherNotebook => otherNotebook.ID == notebookFolderName.Split(';')[1]))
+            foreach(var otherNotebook in App.MainWindowViewModel.OpenNotebooks.Where(otherNotebook => otherNotebook.ID == notebookFolderName.Split(';')[1] &&
+                                                                                                      otherNotebook.OwnerID == notebookFolderName.Split(';')[2]))
             {
                 App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(otherNotebook);
                 return;
@@ -516,7 +517,10 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             notebook.CurrentPage = notebook.Pages.First();
             App.MainWindowViewModel.OpenNotebooks.Add(notebook);
-            App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(notebook);
+            var ownerNotebook = notebook.CopyForNewOwner(App.MainWindowViewModel.CurrentUser);
+            App.MainWindowViewModel.OpenNotebooks.Add(ownerNotebook);
+            App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(ownerNotebook);
+            App.MainWindowViewModel.AvailableUsers = App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.StudentList;
         }
 
         public static string GetNotebookFolderPathByID(string id)

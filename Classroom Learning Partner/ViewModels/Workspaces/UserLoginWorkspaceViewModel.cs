@@ -1,8 +1,10 @@
 ﻿using System;
-using System.Collections.ObjectModel;
-using System.IO;
-using Catel.Data;
+using System.Linq;
+using System.Threading;
+using System.Windows;
+using System.Windows.Threading;
 using Catel.MVVM;
+using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -13,28 +15,9 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public UserLoginWorkspaceViewModel()
         {
-            LogInCommand = new Command<string>(OnLogInCommandExecute);
+            LogInCommand = new Command<Person>(OnLogInCommandExecute);
 
             // TODO: DATABASE - inject IPersonService that can grab the available student names?
-            var filePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\StudentNames.txt";
-
-            if(File.Exists(filePath))
-            {
-                var reader = new StreamReader(filePath);
-                string name;
-                while((name = reader.ReadLine()) != null)
-                {
-                    UserNames.Add(name);
-                }
-                reader.Dispose();
-            }
-            else
-            {
-                for(var i = 1; i < 26; i++)
-                {
-                    UserNames.Add("Guest " + i);
-                }
-            }
         }
 
         public override string Title
@@ -42,63 +25,63 @@ namespace Classroom_Learning_Partner.ViewModels
             get { return "UserLoginWorkspaceVM"; }
         }
 
-        #region Bindings
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public ObservableCollection<string> UserNames
-        {
-            get { return GetValue<ObservableCollection<string>>(UserNamesProperty); }
-            set { SetValue(UserNamesProperty, value); }
-        }
-
-        public static readonly PropertyData UserNamesProperty = RegisterProperty("UserNames", typeof(ObservableCollection<string>), () => new ObservableCollection<string>());
-
-        #endregion //Bindings
-
         /// <summary>
         /// Gets the LogInCommand command.
         /// </summary>
-        public Command<string> LogInCommand { get; private set; }
+        public Command<Person> LogInCommand { get; private set; }
 
-        private void OnLogInCommandExecute(string userName)
+        private void OnLogInCommandExecute(Person user)
         {
-            // TODO: Entities
-            //App.Network.CurrentUser.FullName = userName.Split(new char[] { ',' })[0];
-            //App.Network.CurrentUser.GroupName = userName.Split(new char[] { ',' })[1];
-            //App.Network.CurrentGroup.GroupName = userName.Split(new char[] { ',' })[1];
+            App.MainWindowViewModel.CurrentUser = user;
 
-            //new Thread(() =>
-            //{
-            //    Thread.CurrentThread.IsBackground = true;
-            //    int i = App.Network.DiscoveredInstructors.Addresses.Count();
-            //    while(App.Network.DiscoveredInstructors.Addresses.Count() < 1 || App.Network.CurrentUser.CurrentMachineAddress == null || App.Network.InstructorProxy == null)
-            //    {
-            //        Thread.Sleep(1000);
-            //    }
+            new Thread(() =>
+                       {
+                           Thread.CurrentThread.IsBackground = true;
+                           while(!App.Network.DiscoveredInstructors.Addresses.Any() ||
+                                 App.Network.CurrentMachineAddress == null ||
+                                 App.Network.InstructorProxy == null)
+                           {
+                               Thread.Sleep(1000);
+                           }
 
-            //    if(App.Network.InstructorProxy != null)
-            //    {
-            //        try
-            //        {
-            //            var sStudent = ObjectSerializer.ToString(App.Network.CurrentUser);
-            //            var zippedStudent = CLPServiceAgent.Instance.Zip(sStudent);
-            //            App.Network.InstructorProxy.StudentLogin(zippedStudent);
-            //            App.MainWindowViewModel.OnlineStatus = "CONNECTED - As " + App.Network.CurrentUser.FullName;
-            //        }
-            //        catch(System.Exception)
-            //        {
-            //            Logger.Instance.WriteToLog("Problem Logging In as " + App.Network.CurrentUser.FullName);
-            //        }
-            //    }
-            //    else
-            //    {
-            //        Console.WriteLine("Instructor NOT Available");
-            //    }
-            //}).Start();
+                           if(App.Network.InstructorProxy != null)
+                           {
+                               try
+                               {
+                                   var zippedNotebook = App.Network.InstructorProxy.StudentLogin(App.MainWindowViewModel.CurrentUser.ID,
+                                                                                                 App.Network.CurrentMachineName,
+                                                                                                 App.Network.CurrentMachineAddress);
+                                   var unZippedNotebook = CLPServiceAgent.Instance.UnZip(zippedNotebook);
+                                   var notebook = ObjectSerializer.ToObject(unZippedNotebook) as Notebook;
+                                   if(notebook == null)
+                                   {
+                                       Logger.Instance.WriteToLog("Failed to load notebook.");
+                                       return;
+                                   }
+                                   notebook.CurrentPage = notebook.Pages.First();
 
-            App.MainWindowViewModel.Workspace = new NotebookChooserWorkspaceViewModel();
+                                   Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                                                                              (DispatcherOperationCallback)delegate
+                                                                                                           {
+                                                                                                               App.MainWindowViewModel.OpenNotebooks.Add(notebook);
+                                                                                                               App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(notebook);
+                                                                                                               App.MainWindowViewModel.OnlineStatus = "CONNECTED - As " +
+                                                                                                                                                      App.MainWindowViewModel.CurrentUser.FullName;
+
+                                                                                                               return null;
+                                                                                                           },
+                                                                              null);
+                               }
+                               catch(Exception)
+                               {
+                                   Logger.Instance.WriteToLog("Problem Logging In as " + App.MainWindowViewModel.CurrentUser.FullName);
+                               }
+                           }
+                           else
+                           {
+                               Console.WriteLine("Instructor NOT Available");
+                           }
+                       }).Start();
         }
     }
 }

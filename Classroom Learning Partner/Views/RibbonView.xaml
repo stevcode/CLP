@@ -81,7 +81,8 @@
                 
                 <RibbonApplicationMenuItem Header="Start Current Class Period"
                                            ImageSource="pack://application:,,,/Resources/Images/GroupSubmit32.png"
-                                           Command="{Binding StartClassPeriodCommand}" />
+                                           Command="{Binding StartClassPeriodCommand}"
+                                           Visibility="{Binding InstructorVisibility}" />
 
                 <RibbonSeparator />
 
@@ -428,7 +429,7 @@
 
             </RibbonGroup>
 
-            <RibbonGroup Header="History">
+            <!--<RibbonGroup Header="History">
 
                 <RibbonButton Label="Undo"
                               LargeImageSource="pack://application:,,,/Resources/Images/Undo32.png"
@@ -440,7 +441,7 @@
                               SmallImageSource="pack://application:,,,/Resources/Images/Redo16.png"
                               Command="{Binding RedoCommand}" />
 
-            </RibbonGroup>
+            </RibbonGroup>-->
 
             <RibbonGroup Header="Displays"
                          Visibility="{Binding InstructorVisibility}">

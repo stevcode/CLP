@@ -33,6 +33,7 @@ namespace CLP.Entities
         Grid
     }
 
+    [Serializable]
     public class CLPPage : AEntityBase
     {
         #region Fields
@@ -513,6 +514,32 @@ namespace CLP.Entities
             newTag.ParentPage = this;
             newTag.OwnerID = OwnerID;
             Tags.Add(newTag);
+        }
+
+        public CLPPage CopyForNewOwner(Person owner)
+        {
+            var newPage = Clone() as CLPPage;
+            if(newPage == null)
+            {
+                return null;
+            }
+            newPage.Owner = owner;
+
+            foreach(var pageObject in newPage.PageObjects)
+            {
+                pageObject.ParentPage = newPage;
+                if(pageObject.IsBackgroundInteractable)
+                {
+                    pageObject.OwnerID = owner.ID;
+                }
+            }
+
+            foreach(var tag in newPage.Tags)
+            {
+                tag.ParentPage = newPage;
+            }
+
+            return newPage;
         }
 
         #endregion //Methods

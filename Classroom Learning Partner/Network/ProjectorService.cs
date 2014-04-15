@@ -32,6 +32,7 @@ namespace Classroom_Learning_Partner
         void ScrollPage(string pageID, string submissionID, double offset);
     }
 
+    [ServiceBehavior(IncludeExceptionDetailInFaults = true)]
     public class ProjectorService : IProjectorContract
     {
         public void SwitchProjectorDisplay(string displayType, List<string> displayPages)
@@ -237,6 +238,49 @@ namespace Classroom_Learning_Partner
         }
 
         #region INotebookContract Members
+
+        public void OpenClassPeriod(string zippedClassPeriod, string zippedClassSubject)
+        {
+            var unZippedClassPeriod = CLPServiceAgent.Instance.UnZip(zippedClassPeriod);
+            var classPeriod = ObjectSerializer.ToObject(unZippedClassPeriod) as ClassPeriod;
+            if(classPeriod == null)
+            {
+                Logger.Instance.WriteToLog("Failed to load classperiod.");
+                return;
+            }
+
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                                                       (DispatcherOperationCallback)delegate
+                                                                                    {
+                                                                                        App.MainWindowViewModel.CurrentClassPeriod = classPeriod;
+                                                                                        App.MainWindowViewModel.AvailableUsers = classPeriod.ClassSubject.StudentList;
+
+                                                                                        return null;
+                                                                                    },
+                                                       null);
+        }
+
+         public void OpenPartialNotebook(string zippedNotebook)
+        {
+            var unZippedNotebook = CLPServiceAgent.Instance.UnZip(zippedNotebook);
+            var notebook = ObjectSerializer.ToObject(unZippedNotebook) as Notebook;
+            if(notebook == null)
+            {
+                Logger.Instance.WriteToLog("Failed to load notebook.");
+                return;
+            }
+            notebook.CurrentPage = notebook.Pages.First();
+
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                                                       (DispatcherOperationCallback)delegate
+                                                                                    {
+                                                                                        App.MainWindowViewModel.OpenNotebooks.Add(notebook);
+                                                                                        App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(notebook);
+
+                                                                                        return null;
+                                                                                    },
+                                                       null);
+        }
 
         public void ModifyPageInkStrokes(List<StrokeDTO> strokesAdded, List<StrokeDTO> strokesRemoved, string pageID)
         {

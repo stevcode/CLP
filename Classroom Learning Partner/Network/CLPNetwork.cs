@@ -13,6 +13,12 @@ namespace Classroom_Learning_Partner
     public sealed class CLPNetwork : IDisposable
     {
         public Person CurrentUser { get; set; }
+        public string CurrentMachineAddress { get; set; }
+
+        public string CurrentMachineName
+        {
+            get { return Environment.MachineName; }
+        }
         public ObservableCollection<ServiceHost> RunningServices { get; set; }
         public DiscoveredServices<IInstructorContract> DiscoveredInstructors { get; set; }
         public DiscoveredServices<IProjectorContract> DiscoveredProjectors { get; set; }
@@ -57,13 +63,10 @@ namespace Classroom_Learning_Partner
                     break;
                 case App.UserMode.Student:
                     host = DiscoveryFactory.CreateDiscoverableHost<StudentService>();
-                    foreach(var endpoint in host.Description.Endpoints)
+                    foreach(var endpoint in host.Description.Endpoints.Where(endpoint => endpoint.Name == "NetTcpBinding_IStudentContract")) 
                     {
-                        if(endpoint.Name == "NetTcpBinding_IStudentContract")
-                        {
-                     //       CurrentUser.CurrentMachineAddress = endpoint.Address.ToString();
-                            break;
-                        }
+                        CurrentMachineAddress = endpoint.Address.ToString();
+                        break;
                     }
                     break;
             }
@@ -122,7 +125,7 @@ namespace Classroom_Learning_Partner
                         try
                         {
                             InstructorProxy = ChannelFactory<IInstructorContract>.CreateChannel(DefaultBinding, DiscoveredInstructors.Addresses[0]);
-                            App.MainWindowViewModel.OnlineStatus = "CONNECTED - As " + App.MainWindowViewModel.CurrentUser.FullName;
+                            InstructorProxy.SendClassPeriod(CurrentMachineAddress);
                         }
                         catch(Exception)
                         {

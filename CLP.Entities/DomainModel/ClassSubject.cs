@@ -8,6 +8,7 @@ using Path = Catel.IO.Path;
 
 namespace CLP.Entities
 {
+    [Serializable]
     public class ClassSubject : AEntityBase
     {
         #region Constructors

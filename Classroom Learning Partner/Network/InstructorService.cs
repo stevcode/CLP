@@ -20,15 +20,43 @@ namespace Classroom_Learning_Partner
         void CollectStudentNotebook(string zippedNotebook, string studentName);
 
         [OperationContract]
-        void StudentLogin(string zippedStudent);
+        string StudentLogin(string studentID, string machineName, string machineAddress);
 
         [OperationContract]
-        void StudentLogout(string zippedStudent);
+        void StudentLogout(string studentID);
+
+        [OperationContract]
+        void SendClassPeriod(string machineAddress);
     }
 
+    [ServiceBehavior(IncludeExceptionDetailInFaults = true)]
     public class InstructorService : IInstructorContract
     {
         #region IInstructorContract Members
+
+        public void SendClassPeriod(string machineAddress)
+        {
+            if(App.MainWindowViewModel.CurrentClassPeriod == null)
+            {
+                Logger.Instance.WriteToLog("Failed to send classperiod, currentclassperiod is null.");
+                return;
+            }
+            try
+            {
+                var classPeriodString = ObjectSerializer.ToString(App.MainWindowViewModel.CurrentClassPeriod);
+                var classPeriod = CLPServiceAgent.Instance.Zip(classPeriodString);
+
+                var classSubjectString = ObjectSerializer.ToString(App.MainWindowViewModel.CurrentClassPeriod.ClassSubject);
+                var classsubject = CLPServiceAgent.Instance.Zip(classSubjectString);
+
+                var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(App.Network.DefaultBinding, new EndpointAddress(machineAddress));
+                studentProxy.OpenClassPeriod(classPeriod, classsubject);
+                (studentProxy as ICommunicationObject).Close();
+            }
+            catch(Exception)
+            {
+            }
+        }
 
         public void AddSerializedSubmission(string zippedPage, string submissionID,
             DateTime submissionTime, string notebookID, string zippedSubmitter)
@@ -131,31 +159,42 @@ namespace Classroom_Learning_Partner
            // TODO: Entities            notebook.Save(filePathName);
         }
 
-        public void StudentLogin(string zippedStudent)
+        public string StudentLogin(string studentID, string machineName, string machineAddress)
         {
-            var unZippedStudent = CLPServiceAgent.Instance.UnZip(zippedStudent);
-            var student = ObjectSerializer.ToObject(unZippedStudent) as Person;
-
+            var student = App.MainWindowViewModel.AvailableUsers.FirstOrDefault(x => x.ID == studentID);
             if(student == null)
             {
                 Logger.Instance.WriteToLog("Failed to log in student. student is null.");
-                return;
+                return string.Empty;
             }
-            Logger.Instance.WriteToLog("Student Logged In: " + student.FullName);
-            App.MainWindowViewModel.AvailableUsers.Add(student);
+            student.CurrentMachineAddress = machineAddress;
+            student.CurrentMachineName = machineName;
+
+            try
+            {
+                var newNotebook = App.MainWindowViewModel.OpenNotebooks.First().CopyForNewOwner(student);
+                var newNotebookString = ObjectSerializer.ToString(newNotebook);
+                var zippedNotebook = CLPServiceAgent.Instance.Zip(newNotebookString);
+                student.IsConnected = true;
+                return zippedNotebook;
+            }
+            catch(Exception ex)
+            {
+                Logger.Instance.WriteToLog("Error, failed to send partial notebook: " + ex.Message);
+                return string.Empty;
+            }
         }
 
-        public void StudentLogout(string zippedStudent)
+        public void StudentLogout(string studentID)
         {
-            var unZippedStudent = CLPServiceAgent.Instance.UnZip(zippedStudent);
-            var student = ObjectSerializer.ToObject(unZippedStudent) as Person;
-
+            var student = App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.StudentList.FirstOrDefault(x => x.ID == studentID);
             if(student == null)
             {
                 Logger.Instance.WriteToLog("Failed to log out student. student is null.");
                 return;
             }
-            Logger.Instance.WriteToLog("Student Logged Out: " + student.FullName);
+
+            student.IsConnected = false;
         }
 
         #endregion

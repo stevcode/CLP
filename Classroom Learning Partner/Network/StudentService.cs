@@ -23,6 +23,7 @@ namespace Classroom_Learning_Partner
         void AddWebcamImage(List<byte> image);
     }
 
+    [ServiceBehavior(IncludeExceptionDetailInFaults = true)]
     public class StudentService : IStudentContract
     {
         #region IStudentContract Members
@@ -32,15 +33,8 @@ namespace Classroom_Learning_Partner
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                 (DispatcherOperationCallback)delegate
                                              {
-                    //TODO: Steve - AutoSave here
-                    if(isPenDownModeEnabled)
-                    {
-                        PleaseWaitHelper.Show("The Teacher has disabled the pen.");
-                    }
-                    else
-                    {
-                        PleaseWaitHelper.Hide();
-                    }
+                                                 //TODO: Steve - AutoSave here
+                                                 App.MainWindowViewModel.IsPenDownActivated = isPenDownModeEnabled;
                     return null;
                 }, null);
         }
@@ -76,6 +70,59 @@ namespace Classroom_Learning_Partner
         #endregion
 
         #region INotebookContract Members
+
+        public void OpenClassPeriod(string zippedClassPeriod, string zippedClassSubject)
+        {
+            var unZippedClassPeriod = CLPServiceAgent.Instance.UnZip(zippedClassPeriod);
+            var classPeriod = ObjectSerializer.ToObject(unZippedClassPeriod) as ClassPeriod;
+            if(classPeriod == null)
+            {
+                Logger.Instance.WriteToLog("Failed to load classperiod.");
+                return;
+            }
+
+            var unZippedClassSubject = CLPServiceAgent.Instance.UnZip(zippedClassSubject);
+            var classSubject = ObjectSerializer.ToObject(unZippedClassSubject) as ClassSubject;
+            if(classSubject == null)
+            {
+                Logger.Instance.WriteToLog("Failed to load classperiod.");
+                return;
+            }
+
+            classPeriod.ClassSubject = classSubject;
+
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                                                       (DispatcherOperationCallback)delegate
+                                                                                    {
+                                                                                        App.MainWindowViewModel.CurrentClassPeriod = classPeriod;
+                                                                                        App.MainWindowViewModel.AvailableUsers = classPeriod.ClassSubject.StudentList;
+
+                                                                                        return null;
+                                                                                    },
+                                                       null);
+        }
+
+        public void OpenPartialNotebook(string zippedNotebook)
+        {
+            var unZippedNotebook = CLPServiceAgent.Instance.UnZip(zippedNotebook);
+            var notebook = ObjectSerializer.ToObject(unZippedNotebook) as Notebook;
+            if(notebook == null)
+            {
+                Logger.Instance.WriteToLog("Failed to load notebook.");
+                return;
+            }
+            notebook.CurrentPage = notebook.Pages.First();
+
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                                                       (DispatcherOperationCallback)delegate
+                                                                                    {
+                                                                                        App.MainWindowViewModel.OpenNotebooks.Add(notebook);
+                                                                                        App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(notebook);
+
+                                                                                        return null;
+                                                                                    },
+                                                       null);
+        }
 
         public void ModifyPageInkStrokes(List<StrokeDTO> strokesAdded, List<StrokeDTO> strokesRemoved, string pageID)
         {
