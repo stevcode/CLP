@@ -668,6 +668,8 @@ namespace Classroom_Learning_Partner.ViewModels
             PageObjects.CollectionChanged -= PageObjects_CollectionChanged;
             var newUniqueID = Guid.NewGuid().ToString();
             stroke.SetStrokeID(newUniqueID);
+            stroke.SetStrokeOwnerID(App.MainWindowViewModel.CurrentUser.ID);
+            stroke.SetStrokeVersionIndex(0);
             Page.InkStrokes.Remove(stroke);
 
             var allCutPageObjects = new List<ICuttable>();
@@ -686,7 +688,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             foreach(var pageObject in allCutPageObjects)
             {
-                PageObjects.Remove(pageObject as IPageObject);
+                PageObjects.Remove(pageObject);
             }
 
             var allHalvedPageObjectIDs = new List<string>();
@@ -814,6 +816,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 var strokeID = Guid.NewGuid().ToString();
                 stroke.SetStrokeID(strokeID);
                 stroke.SetStrokeOwnerID(App.MainWindowViewModel.CurrentUser.ID);
+                stroke.SetStrokeVersionIndex(0);
                 addedStrokeIDs.Add(strokeID);
 
                 RefreshAcceptedStrokes(new List<Stroke>

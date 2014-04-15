@@ -41,6 +41,8 @@ namespace CLP.Entities
         /// </remarks>
         public string PersonID { get; set; }
 
+        public int VersionIndex { get; set; }
+
         /// <summary>
         /// List of all the points that make up a <see cref="StrokeDTO" />. Entire list stored as a string because
         /// individual points do not need to be inserted into the database. Points are delimited by a ','. Each
@@ -120,6 +122,7 @@ namespace CLP.Entities
                          };
             stroke.SetStrokeID(ID);
             stroke.SetStrokeOwnerID(PersonID);
+            stroke.SetStrokeVersionIndex(VersionIndex);
 
             return stroke;
         }

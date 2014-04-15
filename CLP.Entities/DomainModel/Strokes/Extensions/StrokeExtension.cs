@@ -13,6 +13,7 @@ namespace CLP.Entities
     {
         private static readonly Guid StrokeIDKey = new Guid("00000000-0000-0000-0000-000000000001");
         private static readonly Guid StrokeOwnerIDKey = new Guid("00000000-0000-0000-0000-000000000002");
+        private static readonly Guid StrokeVersionIndexKey = new Guid("00000000-0000-0000-0000-000000000003");
 
         public static StrokeDTO ToStrokeDTO(this Stroke stroke)
         {
@@ -73,6 +74,20 @@ namespace CLP.Entities
             Argument.IsNotNull("stroke", stroke);
 
             stroke.AddPropertyData(StrokeOwnerIDKey, uniqueID);
+        }
+
+        public static string GetStrokeVersionIndex(this Stroke stroke)
+        {
+            Argument.IsNotNull("stroke", stroke);
+
+            return stroke.GetPropertyData(StrokeVersionIndexKey) as string;
+        }
+
+        public static void SetStrokeVersionIndex(this Stroke stroke, int index)
+        {
+            Argument.IsNotNull("stroke", stroke);
+
+            stroke.AddPropertyData(StrokeVersionIndexKey, index);
         }
     }
 }
