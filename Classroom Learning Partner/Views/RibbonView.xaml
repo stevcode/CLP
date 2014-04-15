@@ -958,6 +958,10 @@
                 <RibbonButton Label="Set Notebook Curriculum"
                               LargeImageSource="..\Images\LargeIcon.png"
                               Command="{Binding SetNotebookCurriculumCommand}" />
+                
+                <RibbonButton Label="Set Entire Notebook as Authored"
+                              LargeImageSource="..\Images\LargeIcon.png"
+                              Command="{Binding SetEntireNotebookAsAuthoredCommand}" />
 
             </RibbonGroup>
             <!--RibbonGroup Header="Insert">

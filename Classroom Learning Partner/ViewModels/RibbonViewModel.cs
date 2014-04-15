@@ -197,6 +197,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Authoring
             EditPageDefinitionCommand = new Command(OnEditPageDefinitionCommandExecute);
+            SetEntireNotebookAsAuthoredCommand = new Command(OnSetEntireNotebookAsAuthoredCommandExecute);
 
             //Analysis
             AnalyzeArrayCommand = new Command(OnAnalyzeArrayCommandExecute);
@@ -3110,6 +3111,46 @@ namespace Classroom_Learning_Partner.ViewModels
                 CurrentPage.AddTag(newTag);
             }
         }
+
+        /// <summary>
+        /// Recursively sets the OwnerID of every page, stroke, and pageObject as Author.ID
+        /// </summary>
+        public Command SetEntireNotebookAsAuthoredCommand { get; private set; }
+
+        private void OnSetEntireNotebookAsAuthoredCommandExecute()
+        {
+            var notebookPanel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
+            if(notebookPanel == null)
+            {
+                return;
+            }
+
+            var notebook = notebookPanel.Notebook;
+            notebook.Owner = Person.Author;
+            foreach(var page in notebook.Pages)
+            {
+                page.Owner = Person.Author;
+                foreach(var pageObject in page.PageObjects)
+                {
+                    pageObject.OwnerID = Person.Author.ID;
+                    pageObject.CreatorID = Person.Author.ID;
+                    pageObject.ParentPage = page;
+                }
+                foreach(var inkStroke in page.InkStrokes)
+                {
+                    inkStroke.SetStrokeOwnerID(Person.Author.ID);
+                }
+                foreach(var tag in page.Tags)
+                {
+                    tag.OwnerID = Person.Author.ID;
+                    tag.ParentPage = page;
+                }
+            }
+        }
+
+        // TODO: Move line below to constructor.
+        
+        // TODO: Move line above to constructor.
 
         /// <summary>
         /// Gets the AnalyzeArrayCommand command.
