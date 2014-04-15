@@ -173,7 +173,17 @@ namespace CLP.Entities
         private static readonly ClassPeriod firstClassPeriod = new ClassPeriod
                                                                {
                                                                    ID = EMILY_CLASS_PERIOD_ID,
-                                                                   NotebookID = "fa5045a5-4fa0-45c9-82b8-758cb3d76bc8"
+                                                                   NotebookID = "fa5045a5-4fa0-45c9-82b8-758cb3d76bc8",
+                                                                   ClassSubject = ClassSubject.EmilyClass,
+                                                                   StartTime = DateTime.Now,
+                                                                   PageIDs = new List<string>
+                                                                             {
+                                                                                 "5d4bbe07-5b1c-45e1-aa3f-da05875f65f0",
+                                                                                 "1f052efb-b277-4322-a349-8c9a76465f61",
+                                                                                 "8f43cdfb-22db-4599-bc64-99160090d1ec",
+                                                                                 "cbd97aeb-8c08-4877-bdfb-db255f85e1af",
+                                                                                 "2bf7b59e-dfa6-4464-abfc-4b8e2ddc6fc1"
+                                                                             }
                                                                };
     }
 }

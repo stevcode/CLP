@@ -35,6 +35,7 @@ namespace Classroom_Learning_Partner.ViewModels
             InitializeCommands();
             TitleBarText = CLP_TEXT;
             CurrentUser = Person.Emily;
+            CreateClassPeriodSeed();
         }
 
         public override string Title
@@ -478,7 +479,52 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
 
+            var notebookFolderPath = GetNotebookFolderPathByID(App.MainWindowViewModel.CurrentClassPeriod.NotebookID);
+            if(notebookFolderPath == null)
+            {
+                MessageBox.Show("ERROR: Could not find Notebook for latest ClassPeriod.");
+                return;
+            }
 
+            if(!Directory.Exists(notebookFolderPath))
+            {
+                MessageBox.Show("Notebook doesn't exist");
+                return;
+            }
+
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
+
+            var notebook = Notebook.OpenPartialNotebook(notebookFolderPath, App.MainWindowViewModel.CurrentClassPeriod.PageIDs, new List<string>());
+
+            stopWatch.Stop();
+            Logger.Instance.WriteToLog("Time to OPEN notebook (In Seconds): " + stopWatch.ElapsedMilliseconds / 1000.0);
+
+            if(notebook == null)
+            {
+                MessageBox.Show("Notebook could not be opened. Check error log.");
+                return;
+            }
+
+            App.MainWindowViewModel.CurrentNotebookName = notebook.Name;
+            if(notebook.LastSavedDate != null)
+            {
+                App.MainWindowViewModel.LastSavedTime = notebook.LastSavedDate.Value.ToString("yyyy/MM/dd - HH:mm:ss");
+            }
+
+            App.MainWindowViewModel.OpenNotebooks.Add(notebook);
+            App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(notebook);
+        }
+
+        public static string GetNotebookFolderPathByID(string id)
+        {
+            var notebookFolderPaths = Directory.GetDirectories(App.NotebookCacheDirectory);
+            return (from notebookFolderPath in notebookFolderPaths
+                    let notebookInfo = notebookFolderPath.Split(';')
+                    where notebookInfo.Length == 4
+                    let notebookID = notebookInfo[1]
+                    where notebookID == id
+                    select notebookFolderPath).FirstOrDefault();
         }
 
         #endregion //Static Methods
@@ -520,6 +566,12 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             ClassSubject.EmilyClass.SaveClassSubject(App.ClassCacheDirectory);
+        }
+
+        public static void CreateClassPeriodSeed()
+        {
+            var classPeriod = ClassPeriod.CurrentClassPeriod;
+            classPeriod.SaveClassPeriod(App.ClassCacheDirectory);
         }
 
         #endregion //Temp Methods

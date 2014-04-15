@@ -27,7 +27,7 @@ namespace Classroom_Learning_Partner
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
+            //Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
             base.OnStartup(e);
 
             InitializeCatelSettings();
