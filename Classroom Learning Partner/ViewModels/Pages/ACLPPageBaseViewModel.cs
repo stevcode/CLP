@@ -813,6 +813,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 var removedStrokes = new List<Stroke>();
                 var strokeID = Guid.NewGuid().ToString();
                 stroke.SetStrokeID(strokeID);
+                stroke.SetStrokeOwnerID(App.MainWindowViewModel.CurrentUser.ID);
                 addedStrokeIDs.Add(strokeID);
 
                 RefreshAcceptedStrokes(new List<Stroke>
@@ -842,7 +843,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 var removedStrokeIDs = enumerable.Select(stroke => stroke.GetStrokeID()).ToList();
                 var addedStrokeIDs = new List<string>();
                 var strokes = addedStrokes as IList<Stroke> ?? addedStrokes.ToList();
-                foreach(Stroke stroke in strokes)
+                foreach(var stroke in strokes)
                 {
                     var newStrokeID = Guid.NewGuid().ToString();
                     stroke.SetStrokeID(newStrokeID);

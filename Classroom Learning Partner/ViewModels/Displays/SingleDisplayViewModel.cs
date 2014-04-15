@@ -229,6 +229,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnPageResize()
         {
+            if(CurrentPage == null)
+            {
+                return;
+            }
+
             var pageAspectRatio = CurrentPage.InitialAspectRatio;
             var pageHeight = CurrentPage.Height;
             var pageWidth = CurrentPage.Width;

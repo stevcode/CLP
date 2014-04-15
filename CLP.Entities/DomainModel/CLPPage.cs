@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -388,6 +389,8 @@ namespace CLP.Entities
         /// <summary>
         /// Unserialized <see cref="Stroke" />s of the <see cref="CLPPage" />.
         /// </summary>
+        [XmlIgnore]
+        [ExcludeFromSerialization]
         public virtual StrokeCollection InkStrokes
         {
             get { return GetValue<StrokeCollection>(InkStrokesProperty); }
@@ -395,6 +398,17 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData InkStrokesProperty = RegisterProperty("InkStrokes", typeof(StrokeCollection), () => new StrokeCollection());
+
+        /// <summary>
+        /// Serialized <see cref="Stroke" />s in the form of <see cref="StrokeDTO" />.
+        /// </summary>
+        public List<StrokeDTO> SerializedStrokes
+        {
+            get { return GetValue<List<StrokeDTO>>(SerializedStrokesProperty); }
+            set { SetValue(SerializedStrokesProperty, value); }
+        }
+
+        public static readonly PropertyData SerializedStrokesProperty = RegisterProperty("SerializedStrokes", typeof(List<StrokeDTO>), () => new List<StrokeDTO>());
 
         #endregion //Navigation Properties
 
@@ -509,6 +523,7 @@ namespace CLP.Entities
 
         public void ToXML(string fileName)
         {
+            SerializedStrokes = StrokeDTO.SaveInkStrokes(InkStrokes);
             var fileInfo = new FileInfo(fileName);
             if(!Directory.Exists(fileInfo.DirectoryName))
             {

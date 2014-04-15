@@ -456,6 +456,7 @@ namespace CLP.Entities
                     {
                         notebook.CurrentPage = page;
                     }
+                    page.InkStrokes = StrokeDTO.LoadInkStrokes(page.SerializedStrokes);
                     page.IsCached = true;
                     pages.Add(page);
                 }
@@ -530,6 +531,7 @@ namespace CLP.Entities
                     {
                         notebook.CurrentPage = page;
                     }
+                    page.InkStrokes = StrokeDTO.LoadInkStrokes(page.SerializedStrokes);
                     page.IsCached = true;
                     pages.Add(page);
                 }

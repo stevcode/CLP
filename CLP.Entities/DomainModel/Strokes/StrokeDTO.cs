@@ -14,6 +14,7 @@ namespace CLP.Entities
         Rectangle
     }
 
+    [Serializable]
     public class StrokeDTO
     {
         #region Constructors
@@ -123,9 +124,9 @@ namespace CLP.Entities
             return stroke;
         }
 
-        public static ObservableCollection<StrokeDTO> SaveInkStrokes(IEnumerable<Stroke> strokes)
+        public static List<StrokeDTO> SaveInkStrokes(IEnumerable<Stroke> strokes)
         {
-            var serializedStrokes = new ObservableCollection<StrokeDTO>();
+            var serializedStrokes = new List<StrokeDTO>();
             foreach(var stroke in strokes)
             {
                 serializedStrokes.Add(stroke.ToStrokeDTO());

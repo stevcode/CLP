@@ -12,6 +12,7 @@ namespace Classroom_Learning_Partner
 {
     public sealed class CLPNetwork : IDisposable
     {
+        public Person CurrentUser { get; set; }
         public ObservableCollection<ServiceHost> RunningServices { get; set; }
         public DiscoveredServices<IInstructorContract> DiscoveredInstructors { get; set; }
         public DiscoveredServices<IProjectorContract> DiscoveredProjectors { get; set; }
@@ -24,6 +25,7 @@ namespace Classroom_Learning_Partner
 
         public CLPNetwork()
         {
+            CurrentUser = new Person();
             DiscoveredProjectors = new DiscoveredServices<IProjectorContract>();
             DiscoveredInstructors = new DiscoveredServices<IInstructorContract>();
             RunningServices = new ObservableCollection<ServiceHost>();
