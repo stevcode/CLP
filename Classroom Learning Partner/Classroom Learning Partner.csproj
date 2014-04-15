@@ -217,6 +217,7 @@
     <Compile Include="Converters\IntToVisibilityConverter.cs" />
     <Compile Include="Converters\IsNullConverter.cs" />
     <Compile Include="Converters\ItemsControlItemIndexConverter.cs" />
+    <Compile Include="Converters\List Converters\ListToDistinctCountConverter.cs" />
     <Compile Include="Converters\PageMatchToColorConverter.cs" />
     <Compile Include="Converters\ItemSelectedToColorConverter.cs" />
     <Compile Include="Converters\MarginSingleSideConverter.cs" />

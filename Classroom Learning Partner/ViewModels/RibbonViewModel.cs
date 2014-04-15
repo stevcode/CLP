@@ -2161,11 +2161,6 @@ namespace Classroom_Learning_Partner.ViewModels
         
         private void OnMakePageLongerCommandExecute()
         {
-            var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel != null && notebookWorkspaceViewModel.CurrentDisplay == null)
-            {
-                return;
-            }
             var page = CurrentPage;
             var initialHeight = page.Width / page.InitialAspectRatio;
             const int MAX_INCREASE_TIMES = 2;

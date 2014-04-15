@@ -45,11 +45,17 @@ namespace Classroom_Learning_Partner.ViewModels
 
             InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
             PageObjects.CollectionChanged += PageObjects_CollectionChanged;
+            Submissions.CollectionChanged += Submissions_CollectionChanged;
 
             MouseMoveCommand = new Command<MouseEventArgs>(OnMouseMoveCommandExecute);
             MouseDownCommand = new Command<MouseEventArgs>(OnMouseDownCommandExecute);
             MouseUpCommand = new Command<MouseEventArgs>(OnMouseUpCommandExecute);
             ClearPageCommand = new Command(OnClearPageCommandExecute);
+        }
+
+        void Submissions_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            RaisePropertyChanged("HasSubmissions");
         }
 
         public override string Title
@@ -120,6 +126,18 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData WidthProperty = RegisterProperty("Width", typeof(double));
+
+        /// <summary>
+        /// Submissionf for the page.
+        /// </summary>
+        [ViewModelToModel("Page")]
+        public ObservableCollection<CLPPage> Submissions
+        {
+            get { return GetValue<ObservableCollection<CLPPage>>(SubmissionsProperty); }
+            set { SetValue(SubmissionsProperty, value); }
+        }
+
+        public static readonly PropertyData SubmissionsProperty = RegisterProperty("Submissions", typeof(ObservableCollection<CLPPage>));
 
         #endregion //Model
 
@@ -361,13 +379,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public bool HasSubmissions
         {
-            get
-            {
-                var notebookPagesPanel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
-                // TODO: Entities
-                //return notebookPagesPanel != null && App.CurrentUserMode == App.UserMode.Student && notebookPagesPanel.Notebook.Submissions[Page.ID].Any();
-                return false;
-            }
+            get { return Submissions.Any(); }
         }
 
         #endregion //Bindings
