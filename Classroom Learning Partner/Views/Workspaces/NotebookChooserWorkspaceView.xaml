@@ -9,19 +9,23 @@
     <UserControl.Resources>
         <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
     </UserControl.Resources>
-    
+
     <ListBox ItemsSource="{Binding NotebookNames}"
              ScrollViewer.HorizontalScrollBarVisibility="Hidden">
         <ListBox.ItemTemplate>
             <DataTemplate>
-                <Button
-                    Command="{Binding DataContext.SelectNotebookCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:NotebookChooserWorkspaceView}}}"
-                    CommandParameter="{Binding}"
-                    Height="90"
-                    Width="200">
+                <Button Command="{Binding DataContext.SelectNotebookCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:NotebookChooserWorkspaceView}}}"
+                        CommandParameter="{Binding}"
+                        Height="90"
+                        Width="200">
                     <DockPanel LastChildFill="True">
                         <TextBlock DockPanel.Dock="Bottom"
-                                   Height="30"
+                                   FontWeight="Bold"
+                                   FontSize="12"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Bottom"
+                                   Text="{Binding OwnerName}" />
+                        <TextBlock DockPanel.Dock="Bottom"
                                    FontWeight="Bold"
                                    FontSize="12"
                                    HorizontalAlignment="Center"

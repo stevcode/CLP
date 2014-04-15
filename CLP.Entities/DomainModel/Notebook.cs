@@ -25,6 +25,18 @@ namespace CLP.Entities
         }
 
         /// <summary>
+        /// Initializes <see cref="Notebook" /> with name and owner.
+        /// </summary>
+        /// <param name="notebookName">The name of the notebook.</param>
+        /// <param name="owner">The <see cref="Person" /> who owns the notebook.</param>
+        public Notebook(string notebookName, Person owner)
+            : this()
+        {
+            Name = notebookName;
+            Owner = owner;
+        }
+
+        /// <summary>
         /// Initializes <see cref="Notebook" /> based on <see cref="SerializationInfo" />.
         /// </summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
@@ -74,7 +86,15 @@ namespace CLP.Entities
         public virtual Person Owner
         {
             get { return GetValue<Person>(OwnerProperty); }
-            set { SetValue(OwnerProperty, value); }
+            set
+            {
+                SetValue(OwnerProperty, value);
+                if(value == null)
+                {
+                    return;
+                }
+                OwnerID = value.ID;
+            }
         }
 
         public static readonly PropertyData OwnerProperty = RegisterProperty("Owner", typeof(Person));

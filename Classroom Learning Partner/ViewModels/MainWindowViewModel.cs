@@ -33,6 +33,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             InitializeCommands();
             TitleBarText = CLP_TEXT;
+            CurrentUser = Person.Emily;
         }
 
         public override string Title
@@ -334,6 +335,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static void CreateNewNotebook()
         {
+            App.MainWindowViewModel.IsAuthoring = false;
             var nameChooserLoop = true;
 
             while(nameChooserLoop)
@@ -421,7 +423,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static void SaveNotebook(Notebook notebook, bool isFullSaveForced = false)
         {
-            var folderPath = Path.Combine(App.NotebookCacheDirectory, notebook.Name + ";" + notebook.ID);
+            var folderPath = Path.Combine(App.NotebookCacheDirectory, notebook.Name + ";" + notebook.ID + ";" + notebook.OwnerID + ";" + notebook.Owner.FullName);
 
             //if(isFullSaveForced)
             //{

@@ -12,6 +12,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public struct NotebookName
         {
             public string Name { get; set; }
+            public string OwnerName { get; set; }
             public string ID { get; set; }
             public bool IsLocal { get; set; }
         }
@@ -29,11 +30,12 @@ namespace Classroom_Learning_Partner.ViewModels
             foreach(var name in from localName in localNames
                                 select localName.Split(';')
                                 into nameAndID
-                                where nameAndID.Length == 2
+                                where nameAndID.Length == 4
                                 select new NotebookName
                                        {
                                            Name = nameAndID[0],
                                            ID = nameAndID[1],
+                                           OwnerName = nameAndID[3],
                                            IsLocal = true
                                        })
             {
