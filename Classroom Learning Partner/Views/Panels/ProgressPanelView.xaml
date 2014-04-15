@@ -84,20 +84,20 @@
                                 <Border Grid.Row="1" Margin="3"
                                         BorderBrush="{StaticResource GrayEdgeColor}"
                                         BorderThickness="1,1,1,1">
-                                    <Rectangle Grid.Row="0" Margin="0" Fill="White" StrokeThickness="2" Height="24" Width="32">
-                                        <!--Rectangle.Stroke>
+                                    <Rectangle Grid.Row="0" Margin="0" Fill="White" StrokeThickness="2" Height="16" Width="32">
+                                        <Rectangle.Stroke>
                                             <MultiBinding Converter="{StaticResource PageMatchToColorConverter}">
                                                 <Binding ElementName="Pages" Path="DataContext.CurrentPage"/>
                                                 <Binding Path=""/>
                                             </MultiBinding>
-                                        </-->
-                                        <!--i:Interaction.Triggers>
+                                        </Rectangle.Stroke>
+                                        <i:Interaction.Triggers>
                                             <i:EventTrigger EventName="MouseUp">
                                                 <catel:EventToCommand Command="{Binding DataContext.SetCurrentPageCommand, ElementName=Pages}"
                                                                                       PassEventArgsToCommand="False"
                                                                                       CommandParameter="{Binding}" />
                                             </i:EventTrigger>
-                                        </-->
+                                        </i:Interaction.Triggers>
                                     </Rectangle>
                                 </Border>
                                 <ItemsControl Grid.Row="2" ItemsSource="{Binding Converter={StaticResource PageToSubmissionsListConverter}}">
@@ -130,19 +130,19 @@
                                                                Visibility="{Binding Converter={StaticResource PageToSubmissionVisibilityConverter}}" />
                                                     </Grid>
                                                     <Rectangle Grid.Row="0" Margin="0" Fill="Transparent" StrokeThickness="2">
-                                                        <!--Rectangle.Stroke>
+                                                        <Rectangle.Stroke>
                                                             <MultiBinding Converter="{StaticResource PageMatchToColorConverter}">
                                                                 <Binding ElementName="Pages" Path="DataContext.CurrentPage"/>
-                                                                <Binding Path=""/>
+                                                                <Binding Path="Page"/>
                                                             </MultiBinding>
-                                                        </-->
-                                                        <!--i:Interaction.Triggers>
+                                                        </Rectangle.Stroke>
+                                                        <i:Interaction.Triggers>
                                                             <i:EventTrigger EventName="MouseUp">
                                                                 <catel:EventToCommand Command="{Binding DataContext.SetCurrentPageCommand, ElementName=Pages}"
                                                                                       PassEventArgsToCommand="False"
-                                                                                      CommandParameter="{Binding}" />
+                                                                                      CommandParameter="{Binding Page}" />
                                                             </i:EventTrigger>
-                                                        </-->
+                                                        </i:Interaction.Triggers>
                                                     </Rectangle>
                                                 </Grid>
                                             </Border>
