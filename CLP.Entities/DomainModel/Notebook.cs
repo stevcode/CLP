@@ -404,7 +404,7 @@ namespace CLP.Entities
             }
         }
 
-        public static Notebook OpenNotebook(string folderPath)
+        public static Notebook OpenNotebook(string folderPath, bool includeSubmissions = true)
         {
             try
             {
@@ -421,8 +421,14 @@ namespace CLP.Entities
                     {
                         continue;
                     }
+                    if(!includeSubmissions &&
+                       pageAndHistoryInfo[4] != "0")
+                    {
+                        continue;
+                    }
 
                     var page = Load<CLPPage>(pageAndHistoryFilePath, SerializationMode.Xml);
+                    //TODO: :Load Page History
                     foreach(var pageObject in page.PageObjects)
                     {
                         pageObject.ParentPage = page;
@@ -434,8 +440,6 @@ namespace CLP.Entities
                     page.IsCached = true;
                     pages.Add(page);
                 }
-
-
 
                 var notebookPages = new List<CLPPage>();
 
@@ -450,7 +454,7 @@ namespace CLP.Entities
                                submission.OwnerID == notebookPage.OwnerID &&
                                submission.VersionIndex != 0)
                             {
-                                
+                                notebookPage.Submissions.Add(submission);
                             }
                         }
                     }
@@ -473,19 +477,31 @@ namespace CLP.Entities
                 var filePath = Path.Combine(folderPath, "notebook.xml");
                 var notebook = Load<Notebook>(filePath, SerializationMode.Xml);
                 var pagesFolderPath = Path.Combine(folderPath, "Pages");
-                var pageFilePaths = Directory.EnumerateFiles(pagesFolderPath);
+                var pageAndHistoryFilePaths = Directory.EnumerateFiles(pagesFolderPath);
                 var pages = new List<CLPPage>();
-
-                
-
-
-
-                foreach(string pageFilePath in pageFilePaths)
+                var pageIds = pageIDs as IList<string> ?? pageIDs.ToList();
+                foreach(var pageAndHistoryFilePath in pageAndHistoryFilePaths)
                 {
-                    var pageAndID = pageFilePath.Split(';');
-           
+                    var pageAndHistoryInfo = pageAndHistoryFilePath.Split(';');
+                    if(pageAndHistoryInfo.Length != 5 ||
+                       pageAndHistoryInfo[0] != "Page")
+                    {
+                        continue;
+                    }
+                    if(!includeSubmissions &&
+                       pageAndHistoryInfo[4] != "0")
+                    {
+                        continue;
+                    }
+                    var isFilePartOfPartialPages = pageIds.Any(pageID => pageID == pageAndHistoryInfo[4]);
 
-                    var page = Load<CLPPage>(pageFilePath, SerializationMode.Xml);
+                    if(!isFilePartOfPartialPages)
+                    {
+                        continue;
+                    }
+
+                    var page = Load<CLPPage>(pageAndHistoryFilePath, SerializationMode.Xml);
+                    //TODO: :Load Page History
                     foreach(var pageObject in page.PageObjects)
                     {
                         pageObject.ParentPage = page;
@@ -496,8 +512,28 @@ namespace CLP.Entities
                     }
                     page.IsCached = true;
                     pages.Add(page);
-                    notebook.Pages = new ObservableCollection<CLPPage>(pages.OrderBy(x => x.PageNumber));
                 }
+
+                var notebookPages = new List<CLPPage>();
+
+                foreach(var notebookPage in pages)
+                {
+                    if(notebookPage.VersionIndex == 0)
+                    {
+                        notebookPages.Add(notebookPage);
+                        foreach(var submission in pages)
+                        {
+                            if(submission.ID == notebookPage.ID &&
+                               submission.OwnerID == notebookPage.OwnerID &&
+                               submission.VersionIndex != 0)
+                            {
+                                notebookPage.Submissions.Add(submission);
+                            }
+                        }
+                    }
+                }
+
+                notebook.Pages = new ObservableCollection<CLPPage>(notebookPages.OrderBy(x => x.PageNumber));
 
                 return notebook;
             }

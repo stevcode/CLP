@@ -379,6 +379,12 @@ namespace CLP.Entities
 
         public static readonly PropertyData ParentNotebookProperty = RegisterProperty("ParentNotebook", typeof(Notebook));
 
+        /// <summary>
+        /// Submissions associated with this <see cref="CLPPage" />.
+        /// </summary>
+        /// <remarks>
+        /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
+        /// </remarks>
         [XmlIgnore]
         [ExcludeFromSerialization]
         public virtual ObservableCollection<CLPPage> Submissions
@@ -388,7 +394,6 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData SubmissionsProperty = RegisterProperty("Submissions", typeof(ObservableCollection<CLPPage>), () => new ObservableCollection<CLPPage>());
-
 
         /// <summary>
         /// Authored <see cref="IPageObject" />s for the <see cref="CLPPage" />.
