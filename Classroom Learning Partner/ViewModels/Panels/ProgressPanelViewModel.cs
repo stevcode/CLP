@@ -57,6 +57,17 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Constructor
 
         #region Model
+        /// <summary>
+        /// Notebook associated with the panel.
+        /// </summary>
+        [Model(SupportIEditableObject = false)]
+        public Notebook Notebook
+        {
+            get { return GetValue<Notebook>(NotebookProperty); }
+            set { SetValue(NotebookProperty, value); }
+        }
+
+        public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof(Notebook));
 
         /// <summary>
         /// Pages of the Notebook.
@@ -76,6 +87,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Current, selected page in the notebook.
         /// </summary>
+        [ViewModelToModel("Notebook")]
         public CLPPage CurrentPage
         {
             get { return GetValue<CLPPage>(CurrentPageProperty); }
@@ -128,12 +140,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnSetCurrentPageCommandExecute(CLPPage page)
         {
-            var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
-            CurrentPage = page;
-            if(notebookWorkspaceViewModel != null)
-            {
-                notebookWorkspaceViewModel.CurrentDisplay.AddPageToDisplay(page);
-            }
+            Notebook.CurrentPage = page;
         }
 
         #endregion

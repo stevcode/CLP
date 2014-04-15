@@ -91,13 +91,13 @@
                                                 <Binding Path=""/>
                                             </MultiBinding>
                                         </-->
-                                        <!--i:Interaction.Triggers>
+                                        <i:Interaction.Triggers>
                                             <i:EventTrigger EventName="MouseUp">
-                                                <catel:EventToCommand Command="{Binding DataContext.SetCurrentPageCommand, ElementName=Pages}"
+                                                <catel:EventToCommand Command="{Binding DataContext.SetCurrentPageCommand}"
                                                                                       PassEventArgsToCommand="False"
                                                                                       CommandParameter="{Binding}" />
                                             </i:EventTrigger>
-                                        </-->
+                                        </i:Interaction.Triggers>
                                     </Rectangle>
                                 </Border>
                                 <ItemsControl Grid.Row="2" ItemsSource="{Binding Converter={StaticResource PageToSubmissionsListConverter}}">
