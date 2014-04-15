@@ -269,13 +269,18 @@ namespace CLP.Entities
             else if(Math.Abs(strokeLeft - strokeRight) > Math.Abs(strokeTop - strokeBottom) &&
                     strokeBottom <= cuttableBottom &&
                     strokeTop >= cuttableTop &&
-                    strokeRight - cuttableRight <= MIN_THRESHHOLD &&
-                    cuttableLeft - strokeLeft <= MIN_THRESHHOLD &&
+                    cuttableRight - strokeRight <= MIN_THRESHHOLD &&
+                    strokeLeft - cuttableLeft <= MIN_THRESHHOLD &&
                     Rows > 1) //Horizontal Cut Stroke. Stroke must be within the bounds of the pageObject
             {
-                var average = (strokeRight + strokeLeft) / 2;
-                var relativeAverage = average - LabelLength - XPosition;
+                var average = (strokeTop + strokeBottom) / 2;
+                var relativeAverage = average - LabelLength - YPosition;
                 var closestRow = Convert.ToInt32(Math.Round(relativeAverage / GridSquareSize));
+
+                if(closestRow == Rows)
+                {
+                    return halvedPageObjects;
+                }
 
                 var topArray = new CLPArray(ParentPage, Columns, closestRow, ArrayTypes.Array)
                                {
@@ -295,7 +300,7 @@ namespace CLP.Entities
                                       IsGridOn = IsGridOn,
                                       IsDivisionBehaviorOn = IsDivisionBehaviorOn,
                                       XPosition = XPosition,
-                                      YPosition = YPosition,
+                                      YPosition = YPosition + topArray.ArrayHeight,
                                       IsTopLabelVisible = IsTopLabelVisible,
                                       IsSideLabelVisible = IsSideLabelVisible,
                                       IsSnappable = IsSnappable
