@@ -904,10 +904,6 @@
                               LargeImageSource="..\Images\LargeIcon.png"
                               Command="{Binding CopyPageCommand}" />
 
-                <RibbonButton Label="Add Page Topic to this Page"
-                              LargeImageSource="..\Images\LargeIcon.png"
-                              Command="{Binding AddPageTopicCommand}" />
-
                 <RibbonButton Label="Make Page Longer"
                               LargeImageSource="..\Images\MakePageLonger.png"
                               Command="{Binding MakePageLongerCommand}" />
@@ -936,7 +932,22 @@
 
             </RibbonGroup>
 
-            <RibbonGroup Header="Insert">
+            <RibbonGroup Header="Metadata">
+
+                <RibbonButton Label="Add Page Topic to this Page"
+                              LargeImageSource="..\Images\LargeIcon.png"
+                              Command="{Binding AddPageTopicCommand}" />
+
+                <RibbonButton Label="Edit Current Page Metadata"
+                              LargeImageSource="..\Images\LargeIcon.png"
+                              Command="{Binding EditPageMetadataCommand}" />
+
+                <RibbonButton Label="Set Notebook Curriculum"
+                              LargeImageSource="..\Images\LargeIcon.png"
+                              Command="{Binding SetNotebookCurriculumCommand}" />
+
+            </RibbonGroup>
+            <!--RibbonGroup Header="Insert">
 
                 <RibbonButton Label="Insert Image"
                               LargeImageSource="..\Images\AddImage.png"
@@ -1139,7 +1150,7 @@
                     </RibbonGallery>
                 </RibbonMenuButton>
 
-            </RibbonGroup>
+            </-->
 
         </RibbonTab>
 

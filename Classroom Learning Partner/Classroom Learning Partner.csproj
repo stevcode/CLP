@@ -266,6 +266,12 @@
     <Compile Include="Views\Modal Windows\SimpleTextWindowView.xaml.cs">
       <DependentUpon>SimpleTextWindowView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Modal Windows\PageMetadataWindowView.xaml.cs">
+      <DependentUpon>PageMetadataWindowView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Modal Windows\NotebookMetadataWindowView.xaml.cs">
+      <DependentUpon>NotebookMetadataWindowView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PageObjects\RemainderTilesView.xaml.cs">
       <DependentUpon>RemainderTilesView.xaml</DependentUpon>
     </Compile>
@@ -475,6 +481,14 @@
     <Page Include="Views\Modal Windows\SimpleTextWindowView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Modal Windows\PageMetadataWindowView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Modal Windows\NotebookMetadataWindowView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PageObjects\RemainderTilesView.xaml">
       <SubType>Designer</SubType>

@@ -181,10 +181,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
             DeletePageCommand = new Command(OnDeletePageCommandExecute, OnInsertPageObjectCanExecute);
             CopyPageCommand = new Command(OnCopyPageCommandExecute, OnInsertPageObjectCanExecute);
-            AddPageTopicCommand = new Command(OnAddPageTopicCommandExecute, OnInsertPageObjectCanExecute);
             MakePageLongerCommand = new Command(OnMakePageLongerCommandExecute, OnInsertPageObjectCanExecute);
             TrimPageCommand = new Command(OnTrimPageCommandExecute, OnInsertPageObjectCanExecute);
             ClearPageCommand = new Command(OnClearPageCommandExecute, OnInsertPageObjectCanExecute);
+
+            //Metadata
+            AddPageTopicCommand = new Command(OnAddPageTopicCommandExecute, OnInsertPageObjectCanExecute);
+            EditPageMetadataCommand = new Command(OnEditPageMetadataCommandExecute, OnInsertPageObjectCanExecute);
+            SetNotebookCurriculumCommand = new Command(OnSetNotebookCurriculumCommandExecute);
 
             //Debug
             InterpretPageCommand = new Command(OnInterpretPageCommandExecute);
@@ -2139,30 +2143,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
-        /// Bring up window to tag a page with Page Topics.
-        /// </summary>
-        public Command AddPageTopicCommand { get; private set; }
-
-        private void OnAddPageTopicCommandExecute()
-        {
-            //TODO: PageTopics gone, convert to Tags
-            //var page = ((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as LinkedDisplayViewModel).DisplayedPage;
-
-            //PageTopicWindowView pageTopicWindow = new PageTopicWindowView();
-            //pageTopicWindow.Owner = Application.Current.MainWindow;
-
-            //string originalPageTopics = String.Join(",", page.PageTopics);
-            //pageTopicWindow.PageTopicName.Text = originalPageTopics;
-            //pageTopicWindow.ShowDialog();
-            //if(pageTopicWindow.DialogResult == true)
-            //{
-            //    string pageTopics = pageTopicWindow.PageTopicName.Text;
-            //    string[] stringArray = pageTopics.Split(',');
-            //    page.PageTopics = new ObservableCollection<string>(new List<string>(stringArray));
-            //}
-        }
-
-        /// <summary>
         /// Add 200 pixels to the height of the current page.
         /// </summary>
         public Command MakePageLongerCommand { get; private set; }
@@ -2217,6 +2197,79 @@ namespace Classroom_Learning_Partner.ViewModels
             //page.PageObjects.Clear();
             //page.InkStrokes.Clear();
             //page.SerializedStrokes.Clear();
+        }
+
+        /// <summary>
+        /// Bring up window to tag a page with Page Topics.
+        /// </summary>
+        public Command AddPageTopicCommand { get; private set; }
+
+        private void OnAddPageTopicCommandExecute()
+        {
+            //PageTopicWindowView pageTopicWindow = new PageTopicWindowView();
+            //pageTopicWindow.Owner = Application.Current.MainWindow;
+
+            //string originalPageTopics = String.Join(",", page.PageTopics);
+            //pageTopicWindow.PageTopicName.Text = originalPageTopics;
+            //pageTopicWindow.ShowDialog();
+            //if(pageTopicWindow.DialogResult == true)
+            //{
+            //    string pageTopics = pageTopicWindow.PageTopicName.Text;
+            //    string[] stringArray = pageTopics.Split(',');
+            //    page.PageTopics = new ObservableCollection<string>(new List<string>(stringArray));
+            //}
+        }
+
+         /// <summary>
+        /// Bring up window to edit a page's metadata.
+        /// </summary>
+        public Command EditPageMetadataCommand { get; private set; }
+
+        private void OnEditPageMetadataCommandExecute()
+        {
+            PageMetadataWindowView pageMetadataWindow = new PageMetadataWindowView();
+            pageMetadataWindow.Owner = Application.Current.MainWindow;
+
+            pageMetadataWindow.ChapterTitle.Text = CurrentPage.ChapterTitle;
+            pageMetadataWindow.SectionTitle.Text = CurrentPage.SectionTitle;
+            pageMetadataWindow.PageNumber.Text = CurrentPage.PageNumber.ToString();
+            pageMetadataWindow.StudentWorkbookPageNumber.Text = CurrentPage.StudentWorkbookPageNumber;
+            pageMetadataWindow.TeacherWorkbookPageNumber.Text = CurrentPage.TeacherWorkbookPageNumber;
+            pageMetadataWindow.Curriculum.Text = CurrentPage.Curriculum;
+
+            pageMetadataWindow.ShowDialog();
+            if(pageMetadataWindow.DialogResult == true)
+            {
+                CurrentPage.ChapterTitle = pageMetadataWindow.ChapterTitle.Text;
+                CurrentPage.SectionTitle = pageMetadataWindow.SectionTitle.Text;
+                int pageNumber;
+                if(int.TryParse(pageMetadataWindow.PageNumber.Text, out pageNumber)) {
+                    CurrentPage.PageNumber = pageNumber;
+                }
+                CurrentPage.StudentWorkbookPageNumber = pageMetadataWindow.StudentWorkbookPageNumber.Text;
+                CurrentPage.TeacherWorkbookPageNumber = pageMetadataWindow.TeacherWorkbookPageNumber.Text;
+                CurrentPage.Curriculum = pageMetadataWindow.Curriculum.Text;
+            }
+        }
+
+         /// <summary>
+        /// Bring up window to set a notebook's curriculum.
+        /// </summary>
+        public Command SetNotebookCurriculumCommand { get; private set; }
+
+        private void OnSetNotebookCurriculumCommandExecute()
+        {
+            var notebook = (App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).Notebook;
+            NotebookMetadataWindowView notebookMetadataWindow = new NotebookMetadataWindowView();
+            notebookMetadataWindow.Owner = Application.Current.MainWindow;
+
+            notebookMetadataWindow.Curriculum.Text = notebook.Curriculum;
+
+            notebookMetadataWindow.ShowDialog();
+            if(notebookMetadataWindow.DialogResult == true)
+            {
+                notebook.Curriculum = notebookMetadataWindow.Curriculum.Text;
+            }
         }
 
         #endregion //Page Commands

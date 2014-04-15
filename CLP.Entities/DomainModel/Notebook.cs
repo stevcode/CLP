@@ -257,6 +257,7 @@ namespace CLP.Entities
         public void AddCLPPageToNotebook(CLPPage page)
         {
             page.PageNumber = Pages.Any() ? Pages.Last().PageNumber + 1 : 1;
+            page.Curriculum = Curriculum;
             Pages.Add(page);
             CurrentPage = page;
         }
@@ -271,6 +272,7 @@ namespace CLP.Entities
         public void InsertPageAt(int index, CLPPage page)
         {
             Pages.Insert(index, page);
+            page.Curriculum = Curriculum;
             GeneratePageNumbers();
             CurrentPage = page;
         }
