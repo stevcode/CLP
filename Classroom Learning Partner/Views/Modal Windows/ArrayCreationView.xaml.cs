@@ -14,7 +14,7 @@ namespace Classroom_Learning_Partner.Views
         public ArrayCreationView()
         {
             Left = 515;
-            Top = 250;
+            Top = 315;
             InitializeComponent();
             _focusedTextBox = Rows;
             _focusedTextBox.Focus();

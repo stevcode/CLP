@@ -2848,9 +2848,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
             firstArray.SizeArrayToGridLevel(initializedSquareSize);
             firstArray.XPosition = 0.0;
-            if(275.0 + firstArray.Height < page.Height)
+            if(295.0 + firstArray.Height < page.Height)
             {
-                firstArray.YPosition = 275.0;
+                firstArray.YPosition = 295.0;
             }
             else
             {
