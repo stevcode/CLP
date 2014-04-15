@@ -12,6 +12,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public struct NotebookName
         {
             public string Name { get; set; }
+            public string OwnerID { get; set; }
             public string OwnerName { get; set; }
             public string ID { get; set; }
             public bool IsLocal { get; set; }
@@ -35,6 +36,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                        {
                                            Name = nameAndID[0],
                                            ID = nameAndID[1],
+                                           OwnerID = nameAndID[2],
                                            OwnerName = nameAndID[3],
                                            IsLocal = true
                                        })
@@ -69,7 +71,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             var stopWatch = new Stopwatch();
             stopWatch.Start();
-            PleaseWaitHelper.Show(() => MainWindowViewModel.OpenNotebook(notebookName.Name + ";" + notebookName.ID), null, "Loading Notebook");
+            PleaseWaitHelper.Show(() => MainWindowViewModel.OpenNotebook(notebookName.Name + ";" + notebookName.ID + ";" + notebookName.OwnerID + ";" + notebookName.OwnerName), null, "Loading Notebook");
             stopWatch.Stop();
             Logger.Instance.WriteToLog("Time to LOAD notebook (In Seconds): " + stopWatch.ElapsedMilliseconds / 1000.0);
         }

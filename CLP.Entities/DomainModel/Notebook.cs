@@ -256,10 +256,8 @@ namespace CLP.Entities
 
         public void AddCLPPageToNotebook(CLPPage page)
         {
-            page.ParentNotebookID = ID;
             page.PageNumber = Pages.Any() ? Pages.Last().PageNumber + 1 : 1;
             Pages.Add(page);
-            //GenerateSubmissionViews(page.UniqueID);
             CurrentPage = page;
         }
 
@@ -272,10 +270,8 @@ namespace CLP.Entities
 
         public void InsertPageAt(int index, CLPPage page)
         {
-            page.ParentNotebookID = ID;
             Pages.Insert(index, page);
             GeneratePageNumbers();
-            //GenerateSubmissionViews(page.UniqueID);
             CurrentPage = page;
         }
 
@@ -291,9 +287,8 @@ namespace CLP.Entities
 
             if(Pages.Count == 1)
             {
-                var newPage = new CLPPage
+                var newPage = new CLPPage(Person.Author)
                               {
-                                  ParentNotebookID = ID,
                                   PageNumber = Pages.Any() ? Pages.First().PageNumber : 1
                               };
 
@@ -318,7 +313,6 @@ namespace CLP.Entities
             }
 
             _trashedPages.Add(Pages[index]);
-            //Submissions.Remove(Pages[index].UniqueID);
             Pages.RemoveAt(index);
             GeneratePageNumbers();
         }
@@ -326,7 +320,7 @@ namespace CLP.Entities
         public void GeneratePageNumbers()
         {
             var initialPageNumber = Pages.Any() ? Pages.First().PageNumber : 1;
-            foreach(CLPPage page in Pages)
+            foreach(var page in Pages)
             {
                 page.PageNumber = initialPageNumber;
                 initialPageNumber++;
@@ -407,7 +401,6 @@ namespace CLP.Entities
             //    }
             //}
 
-
             //foreach(var pageFilePath in from pageFilePath in pageFilePaths
             //                            let pageNumberOfFile = Convert.ToInt32(Path.GetFileName(pageFilePath).Split(' ')[1])
             //                            from page in Pages
@@ -431,11 +424,12 @@ namespace CLP.Entities
                 var filePath = Path.Combine(folderPath, "notebook.xml");
                 var notebook = Load<Notebook>(filePath, SerializationMode.Xml);
                 var pagesFolderPath = Path.Combine(folderPath, "Pages");
-                var pageAndHistoryFilePaths = Directory.EnumerateFiles(pagesFolderPath);
+                var pageAndHistoryFilePaths = Directory.EnumerateFiles(pagesFolderPath, "*.xml");
                 var pages = new List<CLPPage>();
                 foreach(var pageAndHistoryFilePath in pageAndHistoryFilePaths)
                 {
-                    var pageAndHistoryInfo = pageAndHistoryFilePath.Split(';');
+                    var pageAndHistoryFileName = System.IO.Path.GetFileNameWithoutExtension(pageAndHistoryFilePath);
+                    var pageAndHistoryInfo = pageAndHistoryFileName.Split(';');
                     if(pageAndHistoryInfo.Length != 5 ||
                        pageAndHistoryInfo[0] != "Page")
                     {
@@ -497,12 +491,13 @@ namespace CLP.Entities
                 var filePath = Path.Combine(folderPath, "notebook.xml");
                 var notebook = Load<Notebook>(filePath, SerializationMode.Xml);
                 var pagesFolderPath = Path.Combine(folderPath, "Pages");
-                var pageAndHistoryFilePaths = Directory.EnumerateFiles(pagesFolderPath);
+                var pageAndHistoryFilePaths = Directory.EnumerateFiles(pagesFolderPath, "*.xml");
                 var pages = new List<CLPPage>();
                 var pageIds = pageIDs as IList<string> ?? pageIDs.ToList();
                 foreach(var pageAndHistoryFilePath in pageAndHistoryFilePaths)
                 {
-                    var pageAndHistoryInfo = pageAndHistoryFilePath.Split(';');
+                    var pageAndHistoryFileName = System.IO.Path.GetFileNameWithoutExtension(pageAndHistoryFilePath);
+                    var pageAndHistoryInfo = pageAndHistoryFileName.Split(';');
                     if(pageAndHistoryInfo.Length != 5 ||
                        pageAndHistoryInfo[0] != "Page")
                     {

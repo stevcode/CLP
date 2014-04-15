@@ -49,20 +49,37 @@ namespace CLP.Entities
         /// Initializes <see cref="CLPPage" /> from scratch.
         /// </summary>
         public CLPPage()
-            : this(LANDSCAPE_HEIGHT, LANDSCAPE_WIDTH) { }
+        {
+            Height = LANDSCAPE_HEIGHT;
+            Width = LANDSCAPE_WIDTH;
+            CreationDate = DateTime.Now;
+            ID = Guid.NewGuid().ToString();
+            InitialAspectRatio = Width / Height;
+        }
 
         /// <summary>
         /// Initializes <see cref="CLPPage" /> from page dimensions.
         /// </summary>
         /// <param name="height">Height of the <see cref="CLPPage" />.</param>
         /// <param name="width">Width of the <see cref="CLPPage" />.</param>
-        public CLPPage(double height, double width)
+        public CLPPage(Person owner, double height, double width)
         {
             CreationDate = DateTime.Now;
             ID = Guid.NewGuid().ToString();
+            Owner = owner;
             Height = height;
             Width = width;
             InitialAspectRatio = Width / Height;
+        }
+
+        /// <summary>
+        /// Initializes <see cref="CLPPage" /> from page dimensions.
+        /// </summary>
+        /// <param name="owner">The owner of the <see cref="CLPPage" />.</param>
+        public CLPPage(Person owner)
+            : this()
+        {
+            Owner = owner;
         }
 
         /// <summary>
@@ -327,59 +344,6 @@ namespace CLP.Entities
         public static readonly PropertyData OwnerProperty = RegisterProperty("Owner", typeof(Person));
 
         /// <summary>
-        /// Unique Identifier of the <see cref="CLPPage" />'s parent <see cref="Notebook" />.
-        /// </summary>
-        /// <remarks>
-        /// Composite Foreign Key.
-        /// </remarks>
-        public string ParentNotebookID
-        {
-            get { return GetValue<string>(ParentNotebookIDProperty); }
-            set { SetValue(ParentNotebookIDProperty, value); }
-        }
-
-        public static readonly PropertyData ParentNotebookIDProperty = RegisterProperty("ParentNotebookID", typeof(string));
-
-        /// <summary>
-        /// Unique Identifier of the <see cref="Person" /> who owns the parent <see cref="Notebook" />.
-        /// </summary>
-        /// <remarks>
-        /// Composite Foreign Key.
-        /// </remarks>
-        public string ParentNotebookOwnerID
-        {
-            get { return GetValue<string>(ParentNotebookOwnerIDProperty); }
-            set { SetValue(ParentNotebookOwnerIDProperty, value); }
-        }
-
-        public static readonly PropertyData ParentNotebookOwnerIDProperty = RegisterProperty("ParentNotebookOwnerID", typeof(string));
-
-        /// <summary>
-        /// Parent <see cref="Notebook" /> of the <see cref="CLPPage" />.
-        /// </summary>
-        /// <remarks>
-        /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
-        /// </remarks>
-        [XmlIgnore]
-        [ExcludeFromSerialization]
-        public virtual Notebook ParentNotebook
-        {
-            get { return GetValue<Notebook>(ParentNotebookProperty); }
-            set
-            {
-                SetValue(ParentNotebookProperty, value);
-                if(value == null)
-                {
-                    return;
-                }
-                ParentNotebookID = value.ID;
-                ParentNotebookOwnerID = value.OwnerID;
-            }
-        }
-
-        public static readonly PropertyData ParentNotebookProperty = RegisterProperty("ParentNotebook", typeof(Notebook));
-
-        /// <summary>
         /// Submissions associated with this <see cref="CLPPage" />.
         /// </summary>
         /// <remarks>
@@ -471,9 +435,8 @@ namespace CLP.Entities
             // TODO: Entities
             var newPage = new CLPPage
                           {
-                              ParentNotebook = ParentNotebook,
-                              // PageTags = PageTags,
-                              //GroupSubmitType = GroupSubmitType,
+                              Owner = Owner,
+                              Tags = Tags,
                               Height = Height,
                               Width = Width,
                               InitialAspectRatio = InitialAspectRatio

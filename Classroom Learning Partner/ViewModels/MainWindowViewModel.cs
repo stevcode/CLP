@@ -349,14 +349,12 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     // TODO: Steve - sanitize notebook name
                     var notebookName = nameChooser.NotebookName.Text;
-                    var newNotebook = new Notebook
-                                          {
-                                              Name = notebookName
-                                          };
-                    var newPage = new CLPPage();
+                    var newNotebook = new Notebook(notebookName, Person.Author);
+                                  
+                    var newPage = new CLPPage(Person.Author);
                     newNotebook.AddCLPPageToNotebook(newPage);
 
-                    var folderName = newNotebook.Name + ";" + newNotebook.ID;
+                    var folderName = newNotebook.Name + ";" + newNotebook.ID + ";" + newNotebook.OwnerID + ";" + newNotebook.Owner.FullName;
                     var folderPath = Path.Combine(App.NotebookCacheDirectory, folderName);
                     if(!Directory.Exists(folderPath))
                     {

@@ -1943,14 +1943,13 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             var index = notebookPanel.Pages.IndexOf(currentPage);
             index++;
-            var page = new CLPPage();
+            var page = new CLPPage(App.MainWindowViewModel.CurrentUser);
             if(pageOrientation == "Portrait")
             {
                 page.Height = CLPPage.PORTRAIT_HEIGHT;
                 page.Width = CLPPage.PORTRAIT_WIDTH;
                 page.InitialAspectRatio = page.Width / page.Height;
             }
-            page.ParentNotebook = notebookPanel.Notebook;
             notebookPanel.Notebook.InsertPageAt(index, page);
         }
 
