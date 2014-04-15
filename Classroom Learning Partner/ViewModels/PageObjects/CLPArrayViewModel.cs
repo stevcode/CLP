@@ -388,7 +388,7 @@ namespace Classroom_Learning_Partner.ViewModels
             ACLPArrayBase closestPersistingArray = null;
             var closestSnappingDistance = Double.MaxValue;
             var snapType = SnapType.Top;
-            foreach(IPageObject pageObject in PageObject.ParentPage.PageObjects)
+            foreach(var pageObject in PageObject.ParentPage.PageObjects)
             {
                 var persistingArray = pageObject as ACLPArrayBase;
                 if(persistingArray == null ||
@@ -435,14 +435,16 @@ namespace Classroom_Learning_Partner.ViewModels
                                 var hasTag = false;
                                 if(snappingArray.Columns == factorCard.Rows)
                                 {
-                                    foreach(ATagBase tag in PageObject.ParentPage.Tags.ToList())
+                                    foreach(var tag in PageObject.ParentPage.Tags.ToList())
                                     {
-                                        if(tag is FuzzyFactorCardFailedSnapTag && tag.Value == FuzzyFactorCardFailedSnapTag.AcceptedValues.SnappedWrongOrientationMultipleTimes.ToString())
+                                        if(tag is FuzzyFactorCardFailedSnapTag &&
+                                           tag.Value == FuzzyFactorCardFailedSnapTag.AcceptedValues.SnappedWrongOrientationMultipleTimes.ToString())
                                         {
                                             hasTag = true;
                                             break;
                                         }
-                                        if(tag is FuzzyFactorCardFailedSnapTag && tag.Value == FuzzyFactorCardFailedSnapTag.AcceptedValues.SnappedWrongOrientation.ToString())
+                                        if(tag is FuzzyFactorCardFailedSnapTag &&
+                                           tag.Value == FuzzyFactorCardFailedSnapTag.AcceptedValues.SnappedWrongOrientation.ToString())
                                         {
                                             tag.Value = FuzzyFactorCardFailedSnapTag.AcceptedValues.SnappedWrongOrientationMultipleTimes.ToString();
                                             hasTag = true;
@@ -458,14 +460,16 @@ namespace Classroom_Learning_Partner.ViewModels
                                 }
                                 else
                                 {
-                                    foreach(ATagBase tag in PageObject.ParentPage.Tags.ToList())
+                                    foreach(var tag in PageObject.ParentPage.Tags.ToList())
                                     {
-                                        if(tag is FuzzyFactorCardFailedSnapTag && tag.Value == FuzzyFactorCardFailedSnapTag.AcceptedValues.SnappedIncorrectDimensionMultipleTimes.ToString())
+                                        if(tag is FuzzyFactorCardFailedSnapTag &&
+                                           tag.Value == FuzzyFactorCardFailedSnapTag.AcceptedValues.SnappedIncorrectDimensionMultipleTimes.ToString())
                                         {
                                             hasTag = true;
                                             break;
                                         }
-                                        if(tag is FuzzyFactorCardFailedSnapTag && tag.Value == FuzzyFactorCardFailedSnapTag.AcceptedValues.SnappedIncorrectDimension.ToString())
+                                        if(tag is FuzzyFactorCardFailedSnapTag &&
+                                           tag.Value == FuzzyFactorCardFailedSnapTag.AcceptedValues.SnappedIncorrectDimension.ToString())
                                         {
                                             tag.Value = FuzzyFactorCardFailedSnapTag.AcceptedValues.SnappedIncorrectDimensionMultipleTimes.ToString();
                                             hasTag = true;
@@ -481,7 +485,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                 }
 
                                 var factorCardViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(factorCard);
-                                foreach(IViewModel viewModel in factorCardViewModels)
+                                foreach(var viewModel in factorCardViewModels)
                                 {
                                     (viewModel as FuzzyFactorCardViewModel).RejectSnappedArray();
                                 }
@@ -495,14 +499,16 @@ namespace Classroom_Learning_Partner.ViewModels
                                 //APageObjectBaseViewModel.ChangePageObjectPosition(snappingArray, oldX, oldY, false);
 
                                 var hasTag = false;
-                                foreach(ATagBase tag in PageObject.ParentPage.Tags.ToList())
+                                foreach(var tag in PageObject.ParentPage.Tags.ToList())
                                 {
-                                    if(tag is FuzzyFactorCardFailedSnapTag && tag.Value == FuzzyFactorCardFailedSnapTag.AcceptedValues.TooManyMultipleTimes.ToString())
+                                    if(tag is FuzzyFactorCardFailedSnapTag &&
+                                       tag.Value == FuzzyFactorCardFailedSnapTag.AcceptedValues.TooManyMultipleTimes.ToString())
                                     {
                                         hasTag = true;
                                         break;
                                     }
-                                    if(tag is FuzzyFactorCardFailedSnapTag && tag.Value == FuzzyFactorCardFailedSnapTag.AcceptedValues.TooMany.ToString())
+                                    if(tag is FuzzyFactorCardFailedSnapTag &&
+                                       tag.Value == FuzzyFactorCardFailedSnapTag.AcceptedValues.TooMany.ToString())
                                     {
                                         tag.Value = FuzzyFactorCardFailedSnapTag.AcceptedValues.TooManyMultipleTimes.ToString();
                                         hasTag = true;
@@ -525,7 +531,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                 //}
 
                                 var factorCardViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(factorCard);
-                                foreach(IViewModel viewModel in factorCardViewModels)
+                                foreach(var viewModel in factorCardViewModels)
                                 {
                                     (viewModel as FuzzyFactorCardViewModel).RejectSnappedArray();
                                 }
@@ -647,11 +653,11 @@ namespace Classroom_Learning_Partner.ViewModels
                         closestPersistingArray.HorizontalDivisions.Add(new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, 0, snappingArray.ArrayHeight, snappingArray.Rows));
                     }
 
-                    foreach(CLPArrayDivision horizontalDivision in snappingArray.HorizontalDivisions)
+                    foreach(var horizontalDivision in snappingArray.HorizontalDivisions)
                     {
                         closestPersistingArray.HorizontalDivisions.Add(horizontalDivision);
                     }
-                    foreach(CLPArrayDivision horizontalDivision in tempDivisions)
+                    foreach(var horizontalDivision in tempDivisions)
                     {
                         closestPersistingArray.HorizontalDivisions.Add(new CLPArrayDivision(horizontalDivision.Orientation,
                                                                                             horizontalDivision.Position + snappingArray.ArrayHeight,
@@ -683,7 +689,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                     else
                     {
-                        foreach(CLPArrayDivision horizontalDivision in snappingArray.HorizontalDivisions)
+                        foreach(var horizontalDivision in snappingArray.HorizontalDivisions)
                         {
                             closestPersistingArray.HorizontalDivisions.Add(new CLPArrayDivision(horizontalDivision.Orientation,
                                                                                                 horizontalDivision.Position + closestPersistingArray.ArrayHeight,
@@ -719,11 +725,11 @@ namespace Classroom_Learning_Partner.ViewModels
                         closestPersistingArray.VerticalDivisions.Add(new CLPArrayDivision(ArrayDivisionOrientation.Vertical, 0, snappingArray.ArrayWidth, snappingArray.Columns));
                     }
 
-                    foreach(CLPArrayDivision verticalDivision in snappingArray.VerticalDivisions)
+                    foreach(var verticalDivision in snappingArray.VerticalDivisions)
                     {
                         closestPersistingArray.VerticalDivisions.Add(verticalDivision);
                     }
-                    foreach(CLPArrayDivision verticalDivision in tempDivisions)
+                    foreach(var verticalDivision in tempDivisions)
                     {
                         closestPersistingArray.VerticalDivisions.Add(new CLPArrayDivision(verticalDivision.Orientation,
                                                                                           verticalDivision.Position + snappingArray.ArrayWidth,
@@ -755,7 +761,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                     else
                     {
-                        foreach(CLPArrayDivision verticalDivision in snappingArray.VerticalDivisions)
+                        foreach(var verticalDivision in snappingArray.VerticalDivisions)
                         {
                             closestPersistingArray.VerticalDivisions.Add(new CLPArrayDivision(verticalDivision.Orientation,
                                                                                               verticalDivision.Position + closestPersistingArray.ArrayWidth,
@@ -987,7 +993,7 @@ namespace Classroom_Learning_Partner.ViewModels
             if(division.Orientation == ArrayDivisionOrientation.Horizontal)
             {
                 var total = 0;
-                foreach(CLPArrayDivision div in HorizontalDivisions)
+                foreach(var div in HorizontalDivisions)
                 {
                     if(div.Value == 0)
                     {
@@ -1021,14 +1027,12 @@ namespace Classroom_Learning_Partner.ViewModels
                         }
                     }
                 }
-                MessageBox.Show(
-                                "The side of the array is " + Rows + ". You broke the side into " + labelsString + " , which don’t add up to " + Rows + ".",
-                                "Oops");
+                MessageBox.Show("The side of the array is " + Rows + ". You broke the side into " + labelsString + " , which don’t add up to " + Rows + ".", "Oops");
             }
             else
             {
                 var total = 0;
-                foreach(CLPArrayDivision div in VerticalDivisions)
+                foreach(var div in VerticalDivisions)
                 {
                     if(div.Value == 0)
                     {
@@ -1062,9 +1066,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         }
                     }
                 }
-                MessageBox.Show(
-                                "The side of the array is " + Columns + ". You broke the side into " + labelsString + " , which don’t add up to " + Columns + ".",
-                                "Oops");
+                MessageBox.Show("The side of the array is " + Columns + ". You broke the side into " + labelsString + " , which don’t add up to " + Columns + ".", "Oops");
             }
         }
 
@@ -1191,7 +1193,7 @@ namespace Classroom_Learning_Partner.ViewModels
             const double LABEL_LENGTH = 22.0;
 
             var arraysToAdd = new List<CLPArray>();
-            foreach(int index in Enumerable.Range(1, numberOfArrays))
+            foreach(var index in Enumerable.Range(1, numberOfArrays))
             {
                 var array = PageObject.Duplicate() as CLPArray;
                 array.XPosition = xPosition;

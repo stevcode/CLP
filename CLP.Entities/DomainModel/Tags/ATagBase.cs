@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using Catel.Data;
+using Catel.Runtime.Serialization;
 
 namespace CLP.Entities
 {
@@ -15,7 +17,8 @@ namespace CLP.Entities
         StudentPageObjectGenerated
     }
 
-    public abstract class ATagBase : AEntityBase
+    [Serializable]
+    public abstract class ATagBase : AEntityBase, ITag
     {
         #region Constructors
 
@@ -191,6 +194,8 @@ namespace CLP.Entities
         /// <remarks>
         /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
         /// </remarks>
+        [XmlIgnore]
+        [ExcludeFromSerialization]
         public virtual CLPPage ParentPage
         {
             get { return GetValue<CLPPage>(ParentPageProperty); }

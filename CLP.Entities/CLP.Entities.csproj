@@ -136,6 +136,7 @@
     <Compile Include="DomainModel\Tags\FuzzyFactorCardIncorrectArrayCreationTag.cs" />
     <Compile Include="DomainModel\Tags\FuzzyFactorCardRepresentationCorrectnessTag.cs" />
     <Compile Include="DomainModel\Tags\FuzzyFactorCardStrategyTag.cs" />
+    <Compile Include="DomainModel\Tags\ITag.cs" />
     <Compile Include="DomainModel\Tags\PageDefinitionTag.cs" />
     <Compile Include="DomainModel\Tags\PageTopicTag.cs" />
     <Compile Include="DomainModel\Tags\Relations\MathRelation.cs" />

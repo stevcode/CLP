@@ -1918,7 +1918,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var page = NotebookPagesPanelViewModel.GetCurrentPage();
 
             string tags = "";
-            foreach(ATagBase t in page.Tags)
+            foreach(var t in page.Tags)
             {
                 tags = tags + t.GetType().ToString() + " = " + t.Value + "\n";
             }
@@ -3004,7 +3004,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             // If the page already has a Page Definition tag, start from that one
             ProductRelation productRelation = new ProductRelation();
-            foreach(ATagBase tag in CurrentPage.Tags)
+            foreach(var tag in CurrentPage.Tags)
             {
                 if(tag is PageDefinitionTag)
                 {

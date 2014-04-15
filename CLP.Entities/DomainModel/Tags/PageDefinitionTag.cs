@@ -6,15 +6,12 @@ namespace CLP.Entities
     [Serializable]
     public class PageDefinitionTag : ATagBase
     {
-
         #region Constructors
 
         /// <summary>
         /// Initializes <see cref="PageDefinitionTag" /> from scratch.
         /// </summary>
-        public PageDefinitionTag()
-        {
-        }
+        public PageDefinitionTag() { }
 
         /// <summary>
         /// Initializes <see cref="PageDefinitionTag" /> from <see cref="ProductRelation" />.
@@ -33,9 +30,7 @@ namespace CLP.Entities
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext" />.</param>
         public PageDefinitionTag(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
+            : base(info, context) { }
 
         #endregion //Constructors
     }

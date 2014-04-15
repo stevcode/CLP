@@ -17,7 +17,7 @@ namespace CLP.Entities
         public FuzzyFactorCard() { }
 
         /// <summary>
-        /// Initializes <see cref="FuzzyFactorCard" /> from 
+        /// Initializes <see cref="FuzzyFactorCard" /> from
         /// </summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="FuzzyFactorCard" /> belongs to.</param>
         /// <param name="columns">The number of columns in the <see cref="FuzzyFactorCard" />.</param>
@@ -61,26 +61,17 @@ namespace CLP.Entities
 
         public override double ArrayWidth
         {
-            get
-            {
-                return Width - (LargeLabelLength + LabelLength);
-            }
+            get { return Width - (LargeLabelLength + LabelLength); }
         }
-        
+
         public override double ArrayHeight
         {
-            get
-            {
-                return Height - (2 * LabelLength);
-            }
+            get { return Height - (2 * LabelLength); }
         }
 
         public override double GridSquareSize
         {
-            get
-            {
-                return ArrayWidth / Columns;
-            }
+            get { return ArrayWidth / Columns; }
         }
 
         public override bool IsBackgroundInteractable
@@ -107,25 +98,17 @@ namespace CLP.Entities
 
         public int GroupsSubtracted
         {
-            get
-            {
-                return VerticalDivisions.Sum(division => division.Value);
-            }
+            get { return VerticalDivisions.Sum(division => division.Value); }
         }
+
         public int CurrentRemainder
         {
-            get
-            {
-                return Dividend - GroupsSubtracted * Rows;
-            }
+            get { return Dividend - GroupsSubtracted * Rows; }
         }
 
         public double LastDivisionPosition
         {
-            get
-            {
-                return VerticalDivisions.Any() ? VerticalDivisions.Last().Position : 0.0;
-            }
+            get { return VerticalDivisions.Any() ? VerticalDivisions.Last().Position : 0.0; }
         }
 
         /// <summary>
@@ -214,7 +197,7 @@ namespace CLP.Entities
             }
         }
 
-        public static readonly PropertyData RemainderTilesProperty = RegisterProperty("RemainderTiles", typeof(RemainderTiles)); 
+        public static readonly PropertyData RemainderTilesProperty = RegisterProperty("RemainderTiles", typeof(RemainderTiles));
 
         #endregion //Navigation Properties
 
@@ -249,7 +232,7 @@ namespace CLP.Entities
             base.OnDeleted();
 
             // FFC deleted tag
-            ObservableCollection<ATagBase> tags = ParentPage.Tags;
+            ObservableCollection<ITag> tags = ParentPage.Tags;
             ProductRelation relation = null;
             foreach(ATagBase tag in tags)
             {
@@ -262,11 +245,12 @@ namespace CLP.Entities
 
             if(relation != null)
             {
-                int factor1 = Convert.ToInt32(relation.Factor1);
-                int factor2 = Convert.ToInt32(relation.Factor2);
-                int product = Convert.ToInt32(relation.Product);
+                var factor1 = Convert.ToInt32(relation.Factor1);
+                var factor2 = Convert.ToInt32(relation.Factor2);
+                var product = Convert.ToInt32(relation.Product);
 
-                if(product == Dividend && ((factor1 == Rows && relation.Factor1Given) || (factor2 == Rows && relation.Factor2Given)))
+                if(product == Dividend &&
+                   ((factor1 == Rows && relation.Factor1Given) || (factor2 == Rows && relation.Factor2Given)))
                 {
                     var tag = new FuzzyFactorCardDeletedTag(ParentPage, ("Deleted correct division object: " + Dividend + "/" + Rows));
                     ParentPage.Tags.Add(tag);
@@ -286,7 +270,7 @@ namespace CLP.Entities
             var initialSquareSize = 45.0;
             if(toSquareSize <= 0)
             {
-                while(XPosition + LabelLength + rightLabelLength + initialSquareSize * Columns >= ParentPage.Width || 
+                while(XPosition + LabelLength + rightLabelLength + initialSquareSize * Columns >= ParentPage.Width ||
                       YPosition + LabelLength + bottomLabelLength + initialSquareSize * Rows >= ParentPage.Height)
                 {
                     initialSquareSize = Math.Abs(initialSquareSize - 45.0) < .0001 ? 22.5 : initialSquareSize / 4 * 3;
@@ -309,19 +293,22 @@ namespace CLP.Entities
 
         public void AnalyzeArrays()
         {
-            int arrayArea = 0;
+            var arrayArea = 0;
             foreach(var pageObject in ParentPage.PageObjects)
             {
-                if(pageObject is CLPArray && !(pageObject is FuzzyFactorCard))
+                if(pageObject is CLPArray &&
+                   !(pageObject is FuzzyFactorCard))
                 {
                     arrayArea += (pageObject as CLPArray).Rows * (pageObject as CLPArray).Columns;
-                    if((pageObject as CLPArray).Columns == Dividend || ((pageObject as CLPArray).Rows == Dividend))
+                    if((pageObject as CLPArray).Columns == Dividend ||
+                       ((pageObject as CLPArray).Rows == Dividend))
                     {
                         //Array with product as array dimension added
                         var hasTag = false;
-                        foreach(ATagBase tag in ParentPage.Tags.ToList())
+                        foreach(var tag in ParentPage.Tags.ToList())
                         {
-                            if(tag is FuzzyFactorCardIncorrectArrayCreationTag && tag.Value == FuzzyFactorCardIncorrectArrayCreationTag.AcceptedValues.ProductAsDimension.ToString())
+                            if(tag is FuzzyFactorCardIncorrectArrayCreationTag &&
+                               tag.Value == FuzzyFactorCardIncorrectArrayCreationTag.AcceptedValues.ProductAsDimension.ToString())
                             {
                                 hasTag = true;
                                 continue;
@@ -333,13 +320,15 @@ namespace CLP.Entities
                             ParentPage.Tags.Add(tag);
                         }
                     }
-                    if((pageObject as CLPArray).Rows != Rows && (pageObject as CLPArray).Columns == Rows)
+                    if((pageObject as CLPArray).Rows != Rows &&
+                       (pageObject as CLPArray).Columns == Rows)
                     {
                         //Array with wrong orientation added
                         var hasTag = false;
-                        foreach(ATagBase tag in ParentPage.Tags.ToList())
+                        foreach(var tag in ParentPage.Tags.ToList())
                         {
-                            if(tag is FuzzyFactorCardIncorrectArrayCreationTag && tag.Value == FuzzyFactorCardIncorrectArrayCreationTag.AcceptedValues.WrongOrientation.ToString())
+                            if(tag is FuzzyFactorCardIncorrectArrayCreationTag &&
+                               tag.Value == FuzzyFactorCardIncorrectArrayCreationTag.AcceptedValues.WrongOrientation.ToString())
                             {
                                 hasTag = true;
                                 continue;
@@ -355,9 +344,10 @@ namespace CLP.Entities
                     {
                         //Array with incorrect dimension added
                         var hasTag = false;
-                        foreach(ATagBase tag in ParentPage.Tags.ToList())
+                        foreach(var tag in ParentPage.Tags.ToList())
                         {
-                            if(tag is FuzzyFactorCardIncorrectArrayCreationTag && tag.Value == FuzzyFactorCardIncorrectArrayCreationTag.AcceptedValues.IncorrectDimension.ToString())
+                            if(tag is FuzzyFactorCardIncorrectArrayCreationTag &&
+                               tag.Value == FuzzyFactorCardIncorrectArrayCreationTag.AcceptedValues.IncorrectDimension.ToString())
                             {
                                 hasTag = true;
                                 continue;
@@ -375,9 +365,10 @@ namespace CLP.Entities
             {
                 //Too many arrays added
                 var hasTag = false;
-                foreach(ATagBase tag in ParentPage.Tags.ToList())
+                foreach(var tag in ParentPage.Tags.ToList())
                 {
-                    if(tag is FuzzyFactorCardIncorrectArrayCreationTag && tag.Value == FuzzyFactorCardIncorrectArrayCreationTag.AcceptedValues.TooMany.ToString())
+                    if(tag is FuzzyFactorCardIncorrectArrayCreationTag &&
+                       tag.Value == FuzzyFactorCardIncorrectArrayCreationTag.AcceptedValues.TooMany.ToString())
                     {
                         hasTag = true;
                         continue;
@@ -409,11 +400,24 @@ namespace CLP.Entities
                 ParentPage.PageObjects.Add(RemainderTiles);
             }
 
-            var numberOfBlackTiles = ParentPage.PageObjects.Where(pageObject => pageObject is CLPArray && (pageObject as CLPArray).ArrayType == ArrayTypes.Array && (pageObject as CLPArray).Rows == Rows).Sum(pageObject =>
-                                                                                                                                                                                                                   {
-                                                                                                                                                                                                                       var clpArray = pageObject as CLPArray;
-                                                                                                                                                                                                                       return clpArray != null ? clpArray.Rows * clpArray.Columns : 0;
-                                                                                                                                                                                                                   });
+            var numberOfBlackTiles =
+                ParentPage.PageObjects.Where(pageObject => pageObject is CLPArray && (pageObject as CLPArray).ArrayType == ArrayTypes.Array && (pageObject as CLPArray).Rows == Rows).Sum(pageObject =>
+                                                                                                                                                                                          {
+                                                                                                                                                                                              var
+                                                                                                                                                                                                  clpArray
+                                                                                                                                                                                                      =
+                                                                                                                                                                                                      pageObject
+                                                                                                                                                                                                      as
+                                                                                                                                                                                                      CLPArray;
+                                                                                                                                                                                              return
+                                                                                                                                                                                                  clpArray !=
+                                                                                                                                                                                                  null
+                                                                                                                                                                                                      ? clpArray
+                                                                                                                                                                                                            .Rows *
+                                                                                                                                                                                                        clpArray
+                                                                                                                                                                                                            .Columns
+                                                                                                                                                                                                      : 0;
+                                                                                                                                                                                          });
             numberOfBlackTiles = Math.Min(numberOfBlackTiles, CurrentRemainder);
 
             RemainderTiles.TileOffsets.Clear();
@@ -450,7 +454,9 @@ namespace CLP.Entities
                 }
                 VerticalDivisions.Add(topDiv);
                 CLPArrayDivision bottomDiv;
-                bottomDiv = divBelow == null ? new CLPArrayDivision(ArrayDivisionOrientation.Vertical, position, ArrayWidth - position, 0) : new CLPArrayDivision(ArrayDivisionOrientation.Vertical, position, divBelow.Position - position, 0);
+                bottomDiv = divBelow == null
+                                ? new CLPArrayDivision(ArrayDivisionOrientation.Vertical, position, ArrayWidth - position, 0)
+                                : new CLPArrayDivision(ArrayDivisionOrientation.Vertical, position, divBelow.Position - position, 0);
                 VerticalDivisions.Add(bottomDiv);
                 UpdateRemainderRegion();
             }

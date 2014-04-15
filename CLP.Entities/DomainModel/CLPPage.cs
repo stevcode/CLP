@@ -325,8 +325,6 @@ namespace CLP.Entities
         /// <remarks>
         /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
         /// </remarks>
-        [XmlIgnore]
-        [ExcludeFromSerialization]
         public virtual Person Owner
         {
             get { return GetValue<Person>(OwnerProperty); }
@@ -379,13 +377,13 @@ namespace CLP.Entities
         /// <remarks>
         /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
         /// </remarks>
-        public virtual ObservableCollection<ATagBase> Tags
+        public virtual ObservableCollection<ITag> Tags
         {
-            get { return GetValue<ObservableCollection<ATagBase>>(TagsProperty); }
+            get { return GetValue<ObservableCollection<ITag>>(TagsProperty); }
             set { SetValue(TagsProperty, value); }
         }
 
-        public static readonly PropertyData TagsProperty = RegisterProperty("Tags", typeof(ObservableCollection<ATagBase>), () => new ObservableCollection<ATagBase>());
+        public static readonly PropertyData TagsProperty = RegisterProperty("Tags", typeof(ObservableCollection<ITag>), () => new ObservableCollection<ITag>());
 
         /// <summary>
         /// Unserialized <see cref="Stroke" />s of the <see cref="CLPPage" />.
@@ -487,18 +485,19 @@ namespace CLP.Entities
             //}   
         }
 
-        public void AddTag(ATagBase newTag)
+        public void AddTag(ITag newTag)
         {
             if(newTag.IsSingleValueTag)
             {
                 var toRemove = Tags.Where(t => t.GetType() == newTag.GetType()).ToList();
-                foreach(ATagBase tag in toRemove)
+                foreach(var tag in toRemove)
                 {
                     Tags.Remove(tag);
                 }
             }
 
-            newTag.ParentPageID = ID;
+            newTag.ParentPage = this;
+            newTag.OwnerID = OwnerID;
             Tags.Add(newTag);
         }
 

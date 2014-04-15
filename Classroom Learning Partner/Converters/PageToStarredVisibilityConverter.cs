@@ -13,7 +13,7 @@ namespace Classroom_Learning_Partner.Converters
             var page = ((StudentProgressInfo)value).Page;
             if(page != null)
             {
-                foreach(ATagBase t in page.Tags)
+                foreach(var t in page.Tags)
                 {
                     if(t is StarredTag)
                     {
@@ -28,9 +28,6 @@ namespace Classroom_Learning_Partner.Converters
             return "Hidden";
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) { throw new NotImplementedException(); }
     }
 }

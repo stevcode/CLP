@@ -2,21 +2,18 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CLP.Entities
 {
     public static class TagAnalysis
     {
-
         /// <summary>
         /// Method to invoke when the AnalyzeArrayCommand command is executed.
         /// </summary>
         public static void AnalyzeArray(CLPPage page)
         {
             //Logger.Instance.WriteToLog("Start of PageAnalysis.AnalyzeArray");
-            ObservableCollection<ATagBase> tags = page.Tags;
+            ObservableCollection<ITag> tags = page.Tags;
             ProductRelation relation = null;
             foreach(ATagBase tag in tags)
             {
@@ -34,12 +31,11 @@ namespace CLP.Entities
                 return;
             }
 
-
             // Find an array object on the page (just use the first one we find), or be sad if we don't find one
-            ObservableCollection<IPageObject> objects = page.PageObjects;
+            var objects = page.PageObjects;
             CLPArray array = null;
 
-            foreach(IPageObject pageObject in objects)
+            foreach(var pageObject in objects)
             {
                 if(pageObject.GetType() == typeof(CLPArray))
                 {
@@ -58,27 +54,26 @@ namespace CLP.Entities
             // We have a page definition and an array, so we're good to go!
             //Logger.Instance.WriteToLog("Array found! Dimensions: " + array.Columns + " by " + array.Rows);
 
-            int arrayWidth = array.Columns;
-            int arrayHeight = array.Rows;
-            int arrayArea = arrayWidth * arrayHeight;
+            var arrayWidth = array.Columns;
+            var arrayHeight = array.Rows;
+            var arrayArea = arrayWidth * arrayHeight;
 
             // TODO: Add handling for variables in math relation
-            int factor1 = Convert.ToInt32(relation.Factor1);
-            int factor2 = Convert.ToInt32(relation.Factor2);
-            int product = Convert.ToInt32(relation.Product);
+            var factor1 = Convert.ToInt32(relation.Factor1);
+            var factor2 = Convert.ToInt32(relation.Factor2);
+            var product = Convert.ToInt32(relation.Product);
 
             // Make a tag based on the array's orientation
             // First, clear out any old ArrayOrientationTagTypes
             foreach(ATagBase tag in tags.ToList())
             {
                 if(tag == null ||
-                    tag is ArrayRepresentationCorrectnessTag ||
-                    tag is ArrayOrientationTag ||
-                    tag is ArrayXAxisStrategyTag ||
-                    tag is ArrayYAxisStrategyTag ||
-                    tag is ArrayPartialProductsStrategyTag ||
-                    tag is ArrayDivisionCorrectnessTag)
-                    //tag is ArrayVerticalDivisionsTag ||
+                   tag is ArrayRepresentationCorrectnessTag ||
+                   tag is ArrayOrientationTag ||
+                   tag is ArrayXAxisStrategyTag ||
+                   tag is ArrayYAxisStrategyTag ||
+                   tag is ArrayPartialProductsStrategyTag ||
+                   tag is ArrayDivisionCorrectnessTag) //tag is ArrayVerticalDivisionsTag ||
                     //tag is ArrayHorizontalDivisionsTag)
                 {
                     tags.Remove(tag);
@@ -86,14 +81,16 @@ namespace CLP.Entities
             }
 
             // Apply a representation correctness tag
-            if(factor1 == arrayWidth && factor2 == arrayHeight)
+            if(factor1 == arrayWidth &&
+               factor2 == arrayHeight)
             {
                 var tag = new ArrayRepresentationCorrectnessTag(page, ArrayRepresentationCorrectnessTag.AcceptedValues.Correct);
                 page.Tags.Add(tag);
             }
             else
             {
-                if(factor2 == arrayWidth && factor1 == arrayHeight)
+                if(factor2 == arrayWidth &&
+                   factor1 == arrayHeight)
                 {
                     // Are the factors swapped? Depends on whether we care about width vs. height
                     if(relation.RelationType == ProductRelation.ProductRelationTypes.Area)
@@ -110,7 +107,7 @@ namespace CLP.Entities
                 else
                 {
                     // One more possibility: The representation uses the givens in the problem, but in the wrong way
-                    ObservableCollection<int> givens = new ObservableCollection<int>();
+                    var givens = new ObservableCollection<int>();
                     if(relation.Factor1Given)
                     {
                         givens.Add(factor1);
@@ -124,12 +121,14 @@ namespace CLP.Entities
                         givens.Add(product);
                     }
 
-                    ObservableCollection<int> numbersUsed = new ObservableCollection<int>();
+                    var numbersUsed = new ObservableCollection<int>();
                     numbersUsed.Add(arrayWidth);
                     numbersUsed.Add(arrayHeight);
                     numbersUsed.Add(arrayWidth * arrayHeight);
 
-                    if(givens.Count == 2 && numbersUsed.Contains(givens[0]) && numbersUsed.Contains(givens[1]))
+                    if(givens.Count == 2 &&
+                       numbersUsed.Contains(givens[0]) &&
+                       numbersUsed.Contains(givens[1]))
                     {
                         var tag = new ArrayRepresentationCorrectnessTag(page, ArrayRepresentationCorrectnessTag.AcceptedValues.ErrorMisusedGivens);
                         page.Tags.Add(tag);
@@ -138,12 +137,14 @@ namespace CLP.Entities
             }
 
             // Apply an orientation tag
-            if(arrayWidth == factor1 && arrayHeight == factor2)
+            if(arrayWidth == factor1 &&
+               arrayHeight == factor2)
             {
                 var tag = new ArrayOrientationTag(page, ArrayOrientationTag.AcceptedValues.FirstFactorWidth);
                 page.Tags.Add(tag);
             }
-            else if(arrayWidth == factor2 && arrayHeight == factor1)
+            else if(arrayWidth == factor2 &&
+                    arrayHeight == factor1)
             {
                 var tag = new ArrayOrientationTag(page, ArrayOrientationTag.AcceptedValues.FirstFactorHeight);
                 page.Tags.Add(tag);
@@ -157,8 +158,8 @@ namespace CLP.Entities
 
             // First check the horizontal divisions
             // Create a sorted list of the divisions' labels (as entered by the student)
-            List<int> horizDivs = new List<int>();
-            foreach(CLPArrayDivision div in array.HorizontalDivisions)
+            var horizDivs = new List<int>();
+            foreach(var div in array.HorizontalDivisions)
             {
                 horizDivs.Add(div.Value);
             }
@@ -189,12 +190,15 @@ namespace CLP.Entities
                 var tag = new ArrayYAxisStrategyTag(page, ArrayYAxisStrategyTag.AcceptedValues.PlaceValue);
                 page.Tags.Add(tag);
             }
-            else if(arrayHeight > 20 && arrayHeight < 100 && horizDivs.SequenceEqual(TensStrategyDivisions(arrayHeight)))
+            else if(arrayHeight > 20 &&
+                    arrayHeight < 100 &&
+                    horizDivs.SequenceEqual(TensStrategyDivisions(arrayHeight)))
             {
                 var tag = new ArrayYAxisStrategyTag(page, ArrayYAxisStrategyTag.AcceptedValues.Tens);
                 page.Tags.Add(tag);
             }
-            else if((arrayHeight % 2 == 0) && horizDivs.SequenceEqual(HalvingStrategyDivisions(arrayHeight)))
+            else if((arrayHeight % 2 == 0) &&
+                    horizDivs.SequenceEqual(HalvingStrategyDivisions(arrayHeight)))
             {
                 var tag = new ArrayYAxisStrategyTag(page, ArrayYAxisStrategyTag.AcceptedValues.Half);
                 page.Tags.Add(tag);
@@ -206,8 +210,8 @@ namespace CLP.Entities
             }
 
             // Then the vertical divisions
-            List<int> vertDivs = new List<int>();
-            foreach(CLPArrayDivision div in array.VerticalDivisions)
+            var vertDivs = new List<int>();
+            foreach(var div in array.VerticalDivisions)
             {
                 vertDivs.Add(div.Value);
             }
@@ -230,12 +234,15 @@ namespace CLP.Entities
                 var tag = new ArrayXAxisStrategyTag(page, ArrayXAxisStrategyTag.AcceptedValues.PlaceValue);
                 page.Tags.Add(tag);
             }
-            else if(arrayWidth > 20 && arrayWidth < 100 && vertDivs.SequenceEqual(TensStrategyDivisions(arrayWidth)))
+            else if(arrayWidth > 20 &&
+                    arrayWidth < 100 &&
+                    vertDivs.SequenceEqual(TensStrategyDivisions(arrayWidth)))
             {
                 var tag = new ArrayXAxisStrategyTag(page, ArrayXAxisStrategyTag.AcceptedValues.Tens);
                 page.Tags.Add(tag);
             }
-            else if((arrayWidth % 2 == 0) && vertDivs.SequenceEqual(HalvingStrategyDivisions(arrayWidth)))
+            else if((arrayWidth % 2 == 0) &&
+                    vertDivs.SequenceEqual(HalvingStrategyDivisions(arrayWidth)))
             {
                 var tag = new ArrayXAxisStrategyTag(page, ArrayXAxisStrategyTag.AcceptedValues.Half);
                 page.Tags.Add(tag);
@@ -250,13 +257,13 @@ namespace CLP.Entities
             //Logger.Instance.WriteToLog("Tag added: " + strategyTagX.TagType.Name + " -> " + strategyTagX.Value[0].Value);
 
             // Add a strategy tag for inner products (if applicable)
-            int[,] partialProducts = array.GetPartialProducts();
+            var partialProducts = array.GetPartialProducts();
 
-            Boolean friendlyFound = false;
-            Boolean incomplete = false;
+            var friendlyFound = false;
+            var incomplete = false;
 
-            ObservableCollection<int> foundProducts = new ObservableCollection<int>();
-            foreach(int partialProduct in partialProducts)
+            var foundProducts = new ObservableCollection<int>();
+            foreach(var partialProduct in partialProducts)
             {
                 if(partialProduct == 0)
                 {
@@ -264,7 +271,8 @@ namespace CLP.Entities
                     break;
                 }
 
-                if(partialProduct % 100 == 0 && !friendlyFound)
+                if(partialProduct % 100 == 0 &&
+                   !friendlyFound)
                 {
                     var tag = new ArrayPartialProductsStrategyTag(page, ArrayPartialProductsStrategyTag.AcceptedValues.FriendlyNumbers);
                     page.Tags.Add(tag);
@@ -279,14 +287,16 @@ namespace CLP.Entities
 
             if(!incomplete)
             {
-                if(foundProducts.Count > 1 && foundProducts.Count < (horizDivs.Count * vertDivs.Count))
+                if(foundProducts.Count > 1 &&
+                   foundProducts.Count < (horizDivs.Count * vertDivs.Count))
                 {
                     var tag = new ArrayPartialProductsStrategyTag(page, ArrayPartialProductsStrategyTag.AcceptedValues.SomeRepeated);
                     page.Tags.Add(tag);
                 }
                 else
                 {
-                    if(foundProducts.Count == 1 && (horizDivs.Count * vertDivs.Count) > 1)
+                    if(foundProducts.Count == 1 &&
+                       (horizDivs.Count * vertDivs.Count) > 1)
                     {
                         var tag = new ArrayPartialProductsStrategyTag(page, ArrayPartialProductsStrategyTag.AcceptedValues.AllRepeated);
                         page.Tags.Add(tag);
@@ -318,9 +328,9 @@ namespace CLP.Entities
         // Get the (sorted) list of subdivisions of startingValue, using the place value strategy
         private static List<int> PlaceValueStrategyDivisions(int startingValue)
         {
-            int currentValue = startingValue;
-            int currentPlace = 1;
-            List<int> output = new List<int>();
+            var currentValue = startingValue;
+            var currentPlace = 1;
+            var output = new List<int>();
             while(currentValue > 0)
             {
                 if(currentValue % 10 > 0)
@@ -346,8 +356,8 @@ namespace CLP.Entities
         // Assumes 20 < startingValue < 100
         private static List<int> TensStrategyDivisions(int startingValue)
         {
-            int currentValue = startingValue;
-            List<int> output = new List<int>();
+            var currentValue = startingValue;
+            var output = new List<int>();
             if(currentValue % 10 > 0)
             {
                 output.Add(currentValue % 10);
@@ -367,7 +377,7 @@ namespace CLP.Entities
         // Assumes startingValue is even
         private static List<int> HalvingStrategyDivisions(int startingValue)
         {
-            List<int> output = new List<int>();
+            var output = new List<int>();
             output.Add(startingValue / 2);
             output.Add(startingValue / 2);
 
@@ -376,64 +386,64 @@ namespace CLP.Entities
 
         //private static ATagBase CheckArrayDivisionCorrectness(CLPArray array)
         //{
-            //Tag tag = new Tag(Tag.Origins.Generated, ArrayDivisionCorrectnessTagType.Instance);
+        //Tag tag = new Tag(Tag.Origins.Generated, ArrayDivisionCorrectnessTagType.Instance);
 
-            //bool horizUnfinished = false;
-            //bool vertUnfinished = false;
+        //bool horizUnfinished = false;
+        //bool vertUnfinished = false;
 
-            //// First check horizontal divisions
-            //if(array.HorizontalDivisions.Count > 0)
-            //{
-            //    int sum = 0;
-            //    foreach(CLPArrayDivision div in array.HorizontalDivisions)
-            //    {
-            //        if(div.Value == 0)
-            //        {
-            //            horizUnfinished = true;
-            //        }
-            //        sum += div.Value;
-            //    }
-            //    if(!horizUnfinished && sum != array.Rows)
-            //    {
-            //        tag.AddTagOptionValue(new TagOptionValue("Incorrect"));
-            //        return tag;
-            //    }
-            //}
+        //// First check horizontal divisions
+        //if(array.HorizontalDivisions.Count > 0)
+        //{
+        //    int sum = 0;
+        //    foreach(CLPArrayDivision div in array.HorizontalDivisions)
+        //    {
+        //        if(div.Value == 0)
+        //        {
+        //            horizUnfinished = true;
+        //        }
+        //        sum += div.Value;
+        //    }
+        //    if(!horizUnfinished && sum != array.Rows)
+        //    {
+        //        tag.AddTagOptionValue(new TagOptionValue("Incorrect"));
+        //        return tag;
+        //    }
+        //}
 
-            //// Then check vertical divisions
-            //if(array.VerticalDivisions.Count > 0)
-            //{
-            //    int sum = 0;
-            //    foreach(CLPArrayDivision div in array.VerticalDivisions)
-            //    {
-            //        if(div.Value == 0)
-            //        {
-            //            vertUnfinished = true;
-            //        }
-            //        sum += div.Value;
-            //    }
-            //    if(!vertUnfinished && sum != array.Columns)
-            //    {
-            //        tag.AddTagOptionValue(new TagOptionValue("Incorrect"));
-            //        return tag;
-            //    }
-            //}
+        //// Then check vertical divisions
+        //if(array.VerticalDivisions.Count > 0)
+        //{
+        //    int sum = 0;
+        //    foreach(CLPArrayDivision div in array.VerticalDivisions)
+        //    {
+        //        if(div.Value == 0)
+        //        {
+        //            vertUnfinished = true;
+        //        }
+        //        sum += div.Value;
+        //    }
+        //    if(!vertUnfinished && sum != array.Columns)
+        //    {
+        //        tag.AddTagOptionValue(new TagOptionValue("Incorrect"));
+        //        return tag;
+        //    }
+        //}
 
-            //if(horizUnfinished || vertUnfinished)
-            //{
-            //    tag.AddTagOptionValue(new TagOptionValue("Unfinished"));
-            //    return tag;
-            //}
-            //else
-            //{
-            //    tag.AddTagOptionValue(new TagOptionValue("Correct"));
-            //    return tag;
-            //}
+        //if(horizUnfinished || vertUnfinished)
+        //{
+        //    tag.AddTagOptionValue(new TagOptionValue("Unfinished"));
+        //    return tag;
+        //}
+        //else
+        //{
+        //    tag.AddTagOptionValue(new TagOptionValue("Correct"));
+        //    return tag;
+        //}
         //}
 
         public static bool FFCUsedOnesStrategy(List<int> divs)
         {
-            foreach(int div in divs)
+            foreach(var div in divs)
             {
                 if(div > 1)
                 {
@@ -445,7 +455,7 @@ namespace CLP.Entities
 
         public static bool FFCUsedValue(List<int> divs, int value)
         {
-            foreach(int div in divs)
+            foreach(var div in divs)
             {
                 if(div == value)
                 {
@@ -461,7 +471,7 @@ namespace CLP.Entities
         public static void AnalyzeFuzzyFactorCard(CLPPage page)
         {
             //Logger.Instance.WriteToLog("Start of PageAnalysis.AnalyzeFuzzyFactorCard");
-            ObservableCollection<ATagBase> tags = page.Tags;
+            ObservableCollection<ITag> tags = page.Tags;
             ProductRelation relation = null;
             foreach(ATagBase tag in tags)
             {
@@ -479,12 +489,11 @@ namespace CLP.Entities
                 return;
             }
 
-
             // Find FFC object on the page (just use the first one we find), or be sad if we don't find one
-            ObservableCollection<IPageObject> objects = page.PageObjects;
+            var objects = page.PageObjects;
             FuzzyFactorCard ffc = null;
 
-            foreach(IPageObject pageObject in objects)
+            foreach(var pageObject in objects)
             {
                 if(pageObject.GetType() == typeof(FuzzyFactorCard))
                 {
@@ -505,29 +514,30 @@ namespace CLP.Entities
             // We have a page definition and an array, so we're good to go!
             //Logger.Instance.WriteToLog("FuzzyFactorCard found! Product: " + ffc.Dividend + " Factor: " + ffc.Rows);
 
-            int ffcWidth = ffc.Columns;
-            int ffcHeight = ffc.Rows;
-            int ffcDividend = ffc.Dividend;
+            var ffcWidth = ffc.Columns;
+            var ffcHeight = ffc.Rows;
+            var ffcDividend = ffc.Dividend;
 
             // TODO: Add handling for variables in math relation
-            int factor1 = Convert.ToInt32(relation.Factor1);
-            int factor2 = Convert.ToInt32(relation.Factor2);
-            int product = Convert.ToInt32(relation.Product);
+            var factor1 = Convert.ToInt32(relation.Factor1);
+            var factor2 = Convert.ToInt32(relation.Factor2);
+            var product = Convert.ToInt32(relation.Product);
 
             // First, clear out any old FFC TagTypes
             foreach(ATagBase tag in tags.ToList())
             {
                 if(tag == null ||
-                    tag is FuzzyFactorCardRepresentationCorrectnessTag ||
-                    tag is FuzzyFactorCardStrategyTag ||
-                    tag is FuzzyFactorCardCorrectnessTag)
+                   tag is FuzzyFactorCardRepresentationCorrectnessTag ||
+                   tag is FuzzyFactorCardStrategyTag ||
+                   tag is FuzzyFactorCardCorrectnessTag)
                 {
                     tags.Remove(tag);
                 }
             }
 
             // Apply a representation correctness tag
-            if(product == ffcDividend && ((factor1 == ffcHeight && relation.Factor1Given) || (factor2 == ffcHeight && relation.Factor2Given)))
+            if(product == ffcDividend &&
+               ((factor1 == ffcHeight && relation.Factor1Given) || (factor2 == ffcHeight && relation.Factor2Given)))
             {
                 var tag = new FuzzyFactorCardRepresentationCorrectnessTag(page, FuzzyFactorCardRepresentationCorrectnessTag.AcceptedValues.Correct);
                 page.Tags.Add(tag);
@@ -535,7 +545,7 @@ namespace CLP.Entities
             else
             {
                 // One more possibility: The representation uses the givens in the problem, but in the wrong way
-                ObservableCollection<int> givens = new ObservableCollection<int>();
+                var givens = new ObservableCollection<int>();
                 if(relation.Factor1Given)
                 {
                     givens.Add(factor1);
@@ -549,12 +559,14 @@ namespace CLP.Entities
                     givens.Add(product);
                 }
 
-                ObservableCollection<int> numbersUsed = new ObservableCollection<int>();
+                var numbersUsed = new ObservableCollection<int>();
                 numbersUsed.Add(ffcWidth);
                 numbersUsed.Add(ffcHeight);
                 numbersUsed.Add(ffcDividend);
 
-                if(givens.Count == 2 && numbersUsed.Contains(givens[0]) && numbersUsed.Contains(givens[1]))
+                if(givens.Count == 2 &&
+                   numbersUsed.Contains(givens[0]) &&
+                   numbersUsed.Contains(givens[1]))
                 {
                     var tag = new FuzzyFactorCardRepresentationCorrectnessTag(page, FuzzyFactorCardRepresentationCorrectnessTag.AcceptedValues.ErrorMisusedGivens);
                     page.Tags.Add(tag);
@@ -562,8 +574,8 @@ namespace CLP.Entities
             }
 
             // Create a list of the divisions' values
-            List<int> divs = new List<int>();
-            foreach(CLPArrayDivision div in ffc.VerticalDivisions)
+            var divs = new List<int>();
+            foreach(var div in ffc.VerticalDivisions)
             {
                 divs.Add(div.Value);
             }
@@ -610,7 +622,8 @@ namespace CLP.Entities
                     var tag = new FuzzyFactorCardStrategyTag(page, FuzzyFactorCardStrategyTag.AcceptedValues.Fives);
                     page.Tags.Add(tag);
                 }
-                if(divs.Count > 1 && divs.First() == divs.ElementAt(1))
+                if(divs.Count > 1 &&
+                   divs.First() == divs.ElementAt(1))
                 {
                     var tag = new FuzzyFactorCardStrategyTag(page, FuzzyFactorCardStrategyTag.AcceptedValues.Repeat);
                     page.Tags.Add(tag);
@@ -630,162 +643,161 @@ namespace CLP.Entities
         /// </summary>
         public static void AnalyzeStamps(CLPPage page)
         {
-        //    Logger.Instance.WriteToLog("Analyzing stamp grouping region...");
+            //    Logger.Instance.WriteToLog("Analyzing stamp grouping region...");
 
-        //    ObservableCollection<Tag> tags = page.PageTags;
-        //    ProductRelation relation = null;
-        //    foreach(Tag tag in tags)
-        //    {
-        //        if(tag.TagType.Name == PageDefinitionTagType.Instance.Name)
-        //        {
-        //            relation = (ProductRelation)tag.Value[0].Value;
-        //            break;
-        //        }
-        //    }
+            //    ObservableCollection<Tag> tags = page.PageTags;
+            //    ProductRelation relation = null;
+            //    foreach(Tag tag in tags)
+            //    {
+            //        if(tag.TagType.Name == PageDefinitionTagType.Instance.Name)
+            //        {
+            //            relation = (ProductRelation)tag.Value[0].Value;
+            //            break;
+            //        }
+            //    }
 
-        //    if(relation == null)
-        //    {
-        //        // No definition for the page!
-        //        Logger.Instance.WriteToLog("No page definition found! :(");
-        //        return;
-        //    }
+            //    if(relation == null)
+            //    {
+            //        // No definition for the page!
+            //        Logger.Instance.WriteToLog("No page definition found! :(");
+            //        return;
+            //    }
 
+            //    // Find an array object on the page (just use the first one we find), or be sad if we don't find one
+            //    ObservableCollection<ICLPPageObject> objects = page.PageObjects;
+            //    CLPGroupingRegion region = null;
 
-        //    // Find an array object on the page (just use the first one we find), or be sad if we don't find one
-        //    ObservableCollection<ICLPPageObject> objects = page.PageObjects;
-        //    CLPGroupingRegion region = null;
+            //    foreach(ICLPPageObject pageObject in objects)
+            //    {
+            //        if(pageObject.GetType() == typeof(CLPGroupingRegion))
+            //        {
+            //            region = (CLPGroupingRegion)pageObject;
+            //            break;
+            //        }
+            //    }
 
-        //    foreach(ICLPPageObject pageObject in objects)
-        //    {
-        //        if(pageObject.GetType() == typeof(CLPGroupingRegion))
-        //        {
-        //            region = (CLPGroupingRegion)pageObject;
-        //            break;
-        //        }
-        //    }
+            //    if(region == null)
+            //    {
+            //        // No CLPGroupingRegion on this page!
+            //        Logger.Instance.WriteToLog("No grouping region found! :(");
+            //        return;
+            //    }
 
-        //    if(region == null)
-        //    {
-        //        // No CLPGroupingRegion on this page!
-        //        Logger.Instance.WriteToLog("No grouping region found! :(");
-        //        return;
-        //    }
+            //    region.DoInterpretation();
+            //    Logger.Instance.WriteToLog("Done with stamps interpretation");
 
-        //    region.DoInterpretation();
-        //    Logger.Instance.WriteToLog("Done with stamps interpretation");
+            //    // Now we have a list of the possible interpretations of the student's stamps
+            //    ObservableCollection<CLPGrouping> groupings = region.Groupings;
 
-        //    // Now we have a list of the possible interpretations of the student's stamps
-        //    ObservableCollection<CLPGrouping> groupings = region.Groupings;
+            //    // Clear out any old stamp-related Tags
+            //    foreach(Tag tag in tags.ToList())
+            //    {
+            //        if(tag.TagType == null ||                                           // Clear out any tags that somehow never got a TagType!
+            //            tag.TagType.Name == RepresentationCorrectnessTagType.Instance.Name ||
+            //            tag.TagType.Name == StampPartsPerStampTagType.Instance.Name ||
+            //            tag.TagType.Name == StampGroupingTypeTagType.Instance.Name)
+            //        {
+            //            tags.Remove(tag);
+            //        }
+            //    }
 
-        //    // Clear out any old stamp-related Tags
-        //    foreach(Tag tag in tags.ToList())
-        //    {
-        //        if(tag.TagType == null ||                                           // Clear out any tags that somehow never got a TagType!
-        //            tag.TagType.Name == RepresentationCorrectnessTagType.Instance.Name ||
-        //            tag.TagType.Name == StampPartsPerStampTagType.Instance.Name ||
-        //            tag.TagType.Name == StampGroupingTypeTagType.Instance.Name)
-        //        {
-        //            tags.Remove(tag);
-        //        }
-        //    }
+            //    ObservableCollection<Tag> newTags = GetStampTags(groupings, relation);
 
-        //    ObservableCollection<Tag> newTags = GetStampTags(groupings, relation);
+            //    foreach(Tag tag in newTags)
+            //    {
+            //        tags.Add(tag);
+            //    }
+            //}
 
-        //    foreach(Tag tag in newTags)
-        //    {
-        //        tags.Add(tag);
-        //    }
-        //}
+            ///// <summary>
+            ///// Returns an appropriate StampCorrectnessTag for the given interpretation and product relation
+            ///// </summary>
+            //private static ObservableCollection<Tag> GetStampTags(ObservableCollection<CLPGrouping> groupings, ProductRelation relation)
+            //{
+            //    ObservableCollection<Tag> tags = new ObservableCollection<Tag>();
+            //    Tag correctnessTag = new Tag(Tag.Origins.Generated, RepresentationCorrectnessTagType.Instance);
+            //    correctnessTag.AddTagOptionValue(new TagOptionValue("Error: Other")); // The student's work is assumed incorrect until proven correct
 
-        ///// <summary>
-        ///// Returns an appropriate StampCorrectnessTag for the given interpretation and product relation
-        ///// </summary>
-        //private static ObservableCollection<Tag> GetStampTags(ObservableCollection<CLPGrouping> groupings, ProductRelation relation)
-        //{
-        //    ObservableCollection<Tag> tags = new ObservableCollection<Tag>();
-        //    Tag correctnessTag = new Tag(Tag.Origins.Generated, RepresentationCorrectnessTagType.Instance);
-        //    correctnessTag.AddTagOptionValue(new TagOptionValue("Error: Other")); // The student's work is assumed incorrect until proven correct
+            //    Tag partsPerStampTag = new Tag(Tag.Origins.Generated, StampPartsPerStampTagType.Instance);
+            //    Tag groupingTypeTag = new Tag(Tag.Origins.Generated, StampGroupingTypeTagType.Instance);
 
-        //    Tag partsPerStampTag = new Tag(Tag.Origins.Generated, StampPartsPerStampTagType.Instance);
-        //    Tag groupingTypeTag = new Tag(Tag.Origins.Generated, StampGroupingTypeTagType.Instance);
+            //    foreach(CLPGrouping grouping in groupings)
+            //    {
+            //        if(HasEqualGroups(grouping) && grouping.Groups[0].Values.Count > 0) // If we can assume that this grouping has a homogeneous structure...
+            //        {
+            //            int numGroups = grouping.Groups.Count;
+            //            List<ICLPPageObject> objList = grouping.Groups[0].Values.ToList()[0];
+            //            int objectsPerGroup = objList.Count;
+            //            int partsPerObject = objList[0].Parts;
+            //            int partsPerGroup = objectsPerGroup * partsPerObject;
 
-        //    foreach(CLPGrouping grouping in groupings)
-        //    {
-        //        if(HasEqualGroups(grouping) && grouping.Groups[0].Values.Count > 0) // If we can assume that this grouping has a homogeneous structure...
-        //        {
-        //            int numGroups = grouping.Groups.Count;
-        //            List<ICLPPageObject> objList = grouping.Groups[0].Values.ToList()[0];
-        //            int objectsPerGroup = objList.Count;
-        //            int partsPerObject = objList[0].Parts;
-        //            int partsPerGroup = objectsPerGroup * partsPerObject;
+            //            partsPerStampTag.Value.Add(new TagOptionValue(partsPerObject.ToString() + (partsPerObject == 1 ? " part" : " parts")));
+            //            groupingTypeTag.AddTagOptionValue(new TagOptionValue(grouping.GroupingType));
 
-        //            partsPerStampTag.Value.Add(new TagOptionValue(partsPerObject.ToString() + (partsPerObject == 1 ? " part" : " parts")));
-        //            groupingTypeTag.AddTagOptionValue(new TagOptionValue(grouping.GroupingType));
+            //            // We're a little stricter about correctness if it's specifically an equal-grouping problem
+            //            if(relation.RelationType == ProductRelation.ProductRelationTypes.EqualGroups)
+            //            {
+            //                if(relation.Factor1.Equals(numGroups.ToString()) && relation.Factor2.Equals(partsPerGroup.ToString()))
+            //                {
+            //                    correctnessTag.AddTagOptionValue(new TagOptionValue("Correct"));
+            //                    tags.Add(partsPerStampTag);
+            //                    tags.Add(groupingTypeTag);
+            //                    break;
+            //                }
+            //                else
+            //                {
+            //                    if(relation.Factor2.Equals(numGroups.ToString()) && relation.Factor1.Equals(partsPerGroup.ToString()))
+            //                    {
+            //                        correctnessTag.AddTagOptionValue(new TagOptionValue("Error: Swapped Factors"));
+            //                        tags.Add(partsPerStampTag);
+            //                        tags.Add(groupingTypeTag);
+            //                        break;
+            //                    }
+            //                }
+            //            }
+            //            else
+            //            {
+            //                if((relation.Factor1.Equals(numGroups.ToString()) && relation.Factor2.Equals(partsPerGroup.ToString())) ||
+            //                    (relation.Factor2.Equals(numGroups.ToString()) && relation.Factor1.Equals(partsPerGroup.ToString())))
+            //                {
+            //                    correctnessTag.AddTagOptionValue(new TagOptionValue("Correct"));
+            //                    tags.Add(partsPerStampTag);
+            //                    tags.Add(groupingTypeTag);
+            //                    break;
+            //                }
+            //            }
 
-        //            // We're a little stricter about correctness if it's specifically an equal-grouping problem
-        //            if(relation.RelationType == ProductRelation.ProductRelationTypes.EqualGroups)
-        //            {
-        //                if(relation.Factor1.Equals(numGroups.ToString()) && relation.Factor2.Equals(partsPerGroup.ToString()))
-        //                {
-        //                    correctnessTag.AddTagOptionValue(new TagOptionValue("Correct"));
-        //                    tags.Add(partsPerStampTag);
-        //                    tags.Add(groupingTypeTag);
-        //                    break;
-        //                }
-        //                else
-        //                {
-        //                    if(relation.Factor2.Equals(numGroups.ToString()) && relation.Factor1.Equals(partsPerGroup.ToString()))
-        //                    {
-        //                        correctnessTag.AddTagOptionValue(new TagOptionValue("Error: Swapped Factors"));
-        //                        tags.Add(partsPerStampTag);
-        //                        tags.Add(groupingTypeTag);
-        //                        break;
-        //                    }
-        //                }
-        //            }
-        //            else
-        //            {
-        //                if((relation.Factor1.Equals(numGroups.ToString()) && relation.Factor2.Equals(partsPerGroup.ToString())) ||
-        //                    (relation.Factor2.Equals(numGroups.ToString()) && relation.Factor1.Equals(partsPerGroup.ToString())))
-        //                {
-        //                    correctnessTag.AddTagOptionValue(new TagOptionValue("Correct"));
-        //                    tags.Add(partsPerStampTag);
-        //                    tags.Add(groupingTypeTag);
-        //                    break;
-        //                }
-        //            }
+            //            // If we haven't hit a break yet, then this isn't looking good. Check for a student using the wrong operator
+            //            ObservableCollection<int> givens = new ObservableCollection<int>();
+            //            if(relation.Factor1Given)
+            //            {
+            //                givens.Add(Convert.ToInt32(relation.Factor1));
+            //            }
+            //            if(relation.Factor2Given)
+            //            {
+            //                givens.Add(Convert.ToInt32(relation.Factor2));
+            //            }
+            //            if(relation.ProductGiven)
+            //            {
+            //                givens.Add(Convert.ToInt32(relation.Product));
+            //            }
 
-        //            // If we haven't hit a break yet, then this isn't looking good. Check for a student using the wrong operator
-        //            ObservableCollection<int> givens = new ObservableCollection<int>();
-        //            if(relation.Factor1Given)
-        //            {
-        //                givens.Add(Convert.ToInt32(relation.Factor1));
-        //            }
-        //            if(relation.Factor2Given)
-        //            {
-        //                givens.Add(Convert.ToInt32(relation.Factor2));
-        //            }
-        //            if(relation.ProductGiven)
-        //            {
-        //                givens.Add(Convert.ToInt32(relation.Product));
-        //            }
+            //            ObservableCollection<int> numbersUsed = new ObservableCollection<int>();
+            //            numbersUsed.Add(numGroups);
+            //            numbersUsed.Add(partsPerGroup);
+            //            numbersUsed.Add(numGroups * partsPerGroup);
 
-        //            ObservableCollection<int> numbersUsed = new ObservableCollection<int>();
-        //            numbersUsed.Add(numGroups);
-        //            numbersUsed.Add(partsPerGroup);
-        //            numbersUsed.Add(numGroups * partsPerGroup);
-
-        //            if(givens.Count == 2 && numbersUsed.Contains(givens[0]) && numbersUsed.Contains(givens[1]))
-        //            {
-        //                correctnessTag.AddTagOptionValue(new TagOptionValue("Error: Misused Givens"));
-        //                tags.Add(partsPerStampTag);
-        //                tags.Add(groupingTypeTag);
-        //                break;
-        //            }
-        //        }
-        //    }
-        //    tags.Add(correctnessTag); // A correctness tag always gets added
-        //    return tags;
+            //            if(givens.Count == 2 && numbersUsed.Contains(givens[0]) && numbersUsed.Contains(givens[1]))
+            //            {
+            //                correctnessTag.AddTagOptionValue(new TagOptionValue("Error: Misused Givens"));
+            //                tags.Add(partsPerStampTag);
+            //                tags.Add(groupingTypeTag);
+            //                break;
+            //            }
+            //        }
+            //    }
+            //    tags.Add(correctnessTag); // A correctness tag always gets added
+            //    return tags;
         }
 
         /// <summary>
@@ -834,6 +846,5 @@ namespace CLP.Entities
 
         //    return true;
         //}
-
     }
 }
