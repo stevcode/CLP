@@ -149,7 +149,7 @@ namespace CLP.Entities
             {
                 var classPeriod = Load<ClassPeriod>(filePath, SerializationMode.Xml);
                 var classPeriodFolderPath = Path.GetDirectoryName(filePath);
-                var classSubjectFilePath = Path.Combine(classPeriodFolderPath, "ClassSubject" + ";" + classPeriod.ClassSubjectID);
+                var classSubjectFilePath = Path.Combine(classPeriodFolderPath, "ClassSubject" + ";" + classPeriod.ClassSubjectID + ".xml");
                 classPeriod.ClassSubject = ClassSubject.OpenClassSubject(classSubjectFilePath);
 
                 return classPeriod;

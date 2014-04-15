@@ -27,7 +27,7 @@ namespace Classroom_Learning_Partner
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            //Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
+            Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
             base.OnStartup(e);
 
             InitializeCatelSettings();
@@ -43,6 +43,7 @@ namespace Classroom_Learning_Partner
             MainWindowViewModel.Workspace = new BlankWorkspaceViewModel();
             window.Show();
 
+            _network = new CLPNetwork();
             CLPServiceAgent.Instance.NetworkSetup();
             MainWindowViewModel.SetWorkspace();
         }
@@ -131,7 +132,7 @@ namespace Classroom_Learning_Partner
 
         #region Properties
 
-        private static CLPNetwork _network = new CLPNetwork();
+        private static CLPNetwork _network;
         public static CLPNetwork Network
         {
             get

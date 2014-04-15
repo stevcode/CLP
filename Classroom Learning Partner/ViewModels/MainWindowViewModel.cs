@@ -35,7 +35,6 @@ namespace Classroom_Learning_Partner.ViewModels
             InitializeCommands();
             TitleBarText = CLP_TEXT;
             CurrentUser = Person.Emily;
-            CreateClassPeriodSeed();
         }
 
         public override string Title
@@ -463,20 +462,24 @@ namespace Classroom_Learning_Partner.ViewModels
                 var dateTime = new DateTime(year,month,day,hour, minute, 0);
                 var now = DateTime.Now;
                 var timeSpan = now - dateTime;
-                if(timeSpan >= new TimeSpan(3))
+                var threeHours = new TimeSpan(3, 0, 0);
+                if(timeSpan >= threeHours)
                 {
                     continue;
                 }
                 var classPeriod = ClassPeriod.OpenClassPeriod(classPeriodFilePath);
-                if(classPeriod != null)
+                if(classPeriod == null)
                 {
-                    App.MainWindowViewModel.CurrentClassPeriod = classPeriod;
-                    break;
+                    continue;
                 }
-                else
-                {
-                    return;
-                }
+                App.MainWindowViewModel.CurrentClassPeriod = classPeriod;
+                break;
+            }
+
+            if(App.MainWindowViewModel.CurrentClassPeriod == null)
+            {
+                MessageBox.Show("ERROR: Could not find ClassPeriod.");
+                return;
             }
 
             var notebookFolderPath = GetNotebookFolderPathByID(App.MainWindowViewModel.CurrentClassPeriod.NotebookID);
@@ -511,7 +514,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 App.MainWindowViewModel.LastSavedTime = notebook.LastSavedDate.Value.ToString("yyyy/MM/dd - HH:mm:ss");
             }
-
+            notebook.CurrentPage = notebook.Pages.First();
             App.MainWindowViewModel.OpenNotebooks.Add(notebook);
             App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(notebook);
         }
