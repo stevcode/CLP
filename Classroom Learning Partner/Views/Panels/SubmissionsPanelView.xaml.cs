@@ -16,6 +16,7 @@ namespace Classroom_Learning_Partner.Views
         public SubmissionsPanelView()
         {
             InitializeComponent();
+            CloseViewModelOnUnloaded = false;
         }
 
         protected override Type GetViewModelType()
