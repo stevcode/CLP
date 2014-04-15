@@ -25,8 +25,7 @@ namespace Classroom_Learning_Partner
         void RemovePageFromDisplay(string pageID);
 
         [OperationContract]
-        void AddSerializedSubmission(string zippedPage, string submissionID,
-            DateTime submissionTime, string notebookID, string zippedSubmitter);
+        void AddSerializedSubmission(string zippedPage, string notebookID);
 
         [OperationContract]
         void ScrollPage(string pageID, string submissionID, double offset);
@@ -147,8 +146,7 @@ namespace Classroom_Learning_Partner
             //    }, null);
         }
 
-        public void AddSerializedSubmission(string zippedPage, string submissionID,
-            DateTime submissionTime, string notebookID, string zippedSubmitter)
+        public void AddSerializedSubmission(string zippedPage, string notebookID)
         {
             var unZippedPage = CLPServiceAgent.Instance.UnZip(zippedPage);
             var page = ObjectSerializer.ToObject(unZippedPage);

@@ -477,6 +477,40 @@ namespace CLP.Entities
             return newPage;
         }
 
+        public CLPPage NextVersionCopy()
+        {
+            if(LastVersionIndex == null)
+            {
+                LastVersionIndex = 1;
+            }
+            else
+            {
+                LastVersionIndex++;
+            }
+            SubmissionTime = DateTime.Now;
+            SerializedStrokes = StrokeDTO.SaveInkStrokes(InkStrokes);
+            var copy = Clone() as CLPPage;
+            if(copy == null)
+            {
+                return null;
+            }
+            copy.SubmissionType = SubmissionTypes.Single;
+            copy.VersionIndex = LastVersionIndex.Value;
+            foreach(var pageObject in copy.PageObjects)
+            {
+                pageObject.LastVersionIndex = LastVersionIndex;
+                pageObject.ParentPage = copy;
+            }
+
+            foreach(var tag in copy.Tags)
+            {
+                tag.LastVersionIndex = LastVersionIndex;
+                tag.ParentPage = copy;
+            }
+
+            return copy;
+        }
+
         public void TrimPage()
         {
             var lowestY = PageObjects.Select(pageObject => pageObject.YPosition + pageObject.Height).Concat(new double[] {0}).Max();

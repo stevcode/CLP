@@ -262,78 +262,56 @@ namespace Classroom_Learning_Partner
             }
 
             page.TrimPage();
-            var pageViewModels = GetViewModelsFromModel(page);
-            var currentPageViewModel = pageViewModels.Select(pageViewModel => pageViewModel as ACLPPageBaseViewModel).FirstOrDefault(pageVM => !pageVM.IsPagePreview);
+            //var pageViewModels = GetViewModelsFromModel(page);
+            //var currentPageViewModel = pageViewModels.Select(pageViewModel => pageViewModel as ACLPPageBaseViewModel).FirstOrDefault(pageVM => !pageVM.IsPagePreview);
 
-            var pageView = GetViewFromViewModel(currentPageViewModel);
+            //var pageView = GetViewFromViewModel(currentPageViewModel);
             // TODO: Entities
             //page.PageThumbnail = GetJpgImage(pageView as UIElement);
 
-            //var t = new Thread(() =>
-            //                   {
-            //                       try
-            //                       {
-            //                           page.SerializedStrokes = StrokeDTO.SaveInkStrokes(page.InkStrokes);
-            //                           // Perform analysis (syntactic and semantic interpretation) of the page here, on the student machine
-            //                           PageAnalysis.AnalyzeArray(page);
-            //                           PageAnalysis.AnalyzeStamps(page);
-            //                           page.SubmissionID = Guid.NewGuid().ToString();
-            //                           page.SubmissionTime = DateTime.Now; 
+            var t = new Thread(() =>
+                               {
+                                   try
+                                   {
+                                       page.SerializedStrokes = StrokeDTO.SaveInkStrokes(page.InkStrokes);
+                                       // Perform analysis (syntactic and semantic interpretation) of the page here, on the student machine
+                                       TagAnalysis.AnalyzeArray(page);
+                                       TagAnalysis.AnalyzeStamps(page);
 
-            //                           var sPage = ObjectSerializer.ToString(page);
-            //                           var zippedPage = Zip(sPage);
+                                       var copy = page.NextVersionCopy();
 
-            //                           var sSubmitter = ObjectSerializer.ToString(App.Network.CurrentUser);
-            //                           var zippedSubmitter = Zip(sSubmitter);
+                                       var sPage = ObjectSerializer.ToString(copy);
+                                       var zippedPage = Zip(sPage);
 
-            //                           App.Network.InstructorProxy.AddSerializedSubmission(zippedPage, page.SubmissionID, page.SubmissionTime, notebookID, zippedSubmitter);
+                                       Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                                                                        (DispatcherOperationCallback)delegate
+                                                                        {
+                                                                            page.Submissions.Add(copy);
+                                                                            return null;
+                                                                        }, null);
 
-            //                           ICLPPage submission = null;
-            //                           if(page is CLPPage)
-            //                           {
-            //                               submission = (page as CLPPage).Clone() as CLPPage;
-            //                           }
-            //                           else if(page is CLPAnimationPage)
-            //                           {
-            //                               submission = (page as CLPAnimationPage).Clone() as CLPAnimationPage;
-            //                           }
-
-            //                           var notebookPagesPanel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
-            //                           if(submission == null || notebookPagesPanel == null)
-            //                           {
-            //                               return;
-            //                           }
-
-            //                           ACLPPageBase.Deserialize(submission);
-            //                           submission.SubmissionType = isGroupSubmission ? SubmissionType.Group : SubmissionType.Single;
-            //                           submission.Submitter = App.Network.CurrentUser;
-                                       
-            //                           Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-            //                                                            (DispatcherOperationCallback)delegate
-            //                                                            {
-            //                                                                notebookPagesPanel.Notebook.AddStudentSubmission(submission.UniqueID, submission);
-            //                                                                return null;
-            //                                                            }, null);
-            //                       }
-            //                       catch(Exception ex)
-            //                       {
-            //                           Logger.Instance.WriteToLog("Error Sending Submission: " + ex.Message);
-            //                       }
-            //                   })
-            //        {
-            //            IsBackground = true
-            //        };
-            //t.Start();
+                                       App.Network.InstructorProxy.AddSerializedSubmission(zippedPage, notebookID);
+                                   }
+                                   catch(Exception ex)
+                                   {
+                                       Logger.Instance.WriteToLog("Error Sending Submission: " + ex.Message);
+                                   }
+                               })
+                    {
+                        IsBackground = true
+                    };
+            t.Start();
         }
 
-        public void AddSubmission(Notebook notebook, CLPPage page)
+        public void AddSubmission(Notebook notebook, CLPPage submission)
         {
-           // notebook.AddStudentSubmission(page.UniqueID, page);
+            var page = notebook.Pages.FirstOrDefault(x => x.ID == submission.ID && x.OwnerID == submission.OwnerID);
+            if(page == null)
+            {
+                return;
+            }
+            page.Submissions.Add(submission);
         }
-
-        
-
-        
 
         private bool _isAutoSaving;
         void _autoSaveTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)

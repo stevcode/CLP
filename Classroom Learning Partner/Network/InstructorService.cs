@@ -6,6 +6,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 using CLP.Entities;
+using Microsoft.Ink;
 
 namespace Classroom_Learning_Partner
 {
@@ -13,8 +14,7 @@ namespace Classroom_Learning_Partner
     public interface IInstructorContract
     {
         [OperationContract]
-        void AddSerializedSubmission(string zippedPage, string submissionID, 
-            DateTime submissionTime, string notebookID, string zippedSubmitter);
+        void AddSerializedSubmission(string zippedPage, string notebookID);
 
         [OperationContract]
         void CollectStudentNotebook(string zippedNotebook, string studentName);
@@ -58,8 +58,7 @@ namespace Classroom_Learning_Partner
             }
         }
 
-        public void AddSerializedSubmission(string zippedPage, string submissionID,
-            DateTime submissionTime, string notebookID, string zippedSubmitter)
+        public void AddSerializedSubmission(string zippedPage, string notebookID)
         {
             if(App.Network.ProjectorProxy != null)
             {
@@ -67,7 +66,7 @@ namespace Classroom_Learning_Partner
                                    {
                                        try
                                        {
-                                           App.Network.ProjectorProxy.AddSerializedSubmission(zippedPage, submissionID, submissionTime, notebookID, zippedSubmitter);
+                                           App.Network.ProjectorProxy.AddSerializedSubmission(zippedPage, notebookID);
                                        }
                                        catch(Exception ex)
                                        {
@@ -86,52 +85,33 @@ namespace Classroom_Learning_Partner
             }
 
             var unZippedPage = CLPServiceAgent.Instance.UnZip(zippedPage);
-            var page = ObjectSerializer.ToObject(unZippedPage);
-            // TODO: Entities
-            //ICLPPage submission = null;
-            //if(page is CLPPage)
-            //{
-            //    submission = page as CLPPage;
-            //}
-            //else if(page is CLPAnimationPage)
-            //{
-            //    submission = page as CLPAnimationPage;
-            //}
+            var submission = ObjectSerializer.ToObject(unZippedPage) as CLPPage;
 
-            //var unZippedSubmitter = CLPServiceAgent.Instance.UnZip(zippedSubmitter);
-            //var submitter = ObjectSerializer.ToObject(unZippedSubmitter) as Person;
+            if(submission == null)
+            {
+                Logger.Instance.WriteToLog("Failed to receive student submission. Page or Submitter is null.");
+                return;
+            }
+            submission.InkStrokes = StrokeDTO.LoadInkStrokes(submission.SerializedStrokes);
+            var currentNotebook = App.MainWindowViewModel.OpenNotebooks.FirstOrDefault(notebook => notebookID == notebook.ID && notebook.OwnerID == App.MainWindowViewModel.CurrentUser.ID);
 
-            //if(submission == null || submitter == null)
-            //{
-            //    Logger.Instance.WriteToLog("Failed to receive student submission. Page or Submitter is null.");
-            //    return;
-            //}
-            //submission.SubmissionType = SubmissionType.Single;
-            //submission.SubmissionID = submissionID;
-            //submission.SubmissionTime = submissionTime;
-            //submission.Submitter = submitter;
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                                                       (DispatcherOperationCallback)delegate
+                                                                                    {
+                                                                                        try
+                                                                                        {
+                                                                                            CLPServiceAgent.Instance.AddSubmission(currentNotebook, submission);
+                                                                                            //TODO: QuickSave
+                                                                                        }
+                                                                                        catch(Exception e)
+                                                                                        {
+                                                                                            Logger.Instance.WriteToLog("[ERROR] Recieved Submission from wrong notebook: " +
+                                                                                                                       e.Message);
+                                                                                        }
 
-            //ACLPPageBase.Deserialize(submission);
-
-            //var currentNotebook = App.MainWindowViewModel.OpenNotebooks.FirstOrDefault(notebook => notebookID == notebook.UniqueID);
-
-            //Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-            //                                           (DispatcherOperationCallback)delegate
-            //                                                                        {
-            //                                                                            try
-            //                                                                            {
-            //                                                                                CLPServiceAgent.Instance.AddSubmission(currentNotebook, submission);
-            //                                                                                //CLPServiceAgent.Instance.QuickSaveNotebook("RECIEVE-" + userName);
-            //                                                                            }
-            //                                                                            catch(Exception e)
-            //                                                                            {
-            //                                                                                Logger.Instance.WriteToLog("[ERROR] Recieved Submission from wrong notebook: " +
-            //                                                                                                           e.Message);
-            //                                                                            }
-
-            //                                                                            return null;
-            //                                                                        },
-            //                                           null);
+                                                                                        return null;
+                                                                                    },
+                                                       null);
         }
 
         public void CollectStudentNotebook(string zippedNotebook, string studentName)
