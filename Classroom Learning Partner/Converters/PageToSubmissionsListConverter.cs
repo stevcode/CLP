@@ -20,17 +20,17 @@ namespace Classroom_Learning_Partner.Converters
             }
             else
             {
-                Person dummy = new Person();
-                dummy.FullName = "Test";
-                studentList.Add(dummy);
+                studentList.Add(Person.TestSubmitter);
             }
             foreach (Person student in studentList) {
                 CLPPage foundSubmission = null;
                 foreach(CLPPage submission in page.Submissions)
                 {
-                    // TODO check same person :)
-                    foundSubmission = submission;
-                    break;
+                    if(submission.OwnerID == student.ID)
+                    {
+                        foundSubmission = submission;
+                        break;
+                    }
                 }
                 submissions.Add(new StudentProgressInfo(student, foundSubmission));
             }

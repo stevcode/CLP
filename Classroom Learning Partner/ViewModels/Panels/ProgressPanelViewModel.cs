@@ -26,9 +26,7 @@ namespace Classroom_Learning_Partner.ViewModels
             else
             {
                 StudentList = new ObservableCollection<Person>();
-                Person dummy = new Person();
-                dummy.FullName = "Test";
-                StudentList.Add(dummy);
+                StudentList.Add(Person.TestSubmitter);
             }
 
             PageSets = new ObservableCollection<string>();
