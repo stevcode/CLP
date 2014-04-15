@@ -16,6 +16,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public ProgressPanelViewModel(Notebook notebook)
         {
+            Notebook = notebook;
             CurrentPages = notebook.Pages;
             Initialized += ProgressPanelViewModel_Initialized;
 

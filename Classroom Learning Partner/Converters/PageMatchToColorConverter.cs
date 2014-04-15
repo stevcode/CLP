@@ -14,18 +14,13 @@ namespace Classroom_Learning_Partner.Converters
             var uri = new Uri(@"pack://application:,,,/Resources/CLPBrushes.xaml");
             dict.Source = uri;
 
-            //ICLPPage current = values[0] as ICLPPage;
-            //ICLPPage compared = values[1] as ICLPPage;
+            CLPPage current = values[0] as CLPPage;
+            CLPPage compared = values[1] as CLPPage;
 
-            //// same page
-            //if(current != null && current.UniqueID == compared.UniqueID)
-            //{
-            //    // submission
-            //    if(current.Submitter != null && current.SubmissionID == compared.SubmissionID)
-            //    {
-            //        return dict["MainColor"];
-            //    }
-            //}
+            if(current != null && compared != null && current.ID == compared.ID && current.OwnerID == compared.OwnerID)
+            {
+                 return dict["MainColor"];
+            }
             return dict["GrayBorderColor"];
         }
 
