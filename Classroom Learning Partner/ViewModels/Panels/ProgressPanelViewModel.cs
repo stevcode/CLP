@@ -141,7 +141,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnSetCurrentPageCommandExecute(CLPPage page)
         {
-            Notebook.CurrentPage = page;
+            if(page != null)
+            {
+                Notebook.CurrentPage = page;
+            }
         }
 
         #endregion
