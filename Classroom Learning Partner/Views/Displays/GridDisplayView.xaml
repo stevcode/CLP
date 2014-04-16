@@ -42,6 +42,7 @@
                                    Text="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Converter={StaticResource ItemsControlItemIndexConverter}}"
                                    Foreground="{StaticResource MainColor}"
                                    FontWeight="Bold"
+                                   FontSize="20"
                                    VerticalAlignment="Top" />
 
                         <TextBlock Grid.Column="0"
@@ -104,7 +105,7 @@
 
         <TextBlock Grid.Row="1"
                    Foreground="{StaticResource MainColor}"
-                   FontSize="24"
+                   FontSize="20"
                    TextAlignment="Right"
                    HorizontalAlignment="Right"
                    Margin="5">

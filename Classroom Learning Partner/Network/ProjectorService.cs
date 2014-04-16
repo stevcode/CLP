@@ -107,6 +107,9 @@ namespace Classroom_Learning_Partner
                                                                                         {
                                                                                             foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
                                                                                             {
+                                                                                           
+
+
                                                                                                 var page = notebook.GetPageByCompositeKeys(pageID, pageOwnerID, pageVersionIndex);
 
                                                                                                 if(page == null)
@@ -252,6 +255,16 @@ namespace Classroom_Learning_Partner
                 Logger.Instance.WriteToLog("Failed to load classperiod.");
                 return;
             }
+
+            var unZippedClassSubject = CLPServiceAgent.Instance.UnZip(zippedClassSubject);
+            var classSubject = ObjectSerializer.ToObject(unZippedClassSubject) as ClassSubject;
+            if(classSubject == null)
+            {
+                Logger.Instance.WriteToLog("Failed to load classperiod.");
+                return;
+            }
+
+            classPeriod.ClassSubject = classSubject;
 
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                        (DispatcherOperationCallback)delegate

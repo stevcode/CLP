@@ -138,7 +138,8 @@ namespace Classroom_Learning_Partner.ViewModels
             var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
             if(displayListPanelViewModel == null ||
                notebookWorkspaceViewModel == null ||
-               App.CurrentUserMode != App.UserMode.Instructor)
+               App.CurrentUserMode != App.UserMode.Instructor ||
+               args.NewValue == null)
             {
                 return;
             }
@@ -150,28 +151,21 @@ namespace Classroom_Learning_Partner.ViewModels
             displayListPanelViewModel.SingleDisplaySelectedColor = color;
             displayListPanelViewModel.SingleDisplaySelectedBackgroundColor = "Transparent";
 
+            notebookWorkspaceViewModel.CurrentDisplay = null;
             notebookWorkspaceViewModel.CurrentDisplay = args.NewValue as IDisplay;
 
             if(App.Network.ProjectorProxy == null ||
-               !App.MainWindowViewModel.Ribbon.IsProjectorOn)
+               !App.MainWindowViewModel.Ribbon.IsProjectorOn ||
+               notebookWorkspaceViewModel.CurrentDisplay == null)
             {
                 return;
             }
 
             try
             {
-                var displayID = notebookWorkspaceViewModel.CurrentDisplay == null ? "SingleDisplay" : notebookWorkspaceViewModel.CurrentDisplay.ID;
+                var displayID = notebookWorkspaceViewModel.CurrentDisplay.ID;
                 var displayPageIDs = new List<string>();
-                if(notebookWorkspaceViewModel.CurrentDisplay == null)
-                {
-                    var currentPage = notebookWorkspaceViewModel.Notebook.CurrentPage;
-                    var compositeID = currentPage.ID + ";" + currentPage.OwnerID + ";" + currentPage.VersionIndex;
-                    displayPageIDs.Add(compositeID);
-                }
-                else
-                {
-                    displayPageIDs.AddRange(notebookWorkspaceViewModel.CurrentDisplay.Pages.Select(page => page.ID + ";" + page.OwnerID + ";" + page.VersionIndex));
-                }
+                displayPageIDs.AddRange(notebookWorkspaceViewModel.CurrentDisplay.Pages.Select(page => page.ID + ";" + page.OwnerID + ";" + page.VersionIndex));
 
                  App.Network.ProjectorProxy.SwitchProjectorDisplay(displayID, displayPageIDs);
             }
@@ -227,6 +221,26 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
             notebookWorkspaceViewModel.CurrentDisplay = null;
+
+            if(App.Network.ProjectorProxy == null ||
+               !App.MainWindowViewModel.Ribbon.IsProjectorOn)
+            {
+                return;
+            }
+
+            try
+            {
+                const string DISPLAY_ID = "SingleDisplay";
+                var displayPageIDs = new List<string>();
+                var currentPage = notebookWorkspaceViewModel.Notebook.CurrentPage;
+                var compositeID = currentPage.ID + ";" + currentPage.OwnerID + ";" + currentPage.VersionIndex;
+                displayPageIDs.Add(compositeID);
+                
+                App.Network.ProjectorProxy.SwitchProjectorDisplay(DISPLAY_ID, displayPageIDs);
+            }
+            catch(Exception) { }
+
+            
         }
 
         /// <summary>

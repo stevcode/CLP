@@ -351,7 +351,7 @@ namespace CLP.Entities
         public CLPPage GetPageByCompositeKeys(string pageID, string pageOwnerID, int versionIndex, bool searchDatabaseAndCache = false)
         {
             // TODO: Database, search through cache and database if not found in memory.
-            var notebookPage = Pages.FirstOrDefault(x => x.ID == pageID && x.OwnerID == pageID && x.VersionIndex == versionIndex);
+            var notebookPage = Pages.FirstOrDefault(x => x.ID == pageID && x.OwnerID == pageOwnerID && x.VersionIndex == versionIndex);
             if(notebookPage != null)
             {
                 return notebookPage;
