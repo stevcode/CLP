@@ -227,25 +227,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
             notebookWorkspaceViewModel.CurrentDisplay = null;
-
-            // TODO: Entities
-            //if(App.Network.ProjectorProxy == null ||
-            //   !App.MainWindowViewModel.Ribbon.IsProjectorOn)
-            //{
-            //    return;
-            //}
-
-            //var currentPage = SingleDisplay.CurrentPage;
-            //var currentPageID = currentPage.SubmissionType != SubmissionType.None ? currentPage.SubmissionID : currentPage.UniqueID;
-            //try
-            //{
-            //    App.Network.ProjectorProxy.SwitchProjectorDisplay("SingleDisplay",
-            //                                                      new List<string>
-            //                                                      {
-            //                                                          currentPageID
-            //                                                      });
-            //}
-            //catch(Exception) { }
         }
 
         /// <summary>
