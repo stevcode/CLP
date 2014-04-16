@@ -99,8 +99,24 @@ namespace Classroom_Learning_Partner
                         try
                         {
                             ProjectorProxy = ChannelFactory<IProjectorContract>.CreateChannel(DefaultBinding, DiscoveredProjectors.Addresses[0]);
+                            
                             App.MainWindowViewModel.OnlineStatus = "CONNECTED";
                             App.MainWindowViewModel.Ribbon.IsProjectorOn = true;
+
+                            if(App.MainWindowViewModel.CurrentClassPeriod != null)
+                            {
+                                var classPeriodString = ObjectSerializer.ToString(App.MainWindowViewModel.CurrentClassPeriod);
+                                var classPeriod = CLPServiceAgent.Instance.Zip(classPeriodString);
+
+                                var classSubjectString = ObjectSerializer.ToString(App.MainWindowViewModel.CurrentClassPeriod.ClassSubject);
+                                var classsubject = CLPServiceAgent.Instance.Zip(classSubjectString);
+
+                                var newNotebook = App.MainWindowViewModel.OpenNotebooks.First().CopyForNewOwner(App.MainWindowViewModel.CurrentUser);
+                                var newNotebookString = ObjectSerializer.ToString(newNotebook);
+                                var zippedNotebook = CLPServiceAgent.Instance.Zip(newNotebookString);
+                                ProjectorProxy.OpenClassPeriod(classPeriod, classsubject);
+                                ProjectorProxy.OpenPartialNotebook(zippedNotebook);
+                            }
                         }
                         catch(Exception)
                         {

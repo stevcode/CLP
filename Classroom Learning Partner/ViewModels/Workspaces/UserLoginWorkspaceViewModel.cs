@@ -63,6 +63,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                                               (DispatcherOperationCallback)delegate
                                                                                                            {
+                                                                                                               App.MainWindowViewModel.CurrentUser.IsConnected = true;
                                                                                                                App.MainWindowViewModel.OpenNotebooks.Add(notebook);
                                                                                                                App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(notebook);
                                                                                                                App.MainWindowViewModel.OnlineStatus = "CONNECTED - As " +

@@ -348,6 +348,24 @@ namespace CLP.Entities
             return newNotebook;
         }
 
+        public CLPPage GetPageByCompositeKeys(string pageID, string pageOwnerID, int versionIndex, bool searchDatabaseAndCache = false)
+        {
+            // TODO: Database, search through cache and database if not found in memory.
+            var notebookPage = Pages.FirstOrDefault(x => x.ID == pageID && x.OwnerID == pageID && x.VersionIndex == versionIndex);
+            if(notebookPage != null)
+            {
+                return notebookPage;
+            }
+
+            notebookPage = Pages.FirstOrDefault(x => x.ID == pageID);
+            if(notebookPage == null)
+            {
+                return null;
+            }
+
+            return notebookPage.Submissions.FirstOrDefault(x => x.OwnerID == pageOwnerID && x.VersionIndex == versionIndex);
+        }
+
         #endregion //Methods
 
         #region Cache

@@ -471,12 +471,12 @@
                     <RibbonToggleButton.Style>
                         <Style TargetType="{x:Type RibbonToggleButton}">
                             <Setter Property="Label"
-                                    Value="Go Public" />
+                                    Value="Unfreeze" />
                             <Style.Triggers>
                                 <Trigger Property="IsChecked"
                                          Value="True">
                                     <Setter Property="Label"
-                                            Value="Go Private" />
+                                            Value="Freeze" />
                                 </Trigger>
                             </Style.Triggers>
                         </Style>

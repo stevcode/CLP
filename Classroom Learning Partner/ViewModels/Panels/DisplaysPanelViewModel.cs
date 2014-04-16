@@ -138,8 +138,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
             if(displayListPanelViewModel == null ||
                notebookWorkspaceViewModel == null ||
-               App.CurrentUserMode != App.UserMode.Instructor ||
-               args.NewValue == null)
+               App.CurrentUserMode != App.UserMode.Instructor)
             {
                 return;
             }
@@ -154,16 +153,27 @@ namespace Classroom_Learning_Partner.ViewModels
             notebookWorkspaceViewModel.CurrentDisplay = args.NewValue as IDisplay;
 
             if(App.Network.ProjectorProxy == null ||
-               !App.MainWindowViewModel.Ribbon.IsProjectorOn ||
-               notebookWorkspaceViewModel.CurrentDisplay == null)
+               !App.MainWindowViewModel.Ribbon.IsProjectorOn)
             {
                 return;
             }
 
             try
             {
-                // TODO: Entities, DisplayPageIDs no longer necessary. LINQ over Pages (x => x.ID) and send to projector
-                // App.Network.ProjectorProxy.SwitchProjectorDisplay(notebookWorkspaceViewModel.CurrentDisplay.ID, notebookWorkspaceViewModel.CurrentDisplay.DisplayPageIDs.ToList());
+                var displayID = notebookWorkspaceViewModel.CurrentDisplay == null ? "SingleDisplay" : notebookWorkspaceViewModel.CurrentDisplay.ID;
+                var displayPageIDs = new List<string>();
+                if(notebookWorkspaceViewModel.CurrentDisplay == null)
+                {
+                    var currentPage = notebookWorkspaceViewModel.Notebook.CurrentPage;
+                    var compositeID = currentPage.ID + ";" + currentPage.OwnerID + ";" + currentPage.VersionIndex;
+                    displayPageIDs.Add(compositeID);
+                }
+                else
+                {
+                    displayPageIDs.AddRange(notebookWorkspaceViewModel.CurrentDisplay.Pages.Select(page => page.ID + ";" + page.OwnerID + ";" + page.VersionIndex));
+                }
+
+                 App.Network.ProjectorProxy.SwitchProjectorDisplay(displayID, displayPageIDs);
             }
             catch(Exception) { }
         }

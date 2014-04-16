@@ -100,7 +100,8 @@ namespace Classroom_Learning_Partner
                                                                                     {
                                                                                         try
                                                                                         {
-                                                                                            if(currentNotebook != null) {
+                                                                                            if(currentNotebook != null)
+                                                                                            {
                                                                                                 var page = currentNotebook.Pages.FirstOrDefault(x => x.ID == submission.ID);
                                                                                                 if(page == null)
                                                                                                 {
@@ -112,8 +113,7 @@ namespace Classroom_Learning_Partner
                                                                                         }
                                                                                         catch(Exception e)
                                                                                         {
-                                                                                            Logger.Instance.WriteToLog("[ERROR] Recieved Submission from wrong notebook: " +
-                                                                                                                       e.Message);
+                                                                                            Logger.Instance.WriteToLog("[ERROR] Recieved Submission from wrong notebook: " + e.Message);
                                                                                         }
 
                                                                                         return null;

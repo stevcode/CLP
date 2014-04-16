@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
 using System.Windows;
-using System.Windows.Ink;
 using System.Windows.Threading;
-using Catel.Windows;
-using CLP.Entities;
 using Classroom_Learning_Partner.ViewModels;
-using System.Security.Cryptography;
+using CLP.Entities;
 
 namespace Classroom_Learning_Partner
 {
@@ -31,12 +26,13 @@ namespace Classroom_Learning_Partner
         public void TogglePenDownMode(bool isPenDownModeEnabled)
         {
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                (DispatcherOperationCallback)delegate
-                                             {
-                                                 //TODO: Steve - AutoSave here
-                                                 App.MainWindowViewModel.IsPenDownActivated = isPenDownModeEnabled;
-                    return null;
-                }, null);
+                                                       (DispatcherOperationCallback)delegate
+                                                                                    {
+                                                                                        //TODO: Steve - AutoSave here
+                                                                                        App.MainWindowViewModel.IsPenDownActivated = isPenDownModeEnabled;
+                                                                                        return null;
+                                                                                    },
+                                                       null);
         }
 
         public void AddWebcamImage(List<byte> image)
@@ -158,10 +154,7 @@ namespace Classroom_Learning_Partner
             //    }, null);
         }
 
-        public void AddHistoryItem(string pageID, string zippedHistoryItem)
-        {
-            
-        }
+        public void AddHistoryItem(string pageID, string zippedHistoryItem) { }
 
         public void AddNewPage(string zippedPage, int index)
         {
@@ -206,12 +199,12 @@ namespace Classroom_Learning_Partner
             }
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                        (DispatcherOperationCallback)delegate
-                                                       {
-                                                           notebookWorkspaceViewModel.Notebook.RemovePageAt(index);
-                                                           notebookWorkspaceViewModel.Notebook.InsertPageAt(index, page);
+                                                                                    {
+                                                                                        notebookWorkspaceViewModel.Notebook.RemovePageAt(index);
+                                                                                        notebookWorkspaceViewModel.Notebook.InsertPageAt(index, page);
 
-                                                           return null;
-                                                       },
+                                                                                        return null;
+                                                                                    },
                                                        null);
         }
 
