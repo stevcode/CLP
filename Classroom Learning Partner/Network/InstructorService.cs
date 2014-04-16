@@ -100,7 +100,14 @@ namespace Classroom_Learning_Partner
                                                                                     {
                                                                                         try
                                                                                         {
-                                                                                            CLPServiceAgent.Instance.AddSubmission(currentNotebook, submission);
+                                                                                            if(currentNotebook != null) {
+                                                                                                var page = currentNotebook.Pages.FirstOrDefault(x => x.ID == submission.ID);
+                                                                                                if(page == null)
+                                                                                                {
+                                                                                                    return null;
+                                                                                                }
+                                                                                                page.Submissions.Add(submission);
+                                                                                            }
                                                                                             //TODO: QuickSave
                                                                                         }
                                                                                         catch(Exception e)
