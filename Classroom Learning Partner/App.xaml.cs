@@ -30,13 +30,15 @@ namespace Classroom_Learning_Partner
             Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
             base.OnStartup(e);
 
+            
+
+            _currentUserMode = UserMode.Instructor;
+
             InitializeCatelSettings();
             InitializeLocalCache();
 
             Logger.Instance.InitializeLog();
             CLPServiceAgent.Instance.Initialize();
-
-            _currentUserMode = UserMode.Instructor;
 
             MainWindowViewModel = new MainWindowViewModel();
             var window = new MainWindowView {DataContext = MainWindowViewModel};
@@ -69,7 +71,8 @@ namespace Classroom_Learning_Partner
 
         private static void InitializeLocalCache()
         {
-            LocalCacheDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "LocalCache");
+            var variant = _currentUserMode == UserMode.Student ? "Student" : string.Empty;
+            LocalCacheDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "LocalCache" + variant);
             if(!Directory.Exists(LocalCacheDirectory))
             {
                 Directory.CreateDirectory(LocalCacheDirectory);

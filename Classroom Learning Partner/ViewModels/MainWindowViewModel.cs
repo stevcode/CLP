@@ -438,6 +438,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             notebook.SaveNotebook(folderPath, isFullSaveForced);
+            notebook.SaveSubmissions(folderPath);
             if(notebook.LastSavedDate != null)
             {
                 App.MainWindowViewModel.LastSavedTime = notebook.LastSavedDate.Value.ToString("yyyy/MM/dd - HH:mm:ss");

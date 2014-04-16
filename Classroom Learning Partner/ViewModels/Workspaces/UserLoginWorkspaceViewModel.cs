@@ -86,6 +86,10 @@ namespace Classroom_Learning_Partner.ViewModels
                                    }
 
                                    notebook.CurrentPage = notebook.Pages.First();
+                                   foreach(var page in notebook.Pages)
+                                   {
+                                       page.InkStrokes = StrokeDTO.LoadInkStrokes(page.SerializedStrokes);
+                                   }
                                    App.ResetCache();
 
                                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,

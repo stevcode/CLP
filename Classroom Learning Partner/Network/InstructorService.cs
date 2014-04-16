@@ -192,7 +192,7 @@ namespace Classroom_Learning_Partner
                     }
                     var orderedPages = studentNotebook.Pages.OrderBy(x => x.PageNumber).ToList();
                     studentNotebook.Pages = new ObservableCollection<CLPPage>(orderedPages);
-                    var studentNotebookString = ObjectSerializer.ToString(newNotebook);
+                    var studentNotebookString = ObjectSerializer.ToString(studentNotebook);
                     var zippedStudentNotebook = CLPServiceAgent.Instance.Zip(studentNotebookString);
 
                     return zippedStudentNotebook;
