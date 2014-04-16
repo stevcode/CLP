@@ -141,8 +141,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 CurrentPage = page;
 
                 if(App.Network.ProjectorProxy == null ||
-                   !App.MainWindowViewModel.Ribbon.IsProjectorOn ||
-                   notebookWorkspaceViewModel.CurrentDisplay == null)
+                   !App.MainWindowViewModel.Ribbon.IsProjectorOn)
                 {
                     return;
                 }
