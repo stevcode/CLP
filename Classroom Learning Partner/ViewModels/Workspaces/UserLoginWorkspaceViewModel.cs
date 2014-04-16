@@ -51,14 +51,42 @@ namespace Classroom_Learning_Partner.ViewModels
                                    var zippedNotebook = App.Network.InstructorProxy.StudentLogin(App.MainWindowViewModel.CurrentUser.ID,
                                                                                                  App.Network.CurrentMachineName,
                                                                                                  App.Network.CurrentMachineAddress);
+                                   if(String.IsNullOrEmpty(zippedNotebook))
+                                   {
+                                       Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                                                                              (DispatcherOperationCallback)delegate
+                                                                                                           {
+                                                                                                               App.MainWindowViewModel.CurrentUser.IsConnected = true;
+                                                                                                               App.MainWindowViewModel.Workspace = new NotebookChooserWorkspaceViewModel();
+                                                                                                               App.MainWindowViewModel.OnlineStatus = "CONNECTED - As " +
+                                                                                                                                                      App.MainWindowViewModel.CurrentUser.FullName;
+
+                                                                                                               return null;
+                                                                                                           },
+                                                                              null);
+                                       return;
+                                   }
+
                                    var unZippedNotebook = CLPServiceAgent.Instance.UnZip(zippedNotebook);
                                    var notebook = ObjectSerializer.ToObject(unZippedNotebook) as Notebook;
                                    if(notebook == null)
                                    {
-                                       Logger.Instance.WriteToLog("Failed to load notebook.");
+                                       Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                                                                              (DispatcherOperationCallback)delegate
+                                                                                                           {
+                                                                                                               App.MainWindowViewModel.CurrentUser.IsConnected = true;
+                                                                                                               App.MainWindowViewModel.Workspace = new NotebookChooserWorkspaceViewModel();
+                                                                                                               App.MainWindowViewModel.OnlineStatus = "CONNECTED - As " +
+                                                                                                                                                      App.MainWindowViewModel.CurrentUser.FullName;
+
+                                                                                                               return null;
+                                                                                                           },
+                                                                              null);
                                        return;
                                    }
+
                                    notebook.CurrentPage = notebook.Pages.First();
+                                   App.ResetCache();
 
                                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                                               (DispatcherOperationCallback)delegate

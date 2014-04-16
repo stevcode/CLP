@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.ServiceModel;
 using System.Threading;
 using System.Windows;
+using System.Windows.Documents;
 using System.Windows.Threading;
 using CLP.Entities;
 using Microsoft.Ink;
@@ -20,7 +23,7 @@ namespace Classroom_Learning_Partner
         void CollectStudentNotebook(string zippedNotebook, string studentName);
 
         [OperationContract]
-        string StudentLogin(string studentID, string machineName, string machineAddress);
+        string StudentLogin(string studentID, string machineName, string machineAddress, bool useClassPeriod = true);
 
         [OperationContract]
         void StudentLogout(string studentID);
@@ -146,7 +149,7 @@ namespace Classroom_Learning_Partner
            // TODO: Entities            notebook.Save(filePathName);
         }
 
-        public string StudentLogin(string studentID, string machineName, string machineAddress)
+        public string StudentLogin(string studentID, string machineName, string machineAddress, bool useClassPeriod = true)
         {
             var student = App.MainWindowViewModel.AvailableUsers.FirstOrDefault(x => x.ID == studentID);
             if(student == null)
@@ -156,14 +159,49 @@ namespace Classroom_Learning_Partner
             }
             student.CurrentMachineAddress = machineAddress;
             student.CurrentMachineName = machineName;
+            student.IsConnected = true;
+
+            if(!useClassPeriod ||
+               App.MainWindowViewModel.CurrentClassPeriod == null)
+            {
+                return string.Empty;
+            }
 
             try
             {
+                Notebook notebookToZip;
                 var newNotebook = App.MainWindowViewModel.OpenNotebooks.First().CopyForNewOwner(student);
-                var newNotebookString = ObjectSerializer.ToString(newNotebook);
-                var zippedNotebook = CLPServiceAgent.Instance.Zip(newNotebookString);
-                student.IsConnected = true;
-                return zippedNotebook;
+
+                var studentNotebookFolderName = newNotebook.Name + ";" + newNotebook.ID + ";" + newNotebook.OwnerID + ";" + newNotebook.Owner.FullName;
+                var studentNotebookFolderPath = Path.Combine(App.NotebookCacheDirectory, studentNotebookFolderName);
+                if(Directory.Exists(studentNotebookFolderPath))
+                {
+                    var pageIDs = App.MainWindowViewModel.CurrentClassPeriod.PageIDs;
+                    var studentNotebook = Notebook.OpenPartialNotebook(studentNotebookFolderPath, pageIDs, new List<string>());
+                    if(studentNotebook == null)
+                    {
+                        var newNotebookString = ObjectSerializer.ToString(newNotebook);
+                        var zippedNotebook = CLPServiceAgent.Instance.Zip(newNotebookString);
+
+                        return zippedNotebook;
+                    }
+                    var loadedPageIDs = studentNotebook.Pages.Select(page => page.ID).ToList();
+                    foreach(var page in newNotebook.Pages.Where(page => !loadedPageIDs.Contains(page.ID))) 
+                    {
+                        studentNotebook.Pages.Add(page);
+                    }
+                    var orderedPages = studentNotebook.Pages.OrderBy(x => x.PageNumber).ToList();
+                    studentNotebook.Pages = new ObservableCollection<CLPPage>(orderedPages);
+                    var studentNotebookString = ObjectSerializer.ToString(newNotebook);
+                    var zippedStudentNotebook = CLPServiceAgent.Instance.Zip(studentNotebookString);
+
+                    return zippedStudentNotebook;
+                }
+
+                var newNotebookString2 = ObjectSerializer.ToString(newNotebook);
+                var zippedNotebook2 = CLPServiceAgent.Instance.Zip(newNotebookString2);
+
+                return zippedNotebook2;
             }
             catch(Exception ex)
             {
