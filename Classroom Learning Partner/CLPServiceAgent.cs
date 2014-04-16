@@ -283,14 +283,13 @@ namespace Classroom_Learning_Partner
                                        var sPage = ObjectSerializer.ToString(copy);
                                        var zippedPage = Zip(sPage);
 
+                                       App.Network.InstructorProxy.AddSerializedSubmission(zippedPage, notebookID);
                                        Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                                         (DispatcherOperationCallback)delegate
                                                                         {
                                                                             page.Submissions.Add(copy);
                                                                             return null;
                                                                         }, null);
-
-                                       App.Network.InstructorProxy.AddSerializedSubmission(zippedPage, notebookID);
                                    }
                                    catch(Exception ex)
                                    {

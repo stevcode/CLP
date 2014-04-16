@@ -151,7 +151,7 @@
                                         <Image Source="pack://application:,,,/Resources/Images/DisplaySubmissionsButton50x25.png" />
                                     </Button>
                                     <TextBlock Grid.Row="1"
-                                               Text="{Binding Submissions.Count}"
+                                               Text="{Binding ViewModel.NumberOfDistinctSubmissions, ElementName=PagePreviewView}"
                                                TextAlignment="Center"
                                                Width="25" />
                                 </Grid>

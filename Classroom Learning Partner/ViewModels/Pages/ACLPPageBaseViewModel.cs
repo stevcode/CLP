@@ -53,11 +53,6 @@ namespace Classroom_Learning_Partner.ViewModels
             ClearPageCommand = new Command(OnClearPageCommandExecute);
         }
 
-        void Submissions_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            RaisePropertyChanged("HasSubmissions");
-        }
-
         public override string Title
         {
             get { return "APageBaseVM"; }
@@ -382,6 +377,11 @@ namespace Classroom_Learning_Partner.ViewModels
             get { return Submissions.Any(); }
         }
 
+        public int NumberOfDistinctSubmissions
+        {
+            get { return Submissions.Distinct().Count(); }
+        }
+
         #endregion //Bindings
 
         #region Commands
@@ -517,6 +517,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
+            App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
+
             switch(App.MainWindowViewModel.Ribbon.PageInteractionMode)
             {
                 case PageInteractionMode.Scissors:
@@ -560,6 +562,12 @@ namespace Classroom_Learning_Partner.ViewModels
                     RemoveStroke(e.Removed, e.Added);
                     break;
             }
+        }
+
+        protected void Submissions_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            RaisePropertyChanged("HasSubmissions");
+            RaisePropertyChanged("NumberOfDistinctSubmissions");
         }
 
         protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
