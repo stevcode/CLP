@@ -56,10 +56,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private static void OnCurrentPageChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
         {
-            var displayPanel = DisplaysPanelViewModel.GetDisplayListPanelViewModel();
             var singleDisplayViewModel = sender as SingleDisplayViewModel;
             if(singleDisplayViewModel == null ||
-               displayPanel == null ||
                singleDisplayViewModel.CurrentPage == null)
             {
                 return;
