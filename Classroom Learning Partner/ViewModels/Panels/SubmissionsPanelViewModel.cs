@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
@@ -22,7 +23,8 @@ namespace Classroom_Learning_Partner.ViewModels
         public SubmissionsPanelViewModel(Notebook notebook)
         {
             Notebook = notebook;
-            Length = InitialLength;
+            
+            Initialized += SubmissionsPanelViewModel_Initialized;
 
             #region Tag Stuff
 
@@ -64,6 +66,11 @@ namespace Classroom_Learning_Partner.ViewModels
             SetCurrentPageCommand = new Command<CLPPage>(OnSetCurrentPageCommandExecute);
         }
 
+        void SubmissionsPanelViewModel_Initialized(object sender, EventArgs e)
+        {
+            Length = InitialLength;
+        }
+
         public override string Title
         {
             get { return "SubmissionsPanelVM"; }
@@ -85,13 +92,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof(Notebook));
 
-        #endregion //Model
-
-        #region Bindings
-
         /// <summary>
         /// Current, selected submission.
         /// </summary>
+        [ViewModelToModel("Notebook")]
         public CLPPage CurrentPage
         {
             get { return GetValue<CLPPage>(CurrentPageProperty); }
@@ -99,6 +103,10 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage));
+
+        #endregion //Model
+
+        #region Bindings
 
         /// <summary>
         /// List of student names who don't have submissions for the CurrentPage.
@@ -216,10 +224,18 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnSetCurrentPageCommandExecute(CLPPage page)
         {
             var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel != null)
+            if(notebookWorkspaceViewModel == null)
             {
-                notebookWorkspaceViewModel.CurrentDisplay.AddPageToDisplay(page);
+                return;
             }
+
+            if(notebookWorkspaceViewModel.CurrentDisplay == null)
+            {
+                CurrentPage = page;
+                return;
+            }
+
+            notebookWorkspaceViewModel.CurrentDisplay.AddPageToDisplay(page);
         }
 
         #endregion //Commands
@@ -229,30 +245,17 @@ namespace Classroom_Learning_Partner.ViewModels
         public ObservableCollection<string> GetStudentsWithNoSubmissions()
         {
             var userNames = new ObservableCollection<string>();
-            //Steve - move to CLPService and grab from database
-            var filePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\StudentNames.txt";
 
-            if(File.Exists(filePath))
+            foreach(var availableUser in App.MainWindowViewModel.AvailableUsers)
             {
-                var reader = new StreamReader(filePath);
-                string name;
-                while((name = reader.ReadLine()) != null)
-                {
-                    var user = name.Split(new[] {','})[0];
-                    userNames.Add(user);
-                }
-                reader.Dispose();
-            }
-            else
-            {
-                return userNames;
+                userNames.Add(availableUser.FullName);
             }
 
             // TODO: Entities
-            //foreach(var p in SubmissionPages.Where(p => userNames.Contains(p.Submitter.FullName))) 
-            //{
-            //    userNames.Remove(p.Submitter.FullName);
-            //}
+            foreach(var p in SubmissionPages.Where(p => userNames.Contains(p.Owner.FullName))) 
+            {
+                userNames.Remove(p.Owner.FullName);
+            }
             return userNames;
         }
 
@@ -264,15 +267,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            // TODO: Entities
-            //if(page.SubmissionType == SubmissionType.Group)
-            //{
-            //    e.Accepted = true;
-            //}
-            //else
-            //{
-            //    e.Accepted = false;
-            //}
+            e.Accepted = page.SubmissionType == SubmissionTypes.Group;
         }
 
         public void OnlyIndividualSubmissionsFilter(object sender, FilterEventArgs e)
@@ -283,15 +278,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            // TODO: Entities
-            //if(page.SubmissionType == SubmissionType.Group)
-            //{
-            //    e.Accepted = false;
-            //}
-            //else
-            //{
-            //    e.Accepted = true;
-            //}
+            e.Accepted = page.SubmissionType != SubmissionTypes.Group;
         }
 
         // TODO: Entities
@@ -320,14 +307,14 @@ namespace Classroom_Learning_Partner.ViewModels
                                   };
             //StudentsWithNoSubmissions = getStudentsWithNoSubmissions();
 
-            var submitterNameDescription = new PropertyGroupDescription("Submitter.FullName");
+            var submitterNameDescription = new PropertyGroupDescription("Owner.FullName");
             //PropertyGroupDescription groupNameDescription = new PropertyGroupDescription("GroupName", new GroupLabelConverter());
             //PropertyGroupDescription timeDescription = new PropertyGroupDescription("SubmissionTime");
             //PropertyGroupDescription isGroupDescription = new PropertyGroupDescription("IsGroupSubmission", new BooleantoGroupConverter());
             //PropertyGroupDescription correctnessDescription = new PropertyGroupDescription(null, new PagetToCorrectnessTagConverter());
             //PropertyGroupDescription starredDescription = new PropertyGroupDescription(null, new PagetToStarredTagConverter());
 
-            var submitterNameSort = new SortDescription("Submitter.FullName", ListSortDirection.Ascending);
+            var submitterNameSort = new SortDescription("Owner.FullName", ListSortDirection.Ascending);
             //SortDescription groupNameSort = new SortDescription("GroupName", ListSortDirection.Ascending);
             var timeDescendingSort = new SortDescription("SubmissionTime", ListSortDirection.Descending);
             //SortDescription timeAscendingSort = new SortDescription("SubmissionTime", ListSortDirection.Ascending);

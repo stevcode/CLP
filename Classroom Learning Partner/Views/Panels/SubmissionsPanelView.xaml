@@ -8,7 +8,7 @@
                    xmlns:res="clr-namespace:Classroom_Learning_Partner.Resources"
                    xmlns:system="clr-namespace:System;assembly=mscorlib"
                    xmlns:extenders="clr-namespace:Classroom_Learning_Partner.Views.Extenders"
-                   Width="{Binding PanelWidth}">
+                   Width="{Binding Length}">
     <UserControl.Resources>
         <res:GrouptoBooleanConverter x:Key="gConverter" />
         <res:SumbissiontoBooleanConverter x:Key="sConverter" />
@@ -371,7 +371,11 @@
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
                                 
-                                <Control Grid.Row="0" Margin="5 5 5 0">
+                                <views:CLPPagePreviewView DataContext="{Binding}"
+                                                          Grid.Row="0"
+                                                          Margin="5 5 5 0" />
+                                
+                                <!--<Control Grid.Row="0" Margin="5 5 5 0">
                                     <Control.Resources>
                     
                                         <ControlTemplate x:Key="PagePreviewTemplate">
@@ -389,12 +393,12 @@
                                         <Style TargetType="{x:Type Control}">
                                             <Style.Triggers>
                                                 
-                                                <!--CLPPagePreviewView Fallback if Thumbnail is absent-->
+                                                CLPPagePreviewView Fallback if Thumbnail is absent
                                                 <DataTrigger Binding="{Binding PageThumbnail, Converter={StaticResource ByteArrayToBoolConverter}}" Value="False">
                                                     <Setter Property="Template" Value="{StaticResource PagePreviewTemplate}" />
                                                 </DataTrigger>
                                                 
-                                                <!--Thumbnail-->
+                                                Thumbnail
                                                 <DataTrigger Binding="{Binding PageThumbnail, Converter={StaticResource ByteArrayToBoolConverter}}" Value="True">
                                                     <Setter Property="Template" Value="{StaticResource ThumbnailTemplate}" />
                                                 </DataTrigger>
@@ -403,7 +407,7 @@
                                         </Style>
                     
                                     </Control.Style>
-                                </Control>
+                                </Control>-->
 
                                 <Rectangle Grid.Row="0" Margin="5 5 5 0"
                                            Stroke="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"

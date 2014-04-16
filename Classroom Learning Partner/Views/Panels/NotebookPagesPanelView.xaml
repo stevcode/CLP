@@ -199,10 +199,10 @@
 
         </Border>
 
-        <!--TODO: Entities, StagingPanel
-        <views:SubmissionsPanelView DataContext="{Binding LinkedPanel}"
+        <!--TODO: Entities, StagingPanel-->
+        <views:SubmissionsPanelView DataContext="{Binding StagingPanel}"
                                     Grid.Column="1"
-                                    Visibility="{Binding IsVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />-->
+                                    Visibility="{Binding IsVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />
 
     </Grid>
 

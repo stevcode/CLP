@@ -19,6 +19,11 @@ namespace Classroom_Learning_Partner.ViewModels
             
             SetCurrentPageCommand = new Command<CLPPage>(OnSetCurrentPageCommandExecute);
             ShowSubmissionsCommand = new Command<CLPPage>(OnShowSubmissionsCommandExecute);
+
+            StagingPanel = new SubmissionsPanelViewModel(notebook)
+                           {
+                               IsVisible = false
+                           };
         }
 
         void NotebookPagesPanelViewModel_Initialized(object sender, System.EventArgs e)
@@ -73,6 +78,21 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Model
 
+        #region Bindings
+
+        /// <summary>
+        /// Staging Panel for submissions
+        /// </summary>
+        public IPanel StagingPanel
+        {
+            get { return GetValue<IPanel>(StagingPanelProperty); }
+            set { SetValue(StagingPanelProperty, value); }
+        }
+
+        public static readonly PropertyData StagingPanelProperty = RegisterProperty("StagingPanel", typeof(IPanel)); 
+
+        #endregion //Bindings
+
         #region Commands
 
         /// <summary>
@@ -90,15 +110,15 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnShowSubmissionsCommandExecute(CLPPage page)
         {
             // TODO: Entities, convert to StagingPanel
-            //var submissionsPanel = LinkedPanel as SubmissionsPanelViewModel;
-            //if(submissionsPanel == null)
-            //{
-            //    return;
-            //}
+            var submissionsPanel = StagingPanel as SubmissionsPanelViewModel;
+            if(submissionsPanel == null)
+            {
+                return;
+            }
 
-            //submissionsPanel.IsVisible = true;
+            submissionsPanel.IsVisible = true;
 
-            //submissionsPanel.SubmissionPages = page.Submissions;
+            submissionsPanel.SubmissionPages = page.Submissions;
         }
 
         #endregion //Commands
