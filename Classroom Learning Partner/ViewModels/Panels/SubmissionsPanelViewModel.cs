@@ -251,7 +251,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 userNames.Add(availableUser.FullName);
             }
 
-            // TODO: Entities
             foreach(var p in SubmissionPages.Where(p => userNames.Contains(p.Owner.FullName))) 
             {
                 userNames.Remove(p.Owner.FullName);

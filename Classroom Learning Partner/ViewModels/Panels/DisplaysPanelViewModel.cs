@@ -167,7 +167,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 var displayPageIDs = new List<string>();
                 displayPageIDs.AddRange(notebookWorkspaceViewModel.CurrentDisplay.Pages.Select(page => page.ID + ";" + page.OwnerID + ";" + page.VersionIndex));
 
-                 App.Network.ProjectorProxy.SwitchProjectorDisplay(displayID, displayPageIDs);
+                 App.Network.ProjectorProxy.SwitchProjectorDisplay(displayID, notebookWorkspaceViewModel.CurrentDisplay.DisplayNumber, displayPageIDs);
             }
             catch(Exception) { }
         }
@@ -236,7 +236,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 var compositeID = currentPage.ID + ";" + currentPage.OwnerID + ";" + currentPage.VersionIndex;
                 displayPageIDs.Add(compositeID);
                 
-                App.Network.ProjectorProxy.SwitchProjectorDisplay(DISPLAY_ID, displayPageIDs);
+                App.Network.ProjectorProxy.SwitchProjectorDisplay(DISPLAY_ID, -1, displayPageIDs);
             }
             catch(Exception) { }
 

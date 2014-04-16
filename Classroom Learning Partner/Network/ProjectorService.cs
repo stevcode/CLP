@@ -13,7 +13,7 @@ namespace Classroom_Learning_Partner
     public interface IProjectorContract : INotebookContract
     {
         [OperationContract]
-        void SwitchProjectorDisplay(string displayType, List<string> displayPages);
+        void SwitchProjectorDisplay(string displayType, int displayNumber, List<string> displayPageIDs);
 
         [OperationContract]
         void AddPageToDisplay(string pageID, string pageOwnerID, int pageVersionIndex);
@@ -31,7 +31,7 @@ namespace Classroom_Learning_Partner
     [ServiceBehavior(IncludeExceptionDetailInFaults = true)]
     public class ProjectorService : IProjectorContract
     {
-        public void SwitchProjectorDisplay(string displayType, List<string> displayPageIDs)
+        public void SwitchProjectorDisplay(string displayType, int displayNumber, List<string> displayPageIDs)
         {
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                        (DispatcherOperationCallback)delegate
@@ -74,10 +74,12 @@ namespace Classroom_Learning_Partner
                                                                                                 {
                                                                                                     var newGridDisplay = new GridDisplay
                                                                                                                          {
-                                                                                                                             ID = displayType
+                                                                                                                             ID = displayType,
+                                                                                                                             DisplayNumber = displayNumber
                                                                                                                          };
                                                                                                     newGridDisplay.Pages.Clear();
                                                                                                     notebookWorkspaceViewModel.Notebook.AddDisplayToNotebook(newGridDisplay);
+                                                                                                    notebookWorkspaceViewModel.CurrentDisplay = null;
                                                                                                     notebookWorkspaceViewModel.CurrentDisplay = newGridDisplay;
                                                                                                 }
 

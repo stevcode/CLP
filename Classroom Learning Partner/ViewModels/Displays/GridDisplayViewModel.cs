@@ -1,5 +1,7 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Linq;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Entities;
@@ -101,53 +103,36 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             UGridRows = Pages.Count < 3 ? 1 : 0;
 
-            // TODO: Entities
-            //if(!App.MainWindowViewModel.Ribbon.IsProjectorOn || App.Network.ProjectorProxy == null || IsDisplayPreview)
-            //{
-            //    return;
-            //}
+            if(!App.MainWindowViewModel.Ribbon.IsProjectorOn ||
+               App.Network.ProjectorProxy == null ||
+               IsDisplayPreview)
+            {
+                return;
+            }
 
-            //if(e.NewItems != null)
-            //{
-            //    foreach(var pageAdded in e.NewItems)
-            //    {
-            //        var page = pageAdded as CLPPage;
-            //        if(page == null)
-            //        {
-            //            continue;
-            //        }
-            //        var pageID = page.SubmissionType != SubmissionType.None ? page.SubmissionID : page.UniqueID;
-            //        try
-            //        {
-            //            App.Network.ProjectorProxy.AddPageToDisplay(pageID);
-            //        }
-            //        catch(Exception)
-            //        {
+            if(e.NewItems != null)
+            {
+                foreach(var page in e.NewItems.OfType<CLPPage>()) 
+                {
+                    try
+                    {
+                        App.Network.ProjectorProxy.AddPageToDisplay(page.ID, page.OwnerID, (int)page.VersionIndex);
+                    }
+                    catch { }
+                }
+            }
 
-            //        }
-            //    }
-            //}
-
-            //if(e.OldItems != null)
-            //{
-            //    foreach(var pageRemoved in e.OldItems)
-            //    {
-            //        var page = pageRemoved as CLPPage;
-            //        if(page == null)
-            //        {
-            //            continue;
-            //        }
-            //        var pageID = page.SubmissionType != SubmissionType.None ? page.SubmissionID : page.UniqueID;
-            //        try
-            //        {
-            //            App.Network.ProjectorProxy.RemovePageFromDisplay(pageID);
-            //        }
-            //        catch(Exception)
-            //        {
-
-            //        }
-            //    }
-            //}
+            if(e.OldItems != null)
+            {
+                foreach(var page in e.OldItems.OfType<CLPPage>()) 
+                {
+                    try
+                    {
+                        App.Network.ProjectorProxy.RemovePageFromDisplay(page.ID, page.OwnerID, (int)page.VersionIndex);
+                    }
+                    catch { }
+                }
+            }
         }
 
         #endregion //Methods

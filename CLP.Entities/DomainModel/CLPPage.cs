@@ -514,24 +514,23 @@ namespace CLP.Entities
         public void TrimPage()
         {
             var lowestY = PageObjects.Select(pageObject => pageObject.YPosition + pageObject.Height).Concat(new double[] {0}).Max();
-            // TODO: Entities
-            //foreach(var bounds in InkStrokes.Select(s => s.GetBounds()))
-            //{
-            //    if(bounds.Bottom >= Height)
-            //    {
-            //        lowestY = Math.Max(lowestY, Height);
-            //        break;
-            //    }
-            //    lowestY = Math.Max(lowestY, bounds.Bottom);
-            //}
+            foreach(var bounds in InkStrokes.Select(s => s.GetBounds()))
+            {
+                if(bounds.Bottom >= Height)
+                {
+                    lowestY = Math.Max(lowestY, Height);
+                    break;
+                }
+                lowestY = Math.Max(lowestY, bounds.Bottom);
+            }
 
-            //double defaultHeight = Math.Abs(Width - LANDSCAPE_WIDTH) < .000001 ? LANDSCAPE_HEIGHT : PORTRAIT_HEIGHT;
+            var defaultHeight = Math.Abs(Width - LANDSCAPE_WIDTH) < .000001 ? LANDSCAPE_HEIGHT : PORTRAIT_HEIGHT;
 
-            //double newHeight = Math.Max(defaultHeight, lowestY);
-            //if(newHeight < Height)
-            //{
-            //    Height = newHeight;
-            //}   
+            var newHeight = Math.Max(defaultHeight, lowestY);
+            if(newHeight < Height)
+            {
+                Height = newHeight;
+            }   
         }
 
         public void AddTag(ITag newTag)

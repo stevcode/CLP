@@ -1,4 +1,7 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Entities;
@@ -136,6 +139,19 @@ namespace Classroom_Learning_Partner.ViewModels
             if(notebookWorkspaceViewModel.CurrentDisplay == null)
             {
                 CurrentPage = page;
+
+                if(App.Network.ProjectorProxy == null ||
+                   !App.MainWindowViewModel.Ribbon.IsProjectorOn ||
+                   notebookWorkspaceViewModel.CurrentDisplay == null)
+                {
+                    return;
+                }
+
+                try
+                {
+                     App.Network.ProjectorProxy.AddPageToDisplay(page.ID, page.OwnerID, (int)page.VersionIndex);
+                }
+                catch(Exception) { }
                 return;
             }
 

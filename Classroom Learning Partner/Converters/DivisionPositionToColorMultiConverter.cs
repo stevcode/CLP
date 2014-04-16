@@ -14,7 +14,6 @@ namespace Classroom_Learning_Partner.Converters
         public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
         {
             int index = 0;
-            // TODO: Entities
             if(value[1] is ObservableCollection<CLPArrayDivision>)
             {
                 foreach(var division in (ObservableCollection<CLPArrayDivision>)value[1])
