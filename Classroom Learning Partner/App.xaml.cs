@@ -32,7 +32,7 @@ namespace Classroom_Learning_Partner
 
             
 
-            _currentUserMode = UserMode.Instructor;
+            _currentUserMode = UserMode.Projector;
 
             InitializeCatelSettings();
             InitializeLocalCache();

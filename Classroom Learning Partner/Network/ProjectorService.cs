@@ -289,6 +289,10 @@ namespace Classroom_Learning_Partner
                 return;
             }
             notebook.CurrentPage = notebook.Pages.First();
+            foreach(var page in notebook.Pages)
+            {
+                page.InkStrokes = StrokeDTO.LoadInkStrokes(page.SerializedStrokes);
+            }
 
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                        (DispatcherOperationCallback)delegate
