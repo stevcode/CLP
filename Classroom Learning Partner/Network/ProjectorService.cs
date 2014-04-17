@@ -182,7 +182,7 @@ namespace Classroom_Learning_Partner
                 return;
             }
             submission.InkStrokes = StrokeDTO.LoadInkStrokes(submission.SerializedStrokes);
-            var currentNotebook = App.MainWindowViewModel.OpenNotebooks.FirstOrDefault(notebook => notebookID == notebook.ID && notebook.OwnerID == App.MainWindowViewModel.CurrentUser.ID);
+            var currentNotebook = App.MainWindowViewModel.OpenNotebooks.FirstOrDefault(notebook => notebookID == notebook.ID && notebook.OwnerID == Person.Emily.ID);
 
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                        (DispatcherOperationCallback)delegate
