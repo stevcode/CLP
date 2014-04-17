@@ -584,6 +584,73 @@ namespace Classroom_Learning_Partner.ViewModels
             classPeriod.SaveClassPeriod(App.ClassCacheDirectory);
         }
 
+        public static void GenerateSubmissionsFromOriginals()
+        {
+
+            foreach(var notebookName in AvailableLocalNotebookNames)
+            {
+                var notebookInfo = notebookName.Split(';');
+                if(notebookInfo.Length != 4 ||
+                   notebookInfo[2] == Person.Author.ID ||
+                   notebookInfo[2] == Person.Emily.ID ||
+                   notebookInfo[2] == Person.EmilyProjector.ID)
+                {
+                    continue;
+                }
+
+                var folderPath = Path.Combine(App.NotebookCacheDirectory, notebookName);
+                if(!Directory.Exists(folderPath))
+                {
+                    MessageBox.Show("Notebook doesn't exist");
+                    return;
+                }
+
+                var notebook = Notebook.OpenNotebook(folderPath);
+
+                if(notebook == null)
+                {
+                    MessageBox.Show("Notebook could not be opened. Check error log.");
+                    return;
+                }
+
+                var submissionFolderPath = Path.Combine(folderPath, "Pages", "Submissions");
+                if(!Directory.Exists(submissionFolderPath))
+                {
+                    Directory.CreateDirectory(submissionFolderPath);
+                }
+
+                var submissions = new List<CLPPage>();
+                foreach(var page in notebook.Pages)
+                {
+                    page.VersionIndex = 1;
+                    page.LastVersionIndex = 1;
+                    page.SubmissionTime = notebook.LastSavedDate;
+                    foreach(var pageObject in page.PageObjects)
+                    {
+                        if(pageObject.OwnerID == page.OwnerID)
+                        {
+                            pageObject.VersionIndex = 1;
+                            pageObject.LastVersionIndex = 1;
+                        }
+                        
+                        pageObject.ParentPageVersionIndex = 1;
+                    }
+                    foreach(var serializedStroke in page.SerializedStrokes)
+                    {
+                        if(serializedStroke.PersonID != page.OwnerID)
+                        {
+                            continue;
+                        }
+                        serializedStroke.VersionIndex = 1;
+                    }
+
+                    var submissionFilePath = Catel.IO.Path.Combine(submissionFolderPath, "Page;" + page.PageNumber + ";" + page.ID + ";" + page.OwnerID + ";" + page.VersionIndex + ".xml");
+                    page.ToXML(submissionFilePath, false);
+                }
+                
+            }
+        }
+
         #endregion //Temp Methods
     }
 }

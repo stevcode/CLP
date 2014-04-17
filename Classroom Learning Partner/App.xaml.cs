@@ -71,7 +71,26 @@ namespace Classroom_Learning_Partner
 
         private static void InitializeLocalCache()
         {
-            var variant = _currentUserMode == UserMode.Student ? "Student" : string.Empty;
+            string variant;
+            switch(_currentUserMode)
+            {
+                case UserMode.Server:
+                    variant = "Server";
+                    break;
+                case UserMode.Instructor:
+                    variant = "Instructor";
+                    break;
+                case UserMode.Projector:
+                    variant = "Projector";
+                    break;
+                case UserMode.Student:
+                    variant = "Student";
+                    break;
+                default:
+                    variant = string.Empty;
+                    break;
+            }
+
             LocalCacheDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "LocalCache" + variant);
             if(!Directory.Exists(LocalCacheDirectory))
             {
@@ -95,8 +114,9 @@ namespace Classroom_Learning_Partner
         {
             if(Directory.Exists(LocalCacheDirectory))
             {
+                var archiveDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "CacheArchive");
                 var now = DateTime.Now.ToString("yyyy.MM.dd.HH.mm.ss");
-                var newCacheDirectory = LocalCacheDirectory + " - " + now;
+                var newCacheDirectory = Path.Combine(archiveDirectory, "LocalCache - " + now);
                 Directory.Move(LocalCacheDirectory, newCacheDirectory);
             }
 

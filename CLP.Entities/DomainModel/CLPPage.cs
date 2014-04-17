@@ -581,9 +581,13 @@ namespace CLP.Entities
 
         public bool IsCached { get; set; }
 
-        public void ToXML(string fileName)
+        public void ToXML(string fileName, bool serializeStrokes = true)
         {
-            SerializedStrokes = StrokeDTO.SaveInkStrokes(InkStrokes);
+            if(serializeStrokes)
+            {
+                SerializedStrokes = StrokeDTO.SaveInkStrokes(InkStrokes);
+            }
+            
             var fileInfo = new FileInfo(fileName);
             if(!Directory.Exists(fileInfo.DirectoryName))
             {
