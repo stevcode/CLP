@@ -32,7 +32,7 @@ namespace Classroom_Learning_Partner
 
             
 
-            _currentUserMode = UserMode.Instructor;
+            _currentUserMode = UserMode.Student;
 
             InitializeCatelSettings();
             InitializeLocalCache();
@@ -117,6 +117,10 @@ namespace Classroom_Learning_Partner
                 var archiveDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "CacheArchive");
                 var now = DateTime.Now.ToString("yyyy.MM.dd.HH.mm.ss");
                 var newCacheDirectory = Path.Combine(archiveDirectory, "LocalCache - " + now);
+                if(!Directory.Exists(archiveDirectory))
+                {
+                    Directory.CreateDirectory(archiveDirectory);
+                }
                 Directory.Move(LocalCacheDirectory, newCacheDirectory);
             }
 
@@ -186,7 +190,7 @@ namespace Classroom_Learning_Partner
 
         public static string ClassCacheDirectory { get; private set; }
 
-        private static UserMode _currentUserMode = UserMode.Instructor;
+        private static UserMode _currentUserMode = UserMode.Student;
         public static UserMode CurrentUserMode
         {
             get { return _currentUserMode; }
