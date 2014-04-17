@@ -32,7 +32,7 @@ namespace Classroom_Learning_Partner
 
             
 
-            _currentUserMode = UserMode.Projector;
+            _currentUserMode = UserMode.Instructor;
 
             InitializeCatelSettings();
             InitializeLocalCache();
@@ -186,7 +186,7 @@ namespace Classroom_Learning_Partner
 
         public static string ClassCacheDirectory { get; private set; }
 
-        private static UserMode _currentUserMode = UserMode.Projector;
+        private static UserMode _currentUserMode = UserMode.Instructor;
         public static UserMode CurrentUserMode
         {
             get { return _currentUserMode; }
