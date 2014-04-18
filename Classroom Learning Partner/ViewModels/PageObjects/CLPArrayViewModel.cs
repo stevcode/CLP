@@ -1028,7 +1028,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         }
                     }
                 }
-                MessageBox.Show("The side of the array is " + Rows + ". You broke the side into " + labelsString + " , which don’t add up to " + Rows + ".", "Oops");
+                MessageBox.Show("The side of the array is " + Rows + ". You broke the side into " + labelsString + ", which don’t add up to " + Rows + ".", "Oops");
             }
             else
             {
@@ -1067,7 +1067,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         }
                     }
                 }
-                MessageBox.Show("The side of the array is " + Columns + ". You broke the side into " + labelsString + " , which don’t add up to " + Columns + ".", "Oops");
+                MessageBox.Show("The side of the array is " + Columns + ". You broke the side into " + labelsString + ", which don’t add up to " + Columns + ".", "Oops");
             }
         }
 
