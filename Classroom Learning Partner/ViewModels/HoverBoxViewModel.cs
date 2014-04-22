@@ -292,32 +292,14 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnToggleStarCommandExecute(MouseEventArgs e)
         {
             IsStarred = !IsStarred;
-            // TODO: Entities
-            //if(Page.PageTags != null)
-            //{
-            //    foreach(Tag tag in Page.PageTags)
-            //    {
-            //        if(tag.TagType.Name == StarredTagType.Instance.Name)
-            //        {
-            //            Console.WriteLine("Name: " + tag.TagType.Name + " value" + tag.Value.ElementAt(0).Value);
-
-            //            tag.Value.Clear();
-            //            if(IsStarred)
-            //            {
-            //                Topics.Replace("Starred: True", "Starred: False");
-            //                tag.Value.Add(new TagOptionValue("Starred", "..\\Images\\Starred.png"));
-            //            }
-            //            else
-            //            {
-            //                Topics.Replace("Starred: False", "Starred: True");
-            //                tag.Value.Add(new TagOptionValue("Unstarred", "..\\Images\\Unstarred.png"));
-            //            }
-            //        }
-            //    }
-            //}
-            //var submissionsPanel = NotebookPagesPanelViewModel.GetSubmissionsPanelViewModel();
-            //submissionsPanel.SubmissionPages.Remove(Page);
-            //submissionsPanel.SubmissionPages.Add(Page);
+            if(IsStarred)
+            {
+                Page.AddTag(new StarredTag(Page, StarredTag.AcceptedValues.Starred));
+            }
+            else
+            {
+                Page.AddTag(new StarredTag(Page, StarredTag.AcceptedValues.Unstarred));
+            }
         }
 
         /// <summary>
