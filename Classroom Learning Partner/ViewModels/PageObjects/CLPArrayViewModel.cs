@@ -39,6 +39,7 @@ namespace Classroom_Learning_Partner.ViewModels
             CreateHorizontalDivisionCommand = new Command(OnCreateHorizontalDivisionCommandExecute);
             EditLabelCommand = new Command<CLPArrayDivision>(OnEditLabelCommandExecute);
             EraseDivisionCommand = new Command<MouseEventArgs>(OnEraseDivisionCommandExecute);
+            EraseLabelCommand = new Command<CLPArrayDivision>(OnEraseLabelCommandExecute);
             ToggleMainArrayAdornersCommand = new Command<MouseButtonEventArgs>(OnToggleMainArrayAdornersCommandExecute);
             DuplicateArrayCommand = new Command(OnDuplicateArrayCommandExecute);
         }
@@ -1027,7 +1028,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         }
                     }
                 }
-                MessageBox.Show("The side of the array is " + Rows + ". You broke the side into " + labelsString + " , which don’t add up to " + Rows + ".", "Oops");
+                MessageBox.Show("The side of the array is " + Rows + ". You broke the side into " + labelsString + ", which don’t add up to " + Rows + ".", "Oops");
             }
             else
             {
@@ -1066,7 +1067,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         }
                     }
                 }
-                MessageBox.Show("The side of the array is " + Columns + ". You broke the side into " + labelsString + " , which don’t add up to " + Columns + ".", "Oops");
+                MessageBox.Show("The side of the array is " + Columns + ". You broke the side into " + labelsString + ", which don’t add up to " + Columns + ".", "Oops");
             }
         }
 
@@ -1130,6 +1131,16 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             //ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryArrayDivisionsChanged(PageObject.ParentPage, PageObject.UniqueID, addedDivisions, removedDivisions));
+        }
+
+        /// <summary>
+        /// Resets the label to a question mark
+        /// </summary>
+        public Command<CLPArrayDivision> EraseLabelCommand { get; private set; }
+
+        private void OnEraseLabelCommandExecute(CLPArrayDivision division)
+        {
+            division.Value = 0;
         }
 
         /// <summary>

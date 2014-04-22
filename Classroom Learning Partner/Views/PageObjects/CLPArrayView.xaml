@@ -743,6 +743,12 @@
                                                 PassEventArgsToCommand="False"
                                                 CommandParameter="{Binding}" />
                                         </i:EventTrigger>
+                                        <i:EventTrigger EventName="MouseEnter">
+                                            <catel:EventToCommand
+                                            Command="{Binding DataContext.EraseLabelCommand, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
+                                            PassEventArgsToCommand="False"
+                                            CommandParameter="{Binding}" />
+                                        </i:EventTrigger>
                                     </i:Interaction.Triggers>
                                 </Rectangle>
                             </Grid>
@@ -813,6 +819,12 @@
                                                 Command="{Binding DataContext.EditLabelCommand, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
                                                 PassEventArgsToCommand="False"
                                                 CommandParameter="{Binding}" />
+                                        </i:EventTrigger>
+                                        <i:EventTrigger EventName="MouseEnter">
+                                            <catel:EventToCommand
+                                            Command="{Binding DataContext.EraseLabelCommand, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
+                                            PassEventArgsToCommand="False"
+                                            CommandParameter="{Binding}" />
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
                                 </Rectangle>
