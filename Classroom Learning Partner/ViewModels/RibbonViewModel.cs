@@ -2238,7 +2238,7 @@ namespace Classroom_Learning_Partner.ViewModels
             pageMetadataWindow.Owner = Application.Current.MainWindow;
 
             pageMetadataWindow.ChapterTitle.Text = CurrentPage.ChapterTitle;
-            pageMetadataWindow.SectionTitle.Text = CurrentPage.SectionTitle;
+            pageMetadataWindow.SubchapterTitle.Text = CurrentPage.SectionTitle;
             pageMetadataWindow.PageNumber.Text = CurrentPage.PageNumber.ToString();
             pageMetadataWindow.StudentWorkbookPageNumber.Text = CurrentPage.StudentWorkbookPageNumber;
             pageMetadataWindow.TeacherWorkbookPageNumber.Text = CurrentPage.TeacherWorkbookPageNumber;
@@ -2248,7 +2248,7 @@ namespace Classroom_Learning_Partner.ViewModels
             if(pageMetadataWindow.DialogResult == true)
             {
                 CurrentPage.ChapterTitle = pageMetadataWindow.ChapterTitle.Text;
-                CurrentPage.SectionTitle = pageMetadataWindow.SectionTitle.Text;
+                CurrentPage.SectionTitle = pageMetadataWindow.SubchapterTitle.Text;
                 int pageNumber;
                 if(int.TryParse(pageMetadataWindow.PageNumber.Text, out pageNumber)) {
                     CurrentPage.PageNumber = pageNumber;
