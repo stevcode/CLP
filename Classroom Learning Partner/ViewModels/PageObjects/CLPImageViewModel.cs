@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Linq;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -10,32 +11,47 @@ namespace Classroom_Learning_Partner.ViewModels
 {
     public class CLPImageViewModel : APageObjectBaseViewModel
     {
-        // TODO: Entities
-        ///// <summary>
-        ///// Initializes a new instance of the CLPImageViewModel class.
-        ///// </summary>
-        //public CLPImageViewModel(CLPImage image)
-        //{
-        //    PageObject = image;
-        //    try
-        //    {
-        //        var byteSource = image.ParentPage.ImagePool[image.ImageID];
-        //        SourceImage = LoadImageFromByteSource(byteSource.ToArray());
-        //    }
-        //    catch(System.Exception ex)
-        //    {
-        //        Logger.Instance.WriteToLog("ImageVM failed to load Image from ByteSource, image.ParentPage likely null. Error: " + ex.Message);
-        //    }
+        /// <summary>
+        /// Initializes a new instance of the CLPImageViewModel class.
+        /// </summary>
+        public CLPImageViewModel(CLPImage image)
+        {
+            PageObject = image;
+            if(App.MainWindowViewModel.ImagePool.ContainsKey(image.ImageHashID))
+            {
+                SourceImage = App.MainWindowViewModel.ImagePool[image.ImageHashID];
+            }
+            else
+            {
+                var filePath = string.Empty;
+                var imageFilePaths = Directory.EnumerateFiles(App.ImageCacheDirectory);
+                foreach(var imageFilePath in from imageFilePath in imageFilePaths
+                                             let imageHashID = Path.GetFileNameWithoutExtension(imageFilePath)
+                                             where imageHashID == image.ImageHashID
+                                             select imageFilePath) 
+                                             {
+                                                 filePath = imageFilePath;
+                                                 break;
+                                             }
 
-        //    ResizeImageCommand = new Command<DragDeltaEventArgs>(OnResizeImageCommandExecute);
-        //}
+                var bitmapImage = CLPImage.GetImageFromPath(filePath);
+                if(bitmapImage == null)
+                {
+                    return;
+                }
+                SourceImage = bitmapImage;
+                App.MainWindowViewModel.ImagePool.Add(image.ImageHashID, bitmapImage);
+            }
+
+            ResizeImageCommand = new Command<DragDeltaEventArgs>(OnResizeImageCommandExecute);
+        }
 
         public override string Title { get { return "ImageVM"; } }
 
         #region Binding
 
         /// <summary>
-        /// The visible image, loaded from the page's ImagePool.
+        /// The visible image, loaded from the ImageCache.
         /// </summary>
         public ImageSource SourceImage
         {

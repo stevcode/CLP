@@ -81,6 +81,7 @@
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -111,6 +112,7 @@
     <Compile Include="DomainModel\PageObjects\Arrays\CLPArray.cs" />
     <Compile Include="DomainModel\PageObjects\Arrays\FuzzyFactorCard.cs" />
     <Compile Include="DomainModel\PageObjects\Arrays\RemainderTiles.cs" />
+    <Compile Include="DomainModel\PageObjects\CLPImage.cs" />
     <Compile Include="DomainModel\PageObjects\PageObject Interfaces\ICountable.cs" />
     <Compile Include="DomainModel\PageObjects\PageObject Interfaces\ICuttable.cs" />
     <Compile Include="DomainModel\PageObjects\PageObject Interfaces\IPageObject.cs" />

@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Catel.Data;
 using Catel.MVVM;
@@ -191,6 +192,17 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Bindings
 
         #region Properties
+
+        /// <summary>
+        /// ImagePool for the current CLP instance, populated by all open notebooks.
+        /// </summary>
+        public Dictionary<string,BitmapImage> ImagePool
+        {
+            get { return GetValue<Dictionary<string,BitmapImage>>(ImagePoolProperty); }
+            set { SetValue(ImagePoolProperty, value); }
+        }
+
+        public static readonly PropertyData ImagePoolProperty = RegisterProperty("ImagePool", typeof(Dictionary<string,BitmapImage>), () => new Dictionary<string,BitmapImage>());
 
         /// <summary>
         /// The <see cref="Person" /> using the program.

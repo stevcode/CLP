@@ -12,6 +12,7 @@ using System.Windows.Controls.Ribbon;
 using System.Windows.Documents;
 using System.Windows.Ink;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Xps.Packaging;
 using Catel.Collections;
 using Catel.Data;
@@ -2375,45 +2376,69 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnInsertImageCommandExecute()
         {
-            // TODO: Entities
-            //// Configure open file dialog box
-            //Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
-            //dlg.Filter = "Images|*.png;*.jpg;*.jpeg;*.gif"; // Filter files by extension
+            // Configure open file dialog box
+            var dlg = new Microsoft.Win32.OpenFileDialog
+                      {
+                          // Filter files by extension
+                          Filter = "Images|*.png;*.jpg;*.jpeg;*.gif"
+                      };
 
-            //// Show open file dialog box
-            //Nullable<bool> result = dlg.ShowDialog();
+            var result = dlg.ShowDialog();
+            if(result != true)
+            {
+                return;
+            }
 
-            //// Process open file dialog box results
-            //if(result == true)
-            //{
-            //    // Open document
-            //    string filename = dlg.FileName;
-            //    if(File.Exists(filename))
-            //    {
-            //        var bytes = File.ReadAllBytes(filename);
-            //        var byteSource = new List<byte>(bytes);
+            // Open document
+            var filename = dlg.FileName;
+            if(File.Exists(filename))
+            {
+                var bytes = File.ReadAllBytes(filename);
 
-            //        var md5 = new MD5CryptoServiceProvider();
-            //        var hash = md5.ComputeHash(bytes);
-            //        var imageID = Convert.ToBase64String(hash);
+                var md5 = new MD5CryptoServiceProvider();
+                var hash = md5.ComputeHash(bytes);
+                var imageHashID = Convert.ToBase64String(hash).Replace("/", "_").Replace("+", "-").Replace("=","");
+                var newFileName = imageHashID + Path.GetExtension(filename);
+                var newFilePath = Path.Combine(App.ImageCacheDirectory, newFileName);
 
-            //        var page = ((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as SingleDisplay).CurrentPage;
+                try
+                {
+                    File.Copy(filename, newFilePath);
+                }
+                catch(IOException)
+                {
+                    MessageBox.Show("Image already in ImagePool, using ImagePool instead.");
+                }
+                catch(Exception e)
+                {
+                    MessageBox.Show("Something went wrong copying the image to the ImagePool. See Error Log.");
+                    Logger.Instance.WriteToLog("[IMAGEPOOL ERROR]: " + e.Message);
+                    return;
+                }
 
+                var bitmapImage = CLPImage.GetImageFromPath(newFilePath);
+                if(bitmapImage == null)
+                {
+                    MessageBox.Show("Failed to load image from ImageCache by fileName.");
+                    return;
+                }
 
-            //        if(!page.ImagePool.ContainsKey(imageID))
-            //        {
-            //            page.ImagePool.Add(imageID, byteSource);
-            //        }
-            //        var visualImage = System.Drawing.Image.FromFile(filename);
-            //        var image = new CLPImage(imageID, page, visualImage.Height, visualImage.Width);
+                if(!App.MainWindowViewModel.ImagePool.ContainsKey(imageHashID))
+                {
+                    App.MainWindowViewModel.ImagePool.Add(imageHashID, bitmapImage);
+                }
 
-            //        ACLPPageBaseViewModel.AddPageObjectToPage(image);
-            //    }
-            //    else
-            //    {
-            //        MessageBox.Show("Error opening image file. Please try again.");
-            //    }
-            //}
+                var page = CurrentPage;
+
+                var visualImage = System.Drawing.Image.FromFile(newFilePath);
+                var image = new CLPImage(page, imageHashID, visualImage.Height, visualImage.Width);
+
+                ACLPPageBaseViewModel.AddPageObjectToPage(image);
+            }
+            else
+            {
+                MessageBox.Show("Error opening image file. Please try again.");
+            }
         }
 
         /// <summary>

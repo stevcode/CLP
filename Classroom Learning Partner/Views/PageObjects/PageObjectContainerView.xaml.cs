@@ -19,7 +19,10 @@ namespace Classroom_Learning_Partner.Views
             //if (dataContext is CLPDataTable) return typeof(CLPDataTableViewModel);
             //if (dataContext is CLPHandwritingRegion) return typeof(CLPHandwritingRegionViewModel);
             //if (dataContext is CLPGroupingRegion) return typeof(CLPGroupingRegionViewModel);
-            //if (dataContext is CLPImage) return typeof(CLPImageViewModel);
+            if(dataContext is CLPImage)
+            {
+                return typeof(CLPImageViewModel);
+            }
             //if (dataContext is CLPInkShapeRegion) return typeof(CLPInkShapeRegionViewModel);
             //if (dataContext is CLPShadingRegion) return typeof(CLPShadingRegionViewModel);
             if(dataContext is Shape)
