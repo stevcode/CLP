@@ -139,7 +139,7 @@ namespace CLP.Entities
 
         public void SaveClassPeriod(string folderPath)
         {
-            var fileName = Path.Combine(folderPath, "ClassPeriod;" + ID + ";" + StartTime.ToString("yyyy.M.dd.HH.mm") + ".xml");
+            var fileName = Path.Combine(folderPath, "period;" + ID + ";" + StartTime.ToString("yyyy.M.dd.HH.mm") + ".xml");
             ToXML(fileName);
         }
 
@@ -149,7 +149,7 @@ namespace CLP.Entities
             {
                 var classPeriod = Load<ClassPeriod>(filePath, SerializationMode.Xml);
                 var classPeriodFolderPath = Path.GetDirectoryName(filePath);
-                var classSubjectFilePath = Path.Combine(classPeriodFolderPath, "ClassSubject" + ";" + classPeriod.ClassSubjectID + ".xml");
+                var classSubjectFilePath = Path.Combine(classPeriodFolderPath, "subject" + ";" + classPeriod.ClassSubjectID + ".xml");
                 classPeriod.ClassSubject = ClassSubject.OpenClassSubject(classSubjectFilePath);
 
                 return classPeriod;

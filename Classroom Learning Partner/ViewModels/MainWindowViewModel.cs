@@ -427,6 +427,23 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             var folderPath = Path.Combine(App.NotebookCacheDirectory, notebook.Name + ";" + notebook.ID + ";" + notebook.OwnerID + ";" + notebook.Owner.FullName);
 
+
+            //////////////////
+
+
+            //foreach(var page in notebook.Pages)
+            //{
+            //    foreach(var pageObject in page.PageObjects)
+            //    {
+            //        pageObject.CreatorID = Person.Author.ID;
+            //        pageObject.ParentPage = page;
+            //        pageObject.ID = new Guid(pageObject.ID).ToCompactID();
+            //    }
+            //}
+
+
+            /// ////////////////
+
             //if(isFullSaveForced)
             //{
             //    folderPath += " - FORCED";
@@ -601,49 +618,6 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Static Methods
 
         #region Temp Methods
-
-        public static void CreateStudentListSeed()
-        {
-            var namesList = new List<string>
-                            {
-                                "Ivanoshka",
-                                "Adam",
-                                "Serenity",
-                                "Sarisha",
-                                "Selma",
-                                "Fadi",
-                                "Keaton",
-                                "Renata",
-                                "Deven",
-                                "Ruggero",
-                                "Isabel",
-                                "Trishyn",
-                                "Miles",
-                                "Satyri",
-                                "Julio",
-                                "Tyler",
-                                "Katherine",
-                                "Antinoe"
-                            };
-
-            foreach(var name in namesList)
-            {
-                var student = new Person
-                              {
-                                  FullName = name,
-                                  IsStudent = true
-                              };
-                ClassSubject.EmilyClass.StudentList.Add(student);
-            }
-
-            ClassSubject.EmilyClass.SaveClassSubject(App.ClassCacheDirectory);
-        }
-
-        public static void CreateClassPeriodSeed()
-        {
-            var classPeriod = ClassPeriod.CurrentClassPeriod;
-            classPeriod.SaveClassPeriod(App.ClassCacheDirectory);
-        }
 
         public static void GenerateSubmissionsFromOriginals()
         {

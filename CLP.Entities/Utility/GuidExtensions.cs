@@ -10,9 +10,9 @@ namespace CLP.Entities
             Argument.IsNotNull("guid", guid);
 
             var compactedID = Convert.ToBase64String(guid.ToByteArray());
-            compactedID = compactedID.Replace("/", "_").Replace("+", "-");
+            compactedID = compactedID.Replace("/", "_").Replace("+", "-").Replace("=","");
   
-            return compactedID.Substring(0, 22);
+            return compactedID;
         }
     }
 }

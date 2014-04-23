@@ -76,7 +76,7 @@ namespace Classroom_Learning_Partner
                     variant = "D";
                     break;
                 case UserMode.Instructor:
-                    variant = "I";
+                    variant = "T";
                     break;
                 case UserMode.Projector:
                     variant = "P";

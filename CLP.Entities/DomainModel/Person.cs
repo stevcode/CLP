@@ -15,7 +15,7 @@ namespace CLP.Entities
     [Serializable]
     public class Person : AEntityBase, IConnectedPerson
     {
-        private const string AUTHOR_ID = "00000000-0000-0000-1111-000000000001";
+        private const string AUTHOR_ID = "AUTHOR0000000000000000";
 
         #region Constructors
 
@@ -140,7 +140,7 @@ namespace CLP.Entities
                                   IsStudent = false
                               };
 
-        private const string TEST_SUBMITTER_ID = "00000000-0000-0000-5555-000000000005";
+        private const string TEST_SUBMITTER_ID = "TEST000000000000000000";
         public static Person TestSubmitter
         {
             get

@@ -8,7 +8,6 @@ namespace ConsoleScripts
     {
         static void Main(string[] args)
         {
-            DatabaseTesting();
             //while(true)
             //{
             //    Console.Write("> ");
@@ -18,6 +17,22 @@ namespace ConsoleScripts
             //        break;
             //    }
             //}
+
+            while(true)
+            {
+                Console.Write("> ");
+                var command = Console.ReadLine();
+                if(command == null)
+                {
+                    continue;
+                }
+                if(command == "exit")
+                {
+                    return;
+                }
+                var compactID = new Guid(command).ToCompactID();
+                Console.WriteLine("CompactID: " + compactID);
+            }
         }
 
         static void DatabaseTesting()

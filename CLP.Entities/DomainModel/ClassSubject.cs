@@ -241,7 +241,7 @@ namespace CLP.Entities
 
         public void SaveClassSubject(string folderPath)
         {
-            var fileName = Path.Combine(folderPath, "ClassSubject;" + ID + ".xml");
+            var fileName = Path.Combine(folderPath, "subject;" + ID + ".xml");
             ToXML(fileName);
         }
 
