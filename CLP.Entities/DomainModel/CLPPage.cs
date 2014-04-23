@@ -55,7 +55,7 @@ namespace CLP.Entities
             Height = LANDSCAPE_HEIGHT;
             Width = LANDSCAPE_WIDTH;
             CreationDate = DateTime.Now;
-            ID = Guid.NewGuid().ToString();
+            ID = Guid.NewGuid().ToCompactID();
             InitialAspectRatio = Width / Height;
         }
 
@@ -67,7 +67,7 @@ namespace CLP.Entities
         public CLPPage(Person owner, double height, double width)
         {
             CreationDate = DateTime.Now;
-            ID = Guid.NewGuid().ToString();
+            ID = Guid.NewGuid().ToCompactID();
             Owner = owner;
             Height = height;
             Width = width;

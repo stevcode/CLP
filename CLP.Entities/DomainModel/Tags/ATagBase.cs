@@ -28,7 +28,7 @@ namespace CLP.Entities
         public ATagBase()
         {
             CreationDate = DateTime.Now;
-            ID = Guid.NewGuid().ToString();
+            ID = Guid.NewGuid().ToCompactID();
         }
 
         /// <summary>

@@ -213,7 +213,7 @@ namespace CLP.Entities
                 return null;
             }
             newFuzzyFactorCard.CreationDate = DateTime.Now;
-            newFuzzyFactorCard.ID = Guid.NewGuid().ToString();
+            newFuzzyFactorCard.ID = Guid.NewGuid().ToCompactID();
             newFuzzyFactorCard.VersionIndex = 0;
             newFuzzyFactorCard.LastVersionIndex = null;
             newFuzzyFactorCard.ParentPage = ParentPage;

@@ -22,7 +22,7 @@ namespace CLP.Entities
         /// <summary>
         /// Initializes <see cref="Person" /> from scratch.
         /// </summary>
-        public Person() { ID = Guid.NewGuid().ToString(); }
+        public Person() { ID = Guid.NewGuid().ToCompactID(); }
 
         /// <summary>
         /// Initializes <see cref="Person" /> based on <see cref="SerializationInfo" />.

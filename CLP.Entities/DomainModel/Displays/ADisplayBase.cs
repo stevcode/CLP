@@ -17,7 +17,7 @@ namespace CLP.Entities
         public ADisplayBase()
         {
             CreationDate = DateTime.Now;
-            ID = Guid.NewGuid().ToString();
+            ID = Guid.NewGuid().ToCompactID();
         }
 
         /// <summary>

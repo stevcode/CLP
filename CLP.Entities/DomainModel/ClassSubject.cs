@@ -16,7 +16,7 @@ namespace CLP.Entities
         /// <summary>
         /// Initializes <see cref="ClassSubject" /> from scratch.
         /// </summary>
-        public ClassSubject() { ID = Guid.NewGuid().ToString(); }
+        public ClassSubject() { ID = Guid.NewGuid().ToCompactID(); }
 
         /// <summary>
         /// Initializes <see cref="ClassSubject" /> based on <see cref="SerializationInfo" />.

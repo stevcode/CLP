@@ -30,8 +30,6 @@ namespace Classroom_Learning_Partner
             Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
             base.OnStartup(e);
 
-            
-
             _currentUserMode = UserMode.Instructor;
 
             InitializeCatelSettings();
@@ -75,23 +73,23 @@ namespace Classroom_Learning_Partner
             switch(_currentUserMode)
             {
                 case UserMode.Server:
-                    variant = "Server";
+                    variant = "D";
                     break;
                 case UserMode.Instructor:
-                    variant = "Instructor";
+                    variant = "I";
                     break;
                 case UserMode.Projector:
-                    variant = "Projector";
+                    variant = "P";
                     break;
                 case UserMode.Student:
-                    variant = "Student";
+                    variant = "S";
                     break;
                 default:
                     variant = string.Empty;
                     break;
             }
 
-            LocalCacheDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "LocalCache" + variant);
+            LocalCacheDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Cache" + variant);
             if(!Directory.Exists(LocalCacheDirectory))
             {
                 Directory.CreateDirectory(LocalCacheDirectory);
@@ -108,6 +106,12 @@ namespace Classroom_Learning_Partner
             {
                 Directory.CreateDirectory(ClassCacheDirectory);
             }
+
+            ImageCacheDirectory = Path.Combine(LocalCacheDirectory, "Images");
+            if(!Directory.Exists(ImageCacheDirectory))
+            {
+                Directory.CreateDirectory(ImageCacheDirectory);
+            }
         }
 
         public static void ResetCache()
@@ -116,7 +120,7 @@ namespace Classroom_Learning_Partner
             {
                 var archiveDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "CacheArchive");
                 var now = DateTime.Now.ToString("yyyy.MM.dd.HH.mm.ss");
-                var newCacheDirectory = Path.Combine(archiveDirectory, "LocalCache - " + now);
+                var newCacheDirectory = Path.Combine(archiveDirectory, "Cache-" + now);
                 if(!Directory.Exists(archiveDirectory))
                 {
                     Directory.CreateDirectory(archiveDirectory);
@@ -187,8 +191,8 @@ namespace Classroom_Learning_Partner
 
         public static string LocalCacheDirectory { get; private set; }
         public static string NotebookCacheDirectory { get; private set; }
-
         public static string ClassCacheDirectory { get; private set; }
+        public static string ImageCacheDirectory { get; private set; }
 
         private static UserMode _currentUserMode = UserMode.Instructor;
         public static UserMode CurrentUserMode

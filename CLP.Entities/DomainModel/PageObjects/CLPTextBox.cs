@@ -69,7 +69,7 @@ namespace CLP.Entities
                 return null;
             }
             newTextBox.CreationDate = DateTime.Now;
-            newTextBox.ID = Guid.NewGuid().ToString();
+            newTextBox.ID = Guid.NewGuid().ToCompactID();
             newTextBox.VersionIndex = 0;
             newTextBox.LastVersionIndex = null;
             newTextBox.ParentPage = ParentPage;

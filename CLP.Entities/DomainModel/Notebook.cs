@@ -22,7 +22,7 @@ namespace CLP.Entities
         public Notebook()
         {
             CreationDate = DateTime.Now;
-            ID = Guid.NewGuid().ToString();
+            ID = Guid.NewGuid().ToCompactID();
         }
 
         /// <summary>

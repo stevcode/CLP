@@ -17,7 +17,7 @@ namespace CLP.Entities
         /// <summary>
         /// Initializes <see cref="ClassPeriod" /> from scratch.
         /// </summary>
-        public ClassPeriod() { ID = Guid.NewGuid().ToString(); }
+        public ClassPeriod() { ID = Guid.NewGuid().ToCompactID(); }
 
         /// <summary>
         /// Initializes <see cref="ClassPeriod" /> based on <see cref="SerializationInfo" />.

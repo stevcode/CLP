@@ -14,7 +14,7 @@ namespace CLP.Entities
         protected APageObjectBase()
         {
             CreationDate = DateTime.Now;
-            ID = Guid.NewGuid().ToString();
+            ID = Guid.NewGuid().ToCompactID();
         }
 
         /// <summary>
