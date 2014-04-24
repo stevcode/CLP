@@ -203,19 +203,6 @@ namespace Classroom_Learning_Partner.ViewModels
             hoverTimeElapsed = true;
         }
 
-        public virtual void EraserHitTest(string hitBoxName, object tag)
-        {
-            if(IsBackground && !App.MainWindowViewModel.IsAuthoring)
-            {
-                //don't erase
-            }
-            else
-            {
-                OnRemovePageObjectCommandExecute();
-            }
-        }
-
-
         #endregion //IPageObjectAdorners
 
         public virtual void ClearAdorners()

@@ -514,33 +514,6 @@ namespace Classroom_Learning_Partner.ViewModels
         
         #region Methods
 
-        public override void EraserHitTest(string hitBoxName, object tag)
-        {
-            //if(IsBackground && !App.MainWindowViewModel.IsAuthoring)
-            //{
-            //    return;
-            //}
-            
-            //if(hitBoxName == "StampHandleHitBox")
-            //{
-            //    var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
-            //    if(notebookWorkspaceViewModel != null)
-            //    {
-            //        var parentPage = notebookWorkspaceViewModel.Notebook.GetNotebookPageByID(PageObject.ParentPageID);
-
-            //        if(parentPage != null)
-            //        {
-            //            foreach(CLPPageViewModel pageVM in ViewModelManager.GetViewModelsOfModel(parentPage))
-            //            {
-            //                pageVM.IsInkCanvasHitTestVisible = true;
-            //            }
-
-            //            ACLPPageBaseViewModel.RemovePageObjectFromPage(PageObject);
-            //        }
-            //    }
-            //}
-        }
-
         private bool HasParts()
         {
             //var clpStamp = PageObject as CLPStamp;
