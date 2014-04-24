@@ -38,7 +38,14 @@ namespace Classroom_Learning_Partner.ViewModels
             NotebookPagesPanel = new NotebookPagesPanelViewModel(notebook);
             StudentWorkPanel = new StudentWorkPanelViewModel(notebook);
             ProgressPanel = new ProgressPanelViewModel(notebook);
-            LeftPanel = NotebookPagesPanel;
+            if(App.MainWindowViewModel.Ribbon.CurrentLeftPanel == Panels.Progress)
+            {
+                LeftPanel = ProgressPanel;
+            }
+            else
+            {
+                LeftPanel = NotebookPagesPanel;
+            }
 
             DisplaysPanel = new DisplaysPanelViewModel(notebook);
             RightPanel = DisplaysPanel;
