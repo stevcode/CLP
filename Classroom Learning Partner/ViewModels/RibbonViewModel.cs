@@ -891,6 +891,72 @@ namespace Classroom_Learning_Partner.ViewModels
             //}, null, "Converting Notebook Displays to XPS", 0.0 / 0.0);
         }
 
+        private void AddCLPPageToXPSDocument(CLPPage page, ref FixedDocument document)
+        {
+            page.TrimPage();
+            var printHeight = page.Width / page.InitialAspectRatio;
+
+            double transformAmount = 0;
+            do
+            {
+                var currentPageView = new CLPPagePreviewView { DataContext = page };
+                currentPageView.UpdateLayout();
+
+                var grid = new Grid();
+                grid.Children.Add(currentPageView);
+
+                var pageNumberOffset = 5.0;
+                if(page.SubmissionType != SubmissionTypes.Unsubmitted)
+                {
+                    var submitterLabel = new Label
+                    {
+                        FontSize = 20,
+                        FontWeight = FontWeights.Bold,
+                        FontStyle = FontStyles.Oblique,
+                        HorizontalAlignment = HorizontalAlignment.Right,
+                        VerticalAlignment = VerticalAlignment.Top,
+                        Content = page.Owner.FullName,
+                        Margin = new Thickness(0, transformAmount + 5, 5, 0)
+                    };
+                    grid.Children.Add(submitterLabel);
+                    pageNumberOffset = 30.0;
+                }
+
+                var pageIndexlabel = new Label
+                {
+                    FontSize = 20,
+                    FontWeight = FontWeights.Bold,
+                    FontStyle = FontStyles.Oblique,
+                    HorizontalAlignment = HorizontalAlignment.Right,
+                    VerticalAlignment = VerticalAlignment.Top,
+                    Content = "Page " + page.PageNumber,
+                    Margin = new Thickness(0, transformAmount + pageNumberOffset, 5, 0)
+                };
+                grid.Children.Add(pageIndexlabel);
+                grid.UpdateLayout();
+
+                var transform = new TransformGroup();
+                var translate = new TranslateTransform(0, -transformAmount);
+                transform.Children.Add(translate);
+                if(Math.Abs(page.Width - CLPPage.LANDSCAPE_WIDTH) < 0.001)
+                {
+                    var rotate = new RotateTransform(90.0);
+                    var translate2 = new TranslateTransform(816, 0);
+                    transform.Children.Add(rotate);
+                    transform.Children.Add(translate2);
+                }
+                grid.RenderTransform = transform;
+                transformAmount += printHeight;
+
+                var pageContent = new PageContent();
+                var fixedPage = new FixedPage();
+                fixedPage.Children.Add(grid);
+
+                ((System.Windows.Markup.IAddChild)pageContent).AddChild(fixedPage);
+                document.Pages.Add(pageContent);
+            } while(page.Height > transformAmount);
+        }
+
         /// <summary>
         /// Converts Notebook Pages to XPS.
         /// </summary>
@@ -898,92 +964,104 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnConvertToXPSCommandExecute()
         {
-            // TODO: Entities
-            //var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
-            //if(notebookWorkspaceViewModel == null)
-            //{
-            //    return;
-            //}
+            var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null)
+            {
+                return;
+            }
 
-            //Catel.Windows.PleaseWaitHelper.Show(() =>
-            //{
-            //    var notebook = notebookWorkspaceViewModel.Notebook;
-            //    string directoryPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\";
-            //    if(!Directory.Exists(directoryPath))
-            //    {
-            //        Directory.CreateDirectory(directoryPath);
-            //    }
+            Catel.Windows.PleaseWaitHelper.Show(() =>
+            {
+                var notebook = notebookWorkspaceViewModel.Notebook;
+                var directoryPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop),"Notebooks - XPS");
+                if(!Directory.Exists(directoryPath))
+                {
+                    Directory.CreateDirectory(directoryPath);
+                }
 
-            //    string fileName = notebook.NotebookName + ".xps";
-            //    string filePath = directoryPath + fileName;
-            //    if(File.Exists(filePath))
-            //    {
-            //        File.Delete(filePath);
-            //    }
+                var fileName = notebook.Name + ".xps";
+                var filePath = Path.Combine(directoryPath, fileName);
+                if(File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                }
 
-            //    var document = new FixedDocument();
-            //    document.DocumentPaginator.PageSize = new Size(96 * 11, 96 * 8.5);
+                var document = new FixedDocument();
+                document.DocumentPaginator.PageSize = new Size(96 * 11, 96 * 8.5);
 
-            //    foreach(var page in notebook.Pages)
-            //    {
-            //        foreach(var pageObject in page.PageObjects)
-            //        {
-            //            pageObject.ParentPage = page;
-            //        }
+                foreach(var page in notebook.Pages)
+                {
+                    page.TrimPage();
+                    var printHeight = page.Width / page.InitialAspectRatio;
 
-            //        page.TrimPage();
-            //        double printHeight = page.Width / page.InitialAspectRatio;
+                    double transformAmount = 0;
+                    do
+                    {
+                        var currentPageView = new CLPPagePreviewView { DataContext = page };
+                        currentPageView.UpdateLayout();
 
-            //        double transformAmount = 0;
-            //        do
-            //        {
-            //            var currentPageView = new CLPPagePreviewView { DataContext = page };
-            //            currentPageView.UpdateLayout();
+                        var grid = new Grid();
+                        grid.Children.Add(currentPageView);
 
-            //            var grid = new Grid();
-            //            grid.Children.Add(currentPageView);
-            //            var pageIndexlabel = new Label
-            //            {
-            //                FontSize = 20,
-            //                FontWeight = FontWeights.Bold,
-            //                FontStyle = FontStyles.Oblique,
-            //                HorizontalAlignment = HorizontalAlignment.Right,
-            //                VerticalAlignment = VerticalAlignment.Top,
-            //                Content = "Page " + page.PageIndex,
-            //                Margin = new Thickness(0, transformAmount + 5, 5, 0)
-            //            };
-            //            grid.Children.Add(pageIndexlabel);
-            //            grid.UpdateLayout();
+                        var pageNumberOffset = 5.0;
+                        if(page.SubmissionType != SubmissionTypes.Unsubmitted)
+                        {
+                            var submitterLabel = new Label
+                            {
+                                FontSize = 20,
+                                FontWeight = FontWeights.Bold,
+                                FontStyle = FontStyles.Oblique,
+                                HorizontalAlignment = HorizontalAlignment.Right,
+                                VerticalAlignment = VerticalAlignment.Top,
+                                Content = page.Owner.FullName,
+                                Margin = new Thickness(0, transformAmount + 5, 5, 0)
+                            };
+                            grid.Children.Add(submitterLabel);
+                            pageNumberOffset = 30.0;
+                        }
 
-            //            var transform = new TransformGroup();
-            //            var translate = new TranslateTransform(0, -transformAmount);
-            //            transform.Children.Add(translate);
-            //            if(page.Width == CLPPage.LANDSCAPE_WIDTH)
-            //            {
-            //                var rotate = new RotateTransform(90.0);
-            //                var translate2 = new TranslateTransform(816, 0);
-            //                transform.Children.Add(rotate);
-            //                transform.Children.Add(translate2);
-            //            }
-            //            grid.RenderTransform = transform;
-            //            transformAmount += printHeight;
+                        var pageIndexlabel = new Label
+                        {
+                            FontSize = 20,
+                            FontWeight = FontWeights.Bold,
+                            FontStyle = FontStyles.Oblique,
+                            HorizontalAlignment = HorizontalAlignment.Right,
+                            VerticalAlignment = VerticalAlignment.Top,
+                            Content = "Page " + page.PageNumber,
+                            Margin = new Thickness(0, transformAmount + pageNumberOffset, 5, 0)
+                        };
+                        grid.Children.Add(pageIndexlabel);
+                        grid.UpdateLayout();
 
-            //            var pageContent = new PageContent();
-            //            var fixedPage = new FixedPage();
-            //            fixedPage.Children.Add(grid);
+                        var transform = new TransformGroup();
+                        var translate = new TranslateTransform(0, -transformAmount);
+                        transform.Children.Add(translate);
+                        if(Math.Abs(page.Width - CLPPage.LANDSCAPE_WIDTH) < 0.001)
+                        {
+                            var rotate = new RotateTransform(90.0);
+                            var translate2 = new TranslateTransform(816, 0);
+                            transform.Children.Add(rotate);
+                            transform.Children.Add(translate2);
+                        }
+                        grid.RenderTransform = transform;
+                        transformAmount += printHeight;
 
-            //            ((System.Windows.Markup.IAddChild)pageContent).AddChild(fixedPage);
-            //            document.Pages.Add(pageContent);
-            //        } while(page.Height > transformAmount);
-            //    }
+                        var pageContent = new PageContent();
+                        var fixedPage = new FixedPage();
+                        fixedPage.Children.Add(grid);
 
-            //    //Save the document
-            //    var xpsDocument = new XpsDocument(filePath, FileAccess.ReadWrite);
-            //    var documentWriter = XpsDocument.CreateXpsDocumentWriter(xpsDocument);
-            //    documentWriter.Write(document);
-            //    xpsDocument.Close();
+                        ((System.Windows.Markup.IAddChild)pageContent).AddChild(fixedPage);
+                        document.Pages.Add(pageContent);
+                    } while(page.Height > transformAmount);
+                }
 
-            //}, null, "Converting Notebook to XPS", 0.0 / 0.0);
+                //Save the document
+                var xpsDocument = new XpsDocument(filePath, FileAccess.ReadWrite);
+                var documentWriter = XpsDocument.CreateXpsDocumentWriter(xpsDocument);
+                documentWriter.Write(document);
+                xpsDocument.Close();
+
+            }, null, "Converting Notebook Pages to XPS");
         }
 
         /// <summary>
@@ -1032,66 +1110,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //    foreach(var page in notebook.Submissions[currentPage.UniqueID])
             //    {
-            //        foreach(var pageObject in page.PageObjects)
-            //        {
-            //            pageObject.ParentPage = page;
-            //        }
-
-            //        page.TrimPage();
-            //        double printHeight = page.Width / page.InitialAspectRatio;
-
-            //        double transformAmount = 0;
-            //        do
-            //        {
-            //            var currentPageView = new CLPPagePreviewView { DataContext = page };
-            //            currentPageView.UpdateLayout();
-
-            //            var grid = new Grid();
-            //            grid.Children.Add(currentPageView);
-            //            var label = new Label
-            //            {
-            //                FontSize = 20,
-            //                FontWeight = FontWeights.Bold,
-            //                FontStyle = FontStyles.Oblique,
-            //                HorizontalAlignment = HorizontalAlignment.Right,
-            //                VerticalAlignment = VerticalAlignment.Top,
-            //                Content = page.Submitter.FullName,
-            //                Margin = new Thickness(0, transformAmount + 5, 5, 0)
-            //            };
-            //            grid.Children.Add(label);
-            //            var pageIndexlabel = new Label
-            //            {
-            //                FontSize = 20,
-            //                FontWeight = FontWeights.Bold,
-            //                FontStyle = FontStyles.Oblique,
-            //                HorizontalAlignment = HorizontalAlignment.Right,
-            //                VerticalAlignment = VerticalAlignment.Top,
-            //                Content = "Page " + page.PageIndex,
-            //                Margin = new Thickness(0, transformAmount + 30, 5, 0)
-            //            };
-            //            grid.Children.Add(pageIndexlabel);
-            //            grid.UpdateLayout();
-
-            //            var transform = new TransformGroup();
-            //            var translate = new TranslateTransform(0, -transformAmount);
-            //            transform.Children.Add(translate);
-            //            if(page.Width == CLPPage.LANDSCAPE_WIDTH)
-            //            {
-            //                var rotate = new RotateTransform(90.0);
-            //                var translate2 = new TranslateTransform(816, 0);
-            //                transform.Children.Add(rotate);
-            //                transform.Children.Add(translate2);
-            //            }
-            //            grid.RenderTransform = transform;
-            //            transformAmount += printHeight;
-
-            //            var pageContent = new PageContent();
-            //            var fixedPage = new FixedPage();
-            //            fixedPage.Children.Add(grid);
-
-            //            ((System.Windows.Markup.IAddChild)pageContent).AddChild(fixedPage);
-            //            document.Pages.Add(pageContent);
-            //        } while(page.Height > transformAmount);
+    
             //    }
 
             //    //Save the document
@@ -1143,66 +1162,7 @@ namespace Classroom_Learning_Partner.ViewModels
                
             //  //  foreach(var page in notebook.Submissions.Keys.SelectMany(pageID => notebook.Submissions[pageID]))
             //    {
-            //        foreach(var pageObject in page.PageObjects)
-            //        {
-            //            pageObject.ParentPage = page;
-            //        }
-
-            //        page.TrimPage();
-            //        double printHeight = page.Width / page.InitialAspectRatio;
-
-            //        double transformAmount = 0;
-            //        do
-            //        {
-            //            var currentPageView = new CLPPagePreviewView { DataContext = page };
-            //            currentPageView.UpdateLayout();
-
-            //            var grid = new Grid();
-            //            grid.Children.Add(currentPageView);
-            //            var label = new Label
-            //            {
-            //                FontSize = 20,
-            //                FontWeight = FontWeights.Bold,
-            //                FontStyle = FontStyles.Oblique,
-            //                HorizontalAlignment = HorizontalAlignment.Right,
-            //                VerticalAlignment = VerticalAlignment.Top,
-            //                Content = page.Submitter.FullName,
-            //                Margin = new Thickness(0, transformAmount + 5, 5, 0)
-            //            };
-            //            grid.Children.Add(label);
-            //            var pageIndexlabel = new Label
-            //            {
-            //                FontSize = 20,
-            //                FontWeight = FontWeights.Bold,
-            //                FontStyle = FontStyles.Oblique,
-            //                HorizontalAlignment = HorizontalAlignment.Right,
-            //                VerticalAlignment = VerticalAlignment.Top,
-            //                Content = "Page " + page.PageIndex,
-            //                Margin = new Thickness(0, transformAmount + 30, 5, 0)
-            //            };
-            //            grid.Children.Add(pageIndexlabel);
-            //            grid.UpdateLayout();
-
-            //            var transform = new TransformGroup();
-            //            var translate = new TranslateTransform(0, -transformAmount);
-            //            transform.Children.Add(translate);
-            //            if(page.Width == CLPPage.LANDSCAPE_WIDTH)
-            //            {
-            //                var rotate = new RotateTransform(90.0);
-            //                var translate2 = new TranslateTransform(816, 0);
-            //                transform.Children.Add(rotate);
-            //                transform.Children.Add(translate2);
-            //            }
-            //            grid.RenderTransform = transform;
-            //            transformAmount += printHeight;
-
-            //            var pageContent = new PageContent();
-            //            var fixedPage = new FixedPage();
-            //            fixedPage.Children.Add(grid);
-
-            //            ((System.Windows.Markup.IAddChild)pageContent).AddChild(fixedPage);
-            //            document.Pages.Add(pageContent);
-            //        } while(page.Height > transformAmount);
+         
             //    }
             //         }
 
