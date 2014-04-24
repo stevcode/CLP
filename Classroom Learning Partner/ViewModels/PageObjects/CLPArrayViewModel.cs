@@ -1238,8 +1238,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Methods
 
-        public override bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown) { return false; }
-
         public override void EraserHitTest(string hitBoxName, object tag)
         {
             if(IsBackground && !App.MainWindowViewModel.IsAuthoring)

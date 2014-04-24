@@ -24,7 +24,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         double CloseAdornerTimeOut { get; set; }
 
-        bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown);
+       // bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown);
 
         //TODO: Steve - Add CanMousePassThrough boolean to allow the mouse to pass it's mouse enter event to pageObjects with a lower z-index below itself.
     }

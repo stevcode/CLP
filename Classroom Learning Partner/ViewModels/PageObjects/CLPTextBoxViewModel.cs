@@ -24,16 +24,5 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData TextProperty = RegisterProperty("Text", typeof(string));
-
-        public override bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown)
-        {
-            if(IsBackground && App.MainWindowViewModel.IsAuthoring)
-            {
-                IsMouseOverShowEnabled = true;
-                return false;
-            }
-            IsMouseOverShowEnabled = false;
-            return true;
-        }
     }
 }
