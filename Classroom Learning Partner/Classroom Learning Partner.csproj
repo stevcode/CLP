@@ -251,6 +251,7 @@
     <Compile Include="ViewModels\PageObjects\FuzzyFactorCardViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPRegionViewModel.cs" />
     <Compile Include="ViewModels\Panels\APanelBaseViewModel.cs" />
+    <Compile Include="ViewModels\Panels\ClassPeriodForDisplay.cs" />
     <Compile Include="ViewModels\Panels\DisplaysPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\NotebookPagesPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\StagingPanelViewModel.cs" />
@@ -260,6 +261,9 @@
     <Compile Include="ViewModels\Panels\SubmissionHistoryPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\SubmissionsPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\WebcamPanelViewModel.cs" />
+    <Compile Include="Views\Modal Windows\ClassPeriodChooserView.xaml.cs">
+      <DependentUpon>ClassPeriodChooserView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Modal Windows\FuzzyFactorCardWithTiles.xaml.cs">
       <DependentUpon>FuzzyFactorCardWithTiles.xaml</DependentUpon>
     </Compile>
@@ -471,6 +475,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Resources\CLPFlatTheme.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Modal Windows\ClassPeriodChooserView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
