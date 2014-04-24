@@ -147,6 +147,17 @@ namespace CLP.Entities
 
         public static readonly PropertyData CurriculumProperty = RegisterProperty("Curriculum", typeof(string), string.Empty);
 
+        /// <summary>
+        /// List of all the HashIDs for each <see cref="CLPImage" /> that is in the notebook.
+        /// </summary>
+        public List<string> ImagePoolHashIDs
+        {
+            get
+            {
+                return Pages.SelectMany(page => page.PageObjects).OfType<CLPImage>().Select(image => image.ImageHashID).ToList().Distinct().ToList();
+            }
+        }
+
         #region Navigation Properties
 
         /// <summary>

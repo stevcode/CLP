@@ -34,6 +34,7 @@ namespace Classroom_Learning_Partner.ViewModels
         StudentWork,
         Progress,
         Displays,
+        PageInfo,
         Webcam
     }
 
@@ -47,7 +48,7 @@ namespace Classroom_Learning_Partner.ViewModels
             get { return App.MainWindowViewModel; }
         }
 
-        private static CLPPage CurrentPage 
+        public static CLPPage CurrentPage 
         {
             get { return NotebookPagesPanelViewModel.GetCurrentPage(); }
         }

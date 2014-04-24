@@ -15,8 +15,6 @@ namespace CLP.Entities
     [Serializable]
     public class Person : AEntityBase, IConnectedPerson
     {
-        private const string AUTHOR_ID = "AUTHOR0000000000000000";
-
         #region Constructors
 
         /// <summary>
@@ -93,68 +91,79 @@ namespace CLP.Entities
 
         #endregion //Properties
 
-        private static readonly Person DefaultAuthor = new Person
-                                                       {
-                                                           ID = AUTHOR_ID,
-                                                           FullName = "AUTHOR",
-                                                           IsStudent = false
-                                                       };
+        #region Static Persons
+
         public static Person Author
         {
-            get
-            {
-                return DefaultAuthor;
-            }
+            get { return AuthorPerson; }
         }
+
+        public const string AUTHOR_ID = "AUTHOR0000000000000000";
+
+        private static readonly Person AuthorPerson = new Person
+                                                      {
+                                                          ID = AUTHOR_ID,
+                                                          FullName = "AUTHOR",
+                                                          IsStudent = false
+                                                      };
+
+        public static Person TestSubmitter
+        {
+            get { return TestSubmitterPerson; }
+        }
+
+        private const string TEST_SUBMITTER_ID = "TEST000000000000000000";
+
+        private static readonly Person TestSubmitterPerson = new Person
+                                                             {
+                                                                 ID = TEST_SUBMITTER_ID,
+                                                                 FullName = "TestSubmitter",
+                                                                 IsStudent = true
+                                                             };
+
+        public static Person Guest
+        {
+            get { return GuestPerson; }
+        }
+
+        private static readonly Person GuestPerson = new Person
+                                                     {
+                                                         ID = Guid.NewGuid().ToCompactID(),
+                                                         FullName = "GUEST",
+                                                         IsStudent = true
+                                                     };
 
         //TODO: Remove once database established
         private const string EMILY_ID = "00000000-0000-0000-2222-000000000002";
+
         public static Person Emily
         {
-            get
-            {
-                return _teacherPerson;
-            }
+            get { return TeacherPerson; }
         }
-        private static readonly Person _teacherPerson = new Person
-                              {
-                                  ID = EMILY_ID,
-                                  FullName = "Emily Sparks",
-                                  IsStudent = false
-                              };
+
+        private static readonly Person TeacherPerson = new Person
+                                                       {
+                                                           ID = EMILY_ID,
+                                                           FullName = "Emily Sparks",
+                                                           IsStudent = false
+                                                       };
 
         private const string EMILY_PROJECTOR_ID = "00000000-0000-0000-2222-000000000003";
+
         public static Person EmilyProjector
         {
-            get
-            {
-                return _projectorPerson;
-            }
+            get { return ProjectorPerson; }
         }
 
-        private static readonly Person _projectorPerson = new Person
-                              {
-                                  ID = EMILY_PROJECTOR_ID,
-                                  FullName = "Projector",
-                                  Alias = "Emily Sparks",
-                                  IsStudent = false
-                              };
+        private static readonly Person ProjectorPerson = new Person
+                                                         {
+                                                             ID = EMILY_PROJECTOR_ID,
+                                                             FullName = "Projector",
+                                                             Alias = "Emily Sparks",
+                                                             IsStudent = false
+                                                         };
 
-        private const string TEST_SUBMITTER_ID = "TEST000000000000000000";
-        public static Person TestSubmitter
-        {
-            get
-            {
-                return _testSubmitterPerson;
-            }
-        }
-
-        private static readonly Person _testSubmitterPerson = new Person
-        {
-            ID = TEST_SUBMITTER_ID,
-            FullName = "TestSubmitter",
-            IsStudent = true
-        };
+        #endregion //Static Persons
 
         #region IConnectedPerson Members
 
