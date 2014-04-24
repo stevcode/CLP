@@ -34,8 +34,8 @@
         <Label Grid.Row="0" Grid.Column="0" Content="Chapter Title" HorizontalAlignment="Right" />
         <TextBox Grid.Row="0" Grid.Column="1" Name="ChapterTitle" />
 
-        <Label Grid.Row="1" Grid.Column="0" Content="Section Title" HorizontalAlignment="Right" />
-        <TextBox Grid.Row="1" Grid.Column="1" Name="SectionTitle" />
+        <Label Grid.Row="1" Grid.Column="0" Content="Subchapter Title" HorizontalAlignment="Right" />
+        <TextBox Grid.Row="1" Grid.Column="1" Name="SubchapterTitle" />
 
         <Label Grid.Row="2" Grid.Column="0" Content="Page Number" HorizontalAlignment="Right" />
         <TextBox Grid.Row="2" Grid.Column="1" Name="PageNumber" />

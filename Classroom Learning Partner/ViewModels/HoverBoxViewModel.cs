@@ -23,70 +23,26 @@ namespace Classroom_Learning_Partner.ViewModels
             IsStarred = false;
             Topics = "";
 
-            //if(Page.PageTopics != null) //TODO: PageTopics gone, need to be Tags
-            //{
-            //    foreach(string topic in Page.PageTopics)
-            //    {
-            //        Topics += "Page Topic: " + topic + "\n";
-            //    }
-            //}
-
-            // TODO: Entities
-            //if(Page.PageTags != null)
-            //{
-            //    foreach(Tag tag in Page.PageTags)
-            //    {
-            //        if(tag.TagType == null)
-            //        {
-            //            continue;
-            //        } // Skip tags that somehow didn't get a TagType, to avoid an exception in the next line
-            //        if(tag.TagType.Name == CorrectnessTagType.Instance.Name)
-            //        {
-            //            if(tag.Value.Count > 0)
-            //            {
-            //                String correct = (String)tag.Value.ElementAt(0).Value;
-            //                if(correct == "Correct")
-            //                {
-            //                    Topics += "Correctness: Correct \n";
-            //                    IsCorrect = true;
-            //                    IsIncorrect = false;
-            //                    IsUnknown = false;
-            //                }
-            //                else if(correct == "Incorrect")
-            //                {
-            //                    Topics += "Correctness: Incorrect \n";
-            //                    IsIncorrect = true;
-            //                    IsCorrect = false;
-            //                    IsUnknown = false;
-            //                }
-            //                else
-            //                {
-            //                    Topics += "Correctness: Unknown \n";
-            //                    IsUnknown = true;
-            //                    IsCorrect = false;
-            //                    IsIncorrect = false;
-            //                }
-            //            }
-            //        }
-            //        if(tag.TagType.Name == StarredTagType.Instance.Name)
-            //        {
-            //            if(tag.Value.Count > 0)
-            //            {
-            //                String star = (String)tag.Value.ElementAt(0).Value;
-            //                if(star == "Starred")
-            //                {
-            //                    Topics += "Starred: True \n";
-            //                    IsStarred = true;
-            //                }
-            //                else
-            //                {
-            //                    Topics += "Starred: False \n";
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
-
+            foreach(ATagBase t in Page.Tags)
+            {
+                if (t is StarredTag && t.Value == "Starred") 
+                {
+                    IsStarred = true;
+                }
+                else if(t is CorrectnessTag)
+                {
+                    if(t.Value == "Correct")
+                    {
+                        IsCorrect = true;
+                        IsUnknown = false;
+                    }
+                    else if(t.Value == "Incorrect")
+                    {
+                        IsIncorrect = true;
+                        IsUnknown = false;
+                    }
+                }
+            }
             MarkCorrectCommand = new Command<MouseEventArgs>(OnMarkCorrectCommandExecute);
             MarkIncorrectCommand = new Command<MouseEventArgs>(OnMarkIncorrectCommandExecute);
             MarkUnknownCommand = new Command<MouseEventArgs>(OnMarkUnknownCommandExecute);
@@ -196,27 +152,10 @@ namespace Classroom_Learning_Partner.ViewModels
             IsCorrect = !IsCorrect;
             if(IsCorrect)
             {
-                // TODO: Entities
-                //if(Page.PageTags != null)
-                //{
-                //    foreach(Tag tag in Page.PageTags)
-                //    {
-                //        if(tag.TagType.Name == CorrectnessTagType.Instance.Name)
-                //        {
-                //            tag.Value.Clear();
-                //            tag.Value.Add(new TagOptionValue("Correct", "..\\Images\\Correct.png"));
-                //        }
-                //    }
-                //}
-                //IsIncorrect = false;
-                //IsUnknown = false;
+                IsIncorrect = false;
+                IsUnknown = false;
+                Page.AddTag(new CorrectnessTag(Page, CorrectnessTag.AcceptedValues.Correct));
             }
-            //  CLPNotebook notebook = (App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).Notebook;
-            //  notebook.Submissions.Remove(Page.UniqueID);
-            //notebook.AddStudentSubmission(Page.UniqueID, Page);
-            //var submissionsPanel = NotebookPagesPanelViewModel.GetSubmissionsPanelViewModel();
-            //submissionsPanel.SubmissionPages.Remove(Page);
-            //submissionsPanel.SubmissionPages.Add(Page);
         }
 
         /// <summary>
@@ -226,29 +165,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnMarkIncorrectCommandExecute(MouseEventArgs e)
         {
-            Console.WriteLine("Marking INcorrect");
+            Console.WriteLine("Marking Incorrect");
             IsIncorrect = !IsIncorrect;
             if(IsIncorrect)
             {
                 IsCorrect = false;
                 IsUnknown = false;
-                // TODO: Entities
-                //if(Page.PageTags != null)
-                //{
-                //    Console.WriteLine("[age tags:" + Page.PageTags.Count);
-                //    foreach(Tag tag in Page.PageTags)
-                //    {
-                //        if(tag.TagType.Name == CorrectnessTagType.Instance.Name)
-                //        {
-                //            tag.Value.Clear();
-                //            tag.Value.Add(new TagOptionValue("Incorrect", "..\\Images\\Incorrect.png"));
-                //        }
-                //    }
-                //}
+                Page.AddTag(new CorrectnessTag(Page, CorrectnessTag.AcceptedValues.Incorrect));
             }
-            //var submissionsPanel = NotebookPagesPanelViewModel.GetSubmissionsPanelViewModel();
-            //submissionsPanel.SubmissionPages.Remove(Page);
-            //submissionsPanel.SubmissionPages.Add(Page);
         }
 
         /// <summary>
@@ -265,23 +189,8 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 IsCorrect = false;
                 IsIncorrect = false;
-                // TODO: Entities
-                //if(Page.PageTags != null)
-                //{
-                //    Console.WriteLine("in unknown:" + Page.PageTags.Count);
-                //    foreach(Tag tag in Page.PageTags)
-                //    {
-                //        if(tag.TagType.Name == CorrectnessTagType.Instance.Name)
-                //        {
-                //            tag.Value.Clear();
-                //            tag.Value.Add(new TagOptionValue("Unknown", ""));
-                //        }
-                //    }
-                //}
+                Page.AddTag(new CorrectnessTag(Page, CorrectnessTag.AcceptedValues.Unknown));
             }
-            //var submissionsPanel = NotebookPagesPanelViewModel.GetSubmissionsPanelViewModel();
-            //submissionsPanel.SubmissionPages.Remove(Page);
-            //submissionsPanel.SubmissionPages.Add(Page);
         }
 
         /// <summary>
@@ -292,32 +201,14 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnToggleStarCommandExecute(MouseEventArgs e)
         {
             IsStarred = !IsStarred;
-            // TODO: Entities
-            //if(Page.PageTags != null)
-            //{
-            //    foreach(Tag tag in Page.PageTags)
-            //    {
-            //        if(tag.TagType.Name == StarredTagType.Instance.Name)
-            //        {
-            //            Console.WriteLine("Name: " + tag.TagType.Name + " value" + tag.Value.ElementAt(0).Value);
-
-            //            tag.Value.Clear();
-            //            if(IsStarred)
-            //            {
-            //                Topics.Replace("Starred: True", "Starred: False");
-            //                tag.Value.Add(new TagOptionValue("Starred", "..\\Images\\Starred.png"));
-            //            }
-            //            else
-            //            {
-            //                Topics.Replace("Starred: False", "Starred: True");
-            //                tag.Value.Add(new TagOptionValue("Unstarred", "..\\Images\\Unstarred.png"));
-            //            }
-            //        }
-            //    }
-            //}
-            //var submissionsPanel = NotebookPagesPanelViewModel.GetSubmissionsPanelViewModel();
-            //submissionsPanel.SubmissionPages.Remove(Page);
-            //submissionsPanel.SubmissionPages.Add(Page);
+            if(IsStarred)
+            {
+                Page.AddTag(new StarredTag(Page, StarredTag.AcceptedValues.Starred));
+            }
+            else
+            {
+                Page.AddTag(new StarredTag(Page, StarredTag.AcceptedValues.Unstarred));
+            }
         }
 
         /// <summary>
