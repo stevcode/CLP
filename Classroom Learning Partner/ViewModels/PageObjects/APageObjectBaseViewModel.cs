@@ -203,61 +203,6 @@ namespace Classroom_Learning_Partner.ViewModels
             hoverTimeElapsed = true;
         }
 
-        public virtual bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown)
-        {
-            if (isMouseDown)
-            {
-                hoverTimer.Stop();
-                hoverTimeElapsed = false;
-                timerRunning = false;
-                return true;
-            }
-
-            if(IsBackground)
-            {
-                if(App.MainWindowViewModel.IsAuthoring)
-                {
-                    IsMouseOverShowEnabled = true;
-                    if(!timerRunning)
-                    {
-                        timerRunning = true;
-                        hoverTimer.Start();
-                    }
-                }
-                else
-                {
-                    IsMouseOverShowEnabled = false;
-                    hoverTimer.Stop();
-                    timerRunning = false;
-                    hoverTimeElapsed = false;
-                }
-            }
-            else
-            {
-                IsMouseOverShowEnabled = true;
-                if(!timerRunning)
-                {
-                    timerRunning = true;
-                    hoverTimer.Start();
-                }
-            }
-
-            return !hoverTimeElapsed;
-        }
-
-        public virtual void EraserHitTest(string hitBoxName, object tag)
-        {
-            if(IsBackground && !App.MainWindowViewModel.IsAuthoring)
-            {
-                //don't erase
-            }
-            else
-            {
-                OnRemovePageObjectCommandExecute();
-            }
-        }
-
-
         #endregion //IPageObjectAdorners
 
         public virtual void ClearAdorners()

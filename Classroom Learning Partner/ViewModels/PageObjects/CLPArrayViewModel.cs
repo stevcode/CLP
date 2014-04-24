@@ -1238,51 +1238,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Methods
 
-        public override bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown) { return false; }
-
-        public override void EraserHitTest(string hitBoxName, object tag)
-        {
-            if(IsBackground && !App.MainWindowViewModel.IsAuthoring)
-            {
-                //don't erase
-            }
-            else if(hitBoxName == "DivisionHitBox")
-            {
-                var division = tag as CLPArrayDivision;
-                if(division.Position != 0.0) //don't delete first division
-                {
-                    if(division.Orientation == ArrayDivisionOrientation.Horizontal)
-                    {
-                        var divAbove = (PageObject as CLPArray).FindDivisionAbove(division.Position, (PageObject as CLPArray).HorizontalDivisions);
-                        (PageObject as CLPArray).HorizontalDivisions.Remove(divAbove);
-                        (PageObject as CLPArray).HorizontalDivisions.Remove(division);
-
-                        //Add new division unless we removed the only division line
-                        if((PageObject as CLPArray).HorizontalDivisions.Count > 0)
-                        {
-                            var newLength = divAbove.Length + division.Length;
-                            var newDivision = new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, divAbove.Position, newLength, 0);
-                            (PageObject as CLPArray).HorizontalDivisions.Add(newDivision);
-                        }
-                    }
-                    if(division.Orientation == ArrayDivisionOrientation.Vertical)
-                    {
-                        var divAbove = (PageObject as CLPArray).FindDivisionAbove(division.Position, (PageObject as CLPArray).VerticalDivisions);
-                        (PageObject as CLPArray).VerticalDivisions.Remove(divAbove);
-                        (PageObject as CLPArray).VerticalDivisions.Remove(division);
-
-                        //Add new division unless we removed the only division line
-                        if((PageObject as CLPArray).VerticalDivisions.Count > 0)
-                        {
-                            var newLength = divAbove.Length + division.Length;
-                            var newDivision = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, divAbove.Position, newLength, 0);
-                            (PageObject as CLPArray).VerticalDivisions.Add(newDivision);
-                        }
-                    }
-                }
-            }
-        }
-
         public override void ClearAdorners()
         {
             IsAdornerVisible = false;

@@ -55,7 +55,7 @@ namespace CLP.Entities
             Height = LANDSCAPE_HEIGHT;
             Width = LANDSCAPE_WIDTH;
             CreationDate = DateTime.Now;
-            ID = Guid.NewGuid().ToString();
+            ID = Guid.NewGuid().ToCompactID();
             InitialAspectRatio = Width / Height;
         }
 
@@ -67,7 +67,7 @@ namespace CLP.Entities
         public CLPPage(Person owner, double height, double width)
         {
             CreationDate = DateTime.Now;
-            ID = Guid.NewGuid().ToString();
+            ID = Guid.NewGuid().ToCompactID();
             Owner = owner;
             Height = height;
             Width = width;
@@ -149,6 +149,17 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData LastVersionIndexProperty = RegisterProperty("LastVersionIndex", typeof(uint?));
+
+        /// <summary>
+        /// Differentiation Level of the <see cref="CLPPage" />.
+        /// </summary>
+        public string DifferentiationLevel
+        {
+            get { return GetValue<string>(DifferentiationLevelProperty); }
+            set { SetValue(DifferentiationLevelProperty, value); }
+        }
+
+        public static readonly PropertyData DifferentiationLevelProperty = RegisterProperty("DifferentiationLevel", typeof(string), "0");
 
         /// <summary>
         /// The type of page.
@@ -581,9 +592,13 @@ namespace CLP.Entities
 
         public bool IsCached { get; set; }
 
-        public void ToXML(string fileName)
+        public void ToXML(string fileName, bool serializeStrokes = true)
         {
-            SerializedStrokes = StrokeDTO.SaveInkStrokes(InkStrokes);
+            if(serializeStrokes)
+            {
+                SerializedStrokes = StrokeDTO.SaveInkStrokes(InkStrokes);
+            }
+            
             var fileInfo = new FileInfo(fileName);
             if(!Directory.Exists(fileInfo.DirectoryName))
             {

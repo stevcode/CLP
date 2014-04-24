@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.ServiceModel;
 using System.Windows;
 using System.Windows.Threading;
+using Catel.Data;
 using Classroom_Learning_Partner.ViewModels;
 using CLP.Entities;
 
@@ -180,7 +182,7 @@ namespace Classroom_Learning_Partner
                 return;
             }
             submission.InkStrokes = StrokeDTO.LoadInkStrokes(submission.SerializedStrokes);
-            var currentNotebook = App.MainWindowViewModel.OpenNotebooks.FirstOrDefault(notebook => notebookID == notebook.ID && notebook.OwnerID == App.MainWindowViewModel.CurrentUser.ID);
+            var currentNotebook = App.MainWindowViewModel.OpenNotebooks.FirstOrDefault(notebook => notebookID == notebook.ID && notebook.OwnerID == Person.Emily.ID);
 
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                        (DispatcherOperationCallback)delegate
@@ -289,6 +291,50 @@ namespace Classroom_Learning_Partner
                 return;
             }
             notebook.CurrentPage = notebook.Pages.First();
+            foreach(var page in notebook.Pages)
+            {
+                page.InkStrokes = StrokeDTO.LoadInkStrokes(page.SerializedStrokes);
+            }
+
+            foreach(var page in notebook.Pages)
+            {
+                foreach(var notebookName in MainWindowViewModel.AvailableLocalNotebookNames)
+                {
+                    var notebookInfo = notebookName.Split(';');
+                    if(notebookInfo.Length != 4 ||
+                       notebookInfo[2] == Person.Author.ID ||
+                       notebookInfo[2] == Person.Emily.ID ||
+                       notebookInfo[2] == Person.EmilyProjector.ID)
+                    {
+                        continue;
+                    }
+
+                    var folderPath = Path.Combine(App.NotebookCacheDirectory, notebookName);
+                    if(!Directory.Exists(folderPath))
+                    {
+                        continue;
+                    }
+
+                    var submissionsPath = Path.Combine(folderPath, "Pages", "Submissions");
+                    if(!Directory.Exists(submissionsPath))
+                    {
+                        continue;
+                    }
+
+                    var submissionPaths = Directory.EnumerateFiles(submissionsPath, "*.xml");
+
+                    foreach(var submissionPath in submissionPaths)
+                    {
+                        var submissionFileName = Path.GetFileNameWithoutExtension(submissionPath);
+                        if(submissionFileName != null && submissionFileName.Contains(page.ID))
+                        {
+                            var submission = ModelBase.Load<CLPPage>(submissionPath, SerializationMode.Xml);
+                            submission.InkStrokes = StrokeDTO.LoadInkStrokes(submission.SerializedStrokes);
+                            page.Submissions.Add(submission);
+                        }
+                    }
+                }
+            }
 
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                        (DispatcherOperationCallback)delegate

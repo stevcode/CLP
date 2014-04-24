@@ -686,7 +686,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
             PageObjects.CollectionChanged -= PageObjects_CollectionChanged;
-            var newUniqueID = Guid.NewGuid().ToString();
+            var newUniqueID = Guid.NewGuid().ToCompactID();
             stroke.SetStrokeID(newUniqueID);
             stroke.SetStrokeOwnerID(App.MainWindowViewModel.CurrentUser.ID);
             stroke.SetStrokeVersionIndex(0);
@@ -833,7 +833,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 var addedStrokeIDs = new List<string>();
                 var removedStrokes = new List<Stroke>();
-                var strokeID = Guid.NewGuid().ToString();
+                var strokeID = Guid.NewGuid().ToCompactID();
                 stroke.SetStrokeID(strokeID);
                 stroke.SetStrokeOwnerID(App.MainWindowViewModel.CurrentUser.ID);
                 stroke.SetStrokeVersionIndex(0);
@@ -868,14 +868,14 @@ namespace Classroom_Learning_Partner.ViewModels
                 var strokes = addedStrokes as IList<Stroke> ?? addedStrokes.ToList();
                 foreach(var stroke in strokes)
                 {
-                    var newStrokeID = Guid.NewGuid().ToString();
+                    var newStrokeID = Guid.NewGuid().ToCompactID();
                     stroke.SetStrokeID(newStrokeID);
 
                     //Ensures truly uniqueIDs
                     var stroke1 = stroke;
                     foreach(string newUniqueID in from id in removedStrokeIDs
                                                   where id == stroke1.GetStrokeID()
-                                                  select Guid.NewGuid().ToString())
+                                                  select Guid.NewGuid().ToCompactID())
                     {
                         stroke.SetStrokeID(newUniqueID);
                     }

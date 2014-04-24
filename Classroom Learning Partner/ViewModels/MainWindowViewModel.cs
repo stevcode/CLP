@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Catel.Data;
 using Catel.MVVM;
@@ -191,6 +192,17 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Bindings
 
         #region Properties
+
+        /// <summary>
+        /// ImagePool for the current CLP instance, populated by all open notebooks.
+        /// </summary>
+        public Dictionary<string,BitmapImage> ImagePool
+        {
+            get { return GetValue<Dictionary<string,BitmapImage>>(ImagePoolProperty); }
+            set { SetValue(ImagePoolProperty, value); }
+        }
+
+        public static readonly PropertyData ImagePoolProperty = RegisterProperty("ImagePool", typeof(Dictionary<string,BitmapImage>), () => new Dictionary<string,BitmapImage>());
 
         /// <summary>
         /// The <see cref="Person" /> using the program.
@@ -427,6 +439,23 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             var folderPath = Path.Combine(App.NotebookCacheDirectory, notebook.Name + ";" + notebook.ID + ";" + notebook.OwnerID + ";" + notebook.Owner.FullName);
 
+
+            //////////////////
+
+
+            //foreach(var page in notebook.Pages)
+            //{
+            //    foreach(var pageObject in page.PageObjects)
+            //    {
+            //        pageObject.CreatorID = Person.Author.ID;
+            //        pageObject.ParentPage = page;
+            //        pageObject.ID = new Guid(pageObject.ID).ToCompactID();
+            //    }
+            //}
+
+
+            /// ////////////////
+
             //if(isFullSaveForced)
             //{
             //    folderPath += " - FORCED";
@@ -520,9 +549,70 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             notebook.CurrentPage = notebook.Pages.First();
             App.MainWindowViewModel.OpenNotebooks.Add(notebook);
-            var ownerNotebook = notebook.CopyForNewOwner(App.MainWindowViewModel.CurrentUser);
-            App.MainWindowViewModel.OpenNotebooks.Add(ownerNotebook);
-            App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(ownerNotebook);
+
+            var copiedNotebook = notebook.CopyForNewOwner(App.MainWindowViewModel.CurrentUser);
+            var notebookToUse = copiedNotebook;
+
+            var storedNotebookFolderName = copiedNotebook.Name + ";" + copiedNotebook.ID + ";" + copiedNotebook.OwnerID + ";" + copiedNotebook.Owner.FullName;
+            var storedNotebookFolderPath = Path.Combine(App.NotebookCacheDirectory, storedNotebookFolderName);
+            if(Directory.Exists(storedNotebookFolderPath))
+            {
+                var pageIDs = App.MainWindowViewModel.CurrentClassPeriod.PageIDs;
+                var storedNotebook = Notebook.OpenPartialNotebook(storedNotebookFolderPath, pageIDs, new List<string>());
+                if(storedNotebook != null)
+                {
+                    var loadedPageIDs = storedNotebook.Pages.Select(page => page.ID).ToList();
+                    foreach(var page in copiedNotebook.Pages.Where(page => !loadedPageIDs.Contains(page.ID))) 
+                    {
+                        storedNotebook.Pages.Add(page);
+                    }
+                    var orderedPages = storedNotebook.Pages.OrderBy(x => x.PageNumber).ToList();
+                    storedNotebook.Pages = new ObservableCollection<CLPPage>(orderedPages);
+                    notebookToUse = storedNotebook;
+                }
+            }
+
+            foreach(var page in notebookToUse.Pages)
+            {
+                foreach(var notebookName in AvailableLocalNotebookNames)
+                {
+                    var notebookInfo = notebookName.Split(';');
+                    if(notebookInfo.Length != 4 ||
+                       notebookInfo[2] == Person.Author.ID ||
+                       notebookInfo[2] == Person.Emily.ID ||
+                       notebookInfo[2] == Person.EmilyProjector.ID)
+                    {
+                        continue;
+                    }
+
+                    var folderPath = Path.Combine(App.NotebookCacheDirectory, notebookName);
+                    if(!Directory.Exists(folderPath))
+                    {
+                        continue;
+                    }
+
+                    var submissionsPath = Path.Combine(folderPath, "Pages", "Submissions");
+                    if(!Directory.Exists(submissionsPath))
+                    {
+                        continue;
+                    }
+
+                    var submissionPaths = Directory.EnumerateFiles(submissionsPath, "*.xml");
+
+                    foreach(var submissionPath in submissionPaths)
+                    {
+                        var submissionFileName = Path.GetFileNameWithoutExtension(submissionPath);
+                        if(submissionFileName != null && submissionFileName.Contains(page.ID))
+                        {
+                            var submission = Load<CLPPage>(submissionPath, SerializationMode.Xml);
+                            submission.InkStrokes = StrokeDTO.LoadInkStrokes(submission.SerializedStrokes);
+                            page.Submissions.Add(submission);
+                        }
+                    }
+                }
+            }
+            App.MainWindowViewModel.OpenNotebooks.Add(notebookToUse);
+            App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(notebookToUse);
             App.MainWindowViewModel.AvailableUsers = App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.StudentList;
         }
 
@@ -541,47 +631,71 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Temp Methods
 
-        public static void CreateStudentListSeed()
+        public static void GenerateSubmissionsFromOriginals()
         {
-            var namesList = new List<string>
-                            {
-                                "Ivanoshka",
-                                "Adam",
-                                "Serenity",
-                                "Sarisha",
-                                "Selma",
-                                "Fadi",
-                                "Keaton",
-                                "Renata",
-                                "Deven",
-                                "Ruggero",
-                                "Isabel",
-                                "Trishyn",
-                                "Miles",
-                                "Satyri",
-                                "Julio",
-                                "Tyler",
-                                "Katherine",
-                                "Antinoe"
-                            };
 
-            foreach(var name in namesList)
+            foreach(var notebookName in AvailableLocalNotebookNames)
             {
-                var student = new Person
-                              {
-                                  FullName = name,
-                                  IsStudent = true
-                              };
-                ClassSubject.EmilyClass.StudentList.Add(student);
+                var notebookInfo = notebookName.Split(';');
+                if(notebookInfo.Length != 4 ||
+                   notebookInfo[2] == Person.Author.ID ||
+                   notebookInfo[2] == Person.Emily.ID ||
+                   notebookInfo[2] == Person.EmilyProjector.ID)
+                {
+                    continue;
+                }
+
+                var folderPath = Path.Combine(App.NotebookCacheDirectory, notebookName);
+                if(!Directory.Exists(folderPath))
+                {
+                    MessageBox.Show("Notebook doesn't exist");
+                    return;
+                }
+
+                var notebook = Notebook.OpenNotebook(folderPath);
+
+                if(notebook == null)
+                {
+                    MessageBox.Show("Notebook could not be opened. Check error log.");
+                    return;
+                }
+
+                var submissionFolderPath = Path.Combine(folderPath, "Pages", "Submissions");
+                if(!Directory.Exists(submissionFolderPath))
+                {
+                    Directory.CreateDirectory(submissionFolderPath);
+                }
+
+                var submissions = new List<CLPPage>();
+                foreach(var page in notebook.Pages)
+                {
+                    page.VersionIndex = 1;
+                    page.LastVersionIndex = 1;
+                    page.SubmissionTime = notebook.LastSavedDate;
+                    foreach(var pageObject in page.PageObjects)
+                    {
+                        if(pageObject.OwnerID == page.OwnerID)
+                        {
+                            pageObject.VersionIndex = 1;
+                            pageObject.LastVersionIndex = 1;
+                        }
+                        
+                        pageObject.ParentPageVersionIndex = 1;
+                    }
+                    foreach(var serializedStroke in page.SerializedStrokes)
+                    {
+                        if(serializedStroke.PersonID != page.OwnerID)
+                        {
+                            continue;
+                        }
+                        serializedStroke.VersionIndex = 1;
+                    }
+
+                    var submissionFilePath = Catel.IO.Path.Combine(submissionFolderPath, "Page;" + page.PageNumber + ";" + page.ID + ";" + page.OwnerID + ";" + page.VersionIndex + ".xml");
+                    page.ToXML(submissionFilePath, false);
+                }
+                
             }
-
-            ClassSubject.EmilyClass.SaveClassSubject(App.ClassCacheDirectory);
-        }
-
-        public static void CreateClassPeriodSeed()
-        {
-            var classPeriod = ClassPeriod.CurrentClassPeriod;
-            classPeriod.SaveClassPeriod(App.ClassCacheDirectory);
         }
 
         #endregion //Temp Methods

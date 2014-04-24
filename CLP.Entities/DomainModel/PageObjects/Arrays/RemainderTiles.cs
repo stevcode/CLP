@@ -66,7 +66,7 @@ namespace CLP.Entities
                 return null;
             }
             newRemainderTiles.CreationDate = DateTime.Now;
-            newRemainderTiles.ID = Guid.NewGuid().ToString();
+            newRemainderTiles.ID = Guid.NewGuid().ToCompactID();
             newRemainderTiles.VersionIndex = 0;
             newRemainderTiles.LastVersionIndex = null;
             newRemainderTiles.ParentPage = ParentPage;

@@ -95,7 +95,7 @@ namespace CLP.Entities
                 return null;
             }
             newCLPArray.CreationDate = DateTime.Now;
-            newCLPArray.ID = Guid.NewGuid().ToString();
+            newCLPArray.ID = Guid.NewGuid().ToCompactID();
             newCLPArray.VersionIndex = 0;
             newCLPArray.LastVersionIndex = null;
             newCLPArray.ParentPage = ParentPage;

@@ -1,4 +1,5 @@
-﻿using Classroom_Learning_Partner.ViewModels;
+﻿using System;
+using Classroom_Learning_Partner.ViewModels;
 
 namespace Classroom_Learning_Partner.Views
 {
@@ -7,14 +8,8 @@ namespace Classroom_Learning_Partner.Views
     /// </summary>
     public partial class CLPImageView
     {
-        public CLPImageView()
-        {
-            InitializeComponent();
-        }
+        public CLPImageView() { InitializeComponent(); }
 
-        protected override System.Type GetViewModelType()
-        {
-            return typeof(CLPImageViewModel);
-        }
+        protected override Type GetViewModelType() { return typeof(CLPImageViewModel); }
     }
 }

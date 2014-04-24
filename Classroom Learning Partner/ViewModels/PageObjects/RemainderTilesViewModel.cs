@@ -36,11 +36,5 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData TileOffsetsProperty = RegisterProperty("TileOffsets", typeof(ObservableCollection<string>));
 
         #endregion //Model
-
-        #region Methods
-
-        public override bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown) { return false; }
-
-        #endregion //Methods
     }
 }

@@ -16,7 +16,7 @@ namespace CLP.Entities
         /// <summary>
         /// Initializes <see cref="AHistoryItemBase" /> from scratch.
         /// </summary>
-        public AHistoryItemBase() { ID = Guid.NewGuid().ToString(); }
+        public AHistoryItemBase() { ID = Guid.NewGuid().ToCompactID(); }
 
         /// <summary>
         /// Initializes <see cref="APageObjectBase" /> using <see cref="CLPPage" />.

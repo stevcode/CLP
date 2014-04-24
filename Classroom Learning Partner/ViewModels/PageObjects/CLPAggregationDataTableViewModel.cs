@@ -250,24 +250,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Methods
 
-        public override bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown)
-        {
-            if(App.MainWindowViewModel.IsAuthoring)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        public override void EraserHitTest(string hitBoxName, object tag)
-        {
-            if(App.MainWindowViewModel.IsAuthoring && hitBoxName == "TopLeftHitBox")
-            {
-                //TODO: Steve - remove pageObject
-            }
-        }
-
         private void ResizeGridPartsEvenly()
         {
             //double newRowHeight = (PageObject.Height - (PageObject as CLPAggregationDataTable).ColumnHeaderHeight) / (PageObject as CLPAggregationDataTable).Rows.Count;

@@ -74,7 +74,7 @@ namespace CLP.Entities
                 return null;
             }
             newShape.CreationDate = DateTime.Now;
-            newShape.ID = Guid.NewGuid().ToString();
+            newShape.ID = Guid.NewGuid().ToCompactID();
             newShape.VersionIndex = 0;
             newShape.LastVersionIndex = null;
             newShape.ParentPage = ParentPage;

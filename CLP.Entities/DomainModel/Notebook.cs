@@ -22,7 +22,7 @@ namespace CLP.Entities
         public Notebook()
         {
             CreationDate = DateTime.Now;
-            ID = Guid.NewGuid().ToString();
+            ID = Guid.NewGuid().ToCompactID();
         }
 
         /// <summary>
@@ -411,7 +411,7 @@ namespace CLP.Entities
                 {
                     continue;
                 }
-                var pageFilePath = Path.Combine(pagesFolderPath, "Page;" + page.PageNumber + ";" + page.ID + ";" + page.OwnerID + ";" + page.VersionIndex + ".xml");
+                var pageFilePath = Path.Combine(pagesFolderPath, "p;" + page.PageNumber + ";" + page.ID + ";" + page.DifferentiationLevel + ";" + page.VersionIndex + ".xml");
                 page.ToXML(pageFilePath);
             }
 
@@ -458,18 +458,17 @@ namespace CLP.Entities
 
         public void SaveSubmissions(string folderPath)
         {
-            var submissionsFolderPath = Path.Combine(folderPath, "Submissions");
-            if(!Directory.Exists(submissionsFolderPath))
+            if(!Directory.Exists(folderPath))
             {
-                Directory.CreateDirectory(submissionsFolderPath);
+                Directory.CreateDirectory(folderPath);
             }
 
             foreach(var page in Pages)
             {
                 foreach(var submission in page.Submissions)
                 {
-                    var pageFilePath = Path.Combine(submissionsFolderPath, "Page;" + page.PageNumber + ";" + page.ID + ";" + page.OwnerID + ";" + page.VersionIndex + ".xml");
-                    page.ToXML(pageFilePath);
+                    var pageFilePath = Path.Combine(folderPath, "p;" + submission.PageNumber + ";" + submission.ID + ";" + submission.DifferentiationLevel + ";" + submission.VersionIndex + ".xml");
+                    submission.ToXML(pageFilePath);
                 }
             }
         }
@@ -490,7 +489,7 @@ namespace CLP.Entities
                     {
                         var pageAndHistoryInfo = pageAndHistoryFileName.Split(';');
                         if(pageAndHistoryInfo.Length != 5 ||
-                           pageAndHistoryInfo[0] != "Page")
+                           pageAndHistoryInfo[0] != "p")
                         {
                             continue;
                         }
@@ -520,17 +519,18 @@ namespace CLP.Entities
 
                 foreach(var notebookPage in pages)
                 {
-                    if(notebookPage.VersionIndex == 0)
+                    if(notebookPage.VersionIndex != 0)
                     {
-                        notebookPages.Add(notebookPage);
-                        foreach(var submission in pages)
+                        continue;
+                    }
+                    notebookPages.Add(notebookPage);
+                    foreach(var submission in pages)
+                    {
+                        if(submission.ID == notebookPage.ID &&
+                           submission.OwnerID == notebookPage.OwnerID &&
+                           submission.VersionIndex != 0)
                         {
-                            if(submission.ID == notebookPage.ID &&
-                               submission.OwnerID == notebookPage.OwnerID &&
-                               submission.VersionIndex != 0)
-                            {
-                                notebookPage.Submissions.Add(submission);
-                            }
+                            notebookPage.Submissions.Add(submission);
                         }
                     }
                 }
@@ -560,7 +560,7 @@ namespace CLP.Entities
                     var pageAndHistoryFileName = System.IO.Path.GetFileNameWithoutExtension(pageAndHistoryFilePath);
                     var pageAndHistoryInfo = pageAndHistoryFileName.Split(';');
                     if(pageAndHistoryInfo.Length != 5 ||
-                       pageAndHistoryInfo[0] != "Page")
+                       pageAndHistoryInfo[0] != "p")
                     {
                         continue;
                     }
@@ -595,17 +595,18 @@ namespace CLP.Entities
 
                 foreach(var notebookPage in pages)
                 {
-                    if(notebookPage.VersionIndex == 0)
+                    if(notebookPage.VersionIndex != 0)
                     {
-                        notebookPages.Add(notebookPage);
-                        foreach(var submission in pages)
+                        continue;
+                    }
+                    notebookPages.Add(notebookPage);
+                    foreach(var submission in pages)
+                    {
+                        if(submission.ID == notebookPage.ID &&
+                           submission.OwnerID == notebookPage.OwnerID &&
+                           submission.VersionIndex != 0)
                         {
-                            if(submission.ID == notebookPage.ID &&
-                               submission.OwnerID == notebookPage.OwnerID &&
-                               submission.VersionIndex != 0)
-                            {
-                                notebookPage.Submissions.Add(submission);
-                            }
+                            notebookPage.Submissions.Add(submission);
                         }
                     }
                 }

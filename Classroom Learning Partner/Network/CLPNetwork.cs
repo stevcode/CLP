@@ -111,8 +111,8 @@ namespace Classroom_Learning_Partner
                                 var classSubjectString = ObjectSerializer.ToString(App.MainWindowViewModel.CurrentClassPeriod.ClassSubject);
                                 var classsubject = CLPServiceAgent.Instance.Zip(classSubjectString);
 
-                                var newNotebook = App.MainWindowViewModel.OpenNotebooks.First().CopyForNewOwner(App.MainWindowViewModel.CurrentUser);
-                                var newNotebookString = ObjectSerializer.ToString(newNotebook);
+                                //var newNotebook = App.MainWindowViewModel.OpenNotebooks.First().CopyForNewOwner(App.MainWindowViewModel.CurrentUser);
+                                var newNotebookString = ObjectSerializer.ToString(App.MainWindowViewModel.OpenNotebooks.First(x => x.ID == App.MainWindowViewModel.CurrentClassPeriod.NotebookID && x.OwnerID == App.MainWindowViewModel.CurrentUser.ID));
                                 var zippedNotebook = CLPServiceAgent.Instance.Zip(newNotebookString);
                                 ProjectorProxy.OpenClassPeriod(classPeriod, classsubject);
                                 ProjectorProxy.OpenPartialNotebook(zippedNotebook);

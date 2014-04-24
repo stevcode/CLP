@@ -514,68 +514,6 @@ namespace Classroom_Learning_Partner.ViewModels
         
         #region Methods
 
-        public override bool SetInkCanvasHitTestVisibility(string hitBoxTag, string hitBoxName, bool isInkCanvasHitTestVisibile, bool isMouseDown, bool isTouchDown, bool isPenDown)
-        {
-            if(hitBoxName == "StampHandleHitBox")
-            {
-                if(IsBackground)
-                {
-                    if(App.MainWindowViewModel.IsAuthoring)
-                    {
-                        OpenAdornerTimeOut = 0.0;
-                        IsMouseOverShowEnabled = true;
-                    }
-                    else
-                    {
-                        IsMouseOverShowEnabled = false;
-                    }
-                }
-                else
-                {
-                    OpenAdornerTimeOut = 0.8;
-                    IsMouseOverShowEnabled = true;
-                }
-                return false;
-            }
-            if(hitBoxName == "StampBodyHitBox")
-            {
-                return true;
-            }
-            if (hitBoxName == "PartsHitBox")
-            {
-                IsMouseOverShowEnabled = IsAdornerVisible;
-            }
-
-            return false;
-        }
-
-        public override void EraserHitTest(string hitBoxName, object tag)
-        {
-            //if(IsBackground && !App.MainWindowViewModel.IsAuthoring)
-            //{
-            //    return;
-            //}
-            
-            //if(hitBoxName == "StampHandleHitBox")
-            //{
-            //    var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
-            //    if(notebookWorkspaceViewModel != null)
-            //    {
-            //        var parentPage = notebookWorkspaceViewModel.Notebook.GetNotebookPageByID(PageObject.ParentPageID);
-
-            //        if(parentPage != null)
-            //        {
-            //            foreach(CLPPageViewModel pageVM in ViewModelManager.GetViewModelsOfModel(parentPage))
-            //            {
-            //                pageVM.IsInkCanvasHitTestVisible = true;
-            //            }
-
-            //            ACLPPageBaseViewModel.RemovePageObjectFromPage(PageObject);
-            //        }
-            //    }
-            //}
-        }
-
         private bool HasParts()
         {
             //var clpStamp = PageObject as CLPStamp;
