@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
@@ -433,29 +434,33 @@ namespace Classroom_Learning_Partner.ViewModels
             { 
                 SetValue(BlockStudentPenInputProperty, value); 
             
-                // TODO: Entities
-                //if(App.Network.ClassList.Count > 0)
-                //{
-                //    foreach(Person student in App.Network.ClassList)
-                //    {
-                //        try
-                //        {
-                //            NetTcpBinding binding = new NetTcpBinding();
-                //            binding.Security.Mode = SecurityMode.None;
-                //            IStudentContract StudentProxy = ChannelFactory<IStudentContract>.CreateChannel(binding, new EndpointAddress(student.CurrentMachineAddress));
-                //            StudentProxy.TogglePenDownMode(value);
-                //            (StudentProxy as ICommunicationObject).Close();
-                //        }
-                //        catch(System.Exception ex)
-                //        {
-                //            Console.WriteLine(ex.Message);
-                //        }
-                //    }
-                //}
-                //else
-                //{
-                //    Logger.Instance.WriteToLog("No Students Found");
-                //}
+                if(App.MainWindowViewModel.AvailableUsers.Any())
+                {
+                    Parallel.ForEach(App.MainWindowViewModel.AvailableUsers,
+                                     student =>
+                                     {
+                                         try
+                                            {
+                                                var binding = new NetTcpBinding
+                                                              {
+                                                                  Security = {
+                                                                                 Mode = SecurityMode.None
+                                                                             }
+                                                              };
+                                                var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(binding, new EndpointAddress(student.CurrentMachineAddress));
+                                                studentProxy.TogglePenDownMode(value);
+                                                (studentProxy as ICommunicationObject).Close();
+                                            }
+                                            catch(Exception ex)
+                                            {
+                                                Console.WriteLine(ex.Message);
+                                            }
+                                     });
+                }
+                else
+                {
+                    Logger.Instance.WriteToLog("No Students Found");
+                }
             }
         }
 

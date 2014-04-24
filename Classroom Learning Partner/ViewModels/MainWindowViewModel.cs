@@ -485,7 +485,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     continue;
                 }
-                var time = classInfo[2];
+                var time = classInfo[1];
                 var timeParts = time.Split('.');
                 var year = Int32.Parse(timeParts[0]);
                 var month = Int32.Parse(timeParts[1]);
@@ -630,6 +630,17 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Static Methods
 
         #region Temp Methods
+
+        public static void ConvertStudentIDsToCompactIDs()
+        {
+            var classPeriod = ClassSubject.OpenClassSubject(@"C:\Users\Steve\Desktop\CacheT\Classes\ClassSubject;AAAAABERAAAAAAAAAAAAAQ.xml");
+            foreach(var student in classPeriod.StudentList)
+            {
+                student.ID = new Guid(student.ID).ToCompactID();
+            }
+            File.Delete(@"C:\Users\Steve\Desktop\CacheT\Classes\ClassSubject;AAAAABERAAAAAAAAAAAAAQ.xml");
+            classPeriod.SaveClassSubject(@"C:\Users\Steve\Desktop\CacheT\Classes\ClassSubject;AAAAABERAAAAAAAAAAAAAQ.xml");
+        }
 
         public static void GenerateSubmissionsFromOriginals()
         {

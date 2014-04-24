@@ -104,7 +104,7 @@ namespace Classroom_Learning_Partner
             var notebook = ObjectSerializer.ToObject(unZippedNotebook) as Notebook;
             if(notebook == null)
             {
-                Logger.Instance.WriteToLog("Failed to load notebook.");
+                Logger.Instance.WriteToLog("Failed to load partial notebook.");
                 return;
             }
             notebook.CurrentPage = notebook.Pages.First();

@@ -751,14 +751,14 @@
                     <RibbonToggleButton.Style>
                         <Style TargetType="{x:Type RibbonToggleButton}">
                             <Setter Property="Label"
-                                    Value="Allow Students Pen" />
+                                    Value="Pens Down" />
                             <Setter Property="LargeImageSource"
                                     Value="pack://application:,,,/Images/LargeIcon.png" />
                             <Style.Triggers>
                                 <Trigger Property="IsChecked"
                                          Value="True">
                                     <Setter Property="Label"
-                                            Value="Deny Students Pen" />
+                                            Value="Pens Up" />
                                     <Setter Property="LargeImageSource"
                                             Value="pack://application:,,,/Images/LargeIcon.png" />
                                 </Trigger>
