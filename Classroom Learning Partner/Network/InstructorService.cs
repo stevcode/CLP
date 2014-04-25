@@ -35,7 +35,7 @@ namespace Classroom_Learning_Partner
         [OperationContract]
         Dictionary<string,byte[]> SendImages(List<string> imageHashIDs);
 
-     //   [OperationContract]
+     //    [OperationContract]
      //   List<string> SendSubmissions(string ownerID, List<string> pageIDs);
     }
 
