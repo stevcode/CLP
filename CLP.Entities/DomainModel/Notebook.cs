@@ -369,12 +369,7 @@ namespace CLP.Entities
             }
 
             notebookPage = Pages.FirstOrDefault(x => x.ID == pageID);
-            if(notebookPage == null)
-            {
-                return null;
-            }
-
-            return notebookPage.Submissions.FirstOrDefault(x => x.OwnerID == pageOwnerID && x.VersionIndex == versionIndex);
+            return notebookPage == null ? null : notebookPage.Submissions.FirstOrDefault(x => x.OwnerID == pageOwnerID && x.VersionIndex == versionIndex);
         }
 
         #endregion //Methods

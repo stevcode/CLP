@@ -340,7 +340,7 @@ namespace Classroom_Learning_Partner.ViewModels
             get
             {
                 var directoryInfo = new DirectoryInfo(App.NotebookCacheDirectory);
-                return directoryInfo.GetDirectories().Select(directory => directory.Name).ToList();
+                return directoryInfo.GetDirectories().Select(directory => directory.Name).OrderBy(x => x).ToList();
             }
         }
 
@@ -362,32 +362,33 @@ namespace Classroom_Learning_Partner.ViewModels
                                   Owner = Application.Current.MainWindow
                               };
             nameChooser.ShowDialog();
-            if(nameChooser.DialogResult == true)
+            if(nameChooser.DialogResult != true)
             {
-                // TODO: Steve - sanitize notebook name
-                var notebookName = nameChooser.NotebookName.Text;
-                var newNotebook = new Notebook(notebookName, Person.Author);
-
-                var newPage = new CLPPage(Person.Author);
-                newNotebook.AddCLPPageToNotebook(newPage);
-
-                var folderName = newNotebook.Name + ";" + newNotebook.ID + ";" + newNotebook.OwnerID + ";" + newNotebook.Owner.FullName;
-                var folderPath = Path.Combine(App.NotebookCacheDirectory, folderName);
-                if(!Directory.Exists(folderPath))
-                {
-                    SaveNotebook(newNotebook);
-
-                    App.MainWindowViewModel.OpenNotebooks.Add(newNotebook);
-                    App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(newNotebook);
-                    App.MainWindowViewModel.IsAuthoring = true;
-                    App.MainWindowViewModel.Ribbon.AuthoringTabVisibility = Visibility.Visible;
-                    App.MainWindowViewModel.CurrentNotebookName = notebookName;
-                }
-                else
-                {
-                    MessageBox.Show("A Notebook with that name already exists. Please choose a different name.");
-                }
+                return;
             }
+
+            // TODO: Steve - sanitize notebook name
+            var notebookName = nameChooser.NotebookName.Text;
+            var newNotebook = new Notebook(notebookName, Person.Author);
+
+            var newPage = new CLPPage(Person.Author);
+            newNotebook.AddCLPPageToNotebook(newPage);
+
+            var folderName = newNotebook.Name + ";" + newNotebook.ID + ";" + newNotebook.Owner.FullName + ";" + newNotebook.OwnerID;
+            var folderPath = Path.Combine(App.NotebookCacheDirectory, folderName);
+            if(Directory.Exists(folderPath))
+            {
+                return;
+            }
+            
+            // TODO: Reimplement when autosave returns
+            //SaveNotebook(newNotebook);
+
+            App.MainWindowViewModel.OpenNotebooks.Add(newNotebook);
+            App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(newNotebook);
+            App.MainWindowViewModel.IsAuthoring = true;
+            App.MainWindowViewModel.Ribbon.AuthoringTabVisibility = Visibility.Visible;
+            App.MainWindowViewModel.CurrentNotebookName = notebookName;
         }
 
         public static void OpenNotebook(string notebookFolderName, bool forceCache = false, bool forceDatabase = false)
@@ -433,7 +434,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static void SaveNotebook(Notebook notebook, bool isFullSaveForced = false)
         {
-            var folderPath = Path.Combine(App.NotebookCacheDirectory, notebook.Name + ";" + notebook.ID + ";" + notebook.OwnerID + ";" + notebook.Owner.FullName);
+            var folderPath = Path.Combine(App.NotebookCacheDirectory, notebook.Name + ";" + notebook.ID + ";" + notebook.Owner.FullName + ";" + notebook.OwnerID);
 
             //////////////////
 
