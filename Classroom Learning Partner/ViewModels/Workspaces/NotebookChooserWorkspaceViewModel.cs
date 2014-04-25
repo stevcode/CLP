@@ -13,7 +13,7 @@ namespace Classroom_Learning_Partner.ViewModels
 {
     public class NotebookChooserWorkspaceViewModel : ViewModelBase
     {
-        public struct NotebookName
+        public class NotebookName
         {
             public string Name { get; set; }
             public string OwnerID { get; set; }
@@ -48,8 +48,14 @@ namespace Classroom_Learning_Partner.ViewModels
             var emilyNotebookName = notebookNames.FirstOrDefault(x => x.OwnerID == Person.Emily.ID);
             notebookNames.RemoveAll(x => x.OwnerID == Person.Emily.ID || x.OwnerID == Person.Author.ID);
             var sortedNotebookNames = notebookNames.OrderBy(x => x.OwnerName);
-            NotebookNames.Add(authorNotebookName);
-            NotebookNames.Add(emilyNotebookName);
+            if(authorNotebookName != null)
+            {
+                NotebookNames.Add(authorNotebookName);
+            }
+            if(emilyNotebookName != null)
+            {
+                NotebookNames.Add(emilyNotebookName);
+            }
             NotebookNames.AddRange(sortedNotebookNames);
         }
 

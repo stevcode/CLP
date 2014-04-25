@@ -471,6 +471,12 @@ namespace Classroom_Learning_Partner.ViewModels
                 case App.UserMode.Student:
                     var submissionsPath = Path.Combine(folderPath, "Pages");
                     notebook.SaveSubmissions(submissionsPath);
+                    if(App.Network.InstructorProxy != null)
+                    {
+                        var sNotebook = ObjectSerializer.ToString(notebook);
+                        var zippedNotebook = CLPServiceAgent.Instance.Zip(sNotebook);
+                        App.Network.InstructorProxy.CollectStudentNotebook(zippedNotebook, App.MainWindowViewModel.CurrentUser.FullName);
+                    }
                     break;
             }
             

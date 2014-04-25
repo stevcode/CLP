@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows;
@@ -97,6 +98,26 @@ namespace Classroom_Learning_Partner.ViewModels
                                        page.InkStrokes = StrokeDTO.LoadInkStrokes(page.SerializedStrokes);
                                    }
                                    App.ResetCache();
+
+                                   var imageHashIDs = notebook.ImagePoolHashIDs;
+                                   if(Directory.Exists(App.ImageCacheDirectory))
+                                   {
+                                       var localImageFilePaths = Directory.EnumerateFiles(App.ImageCacheDirectory);
+                                       foreach(var localImageFilePath in localImageFilePaths)
+                                       {
+                                           var imageHashID = Path.GetFileNameWithoutExtension(localImageFilePath);
+                                           if(imageHashIDs.Contains(imageHashID))
+                                           {
+                                               imageHashIDs.Remove(imageHashID);
+                                           }
+                                       }
+                                   }
+                                   var imageList = App.Network.InstructorProxy.SendImages(imageHashIDs);
+                                   foreach(var byteSource in imageList)
+                                   {
+                                       var imagePath = Path.Combine(App.ImageCacheDirectory, byteSource.Key);
+                                       File.WriteAllBytes(imagePath, byteSource.Value);
+                                   }
 
                                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                                               (DispatcherOperationCallback)delegate

@@ -461,6 +461,24 @@ namespace CLP.Entities
             }
         }
 
+        public void SavePartialNotebook(string folderPath, bool serializeInkStrokes = true)
+        {
+            var fileName = Path.Combine(folderPath, "notebook.xml");
+            ToXML(fileName);
+
+            var pagesFolderPath = Path.Combine(folderPath, "Pages");
+            if(!Directory.Exists(pagesFolderPath))
+            {
+                Directory.CreateDirectory(pagesFolderPath);
+            }
+
+            foreach(var page in Pages)
+            {
+                var pageFilePath = Path.Combine(pagesFolderPath, "p;" + page.PageNumber + ";" + page.ID + ";" + page.DifferentiationLevel + ";" + page.VersionIndex + ".xml");
+                page.ToXML(pageFilePath, serializeInkStrokes);
+            }
+        }
+
         public void SaveSubmissions(string folderPath)
         {
             if(!Directory.Exists(folderPath))

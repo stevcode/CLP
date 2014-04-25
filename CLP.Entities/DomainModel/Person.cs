@@ -98,7 +98,7 @@ namespace CLP.Entities
             get { return AuthorPerson; }
         }
 
-        public const string AUTHOR_ID = "AUTHOR0000000000000000";
+        private const string AUTHOR_ID = "AUTHOR0000000000000000";
 
         private static readonly Person AuthorPerson = new Person
                                                       {
@@ -134,7 +134,7 @@ namespace CLP.Entities
                                                      };
 
         //TODO: Remove once database established
-        private const string EMILY_ID = "00000000-0000-0000-2222-000000000002";
+        private const string EMILY_ID = "AAAAAAAAAAAiIgAAAAAAAg";
 
         public static Person Emily
         {
@@ -148,7 +148,7 @@ namespace CLP.Entities
                                                            IsStudent = false
                                                        };
 
-        private const string EMILY_PROJECTOR_ID = "00000000-0000-0000-2222-000000000003";
+        private const string EMILY_PROJECTOR_ID = "AAAAAAAAAAAiIgAAAAAAAw";
 
         public static Person EmilyProjector
         {
