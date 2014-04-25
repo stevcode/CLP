@@ -1,9 +1,13 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Windows.Documents;
+using Catel.Collections;
 using Catel.Data;
 using Catel.MVVM;
 using Catel.Windows;
+using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -28,21 +32,25 @@ namespace Classroom_Learning_Partner.ViewModels
             // TODO: DATABASE - inject INotebookService that can grab the available notebook names?
 
             var localNames = MainWindowViewModel.AvailableLocalNotebookNames;
-            foreach(var name in from localName in localNames
-                                select localName.Split(';')
-                                into nameAndID
-                                where nameAndID.Length == 4
-                                select new NotebookName
-                                       {
-                                           Name = nameAndID[0],
-                                           ID = nameAndID[1],
-                                           OwnerID = nameAndID[2],
-                                           OwnerName = nameAndID[3],
-                                           IsLocal = true
-                                       })
-            {
-                NotebookNames.Add(name);
-            }
+            var notebookNames = (from localName in localNames
+                                 select localName.Split(';')
+                                 into nameAndID
+                                 where nameAndID.Length == 4
+                                 select new NotebookName
+                                        {
+                                            Name = nameAndID[0],
+                                            ID = nameAndID[1],
+                                            OwnerName = nameAndID[2],
+                                            OwnerID = nameAndID[3],
+                                            IsLocal = true
+                                        }).ToList();
+            var authorNotebookName = notebookNames.FirstOrDefault(x => x.OwnerID == Person.Author.ID);
+            var emilyNotebookName = notebookNames.FirstOrDefault(x => x.OwnerID == Person.Emily.ID);
+            notebookNames.RemoveAll(x => x.OwnerID == Person.Emily.ID || x.OwnerID == Person.Author.ID);
+            var sortedNotebookNames = notebookNames.OrderBy(x => x.OwnerName);
+            NotebookNames.Add(authorNotebookName);
+            NotebookNames.Add(emilyNotebookName);
+            NotebookNames.AddRange(sortedNotebookNames);
         }
 
         public override string Title
@@ -53,7 +61,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        // TODO: DATABASE - Use List of some Class that includes creation date, last saved date, whether it's from Cache or Database
         public ObservableCollection<NotebookName> NotebookNames
         {
             get { return GetValue<ObservableCollection<NotebookName>>(NotebookNamesProperty); }
@@ -69,11 +76,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnSelectNotebookCommandExecute(NotebookName notebookName)
         {
-            var stopWatch = new Stopwatch();
-            stopWatch.Start();
-            PleaseWaitHelper.Show(() => MainWindowViewModel.OpenNotebook(notebookName.Name + ";" + notebookName.ID + ";" + notebookName.OwnerID + ";" + notebookName.OwnerName), null, "Loading Notebook");
-            stopWatch.Stop();
-            Logger.Instance.WriteToLog("Time to LOAD notebook (In Seconds): " + stopWatch.ElapsedMilliseconds / 1000.0);
+            PleaseWaitHelper.Show(() => MainWindowViewModel.OpenNotebook(notebookName.Name + ";" + notebookName.ID + ";" + notebookName.OwnerName + ";" + notebookName.OwnerID), null, "Loading Notebook");
         }
     }
 }

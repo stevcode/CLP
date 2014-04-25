@@ -393,9 +393,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static void OpenNotebook(string notebookFolderName, bool forceCache = false, bool forceDatabase = false)
         {
-            foreach(
-                var otherNotebook in
-                    App.MainWindowViewModel.OpenNotebooks.Where(otherNotebook => otherNotebook.ID == notebookFolderName.Split(';')[1] && otherNotebook.OwnerID == notebookFolderName.Split(';')[2]))
+            //TODO: find way to bypass this if partial notebook is currently open and you try to open full notebook (or vis versa).
+            foreach(var otherNotebook in
+                    App.MainWindowViewModel.OpenNotebooks.Where(otherNotebook => otherNotebook.ID == notebookFolderName.Split(';')[1] && 
+                                                                                 otherNotebook.OwnerID == notebookFolderName.Split(';')[2]))
             {
                 App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(otherNotebook);
                 return;
@@ -408,14 +409,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            var stopWatch = new Stopwatch();
-            stopWatch.Start();
-
             var notebook = Notebook.OpenNotebook(folderPath);
-
-            stopWatch.Stop();
-            Logger.Instance.WriteToLog("Time to OPEN notebook (In Seconds): " + stopWatch.ElapsedMilliseconds / 1000.0);
-
             if(notebook == null)
             {
                 MessageBox.Show("Notebook could not be opened. Check error log.");
@@ -430,6 +424,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
             App.MainWindowViewModel.OpenNotebooks.Add(notebook);
             App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(notebook);
+            if(notebook.OwnerID == Person.Author.ID)
+            {
+                App.MainWindowViewModel.IsAuthoring = true;
+            }
         }
 
         public static void SaveNotebook(Notebook notebook, bool isFullSaveForced = false)

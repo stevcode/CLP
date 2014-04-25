@@ -508,16 +508,10 @@ namespace CLP.Entities
 
                     var page = Load<CLPPage>(pageAndHistoryFilePath, SerializationMode.Xml);
                     //TODO: :Load Page History
-                    foreach(var pageObject in page.PageObjects)
-                    {
-                        pageObject.ParentPage = page;
-                    }
                     if(page.ID == notebook.CurrentPageID)
                     {
                         notebook.CurrentPage = page;
                     }
-                    page.InkStrokes = StrokeDTO.LoadInkStrokes(page.SerializedStrokes);
-                    page.IsCached = true;
                     pages.Add(page);
                 }
 

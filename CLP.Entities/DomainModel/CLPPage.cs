@@ -614,6 +614,22 @@ namespace CLP.Entities
             IsCached = true;
         }
 
+        #region Overrides of ModelBase
+
+        protected override void OnDeserialized()
+        {
+            base.OnDeserialized();
+            foreach(var pageObject in PageObjects)
+            {
+                pageObject.ParentPage = this;
+            }
+                    
+            InkStrokes = StrokeDTO.LoadInkStrokes(SerializedStrokes);
+            IsCached = true;
+        }
+
+        #endregion
+
         #endregion //Cache
     }
 }
