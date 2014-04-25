@@ -254,6 +254,7 @@
     <Compile Include="ViewModels\Panels\ClassPeriodForDisplay.cs" />
     <Compile Include="ViewModels\Panels\DisplaysPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\NotebookPagesPanelViewModel.cs" />
+    <Compile Include="ViewModels\Panels\PageInformationPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\StagingPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\StudentWorkPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\ProgressPanelViewModel.cs" />
