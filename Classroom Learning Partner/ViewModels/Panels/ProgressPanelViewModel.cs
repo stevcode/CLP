@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Windows;
 using Catel.Data;
 using Catel.MVVM;
+using Classroom_Learning_Partner.Views;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -17,7 +20,6 @@ namespace Classroom_Learning_Partner.ViewModels
         public ProgressPanelViewModel(Notebook notebook)
         {
             Notebook = notebook;
-            CurrentPages = notebook.Pages;
             Initialized += ProgressPanelViewModel_Initialized;
 
             if(App.MainWindowViewModel.CurrentClassPeriod != null)
@@ -29,23 +31,41 @@ namespace Classroom_Learning_Partner.ViewModels
                 StudentList = new ObservableCollection<Person>();
                 StudentList.Add(Person.TestSubmitter);
             }
-
-            PageSets = new ObservableCollection<string>();
-            PageSets.Add("Current Class Period");
-            PageSets.Add("Full Notebook");
+            
+            ClassPeriodsForDisplay = new ObservableCollection<ClassPeriodForDisplay>();
+            ClassPeriod everything = new ClassPeriod();
+            List<string> pageIDs = new List<string>();
+            foreach(CLPPage page in Notebook.Pages) {
+                pageIDs.Add(page.ID);
+            }
+            everything.PageIDs = pageIDs;
+            everything.StartTime = DateTime.Now;
+            ClassPeriodsForDisplay.Add(new ClassPeriodForDisplay(ClassPeriod.CurrentClassPeriod, false));
+            ClassPeriodsForDisplay.Add(new ClassPeriodForDisplay(everything, true));
+            SetCurrentPagesFromList(everything.PageIDs);
 
             SetCurrentPageCommand = new Command<CLPPage>(OnSetCurrentPageCommandExecute);
+            ChooseClassPeriodCommand = new Command(OnChooseClassPeriodCommandExecute);
         }
 
         void ProgressPanelViewModel_Initialized(object sender, EventArgs e)
         {
-            var calculatedWidth = CurrentPages.Count * 40 + 70;
+            setWidth();
+        }
+
+        void setWidth()
+        {
+            var calculatedWidth = CurrentPages.Count * 40 + 90;
             if(App.Current.MainWindow.ActualWidth < calculatedWidth * 2)
             {
                 Length = App.Current.MainWindow.ActualWidth / 2;
             }
             else
             {
+                if(calculatedWidth < 200)
+                {
+                    calculatedWidth = 200;
+                }
                 Length = calculatedWidth;
             }
         }
@@ -105,13 +125,13 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData StudentListProperty = RegisterProperty("StudentList", typeof(ObservableCollection<Person>), () => new ObservableCollection<Person>());
 
-        public ObservableCollection<String> PageSets
+        public ObservableCollection<ClassPeriodForDisplay> ClassPeriodsForDisplay
         {
-            get { return GetValue<ObservableCollection<String>>(PageSetsProperty); }
-            set { SetValue(PageSetsProperty, value); }
+            get { return GetValue<ObservableCollection<ClassPeriodForDisplay>>(ClassPeriodsForDisplayProperty); }
+            set { SetValue(ClassPeriodsForDisplayProperty, value); }
         }
 
-        public static readonly PropertyData PageSetsProperty = RegisterProperty("PageSets", typeof(ObservableCollection<String>), () => new ObservableCollection<String>());
+        public static readonly PropertyData ClassPeriodsForDisplayProperty = RegisterProperty("ClassPeriodsForDisplay", typeof(ObservableCollection<ClassPeriodForDisplay>), () => new ObservableCollection<ClassPeriodForDisplay>());
 
 
         #endregion //Bindings
@@ -147,7 +167,61 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+
+        /// <summary>
+        /// Sets the current selected page in the listbox.
+        /// </summary>
+        public Command ChooseClassPeriodCommand
+        {
+            get;
+            private set;
+        }
+
+        private void OnChooseClassPeriodCommandExecute()
+        {
+            
+            ClassPeriodChooserView classPeriodChooser = new ClassPeriodChooserView(ClassPeriodsForDisplay);
+            classPeriodChooser.Owner = Application.Current.MainWindow;
+            classPeriodChooser.ShowDialog();
+
+            if(classPeriodChooser.DialogResult == true)
+            {
+                List<string> pageIdsToShow = new List<String>();
+                foreach(ClassPeriodForDisplay classPeriod in ClassPeriodsForDisplay)
+                {
+                    if(classPeriod.Showing)
+                    {
+                        foreach(string pageId in classPeriod.Data.PageIDs)
+                        {
+                            if(!pageIdsToShow.Contains(pageId))
+                            {
+                                pageIdsToShow.Add(pageId);
+                            }
+                        }
+                    }
+                }
+                SetCurrentPagesFromList(pageIdsToShow);
+            }
+        }
+
         #endregion
 
+        private void SetCurrentPagesFromList(List<string> PageIDList)
+        {
+            CurrentPages.Clear();
+            foreach(string pageID in PageIDList)
+            {
+                CLPPage page = Notebook.GetPageByCompositeKeys(pageID, Notebook.OwnerID, 0);
+                if(page != null)
+                {
+                    CurrentPages.Add(page);
+                }
+                else
+                {
+                    Logger.Instance.WriteToLog("Page not found: " + pageID);
+                }
+            }
+            setWidth();
+        }
     }
 }

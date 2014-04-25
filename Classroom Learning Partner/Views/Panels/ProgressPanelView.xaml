@@ -29,18 +29,19 @@
             <Grid Grid.Column="0">
                 <!-- names and pages -->
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="24"/> <!-- combobox-->
+                    <RowDefinition Height="50"/> <!-- combobox-->
                     <RowDefinition Height="30"/> <!-- page numbers-->
                     <RowDefinition Height="24"/> <!-- teacher pages -->
                     <RowDefinition Height="*"/> <!-- student pages -->
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="60" />
+                    <ColumnDefinition Width="80" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <ComboBox SelectedIndex="0" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
-                          HorizontalAlignment="Center" Width="150"  VerticalAlignment="Center" 
-                          ItemsSource="{Binding PageSets}"/>
+                <Button Grid.Row="0" Grid.ColumnSpan="2" Height="30" Width="170"
+                    VerticalAlignment="Center" HorizontalAlignment="Center"
+                    Content="Choose Class Period" Margin="10"
+                    Command="{Binding ChooseClassPeriodCommand}" />
                 <TextBlock Grid.Column="0" Grid.Row="2" FontWeight="Bold" Foreground="Blue" Height="24" Margin="5 0 0 0">
                     <Run Text="Teacher"/>
                 </TextBlock>
@@ -50,8 +51,8 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
-                                <Ellipse Height="3"
-                                         Width="3"
+                                <Ellipse Height="10"
+                                         Width="10"
                                          Fill="LawnGreen"
                                          Visibility="{Binding IsConnected, Converter={StaticResource BooleanToHidingVisibilityConverter}}"/>
                                 <TextBlock FontWeight="Bold" Height="24">
