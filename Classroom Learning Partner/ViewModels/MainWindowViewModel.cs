@@ -452,14 +452,28 @@ namespace Classroom_Learning_Partner.ViewModels
             //{
             //    folderPath += " - FORCED";
             //}
-
+            
             if(!Directory.Exists(folderPath))
             {
                 Directory.CreateDirectory(folderPath);
             }
 
             notebook.SaveNotebook(folderPath, isFullSaveForced);
-            notebook.SaveSubmissions(folderPath);
+
+            switch(App.CurrentUserMode)
+            {
+                case App.UserMode.Server:
+                    break;
+                case App.UserMode.Instructor:
+                    break;
+                case App.UserMode.Projector:
+                    break;
+                case App.UserMode.Student:
+                    var submissionsPath = Path.Combine(folderPath, "Pages");
+                    notebook.SaveSubmissions(submissionsPath);
+                    break;
+            }
+            
             if(notebook.LastSavedDate != null)
             {
                 App.MainWindowViewModel.LastSavedTime = notebook.LastSavedDate.Value.ToString("yyyy/MM/dd - HH:mm:ss");
@@ -473,7 +487,8 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 var classFileName = Path.GetFileNameWithoutExtension(classPeriodFilePath);
                 var classInfo = classFileName.Split(';');
-                if(classInfo.Length != 3)
+                if(classInfo.Length != 3 ||
+                   classInfo[0] != "period")
                 {
                     continue;
                 }
@@ -507,7 +522,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            var notebookFolderPath = GetNotebookFolderPathByID(App.MainWindowViewModel.CurrentClassPeriod.NotebookID);
+            var notebookFolderPath = GetNotebookFolderPathByCompositeID(App.MainWindowViewModel.CurrentClassPeriod.NotebookID, Person.Author.ID);
             if(notebookFolderPath == null)
             {
                 MessageBox.Show("ERROR: Could not find Notebook for latest ClassPeriod.");
@@ -520,13 +535,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            var stopWatch = new Stopwatch();
-            stopWatch.Start();
-
             var notebook = Notebook.OpenPartialNotebook(notebookFolderPath, App.MainWindowViewModel.CurrentClassPeriod.PageIDs, new List<string>());
-
-            stopWatch.Stop();
-            Logger.Instance.WriteToLog("Time to OPEN notebook (In Seconds): " + stopWatch.ElapsedMilliseconds / 1000.0);
 
             if(notebook == null)
             {
@@ -545,7 +554,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var copiedNotebook = notebook.CopyForNewOwner(App.MainWindowViewModel.CurrentUser);
             var notebookToUse = copiedNotebook;
 
-            var storedNotebookFolderName = copiedNotebook.Name + ";" + copiedNotebook.ID + ";" + copiedNotebook.OwnerID + ";" + copiedNotebook.Owner.FullName;
+            var storedNotebookFolderName = copiedNotebook.Name + ";" + copiedNotebook.ID + ";" + copiedNotebook.Owner.FullName + ";" + copiedNotebook.OwnerID;
             var storedNotebookFolderPath = Path.Combine(App.NotebookCacheDirectory, storedNotebookFolderName);
             if(Directory.Exists(storedNotebookFolderPath))
             {
@@ -570,9 +579,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     var notebookInfo = notebookName.Split(';');
                     if(notebookInfo.Length != 4 ||
-                       notebookInfo[2] == Person.Author.ID ||
-                       notebookInfo[2] == Person.Emily.ID ||
-                       notebookInfo[2] == Person.EmilyProjector.ID)
+                       notebookInfo[3] == Person.Author.ID ||
+                       notebookInfo[3] == Person.Emily.ID ||
+                       notebookInfo[3] == Person.EmilyProjector.ID)
                     {
                         continue;
                     }
@@ -583,7 +592,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         continue;
                     }
 
-                    var submissionsPath = Path.Combine(folderPath, "Pages", "Submissions");
+                    var submissionsPath = Path.Combine(folderPath, "Pages");
                     if(!Directory.Exists(submissionsPath))
                     {
                         continue;
@@ -594,11 +603,12 @@ namespace Classroom_Learning_Partner.ViewModels
                     foreach(var submissionPath in submissionPaths)
                     {
                         var submissionFileName = Path.GetFileNameWithoutExtension(submissionPath);
-                        if(submissionFileName != null &&
-                           submissionFileName.Contains(page.ID))
+                        var submissionInfo = submissionFileName.Split(';');
+                        if(submissionInfo.Length == 5 &&
+                           submissionInfo[2] == page.ID &&
+                           submissionInfo[4] != "0")
                         {
                             var submission = Load<CLPPage>(submissionPath, SerializationMode.Xml);
-                            submission.InkStrokes = StrokeDTO.LoadInkStrokes(submission.SerializedStrokes);
                             page.Submissions.Add(submission);
                         }
                     }
@@ -609,14 +619,15 @@ namespace Classroom_Learning_Partner.ViewModels
             App.MainWindowViewModel.AvailableUsers = App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.StudentList;
         }
 
-        public static string GetNotebookFolderPathByID(string id)
+        public static string GetNotebookFolderPathByCompositeID(string id, string ownerID)
         {
             var notebookFolderPaths = Directory.GetDirectories(App.NotebookCacheDirectory);
             return (from notebookFolderPath in notebookFolderPaths
                     let notebookInfo = notebookFolderPath.Split(';')
                     where notebookInfo.Length == 4
                     let notebookID = notebookInfo[1]
-                    where notebookID == id
+                    let notebookOwnerID = notebookInfo[3]
+                    where notebookID == id && notebookOwnerID == ownerID
                     select notebookFolderPath).FirstOrDefault();
         }
 

@@ -619,10 +619,6 @@ namespace CLP.Entities
         protected override void OnDeserialized()
         {
             base.OnDeserialized();
-            foreach(var pageObject in PageObjects)
-            {
-                pageObject.ParentPage = this;
-            }
                     
             InkStrokes = StrokeDTO.LoadInkStrokes(SerializedStrokes);
             IsCached = true;

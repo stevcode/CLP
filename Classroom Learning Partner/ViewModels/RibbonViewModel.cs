@@ -105,8 +105,6 @@ namespace Classroom_Learning_Partner.ViewModels
             NewNotebookCommand = new Command(OnNewNotebookCommandExecute);
             OpenNotebookCommand = new Command(OnOpenNotebookCommandExecute);
             LoadNotebookFromXMLCommand = new Command(OnLoadNotebookFromXMLCommandExecute);
-            EditNotebookCommand = new Command(OnEditNotebookCommandExecute);
-            DoneEditingNotebookCommand = new Command(OnDoneEditingNotebookCommandExecute);
             SaveNotebookCommand = new Command(OnSaveNotebookCommandExecute);
             ForceSaveNotebookCommand = new Command(OnForceSaveNotebookCommandExecute);
             SaveAllNotebooksCommand = new Command(OnSaveAllNotebooksCommandExecute);
@@ -703,39 +701,6 @@ namespace Classroom_Learning_Partner.ViewModels
             //        App.MainWindowViewModel.LastSavedTime = notebook.LastSavedTime.ToString("yyyy/MM/dd - HH:mm:ss");
             //    }
             //}  
-        }
-
-        //TODO: Steve - Combine with DoneEditing to make ToggleEditingMode
-        /// <summary>
-        /// Puts current notebook in Authoring Mode.
-        /// </summary>
-        public Command EditNotebookCommand { get; private set; }
-        
-        private void OnEditNotebookCommandExecute()
-        {
-            MainWindow.IsAuthoring = true;
-
-            var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
-            if(currentPage != null)
-            {
-                ACLPPageBaseViewModel.ClearAdorners(currentPage);
-            }
-        }
-
-        /// <summary>
-        /// Leaves Authoring Mode.
-        /// </summary>
-        public Command DoneEditingNotebookCommand { get; private set; }
-
-        private void OnDoneEditingNotebookCommandExecute()
-        {
-            MainWindow.IsAuthoring = false;
-
-            var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
-            if(currentPage != null)
-            {
-                ACLPPageBaseViewModel.ClearAdorners(currentPage);
-            }
         }
 
         /// <summary>

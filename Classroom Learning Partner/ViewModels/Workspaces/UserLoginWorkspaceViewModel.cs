@@ -30,10 +30,16 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command<Person> LogInCommand { get; private set; }
 
+        private bool _isLoggingIn;
         private void OnLogInCommandExecute(Person user)
         {
-            App.MainWindowViewModel.CurrentUser = user;
+            if(_isLoggingIn)
+            {
+                return;
+            }
 
+            App.MainWindowViewModel.CurrentUser = user;
+            _isLoggingIn = true;
             new Thread(() =>
                        {
                            Thread.CurrentThread.IsBackground = true;
@@ -86,7 +92,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                    }
 
                                    notebook.CurrentPage = notebook.Pages.First();
-                                   foreach(var page in notebook.Pages)
+                                   foreach(var page in notebook.Pages) //TODO: Does override deserialization cover this?
                                    {
                                        page.InkStrokes = StrokeDTO.LoadInkStrokes(page.SerializedStrokes);
                                    }
@@ -104,15 +110,18 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                                                return null;
                                                                                                            },
                                                                               null);
+                                   _isLoggingIn = false;
                                }
                                catch(Exception)
                                {
                                    Logger.Instance.WriteToLog("Problem Logging In as " + App.MainWindowViewModel.CurrentUser.FullName);
+                                   _isLoggingIn = false;
                                }
                            }
                            else
                            {
                                Console.WriteLine("Instructor NOT Available");
+                               _isLoggingIn = false;
                            }
                        }).Start();
         }

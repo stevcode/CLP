@@ -350,9 +350,8 @@ namespace CLP.Entities
             }
             newNotebook.Owner = owner;
             newNotebook.CurrentPage = CurrentPage.CopyForNewOwner(owner);
-            foreach(var page in Pages)
+            foreach(var newPage in Pages.Select(page => page.CopyForNewOwner(owner))) 
             {
-                var newPage = page.CopyForNewOwner(owner);
                 newNotebook.Pages.Add(newPage);
             }
 
@@ -524,6 +523,10 @@ namespace CLP.Entities
                         continue;
                     }
                     notebookPages.Add(notebookPage);
+                    if(!includeSubmissions)
+                    {
+                        continue;
+                    }
                     foreach(var submission in pages)
                     {
                         if(submission.ID == notebookPage.ID &&
@@ -578,16 +581,10 @@ namespace CLP.Entities
 
                     var page = Load<CLPPage>(pageAndHistoryFilePath, SerializationMode.Xml);
                     //TODO: :Load Page History
-                    foreach(var pageObject in page.PageObjects)
-                    {
-                        pageObject.ParentPage = page;
-                    }
                     if(page.ID == notebook.CurrentPageID)
                     {
                         notebook.CurrentPage = page;
                     }
-                    page.InkStrokes = StrokeDTO.LoadInkStrokes(page.SerializedStrokes);
-                    page.IsCached = true;
                     pages.Add(page);
                 }
 
@@ -600,6 +597,10 @@ namespace CLP.Entities
                         continue;
                     }
                     notebookPages.Add(notebookPage);
+                    if(!includeSubmissions)
+                    {
+                        continue;
+                    }
                     foreach(var submission in pages)
                     {
                         if(submission.ID == notebookPage.ID &&

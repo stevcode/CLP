@@ -41,17 +41,6 @@
                                            ImageSource="pack://application:,,,/Resources/Images/OpenNotebook32.png"
                                            Command="{Binding OpenNotebookCommand}" />
 
-                <RibbonApplicationMenuItem Header="Edit Notebook"
-                                           ImageSource="pack://application:,,,/Resources/Images/EditNotebook32.png"
-                                           Command="{Binding EditNotebookCommand}"
-                                           Visibility="{Binding InstructorVisibility}" />
-
-                <!--TODO: Steve - Make this a toggle with Edit Notebook above-->
-                <RibbonApplicationMenuItem Header="Done Editing Notebook"
-                                           ImageSource="pack://application:,,,/Resources/Images/DoneEditingNotebook32.png"
-                                           Command="{Binding DoneEditingNotebookCommand}"
-                                           Visibility="{Binding InstructorVisibility}" />
-
                 <!--<RibbonApplicationMenuItem Header="Save Notebook"
                                            KeyTip="S"
                                            ImageSource="pack://application:,,,/Resources/Images/SaveNotebook32.png"
