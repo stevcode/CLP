@@ -1,0 +1,36 @@
+﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.PageInformationPanelView"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:catel="http://catel.codeplex.com"
+                   xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
+                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
+                   xmlns:system="clr-namespace:System;assembly=mscorlib"
+                   xmlns:extenders="clr-namespace:Classroom_Learning_Partner.Views.Extenders">
+
+    <UserControl.Resources>
+        <conv:PanelLocationToThicknessConverter x:Key="PanelLocationToThicknessConverter" />
+    </UserControl.Resources>
+
+    <Border Background="{StaticResource GrayBackgroundColor}"
+            BorderBrush="{StaticResource GrayEdgeColor}"
+            BorderThickness="{Binding Location, Converter={StaticResource PanelLocationToThicknessConverter}, ConverterParameter=7.0}"
+            Width="{Binding Length}">
+        
+        <StackPanel>
+            
+            <TextBlock>
+                <Run Text="Page ID: " />
+                <Run Text="{Binding ID}" />
+            </TextBlock>
+            
+            <TextBlock>
+                <Run Text="Page VersionIndex: " />
+                <Run Text="{Binding VersionIndex}" />
+            </TextBlock>
+            
+        </StackPanel>
+
+    </Border>
+
+</catel:UserControl>

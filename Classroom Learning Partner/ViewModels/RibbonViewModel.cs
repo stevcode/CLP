@@ -34,7 +34,7 @@ namespace Classroom_Learning_Partner.ViewModels
         StudentWork,
         Progress,
         Displays,
-        PageInfo,
+        PageInformation,
         Webcam
     }
 
@@ -351,6 +351,17 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData CurrentLeftPanelProperty = RegisterProperty("CurrentLeftPanel", typeof(Panels?));
+
+        /// <summary>
+        /// Right Panel.
+        /// </summary>
+        public Panels? CurrentRightPanel
+        {
+            get { return GetValue<Panels?>(CurrentRightPanelProperty); }
+            set { SetValue(CurrentRightPanelProperty, value); }
+        }
+
+        public static readonly PropertyData CurrentRightPanelProperty = RegisterProperty("CurrentRightPanel", typeof(Panels?));
 
         /// <summary>
         /// Whether or not to mirror the displays to the projector.

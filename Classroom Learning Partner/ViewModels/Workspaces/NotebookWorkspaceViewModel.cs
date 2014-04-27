@@ -48,6 +48,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             DisplaysPanel = new DisplaysPanelViewModel(notebook);
+            PageInformationPanel = new PageInformationPanelViewModel(notebook);
             RightPanel = DisplaysPanel;
 
             // TODO: Use StagingPanel instead?
@@ -212,6 +213,17 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData DisplaysPanelProperty = RegisterProperty("DisplaysPanel", typeof(DisplaysPanelViewModel));
+
+        /// <summary>
+        /// PageInformationPanel.
+        /// </summary>
+        public PageInformationPanelViewModel PageInformationPanel
+        {
+            get { return GetValue<PageInformationPanelViewModel>(PageInformationPanelProperty); }
+            set { SetValue(PageInformationPanelProperty, value); }
+        }
+
+        public static readonly PropertyData PageInformationPanelProperty = RegisterProperty("PageInformationPanel", typeof(PageInformationPanelViewModel));
 
         /// <summary>
         /// SubmissionHistoryPanel.

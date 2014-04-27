@@ -438,6 +438,9 @@
     <Compile Include="Views\Panels\NotebookPagesPanelView.xaml.cs">
       <DependentUpon>NotebookPagesPanelView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Panels\PageInformationPanelView.xaml.cs">
+      <DependentUpon>PageInformationPanelView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Panels\StagingPanelView.xaml.cs">
       <DependentUpon>StagingPanelView.xaml</DependentUpon>
     </Compile>
@@ -687,6 +690,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Panels\PageInformationPanelView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Panels\StagingPanelView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -749,6 +756,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="app.config">
       <SubType>Designer</SubType>
