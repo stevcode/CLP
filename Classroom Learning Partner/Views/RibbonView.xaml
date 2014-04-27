@@ -436,7 +436,7 @@
                          Visibility="{Binding InstructorVisibility}">
 
                 <RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/Displays32.png"
-                                    IsChecked="{Binding DisplayPanelVisibility}"
+                                    IsChecked="{Binding CurrentRightPanel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.Displays}}"
                                     IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}">
                     <RibbonToggleButton.Style>
                         <Style TargetType="{x:Type RibbonToggleButton}">
@@ -763,6 +763,24 @@
             </RibbonGroup>
 
             <RibbonGroup Header="Page">
+                
+                <RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/Displays32.png"
+                                    IsChecked="{Binding CurrentRightPanel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.PageInformation}}"
+                                    IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}">
+                    <RibbonToggleButton.Style>
+                        <Style TargetType="{x:Type RibbonToggleButton}">
+                            <Setter Property="Label"
+                                    Value="Show Page Info" />
+                            <Style.Triggers>
+                                <Trigger Property="IsChecked"
+                                         Value="True">
+                                    <Setter Property="Label"
+                                            Value="Hide PageInfo" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </RibbonToggleButton.Style>
+                </RibbonToggleButton>
 
                 <RibbonButton Label="Broadcast This Page"
                               LargeImageSource="..\Images\LargeIcon.png"

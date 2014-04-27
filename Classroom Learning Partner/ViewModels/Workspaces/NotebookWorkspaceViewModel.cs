@@ -253,11 +253,11 @@ namespace Classroom_Learning_Partner.ViewModels
             if(viewModel is RibbonViewModel)
             {
                 var ribbon = viewModel as RibbonViewModel;
-                if(propertyName == "DisplayPanelVisibility")
-                {
-                    RightPanel = DisplaysPanel;
-                    RightPanel.IsVisible = ribbon.DisplayPanelVisibility;
-                }
+                //if(propertyName == "DisplayPanelVisibility")
+                //{
+                //    RightPanel = DisplaysPanel;
+                //    RightPanel.IsVisible = ribbon.DisplayPanelVisibility;
+                //}
 
                 if(propertyName == "CurrentLeftPanel")
                 {
@@ -277,6 +277,24 @@ namespace Classroom_Learning_Partner.ViewModels
                             break;
                         default:
                             LeftPanel.IsVisible = false;
+                            break;
+                    }
+                }
+
+                if(propertyName == "CurrentRightPanel")
+                {
+                    switch(ribbon.CurrentRightPanel)
+                    {
+                        case Panels.Displays:
+                            RightPanel = DisplaysPanel;
+                            RightPanel.IsVisible = true;
+                            break;
+                        case Panels.PageInformation:
+                            RightPanel = PageInformationPanel;
+                            RightPanel.IsVisible = true;
+                            break;
+                        default:
+                            RightPanel.IsVisible = false;
                             break;
                     }
                 }
