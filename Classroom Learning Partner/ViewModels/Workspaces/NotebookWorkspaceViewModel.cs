@@ -253,11 +253,6 @@ namespace Classroom_Learning_Partner.ViewModels
             if(viewModel is RibbonViewModel)
             {
                 var ribbon = viewModel as RibbonViewModel;
-                //if(propertyName == "DisplayPanelVisibility")
-                //{
-                //    RightPanel = DisplaysPanel;
-                //    RightPanel.IsVisible = ribbon.DisplayPanelVisibility;
-                //}
 
                 if(propertyName == "CurrentLeftPanel")
                 {
