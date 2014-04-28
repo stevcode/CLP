@@ -151,8 +151,7 @@
                    FontSize="20"
                    TextAlignment="Right"
                    HorizontalAlignment="Right"
-                   Margin="5"
-                   Visibility="{Binding MainWindowViewModel.Ribbon.InstructorVisibility, Source={x:Static Application.Current}}">
+                   Margin="5">
             <Run Text="Grid Display" />
             <Run Text="{Binding DisplayNumber}" />
         </TextBlock>
