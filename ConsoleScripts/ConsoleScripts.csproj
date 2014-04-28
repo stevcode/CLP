@@ -62,6 +62,7 @@
     <Reference Include="EntityFramework">
       <HintPath>..\Classroom Learning Partner\External Libraries\EntityFramework.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
