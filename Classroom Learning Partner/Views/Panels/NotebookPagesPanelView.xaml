@@ -67,10 +67,10 @@
                                 </Grid.ColumnDefinitions>
 
                                 <TextBlock Grid.Column="0"
-                                           Margin="5 15 0 0"
+                                           Margin="5 0 0 0"
                                            Foreground="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
                                            FontWeight="Bold"
-                                           VerticalAlignment="Top">
+                                           VerticalAlignment="Center">
                                     <Run Text="Page " />
                                     <Run Text="{Binding PageNumber}" />
                                     <TextBlock.LayoutTransform>

@@ -3,11 +3,13 @@
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
-                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views">
+                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
+                   xmlns:app="clr-namespace:Classroom_Learning_Partner">
     
     <UserControl.Resources>
         <conv:ItemsControlItemIndexConverter x:Key="ItemsControlItemIndexConverter" />
         <conv:ProjectedDisplayBackgroundConverter x:Key="ProjectedDisplayBackgroundConverter" />
+        <conv:EnumToBoolConverter x:Key="EnumToBoolConverter" />
     </UserControl.Resources>
 
     <Grid Background="{Binding MainWindowViewModel.Ribbon.IsProjectorOn, Source={x:Static Application.Current}, Converter={StaticResource ProjectedDisplayBackgroundConverter}}">
@@ -32,22 +34,37 @@
                     <Grid HorizontalAlignment="Center"
                           VerticalAlignment="Center"
                           Margin="5">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
+                        
+                        <TextBlock Grid.Column="0"
+                               Grid.Row="1"
+                               Foreground="{StaticResource MainColor}"
+                               FontWeight="Bold"
+                               VerticalAlignment="Center">
+                        <Run Text="Page" />
+                        <Run Text="{Binding PageNumber}" />
+                        <TextBlock.LayoutTransform>
+                            <TransformGroup>
+                                <ScaleTransform />
+                                <SkewTransform />
+                                <RotateTransform Angle="-90" />
+                                <TranslateTransform />
+                            </TransformGroup>
+                        </TextBlock.LayoutTransform>
+                    </TextBlock>
 
                         <TextBlock Grid.Column="0"
-                                   Margin="0 5 0 0"
-                                   Text="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Converter={StaticResource ItemsControlItemIndexConverter}}"
-                                   Foreground="{StaticResource MainColor}"
-                                   FontWeight="Bold"
-                                   FontSize="20"
-                                   VerticalAlignment="Top" />
-
-                        <TextBlock Grid.Column="0"
-                                   Margin="0 0 0 15"
-                                   Text="{Binding Submitter.FullName}"
+                                   Grid.Row="1"
+                                   Margin="0 0 0 5"
+                                   Text="{Binding Owner.FullName}"
                                    Foreground="{StaticResource MainColor}"
                                    FontWeight="Bold"
                                    VerticalAlignment="Bottom"
@@ -63,20 +80,46 @@
                         </TextBlock>
 
                         <Border Grid.Column="1"
+                                Grid.Row="1"
                                 BorderThickness="1"
                                 BorderBrush="{StaticResource GrayBorderColor}">
                             <views:CLPPageView DataContext="{Binding}"
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center" />
                         </Border>
-
-                        <Button Grid.Column="1"
+                        
+                        <Button Grid.Column="0"
+                                Grid.Row="0"
                                 Width="30"
                                 Height="30"
+                                Margin="0 0 -20 -20"
+                                Cursor="Hand">
+                            <Button.Template>
+                                <ControlTemplate TargetType="{x:Type Button}">
+                                    <Grid>
+                                        <Ellipse Fill="White"
+                                                 Stroke="Black"
+                                                 StrokeThickness="3"
+                                                 VerticalAlignment="Stretch"
+                                                 HorizontalAlignment="Stretch" />
+                                        <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Converter={StaticResource ItemsControlItemIndexConverter}}"
+                                                   Foreground="{StaticResource MainColor}"
+                                                   FontWeight="Bold"
+                                                   FontSize="20"
+                                                   VerticalAlignment="Center"
+                                                   HorizontalAlignment="Center" />
+                                    </Grid>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+
+                        <Button Grid.Column="2"
+                                Grid.Row="0"
+                                Width="30"
+                                Height="30"
+                                Margin="-20 0 0 -20"
                                 Cursor="Hand"
                                 Visibility="{Binding MainWindowViewModel.Ribbon.InstructorVisibility, Source={x:Static Application.Current}}"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Top"
                                 Command="{Binding ElementName=ItemsControl, Path=DataContext.RemovePageFromGridDisplayCommand}"
                                 CommandParameter="{Binding}">
                             <Button.Template>
@@ -108,7 +151,8 @@
                    FontSize="20"
                    TextAlignment="Right"
                    HorizontalAlignment="Right"
-                   Margin="5">
+                   Margin="5"
+                   Visibility="{Binding MainWindowViewModel.Ribbon.InstructorVisibility, Source={x:Static Application.Current}}">
             <Run Text="Grid Display" />
             <Run Text="{Binding DisplayNumber}" />
         </TextBlock>

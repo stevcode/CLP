@@ -111,33 +111,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData YPositionProperty = RegisterProperty("YPosition", typeof(double));
 
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-     //TODO: Entities, remove?   [ViewModelToModel("PageObject")]
-        public bool IsBackground
-        {
-            get { return GetValue<bool>(IsBackgroundProperty); }
-            set { SetValue(IsBackgroundProperty, value); }
-        }
-
-        public static readonly PropertyData IsBackgroundProperty = RegisterProperty("IsBackground", typeof(bool));
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-   //TODO: Entities, remove     [ViewModelToModel("PageObject")]
-        public bool CanAdornersShow
-        {
-            get { return GetValue<bool>(CanAdornersShowProperty); }
-            set { SetValue(CanAdornersShowProperty, value); }
-        }
-
-        /// <summary>
-        /// Register the CanAdornersShow property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData CanAdornersShowProperty = RegisterProperty("CanAdornersShow", typeof(bool), true);
-
         #endregion //Model
 
         #region IPageObjectAdorners
