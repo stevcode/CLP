@@ -496,6 +496,26 @@ namespace CLP.Entities
             }
         }
 
+        public void SaveOthersSubmissions(string folderPath)
+        {
+            foreach(var page in Pages)
+            {
+                foreach(var submission in page.Submissions)
+                {
+                    var notebookFolderPaths = Directory.EnumerateDirectories(folderPath);
+                    foreach(var notebookFolderPath in notebookFolderPaths)
+                    {
+                        if(notebookFolderPath.Contains(submission.OwnerID))
+                        {
+                            var pagesPath = Path.Combine(notebookFolderPath, "Pages");
+                            var pageFilePath = Path.Combine(pagesPath, "p;" + submission.PageNumber + ";" + submission.ID + ";" + submission.DifferentiationLevel + ";" + submission.VersionIndex + ".xml");
+                            submission.ToXML(pageFilePath);
+                        }
+                    }
+                }
+            }
+        }
+
         public static Notebook OpenNotebook(string folderPath, bool includeSubmissions = true)
         {
             try

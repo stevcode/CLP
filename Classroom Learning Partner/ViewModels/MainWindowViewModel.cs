@@ -465,8 +465,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 case App.UserMode.Server:
                     break;
                 case App.UserMode.Instructor:
+                    notebook.SaveOthersSubmissions(App.NotebookCacheDirectory);
                     break;
                 case App.UserMode.Projector:
+                    notebook.SaveOthersSubmissions(App.NotebookCacheDirectory);
                     break;
                 case App.UserMode.Student:
                     var submissionsPath = Path.Combine(folderPath, "Pages");
