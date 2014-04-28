@@ -302,9 +302,9 @@ namespace Classroom_Learning_Partner
                 {
                     var notebookInfo = notebookName.Split(';');
                     if(notebookInfo.Length != 4 ||
-                       notebookInfo[2] == Person.Author.ID ||
-                       notebookInfo[2] == Person.Emily.ID ||
-                       notebookInfo[2] == Person.EmilyProjector.ID)
+                       notebookInfo[3] == Person.Author.ID ||
+                       notebookInfo[3] == Person.Emily.ID ||
+                       notebookInfo[3] == Person.EmilyProjector.ID)
                     {
                         continue;
                     }
@@ -315,7 +315,7 @@ namespace Classroom_Learning_Partner
                         continue;
                     }
 
-                    var submissionsPath = Path.Combine(folderPath, "Pages", "Submissions");
+                    var submissionsPath = Path.Combine(folderPath, "Pages");
                     if(!Directory.Exists(submissionsPath))
                     {
                         continue;
@@ -326,10 +326,12 @@ namespace Classroom_Learning_Partner
                     foreach(var submissionPath in submissionPaths)
                     {
                         var submissionFileName = Path.GetFileNameWithoutExtension(submissionPath);
-                        if(submissionFileName != null && submissionFileName.Contains(page.ID))
+                        var submissionInfo = submissionFileName.Split(';');
+                        if(submissionInfo.Length == 5 &&
+                           submissionInfo[2] == page.ID &&
+                           submissionInfo[4] != "0")
                         {
                             var submission = ModelBase.Load<CLPPage>(submissionPath, SerializationMode.Xml);
-                            submission.InkStrokes = StrokeDTO.LoadInkStrokes(submission.SerializedStrokes);
                             page.Submissions.Add(submission);
                         }
                     }
