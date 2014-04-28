@@ -191,7 +191,7 @@ namespace Classroom_Learning_Partner
                 Notebook notebookToZip;
                 var newNotebook = App.MainWindowViewModel.OpenNotebooks.First().CopyForNewOwner(student);
 
-                var studentNotebookFolderName = newNotebook.Name + ";" + newNotebook.ID + ";" + newNotebook.OwnerID + ";" + newNotebook.Owner.FullName;
+                var studentNotebookFolderName = newNotebook.Name + ";" + newNotebook.ID + ";" + newNotebook.Owner.FullName + ";" + newNotebook.OwnerID;
                 var studentNotebookFolderPath = Path.Combine(App.NotebookCacheDirectory, studentNotebookFolderName);
                 if(Directory.Exists(studentNotebookFolderPath))
                 {
