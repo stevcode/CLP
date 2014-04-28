@@ -53,7 +53,7 @@ namespace CLP.Entities
         /// <summary>
         /// Method that prepares a clone of the <see cref="IHistoryItem" /> so that is can call Redo() when sent to another machine.
         /// </summary>
-        public override IHistoryItem UndoRedoCompleteClone()
+        public override IHistoryItem CreatePackagedHistoryItem()
         {
             // TODO
             var clonedHistoryItem = Clone() as StrokesChangedHistoryItem;

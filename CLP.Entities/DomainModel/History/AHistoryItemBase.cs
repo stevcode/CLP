@@ -184,7 +184,7 @@ namespace CLP.Entities
 
         protected abstract void RedoAction(bool isAnimationRedo);
 
-        public abstract IHistoryItem UndoRedoCompleteClone();
+        public abstract IHistoryItem CreatePackagedHistoryItem();
 
         #endregion //Methods
     }

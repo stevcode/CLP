@@ -13,6 +13,6 @@
         CLPPage ParentPage { get; set; }
         void Undo(bool isAnimationUndo);
         void Redo(bool isAnimationRedo);
-        IHistoryItem UndoRedoCompleteClone();
+        IHistoryItem CreatePackagedHistoryItem();
     }
 }
