@@ -529,6 +529,20 @@ namespace Classroom_Learning_Partner.ViewModels
                     break;
                 case PageInteractionMode.Select:
                 case PageInteractionMode.Highlighter:
+                    if(e.Removed.Any())
+                    {
+                        RemoveStroke(e.Removed, e.Added);
+                    }
+                    else
+                    {
+                        var stroke = e.Added.FirstOrDefault();
+                        if(stroke == null)
+                        {
+                            return;
+                        }
+                        AddStroke(stroke);
+                    }
+                    break;
                 case PageInteractionMode.Pen:
                     if(e.Removed.Any())
                     {
@@ -540,6 +554,20 @@ namespace Classroom_Learning_Partner.ViewModels
                         if(stroke == null)
                         {
                             return;
+                        }
+                        //Check if stroke divides an array
+                        bool wasArrayDivided = false;
+                        foreach(var array in PageObjects.OfType<CLPArray>())
+                        {
+                            if(array.IsDivisionBehaviorOn)
+                            {
+                                wasArrayDivided = array.CreateDivision(stroke) || wasArrayDivided;
+                            }
+                        }
+                        if(wasArrayDivided)
+                        {
+                            Page.InkStrokes.Remove(stroke);
+                            break;
                         }
                         AddStroke(stroke);
                     }
