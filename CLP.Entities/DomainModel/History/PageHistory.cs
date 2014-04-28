@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Windows.Ink;
+using System.Xml.Serialization;
 using Catel.Collections;
 using Catel.Data;
+using Catel.Runtime.Serialization;
 
 namespace CLP.Entities
 {
@@ -121,6 +124,41 @@ namespace CLP.Entities
                        RedoItems.Any(clpHistoryItem => clpHistoryItem is AnimationIndicator && (clpHistoryItem as AnimationIndicator).AnimationIndicatorType == AnimationIndicatorType.Stop);
             }
         }
+
+        /// <summary>
+        /// A list of all the <see cref="IPageObject" />s that have been removed from a <see cref="CLPPage" />, but are needed for the <see cref="PageHistory" />.
+        /// </summary>
+        public List<IPageObject> TrashedPageObjects
+        {
+            get { return GetValue<List<IPageObject>>(TrashedPageObjectsProperty); }
+            set { SetValue(TrashedPageObjectsProperty, value); }
+        }
+
+        public static readonly PropertyData TrashedPageObjectsProperty = RegisterProperty("TrashedPageObjects", typeof(List<IPageObject>), () => new List<IPageObject>());
+
+        /// <summary>
+        /// A list of all the <see cref="Stroke" />s that have been removed from a <see cref="CLPPage" />, but are needed for the <see cref="PageHistory" />.
+        /// </summary>
+        [XmlIgnore]
+        [ExcludeFromSerialization]
+        public StrokeCollection TrashedInkStrokes
+        {
+            get { return GetValue<StrokeCollection>(TrashedInkStrokesProperty); }
+            set { SetValue(TrashedInkStrokesProperty, value); }
+        }
+
+        public static readonly PropertyData TrashedInkStrokesProperty = RegisterProperty("TrashedInkStrokes", typeof(StrokeCollection), () => new StrokeCollection());
+
+        /// <summary>
+        /// A list of all the serialized <see cref="Stroke" />s that have been removed from a <see cref="CLPPage" />, but are needed for the <see cref="PageHistory" />.
+        /// </summary>
+        public List<StrokeDTO> SerializedTrashedInkStrokes
+        {
+            get { return GetValue<List<StrokeDTO>>(SerializedTrashedInkStrokesProperty); }
+            set { SetValue(SerializedTrashedInkStrokesProperty, value); }
+        }
+
+        public static readonly PropertyData SerializedTrashedInkStrokesProperty = RegisterProperty("SerializedTrashedInkStrokes", typeof(List<StrokeDTO>), () => new List<StrokeDTO>());
 
         #endregion //Properties
 
