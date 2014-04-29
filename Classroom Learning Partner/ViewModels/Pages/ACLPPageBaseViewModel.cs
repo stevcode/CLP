@@ -580,7 +580,9 @@ namespace Classroom_Learning_Partner.ViewModels
                         }
                         if(wasArrayDivided)
                         {
+                            InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
                             Page.InkStrokes.Remove(stroke);
+                            InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
                             break;
                         }
                         AddStroke(stroke);

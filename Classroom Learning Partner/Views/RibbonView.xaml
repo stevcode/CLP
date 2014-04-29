@@ -391,8 +391,7 @@
                 </Border>
             </RibbonGroup>
 
-            <RibbonGroup Header="Page"
-                         Visibility="{Binding StudentVisibility}">
+            <RibbonGroup Header="Page">
 
                 <RibbonButton Label="Longer Page"
                               LargeImageSource="pack://application:,,,/Resources/Images/MakePageLonger32.png"
@@ -472,6 +471,29 @@
                     </RibbonToggleButton.Style>
                 </RibbonToggleButton>
 
+            </RibbonGroup>
+            
+            <RibbonGroup Header="Extras"
+                         Visibility="{Binding InstructorVisibility}">
+                
+                <RibbonToggleButton IsChecked="{Binding BlockStudentPenInput}">
+                    <RibbonToggleButton.Style>
+                        <Style TargetType="{x:Type RibbonToggleButton}">
+                            <Setter Property="Label"
+                                    Value="Pens Down" />
+                            <Setter Property="LargeImageSource"
+                                    Value="pack://application:,,,/Resources/Images/PenDisabled32.png" />
+                            <Style.Triggers>
+                                <Trigger Property="IsChecked"
+                                         Value="True">
+                                    <Setter Property="Label"
+                                            Value="Pens Up" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </RibbonToggleButton.Style>
+                </RibbonToggleButton>
+                
             </RibbonGroup>
 
         </RibbonTab>
@@ -736,25 +758,7 @@
                     </RibbonToggleButton.Style>
                 </RibbonToggleButton>
 
-                <RibbonToggleButton IsChecked="{Binding BlockStudentPenInput}">
-                    <RibbonToggleButton.Style>
-                        <Style TargetType="{x:Type RibbonToggleButton}">
-                            <Setter Property="Label"
-                                    Value="Pens Down" />
-                            <Setter Property="LargeImageSource"
-                                    Value="pack://application:,,,/Images/LargeIcon.png" />
-                            <Style.Triggers>
-                                <Trigger Property="IsChecked"
-                                         Value="True">
-                                    <Setter Property="Label"
-                                            Value="Pens Up" />
-                                    <Setter Property="LargeImageSource"
-                                            Value="pack://application:,,,/Images/LargeIcon.png" />
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </RibbonToggleButton.Style>
-                </RibbonToggleButton>
+                
 
                 <RibbonButton Label="Turn Off Webcam Sharing"
                               LargeImageSource="..\Images\LargeIcon.png"
