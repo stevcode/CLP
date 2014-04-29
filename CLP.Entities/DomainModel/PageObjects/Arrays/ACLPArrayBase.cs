@@ -13,6 +13,7 @@ namespace CLP.Entities
         Horizontal
     }
 
+    [Serializable]
     public class CLPArrayDivision : ModelBase
     {
         #region Constructors
