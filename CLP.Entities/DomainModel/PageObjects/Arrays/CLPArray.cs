@@ -312,6 +312,136 @@ namespace CLP.Entities
             return halvedPageObjects;
         }
 
+        public bool CreateDivision(Stroke cuttingStroke)
+        {
+            var strokeTop = cuttingStroke.GetBounds().Top;
+            var strokeBottom = cuttingStroke.GetBounds().Bottom;
+            var strokeLeft = cuttingStroke.GetBounds().Left;
+            var strokeRight = cuttingStroke.GetBounds().Right;
+
+            var cuttableTop = YPosition + LabelLength;
+            var cuttableBottom = cuttableTop + ArrayHeight;
+            var cuttableLeft = XPosition + LabelLength;
+            var cuttableRight = cuttableLeft + ArrayWidth;
+
+            if(ArrayType != ArrayTypes.Array)
+            {
+                return false;
+            }
+
+            const double MIN_THRESHHOLD = 5.0;
+
+            if(Math.Abs(strokeLeft - strokeRight) < Math.Abs(strokeTop - strokeBottom) &&
+               strokeRight <= cuttableRight &&
+               strokeLeft >= cuttableLeft &&
+               strokeTop - cuttableTop <= MIN_THRESHHOLD &&
+               cuttableBottom - strokeBottom <= MIN_THRESHHOLD &&
+               Columns > 1) //Vertical Stroke. Stroke must be within the bounds of the pageObject
+            {
+                var average = (strokeRight + strokeLeft) / 2;
+                var relativeAverage = average - LabelLength - XPosition;
+                var position = relativeAverage;
+                if(IsGridOn)
+                {
+                    position = GetClosestGridLine(position);
+                }
+
+                if(VerticalDivisions.Any(verticalDivision => Math.Abs(verticalDivision.Position - position) < 30.0))
+                {
+                    return false;
+                }
+                if(VerticalDivisions.Count >= Columns)
+                {
+                    //MessageBox.Show("The number of divisions cannot be larger than the number of Columns.");
+                    return false;
+                }
+
+                var divAbove = FindDivisionAbove(position, VerticalDivisions);
+                var divBelow = FindDivisionBelow(position, VerticalDivisions);
+
+                var addedDivisions = new List<CLPArrayDivision>();
+                var removedDivisions = new List<CLPArrayDivision>();
+
+                CLPArrayDivision topDiv;
+                if(divAbove == null)
+                {
+                    topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, 0, position, 0);
+                }
+                else
+                {
+                    topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, divAbove.Position, position - divAbove.Position, 0);
+                    VerticalDivisions.Remove(divAbove);
+                    removedDivisions.Add(divAbove);
+                }
+                VerticalDivisions.Add(topDiv);
+                addedDivisions.Add(topDiv);
+
+                var bottomDiv = divBelow == null
+                                    ? new CLPArrayDivision(ArrayDivisionOrientation.Vertical, position, ArrayWidth - position, 0)
+                                    : new CLPArrayDivision(ArrayDivisionOrientation.Vertical, position, divBelow.Position - position, 0);
+
+                VerticalDivisions.Add(bottomDiv);
+                addedDivisions.Add(bottomDiv);
+                return true; 
+            }
+            else if(Math.Abs(strokeLeft - strokeRight) > Math.Abs(strokeTop - strokeBottom) &&
+                    strokeBottom <= cuttableBottom &&
+                    strokeTop >= cuttableTop &&
+                    cuttableRight - strokeRight <= MIN_THRESHHOLD &&
+                    strokeLeft - cuttableLeft <= MIN_THRESHHOLD &&
+                    Rows > 1) //Horizontal Stroke. Stroke must be within the bounds of the pageObject
+            {
+                var average = (strokeTop + strokeBottom) / 2;
+                var relativeAverage = average - LabelLength - YPosition;
+                var position = relativeAverage;
+                if(IsGridOn)
+                {
+                    position = GetClosestGridLine(position);
+                }
+
+                if(HorizontalDivisions.Any(horizontalDivision => Math.Abs(horizontalDivision.Position - position) < 30.0))
+                {
+                    return false;
+                }
+                if(HorizontalDivisions.Count >= Rows)
+                {
+                    //MessageBox.Show("The number of divisions cannot be larger than the number of Rows.");
+                    return false;
+                }
+
+                var divAbove = FindDivisionAbove(position, HorizontalDivisions);
+                var divBelow = FindDivisionBelow(position, HorizontalDivisions);
+
+                var addedDivisions = new List<CLPArrayDivision>();
+                var removedDivisions = new List<CLPArrayDivision>();
+
+                CLPArrayDivision topDiv;
+                if(divAbove == null)
+                {
+                    topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, 0, position, 0);
+                }
+                else
+                {
+                    topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, divAbove.Position, position - divAbove.Position, 0);
+                    HorizontalDivisions.Remove(divAbove);
+                    removedDivisions.Add(divAbove);
+                }
+                HorizontalDivisions.Add(topDiv);
+                addedDivisions.Add(topDiv);
+
+                var bottomDiv = divBelow == null
+                                    ? new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, position, ArrayHeight - position, 0)
+                                    : new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, position, divBelow.Position - position, 0);
+
+                HorizontalDivisions.Add(bottomDiv);
+                addedDivisions.Add(bottomDiv);
+
+                return true;
+            }
+
+            return false;
+        }
+
         #endregion
     }
 }
