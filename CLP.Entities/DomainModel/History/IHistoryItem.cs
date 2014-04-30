@@ -14,5 +14,6 @@
         void Undo(bool isAnimationUndo);
         void Redo(bool isAnimationRedo);
         IHistoryItem CreatePackagedHistoryItem();
+        void UnpackHistoryItem();
     }
 }

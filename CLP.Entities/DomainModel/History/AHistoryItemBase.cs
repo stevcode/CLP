@@ -186,6 +186,8 @@ namespace CLP.Entities
 
         public abstract IHistoryItem CreatePackagedHistoryItem();
 
+        public abstract void UnpackHistoryItem();
+
         #endregion //Methods
     }
 }

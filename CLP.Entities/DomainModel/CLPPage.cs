@@ -424,6 +424,17 @@ namespace CLP.Entities
 
         #endregion //Navigation Properties
 
+        /// <summary>
+        /// SUMMARY
+        /// </summary>
+        public PageHistory History
+        {
+            get { return GetValue<PageHistory>(HistoryProperty); }
+            set { SetValue(HistoryProperty, value); }
+        }
+
+        public static readonly PropertyData HistoryProperty = RegisterProperty("History", typeof(PageHistory), () => new PageHistory());
+
         #endregion //Properties
 
         #region Overrides of ObservableObject
@@ -590,6 +601,8 @@ namespace CLP.Entities
 
             return newPage;
         }
+
+        public Stroke GetStrokeByID(string id) { return InkStrokes.FirstOrDefault(stroke => stroke.GetStrokeID() == id); }
 
         #endregion //Methods
 

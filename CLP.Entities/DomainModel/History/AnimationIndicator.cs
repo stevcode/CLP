@@ -77,6 +77,8 @@ namespace CLP.Entities
             return clonedHistoryItem;
         }
 
+        public override void UnpackHistoryItem() { }
+
         #endregion //Methods
     }
 }

@@ -16,10 +16,7 @@ namespace Classroom_Learning_Partner
         void OpenPartialNotebook(string zippedNotebook);
 
         [OperationContract]
-        void ModifyPageInkStrokes(List<StrokeDTO> strokesAdded, List<StrokeDTO> strokesRemoved, string pageID);
-
-        [OperationContract]
-        void AddHistoryItem(string pageID, string zippedHistoryItem);
+        void AddHistoryItem(string compositePageID, string zippedHistoryItem);
 
         [OperationContract]
         void AddNewPage(string zippedPage, int index);

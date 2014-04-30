@@ -489,6 +489,8 @@ namespace CLP.Entities
             }
         }
 
+        public Stroke GetStrokeByID(string id) { return TrashedInkStrokes.FirstOrDefault(stroke => stroke.GetStrokeID() == id); }
+
         #endregion //Methods
     }
 }
