@@ -1470,8 +1470,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var notebook = notebookWorkspaceViewModel.Notebook;
             foreach(var page in notebook.Pages)
             {
-                // TODO: Entities
-              //  page.PageHistory.UseHistory = false;
+                page.History.UseHistory = false;
             }
         }
 
@@ -1518,34 +1517,24 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnUndoCommandExecute()
         {
-            // TODO: Entities
-            //CurrentPage.PageHistory.Undo();
+            CurrentPage.History.Undo();
         }
 
         private bool OnUndoCanExecute()
         {
-            // TODO: Entities
-            //var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
-            //if(notebookWorkspaceViewModel == null)
-            //{
-            //    return false;
-            //}
-            //var mirrorDisplay = notebookWorkspaceViewModel.CurrentDisplay as SingleDisplay;
-            //if(mirrorDisplay == null)
-            //{
-            //    return false;
-            //}
-            //var page = mirrorDisplay.CurrentPage;
-
+            var page = CurrentPage;
+            if(page == null)
+            {
+                return false;
+            }
             
-            //var recordIndicator = page.PageHistory.RedoItems.FirstOrDefault() as CLPAnimationIndicator;
-            //if(recordIndicator != null && recordIndicator.AnimationIndicatorType == AnimationIndicatorType.Record)
-            //{
-            //    return false;
-            //}
+            var recordIndicator = page.History.RedoItems.FirstOrDefault() as AnimationIndicator;
+            if(recordIndicator != null && recordIndicator.AnimationIndicatorType == AnimationIndicatorType.Record)
+            {
+                return false;
+            }
 
-            //return page.PageHistory.CanUndo;
-            return false;
+            return page.History.CanUndo;
         }
 
         /// <summary>
@@ -1555,27 +1544,18 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnRedoCommandExecute()
         {
-            // TODO: Entities
-//            CurrentPage.PageHistory.Redo();
+            CurrentPage.History.Redo();
         }
 
         private bool OnRedoCanExecute()
         {
-            //var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
-            //if(notebookWorkspaceViewModel == null)
-            //{
-            //    return false;
-            //}
-            //var singleDisplay = notebookWorkspaceViewModel.CurrentDisplay as SingleDisplay;
-            //if(singleDisplay == null)
-            //{
-            //    return false;
-            //}
-            //var page = singleDisplay.CurrentPage;
+            var page = CurrentPage;
+            if(page == null)
+            {
+                return false;
+            }
 
-            // TODO: Entities
-//            return page.PageHistory.CanRedo;
-            return false;
+            return page.History.CanRedo;
         }
 
         /// <summary>
@@ -1588,8 +1568,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
             if(currentPage == null) { return; }
 
-            // TODO: Entities
-            //currentPage.PageHistory.ClearHistory();
+            currentPage.History.ClearHistory();
         }
 
         /// <summary>
@@ -1602,8 +1581,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
             if(currentPage == null) { return; }
 
-            // TODO: Entities
-          //  currentPage.PageHistory.ClearNonAnimationHistory();
+            currentPage.History.ClearNonAnimationHistory();
         }
 
         /// <summary>
@@ -1622,8 +1600,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var notebook = notebookWorkspaceViewModel.Notebook;
             foreach(var page in notebook.Pages)
             {
-                // TODO: Entities
-              //  page.PageHistory.ClearHistory();
+                page.History.ClearHistory();
             }
         }
 
@@ -1643,8 +1620,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var notebook = notebookWorkspaceViewModel.Notebook;
             foreach(var page in notebook.Pages)
             {
-                // TODO: Entities
-            //    page.PageHistory.ClearNonAnimationHistory();
+                page.History.ClearNonAnimationHistory();
             }
         }
 

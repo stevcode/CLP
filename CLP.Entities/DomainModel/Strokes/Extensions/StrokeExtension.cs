@@ -89,5 +89,12 @@ namespace CLP.Entities
 
             stroke.AddPropertyData(StrokeVersionIndexKey, index);
         }
+
+        public static bool HasStrokeID(this Stroke stroke)
+        {
+            Argument.IsNotNull("stroke", stroke);
+
+            return stroke.ContainsPropertyData(StrokeIDKey);
+        }
     }
 }

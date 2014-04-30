@@ -861,6 +861,11 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             try
             {
+                if(stroke.HasStrokeID())
+                {
+                    return;
+                }
+
                 var addedStrokeIDs = new List<string>();
                 var removedStrokes = new List<Stroke>();
                 var strokeID = Guid.NewGuid().ToCompactID();
