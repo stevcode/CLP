@@ -712,6 +712,19 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Page Interaction Methods
 
+        private void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
+        {
+            /**
+             * All IStokeAcceptors go here
+             * Switch statement to call state method on pageObject's viewmodel AcceptStrokes
+             * most will default to calling pageObject.AcceptStrokes()
+             * array will first test for stroke that can create division
+             * if true, call CreateDivisions, public method on ArrayViewModel, cut method from clparray
+             * create the divisions and then add history item.
+             * if false, call array.acceptstrokes() 
+             */
+        }
+
         private void CutStroke(Stroke stroke)
         {
             InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;

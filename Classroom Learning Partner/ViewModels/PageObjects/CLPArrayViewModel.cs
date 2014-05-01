@@ -178,7 +178,13 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(HorizontalDivisionsProperty, value); }
         }
 
-        public static readonly PropertyData HorizontalDivisionsProperty = RegisterProperty("HorizontalDivisions", typeof(ObservableCollection<CLPArrayDivision>));
+        public static readonly PropertyData HorizontalDivisionsProperty = RegisterProperty("HorizontalDivisions", typeof(ObservableCollection<CLPArrayDivision>), null, Divisions_Changed);
+
+        private static void Divisions_Changed(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
+        {
+            //throw new NotImplementedException();
+            
+        }
 
         /// <summary>
         /// Gets or sets the VerticalDivisions value.
@@ -897,7 +903,7 @@ namespace Classroom_Learning_Partner.ViewModels
             HorizontalDivisions.Add(bottomDiv);
             addedDivisions.Add(bottomDiv);
 
-            //ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryArrayDivisionsChanged(PageObject.ParentPage, PageObject.UniqueID, addedDivisions, removedDivisions));
+            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPArrayDivisionsChangedHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, PageObject.ID, addedDivisions, removedDivisions));
         }
 
         /// <summary>
@@ -950,7 +956,7 @@ namespace Classroom_Learning_Partner.ViewModels
             VerticalDivisions.Add(bottomDiv);
             addedDivisions.Add(bottomDiv);
 
-            //ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryArrayDivisionsChanged(PageObject.ParentPage, PageObject.UniqueID, addedDivisions, removedDivisions));
+            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPArrayDivisionsChangedHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, PageObject.ID, addedDivisions, removedDivisions));
         }
 
         /// <summary>
@@ -1130,7 +1136,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
 
-            //ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryArrayDivisionsChanged(PageObject.ParentPage, PageObject.UniqueID, addedDivisions, removedDivisions));
+            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPArrayDivisionsChangedHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, PageObject.ID, addedDivisions, removedDivisions));
         }
 
         /// <summary>
