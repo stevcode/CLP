@@ -605,9 +605,9 @@ namespace CLP.Entities
             return newPage;
         }
 
-        public Stroke GetStrokeByID(string id) { return InkStrokes.FirstOrDefault(stroke => stroke.GetStrokeID() == id); }
+        public Stroke GetStrokeByID(string id) { return !InkStrokes.Any() ? null : InkStrokes.FirstOrDefault(stroke => stroke.GetStrokeID() == id); }
 
-        public IPageObject GetPageObjectByID(string id) { return PageObjects.FirstOrDefault(pageObject => pageObject.ID == id); }
+        public IPageObject GetPageObjectByID(string id) { return !PageObjects.Any() ? null : PageObjects.FirstOrDefault(pageObject => pageObject.ID == id); }
 
         #endregion //Methods
 

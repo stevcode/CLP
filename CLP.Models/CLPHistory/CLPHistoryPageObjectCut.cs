@@ -201,7 +201,6 @@ namespace CLP.Models
             return clonedHistoryItem;
         }
 
-        //TODO: Move to helper class and make public
         /// <summary>
         /// Forces the UI Thread to sleep for the given number of milliseconds.
         /// </summary>

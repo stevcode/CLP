@@ -112,6 +112,7 @@ namespace CLP.Entities
                 return null;
             }
 
+            clonedHistoryItem.PackagedPageObjects.Clear();
             foreach(var pageObject in PageObjectIDs.Select(pageObjectID => ParentPage.GetPageObjectByID(pageObjectID)))
             {
                 try

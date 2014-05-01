@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Threading;
 using System.Windows.Ink;
+using System.Windows.Threading;
 using System.Xml.Serialization;
 using Catel.Collections;
 using Catel.Data;
@@ -23,7 +25,10 @@ namespace CLP.Entities
         /// <summary>
         /// Initializes <see cref="PageHistory" /> from scratch.
         /// </summary>
-        public PageHistory() { ID = Guid.NewGuid().ToCompactID(); }
+        public PageHistory()
+        {
+            ID = Guid.NewGuid().ToCompactID();
+        }
 
         /// <summary>
         /// Initializes <see cref="PageHistory" /> based on <see cref="SerializationInfo" />.
@@ -554,10 +559,29 @@ namespace CLP.Entities
             }
         }
 
-        public Stroke GetStrokeByID(string id) { return TrashedInkStrokes.FirstOrDefault(stroke => stroke.GetStrokeID() == id); }
+        public Stroke GetStrokeByID(string id) { return !TrashedInkStrokes.Any() ? null : TrashedInkStrokes.FirstOrDefault(stroke => stroke.GetStrokeID() == id); }
 
-        public IPageObject GetPageObjectByID(string id) { return TrashedPageObjects.FirstOrDefault(pageObject => pageObject.ID == id); }
+        public IPageObject GetPageObjectByID(string id) { return !TrashedPageObjects.Any() ? null : TrashedPageObjects.FirstOrDefault(pageObject => pageObject.ID == id); }
 
         #endregion //Methods
+
+        #region Static Methods
+
+        /// <summary>
+        /// Forces the UI Thread to sleep for the given number of milliseconds.
+        /// </summary>
+        /// <param name="timeToWait"></param>
+        public static void UISleep(int timeToWait)
+        {
+            var frame = new DispatcherFrame();
+            new Thread(() =>
+                       {
+                           Thread.Sleep(timeToWait);
+                           frame.Continue = false;
+                       }).Start();
+            Dispatcher.PushFrame(frame);
+        }
+
+        #endregion //Static Methods
     }
 }

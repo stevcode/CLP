@@ -728,7 +728,8 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 var halvedPageObjects = pageObject.Cut(stroke);
                 if(!halvedPageObjects.Any() ||
-                   pageObject.OwnerID == Person.Author.ID)
+                   (App.MainWindowViewModel.CurrentUser.ID != pageObject.CreatorID &&
+                    !pageObject.IsManipulatableByNonCreator))
                 {
                     continue;
                 }
@@ -748,7 +749,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 AddPageObjectToPage(Page, pageObject, false, false);
             }
 
-            // AddHistoryItemToPage(Page, new CLPHistoryPageObjectCut(Page, stroke, allCutPageObjects, allHalvedPageObjectIDs));
+            AddHistoryItemToPage(Page, new PageObjectCutHistoryItem(Page, App.MainWindowViewModel.CurrentUser, stroke, allCutPageObjects, allHalvedPageObjectIDs));
 
             RefreshInkStrokes();
             RefreshPageObjects(allHalvedPageObjects);
