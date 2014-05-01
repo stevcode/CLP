@@ -338,25 +338,25 @@ namespace Classroom_Learning_Partner.ViewModels
             clpArray.SizeArrayToGridLevel(newSquareSize);
 
             ////Resize History
-            //var heightDiff = Math.Abs(oldHeight - Height);
-            //var widthDiff = Math.Abs(oldWidth - Width);
-            //var diff = heightDiff + widthDiff;
-            //if(!(diff > CLPHistory.SAMPLE_RATE))
-            //{
-            //    return;
-            //}
+            var heightDiff = Math.Abs(oldHeight - Height);
+            var widthDiff = Math.Abs(oldWidth - Width);
+            var diff = heightDiff + widthDiff;
+            if(!(diff > PageHistory.SAMPLE_RATE))
+            {
+                return;
+            }
 
-            //var batch = PageObject.ParentPage.PageHistory.CurrentHistoryBatch;
-            //if(batch is CLPHistoryPageObjectResizeBatch)
-            //{
-            //    (batch as CLPHistoryPageObjectResizeBatch).AddResizePointToBatch(PageObject.UniqueID, new Point(Width, Height));
-            //}
-            //else
-            //{
-            //    var batchHistoryItem = PageObject.ParentPage.PageHistory.EndBatch();
-            //    ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, batchHistoryItem, true);
-            //    //TODO: log this error
-            //}
+            var batch = PageObject.ParentPage.History.CurrentHistoryBatch;
+            if(batch is PageObjectResizeBatchHistoryItem)
+            {
+                (batch as PageObjectResizeBatchHistoryItem).AddResizePointToBatch(PageObject.ID, new Point(Width, Height));
+            }
+            else
+            {
+                var batchHistoryItem = PageObject.ParentPage.History.EndBatch();
+                ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, batchHistoryItem, true);
+                //TODO: log this error
+            }
         }
 
         public Command<DragCompletedEventArgs> DragStopAndSnapCommand { get; private set; }
@@ -371,13 +371,13 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnDragStopAndSnapCommandExecute(DragCompletedEventArgs e)
         {
-            //var movementBatch = PageObject.ParentPage.PageHistory.CurrentHistoryBatch as CLPHistoryPageObjectMoveBatch;
-            //if(movementBatch != null)
-            //{
-            //    movementBatch.AddPositionPointToBatch(PageObject.UniqueID, new Point(PageObject.XPosition, PageObject.YPosition));
-            //}
-            //var batchHistoryItem = PageObject.ParentPage.PageHistory.EndBatch();
-            //ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, batchHistoryItem, true);
+            var movementBatch = PageObject.ParentPage.History.CurrentHistoryBatch as PageObjectMoveBatchHistoryItem;
+            if(movementBatch != null)
+            {
+                movementBatch.AddPositionPointToBatch(PageObject.ID, new Point(PageObject.XPosition, PageObject.YPosition));
+            }
+            var batchHistoryItem = PageObject.ParentPage.History.EndBatch();
+            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, batchHistoryItem, true);
             PageObject.OnMoved();
 
             var snappingArray = PageObject as CLPArray;
@@ -817,7 +817,7 @@ namespace Classroom_Learning_Partner.ViewModels
             if(clpArray != null)
             {
                 clpArray.IsGridOn = !clpArray.IsGridOn;
-                //ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryArrayGridToggle(PageObject.ParentPage, PageObject.UniqueID));
+                ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPArrayGridToggleHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, PageObject.ID));
             }
         }
 
@@ -844,7 +844,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var initXPos = PageObject.XPosition;
             var initYPos = PageObject.YPosition;
             (PageObject as CLPArray).RotateArray();
-            //ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryArrayRotate(PageObject.ParentPage, PageObject.UniqueID, initXPos, initYPos));
+            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPArrayRotateHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, PageObject.ID, initXPos, initYPos));
         }
 
         /// <summary>
