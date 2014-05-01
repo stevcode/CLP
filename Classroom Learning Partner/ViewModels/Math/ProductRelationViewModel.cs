@@ -1,35 +1,29 @@
-﻿using Catel.Data;
+﻿using System;
+using System.Collections.Generic;
+using Catel.Data;
 using Catel.MVVM;
 using CLP.Entities;
-using System.Text;
-using System;
-using System.Collections.Generic;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-  
     /// <summary>
     /// UserControl view model.
     /// </summary>
     public class ProductRelationViewModel : ViewModelBase
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ProductRelationViewModel"/> class.
+        /// Initializes a new instance of the <see cref="ProductRelationViewModel" /> class.
         /// </summary>
-        public ProductRelationViewModel(ProductRelation relation)
-        {
-            this.Model = relation;
-        }
+        public ProductRelationViewModel(ProductRelation relation) { Model = relation; }
 
         /// <summary>
         /// Gets the title of the view model.
         /// </summary>
         /// <value>The title.</value>
-        public override string Title { get { return "ProductRelation view model"; } }
-
-        // TODO: Register models with the vmpropmodel codesnippet
-        // TODO: Register view model properties with the vmprop or vmpropviewmodeltomodel codesnippets
-        // TODO: Register commands with the vmcommand or vmcommandwithcanexecute codesnippets
+        public override string Title
+        {
+            get { return "ProductRelation view model"; }
+        }
 
         /// <summary>
         /// Gets or sets the property value.
@@ -41,9 +35,6 @@ namespace Classroom_Learning_Partner.ViewModels
             private set { SetValue(ModelProperty, value); }
         }
 
-        /// <summary>
-        /// Register the Model property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData ModelProperty = RegisterProperty("Model", typeof(ProductRelation));
 
         /// <summary>
@@ -56,9 +47,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(Factor1Property, value); }
         }
 
-        /// <summary>
-        /// Register the Factor1 property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData Factor1Property = RegisterProperty("Factor1", typeof(String));
 
         /// <summary>
@@ -71,9 +59,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(Factor2Property, value); }
         }
 
-        /// <summary>
-        /// Register the Factor2 property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData Factor2Property = RegisterProperty("Factor2", typeof(String));
 
         /// <summary>
@@ -86,9 +71,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(ProductProperty, value); }
         }
 
-        /// <summary>
-        /// Register the Product property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData ProductProperty = RegisterProperty("Product", typeof(String));
 
         /// <summary>
@@ -101,9 +83,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(Factor1LabelProperty, value); }
         }
 
-        /// <summary>
-        /// Register the Factor1Label property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData Factor1LabelProperty = RegisterProperty("Factor1Label", typeof(String));
 
         /// <summary>
@@ -116,9 +95,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(Factor2LabelProperty, value); }
         }
 
-        /// <summary>
-        /// Register the Factor2Label property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData Factor2LabelProperty = RegisterProperty("Factor2Label", typeof(String));
 
         /// <summary>
@@ -131,9 +107,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(ProductLabelProperty, value); }
         }
 
-        /// <summary>
-        /// Register the ProductLabel property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData ProductLabelProperty = RegisterProperty("ProductLabel", typeof(String));
 
         /// <summary>
@@ -146,9 +119,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(Factor1GivenProperty, value); }
         }
 
-        /// <summary>
-        /// Register the Factor1Given property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData Factor1GivenProperty = RegisterProperty("Factor1Given", typeof(Boolean));
 
         /// <summary>
@@ -161,9 +131,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(Factor2GivenProperty, value); }
         }
 
-        /// <summary>
-        /// Register the Factor2Given property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData Factor2GivenProperty = RegisterProperty("Factor2Given", typeof(Boolean));
 
         /// <summary>
@@ -176,9 +143,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(ProductGivenProperty, value); }
         }
 
-        /// <summary>
-        /// Register the ProductGiven property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData ProductGivenProperty = RegisterProperty("ProductGiven", typeof(Boolean));
 
         /// <summary>
@@ -191,17 +155,11 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(RelationTypeProperty, value); }
         }
 
-        /// <summary>
-        /// Register the RelationType property so it is known in the class.
-        /// </summary>
         public static readonly PropertyData RelationTypeProperty = RegisterProperty("RelationType", typeof(ProductRelation.ProductRelationTypes));
 
         public IEnumerable<ProductRelation.ProductRelationTypes> ProductRelationTypeValues
         {
-            get
-            {
-                return (IEnumerable<ProductRelation.ProductRelationTypes>)Enum.GetValues(typeof(ProductRelation.ProductRelationTypes));
-            }
+            get { return (IEnumerable<ProductRelation.ProductRelationTypes>)Enum.GetValues(typeof(ProductRelation.ProductRelationTypes)); }
         }
     }
 }

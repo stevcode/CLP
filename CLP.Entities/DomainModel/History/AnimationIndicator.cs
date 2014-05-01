@@ -23,8 +23,8 @@ namespace CLP.Entities
         /// </summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryItem" /> is part of.</param>
         /// <param name="animationIndicatorType">The <see cref="AnimationIndicatorType" /> of animation indication this <see cref="AnimationIndicator" /> represents.</param>
-        public AnimationIndicator(CLPPage parentPage, AnimationIndicatorType animationIndicatorType)
-            : base(parentPage) { AnimationIndicatorType = animationIndicatorType; }
+        public AnimationIndicator(CLPPage parentPage, Person owner, AnimationIndicatorType animationIndicatorType)
+            : base(parentPage, owner) { AnimationIndicatorType = animationIndicatorType; }
 
         /// <summary>
         /// Initializes a new object based on <see cref="SerializationInfo" />.

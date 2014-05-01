@@ -349,6 +349,7 @@ namespace CLP.Entities
                     return;
                 }
                 OwnerID = value.ID;
+                History.OwnerID = value.ID;
             }
         }
 
@@ -477,16 +478,14 @@ namespace CLP.Entities
                               InitialAspectRatio = InitialAspectRatio
                           };
 
-            //foreach(var s in InkStrokes.Select(stroke => stroke.Clone())) 
-            //{
-            //    s.RemovePropertyData(StrokeIDKey);
+            foreach(var s in InkStrokes.Select(stroke => stroke.Clone())) 
+            {
+                // TODO: Make sure all accepted strokes change appropriate strokeIDs lists
+                s.SetStrokeID(Guid.NewGuid().ToCompactID());
 
-            //    var newUniqueID = Guid.NewGuid().ToString();
-            //    s.AddPropertyData(StrokeIDKey, newUniqueID);
-
-            //    newPage.InkStrokes.Add(s);
-            //}
-            //newPage.SerializedStrokes = StrokeDTO.SaveInkStrokes(newPage.InkStrokes);
+                newPage.InkStrokes.Add(s);
+            }
+            newPage.SerializedStrokes = StrokeDTO.SaveInkStrokes(newPage.InkStrokes);
 
             foreach(var clonedPageObject in PageObjects.Select(pageObject => pageObject.Duplicate()))
             {
@@ -494,6 +493,8 @@ namespace CLP.Entities
                 newPage.PageObjects.Add(clonedPageObject);
                 // clonedPageObject.RefreshStrokeParentIDs();
             }
+
+            // TODO: Delete history on copied page.
 
             return newPage;
         }
@@ -534,6 +535,8 @@ namespace CLP.Entities
                 //TODO: Stroke Version Index should be uint
                 serializedStroke.VersionIndex = (int)copy.VersionIndex;
             }
+
+            //TODO: Version history and history items.
 
             return copy;
         }
@@ -603,6 +606,8 @@ namespace CLP.Entities
         }
 
         public Stroke GetStrokeByID(string id) { return InkStrokes.FirstOrDefault(stroke => stroke.GetStrokeID() == id); }
+
+        public IPageObject GetPageObjectByID(string id) { return PageObjects.FirstOrDefault(pageObject => pageObject.ID == id); }
 
         #endregion //Methods
 

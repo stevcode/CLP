@@ -262,12 +262,6 @@ namespace Classroom_Learning_Partner
             }
 
             page.TrimPage();
-            //var pageViewModels = GetViewModelsFromModel(page);
-            //var currentPageViewModel = pageViewModels.Select(pageViewModel => pageViewModel as ACLPPageBaseViewModel).FirstOrDefault(pageVM => !pageVM.IsPagePreview);
-
-            //var pageView = GetViewFromViewModel(currentPageViewModel);
-            // TODO: Entities
-            //page.PageThumbnail = GetJpgImage(pageView as UIElement);
 
             var t = new Thread(() =>
                                {

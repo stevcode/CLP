@@ -22,8 +22,9 @@ namespace CLP.Entities
         /// Initializes <see cref="StrokesChangedHistoryItem" /> with a parent <see cref="CLPPage" />.
         /// </summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryItem" /> is part of.</param>
-        public StrokesChangedHistoryItem(CLPPage parentPage, List<string> strokesIDsAdded, IEnumerable<Stroke> strokesRemoved)
-            : base(parentPage)
+        /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryItem" />.</param>
+        public StrokesChangedHistoryItem(CLPPage parentPage, Person owner, List<string> strokesIDsAdded, IEnumerable<Stroke> strokesRemoved)
+            : base(parentPage, owner)
         {
             StrokeIDsAdded = strokesIDsAdded;
             foreach(var stroke in strokesRemoved)
@@ -149,7 +150,7 @@ namespace CLP.Entities
         }
 
         /// <summary>
-        /// Method that prepares a clone of the <see cref="IHistoryItem" /> so that is can call Redo() when sent to another machine.
+        /// Method that prepares a clone of the <see cref="IHistoryItem" /> so that it can call Redo() when sent to another machine.
         /// </summary>
         public override IHistoryItem CreatePackagedHistoryItem()
         {
@@ -168,8 +169,9 @@ namespace CLP.Entities
             return clonedHistoryItem;
         }
 
-        #region Overrides of AHistoryItemBase
-
+        /// <summary>
+        /// Method that unpacks the <see cref="IHistoryItem" /> after it has been sent to another machine.
+        /// </summary>
         public override void UnpackHistoryItem()
         {
             foreach(var stroke in PackagedSerializedStrokes.Select(serializedStroke => serializedStroke.ToStroke())) 
@@ -177,8 +179,6 @@ namespace CLP.Entities
                 ParentPage.History.TrashedInkStrokes.Add(stroke);
             }
         }
-
-        #endregion
 
         #endregion //Methods
     }

@@ -23,7 +23,7 @@ namespace CLP.Entities
         /// <summary>
         /// Initializes <see cref="PageHistory" /> from scratch.
         /// </summary>
-        public PageHistory() { }
+        public PageHistory() { ID = Guid.NewGuid().ToCompactID(); }
 
         /// <summary>
         /// Initializes <see cref="PageHistory" /> based on <see cref="SerializationInfo" />.
@@ -36,6 +36,71 @@ namespace CLP.Entities
         #endregion //Constructors
 
         #region Properties
+
+        /// <summary>
+        /// Unique Identifier for the <see cref="PageHistory" />.
+        /// </summary>
+        /// <remarks>
+        /// Composite Primary Key.
+        /// </remarks>
+        public string ID
+        {
+            get { return GetValue<string>(IDProperty); }
+            set { SetValue(IDProperty, value); }
+        }
+
+        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string));
+
+        /// <summary>
+        /// Unique Identifier for the <see cref="Person" /> who owns the <see cref="PageHistory" />.
+        /// </summary>
+        /// <remarks>
+        /// Composite Primary Key.
+        /// Also Foregin Key for <see cref="Person" /> who owns the <see cref="PageHistory" />.
+        /// </remarks>
+        public string OwnerID
+        {
+            get { return GetValue<string>(OwnerIDProperty); }
+            set { SetValue(OwnerIDProperty, value); }
+        }
+
+        public static readonly PropertyData OwnerIDProperty = RegisterProperty("OwnerID", typeof(string), string.Empty);
+
+        /// <summary>
+        /// Version Index of the <see cref="PageHistory" />.
+        /// </summary>
+        /// <remarks>
+        /// Composite Primary Key.
+        /// </remarks>
+        public uint VersionIndex
+        {
+            get { return GetValue<uint>(VersionIndexProperty); }
+            set { SetValue(VersionIndexProperty, value); }
+        }
+
+        public static readonly PropertyData VersionIndexProperty = RegisterProperty("VersionIndex", typeof(uint), 0);
+
+        /// <summary>
+        /// Version Index of the latest submission.
+        /// </summary>
+        public uint? LastVersionIndex
+        {
+            get { return GetValue<uint?>(LastVersionIndexProperty); }
+            set { SetValue(LastVersionIndexProperty, value); }
+        }
+
+        public static readonly PropertyData LastVersionIndexProperty = RegisterProperty("LastVersionIndex", typeof(uint?));
+
+        /// <summary>
+        /// Differentiation Level of the <see cref="PageHistory" />.
+        /// </summary>
+        public string DifferentiationLevel
+        {
+            get { return GetValue<string>(DifferentiationLevelProperty); }
+            set { SetValue(DifferentiationLevelProperty, value); }
+        }
+
+        public static readonly PropertyData DifferentiationLevelProperty = RegisterProperty("DifferentiationLevel", typeof(string), "0");
 
         public int CurrentAnimationDelay
         {
@@ -490,6 +555,8 @@ namespace CLP.Entities
         }
 
         public Stroke GetStrokeByID(string id) { return TrashedInkStrokes.FirstOrDefault(stroke => stroke.GetStrokeID() == id); }
+
+        public IPageObject GetPageObjectByID(string id) { return TrashedPageObjects.FirstOrDefault(pageObject => pageObject.ID == id); }
 
         #endregion //Methods
     }

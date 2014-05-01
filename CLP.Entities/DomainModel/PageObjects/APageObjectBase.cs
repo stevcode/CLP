@@ -95,6 +95,17 @@ namespace CLP.Entities
         public static readonly PropertyData LastVersionIndexProperty = RegisterProperty("LastVersionIndex", typeof(uint?));
 
         /// <summary>
+        /// Differentiation Level of the <see cref="IPageObject" />.
+        /// </summary>
+        public string DifferentiationLevel
+        {
+            get { return GetValue<string>(DifferentiationLevelProperty); }
+            set { SetValue(DifferentiationLevelProperty, value); }
+        }
+
+        public static readonly PropertyData DifferentiationLevelProperty = RegisterProperty("DifferentiationLevel", typeof(string), "0");
+
+        /// <summary>
         /// Date and Time the <see cref="IPageObject" /> was created.
         /// </summary>
         public DateTime CreationDate

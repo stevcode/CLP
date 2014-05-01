@@ -8,6 +8,7 @@ namespace CLP.Entities
         string OwnerID { get; set; }
         uint VersionIndex { get; set; }
         uint? LastVersionIndex { get; set; }
+        string DifferentiationLevel { get; set; }
         DateTime CreationDate { get; set; }
         double XPosition { get; set; }
         double YPosition { get; set; }
