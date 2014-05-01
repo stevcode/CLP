@@ -193,7 +193,7 @@ namespace CLP.Entities
             set { SetValue(IsDivisionBehaviorOnProperty, value); }
         }
 
-        public static readonly PropertyData IsDivisionBehaviorOnProperty = RegisterProperty("IsDivisionBehaviorOn", typeof(bool), false);
+        public static readonly PropertyData IsDivisionBehaviorOnProperty = RegisterProperty("IsDivisionBehaviorOn", typeof(bool), true);
 
         /// <summary>
         /// Whether the array can be snapped to other arrays or not.

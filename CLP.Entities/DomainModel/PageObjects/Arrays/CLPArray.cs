@@ -34,7 +34,7 @@ namespace CLP.Entities
         public CLPArray(CLPPage parentPage, int columns, int rows, ArrayTypes arrayType)
             : base(parentPage, columns, rows)
         {
-            IsGridOn = rows < 50 && columns < 50;
+            IsGridOn = rows < 26 && columns < 26;
             ArrayType = arrayType;
         }
 
@@ -329,7 +329,7 @@ namespace CLP.Entities
                 return false;
             }
 
-            const double MIN_THRESHHOLD = 5.0;
+            const double MIN_THRESHHOLD = 30.0;
 
             if(Math.Abs(strokeLeft - strokeRight) < Math.Abs(strokeTop - strokeBottom) &&
                strokeRight <= cuttableRight &&
