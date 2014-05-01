@@ -317,7 +317,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnToggleMainArrayAdornersCommandExecute(MouseButtonEventArgs e)
         {
-            if(!App.MainWindowViewModel.IsAuthoring && IsBackground)
+            if(App.MainWindowViewModel.CurrentUser.ID != PageObject.CreatorID &&
+               !PageObject.IsManipulatableByNonCreator)
             {
                 return;
             }

@@ -464,7 +464,6 @@ namespace CLP.Entities
                               Height = Height,
                               Width = Width,
                               InitialAspectRatio = InitialAspectRatio
-                              //   ImagePool = ImagePool
                           };
 
             //foreach(var s in InkStrokes.Select(stroke => stroke.Clone())) 
@@ -478,7 +477,7 @@ namespace CLP.Entities
             //}
             //newPage.SerializedStrokes = StrokeDTO.SaveInkStrokes(newPage.InkStrokes);
 
-            foreach(IPageObject clonedPageObject in PageObjects.Select(pageObject => pageObject.Duplicate()))
+            foreach(var clonedPageObject in PageObjects.Select(pageObject => pageObject.Duplicate()))
             {
                 clonedPageObject.ParentPage = newPage;
                 newPage.PageObjects.Add(clonedPageObject);
@@ -517,6 +516,12 @@ namespace CLP.Entities
             {
                 tag.LastVersionIndex = LastVersionIndex;
                 tag.ParentPage = copy;
+            }
+
+            foreach(var serializedStroke in copy.SerializedStrokes)
+            {
+                //TODO: Stroke Version Index should be uint
+                serializedStroke.VersionIndex = (int)copy.VersionIndex;
             }
 
             return copy;
@@ -613,6 +618,18 @@ namespace CLP.Entities
             }
             IsCached = true;
         }
+
+        #region Overrides of ModelBase
+
+        protected override void OnDeserialized()
+        {
+            base.OnDeserialized();
+                    
+            InkStrokes = StrokeDTO.LoadInkStrokes(SerializedStrokes);
+            IsCached = true;
+        }
+
+        #endregion
 
         #endregion //Cache
     }

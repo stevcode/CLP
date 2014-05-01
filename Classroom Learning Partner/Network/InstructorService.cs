@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.ServiceModel;
@@ -30,12 +31,39 @@ namespace Classroom_Learning_Partner
 
         [OperationContract]
         void SendClassPeriod(string machineAddress);
+
+        [OperationContract]
+        Dictionary<string,byte[]> SendImages(List<string> imageHashIDs);
+
+     //    [OperationContract]
+     //   List<string> SendSubmissions(string ownerID, List<string> pageIDs);
     }
 
     [ServiceBehavior(IncludeExceptionDetailInFaults = true)]
     public class InstructorService : IInstructorContract
     {
         #region IInstructorContract Members
+
+        public Dictionary<string,byte[]> SendImages(List<string> imageHashIDs)
+        {
+            var imageList = new Dictionary<string,byte[]>();
+            if(Directory.Exists(App.ImageCacheDirectory))
+            {
+                var localImageFilePaths = Directory.EnumerateFiles(App.ImageCacheDirectory);
+                foreach(var localImageFilePath in localImageFilePaths)
+                {
+                    var imageHashID = Path.GetFileNameWithoutExtension(localImageFilePath);
+                    var fileName = Path.GetFileName(localImageFilePath);
+                    if(imageHashIDs.Contains(imageHashID))
+                    {
+                        var byteSource = File.ReadAllBytes(localImageFilePath);
+                        imageList.Add(fileName, byteSource);
+                    }
+                }
+            }
+
+            return imageList;
+        }
 
         public void SendClassPeriod(string machineAddress)
         {
@@ -134,19 +162,10 @@ namespace Classroom_Learning_Partner
                 Logger.Instance.WriteToLog("Failed to collect notebook from " + studentName);
                 return;
             }
-            
-            var filePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\CollectedStudentNotebooks";
 
-            if(!Directory.Exists(filePath))
-            {
-                Directory.CreateDirectory(filePath);
-            }
-
-            var saveTime = DateTime.Now;
-            var time = saveTime.Year + "." + saveTime.Month + "." + saveTime.Day;
-
-            var filePathName = filePath + @"\" + time + "-" + studentName + "-" + notebook.Name + @".clp";
-           // TODO: Entities            notebook.Save(filePathName);
+            var notebookFolderName = notebook.Name + ";" + notebook.ID + ";" + notebook.Owner.FullName + ";" + notebook.OwnerID;
+            var notebookFolderPath = Path.Combine(App.NotebookCacheDirectory, notebookFolderName);
+            notebook.SavePartialNotebook(notebookFolderPath, false);
         }
 
         public string StudentLogin(string studentID, string machineName, string machineAddress, bool useClassPeriod = true)
@@ -172,7 +191,7 @@ namespace Classroom_Learning_Partner
                 Notebook notebookToZip;
                 var newNotebook = App.MainWindowViewModel.OpenNotebooks.First().CopyForNewOwner(student);
 
-                var studentNotebookFolderName = newNotebook.Name + ";" + newNotebook.ID + ";" + newNotebook.OwnerID + ";" + newNotebook.Owner.FullName;
+                var studentNotebookFolderName = newNotebook.Name + ";" + newNotebook.ID + ";" + newNotebook.Owner.FullName + ";" + newNotebook.OwnerID;
                 var studentNotebookFolderPath = Path.Combine(App.NotebookCacheDirectory, studentNotebookFolderName);
                 if(Directory.Exists(studentNotebookFolderPath))
                 {

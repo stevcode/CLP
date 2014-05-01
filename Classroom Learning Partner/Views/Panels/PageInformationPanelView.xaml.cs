@@ -4,16 +4,16 @@ using Classroom_Learning_Partner.ViewModels;
 namespace Classroom_Learning_Partner.Views
 {
     /// <summary>
-    /// Interaction logic for GridDisplayView.xaml
+    /// Interaction logic for PageInformationPanelView.xaml
     /// </summary>
-    public partial class GridDisplayView
+    public partial class PageInformationPanelView
     {
-        public GridDisplayView()
+        public PageInformationPanelView()
         {
             InitializeComponent();
             CloseViewModelOnUnloaded = false;
         }
 
-        protected override Type GetViewModelType() { return typeof(GridDisplayViewModel); }
+        protected override Type GetViewModelType() { return typeof(PageInformationPanelViewModel); }
     }
 }

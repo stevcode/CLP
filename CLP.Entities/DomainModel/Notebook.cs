@@ -147,6 +147,17 @@ namespace CLP.Entities
 
         public static readonly PropertyData CurriculumProperty = RegisterProperty("Curriculum", typeof(string), string.Empty);
 
+        /// <summary>
+        /// List of all the HashIDs for each <see cref="CLPImage" /> that is in the notebook.
+        /// </summary>
+        public List<string> ImagePoolHashIDs
+        {
+            get
+            {
+                return Pages.SelectMany(page => page.PageObjects).OfType<CLPImage>().Select(image => image.ImageHashID).ToList().Distinct().ToList();
+            }
+        }
+
         #region Navigation Properties
 
         /// <summary>
@@ -339,9 +350,8 @@ namespace CLP.Entities
             }
             newNotebook.Owner = owner;
             newNotebook.CurrentPage = CurrentPage.CopyForNewOwner(owner);
-            foreach(var page in Pages)
+            foreach(var newPage in Pages.Select(page => page.CopyForNewOwner(owner))) 
             {
-                var newPage = page.CopyForNewOwner(owner);
                 newNotebook.Pages.Add(newPage);
             }
 
@@ -358,12 +368,7 @@ namespace CLP.Entities
             }
 
             notebookPage = Pages.FirstOrDefault(x => x.ID == pageID);
-            if(notebookPage == null)
-            {
-                return null;
-            }
-
-            return notebookPage.Submissions.FirstOrDefault(x => x.OwnerID == pageOwnerID && x.VersionIndex == versionIndex);
+            return notebookPage == null ? null : notebookPage.Submissions.FirstOrDefault(x => x.OwnerID == pageOwnerID && x.VersionIndex == versionIndex);
         }
 
         #endregion //Methods
@@ -456,6 +461,24 @@ namespace CLP.Entities
             }
         }
 
+        public void SavePartialNotebook(string folderPath, bool serializeInkStrokes = true)
+        {
+            var fileName = Path.Combine(folderPath, "notebook.xml");
+            ToXML(fileName);
+
+            var pagesFolderPath = Path.Combine(folderPath, "Pages");
+            if(!Directory.Exists(pagesFolderPath))
+            {
+                Directory.CreateDirectory(pagesFolderPath);
+            }
+
+            foreach(var page in Pages)
+            {
+                var pageFilePath = Path.Combine(pagesFolderPath, "p;" + page.PageNumber + ";" + page.ID + ";" + page.DifferentiationLevel + ";" + page.VersionIndex + ".xml");
+                page.ToXML(pageFilePath, serializeInkStrokes);
+            }
+        }
+
         public void SaveSubmissions(string folderPath)
         {
             if(!Directory.Exists(folderPath))
@@ -469,6 +492,26 @@ namespace CLP.Entities
                 {
                     var pageFilePath = Path.Combine(folderPath, "p;" + submission.PageNumber + ";" + submission.ID + ";" + submission.DifferentiationLevel + ";" + submission.VersionIndex + ".xml");
                     submission.ToXML(pageFilePath);
+                }
+            }
+        }
+
+        public void SaveOthersSubmissions(string folderPath)
+        {
+            foreach(var page in Pages)
+            {
+                foreach(var submission in page.Submissions)
+                {
+                    var notebookFolderPaths = Directory.EnumerateDirectories(folderPath);
+                    foreach(var notebookFolderPath in notebookFolderPaths)
+                    {
+                        if(notebookFolderPath.Contains(submission.OwnerID))
+                        {
+                            var pagesPath = Path.Combine(notebookFolderPath, "Pages");
+                            var pageFilePath = Path.Combine(pagesPath, "p;" + submission.PageNumber + ";" + submission.ID + ";" + submission.DifferentiationLevel + ";" + submission.VersionIndex + ".xml");
+                            submission.ToXML(pageFilePath);
+                        }
+                    }
                 }
             }
         }
@@ -502,16 +545,10 @@ namespace CLP.Entities
 
                     var page = Load<CLPPage>(pageAndHistoryFilePath, SerializationMode.Xml);
                     //TODO: :Load Page History
-                    foreach(var pageObject in page.PageObjects)
-                    {
-                        pageObject.ParentPage = page;
-                    }
                     if(page.ID == notebook.CurrentPageID)
                     {
                         notebook.CurrentPage = page;
                     }
-                    page.InkStrokes = StrokeDTO.LoadInkStrokes(page.SerializedStrokes);
-                    page.IsCached = true;
                     pages.Add(page);
                 }
 
@@ -524,6 +561,10 @@ namespace CLP.Entities
                         continue;
                     }
                     notebookPages.Add(notebookPage);
+                    if(!includeSubmissions)
+                    {
+                        continue;
+                    }
                     foreach(var submission in pages)
                     {
                         if(submission.ID == notebookPage.ID &&
@@ -578,16 +619,10 @@ namespace CLP.Entities
 
                     var page = Load<CLPPage>(pageAndHistoryFilePath, SerializationMode.Xml);
                     //TODO: :Load Page History
-                    foreach(var pageObject in page.PageObjects)
-                    {
-                        pageObject.ParentPage = page;
-                    }
                     if(page.ID == notebook.CurrentPageID)
                     {
                         notebook.CurrentPage = page;
                     }
-                    page.InkStrokes = StrokeDTO.LoadInkStrokes(page.SerializedStrokes);
-                    page.IsCached = true;
                     pages.Add(page);
                 }
 
@@ -600,6 +635,10 @@ namespace CLP.Entities
                         continue;
                     }
                     notebookPages.Add(notebookPage);
+                    if(!includeSubmissions)
+                    {
+                        continue;
+                    }
                     foreach(var submission in pages)
                     {
                         if(submission.ID == notebookPage.ID &&

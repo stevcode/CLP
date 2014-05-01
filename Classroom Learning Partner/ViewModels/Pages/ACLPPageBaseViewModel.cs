@@ -712,7 +712,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             var allHalvedPageObjectIDs = new List<string>();
-            foreach(IPageObject pageObject in allHalvedPageObjects)
+            foreach(var pageObject in allHalvedPageObjects)
             {
                 allHalvedPageObjectIDs.Add(pageObject.ID);
                 AddPageObjectToPage(Page, pageObject, false, false);
@@ -863,6 +863,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 //Avoid uniqueID duplication
                 var enumerable = removedStrokes as IList<Stroke> ?? removedStrokes.ToList();
+                //TODO: test to see if OwnerID == CurrentUser.ID. If not, remove CollectionChanged handler and re-add stroke
                 var removedStrokeIDs = enumerable.Select(stroke => stroke.GetStrokeID()).ToList();
                 var addedStrokeIDs = new List<string>();
                 var strokes = addedStrokes as IList<Stroke> ?? addedStrokes.ToList();
@@ -972,8 +973,11 @@ namespace Classroom_Learning_Partner.ViewModels
                 Logger.Instance.WriteToLog("ParentPage for pageObject not set in AddPageObjectToPage().");
                 return;
             }
-            // TODO: Entities
-            //pageObject.IsBackground = App.MainWindowViewModel.IsAuthoring;
+            if(String.IsNullOrEmpty(pageObject.CreatorID))
+            {
+                pageObject.CreatorID = App.MainWindowViewModel.CurrentUser.ID;
+            }
+
             if(index == -1)
             {
                 page.PageObjects.Add(pageObject);
@@ -1002,7 +1006,10 @@ namespace Classroom_Learning_Partner.ViewModels
             // TODO: Entities
             foreach(var pageObject in pageObjects)
             {
-                //   pageObject.IsBackground = App.MainWindowViewModel.IsAuthoring;
+                if(String.IsNullOrEmpty(pageObject.CreatorID))
+                {
+                    pageObject.CreatorID = App.MainWindowViewModel.CurrentUser.ID;
+                }
                 pageObjectIDs.Add(pageObject.ID);
                 page.PageObjects.Add(pageObject);
                 pageObject.OnAdded();

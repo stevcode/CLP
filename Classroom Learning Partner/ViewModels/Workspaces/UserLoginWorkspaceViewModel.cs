@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows;
@@ -30,10 +31,16 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command<Person> LogInCommand { get; private set; }
 
+        private bool _isLoggingIn;
         private void OnLogInCommandExecute(Person user)
         {
-            App.MainWindowViewModel.CurrentUser = user;
+            if(_isLoggingIn)
+            {
+                return;
+            }
 
+            App.MainWindowViewModel.CurrentUser = user;
+            _isLoggingIn = true;
             new Thread(() =>
                        {
                            Thread.CurrentThread.IsBackground = true;
@@ -86,11 +93,31 @@ namespace Classroom_Learning_Partner.ViewModels
                                    }
 
                                    notebook.CurrentPage = notebook.Pages.First();
-                                   foreach(var page in notebook.Pages)
+                                   foreach(var page in notebook.Pages) //TODO: Does override deserialization cover this?
                                    {
                                        page.InkStrokes = StrokeDTO.LoadInkStrokes(page.SerializedStrokes);
                                    }
                                    App.ResetCache();
+
+                                   var imageHashIDs = notebook.ImagePoolHashIDs;
+                                   if(Directory.Exists(App.ImageCacheDirectory))
+                                   {
+                                       var localImageFilePaths = Directory.EnumerateFiles(App.ImageCacheDirectory);
+                                       foreach(var localImageFilePath in localImageFilePaths)
+                                       {
+                                           var imageHashID = Path.GetFileNameWithoutExtension(localImageFilePath);
+                                           if(imageHashIDs.Contains(imageHashID))
+                                           {
+                                               imageHashIDs.Remove(imageHashID);
+                                           }
+                                       }
+                                   }
+                                   var imageList = App.Network.InstructorProxy.SendImages(imageHashIDs);
+                                   foreach(var byteSource in imageList)
+                                   {
+                                       var imagePath = Path.Combine(App.ImageCacheDirectory, byteSource.Key);
+                                       File.WriteAllBytes(imagePath, byteSource.Value);
+                                   }
 
                                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                                               (DispatcherOperationCallback)delegate
@@ -104,15 +131,18 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                                                return null;
                                                                                                            },
                                                                               null);
+                                   _isLoggingIn = false;
                                }
                                catch(Exception)
                                {
                                    Logger.Instance.WriteToLog("Problem Logging In as " + App.MainWindowViewModel.CurrentUser.FullName);
+                                   _isLoggingIn = false;
                                }
                            }
                            else
                            {
                                Console.WriteLine("Instructor NOT Available");
+                               _isLoggingIn = false;
                            }
                        }).Start();
         }

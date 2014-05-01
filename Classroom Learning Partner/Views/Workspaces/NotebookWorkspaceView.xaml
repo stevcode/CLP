@@ -72,10 +72,14 @@
                     <views:WebcamPanelView DataContext="{Binding RightPanel}" />
                 </ControlTemplate>
 
-                <ControlTemplate x:Key="DisplayListPanelTemplate">
+                <ControlTemplate x:Key="DisplaysPanelTemplate">
                     <views:DisplaysPanelView DataContext="{Binding DisplaysPanel}" />
                 </ControlTemplate>
 
+                
+                <ControlTemplate x:Key="PageInformationPanelTemplate">
+                    <views:PageInformationPanelView DataContext="{Binding PageInformationPanel}" />
+                </ControlTemplate>
             </Control.Resources>
 
             <Control.Style>
@@ -89,11 +93,18 @@
                                     Value="{StaticResource WebcamPanelTemplate}" />
                         </DataTrigger>
 
-                        <!--DisplayListPanel trigger-->
+                        <!--DisplaysPanel trigger-->
                         <DataTrigger Binding="{Binding RightPanel, Converter={StaticResource TypeToStringConverter}}"
                                      Value="DisplaysPanelViewModel">
                             <Setter Property="Template"
-                                    Value="{StaticResource DisplayListPanelTemplate}" />
+                                    Value="{StaticResource DisplaysPanelTemplate}" />
+                        </DataTrigger>
+                        
+                        <!--PageInformationPanel trigger-->
+                        <DataTrigger Binding="{Binding RightPanel, Converter={StaticResource TypeToStringConverter}}"
+                                     Value="PageInformationPanelViewModel">
+                            <Setter Property="Template"
+                                    Value="{StaticResource PageInformationPanelTemplate}" />
                         </DataTrigger>
 
                     </Style.Triggers>

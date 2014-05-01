@@ -1,6 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
+using System.Windows.Media;
+using System.Xml.Serialization;
+using Catel.Data;
 using CLP.Entities;
+using Catel.Runtime.Serialization;
+using Path = Catel.IO.Path;
 
 namespace ConsoleScripts
 {
@@ -18,20 +27,116 @@ namespace ConsoleScripts
             //    }
             //}
 
-            while(true)
+            //while(true)
+            //{
+            //    Console.Write("> ");
+            //    var command = Console.ReadLine();
+            //    if(command == null)
+            //    {
+            //        continue;
+            //    }
+            //    if(command == "exit")
+            //    {
+            //        return;
+            //    }
+            //    var compactID = new Guid(command).ToCompactID();
+            //    Console.WriteLine("CompactID: " + compactID);
+            //}
+
+            ConvertToNewIDs();
+        }
+
+        static void ConvertToNewIDs()
+        {
+            var convertFromFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Convert");
+            var convertToFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Converted");
+            if(!Directory.Exists(convertToFolderPath))
             {
-                Console.Write("> ");
-                var command = Console.ReadLine();
-                if(command == null)
+                Directory.CreateDirectory(convertToFolderPath);
+            }
+
+            var notebookFolderPaths = Directory.EnumerateDirectories(convertFromFolderPath);
+            foreach(var notebookFolderPath in notebookFolderPaths)
+            {
+                var filePath = Path.Combine(notebookFolderPath, "notebook.xml");
+                var notebook = ModelBase.Load<Notebook>(filePath, SerializationMode.Xml);
+                var pagesFolderPath = Path.Combine(notebookFolderPath, "Pages");
+                var pageAndHistoryFilePaths = Directory.EnumerateFiles(pagesFolderPath, "*.xml");
+                var pages = new List<CLPPage>();
+                foreach(var pageAndHistoryFilePath in pageAndHistoryFilePaths)
                 {
-                    continue;
+                    var pageAndHistoryFileName = System.IO.Path.GetFileNameWithoutExtension(pageAndHistoryFilePath);
+                    if(pageAndHistoryFileName != null)
+                    {
+                        var pageAndHistoryInfo = pageAndHistoryFileName.Split(';');
+                        if(pageAndHistoryInfo.Length != 5 ||
+                           pageAndHistoryInfo[0] != "Page")
+                        {
+                            continue;
+                        }
+                        if(pageAndHistoryInfo[4] != "0")
+                        {
+                            continue;
+                        }
+                    }
+
+                    var page = ModelBase.Load<CLPPage>(pageAndHistoryFilePath, SerializationMode.Xml);
+                    pages.Add(page);
                 }
-                if(command == "exit")
+
+                var notebookPages = new List<CLPPage>();
+
+                foreach(var notebookPage in pages)
                 {
-                    return;
+                    if(notebookPage.VersionIndex != 0)
+                    {
+                        continue;
+                    }
+                    notebookPages.Add(notebookPage);
                 }
-                var compactID = new Guid(command).ToCompactID();
-                Console.WriteLine("CompactID: " + compactID);
+
+                notebook.Pages = new ObservableCollection<CLPPage>(notebookPages.OrderBy(x => x.PageNumber));
+
+                var compactOwnerID = new Guid(notebook.OwnerID).ToCompactID();
+                notebook.Owner.ID = compactOwnerID;
+                notebook.OwnerID = compactOwnerID;
+                notebook.ID = new Guid(notebook.ID).ToCompactID();
+
+                foreach(var page in notebook.Pages)
+                {
+                    page.ID = new Guid(page.ID).ToCompactID();
+                    page.OwnerID = compactOwnerID;
+                    page.Owner.ID = compactOwnerID;
+
+                    foreach(var pageObject in page.PageObjects)
+                    {
+                        pageObject.ID = new Guid(pageObject.ID).ToCompactID();
+                        pageObject.ParentPage = page;
+                        if(pageObject is Shape ||
+                           pageObject is CLPTextBox)
+                        {
+                            pageObject.OwnerID = Person.Author.ID;
+                            pageObject.CreatorID = Person.Author.ID;
+                        }
+                        else
+                        {
+                            pageObject.OwnerID = compactOwnerID;
+                            pageObject.CreatorID = compactOwnerID;
+                        }
+
+                    }
+
+                    foreach(var stroke in page.SerializedStrokes)
+                    {
+                        stroke.ID = new Guid(stroke.ID).ToCompactID();
+                        stroke.PersonID = compactOwnerID;
+                    }
+
+                    page.InkStrokes = StrokeDTO.LoadInkStrokes(page.SerializedStrokes);
+                }
+                notebook.CurrentPage = notebook.Pages.First();
+                var folderPath = Path.Combine(convertToFolderPath, notebook.Name + ";" + notebook.ID + ";" + notebook.Owner.FullName + ";" + notebook.OwnerID);
+                notebook.SaveNotebook(folderPath);
             }
         }
 

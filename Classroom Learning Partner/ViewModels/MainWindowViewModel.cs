@@ -4,10 +4,8 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
 using Catel.Data;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Views.Modal_Windows;
@@ -18,7 +16,7 @@ namespace Classroom_Learning_Partner.ViewModels
     public enum ProgramModes
     {
         Author,
-        Instructor,
+        Teacher,
         Student,
         Projector,
         Database
@@ -37,7 +35,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             InitializeCommands();
             TitleBarText = CLP_TEXT;
-            CurrentUser = Person.Emily;
+            CurrentUser = Person.Guest;
         }
 
         public override string Title
@@ -162,7 +160,14 @@ namespace Classroom_Learning_Partner.ViewModels
         public bool IsPenDownActivated
         {
             get { return GetValue<bool>(IsPenDownActivatedProperty); }
-            set { SetValue(IsPenDownActivatedProperty, value); }
+            set
+            {
+                if(value)
+                {
+                    ACLPPageBaseViewModel.ClearAdorners(RibbonViewModel.CurrentPage);
+                }
+                SetValue(IsPenDownActivatedProperty, value);
+            }
         }
 
         public static readonly PropertyData IsPenDownActivatedProperty = RegisterProperty("IsPenDownActivated", typeof(bool), false);
@@ -196,13 +201,13 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// ImagePool for the current CLP instance, populated by all open notebooks.
         /// </summary>
-        public Dictionary<string,BitmapImage> ImagePool
+        public Dictionary<string, BitmapImage> ImagePool
         {
-            get { return GetValue<Dictionary<string,BitmapImage>>(ImagePoolProperty); }
+            get { return GetValue<Dictionary<string, BitmapImage>>(ImagePoolProperty); }
             set { SetValue(ImagePoolProperty, value); }
         }
 
-        public static readonly PropertyData ImagePoolProperty = RegisterProperty("ImagePool", typeof(Dictionary<string,BitmapImage>), () => new Dictionary<string,BitmapImage>());
+        public static readonly PropertyData ImagePoolProperty = RegisterProperty("ImagePool", typeof(Dictionary<string, BitmapImage>), () => new Dictionary<string, BitmapImage>());
 
         /// <summary>
         /// The <see cref="Person" /> using the program.
@@ -335,7 +340,7 @@ namespace Classroom_Learning_Partner.ViewModels
             get
             {
                 var directoryInfo = new DirectoryInfo(App.NotebookCacheDirectory);
-                return directoryInfo.GetDirectories().Select(directory => directory.Name).ToList();
+                return directoryInfo.GetDirectories().Select(directory => directory.Name).OrderBy(x => x).ToList();
             }
         }
 
@@ -351,54 +356,47 @@ namespace Classroom_Learning_Partner.ViewModels
         public static void CreateNewNotebook()
         {
             App.MainWindowViewModel.IsAuthoring = false;
-            var nameChooserLoop = true;
 
-            while(nameChooserLoop)
+            var nameChooser = new NotebookNamerWindowView
+                              {
+                                  Owner = Application.Current.MainWindow
+                              };
+            nameChooser.ShowDialog();
+            if(nameChooser.DialogResult != true)
             {
-                var nameChooser = new NotebookNamerWindowView
-                                  {
-                                      Owner = Application.Current.MainWindow
-                                  };
-                nameChooser.ShowDialog();
-                if(nameChooser.DialogResult == true)
-                {
-                    // TODO: Steve - sanitize notebook name
-                    var notebookName = nameChooser.NotebookName.Text;
-                    var newNotebook = new Notebook(notebookName, Person.Author);
-                                  
-                    var newPage = new CLPPage(Person.Author);
-                    newNotebook.AddCLPPageToNotebook(newPage);
-
-                    var folderName = newNotebook.Name + ";" + newNotebook.ID + ";" + newNotebook.OwnerID + ";" + newNotebook.Owner.FullName;
-                    var folderPath = Path.Combine(App.NotebookCacheDirectory, folderName);
-                    if(!Directory.Exists(folderPath))
-                    {
-                        SaveNotebook(newNotebook);
-
-                        App.MainWindowViewModel.OpenNotebooks.Add(newNotebook);
-                        App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(newNotebook);
-                        App.MainWindowViewModel.IsAuthoring = true;
-                        App.MainWindowViewModel.Ribbon.AuthoringTabVisibility = Visibility.Visible;
-                        App.MainWindowViewModel.CurrentNotebookName = notebookName;
-
-                        nameChooserLoop = false;
-                    }
-                    else
-                    {
-                        MessageBox.Show("A Notebook with that name already exists. Please choose a different name.");
-                    }
-                }
-                else
-                {
-                    nameChooserLoop = false;
-                }
+                return;
             }
+
+            // TODO: Steve - sanitize notebook name
+            var notebookName = nameChooser.NotebookName.Text;
+            var newNotebook = new Notebook(notebookName, Person.Author);
+
+            var newPage = new CLPPage(Person.Author);
+            newNotebook.AddCLPPageToNotebook(newPage);
+
+            var folderName = newNotebook.Name + ";" + newNotebook.ID + ";" + newNotebook.Owner.FullName + ";" + newNotebook.OwnerID;
+            var folderPath = Path.Combine(App.NotebookCacheDirectory, folderName);
+            if(Directory.Exists(folderPath))
+            {
+                return;
+            }
+            
+            // TODO: Reimplement when autosave returns
+            //SaveNotebook(newNotebook);
+
+            App.MainWindowViewModel.OpenNotebooks.Add(newNotebook);
+            App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(newNotebook);
+            App.MainWindowViewModel.IsAuthoring = true;
+            App.MainWindowViewModel.Ribbon.AuthoringTabVisibility = Visibility.Visible;
+            App.MainWindowViewModel.CurrentNotebookName = notebookName;
         }
 
         public static void OpenNotebook(string notebookFolderName, bool forceCache = false, bool forceDatabase = false)
         {
-            foreach(var otherNotebook in App.MainWindowViewModel.OpenNotebooks.Where(otherNotebook => otherNotebook.ID == notebookFolderName.Split(';')[1] &&
-                                                                                                      otherNotebook.OwnerID == notebookFolderName.Split(';')[2]))
+            //TODO: find way to bypass this if partial notebook is currently open and you try to open full notebook (or vis versa).
+            foreach(var otherNotebook in
+                    App.MainWindowViewModel.OpenNotebooks.Where(otherNotebook => otherNotebook.ID == notebookFolderName.Split(';')[1] && 
+                                                                                 otherNotebook.OwnerID == notebookFolderName.Split(';')[2]))
             {
                 App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(otherNotebook);
                 return;
@@ -411,14 +409,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            var stopWatch = new Stopwatch();
-            stopWatch.Start();
-
             var notebook = Notebook.OpenNotebook(folderPath);
-
-            stopWatch.Stop();
-            Logger.Instance.WriteToLog("Time to OPEN notebook (In Seconds): " + stopWatch.ElapsedMilliseconds / 1000.0);
-
             if(notebook == null)
             {
                 MessageBox.Show("Notebook could not be opened. Check error log.");
@@ -433,15 +424,17 @@ namespace Classroom_Learning_Partner.ViewModels
 
             App.MainWindowViewModel.OpenNotebooks.Add(notebook);
             App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(notebook);
+            if(notebook.OwnerID == Person.Author.ID)
+            {
+                App.MainWindowViewModel.IsAuthoring = true;
+            }
         }
 
         public static void SaveNotebook(Notebook notebook, bool isFullSaveForced = false)
         {
-            var folderPath = Path.Combine(App.NotebookCacheDirectory, notebook.Name + ";" + notebook.ID + ";" + notebook.OwnerID + ";" + notebook.Owner.FullName);
-
+            var folderPath = Path.Combine(App.NotebookCacheDirectory, notebook.Name + ";" + notebook.ID + ";" + notebook.Owner.FullName + ";" + notebook.OwnerID);
 
             //////////////////
-
 
             //foreach(var page in notebook.Pages)
             //{
@@ -453,21 +446,42 @@ namespace Classroom_Learning_Partner.ViewModels
             //    }
             //}
 
-
             /// ////////////////
 
             //if(isFullSaveForced)
             //{
             //    folderPath += " - FORCED";
             //}
-
+            
             if(!Directory.Exists(folderPath))
             {
                 Directory.CreateDirectory(folderPath);
             }
 
             notebook.SaveNotebook(folderPath, isFullSaveForced);
-            notebook.SaveSubmissions(folderPath);
+
+            switch(App.CurrentUserMode)
+            {
+                case App.UserMode.Server:
+                    break;
+                case App.UserMode.Instructor:
+                    notebook.SaveOthersSubmissions(App.NotebookCacheDirectory);
+                    break;
+                case App.UserMode.Projector:
+                    notebook.SaveOthersSubmissions(App.NotebookCacheDirectory);
+                    break;
+                case App.UserMode.Student:
+                    var submissionsPath = Path.Combine(folderPath, "Pages");
+                    notebook.SaveSubmissions(submissionsPath);
+                    if(App.Network.InstructorProxy != null)
+                    {
+                        var sNotebook = ObjectSerializer.ToString(notebook);
+                        var zippedNotebook = CLPServiceAgent.Instance.Zip(sNotebook);
+                        App.Network.InstructorProxy.CollectStudentNotebook(zippedNotebook, App.MainWindowViewModel.CurrentUser.FullName);
+                    }
+                    break;
+            }
+            
             if(notebook.LastSavedDate != null)
             {
                 App.MainWindowViewModel.LastSavedTime = notebook.LastSavedDate.Value.ToString("yyyy/MM/dd - HH:mm:ss");
@@ -481,18 +495,19 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 var classFileName = Path.GetFileNameWithoutExtension(classPeriodFilePath);
                 var classInfo = classFileName.Split(';');
-                if(classInfo.Length != 3)
+                if(classInfo.Length != 3 ||
+                   classInfo[0] != "period")
                 {
                     continue;
                 }
-                var time = classInfo[2];
+                var time = classInfo[1];
                 var timeParts = time.Split('.');
                 var year = Int32.Parse(timeParts[0]);
                 var month = Int32.Parse(timeParts[1]);
                 var day = Int32.Parse(timeParts[2]);
                 var hour = Int32.Parse(timeParts[3]);
                 var minute = Int32.Parse(timeParts[4]);
-                var dateTime = new DateTime(year,month,day,hour, minute, 0);
+                var dateTime = new DateTime(year, month, day, hour, minute, 0);
                 var now = DateTime.Now;
                 var timeSpan = now - dateTime;
                 var threeHours = new TimeSpan(3, 0, 0);
@@ -515,7 +530,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            var notebookFolderPath = GetNotebookFolderPathByID(App.MainWindowViewModel.CurrentClassPeriod.NotebookID);
+            var notebookFolderPath = GetNotebookFolderPathByCompositeID(App.MainWindowViewModel.CurrentClassPeriod.NotebookID, Person.Author.ID);
             if(notebookFolderPath == null)
             {
                 MessageBox.Show("ERROR: Could not find Notebook for latest ClassPeriod.");
@@ -528,13 +543,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            var stopWatch = new Stopwatch();
-            stopWatch.Start();
-
             var notebook = Notebook.OpenPartialNotebook(notebookFolderPath, App.MainWindowViewModel.CurrentClassPeriod.PageIDs, new List<string>());
-
-            stopWatch.Stop();
-            Logger.Instance.WriteToLog("Time to OPEN notebook (In Seconds): " + stopWatch.ElapsedMilliseconds / 1000.0);
 
             if(notebook == null)
             {
@@ -553,7 +562,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var copiedNotebook = notebook.CopyForNewOwner(App.MainWindowViewModel.CurrentUser);
             var notebookToUse = copiedNotebook;
 
-            var storedNotebookFolderName = copiedNotebook.Name + ";" + copiedNotebook.ID + ";" + copiedNotebook.OwnerID + ";" + copiedNotebook.Owner.FullName;
+            var storedNotebookFolderName = copiedNotebook.Name + ";" + copiedNotebook.ID + ";" + copiedNotebook.Owner.FullName + ";" + copiedNotebook.OwnerID;
             var storedNotebookFolderPath = Path.Combine(App.NotebookCacheDirectory, storedNotebookFolderName);
             if(Directory.Exists(storedNotebookFolderPath))
             {
@@ -562,7 +571,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 if(storedNotebook != null)
                 {
                     var loadedPageIDs = storedNotebook.Pages.Select(page => page.ID).ToList();
-                    foreach(var page in copiedNotebook.Pages.Where(page => !loadedPageIDs.Contains(page.ID))) 
+                    foreach(var page in copiedNotebook.Pages.Where(page => !loadedPageIDs.Contains(page.ID)))
                     {
                         storedNotebook.Pages.Add(page);
                     }
@@ -578,9 +587,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     var notebookInfo = notebookName.Split(';');
                     if(notebookInfo.Length != 4 ||
-                       notebookInfo[2] == Person.Author.ID ||
-                       notebookInfo[2] == Person.Emily.ID ||
-                       notebookInfo[2] == Person.EmilyProjector.ID)
+                       notebookInfo[3] == Person.Author.ID ||
+                       notebookInfo[3] == Person.Emily.ID ||
+                       notebookInfo[3] == Person.EmilyProjector.ID)
                     {
                         continue;
                     }
@@ -591,7 +600,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         continue;
                     }
 
-                    var submissionsPath = Path.Combine(folderPath, "Pages", "Submissions");
+                    var submissionsPath = Path.Combine(folderPath, "Pages");
                     if(!Directory.Exists(submissionsPath))
                     {
                         continue;
@@ -602,10 +611,12 @@ namespace Classroom_Learning_Partner.ViewModels
                     foreach(var submissionPath in submissionPaths)
                     {
                         var submissionFileName = Path.GetFileNameWithoutExtension(submissionPath);
-                        if(submissionFileName != null && submissionFileName.Contains(page.ID))
+                        var submissionInfo = submissionFileName.Split(';');
+                        if(submissionInfo.Length == 5 &&
+                           submissionInfo[2] == page.ID &&
+                           submissionInfo[4] != "0")
                         {
                             var submission = Load<CLPPage>(submissionPath, SerializationMode.Xml);
-                            submission.InkStrokes = StrokeDTO.LoadInkStrokes(submission.SerializedStrokes);
                             page.Submissions.Add(submission);
                         }
                     }
@@ -616,14 +627,15 @@ namespace Classroom_Learning_Partner.ViewModels
             App.MainWindowViewModel.AvailableUsers = App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.StudentList;
         }
 
-        public static string GetNotebookFolderPathByID(string id)
+        public static string GetNotebookFolderPathByCompositeID(string id, string ownerID)
         {
             var notebookFolderPaths = Directory.GetDirectories(App.NotebookCacheDirectory);
             return (from notebookFolderPath in notebookFolderPaths
                     let notebookInfo = notebookFolderPath.Split(';')
                     where notebookInfo.Length == 4
                     let notebookID = notebookInfo[1]
-                    where notebookID == id
+                    let notebookOwnerID = notebookInfo[3]
+                    where notebookID == id && notebookOwnerID == ownerID
                     select notebookFolderPath).FirstOrDefault();
         }
 
@@ -631,9 +643,19 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Temp Methods
 
+        public static void ConvertStudentIDsToCompactIDs()
+        {
+            var classPeriod = ClassSubject.OpenClassSubject(@"C:\Users\Steve\Desktop\CacheT\Classes\ClassSubject;AAAAABERAAAAAAAAAAAAAQ.xml");
+            foreach(var student in classPeriod.StudentList)
+            {
+                student.ID = new Guid(student.ID).ToCompactID();
+            }
+            File.Delete(@"C:\Users\Steve\Desktop\CacheT\Classes\ClassSubject;AAAAABERAAAAAAAAAAAAAQ.xml");
+            classPeriod.SaveClassSubject(@"C:\Users\Steve\Desktop\CacheT\Classes\ClassSubject;AAAAABERAAAAAAAAAAAAAQ.xml");
+        }
+
         public static void GenerateSubmissionsFromOriginals()
         {
-
             foreach(var notebookName in AvailableLocalNotebookNames)
             {
                 var notebookInfo = notebookName.Split(';');
@@ -679,7 +701,7 @@ namespace Classroom_Learning_Partner.ViewModels
                             pageObject.VersionIndex = 1;
                             pageObject.LastVersionIndex = 1;
                         }
-                        
+
                         pageObject.ParentPageVersionIndex = 1;
                     }
                     foreach(var serializedStroke in page.SerializedStrokes)
@@ -694,7 +716,6 @@ namespace Classroom_Learning_Partner.ViewModels
                     var submissionFilePath = Catel.IO.Path.Combine(submissionFolderPath, "Page;" + page.PageNumber + ";" + page.ID + ";" + page.OwnerID + ";" + page.VersionIndex + ".xml");
                     page.ToXML(submissionFilePath, false);
                 }
-                
             }
         }
 

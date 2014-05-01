@@ -260,28 +260,5 @@ namespace CLP.Entities
         }
 
         #endregion //Cache
-
-        //TODO: Remove after database established
-        private const string EMILY_CLASS_SUBJECT_ID = "00000000-1111-0000-0000-000000000001";
-
-        public static ClassSubject EmilyClass
-        {
-            get { return _emilyClass; }
-        }
-
-        private static readonly ClassSubject _emilyClass = new ClassSubject
-                                                           {
-                                                               ID = EMILY_CLASS_SUBJECT_ID,
-                                                               Name = "Math",
-                                                               GradeLevel = "4",
-                                                               SchoolName = "King Open School",
-                                                               SchoolDistrict = "Cambridge Public Schools",
-                                                               City = "Cambridge",
-                                                               State = "MA",
-                                                               Teacher = Person.Emily,
-                                                               Projector = Person.EmilyProjector,
-                                                               StartDate = new DateTime(2013, 9, 1),
-                                                               EndDate = new DateTime(2014, 6, 15)
-                                                           };
     }
 }

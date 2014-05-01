@@ -40,7 +40,9 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             everything.PageIDs = pageIDs;
             everything.StartTime = DateTime.Now;
-            ClassPeriodsForDisplay.Add(new ClassPeriodForDisplay(ClassPeriod.CurrentClassPeriod, false));
+            //TODO: Casey - I removed CurrentClassPeriod in the ClassPeriod.cs class. It was just a temp variable used to create a class period for the first time so that I knew its structure.
+            //It never represented the currently loaded class period. App.MainWindowViewModel.CurrentClassPeriod is what you want.
+       //     ClassPeriodsForDisplay.Add(new ClassPeriodForDisplay(ClassPeriod.CurrentClassPeriod, false));
             ClassPeriodsForDisplay.Add(new ClassPeriodForDisplay(everything, true));
             SetCurrentPagesFromList(everything.PageIDs);
 

@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
@@ -33,6 +34,7 @@ namespace Classroom_Learning_Partner.ViewModels
         StudentWork,
         Progress,
         Displays,
+        PageInformation,
         Webcam
     }
 
@@ -46,7 +48,7 @@ namespace Classroom_Learning_Partner.ViewModels
             get { return App.MainWindowViewModel; }
         }
 
-        private static CLPPage CurrentPage 
+        public static CLPPage CurrentPage 
         {
             get { return NotebookPagesPanelViewModel.GetCurrentPage(); }
         }
@@ -103,8 +105,6 @@ namespace Classroom_Learning_Partner.ViewModels
             NewNotebookCommand = new Command(OnNewNotebookCommandExecute);
             OpenNotebookCommand = new Command(OnOpenNotebookCommandExecute);
             LoadNotebookFromXMLCommand = new Command(OnLoadNotebookFromXMLCommandExecute);
-            EditNotebookCommand = new Command(OnEditNotebookCommandExecute);
-            DoneEditingNotebookCommand = new Command(OnDoneEditingNotebookCommandExecute);
             SaveNotebookCommand = new Command(OnSaveNotebookCommandExecute);
             ForceSaveNotebookCommand = new Command(OnForceSaveNotebookCommandExecute);
             SaveAllNotebooksCommand = new Command(OnSaveAllNotebooksCommandExecute);
@@ -353,6 +353,17 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData CurrentLeftPanelProperty = RegisterProperty("CurrentLeftPanel", typeof(Panels?));
 
         /// <summary>
+        /// Right Panel.
+        /// </summary>
+        public Panels? CurrentRightPanel
+        {
+            get { return GetValue<Panels?>(CurrentRightPanelProperty); }
+            set { SetValue(CurrentRightPanelProperty, value); }
+        }
+
+        public static readonly PropertyData CurrentRightPanelProperty = RegisterProperty("CurrentRightPanel", typeof(Panels?));
+
+        /// <summary>
         /// Whether or not to mirror the displays to the projector.
         /// </summary>
         public bool IsProjectorOn
@@ -433,29 +444,33 @@ namespace Classroom_Learning_Partner.ViewModels
             { 
                 SetValue(BlockStudentPenInputProperty, value); 
             
-                // TODO: Entities
-                //if(App.Network.ClassList.Count > 0)
-                //{
-                //    foreach(Person student in App.Network.ClassList)
-                //    {
-                //        try
-                //        {
-                //            NetTcpBinding binding = new NetTcpBinding();
-                //            binding.Security.Mode = SecurityMode.None;
-                //            IStudentContract StudentProxy = ChannelFactory<IStudentContract>.CreateChannel(binding, new EndpointAddress(student.CurrentMachineAddress));
-                //            StudentProxy.TogglePenDownMode(value);
-                //            (StudentProxy as ICommunicationObject).Close();
-                //        }
-                //        catch(System.Exception ex)
-                //        {
-                //            Console.WriteLine(ex.Message);
-                //        }
-                //    }
-                //}
-                //else
-                //{
-                //    Logger.Instance.WriteToLog("No Students Found");
-                //}
+                if(App.MainWindowViewModel.AvailableUsers.Any())
+                {
+                    Parallel.ForEach(App.MainWindowViewModel.AvailableUsers,
+                                     student =>
+                                     {
+                                         try
+                                            {
+                                                var binding = new NetTcpBinding
+                                                              {
+                                                                  Security = {
+                                                                                 Mode = SecurityMode.None
+                                                                             }
+                                                              };
+                                                var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(binding, new EndpointAddress(student.CurrentMachineAddress));
+                                                studentProxy.TogglePenDownMode(value);
+                                                (studentProxy as ICommunicationObject).Close();
+                                            }
+                                            catch(Exception ex)
+                                            {
+                                                Console.WriteLine(ex.Message);
+                                            }
+                                     });
+                }
+                else
+                {
+                    Logger.Instance.WriteToLog("No Students Found");
+                }
             }
         }
 
@@ -697,39 +712,6 @@ namespace Classroom_Learning_Partner.ViewModels
             //        App.MainWindowViewModel.LastSavedTime = notebook.LastSavedTime.ToString("yyyy/MM/dd - HH:mm:ss");
             //    }
             //}  
-        }
-
-        //TODO: Steve - Combine with DoneEditing to make ToggleEditingMode
-        /// <summary>
-        /// Puts current notebook in Authoring Mode.
-        /// </summary>
-        public Command EditNotebookCommand { get; private set; }
-        
-        private void OnEditNotebookCommandExecute()
-        {
-            MainWindow.IsAuthoring = true;
-
-            var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
-            if(currentPage != null)
-            {
-                ACLPPageBaseViewModel.ClearAdorners(currentPage);
-            }
-        }
-
-        /// <summary>
-        /// Leaves Authoring Mode.
-        /// </summary>
-        public Command DoneEditingNotebookCommand { get; private set; }
-
-        private void OnDoneEditingNotebookCommandExecute()
-        {
-            MainWindow.IsAuthoring = false;
-
-            var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
-            if(currentPage != null)
-            {
-                ACLPPageBaseViewModel.ClearAdorners(currentPage);
-            }
         }
 
         /// <summary>

@@ -48,6 +48,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             DisplaysPanel = new DisplaysPanelViewModel(notebook);
+            PageInformationPanel = new PageInformationPanelViewModel(notebook);
             RightPanel = DisplaysPanel;
 
             // TODO: Use StagingPanel instead?
@@ -214,6 +215,17 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData DisplaysPanelProperty = RegisterProperty("DisplaysPanel", typeof(DisplaysPanelViewModel));
 
         /// <summary>
+        /// PageInformationPanel.
+        /// </summary>
+        public PageInformationPanelViewModel PageInformationPanel
+        {
+            get { return GetValue<PageInformationPanelViewModel>(PageInformationPanelProperty); }
+            set { SetValue(PageInformationPanelProperty, value); }
+        }
+
+        public static readonly PropertyData PageInformationPanelProperty = RegisterProperty("PageInformationPanel", typeof(PageInformationPanelViewModel));
+
+        /// <summary>
         /// SubmissionHistoryPanel.
         /// </summary>
         // TODO: Replace with StagingPanel?
@@ -241,11 +253,6 @@ namespace Classroom_Learning_Partner.ViewModels
             if(viewModel is RibbonViewModel)
             {
                 var ribbon = viewModel as RibbonViewModel;
-                if(propertyName == "DisplayPanelVisibility")
-                {
-                    RightPanel = DisplaysPanel;
-                    RightPanel.IsVisible = ribbon.DisplayPanelVisibility;
-                }
 
                 if(propertyName == "CurrentLeftPanel")
                 {
@@ -265,6 +272,24 @@ namespace Classroom_Learning_Partner.ViewModels
                             break;
                         default:
                             LeftPanel.IsVisible = false;
+                            break;
+                    }
+                }
+
+                if(propertyName == "CurrentRightPanel")
+                {
+                    switch(ribbon.CurrentRightPanel)
+                    {
+                        case Panels.Displays:
+                            RightPanel = DisplaysPanel;
+                            RightPanel.IsVisible = true;
+                            break;
+                        case Panels.PageInformation:
+                            RightPanel = PageInformationPanel;
+                            RightPanel.IsVisible = true;
+                            break;
+                        default:
+                            RightPanel.IsVisible = false;
                             break;
                     }
                 }

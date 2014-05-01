@@ -116,7 +116,7 @@ namespace Classroom_Learning_Partner
 
         public static void ResetCache()
         {
-            if(Directory.Exists(LocalCacheDirectory))
+            if(Directory.Exists(NotebookCacheDirectory))
             {
                 var archiveDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "CacheArchive");
                 var now = DateTime.Now.ToString("yyyy.MM.dd.HH.mm.ss");
@@ -125,7 +125,7 @@ namespace Classroom_Learning_Partner
                 {
                     Directory.CreateDirectory(archiveDirectory);
                 }
-                Directory.Move(LocalCacheDirectory, newCacheDirectory);
+                Directory.Move(NotebookCacheDirectory, newCacheDirectory);
             }
 
             InitializeCatelSettings();

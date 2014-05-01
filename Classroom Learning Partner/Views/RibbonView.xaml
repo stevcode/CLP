@@ -41,17 +41,6 @@
                                            ImageSource="pack://application:,,,/Resources/Images/OpenNotebook32.png"
                                            Command="{Binding OpenNotebookCommand}" />
 
-                <RibbonApplicationMenuItem Header="Edit Notebook"
-                                           ImageSource="pack://application:,,,/Resources/Images/EditNotebook32.png"
-                                           Command="{Binding EditNotebookCommand}"
-                                           Visibility="{Binding InstructorVisibility}" />
-
-                <!--TODO: Steve - Make this a toggle with Edit Notebook above-->
-                <RibbonApplicationMenuItem Header="Done Editing Notebook"
-                                           ImageSource="pack://application:,,,/Resources/Images/DoneEditingNotebook32.png"
-                                           Command="{Binding DoneEditingNotebookCommand}"
-                                           Visibility="{Binding InstructorVisibility}" />
-
                 <!--<RibbonApplicationMenuItem Header="Save Notebook"
                                            KeyTip="S"
                                            ImageSource="pack://application:,,,/Resources/Images/SaveNotebook32.png"
@@ -447,7 +436,7 @@
                          Visibility="{Binding InstructorVisibility}">
 
                 <RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/Displays32.png"
-                                    IsChecked="{Binding DisplayPanelVisibility}"
+                                    IsChecked="{Binding CurrentRightPanel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.Displays}}"
                                     IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}">
                     <RibbonToggleButton.Style>
                         <Style TargetType="{x:Type RibbonToggleButton}">
@@ -751,14 +740,14 @@
                     <RibbonToggleButton.Style>
                         <Style TargetType="{x:Type RibbonToggleButton}">
                             <Setter Property="Label"
-                                    Value="Allow Students Pen" />
+                                    Value="Pens Down" />
                             <Setter Property="LargeImageSource"
                                     Value="pack://application:,,,/Images/LargeIcon.png" />
                             <Style.Triggers>
                                 <Trigger Property="IsChecked"
                                          Value="True">
                                     <Setter Property="Label"
-                                            Value="Deny Students Pen" />
+                                            Value="Pens Up" />
                                     <Setter Property="LargeImageSource"
                                             Value="pack://application:,,,/Images/LargeIcon.png" />
                                 </Trigger>
@@ -774,6 +763,24 @@
             </RibbonGroup>
 
             <RibbonGroup Header="Page">
+                
+                <RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/Displays32.png"
+                                    IsChecked="{Binding CurrentRightPanel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.PageInformation}}"
+                                    IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}">
+                    <RibbonToggleButton.Style>
+                        <Style TargetType="{x:Type RibbonToggleButton}">
+                            <Setter Property="Label"
+                                    Value="Show Page Info" />
+                            <Style.Triggers>
+                                <Trigger Property="IsChecked"
+                                         Value="True">
+                                    <Setter Property="Label"
+                                            Value="Hide PageInfo" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </RibbonToggleButton.Style>
+                </RibbonToggleButton>
 
                 <RibbonButton Label="Broadcast This Page"
                               LargeImageSource="..\Images\LargeIcon.png"
