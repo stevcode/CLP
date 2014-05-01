@@ -104,6 +104,8 @@
     <Compile Include="DomainModel\History\IHistoryBatch.cs" />
     <Compile Include="DomainModel\History\IHistoryItem.cs" />
     <Compile Include="DomainModel\History\PageHistory.cs" />
+    <Compile Include="DomainModel\History\PageObjectMoveBatchHistoryItem.cs" />
+    <Compile Include="DomainModel\History\PageObjectResizeBatchHistoryItem.cs" />
     <Compile Include="DomainModel\History\PageObjectsAddedHistoryItem.cs" />
     <Compile Include="DomainModel\History\PageObjectsRemovedHistoryItem.cs" />
     <Compile Include="DomainModel\History\StrokesChangedHistoryItem.cs" />
