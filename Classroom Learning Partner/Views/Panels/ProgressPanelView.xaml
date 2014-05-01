@@ -51,9 +51,11 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
-                                <Ellipse Height="10"
-                                         Width="10"
+                                <Ellipse Height="7"
+                                         Width="7"
                                          Fill="LawnGreen"
+                                         Margin="3 3 3 0"
+                                         VerticalAlignment="Top"
                                          Visibility="{Binding IsConnected, Converter={StaticResource BooleanToHidingVisibilityConverter}}"/>
                                 <TextBlock FontWeight="Bold" Height="24">
                                     <Run Text="{Binding FullName}" />

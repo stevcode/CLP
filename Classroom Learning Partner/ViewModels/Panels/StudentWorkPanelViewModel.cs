@@ -25,6 +25,18 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 StudentList = App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.StudentList;
             }
+            else
+            {
+                StudentList = new ObservableCollection<Person>();
+                StudentList.Add(Person.TestSubmitter);
+            }
+            
+            foreach(CLPPage page in Notebook.Pages)
+            {
+                CurrentPages.Add(page);
+            }
+            FirstPage = CurrentPages[0];
+            SecondPage = CurrentPages[1];
         }
 
         void StudentWorkPanelViewModel_Initialized(object sender, EventArgs e)
@@ -66,7 +78,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(CurrentPagesProperty, value); }
         }
 
-        public static readonly PropertyData CurrentPagesProperty = RegisterProperty("CurrentPages", typeof(ObservableCollection<CLPPage>));
+        public static readonly PropertyData CurrentPagesProperty = RegisterProperty("CurrentPages", typeof(ObservableCollection<CLPPage>), () => new ObservableCollection<CLPPage>());
 
         #endregion //Model
 
@@ -82,6 +94,28 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage));
+
+        /// <summary>
+        /// First of the two pages displayed.
+        /// </summary>
+        public CLPPage FirstPage
+        {
+            get { return GetValue<CLPPage>(FirstPageProperty); }
+            set { SetValue(FirstPageProperty, value); }
+        }
+
+        public static readonly PropertyData FirstPageProperty = RegisterProperty("FirstPage", typeof(CLPPage));
+        
+        /// <summary>
+        /// Second of the two pages displayed.
+        /// </summary>
+        public CLPPage SecondPage
+        {
+            get { return GetValue<CLPPage>(SecondPageProperty); }
+            set { SetValue(SecondPageProperty, value); }
+        }
+
+        public static readonly PropertyData SecondPageProperty = RegisterProperty("SecondPage", typeof(CLPPage));
 
         public ObservableCollection<Person> StudentList
         {
