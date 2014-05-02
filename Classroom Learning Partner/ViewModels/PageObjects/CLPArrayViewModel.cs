@@ -637,7 +637,7 @@ namespace Classroom_Learning_Partner.ViewModels
             switch(snapType)
             {
                 case SnapType.Top:
-                    // ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryArraySnap(PageObject.ParentPage, closestPersistingArray, snappingArray, true));
+                    ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPArraySnapHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, closestPersistingArray, snappingArray, true));
 
                     closestPersistingArray.VerticalDivisions.Clear();
 
@@ -677,7 +677,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     closestPersistingArray.YPosition -= snappingArray.ArrayHeight;
                     break;
                 case SnapType.Bottom:
-                    //   ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryArraySnap(PageObject.ParentPage, closestPersistingArray, snappingArray, true));
+                    ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPArraySnapHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, closestPersistingArray, snappingArray, true));
 
                     closestPersistingArray.VerticalDivisions.Clear();
 
@@ -709,7 +709,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     closestPersistingArray.Rows += snappingArray.Rows;
                     break;
                 case SnapType.Left:
-                    //   ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryArraySnap(PageObject.ParentPage, closestPersistingArray, snappingArray, false));
+                    ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPArraySnapHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, closestPersistingArray, snappingArray, false));
 
                     closestPersistingArray.HorizontalDivisions.Clear();
 
@@ -749,7 +749,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     closestPersistingArray.XPosition -= snappingArray.ArrayWidth;
                     break;
                 case SnapType.Right:
-                    //   ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryArraySnap(PageObject.ParentPage, closestPersistingArray, snappingArray, false));
+                    ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPArraySnapHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, closestPersistingArray, snappingArray, false));
 
                     closestPersistingArray.HorizontalDivisions.Clear();
 
@@ -994,8 +994,8 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             var divisionIndex = isHorizontalDivision ? array.HorizontalDivisions.IndexOf(division) : array.VerticalDivisions.IndexOf(division);
 
-            //ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
-            //                                           new CLPHistoryArrayDivisionValueChanged(PageObject.ParentPage, PageObject.UniqueID, isHorizontalDivision, divisionIndex, previousValue));
+            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
+                                                       new CLPArrayDivisionValueChangedHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, PageObject.ID, isHorizontalDivision, divisionIndex, previousValue));
 
             // Check if array labels add up to larger array dimension
             if(division.Orientation == ArrayDivisionOrientation.Horizontal)
