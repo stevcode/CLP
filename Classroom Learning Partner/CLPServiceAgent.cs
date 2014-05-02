@@ -268,6 +268,7 @@ namespace Classroom_Learning_Partner
                                    try
                                    {
                                        page.SerializedStrokes = StrokeDTO.SaveInkStrokes(page.InkStrokes);
+                                       page.History.SerializedTrashedInkStrokes = StrokeDTO.SaveInkStrokes(page.History.TrashedInkStrokes);
                                        // Perform analysis (syntactic and semantic interpretation) of the page here, on the student machine
                                        TagAnalysis.AnalyzeArray(page);
                                        TagAnalysis.AnalyzeStamps(page);

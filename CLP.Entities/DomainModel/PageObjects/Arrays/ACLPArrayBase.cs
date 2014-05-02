@@ -18,6 +18,8 @@ namespace CLP.Entities
     {
         #region Constructors
 
+        public CLPArrayDivision() { }
+
         public CLPArrayDivision(ArrayDivisionOrientation orientation, double position, double length, int value)
         {
             Orientation = orientation;
@@ -85,6 +87,7 @@ namespace CLP.Entities
         #endregion //Properties
     }
 
+    [Serializable]
     public abstract class ACLPArrayBase : APageObjectBase
     {
         #region Constructors

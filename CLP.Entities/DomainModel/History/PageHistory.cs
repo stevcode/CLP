@@ -13,6 +13,7 @@ using Catel.Runtime.Serialization;
 
 namespace CLP.Entities
 {
+    [Serializable]
     public class PageHistory : AEntityBase
     {
         private readonly object _historyLock = new object();

@@ -494,7 +494,7 @@ namespace CLP.Entities
                 // clonedPageObject.RefreshStrokeParentIDs();
             }
 
-            // TODO: Delete history on copied page.
+            newPage.History.ClearHistory();
 
             return newPage;
         }
@@ -511,6 +511,7 @@ namespace CLP.Entities
             }
             SubmissionTime = DateTime.Now;
             SerializedStrokes = StrokeDTO.SaveInkStrokes(InkStrokes);
+            History.SerializedTrashedInkStrokes = StrokeDTO.SaveInkStrokes(History.TrashedInkStrokes);
             var copy = Clone() as CLPPage;
             if(copy == null)
             {
@@ -518,14 +519,25 @@ namespace CLP.Entities
             }
             copy.SubmissionType = SubmissionTypes.Single;
             copy.VersionIndex = LastVersionIndex.Value;
+            copy.History.VersionIndex = LastVersionIndex.Value;
+            copy.History.LastVersionIndex = LastVersionIndex;
             foreach(var pageObject in copy.PageObjects)
             {
+                pageObject.VersionIndex = LastVersionIndex.Value;
+                pageObject.LastVersionIndex = LastVersionIndex;
+                pageObject.ParentPage = copy;
+            }
+
+            foreach(var pageObject in copy.History.TrashedPageObjects)
+            {
+                pageObject.VersionIndex = LastVersionIndex.Value;
                 pageObject.LastVersionIndex = LastVersionIndex;
                 pageObject.ParentPage = copy;
             }
 
             foreach(var tag in copy.Tags)
             {
+                tag.VersionIndex = LastVersionIndex.Value;
                 tag.LastVersionIndex = LastVersionIndex;
                 tag.ParentPage = copy;
             }
@@ -533,10 +545,13 @@ namespace CLP.Entities
             foreach(var serializedStroke in copy.SerializedStrokes)
             {
                 //TODO: Stroke Version Index should be uint
-                serializedStroke.VersionIndex = (int)copy.VersionIndex;
+                serializedStroke.VersionIndex = (int)LastVersionIndex.Value;
             }
 
-            //TODO: Version history and history items.
+            foreach(var serializedStroke in copy.History.SerializedTrashedInkStrokes)
+            {
+                serializedStroke.VersionIndex = (int)LastVersionIndex.Value;
+            }
 
             return copy;
         }
@@ -620,6 +635,7 @@ namespace CLP.Entities
             if(serializeStrokes)
             {
                 SerializedStrokes = StrokeDTO.SaveInkStrokes(InkStrokes);
+                History.SerializedTrashedInkStrokes = StrokeDTO.SaveInkStrokes(History.TrashedInkStrokes);
             }
             
             var fileInfo = new FileInfo(fileName);
@@ -644,6 +660,7 @@ namespace CLP.Entities
             base.OnDeserialized();
                     
             InkStrokes = StrokeDTO.LoadInkStrokes(SerializedStrokes);
+            History.TrashedInkStrokes = StrokeDTO.LoadInkStrokes(History.SerializedTrashedInkStrokes);
             IsCached = true;
         }
 

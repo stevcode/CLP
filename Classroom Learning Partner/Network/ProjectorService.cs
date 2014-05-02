@@ -182,6 +182,7 @@ namespace Classroom_Learning_Partner
                 return;
             }
             submission.InkStrokes = StrokeDTO.LoadInkStrokes(submission.SerializedStrokes);
+            submission.History.TrashedInkStrokes = StrokeDTO.LoadInkStrokes(submission.History.SerializedTrashedInkStrokes);
             var currentNotebook = App.MainWindowViewModel.OpenNotebooks.FirstOrDefault(notebook => notebookID == notebook.ID && notebook.OwnerID == Person.Emily.ID);
 
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
@@ -294,6 +295,7 @@ namespace Classroom_Learning_Partner
             foreach(var page in notebook.Pages)
             {
                 page.InkStrokes = StrokeDTO.LoadInkStrokes(page.SerializedStrokes);
+                page.History.TrashedInkStrokes = StrokeDTO.LoadInkStrokes(page.History.SerializedTrashedInkStrokes);
             }
 
             foreach(var page in notebook.Pages)
