@@ -192,7 +192,7 @@ namespace CLP.Entities
                 return null;
             }
 
-            PackagedCuttingStroke = ParentPage.History.GetStrokeByID(CuttingStrokeID).ToStrokeDTO();
+            clonedHistoryItem.PackagedCuttingStroke = ParentPage.History.GetStrokeByID(CuttingStrokeID).ToStrokeDTO();
 
             clonedHistoryItem.PackagedPageObjects.Clear();
             foreach(var pageObject in HalvedPageObjectIDs.Select(pageObjectID => ParentPage.GetPageObjectByID(pageObjectID)))

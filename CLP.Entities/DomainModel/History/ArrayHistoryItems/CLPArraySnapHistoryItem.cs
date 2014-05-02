@@ -195,14 +195,9 @@ namespace CLP.Entities
         protected override void RedoAction(bool isAnimationRedo)
         {
             var snappedArray = ParentPage.GetPageObjectByID(SnappedArrayID) as CLPArray;
-            if(snappedArray == null)
-            {
-                return;
-            }
-            snappedArray.ParentPage = ParentPage;
-
             var persistingArray = ParentPage.GetPageObjectByID(PersistingArrayID) as CLPArray;
-            if(persistingArray == null)
+            if(snappedArray == null ||
+               persistingArray == null)
             {
                 return;
             }
@@ -260,7 +255,6 @@ namespace CLP.Entities
         {
             var clonedHistoryItem = Clone() as CLPArraySnapHistoryItem;
             var persistingArray = ParentPage.GetPageObjectByID(PersistingArrayID) as CLPArray;
-            var snappedArray = ParentPage.History.GetPageObjectByID(SnappedArrayID) as CLPArray;
             if(clonedHistoryItem == null ||
                persistingArray == null)
             {
@@ -272,12 +266,12 @@ namespace CLP.Entities
 
             if(IsHorizontal)
             {
-                clonedHistoryItem.PersistingArrayRowsOrColumns = persistingArray.Rows + snappedArray.Rows;
+                clonedHistoryItem.PersistingArrayRowsOrColumns = persistingArray.Rows;
                 clonedHistoryItem.PersistingArrayXOrYPosition = persistingArray.YPosition;
             }
             else
             {
-                clonedHistoryItem.PersistingArrayRowsOrColumns = persistingArray.Columns + snappedArray.Columns;
+                clonedHistoryItem.PersistingArrayRowsOrColumns = persistingArray.Columns;
                 clonedHistoryItem.PersistingArrayXOrYPosition = persistingArray.XPosition;
             }
 

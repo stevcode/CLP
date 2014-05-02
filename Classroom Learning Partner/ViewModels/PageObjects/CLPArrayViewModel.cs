@@ -634,10 +634,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var squareSize = closestPersistingArray.GridSquareSize;
             ObservableCollection<CLPArrayDivision> tempDivisions;
+
+            CLPArraySnapHistoryItem arraySnapHistoryItem;
             switch(snapType)
             {
                 case SnapType.Top:
-                    ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPArraySnapHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, closestPersistingArray, snappingArray, true));
+                    arraySnapHistoryItem = new CLPArraySnapHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, closestPersistingArray, snappingArray, true);
 
                     closestPersistingArray.VerticalDivisions.Clear();
 
@@ -677,7 +679,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     closestPersistingArray.YPosition -= snappingArray.ArrayHeight;
                     break;
                 case SnapType.Bottom:
-                    ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPArraySnapHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, closestPersistingArray, snappingArray, true));
+                    arraySnapHistoryItem = new CLPArraySnapHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, closestPersistingArray, snappingArray, true);
 
                     closestPersistingArray.VerticalDivisions.Clear();
 
@@ -709,7 +711,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     closestPersistingArray.Rows += snappingArray.Rows;
                     break;
                 case SnapType.Left:
-                    ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPArraySnapHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, closestPersistingArray, snappingArray, false));
+                    arraySnapHistoryItem = new CLPArraySnapHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, closestPersistingArray, snappingArray, false);
 
                     closestPersistingArray.HorizontalDivisions.Clear();
 
@@ -749,7 +751,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     closestPersistingArray.XPosition -= snappingArray.ArrayWidth;
                     break;
                 case SnapType.Right:
-                    ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPArraySnapHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, closestPersistingArray, snappingArray, false));
+                    arraySnapHistoryItem = new CLPArraySnapHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, closestPersistingArray, snappingArray, false);
 
                     closestPersistingArray.HorizontalDivisions.Clear();
 
@@ -786,6 +788,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
             closestPersistingArray.SizeArrayToGridLevel(squareSize, false);
             closestPersistingArray.IsDivisionBehaviorOn = true;
+
+            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, arraySnapHistoryItem);
 
             //var extraPageObjects = PageObject.GetPageObjectsOverPageObject();
             PageObject.ParentPage.PageObjects.Remove(PageObject);
