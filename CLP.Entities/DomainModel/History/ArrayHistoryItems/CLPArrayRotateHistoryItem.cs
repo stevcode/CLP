@@ -1,8 +1,10 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
 {
+    [Serializable]
     public class CLPArrayRotateHistoryItem : AHistoryItemBase
     {
         #region Constructors

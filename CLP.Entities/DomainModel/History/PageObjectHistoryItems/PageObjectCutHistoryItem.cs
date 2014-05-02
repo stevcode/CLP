@@ -8,6 +8,7 @@ using Catel.Data;
 
 namespace CLP.Entities
 {
+    [Serializable]
     public class PageObjectCutHistoryItem : AHistoryItemBase
     {
         private const int STROKE_CUT_DELAY = 375;

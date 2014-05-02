@@ -102,6 +102,7 @@
     <Compile Include="DomainModel\History\AHistoryItemBase.cs" />
     <Compile Include="DomainModel\History\AnimationIndicator.cs" />
     <Compile Include="DomainModel\History\ArrayHistoryItems\CLPArrayDivisionsChangedHistoryItem.cs" />
+    <Compile Include="DomainModel\History\ArrayHistoryItems\CLPArrayDivisionValueChangedHistoryItem.cs" />
     <Compile Include="DomainModel\History\ArrayHistoryItems\CLPArrayGridToggleHistoryItem.cs" />
     <Compile Include="DomainModel\History\ArrayHistoryItems\CLPArrayRotateHistoryItem.cs" />
     <Compile Include="DomainModel\History\IHistoryBatch.cs" />

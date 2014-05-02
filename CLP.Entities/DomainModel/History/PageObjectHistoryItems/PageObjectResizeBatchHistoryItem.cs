@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows;
@@ -6,6 +7,7 @@ using Catel.Data;
 
 namespace CLP.Entities
 {
+    [Serializable]
     public class PageObjectResizeBatchHistoryItem : AHistoryItemBase, IHistoryBatch
     {
         #region Constructors
