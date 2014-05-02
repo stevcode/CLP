@@ -1818,14 +1818,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnCreatePageSubmissionCommandExecute()
         {
-
-            Logger.Instance.WriteToLog("Create a page");
             CLPPage submission = CurrentPage.DuplicatePage();
             submission.ID = CurrentPage.ID;
             submission.VersionIndex = 1;
             submission.OwnerID = Person.TestSubmitter.ID;
             CurrentPage.Submissions.Add(submission);
-            Logger.Instance.WriteToLog("Created a page");
         }
 
         /// <summary>

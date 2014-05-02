@@ -37,11 +37,15 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             FirstPage = CurrentPages[0];
             SecondPage = CurrentPages[1];
+
+            SetCurrentPageCommand = new Command<CLPPage>(OnSetCurrentPageCommandExecute);
+            PageHeightUpdateCommand = new Command(OnPageHeightUpdateCommandExecute);
         }
 
         void StudentWorkPanelViewModel_Initialized(object sender, EventArgs e)
         {
             Length = InitialLength;
+            OnPageHeightUpdateCommandExecute();
         }
 
         /// <summary>
@@ -83,6 +87,14 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Model
 
         #region Bindings
+
+        public double PageHeight
+        {
+            get { return GetValue<double>(PageHeightProperty); }
+            set { SetValue(PageHeightProperty, value); }
+        }
+
+        public static readonly PropertyData PageHeightProperty = RegisterProperty("PageHeight", typeof(double));
 
         /// <summary>
         /// Current, selected page in the notebook.
@@ -138,19 +150,26 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnSetCurrentPageCommandExecute(CLPPage page)
         {
-            var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel != null)
+            Logger.Instance.WriteToLog("Set current page");
+            //TODO staging panel
+            if(page != null)
             {
-                notebookWorkspaceViewModel.CurrentDisplay.AddPageToDisplay(page);
-
-                // TODO: Entities, StagingPanel
-                //var historyPanel = notebookWorkspaceViewModel.SubmissionHistoryPanel;
-                //if(historyPanel != null)
-                //{
-                //    historyPanel.CurrentPage = null;
-                //    historyPanel.IsSubmissionHistoryVisible = false;
-                //}
+                Notebook.CurrentPage = page;
             }
+        }
+
+        /// <summary>
+        /// Updates page height
+        /// </summary>
+        public Command PageHeightUpdateCommand
+        {
+            get;
+            private set;
+        }
+
+        private void OnPageHeightUpdateCommandExecute()
+        {
+            PageHeight = ((Length - 80) / 2 - 6) * CLPPage.LANDSCAPE_HEIGHT / CLPPage.LANDSCAPE_WIDTH;
         }
 
         #endregion
