@@ -417,7 +417,7 @@
 
             </RibbonGroup>
 
-            <RibbonGroup Header="History">
+            <!--<RibbonGroup Header="History">
 
                 <RibbonButton Label="Undo"
                               LargeImageSource="pack://application:,,,/Resources/Images/Undo32.png"
@@ -429,7 +429,7 @@
                               SmallImageSource="pack://application:,,,/Resources/Images/Redo16.png"
                               Command="{Binding RedoCommand}" />
 
-            </RibbonGroup>
+            </RibbonGroup>-->
 
             <RibbonGroup Header="Displays"
                          Visibility="{Binding InstructorVisibility}">
