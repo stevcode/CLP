@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls.Primitives;
+using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Shapes;
 using Catel.Data;
@@ -1254,5 +1255,142 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //Methods
+
+        #region Static Methods
+
+        public static bool CreateDivision(CLPArray array, Stroke cuttingStroke)
+        {
+            var strokeTop = cuttingStroke.GetBounds().Top;
+            var strokeBottom = cuttingStroke.GetBounds().Bottom;
+            var strokeLeft = cuttingStroke.GetBounds().Left;
+            var strokeRight = cuttingStroke.GetBounds().Right;
+
+            var cuttableTop = array.YPosition + array.LabelLength;
+            var cuttableBottom = cuttableTop + array.ArrayHeight;
+            var cuttableLeft = array.XPosition + array.LabelLength;
+            var cuttableRight = cuttableLeft + array.ArrayWidth;
+
+            if(array.ArrayType != ArrayTypes.Array)
+            {
+                return false;
+            }
+
+            const double MIN_THRESHHOLD = 30.0;
+
+            if(Math.Abs(strokeLeft - strokeRight) < Math.Abs(strokeTop - strokeBottom) &&
+               strokeRight <= cuttableRight &&
+               strokeLeft >= cuttableLeft &&
+               strokeTop - cuttableTop <= MIN_THRESHHOLD &&
+               cuttableBottom - strokeBottom <= MIN_THRESHHOLD &&
+               array.Columns > 1) //Vertical Stroke. Stroke must be within the bounds of the pageObject
+            {
+                var average = (strokeRight + strokeLeft) / 2;
+                var relativeAverage = average - array.LabelLength - array.XPosition;
+                var position = relativeAverage;
+                if(array.IsGridOn)
+                {
+                    position = array.GetClosestGridLine(position);
+                }
+
+                if(array.VerticalDivisions.Any(verticalDivision => Math.Abs(verticalDivision.Position - position) < 30.0))
+                {
+                    return false;
+                }
+                if(array.VerticalDivisions.Count >= array.Columns)
+                {
+                    //MessageBox.Show("The number of divisions cannot be larger than the number of Columns.");
+                    return false;
+                }
+
+                var divAbove = array.FindDivisionAbove(position, array.VerticalDivisions);
+                var divBelow = array.FindDivisionBelow(position, array.VerticalDivisions);
+
+                var addedDivisions = new List<CLPArrayDivision>();
+                var removedDivisions = new List<CLPArrayDivision>();
+
+                CLPArrayDivision topDiv;
+                if(divAbove == null)
+                {
+                    topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, 0, position, 0);
+                }
+                else
+                {
+                    topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, divAbove.Position, position - divAbove.Position, 0);
+                    array.VerticalDivisions.Remove(divAbove);
+                    removedDivisions.Add(divAbove);
+                }
+                array.VerticalDivisions.Add(topDiv);
+                addedDivisions.Add(topDiv);
+
+                var bottomDiv = divBelow == null
+                                    ? new CLPArrayDivision(ArrayDivisionOrientation.Vertical, position, array.ArrayWidth - position, 0)
+                                    : new CLPArrayDivision(ArrayDivisionOrientation.Vertical, position, divBelow.Position - position, 0);
+
+                array.VerticalDivisions.Add(bottomDiv);
+                addedDivisions.Add(bottomDiv);
+
+                ACLPPageBaseViewModel.AddHistoryItemToPage(array.ParentPage, new CLPArrayDivisionsChangedHistoryItem(array.ParentPage, App.MainWindowViewModel.CurrentUser, array.ID, addedDivisions, removedDivisions));
+                return true; 
+            }
+            else if(Math.Abs(strokeLeft - strokeRight) > Math.Abs(strokeTop - strokeBottom) &&
+                    strokeBottom <= cuttableBottom &&
+                    strokeTop >= cuttableTop &&
+                    cuttableRight - strokeRight <= MIN_THRESHHOLD &&
+                    strokeLeft - cuttableLeft <= MIN_THRESHHOLD &&
+                    array.Rows > 1) //Horizontal Stroke. Stroke must be within the bounds of the pageObject
+            {
+                var average = (strokeTop + strokeBottom) / 2;
+                var relativeAverage = average - array.LabelLength - array.YPosition;
+                var position = relativeAverage;
+                if(array.IsGridOn)
+                {
+                    position = array.GetClosestGridLine(position);
+                }
+
+                if(array.HorizontalDivisions.Any(horizontalDivision => Math.Abs(horizontalDivision.Position - position) < 30.0))
+                {
+                    return false;
+                }
+                if(array.HorizontalDivisions.Count >= array.Rows)
+                {
+                    //MessageBox.Show("The number of divisions cannot be larger than the number of Rows.");
+                    return false;
+                }
+
+                var divAbove = array.FindDivisionAbove(position, array.HorizontalDivisions);
+                var divBelow = array.FindDivisionBelow(position, array.HorizontalDivisions);
+
+                var addedDivisions = new List<CLPArrayDivision>();
+                var removedDivisions = new List<CLPArrayDivision>();
+
+                CLPArrayDivision topDiv;
+                if(divAbove == null)
+                {
+                    topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, 0, position, 0);
+                }
+                else
+                {
+                    topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, divAbove.Position, position - divAbove.Position, 0);
+                    array.HorizontalDivisions.Remove(divAbove);
+                    removedDivisions.Add(divAbove);
+                }
+                array.HorizontalDivisions.Add(topDiv);
+                addedDivisions.Add(topDiv);
+
+                var bottomDiv = divBelow == null
+                                    ? new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, position, array.ArrayHeight - position, 0)
+                                    : new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, position, divBelow.Position - position, 0);
+
+                array.HorizontalDivisions.Add(bottomDiv);
+                addedDivisions.Add(bottomDiv);
+
+                ACLPPageBaseViewModel.AddHistoryItemToPage(array.ParentPage, new CLPArrayDivisionsChangedHistoryItem(array.ParentPage, App.MainWindowViewModel.CurrentUser, array.ID, addedDivisions, removedDivisions));
+                return true;
+            }
+
+            return false;
+        }
+
+        #endregion //Static Methods
     }
 }

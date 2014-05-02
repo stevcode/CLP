@@ -569,22 +569,6 @@ namespace Classroom_Learning_Partner.ViewModels
                         {
                             return;
                         }
-                        //Check if stroke divides an array
-                        bool wasArrayDivided = false;
-                        foreach(var array in PageObjects.OfType<CLPArray>())
-                        {
-                            if(array.IsDivisionBehaviorOn)
-                            {
-                                wasArrayDivided = array.CreateDivision(stroke) || wasArrayDivided;
-                            }
-                        }
-                        if(wasArrayDivided)
-                        {
-                            InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
-                            Page.InkStrokes.Remove(stroke);
-                            InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
-                            break;
-                        }
                         AddStroke(stroke);
                     }
                     break;
@@ -712,9 +696,33 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Page Interaction Methods
 
-        private void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
+        private bool AcceptStrokes(IEnumerable<Stroke> addedStrokes, IEnumerable<Stroke> removedStrokes)
         {
-            /**
+            var addedStrokesEnumerable = addedStrokes as IList<Stroke> ?? addedStrokes.ToList();
+            if(addedStrokesEnumerable.Count() == 1 &&
+               !removedStrokes.Any())
+            {
+                var stroke = addedStrokesEnumerable.First();
+                bool wasArrayDivided = false;
+                foreach(var array in PageObjects.OfType<CLPArray>())
+                {
+                    if(array.IsDivisionBehaviorOn)
+                    {
+                        wasArrayDivided = CLPArrayViewModel.CreateDivision(array, stroke) || wasArrayDivided;
+                    }
+                }
+                if(wasArrayDivided)
+                {
+                    InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
+                    Page.InkStrokes.Remove(stroke);
+                    InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
+                    return true;
+                }
+            }
+
+            return false;
+       
+            /** TODO: implement below
              * All IStokeAcceptors go here
              * Switch statement to call state method on pageObject's viewmodel AcceptStrokes
              * most will default to calling pageObject.AcceptStrokes()
@@ -880,19 +888,28 @@ namespace Classroom_Learning_Partner.ViewModels
                     return;
                 }
 
-                var addedStrokeIDs = new List<string>();
-                var removedStrokes = new List<Stroke>();
                 var strokeID = Guid.NewGuid().ToCompactID();
                 stroke.SetStrokeID(strokeID);
                 stroke.SetStrokeOwnerID(App.MainWindowViewModel.CurrentUser.ID);
                 stroke.SetStrokeVersionIndex(0);
-                addedStrokeIDs.Add(strokeID);
 
-                RefreshAcceptedStrokes(new List<Stroke>
-                                       {
-                                           stroke
-                                       },
-                                       removedStrokes);
+                var strokesAdded = new List<Stroke>
+                                   {
+                                       stroke
+                                   };
+                var removedStrokes = new List<Stroke>();
+                var skipAddingStroke = AcceptStrokes(strokesAdded, removedStrokes);
+                if(skipAddingStroke)
+                {
+                    return;
+                }
+
+                var addedStrokeIDs = new List<string>
+                                     {
+                                         strokeID
+                                     };
+
+                RefreshAcceptedStrokes(strokesAdded, removedStrokes);
                 AddHistoryItemToPage(Page, new StrokesChangedHistoryItem(Page, App.MainWindowViewModel.CurrentUser, addedStrokeIDs, removedStrokes));
             }
             catch(Exception ex)
