@@ -2868,7 +2868,7 @@ namespace Classroom_Learning_Partner.ViewModels
                             xPosition = firstArray.XPosition;
                             yPosition += firstArray.LabelLength + rows * initialGridsquareSize;
                         }
-                        array.XPosition += xPosition;
+                        array.XPosition = xPosition;
                         array.YPosition = yPosition;
                         xPosition += firstArray.LabelLength + columns * initialGridsquareSize;
                         array.SizeArrayToGridLevel(initialGridsquareSize);
