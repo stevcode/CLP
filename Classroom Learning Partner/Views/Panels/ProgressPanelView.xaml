@@ -112,7 +112,14 @@
                                         </i:Interaction.Triggers>
                                     </Rectangle>
                                 </Border>
-                                <ItemsControl Grid.Row="2" ItemsSource="{Binding Converter={StaticResource PageToSubmissionsListConverter}}">
+                                <ItemsControl Grid.Row="2">
+                                    <ItemsControl.ItemsSource>
+                                        <MultiBinding Converter="{StaticResource PageToSubmissionsListConverter}">
+                                            <Binding Path="Submissions"/>
+                                            <Binding Path="Submissions.Count"/>
+                                            <!-- hack to update on collection change -->
+                                        </MultiBinding>
+                                    </ItemsControl.ItemsSource>
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
                                             <StackPanel Orientation="Vertical" />
