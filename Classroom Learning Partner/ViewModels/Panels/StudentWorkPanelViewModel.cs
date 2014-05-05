@@ -50,7 +50,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         void StudentWorkPanelViewModel_Initialized(object sender, EventArgs e)
         {
-            Length = InitialLength;
+            Length = 600; // I want it wider than InitialLength, which is read-only.  Maybe I should be overriding.
             OnPageHeightUpdateCommandExecute();
         }
 
