@@ -29,10 +29,14 @@ namespace Classroom_Learning_Partner.ViewModels
             else
             {
                 StudentList = new ObservableCollection<Person>();
-                StudentList.Add(Person.TestSubmitter);
+                for(int i = 1; i <= 10; i++)
+                {
+                    StudentList.Add(Person.TestSubmitter);
+                }
             }
             
             ClassPeriodsForDisplay = new ObservableCollection<ClassPeriodForDisplay>();
+            
             ClassPeriod everything = new ClassPeriod();
             List<string> pageIDs = new List<string>();
             foreach(CLPPage page in Notebook.Pages) {
@@ -40,11 +44,17 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             everything.PageIDs = pageIDs;
             everything.StartTime = DateTime.Now;
-            //TODO: Casey - I removed CurrentClassPeriod in the ClassPeriod.cs class. It was just a temp variable used to create a class period for the first time so that I knew its structure.
-            //It never represented the currently loaded class period. App.MainWindowViewModel.CurrentClassPeriod is what you want.
-       //     ClassPeriodsForDisplay.Add(new ClassPeriodForDisplay(ClassPeriod.CurrentClassPeriod, false));
-            ClassPeriodsForDisplay.Add(new ClassPeriodForDisplay(everything, true));
-            SetCurrentPagesFromList(everything.PageIDs);
+            
+            if(App.MainWindowViewModel.CurrentClassPeriod != null)
+            {
+                ClassPeriodsForDisplay.Add(new ClassPeriodForDisplay(App.MainWindowViewModel.CurrentClassPeriod, true));
+                SetCurrentPagesFromList(App.MainWindowViewModel.CurrentClassPeriod.PageIDs);
+            }
+            else
+            {
+                ClassPeriodsForDisplay.Add(new ClassPeriodForDisplay(everything, true));
+                SetCurrentPagesFromList(everything.PageIDs);
+            }
 
             SetCurrentPageCommand = new Command<CLPPage>(OnSetCurrentPageCommandExecute);
             ChooseClassPeriodCommand = new Command(OnChooseClassPeriodCommandExecute);

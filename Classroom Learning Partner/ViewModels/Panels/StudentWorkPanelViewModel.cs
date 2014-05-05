@@ -7,6 +7,7 @@ using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
+    [InterestedIn(typeof(HoverBoxViewModel))]
     public class StudentWorkPanelViewModel : APanelBaseViewModel
     {
         #region Constructor
@@ -25,11 +26,32 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 StudentList = App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.StudentList;
             }
+            else
+            {
+                StudentList = new ObservableCollection<Person>();
+                for(int i = 1; i <= 10; i++)
+                {
+                    StudentList.Add(Person.TestSubmitter);
+                }
+            }
+            
+            foreach(CLPPage page in Notebook.Pages)
+            {
+                CurrentPages.Add(page);
+            }
+            FirstPage = CurrentPages[0];
+            SecondPage = CurrentPages[1];
+
+            SetCurrentPageCommand = new Command<CLPPage>(OnSetCurrentPageCommandExecute);
+            PageHeightUpdateCommand = new Command(OnPageHeightUpdateCommandExecute);
+            BackCommand = new Command(OnBackCommandExecute);
+            ForwardCommand = new Command(OnForwardCommandExecute);
         }
 
         void StudentWorkPanelViewModel_Initialized(object sender, EventArgs e)
         {
-            Length = InitialLength;
+            Length = 600; // I want it wider than InitialLength, which is read-only.  Maybe I should be overriding.
+            OnPageHeightUpdateCommandExecute();
         }
 
         /// <summary>
@@ -66,15 +88,24 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(CurrentPagesProperty, value); }
         }
 
-        public static readonly PropertyData CurrentPagesProperty = RegisterProperty("CurrentPages", typeof(ObservableCollection<CLPPage>));
+        public static readonly PropertyData CurrentPagesProperty = RegisterProperty("CurrentPages", typeof(ObservableCollection<CLPPage>), () => new ObservableCollection<CLPPage>());
 
         #endregion //Model
 
         #region Bindings
 
+        public double PageHeight
+        {
+            get { return GetValue<double>(PageHeightProperty); }
+            set { SetValue(PageHeightProperty, value); }
+        }
+
+        public static readonly PropertyData PageHeightProperty = RegisterProperty("PageHeight", typeof(double));
+
         /// <summary>
         /// Current, selected page in the notebook.
         /// </summary>
+        [ViewModelToModel("Notebook")]
         public CLPPage CurrentPage
         {
             get { return GetValue<CLPPage>(CurrentPageProperty); }
@@ -82,6 +113,28 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage));
+
+        /// <summary>
+        /// First of the two pages displayed.
+        /// </summary>
+        public CLPPage FirstPage
+        {
+            get { return GetValue<CLPPage>(FirstPageProperty); }
+            set { SetValue(FirstPageProperty, value); }
+        }
+
+        public static readonly PropertyData FirstPageProperty = RegisterProperty("FirstPage", typeof(CLPPage));
+        
+        /// <summary>
+        /// Second of the two pages displayed.
+        /// </summary>
+        public CLPPage SecondPage
+        {
+            get { return GetValue<CLPPage>(SecondPageProperty); }
+            set { SetValue(SecondPageProperty, value); }
+        }
+
+        public static readonly PropertyData SecondPageProperty = RegisterProperty("SecondPage", typeof(CLPPage));
 
         public ObservableCollection<Person> StudentList
         {
@@ -104,18 +157,55 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnSetCurrentPageCommandExecute(CLPPage page)
         {
-            var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel != null)
+            Logger.Instance.WriteToLog("Set current page");
+            //TODO staging panel
+            if(page != null)
             {
-                notebookWorkspaceViewModel.CurrentDisplay.AddPageToDisplay(page);
+                Notebook.CurrentPage = page;
+            }
+        }
 
-                // TODO: Entities, StagingPanel
-                //var historyPanel = notebookWorkspaceViewModel.SubmissionHistoryPanel;
-                //if(historyPanel != null)
-                //{
-                //    historyPanel.CurrentPage = null;
-                //    historyPanel.IsSubmissionHistoryVisible = false;
-                //}
+        /// <summary>
+        /// Updates page height
+        /// </summary>
+        public Command PageHeightUpdateCommand
+        {
+            get;
+            private set;
+        }
+
+        private void OnPageHeightUpdateCommandExecute()
+        {
+            PageHeight = ((Length - 100) / 2 - 6) * CLPPage.LANDSCAPE_HEIGHT / CLPPage.LANDSCAPE_WIDTH;
+        }
+
+        /// <summary>
+        /// Navigates to the next page.
+        /// </summary>
+        public Command ForwardCommand { get; private set; }
+
+        private void OnForwardCommandExecute()
+        {
+            var nextIndex = CurrentPages.IndexOf(SecondPage) + 1;
+            if(nextIndex < CurrentPages.Count)
+            {
+                FirstPage = SecondPage;
+                SecondPage = CurrentPages[nextIndex];
+            }
+        }
+
+        /// <summary>
+        /// Navigates to the previous page.
+        /// </summary>
+        public Command BackCommand { get; private set; }
+
+        private void OnBackCommandExecute()
+        {
+            var prevIndex = CurrentPages.IndexOf(FirstPage) - 1;
+            if(prevIndex >= 0)
+            {
+                SecondPage = FirstPage;
+                FirstPage = CurrentPages[prevIndex];
             }
         }
 

@@ -20,7 +20,10 @@ namespace Classroom_Learning_Partner.Converters
             }
             else
             {
-                studentList.Add(Person.TestSubmitter);
+                for(int i = 1; i <= 10; i++)
+                {
+                    studentList.Add(Person.TestSubmitter);
+                }
             }
             foreach (Person student in studentList) {
                 CLPPage foundSubmission = null;

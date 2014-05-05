@@ -182,7 +182,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnMarkUnknownCommandExecute(MouseEventArgs e)
         {
-            Console.WriteLine("Marking Unkown");
+            Console.WriteLine("Marking Unknown");
 
             IsUnknown = !IsUnknown;
             if(IsUnknown == true)

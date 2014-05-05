@@ -1738,7 +1738,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnCreatePageSubmissionCommandExecute()
         {
-
             var submission = CurrentPage.DuplicatePage();
             submission.ID = CurrentPage.ID;
             submission.VersionIndex = 1;
