@@ -136,7 +136,8 @@
                                     BorderThickness="1,1,1,1" Height="{Binding ElementName=FirstPageSubmissions, Path=DataContext.PageHeight}">
                                     <Grid>
                                         <Grid.RowDefinitions>
-                                            <RowDefinition />
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
                                         <views:CLPPagePreviewView x:Name="FirstPagePreviewView"
                                                               Grid.Row="0"
@@ -158,6 +159,7 @@
                                                 </i:EventTrigger>
                                             </i:Interaction.Triggers>
                                         </Rectangle>
+                                        <views:HoverBoxView Grid.Row="1" Width="150" DataContext="{Binding Path=Page}" />
                                     </Grid>
                                 </Border>
                             </DataTemplate>
@@ -175,7 +177,8 @@
                                     BorderThickness="1,1,1,1" Height="{Binding ElementName=SecondPageSubmissions, Path=DataContext.PageHeight}">
                                     <Grid>
                                         <Grid.RowDefinitions>
-                                            <RowDefinition />
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
 
                                         <views:CLPPagePreviewView x:Name="SecondPagePreviewView"
@@ -198,6 +201,7 @@
                                                 </i:EventTrigger>
                                             </i:Interaction.Triggers>
                                         </Rectangle>
+                                        <views:HoverBoxView Grid.Row="1" Width="150" DataContext="{Binding Path=Page}" />
                                     </Grid>
                                 </Border>
                             </DataTemplate>

@@ -7,6 +7,7 @@ using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
+    [InterestedIn(typeof(HoverBoxViewModel))]
     public class StudentWorkPanelViewModel : APanelBaseViewModel
     {
         #region Constructor
