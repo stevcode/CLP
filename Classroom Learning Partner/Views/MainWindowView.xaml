@@ -4,6 +4,8 @@
               xmlns:catel="http://catel.codeplex.com"
               xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
               xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
+              UseLayoutRounding="True"
+              SnapsToDevicePixels="True"
               Icon="..\Images\InkWell.ico"
               Height="800"
               Width="1280"

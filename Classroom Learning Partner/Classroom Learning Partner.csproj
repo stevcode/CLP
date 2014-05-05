@@ -853,6 +853,10 @@
     <Content Include="External Libraries\NRtfTree.dll" />
     <Content Include="External Libraries\ServiceModelEx.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
+    <Resource Include="Resources\Images\BlankPage64.png" />
+    <Resource Include="Resources\Images\PageInformation16.png" />
+    <Resource Include="Resources\Images\PageInformation32.png" />
+    <Resource Include="Resources\Images\PageInformation64.png" />
     <Resource Include="Resources\Images\PenDisabled16.png" />
     <Resource Include="Resources\Images\PenDisabled32.png" />
     <Resource Include="Resources\Images\YellowStar16.png" />
