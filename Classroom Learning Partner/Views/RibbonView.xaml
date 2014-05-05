@@ -51,11 +51,11 @@
                                            ImageSource="pack://application:,,,/Resources/Images/SaveNotebook32.png"
                                            Command="{Binding ForceSaveNotebookCommand}" />
 
-                <RibbonApplicationMenuItem Header="Convert Notebook Pages To XPS"
+                <!--<RibbonApplicationMenuItem Header="Convert Notebook Pages To XPS"
                                            ImageSource="pack://application:,,,/Resources/Images/ConvertToXPS32.png"
                                            Command="{Binding ConvertToXPSCommand}" />
 
-                <!--<RibbonApplicationMenuItem Header="Convert Submissions for this page to XPS"
+                <RibbonApplicationMenuItem Header="Convert Submissions for this page to XPS"
                                            ImageSource="pack://application:,,,/Resources/Images/ConvertToXPS32.png"
                                            Command="{Binding ConvertPageSubmissionToXPSCommand}"
                                            Visibility="{Binding InstructorVisibility}" />
@@ -391,8 +391,7 @@
                 </Border>
             </RibbonGroup>
 
-            <RibbonGroup Header="Page"
-                         Visibility="{Binding StudentVisibility}">
+            <RibbonGroup Header="Page">
 
                 <RibbonButton Label="Longer Page"
                               LargeImageSource="pack://application:,,,/Resources/Images/MakePageLonger32.png"
@@ -472,6 +471,29 @@
                     </RibbonToggleButton.Style>
                 </RibbonToggleButton>
 
+            </RibbonGroup>
+            
+            <RibbonGroup Header="Extras"
+                         Visibility="{Binding InstructorVisibility}">
+                
+                <RibbonToggleButton IsChecked="{Binding BlockStudentPenInput}">
+                    <RibbonToggleButton.Style>
+                        <Style TargetType="{x:Type RibbonToggleButton}">
+                            <Setter Property="Label"
+                                    Value="Pens Down" />
+                            <Setter Property="LargeImageSource"
+                                    Value="pack://application:,,,/Resources/Images/PenDisabled32.png" />
+                            <Style.Triggers>
+                                <Trigger Property="IsChecked"
+                                         Value="True">
+                                    <Setter Property="Label"
+                                            Value="Pens Up" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </RibbonToggleButton.Style>
+                </RibbonToggleButton>
+                
             </RibbonGroup>
 
         </RibbonTab>
@@ -736,25 +758,7 @@
                     </RibbonToggleButton.Style>
                 </RibbonToggleButton>
 
-                <RibbonToggleButton IsChecked="{Binding BlockStudentPenInput}">
-                    <RibbonToggleButton.Style>
-                        <Style TargetType="{x:Type RibbonToggleButton}">
-                            <Setter Property="Label"
-                                    Value="Pens Down" />
-                            <Setter Property="LargeImageSource"
-                                    Value="pack://application:,,,/Images/LargeIcon.png" />
-                            <Style.Triggers>
-                                <Trigger Property="IsChecked"
-                                         Value="True">
-                                    <Setter Property="Label"
-                                            Value="Pens Up" />
-                                    <Setter Property="LargeImageSource"
-                                            Value="pack://application:,,,/Images/LargeIcon.png" />
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </RibbonToggleButton.Style>
-                </RibbonToggleButton>
+                
 
                 <RibbonButton Label="Turn Off Webcam Sharing"
                               LargeImageSource="..\Images\LargeIcon.png"
@@ -793,14 +797,6 @@
                 <RibbonButton Label="Create Submission For This Page"
                               LargeImageSource="..\Images\LargeIcon.png"
                               Command="{Binding CreatePageSubmissionCommand}" />
-                
-                <RibbonButton Label="Remove All Submissions"
-                              LargeImageSource="..\Images\LargeIcon.png"
-                              Command="{Binding RemoveAllSubmissionsCommand}" />
-
-                <RibbonButton Label="Remove Submissions For This Page"
-                              LargeImageSource="..\Images\LargeIcon.png"
-                              Command="{Binding RemoveAllPageSubmissionsCommand}" />
 
             </RibbonGroup>
 

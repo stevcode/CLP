@@ -120,41 +120,7 @@ namespace Classroom_Learning_Partner
                                                        null);
         }
 
-        public void ModifyPageInkStrokes(List<StrokeDTO> strokesAdded, List<StrokeDTO> strokesRemoved, string pageID)
-        {
-            //Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-            //    (DispatcherOperationCallback)delegate
-            //                                 {
-            //        foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
-            //        {
-            //            var page = notebook.GetNotebookPageByID(pageID);
-
-            //            if(page == null)
-            //            {
-            //                continue;
-            //            }
-
-            //            var strokesToRemove = StrokeDTO.LoadInkStrokes(new ObservableCollection<StrokeDTO>(strokesRemoved));
-
-            //            var strokes =
-            //                from externalStroke in strokesToRemove
-            //                from stroke in page.InkStrokes
-            //                where stroke.GetStrokeUniqueID() == externalStroke.GetStrokeUniqueID()
-            //                select stroke;
-
-            //            var actualStrokesToRemove = new StrokeCollection(strokes.ToList());
-
-            //            page.InkStrokes.Remove(actualStrokesToRemove);
-
-            //            var strokesToAdd = StrokeDTO.LoadInkStrokes(new ObservableCollection<StrokeDTO>(strokesAdded));
-            //            page.InkStrokes.Add(strokesToAdd);
-            //            break;
-            //        }
-            //        return null;
-            //    }, null);
-        }
-
-        public void AddHistoryItem(string pageID, string zippedHistoryItem) { }
+        public void AddHistoryItem(string compositePageID, string zippedHistoryItem) { }
 
         public void AddNewPage(string zippedPage, int index)
         {

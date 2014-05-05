@@ -39,10 +39,6 @@ namespace CLP.Entities
 #endif
         #endregion
 
-        #region Properties
-        // TODO: Define your custom properties here using the dataprop code snippet
-        #endregion
-
         #region Methods
 
         abstract public String GetExampleNumberSentence();

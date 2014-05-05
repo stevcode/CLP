@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Threading;
 using Catel.MVVM;
 using CLP.Entities;
+using Microsoft.Ink;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -93,9 +94,10 @@ namespace Classroom_Learning_Partner.ViewModels
                                    }
 
                                    notebook.CurrentPage = notebook.Pages.First();
-                                   foreach(var page in notebook.Pages) //TODO: Does override deserialization cover this?
+                                   foreach(var page in notebook.Pages)
                                    {
                                        page.InkStrokes = StrokeDTO.LoadInkStrokes(page.SerializedStrokes);
+                                       page.History.TrashedInkStrokes = StrokeDTO.LoadInkStrokes(page.History.SerializedTrashedInkStrokes);
                                    }
                                    App.ResetCache();
 

@@ -13,9 +13,12 @@ namespace CLP.Entities
         Horizontal
     }
 
+    [Serializable]
     public class CLPArrayDivision : ModelBase
     {
         #region Constructors
+
+        public CLPArrayDivision() { }
 
         public CLPArrayDivision(ArrayDivisionOrientation orientation, double position, double length, int value)
         {
@@ -84,6 +87,7 @@ namespace CLP.Entities
         #endregion //Properties
     }
 
+    [Serializable]
     public abstract class ACLPArrayBase : APageObjectBase
     {
         #region Constructors
@@ -193,7 +197,7 @@ namespace CLP.Entities
             set { SetValue(IsDivisionBehaviorOnProperty, value); }
         }
 
-        public static readonly PropertyData IsDivisionBehaviorOnProperty = RegisterProperty("IsDivisionBehaviorOn", typeof(bool), false);
+        public static readonly PropertyData IsDivisionBehaviorOnProperty = RegisterProperty("IsDivisionBehaviorOn", typeof(bool), true);
 
         /// <summary>
         /// Whether the array can be snapped to other arrays or not.

@@ -262,18 +262,13 @@ namespace Classroom_Learning_Partner
             }
 
             page.TrimPage();
-            //var pageViewModels = GetViewModelsFromModel(page);
-            //var currentPageViewModel = pageViewModels.Select(pageViewModel => pageViewModel as ACLPPageBaseViewModel).FirstOrDefault(pageVM => !pageVM.IsPagePreview);
-
-            //var pageView = GetViewFromViewModel(currentPageViewModel);
-            // TODO: Entities
-            //page.PageThumbnail = GetJpgImage(pageView as UIElement);
 
             var t = new Thread(() =>
                                {
                                    try
                                    {
                                        page.SerializedStrokes = StrokeDTO.SaveInkStrokes(page.InkStrokes);
+                                       page.History.SerializedTrashedInkStrokes = StrokeDTO.SaveInkStrokes(page.History.TrashedInkStrokes);
                                        // Perform analysis (syntactic and semantic interpretation) of the page here, on the student machine
                                        TagAnalysis.AnalyzeArray(page);
                                        TagAnalysis.AnalyzeStamps(page);

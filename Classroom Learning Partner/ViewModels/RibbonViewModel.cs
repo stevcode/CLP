@@ -104,11 +104,9 @@ namespace Classroom_Learning_Partner.ViewModels
             //File Menu
             NewNotebookCommand = new Command(OnNewNotebookCommandExecute);
             OpenNotebookCommand = new Command(OnOpenNotebookCommandExecute);
-            LoadNotebookFromXMLCommand = new Command(OnLoadNotebookFromXMLCommandExecute);
             SaveNotebookCommand = new Command(OnSaveNotebookCommandExecute);
             ForceSaveNotebookCommand = new Command(OnForceSaveNotebookCommandExecute);
             SaveAllNotebooksCommand = new Command(OnSaveAllNotebooksCommandExecute);
-            SubmitNotebookToTeacherCommand = new Command(OnSubmitNotebookToTeacherCommandExecute);
             ConvertDisplaysToXPSCommand = new Command(OnConvertDisplaysToXPSCommandExecute);
             ConvertToXPSCommand = new Command(OnConvertToXPSCommandExecute);
             ConvertPageSubmissionToXPSCommand = new Command(OnConvertPageSubmissionToXPSCommandExecute);
@@ -169,8 +167,6 @@ namespace Classroom_Learning_Partner.ViewModels
             BroadcastPageCommand = new Command(OnBroadcastPageCommandExecute);
             ReplacePageCommand = new Command(OnReplacePageCommandExecute);
             CreatePageSubmissionCommand = new Command(OnCreatePageSubmissionCommandExecute);
-            RemoveAllSubmissionsCommand = new Command(OnRemoveAllSubmissionsCommandExecute);
-            RemoveAllPageSubmissionsCommand = new Command(OnRemoveAllPageSubmissionsCommandExecute);
             ShowTagsCommand = new Command(OnShowTagsCommandExecute);
 
             //Page
@@ -685,36 +681,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
-        /// Opens a notebook from the Notebooks folder.
-        /// </summary>
-        public Command LoadNotebookFromXMLCommand { get; private set; }
-
-        private void OnLoadNotebookFromXMLCommandExecute()
-        {
-            // TODO: Entities?
-            //var selectDirectoryService = Catel.IoC.ServiceLocator.Default.ResolveType<ISelectDirectoryService>();
-            //selectDirectoryService.InitialDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "NotebookXML/");
-
-            //if(selectDirectoryService.DetermineDirectory())
-            //{
-            //    var notebook = ImportFromXML.ImportNotebook(selectDirectoryService.DirectoryName);
-
-            //    App.MainWindowViewModel.OpenNotebooks.Add(notebook);
-            //    if(App.CurrentUserMode == App.UserMode.Instructor ||
-            //       App.CurrentUserMode == App.UserMode.Student ||
-            //       App.CurrentUserMode == App.UserMode.Projector)
-            //    {
-            //        App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(notebook);
-            //    }
-
-            //    if(notebook.LastSavedTime != null)
-            //    {
-            //        App.MainWindowViewModel.LastSavedTime = notebook.LastSavedTime.ToString("yyyy/MM/dd - HH:mm:ss");
-            //    }
-            //}  
-        }
-
-        /// <summary>
         /// Saves the current notebook to disk.
         /// </summary>
         public Command SaveNotebookCommand { get; private set; }
@@ -753,39 +719,6 @@ namespace Classroom_Learning_Partner.ViewModels
             //foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
             //{
             //    CLPServiceAgent.Instance.SaveNotebook(notebook);
-            //}
-        }
-
-        /// <summary>
-        /// Submits the entirety of a student's current notebook to the teacher to save on her desktop.
-        /// </summary>
-        public Command SubmitNotebookToTeacherCommand { get; private set; }
-
-        private void OnSubmitNotebookToTeacherCommandExecute()
-        {
-            // TODO: Entities? Probably not necessary with Database
-            //if(App.MainWindowViewModel.Workspace is NotebookWorkspaceViewModel)
-            //{
-            //    CLPNotebook notebook = (App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).Notebook;
-
-            //    if(App.Network.InstructorProxy != null)
-            //    {
-            //        try
-            //        {
-            //            var sNotebook = ObjectSerializer.ToString(notebook);
-            //            var zippedNotebook = CLPServiceAgent.Instance.Zip(sNotebook);
-
-            //            App.Network.InstructorProxy.CollectStudentNotebook(zippedNotebook, App.Network.CurrentUser.FullName);
-            //        }
-            //        catch(Exception)
-            //        {
-
-            //        }
-            //    }
-            //    else
-            //    {
-            //        Console.WriteLine("Instructor NOT Available");
-            //    }
             //}
         }
 
@@ -1470,8 +1403,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var notebook = notebookWorkspaceViewModel.Notebook;
             foreach(var page in notebook.Pages)
             {
-                // TODO: Entities
-              //  page.PageHistory.UseHistory = false;
+                page.History.UseHistory = false;
             }
         }
 
@@ -1518,34 +1450,24 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnUndoCommandExecute()
         {
-            // TODO: Entities
-            //CurrentPage.PageHistory.Undo();
+            CurrentPage.History.Undo();
         }
 
         private bool OnUndoCanExecute()
         {
-            // TODO: Entities
-            //var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
-            //if(notebookWorkspaceViewModel == null)
-            //{
-            //    return false;
-            //}
-            //var mirrorDisplay = notebookWorkspaceViewModel.CurrentDisplay as SingleDisplay;
-            //if(mirrorDisplay == null)
-            //{
-            //    return false;
-            //}
-            //var page = mirrorDisplay.CurrentPage;
-
+            var page = CurrentPage;
+            if(page == null)
+            {
+                return false;
+            }
             
-            //var recordIndicator = page.PageHistory.RedoItems.FirstOrDefault() as CLPAnimationIndicator;
-            //if(recordIndicator != null && recordIndicator.AnimationIndicatorType == AnimationIndicatorType.Record)
-            //{
-            //    return false;
-            //}
+            var recordIndicator = page.History.RedoItems.FirstOrDefault() as AnimationIndicator;
+            if(recordIndicator != null && recordIndicator.AnimationIndicatorType == AnimationIndicatorType.Record)
+            {
+                return false;
+            }
 
-            //return page.PageHistory.CanUndo;
-            return false;
+            return page.History.CanUndo;
         }
 
         /// <summary>
@@ -1555,27 +1477,18 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnRedoCommandExecute()
         {
-            // TODO: Entities
-//            CurrentPage.PageHistory.Redo();
+            CurrentPage.History.Redo();
         }
 
         private bool OnRedoCanExecute()
         {
-            //var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
-            //if(notebookWorkspaceViewModel == null)
-            //{
-            //    return false;
-            //}
-            //var singleDisplay = notebookWorkspaceViewModel.CurrentDisplay as SingleDisplay;
-            //if(singleDisplay == null)
-            //{
-            //    return false;
-            //}
-            //var page = singleDisplay.CurrentPage;
+            var page = CurrentPage;
+            if(page == null)
+            {
+                return false;
+            }
 
-            // TODO: Entities
-//            return page.PageHistory.CanRedo;
-            return false;
+            return page.History.CanRedo;
         }
 
         /// <summary>
@@ -1588,8 +1501,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
             if(currentPage == null) { return; }
 
-            // TODO: Entities
-            //currentPage.PageHistory.ClearHistory();
+            currentPage.History.ClearHistory();
         }
 
         /// <summary>
@@ -1602,8 +1514,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
             if(currentPage == null) { return; }
 
-            // TODO: Entities
-          //  currentPage.PageHistory.ClearNonAnimationHistory();
+            currentPage.History.ClearNonAnimationHistory();
         }
 
         /// <summary>
@@ -1622,8 +1533,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var notebook = notebookWorkspaceViewModel.Notebook;
             foreach(var page in notebook.Pages)
             {
-                // TODO: Entities
-              //  page.PageHistory.ClearHistory();
+                page.History.ClearHistory();
             }
         }
 
@@ -1643,8 +1553,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var notebook = notebookWorkspaceViewModel.Notebook;
             foreach(var page in notebook.Pages)
             {
-                // TODO: Entities
-            //    page.PageHistory.ClearNonAnimationHistory();
+                page.History.ClearNonAnimationHistory();
             }
         }
 
@@ -1818,52 +1727,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnCreatePageSubmissionCommandExecute()
         {
-            CLPPage submission = CurrentPage.DuplicatePage();
+            var submission = CurrentPage.DuplicatePage();
             submission.ID = CurrentPage.ID;
             submission.VersionIndex = 1;
             submission.OwnerID = Person.TestSubmitter.ID;
             CurrentPage.Submissions.Add(submission);
-        }
-
-        /// <summary>
-        /// Removes all the submissions on a notebook, making it essentially a Student Notebook.
-        /// </summary>
-        public Command RemoveAllSubmissionsCommand { get; private set; }
-
-        private void OnRemoveAllSubmissionsCommandExecute()
-        {
-            var notebook = (App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).Notebook;
-            // TODO: Entities
-            //foreach(var pages in notebook.Submissions.Values)
-            //{
-            //    pages.Clear();
-            //}
-            //foreach(var page in notebook.Pages)
-            //{
-            //    page.NumberOfSubmissions = 0;
-            //    page.NumberOfGroupSubmissions = 0;
-            //}
-        }
-
-        /// <summary>
-        /// Removes all the submissions for the current page.
-        /// </summary>
-        public Command RemoveAllPageSubmissionsCommand { get; private set; }
-
-        private void OnRemoveAllPageSubmissionsCommandExecute()
-        {
-            // TODO: Entities
-            //var page = NotebookPagesPanelViewModel.GetCurrentPage();
-            //var panel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
-            //if(page == null || panel == null || page.SubmissionType != SubmissionType.None)
-            //{
-            //    MessageBox.Show("You can't be on a submission page. Please select the notebook page you want to delete the submissions from.");
-            //    return;
-            //}
-
-            //panel.Notebook.Submissions[page.UniqueID].Clear();
-            //page.NumberOfSubmissions = 0;
-            //page.NumberOfGroupSubmissions = 0;
         }
 
         public Command ShowTagsCommand { get; private set; }
@@ -2139,11 +2007,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
             var page = CurrentPage;
-            // TODO: Entities
-            //page.PageHistory.ClearHistory();
-            //page.PageObjects.Clear();
-            //page.InkStrokes.Clear();
-            //page.SerializedStrokes.Clear();
+            page.History.ClearHistory();
+            page.PageObjects.Clear();
+            page.InkStrokes.Clear();
+            page.SerializedStrokes.Clear();
         }
 
         /// <summary>
@@ -3000,7 +2867,7 @@ namespace Classroom_Learning_Partner.ViewModels
                             xPosition = firstArray.XPosition;
                             yPosition += firstArray.LabelLength + rows * initialGridsquareSize;
                         }
-                        array.XPosition += xPosition;
+                        array.XPosition = xPosition;
                         array.YPosition = yPosition;
                         xPosition += firstArray.LabelLength + columns * initialGridsquareSize;
                         array.SizeArrayToGridLevel(initialGridsquareSize);
@@ -3107,18 +2974,11 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        // TODO: Move line below to constructor.
-        
-        // TODO: Move line above to constructor.
-
         /// <summary>
         /// Gets the AnalyzeArrayCommand command.
         /// </summary>
         public Command AnalyzeArrayCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the AnalyzeArrayCommand command is executed.
-        /// </summary>
         private void OnAnalyzeArrayCommandExecute()
         {
             // TODO: Entities
@@ -3141,14 +3001,8 @@ namespace Classroom_Learning_Partner.ViewModels
             private set;
         }
 
-        /// <summary>
-        /// Method to invoke when the AnalyzeFuzzyFactorCardCommand command is executed.
-        /// </summary>
         private void OnAnalyzeFuzzyFactorCardCommandExecute()
         {
-            // TODO: Entities
-            //Logger.Instance.WriteToLog("Start of OnAnalyzeFuzzyFactorCardCommandExecute()");
-
             // Get the page's math definition, or be sad if it doesn't have one
             var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
             if(currentPage != null)
@@ -3162,9 +3016,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command AnalyzeStampsCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the AnalyzeStampsCommand command is executed.
-        /// </summary>
         private void OnAnalyzeStampsCommandExecute()
         {
             // TODO: Entities
@@ -3179,9 +3030,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command InsertAudioCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the InsertAudioCommand command is executed.
-        /// </summary>
         private void OnInsertAudioCommandExecute()
         {
             // TODO: Entities
@@ -3377,8 +3225,8 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnInterpretPageCommandExecute()
         {
             // TODO: Entities
-            //var currentPage = ((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as CLPMirrorDisplay).CurrentPage;
-            //foreach (IPageObject pageObject in currentPage.PageObjects)
+            //var currentPage = CurrentPage;
+            //foreach (var pageObject in currentPage.PageObjects)
             //{
             //    if (pageObject.GetType().IsSubclassOf(typeof(ACLPInkRegion)))
             //    {

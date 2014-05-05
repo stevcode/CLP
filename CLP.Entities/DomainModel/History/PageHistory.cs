@@ -3,11 +3,17 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Threading;
+using System.Windows.Ink;
+using System.Windows.Threading;
+using System.Xml.Serialization;
 using Catel.Collections;
 using Catel.Data;
+using Catel.Runtime.Serialization;
 
 namespace CLP.Entities
 {
+    [Serializable]
     public class PageHistory : AEntityBase
     {
         private readonly object _historyLock = new object();
@@ -20,7 +26,10 @@ namespace CLP.Entities
         /// <summary>
         /// Initializes <see cref="PageHistory" /> from scratch.
         /// </summary>
-        public PageHistory() { }
+        public PageHistory()
+        {
+            ID = Guid.NewGuid().ToCompactID();
+        }
 
         /// <summary>
         /// Initializes <see cref="PageHistory" /> based on <see cref="SerializationInfo" />.
@@ -33,6 +42,71 @@ namespace CLP.Entities
         #endregion //Constructors
 
         #region Properties
+
+        /// <summary>
+        /// Unique Identifier for the <see cref="PageHistory" />.
+        /// </summary>
+        /// <remarks>
+        /// Composite Primary Key.
+        /// </remarks>
+        public string ID
+        {
+            get { return GetValue<string>(IDProperty); }
+            set { SetValue(IDProperty, value); }
+        }
+
+        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string));
+
+        /// <summary>
+        /// Unique Identifier for the <see cref="Person" /> who owns the <see cref="PageHistory" />.
+        /// </summary>
+        /// <remarks>
+        /// Composite Primary Key.
+        /// Also Foregin Key for <see cref="Person" /> who owns the <see cref="PageHistory" />.
+        /// </remarks>
+        public string OwnerID
+        {
+            get { return GetValue<string>(OwnerIDProperty); }
+            set { SetValue(OwnerIDProperty, value); }
+        }
+
+        public static readonly PropertyData OwnerIDProperty = RegisterProperty("OwnerID", typeof(string), string.Empty);
+
+        /// <summary>
+        /// Version Index of the <see cref="PageHistory" />.
+        /// </summary>
+        /// <remarks>
+        /// Composite Primary Key.
+        /// </remarks>
+        public uint VersionIndex
+        {
+            get { return GetValue<uint>(VersionIndexProperty); }
+            set { SetValue(VersionIndexProperty, value); }
+        }
+
+        public static readonly PropertyData VersionIndexProperty = RegisterProperty("VersionIndex", typeof(uint), 0);
+
+        /// <summary>
+        /// Version Index of the latest submission.
+        /// </summary>
+        public uint? LastVersionIndex
+        {
+            get { return GetValue<uint?>(LastVersionIndexProperty); }
+            set { SetValue(LastVersionIndexProperty, value); }
+        }
+
+        public static readonly PropertyData LastVersionIndexProperty = RegisterProperty("LastVersionIndex", typeof(uint?));
+
+        /// <summary>
+        /// Differentiation Level of the <see cref="PageHistory" />.
+        /// </summary>
+        public string DifferentiationLevel
+        {
+            get { return GetValue<string>(DifferentiationLevelProperty); }
+            set { SetValue(DifferentiationLevelProperty, value); }
+        }
+
+        public static readonly PropertyData DifferentiationLevelProperty = RegisterProperty("DifferentiationLevel", typeof(string), "0");
 
         public int CurrentAnimationDelay
         {
@@ -121,6 +195,41 @@ namespace CLP.Entities
                        RedoItems.Any(clpHistoryItem => clpHistoryItem is AnimationIndicator && (clpHistoryItem as AnimationIndicator).AnimationIndicatorType == AnimationIndicatorType.Stop);
             }
         }
+
+        /// <summary>
+        /// A list of all the <see cref="IPageObject" />s that have been removed from a <see cref="CLPPage" />, but are needed for the <see cref="PageHistory" />.
+        /// </summary>
+        public List<IPageObject> TrashedPageObjects
+        {
+            get { return GetValue<List<IPageObject>>(TrashedPageObjectsProperty); }
+            set { SetValue(TrashedPageObjectsProperty, value); }
+        }
+
+        public static readonly PropertyData TrashedPageObjectsProperty = RegisterProperty("TrashedPageObjects", typeof(List<IPageObject>), () => new List<IPageObject>());
+
+        /// <summary>
+        /// A list of all the <see cref="Stroke" />s that have been removed from a <see cref="CLPPage" />, but are needed for the <see cref="PageHistory" />.
+        /// </summary>
+        [XmlIgnore]
+        [ExcludeFromSerialization]
+        public StrokeCollection TrashedInkStrokes
+        {
+            get { return GetValue<StrokeCollection>(TrashedInkStrokesProperty); }
+            set { SetValue(TrashedInkStrokesProperty, value); }
+        }
+
+        public static readonly PropertyData TrashedInkStrokesProperty = RegisterProperty("TrashedInkStrokes", typeof(StrokeCollection), () => new StrokeCollection());
+
+        /// <summary>
+        /// A list of all the serialized <see cref="Stroke" />s that have been removed from a <see cref="CLPPage" />, but are needed for the <see cref="PageHistory" />.
+        /// </summary>
+        public List<StrokeDTO> SerializedTrashedInkStrokes
+        {
+            get { return GetValue<List<StrokeDTO>>(SerializedTrashedInkStrokesProperty); }
+            set { SetValue(SerializedTrashedInkStrokesProperty, value); }
+        }
+
+        public static readonly PropertyData SerializedTrashedInkStrokesProperty = RegisterProperty("SerializedTrashedInkStrokes", typeof(List<StrokeDTO>), () => new List<StrokeDTO>());
 
         #endregion //Properties
 
@@ -451,6 +560,29 @@ namespace CLP.Entities
             }
         }
 
+        public Stroke GetStrokeByID(string id) { return !TrashedInkStrokes.Any() ? null : TrashedInkStrokes.FirstOrDefault(stroke => stroke.GetStrokeID() == id); }
+
+        public IPageObject GetPageObjectByID(string id) { return !TrashedPageObjects.Any() ? null : TrashedPageObjects.FirstOrDefault(pageObject => pageObject.ID == id); }
+
         #endregion //Methods
+
+        #region Static Methods
+
+        /// <summary>
+        /// Forces the UI Thread to sleep for the given number of milliseconds.
+        /// </summary>
+        /// <param name="timeToWait"></param>
+        public static void UISleep(int timeToWait)
+        {
+            var frame = new DispatcherFrame();
+            new Thread(() =>
+                       {
+                           Thread.Sleep(timeToWait);
+                           frame.Continue = false;
+                       }).Start();
+            Dispatcher.PushFrame(frame);
+        }
+
+        #endregion //Static Methods
     }
 }

@@ -543,6 +543,20 @@ namespace Classroom_Learning_Partner.ViewModels
                     break;
                 case PageInteractionMode.Select:
                 case PageInteractionMode.Highlighter:
+                    if(e.Removed.Any())
+                    {
+                        RemoveStroke(e.Removed, e.Added);
+                    }
+                    else
+                    {
+                        var stroke = e.Added.FirstOrDefault();
+                        if(stroke == null)
+                        {
+                            return;
+                        }
+                        AddStroke(stroke);
+                    }
+                    break;
                 case PageInteractionMode.Pen:
                     if(e.Removed.Any())
                     {
@@ -682,6 +696,43 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Page Interaction Methods
 
+        private bool AcceptStrokes(IEnumerable<Stroke> addedStrokes, IEnumerable<Stroke> removedStrokes)
+        {
+            var addedStrokesEnumerable = addedStrokes as IList<Stroke> ?? addedStrokes.ToList();
+            if(addedStrokesEnumerable.Count() == 1 &&
+               !removedStrokes.Any())
+            {
+                var stroke = addedStrokesEnumerable.First();
+                bool wasArrayDivided = false;
+                foreach(var array in PageObjects.OfType<CLPArray>())
+                {
+                    if(array.IsDivisionBehaviorOn)
+                    {
+                        wasArrayDivided = CLPArrayViewModel.CreateDivision(array, stroke) || wasArrayDivided;
+                    }
+                }
+                if(wasArrayDivided)
+                {
+                    InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
+                    Page.InkStrokes.Remove(stroke);
+                    InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
+                    return true;
+                }
+            }
+
+            return false;
+       
+            /** TODO: implement below
+             * All IStokeAcceptors go here
+             * Switch statement to call state method on pageObject's viewmodel AcceptStrokes
+             * most will default to calling pageObject.AcceptStrokes()
+             * array will first test for stroke that can create division
+             * if true, call CreateDivisions, public method on ArrayViewModel, cut method from clparray
+             * create the divisions and then add history item.
+             * if false, call array.acceptstrokes() 
+             */
+        }
+
         private void CutStroke(Stroke stroke)
         {
             InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
@@ -698,7 +749,8 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 var halvedPageObjects = pageObject.Cut(stroke);
                 if(!halvedPageObjects.Any() ||
-                   pageObject.OwnerID == Person.Author.ID)
+                   (App.MainWindowViewModel.CurrentUser.ID != pageObject.CreatorID &&
+                    !pageObject.IsManipulatableByNonCreator))
                 {
                     continue;
                 }
@@ -718,7 +770,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 AddPageObjectToPage(Page, pageObject, false, false);
             }
 
-            // AddHistoryItemToPage(Page, new CLPHistoryPageObjectCut(Page, stroke, allCutPageObjects, allHalvedPageObjectIDs));
+            AddHistoryItemToPage(Page, new PageObjectCutHistoryItem(Page, App.MainWindowViewModel.CurrentUser, stroke, allCutPageObjects, allHalvedPageObjectIDs));
 
             RefreshInkStrokes();
             RefreshPageObjects(allHalvedPageObjects);
@@ -831,20 +883,34 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             try
             {
-                var addedStrokeIDs = new List<string>();
-                var removedStrokes = new List<Stroke>();
+                if(stroke.HasStrokeID())
+                {
+                    return;
+                }
+
                 var strokeID = Guid.NewGuid().ToCompactID();
                 stroke.SetStrokeID(strokeID);
                 stroke.SetStrokeOwnerID(App.MainWindowViewModel.CurrentUser.ID);
                 stroke.SetStrokeVersionIndex(0);
-                addedStrokeIDs.Add(strokeID);
 
-                RefreshAcceptedStrokes(new List<Stroke>
-                                       {
-                                           stroke
-                                       },
-                                       removedStrokes);
-                //  AddHistoryItemToPage(Page, new CLPHistoryStrokesChanged(Page, addedStrokeIDs, removedStrokes));
+                var strokesAdded = new List<Stroke>
+                                   {
+                                       stroke
+                                   };
+                var removedStrokes = new List<Stroke>();
+                var skipAddingStroke = AcceptStrokes(strokesAdded, removedStrokes);
+                if(skipAddingStroke)
+                {
+                    return;
+                }
+
+                var addedStrokeIDs = new List<string>
+                                     {
+                                         strokeID
+                                     };
+
+                RefreshAcceptedStrokes(strokesAdded, removedStrokes);
+                AddHistoryItemToPage(Page, new StrokesChangedHistoryItem(Page, App.MainWindowViewModel.CurrentUser, addedStrokeIDs, removedStrokes));
             }
             catch(Exception ex)
             {
@@ -884,7 +950,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     addedStrokeIDs.Add(stroke.GetStrokeID());
                 }
                 RefreshAcceptedStrokes(strokes.ToList(), enumerable.ToList());
-                // AddHistoryItemToPage(Page, new CLPHistoryStrokesChanged(Page, addedStrokeIDs, enumerable.ToList()));
+                AddHistoryItemToPage(Page, new StrokesChangedHistoryItem(Page, App.MainWindowViewModel.CurrentUser, addedStrokeIDs, enumerable.ToList()));
             }
             catch(Exception ex)
             {
@@ -901,59 +967,57 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Static Methods
 
-        // TODO: Entities
-        //public static void AddHistoryItemToPage(CLPPage page, IHistoryItem historyItem, bool isBatch = false)
-        //{
-        //    App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
-        //    App.MainWindowViewModel.Ribbon.CanGroupSendToTeacher = true;
-        //    if(!isBatch)
-        //    {
-        //        page.PageHistory.AddHistoryItem(historyItem); 
-        //    }
+        public static void AddHistoryItemToPage(CLPPage page, IHistoryItem historyItem, bool isBatch = false)
+        {
+            App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
+            App.MainWindowViewModel.Ribbon.CanGroupSendToTeacher = true;
+            if(!isBatch)
+            {
+                page.History.AddHistoryItem(historyItem); 
+            }
 
-        //    if(App.CurrentUserMode != App.UserMode.Instructor || App.Network.ProjectorProxy == null || App.MainWindowViewModel.Ribbon.IsBroadcastHistoryDisabled)
-        //    {
-        //        return;
-        //    }
+            if(App.CurrentUserMode != App.UserMode.Instructor || App.Network.ProjectorProxy == null || App.MainWindowViewModel.Ribbon.IsBroadcastHistoryDisabled)
+            {
+                return;
+            }
 
-        //    var historyItemCopy = historyItem.UndoRedoCompleteClone();
-        //    if(historyItemCopy == null)
-        //    {
-        //        Logger.Instance.WriteToLog("Failed to UndoRedoCompleteClone history item");
-        //        return;
-        //    }
-        //    var historyItemString = ObjectSerializer.ToString(historyItemCopy);
-        //    var zippedHistoryItem = CLPServiceAgent.Instance.Zip(historyItemString);
+            var historyItemCopy = historyItem.CreatePackagedHistoryItem();
+            if(historyItemCopy == null)
+            {
+                Logger.Instance.WriteToLog("Failed to CreatePackagedHistoryItem");
+                return;
+            }
+            var historyItemString = ObjectSerializer.ToString(historyItemCopy);
+            var zippedHistoryItem = CLPServiceAgent.Instance.Zip(historyItemString);
 
-        //    var pageID = page.SubmissionType != SubmissionType.None ? page.SubmissionID : page.UniqueID;
+            try
+            {
+                var compositePageID = page.ID + ";" + page.OwnerID + ";" + page.VersionIndex;
+                App.Network.ProjectorProxy.AddHistoryItem(compositePageID, zippedHistoryItem);
+            }
+            catch(Exception)
+            {
+                Logger.Instance.WriteToLog("Failed to send historyItem to Projector");
+            }
 
-        //    try
-        //    {
-        //        App.Network.ProjectorProxy.AddHistoryItem(pageID, zippedHistoryItem);
-        //    }
-        //    catch(Exception)
-        //    {
-        //        Logger.Instance.WriteToLog("Failed to send historyItem to Projector");
-        //    }
+            //if(!App.MainWindowViewModel.Ribbon.BroadcastInkToStudents || page.SubmissionType != SubmissionType.None || !App.Network.ClassList.Any())
+            //{
+            //    return;
+            //}
 
-        //    //if(!App.MainWindowViewModel.Ribbon.BroadcastInkToStudents || page.SubmissionType != SubmissionType.None || !App.Network.ClassList.Any())
-        //    //{
-        //    //    return;
-        //    //}
-
-        //    //foreach(var student in App.Network.ClassList)
-        //    //{
-        //    //    try
-        //    //    {
-        //    //        var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(App.Network.DefaultBinding, new EndpointAddress(student.CurrentMachineAddress));
-        //    //        studentProxy.ModifyPageInkStrokes(add, remove, pageID);
-        //    //        (studentProxy as ICommunicationObject).Close();
-        //    //    }
-        //    //    catch(Exception)
-        //    //    {
-        //    //    }
-        //    //}
-        //}
+            //foreach(var student in App.Network.ClassList)
+            //{
+            //    try
+            //    {
+            //        var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(App.Network.DefaultBinding, new EndpointAddress(student.CurrentMachineAddress));
+            //        studentProxy.ModifyPageInkStrokes(add, remove, pageID);
+            //        (studentProxy as ICommunicationObject).Close();
+            //    }
+            //    catch(Exception)
+            //    {
+            //    }
+            //}
+        }
 
         public static void AddPageObjectToPage(IPageObject pageObject, bool addToHistory = true, bool forceSelectMode = true, int index = -1)
         {
@@ -988,11 +1052,12 @@ namespace Classroom_Learning_Partner.ViewModels
                 page.PageObjects.Insert(index, pageObject);
             }
 
-            // TODO: Entities
-            //if(addToHistory)
-            //{
-            //    AddHistoryItemToPage(page, new CLPHistoryPageObjectAdd(page, pageObject.UniqueID, (index == -1) ? (page.PageObjects.Count - 1) : index));
-            //}
+            if(addToHistory)
+            {
+                var pageObjectIDs = new List<string>{ pageObject.ID };
+  
+                AddHistoryItemToPage(page, new PageObjectsAddedHistoryItem(page, App.MainWindowViewModel.CurrentUser, pageObjectIDs));
+            }
 
             if(forceSelectMode)
             {
@@ -1003,7 +1068,6 @@ namespace Classroom_Learning_Partner.ViewModels
         public static void AddPageObjectsToPage(CLPPage page, IEnumerable<IPageObject> pageObjects, bool addToHistory = true, bool forceSelectMode = true)
         {
             var pageObjectIDs = new List<string>();
-            // TODO: Entities
             foreach(var pageObject in pageObjects)
             {
                 if(String.IsNullOrEmpty(pageObject.CreatorID))
@@ -1015,10 +1079,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 pageObject.OnAdded();
             }
 
-            //if(addToHistory)
-            //{
-            //    AddHistoryItemToPage(page, new CLPHistoryPageObjectsMassAdd(page, pageObjectIDs));
-            //}
+            if(addToHistory)
+            {
+                AddHistoryItemToPage(page, new PageObjectsAddedHistoryItem(page, App.MainWindowViewModel.CurrentUser, pageObjectIDs));
+            }
 
             if(forceSelectMode)
             {
@@ -1034,12 +1098,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            // TODO: Entities
-            //if(addToHistory)
-            //{
-            //    var currentIndex = page.PageObjects.IndexOf(pageObject);
-            //    AddHistoryItemToPage(page, new CLPHistoryPageObjectRemove(page, pageObject, currentIndex));
-            //}
+            if(addToHistory)
+            {
+                AddHistoryItemToPage(page, new PageObjectsRemovedHistoryItem(page, App.MainWindowViewModel.CurrentUser, new List<IPageObject>{ pageObject }));
+            }
             
             page.PageObjects.Remove(pageObject);
             pageObject.OnDeleted();

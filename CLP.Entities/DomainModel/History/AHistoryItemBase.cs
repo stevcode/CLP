@@ -21,9 +21,14 @@ namespace CLP.Entities
         /// <summary>
         /// Initializes <see cref="APageObjectBase" /> using <see cref="CLPPage" />.
         /// </summary>
-        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IPageObject" /> belongs to.</param>
-        public AHistoryItemBase(CLPPage parentPage)
-            : this() { ParentPage = parentPage; }
+        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryItem" /> belongs to.</param>
+        /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryItem" />.</param>
+        public AHistoryItemBase(CLPPage parentPage, Person owner)
+            : this()
+        {
+            ParentPage = parentPage;
+            OwnerID = owner.ID;
+        }
 
         /// <summary>
         /// Initializes <see cref="AHistoryItemBase" /> based on <see cref="SerializationInfo" />.
@@ -184,7 +189,9 @@ namespace CLP.Entities
 
         protected abstract void RedoAction(bool isAnimationRedo);
 
-        public abstract IHistoryItem UndoRedoCompleteClone();
+        public abstract IHistoryItem CreatePackagedHistoryItem();
+
+        public abstract void UnpackHistoryItem();
 
         #endregion //Methods
     }

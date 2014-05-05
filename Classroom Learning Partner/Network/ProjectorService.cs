@@ -182,6 +182,7 @@ namespace Classroom_Learning_Partner
                 return;
             }
             submission.InkStrokes = StrokeDTO.LoadInkStrokes(submission.SerializedStrokes);
+            submission.History.TrashedInkStrokes = StrokeDTO.LoadInkStrokes(submission.History.SerializedTrashedInkStrokes);
             var currentNotebook = App.MainWindowViewModel.OpenNotebooks.FirstOrDefault(notebook => notebookID == notebook.ID && notebook.OwnerID == Person.Emily.ID);
 
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
@@ -294,6 +295,7 @@ namespace Classroom_Learning_Partner
             foreach(var page in notebook.Pages)
             {
                 page.InkStrokes = StrokeDTO.LoadInkStrokes(page.SerializedStrokes);
+                page.History.TrashedInkStrokes = StrokeDTO.LoadInkStrokes(page.History.SerializedTrashedInkStrokes);
             }
 
             foreach(var page in notebook.Pages)
@@ -349,73 +351,44 @@ namespace Classroom_Learning_Partner
                                                        null);
         }
 
-        public void ModifyPageInkStrokes(List<StrokeDTO> strokesAdded, List<StrokeDTO> strokesRemoved, string pageID)
+        public void AddHistoryItem(string compositePageID, string zippedHistoryItem)
         {
-            // TODO: Entities
-            //Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-            //    (DispatcherOperationCallback)delegate
-            //    {
-            //        foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
-            //        {
-            //            var page = notebook.GetNotebookPageOrSubmissionByID(pageID);
+            var compositeKeys = compositePageID.Split(';');
+            var pageID = compositeKeys[0];
+            var pageOwnerID = compositeKeys[1];
+            var versionIndex = -1;
+            Int32.TryParse(compositeKeys[2], out versionIndex);
 
-            //            if(page == null)
-            //            {
-            //                continue;
-            //            }
+            var unzippedHistoryItem = CLPServiceAgent.Instance.UnZip(zippedHistoryItem);
+            var historyItem = ObjectSerializer.ToObject(unzippedHistoryItem) as IHistoryItem;
+            if(historyItem == null)
+            {
+                Logger.Instance.WriteToLog("Failed to apply historyItem to projector.");
+                return;
+            }
 
-            //            var strokesToRemove = StrokeDTO.LoadInkStrokes(new ObservableCollection<StrokeDTO>(strokesRemoved));
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                (DispatcherOperationCallback)delegate
+                {
+                    foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
+                    {
+                        var page = notebook.GetPageByCompositeKeys(pageID, pageOwnerID, versionIndex);
 
-            //            var strokes =
-            //                from externalStroke in strokesToRemove
-            //                from stroke in page.InkStrokes
-            //                where stroke.GetStrokeUniqueID() == externalStroke.GetStrokeUniqueID()
-            //                select stroke;
+                        if(page == null)
+                        {
+                            continue;
+                        }
 
-            //            var actualStrokesToRemove = new StrokeCollection(strokes.ToList());
+                        historyItem.ParentPage = page;
+                        historyItem.UnpackHistoryItem();
+                        page.History.RedoItems.Clear();
+                        page.History.RedoItems.Add(historyItem);
+                        page.History.Redo();
 
-            //            page.InkStrokes.Remove(actualStrokesToRemove);
-
-            //            var strokesToAdd = StrokeDTO.LoadInkStrokes(new ObservableCollection<StrokeDTO>(strokesAdded));
-            //            page.InkStrokes.Add(strokesToAdd);
-            //            break;
-            //        }
-            //        return null;
-            //    }, null);
-        }
-
-        public void AddHistoryItem(string pageID, string zippedHistoryItem)
-        {
-            // TODO: Entities
-            //var unzippedHistoryItem = CLPServiceAgent.Instance.UnZip(zippedHistoryItem);
-            //var historyItem = ObjectSerializer.ToObject(unzippedHistoryItem) as ICLPHistoryItem;
-            //if(historyItem == null)
-            //{
-            //    Logger.Instance.WriteToLog("Failed to apply historyItem to projector.");
-            //    return;
-            //}
-
-            //Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-            //    (DispatcherOperationCallback)delegate
-            //    {
-            //        foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
-            //        {
-            //            var page = notebook.GetNotebookPageOrSubmissionByID(pageID);
-
-            //            if(page == null)
-            //            {
-            //                continue;
-            //            }
-
-            //            historyItem.ParentPage = page;
-            //            page.PageHistory.RedoItems.Clear();
-            //            page.PageHistory.RedoItems.Add(historyItem);
-            //            page.PageHistory.Redo();
-
-            //            break;
-            //        }
-            //        return null;
-            //    }, null);
+                        break;
+                    }
+                    return null;
+                }, null);
         }
 
         public void AddNewPage(string zippedPage, int index)

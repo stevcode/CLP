@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls.Primitives;
+using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Shapes;
 using Catel.Data;
@@ -178,7 +179,13 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(HorizontalDivisionsProperty, value); }
         }
 
-        public static readonly PropertyData HorizontalDivisionsProperty = RegisterProperty("HorizontalDivisions", typeof(ObservableCollection<CLPArrayDivision>));
+        public static readonly PropertyData HorizontalDivisionsProperty = RegisterProperty("HorizontalDivisions", typeof(ObservableCollection<CLPArrayDivision>), null, Divisions_Changed);
+
+        private static void Divisions_Changed(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
+        {
+            //throw new NotImplementedException();
+            
+        }
 
         /// <summary>
         /// Gets or sets the VerticalDivisions value.
@@ -338,25 +345,25 @@ namespace Classroom_Learning_Partner.ViewModels
             clpArray.SizeArrayToGridLevel(newSquareSize);
 
             ////Resize History
-            //var heightDiff = Math.Abs(oldHeight - Height);
-            //var widthDiff = Math.Abs(oldWidth - Width);
-            //var diff = heightDiff + widthDiff;
-            //if(!(diff > CLPHistory.SAMPLE_RATE))
-            //{
-            //    return;
-            //}
+            var heightDiff = Math.Abs(oldHeight - Height);
+            var widthDiff = Math.Abs(oldWidth - Width);
+            var diff = heightDiff + widthDiff;
+            if(!(diff > PageHistory.SAMPLE_RATE))
+            {
+                return;
+            }
 
-            //var batch = PageObject.ParentPage.PageHistory.CurrentHistoryBatch;
-            //if(batch is CLPHistoryPageObjectResizeBatch)
-            //{
-            //    (batch as CLPHistoryPageObjectResizeBatch).AddResizePointToBatch(PageObject.UniqueID, new Point(Width, Height));
-            //}
-            //else
-            //{
-            //    var batchHistoryItem = PageObject.ParentPage.PageHistory.EndBatch();
-            //    ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, batchHistoryItem, true);
-            //    //TODO: log this error
-            //}
+            var batch = PageObject.ParentPage.History.CurrentHistoryBatch;
+            if(batch is PageObjectResizeBatchHistoryItem)
+            {
+                (batch as PageObjectResizeBatchHistoryItem).AddResizePointToBatch(PageObject.ID, new Point(Width, Height));
+            }
+            else
+            {
+                var batchHistoryItem = PageObject.ParentPage.History.EndBatch();
+                ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, batchHistoryItem, true);
+                //TODO: log this error
+            }
         }
 
         public Command<DragCompletedEventArgs> DragStopAndSnapCommand { get; private set; }
@@ -371,13 +378,13 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnDragStopAndSnapCommandExecute(DragCompletedEventArgs e)
         {
-            //var movementBatch = PageObject.ParentPage.PageHistory.CurrentHistoryBatch as CLPHistoryPageObjectMoveBatch;
-            //if(movementBatch != null)
-            //{
-            //    movementBatch.AddPositionPointToBatch(PageObject.UniqueID, new Point(PageObject.XPosition, PageObject.YPosition));
-            //}
-            //var batchHistoryItem = PageObject.ParentPage.PageHistory.EndBatch();
-            //ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, batchHistoryItem, true);
+            var movementBatch = PageObject.ParentPage.History.CurrentHistoryBatch as PageObjectMoveBatchHistoryItem;
+            if(movementBatch != null)
+            {
+                movementBatch.AddPositionPointToBatch(PageObject.ID, new Point(PageObject.XPosition, PageObject.YPosition));
+            }
+            var batchHistoryItem = PageObject.ParentPage.History.EndBatch();
+            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, batchHistoryItem, true);
             PageObject.OnMoved();
 
             var snappingArray = PageObject as CLPArray;
@@ -627,10 +634,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var squareSize = closestPersistingArray.GridSquareSize;
             ObservableCollection<CLPArrayDivision> tempDivisions;
+
+            CLPArraySnapHistoryItem arraySnapHistoryItem;
             switch(snapType)
             {
                 case SnapType.Top:
-                    // ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryArraySnap(PageObject.ParentPage, closestPersistingArray, snappingArray, true));
+                    arraySnapHistoryItem = new CLPArraySnapHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, closestPersistingArray, snappingArray, true);
 
                     closestPersistingArray.VerticalDivisions.Clear();
 
@@ -670,7 +679,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     closestPersistingArray.YPosition -= snappingArray.ArrayHeight;
                     break;
                 case SnapType.Bottom:
-                    //   ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryArraySnap(PageObject.ParentPage, closestPersistingArray, snappingArray, true));
+                    arraySnapHistoryItem = new CLPArraySnapHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, closestPersistingArray, snappingArray, true);
 
                     closestPersistingArray.VerticalDivisions.Clear();
 
@@ -702,7 +711,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     closestPersistingArray.Rows += snappingArray.Rows;
                     break;
                 case SnapType.Left:
-                    //   ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryArraySnap(PageObject.ParentPage, closestPersistingArray, snappingArray, false));
+                    arraySnapHistoryItem = new CLPArraySnapHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, closestPersistingArray, snappingArray, false);
 
                     closestPersistingArray.HorizontalDivisions.Clear();
 
@@ -742,7 +751,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     closestPersistingArray.XPosition -= snappingArray.ArrayWidth;
                     break;
                 case SnapType.Right:
-                    //   ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryArraySnap(PageObject.ParentPage, closestPersistingArray, snappingArray, false));
+                    arraySnapHistoryItem = new CLPArraySnapHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, closestPersistingArray, snappingArray, false);
 
                     closestPersistingArray.HorizontalDivisions.Clear();
 
@@ -779,6 +788,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
             closestPersistingArray.SizeArrayToGridLevel(squareSize, false);
             closestPersistingArray.IsDivisionBehaviorOn = true;
+
+            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, arraySnapHistoryItem);
 
             //var extraPageObjects = PageObject.GetPageObjectsOverPageObject();
             PageObject.ParentPage.PageObjects.Remove(PageObject);
@@ -817,7 +828,7 @@ namespace Classroom_Learning_Partner.ViewModels
             if(clpArray != null)
             {
                 clpArray.IsGridOn = !clpArray.IsGridOn;
-                //ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryArrayGridToggle(PageObject.ParentPage, PageObject.UniqueID));
+                ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPArrayGridToggleHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, PageObject.ID));
             }
         }
 
@@ -844,7 +855,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var initXPos = PageObject.XPosition;
             var initYPos = PageObject.YPosition;
             (PageObject as CLPArray).RotateArray();
-            //ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryArrayRotate(PageObject.ParentPage, PageObject.UniqueID, initXPos, initYPos));
+            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPArrayRotateHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, PageObject.ID, initXPos, initYPos));
         }
 
         /// <summary>
@@ -897,7 +908,7 @@ namespace Classroom_Learning_Partner.ViewModels
             HorizontalDivisions.Add(bottomDiv);
             addedDivisions.Add(bottomDiv);
 
-            //ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryArrayDivisionsChanged(PageObject.ParentPage, PageObject.UniqueID, addedDivisions, removedDivisions));
+            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPArrayDivisionsChangedHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, PageObject.ID, addedDivisions, removedDivisions));
         }
 
         /// <summary>
@@ -950,7 +961,7 @@ namespace Classroom_Learning_Partner.ViewModels
             VerticalDivisions.Add(bottomDiv);
             addedDivisions.Add(bottomDiv);
 
-            //ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryArrayDivisionsChanged(PageObject.ParentPage, PageObject.UniqueID, addedDivisions, removedDivisions));
+            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPArrayDivisionsChangedHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, PageObject.ID, addedDivisions, removedDivisions));
         }
 
         /// <summary>
@@ -987,8 +998,8 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             var divisionIndex = isHorizontalDivision ? array.HorizontalDivisions.IndexOf(division) : array.VerticalDivisions.IndexOf(division);
 
-            //ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
-            //                                           new CLPHistoryArrayDivisionValueChanged(PageObject.ParentPage, PageObject.UniqueID, isHorizontalDivision, divisionIndex, previousValue));
+            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
+                                                       new CLPArrayDivisionValueChangedHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, PageObject.ID, isHorizontalDivision, divisionIndex, previousValue));
 
             // Check if array labels add up to larger array dimension
             if(division.Orientation == ArrayDivisionOrientation.Horizontal)
@@ -1130,7 +1141,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
 
-            //ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryArrayDivisionsChanged(PageObject.ParentPage, PageObject.UniqueID, addedDivisions, removedDivisions));
+            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPArrayDivisionsChangedHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, PageObject.ID, addedDivisions, removedDivisions));
         }
 
         /// <summary>
@@ -1248,5 +1259,142 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //Methods
+
+        #region Static Methods
+
+        public static bool CreateDivision(CLPArray array, Stroke cuttingStroke)
+        {
+            var strokeTop = cuttingStroke.GetBounds().Top;
+            var strokeBottom = cuttingStroke.GetBounds().Bottom;
+            var strokeLeft = cuttingStroke.GetBounds().Left;
+            var strokeRight = cuttingStroke.GetBounds().Right;
+
+            var cuttableTop = array.YPosition + array.LabelLength;
+            var cuttableBottom = cuttableTop + array.ArrayHeight;
+            var cuttableLeft = array.XPosition + array.LabelLength;
+            var cuttableRight = cuttableLeft + array.ArrayWidth;
+
+            if(array.ArrayType != ArrayTypes.Array)
+            {
+                return false;
+            }
+
+            const double MIN_THRESHHOLD = 30.0;
+
+            if(Math.Abs(strokeLeft - strokeRight) < Math.Abs(strokeTop - strokeBottom) &&
+               strokeRight <= cuttableRight &&
+               strokeLeft >= cuttableLeft &&
+               strokeTop - cuttableTop <= MIN_THRESHHOLD &&
+               cuttableBottom - strokeBottom <= MIN_THRESHHOLD &&
+               array.Columns > 1) //Vertical Stroke. Stroke must be within the bounds of the pageObject
+            {
+                var average = (strokeRight + strokeLeft) / 2;
+                var relativeAverage = average - array.LabelLength - array.XPosition;
+                var position = relativeAverage;
+                if(array.IsGridOn)
+                {
+                    position = array.GetClosestGridLine(position);
+                }
+
+                if(array.VerticalDivisions.Any(verticalDivision => Math.Abs(verticalDivision.Position - position) < 30.0))
+                {
+                    return false;
+                }
+                if(array.VerticalDivisions.Count >= array.Columns)
+                {
+                    //MessageBox.Show("The number of divisions cannot be larger than the number of Columns.");
+                    return false;
+                }
+
+                var divAbove = array.FindDivisionAbove(position, array.VerticalDivisions);
+                var divBelow = array.FindDivisionBelow(position, array.VerticalDivisions);
+
+                var addedDivisions = new List<CLPArrayDivision>();
+                var removedDivisions = new List<CLPArrayDivision>();
+
+                CLPArrayDivision topDiv;
+                if(divAbove == null)
+                {
+                    topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, 0, position, 0);
+                }
+                else
+                {
+                    topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, divAbove.Position, position - divAbove.Position, 0);
+                    array.VerticalDivisions.Remove(divAbove);
+                    removedDivisions.Add(divAbove);
+                }
+                array.VerticalDivisions.Add(topDiv);
+                addedDivisions.Add(topDiv);
+
+                var bottomDiv = divBelow == null
+                                    ? new CLPArrayDivision(ArrayDivisionOrientation.Vertical, position, array.ArrayWidth - position, 0)
+                                    : new CLPArrayDivision(ArrayDivisionOrientation.Vertical, position, divBelow.Position - position, 0);
+
+                array.VerticalDivisions.Add(bottomDiv);
+                addedDivisions.Add(bottomDiv);
+
+                ACLPPageBaseViewModel.AddHistoryItemToPage(array.ParentPage, new CLPArrayDivisionsChangedHistoryItem(array.ParentPage, App.MainWindowViewModel.CurrentUser, array.ID, addedDivisions, removedDivisions));
+                return true; 
+            }
+            else if(Math.Abs(strokeLeft - strokeRight) > Math.Abs(strokeTop - strokeBottom) &&
+                    strokeBottom <= cuttableBottom &&
+                    strokeTop >= cuttableTop &&
+                    cuttableRight - strokeRight <= MIN_THRESHHOLD &&
+                    strokeLeft - cuttableLeft <= MIN_THRESHHOLD &&
+                    array.Rows > 1) //Horizontal Stroke. Stroke must be within the bounds of the pageObject
+            {
+                var average = (strokeTop + strokeBottom) / 2;
+                var relativeAverage = average - array.LabelLength - array.YPosition;
+                var position = relativeAverage;
+                if(array.IsGridOn)
+                {
+                    position = array.GetClosestGridLine(position);
+                }
+
+                if(array.HorizontalDivisions.Any(horizontalDivision => Math.Abs(horizontalDivision.Position - position) < 30.0))
+                {
+                    return false;
+                }
+                if(array.HorizontalDivisions.Count >= array.Rows)
+                {
+                    //MessageBox.Show("The number of divisions cannot be larger than the number of Rows.");
+                    return false;
+                }
+
+                var divAbove = array.FindDivisionAbove(position, array.HorizontalDivisions);
+                var divBelow = array.FindDivisionBelow(position, array.HorizontalDivisions);
+
+                var addedDivisions = new List<CLPArrayDivision>();
+                var removedDivisions = new List<CLPArrayDivision>();
+
+                CLPArrayDivision topDiv;
+                if(divAbove == null)
+                {
+                    topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, 0, position, 0);
+                }
+                else
+                {
+                    topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, divAbove.Position, position - divAbove.Position, 0);
+                    array.HorizontalDivisions.Remove(divAbove);
+                    removedDivisions.Add(divAbove);
+                }
+                array.HorizontalDivisions.Add(topDiv);
+                addedDivisions.Add(topDiv);
+
+                var bottomDiv = divBelow == null
+                                    ? new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, position, array.ArrayHeight - position, 0)
+                                    : new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, position, divBelow.Position - position, 0);
+
+                array.HorizontalDivisions.Add(bottomDiv);
+                addedDivisions.Add(bottomDiv);
+
+                ACLPPageBaseViewModel.AddHistoryItemToPage(array.ParentPage, new CLPArrayDivisionsChangedHistoryItem(array.ParentPage, App.MainWindowViewModel.CurrentUser, array.ID, addedDivisions, removedDivisions));
+                return true;
+            }
+
+            return false;
+        }
+
+        #endregion //Static Methods
     }
 }
