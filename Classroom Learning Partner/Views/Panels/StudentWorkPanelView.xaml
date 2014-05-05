@@ -124,8 +124,8 @@
                                                 <Run Text="{Binding FullName}" />
                                             </TextBlock>
                                         </StackPanel>
-                                        <TextBlock FontWeight="Bold" HorizontalAlignment="Center">
-                                            <Run>
+                                        <!--TextBlock FontWeight="Bold" HorizontalAlignment="Center">
+                                            <Run x:Name="SubmissionsCount">
                                                 <Run.Text>
                                                     <MultiBinding Converter="{StaticResource PersonToSubmissionsCountConverter}">
                                                         <Binding Mode="OneWay" Path=""/>
@@ -135,7 +135,7 @@
                                             </Run>
                                             <Run Text="/" />
                                             <Run Text="{Binding Mode=OneWay, ElementName=StudentNames, Path=DataContext.CurrentPages.Count}" />
-                                        </TextBlock>
+                                        </-->
                                     </StackPanel>
                                 </StackPanel>
                             </DataTemplate>
