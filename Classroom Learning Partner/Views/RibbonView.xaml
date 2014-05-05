@@ -40,6 +40,12 @@
                                            KeyTip="O"
                                            ImageSource="pack://application:,,,/Resources/Images/OpenNotebook32.png"
                                            Command="{Binding OpenNotebookCommand}" />
+                
+                <RibbonApplicationMenuItem Header="Copy Notebook For New Owner"
+                                           KeyTip="S"
+                                           ImageSource="pack://application:,,,/Resources/Images/SaveNotebook32.png"
+                                           Command="{Binding CopyNotebookForNewOwnerCommand}"
+                                           Visibility="{Binding AuthoringTabVisibility}" />
 
                 <!--<RibbonApplicationMenuItem Header="Save Notebook"
                                            KeyTip="S"

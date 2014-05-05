@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Media.Imaging;
 using Catel.Data;
 using Catel.MVVM;
+using Classroom_Learning_Partner.Views;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Entities;
 
@@ -637,6 +638,32 @@ namespace Classroom_Learning_Partner.ViewModels
                     let notebookOwnerID = notebookInfo[3]
                     where notebookID == id && notebookOwnerID == ownerID
                     select notebookFolderPath).FirstOrDefault();
+        }
+
+        public static void CopyNotebookForNewOwner()
+        {
+            var notebook = App.MainWindowViewModel.OpenNotebooks.FirstOrDefault(n => n.OwnerID == Person.Author.ID);
+            if(notebook == null)
+            {
+                return;
+            }
+
+            var person = new Person();
+            var personCreationView = new PersonCreationView(new PersonCreationViewModel(person));
+            personCreationView.ShowDialog();
+
+            if(personCreationView.DialogResult == null ||
+               personCreationView.DialogResult != true)
+            {
+                return;
+            }
+
+            var copiedNotebook = notebook.CopyForNewOwner(person);
+            App.MainWindowViewModel.OpenNotebooks.Add(copiedNotebook);
+            App.MainWindowViewModel.CurrentUser = person;
+            App.MainWindowViewModel.IsAuthoring = false;
+            App.MainWindowViewModel.Workspace = null;
+            App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(copiedNotebook);
         }
 
         #endregion //Static Methods
