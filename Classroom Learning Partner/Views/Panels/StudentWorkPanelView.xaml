@@ -35,158 +35,208 @@
             Width="{Binding Length}">
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="80"/>
-                <!-- names -->
                 <ColumnDefinition />
-                <!-- first page -->
-                <ColumnDefinition />
-                <!-- second page -->
             </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="{Binding PageHeight}"/>
-                <!-- top row -->
-                <RowDefinition />
-                <!-- lower rows -->
-            </Grid.RowDefinitions>
+            <ScrollViewer Grid.Column="0" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                <ScrollViewer.Resources>
+                    <system:Double x:Key="{x:Static SystemParameters.VerticalScrollBarWidthKey}">25</system:Double>
+                </ScrollViewer.Resources>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="60"/>
+                        <!-- names -->
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition />
+                        <!-- first page -->
+                        <ColumnDefinition />
+                        <!-- second page -->
+                        <ColumnDefinition Width="20"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="{Binding PageHeight}"/>
+                        <!-- top row -->
+                        <RowDefinition />
+                        <!-- lower rows -->
+                    </Grid.RowDefinitions>
 
-            <views:CLPPagePreviewView x:Name="FirstTeacherPagePreviewView"
-                Grid.Row="0" Grid.Column="1" Margin="5" DataContext="{Binding FirstPage}"
-                ClipToBounds="True" />
+                    <Button Grid.Column="1" Grid.Row="0"  Command="{Binding BackCommand}">
+                        <Image Source="pack://application:,,,/Resources/Images/PreviousPage16.png"/>
+                    </Button>
 
-            <views:CLPPagePreviewView x:Name="SecondTeacherPagePreviewView"
-                Grid.Row="0" Grid.Column="2" Margin="5" DataContext="{Binding SecondPage}"
-                ClipToBounds="True" />
-            
-            <ItemsControl Name="StudentNames" Grid.Column="0" Grid.Row="1"
-                              ItemsSource="{Binding StudentList}"
-                              Margin="5 0 0 0">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal" Height="{Binding ElementName=StudentNames, Path=DataContext.PageHeight}">
-                            <Ellipse Height="7"
-                                         Width="7"
-                                         Fill="LawnGreen"
-                                         Margin="3 0 3 0"
-                                         VerticalAlignment="Center"
-                                         Visibility="{Binding IsConnected, Converter={StaticResource BooleanToHidingVisibilityConverter}}"/>
-                            <TextBlock FontWeight="Bold" VerticalAlignment="Center">
-                                    <Run Text="{Binding FullName}" />
-                            </TextBlock>
-                        </StackPanel>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-            <ItemsControl Name="FirstPageSubmissions" Grid.Column="1" Grid.Row="1" ItemsSource="{Binding FirstPage, Converter={StaticResource PageToSubmissionsListConverter}}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Vertical" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Border Margin="3" BorderBrush="{StaticResource GrayEdgeColor}"
-                                BorderThickness="1,1,1,1" Height="{Binding ElementName=FirstPageSubmissions, Path=DataContext.PageHeight}">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition />
-                                </Grid.RowDefinitions>
-                                <views:CLPPagePreviewView x:Name="FirstPagePreviewView"
-                                                          Grid.Row="0"
-                                                          Margin="5"
-                                                          DataContext="{Binding Page}"
-                                                          ClipToBounds="True" />
-                                <Rectangle Grid.Row="0" Margin="0" Fill="Transparent" StrokeThickness="2">
-                                    <Rectangle.Stroke>
-                                        <MultiBinding Converter="{StaticResource PageMatchToColorConverter}">
-                                            <Binding ElementName="FirstPageSubmissions" Path="DataContext.CurrentPage"/>
-                                            <Binding Path="Page"/>
-                                        </MultiBinding>
-                                    </Rectangle.Stroke>
-                                    <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="MouseUp">
-                                            <catel:EventToCommand Command="{Binding DataContext.SetCurrentPageCommand, ElementName=FirstPageSubmissions}"
-                                                                                      PassEventArgsToCommand="False"
-                                                                                      CommandParameter="{Binding Page}" />
-                                        </i:EventTrigger>
-                                    </i:Interaction.Triggers>
-                                </Rectangle>
-                            </Grid>
-                        </Border>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-            <ItemsControl Name="SecondPageSubmissions" Grid.Column="2" Grid.Row="1" ItemsSource="{Binding SecondPage, Converter={StaticResource PageToSubmissionsListConverter}}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Vertical" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Border Margin="3" BorderBrush="{StaticResource GrayEdgeColor}"
-                                BorderThickness="1,1,1,1" Height="{Binding ElementName=SecondPageSubmissions, Path=DataContext.PageHeight}">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition />
-                                </Grid.RowDefinitions>
+                    <views:CLPPagePreviewView x:Name="FirstTeacherPagePreviewView"
+                    Grid.Row="0" Grid.Column="2" Margin="5" DataContext="{Binding FirstPage}"
+                    ClipToBounds="True" />
+                    <Rectangle Grid.Row="0" Grid.Column="2" Margin="3" Fill="Transparent" StrokeThickness="2">
+                        <Rectangle.Stroke>
+                            <MultiBinding Converter="{StaticResource PageMatchToColorConverter}">
+                                <Binding Path="CurrentPage"/>
+                                <Binding Path="FirstPage"/>
+                            </MultiBinding>
+                        </Rectangle.Stroke>
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseUp">
+                                <catel:EventToCommand Command="{Binding SetCurrentPageCommand}"
+                                                      PassEventArgsToCommand="False"
+                                                      CommandParameter="{Binding FirstPage}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </Rectangle>
 
-                                <views:CLPPagePreviewView x:Name="SecondPagePreviewView"
-                                                          Grid.Row="0"
-                                                          Margin="5"
-                                                          DataContext="{Binding Page}"
-                                                          ClipToBounds="True" />
-                                <Rectangle Grid.Row="0" Margin="0" Fill="Transparent" StrokeThickness="2">
-                                    <Rectangle.Stroke>
-                                        <MultiBinding Converter="{StaticResource PageMatchToColorConverter}">
-                                            <Binding ElementName="SecondPageSubmissions" Path="DataContext.CurrentPage"/>
-                                            <Binding Path="Page"/>
-                                        </MultiBinding>
-                                    </Rectangle.Stroke>
-                                    <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="MouseUp">
-                                            <catel:EventToCommand Command="{Binding DataContext.SetCurrentPageCommand, ElementName=SecondPageSubmissions}"
-                                                                                      PassEventArgsToCommand="False"
-                                                                                      CommandParameter="{Binding Page}" />
-                                        </i:EventTrigger>
-                                    </i:Interaction.Triggers>
-                                </Rectangle>
-                            </Grid>
-                        </Border>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+                    <views:CLPPagePreviewView x:Name="SecondTeacherPagePreviewView"
+                    Grid.Row="0" Grid.Column="3" Margin="5" DataContext="{Binding SecondPage}"
+                    ClipToBounds="True" />
+                    <Rectangle Grid.Row="0" Grid.Column="3" Margin="3" Fill="Transparent" StrokeThickness="2">
+                        <Rectangle.Stroke>
+                            <MultiBinding Converter="{StaticResource PageMatchToColorConverter}">
+                                <Binding Path="CurrentPage"/>
+                                <Binding Path="SecondPage"/>
+                            </MultiBinding>
+                        </Rectangle.Stroke>
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseUp">
+                                <catel:EventToCommand Command="{Binding SetCurrentPageCommand}"
+                                                      PassEventArgsToCommand="False"
+                                                      CommandParameter="{Binding SecondPage}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </Rectangle>
+
+                    <Button Grid.Column="4" Grid.Row="0"  Command="{Binding ForwardCommand}">
+                        <Image Source="pack://application:,,,/Resources/Images/NextPage16.png"/>
+                    </Button>
+
+                    <ItemsControl Name="StudentNames" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"
+                                  ItemsSource="{Binding StudentList}"
+                                  Margin="5 0 0 0">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Margin="3" Height="{Binding ElementName=StudentNames, Path=DataContext.PageHeight}">
+                                    <Ellipse Height="7"
+                                             Width="7"
+                                             Fill="LawnGreen"
+                                             Margin="3 0 3 0"
+                                             VerticalAlignment="Center"
+                                             Visibility="{Binding IsConnected, Converter={StaticResource BooleanToHidingVisibilityConverter}}"/>
+                                    <TextBlock FontWeight="Bold" VerticalAlignment="Center">
+                                        <Run Text="{Binding FullName}" />
+                                    </TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <ItemsControl Name="FirstPageSubmissions" Grid.Column="2" Grid.Row="1" ItemsSource="{Binding FirstPage, Converter={StaticResource PageToSubmissionsListConverter}}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Vertical" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Margin="3" BorderBrush="{StaticResource GrayEdgeColor}"
+                                    BorderThickness="1,1,1,1" Height="{Binding ElementName=FirstPageSubmissions, Path=DataContext.PageHeight}">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition />
+                                        </Grid.RowDefinitions>
+                                        <views:CLPPagePreviewView x:Name="FirstPagePreviewView"
+                                                              Grid.Row="0"
+                                                              Margin="5"
+                                                              DataContext="{Binding Page}"
+                                                              ClipToBounds="True" />
+                                        <Rectangle Grid.Row="0" Margin="0" Fill="Transparent" StrokeThickness="2">
+                                            <Rectangle.Stroke>
+                                                <MultiBinding Converter="{StaticResource PageMatchToColorConverter}">
+                                                    <Binding ElementName="FirstPageSubmissions" Path="DataContext.CurrentPage"/>
+                                                    <Binding Path="Page"/>
+                                                </MultiBinding>
+                                            </Rectangle.Stroke>
+                                            <i:Interaction.Triggers>
+                                                <i:EventTrigger EventName="MouseUp">
+                                                    <catel:EventToCommand Command="{Binding DataContext.SetCurrentPageCommand, ElementName=FirstPageSubmissions}"
+                                                                                          PassEventArgsToCommand="False"
+                                                                                          CommandParameter="{Binding Page}" />
+                                                </i:EventTrigger>
+                                            </i:Interaction.Triggers>
+                                        </Rectangle>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <ItemsControl Name="SecondPageSubmissions" Grid.Column="3" Grid.Row="1" ItemsSource="{Binding SecondPage, Converter={StaticResource PageToSubmissionsListConverter}}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Vertical" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Margin="3" BorderBrush="{StaticResource GrayEdgeColor}"
+                                    BorderThickness="1,1,1,1" Height="{Binding ElementName=SecondPageSubmissions, Path=DataContext.PageHeight}">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition />
+                                        </Grid.RowDefinitions>
+
+                                        <views:CLPPagePreviewView x:Name="SecondPagePreviewView"
+                                                              Grid.Row="0"
+                                                              Margin="5"
+                                                              DataContext="{Binding Page}"
+                                                              ClipToBounds="True" />
+                                        <Rectangle Grid.Row="0" Margin="0" Fill="Transparent" StrokeThickness="2">
+                                            <Rectangle.Stroke>
+                                                <MultiBinding Converter="{StaticResource PageMatchToColorConverter}">
+                                                    <Binding ElementName="SecondPageSubmissions" Path="DataContext.CurrentPage"/>
+                                                    <Binding Path="Page"/>
+                                                </MultiBinding>
+                                            </Rectangle.Stroke>
+                                            <i:Interaction.Triggers>
+                                                <i:EventTrigger EventName="MouseUp">
+                                                    <catel:EventToCommand Command="{Binding DataContext.SetCurrentPageCommand, ElementName=SecondPageSubmissions}"
+                                                                                          PassEventArgsToCommand="False"
+                                                                                          CommandParameter="{Binding Page}" />
+                                                </i:EventTrigger>
+                                            </i:Interaction.Triggers>
+                                        </Rectangle>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>      
+                </Grid>
+            </ScrollViewer>
             <Thumb Cursor="ScrollWE"
-                   Grid.Column="2" Grid.RowSpan="2"
-                       Width="7"
-                       Margin="0 0 -7 0"
-                       VerticalAlignment="Stretch"
-                       HorizontalAlignment="Right">
+                       Grid.Column="1"
+                           Width="7"
+                           Margin="0 0 -7 0"
+                           VerticalAlignment="Stretch"
+                           HorizontalAlignment="Right">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="DragDelta">
                         <catel:EventToCommand Command="{Binding PanelResizeDragCommand}"
-                                                  PassEventArgsToCommand="True" />
+                                                      PassEventArgsToCommand="True" />
                         <catel:EventToCommand Command="{Binding PageHeightUpdateCommand}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
                 <Thumb.Template>
                     <ControlTemplate>
                         <Grid VerticalAlignment="Stretch"
-                                  Background="Transparent">
+                                      Background="Transparent">
                             <UniformGrid Columns="1"
-                                             Height="30"
-                                             Background="Transparent">
+                                                 Height="30"
+                                                 Background="Transparent">
                                 <Ellipse StrokeThickness="0"
-                                             Fill="{StaticResource HighlightColor}"
-                                             Height="3"
-                                             Width="3" />
+                                                 Fill="{StaticResource HighlightColor}"
+                                                 Height="3"
+                                                 Width="3" />
                                 <Ellipse StrokeThickness="0"
-                                             Fill="{StaticResource HighlightColor}"
-                                             Height="3"
-                                             Width="3" />
+                                                 Fill="{StaticResource HighlightColor}"
+                                                 Height="3"
+                                                 Width="3" />
                                 <Ellipse StrokeThickness="0"
-                                             Fill="{StaticResource HighlightColor}"
-                                             Height="3"
-                                             Width="3" />
+                                                 Fill="{StaticResource HighlightColor}"
+                                                 Height="3"
+                                                 Width="3" />
                             </UniformGrid>
                         </Grid>
                     </ControlTemplate>

@@ -28,7 +28,10 @@ namespace Classroom_Learning_Partner.ViewModels
             else
             {
                 StudentList = new ObservableCollection<Person>();
-                StudentList.Add(Person.TestSubmitter);
+                for(int i = 1; i <= 10; i++)
+                {
+                    StudentList.Add(Person.TestSubmitter);
+                }
             }
             
             foreach(CLPPage page in Notebook.Pages)
@@ -40,6 +43,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
             SetCurrentPageCommand = new Command<CLPPage>(OnSetCurrentPageCommandExecute);
             PageHeightUpdateCommand = new Command(OnPageHeightUpdateCommandExecute);
+            BackCommand = new Command(OnBackCommandExecute);
+            ForwardCommand = new Command(OnForwardCommandExecute);
         }
 
         void StudentWorkPanelViewModel_Initialized(object sender, EventArgs e)
@@ -99,6 +104,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Current, selected page in the notebook.
         /// </summary>
+        [ViewModelToModel("Notebook")]
         public CLPPage CurrentPage
         {
             get { return GetValue<CLPPage>(CurrentPageProperty); }
@@ -169,7 +175,37 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnPageHeightUpdateCommandExecute()
         {
-            PageHeight = ((Length - 80) / 2 - 6) * CLPPage.LANDSCAPE_HEIGHT / CLPPage.LANDSCAPE_WIDTH;
+            PageHeight = ((Length - 100) / 2 - 6) * CLPPage.LANDSCAPE_HEIGHT / CLPPage.LANDSCAPE_WIDTH;
+        }
+
+        /// <summary>
+        /// Navigates to the next page.
+        /// </summary>
+        public Command ForwardCommand { get; private set; }
+
+        private void OnForwardCommandExecute()
+        {
+            var nextIndex = CurrentPages.IndexOf(SecondPage) + 1;
+            if(nextIndex < CurrentPages.Count)
+            {
+                FirstPage = SecondPage;
+                SecondPage = CurrentPages[nextIndex];
+            }
+        }
+
+        /// <summary>
+        /// Navigates to the previous page.
+        /// </summary>
+        public Command BackCommand { get; private set; }
+
+        private void OnBackCommandExecute()
+        {
+            var prevIndex = CurrentPages.IndexOf(FirstPage) - 1;
+            if(prevIndex >= 0)
+            {
+                SecondPage = FirstPage;
+                FirstPage = CurrentPages[prevIndex];
+            }
         }
 
         #endregion

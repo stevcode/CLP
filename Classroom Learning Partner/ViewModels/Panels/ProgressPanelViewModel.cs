@@ -29,7 +29,10 @@ namespace Classroom_Learning_Partner.ViewModels
             else
             {
                 StudentList = new ObservableCollection<Person>();
-                StudentList.Add(Person.TestSubmitter);
+                for(int i = 1; i <= 10; i++)
+                {
+                    StudentList.Add(Person.TestSubmitter);
+                }
             }
             
             ClassPeriodsForDisplay = new ObservableCollection<ClassPeriodForDisplay>();

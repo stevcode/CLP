@@ -26,12 +26,16 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <Grid Grid.Column="0">
+            <ScrollViewer Grid.Column="0" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                <ScrollViewer.Resources>
+                    <sys:Double x:Key="{x:Static SystemParameters.VerticalScrollBarWidthKey}">25</sys:Double>
+                </ScrollViewer.Resources>
+                <Grid>
                 <!-- names and pages -->
                 <Grid.RowDefinitions>
                     <RowDefinition Height="50"/> <!-- combobox-->
-                    <RowDefinition Height="30"/> <!-- page numbers-->
-                    <RowDefinition Height="24"/> <!-- teacher pages -->
+                        <RowDefinition Height="8"/> <!-- page numbers -->
+                        <RowDefinition Height="5"/> <!-- teacher pages -->
                     <RowDefinition Height="*"/> <!-- student pages -->
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
@@ -42,21 +46,20 @@
                     VerticalAlignment="Center" HorizontalAlignment="Center"
                     Content="Choose Class Period" Margin="10"
                     Command="{Binding ChooseClassPeriodCommand}" />
-                <TextBlock Grid.Column="0" Grid.Row="2" FontWeight="Bold" Foreground="Blue" Height="24" Margin="5 0 0 0">
+                <TextBlock Grid.Column="0" Grid.Row="2" VerticalAlignment="Top" FontWeight="Bold" Foreground="Blue" Margin="15 0 0 0">
                     <Run Text="Teacher"/>
                 </TextBlock>
-                <ItemsControl Grid.Column="0" Grid.Row="3"
-                              ItemsSource="{Binding StudentList}"
-                              Margin="5 0 0 0">
+                <ItemsControl Grid.Column="0" Grid.Row="3" Margin="0"
+                              ItemsSource="{Binding StudentList}" VerticalAlignment="Top">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <Ellipse Height="7"
+                            <StackPanel Orientation="Horizontal" Height="24">
+                                    <Ellipse Height="7"
                                          Width="7"
                                          Fill="LawnGreen"
-                                         Margin="3 3 3 0"
+                                         Margin="5 3 3 0"
                                          VerticalAlignment="Top"
-                                         Visibility="{Binding IsConnected, Converter={StaticResource BooleanToHidingVisibilityConverter}}"/>
+                                    Visibility="{Binding IsConnected, Converter={StaticResource BooleanToHidingVisibilityConverter}}"/>
                                 <TextBlock FontWeight="Bold" Height="24">
                                     <Run Text="{Binding FullName}" />
                                 </TextBlock>
@@ -66,7 +69,7 @@
                 </ItemsControl>
                 <ScrollViewer Grid.Column="1" Grid.Row="1" Grid.RowSpan="3" 
                               HorizontalScrollBarVisibility="Auto"
-                              VerticalScrollBarVisibility="Hidden">
+                              VerticalScrollBarVisibility="Disabled">
                     <ScrollViewer.Resources>
                         <sys:Double x:Key="{x:Static SystemParameters.HorizontalScrollBarHeightKey}">25</sys:Double>
                     </ScrollViewer.Resources>
@@ -80,7 +83,7 @@
                         <DataTemplate>
                             <Grid>
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="24" />
+                                    <RowDefinition Height="20" />
                                     <RowDefinition Height="24" />
                                     <RowDefinition Height="*"  />
                                 </Grid.RowDefinitions>
@@ -164,7 +167,7 @@
                 </ItemsControl>
                 </ScrollViewer>
             </Grid>
-
+            </ScrollViewer>
             <!--Thumb Cursor="ScrollWE" Width="5" 
             <Thumb Cursor="ScrollWE"
                    Width="7"
