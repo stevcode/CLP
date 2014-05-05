@@ -287,13 +287,13 @@ namespace CLP.Entities
         /// <summary>
         /// Page Number of the <see cref="CLPPage" /> within the <see cref="Notebook" />.
         /// </summary>
-        public int PageNumber
+        public decimal PageNumber
         {
-            get { return GetValue<int>(PageNumberProperty); }
+            get { return GetValue<decimal>(PageNumberProperty); }
             set { SetValue(PageNumberProperty, value); }
         }
 
-        public static readonly PropertyData PageNumberProperty = RegisterProperty("PageNumber", typeof(int), 1);
+        public static readonly PropertyData PageNumberProperty = RegisterProperty("PageNumber", typeof(decimal), 1);
 
         /// <summary>
         /// Page Number of the <see cref="CLPPage" />'s corresponding page in the Student Workbook.
