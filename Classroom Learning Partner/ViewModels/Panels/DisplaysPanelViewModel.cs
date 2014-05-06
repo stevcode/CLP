@@ -155,7 +155,6 @@ namespace Classroom_Learning_Partner.ViewModels
             notebookWorkspaceViewModel.CurrentDisplay = args.NewValue as IDisplay;
 
             if(App.Network.ProjectorProxy == null ||
-               !App.MainWindowViewModel.Ribbon.IsProjectorOn ||
                notebookWorkspaceViewModel.CurrentDisplay == null)
             {
                 return;
@@ -164,10 +163,7 @@ namespace Classroom_Learning_Partner.ViewModels
             try
             {
                 var displayID = notebookWorkspaceViewModel.CurrentDisplay.ID;
-                var displayPageIDs = new List<string>();
-                displayPageIDs.AddRange(notebookWorkspaceViewModel.CurrentDisplay.Pages.Select(page => page.ID + ";" + page.OwnerID + ";" + page.VersionIndex));
-
-                 App.Network.ProjectorProxy.SwitchProjectorDisplay(displayID, notebookWorkspaceViewModel.CurrentDisplay.DisplayNumber, displayPageIDs);
+                App.Network.ProjectorProxy.SwitchProjectorDisplay(displayID, notebookWorkspaceViewModel.CurrentDisplay.DisplayNumber);
             }
             catch(Exception) { }
         }
@@ -222,21 +218,15 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             notebookWorkspaceViewModel.CurrentDisplay = null;
 
-            if(App.Network.ProjectorProxy == null ||
-               !App.MainWindowViewModel.Ribbon.IsProjectorOn)
+            if(App.Network.ProjectorProxy == null)
             {
                 return;
             }
 
             try
             {
-                const string DISPLAY_ID = "SingleDisplay";
-                var displayPageIDs = new List<string>();
-                var currentPage = notebookWorkspaceViewModel.Notebook.CurrentPage;
-                var compositeID = currentPage.ID + ";" + currentPage.OwnerID + ";" + currentPage.VersionIndex;
-                displayPageIDs.Add(compositeID);
-                
-                App.Network.ProjectorProxy.SwitchProjectorDisplay(DISPLAY_ID, -1, displayPageIDs);
+                const string DISPLAY_ID = "SingleDisplay";               
+                App.Network.ProjectorProxy.SwitchProjectorDisplay(DISPLAY_ID, -1);
             }
             catch(Exception) { }
 

@@ -233,21 +233,30 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 CurrentPage = page;
 
-                if(App.Network.ProjectorProxy == null ||
-                   !App.MainWindowViewModel.Ribbon.IsProjectorOn)
+                if(App.Network.ProjectorProxy == null)
                 {
                     return;
                 }
 
                 try
                 {
-                     App.Network.ProjectorProxy.AddPageToDisplay(page.ID, page.OwnerID, (int)page.VersionIndex);
+                     App.Network.ProjectorProxy.AddPageToDisplay(page.ID, page.OwnerID, page.DifferentiationLevel, (int)page.VersionIndex);
                 }
                 catch(Exception) { }
                 return;
             }
 
             notebookWorkspaceViewModel.CurrentDisplay.AddPageToDisplay(page);
+            if(App.Network.ProjectorProxy == null)
+            {
+                return;
+            }
+
+            try
+            {
+                    App.Network.ProjectorProxy.AddPageToDisplay(page.ID, page.OwnerID, page.DifferentiationLevel, (int)page.VersionIndex);
+            }
+            catch(Exception) { }
         }
 
         #endregion //Commands

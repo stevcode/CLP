@@ -15,13 +15,13 @@ namespace Classroom_Learning_Partner
     public interface IProjectorContract : INotebookContract
     {
         [OperationContract]
-        void SwitchProjectorDisplay(string displayType, int displayNumber, List<string> displayPageIDs);
+        void SwitchProjectorDisplay(string displayID, int displayNumber);
 
         [OperationContract]
-        void AddPageToDisplay(string pageID, string pageOwnerID, int pageVersionIndex);
+        void AddPageToDisplay(string pageID, string pageOwnerID, string differentiationLevel, int pageVersionIndex);
 
         [OperationContract]
-        void RemovePageFromDisplay(string pageID, string pageOwnerID, int pageVersionIndex);
+        void RemovePageFromDisplay(string pageID, string pageOwnerID, string differentiationLevel, int pageVersionIndex);
 
         [OperationContract]
         void AddSerializedSubmission(string zippedPage, string notebookID);
@@ -33,7 +33,7 @@ namespace Classroom_Learning_Partner
     [ServiceBehavior(IncludeExceptionDetailInFaults = true)]
     public class ProjectorService : IProjectorContract
     {
-        public void SwitchProjectorDisplay(string displayType, int displayNumber, List<string> displayPageIDs)
+        public void SwitchProjectorDisplay(string displayID, int displayNumber)
         {
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                        (DispatcherOperationCallback)delegate
@@ -45,27 +45,18 @@ namespace Classroom_Learning_Partner
                                                                                         }
                                                                                         if(App.CurrentUserMode == App.UserMode.Projector)
                                                                                         {
-                                                                                            if(displayType == "SingleDisplay")
+                                                                                            if(displayID == "SingleDisplay")
                                                                                             {
                                                                                                 notebookWorkspaceViewModel.CurrentDisplay = null;
-                                                                                                var compositeKeys = displayPageIDs[0].Split(';');
-                                                                                                var pageID = compositeKeys[0];
-                                                                                                var pageOwnerID = compositeKeys[1];
-                                                                                                var versionIndex = -1;
-                                                                                                Int32.TryParse(compositeKeys[2], out versionIndex);
-
-                                                                                                AddPageToDisplay(pageID, pageOwnerID, versionIndex);
                                                                                             }
                                                                                             else
                                                                                             {
                                                                                                 var isNewDisplay = true;
                                                                                                 foreach(var gridDisplay in
-                                                                                                    notebookWorkspaceViewModel.Displays.Where(
-                                                                                                                                              gridDisplay =>
-                                                                                                                                              gridDisplay.ID == displayType &&
+                                                                                                    notebookWorkspaceViewModel.Displays.Where(gridDisplay =>
+                                                                                                                                              gridDisplay.ID == displayID &&
                                                                                                                                               gridDisplay is GridDisplay))
                                                                                                 {
-                                                                                                    (gridDisplay as GridDisplay).Pages.Clear();
                                                                                                     notebookWorkspaceViewModel.CurrentDisplay = gridDisplay;
 
                                                                                                     isNewDisplay = false;
@@ -76,24 +67,13 @@ namespace Classroom_Learning_Partner
                                                                                                 {
                                                                                                     var newGridDisplay = new GridDisplay
                                                                                                                          {
-                                                                                                                             ID = displayType,
-                                                                                                                             DisplayNumber = displayNumber
+                                                                                                                             ID = displayID,
+                                                                                                                             DisplayNumber = displayNumber,
+                                                                                                                             NotebookID = notebookWorkspaceViewModel.Notebook.ID
                                                                                                                          };
-                                                                                                    newGridDisplay.Pages.Clear();
-                                                                                                    notebookWorkspaceViewModel.Notebook.AddDisplayToNotebook(newGridDisplay);
+                                                                                                    notebookWorkspaceViewModel.Notebook.Displays.Add(newGridDisplay);
                                                                                                     notebookWorkspaceViewModel.CurrentDisplay = null;
                                                                                                     notebookWorkspaceViewModel.CurrentDisplay = newGridDisplay;
-                                                                                                }
-
-                                                                                                foreach(var joinedComposite in displayPageIDs)
-                                                                                                {
-                                                                                                    var compositeKeys = joinedComposite.Split(';');
-                                                                                                    var pageID = compositeKeys[0];
-                                                                                                    var pageOwnerID = compositeKeys[1];
-                                                                                                    var versionIndex = -1;
-                                                                                                    Int32.TryParse(compositeKeys[2], out versionIndex);
-
-                                                                                                    AddPageToDisplay(pageID, pageOwnerID, versionIndex);
                                                                                                 }
                                                                                             }
                                                                                         }
@@ -102,7 +82,7 @@ namespace Classroom_Learning_Partner
                                                        null);
         }
 
-        public void AddPageToDisplay(string pageID, string pageOwnerID, int pageVersionIndex)
+        public void AddPageToDisplay(string pageID, string pageOwnerID, string differentiationLevel, int pageVersionIndex)
         {
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                        (DispatcherOperationCallback)delegate
@@ -142,7 +122,7 @@ namespace Classroom_Learning_Partner
                                                        null);
         }
 
-        public void RemovePageFromDisplay(string pageID, string pageOwnerID, int pageVersionIndex)
+        public void RemovePageFromDisplay(string pageID, string pageOwnerID, string differentiationLevel, int pageVersionIndex)
         {
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                        (DispatcherOperationCallback)delegate

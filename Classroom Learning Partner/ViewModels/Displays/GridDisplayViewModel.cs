@@ -102,37 +102,6 @@ namespace Classroom_Learning_Partner.ViewModels
         private void Pages_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             UGridRows = Pages.Count < 3 ? 1 : 0;
-
-            if(!App.MainWindowViewModel.Ribbon.IsProjectorOn ||
-               App.Network.ProjectorProxy == null ||
-               IsDisplayPreview)
-            {
-                return;
-            }
-
-            if(e.NewItems != null)
-            {
-                foreach(var page in e.NewItems.OfType<CLPPage>()) 
-                {
-                    try
-                    {
-                        App.Network.ProjectorProxy.AddPageToDisplay(page.ID, page.OwnerID, (int)page.VersionIndex);
-                    }
-                    catch { }
-                }
-            }
-
-            if(e.OldItems != null)
-            {
-                foreach(var page in e.OldItems.OfType<CLPPage>()) 
-                {
-                    try
-                    {
-                        App.Network.ProjectorProxy.RemovePageFromDisplay(page.ID, page.OwnerID, (int)page.VersionIndex);
-                    }
-                    catch { }
-                }
-            }
         }
 
         #endregion //Methods
