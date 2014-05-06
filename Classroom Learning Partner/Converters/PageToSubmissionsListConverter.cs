@@ -11,7 +11,7 @@ namespace Classroom_Learning_Partner.Converters
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            var pageSubmissions = (ObservableCollection<CLPPage>)values[0];
+            var pageSubmissions = values[0] as ObservableCollection<CLPPage>;
             var submissionsWithBlanks = new ObservableCollection<StudentProgressInfo>();
             var studentList = new ObservableCollection<Person>();
             if(App.MainWindowViewModel.CurrentClassPeriod != null)
@@ -27,12 +27,15 @@ namespace Classroom_Learning_Partner.Converters
             }
             foreach (Person student in studentList) {
                 CLPPage foundSubmission = null;
-                foreach(CLPPage submission in pageSubmissions)
+                if(pageSubmissions != null)
                 {
-                    if(submission.OwnerID == student.ID)
+                    foreach(CLPPage submission in pageSubmissions)
                     {
-                        foundSubmission = submission;
-                        break;
+                        if(submission.OwnerID == student.ID)
+                        {
+                            foundSubmission = submission;
+                            break;
+                        }
                     }
                 }
                 submissionsWithBlanks.Add(new StudentProgressInfo(student, foundSubmission));

@@ -39,9 +39,14 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 CurrentPages.Add(page);
             }
-            FirstPage = CurrentPages[0];
-            SecondPage = CurrentPages[1];
-
+            if(CurrentPages.Count > 0)
+            {
+                FirstPage = CurrentPages[0];
+            }
+            if(CurrentPages.Count > 1)
+            {
+                SecondPage = CurrentPages[1];
+            }
             SetCurrentPageCommand = new Command<CLPPage>(OnSetCurrentPageCommandExecute);
             PageHeightUpdateCommand = new Command(OnPageHeightUpdateCommandExecute);
             BackCommand = new Command(OnBackCommandExecute);
@@ -186,11 +191,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnForwardCommandExecute()
         {
-            var nextIndex = CurrentPages.IndexOf(SecondPage) + 1;
-            if(nextIndex < CurrentPages.Count)
+            if(SecondPage != null) // don't go forward if there's only one page
             {
-                FirstPage = SecondPage;
-                SecondPage = CurrentPages[nextIndex];
+                var nextIndex = CurrentPages.IndexOf(SecondPage) + 1;
+                if(nextIndex < CurrentPages.Count)
+                {
+                    FirstPage = SecondPage;
+                    SecondPage = CurrentPages[nextIndex];
+                }
             }
         }
 
@@ -210,6 +218,5 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion
-
     }
 }
