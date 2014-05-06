@@ -40,7 +40,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 CurrentPages.Add(page);
             }
             FirstPage = CurrentPages[0];
-            SecondPage = CurrentPages[1];
+           // SecondPage = CurrentPages[1];
 
             SetCurrentPageCommand = new Command<CLPPage>(OnSetCurrentPageCommandExecute);
             PageHeightUpdateCommand = new Command(OnPageHeightUpdateCommandExecute);

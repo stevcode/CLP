@@ -527,9 +527,9 @@
                     </RibbonToggleButton.Style>
                 </RibbonToggleButton>
                  
-                <RibbonButton Label="New Page After This Page"
+                <RibbonButton Label="Create Sub-Page"
                               LargeImageSource="pack://application:,,,/Resources/Images/BlankPage64.png"
-                              Command="{Binding BroadcastPageCommand}" /> 
+                              Command="{Binding CreateSubPageCommand}" /> 
 
                 <RibbonButton Label="Broadcast This Page"
                               LargeImageSource="pack://application:,,,/Resources/Images/BlankPage64.png"

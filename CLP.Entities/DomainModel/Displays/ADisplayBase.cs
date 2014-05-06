@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
@@ -83,6 +84,17 @@ namespace CLP.Entities
         public static readonly PropertyData NotebookIDProperty = RegisterProperty("NotebookID", typeof(string), string.Empty);
 
         /// <summary>
+        /// List of the composite IDs of the <see cref="CLPPage" />s in the <see cref="IDisplay" />.
+        /// </summary>
+        public List<string> CompositePageIDs
+        {
+            get { return GetValue<List<string>>(CompositePageIDsProperty); }
+            set { SetValue(CompositePageIDsProperty, value); }
+        }
+
+        public static readonly PropertyData CompositePageIDsProperty = RegisterProperty("CompositePageIDs", typeof(List<string>), () => new List<string>());
+
+        /// <summary>
         /// List of the <see cref="CLPPage" />s in the <see cref="IDisplay" />.
         /// </summary>
         [XmlIgnore]
@@ -102,6 +114,10 @@ namespace CLP.Entities
         public abstract void AddPageToDisplay(CLPPage page);
 
         public abstract void RemovePageFromDisplay(CLPPage page);
+
+        public abstract void ToXML(string filePath);
+
+        public abstract void Save(string folderPath);
 
         #endregion //Methods
     }

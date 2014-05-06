@@ -459,6 +459,11 @@ namespace CLP.Entities
             {
                 Directory.CreateDirectory(displaysFolderPath);
             }
+
+            foreach(var display in Displays)
+            {
+                display.Save(displaysFolderPath);
+            }
         }
 
         public void SavePartialNotebook(string folderPath, bool serializeInkStrokes = true)
@@ -577,6 +582,36 @@ namespace CLP.Entities
                 }
 
                 notebook.Pages = new ObservableCollection<CLPPage>(notebookPages.OrderBy(x => x.PageNumber));
+
+                var displaysFolderPath = Path.Combine(folderPath, "Displays");
+                var displayFilePaths = Directory.EnumerateFiles(displaysFolderPath, "*.xml");
+                var displays = new List<IDisplay>();
+                foreach(var displayFilePath in displayFilePaths)
+                {
+                    var displayFileName = System.IO.Path.GetFileNameWithoutExtension(displayFilePath);
+                    if(displayFileName == null)
+                    {
+                        continue;
+                    }
+                    var displayInfo = displayFileName.Split(';');
+                    if(displayInfo.Length != 3)
+                    {
+                        continue;
+                    }
+
+                    var displayType = displayInfo[0];
+                    switch(displayType)
+                    {
+                        case "grid":
+                            var gridDisplay = GridDisplay.Load(displayFilePath, notebook);
+                            displays.Add(gridDisplay);
+                            break;
+                        default:
+                            continue;
+                    }
+                }
+
+                notebook.Displays = new ObservableCollection<IDisplay>(displays.OrderBy(x => x.DisplayNumber));
 
                 return notebook;
             }
