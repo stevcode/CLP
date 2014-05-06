@@ -7,12 +7,12 @@ using CLP.Entities;
 
 namespace Classroom_Learning_Partner.Converters
 {
-    public class PageToSubmissionsListConverter : IValueConverter
+    public class PageToSubmissionsListConverter : IMultiValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            var page = (CLPPage)value;
-            var submissions = new ObservableCollection<StudentProgressInfo>();
+            var pageSubmissions = values[0] as ObservableCollection<CLPPage>;
+            var submissionsWithBlanks = new ObservableCollection<StudentProgressInfo>();
             var studentList = new ObservableCollection<Person>();
             if(App.MainWindowViewModel.CurrentClassPeriod != null)
             {
@@ -27,20 +27,23 @@ namespace Classroom_Learning_Partner.Converters
             }
             foreach (Person student in studentList) {
                 CLPPage foundSubmission = null;
-                foreach(CLPPage submission in page.Submissions)
+                if(pageSubmissions != null)
                 {
-                    if(submission.OwnerID == student.ID)
+                    foreach(CLPPage submission in pageSubmissions)
                     {
-                        foundSubmission = submission;
-                        break;
+                        if(submission.OwnerID == student.ID)
+                        {
+                            foundSubmission = submission;
+                            break;
+                        }
                     }
                 }
-                submissions.Add(new StudentProgressInfo(student, foundSubmission));
+                submissionsWithBlanks.Add(new StudentProgressInfo(student, foundSubmission));
             }
-            return submissions;
+            return submissionsWithBlanks;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object[] ConvertBack(object value, Type[] targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }
