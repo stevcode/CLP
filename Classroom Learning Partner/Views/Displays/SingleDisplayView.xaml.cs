@@ -12,6 +12,7 @@ namespace Classroom_Learning_Partner.Views
         public SingleDisplayView()
         {
             InitializeComponent();
+            CloseViewModelOnUnloaded = false;
         }
 
         protected override Type GetViewModelType() { return typeof(SingleDisplayViewModel); }

@@ -216,6 +216,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 var pageViewModel = viewModel as ACLPPageBaseViewModel;
                 if(pageViewModel != null &&
+                   CurrentPage != null &&
                    pageViewModel.Page.ID == CurrentPage.ID)
                 {
                     OnPageResize();
