@@ -58,7 +58,7 @@ namespace Classroom_Learning_Partner
             var viewManager = ServiceLocator.Default.ResolveType<IViewManager>();
             var views = viewManager.GetViewsOfViewModel(viewModel);
 
-            return views[0];
+            return views.Any() ? views[0] : null;
         }
 
         public List<IViewModel> GetViewModelsFromModel(IModel model)

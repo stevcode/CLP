@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using Catel.Data;
 using Catel.MVVM;
@@ -61,6 +62,19 @@ namespace Classroom_Learning_Partner.ViewModels
                singleDisplayViewModel.CurrentPage == null)
             {
                 return;
+            }
+
+            if(advancedPropertyChangedEventArgs.OldValue == null)
+            {
+                var singleDisplayView = CLPServiceAgent.Instance.GetViewFromViewModel(singleDisplayViewModel);
+                if(singleDisplayView != null)
+                {
+                    var frameworkElement = singleDisplayView as FrameworkElement;
+                    if(frameworkElement != null)
+                    {
+                        singleDisplayViewModel.DisplayWidthHeight = new Tuple<double, double>(frameworkElement.ActualWidth, frameworkElement.ActualHeight);
+                    }
+                }
             }
 
             singleDisplayViewModel.OnPageResize();

@@ -623,6 +623,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                 }
             }
+            notebookToUse.CurrentPage = notebookToUse.Pages.FirstOrDefault();
             App.MainWindowViewModel.OpenNotebooks.Add(notebookToUse);
             App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(notebookToUse);
             App.MainWindowViewModel.AvailableUsers = App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.StudentList;
