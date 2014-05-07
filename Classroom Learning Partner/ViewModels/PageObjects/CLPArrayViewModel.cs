@@ -40,7 +40,6 @@ namespace Classroom_Learning_Partner.ViewModels
             CreateHorizontalDivisionCommand = new Command(OnCreateHorizontalDivisionCommandExecute);
             EditLabelCommand = new Command<CLPArrayDivision>(OnEditLabelCommandExecute);
             EraseDivisionCommand = new Command<MouseEventArgs>(OnEraseDivisionCommandExecute);
-            EraseLabelCommand = new Command<CLPArrayDivision>(OnEraseLabelCommandExecute);
             ToggleMainArrayAdornersCommand = new Command<MouseButtonEventArgs>(OnToggleMainArrayAdornersCommandExecute);
             DuplicateArrayCommand = new Command(OnDuplicateArrayCommandExecute);
         }
@@ -1142,16 +1141,6 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPArrayDivisionsChangedHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, PageObject.ID, addedDivisions, removedDivisions));
-        }
-
-        /// <summary>
-        /// Resets the label to a question mark
-        /// </summary>
-        public Command<CLPArrayDivision> EraseLabelCommand { get; private set; }
-
-        private void OnEraseLabelCommandExecute(CLPArrayDivision division)
-        {
-            division.Value = 0;
         }
 
         /// <summary>
