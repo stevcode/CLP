@@ -3094,7 +3094,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnInsertHorizontalLineShapeCommandExecute()
         {
-            var line = new Shape(CurrentPage, ShapeType.HorizontalLine);
+            var line = new Shape(CurrentPage, ShapeType.HorizontalLine)
+                       {
+                           Height = 20.0
+                       };
             ACLPPageBaseViewModel.AddPageObjectToPage(line);
         }
 
@@ -3105,7 +3108,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnInsertVerticalLineShapeCommandExecute()
         {
-            var line = new Shape(CurrentPage, ShapeType.VerticalLine);
+            var line = new Shape(CurrentPage, ShapeType.VerticalLine)
+                       {
+                           Width = 20.0
+                       };
             ACLPPageBaseViewModel.AddPageObjectToPage(line);
         }
 
