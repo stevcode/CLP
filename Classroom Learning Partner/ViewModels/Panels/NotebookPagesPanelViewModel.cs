@@ -39,6 +39,14 @@ namespace Classroom_Learning_Partner.ViewModels
             get { return "NotebookPagesPanelVM"; }
         }
 
+        /// <summary>
+        /// Initial Length of the Panel, before any resizing.
+        /// </summary>
+        public override double InitialLength
+        {
+            get { return 300.0; }
+        }
+
         #endregion //Constructor
 
         #region Model
