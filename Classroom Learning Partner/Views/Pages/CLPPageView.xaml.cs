@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel;
+using Catel.MVVM;
 using Classroom_Learning_Partner.ViewModels;
 using CLP.Entities;
 

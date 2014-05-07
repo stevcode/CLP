@@ -11,7 +11,6 @@ namespace Classroom_Learning_Partner.Views
         public GridDisplayView()
         {
             InitializeComponent();
-            CloseViewModelOnUnloaded = false;
         }
 
         protected override Type GetViewModelType() { return typeof(GridDisplayViewModel); }
