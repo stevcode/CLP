@@ -67,8 +67,9 @@
                                              Width="7"
                                              Fill="LawnGreen"
                                              Margin="5 0 3 0"
-                                             VerticalAlignment="Center" />
-                                        <TextBlock FontWeight="Bold" VerticalAlignment="Center">
+                                             VerticalAlignment="Center"
+                                             Visibility="{Binding IsConnected, Converter={StaticResource BooleanToHidingVisibilityConverter}}"/>
+                                    <TextBlock FontWeight="Bold" VerticalAlignment="Center">
                                         <Run Text="{Binding FullName}" />
                                     </TextBlock>
                                 </StackPanel>
