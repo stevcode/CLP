@@ -53,6 +53,18 @@ namespace Classroom_Learning_Partner.ViewModels
             ClearPageCommand = new Command(OnClearPageCommandExecute);
         }
 
+        #region Overrides of ViewModelBase
+
+        protected override void OnClosing()
+        {
+            InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
+            PageObjects.CollectionChanged -= PageObjects_CollectionChanged;
+            Submissions.CollectionChanged -= Submissions_CollectionChanged;
+            base.OnClosing();
+        }
+
+        #endregion
+
         public override string Title
         {
             get { return "APageBaseVM"; }
@@ -374,7 +386,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public bool HasSubmissions
         {
-            get { return Submissions.Any(); }
+            get { return Submissions.Any() || Page.LastVersionIndex != null; }
         }
 
         public int NumberOfDistinctSubmissions

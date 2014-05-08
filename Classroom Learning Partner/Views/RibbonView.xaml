@@ -40,6 +40,12 @@
                                            KeyTip="O"
                                            ImageSource="pack://application:,,,/Resources/Images/OpenNotebook32.png"
                                            Command="{Binding OpenNotebookCommand}" />
+                
+                <RibbonApplicationMenuItem Header="Copy Notebook For New Owner"
+                                           KeyTip="S"
+                                           ImageSource="pack://application:,,,/Resources/Images/SaveNotebook32.png"
+                                           Command="{Binding CopyNotebookForNewOwnerCommand}"
+                                           Visibility="{Binding AuthoringTabVisibility}" />
 
                 <!--<RibbonApplicationMenuItem Header="Save Notebook"
                                            KeyTip="S"
@@ -122,7 +128,7 @@
                     </RibbonToggleButton.Style>
                 </RibbonToggleButton>               
                 
-                <RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/GroupSubmit32.png"
+                <!--<RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/GroupSubmit32.png"
                                     SmallImageSource="pack://application:,,,/Resources/Images/GroupSubmit16.png"
                                     IsChecked="{Binding CurrentLeftPanel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.StudentWork}}"
                                     IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
@@ -140,7 +146,7 @@
                             </Style.Triggers>
                         </Style>
                     </RibbonToggleButton.Style>
-                </RibbonToggleButton>
+                </RibbonToggleButton>-->
 
                 <RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/Clipboard32.png"
                                     IsChecked="{Binding CurrentLeftPanel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.Progress}}"
@@ -417,7 +423,7 @@
 
             </RibbonGroup>
 
-            <!--<RibbonGroup Header="History">
+            <RibbonGroup Header="History">
 
                 <RibbonButton Label="Undo"
                               LargeImageSource="pack://application:,,,/Resources/Images/Undo32.png"
@@ -429,7 +435,7 @@
                               SmallImageSource="pack://application:,,,/Resources/Images/Redo16.png"
                               Command="{Binding RedoCommand}" />
 
-            </RibbonGroup>-->
+            </RibbonGroup>
 
             <RibbonGroup Header="Displays"
                          Visibility="{Binding InstructorVisibility}">
@@ -497,6 +503,41 @@
             </RibbonGroup>
 
         </RibbonTab>
+        
+        <RibbonTab Header="Overflow"
+                   Visibility="{Binding InstructorVisibility}">
+            
+            <RibbonGroup Header="Page">
+                
+                <RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/PageInformation32.png"
+                                    IsChecked="{Binding CurrentRightPanel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.PageInformation}}"
+                                    IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}">
+                    <RibbonToggleButton.Style>
+                        <Style TargetType="{x:Type RibbonToggleButton}">
+                            <Setter Property="Label"
+                                    Value="Show Page Info" />
+                            <Style.Triggers>
+                                <Trigger Property="IsChecked"
+                                         Value="True">
+                                    <Setter Property="Label"
+                                            Value="Hide PageInfo" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </RibbonToggleButton.Style>
+                </RibbonToggleButton>
+                 
+                <RibbonButton Label="Create Sub-Page"
+                              LargeImageSource="pack://application:,,,/Resources/Images/BlankPage64.png"
+                              Command="{Binding CreateSubPageCommand}" /> 
+
+                <RibbonButton Label="Broadcast This Page"
+                              LargeImageSource="pack://application:,,,/Resources/Images/BlankPage64.png"
+                              Command="{Binding BroadcastPageCommand}" />
+
+            </RibbonGroup>
+            
+        </RibbonTab>
 
         <!--Insert Tab-->
         <RibbonTab Header="Insert"
@@ -534,7 +575,7 @@
 
             </RibbonGroup>
 
-            <RibbonGroup Header="Stamps">
+            <!--<RibbonGroup Header="Stamps">
 
                 <RibbonButton Label="Stamp"
                               LargeImageSource="pack://application:,,,/Resources/Images/Stamp32.png"
@@ -554,7 +595,7 @@
                               LargeImageSource="..\Images\PictureStamp.png"
                               Command="{Binding InsertImageContainerStampCommand}" />
 
-            </RibbonGroup>
+            </RibbonGroup>-->
 
             <RibbonGroup Header="Arrays">
 
@@ -565,7 +606,7 @@
                               Command="{Binding InsertArrayCommand}"
                               CommandParameter="ARRAY" />
 
-                <RibbonButton Label="Array Card"
+                <!--<RibbonButton Label="Array Card"
                               LargeImageSource="pack://application:,,,/Resources/Images/ArrayCard32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/ArrayCard16.png"
                               Command="{Binding InsertArrayCommand}"
@@ -575,7 +616,7 @@
                               LargeImageSource="pack://application:,,,/Resources/Images/FactorCard32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/FactorCard16.png"
                               Command="{Binding InsertArrayCommand}"
-                              CommandParameter="FACTORCARD" />
+                              CommandParameter="FACTORCARD" />-->
 
                 <RibbonButton Label="Division Tool"
                               LargeImageSource="pack://application:,,,/Resources/Images/FuzzyFactorCard32.png"
@@ -767,28 +808,6 @@
             </RibbonGroup>
 
             <RibbonGroup Header="Page">
-                
-                <RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/Displays32.png"
-                                    IsChecked="{Binding CurrentRightPanel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.PageInformation}}"
-                                    IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}">
-                    <RibbonToggleButton.Style>
-                        <Style TargetType="{x:Type RibbonToggleButton}">
-                            <Setter Property="Label"
-                                    Value="Show Page Info" />
-                            <Style.Triggers>
-                                <Trigger Property="IsChecked"
-                                         Value="True">
-                                    <Setter Property="Label"
-                                            Value="Hide PageInfo" />
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </RibbonToggleButton.Style>
-                </RibbonToggleButton>
-
-                <RibbonButton Label="Broadcast This Page"
-                              LargeImageSource="..\Images\LargeIcon.png"
-                              Command="{Binding BroadcastPageCommand}" />
 
                 <RibbonButton Label="Replace This Page"
                               LargeImageSource="..\Images\LargeIcon.png"
@@ -855,8 +874,7 @@
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="{x:Type RibbonMenuItem}">
-                                        <ContentPresenter Grid.Column="1"
-                                                          ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                        <ContentPresenter ContentTemplate="{TemplateBinding HeaderTemplate}"
                                                           Content="{TemplateBinding Header}"
                                                           ContentStringFormat="{TemplateBinding HeaderStringFormat}"
                                                           ContentSource="Header"

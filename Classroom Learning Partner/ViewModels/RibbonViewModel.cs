@@ -104,6 +104,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //File Menu
             NewNotebookCommand = new Command(OnNewNotebookCommandExecute);
             OpenNotebookCommand = new Command(OnOpenNotebookCommandExecute);
+            CopyNotebookForNewOwnerCommand = new Command(OnCopyNotebookForNewOwnerCommandExecute);
             SaveNotebookCommand = new Command(OnSaveNotebookCommandExecute);
             ForceSaveNotebookCommand = new Command(OnForceSaveNotebookCommandExecute);
             SaveAllNotebooksCommand = new Command(OnSaveAllNotebooksCommandExecute);
@@ -678,6 +679,16 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnOpenNotebookCommandExecute()
         {
             MainWindow.Workspace = new NotebookChooserWorkspaceViewModel();
+        }
+
+        /// <summary>
+        /// Copies the current authored notebook for a new owner.
+        /// </summary>
+        public Command CopyNotebookForNewOwnerCommand { get; private set; }
+
+        private void OnCopyNotebookForNewOwnerCommandExecute()
+        {
+            MainWindowViewModel.CopyNotebookForNewOwner();
         }
 
         /// <summary>
@@ -3083,7 +3094,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnInsertHorizontalLineShapeCommandExecute()
         {
-            var line = new Shape(CurrentPage, ShapeType.HorizontalLine);
+            var line = new Shape(CurrentPage, ShapeType.HorizontalLine)
+                       {
+                           Height = 20.0
+                       };
             ACLPPageBaseViewModel.AddPageObjectToPage(line);
         }
 
@@ -3094,7 +3108,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnInsertVerticalLineShapeCommandExecute()
         {
-            var line = new Shape(CurrentPage, ShapeType.VerticalLine);
+            var line = new Shape(CurrentPage, ShapeType.VerticalLine)
+                       {
+                           Width = 20.0
+                       };
             ACLPPageBaseViewModel.AddPageObjectToPage(line);
         }
 

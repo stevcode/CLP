@@ -28,5 +28,22 @@ namespace Classroom_Learning_Partner.Views
 
             base.OnRenderSizeChanged(sizeInfo);
         }
+
+        #region Overrides of UserControl
+
+        protected override void OnViewModelChanged()
+        {
+            if(ViewModel != null)
+            {
+                var singleDisplayViewModel = ViewModel as SingleDisplayViewModel;
+                if(singleDisplayViewModel != null)
+                {
+                    singleDisplayViewModel.DisplayWidthHeight = new Tuple<double, double>(ActualWidth, ActualHeight);
+                }
+            }
+            base.OnViewModelChanged();
+        }
+
+        #endregion
     }
 }

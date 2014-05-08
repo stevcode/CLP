@@ -403,11 +403,11 @@ namespace CLP.Entities
                 Directory.CreateDirectory(pagesFolderPath);
             }
 
-            var pageFilePaths = Directory.EnumerateFiles(pagesFolderPath, "*.xml").ToList();
-            foreach(var pageFilePath in pageFilePaths)
-            {
-                File.Delete(pageFilePath);
-            }
+            //var pageFilePaths = Directory.EnumerateFiles(pagesFolderPath, "*.xml").ToList();
+            //foreach(var pageFilePath in pageFilePaths)
+            //{
+            //    File.Delete(pageFilePath);
+            //}
 
             foreach(var page in Pages)
             {
@@ -458,6 +458,11 @@ namespace CLP.Entities
             if(!Directory.Exists(displaysFolderPath))
             {
                 Directory.CreateDirectory(displaysFolderPath);
+            }
+
+            foreach(var display in Displays)
+            {
+                display.Save(displaysFolderPath);
             }
         }
 
@@ -578,6 +583,36 @@ namespace CLP.Entities
 
                 notebook.Pages = new ObservableCollection<CLPPage>(notebookPages.OrderBy(x => x.PageNumber));
 
+                var displaysFolderPath = Path.Combine(folderPath, "Displays");
+                var displayFilePaths = Directory.EnumerateFiles(displaysFolderPath, "*.xml");
+                var displays = new List<IDisplay>();
+                foreach(var displayFilePath in displayFilePaths)
+                {
+                    var displayFileName = System.IO.Path.GetFileNameWithoutExtension(displayFilePath);
+                    if(displayFileName == null)
+                    {
+                        continue;
+                    }
+                    var displayInfo = displayFileName.Split(';');
+                    if(displayInfo.Length != 3)
+                    {
+                        continue;
+                    }
+
+                    var displayType = displayInfo[0];
+                    switch(displayType)
+                    {
+                        case "grid":
+                            var gridDisplay = GridDisplay.Load(displayFilePath, notebook);
+                            displays.Add(gridDisplay);
+                            break;
+                        default:
+                            continue;
+                    }
+                }
+
+                notebook.Displays = new ObservableCollection<IDisplay>(displays.OrderBy(x => x.DisplayNumber));
+
                 return notebook;
             }
             catch(Exception)
@@ -651,6 +686,40 @@ namespace CLP.Entities
                 }
 
                 notebook.Pages = new ObservableCollection<CLPPage>(notebookPages.OrderBy(x => x.PageNumber));
+
+                var displaysFolderPath = Path.Combine(folderPath, "Displays");
+                var displayFilePaths = Directory.EnumerateFiles(displaysFolderPath, "*.xml");
+                var displays = new List<IDisplay>();
+                foreach(var displayFilePath in displayFilePaths)
+                {
+                    var displayFileName = System.IO.Path.GetFileNameWithoutExtension(displayFilePath);
+                    if(displayFileName == null)
+                    {
+                        continue;
+                    }
+                    var displayInfo = displayFileName.Split(';');
+                    if(displayInfo.Length != 3)
+                    {
+                        continue;
+                    }
+
+                    var displayType = displayInfo[0];
+                    switch(displayType)
+                    {
+                        case "grid":
+                            var gridDisplay = GridDisplay.Load(displayFilePath, notebook);
+                            if(gridDisplay == null)
+                            {
+                                continue;
+                            }
+                            displays.Add(gridDisplay);
+                            break;
+                        default:
+                            continue;
+                    }
+                }
+
+                notebook.Displays = new ObservableCollection<IDisplay>(displays.OrderBy(x => x.DisplayNumber));
 
                 return notebook;
             }

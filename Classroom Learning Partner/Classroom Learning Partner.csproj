@@ -240,6 +240,7 @@
     <Compile Include="Network\StudentService.cs" />
     <Compile Include="Resources\Converters.cs" />
     <Compile Include="Resources\InkInterpretation.cs" />
+    <Compile Include="ViewModels\Modal Windows\PersonCreationViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\RemainderTilesViewModel.cs" />
     <Compile Include="ViewModels\Pages\CLPAnimationPageViewModel.cs" />
     <Compile Include="ViewModels\Pages\CLPPageViewModel.cs" />
@@ -268,6 +269,9 @@
     </Compile>
     <Compile Include="Views\Modal Windows\FuzzyFactorCardWithTiles.xaml.cs">
       <DependentUpon>FuzzyFactorCardWithTiles.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Modal Windows\PersonCreationView.xaml.cs">
+      <DependentUpon>PersonCreationView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Modal Windows\SimpleTextWindowView.xaml.cs">
       <DependentUpon>SimpleTextWindowView.xaml</DependentUpon>
@@ -488,6 +492,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Modal Windows\FuzzyFactorCardWithTiles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Modal Windows\PersonCreationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -845,6 +853,10 @@
     <Content Include="External Libraries\NRtfTree.dll" />
     <Content Include="External Libraries\ServiceModelEx.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
+    <Resource Include="Resources\Images\BlankPage64.png" />
+    <Resource Include="Resources\Images\PageInformation16.png" />
+    <Resource Include="Resources\Images\PageInformation32.png" />
+    <Resource Include="Resources\Images\PageInformation64.png" />
     <Resource Include="Resources\Images\PenDisabled16.png" />
     <Resource Include="Resources\Images\PenDisabled32.png" />
     <Resource Include="Resources\Images\YellowStar16.png" />
