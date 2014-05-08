@@ -3,9 +3,9 @@
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
-    
     <UserControl.Resources>
         <ResourceDictionary>
             <catel:BooleanToHidingVisibilityConverter x:Key="BooleanToHidingVisibilityConverter" />
@@ -22,54 +22,62 @@
             BorderThickness="{Binding Location, Converter={StaticResource PanelLocationToThicknessConverter}, ConverterParameter=7.0}"
             Width="{Binding Length}">
         <Grid>
-            <!-- content and resizing thumb-->
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
+                <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <ScrollViewer Grid.Column="0" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Button Grid.Row="0" Grid.Column="0" Height="30" Width="170"
+                    VerticalAlignment="Center" HorizontalAlignment="Center"
+                    Content="Choose Class Period" Margin="10"
+                    Command="{Binding ChooseClassPeriodCommand}" />
+            <Slider Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" x:Name="SizeSlider"
+                    Minimum="32" Maximum="300"/>
+            <ScrollViewer Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"  HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
                 <ScrollViewer.Resources>
                     <sys:Double x:Key="{x:Static SystemParameters.VerticalScrollBarWidthKey}">25</sys:Double>
                 </ScrollViewer.Resources>
                 <Grid>
-                <!-- names and pages -->
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="50"/> <!-- combobox-->
-                        <RowDefinition Height="8"/> <!-- page numbers -->
-                        <RowDefinition Height="5"/> <!-- teacher pages -->
-                    <RowDefinition Height="*"/> <!-- student pages -->
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="80" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <Button Grid.Row="0" Grid.ColumnSpan="2" Height="30" Width="170"
-                    VerticalAlignment="Center" HorizontalAlignment="Center"
-                    Content="Choose Class Period" Margin="10"
-                    Command="{Binding ChooseClassPeriodCommand}" />
-                <TextBlock Grid.Column="0" Grid.Row="2" VerticalAlignment="Top" FontWeight="Bold" Foreground="Blue" Margin="15 0 0 0">
-                    <Run Text="Teacher"/>
-                </TextBlock>
-                <ItemsControl Grid.Column="0" Grid.Row="3" Margin="0"
-                              ItemsSource="{Binding StudentList}" VerticalAlignment="Top">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal" Height="24">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20"/>
+                        <!-- page numbers -->
+                        <RowDefinition Height="{Binding ElementName=SizeSlider, Path=Value}"/>
+                        <!-- teacher pages -->
+                        <RowDefinition Height="*"/>
+                        <!-- student pages -->
+                        <RowDefinition Height="25" />
+                        <!-- placeholder for horizontal scrollbar -->
+                    </Grid.RowDefinitions>
+                    <!-- names and pages -->
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="80" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" VerticalAlignment="Center" Grid.Row="1" FontWeight="Bold" Foreground="Blue" Margin="15 0 0 0">
+                        <Run Text="Teacher"/>
+                    </TextBlock>
+                    <ItemsControl Grid.Column="0" Grid.Row="2" Margin="0" ItemsSource="{Binding StudentList}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Height="32" VerticalAlignment="Center">
                                     <Ellipse Height="7"
-                                         Width="7"
-                                         Fill="LawnGreen"
-                                         Margin="5 3 3 0"
-                                         VerticalAlignment="Top"
-                                    Visibility="{Binding IsConnected, Converter={StaticResource BooleanToHidingVisibilityConverter}}"/>
-                                <TextBlock FontWeight="Bold" Height="24">
-                                    <Run Text="{Binding FullName}" />
-                                </TextBlock>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-                <ScrollViewer Grid.Column="1" Grid.Row="1" Grid.RowSpan="3" 
+                                             Width="7"
+                                             Fill="LawnGreen"
+                                             Margin="5 0 3 0"
+                                             VerticalAlignment="Center" />
+                                        <TextBlock FontWeight="Bold" VerticalAlignment="Center">
+                                        <Run Text="{Binding FullName}" />
+                                    </TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                <ScrollViewer Grid.Column="1" Grid.Row="0" Grid.RowSpan="4" 
                               HorizontalScrollBarVisibility="Auto"
-                              VerticalScrollBarVisibility="Disabled">
+                              VerticalScrollBarVisibility="Disabled" Margin="0">
                     <ScrollViewer.Resources>
                         <sys:Double x:Key="{x:Static SystemParameters.HorizontalScrollBarHeightKey}">25</sys:Double>
                     </ScrollViewer.Resources>
@@ -84,9 +92,9 @@
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="20" />
-                                    <RowDefinition Height="24" />
-                                    <RowDefinition Height="*"  />
-                                </Grid.RowDefinitions>
+                                    <RowDefinition Height="{Binding ElementName=SizeSlider, Path=Value}" />
+                                    <RowDefinition Height="*"/>
+                                        </Grid.RowDefinitions>
                                 <TextBlock Grid.Row="0"
                                            FontWeight="Bold"
                                            VerticalAlignment="Center"
@@ -96,21 +104,27 @@
                                 <Border Grid.Row="1" Margin="3"
                                         BorderBrush="{StaticResource GrayEdgeColor}"
                                         BorderThickness="1,1,1,1">
-                                    <Rectangle Grid.Row="0" Margin="0" Fill="White" StrokeThickness="2" Height="16" Width="32">
-                                        <Rectangle.Stroke>
-                                            <MultiBinding Converter="{StaticResource PageMatchToColorConverter}">
-                                                <Binding ElementName="Pages" Path="DataContext.CurrentPage"/>
-                                                <Binding Path=""/>
-                                            </MultiBinding>
-                                        </Rectangle.Stroke>
-                                        <i:Interaction.Triggers>
-                                            <i:EventTrigger EventName="MouseUp">
-                                                <catel:EventToCommand Command="{Binding DataContext.SetCurrentPageCommand, ElementName=Pages}"
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition/>
+                                                </Grid.RowDefinitions>
+                                                <views:CLPPagePreviewView Grid.Row="0" Margin="0" DataContext="{Binding}" ClipToBounds="True" />
+                                                <Rectangle Grid.Row="0" Margin="0" Fill="Transparent" StrokeThickness="2">
+                                                    <Rectangle.Stroke>
+                                                        <MultiBinding Converter="{StaticResource PageMatchToColorConverter}">
+                                                            <Binding ElementName="Pages" Path="DataContext.CurrentPage"/>
+                                                            <Binding Path=""/>
+                                                        </MultiBinding>
+                                                    </Rectangle.Stroke>
+                                                    <i:Interaction.Triggers>
+                                                        <i:EventTrigger EventName="MouseUp">
+                                                            <catel:EventToCommand Command="{Binding DataContext.SetCurrentPageCommand, ElementName=Pages}"
                                                                                       PassEventArgsToCommand="False"
                                                                                       CommandParameter="{Binding}" />
-                                            </i:EventTrigger>
-                                        </i:Interaction.Triggers>
-                                    </Rectangle>
+                                                        </i:EventTrigger>
+                                                    </i:Interaction.Triggers>
+                                                </Rectangle>
+                                            </Grid>      
                                 </Border>
                                 <ItemsControl Grid.Row="2">
                                     <ItemsControl.ItemsSource>
@@ -127,7 +141,7 @@
                                     </ItemsControl.ItemsPanel>
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <Border Margin="3"
+                                            <Border Margin="2" Height="28" Width="28" HorizontalAlignment="Center" VerticalAlignment="Center"
                                                     BorderBrush="{StaticResource GrayEdgeColor}"
                                                     BorderThickness="1,1,1,1">
                                                 <Grid>
@@ -177,6 +191,7 @@
             </ScrollViewer>
             <!--Thumb Cursor="ScrollWE" Width="5" 
             <Thumb Cursor="ScrollWE"
+                   Grid.Column="1"
                    Width="7"
                    Margin="0 0 -7 0"
                    VerticalAlignment="Stretch"
