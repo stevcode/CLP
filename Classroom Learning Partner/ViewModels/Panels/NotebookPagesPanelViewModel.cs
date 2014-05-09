@@ -8,6 +8,7 @@ using Catel.MVVM;
 using CLP.Entities;
 using System.IO;
 using System.Windows;
+using System.Windows.Media.Imaging;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -162,8 +163,17 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(page).First(x => (x is CLPPageViewModel) && !(x as CLPPageViewModel).IsPagePreview);
                 UIElement pageView = (UIElement) CLPServiceAgent.Instance.GetViewFromViewModel(pageViewModel);
-                File.WriteAllBytes(thumbnailFilePath, CLPServiceAgent.Instance.GetJpgImage(pageView, 1.0, 100, true));
-                page.HasThumbnail = true;
+                var thumbnail = CLPServiceAgent.Instance.GetJpgImage(pageView, 1.0, 100, true);
+                //File.WriteAllBytes(thumbnailFilePath, thumbnail);
+
+                var bitmapImage = new BitmapImage();
+                bitmapImage.BeginInit();
+                bitmapImage.CacheOption = BitmapCacheOption.OnDemand;
+                bitmapImage.StreamSource = new MemoryStream(thumbnail);
+                bitmapImage.EndInit();
+                bitmapImage.Freeze();
+
+                page.PageThumbnail = bitmapImage;
 
                 if(App.Network.ProjectorProxy == null ||
                    !App.MainWindowViewModel.Ribbon.IsProjectorOn)

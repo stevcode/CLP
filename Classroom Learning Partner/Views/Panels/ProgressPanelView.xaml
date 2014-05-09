@@ -110,7 +110,7 @@
                                                 <Grid.RowDefinitions>
                                                     <RowDefinition/>
                                                 </Grid.RowDefinitions>
-                                                <Image Source="{Binding Converter={StaticResource PageToThumbnailFilePathConverter}}"/>
+                                                <Image Source="{Binding PageThumbnail}"/>
                                                 <!--views:CLPPagePreviewView Grid.Row="0" Margin="0" DataContext="{Binding}" ClipToBounds="True" /-->
                                                 <Rectangle Grid.Row="0" Margin="0" Fill="Transparent" StrokeThickness="2">
                                                     <Rectangle.Stroke>
