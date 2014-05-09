@@ -18,7 +18,7 @@
             <conv:ItemSelectedToColorConverter x:Key="PageOrDisplaySelectionColorConverter" />
             <conv:TypeToStringConverter x:Key="TypeToStringConverter" />
             <conv:PanelLocationToThicknessConverter x:Key="PanelLocationToThicknessConverter" />
-            <conv:IsNullConverter x:Key="IsNullConverter" />
+            <conv:ShouldUseThumbnailConverter x:Key="ShouldUseThumbnailConverter" />
 
             <!-- Style to override ListBoxItem selection visuals for Pages -->
             <Style x:Key="PageSidebarContainer"
@@ -54,6 +54,7 @@
                          SelectedValue="{Binding CurrentPage, Mode=OneWay}"
                          ItemContainerStyle="{StaticResource PageSidebarContainer}"
                          SelectionMode="Single"
+                         x:Name="PagesListBox"
                          extenders:ListBoxExtenders.AutoScrollToCurrentItem="True">
 
                     <ListBox.ItemTemplate>
@@ -96,24 +97,38 @@
                                                           ClipToBounds="True" />
                                         </ControlTemplate>
                                     </Control.Resources>
-
                                     <Control.Style>
                                         <Style TargetType="{x:Type Control}">
                                             <Style.Triggers>
+                                                <!--Thumbnail trigger-->
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Value="True">
+                                                            <Condition.Binding>
+                                                                <MultiBinding Converter="{StaticResource ShouldUseThumbnailConverter}">
+                                                                    <Binding ElementName="PagesListBox" Path="DataContext.CurrentPage"/>
+                                                                    <Binding Path=""/>
+                                                                </MultiBinding>
+                                                            </Condition.Binding>
+                                                        </Condition>
+                                                    </MultiDataTrigger.Conditions>
+                                                    <Setter Property="Template" Value="{StaticResource ThumbnailTemplate}" />
+                                                </MultiDataTrigger>
 
                                                 <!--PagePreview trigger-->
-                                                <DataTrigger Binding="{Binding PageThumbnail, Converter={StaticResource IsNullConverter}}"
-                                                             Value="True">
-                                                    <Setter Property="Template"
-                                                            Value="{StaticResource PagePreviewTemplate}" />
-                                                </DataTrigger>
-
-                                                <!--Thumbnail trigger-->
-                                                <DataTrigger Binding="{Binding PageThumbnail, Converter={StaticResource IsNullConverter}}"
-                                                             Value="False">
-                                                    <Setter Property="Template"
-                                                            Value="{StaticResource ThumbnailTemplate}" />
-                                                </DataTrigger>
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Value="False">
+                                                            <Condition.Binding>
+                                                                <MultiBinding Converter="{StaticResource ShouldUseThumbnailConverter}">
+                                                                    <Binding ElementName="PagesListBox" Path="DataContext.CurrentPage"/>
+                                                                    <Binding Path=""/>
+                                                                </MultiBinding>
+                                                            </Condition.Binding>
+                                                        </Condition>
+                                                    </MultiDataTrigger.Conditions>
+                                                    <Setter Property="Template" Value="{StaticResource PagePreviewTemplate}" />
+                                                </MultiDataTrigger>
                                             </Style.Triggers>
                                         </Style>
                                     </Control.Style>
