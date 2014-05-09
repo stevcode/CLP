@@ -70,8 +70,10 @@ namespace Classroom_Learning_Partner
 
         public byte[] GetJpgImage(UIElement source, double scale = 1.0, int quality = 100, bool png = false)
         {
-            var actualHeight = source.RenderSize.Height;
-            var actualWidth = source.RenderSize.Width;
+            // These are like this because they're making nicely-sized page thumbnails.
+            // TODO make the values constants dependent on something or other.
+            var actualHeight = 492 * source.RenderSize.Height / source.RenderSize.Width; //source.RenderSize.Height;
+            var actualWidth = 492; //source.RenderSize.Width;
 
             var renderHeight = actualHeight * scale;
             var renderWidth = actualWidth * scale;
