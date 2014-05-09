@@ -164,6 +164,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(page).First(x => (x is CLPPageViewModel) && !(x as CLPPageViewModel).IsPagePreview);
                 UIElement pageView = (UIElement) CLPServiceAgent.Instance.GetViewFromViewModel(pageViewModel);
                 File.WriteAllBytes(thumbnailFilePath, CLPServiceAgent.Instance.GetJpgImage(pageView, 0.6, 100, true));
+                page.HasThumbnail = true;
 
                 if(App.Network.ProjectorProxy == null ||
                    !App.MainWindowViewModel.Ribbon.IsProjectorOn)
