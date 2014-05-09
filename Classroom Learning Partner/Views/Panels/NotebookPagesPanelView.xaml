@@ -18,6 +18,7 @@
             <conv:ItemSelectedToColorConverter x:Key="PageOrDisplaySelectionColorConverter" />
             <conv:TypeToStringConverter x:Key="TypeToStringConverter" />
             <conv:PanelLocationToThicknessConverter x:Key="PanelLocationToThicknessConverter" />
+            <conv:IsNullConverter x:Key="IsNullConverter" />
 
             <!-- Style to override ListBoxItem selection visuals for Pages -->
             <Style x:Key="PageSidebarContainer"
@@ -83,12 +84,40 @@
                                     </TextBlock.LayoutTransform>
                                 </TextBlock>
 
-                                <Image Grid.Column="1" Margin="5" Source="{Binding PageThumbnail, Mode=OneWay}"/>
-                                <!--views:CLPPagePreviewView x:Name="PagePreviewView"
-                                                          Grid.Column="1"
-                                                          Margin="5"
+                                <Control Grid.Column="1" Margin="5">
+                                    <Control.Resources>
+                                        <ControlTemplate x:Key="ThumbnailTemplate">
+                                            <Image Source="{Binding PageThumbnail, Mode=OneWay}"/>
+                                        </ControlTemplate>
+
+                                        <ControlTemplate x:Key="PagePreviewTemplate">
+                                            <views:CLPPagePreviewView x:Name="PagePreviewView"
                                                           DataContext="{Binding}"
-                                                          ClipToBounds="True" /-->
+                                                          ClipToBounds="True" />
+                                        </ControlTemplate>
+                                    </Control.Resources>
+
+                                    <Control.Style>
+                                        <Style TargetType="{x:Type Control}">
+                                            <Style.Triggers>
+
+                                                <!--PagePreview trigger-->
+                                                <DataTrigger Binding="{Binding PageThumbnail, Converter={StaticResource IsNullConverter}}"
+                                                             Value="True">
+                                                    <Setter Property="Template"
+                                                            Value="{StaticResource PagePreviewTemplate}" />
+                                                </DataTrigger>
+
+                                                <!--Thumbnail trigger-->
+                                                <DataTrigger Binding="{Binding PageThumbnail, Converter={StaticResource IsNullConverter}}"
+                                                             Value="False">
+                                                    <Setter Property="Template"
+                                                            Value="{StaticResource ThumbnailTemplate}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Control.Style>
+                                </Control>
 
                                 <Rectangle Grid.Column="1"
                                            Margin="5"

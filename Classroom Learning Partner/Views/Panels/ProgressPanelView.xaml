@@ -14,7 +14,7 @@
             <conv:PageToSubmissionVisibilityConverter x:Key="PageToSubmissionVisibilityConverter" />
             <conv:PanelLocationToThicknessConverter x:Key="PanelLocationToThicknessConverter" />
             <conv:PageMatchToColorConverter x:Key="PageMatchToColorConverter" />
-            <conv:PageToThumbnailFilePathConverter x:Key="PageToThumbnailFilePathConverter" />
+            <conv:IsNullConverter x:Key="IsNullConverter" />
         </ResourceDictionary>
     </UserControl.Resources>
     
@@ -110,8 +110,40 @@
                                                 <Grid.RowDefinitions>
                                                     <RowDefinition/>
                                                 </Grid.RowDefinitions>
-                                                <Image Source="{Binding PageThumbnail, Mode=OneWay}"/>
-                                                <!--views:CLPPagePreviewView Grid.Row="0" Margin="0" DataContext="{Binding}" ClipToBounds="True" /-->
+                                                <Control Grid.Row="0" Margin="0">
+                                                    <Control.Resources>
+                                                        <ControlTemplate x:Key="ThumbnailTemplate">
+                                                            <Image Source="{Binding PageThumbnail, Mode=OneWay}"/>
+                                                        </ControlTemplate>
+
+                                                        <ControlTemplate x:Key="PagePreviewTemplate">
+                                                            <views:CLPPagePreviewView x:Name="PagePreviewView"
+                                                          DataContext="{Binding}"
+                                                          ClipToBounds="True" />
+                                                        </ControlTemplate>
+                                                    </Control.Resources>
+
+                                                    <Control.Style>
+                                                        <Style TargetType="{x:Type Control}">
+                                                            <Style.Triggers>
+
+                                                                <!--PagePreview trigger-->
+                                                                <DataTrigger Binding="{Binding PageThumbnail, Converter={StaticResource IsNullConverter}}"
+                                                             Value="True">
+                                                                    <Setter Property="Template"
+                                                            Value="{StaticResource PagePreviewTemplate}" />
+                                                                </DataTrigger>
+
+                                                                <!--Thumbnail trigger-->
+                                                                <DataTrigger Binding="{Binding PageThumbnail, Converter={StaticResource IsNullConverter}}"
+                                                             Value="False">
+                                                                    <Setter Property="Template"
+                                                            Value="{StaticResource ThumbnailTemplate}" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Control.Style>
+                                                </Control>
                                                 <Rectangle Grid.Row="0" Margin="0" Fill="Transparent" StrokeThickness="2">
                                                     <Rectangle.Stroke>
                                                         <MultiBinding Converter="{StaticResource PageMatchToColorConverter}">

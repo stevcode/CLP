@@ -217,7 +217,6 @@
     <Compile Include="Converters\IntToVisibilityConverter.cs" />
     <Compile Include="Converters\IsNullConverter.cs" />
     <Compile Include="Converters\ItemsControlItemIndexConverter.cs" />
-    <Compile Include="Converters\PageToThumbnailFilePathConverter.cs" />
     <Compile Include="Converters\PersonToSubmissionsCountConverter.cs" />
     <Compile Include="Converters\PageMatchToColorConverter.cs" />
     <Compile Include="Converters\ItemSelectedToColorConverter.cs" />

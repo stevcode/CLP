@@ -15,7 +15,8 @@
             <conv:PanelLocationToThicknessConverter x:Key="PanelLocationToThicknessConverter" />
             <conv:PageMatchToColorConverter x:Key="PageMatchToColorConverter" />
             <conv:PersonToSubmissionsCountConverter x:Key="PersonToSubmissionsCountConverter" />
-
+            <conv:IsNullConverter x:Key="IsNullConverter" />
+            
             <!-- Style to override ListBoxItem selection visuals for Pages -->
             <Style x:Key="PageSidebarContainer"
                TargetType="{x:Type ListBoxItem}">
@@ -88,9 +89,35 @@
                         <RowDefinition />
                         <!-- lower rows -->
                     </Grid.RowDefinitions>
-                    <views:CLPPagePreviewView x:Name="FirstTeacherPagePreviewView"
-                    Grid.Row="0" Grid.Column="2" Margin="5" DataContext="{Binding FirstPage}"
-                    ClipToBounds="True" />
+                    <Control Grid.Row="0" Grid.Column="2" Margin="5">
+                        <Control.Resources>
+                            <ControlTemplate x:Key="FirstTeacherPageThumbnailTemplate">
+                                <Image Source="{Binding FirstPage.PageThumbnail, Mode=OneWay}"/>
+                            </ControlTemplate>
+
+                            <ControlTemplate x:Key="FirstTeacherPagePreviewTemplate">
+                                <views:CLPPagePreviewView x:Name="FirstTeacherPagePreviewView"
+                                                          DataContext="{Binding FirstPage}"
+                                                          ClipToBounds="True" />
+                            </ControlTemplate>
+                        </Control.Resources>
+
+                        <Control.Style>
+                            <Style TargetType="{x:Type Control}">
+                                <Style.Triggers>
+                                    <!--PagePreview trigger-->
+                                    <DataTrigger Binding="{Binding FirstPage.PageThumbnail, Converter={StaticResource IsNullConverter}}" Value="True">
+                                        <Setter Property="Template" Value="{StaticResource FirstTeacherPagePreviewTemplate}" />
+                                    </DataTrigger>
+
+                                    <!--Thumbnail trigger-->
+                                    <DataTrigger Binding="{Binding FirstPage.PageThumbnail, Converter={StaticResource IsNullConverter}}" Value="False">
+                                        <Setter Property="Template" Value="{StaticResource FirstTeacherPageThumbnailTemplate}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Control.Style>
+                    </Control>
                     <Rectangle Grid.Row="0" Grid.Column="2" Margin="3" Fill="Transparent" StrokeThickness="2">
                         <Rectangle.Stroke>
                             <MultiBinding Converter="{StaticResource PageMatchToColorConverter}">
@@ -107,9 +134,35 @@
                         </i:Interaction.Triggers>
                     </Rectangle>
 
-                    <views:CLPPagePreviewView x:Name="SecondTeacherPagePreviewView"
-                    Grid.Row="0" Grid.Column="3" Margin="5" DataContext="{Binding SecondPage}"
-                    ClipToBounds="True" />
+                    <Control Grid.Row="0" Grid.Column="3" Margin="5">
+                        <Control.Resources>
+                            <ControlTemplate x:Key="SecondTeacherPageThumbnailTemplate">
+                                <Image Source="{Binding SecondPage.PageThumbnail, Mode=OneWay}"/>
+                            </ControlTemplate>
+
+                            <ControlTemplate x:Key="SecondTeacherPagePreviewTemplate">
+                                <views:CLPPagePreviewView x:Name="SecondTeacherPagePreviewView"
+                                                          DataContext="{Binding SecondPage}"
+                                                          ClipToBounds="True" />
+                            </ControlTemplate>
+                        </Control.Resources>
+
+                        <Control.Style>
+                            <Style TargetType="{x:Type Control}">
+                                <Style.Triggers>
+                                    <!--PagePreview trigger-->
+                                    <DataTrigger Binding="{Binding SecondPage.PageThumbnail, Converter={StaticResource IsNullConverter}}" Value="True">
+                                        <Setter Property="Template" Value="{StaticResource SecondTeacherPagePreviewTemplate}" />
+                                    </DataTrigger>
+
+                                    <!--Thumbnail trigger-->
+                                    <DataTrigger Binding="{Binding SecondPage.PageThumbnail, Converter={StaticResource IsNullConverter}}" Value="False">
+                                        <Setter Property="Template" Value="{StaticResource SecondTeacherPageThumbnailTemplate}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Control.Style>
+                    </Control>
                     <Rectangle Grid.Row="0" Grid.Column="3" Margin="3" Fill="Transparent" StrokeThickness="2">
                         <Rectangle.Stroke>
                             <MultiBinding Converter="{StaticResource PageMatchToColorConverter}">
@@ -182,11 +235,35 @@
                                             <RowDefinition Height="*"/>
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
-                                        <views:CLPPagePreviewView x:Name="FirstPagePreviewView"
-                                                              Grid.Row="0"
-                                                              Margin="5"
-                                                              DataContext="{Binding Page}"
-                                                              ClipToBounds="True" />
+                                        <Control Grid.Row="0" Grid.Column="2" Margin="5">
+                                            <Control.Resources>
+                                                <ControlTemplate x:Key="FirstPageThumbnailTemplate">
+                                                    <Image Source="{Binding Page.PageThumbnail, Mode=OneWay}"/>
+                                                </ControlTemplate>
+
+                                                <ControlTemplate x:Key="FirstPagePreviewTemplate">
+                                                    <views:CLPPagePreviewView x:Name="FirstPagePreviewView"
+                                                          DataContext="{Binding Page}"
+                                                          ClipToBounds="True" />
+                                                </ControlTemplate>
+                                            </Control.Resources>
+
+                                            <Control.Style>
+                                                <Style TargetType="{x:Type Control}">
+                                                    <Style.Triggers>
+                                                        <!--PagePreview trigger-->
+                                                        <DataTrigger Binding="{Binding Page.PageThumbnail, Converter={StaticResource IsNullConverter}}" Value="True">
+                                                            <Setter Property="Template" Value="{StaticResource FirstPagePreviewTemplate}" />
+                                                        </DataTrigger>
+
+                                                        <!--Thumbnail trigger-->
+                                                        <DataTrigger Binding="{Binding Page.PageThumbnail, Converter={StaticResource IsNullConverter}}" Value="False">
+                                                            <Setter Property="Template" Value="{StaticResource FirstPageThumbnailTemplate}" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Control.Style>
+                                        </Control>
                                         <Rectangle Grid.Row="0" Margin="0" Fill="Transparent" StrokeThickness="2">
                                             <Rectangle.Stroke>
                                                 <MultiBinding Converter="{StaticResource PageMatchToColorConverter}">
@@ -231,11 +308,35 @@
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
 
-                                        <views:CLPPagePreviewView x:Name="SecondPagePreviewView"
-                                                              Grid.Row="0"
-                                                              Margin="5"
-                                                              DataContext="{Binding Page}"
-                                                              ClipToBounds="True" />
+                                        <Control Grid.Row="0" Grid.Column="2" Margin="5">
+                                            <Control.Resources>
+                                                <ControlTemplate x:Key="SecondPageThumbnailTemplate">
+                                                    <Image Source="{Binding Page.PageThumbnail, Mode=OneWay}"/>
+                                                </ControlTemplate>
+
+                                                <ControlTemplate x:Key="SecondPagePreviewTemplate">
+                                                    <views:CLPPagePreviewView x:Name="SecondPagePreviewView"
+                                                          DataContext="{Binding Page}"
+                                                          ClipToBounds="True" />
+                                                </ControlTemplate>
+                                            </Control.Resources>
+
+                                            <Control.Style>
+                                                <Style TargetType="{x:Type Control}">
+                                                    <Style.Triggers>
+                                                        <!--PagePreview trigger-->
+                                                        <DataTrigger Binding="{Binding Page.PageThumbnail, Converter={StaticResource IsNullConverter}}" Value="True">
+                                                            <Setter Property="Template" Value="{StaticResource SecondPagePreviewTemplate}" />
+                                                        </DataTrigger>
+
+                                                        <!--Thumbnail trigger-->
+                                                        <DataTrigger Binding="{Binding Page.PageThumbnail, Converter={StaticResource IsNullConverter}}" Value="False">
+                                                            <Setter Property="Template" Value="{StaticResource SecondPageThumbnailTemplate}" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Control.Style>
+                                        </Control>
                                         <Rectangle Grid.Row="0" Margin="0" Fill="Transparent" StrokeThickness="2">
                                             <Rectangle.Stroke>
                                                 <MultiBinding Converter="{StaticResource PageMatchToColorConverter}">
