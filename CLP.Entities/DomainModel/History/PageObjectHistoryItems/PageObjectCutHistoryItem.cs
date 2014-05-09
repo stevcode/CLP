@@ -219,6 +219,16 @@ namespace CLP.Entities
             }
         }
 
+        public override bool IsUsingTrashedPageObject(string id, bool isUndoItem)
+        {
+            return isUndoItem ? CutPageObjectIDs.Contains(id) : HalvedPageObjectIDs.Contains(id);
+        }
+
+        public override bool IsUsingTrashedInkStroke(string id, bool isUndoItem)
+        {
+            return CuttingStrokeID == id;
+        }
+
         #endregion //Methods
     }
 }

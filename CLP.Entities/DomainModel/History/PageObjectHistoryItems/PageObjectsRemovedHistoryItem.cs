@@ -123,6 +123,8 @@ namespace CLP.Entities
         /// </summary>
         public override void UnpackHistoryItem() { }
 
+        public override bool IsUsingTrashedPageObject(string id, bool isUndoItem) { return isUndoItem && PageObjectIDs.Contains(id); }
+
         #endregion //Methods
     }
 }

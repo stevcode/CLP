@@ -283,6 +283,8 @@ namespace CLP.Entities
         /// </summary>
         public override void UnpackHistoryItem() { }
 
+        public override bool IsUsingTrashedPageObject(string id, bool isUndoItem) { return isUndoItem && SnappedArrayID == id; }
+
         #endregion //Methods
     }
 }

@@ -43,10 +43,10 @@ namespace ConsoleScripts
             //    Console.WriteLine("CompactID: " + compactID);
             //}
 
-            ConvertToNewIDs();
+            Convert();
         }
 
-        static void ConvertToNewIDs()
+        static void Convert()
         {
             var convertFromFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Convert");
             var convertToFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Converted");
@@ -61,82 +61,31 @@ namespace ConsoleScripts
                 var filePath = Path.Combine(notebookFolderPath, "notebook.xml");
                 var notebook = ModelBase.Load<Notebook>(filePath, SerializationMode.Xml);
                 var pagesFolderPath = Path.Combine(notebookFolderPath, "Pages");
-                var pageAndHistoryFilePaths = Directory.EnumerateFiles(pagesFolderPath, "*.xml");
-                var pages = new List<CLPPage>();
-                foreach(var pageAndHistoryFilePath in pageAndHistoryFilePaths)
+                var pageFilePaths = Directory.EnumerateFiles(pagesFolderPath, "*.xml");
+                foreach(var pageFilePath in pageFilePaths)
                 {
-                    var pageAndHistoryFileName = System.IO.Path.GetFileNameWithoutExtension(pageAndHistoryFilePath);
-                    if(pageAndHistoryFileName != null)
-                    {
-                        var pageAndHistoryInfo = pageAndHistoryFileName.Split(';');
-                        if(pageAndHistoryInfo.Length != 5 ||
-                           pageAndHistoryInfo[0] != "Page")
-                        {
-                            continue;
-                        }
-                        if(pageAndHistoryInfo[4] != "0")
-                        {
-                            continue;
-                        }
-                    }
-
-                    var page = ModelBase.Load<CLPPage>(pageAndHistoryFilePath, SerializationMode.Xml);
-                    pages.Add(page);
-                }
-
-                var notebookPages = new List<CLPPage>();
-
-                foreach(var notebookPage in pages)
-                {
-                    if(notebookPage.VersionIndex != 0)
-                    {
-                        continue;
-                    }
-                    notebookPages.Add(notebookPage);
-                }
-
-                notebook.Pages = new ObservableCollection<CLPPage>(notebookPages.OrderBy(x => x.PageNumber));
-
-                var compactOwnerID = new Guid(notebook.OwnerID).ToCompactID();
-                notebook.Owner.ID = compactOwnerID;
-                notebook.OwnerID = compactOwnerID;
-                notebook.ID = new Guid(notebook.ID).ToCompactID();
-
-                foreach(var page in notebook.Pages)
-                {
-                    page.ID = new Guid(page.ID).ToCompactID();
-                    page.OwnerID = compactOwnerID;
-                    page.Owner.ID = compactOwnerID;
-
-                    foreach(var pageObject in page.PageObjects)
-                    {
-                        pageObject.ID = new Guid(pageObject.ID).ToCompactID();
-                        pageObject.ParentPage = page;
-                        if(pageObject is Shape ||
-                           pageObject is CLPTextBox)
-                        {
-                            pageObject.OwnerID = Person.Author.ID;
-                            pageObject.CreatorID = Person.Author.ID;
-                        }
-                        else
-                        {
-                            pageObject.OwnerID = compactOwnerID;
-                            pageObject.CreatorID = compactOwnerID;
-                        }
-
-                    }
-
-                    foreach(var stroke in page.SerializedStrokes)
-                    {
-                        stroke.ID = new Guid(stroke.ID).ToCompactID();
-                        stroke.PersonID = compactOwnerID;
-                    }
-
+                    var page = ModelBase.Load<CLPPage>(pageFilePath, SerializationMode.Xml);
                     page.InkStrokes = StrokeDTO.LoadInkStrokes(page.SerializedStrokes);
+                    page.History.TrashedInkStrokes = StrokeDTO.LoadInkStrokes(page.History.SerializedTrashedInkStrokes);
+                    //Do stuff to each page here.
+
+                    var undoItemsToRemove = page.History.UndoItems.Where(historyItem => historyItem.OwnerID == Person.Author.ID).ToList();
+                    foreach(var historyItem in undoItemsToRemove)
+                    {
+                        page.History.UndoItems.Remove(historyItem);
+                    }
+
+                    var redoItemsToRemove = page.History.RedoItems.Where(historyItem => historyItem.OwnerID == Person.Author.ID).ToList();
+                    foreach(var historyItem in redoItemsToRemove)
+                    {
+                        page.History.RedoItems.Remove(historyItem);
+                    }
+
+                    page.History.OptimizeTrashedItems();
+
+                    //Finished doing stuff to page, it'll save below.
+                    page.ToXML(pageFilePath, true);
                 }
-                notebook.CurrentPage = notebook.Pages.First();
-                var folderPath = Path.Combine(convertToFolderPath, notebook.Name + ";" + notebook.ID + ";" + notebook.Owner.FullName + ";" + notebook.OwnerID);
-                notebook.SaveNotebook(folderPath);
             }
         }
 
