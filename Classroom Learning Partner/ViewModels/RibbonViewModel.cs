@@ -1425,33 +1425,32 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnReplayCommandExecute()
         {
-            // TODO: Entities
-            //var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
-            //if(currentPage == null) { return; }
+            var currentPage = CurrentPage;
+            if(currentPage == null) { return; }
 
-            //var oldPageInteractionMode = (PageInteractionMode == PageInteractionMode.None) ? PageInteractionMode.Pen : PageInteractionMode;
-            //PageInteractionMode = PageInteractionMode.None;
+            var oldPageInteractionMode = (PageInteractionMode == PageInteractionMode.None) ? PageInteractionMode.Pen : PageInteractionMode;
+            PageInteractionMode = PageInteractionMode.None;
 
-            //while(currentPage.PageHistory.UndoItems.Any()) { currentPage.PageHistory.Undo(); }
+            while(currentPage.History.UndoItems.Any()) { currentPage.History.Undo(); }
 
-            //var t = new Thread(() =>
-            //                   {
-            //                       while(currentPage.PageHistory.RedoItems.Any())
-            //                       {
-            //                           var historyItemAnimationDelay = Convert.ToInt32(Math.Round(currentPage.PageHistory.CurrentAnimationDelay / 2.0));
-            //                           Application.Current.Dispatcher.Invoke(DispatcherPriority.DataBind,
-            //                                                                 (DispatcherOperationCallback)delegate
-            //                                                                                              {
-            //                                                                                                  currentPage.PageHistory.Redo(true);
-            //                                                                                                  return null;
-            //                                                                                              },
-            //                                                                 null);
-            //                           Thread.Sleep(historyItemAnimationDelay);
-            //                       }
-            //                       PageInteractionMode = oldPageInteractionMode;
-            //                   });
+            var t = new Thread(() =>
+                               {
+                                   while(currentPage.History.RedoItems.Any())
+                                   {
+                                       var historyItemAnimationDelay = Convert.ToInt32(Math.Round(currentPage.History.CurrentAnimationDelay / 2.0));
+                                       Application.Current.Dispatcher.Invoke(DispatcherPriority.DataBind,
+                                                                             (DispatcherOperationCallback)delegate
+                                                                                                          {
+                                                                                                              currentPage.History.Redo(true);
+                                                                                                              return null;
+                                                                                                          },
+                                                                             null);
+                                       Thread.Sleep(historyItemAnimationDelay);
+                                   }
+                                   PageInteractionMode = oldPageInteractionMode;
+                               });
 
-            //t.Start();
+            t.Start();
         }
 
         /// <summary>

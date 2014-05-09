@@ -193,6 +193,10 @@ namespace CLP.Entities
 
         public abstract void UnpackHistoryItem();
 
+        public virtual bool IsUsingTrashedPageObject(string id, bool isUndoItem) { return false; }
+
+        public virtual bool IsUsingTrashedInkStroke(string id, bool isUndoItem) { return false; }
+
         #endregion //Methods
     }
 }

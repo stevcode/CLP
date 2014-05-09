@@ -243,7 +243,7 @@ namespace CLP.Entities
                 var leftArray = new CLPArray(ParentPage, closestColumn, Rows, ArrayTypes.Array)
                                 {
                                     IsGridOn = IsGridOn,
-                                    IsDivisionBehaviorOn = IsDivisionBehaviorOn,
+                                    IsDivisionBehaviorOn = false,
                                     XPosition = XPosition,
                                     YPosition = YPosition,
                                     IsTopLabelVisible = IsTopLabelVisible,
@@ -256,7 +256,7 @@ namespace CLP.Entities
                 var rightArray = new CLPArray(ParentPage, Columns - closestColumn, Rows, ArrayTypes.Array)
                                  {
                                      IsGridOn = IsGridOn,
-                                     IsDivisionBehaviorOn = IsDivisionBehaviorOn,
+                                     IsDivisionBehaviorOn = false,
                                      XPosition = XPosition + leftArray.ArrayWidth,
                                      YPosition = YPosition,
                                      IsTopLabelVisible = IsTopLabelVisible,
@@ -285,7 +285,7 @@ namespace CLP.Entities
                 var topArray = new CLPArray(ParentPage, Columns, closestRow, ArrayTypes.Array)
                                {
                                    IsGridOn = IsGridOn,
-                                   IsDivisionBehaviorOn = IsDivisionBehaviorOn,
+                                   IsDivisionBehaviorOn = false,
                                    XPosition = XPosition,
                                    YPosition = YPosition,
                                    IsTopLabelVisible = IsTopLabelVisible,
@@ -298,7 +298,7 @@ namespace CLP.Entities
                 var bottomArray = new CLPArray(ParentPage, Columns, Rows - closestRow, ArrayTypes.Array)
                                   {
                                       IsGridOn = IsGridOn,
-                                      IsDivisionBehaviorOn = IsDivisionBehaviorOn,
+                                      IsDivisionBehaviorOn = false,
                                       XPosition = XPosition,
                                       YPosition = YPosition + topArray.ArrayHeight,
                                       IsTopLabelVisible = IsTopLabelVisible,
