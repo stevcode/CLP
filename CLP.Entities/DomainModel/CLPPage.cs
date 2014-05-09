@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows.Ink;
+using System.Windows.Media;
 using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
@@ -97,15 +98,16 @@ namespace CLP.Entities
         #region Properties
 
         /// <summary>
-        /// Whether or not a .png thumbnail image has been saved for this page.
+        /// The thumbnail for the <see cref="CLPPage" />
         /// </summary>
-        public bool HasThumbnail
+        [XmlIgnore]
+        public ImageSource PageThumbnail
         {
-            get { return GetValue<bool>(HasThumbnailProperty); }
-            set { SetValue(HasThumbnailProperty, value); }
+            get { return GetValue<ImageSource>(PageThumbnailProperty); }
+            set { SetValue(PageThumbnailProperty, value); }
         }
 
-        public static readonly PropertyData HasThumbnailProperty = RegisterProperty("HasThumbnail", typeof(bool), false);
+        public static readonly PropertyData PageThumbnailProperty = RegisterProperty("PageThumbnail", typeof(ImageSource));
 
         /// <summary>
         /// Unique Identifier for the <see cref="CLPPage" />.
