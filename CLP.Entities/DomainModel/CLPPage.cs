@@ -97,6 +97,17 @@ namespace CLP.Entities
         #region Properties
 
         /// <summary>
+        /// Whether or not a .png thumbnail image has been saved for this page.
+        /// </summary>
+        public bool HasThumbnail
+        {
+            get { return GetValue<bool>(HasThumbnailProperty); }
+            set { SetValue(HasThumbnailProperty, value); }
+        }
+
+        public static readonly PropertyData HasThumbnailProperty = RegisterProperty("HasThumbnail", typeof(bool), false);
+
+        /// <summary>
         /// Unique Identifier for the <see cref="CLPPage" />.
         /// </summary>
         /// <remarks>
