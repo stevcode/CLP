@@ -191,6 +191,7 @@ namespace Classroom_Learning_Partner
 
         public static string LocalCacheDirectory { get; private set; }
         public static string NotebookCacheDirectory { get; private set; }
+        public static string CurrentNotebookCacheDirectory { get; set; }
         public static string ClassCacheDirectory { get; private set; }
         public static string ImageCacheDirectory { get; private set; }
 

@@ -152,8 +152,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 CurrentPage = page;
 
                 // save a thumbnail
-                var notebookFolderPath = Path.Combine(App.NotebookCacheDirectory, Notebook.Name + ";" + Notebook.ID + ";" + Notebook.Owner.FullName + ";" + Notebook.OwnerID);
-                var pagesFolderPath = Path.Combine(notebookFolderPath, "Pages");
+                var pagesFolderPath = Path.Combine(App.CurrentNotebookCacheDirectory, "Pages");
                 var thumbnailsFolderPath = Path.Combine(pagesFolderPath, "Thumbnails");
                 if(!Directory.Exists(thumbnailsFolderPath))
                 {

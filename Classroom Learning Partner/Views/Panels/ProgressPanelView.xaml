@@ -14,6 +14,7 @@
             <conv:PageToSubmissionVisibilityConverter x:Key="PageToSubmissionVisibilityConverter" />
             <conv:PanelLocationToThicknessConverter x:Key="PanelLocationToThicknessConverter" />
             <conv:PageMatchToColorConverter x:Key="PageMatchToColorConverter" />
+            <conv:PageToThumbnailFilePathConverter x:Key="PageToThumbnailFilePathConverter" />
         </ResourceDictionary>
     </UserControl.Resources>
     
@@ -109,7 +110,8 @@
                                                 <Grid.RowDefinitions>
                                                     <RowDefinition/>
                                                 </Grid.RowDefinitions>
-                                                <views:CLPPagePreviewView Grid.Row="0" Margin="0" DataContext="{Binding}" ClipToBounds="True" />
+                                                <Image Source="{Binding Converter={StaticResource PageToThumbnailFilePathConverter}}"/>
+                                                <!--views:CLPPagePreviewView Grid.Row="0" Margin="0" DataContext="{Binding}" ClipToBounds="True" /-->
                                                 <Rectangle Grid.Row="0" Margin="0" Fill="Transparent" StrokeThickness="2">
                                                     <Rectangle.Stroke>
                                                         <MultiBinding Converter="{StaticResource PageMatchToColorConverter}">

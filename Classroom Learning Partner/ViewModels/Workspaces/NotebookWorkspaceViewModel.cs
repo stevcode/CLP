@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Media;
 using Catel.Data;
+using Catel.IO;
 using Catel.MVVM;
 using CLP.Entities;
 using Brush = System.Windows.Media.Brush;
@@ -24,6 +25,8 @@ namespace Classroom_Learning_Partner.ViewModels
         public NotebookWorkspaceViewModel(Notebook notebook)
         {
             Notebook = notebook;
+
+            App.CurrentNotebookCacheDirectory = Path.Combine(App.NotebookCacheDirectory, Notebook.Name + ";" + Notebook.ID + ";" + Notebook.Owner.FullName + ";" + Notebook.OwnerID);
 
             InitializePanels(notebook);
 
