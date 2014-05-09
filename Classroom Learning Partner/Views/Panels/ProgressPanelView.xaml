@@ -110,7 +110,7 @@
                                                 <Grid.RowDefinitions>
                                                     <RowDefinition/>
                                                 </Grid.RowDefinitions>
-                                                <Image Source="{Binding PageThumbnail}"/>
+                                                <Image Source="{Binding PageThumbnail, Mode=OneWay}"/>
                                                 <!--views:CLPPagePreviewView Grid.Row="0" Margin="0" DataContext="{Binding}" ClipToBounds="True" /-->
                                                 <Rectangle Grid.Row="0" Margin="0" Fill="Transparent" StrokeThickness="2">
                                                     <Rectangle.Stroke>

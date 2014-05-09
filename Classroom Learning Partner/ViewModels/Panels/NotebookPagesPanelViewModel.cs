@@ -153,18 +153,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 CurrentPage = page;
 
                 // save a thumbnail
-                var pagesFolderPath = Path.Combine(App.CurrentNotebookCacheDirectory, "Pages");
-                var thumbnailsFolderPath = Path.Combine(pagesFolderPath, "Thumbnails");
-                if(!Directory.Exists(thumbnailsFolderPath))
-                {
-                    Directory.CreateDirectory(thumbnailsFolderPath);
-                }
-                var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, "p;" + page.PageNumber + ";" + page.ID + ";" + page.DifferentiationLevel + ";" + page.VersionIndex + ".png");
-
+                
                 var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(page).First(x => (x is CLPPageViewModel) && !(x as CLPPageViewModel).IsPagePreview);
                 UIElement pageView = (UIElement) CLPServiceAgent.Instance.GetViewFromViewModel(pageViewModel);
                 var thumbnail = CLPServiceAgent.Instance.GetJpgImage(pageView, 1.0, 100, true);
-                //File.WriteAllBytes(thumbnailFilePath, thumbnail);
 
                 var bitmapImage = new BitmapImage();
                 bitmapImage.BeginInit();

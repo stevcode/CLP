@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Windows.Media.Imaging;
 using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
@@ -418,6 +419,20 @@ namespace CLP.Entities
                 }
                 var pageFilePath = Path.Combine(pagesFolderPath, "p;" + page.PageNumber + ";" + page.ID + ";" + page.DifferentiationLevel + ";" + page.VersionIndex + ".xml");
                 page.ToXML(pageFilePath);
+                var thumbnailsFolderPath = Path.Combine(pagesFolderPath, "Thumbnails");
+                if(!Directory.Exists(thumbnailsFolderPath))
+                {
+                    Directory.CreateDirectory(thumbnailsFolderPath);
+                }
+                var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, "p;" + page.PageNumber + ";" + page.ID + ";" + page.DifferentiationLevel + ";" + page.VersionIndex + ".png");
+
+                var pngEncoder = new PngBitmapEncoder();
+                pngEncoder.Frames.Add(BitmapFrame.Create(page.PageThumbnail as BitmapSource));
+                using(var outputStream = new MemoryStream())
+                {
+                    pngEncoder.Save(outputStream);
+                    File.WriteAllBytes(thumbnailFilePath, outputStream.ToArray());
+                }
             }
 
             //var pageFilePaths = Directory.EnumerateFiles(pagesFolderPath, "*.xml").ToList();
@@ -528,6 +543,7 @@ namespace CLP.Entities
                 var filePath = Path.Combine(folderPath, "notebook.xml");
                 var notebook = Load<Notebook>(filePath, SerializationMode.Xml);
                 var pagesFolderPath = Path.Combine(folderPath, "Pages");
+                var thumbnailsFolderPath = Path.Combine(pagesFolderPath, "Thumbnails");
                 var pageAndHistoryFilePaths = Directory.EnumerateFiles(pagesFolderPath, "*.xml");
                 var pages = new List<CLPPage>();
                 foreach(var pageAndHistoryFilePath in pageAndHistoryFilePaths)
@@ -554,6 +570,10 @@ namespace CLP.Entities
                     {
                         notebook.CurrentPage = page;
                     }
+
+                    var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, pageAndHistoryFileName + ".png");
+                    page.PageThumbnail = CLPImage.GetImageFromPath(thumbnailFilePath);
+
                     pages.Add(page);
                 }
 
