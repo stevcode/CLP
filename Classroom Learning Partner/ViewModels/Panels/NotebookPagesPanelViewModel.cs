@@ -150,12 +150,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if(notebookWorkspaceViewModel.CurrentDisplay == null)
             {
-                CurrentPage = page;
-
-                // save a thumbnail
-                
-                var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(page).First(x => (x is CLPPageViewModel) && !(x as CLPPageViewModel).IsPagePreview);
-                UIElement pageView = (UIElement) CLPServiceAgent.Instance.GetViewFromViewModel(pageViewModel);
+                // save a thumbnail of page being navigated away from
+                var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(CurrentPage).First(x => (x is CLPPageViewModel) && !(x as CLPPageViewModel).IsPagePreview);
+                UIElement pageView = (UIElement)CLPServiceAgent.Instance.GetViewFromViewModel(pageViewModel);
                 var thumbnail = CLPServiceAgent.Instance.GetJpgImage(pageView, 1.0, 100, true);
 
                 var bitmapImage = new BitmapImage();
@@ -165,7 +162,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 bitmapImage.EndInit();
                 bitmapImage.Freeze();
 
-                page.PageThumbnail = bitmapImage;
+                CurrentPage.PageThumbnail = bitmapImage;
+
+                // actually set current page
+                CurrentPage = page;
 
                 if(App.Network.ProjectorProxy == null ||
                    !App.MainWindowViewModel.Ribbon.IsProjectorOn)

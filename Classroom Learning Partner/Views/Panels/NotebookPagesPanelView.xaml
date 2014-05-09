@@ -50,7 +50,7 @@
             <Grid>
                 <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          ItemsSource="{Binding Pages, IsAsync=True}"
-                         SelectedValue="{Binding CurrentPage}"
+                         SelectedValue="{Binding CurrentPage, Mode=OneWay}"
                          ItemContainerStyle="{StaticResource PageSidebarContainer}"
                          SelectionMode="Single"
                          extenders:ListBoxExtenders.AutoScrollToCurrentItem="True">
@@ -83,11 +83,12 @@
                                     </TextBlock.LayoutTransform>
                                 </TextBlock>
 
-                                <views:CLPPagePreviewView x:Name="PagePreviewView"
+                                <Image Grid.Column="1" Margin="5" Source="{Binding PageThumbnail, Mode=OneWay}"/>
+                                <!--views:CLPPagePreviewView x:Name="PagePreviewView"
                                                           Grid.Column="1"
                                                           Margin="5"
                                                           DataContext="{Binding}"
-                                                          ClipToBounds="True" />
+                                                          ClipToBounds="True" /-->
 
                                 <Rectangle Grid.Column="1"
                                            Margin="5"
