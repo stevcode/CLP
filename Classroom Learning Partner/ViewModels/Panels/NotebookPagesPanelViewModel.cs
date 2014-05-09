@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Catel.Data;
+using Path = Catel.IO.Path;
 using Catel.MVVM;
 using CLP.Entities;
+using System.IO;
+using System.Windows;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -147,6 +150,20 @@ namespace Classroom_Learning_Partner.ViewModels
             if(notebookWorkspaceViewModel.CurrentDisplay == null)
             {
                 CurrentPage = page;
+
+                // save a thumbnail
+                var notebookFolderPath = Path.Combine(App.NotebookCacheDirectory, Notebook.Name + ";" + Notebook.ID + ";" + Notebook.Owner.FullName + ";" + Notebook.OwnerID);
+                var pagesFolderPath = Path.Combine(notebookFolderPath, "Pages");
+                var thumbnailsFolderPath = Path.Combine(pagesFolderPath, "Thumbnails");
+                if(!Directory.Exists(thumbnailsFolderPath))
+                {
+                    Directory.CreateDirectory(thumbnailsFolderPath);
+                }
+                var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, "p;" + page.PageNumber + ";" + page.ID + ";" + page.DifferentiationLevel + ";" + page.VersionIndex + ".png");
+
+                var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(page).First(x => (x is CLPPageViewModel) && !(x as CLPPageViewModel).IsPagePreview);
+                UIElement pageView = (UIElement) CLPServiceAgent.Instance.GetViewFromViewModel(pageViewModel);
+                File.WriteAllBytes(thumbnailFilePath, CLPServiceAgent.Instance.GetJpgImage(pageView, 0.6, 100, true));
 
                 if(App.Network.ProjectorProxy == null ||
                    !App.MainWindowViewModel.Ribbon.IsProjectorOn)

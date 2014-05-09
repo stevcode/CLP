@@ -68,7 +68,7 @@ namespace Classroom_Learning_Partner
             return result;
         }
 
-        public byte[] GetJpgImage(UIElement source, double scale = 1.0, int quality = 100)
+        public byte[] GetJpgImage(UIElement source, double scale = 1.0, int quality = 100, bool png = false)
         {
             var actualHeight = source.RenderSize.Height;
             var actualWidth = source.RenderSize.Width;
@@ -88,18 +88,30 @@ namespace Classroom_Learning_Partner
                 drawingContext.DrawRectangle(sourceBrush, null, new Rect(new Point(0, 0), new Point(actualWidth, actualHeight)));
             }
             renderTarget.Render(drawingVisual);
-
-            var jpgEncoder = new JpegBitmapEncoder { QualityLevel = quality };
-            jpgEncoder.Frames.Add(BitmapFrame.Create(renderTarget));
-
+            
             byte[] imageArray;
 
-            using(var outputStream = new MemoryStream())
+            if(png)
             {
-                jpgEncoder.Save(outputStream);
-                imageArray = outputStream.ToArray();
+                var pngEncoder = new PngBitmapEncoder();
+                pngEncoder.Frames.Add(BitmapFrame.Create(renderTarget));
+                using(var outputStream = new MemoryStream())
+                {
+                    pngEncoder.Save(outputStream);
+                    imageArray = outputStream.ToArray();
+                }
             }
+            else
+            {
+                var jpgEncoder = new JpegBitmapEncoder { QualityLevel = quality };
+                jpgEncoder.Frames.Add(BitmapFrame.Create(renderTarget));
 
+                using(var outputStream = new MemoryStream())
+                {
+                    jpgEncoder.Save(outputStream);
+                    imageArray = outputStream.ToArray();
+                }
+            }
             return imageArray;
         }
 
