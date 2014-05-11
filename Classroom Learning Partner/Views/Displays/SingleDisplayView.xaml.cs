@@ -9,11 +9,7 @@ namespace Classroom_Learning_Partner.Views
     /// </summary>
     public partial class SingleDisplayView
     {
-        public SingleDisplayView()
-        {
-            InitializeComponent();
-            CloseViewModelOnUnloaded = false;
-        }
+        public SingleDisplayView() { InitializeComponent(); }
 
         protected override Type GetViewModelType() { return typeof(SingleDisplayViewModel); }
 
@@ -28,5 +24,22 @@ namespace Classroom_Learning_Partner.Views
 
             base.OnRenderSizeChanged(sizeInfo);
         }
+
+        #region Overrides of UserControl
+
+        protected override void OnViewModelChanged()
+        {
+            if(ViewModel != null)
+            {
+                var singleDisplayViewModel = ViewModel as SingleDisplayViewModel;
+                if(singleDisplayViewModel != null)
+                {
+                    singleDisplayViewModel.DisplayWidthHeight = new Tuple<double, double>(ActualWidth, ActualHeight);
+                }
+            }
+            base.OnViewModelChanged();
+        }
+
+        #endregion
     }
 }

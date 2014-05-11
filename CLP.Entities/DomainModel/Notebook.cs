@@ -403,11 +403,11 @@ namespace CLP.Entities
                 Directory.CreateDirectory(pagesFolderPath);
             }
 
-            var pageFilePaths = Directory.EnumerateFiles(pagesFolderPath, "*.xml").ToList();
-            foreach(var pageFilePath in pageFilePaths)
-            {
-                File.Delete(pageFilePath);
-            }
+            //var pageFilePaths = Directory.EnumerateFiles(pagesFolderPath, "*.xml").ToList();
+            //foreach(var pageFilePath in pageFilePaths)
+            //{
+            //    File.Delete(pageFilePath);
+            //}
 
             foreach(var page in Pages)
             {

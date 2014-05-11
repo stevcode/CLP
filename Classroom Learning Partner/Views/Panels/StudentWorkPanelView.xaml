@@ -114,35 +114,40 @@
                                 <StackPanel Orientation="Horizontal" Margin="3" Height="{Binding ElementName=StudentNames, Path=DataContext.PageHeight}">
                                     <StackPanel Orientation="Vertical" VerticalAlignment="Center">
                                         <StackPanel Orientation="Horizontal">
-                                        <Ellipse Height="7"
-                                             Width="7"
-                                             Fill="LawnGreen"
-                                             Margin="3 0 3 0"
-                                             VerticalAlignment="Center"
-                                             Visibility="{Binding IsConnected, Converter={StaticResource BooleanToHidingVisibilityConverter}}"/>
-                                        <TextBlock FontWeight="Bold" VerticalAlignment="Center">
-                                            <Run Text="{Binding FullName}" />
-                                        </TextBlock>
+                                            <Ellipse Height="7"
+                                                 Width="7"
+                                                 Fill="LawnGreen"
+                                                 Margin="3 0 3 0"
+                                                 VerticalAlignment="Center"
+                                                 Visibility="{Binding IsConnected, Converter={StaticResource BooleanToHidingVisibilityConverter}}"/>
+                                            <TextBlock FontWeight="Bold" VerticalAlignment="Center">
+                                                <Run Text="{Binding FullName}" />
+                                            </TextBlock>
+                                        </StackPanel>
+                                        <!--TextBlock FontWeight="Bold" HorizontalAlignment="Center">
+                                            <Run x:Name="SubmissionsCount">
+                                                <Run.Text>
+                                                    <MultiBinding Converter="{StaticResource PersonToSubmissionsCountConverter}">
+                                                        <Binding Mode="OneWay" Path=""/>
+                                                        <Binding ElementName="StudentNames" Path="DataContext.CurrentPages"/>
+                                                    </MultiBinding>
+                                                </Run.Text>
+                                            </Run>
+                                            <Run Text="/" />
+                                            <Run Text="{Binding Mode=OneWay, ElementName=StudentNames, Path=DataContext.CurrentPages.Count}" />
+                                        </-->
                                     </StackPanel>
-                                    <TextBlock FontWeight="Bold" HorizontalAlignment="Center">
-                                        <Run>
-                                            <Run.Text>
-                                                <MultiBinding Converter="{StaticResource PersonToSubmissionsCountConverter}">
-                                                    <Binding Mode="OneWay" Path=""/>
-                                                    <Binding ElementName="StudentNames" Path="DataContext.CurrentPages"/>
-                                                </MultiBinding>
-                                            </Run.Text>
-                                        </Run>
-                                        <Run Text="/" />
-                                        <Run Text="{Binding Mode=OneWay, ElementName=StudentNames, Path=DataContext.CurrentPages.Count}" />
-                                        </TextBlock>
-                                    </StackPanel>
-
                                 </StackPanel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
-                    <ItemsControl Name="FirstPageSubmissions" Grid.Column="2" Grid.Row="1" ItemsSource="{Binding FirstPage, Converter={StaticResource PageToSubmissionsListConverter}}">
+                    <ItemsControl Name="FirstPageSubmissions" Grid.Column="2" Grid.Row="1">
+                        <ItemsControl.ItemsSource>
+                            <MultiBinding Converter="{StaticResource PageToSubmissionsListConverter}">
+                                <Binding Path="FirstPage.Submissions"/>
+                                <Binding Path="FirstPage.Submissions.Count"/><!-- hack to update on collection change -->
+                            </MultiBinding>
+                        </ItemsControl.ItemsSource>
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <StackPanel Orientation="Vertical" />
@@ -183,7 +188,14 @@
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
-                    <ItemsControl Name="SecondPageSubmissions" Grid.Column="3" Grid.Row="1" ItemsSource="{Binding SecondPage, Converter={StaticResource PageToSubmissionsListConverter}}">
+                    <ItemsControl Name="SecondPageSubmissions" Grid.Column="3" Grid.Row="1">
+                        <ItemsControl.ItemsSource>
+                            <MultiBinding Converter="{StaticResource PageToSubmissionsListConverter}">
+                                <Binding Path="SecondPage.Submissions"/>
+                                <Binding Path="SecondPage.Submissions.Count"/>
+                                <!-- hack to update on collection change -->
+                            </MultiBinding>
+                        </ItemsControl.ItemsSource>
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <StackPanel Orientation="Vertical" />

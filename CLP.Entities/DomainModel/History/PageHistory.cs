@@ -235,6 +235,30 @@ namespace CLP.Entities
 
         #region Methods
 
+        public void OptimizeTrashedItems()
+        {
+            var inkStrokesToRemove = (from trashedInkStroke in TrashedInkStrokes
+                                      let isTrashedInkStrokeBeingUsed = UndoItems.Any(historyItem => historyItem.IsUsingTrashedInkStroke(trashedInkStroke.GetStrokeID(), true)) || 
+                                                                        RedoItems.Any(historyItem => historyItem.IsUsingTrashedInkStroke(trashedInkStroke.GetStrokeID(), false))
+                                      where !isTrashedInkStrokeBeingUsed
+                                      select trashedInkStroke).ToList();
+            foreach(var stroke in inkStrokesToRemove)
+            {
+                TrashedInkStrokes.Remove(stroke);
+            }
+
+
+            var pageObjectsToRemove = (from trashedPageObject in TrashedPageObjects
+                                       let isTrashedPageObjectBeingUsed = UndoItems.Any(historyItem => historyItem.IsUsingTrashedPageObject(trashedPageObject.ID, true)) || 
+                                                                          RedoItems.Any(historyItem => historyItem.IsUsingTrashedPageObject(trashedPageObject.ID, false))
+                                       where !isTrashedPageObjectBeingUsed
+                                       select trashedPageObject).ToList();
+            foreach(var pageObject in pageObjectsToRemove)
+            {
+                TrashedPageObjects.Remove(pageObject);
+            }
+        }
+
         //Completely clear history.
         public void ClearHistory()
         {

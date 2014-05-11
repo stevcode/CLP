@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Windows.Data;
+using System.Windows.Documents;
 using Classroom_Learning_Partner.ViewModels;
 
 namespace Classroom_Learning_Partner.Views
@@ -12,6 +14,12 @@ namespace Classroom_Learning_Partner.Views
         {
             InitializeComponent();
             CloseViewModelOnUnloaded = false;
+        }
+
+        public void recalculateSubmissionCounts()
+        {
+            Run submissionsCount = (Run)FindName("SubmissionsCount");
+            BindingOperations.GetBindingExpression(submissionsCount, Run.TextProperty).UpdateTarget();
         }
 
         protected override Type GetViewModelType() { return typeof(StudentWorkPanelViewModel); }

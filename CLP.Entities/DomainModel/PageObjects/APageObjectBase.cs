@@ -147,7 +147,7 @@ namespace CLP.Entities
             set { SetValue(HeightProperty, value); }
         }
 
-        public static readonly PropertyData HeightProperty = RegisterProperty("Height", typeof(double), 20.0);
+        public static readonly PropertyData HeightProperty = RegisterProperty("Height", typeof(double), 40.0);
 
         /// <summary>
         /// Width of the <see cref="IPageObject" />.
@@ -158,7 +158,7 @@ namespace CLP.Entities
             set { SetValue(WidthProperty, value); }
         }
 
-        public static readonly PropertyData WidthProperty = RegisterProperty("Width", typeof(double), 20.0);
+        public static readonly PropertyData WidthProperty = RegisterProperty("Width", typeof(double), 40.0);
 
         /// <summary>
         /// Minimum Height of the <see cref="IPageObject" />.

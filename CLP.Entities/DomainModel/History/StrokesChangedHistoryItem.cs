@@ -94,28 +94,24 @@ namespace CLP.Entities
         /// </summary>
         protected override void UndoAction(bool isAnimationUndo)
         {
-            foreach(var stroke in StrokeIDsAdded.Select(id => ParentPage.GetStrokeByID(id))) 
+            foreach(var stroke in StrokeIDsAdded.Select(id => ParentPage.GetStrokeByID(id)))
             {
                 try
                 {
                     ParentPage.InkStrokes.Remove(stroke);
                     ParentPage.History.TrashedInkStrokes.Add(stroke);
                 }
-                catch(Exception ex)
-                {
-                }
+                catch(Exception ex) { }
             }
 
-            foreach(var stroke in StrokeIDsRemoved.Select(id => ParentPage.History.GetStrokeByID(id))) 
+            foreach(var stroke in StrokeIDsRemoved.Select(id => ParentPage.History.GetStrokeByID(id)))
             {
                 try
                 {
                     ParentPage.History.TrashedInkStrokes.Remove(stroke);
                     ParentPage.InkStrokes.Add(stroke);
                 }
-                catch(Exception ex)
-                {
-                }
+                catch(Exception ex) { }
             }
         }
 
@@ -124,28 +120,24 @@ namespace CLP.Entities
         /// </summary>
         protected override void RedoAction(bool isAnimationRedo)
         {
-            foreach(var stroke in StrokeIDsRemoved.Select(id => ParentPage.GetStrokeByID(id))) 
+            foreach(var stroke in StrokeIDsRemoved.Select(id => ParentPage.GetStrokeByID(id)))
             {
                 try
                 {
                     ParentPage.InkStrokes.Remove(stroke);
                     ParentPage.History.TrashedInkStrokes.Add(stroke);
                 }
-                catch(Exception ex)
-                {
-                }
+                catch(Exception ex) { }
             }
 
-            foreach(var stroke in StrokeIDsAdded.Select(id => ParentPage.History.GetStrokeByID(id))) 
+            foreach(var stroke in StrokeIDsAdded.Select(id => ParentPage.History.GetStrokeByID(id)))
             {
                 try
                 {
                     ParentPage.History.TrashedInkStrokes.Remove(stroke);
                     ParentPage.InkStrokes.Add(stroke);
                 }
-                catch(Exception ex)
-                {
-                }
+                catch(Exception ex) { }
             }
         }
 
@@ -174,11 +166,13 @@ namespace CLP.Entities
         /// </summary>
         public override void UnpackHistoryItem()
         {
-            foreach(var stroke in PackagedSerializedStrokes.Select(serializedStroke => serializedStroke.ToStroke())) 
+            foreach(var stroke in PackagedSerializedStrokes.Select(serializedStroke => serializedStroke.ToStroke()))
             {
                 ParentPage.History.TrashedInkStrokes.Add(stroke);
             }
         }
+
+        public override bool IsUsingTrashedInkStroke(string id, bool isUndoItem) { return isUndoItem ? StrokeIDsRemoved.Contains(id) : StrokeIDsAdded.Contains(id); }
 
         #endregion //Methods
     }

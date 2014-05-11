@@ -15,5 +15,7 @@
         void Redo(bool isAnimationRedo);
         IHistoryItem CreatePackagedHistoryItem();
         void UnpackHistoryItem();
+        bool IsUsingTrashedPageObject(string id, bool isUndoItem);
+        bool IsUsingTrashedInkStroke(string id, bool isUndoItem);
     }
 }

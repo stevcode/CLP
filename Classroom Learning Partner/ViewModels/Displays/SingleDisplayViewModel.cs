@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using Catel.Data;
 using Catel.MVVM;
@@ -62,6 +63,19 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 return;
             }
+
+            //if(advancedPropertyChangedEventArgs.OldValue == null)
+            //{
+            //    var singleDisplayView = CLPServiceAgent.Instance.GetViewFromViewModel(singleDisplayViewModel);
+            //    if(singleDisplayView != null)
+            //    {
+            //        var frameworkElement = singleDisplayView as FrameworkElement;
+            //        if(frameworkElement != null)
+            //        {
+            //            singleDisplayViewModel.DisplayWidthHeight = new Tuple<double, double>(frameworkElement.ActualWidth, frameworkElement.ActualHeight);
+            //        }
+            //    }
+            //}
 
             singleDisplayViewModel.OnPageResize();
 
@@ -216,6 +230,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 var pageViewModel = viewModel as ACLPPageBaseViewModel;
                 if(pageViewModel != null &&
+                   CurrentPage != null &&
                    pageViewModel.Page.ID == CurrentPage.ID)
                 {
                     OnPageResize();

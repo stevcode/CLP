@@ -23,6 +23,16 @@ namespace Classroom_Learning_Partner.ViewModels
             RemovePageFromGridDisplayCommand = new Command<CLPPage>(OnRemovePageFromGridDisplayCommandExecute);
         }
 
+        #region Overrides of ViewModelBase
+
+        protected override void OnClosing()
+        {
+            Pages.CollectionChanged -= Pages_CollectionChanged;
+            base.OnClosing();
+        }
+
+        #endregion
+
         public override string Title
         {
             get { return "GridDisplayVM"; }

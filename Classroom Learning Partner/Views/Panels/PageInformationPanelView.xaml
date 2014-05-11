@@ -21,8 +21,10 @@
             
             <TextBlock>
                 <Run Text="Page ID: " />
-                <Run Text="{Binding ID}" />
+                
             </TextBlock>
+            
+            <TextBox Text="{Binding ID}" />
             
             <TextBlock>
                 <Run Text="Page VersionIndex: " />

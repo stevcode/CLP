@@ -53,6 +53,18 @@ namespace Classroom_Learning_Partner.ViewModels
             ClearPageCommand = new Command(OnClearPageCommandExecute);
         }
 
+        #region Overrides of ViewModelBase
+
+        protected override void OnClosing()
+        {
+            InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
+            PageObjects.CollectionChanged -= PageObjects_CollectionChanged;
+            Submissions.CollectionChanged -= Submissions_CollectionChanged;
+            base.OnClosing();
+        }
+
+        #endregion
+
         public override string Title
         {
             get { return "APageBaseVM"; }
@@ -374,7 +386,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public bool HasSubmissions
         {
-            get { return Submissions.Any(); }
+            get { return Submissions.Any() || Page.LastVersionIndex != null; }
         }
 
         public int NumberOfDistinctSubmissions
@@ -909,7 +921,6 @@ namespace Classroom_Learning_Partner.ViewModels
                                          strokeID
                                      };
 
-                RefreshAcceptedStrokes(strokesAdded, removedStrokes);
                 AddHistoryItemToPage(Page, new StrokesChangedHistoryItem(Page, App.MainWindowViewModel.CurrentUser, addedStrokeIDs, removedStrokes));
             }
             catch(Exception ex)
@@ -976,29 +987,29 @@ namespace Classroom_Learning_Partner.ViewModels
                 page.History.AddHistoryItem(historyItem); 
             }
 
-            if(App.CurrentUserMode != App.UserMode.Instructor || App.Network.ProjectorProxy == null || App.MainWindowViewModel.Ribbon.IsBroadcastHistoryDisabled)
-            {
-                return;
-            }
+            //if(App.CurrentUserMode != App.UserMode.Instructor || App.Network.ProjectorProxy == null || App.MainWindowViewModel.Ribbon.IsBroadcastHistoryDisabled)
+            //{
+            //    return;
+            //}
 
-            var historyItemCopy = historyItem.CreatePackagedHistoryItem();
-            if(historyItemCopy == null)
-            {
-                Logger.Instance.WriteToLog("Failed to CreatePackagedHistoryItem");
-                return;
-            }
-            var historyItemString = ObjectSerializer.ToString(historyItemCopy);
-            var zippedHistoryItem = CLPServiceAgent.Instance.Zip(historyItemString);
+            //var historyItemCopy = historyItem.CreatePackagedHistoryItem();
+            //if(historyItemCopy == null)
+            //{
+            //    Logger.Instance.WriteToLog("Failed to CreatePackagedHistoryItem");
+            //    return;
+            //}
+            //var historyItemString = ObjectSerializer.ToString(historyItemCopy);
+            //var zippedHistoryItem = CLPServiceAgent.Instance.Zip(historyItemString);
 
-            try
-            {
-                var compositePageID = page.ID + ";" + page.OwnerID + ";" + page.VersionIndex;
-                App.Network.ProjectorProxy.AddHistoryItem(compositePageID, zippedHistoryItem);
-            }
-            catch(Exception)
-            {
-                Logger.Instance.WriteToLog("Failed to send historyItem to Projector");
-            }
+            //try
+            //{
+            //    var compositePageID = page.ID + ";" + page.OwnerID + ";" + page.VersionIndex;
+            //    App.Network.ProjectorProxy.AddHistoryItem(compositePageID, zippedHistoryItem);
+            //}
+            //catch(Exception)
+            //{
+            //    Logger.Instance.WriteToLog("Failed to send historyItem to Projector");
+            //}
 
             //if(!App.MainWindowViewModel.Ribbon.BroadcastInkToStudents || page.SubmissionType != SubmissionType.None || !App.Network.ClassList.Any())
             //{
