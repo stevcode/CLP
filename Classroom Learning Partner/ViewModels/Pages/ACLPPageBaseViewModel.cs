@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Ink;
@@ -529,46 +531,38 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
+            QueueTask(() => StrokesChanged(e));
+        }
+
+        private void StrokesChanged(StrokeCollectionChangedEventArgs e)
+        {
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
 
             switch(App.MainWindowViewModel.Ribbon.PageInteractionMode)
             {
                 case PageInteractionMode.Scissors:
-                {
-                    var stroke = e.Added.FirstOrDefault();
-                    if(stroke == null)
-                    {
-                        return;
-                    }
-                    CutStroke(stroke);
-                }
-                    break;
-                case PageInteractionMode.Lasso:
-                {
-                    var stroke = e.Added.FirstOrDefault();
-                    if(stroke == null)
-                    {
-                        return;
-                    }
-                    LassoStroke(stroke);
-                }
-                    break;
-                case PageInteractionMode.Select:
-                case PageInteractionMode.Highlighter:
-                    if(e.Removed.Any())
-                    {
-                        RemoveStroke(e.Removed, e.Added);
-                    }
-                    else
                     {
                         var stroke = e.Added.FirstOrDefault();
                         if(stroke == null)
                         {
                             return;
                         }
-                        AddStroke(stroke);
+                        CutStroke(stroke);
                     }
                     break;
+                case PageInteractionMode.Lasso:
+                    {
+                        var stroke = e.Added.FirstOrDefault();
+                        if(stroke == null)
+                        {
+                            return;
+                        }
+                        LassoStroke(stroke);
+                    }
+                    break;
+                case PageInteractionMode.Select:
+                    return;
+                case PageInteractionMode.Highlighter:
                 case PageInteractionMode.Pen:
                     if(e.Removed.Any())
                     {
@@ -977,6 +971,27 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Page Interaction methods
 
         #region Static Methods
+
+        private Task _currentTask = Task.FromResult(Type.Missing);
+        private readonly object _lock = new Object();
+
+        public void QueueTask(Action action)
+        {
+            lock (_lock)
+            {
+                _currentTask = _currentTask.ContinueWith(
+                    lastTask => 
+                    {
+                        // re-throw the error of the last completed task (if any)
+                        lastTask.GetAwaiter().GetResult();
+                        // run the new task
+                        action();
+                    },
+                    CancellationToken.None, 
+                    TaskContinuationOptions.LazyCancellation, 
+                    TaskScheduler.Default);
+            }
+        }
 
         public static void AddHistoryItemToPage(CLPPage page, IHistoryItem historyItem, bool isBatch = false)
         {
