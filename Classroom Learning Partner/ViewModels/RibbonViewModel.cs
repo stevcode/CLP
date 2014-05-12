@@ -76,7 +76,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     break;
             }
 
-            PenSize = 3;
+            PenSize = 2;
             DrawingAttributes = new DrawingAttributes
                                 {
                                     Height = PenSize,
@@ -2567,10 +2567,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 arraysToAdd.Add(array);
             }
 
-            const double MIN_SIDE = 25.0;
+            const double MIN_SIDE = 20.0;
             const double MIN_FFC_SIDE = 185.0;
             const double LABEL_LENGTH = 22.0;
-            var arrayMinSide = (arraysToAdd.First() is FuzzyFactorCard) ? MIN_FFC_SIDE : MIN_SIDE;
 
             var arrayStacks = 1;
             var isHorizontallyAligned = page.Width / columns > page.Height / 4 * 3 / rows;

@@ -57,14 +57,23 @@
 
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <!--TODO: Write background converter for pages w/ purple background...or make converter parameter = color
-                            Background="{Binding ViewModel.IsShowingSubmissions, ElementName=PagePreviewView, Converter={StaticResource ProjectedDisplayBackgroundConverter}}"-->
+
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
+                                <Grid.Style>
+                                    <Style TargetType="Grid">
+                                        <Setter Property="Background" Value="Transparent" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsChecked, ElementName=ToggleButton}" Value="True">
+                                                <Setter Property="Background" Value="Lavender" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Grid.Style>
 
                                 <TextBlock Grid.Column="0"
                                            Margin="5 0 0 0"
@@ -143,13 +152,15 @@
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
-                                    <Button Grid.Row="0"
-                                            Height="50"
-                                            Width="25"
-                                            Command="{Binding DataContext.ShowSubmissionsCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
-                                            CommandParameter="{Binding}">
+                                    <ToggleButton Grid.Row="0"
+                                                  x:Name="ToggleButton"
+                                                  Height="50"
+                                                  Width="25"
+                                                  Click="ShowSubmissionsButton_OnClick"
+                                                  Command="{Binding DataContext.ShowSubmissionsCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                                  CommandParameter="{Binding}">
                                         <Image Source="pack://application:,,,/Resources/Images/DisplaySubmissionsButton50x25.png" />
-                                    </Button>
+                                    </ToggleButton>
                                     <TextBlock Grid.Row="1"
                                                Text="{Binding ViewModel.NumberOfDistinctSubmissions, ElementName=PagePreviewView}"
                                                TextAlignment="Center"

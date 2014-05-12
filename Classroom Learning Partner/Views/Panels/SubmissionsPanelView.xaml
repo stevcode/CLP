@@ -222,7 +222,7 @@
 
     </UserControl.Resources>
 
-    <Border Background="{StaticResource GrayBackgroundColor}"
+    <Border Background="Lavender"
             BorderBrush="{StaticResource GrayEdgeColor}" BorderThickness="0,0,5,0">
 
         <Grid>
