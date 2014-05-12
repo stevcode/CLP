@@ -269,6 +269,13 @@ namespace Classroom_Learning_Partner.ViewModels
                     pageViewModel.DefaultDA.Width = 2.0;
                     pageViewModel.DefaultDA.StylusTip = StylusTip.Ellipse;
                     pageViewModel.ClearAdorners();
+                    if(!pageViewModel.IsPagePreview)
+                    {
+                        foreach(var array in pageViewModel.PageObjects.OfType<ACLPArrayBase>().Where(array => array.Rows < 71 && array.Columns < 71)) 
+                        {
+                            array.IsGridOn = true;
+                        }
+                    }
                     break;
                 case PageInteractionMode.EditObjectProperties:
                     pageViewModel.IsInkCanvasHitTestVisible = false;
