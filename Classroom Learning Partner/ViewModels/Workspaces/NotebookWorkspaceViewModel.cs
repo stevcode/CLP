@@ -39,7 +39,7 @@ namespace Classroom_Learning_Partner.ViewModels
             SingleDisplay = new SingleDisplayViewModel(notebook);
 
             NotebookPagesPanel = new NotebookPagesPanelViewModel(notebook);
-           // StudentWorkPanel = new StudentWorkPanelViewModel(notebook);
+            StudentWorkPanel = new StudentWorkPanelViewModel(notebook);
             ProgressPanel = new ProgressPanelViewModel(notebook);
             if(App.MainWindowViewModel.Ribbon.CurrentLeftPanel == Panels.Progress)
             {
@@ -184,16 +184,16 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData NotebookPagesPanelProperty = RegisterProperty("NotebookPagesPanel", typeof(NotebookPagesPanelViewModel));
 
-        ///// <summary>
-        ///// StudentWorkPanel.
-        ///// </summary>
-        //public StudentWorkPanelViewModel StudentWorkPanel
-        //{
-        //    get { return GetValue<StudentWorkPanelViewModel>(StudentWorkPanelProperty); }
-        //    set { SetValue(StudentWorkPanelProperty, value); }
-        //}
+        /// <summary>
+        /// StudentWorkPanel.
+        /// </summary>
+        public StudentWorkPanelViewModel StudentWorkPanel
+        {
+            get { return GetValue<StudentWorkPanelViewModel>(StudentWorkPanelProperty); }
+            set { SetValue(StudentWorkPanelProperty, value); }
+        }
 
-        //public static readonly PropertyData StudentWorkPanelProperty = RegisterProperty("StudentWorkPanel", typeof(StudentWorkPanelViewModel));
+        public static readonly PropertyData StudentWorkPanelProperty = RegisterProperty("StudentWorkPanel", typeof(StudentWorkPanelViewModel));
 
         /// <summary>
         /// ProgressPanel.
@@ -266,8 +266,8 @@ namespace Classroom_Learning_Partner.ViewModels
                             LeftPanel.IsVisible = true;
                             break;
                         case Panels.StudentWork:
-                            //LeftPanel = StudentWorkPanel;
-                            //LeftPanel.IsVisible = true;
+                            LeftPanel = StudentWorkPanel;
+                            LeftPanel.IsVisible = true;
                             break;
                         case Panels.Progress:
                             LeftPanel = ProgressPanel;
