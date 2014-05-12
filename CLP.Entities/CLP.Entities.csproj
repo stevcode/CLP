@@ -106,6 +106,8 @@
     <Compile Include="DomainModel\History\ArrayHistoryItems\CLPArrayGridToggleHistoryItem.cs" />
     <Compile Include="DomainModel\History\ArrayHistoryItems\CLPArrayRotateHistoryItem.cs" />
     <Compile Include="DomainModel\History\ArrayHistoryItems\CLPArraySnapHistoryItem.cs" />
+    <Compile Include="DomainModel\History\FuzzyFactorCardHistoryItems\FFCArrayRemovedHistoryItem.cs" />
+    <Compile Include="DomainModel\History\FuzzyFactorCardHistoryItems\FFCArraySnappedInHistoryItem.cs" />
     <Compile Include="DomainModel\History\IHistoryBatch.cs" />
     <Compile Include="DomainModel\History\IHistoryItem.cs" />
     <Compile Include="DomainModel\History\PageHistory.cs" />
