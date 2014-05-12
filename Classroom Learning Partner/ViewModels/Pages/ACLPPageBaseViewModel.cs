@@ -434,7 +434,9 @@ namespace Classroom_Learning_Partner.ViewModels
             
             foreach(var pageObject in PageObjects)
             {
-                isOverPageObject = IsPointOverPageObject(pageObject, point);
+                isOverPageObject = IsPointOverPageObject(pageObject, point) &&
+                                   !(App.MainWindowViewModel.CurrentUser.ID != pageObject.CreatorID &&
+                                     !pageObject.IsManipulatableByNonCreator);
                 if(isOverPageObject)
                 {
                     break;
