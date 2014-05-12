@@ -175,15 +175,23 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid Visibility="{Binding IsTrashed, Converter={StaticResource OppositeBooleanToCollapsingVisibilityConverter}, ConverterParameter=False}">
-                            <Grid.Background>
-                                <MultiBinding Converter="{StaticResource AllBoolToColorMultiConverter}"
-                                              ConverterParameter="Colors.PaleGreen">
-                                    <Binding Path="IsSelected"
-                                             RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}" />
-                                    <Binding Path="MainWindowViewModel.Ribbon.IsProjectorOn"
-                                             Source="{x:Static Application.Current}" />
-                                </MultiBinding>
-                            </Grid.Background>
+                            <Grid.Style>
+                                <Style TargetType="Grid">
+                                    <Setter Property="Background" Value="Transparent" />
+                                    <Style.Triggers>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}}"
+                                                           Value="True" />
+                                                <Condition Binding="{Binding MainWindowViewModel.Ribbon.IsProjectorFrozen, Source={x:Static Application.Current}}" Value="False" />
+                                            </MultiDataTrigger.Conditions>
+                                            <MultiDataTrigger.Setters>
+                                                <Setter Property="Background" Value="PaleGreen" />
+                                            </MultiDataTrigger.Setters>
+                                        </MultiDataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Grid.Style>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />

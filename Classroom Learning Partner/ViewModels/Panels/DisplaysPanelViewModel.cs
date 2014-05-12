@@ -28,12 +28,7 @@ namespace Classroom_Learning_Partner.ViewModels
             IsVisible = false;
             OnSetSingleDisplayCommandExecute();
 
-            if(App.Network.ProjectorProxy == null)
-            {
-                return;
-            }
-
-            App.MainWindowViewModel.Ribbon.IsProjectorOn = true;
+            App.MainWindowViewModel.Ribbon.IsProjectorFrozen = true;
         }
 
         void DisplaysPanelViewModel_Initialized(object sender, EventArgs e)
@@ -208,7 +203,7 @@ namespace Classroom_Learning_Partner.ViewModels
             dict.Source = uri;
             var color = dict["MainColor"].ToString();
             SingleDisplaySelectedColor = color;
-            SingleDisplaySelectedBackgroundColor = App.MainWindowViewModel.Ribbon.IsProjectorOn ? "PaleGreen" : "Transparent";
+            SingleDisplaySelectedBackgroundColor = App.MainWindowViewModel.Ribbon.IsProjectorFrozen ? "Transparent" : "PaleGreen";
             CurrentDisplay = null;
 
             var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
@@ -260,17 +255,20 @@ namespace Classroom_Learning_Partner.ViewModels
 
         protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
         {
-            if(propertyName == "IsProjectorOn" &&
+            if(propertyName == "IsProjectorFrozen" &&
                viewModel is RibbonViewModel)
             {
-                if(CurrentDisplay == null &&
-                   (viewModel as RibbonViewModel).IsProjectorOn)
+                if(CurrentDisplay != null ||
+                   (viewModel as RibbonViewModel).IsProjectorFrozen)
                 {
-                    SingleDisplaySelectedBackgroundColor = "PaleGreen";
+                    SingleDisplaySelectedBackgroundColor = "Transparent";
+
+                    //take snapshot
+                    //send freeze to projector
                 }
                 else
                 {
-                    SingleDisplaySelectedBackgroundColor = "Transparent";
+                    SingleDisplaySelectedBackgroundColor = "PaleGreen";
                 }
             }
 
