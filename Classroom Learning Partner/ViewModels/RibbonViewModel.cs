@@ -76,7 +76,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     break;
             }
 
-            PenSize = 3;
+            PenSize = 2;
             DrawingAttributes = new DrawingAttributes
                                 {
                                     Height = PenSize,
