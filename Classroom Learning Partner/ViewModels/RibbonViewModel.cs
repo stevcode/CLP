@@ -97,6 +97,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             PageInteractionMode = PageInteractionMode.Pen;
             CurrentLeftPanel = Panels.NotebookPages;
+            IsProjectorFrozen = App.CurrentUserMode != App.UserMode.Projector;
         }
 
         private void InitializeCommands()

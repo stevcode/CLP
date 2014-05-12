@@ -4,6 +4,7 @@
               xmlns:catel="http://catel.codeplex.com"
               xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
               xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
+              xmlns:clp="clr-namespace:Classroom_Learning_Partner"
               UseLayoutRounding="True"
               SnapsToDevicePixels="True"
               Icon="..\Images\InkWell.ico"
@@ -23,6 +24,7 @@
 
             <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
             <conv:TypeToStringConverter x:Key="TypeToStringConverter" />
+            <conv:EnumToBoolConverter x:Key="EnumToBoolConverter" />
         </ResourceDictionary>
     </Window.Resources>
 
@@ -109,6 +111,35 @@
                 </Style>
             </ContentControl.Style>
         </ContentControl>
+        
+        <Grid Grid.Row="1"
+              Background="{StaticResource GrayBackgroundColor}">
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                    <Style.Triggers>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding CurrentUserMode, Source={x:Static Application.Current}, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static clp:App+UserMode.Projector}}"
+                                            Value="True" />
+                                <Condition Binding="{Binding MainWindowViewModel.Ribbon.IsProjectorFrozen, Source={x:Static Application.Current}}" Value="True" />
+                            </MultiDataTrigger.Conditions>
+                            <MultiDataTrigger.Setters>
+                                <Setter Property="Visibility" Value="Visible" />
+                            </MultiDataTrigger.Setters>
+                        </MultiDataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+            
+            <Image Source="{Binding FrozenDisplayImageSource}" />
+            <TextBlock Text="Frozen"
+                       Foreground="Red"
+                       FontWeight="Bold"
+                       VerticalAlignment="Bottom"
+                       HorizontalAlignment="Center"
+                       FontSize="28" />
+        </Grid>
 
         <StatusBar Grid.Row="2"
                    VerticalAlignment="Bottom"

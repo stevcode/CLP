@@ -1,8 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Entities;
@@ -27,8 +29,6 @@ namespace Classroom_Learning_Partner.ViewModels
             Initialized += DisplaysPanelViewModel_Initialized;
             IsVisible = false;
             OnSetSingleDisplayCommandExecute();
-
-            App.MainWindowViewModel.Ribbon.IsProjectorFrozen = true;
         }
 
         void DisplaysPanelViewModel_Initialized(object sender, EventArgs e)
@@ -264,11 +264,62 @@ namespace Classroom_Learning_Partner.ViewModels
                     SingleDisplaySelectedBackgroundColor = "Transparent";
 
                     //take snapshot
-                    //send freeze to projector
+                    byte[] screenShotByteSource = null;
+                    if(CurrentDisplay == null)
+                    {
+                        var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
+                        if(notebookWorkspaceViewModel != null)
+                        {
+                            var singleDisplayView = CLPServiceAgent.Instance.GetViewFromViewModel(notebookWorkspaceViewModel.SingleDisplay);
+                            screenShotByteSource = CLPServiceAgent.Instance.GetScreenShot(singleDisplayView as UIElement);
+                        }
+
+                        
+                    }
+                    else
+                    {
+                        var displayViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(CurrentDisplay as IModel);
+                        foreach(var gridDisplayView in from displayViewModel in displayViewModels
+                                                       where displayViewModel is GridDisplayViewModel && (displayViewModel as GridDisplayViewModel).IsDisplayPreview == false
+                                                       select CLPServiceAgent.Instance.GetViewFromViewModel(displayViewModel)) 
+                                                       {
+                                                           screenShotByteSource = CLPServiceAgent.Instance.GetScreenShot(gridDisplayView as UIElement);
+                                                       }
+                    }
+
+                    if(screenShotByteSource != null)
+                    {
+                        var bitmapImage = new BitmapImage();
+                        bitmapImage.BeginInit();
+                        bitmapImage.CacheOption = BitmapCacheOption.OnDemand;
+                        bitmapImage.StreamSource = new MemoryStream(screenShotByteSource);
+                        bitmapImage.EndInit();
+                        bitmapImage.Freeze();
+
+                        App.MainWindowViewModel.FrozenDisplayImageSource = bitmapImage;
+                    }
+                    
+                    //send freeze command to projector
+                    if(App.Network.ProjectorProxy != null)
+                    {
+                        try
+                        {
+                            App.Network.ProjectorProxy.FreezeProjector(true);
+                        }
+                        catch(Exception) { }
+                    }
                 }
                 else
                 {
                     SingleDisplaySelectedBackgroundColor = "PaleGreen";
+                    if(App.Network.ProjectorProxy != null)
+                    {
+                        try
+                        {
+                            App.Network.ProjectorProxy.FreezeProjector(false);
+                        }
+                        catch(Exception) { }
+                    }
                 }
             }
 

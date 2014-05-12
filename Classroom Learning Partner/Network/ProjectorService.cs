@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.ServiceModel;
 using System.Windows;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Catel.Data;
 using Classroom_Learning_Partner.ViewModels;
@@ -13,6 +14,9 @@ namespace Classroom_Learning_Partner
     [ServiceContract]
     public interface IProjectorContract : INotebookContract
     {
+        [OperationContract]
+        void FreezeProjector(bool isFreezing);
+
         [OperationContract]
         void SwitchProjectorDisplay(string displayID, int displayNumber);
 
@@ -32,6 +36,62 @@ namespace Classroom_Learning_Partner
     [ServiceBehavior(IncludeExceptionDetailInFaults = true)]
     public class ProjectorService : IProjectorContract
     {
+        public void FreezeProjector(bool isFreezing)
+        {
+            
+            
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                                                       (DispatcherOperationCallback)delegate
+                                                                                    {
+                                                                                        //take snapshot
+                                                                                        if(isFreezing)
+                                                                                        {
+                                                                                            var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
+                                                                                            if(notebookWorkspaceViewModel == null)
+                                                                                            {
+                                                                                                return null;
+                                                                                            }
+
+                                                                                            byte[] screenShotByteSource = null;
+                                                                                            if(notebookWorkspaceViewModel.CurrentDisplay == null)
+                                                                                            {
+                                                                                                var singleDisplayView = CLPServiceAgent.Instance.GetViewFromViewModel(notebookWorkspaceViewModel.SingleDisplay);
+                                                                                                screenShotByteSource = CLPServiceAgent.Instance.GetScreenShot(singleDisplayView as UIElement);
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                var displayViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(notebookWorkspaceViewModel.CurrentDisplay as IModel);
+                                                                                                foreach(var gridDisplayView in from displayViewModel in displayViewModels
+                                                                                                                               where displayViewModel is GridDisplayViewModel && (displayViewModel as GridDisplayViewModel).IsDisplayPreview == false
+                                                                                                                               select CLPServiceAgent.Instance.GetViewFromViewModel(displayViewModel))
+                                                                                                {
+                                                                                                    screenShotByteSource = CLPServiceAgent.Instance.GetScreenShot(gridDisplayView as UIElement);
+                                                                                                }
+                                                                                            }
+
+                                                                                            if(screenShotByteSource == null)
+                                                                                            {
+                                                                                                return null;
+                                                                                            }
+
+                                                                                            var bitmapImage = new BitmapImage();
+                                                                                            bitmapImage.BeginInit();
+                                                                                            bitmapImage.CacheOption = BitmapCacheOption.OnDemand;
+                                                                                            bitmapImage.StreamSource = new MemoryStream(screenShotByteSource);
+                                                                                            bitmapImage.EndInit();
+                                                                                            bitmapImage.Freeze();
+
+                
+                                                                                            App.MainWindowViewModel.FrozenDisplayImageSource = bitmapImage;
+
+                                                                                        }
+                                                                                        App.MainWindowViewModel.Ribbon.IsProjectorFrozen = isFreezing;
+
+                                                                                        return null;
+                                                                                    },
+                                                       null);
+        }
+
         public void SwitchProjectorDisplay(string displayID, int displayNumber)
         {
             var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;

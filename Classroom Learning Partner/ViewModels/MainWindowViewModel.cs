@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Catel.Data;
 using Catel.MVVM;
@@ -56,6 +57,17 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Constructor
 
         #region Bindings
+
+        /// <summary>
+        /// Screenshot of the frozen display.
+        /// </summary>
+        public ImageSource FrozenDisplayImageSource
+        {
+            get { return GetValue<ImageSource>(FrozenDisplayImageSourceProperty); }
+            set { SetValue(FrozenDisplayImageSourceProperty, value); }
+        }
+
+        public static readonly PropertyData FrozenDisplayImageSourceProperty = RegisterProperty("FrozenDisplayImageSource", typeof (ImageSource));
 
         /// <summary>
         /// Gets or sets the Title Bar text of the window.
