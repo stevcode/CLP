@@ -268,7 +268,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public bool IsToggleGridAdornerVisible
         {
-            get { return IsDefaultAdornerVisible && Rows < 51 && Columns < 51; }
+            get { return IsDefaultAdornerVisible && Rows < 71 && Columns < 71; }
         }
 
         public bool IsToggleDivisionAdornerVisible
