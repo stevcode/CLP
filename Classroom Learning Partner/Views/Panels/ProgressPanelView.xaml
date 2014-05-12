@@ -37,208 +37,218 @@
                     Command="{Binding ChooseClassPeriodCommand}" />
             <Slider Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" x:Name="SizeSlider"
                     Minimum="32" Maximum="300"/>
-            <ScrollViewer Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"  HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-                <ScrollViewer.Resources>
-                    <sys:Double x:Key="{x:Static SystemParameters.VerticalScrollBarWidthKey}">25</sys:Double>
-                </ScrollViewer.Resources>
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="20"/>
-                        <!-- page numbers -->
-                        <RowDefinition Height="{Binding ElementName=SizeSlider, Path=Value}"/>
-                        <!-- teacher pages -->
-                        <RowDefinition Height="*"/>
-                        <!-- student pages -->
-                        <RowDefinition Height="25" />
-                        <!-- placeholder for horizontal scrollbar -->
-                    </Grid.RowDefinitions>
-                    <!-- names and pages -->
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="80" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" VerticalAlignment="Center" Grid.Row="1" FontWeight="Bold" Foreground="Blue" Margin="15 0 0 0">
-                        <Run Text="Teacher"/>
-                    </TextBlock>
-                    <ItemsControl Grid.Column="0" Grid.Row="2" Margin="0" ItemsSource="{Binding StudentList}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal" Height="32" VerticalAlignment="Center">
-                                    <Ellipse Height="7"
+
+            <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="{Binding ElementName=SizeSlider, Path=Value}"/>
+                    <!-- teacher pages -->
+                    <RowDefinition Height="20"/>
+                    <!-- page numbers -->
+                    <RowDefinition Height="*"/>
+                    <!-- student pages -->
+                    <RowDefinition Height="25" />
+                    <!-- placeholder for horizontal scrollbar -->
+                </Grid.RowDefinitions>
+                <!-- names and pages -->
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <ScrollViewer Grid.Column="0" Grid.Row="0" Grid.RowSpan="3"
+                                  HorizontalScrollBarVisibility="Disabled"
+                                  VerticalScrollBarVisibility="Hidden"
+                                  x:Name="NamesScrollViewer">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="{Binding ElementName=SizeSlider, Path=Value}"/>
+                            <RowDefinition Height="20" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" VerticalAlignment="Center" FontWeight="Bold" Foreground="Blue" Margin="15 0 0 0">
+                                <Run Text="Teacher"/>
+                        </TextBlock>
+                        <ItemsControl Grid.Row="2" Margin="0" ItemsSource="{Binding StudentList}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Height="32" VerticalAlignment="Center">
+                                        <Ellipse Height="7"
                                              Width="7"
                                              Fill="LawnGreen"
                                              Margin="5 0 3 0"
                                              VerticalAlignment="Center"
                                              Visibility="{Binding IsConnected, Converter={StaticResource BooleanToHidingVisibilityConverter}}"/>
-                                    <TextBlock FontWeight="Bold" VerticalAlignment="Center">
+                                        <TextBlock FontWeight="Bold" VerticalAlignment="Center">
                                         <Run Text="{Binding FullName}" />
-                                    </TextBlock>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                                        </TextBlock>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Grid>
+                </ScrollViewer>
                 <ScrollViewer Grid.Column="1" Grid.Row="0" Grid.RowSpan="4" 
                               HorizontalScrollBarVisibility="Auto"
-                              VerticalScrollBarVisibility="Disabled" Margin="0">
+                              VerticalScrollBarVisibility="Auto" Margin="0"
+                              x:Name="MainScrollViewer">
                     <ScrollViewer.Resources>
+                        <sys:Double x:Key="{x:Static SystemParameters.VerticalScrollBarWidthKey}">25</sys:Double>
                         <sys:Double x:Key="{x:Static SystemParameters.HorizontalScrollBarHeightKey}">25</sys:Double>
                     </ScrollViewer.Resources>
                     <ItemsControl Name="Pages" ItemsSource="{Binding CurrentPages}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Top" />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="20" />
-                                    <RowDefinition Height="{Binding ElementName=SizeSlider, Path=Value}" />
-                                    <RowDefinition Height="*"/>
-                                        </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0"
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Top" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="{Binding ElementName=SizeSlider, Path=Value}" />
+                                        <RowDefinition Height="20"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+                                    <Border Grid.Row="0" Margin="3"
+                                        BorderBrush="{StaticResource GrayEdgeColor}"
+                                        BorderThickness="1,1,1,1">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition/>
+                                            </Grid.RowDefinitions>
+                                            <Control Grid.Row="0" Margin="0">
+                                                <Control.Resources>
+                                                    <ControlTemplate x:Key="ThumbnailTemplate">
+                                                        <Image Source="{Binding PageThumbnail, Mode=OneWay}"/>
+                                                    </ControlTemplate>
+
+                                                    <ControlTemplate x:Key="PagePreviewTemplate">
+                                                        <views:CLPPagePreviewView x:Name="PagePreviewView"
+                                                          DataContext="{Binding}"
+                                                          ClipToBounds="True" />
+                                                    </ControlTemplate>
+                                                </Control.Resources>
+
+                                                <Control.Style>
+                                                    <Style TargetType="{x:Type Control}">
+                                                        <Style.Triggers>
+                                                            <!--Thumbnail trigger-->
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Value="True">
+                                                                        <Condition.Binding>
+                                                                            <MultiBinding Converter="{StaticResource ShouldUseThumbnailConverter}">
+                                                                                <Binding ElementName="Pages" Path="DataContext.CurrentPage"/>
+                                                                                <Binding Path=""/>
+                                                                            </MultiBinding>
+                                                                        </Condition.Binding>
+                                                                    </Condition>
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter Property="Template" Value="{StaticResource ThumbnailTemplate}" />
+                                                            </MultiDataTrigger>
+
+                                                            <!--PagePreview trigger-->
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Value="False">
+                                                                        <Condition.Binding>
+                                                                            <MultiBinding Converter="{StaticResource ShouldUseThumbnailConverter}">
+                                                                                <Binding ElementName="Pages" Path="DataContext.CurrentPage"/>
+                                                                                <Binding Path=""/>
+                                                                            </MultiBinding>
+                                                                        </Condition.Binding>
+                                                                    </Condition>
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter Property="Template" Value="{StaticResource PagePreviewTemplate}" />
+                                                            </MultiDataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Control.Style>
+                                            </Control>
+                                            <Rectangle Grid.Row="0" Margin="0" Fill="Transparent" StrokeThickness="2">
+                                                <Rectangle.Stroke>
+                                                    <MultiBinding Converter="{StaticResource PageMatchToColorConverter}">
+                                                        <Binding ElementName="Pages" Path="DataContext.CurrentPage"/>
+                                                        <Binding Path=""/>
+                                                    </MultiBinding>
+                                                </Rectangle.Stroke>
+                                                <i:Interaction.Triggers>
+                                                    <i:EventTrigger EventName="MouseUp">
+                                                        <catel:EventToCommand Command="{Binding DataContext.SetCurrentPageCommand, ElementName=Pages}"
+                                                                                      PassEventArgsToCommand="False"
+                                                                                      CommandParameter="{Binding}" />
+                                                    </i:EventTrigger>
+                                                </i:Interaction.Triggers>
+                                            </Rectangle>
+                                        </Grid>
+                                    </Border>
+                                    <TextBlock Grid.Row="1"
                                            FontWeight="Bold"
                                            VerticalAlignment="Center"
                                            HorizontalAlignment="Center">
                                     <Run Text="{Binding PageNumber}" />
-                                </TextBlock>
-                                <Border Grid.Row="1" Margin="3"
-                                        BorderBrush="{StaticResource GrayEdgeColor}"
-                                        BorderThickness="1,1,1,1">
-                                            <Grid>
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition/>
-                                                </Grid.RowDefinitions>
-                                                <Control Grid.Row="0" Margin="0">
-                                                    <Control.Resources>
-                                                        <ControlTemplate x:Key="ThumbnailTemplate">
-                                                            <Image Source="{Binding PageThumbnail, Mode=OneWay}"/>
-                                                        </ControlTemplate>
-
-                                                        <ControlTemplate x:Key="PagePreviewTemplate">
-                                                            <views:CLPPagePreviewView x:Name="PagePreviewView"
-                                                          DataContext="{Binding}"
-                                                          ClipToBounds="True" />
-                                                        </ControlTemplate>
-                                                    </Control.Resources>
-
-                                                    <Control.Style>
-                                                        <Style TargetType="{x:Type Control}">
-                                                            <Style.Triggers>
-                                                                <!--Thumbnail trigger-->
-                                                                <MultiDataTrigger>
-                                                                    <MultiDataTrigger.Conditions>
-                                                                        <Condition Value="True">
-                                                                            <Condition.Binding>
-                                                                                <MultiBinding Converter="{StaticResource ShouldUseThumbnailConverter}">
-                                                                                    <Binding ElementName="Pages" Path="DataContext.CurrentPage"/>
-                                                                                    <Binding Path=""/>
-                                                                                </MultiBinding>
-                                                                            </Condition.Binding>
-                                                                        </Condition>
-                                                                    </MultiDataTrigger.Conditions>
-                                                                    <Setter Property="Template" Value="{StaticResource ThumbnailTemplate}" />
-                                                                </MultiDataTrigger>
-
-                                                                <!--PagePreview trigger-->
-                                                                <MultiDataTrigger>
-                                                                    <MultiDataTrigger.Conditions>
-                                                                        <Condition Value="False">
-                                                                            <Condition.Binding>
-                                                                                <MultiBinding Converter="{StaticResource ShouldUseThumbnailConverter}">
-                                                                                    <Binding ElementName="Pages" Path="DataContext.CurrentPage"/>
-                                                                                    <Binding Path=""/>
-                                                                                </MultiBinding>
-                                                                            </Condition.Binding>
-                                                                        </Condition> 
-                                                                    </MultiDataTrigger.Conditions>
-                                                                    <Setter Property="Template" Value="{StaticResource PagePreviewTemplate}" />
-                                                                </MultiDataTrigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </Control.Style>
-                                                </Control>
-                                                <Rectangle Grid.Row="0" Margin="0" Fill="Transparent" StrokeThickness="2">
-                                                    <Rectangle.Stroke>
-                                                        <MultiBinding Converter="{StaticResource PageMatchToColorConverter}">
-                                                            <Binding ElementName="Pages" Path="DataContext.CurrentPage"/>
-                                                            <Binding Path=""/>
-                                                        </MultiBinding>
-                                                    </Rectangle.Stroke>
-                                                    <i:Interaction.Triggers>
-                                                        <i:EventTrigger EventName="MouseUp">
-                                                            <catel:EventToCommand Command="{Binding DataContext.SetCurrentPageCommand, ElementName=Pages}"
-                                                                                      PassEventArgsToCommand="False"
-                                                                                      CommandParameter="{Binding}" />
-                                                        </i:EventTrigger>
-                                                    </i:Interaction.Triggers>
-                                                </Rectangle>
-                                            </Grid>      
-                                </Border>
-                                <ItemsControl Grid.Row="2">
-                                    <ItemsControl.ItemsSource>
-                                        <MultiBinding Converter="{StaticResource PageToSubmissionsListConverter}">
-                                            <Binding Path="Submissions"/>
-                                            <Binding Path="Submissions.Count"/>
-                                            <!-- hack to update on collection change -->
-                                        </MultiBinding>
-                                    </ItemsControl.ItemsSource>
-                                    <ItemsControl.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <StackPanel Orientation="Vertical" />
-                                        </ItemsPanelTemplate>
-                                    </ItemsControl.ItemsPanel>
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <Border Margin="2" Height="28" Width="28" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                    </TextBlock>
+                                    <ItemsControl Grid.Row="2">
+                                        <ItemsControl.ItemsSource>
+                                            <MultiBinding Converter="{StaticResource PageToSubmissionsListConverter}">
+                                                <Binding Path="Submissions"/>
+                                                <Binding Path="Submissions.Count"/>
+                                                <!-- hack to update on collection change -->
+                                            </MultiBinding>
+                                        </ItemsControl.ItemsSource>
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <StackPanel Orientation="Vertical" />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Margin="2" Height="28" Width="28" HorizontalAlignment="Center" VerticalAlignment="Center"
                                                     BorderBrush="{StaticResource GrayEdgeColor}"
                                                     BorderThickness="1,1,1,1">
-                                                <Grid>
-                                                    <Grid.RowDefinitions>
-                                                        <RowDefinition />
-                                                    </Grid.RowDefinitions>
+                                                    <Grid>
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition />
+                                                        </Grid.RowDefinitions>
 
-                                                    <Grid Grid.Row="0">
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition />
-                                                            <ColumnDefinition />
-                                                        </Grid.ColumnDefinitions>
-                                                        <Image Grid.Column="0"
+                                                        <Grid Grid.Row="0">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition />
+                                                                <ColumnDefinition />
+                                                            </Grid.ColumnDefinitions>
+                                                            <Image Grid.Column="0"
                                                                Source="pack://application:,,,/Resources/Images/YellowStar16.png"
                                                                Visibility="{Binding Converter={StaticResource PageToStarredVisibilityConverter}}" />
 
-                                                        <Image Grid.Column="1"
+                                                            <Image Grid.Column="1"
                                                                Source="pack://application:,,,/Resources/Images/BlueEnvelope16.png"
                                                                Visibility="{Binding Converter={StaticResource PageToSubmissionVisibilityConverter}}" />
-                                                    </Grid>
-                                                    <Rectangle Grid.Row="0" Margin="0" Fill="Transparent" StrokeThickness="2">
-                                                        <Rectangle.Stroke>
-                                                            <MultiBinding Converter="{StaticResource PageMatchToColorConverter}">
-                                                                <Binding ElementName="Pages" Path="DataContext.CurrentPage"/>
-                                                                <Binding Path="Page"/>
-                                                            </MultiBinding>
-                                                        </Rectangle.Stroke>
-                                                        <i:Interaction.Triggers>
-                                                            <i:EventTrigger EventName="MouseUp">
-                                                                <catel:EventToCommand Command="{Binding DataContext.SetCurrentPageCommand, ElementName=Pages}"
+                                                        </Grid>
+                                                        <Rectangle Grid.Row="0" Margin="0" Fill="Transparent" StrokeThickness="2">
+                                                            <Rectangle.Stroke>
+                                                                <MultiBinding Converter="{StaticResource PageMatchToColorConverter}">
+                                                                    <Binding ElementName="Pages" Path="DataContext.CurrentPage"/>
+                                                                    <Binding Path="Page"/>
+                                                                </MultiBinding>
+                                                            </Rectangle.Stroke>
+                                                            <i:Interaction.Triggers>
+                                                                <i:EventTrigger EventName="MouseUp">
+                                                                    <catel:EventToCommand Command="{Binding DataContext.SetCurrentPageCommand, ElementName=Pages}"
                                                                                       PassEventArgsToCommand="False"
                                                                                       CommandParameter="{Binding Page}" />
-                                                            </i:EventTrigger>
-                                                        </i:Interaction.Triggers>
-                                                    </Rectangle>
-                                                </Grid>
-                                            </Border>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                            </Grid>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                                                                </i:EventTrigger>
+                                                            </i:Interaction.Triggers>
+                                                        </Rectangle>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
                 </ScrollViewer>
             </Grid>
-            </ScrollViewer>
             <!--Thumb Cursor="ScrollWE" Width="5" 
             <Thumb Cursor="ScrollWE"
                    Grid.Column="1"
