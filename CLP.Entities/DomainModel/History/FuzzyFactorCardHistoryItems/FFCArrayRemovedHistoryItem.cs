@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
 using Catel.Data;
 
@@ -29,14 +27,12 @@ namespace CLP.Entities
         }
 
         /// <summary>
-        /// Initializes a new object based on <see cref="SerializationInfo"/>.
+        /// Initializes a new object based on <see cref="SerializationInfo" />.
         /// </summary>
-        /// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext"/>.</param>
+        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
+        /// <param name="context"><see cref="StreamingContext" />.</param>
         protected FFCArrayRemovedHistoryItem(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
+            : base(info, context) { }
 
         #endregion //Constructor
 
@@ -44,10 +40,7 @@ namespace CLP.Entities
 
         public override int AnimationDelay
         {
-            get
-            {
-                return 600;
-            }
+            get { return 600; }
         }
 
         /// <summary>
@@ -55,14 +48,8 @@ namespace CLP.Entities
         /// </summary>
         public string FFCUniqueID
         {
-            get
-            {
-                return GetValue<string>(FFCUniqueIDProperty);
-            }
-            set
-            {
-                SetValue(FFCUniqueIDProperty, value);
-            }
+            get { return GetValue<string>(FFCUniqueIDProperty); }
+            set { SetValue(FFCUniqueIDProperty, value); }
         }
 
         public static readonly PropertyData FFCUniqueIDProperty = RegisterProperty("FFCUniqueID", typeof(string), string.Empty);
@@ -72,20 +59,14 @@ namespace CLP.Entities
         /// </summary>
         public int DivisionValue
         {
-            get
-            {
-                return GetValue<int>(DivisionValueProperty);
-            }
-            set
-            {
-                SetValue(DivisionValueProperty, value);
-            }
+            get { return GetValue<int>(DivisionValueProperty); }
+            set { SetValue(DivisionValueProperty, value); }
         }
 
         /// <summary>
         /// Register the value property so it is known in the class.
         /// </summary>
-        public static readonly PropertyData DivisionValueProperty = RegisterProperty("DivisionValue", typeof(int), null);
+        public static readonly PropertyData DivisionValueProperty = RegisterProperty("DivisionValue", typeof(int));
 
         #endregion //Properties
 
@@ -101,10 +82,6 @@ namespace CLP.Entities
             {
                 ffc.SnapInArray(DivisionValue);
             }
-            else
-            {
-                //Logger.Instance.WriteToLog("Fuzzy Factor Card not found on page for UndoAction");
-            }
         }
 
         /// <summary>
@@ -116,10 +93,6 @@ namespace CLP.Entities
             if(ffc != null)
             {
                 ffc.RemoveLastDivision();
-            }
-            else
-            {
-                //Logger.Instance.WriteToLog("Fuzzy Factor Card not found on page for RedoAction");
             }
         }
 
@@ -135,9 +108,7 @@ namespace CLP.Entities
         /// <summary>
         /// Method that unpacks the <see cref="IHistoryItem" /> after it has been sent to another machine.
         /// </summary>
-        public override void UnpackHistoryItem()
-        {
-        }
+        public override void UnpackHistoryItem() { }
 
         #endregion //Methods
     }

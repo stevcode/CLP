@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
 using Catel.Data;
 
@@ -30,14 +28,12 @@ namespace CLP.Entities
         }
 
         /// <summary>
-        /// Initializes a new object based on <see cref="SerializationInfo"/>.
+        /// Initializes a new object based on <see cref="SerializationInfo" />.
         /// </summary>
-        /// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext"/>.</param>
+        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
+        /// <param name="context"><see cref="StreamingContext" />.</param>
         protected FFCArraySnappedInHistoryItem(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
+            : base(info, context) { }
 
         #endregion //Constructor
 
@@ -45,10 +41,7 @@ namespace CLP.Entities
 
         public override int AnimationDelay
         {
-            get
-            {
-                return 600;
-            }
+            get { return 600; }
         }
 
         /// <summary>
@@ -56,14 +49,8 @@ namespace CLP.Entities
         /// </summary>
         public string FFCUniqueID
         {
-            get
-            {
-                return GetValue<string>(FFCUniqueIDProperty);
-            }
-            set
-            {
-                SetValue(FFCUniqueIDProperty, value);
-            }
+            get { return GetValue<string>(FFCUniqueIDProperty); }
+            set { SetValue(FFCUniqueIDProperty, value); }
         }
 
         public static readonly PropertyData FFCUniqueIDProperty = RegisterProperty("FFCUniqueID", typeof(string), string.Empty);
@@ -73,31 +60,19 @@ namespace CLP.Entities
         /// </summary>
         public CLPArray SnappedInArray
         {
-            get
-            {
-                return GetValue<CLPArray>(SnappedInArrayProperty);
-            }
-            set
-            {
-                SetValue(SnappedInArrayProperty, value);
-            }
+            get { return GetValue<CLPArray>(SnappedInArrayProperty); }
+            set { SetValue(SnappedInArrayProperty, value); }
         }
 
         public static readonly PropertyData SnappedInArrayProperty = RegisterProperty("SnappedInArray", typeof(CLPArray));
 
         /// <summary>
-        /// UniqueID of the array that wass snapped in and then deleted. 
+        /// UniqueID of the array that wass snapped in and then deleted.
         /// </summary>
         public string SnappedInArrayUniqueID
         {
-            get
-            {
-                return GetValue<string>(SnappedInArrayUniqueIDProperty);
-            }
-            set
-            {
-                SetValue(SnappedInArrayUniqueIDProperty, value);
-            }
+            get { return GetValue<string>(SnappedInArrayUniqueIDProperty); }
+            set { SetValue(SnappedInArrayUniqueIDProperty, value); }
         }
 
         public static readonly PropertyData SnappedInArrayUniqueIDProperty = RegisterProperty("SnappedInArrayUniqueID", typeof(string), string.Empty);
@@ -119,10 +94,6 @@ namespace CLP.Entities
                 SnappedInArray = null;
                 ffc.RemoveLastDivision();
             }
-            else
-            {
-                //Logger.Instance.WriteToLog("Fuzzy Factor Card not found on page for UndoAction");
-            }
         }
 
         /// <summary>
@@ -133,7 +104,6 @@ namespace CLP.Entities
             var array = ParentPage.GetPageObjectByID(SnappedInArrayUniqueID);
             if(array == null)
             {
-                //Logger.Instance.WriteToLog("Array not found on page for RedoAction in HistoryFFCArraySnappedIn.");
                 return;
             }
             SnappedInArray = array as CLPArray;
@@ -150,10 +120,6 @@ namespace CLP.Entities
                     ffc.SnapInArray(SnappedInArray.Rows);
                 }
             }
-            else
-            {
-                //Logger.Instance.WriteToLog("Fuzzy Factor Card not found on page for RedoAction");
-            }
         }
 
         /// <summary>
@@ -168,10 +134,7 @@ namespace CLP.Entities
         /// <summary>
         /// Method that unpacks the <see cref="IHistoryItem" /> after it has been sent to another machine.
         /// </summary>
-        public override void UnpackHistoryItem()
-        {
-        }
-
+        public override void UnpackHistoryItem() { }
 
         #endregion //Methods
     }
