@@ -19,8 +19,8 @@ namespace Classroom_Learning_Partner.Views
         public CLPArrayView()
         {
             InitializeComponent();
-            _divisorHideTimer.Elapsed += _divisorHideTimer_Elapsed;
-            _divisorHideTimer.Interval = 1500;
+            //_divisorHideTimer.Elapsed += _divisorHideTimer_Elapsed;
+            //_divisorHideTimer.Interval = 1500;
         }
 
         private void ArrayTopHitBox_MouseMove(object sender, MouseEventArgs e)
