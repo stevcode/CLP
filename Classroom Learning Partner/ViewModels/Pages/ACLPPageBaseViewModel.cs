@@ -420,7 +420,34 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command<MouseEventArgs> MouseDownCommand { get; private set; }
 
-        private void OnMouseDownCommandExecute(MouseEventArgs e) { }
+        private void OnMouseDownCommandExecute(MouseEventArgs e)
+        {
+            if(PageInteractionMode != PageInteractionMode.Select ||
+               TopCanvas == null ||
+               IsPagePreview)
+            {
+                return;
+            }
+
+            var point = e.GetPosition(TopCanvas);
+            var isOverPageObject = false;
+            
+            foreach(var pageObject in PageObjects)
+            {
+                isOverPageObject = IsPointOverPageObject(pageObject, point);
+                if(isOverPageObject)
+                {
+                    break;
+                }
+            }
+
+            if(isOverPageObject)
+            {
+                return;
+            }
+
+            ClearAdorners();
+        }
 
         /// <summary>
         /// Gets the MouseUpCommand command.
@@ -437,7 +464,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnClearPageCommandExecute()
         {
-            if(MessageBox.Show("Are you sure you want to clear everything on this page? All strokes, arrays, and animations will be erased!",
+            if(
+                MessageBox.Show("Are you sure you want to clear everything on this page? All strokes, arrays, and animations will be erased!",
                                 "Warning!",
                                 MessageBoxButton.YesNo,
                                 MessageBoxImage.Question) != MessageBoxResult.Yes)
@@ -447,8 +475,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
             Page.InkStrokes.Clear();
             Page.PageObjects.Clear();
-            //Page.SerializedStrokes.Clear();
-            //Page.PageHistory.ClearHistory();
+            Page.SerializedStrokes.Clear();
+            Page.History.ClearHistory();
         }
 
         #endregion //Commands
@@ -504,10 +532,9 @@ namespace Classroom_Learning_Partner.ViewModels
                     if(e.NewItems != null)
                     {
                         var o = pageObject;
-                        foreach(
-                            var addedPageObject in
-                                e.NewItems.Cast<IPageObject>()
-                                 .Where(addedPageObject => o.ID != addedPageObject.ID && !o.AcceptedPageObjectIDs.Contains(addedPageObject.ID) && o.PageObjectIsOver(addedPageObject, .50)))
+                        foreach(var addedPageObject in
+                            e.NewItems.Cast<IPageObject>()
+                             .Where(addedPageObject => o.ID != addedPageObject.ID && !o.AcceptedPageObjectIDs.Contains(addedPageObject.ID) && o.PageObjectIsOver(addedPageObject, .50)))
                         {
                             addedPageObjects.Add(addedPageObject);
                         }
@@ -672,11 +699,12 @@ namespace Classroom_Learning_Partner.ViewModels
                 var o = pageObject;
                 Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
                                                            (DispatcherOperationCallback)delegate
-                                                               {
-                                                                   o.AcceptStrokes(addStrokes, removeStrokes);
+                                                                                        {
+                                                                                            o.AcceptStrokes(addStrokes, removeStrokes);
 
-                                                                   return null;
-                                                               }, null);
+                                                                                            return null;
+                                                                                        },
+                                                           null);
             }
         }
 
@@ -715,7 +743,7 @@ namespace Classroom_Learning_Partner.ViewModels
                !removedStrokes.Any())
             {
                 var stroke = addedStrokesEnumerable.First();
-                bool wasArrayDivided = false;
+                var wasArrayDivided = false;
                 foreach(var array in PageObjects.OfType<CLPArray>())
                 {
                     if(array.IsDivisionBehaviorOn)
@@ -733,7 +761,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             return false;
-       
+
             /** TODO: implement below
              * All IStokeAcceptors go here
              * Switch statement to call state method on pageObject's viewmodel AcceptStrokes
@@ -761,8 +789,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 var halvedPageObjects = pageObject.Cut(stroke);
                 if(!halvedPageObjects.Any() ||
-                   (App.MainWindowViewModel.CurrentUser.ID != pageObject.CreatorID &&
-                    !pageObject.IsManipulatableByNonCreator))
+                   (App.MainWindowViewModel.CurrentUser.ID != pageObject.CreatorID && !pageObject.IsManipulatableByNonCreator))
                 {
                     continue;
                 }
@@ -951,9 +978,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
                     //Ensures truly uniqueIDs
                     var stroke1 = stroke;
-                    foreach(string newUniqueID in from id in removedStrokeIDs
-                                                  where id == stroke1.GetStrokeID()
-                                                  select Guid.NewGuid().ToCompactID())
+                    foreach(var newUniqueID in from id in removedStrokeIDs
+                                               where id == stroke1.GetStrokeID()
+                                               select Guid.NewGuid().ToCompactID())
                     {
                         stroke.SetStrokeID(newUniqueID);
                     }
@@ -978,13 +1005,18 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Static Methods
 
+        public static bool IsPointOverPageObject(IPageObject pageObject, Point point)
+        {
+            return pageObject.XPosition <= point.X && point.X <= pageObject.XPosition + pageObject.Width && pageObject.YPosition <= point.Y && point.Y <= pageObject.YPosition + pageObject.Height;
+        }
+
         public static void AddHistoryItemToPage(CLPPage page, IHistoryItem historyItem, bool isBatch = false)
         {
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
             App.MainWindowViewModel.Ribbon.CanGroupSendToTeacher = true;
             if(!isBatch)
             {
-                page.History.AddHistoryItem(historyItem); 
+                page.History.AddHistoryItem(historyItem);
             }
 
             //if(App.CurrentUserMode != App.UserMode.Instructor || App.Network.ProjectorProxy == null || App.MainWindowViewModel.Ribbon.IsBroadcastHistoryDisabled)
@@ -1065,8 +1097,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if(addToHistory)
             {
-                var pageObjectIDs = new List<string>{ pageObject.ID };
-  
+                var pageObjectIDs = new List<string>
+                                    {
+                                        pageObject.ID
+                                    };
+
                 AddHistoryItemToPage(page, new PageObjectsAddedHistoryItem(page, App.MainWindowViewModel.CurrentUser, pageObjectIDs));
             }
 
@@ -1111,9 +1146,15 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if(addToHistory)
             {
-                AddHistoryItemToPage(page, new PageObjectsRemovedHistoryItem(page, App.MainWindowViewModel.CurrentUser, new List<IPageObject>{ pageObject }));
+                AddHistoryItemToPage(page,
+                                     new PageObjectsRemovedHistoryItem(page,
+                                                                       App.MainWindowViewModel.CurrentUser,
+                                                                       new List<IPageObject>
+                                                                       {
+                                                                           pageObject
+                                                                       }));
             }
-            
+
             page.PageObjects.Remove(pageObject);
             pageObject.OnDeleted();
         }
