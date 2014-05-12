@@ -18,24 +18,14 @@
         <conv:MultiplyAllIntToTextMultiConverter x:Key="MultiplyAllIntToTextMultiConverter" />
         <conv:RatioToRectMultiConverter x:Key="RatioToRectMultiConverter" />
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-        <Style x:Key="HorizontalGridLineStyle">
-            <Setter Property="Canvas.Left"
-                    Value="0" />
-            <Setter Property="Canvas.Top"
-                    Value="{Binding}" />
-        </Style>
-        <Style x:Key="VerticalGridLineStyle">
-            <Setter Property="Canvas.Left"
-                    Value="{Binding}" />
-            <Setter Property="Canvas.Top"
-                    Value="0" />
-        </Style>
+
         <Style x:Key="HorizontalDivisionStyle">
             <Setter Property="Canvas.Left"
                     Value="0" />
             <Setter Property="Canvas.Top"
                     Value="{Binding Position}" />
         </Style>
+        
         <Style x:Key="VerticalDivisionStyle">
             <Setter Property="Canvas.Left"
                     Value="{Binding Position}" />
@@ -731,7 +721,6 @@
                                 </TextBlock>
                                 <Rectangle Tag="LeftLabelHitBox"
                                            Fill="Transparent"
-                                           MouseMove="LeftDivisorButton_Mouse"
                                            Width="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
                                            Height="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
                                            VerticalAlignment="Center"
@@ -802,7 +791,6 @@
                                            Width="{Binding Length}" />
                                 <Rectangle Tag="TopLabelHitBox"
                                            Fill="Transparent"
-                                           MouseMove="TopDivisorButton_Mouse"
                                            Width="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
                                            Height="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
                                            VerticalAlignment="Center"
@@ -823,7 +811,7 @@
             </ItemsControl>
 
             <!--Divisor Hitboxes-->
-            <Rectangle Grid.Column="1"
+            <!--<Rectangle Grid.Column="1"
                        Grid.Row="1"
                        Fill="Transparent"
                        Margin="-8 0 0 0"
@@ -847,7 +835,7 @@
                        MouseLeave="ArrayDivisionHitBox_MouseLeave"
                        Height="13"
                        Width="{Binding ArrayWidth}"
-                       IsHitTestVisible="{Binding IsDivisionBehaviorOn}" />
+                       IsHitTestVisible="{Binding IsDivisionBehaviorOn}" />-->
 
         </Grid>
 

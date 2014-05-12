@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.ServiceModel;
 using System.Windows;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Catel.Data;
 using Classroom_Learning_Partner.ViewModels;
@@ -15,13 +15,16 @@ namespace Classroom_Learning_Partner
     public interface IProjectorContract : INotebookContract
     {
         [OperationContract]
-        void SwitchProjectorDisplay(string displayType, int displayNumber, List<string> displayPageIDs);
+        void FreezeProjector(bool isFreezing);
 
         [OperationContract]
-        void AddPageToDisplay(string pageID, string pageOwnerID, int pageVersionIndex);
+        void SwitchProjectorDisplay(string displayID, int displayNumber);
 
         [OperationContract]
-        void RemovePageFromDisplay(string pageID, string pageOwnerID, int pageVersionIndex);
+        void AddPageToDisplay(string pageID, string pageOwnerID, string differentiationLevel, uint pageVersionIndex, string displayID);
+
+        [OperationContract]
+        void RemovePageFromDisplay(string pageID, string pageOwnerID, string differentiationLevel, uint pageVersionIndex, string displayID);
 
         [OperationContract]
         void AddSerializedSubmission(string zippedPage, string notebookID);
@@ -33,138 +36,199 @@ namespace Classroom_Learning_Partner
     [ServiceBehavior(IncludeExceptionDetailInFaults = true)]
     public class ProjectorService : IProjectorContract
     {
-        public void SwitchProjectorDisplay(string displayType, int displayNumber, List<string> displayPageIDs)
+        public void FreezeProjector(bool isFreezing)
         {
+            
+            
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                        (DispatcherOperationCallback)delegate
                                                                                     {
-                                                                                        var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
-                                                                                        if(notebookWorkspaceViewModel == null)
+                                                                                        //take snapshot
+                                                                                        if(isFreezing)
                                                                                         {
-                                                                                            return null;
-                                                                                        }
-                                                                                        if(App.CurrentUserMode == App.UserMode.Projector)
-                                                                                        {
-                                                                                            if(displayType == "SingleDisplay")
+                                                                                            var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
+                                                                                            if(notebookWorkspaceViewModel == null)
                                                                                             {
-                                                                                                notebookWorkspaceViewModel.CurrentDisplay = null;
-                                                                                                var compositeKeys = displayPageIDs[0].Split(';');
-                                                                                                var pageID = compositeKeys[0];
-                                                                                                var pageOwnerID = compositeKeys[1];
-                                                                                                var versionIndex = -1;
-                                                                                                Int32.TryParse(compositeKeys[2], out versionIndex);
+                                                                                                return null;
+                                                                                            }
 
-                                                                                                AddPageToDisplay(pageID, pageOwnerID, versionIndex);
+                                                                                            byte[] screenShotByteSource = null;
+                                                                                            if(notebookWorkspaceViewModel.CurrentDisplay == null)
+                                                                                            {
+                                                                                                var singleDisplayView = CLPServiceAgent.Instance.GetViewFromViewModel(notebookWorkspaceViewModel.SingleDisplay);
+                                                                                                screenShotByteSource = CLPServiceAgent.Instance.GetScreenShot(singleDisplayView as UIElement);
                                                                                             }
                                                                                             else
                                                                                             {
-                                                                                                var isNewDisplay = true;
-                                                                                                foreach(var gridDisplay in
-                                                                                                    notebookWorkspaceViewModel.Displays.Where(
-                                                                                                                                              gridDisplay =>
-                                                                                                                                              gridDisplay.ID == displayType &&
-                                                                                                                                              gridDisplay is GridDisplay))
+                                                                                                var displayViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(notebookWorkspaceViewModel.CurrentDisplay as IModel);
+                                                                                                foreach(var gridDisplayView in from displayViewModel in displayViewModels
+                                                                                                                               where displayViewModel is GridDisplayViewModel && (displayViewModel as GridDisplayViewModel).IsDisplayPreview == false
+                                                                                                                               select CLPServiceAgent.Instance.GetViewFromViewModel(displayViewModel))
                                                                                                 {
-                                                                                                    (gridDisplay as GridDisplay).Pages.Clear();
-                                                                                                    notebookWorkspaceViewModel.CurrentDisplay = gridDisplay;
-
-                                                                                                    isNewDisplay = false;
-                                                                                                    break;
-                                                                                                }
-
-                                                                                                if(isNewDisplay)
-                                                                                                {
-                                                                                                    var newGridDisplay = new GridDisplay
-                                                                                                                         {
-                                                                                                                             ID = displayType,
-                                                                                                                             DisplayNumber = displayNumber
-                                                                                                                         };
-                                                                                                    newGridDisplay.Pages.Clear();
-                                                                                                    notebookWorkspaceViewModel.Notebook.AddDisplayToNotebook(newGridDisplay);
-                                                                                                    notebookWorkspaceViewModel.CurrentDisplay = null;
-                                                                                                    notebookWorkspaceViewModel.CurrentDisplay = newGridDisplay;
-                                                                                                }
-
-                                                                                                foreach(var joinedComposite in displayPageIDs)
-                                                                                                {
-                                                                                                    var compositeKeys = joinedComposite.Split(';');
-                                                                                                    var pageID = compositeKeys[0];
-                                                                                                    var pageOwnerID = compositeKeys[1];
-                                                                                                    var versionIndex = -1;
-                                                                                                    Int32.TryParse(compositeKeys[2], out versionIndex);
-
-                                                                                                    AddPageToDisplay(pageID, pageOwnerID, versionIndex);
+                                                                                                    screenShotByteSource = CLPServiceAgent.Instance.GetScreenShot(gridDisplayView as UIElement);
                                                                                                 }
                                                                                             }
+
+                                                                                            if(screenShotByteSource == null)
+                                                                                            {
+                                                                                                return null;
+                                                                                            }
+
+                                                                                            var bitmapImage = new BitmapImage();
+                                                                                            bitmapImage.BeginInit();
+                                                                                            bitmapImage.CacheOption = BitmapCacheOption.OnDemand;
+                                                                                            bitmapImage.StreamSource = new MemoryStream(screenShotByteSource);
+                                                                                            bitmapImage.EndInit();
+                                                                                            bitmapImage.Freeze();
+
+                
+                                                                                            App.MainWindowViewModel.FrozenDisplayImageSource = bitmapImage;
+
+                                                                                        }
+                                                                                        App.MainWindowViewModel.Ribbon.IsProjectorFrozen = isFreezing;
+
+                                                                                        return null;
+                                                                                    },
+                                                       null);
+        }
+
+        public void SwitchProjectorDisplay(string displayID, int displayNumber)
+        {
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null ||
+               App.CurrentUserMode != App.UserMode.Projector)
+            {
+                return;
+            }
+
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                                                       (DispatcherOperationCallback)delegate
+                                                                                    {
+                                                                                        if(displayID == "SingleDisplay")
+                                                                                        {
+                                                                                            notebookWorkspaceViewModel.CurrentDisplay = null;
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            var isNewDisplay = true;
+                                                                                            foreach(var display in
+                                                                                                notebookWorkspaceViewModel.Displays.Where(display =>
+                                                                                                                                          display.ID == displayID))
+                                                                                            {
+                                                                                                notebookWorkspaceViewModel.CurrentDisplay = null;
+                                                                                                notebookWorkspaceViewModel.CurrentDisplay = display;
+
+                                                                                                isNewDisplay = false;
+                                                                                                break;
+                                                                                            }
+
+                                                                                            if(isNewDisplay)
+                                                                                            {
+                                                                                                var newGridDisplay = new GridDisplay
+                                                                                                                     {
+                                                                                                                         ID = displayID,
+                                                                                                                         DisplayNumber = displayNumber,
+                                                                                                                         NotebookID = notebookWorkspaceViewModel.Notebook.ID
+                                                                                                                     };
+                                                                                                notebookWorkspaceViewModel.Notebook.Displays.Add(newGridDisplay);
+                                                                                                notebookWorkspaceViewModel.CurrentDisplay = null;
+                                                                                                notebookWorkspaceViewModel.CurrentDisplay = newGridDisplay;
+                                                                                            }
+                                                                                        }
+
+                                                                                        return null;
+                                                                                    },
+                                                       null);
+        }
+
+        public void AddPageToDisplay(string pageID, string pageOwnerID, string differentiationLevel, uint pageVersionIndex, string displayID)
+        {
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null ||
+               App.CurrentUserMode != App.UserMode.Projector)
+            {
+                return;
+            }
+
+            CLPPage page = null;
+            foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
+            {
+                page = notebook.GetPageByCompositeKeys(pageID, pageOwnerID, differentiationLevel, pageVersionIndex);
+
+                if(page != null)
+                {
+                    break;
+                }
+            }
+
+            if(page == null)
+            {
+                return;
+            }
+
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                                                       (DispatcherOperationCallback)delegate
+                                                                                    {
+                                                                                        if(displayID == "SingleDisplay")
+                                                                                        {
+                                                                                            notebookWorkspaceViewModel.CurrentDisplay = null;
+                                                                                            notebookWorkspaceViewModel.Notebook.CurrentPage = page;
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            var display = notebookWorkspaceViewModel.Displays.First(x => x.ID == displayID);
+                                                                                            if(display == null)
+                                                                                            {
+                                                                                                return null;
+                                                                                            }
+                                                                                            display.AddPageToDisplay(page);
                                                                                         }
                                                                                         return null;
                                                                                     },
                                                        null);
         }
 
-        public void AddPageToDisplay(string pageID, string pageOwnerID, int pageVersionIndex)
+        public void RemovePageFromDisplay(string pageID, string pageOwnerID, string differentiationLevel, uint pageVersionIndex, string displayID)
         {
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null ||
+               App.CurrentUserMode != App.UserMode.Projector)
+            {
+                return;
+            }
+
+            CLPPage page = null;
+            foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
+            {
+                page = notebook.GetPageByCompositeKeys(pageID, pageOwnerID, differentiationLevel, pageVersionIndex);
+
+                if(page != null)
+                {
+                    break;
+                }
+            }
+
+            if(page == null)
+            {
+                return;
+            }
+
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                        (DispatcherOperationCallback)delegate
                                                                                     {
-                                                                                        if(App.CurrentUserMode == App.UserMode.Projector)
+                                                                                        if(displayID == "SingleDisplay")
                                                                                         {
-                                                                                            foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
-                                                                                            {
-                                                                                           
-
-
-                                                                                                var page = notebook.GetPageByCompositeKeys(pageID, pageOwnerID, pageVersionIndex);
-
-                                                                                                if(page == null)
-                                                                                                {
-                                                                                                    continue;
-                                                                                                }
-
-                                                                                                var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
-                                                                                                if(notebookWorkspaceViewModel == null)
-                                                                                                {
-                                                                                                    break;
-                                                                                                }
-
-                                                                                                if(notebookWorkspaceViewModel.CurrentDisplay == null)
-                                                                                                {
-                                                                                                    notebookWorkspaceViewModel.Notebook.CurrentPage = page;
-                                                                                                    break;
-                                                                                                }
-
-                                                                                                notebookWorkspaceViewModel.CurrentDisplay.AddPageToDisplay(page);
-                                                                                                break;
-                                                                                            }
+                                                                                            notebookWorkspaceViewModel.CurrentDisplay = null;
+                                                                                            notebookWorkspaceViewModel.Notebook.CurrentPage = page;
                                                                                         }
-                                                                                        return null;
-                                                                                    },
-                                                       null);
-        }
-
-        public void RemovePageFromDisplay(string pageID, string pageOwnerID, int pageVersionIndex)
-        {
-            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                                                       (DispatcherOperationCallback)delegate
-                                                                                    {
-                                                                                        if(App.CurrentUserMode == App.UserMode.Projector)
+                                                                                        else
                                                                                         {
-                                                                                            foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
+                                                                                            var display = notebookWorkspaceViewModel.Displays.First(x => x.ID == displayID);
+                                                                                            if(display == null)
                                                                                             {
-                                                                                                var page = notebook.GetPageByCompositeKeys(pageID, pageOwnerID, pageVersionIndex);
-
-                                                                                                if(page == null)
-                                                                                                {
-                                                                                                    continue;
-                                                                                                }
-
-                                                                                                var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
-                                                                                                if(notebookWorkspaceViewModel != null)
-                                                                                                {
-                                                                                                    notebookWorkspaceViewModel.CurrentDisplay.RemovePageFromDisplay(page);
-                                                                                                }
-                                                                                                break;
+                                                                                                return null;
                                                                                             }
+                                                                                            display.RemovePageFromDisplay(page);
                                                                                         }
                                                                                         return null;
                                                                                     },
@@ -356,8 +420,8 @@ namespace Classroom_Learning_Partner
             var compositeKeys = compositePageID.Split(';');
             var pageID = compositeKeys[0];
             var pageOwnerID = compositeKeys[1];
-            var versionIndex = -1;
-            Int32.TryParse(compositeKeys[2], out versionIndex);
+            var differentiationLevel = compositeKeys[2];
+            var versionIndex = Convert.ToUInt32(compositeKeys[3]);
 
             var unzippedHistoryItem = CLPServiceAgent.Instance.UnZip(zippedHistoryItem);
             var historyItem = ObjectSerializer.ToObject(unzippedHistoryItem) as IHistoryItem;
@@ -368,27 +432,28 @@ namespace Classroom_Learning_Partner
             }
 
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                (DispatcherOperationCallback)delegate
-                {
-                    foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
-                    {
-                        var page = notebook.GetPageByCompositeKeys(pageID, pageOwnerID, versionIndex);
+                                                       (DispatcherOperationCallback)delegate
+                                                                                    {
+                                                                                        foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
+                                                                                        {
+                                                                                            var page = notebook.GetPageByCompositeKeys(pageID, pageOwnerID, differentiationLevel, versionIndex);
 
-                        if(page == null)
-                        {
-                            continue;
-                        }
+                                                                                            if(page == null)
+                                                                                            {
+                                                                                                continue;
+                                                                                            }
 
-                        historyItem.ParentPage = page;
-                        historyItem.UnpackHistoryItem();
-                        page.History.RedoItems.Clear();
-                        page.History.RedoItems.Add(historyItem);
-                        page.History.Redo();
+                                                                                            historyItem.ParentPage = page;
+                                                                                            historyItem.UnpackHistoryItem();
+                                                                                            page.History.RedoItems.Clear();
+                                                                                            page.History.RedoItems.Add(historyItem);
+                                                                                            page.History.Redo();
 
-                        break;
-                    }
-                    return null;
-                }, null);
+                                                                                            break;
+                                                                                        }
+                                                                                        return null;
+                                                                                    },
+                                                       null);
         }
 
         public void AddNewPage(string zippedPage, int index)

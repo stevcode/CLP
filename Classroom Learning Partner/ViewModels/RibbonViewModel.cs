@@ -76,7 +76,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     break;
             }
 
-            PenSize = 3;
+            PenSize = 2;
             DrawingAttributes = new DrawingAttributes
                                 {
                                     Height = PenSize,
@@ -97,6 +97,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             PageInteractionMode = PageInteractionMode.Pen;
             CurrentLeftPanel = Panels.NotebookPages;
+            IsProjectorFrozen = App.CurrentUserMode != App.UserMode.Projector;
         }
 
         private void InitializeCommands()
@@ -363,40 +364,13 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Whether or not to mirror the displays to the projector.
         /// </summary>
-        public bool IsProjectorOn
+        public bool IsProjectorFrozen
         {
-            get { return GetValue<bool>(IsProjectorOnProperty); }
-            set { SetValue(IsProjectorOnProperty, value); }
+            get { return GetValue<bool>(IsProjectorFrozenProperty); }
+            set { SetValue(IsProjectorFrozenProperty, value); }
         }
 
-        public static readonly PropertyData IsProjectorOnProperty = RegisterProperty("IsProjectorOn", typeof(bool), false, IsProjectorOn_Changed);
-
-        private static void IsProjectorOn_Changed(object sender, AdvancedPropertyChangedEventArgs args)
-        {
-            // TODO: Entities
-            //var displayList = DisplaysPanelViewModel.GetDisplayListPanelViewModel();
-            //if(App.Network.ProjectorProxy == null || displayList == null)
-            //{
-            //    return;
-            //}
-
-            //var isCurrentDisplayASingleDisplay = displayList.CurrentDisplay == null;
-            //var displayID = isCurrentDisplayASingleDisplay ? "SingleDisplay" : displayList.CurrentDisplay.UniqueID;
-            //var currentPage = displayList.SingleDisplay.CurrentPage;
-            //var currentPageID = currentPage.SubmissionType != SubmissionType.None ? currentPage.SubmissionID : currentPage.UniqueID;
-            //var pageIDs = isCurrentDisplayASingleDisplay
-            //                  ? new List<string> { currentPageID }
-            //                  : displayList.CurrentDisplay.DisplayPageIDs.ToList();
-
-            //try
-            //{
-            //    App.Network.ProjectorProxy.SwitchProjectorDisplay(displayID, pageIDs);
-            //}
-            //catch(Exception)
-            //{
-
-            //}         
-        }
+        public static readonly PropertyData IsProjectorFrozenProperty = RegisterProperty("IsProjectorFrozen", typeof(bool), true);
 
         /// <summary>
         /// Disables the use of history to broadcast changes to a page to the projector.
@@ -2567,10 +2541,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 arraysToAdd.Add(array);
             }
 
-            const double MIN_SIDE = 25.0;
+            const double MIN_SIDE = 20.0;
             const double MIN_FFC_SIDE = 185.0;
             const double LABEL_LENGTH = 22.0;
-            var arrayMinSide = (arraysToAdd.First() is FuzzyFactorCard) ? MIN_FFC_SIDE : MIN_SIDE;
 
             var arrayStacks = 1;
             var isHorizontallyAligned = page.Width / columns > page.Height / 4 * 3 / rows;

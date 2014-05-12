@@ -268,7 +268,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public bool IsToggleGridAdornerVisible
         {
-            get { return IsDefaultAdornerVisible && Rows < 51 && Columns < 51; }
+            get { return IsDefaultAdornerVisible && Rows < 71 && Columns < 71; }
         }
 
         public bool IsToggleDivisionAdornerVisible
@@ -562,7 +562,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                 factorCard.SnapInArray(snappingArray.Rows);
                             }
 
-                            //ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryFFCArraySnappedIn(PageObject.ParentPage, pageObject.ID, snappingArray));
+                            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new FFCArraySnappedInHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, pageObject.ID, snappingArray));
                             return;
                         }
                     }

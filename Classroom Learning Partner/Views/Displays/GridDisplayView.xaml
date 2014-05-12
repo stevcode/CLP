@@ -8,11 +8,20 @@
     
     <UserControl.Resources>
         <conv:ItemsControlItemIndexConverter x:Key="ItemsControlItemIndexConverter" />
-        <conv:ProjectedDisplayBackgroundConverter x:Key="ProjectedDisplayBackgroundConverter" />
         <conv:EnumToBoolConverter x:Key="EnumToBoolConverter" />
     </UserControl.Resources>
 
-    <Grid Background="{Binding MainWindowViewModel.Ribbon.IsProjectorOn, Source={x:Static Application.Current}, Converter={StaticResource ProjectedDisplayBackgroundConverter}}">
+    <Grid>
+        <Grid.Style>
+            <Style TargetType="Grid">
+                <Setter Property="Background" Value="PaleGreen" />
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding MainWindowViewModel.Ribbon.IsProjectorFrozen, Source={x:Static Application.Current}}" Value="True">
+                        <Setter Property="Background" Value="Transparent" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </Grid.Style>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />

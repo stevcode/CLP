@@ -1,8 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Entities;
@@ -27,13 +29,6 @@ namespace Classroom_Learning_Partner.ViewModels
             Initialized += DisplaysPanelViewModel_Initialized;
             IsVisible = false;
             OnSetSingleDisplayCommandExecute();
-
-            if(App.Network.ProjectorProxy == null)
-            {
-                return;
-            }
-
-            App.MainWindowViewModel.Ribbon.IsProjectorOn = true;
         }
 
         void DisplaysPanelViewModel_Initialized(object sender, EventArgs e)
@@ -155,7 +150,6 @@ namespace Classroom_Learning_Partner.ViewModels
             notebookWorkspaceViewModel.CurrentDisplay = args.NewValue as IDisplay;
 
             if(App.Network.ProjectorProxy == null ||
-               !App.MainWindowViewModel.Ribbon.IsProjectorOn ||
                notebookWorkspaceViewModel.CurrentDisplay == null)
             {
                 return;
@@ -164,10 +158,7 @@ namespace Classroom_Learning_Partner.ViewModels
             try
             {
                 var displayID = notebookWorkspaceViewModel.CurrentDisplay.ID;
-                var displayPageIDs = new List<string>();
-                displayPageIDs.AddRange(notebookWorkspaceViewModel.CurrentDisplay.Pages.Select(page => page.ID + ";" + page.OwnerID + ";" + page.VersionIndex));
-
-                 App.Network.ProjectorProxy.SwitchProjectorDisplay(displayID, notebookWorkspaceViewModel.CurrentDisplay.DisplayNumber, displayPageIDs);
+                App.Network.ProjectorProxy.SwitchProjectorDisplay(displayID, notebookWorkspaceViewModel.CurrentDisplay.DisplayNumber);
             }
             catch(Exception) { }
         }
@@ -195,9 +186,9 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnAddPageToNewGridDisplayCommandExecute()
         {
             var newGridDisplay = new GridDisplay();
-            newGridDisplay.AddPageToDisplay(Notebook.CurrentPage);
             Notebook.AddDisplayToNotebook(newGridDisplay);
             CurrentDisplay = newGridDisplay;
+            newGridDisplay.AddPageToDisplay(Notebook.CurrentPage);
         }
 
         /// <summary>
@@ -212,7 +203,7 @@ namespace Classroom_Learning_Partner.ViewModels
             dict.Source = uri;
             var color = dict["MainColor"].ToString();
             SingleDisplaySelectedColor = color;
-            SingleDisplaySelectedBackgroundColor = App.MainWindowViewModel.Ribbon.IsProjectorOn ? "PaleGreen" : "Transparent";
+            SingleDisplaySelectedBackgroundColor = App.MainWindowViewModel.Ribbon.IsProjectorFrozen ? "Transparent" : "PaleGreen";
             CurrentDisplay = null;
 
             var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
@@ -222,25 +213,17 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             notebookWorkspaceViewModel.CurrentDisplay = null;
 
-            if(App.Network.ProjectorProxy == null ||
-               !App.MainWindowViewModel.Ribbon.IsProjectorOn)
+            if(App.Network.ProjectorProxy == null)
             {
                 return;
             }
 
             try
             {
-                const string DISPLAY_ID = "SingleDisplay";
-                var displayPageIDs = new List<string>();
-                var currentPage = notebookWorkspaceViewModel.Notebook.CurrentPage;
-                var compositeID = currentPage.ID + ";" + currentPage.OwnerID + ";" + currentPage.VersionIndex;
-                displayPageIDs.Add(compositeID);
-                
-                App.Network.ProjectorProxy.SwitchProjectorDisplay(DISPLAY_ID, -1, displayPageIDs);
+                const string DISPLAY_ID = "SingleDisplay";               
+                App.Network.ProjectorProxy.SwitchProjectorDisplay(DISPLAY_ID, -1);
             }
             catch(Exception) { }
-
-            
         }
 
         /// <summary>
@@ -272,17 +255,71 @@ namespace Classroom_Learning_Partner.ViewModels
 
         protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
         {
-            if(propertyName == "IsProjectorOn" &&
+            if(propertyName == "IsProjectorFrozen" &&
                viewModel is RibbonViewModel)
             {
-                if(CurrentDisplay == null &&
-                   (viewModel as RibbonViewModel).IsProjectorOn)
+                if(CurrentDisplay != null ||
+                   (viewModel as RibbonViewModel).IsProjectorFrozen)
                 {
-                    SingleDisplaySelectedBackgroundColor = "PaleGreen";
+                    SingleDisplaySelectedBackgroundColor = "Transparent";
+
+                    //take snapshot
+                    byte[] screenShotByteSource = null;
+                    if(CurrentDisplay == null)
+                    {
+                        var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
+                        if(notebookWorkspaceViewModel != null)
+                        {
+                            var singleDisplayView = CLPServiceAgent.Instance.GetViewFromViewModel(notebookWorkspaceViewModel.SingleDisplay);
+                            screenShotByteSource = CLPServiceAgent.Instance.GetScreenShot(singleDisplayView as UIElement);
+                        }
+
+                        
+                    }
+                    else
+                    {
+                        var displayViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(CurrentDisplay as IModel);
+                        foreach(var gridDisplayView in from displayViewModel in displayViewModels
+                                                       where displayViewModel is GridDisplayViewModel && (displayViewModel as GridDisplayViewModel).IsDisplayPreview == false
+                                                       select CLPServiceAgent.Instance.GetViewFromViewModel(displayViewModel)) 
+                                                       {
+                                                           screenShotByteSource = CLPServiceAgent.Instance.GetScreenShot(gridDisplayView as UIElement);
+                                                       }
+                    }
+
+                    if(screenShotByteSource != null)
+                    {
+                        var bitmapImage = new BitmapImage();
+                        bitmapImage.BeginInit();
+                        bitmapImage.CacheOption = BitmapCacheOption.OnDemand;
+                        bitmapImage.StreamSource = new MemoryStream(screenShotByteSource);
+                        bitmapImage.EndInit();
+                        bitmapImage.Freeze();
+
+                        App.MainWindowViewModel.FrozenDisplayImageSource = bitmapImage;
+                    }
+                    
+                    //send freeze command to projector
+                    if(App.Network.ProjectorProxy != null)
+                    {
+                        try
+                        {
+                            App.Network.ProjectorProxy.FreezeProjector(true);
+                        }
+                        catch(Exception) { }
+                    }
                 }
                 else
                 {
-                    SingleDisplaySelectedBackgroundColor = "Transparent";
+                    SingleDisplaySelectedBackgroundColor = "PaleGreen";
+                    if(App.Network.ProjectorProxy != null)
+                    {
+                        try
+                        {
+                            App.Network.ProjectorProxy.FreezeProjector(false);
+                        }
+                        catch(Exception) { }
+                    }
                 }
             }
 

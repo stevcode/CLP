@@ -44,7 +44,7 @@
                     <catel:EventToCommand Command="{Binding MouseMoveCommand}"
                                           PassEventArgsToCommand="True" />
                 </i:EventTrigger>
-                <i:EventTrigger EventName="PreviewMouseLeftButtonDown">
+                <i:EventTrigger EventName="MouseLeftButtonDown">
                     <catel:EventToCommand Command="{Binding MouseDownCommand}"
                                           PassEventArgsToCommand="True" />
                 </i:EventTrigger>

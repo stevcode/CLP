@@ -10,7 +10,17 @@
         <conv:ProjectedDisplayBackgroundConverter x:Key="ProjectedDisplayBackgroundConverter" />
     </UserControl.Resources>
 
-    <Grid Background="{Binding MainWindowViewModel.Ribbon.IsProjectorOn, Source={x:Static Application.Current}, Converter={StaticResource ProjectedDisplayBackgroundConverter}}">
+    <Grid>
+        <Grid.Style>
+            <Style TargetType="Grid">
+                <Setter Property="Background" Value="PaleGreen" />
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding MainWindowViewModel.Ribbon.IsProjectorFrozen, Source={x:Static Application.Current}}" Value="True">
+                        <Setter Property="Background" Value="Transparent" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </Grid.Style>
         <Grid HorizontalAlignment="Center"
               VerticalAlignment="Center">
             <Grid.RowDefinitions>

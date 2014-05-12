@@ -91,9 +91,9 @@ namespace CLP.Entities
                 var id = compositeSections[0];
                 var ownerID = compositeSections[1];
                 var differentiationlevel = compositeSections[2];
-                var versionindex = Convert.ToInt32(compositeSections[3]);
+                var versionIndex = Convert.ToUInt32(compositeSections[3]);
 
-                var page = notebook.GetPageByCompositeKeys(id, ownerID, versionindex);
+                var page = notebook.GetPageByCompositeKeys(id, ownerID, differentiationlevel, versionIndex);
                 if(page == null)
                 {
                     return null;

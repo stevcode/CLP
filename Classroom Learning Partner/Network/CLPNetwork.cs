@@ -101,7 +101,7 @@ namespace Classroom_Learning_Partner
                             ProjectorProxy = ChannelFactory<IProjectorContract>.CreateChannel(DefaultBinding, DiscoveredProjectors.Addresses[0]);
                             
                             App.MainWindowViewModel.OnlineStatus = "CONNECTED";
-                            App.MainWindowViewModel.Ribbon.IsProjectorOn = true;
+                            App.MainWindowViewModel.Ribbon.IsProjectorFrozen = false;
 
                             if(App.MainWindowViewModel.CurrentClassPeriod != null)
                             {
