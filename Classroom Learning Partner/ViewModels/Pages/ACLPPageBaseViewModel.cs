@@ -378,17 +378,6 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData IsUsingCustomCursorsProperty = RegisterProperty("IsUsingCustomCursors", typeof(bool), false);
 
         /// <summary>
-        /// Whether or not the submissions for this page are showing.
-        /// </summary>
-        public bool IsShowingSubmissions
-        {
-            get { return GetValue<bool>(IsShowingSubmissionsProperty); }
-            set { SetValue(IsShowingSubmissionsProperty, value); }
-        }
-
-        public static readonly PropertyData IsShowingSubmissionsProperty = RegisterProperty("IsShowingSubmissions", typeof(bool), false);
-
-        /// <summary>
         /// Whether the page has submissions or not.
         /// </summary>
         public bool HasSubmissions
@@ -397,8 +386,8 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public int NumberOfDistinctSubmissions
-        {
-            get { return Submissions.Distinct().Count(); }
+        { 
+            get { return Submissions.Select(submission => submission.OwnerID).Distinct().Count(); }
         }
 
         #endregion //Bindings
@@ -1044,7 +1033,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //try
             //{
-            //    var compositePageID = page.ID + ";" + page.OwnerID + ";" + page.VersionIndex;
+            //    var compositePageID = page.ID + ";" + page.OwnerID + ";" + page.DifferentiationLevel + ";" + page.VersionIndex;
             //    App.Network.ProjectorProxy.AddHistoryItem(compositePageID, zippedHistoryItem);
             //}
             //catch(Exception)

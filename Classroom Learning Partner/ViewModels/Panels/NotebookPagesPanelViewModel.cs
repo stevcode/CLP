@@ -147,31 +147,10 @@ namespace Classroom_Learning_Partner.ViewModels
             if(notebookWorkspaceViewModel.CurrentDisplay == null)
             {
                 CurrentPage = page;
-
-                if(App.Network.ProjectorProxy == null)
-                {
-                    return;
-                }
-
-                try
-                {
-                     App.Network.ProjectorProxy.AddPageToDisplay(page.ID, page.OwnerID, page.DifferentiationLevel, (int)page.VersionIndex);
-                }
-                catch(Exception) { }
                 return;
             }
 
             notebookWorkspaceViewModel.CurrentDisplay.AddPageToDisplay(page);
-            if(App.Network.ProjectorProxy == null)
-            {
-                return;
-            }
-
-            try
-            {
-                    App.Network.ProjectorProxy.AddPageToDisplay(page.ID, page.OwnerID, page.DifferentiationLevel, (int)page.VersionIndex);
-            }
-            catch(Exception) { }
 
             // TODO: Entities, History of submissions
             //var historyPanel = GetSubmissionHistoryPanelViewModel();

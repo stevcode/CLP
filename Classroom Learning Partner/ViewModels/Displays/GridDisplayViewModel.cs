@@ -112,6 +112,37 @@ namespace Classroom_Learning_Partner.ViewModels
         private void Pages_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             UGridRows = Pages.Count < 3 ? 1 : 0;
+
+            if(App.Network.ProjectorProxy == null ||
+               App.CurrentUserMode != App.UserMode.Instructor ||
+               IsDisplayPreview)
+            {
+                return;
+            }
+
+            if(e.OldItems != null)
+            {
+                foreach(var page in e.OldItems.OfType<CLPPage>()) 
+                {
+                    try
+                    {
+                        App.Network.ProjectorProxy.RemovePageFromDisplay(page.ID, page.OwnerID, page.DifferentiationLevel, page.VersionIndex, GridDisplay.ID);
+                    }
+                    catch { }
+                }
+            }
+
+            if(e.NewItems != null)
+            {
+                foreach(var page in e.NewItems.OfType<CLPPage>()) 
+                {
+                    try
+                    {
+                        App.Network.ProjectorProxy.AddPageToDisplay(page.ID, page.OwnerID, page.DifferentiationLevel, page.VersionIndex, GridDisplay.ID);
+                    }
+                    catch { }
+                }
+            }  
         }
 
         #endregion //Methods

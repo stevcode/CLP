@@ -50,7 +50,7 @@
             <Grid>
                 <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          ItemsSource="{Binding Pages, IsAsync=True}"
-                         SelectedValue="{Binding CurrentPage}"
+                         SelectedValue="{Binding CurrentPage, Mode=OneWay}"
                          ItemContainerStyle="{StaticResource PageSidebarContainer}"
                          SelectionMode="Single"
                          extenders:ListBoxExtenders.AutoScrollToCurrentItem="True">

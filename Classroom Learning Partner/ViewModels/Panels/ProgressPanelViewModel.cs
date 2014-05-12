@@ -223,7 +223,8 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentPages.Clear();
             foreach(string pageID in PageIDList)
             {
-                CLPPage page = Notebook.GetPageByCompositeKeys(pageID, Notebook.OwnerID, 0);
+                //TODO: Make this work with Differentiated Pages
+                CLPPage page = Notebook.GetPageByCompositeKeys(pageID, Notebook.OwnerID, "0", 0);
                 if(page != null)
                 {
                     CurrentPages.Add(page);

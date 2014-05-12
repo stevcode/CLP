@@ -191,9 +191,9 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnAddPageToNewGridDisplayCommandExecute()
         {
             var newGridDisplay = new GridDisplay();
-            newGridDisplay.AddPageToDisplay(Notebook.CurrentPage);
             Notebook.AddDisplayToNotebook(newGridDisplay);
             CurrentDisplay = newGridDisplay;
+            newGridDisplay.AddPageToDisplay(Notebook.CurrentPage);
         }
 
         /// <summary>
@@ -229,8 +229,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 App.Network.ProjectorProxy.SwitchProjectorDisplay(DISPLAY_ID, -1);
             }
             catch(Exception) { }
-
-            
         }
 
         /// <summary>
