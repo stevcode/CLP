@@ -260,8 +260,7 @@ namespace Classroom_Learning_Partner.ViewModels
             if(propertyName == "IsProjectorFrozen" &&
                viewModel is RibbonViewModel)
             {
-                if(CurrentDisplay != null ||
-                   (viewModel as RibbonViewModel).IsProjectorFrozen)
+                if((viewModel as RibbonViewModel).IsProjectorFrozen)
                 {
                     SingleDisplaySelectedBackgroundColor = "Transparent";
 
