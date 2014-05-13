@@ -99,7 +99,7 @@
                     BorderThickness="0"
                     Width="{Binding BorderWidth}"
                     Height="{Binding BorderHeight}">
-                <ScrollViewer x:Name="MirrorDisplayScroller"
+                <ScrollViewer x:Name="SingleDisplayScroller"
                               HorizontalScrollBarVisibility="Hidden"
                               VerticalScrollBarVisibility="Auto">
                     <ScrollViewer.Resources>

@@ -187,24 +187,23 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnPageScrollCommandExecute(ScrollChangedEventArgs e)
         {
-            // TODO: Entities
-            //if(App.CurrentUserMode != App.UserMode.Instructor || App.Network.ProjectorProxy == null || !App.MainWindowViewModel.Ribbon.IsProjectorOn)
-            //{
-            //    return;
-            //}
+            if(App.CurrentUserMode != App.UserMode.Instructor || 
+               App.Network.ProjectorProxy == null ||
+               Math.Abs(e.VerticalChange) < 0.001)
+            {
+                return;
+            }
 
-            //var submissionID = CurrentPage.SubmissionType != SubmissionType.None ? CurrentPage.SubmissionID : "";
-            //try
-            //{
-            //    //TODO: Steve - Make the offset a percentage and convert back on receive. If
-            //    //Instructor and Projector are on different screen sizes, they don't have the
-            //    //same vertical offsets.
-            //    App.Network.ProjectorProxy.ScrollPage(CurrentPage.UniqueID, submissionID, e.VerticalOffset);
-            //}
-            //catch(Exception)
-            //{
+            var percentOffset = e.VerticalOffset / e.ExtentHeight;
 
-            //}
+            try
+            {
+                App.Network.ProjectorProxy.ScrollPage(percentOffset);
+            }
+            catch(Exception)
+            {
+
+            }
         }
 
         #endregion //Commands

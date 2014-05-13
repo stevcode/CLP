@@ -315,11 +315,11 @@
                               Command="{Binding InsertArrayCommand}"
                               CommandParameter="FACTORCARD" />-->
 
-                <RibbonButton Label="Division Tool"
+                <!--<RibbonButton Label="Division Tool"
                               LargeImageSource="pack://application:,,,/Resources/Images/FuzzyFactorCard32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/FuzzyFactorCard16.png"
                               Command="{Binding InsertArrayCommand}"
-                              CommandParameter="FUZZYFACTORCARD" />
+                              CommandParameter="FUZZYFACTORCARD" />-->
 
                 <!--<RibbonButton Label="Division Tool With Tiles"
                               LargeImageSource="pack://application:,,,/Resources/Images/FuzzyFactorCard32.png"

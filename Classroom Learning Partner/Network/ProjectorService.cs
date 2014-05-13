@@ -7,6 +7,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Catel.Data;
 using Classroom_Learning_Partner.ViewModels;
+using Classroom_Learning_Partner.Views;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner
@@ -30,7 +31,7 @@ namespace Classroom_Learning_Partner
         void AddSerializedSubmission(string zippedPage, string notebookID);
 
         [OperationContract]
-        void ScrollPage(string pageID, string submissionID, double offset);
+        void ScrollPage(double percentOffset);
     }
 
     [ServiceBehavior(IncludeExceptionDetailInFaults = true)]
@@ -275,42 +276,27 @@ namespace Classroom_Learning_Partner
                                                        null);
         }
 
-        public void ScrollPage(string pageID, string submissionID, double offset)
+        public void ScrollPage(double percentOffset)
         {
-            // TODO: Fix for lack of single/mirror display
-            //var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
-            //if(currentPage == null || currentPage.ID != pageID)
-            //{
-            //    return;
-            //}
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null)
+            {
+                return;
+            }
 
-            //if(submissionID != "" &&
-            //   submissionID != currentPage.SubmissionID)
-            //{
-            //    return;
-            //}
+            var singleDisplayView = CLPServiceAgent.Instance.GetViewFromViewModel(notebookWorkspaceViewModel.SingleDisplay) as SingleDisplayView;
+            if(singleDisplayView == null)
+            {
+                return;
+            }
 
-            //var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
-            //if(notebookWorkspaceViewModel == null)
-            //{
-            //    return;
-            //}
-
-            //var mirrorDisplay = notebookWorkspaceViewModel.CurrentDisplay as SingleDisplay;
-            //var mirrorDisplayViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(mirrorDisplay);
-            //var mirrorDisplayView = CLPServiceAgent.Instance.GetViewFromViewModel(mirrorDisplayViewModels.FirstOrDefault()) as SingleDisplayView;
-
-            //if(mirrorDisplayView == null)
-            //{
-            //    return;
-            //}
-
-            //Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-            //                                           (DispatcherOperationCallback)delegate
-            //                                                                        {
-            //                                                                            mirrorDisplayView.MirrorDisplayScroller.ScrollToVerticalOffset(offset);
-            //                                                                            return null;
-            //                                                                        }, null);
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                                                       (DispatcherOperationCallback)delegate
+                                                                                    {
+                                                                                        var adjustedOffset = percentOffset * singleDisplayView.SingleDisplayScroller.ExtentHeight;
+                                                                                        singleDisplayView.SingleDisplayScroller.ScrollToVerticalOffset(adjustedOffset);
+                                                                                        return null;
+                                                                                    }, null);
         }
 
         #region INotebookContract Members
