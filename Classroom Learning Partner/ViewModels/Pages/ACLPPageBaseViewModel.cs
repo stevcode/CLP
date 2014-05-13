@@ -556,7 +556,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            QueueTask(() => StrokesChanged(e));
+            StrokesChanged(e);
+
+            //QueueTask(() => StrokesChanged(e));
         }
 
         private void StrokesChanged(StrokeCollectionChangedEventArgs e)
@@ -793,14 +795,13 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 PageObjects.Remove(pageObject);
             }
-
+                                                                                        
             var allHalvedPageObjectIDs = new List<string>();
             foreach(var pageObject in allHalvedPageObjects)
             {
                 allHalvedPageObjectIDs.Add(pageObject.ID);
                 AddPageObjectToPage(Page, pageObject, false, false);
             }
-
             AddHistoryItemToPage(Page, new PageObjectCutHistoryItem(Page, App.MainWindowViewModel.CurrentUser, stroke, allCutPageObjects, allHalvedPageObjectIDs));
 
             RefreshInkStrokes();
@@ -1009,10 +1010,10 @@ namespace Classroom_Learning_Partner.ViewModels
             return pageObject.XPosition <= point.X && point.X <= pageObject.XPosition + pageObject.Width && pageObject.YPosition <= point.Y && point.Y <= pageObject.YPosition + pageObject.Height;
         }
 
-        private Task _currentTask = Task.FromResult(Type.Missing);
-        private readonly object _lock = new Object();
+        private static Task _currentTask = Task.FromResult(Type.Missing);
+        private static readonly object _lock = new Object();
 
-        public void QueueTask(Action action)
+        public static void QueueTask(Action action)
         {
             lock (_lock)
             {
@@ -1043,6 +1044,8 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 return;
             }
+
+            QueueTask(() => {
 
             var historyItemCopy = historyItem.CreatePackagedHistoryItem();
             if(historyItemCopy == null)
@@ -1080,6 +1083,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //    {
             //    }
             //}
+                });
         }
 
         public static void AddPageObjectToPage(IPageObject pageObject, bool addToHistory = true, bool forceSelectMode = true, int index = -1)

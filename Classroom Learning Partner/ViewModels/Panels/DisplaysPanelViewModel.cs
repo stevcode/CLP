@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -188,6 +189,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var newGridDisplay = new GridDisplay();
             Notebook.AddDisplayToNotebook(newGridDisplay);
             CurrentDisplay = newGridDisplay;
+            PageHistory.UISleep(300);
             newGridDisplay.AddPageToDisplay(Notebook.CurrentPage);
         }
 
