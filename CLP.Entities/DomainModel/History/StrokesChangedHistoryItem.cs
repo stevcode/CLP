@@ -146,19 +146,12 @@ namespace CLP.Entities
         /// </summary>
         public override IHistoryItem CreatePackagedHistoryItem()
         {
-            var clonedHistoryItem = Clone() as StrokesChangedHistoryItem;
-            if(clonedHistoryItem == null)
-            {
-                return null;
-            }
-
-            clonedHistoryItem.PackagedSerializedStrokes.Clear();
+            PackagedSerializedStrokes.Clear();
             foreach(var stroke in StrokeIDsAdded.Select(id => ParentPage.GetStrokeByID(id)))
             {
-                clonedHistoryItem.PackagedSerializedStrokes.Add(stroke.ToStrokeDTO());
+                PackagedSerializedStrokes.Add(stroke.ToStrokeDTO());
             }
-
-            return clonedHistoryItem;
+            return this;
         }
 
         /// <summary>

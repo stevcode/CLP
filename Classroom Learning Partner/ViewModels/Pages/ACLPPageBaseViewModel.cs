@@ -959,6 +959,11 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 //Avoid uniqueID duplication
                 var enumerable = removedStrokes as IList<Stroke> ?? removedStrokes.ToList();
+                //HACK: prevents projector from throwing error when receiving Redo for stroke removed
+                if(enumerable.Any(removedStroke => Page.History.TrashedInkStrokes.Contains(removedStroke))) 
+                {
+                    return;
+                }
                 //TODO: test to see if OwnerID == CurrentUser.ID. If not, remove CollectionChanged handler and re-add stroke
                 var removedStrokeIDs = enumerable.Select(stroke => stroke.GetStrokeID()).ToList();
                 var addedStrokeIDs = new List<string>();
@@ -980,6 +985,8 @@ namespace Classroom_Learning_Partner.ViewModels
                     addedStrokeIDs.Add(stroke.GetStrokeID());
                 }
                 RefreshAcceptedStrokes(strokes.ToList(), enumerable.ToList());
+
+                
                 AddHistoryItemToPage(Page, new StrokesChangedHistoryItem(Page, App.MainWindowViewModel.CurrentUser, addedStrokeIDs, enumerable.ToList()));
             }
             catch(Exception ex)
