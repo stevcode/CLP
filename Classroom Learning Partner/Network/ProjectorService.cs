@@ -32,6 +32,9 @@ namespace Classroom_Learning_Partner
 
         [OperationContract]
         void ScrollPage(double percentOffset);
+        
+        [OperationContract]
+        void MakeCurrentPageLonger();
     }
 
     [ServiceBehavior(IncludeExceptionDetailInFaults = true)]
@@ -295,6 +298,29 @@ namespace Classroom_Learning_Partner
                                                                                     {
                                                                                         var adjustedOffset = percentOffset * singleDisplayView.SingleDisplayScroller.ExtentHeight;
                                                                                         singleDisplayView.SingleDisplayScroller.ScrollToVerticalOffset(adjustedOffset);
+                                                                                        return null;
+                                                                                    }, null);
+        }
+
+        public void MakeCurrentPageLonger()
+        {
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null)
+            {
+                return;
+            }
+
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                                                       (DispatcherOperationCallback)delegate
+                                                                                    {
+                                                                                        var page = notebookWorkspaceViewModel.Notebook.CurrentPage;
+                                                                                        var initialHeight = page.Width / page.InitialAspectRatio;
+                                                                                        const int MAX_INCREASE_TIMES = 2;
+                                                                                        const double PAGE_INCREASE_AMOUNT = 200.0;
+                                                                                        if(page.Height < initialHeight + PAGE_INCREASE_AMOUNT * MAX_INCREASE_TIMES)
+                                                                                        {
+                                                                                            page.Height += PAGE_INCREASE_AMOUNT;
+                                                                                        }
                                                                                         return null;
                                                                                     }, null);
         }

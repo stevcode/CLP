@@ -1961,6 +1961,21 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 page.Height += PAGE_INCREASE_AMOUNT;
             }
+
+            if(App.CurrentUserMode != App.UserMode.Instructor || 
+               App.Network.ProjectorProxy == null)
+            {
+                return;
+            }
+
+            try
+            {
+                App.Network.ProjectorProxy.MakeCurrentPageLonger();
+            }
+            catch(Exception)
+            {
+
+            }
         }
 
         /// <summary>
