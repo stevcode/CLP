@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.ServiceModel;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Threading;
@@ -155,79 +156,87 @@ namespace Classroom_Learning_Partner
 
         public void CollectStudentNotebook(string zippedNotebook, string studentName)
         {
-            var unZippedNotebook = CLPServiceAgent.Instance.UnZip(zippedNotebook);
-            var notebook = ObjectSerializer.ToObject(unZippedNotebook) as Notebook;
+            Task.Factory.StartNew(() =>
+                                  {
+                                      var unZippedNotebook = CLPServiceAgent.Instance.UnZip(zippedNotebook);
+                                      var notebook = ObjectSerializer.ToObject(unZippedNotebook) as Notebook;
 
-            if(notebook == null)
-            {
-                Logger.Instance.WriteToLog("Failed to collect notebook from " + studentName);
-                return;
-            }
+                                      if(notebook == null)
+                                      {
+                                          Logger.Instance.WriteToLog("Failed to collect notebook from " + studentName);
+                                          return;
+                                      }
 
-            var notebookFolderName = notebook.Name + ";" + notebook.ID + ";" + notebook.Owner.FullName + ";" + notebook.OwnerID;
-            var notebookFolderPath = Path.Combine(App.NotebookCacheDirectory, notebookFolderName);
-            notebook.SavePartialNotebook(notebookFolderPath, false);
+                                      var notebookFolderName = notebook.Name + ";" + notebook.ID + ";" + notebook.Owner.FullName + ";" + notebook.OwnerID;
+                                      var notebookFolderPath = Path.Combine(App.NotebookCacheDirectory, notebookFolderName);
+                                      notebook.SavePartialNotebook(notebookFolderPath, false);
+                                  });
         }
 
         public string StudentLogin(string studentID, string machineName, string machineAddress, bool useClassPeriod = true)
         {
-            var student = App.MainWindowViewModel.AvailableUsers.FirstOrDefault(x => x.ID == studentID);
-            if(student == null)
+            var task = Task<string>.Factory.StartNew(() =>
             {
-                Logger.Instance.WriteToLog("Failed to log in student. student is null.");
-                return string.Empty;
-            }
-            student.CurrentMachineAddress = machineAddress;
-            student.CurrentMachineName = machineName;
-            student.IsConnected = true;
-
-            if(!useClassPeriod ||
-               App.MainWindowViewModel.CurrentClassPeriod == null)
-            {
-                return string.Empty;
-            }
-
-            try
-            {
-                Notebook notebookToZip;
-                var newNotebook = App.MainWindowViewModel.OpenNotebooks.First().CopyForNewOwner(student);
-
-                var studentNotebookFolderName = newNotebook.Name + ";" + newNotebook.ID + ";" + newNotebook.Owner.FullName + ";" + newNotebook.OwnerID;
-                var studentNotebookFolderPath = Path.Combine(App.NotebookCacheDirectory, studentNotebookFolderName);
-                if(Directory.Exists(studentNotebookFolderPath))
+                var student = App.MainWindowViewModel.AvailableUsers.FirstOrDefault(x => x.ID == studentID);
+                if(student == null)
                 {
-                    var pageIDs = App.MainWindowViewModel.CurrentClassPeriod.PageIDs;
-                    var studentNotebook = Notebook.OpenPartialNotebook(studentNotebookFolderPath, pageIDs, new List<string>());
-                    if(studentNotebook == null)
-                    {
-                        var newNotebookString = ObjectSerializer.ToString(newNotebook);
-                        var zippedNotebook = CLPServiceAgent.Instance.Zip(newNotebookString);
+                    Logger.Instance.WriteToLog("Failed to log in student. student is null.");
+                    return string.Empty;
+                }
+                student.CurrentMachineAddress = machineAddress;
+                student.CurrentMachineName = machineName;
+                student.IsConnected = true;
 
-                        return zippedNotebook;
-                    }
-                    var loadedPageIDs = studentNotebook.Pages.Select(page => page.ID).ToList();
-                    foreach(var page in newNotebook.Pages.Where(page => !loadedPageIDs.Contains(page.ID))) 
-                    {
-                        studentNotebook.Pages.Add(page);
-                    }
-                    var orderedPages = studentNotebook.Pages.OrderBy(x => x.PageNumber).ToList();
-                    studentNotebook.Pages = new ObservableCollection<CLPPage>(orderedPages);
-                    var studentNotebookString = ObjectSerializer.ToString(studentNotebook);
-                    var zippedStudentNotebook = CLPServiceAgent.Instance.Zip(studentNotebookString);
-
-                    return zippedStudentNotebook;
+                if(!useClassPeriod ||
+                   App.MainWindowViewModel.CurrentClassPeriod == null)
+                {
+                    return string.Empty;
                 }
 
-                var newNotebookString2 = ObjectSerializer.ToString(newNotebook);
-                var zippedNotebook2 = CLPServiceAgent.Instance.Zip(newNotebookString2);
+                try
+                {
+                    Notebook notebookToZip;
+                    var newNotebook = App.MainWindowViewModel.OpenNotebooks.First().CopyForNewOwner(student);
 
-                return zippedNotebook2;
-            }
-            catch(Exception ex)
-            {
-                Logger.Instance.WriteToLog("Error, failed to send partial notebook: " + ex.Message);
-                return string.Empty;
-            }
+                    var studentNotebookFolderName = newNotebook.Name + ";" + newNotebook.ID + ";" + newNotebook.Owner.FullName + ";" + newNotebook.OwnerID;
+                    var studentNotebookFolderPath = Path.Combine(App.NotebookCacheDirectory, studentNotebookFolderName);
+                    if(Directory.Exists(studentNotebookFolderPath))
+                    {
+                        var pageIDs = App.MainWindowViewModel.CurrentClassPeriod.PageIDs;
+                        var studentNotebook = Notebook.OpenPartialNotebook(studentNotebookFolderPath, pageIDs, new List<string>());
+                        if(studentNotebook == null)
+                        {
+                            var newNotebookString = ObjectSerializer.ToString(newNotebook);
+                            var zippedNotebook = CLPServiceAgent.Instance.Zip(newNotebookString);
+
+                            return zippedNotebook;
+                        }
+                        var loadedPageIDs = studentNotebook.Pages.Select(page => page.ID).ToList();
+                        foreach(var page in newNotebook.Pages.Where(page => !loadedPageIDs.Contains(page.ID))) 
+                        {
+                            studentNotebook.Pages.Add(page);
+                        }
+                        var orderedPages = studentNotebook.Pages.OrderBy(x => x.PageNumber).ToList();
+                        studentNotebook.Pages = new ObservableCollection<CLPPage>(orderedPages);
+                        var studentNotebookString = ObjectSerializer.ToString(studentNotebook);
+                        var zippedStudentNotebook = CLPServiceAgent.Instance.Zip(studentNotebookString);
+
+                        return zippedStudentNotebook;
+                    }
+
+                    var newNotebookString2 = ObjectSerializer.ToString(newNotebook);
+                    var zippedNotebook2 = CLPServiceAgent.Instance.Zip(newNotebookString2);
+
+                    return zippedNotebook2;
+                }
+                catch(Exception ex)
+                {
+                    Logger.Instance.WriteToLog("Error, failed to send partial notebook: " + ex.Message);
+                    return string.Empty;
+                }
+            }, TaskCreationOptions.LongRunning);
+
+            return task.Result;
         }
 
         public void StudentLogout(string studentID)
