@@ -1021,9 +1021,33 @@ namespace Classroom_Learning_Partner.ViewModels
                     lastTask => 
                     {
                         // re-throw the error of the last completed task (if any)
-                        lastTask.GetAwaiter().GetResult();
+                        try
+                        {
+                            lastTask.GetAwaiter().GetResult();
+                        }
+                        catch(Exception ex)
+                        {
+                            Logger.Instance.WriteToLog("Error on lastTask:");
+                            Logger.Instance.WriteToLog("[UNHANDLED ERROR] - " + ex.Message + " " + (ex.InnerException != null ? "\n" + ex.InnerException.Message : null));
+                            Logger.Instance.WriteToLog("[HResult]: " + ex.HResult);
+                            Logger.Instance.WriteToLog("[Source]: " + ex.Source);
+                            Logger.Instance.WriteToLog("[Method]: " + ex.TargetSite);
+                            Logger.Instance.WriteToLog("[StackTrace]: " + ex.StackTrace);
+                        }
                         // run the new task
-                        action();
+                        try
+                        {
+                            action();
+                        }
+                        catch(Exception ex)
+                        {
+                            Logger.Instance.WriteToLog("Error on task action execute:");
+                            Logger.Instance.WriteToLog("[UNHANDLED ERROR] - " + ex.Message + " " + (ex.InnerException != null ? "\n" + ex.InnerException.Message : null));
+                            Logger.Instance.WriteToLog("[HResult]: " + ex.HResult);
+                            Logger.Instance.WriteToLog("[Source]: " + ex.Source);
+                            Logger.Instance.WriteToLog("[Method]: " + ex.TargetSite);
+                            Logger.Instance.WriteToLog("[StackTrace]: " + ex.StackTrace);
+                        }
                     },
                     CancellationToken.None, 
                     TaskContinuationOptions.LazyCancellation, 

@@ -284,7 +284,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     break;
                 case App.UserMode.Projector:
                     //TODO: Remove after database established
-                    CurrentUser = Person.EmilyProjector;
+                    CurrentUser = Person.Emily;
                     Workspace = new NotebookChooserWorkspaceViewModel();
                     break;
                 case App.UserMode.Student:
@@ -523,7 +523,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 var dateTime = new DateTime(year, month, day, hour, minute, 0);
                 var now = DateTime.Now;
                 var timeSpan = now - dateTime;
-                var threeHours = new TimeSpan(3, 0, 0);
+                var threeHours = new TimeSpan(7, 0, 0);
                 if(timeSpan >= threeHours)
                 {
                     continue;
