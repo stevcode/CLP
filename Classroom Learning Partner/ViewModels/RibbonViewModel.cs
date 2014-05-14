@@ -2665,7 +2665,10 @@ namespace Classroom_Learning_Partner.ViewModels
                         oldDimensions.Add(pageObject.ID, new Point(pageObject.Width, pageObject.Height));
                         if((pageObject as ACLPArrayBase).Rows * initializedSquareSize > pageObjectMinSide && (pageObject as ACLPArrayBase).Columns * initializedSquareSize > pageObjectMinSide)
                         {
-                            (pageObject as ACLPArrayBase).SizeArrayToGridLevel(initializedSquareSize);
+                            if(pageObject.XPosition + (pageObject as ACLPArrayBase).Columns * initializedSquareSize + 2 * LABEL_LENGTH <= page.Width && pageObject.YPosition + (pageObject as ACLPArrayBase).Rows * initializedSquareSize + 2 * LABEL_LENGTH <= page.Height)
+                            {
+                                (pageObject as ACLPArrayBase).SizeArrayToGridLevel(initializedSquareSize);
+                            }
                         }
                         else
                         {
