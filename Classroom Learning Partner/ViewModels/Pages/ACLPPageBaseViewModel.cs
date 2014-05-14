@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Ink;
@@ -269,6 +271,13 @@ namespace Classroom_Learning_Partner.ViewModels
                     pageViewModel.DefaultDA.Width = 2.0;
                     pageViewModel.DefaultDA.StylusTip = StylusTip.Ellipse;
                     pageViewModel.ClearAdorners();
+                    if(!pageViewModel.IsPagePreview)
+                    {
+                        foreach(var array in pageViewModel.PageObjects.OfType<ACLPArrayBase>().Where(array => array.Rows < 71 && array.Columns < 71)) 
+                        {
+                            array.IsGridOn = true;
+                        }
+                    }
                     break;
                 case PageInteractionMode.EditObjectProperties:
                     pageViewModel.IsInkCanvasHitTestVisible = false;
@@ -371,17 +380,6 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData IsUsingCustomCursorsProperty = RegisterProperty("IsUsingCustomCursors", typeof(bool), false);
 
         /// <summary>
-        /// Whether or not the submissions for this page are showing.
-        /// </summary>
-        public bool IsShowingSubmissions
-        {
-            get { return GetValue<bool>(IsShowingSubmissionsProperty); }
-            set { SetValue(IsShowingSubmissionsProperty, value); }
-        }
-
-        public static readonly PropertyData IsShowingSubmissionsProperty = RegisterProperty("IsShowingSubmissions", typeof(bool), false);
-
-        /// <summary>
         /// Whether the page has submissions or not.
         /// </summary>
         public bool HasSubmissions
@@ -390,8 +388,8 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public int NumberOfDistinctSubmissions
-        {
-            get { return Submissions.Distinct().Count(); }
+        { 
+            get { return Submissions.Select(submission => submission.OwnerID).Distinct().Count(); }
         }
 
         #endregion //Bindings
@@ -420,7 +418,36 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command<MouseEventArgs> MouseDownCommand { get; private set; }
 
-        private void OnMouseDownCommandExecute(MouseEventArgs e) { }
+        private void OnMouseDownCommandExecute(MouseEventArgs e)
+        {
+            if(PageInteractionMode != PageInteractionMode.Select ||
+               TopCanvas == null ||
+               IsPagePreview)
+            {
+                return;
+            }
+
+            var point = e.GetPosition(TopCanvas);
+            var isOverPageObject = false;
+            
+            foreach(var pageObject in PageObjects)
+            {
+                isOverPageObject = IsPointOverPageObject(pageObject, point) &&
+                                   !(App.MainWindowViewModel.CurrentUser.ID != pageObject.CreatorID &&
+                                     !pageObject.IsManipulatableByNonCreator);
+                if(isOverPageObject)
+                {
+                    break;
+                }
+            }
+
+            if(isOverPageObject)
+            {
+                return;
+            }
+
+            ClearAdorners();
+        }
 
         /// <summary>
         /// Gets the MouseUpCommand command.
@@ -437,7 +464,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnClearPageCommandExecute()
         {
-            if(MessageBox.Show("Are you sure you want to clear everything on this page? All strokes, arrays, and animations will be erased!",
+            if(
+                MessageBox.Show("Are you sure you want to clear everything on this page? All strokes, arrays, and animations will be erased!",
                                 "Warning!",
                                 MessageBoxButton.YesNo,
                                 MessageBoxImage.Question) != MessageBoxResult.Yes)
@@ -447,8 +475,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
             Page.InkStrokes.Clear();
             Page.PageObjects.Clear();
-            //Page.SerializedStrokes.Clear();
-            //Page.PageHistory.ClearHistory();
+            Page.SerializedStrokes.Clear();
+            Page.History.ClearHistory();
         }
 
         #endregion //Commands
@@ -504,10 +532,9 @@ namespace Classroom_Learning_Partner.ViewModels
                     if(e.NewItems != null)
                     {
                         var o = pageObject;
-                        foreach(
-                            var addedPageObject in
-                                e.NewItems.Cast<IPageObject>()
-                                 .Where(addedPageObject => o.ID != addedPageObject.ID && !o.AcceptedPageObjectIDs.Contains(addedPageObject.ID) && o.PageObjectIsOver(addedPageObject, .50)))
+                        foreach(var addedPageObject in
+                            e.NewItems.Cast<IPageObject>()
+                             .Where(addedPageObject => o.ID != addedPageObject.ID && !o.AcceptedPageObjectIDs.Contains(addedPageObject.ID) && o.PageObjectIsOver(addedPageObject, .50)))
                         {
                             addedPageObjects.Add(addedPageObject);
                         }
@@ -529,46 +556,40 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
+            StrokesChanged(e);
+
+            //QueueTask(() => StrokesChanged(e));
+        }
+
+        private void StrokesChanged(StrokeCollectionChangedEventArgs e)
+        {
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
 
             switch(App.MainWindowViewModel.Ribbon.PageInteractionMode)
             {
                 case PageInteractionMode.Scissors:
-                {
-                    var stroke = e.Added.FirstOrDefault();
-                    if(stroke == null)
-                    {
-                        return;
-                    }
-                    CutStroke(stroke);
-                }
-                    break;
-                case PageInteractionMode.Lasso:
-                {
-                    var stroke = e.Added.FirstOrDefault();
-                    if(stroke == null)
-                    {
-                        return;
-                    }
-                    LassoStroke(stroke);
-                }
-                    break;
-                case PageInteractionMode.Select:
-                case PageInteractionMode.Highlighter:
-                    if(e.Removed.Any())
-                    {
-                        RemoveStroke(e.Removed, e.Added);
-                    }
-                    else
                     {
                         var stroke = e.Added.FirstOrDefault();
                         if(stroke == null)
                         {
                             return;
                         }
-                        AddStroke(stroke);
+                        CutStroke(stroke);
                     }
                     break;
+                case PageInteractionMode.Lasso:
+                    {
+                        var stroke = e.Added.FirstOrDefault();
+                        if(stroke == null)
+                        {
+                            return;
+                        }
+                        LassoStroke(stroke);
+                    }
+                    break;
+                case PageInteractionMode.Select:
+                    return;
+                case PageInteractionMode.Highlighter:
                 case PageInteractionMode.Pen:
                     if(e.Removed.Any())
                     {
@@ -672,11 +693,12 @@ namespace Classroom_Learning_Partner.ViewModels
                 var o = pageObject;
                 Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
                                                            (DispatcherOperationCallback)delegate
-                                                               {
-                                                                   o.AcceptStrokes(addStrokes, removeStrokes);
+                                                                                        {
+                                                                                            o.AcceptStrokes(addStrokes, removeStrokes);
 
-                                                                   return null;
-                                                               }, null);
+                                                                                            return null;
+                                                                                        },
+                                                           null);
             }
         }
 
@@ -715,7 +737,7 @@ namespace Classroom_Learning_Partner.ViewModels
                !removedStrokes.Any())
             {
                 var stroke = addedStrokesEnumerable.First();
-                bool wasArrayDivided = false;
+                var wasArrayDivided = false;
                 foreach(var array in PageObjects.OfType<CLPArray>())
                 {
                     if(array.IsDivisionBehaviorOn)
@@ -733,7 +755,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             return false;
-       
+
             /** TODO: implement below
              * All IStokeAcceptors go here
              * Switch statement to call state method on pageObject's viewmodel AcceptStrokes
@@ -761,8 +783,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 var halvedPageObjects = pageObject.Cut(stroke);
                 if(!halvedPageObjects.Any() ||
-                   (App.MainWindowViewModel.CurrentUser.ID != pageObject.CreatorID &&
-                    !pageObject.IsManipulatableByNonCreator))
+                   (App.MainWindowViewModel.CurrentUser.ID != pageObject.CreatorID && !pageObject.IsManipulatableByNonCreator))
                 {
                     continue;
                 }
@@ -774,14 +795,13 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 PageObjects.Remove(pageObject);
             }
-
+                                                                                        
             var allHalvedPageObjectIDs = new List<string>();
             foreach(var pageObject in allHalvedPageObjects)
             {
                 allHalvedPageObjectIDs.Add(pageObject.ID);
                 AddPageObjectToPage(Page, pageObject, false, false);
             }
-
             AddHistoryItemToPage(Page, new PageObjectCutHistoryItem(Page, App.MainWindowViewModel.CurrentUser, stroke, allCutPageObjects, allHalvedPageObjectIDs));
 
             RefreshInkStrokes();
@@ -921,7 +941,6 @@ namespace Classroom_Learning_Partner.ViewModels
                                          strokeID
                                      };
 
-                RefreshAcceptedStrokes(strokesAdded, removedStrokes);
                 AddHistoryItemToPage(Page, new StrokesChangedHistoryItem(Page, App.MainWindowViewModel.CurrentUser, addedStrokeIDs, removedStrokes));
             }
             catch(Exception ex)
@@ -941,6 +960,11 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 //Avoid uniqueID duplication
                 var enumerable = removedStrokes as IList<Stroke> ?? removedStrokes.ToList();
+                //HACK: prevents projector from throwing error when receiving Redo for stroke removed
+                if(enumerable.Any(removedStroke => Page.History.TrashedInkStrokes.Contains(removedStroke))) 
+                {
+                    return;
+                }
                 //TODO: test to see if OwnerID == CurrentUser.ID. If not, remove CollectionChanged handler and re-add stroke
                 var removedStrokeIDs = enumerable.Select(stroke => stroke.GetStrokeID()).ToList();
                 var addedStrokeIDs = new List<string>();
@@ -952,9 +976,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
                     //Ensures truly uniqueIDs
                     var stroke1 = stroke;
-                    foreach(string newUniqueID in from id in removedStrokeIDs
-                                                  where id == stroke1.GetStrokeID()
-                                                  select Guid.NewGuid().ToCompactID())
+                    foreach(var newUniqueID in from id in removedStrokeIDs
+                                               where id == stroke1.GetStrokeID()
+                                               select Guid.NewGuid().ToCompactID())
                     {
                         stroke.SetStrokeID(newUniqueID);
                     }
@@ -962,6 +986,8 @@ namespace Classroom_Learning_Partner.ViewModels
                     addedStrokeIDs.Add(stroke.GetStrokeID());
                 }
                 RefreshAcceptedStrokes(strokes.ToList(), enumerable.ToList());
+
+                
                 AddHistoryItemToPage(Page, new StrokesChangedHistoryItem(Page, App.MainWindowViewModel.CurrentUser, addedStrokeIDs, enumerable.ToList()));
             }
             catch(Exception ex)
@@ -979,19 +1005,71 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Static Methods
 
+        public static bool IsPointOverPageObject(IPageObject pageObject, Point point)
+        {
+            return pageObject.XPosition <= point.X && point.X <= pageObject.XPosition + pageObject.Width && pageObject.YPosition <= point.Y && point.Y <= pageObject.YPosition + pageObject.Height;
+        }
+
+        private static Task _currentTask = Task.FromResult(Type.Missing);
+        private static readonly object _lock = new Object();
+
+        public static void QueueTask(Action action)
+        {
+            lock (_lock)
+            {
+                _currentTask = _currentTask.ContinueWith(
+                    lastTask => 
+                    {
+                        // re-throw the error of the last completed task (if any)
+                        try
+                        {
+                            lastTask.GetAwaiter().GetResult();
+                        }
+                        catch(Exception ex)
+                        {
+                            Logger.Instance.WriteToLog("Error on lastTask:");
+                            Logger.Instance.WriteToLog("[UNHANDLED ERROR] - " + ex.Message + " " + (ex.InnerException != null ? "\n" + ex.InnerException.Message : null));
+                            Logger.Instance.WriteToLog("[HResult]: " + ex.HResult);
+                            Logger.Instance.WriteToLog("[Source]: " + ex.Source);
+                            Logger.Instance.WriteToLog("[Method]: " + ex.TargetSite);
+                            Logger.Instance.WriteToLog("[StackTrace]: " + ex.StackTrace);
+                        }
+                        // run the new task
+                        try
+                        {
+                            action();
+                        }
+                        catch(Exception ex)
+                        {
+                            Logger.Instance.WriteToLog("Error on task action execute:");
+                            Logger.Instance.WriteToLog("[UNHANDLED ERROR] - " + ex.Message + " " + (ex.InnerException != null ? "\n" + ex.InnerException.Message : null));
+                            Logger.Instance.WriteToLog("[HResult]: " + ex.HResult);
+                            Logger.Instance.WriteToLog("[Source]: " + ex.Source);
+                            Logger.Instance.WriteToLog("[Method]: " + ex.TargetSite);
+                            Logger.Instance.WriteToLog("[StackTrace]: " + ex.StackTrace);
+                        }
+                    },
+                    CancellationToken.None, 
+                    TaskContinuationOptions.LazyCancellation, 
+                    TaskScheduler.Default);
+            }
+        }
+
         public static void AddHistoryItemToPage(CLPPage page, IHistoryItem historyItem, bool isBatch = false)
         {
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
             App.MainWindowViewModel.Ribbon.CanGroupSendToTeacher = true;
             if(!isBatch)
             {
-                page.History.AddHistoryItem(historyItem); 
+                page.History.AddHistoryItem(historyItem);
             }
 
             if(App.CurrentUserMode != App.UserMode.Instructor || App.Network.ProjectorProxy == null || App.MainWindowViewModel.Ribbon.IsBroadcastHistoryDisabled)
             {
                 return;
             }
+
+            QueueTask(() => {
 
             var historyItemCopy = historyItem.CreatePackagedHistoryItem();
             if(historyItemCopy == null)
@@ -1004,7 +1082,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             try
             {
-                var compositePageID = page.ID + ";" + page.OwnerID + ";" + page.VersionIndex;
+                var compositePageID = page.ID + ";" + page.OwnerID + ";" + page.DifferentiationLevel + ";" + page.VersionIndex;
                 App.Network.ProjectorProxy.AddHistoryItem(compositePageID, zippedHistoryItem);
             }
             catch(Exception)
@@ -1029,6 +1107,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //    {
             //    }
             //}
+                });
         }
 
         public static void AddPageObjectToPage(IPageObject pageObject, bool addToHistory = true, bool forceSelectMode = true, int index = -1)
@@ -1066,8 +1145,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if(addToHistory)
             {
-                var pageObjectIDs = new List<string>{ pageObject.ID };
-  
+                var pageObjectIDs = new List<string>
+                                    {
+                                        pageObject.ID
+                                    };
+
                 AddHistoryItemToPage(page, new PageObjectsAddedHistoryItem(page, App.MainWindowViewModel.CurrentUser, pageObjectIDs));
             }
 
@@ -1112,9 +1194,15 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if(addToHistory)
             {
-                AddHistoryItemToPage(page, new PageObjectsRemovedHistoryItem(page, App.MainWindowViewModel.CurrentUser, new List<IPageObject>{ pageObject }));
+                AddHistoryItemToPage(page,
+                                     new PageObjectsRemovedHistoryItem(page,
+                                                                       App.MainWindowViewModel.CurrentUser,
+                                                                       new List<IPageObject>
+                                                                       {
+                                                                           pageObject
+                                                                       }));
             }
-            
+
             page.PageObjects.Remove(pageObject);
             pageObject.OnDeleted();
         }

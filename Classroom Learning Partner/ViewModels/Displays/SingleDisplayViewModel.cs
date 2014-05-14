@@ -64,37 +64,24 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            //if(advancedPropertyChangedEventArgs.OldValue == null)
-            //{
-            //    var singleDisplayView = CLPServiceAgent.Instance.GetViewFromViewModel(singleDisplayViewModel);
-            //    if(singleDisplayView != null)
-            //    {
-            //        var frameworkElement = singleDisplayView as FrameworkElement;
-            //        if(frameworkElement != null)
-            //        {
-            //            singleDisplayViewModel.DisplayWidthHeight = new Tuple<double, double>(frameworkElement.ActualWidth, frameworkElement.ActualHeight);
-            //        }
-            //    }
-            //}
-
             singleDisplayViewModel.OnPageResize();
 
-            // TODO: Entities
-            //if(!App.MainWindowViewModel.Ribbon.IsProjectorOn || App.Network.ProjectorProxy == null)
-            //{
-            //    return;
-            //}
+            if(App.CurrentUserMode != App.UserMode.Instructor || 
+               App.Network.ProjectorProxy == null)
+            {
+                return;
+            }
 
-            //var pageID = singleDisplayViewModel.CurrentPage.SubmissionType != SubmissionType.None ? singleDisplayViewModel.CurrentPage.SubmissionID : singleDisplayViewModel.CurrentPage.UniqueID;
+            var page = singleDisplayViewModel.CurrentPage;
 
-            //try
-            //{
-            //    App.Network.ProjectorProxy.AddPageToDisplay(pageID);
-            //}
-            //catch(Exception)
-            //{
+            try
+            {
+                App.Network.ProjectorProxy.AddPageToDisplay(page.ID, page.OwnerID, page.DifferentiationLevel, page.VersionIndex, "SingleDisplay");
+            }
+            catch(Exception)
+            {
 
-            //}
+            }
         }
 
         #endregion //Model
@@ -200,24 +187,23 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnPageScrollCommandExecute(ScrollChangedEventArgs e)
         {
-            // TODO: Entities
-            //if(App.CurrentUserMode != App.UserMode.Instructor || App.Network.ProjectorProxy == null || !App.MainWindowViewModel.Ribbon.IsProjectorOn)
-            //{
-            //    return;
-            //}
+            if(App.CurrentUserMode != App.UserMode.Instructor || 
+               App.Network.ProjectorProxy == null ||
+               Math.Abs(e.VerticalChange) < 0.001)
+            {
+                return;
+            }
 
-            //var submissionID = CurrentPage.SubmissionType != SubmissionType.None ? CurrentPage.SubmissionID : "";
-            //try
-            //{
-            //    //TODO: Steve - Make the offset a percentage and convert back on receive. If
-            //    //Instructor and Projector are on different screen sizes, they don't have the
-            //    //same vertical offsets.
-            //    App.Network.ProjectorProxy.ScrollPage(CurrentPage.UniqueID, submissionID, e.VerticalOffset);
-            //}
-            //catch(Exception)
-            //{
+            var percentOffset = e.VerticalOffset / e.ExtentHeight;
 
-            //}
+            try
+            {
+                App.Network.ProjectorProxy.ScrollPage(percentOffset);
+            }
+            catch(Exception)
+            {
+
+            }
         }
 
         #endregion //Commands

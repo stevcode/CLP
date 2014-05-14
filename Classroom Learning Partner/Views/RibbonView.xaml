@@ -319,9 +319,9 @@
                               LargeImageSource="pack://application:,,,/Resources/Images/FuzzyFactorCard32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/FuzzyFactorCard16.png"
                               Command="{Binding InsertArrayCommand}"
-                              CommandParameter="FUZZYFACTORCARD" />
+                              CommandParameter="FUZZYFACTORCARD" />-->
 
-                <RibbonButton Label="Division Tool With Tiles"
+                <!--<RibbonButton Label="Division Tool With Tiles"
                               LargeImageSource="pack://application:,,,/Resources/Images/FuzzyFactorCard32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/FuzzyFactorCard16.png"
                               Command="{Binding InsertArrayCommand}"
@@ -460,17 +460,17 @@
 
                 <RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/Projector32.png"
                                     SmallImageSource="pack://application:,,,/Resources/Images/Projector16.png"
-                                    IsChecked="{Binding IsProjectorOn}"
+                                    IsChecked="{Binding IsProjectorFrozen}"
                                     IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}">
                     <RibbonToggleButton.Style>
                         <Style TargetType="{x:Type RibbonToggleButton}">
                             <Setter Property="Label"
-                                    Value="Unfreeze" />
+                                    Value="Freeze" />
                             <Style.Triggers>
                                 <Trigger Property="IsChecked"
                                          Value="True">
                                     <Setter Property="Label"
-                                            Value="Freeze" />
+                                            Value="Unfreeze" />
                                 </Trigger>
                             </Style.Triggers>
                         </Style>

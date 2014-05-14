@@ -467,10 +467,10 @@
                                                TextAlignment="Center"
                                                VerticalAlignment="Center"
                                                HorizontalAlignment="Right"
-                                               FontSize="22"
+                                               FontSize="20"
                                                FontWeight="Bold"
                                                Foreground="{StaticResource LeftLabelColor}"
-                                               Height="22" />
+                                               Height="20" />
                                     <TextBlock Grid.Column="1"
                                                IsHitTestVisible="False"
                                                Margin="3"
@@ -478,19 +478,19 @@
                                                TextAlignment="Center"
                                                VerticalAlignment="Center"
                                                HorizontalAlignment="Center"
-                                               FontSize="22"
+                                               FontSize="20"
                                                FontWeight="Bold"
-                                               Height="22" />
+                                               Height="20" />
                                     <TextBlock Grid.Column="2"
                                                IsHitTestVisible="False"
                                                Text="{Binding Value}"
                                                TextAlignment="Center"
                                                VerticalAlignment="Center"
                                                HorizontalAlignment="Left"
-                                               FontSize="22"
+                                               FontSize="20"
                                                FontWeight="Bold"
                                                Foreground="{StaticResource TopLabelColor}"
-                                               Height="22" />
+                                               Height="20" />
                                 </Grid>
                             </Canvas>
                         </DataTemplate>
@@ -626,6 +626,7 @@
 
             <StackPanel Grid.Row="2"
                         Grid.Column="1"
+                        Grid.ColumnSpan="2"
                         Orientation="Horizontal"
                         HorizontalAlignment="Left"
                         Visibility="{Binding PageObject.GroupsSubtracted, Converter={StaticResource IntToVisibilityConverter}}"

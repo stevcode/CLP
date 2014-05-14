@@ -307,7 +307,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var divisionValue = (VerticalDivisions[VerticalDivisions.Count - 2]).Value;
             (PageObject as FuzzyFactorCard).RemoveLastDivision();
 
-          //  ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryFFCDivisionRemoved(PageObject.ParentPage, PageObject.UniqueID, divisionValue));
+            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new FFCArrayRemovedHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, PageObject.ID, divisionValue));
         }
 
         /// <summary>

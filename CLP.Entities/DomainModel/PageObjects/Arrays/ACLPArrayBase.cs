@@ -85,6 +85,28 @@ namespace CLP.Entities
         public static readonly PropertyData ValueProperty = RegisterProperty("Value", typeof(int), 0);
 
         #endregion //Properties
+
+        #region Overrides of ModelBase
+
+        /// <summary>
+        /// Determines whether the specified <see cref="T:System.Object"/> is equal to the current <see cref="T:System.Object"/>.
+        /// </summary>
+        /// <returns>
+        /// true if the specified object  is equal to the current object; otherwise, false.
+        /// </returns>
+        /// <param name="obj">The object to compare with the current object. </param>
+        public override bool Equals(object obj) 
+        {
+            var division = obj as CLPArrayDivision;
+            if(division == null)
+            {
+                return false;
+            }
+
+            return division.Orientation == Orientation && division.Position == Position && division.Length == Length && division.Value == Value;
+        }
+
+        #endregion
     }
 
     [Serializable]

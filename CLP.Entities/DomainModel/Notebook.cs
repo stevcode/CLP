@@ -359,16 +359,16 @@ namespace CLP.Entities
             return newNotebook;
         }
 
-        public CLPPage GetPageByCompositeKeys(string pageID, string pageOwnerID, int versionIndex, bool searchDatabaseAndCache = false)
+        public CLPPage GetPageByCompositeKeys(string pageID, string pageOwnerID, string differentiationLevel, uint versionIndex, bool searchDatabaseAndCache = false)
         {
             // TODO: Database, search through cache and database if not found in memory.
-            var notebookPage = Pages.FirstOrDefault(x => x.ID == pageID && x.OwnerID == pageOwnerID && x.VersionIndex == versionIndex);
+            var notebookPage = Pages.FirstOrDefault(x => x.ID == pageID && x.OwnerID == pageOwnerID && x.DifferentiationLevel == differentiationLevel && x.VersionIndex == versionIndex);
             if(notebookPage != null)
             {
                 return notebookPage;
             }
 
-            notebookPage = Pages.FirstOrDefault(x => x.ID == pageID);
+            notebookPage = Pages.FirstOrDefault(x => x.ID == pageID && x.DifferentiationLevel == differentiationLevel);
             return notebookPage == null ? null : notebookPage.Submissions.FirstOrDefault(x => x.OwnerID == pageOwnerID && x.VersionIndex == versionIndex);
         }
 

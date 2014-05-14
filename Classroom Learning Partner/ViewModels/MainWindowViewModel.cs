@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Catel.Data;
 using Catel.MVVM;
@@ -56,6 +57,17 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Constructor
 
         #region Bindings
+
+        /// <summary>
+        /// Screenshot of the frozen display.
+        /// </summary>
+        public ImageSource FrozenDisplayImageSource
+        {
+            get { return GetValue<ImageSource>(FrozenDisplayImageSourceProperty); }
+            set { SetValue(FrozenDisplayImageSourceProperty, value); }
+        }
+
+        public static readonly PropertyData FrozenDisplayImageSourceProperty = RegisterProperty("FrozenDisplayImageSource", typeof (ImageSource));
 
         /// <summary>
         /// Gets or sets the Title Bar text of the window.
@@ -272,7 +284,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     break;
                 case App.UserMode.Projector:
                     //TODO: Remove after database established
-                    CurrentUser = Person.EmilyProjector;
+                    CurrentUser = Person.Emily;
                     Workspace = new NotebookChooserWorkspaceViewModel();
                     break;
                 case App.UserMode.Student:
@@ -492,6 +504,9 @@ namespace Classroom_Learning_Partner.ViewModels
         public static void OpenClassPeriod()
         {
             var classPeriodFilePaths = Directory.GetFiles(App.ClassCacheDirectory);
+            string closestClassPeriodFilePath = null;
+            var closestTimeSpan = TimeSpan.MaxValue;
+            var now = DateTime.Now;
             foreach(var classPeriodFilePath in classPeriodFilePaths)
             {
                 var classFileName = Path.GetFileNameWithoutExtension(classPeriodFilePath);
@@ -509,27 +524,29 @@ namespace Classroom_Learning_Partner.ViewModels
                 var hour = Int32.Parse(timeParts[3]);
                 var minute = Int32.Parse(timeParts[4]);
                 var dateTime = new DateTime(year, month, day, hour, minute, 0);
-                var now = DateTime.Now;
+                
                 var timeSpan = now - dateTime;
-                var threeHours = new TimeSpan(3, 0, 0);
-                if(timeSpan >= threeHours)
+                if(timeSpan.Duration() >= closestTimeSpan.Duration())
                 {
                     continue;
                 }
-                var classPeriod = ClassPeriod.OpenClassPeriod(classPeriodFilePath);
-                if(classPeriod == null)
-                {
-                    continue;
-                }
-                App.MainWindowViewModel.CurrentClassPeriod = classPeriod;
-                break;
+                closestTimeSpan = timeSpan;
+                closestClassPeriodFilePath = classPeriodFilePath;
             }
 
-            if(App.MainWindowViewModel.CurrentClassPeriod == null)
+            if(string.IsNullOrEmpty(closestClassPeriodFilePath))
             {
                 MessageBox.Show("ERROR: Could not find ClassPeriod.");
                 return;
             }
+
+            var classPeriod = ClassPeriod.OpenClassPeriod(closestClassPeriodFilePath);
+            if(classPeriod == null)
+            {
+                MessageBox.Show("ERROR: Could not open ClassPeriod.");
+                return;
+            }
+            App.MainWindowViewModel.CurrentClassPeriod = classPeriod;
 
             var notebookFolderPath = GetNotebookFolderPathByCompositeID(App.MainWindowViewModel.CurrentClassPeriod.NotebookID, Person.Author.ID);
             if(notebookFolderPath == null)

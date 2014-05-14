@@ -166,18 +166,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 // actually set current page
                 CurrentPage = page;
-
-                if(App.Network.ProjectorProxy == null ||
-                   !App.MainWindowViewModel.Ribbon.IsProjectorOn)
-                {
-                    return;
-                }
-
-                try
-                {
-                     App.Network.ProjectorProxy.AddPageToDisplay(page.ID, page.OwnerID, (int)page.VersionIndex);
-                }
-                catch(Exception) { }
                 return;
             }
 

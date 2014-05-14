@@ -342,9 +342,6 @@
     <Compile Include="Views\Displays\GridDisplayPreviewView.xaml.cs">
       <DependentUpon>GridDisplayPreviewView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Displays\SingleDisplayPreviewView.xaml.cs">
-      <DependentUpon>SingleDisplayPreviewView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Displays\SingleDisplayView.xaml.cs">
       <DependentUpon>SingleDisplayView.xaml</DependentUpon>
     </Compile>
@@ -541,10 +538,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Displays\GridDisplayPreviewView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Displays\SingleDisplayPreviewView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

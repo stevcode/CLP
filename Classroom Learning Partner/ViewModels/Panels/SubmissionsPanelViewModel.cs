@@ -232,18 +232,6 @@ namespace Classroom_Learning_Partner.ViewModels
             if(notebookWorkspaceViewModel.CurrentDisplay == null)
             {
                 CurrentPage = page;
-
-                if(App.Network.ProjectorProxy == null ||
-                   !App.MainWindowViewModel.Ribbon.IsProjectorOn)
-                {
-                    return;
-                }
-
-                try
-                {
-                     App.Network.ProjectorProxy.AddPageToDisplay(page.ID, page.OwnerID, (int)page.VersionIndex);
-                }
-                catch(Exception) { }
                 return;
             }
 

@@ -117,6 +117,41 @@ namespace Classroom_Learning_Partner
             return imageArray;
         }
 
+        public byte[] GetScreenShot(UIElement source, double scale = 1.0, int quality = 100)
+        {
+            var actualHeight = source.RenderSize.Height;
+            var actualWidth = source.RenderSize.Width;
+
+            var renderHeight = actualHeight * scale;
+            var renderWidth = actualWidth * scale;
+
+            var renderTarget = new RenderTargetBitmap((int)renderWidth, (int)renderHeight, 96, 96, PixelFormats.Pbgra32);
+            var sourceBrush = new VisualBrush(source);
+
+            var drawingVisual = new DrawingVisual();
+            var drawingContext = drawingVisual.RenderOpen();
+
+            using(drawingContext)
+            {
+                drawingContext.PushTransform(new ScaleTransform(scale, scale));
+                drawingContext.DrawRectangle(sourceBrush, null, new Rect(new Point(0, 0), new Point(actualWidth, actualHeight)));
+            }
+            renderTarget.Render(drawingVisual);
+
+            var jpgEncoder = new JpegBitmapEncoder { QualityLevel = quality };
+            jpgEncoder.Frames.Add(BitmapFrame.Create(renderTarget));
+
+            byte[] imageArray;
+
+            using(var outputStream = new MemoryStream())
+            {
+                jpgEncoder.Save(outputStream);
+                imageArray = outputStream.ToArray();
+            }
+
+            return imageArray;
+        }
+
         public T GetVisualChild<T>(Visual parent) where T : Visual
         {
             T child = default(T);

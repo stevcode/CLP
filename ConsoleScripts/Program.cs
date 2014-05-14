@@ -67,27 +67,41 @@ namespace ConsoleScripts
                     var page = ModelBase.Load<CLPPage>(pageFilePath, SerializationMode.Xml);
                     page.InkStrokes = StrokeDTO.LoadInkStrokes(page.SerializedStrokes);
                     page.History.TrashedInkStrokes = StrokeDTO.LoadInkStrokes(page.History.SerializedTrashedInkStrokes);
+
+                    Console.WriteLine("Loaded page {0}, differentiation {1}, version {2}", page.PageNumber, page.DifferentiationLevel, page.VersionIndex);
                     //Do stuff to each page here.
 
-                    var undoItemsToRemove = page.History.UndoItems.Where(historyItem => historyItem.OwnerID == Person.Author.ID).ToList();
-                    foreach(var historyItem in undoItemsToRemove)
+                    if(page.LastVersionIndex == null ||
+                       page.VersionIndex != 0)
                     {
-                        page.History.UndoItems.Remove(historyItem);
+                        continue;
                     }
 
-                    var redoItemsToRemove = page.History.RedoItems.Where(historyItem => historyItem.OwnerID == Person.Author.ID).ToList();
-                    foreach(var historyItem in redoItemsToRemove)
-                    {
-                        page.History.RedoItems.Remove(historyItem);
-                    }
-
-                    page.History.OptimizeTrashedItems();
+                    var submission = page.NextVersionCopy();
+                    var submissionFilePath = Path.Combine(pagesFolderPath, "p;" + submission.PageNumber + ";" + submission.ID + ";" + submission.DifferentiationLevel + ";" + submission.VersionIndex + ".xml");
+                    submission.ToXML(submissionFilePath);
 
                     //Finished doing stuff to page, it'll save below.
                     page.ToXML(pageFilePath, true);
                 }
             }
         }
+
+        //Clear Authored Histories
+        //var undoItemsToRemove = page.History.UndoItems.Where(historyItem => historyItem.OwnerID == Person.Author.ID).ToList();
+        //            foreach(var historyItem in undoItemsToRemove)
+        //            {
+        //                page.History.UndoItems.Remove(historyItem);
+        //            }
+
+        //            var redoItemsToRemove = page.History.RedoItems.Where(historyItem => historyItem.OwnerID == Person.Author.ID).ToList();
+        //            foreach(var historyItem in redoItemsToRemove)
+        //            {
+        //                page.History.RedoItems.Remove(historyItem);
+        //            }
+
+        //            page.History.OptimizeTrashedItems();
+        
 
         static void DatabaseTesting()
         {
