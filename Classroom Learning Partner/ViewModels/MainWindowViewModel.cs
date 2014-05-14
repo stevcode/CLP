@@ -504,6 +504,9 @@ namespace Classroom_Learning_Partner.ViewModels
         public static void OpenClassPeriod()
         {
             var classPeriodFilePaths = Directory.GetFiles(App.ClassCacheDirectory);
+            string closestClassPeriodFilePath = null;
+            var closestTimeSpan = TimeSpan.MaxValue;
+            var now = DateTime.Now;
             foreach(var classPeriodFilePath in classPeriodFilePaths)
             {
                 var classFileName = Path.GetFileNameWithoutExtension(classPeriodFilePath);
@@ -521,27 +524,29 @@ namespace Classroom_Learning_Partner.ViewModels
                 var hour = Int32.Parse(timeParts[3]);
                 var minute = Int32.Parse(timeParts[4]);
                 var dateTime = new DateTime(year, month, day, hour, minute, 0);
-                var now = DateTime.Now;
+                
                 var timeSpan = now - dateTime;
-                var threeHours = new TimeSpan(7, 0, 0);
-                if(timeSpan >= threeHours)
+                if(timeSpan.Duration() >= closestTimeSpan.Duration())
                 {
                     continue;
                 }
-                var classPeriod = ClassPeriod.OpenClassPeriod(classPeriodFilePath);
-                if(classPeriod == null)
-                {
-                    continue;
-                }
-                App.MainWindowViewModel.CurrentClassPeriod = classPeriod;
-                break;
+                closestTimeSpan = timeSpan;
+                closestClassPeriodFilePath = classPeriodFilePath;
             }
 
-            if(App.MainWindowViewModel.CurrentClassPeriod == null)
+            if(string.IsNullOrEmpty(closestClassPeriodFilePath))
             {
                 MessageBox.Show("ERROR: Could not find ClassPeriod.");
                 return;
             }
+
+            var classPeriod = ClassPeriod.OpenClassPeriod(closestClassPeriodFilePath);
+            if(classPeriod == null)
+            {
+                MessageBox.Show("ERROR: Could not open ClassPeriod.");
+                return;
+            }
+            App.MainWindowViewModel.CurrentClassPeriod = classPeriod;
 
             var notebookFolderPath = GetNotebookFolderPathByCompositeID(App.MainWindowViewModel.CurrentClassPeriod.NotebookID, Person.Author.ID);
             if(notebookFolderPath == null)
