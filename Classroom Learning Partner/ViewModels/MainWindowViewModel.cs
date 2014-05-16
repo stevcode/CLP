@@ -447,19 +447,18 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             var folderPath = Path.Combine(App.NotebookCacheDirectory, notebook.Name + ";" + notebook.ID + ";" + notebook.Owner.FullName + ";" + notebook.OwnerID);
 
-            //////////////////
-
-            //foreach(var page in notebook.Pages)
-            //{
-            //    foreach(var pageObject in page.PageObjects)
-            //    {
-            //        pageObject.CreatorID = Person.Author.ID;
-            //        pageObject.ParentPage = page;
-            //        pageObject.ID = new Guid(pageObject.ID).ToCompactID();
-            //    }
-            //}
-
-            /// ////////////////
+            if(App.MainWindowViewModel.CurrentUser.ID == Person.Author.ID)
+            {
+                var pagesFolderPath = Path.Combine(folderPath, "Pages");
+                if(Directory.Exists(pagesFolderPath))
+                {
+                    var pageFilePaths = Directory.EnumerateFiles(pagesFolderPath, "*.xml").ToList();
+                    foreach(var pageFilePath in pageFilePaths)
+                    {
+                        File.Delete(pageFilePath);
+                    }
+                }
+            }
 
             //if(isFullSaveForced)
             //{
