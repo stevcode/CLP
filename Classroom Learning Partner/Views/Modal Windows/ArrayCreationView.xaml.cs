@@ -67,7 +67,7 @@ namespace Classroom_Learning_Partner.Views
         {
             Columns.Background = new SolidColorBrush(Colors.White);
             Rows.Background = new SolidColorBrush(Colors.White);
-            NumberOfArrays.Background = new SolidColorBrush(Colors.White);
+            //NumberOfArrays.Background = new SolidColorBrush(Colors.White);
 
             var textBox = sender as TextBox;
             if(textBox == null)
@@ -89,12 +89,12 @@ namespace Classroom_Learning_Partner.Views
         {
             int rowNum;
             int colNum;
-            int numberOfArrays;
+            int numberOfArrays = 1;
             const int MAX_ARRAY_ROWSCOLUMNS = 200;
             const int MAX_NUMBER_OF_ARRAYS = 21;
             var isRowsNum = Int32.TryParse(Rows.Text, out rowNum);
             var isColsNum = Int32.TryParse(Columns.Text, out colNum);
-            Int32.TryParse(NumberOfArrays.Text, out numberOfArrays);
+            //Int32.TryParse(NumberOfArrays.Text, out numberOfArrays);
 
             if(!(Rows.Text.Length > 0 && Columns.Text.Length > 0 && isRowsNum && isColsNum))
             {

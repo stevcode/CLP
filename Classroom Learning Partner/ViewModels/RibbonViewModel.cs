@@ -2393,7 +2393,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            int rows, columns, dividend = 1, numberOfArrays;
+            int rows, columns, dividend = 1, numberOfArrays = 1;
             switch(arrayType)
             {
                 case "ARRAY":
@@ -2423,14 +2423,14 @@ namespace Classroom_Learning_Partner.ViewModels
                         columns = 1;
                     }
 
-                    try
-                    {
-                        numberOfArrays = Convert.ToInt32(arrayCreationView.NumberOfArrays.Text);
-                    }
-                    catch(FormatException)
-                    {
-                        numberOfArrays = 1;
-                    }
+                    //try
+                    //{
+                    //    numberOfArrays = Convert.ToInt32(arrayCreationView.NumberOfArrays.Text);
+                    //}
+                    //catch(FormatException)
+                    //{
+                    //    numberOfArrays = 1;
+                    //}
                     break;
                 case "FUZZYFACTORCARD":
                     var factorCreationView = new FuzzyFactorCardCreationView{ Owner = Application.Current.MainWindow};

@@ -443,7 +443,7 @@
                 </Button>-->
 
                 <!--Duplicate Array Button-->
-                <Button Command="{Binding DuplicateArrayCommand}"
+                <!--<Button Command="{Binding DuplicateArrayCommand}"
                         Cursor="Hand"
                         Width="40"
                         Height="40"
@@ -466,7 +466,7 @@
                             </Grid>
                         </ControlTemplate>
                     </Button.Template>
-                </Button>
+                </Button>-->
 
                 <!--Left Divisor Line-->
                 <!--<Rectangle IsHitTestVisible="False"
