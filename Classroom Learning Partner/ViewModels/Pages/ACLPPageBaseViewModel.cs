@@ -740,7 +740,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 var wasArrayDivided = false;
                 foreach(var array in PageObjects.OfType<CLPArray>())
                 {
-                    if(array.IsDivisionBehaviorOn &&
+                    if(array.IsDivisionBehaviorOn && 
+                       App.MainWindowViewModel.Ribbon.PageInteractionMode == PageInteractionMode.Pen &&
                        App.MainWindowViewModel.CurrentUser.ID == array.CreatorID)
                     {
                         wasArrayDivided = CLPArrayViewModel.CreateDivision(array, stroke);
