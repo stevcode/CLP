@@ -19,10 +19,10 @@ namespace CLP.Entities
         /// </summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryItem" /> is part of.</param>
         /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryItem" />.</param>
-        public FFCArrayRemovedHistoryItem(CLPPage parentPage, Person owner, string ffcUniqueID, int divisionValue)
+        public FFCArrayRemovedHistoryItem(CLPPage parentPage, Person owner, string fuzzyFactorCardID, int divisionValue)
             : base(parentPage, owner)
         {
-            FFCUniqueID = ffcUniqueID;
+            FuzzyFactorCardID = fuzzyFactorCardID;
             DivisionValue = divisionValue;
         }
 
@@ -46,13 +46,13 @@ namespace CLP.Entities
         /// <summary>
         /// UniqueID of the FFC which had an array snapped inside
         /// </summary>
-        public string FFCUniqueID
+        public string FuzzyFactorCardID
         {
-            get { return GetValue<string>(FFCUniqueIDProperty); }
-            set { SetValue(FFCUniqueIDProperty, value); }
+            get { return GetValue<string>(FuzzyFactorCardIDProperty); }
+            set { SetValue(FuzzyFactorCardIDProperty, value); }
         }
 
-        public static readonly PropertyData FFCUniqueIDProperty = RegisterProperty("FFCUniqueID", typeof(string), string.Empty);
+        public static readonly PropertyData FuzzyFactorCardIDProperty = RegisterProperty("FuzzyFactorCardID", typeof(string), string.Empty);
 
         /// <summary>
         /// Value of the label on the removed division.
@@ -77,10 +77,10 @@ namespace CLP.Entities
         /// </summary>
         protected override void UndoAction(bool isAnimationUndo)
         {
-            var ffc = ParentPage.GetPageObjectByID(FFCUniqueID) as FuzzyFactorCard;
-            if(ffc != null)
+            var fuzzyFactorCard = ParentPage.GetPageObjectByID(FuzzyFactorCardID) as FuzzyFactorCard;
+            if(fuzzyFactorCard != null)
             {
-                ffc.SnapInArray(DivisionValue);
+                fuzzyFactorCard.SnapInArray(DivisionValue);
             }
         }
 
@@ -89,10 +89,10 @@ namespace CLP.Entities
         /// </summary>
         protected override void RedoAction(bool isAnimationRedo)
         {
-            var ffc = ParentPage.GetPageObjectByID(FFCUniqueID) as FuzzyFactorCard;
-            if(ffc != null)
+            var fuzzyFactorCard = ParentPage.GetPageObjectByID(FuzzyFactorCardID) as FuzzyFactorCard;
+            if(fuzzyFactorCard != null)
             {
-                ffc.RemoveLastDivision();
+                fuzzyFactorCard.RemoveLastDivision();
             }
         }
 

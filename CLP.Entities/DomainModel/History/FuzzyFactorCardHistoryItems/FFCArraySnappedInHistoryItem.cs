@@ -19,12 +19,12 @@ namespace CLP.Entities
         /// </summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryItem" /> is part of.</param>
         /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryItem" />.</param>
-        public FFCArraySnappedInHistoryItem(CLPPage parentPage, Person owner, string ffcUniqueID, CLPArray snappedInArray)
+        public FFCArraySnappedInHistoryItem(CLPPage parentPage, Person owner, string fuzzyFactorCardID, CLPArray snappedInArray)
             : base(parentPage, owner)
         {
-            FFCUniqueID = ffcUniqueID;
-            SnappedInArray = snappedInArray;
-            SnappedInArrayUniqueID = snappedInArray.ID;
+            FuzzyFactorCardID = fuzzyFactorCardID;
+            SnappedInArrayID = snappedInArray.ID;
+            parentPage.History.TrashedPageObjects.Add(snappedInArray);
         }
 
         /// <summary>
@@ -47,35 +47,24 @@ namespace CLP.Entities
         /// <summary>
         /// UniqueID of the FFC which had an array snapped inside
         /// </summary>
-        public string FFCUniqueID
+        public string FuzzyFactorCardID
         {
-            get { return GetValue<string>(FFCUniqueIDProperty); }
-            set { SetValue(FFCUniqueIDProperty, value); }
+            get { return GetValue<string>(FuzzyFactorCardIDProperty); }
+            set { SetValue(FuzzyFactorCardIDProperty, value); }
         }
 
-        public static readonly PropertyData FFCUniqueIDProperty = RegisterProperty("FFCUniqueID", typeof(string), string.Empty);
-
-        /// <summary>
-        /// Array which was snapped into the FFC. Null if it's currently on the page.
-        /// </summary>
-        public CLPArray SnappedInArray
-        {
-            get { return GetValue<CLPArray>(SnappedInArrayProperty); }
-            set { SetValue(SnappedInArrayProperty, value); }
-        }
-
-        public static readonly PropertyData SnappedInArrayProperty = RegisterProperty("SnappedInArray", typeof(CLPArray));
+        public static readonly PropertyData FuzzyFactorCardIDProperty = RegisterProperty("FuzzyFactorCardID", typeof(string), string.Empty);
 
         /// <summary>
         /// UniqueID of the array that wass snapped in and then deleted.
         /// </summary>
-        public string SnappedInArrayUniqueID
+        public string SnappedInArrayID
         {
-            get { return GetValue<string>(SnappedInArrayUniqueIDProperty); }
-            set { SetValue(SnappedInArrayUniqueIDProperty, value); }
+            get { return GetValue<string>(SnappedInArrayIDProperty); }
+            set { SetValue(SnappedInArrayIDProperty, value); }
         }
 
-        public static readonly PropertyData SnappedInArrayUniqueIDProperty = RegisterProperty("SnappedInArrayUniqueID", typeof(string), string.Empty);
+        public static readonly PropertyData SnappedInArrayIDProperty = RegisterProperty("SnappedInArrayID", typeof(string), string.Empty);
 
         #endregion //Properties
 
@@ -86,14 +75,17 @@ namespace CLP.Entities
         /// </summary>
         protected override void UndoAction(bool isAnimationUndo)
         {
-            var ffc = ParentPage.GetPageObjectByID(FFCUniqueID) as FuzzyFactorCard;
-            if(ffc != null)
+            var fuzzyFactorCard = ParentPage.GetPageObjectByID(FuzzyFactorCardID) as FuzzyFactorCard;
+            var snappedInArray = ParentPage.History.GetPageObjectByID(SnappedInArrayID) as CLPArray;
+            if(fuzzyFactorCard == null ||
+               snappedInArray == null)
             {
-                SnappedInArray.ParentPage = ParentPage;
-                ParentPage.PageObjects.Add(SnappedInArray);
-                SnappedInArray = null;
-                ffc.RemoveLastDivision();
+                return;
             }
+            
+            ParentPage.History.TrashedPageObjects.Remove(snappedInArray);
+            ParentPage.PageObjects.Add(snappedInArray);
+            fuzzyFactorCard.RemoveLastDivision();
         }
 
         /// <summary>
@@ -101,24 +93,23 @@ namespace CLP.Entities
         /// </summary>
         protected override void RedoAction(bool isAnimationRedo)
         {
-            var array = ParentPage.GetPageObjectByID(SnappedInArrayUniqueID);
-            if(array == null)
+            var fuzzyFactorCard = ParentPage.GetPageObjectByID(FuzzyFactorCardID) as FuzzyFactorCard;
+            var snappedInArray = ParentPage.GetPageObjectByID(SnappedInArrayID) as CLPArray;
+            if(fuzzyFactorCard == null ||
+               snappedInArray == null)
             {
                 return;
             }
-            SnappedInArray = array as CLPArray;
-            var ffc = ParentPage.GetPageObjectByID(FFCUniqueID) as FuzzyFactorCard;
-            if(ffc != null)
+
+            ParentPage.PageObjects.Remove(snappedInArray);
+            ParentPage.History.TrashedPageObjects.Add(snappedInArray);
+            if(fuzzyFactorCard.IsHorizontallyAligned)
             {
-                ParentPage.PageObjects.Remove(SnappedInArray);
-                if(ffc.IsHorizontallyAligned)
-                {
-                    ffc.SnapInArray(SnappedInArray.Columns);
-                }
-                else
-                {
-                    ffc.SnapInArray(SnappedInArray.Rows);
-                }
+                fuzzyFactorCard.SnapInArray(snappedInArray.Columns);
+            }
+            else
+            {
+                fuzzyFactorCard.SnapInArray(snappedInArray.Rows);
             }
         }
 
