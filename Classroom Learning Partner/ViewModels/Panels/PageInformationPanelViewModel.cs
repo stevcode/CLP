@@ -74,6 +74,18 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData VersionIndexProperty = RegisterProperty("VersionIndex", typeof(uint));
 
+        /// <summary>
+        /// Page Number of the <see cref="CLPPage" /> within the <see cref="Notebook" />.
+        /// </summary>
+        [ViewModelToModel("CurrentPage")]
+        public decimal PageNumber
+        {
+            get { return GetValue<decimal>(PageNumberProperty); }
+            set { SetValue(PageNumberProperty, value); }
+        }
+
+        public static readonly PropertyData PageNumberProperty = RegisterProperty("PageNumber", typeof(decimal), 1);
+
         #endregion //Model
          
     }

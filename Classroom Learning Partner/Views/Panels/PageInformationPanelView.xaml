@@ -31,6 +31,12 @@
                 <Run Text="{Binding VersionIndex}" />
             </TextBlock>
             
+            <TextBlock>
+                <Run Text="Page Number: " />
+            </TextBlock>
+            
+            <TextBox Text="{Binding PageNumber}" />
+            
         </StackPanel>
 
     </Border>
