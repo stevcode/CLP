@@ -128,7 +128,7 @@
                     </RibbonToggleButton.Style>
                 </RibbonToggleButton>               
                 
-                <RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/GroupSubmit32.png"
+                <!--<RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/GroupSubmit32.png"
                                     SmallImageSource="pack://application:,,,/Resources/Images/GroupSubmit16.png"
                                     IsChecked="{Binding CurrentLeftPanel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.StudentWork}}"
                                     IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
@@ -146,7 +146,7 @@
                             </Style.Triggers>
                         </Style>
                     </RibbonToggleButton.Style>
-                </RibbonToggleButton>
+                </RibbonToggleButton>-->
 
                 <RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/Clipboard32.png"
                                     IsChecked="{Binding CurrentLeftPanel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.Progress}}"
@@ -315,17 +315,17 @@
                               Command="{Binding InsertArrayCommand}"
                               CommandParameter="FACTORCARD" />-->
 
-                <!--<RibbonButton Label="Division Tool"
+                <RibbonButton Label="Division Tool"
                               LargeImageSource="pack://application:,,,/Resources/Images/FuzzyFactorCard32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/FuzzyFactorCard16.png"
                               Command="{Binding InsertArrayCommand}"
-                              CommandParameter="FUZZYFACTORCARD" />-->
+                              CommandParameter="FUZZYFACTORCARD" />
 
-                <!--<RibbonButton Label="Division Tool With Tiles"
+                <RibbonButton Label="Division Tool With Tiles"
                               LargeImageSource="pack://application:,,,/Resources/Images/FuzzyFactorCard32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/FuzzyFactorCard16.png"
                               Command="{Binding InsertArrayCommand}"
-                              CommandParameter="FFCREMAINDER" />-->
+                              CommandParameter="FFCREMAINDER" />
 
                 <!--<RibbonButton Label="Stamp"
                               LargeImageSource="pack://application:,,,/Resources/Images/Stamp32.png"

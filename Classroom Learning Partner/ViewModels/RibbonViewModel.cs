@@ -2539,9 +2539,16 @@ namespace Classroom_Learning_Partner.ViewModels
                         break;
                     case "FUZZYFACTORCARD":
                         array = new FuzzyFactorCard(page, columns, rows, dividend);
+                        // HACK: Find better way to set this
+                        array.CreatorID = App.MainWindowViewModel.CurrentUser.ID;
+                        array.OwnerID = App.MainWindowViewModel.CurrentUser.ID;
                         break;
                     case "FFCREMAINDER":
                         array = new FuzzyFactorCard(page, columns, rows, dividend, true);
+                        // HACK: Find better way to set this
+                        array.CreatorID = App.MainWindowViewModel.CurrentUser.ID;
+                        (array as FuzzyFactorCard).RemainderTiles.CreatorID = array.CreatorID;
+                        (array as FuzzyFactorCard).RemainderTiles.OwnerID = array.OwnerID;
                         break;
                     case "ARRAYCARD":
                         array = new CLPArray(page, columns, rows, ArrayTypes.ArrayCard);

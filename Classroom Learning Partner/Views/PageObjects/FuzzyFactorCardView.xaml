@@ -65,8 +65,7 @@
                            Canvas.Top="-5"
                            Canvas.Left="-5"
                            Width="{Binding Width, Converter={StaticResource LengthConverter}, ConverterParameter=14}"
-                           Height="{Binding Height, Converter={StaticResource LengthConverter}, ConverterParameter=14}"
-                           Visibility="{Binding IsDefaultAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                           Height="{Binding Height, Converter={StaticResource LengthConverter}, ConverterParameter=14}" />
 
                 <!--Close Button-->
                 <Button Command="{Binding RemoveFuzzyFactorCardCommand}"
@@ -74,8 +73,7 @@
                         Width="40"
                         Height="40"
                         Canvas.Left="-40"
-                        Canvas.Top="-40"
-                        Visibility="{Binding IsDefaultAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        Canvas.Top="-40">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Grid>
@@ -99,8 +97,7 @@
                        Width="40"
                        Height="40"
                        Canvas.Right="-40"
-                       Canvas.Top="-40"
-                       Visibility="{Binding IsDefaultAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                       Canvas.Top="-40">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="DragDelta">
                             <catel:EventToCommand Command="{Binding DragPageObjectCommand}"
@@ -157,8 +154,7 @@
                        Width="40"
                        Height="40"
                        Canvas.Right="-40"
-                       Canvas.Bottom="-40"
-                       Visibility="{Binding IsDefaultAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                       Canvas.Bottom="-40">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="DragDelta">
                             <catel:EventToCommand Command="{Binding ResizeFuzzyFactorCardCommand}"
@@ -218,8 +214,7 @@
                         Width="40"
                         Height="40"
                         Canvas.Left="-40"
-                        Canvas.Bottom="-40"
-                        Visibility="{Binding IsDefaultAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        Canvas.Bottom="-40">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Grid>

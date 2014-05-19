@@ -329,8 +329,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
+            var tempAdornerState = IsAdornerVisible;
             ACLPPageBaseViewModel.ClearAdorners(PageObject.ParentPage);
-            IsAdornerVisible = !IsAdornerVisible;
+            IsAdornerVisible = !tempAdornerState;
         }
 
         #endregion //Commands
