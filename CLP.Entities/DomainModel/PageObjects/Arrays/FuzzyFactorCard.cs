@@ -401,26 +401,33 @@ namespace CLP.Entities
             }
 
             var numberOfBlackTiles =
-                ParentPage.PageObjects.Where(pageObject => pageObject is CLPArray && (pageObject as CLPArray).ArrayType == ArrayTypes.Array && (pageObject as CLPArray).Rows == Rows).Sum(pageObject =>
-                                                                                                                                                                                          {
-                                                                                                                                                                                              var
-                                                                                                                                                                                                  clpArray
-                                                                                                                                                                                                      =
-                                                                                                                                                                                                      pageObject
-                                                                                                                                                                                                      as
-                                                                                                                                                                                                      CLPArray;
-                                                                                                                                                                                              return
-                                                                                                                                                                                                  clpArray !=
-                                                                                                                                                                                                  null
-                                                                                                                                                                                                      ? clpArray
-                                                                                                                                                                                                            .Rows *
-                                                                                                                                                                                                        clpArray
-                                                                                                                                                                                                            .Columns
-                                                                                                                                                                                                      : 0;
-                                                                                                                                                                                          });
+                ParentPage.PageObjects.Where(pageObject => pageObject is CLPArray && (pageObject as CLPArray).ArrayType == ArrayTypes.Array).Sum(pageObject =>
+                                                                                                                                                {
+                                                                                                                                                    var
+                                                                                                                                                        clpArray
+                                                                                                                                                            =
+                                                                                                                                                            pageObject
+                                                                                                                                                            as
+                                                                                                                                                            CLPArray;
+                                                                                                                                                    return
+                                                                                                                                                        clpArray !=
+                                                                                                                                                        null
+                                                                                                                                                            ? clpArray
+                                                                                                                                                                .Rows *
+                                                                                                                                                            clpArray
+                                                                                                                                                                .Columns
+                                                                                                                                                            : 0;
+                                                                                                                                                });
             numberOfBlackTiles = Math.Min(numberOfBlackTiles, CurrentRemainder);
 
-            RemainderTiles.TileOffsets.Clear();
+            if(RemainderTiles.TileOffsets == null)
+            {
+                RemainderTiles.TileOffsets = new ObservableCollection<string>();
+            }
+            else
+            {
+                RemainderTiles.TileOffsets.Clear();
+            }
             for(var i = 0; i < CurrentRemainder - numberOfBlackTiles; i++)
             {
                 RemainderTiles.TileOffsets.Add("DodgerBlue");

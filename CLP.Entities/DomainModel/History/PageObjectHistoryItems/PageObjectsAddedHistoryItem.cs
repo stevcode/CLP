@@ -97,6 +97,7 @@ namespace CLP.Entities
                 {
                     ParentPage.History.TrashedPageObjects.Remove(pageObject);
                     ParentPage.PageObjects.Add(pageObject);
+                    pageObject.OnAdded();
                 }
                 catch(Exception ex) { }
             }

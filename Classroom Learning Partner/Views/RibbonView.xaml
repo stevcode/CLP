@@ -302,7 +302,6 @@
                               Command="{Binding InsertArrayCommand}"
                               CommandParameter="ARRAY" />
 
-                <!--TODO Liz: Uncomment array card, factor card and stamp buttons when done demoing-->
                 <!--<RibbonButton Label="Array Card"
                               LargeImageSource="pack://application:,,,/Resources/Images/ArrayCard32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/ArrayCard16.png"
