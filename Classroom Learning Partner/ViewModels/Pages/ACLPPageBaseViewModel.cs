@@ -752,7 +752,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
                     Page.InkStrokes.Remove(stroke);
-                    PageInteractionMode = PageInteractionMode.Select;
+                    App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.Select;
                     InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
                     return true;
                 }
