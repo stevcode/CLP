@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Media;
 using Catel.Data;
+using Catel.IO;
 using Catel.MVVM;
 using CLP.Entities;
 using Brush = System.Windows.Media.Brush;
@@ -25,6 +26,8 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             Notebook = notebook;
 
+            App.CurrentNotebookCacheDirectory = Path.Combine(App.NotebookCacheDirectory, Notebook.Name + ";" + Notebook.ID + ";" + Notebook.Owner.FullName + ";" + Notebook.OwnerID);
+
             InitializePanels(notebook);
 
             // TODO: Convert this to string, see DisplaysPanelViewModel to pull from CLPBrushes.xaml
@@ -36,7 +39,7 @@ namespace Classroom_Learning_Partner.ViewModels
             SingleDisplay = new SingleDisplayViewModel(notebook);
 
             NotebookPagesPanel = new NotebookPagesPanelViewModel(notebook);
-           // StudentWorkPanel = new StudentWorkPanelViewModel(notebook);
+            StudentWorkPanel = new StudentWorkPanelViewModel(notebook);
             ProgressPanel = new ProgressPanelViewModel(notebook);
             if(App.MainWindowViewModel.Ribbon.CurrentLeftPanel == Panels.Progress)
             {
@@ -181,16 +184,16 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData NotebookPagesPanelProperty = RegisterProperty("NotebookPagesPanel", typeof(NotebookPagesPanelViewModel));
 
-        ///// <summary>
-        ///// StudentWorkPanel.
-        ///// </summary>
-        //public StudentWorkPanelViewModel StudentWorkPanel
-        //{
-        //    get { return GetValue<StudentWorkPanelViewModel>(StudentWorkPanelProperty); }
-        //    set { SetValue(StudentWorkPanelProperty, value); }
-        //}
+        /// <summary>
+        /// StudentWorkPanel.
+        /// </summary>
+        public StudentWorkPanelViewModel StudentWorkPanel
+        {
+            get { return GetValue<StudentWorkPanelViewModel>(StudentWorkPanelProperty); }
+            set { SetValue(StudentWorkPanelProperty, value); }
+        }
 
-        //public static readonly PropertyData StudentWorkPanelProperty = RegisterProperty("StudentWorkPanel", typeof(StudentWorkPanelViewModel));
+        public static readonly PropertyData StudentWorkPanelProperty = RegisterProperty("StudentWorkPanel", typeof(StudentWorkPanelViewModel));
 
         /// <summary>
         /// ProgressPanel.
@@ -263,8 +266,8 @@ namespace Classroom_Learning_Partner.ViewModels
                             LeftPanel.IsVisible = true;
                             break;
                         case Panels.StudentWork:
-                            //LeftPanel = StudentWorkPanel;
-                            //LeftPanel.IsVisible = true;
+                            LeftPanel = StudentWorkPanel;
+                            LeftPanel.IsVisible = true;
                             break;
                         case Panels.Progress:
                             LeftPanel = ProgressPanel;

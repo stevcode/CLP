@@ -3,8 +3,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Catel.Data;
+using Path = Catel.IO.Path;
 using Catel.MVVM;
 using CLP.Entities;
+using System.IO;
+using System.Windows;
+using System.Windows.Media.Imaging;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -146,6 +150,21 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if(notebookWorkspaceViewModel.CurrentDisplay == null)
             {
+                // save a thumbnail of page being navigated away from
+                var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(CurrentPage).First(x => (x is CLPPageViewModel) && !(x as CLPPageViewModel).IsPagePreview);
+                UIElement pageView = (UIElement)CLPServiceAgent.Instance.GetViewFromViewModel(pageViewModel);
+                var thumbnail = CLPServiceAgent.Instance.GetJpgImage(pageView, 1.0, 100, true);
+
+                var bitmapImage = new BitmapImage();
+                bitmapImage.BeginInit();
+                bitmapImage.CacheOption = BitmapCacheOption.OnDemand;
+                bitmapImage.StreamSource = new MemoryStream(thumbnail);
+                bitmapImage.EndInit();
+                bitmapImage.Freeze();
+
+                CurrentPage.PageThumbnail = bitmapImage;
+
+                // actually set current page
                 CurrentPage = page;
                 return;
             }

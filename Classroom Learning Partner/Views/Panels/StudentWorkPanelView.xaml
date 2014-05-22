@@ -15,7 +15,8 @@
             <conv:PanelLocationToThicknessConverter x:Key="PanelLocationToThicknessConverter" />
             <conv:PageMatchToColorConverter x:Key="PageMatchToColorConverter" />
             <conv:PersonToSubmissionsCountConverter x:Key="PersonToSubmissionsCountConverter" />
-
+            <conv:ShouldUseThumbnailConverter x:Key="ShouldUseThumbnailConverter" />
+            
             <!-- Style to override ListBoxItem selection visuals for Pages -->
             <Style x:Key="PageSidebarContainer"
                TargetType="{x:Type ListBoxItem}">
@@ -38,7 +39,37 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <ScrollViewer Grid.Column="0" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Column="0" Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="60"/>
+                    <!-- names -->
+                    <ColumnDefinition Width="25"/>
+                    <ColumnDefinition />
+                    <!-- first page -->
+                    <ColumnDefinition />
+                    <!-- second page -->
+                    <ColumnDefinition Width="25"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="1" Command="{Binding BackCommand}">
+                    <Image Source="pack://application:,,,/Resources/Images/PreviousPage16.png"/>
+                </Button>
+                <TextBlock Grid.Column="2" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Run Text="Page" />
+                        <Run Text="{Binding FirstPage.PageNumber}"/>
+                </TextBlock>
+                <TextBlock Grid.Column="3" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Run Text="Page" />
+                        <Run Text="{Binding SecondPage.PageNumber}"/>
+                </TextBlock>
+                <Button Grid.Column="4" Command="{Binding ForwardCommand}">
+                    <Image Source="pack://application:,,,/Resources/Images/NextPage16.png"/>
+                </Button>
+            </Grid>
+            <ScrollViewer Grid.Column="0" Grid.Row="1"  HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
                 <ScrollViewer.Resources>
                     <system:Double x:Key="{x:Static SystemParameters.VerticalScrollBarWidthKey}">25</system:Double>
                 </ScrollViewer.Resources>
@@ -46,12 +77,11 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="60"/>
                         <!-- names -->
-                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="25"/>
                         <ColumnDefinition />
                         <!-- first page -->
                         <ColumnDefinition />
                         <!-- second page -->
-                        <ColumnDefinition Width="20"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="{Binding PageHeight}"/>
@@ -59,14 +89,54 @@
                         <RowDefinition />
                         <!-- lower rows -->
                     </Grid.RowDefinitions>
+                    <Control Grid.Row="0" Grid.Column="2" Margin="5">
+                        <Control.Resources>
+                            <ControlTemplate x:Key="FirstTeacherPageThumbnailTemplate">
+                                <Image Source="{Binding FirstPage.PageThumbnail, Mode=OneWay}"/>
+                            </ControlTemplate>
 
-                    <Button Grid.Column="1" Grid.Row="0"  Command="{Binding BackCommand}">
-                        <Image Source="pack://application:,,,/Resources/Images/PreviousPage16.png"/>
-                    </Button>
+                            <ControlTemplate x:Key="FirstTeacherPagePreviewTemplate">
+                                <views:CLPPagePreviewView x:Name="FirstTeacherPagePreviewView"
+                                                          DataContext="{Binding FirstPage}"
+                                                          ClipToBounds="True" />
+                            </ControlTemplate>
+                        </Control.Resources>
+                        <Control.Style>
+                            <Style TargetType="{x:Type Control}">
+                                <Style.Triggers>
+                                    <!--Thumbnail trigger-->
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Value="True">
+                                                <Condition.Binding>
+                                                    <MultiBinding Converter="{StaticResource ShouldUseThumbnailConverter}">
+                                                        <Binding Path="CurrentPage"/>
+                                                        <Binding Path="FirstPage"/>
+                                                    </MultiBinding>
+                                                </Condition.Binding>
+                                            </Condition>
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Template" Value="{StaticResource FirstTeacherPageThumbnailTemplate}" />
+                                    </MultiDataTrigger>
 
-                    <views:CLPPagePreviewView x:Name="FirstTeacherPagePreviewView"
-                    Grid.Row="0" Grid.Column="2" Margin="5" DataContext="{Binding FirstPage}"
-                    ClipToBounds="True" />
+                                    <!--PagePreview trigger-->
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Value="False">
+                                                <Condition.Binding>
+                                                    <MultiBinding Converter="{StaticResource ShouldUseThumbnailConverter}">
+                                                        <Binding Path="CurrentPage"/>
+                                                        <Binding Path="FirstPage"/>
+                                                    </MultiBinding>
+                                                </Condition.Binding>
+                                            </Condition>
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Template" Value="{StaticResource FirstTeacherPagePreviewTemplate}" />
+                                    </MultiDataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Control.Style>
+                    </Control>
                     <Rectangle Grid.Row="0" Grid.Column="2" Margin="3" Fill="Transparent" StrokeThickness="2">
                         <Rectangle.Stroke>
                             <MultiBinding Converter="{StaticResource PageMatchToColorConverter}">
@@ -83,9 +153,54 @@
                         </i:Interaction.Triggers>
                     </Rectangle>
 
-                    <views:CLPPagePreviewView x:Name="SecondTeacherPagePreviewView"
-                    Grid.Row="0" Grid.Column="3" Margin="5" DataContext="{Binding SecondPage}"
-                    ClipToBounds="True" />
+                    <Control Grid.Row="0" Grid.Column="3" Margin="5">
+                        <Control.Resources>
+                            <ControlTemplate x:Key="SecondTeacherPageThumbnailTemplate">
+                                <Image Source="{Binding SecondPage.PageThumbnail, Mode=OneWay}"/>
+                            </ControlTemplate>
+
+                            <ControlTemplate x:Key="SecondTeacherPagePreviewTemplate">
+                                <views:CLPPagePreviewView x:Name="SecondTeacherPagePreviewView"
+                                                          DataContext="{Binding SecondPage}"
+                                                          ClipToBounds="True" />
+                            </ControlTemplate>
+                        </Control.Resources>
+                        <Control.Style>
+                            <Style TargetType="{x:Type Control}">
+                                <Style.Triggers>
+                                    <!--Thumbnail trigger-->
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Value="True">
+                                                <Condition.Binding>
+                                                    <MultiBinding Converter="{StaticResource ShouldUseThumbnailConverter}">
+                                                        <Binding Path="CurrentPage"/>
+                                                        <Binding Path="SecondPage"/>
+                                                    </MultiBinding>
+                                                </Condition.Binding>
+                                            </Condition>
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Template" Value="{StaticResource SecondTeacherPageThumbnailTemplate}" />
+                                    </MultiDataTrigger>
+
+                                    <!--PagePreview trigger-->
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Value="False">
+                                                <Condition.Binding>
+                                                    <MultiBinding Converter="{StaticResource ShouldUseThumbnailConverter}">
+                                                        <Binding Path="CurrentPage"/>
+                                                        <Binding Path="SecondPage"/>
+                                                    </MultiBinding>
+                                                </Condition.Binding>
+                                            </Condition>
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Template" Value="{StaticResource SecondTeacherPagePreviewTemplate}" />
+                                    </MultiDataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Control.Style>
+                    </Control>
                     <Rectangle Grid.Row="0" Grid.Column="3" Margin="3" Fill="Transparent" StrokeThickness="2">
                         <Rectangle.Stroke>
                             <MultiBinding Converter="{StaticResource PageMatchToColorConverter}">
@@ -101,10 +216,6 @@
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </Rectangle>
-
-                    <Button Grid.Column="4" Grid.Row="0"  Command="{Binding ForwardCommand}">
-                        <Image Source="pack://application:,,,/Resources/Images/NextPage16.png"/>
-                    </Button>
 
                     <ItemsControl Name="StudentNames" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"
                                   ItemsSource="{Binding StudentList}"
@@ -124,7 +235,7 @@
                                                 <Run Text="{Binding FullName}" />
                                             </TextBlock>
                                         </StackPanel>
-                                        <!--TextBlock FontWeight="Bold" HorizontalAlignment="Center">
+                                        <TextBlock FontWeight="Bold" HorizontalAlignment="Center">
                                             <Run x:Name="SubmissionsCount">
                                                 <Run.Text>
                                                     <MultiBinding Converter="{StaticResource PersonToSubmissionsCountConverter}">
@@ -135,7 +246,7 @@
                                             </Run>
                                             <Run Text="/" />
                                             <Run Text="{Binding Mode=OneWay, ElementName=StudentNames, Path=DataContext.CurrentPages.Count}" />
-                                        </-->
+                                        </TextBlock>
                                     </StackPanel>
                                 </StackPanel>
                             </DataTemplate>
@@ -162,11 +273,54 @@
                                             <RowDefinition Height="*"/>
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
-                                        <views:CLPPagePreviewView x:Name="FirstPagePreviewView"
-                                                              Grid.Row="0"
-                                                              Margin="5"
-                                                              DataContext="{Binding Page}"
-                                                              ClipToBounds="True" />
+                                        <Control Grid.Row="0" Grid.Column="2" Margin="5">
+                                            <Control.Resources>
+                                                <ControlTemplate x:Key="FirstPageThumbnailTemplate">
+                                                    <Image Source="{Binding Page.PageThumbnail, Mode=OneWay}"/>
+                                                </ControlTemplate>
+
+                                                <ControlTemplate x:Key="FirstPagePreviewTemplate">
+                                                    <views:CLPPagePreviewView x:Name="FirstPagePreviewView"
+                                                          DataContext="{Binding Page}"
+                                                          ClipToBounds="True" />
+                                                </ControlTemplate>
+                                            </Control.Resources>
+                                            <Control.Style>
+                                                <Style TargetType="{x:Type Control}">
+                                                    <Style.Triggers>
+                                                        <!--Thumbnail trigger-->
+                                                        <MultiDataTrigger>
+                                                            <MultiDataTrigger.Conditions>
+                                                                <Condition Value="True">
+                                                                    <Condition.Binding>
+                                                                        <MultiBinding Converter="{StaticResource ShouldUseThumbnailConverter}">
+                                                                            <Binding ElementName="FirstPageSubmissions" Path="DataContext.CurrentPage"/>
+                                                                            <Binding Path="Page"/>
+                                                                        </MultiBinding>
+                                                                    </Condition.Binding>
+                                                                </Condition>
+                                                            </MultiDataTrigger.Conditions>
+                                                            <Setter Property="Template" Value="{StaticResource FirstPageThumbnailTemplate}" />
+                                                        </MultiDataTrigger>
+
+                                                        <!--PagePreview trigger-->
+                                                        <MultiDataTrigger>
+                                                            <MultiDataTrigger.Conditions>
+                                                                <Condition Value="False">
+                                                                    <Condition.Binding>
+                                                                        <MultiBinding Converter="{StaticResource ShouldUseThumbnailConverter}">
+                                                                            <Binding ElementName="FirstPageSubmissions" Path="DataContext.CurrentPage"/>
+                                                                            <Binding Path="Page"/>
+                                                                        </MultiBinding>
+                                                                    </Condition.Binding>
+                                                                </Condition>
+                                                            </MultiDataTrigger.Conditions>
+                                                            <Setter Property="Template" Value="{StaticResource FirstPagePreviewTemplate}" />
+                                                        </MultiDataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Control.Style>
+                                        </Control>
                                         <Rectangle Grid.Row="0" Margin="0" Fill="Transparent" StrokeThickness="2">
                                             <Rectangle.Stroke>
                                                 <MultiBinding Converter="{StaticResource PageMatchToColorConverter}">
@@ -211,11 +365,55 @@
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
 
-                                        <views:CLPPagePreviewView x:Name="SecondPagePreviewView"
-                                                              Grid.Row="0"
-                                                              Margin="5"
-                                                              DataContext="{Binding Page}"
-                                                              ClipToBounds="True" />
+                                        <Control Grid.Row="0" Grid.Column="2" Margin="5">
+                                            <Control.Resources>
+                                                <ControlTemplate x:Key="SecondPageThumbnailTemplate">
+                                                    <Image Source="{Binding Page.PageThumbnail, Mode=OneWay}"/>
+                                                </ControlTemplate>
+
+                                                <ControlTemplate x:Key="SecondPagePreviewTemplate">
+                                                    <views:CLPPagePreviewView x:Name="SecondPagePreviewView"
+                                                          DataContext="{Binding Page}"
+                                                          ClipToBounds="True" />
+                                                </ControlTemplate>
+                                            </Control.Resources>
+
+                                            <Control.Style>
+                                                <Style TargetType="{x:Type Control}">
+                                                    <Style.Triggers>
+                                                        <!--Thumbnail trigger-->
+                                                        <MultiDataTrigger>
+                                                            <MultiDataTrigger.Conditions>
+                                                                <Condition Value="True">
+                                                                    <Condition.Binding>
+                                                                        <MultiBinding Converter="{StaticResource ShouldUseThumbnailConverter}">
+                                                                            <Binding ElementName="SecondPageSubmissions" Path="DataContext.CurrentPage"/>
+                                                                            <Binding Path="Page"/>
+                                                                        </MultiBinding>
+                                                                    </Condition.Binding>
+                                                                </Condition>
+                                                            </MultiDataTrigger.Conditions>
+                                                            <Setter Property="Template" Value="{StaticResource SecondPageThumbnailTemplate}" />
+                                                        </MultiDataTrigger>
+
+                                                        <!--PagePreview trigger-->
+                                                        <MultiDataTrigger>
+                                                            <MultiDataTrigger.Conditions>
+                                                                <Condition Value="False">
+                                                                    <Condition.Binding>
+                                                                        <MultiBinding Converter="{StaticResource ShouldUseThumbnailConverter}">
+                                                                            <Binding ElementName="SecondPageSubmissions" Path="DataContext.CurrentPage"/>
+                                                                            <Binding Path="Page"/>
+                                                                        </MultiBinding>
+                                                                    </Condition.Binding>
+                                                                </Condition>
+                                                            </MultiDataTrigger.Conditions>
+                                                            <Setter Property="Template" Value="{StaticResource SecondPagePreviewTemplate}" />
+                                                        </MultiDataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Control.Style>
+                                        </Control>
                                         <Rectangle Grid.Row="0" Margin="0" Fill="Transparent" StrokeThickness="2">
                                             <Rectangle.Stroke>
                                                 <MultiBinding Converter="{StaticResource PageMatchToColorConverter}">
@@ -240,7 +438,7 @@
                 </Grid>
             </ScrollViewer>
             <Thumb Cursor="ScrollWE"
-                       Grid.Column="1"
+                       Grid.Column="1" Grid.Row="0" Grid.RowSpan="2"
                            Width="7"
                            Margin="0 0 -7 0"
                            VerticalAlignment="Stretch"
