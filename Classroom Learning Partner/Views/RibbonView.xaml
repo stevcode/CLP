@@ -167,11 +167,11 @@
                     </RibbonToggleButton.Style>
                 </RibbonToggleButton>
 
-                <RibbonToggleButton Label="Staging Panel"
+                <!--<RibbonToggleButton Label="Staging Panel"
                                     LargeImageSource="pack://application:,,,/Resources/Images/DisplaySubmissionsButton50x25.png"
                                     IsChecked="{Binding CurrentLeftPanel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.Progress}}"
                                     IsEnabled="False"
-                                    Visibility="{Binding InstructorVisibility}" />
+                                    Visibility="{Binding InstructorVisibility}" />-->
 
                 <RibbonButton Label="Previous Page"
                               LargeImageSource="pack://application:,,,/Resources/Images/PreviousPage32.png"
