@@ -2670,11 +2670,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 Dictionary<string, Point> oldDimensions = new Dictionary<string, Point>();
                 foreach(var pageObject in page.PageObjects)
                 {
-                    var pageObjectMinSide = (pageObject is FuzzyFactorCard) ? MIN_FFC_SIDE : MIN_SIDE;
-                    if(pageObject is CLPArray || pageObject is FuzzyFactorCard && pageObject.CreatorID != Person.Author.ID)
+                    if(pageObject is CLPArray && pageObject.CreatorID != Person.Author.ID)
                     {
                         oldDimensions.Add(pageObject.ID, new Point(pageObject.Width, pageObject.Height));
-                        if((pageObject as ACLPArrayBase).Rows * initializedSquareSize > pageObjectMinSide && (pageObject as ACLPArrayBase).Columns * initializedSquareSize > pageObjectMinSide)
+                        if((pageObject as ACLPArrayBase).Rows * initializedSquareSize > MIN_SIDE && (pageObject as ACLPArrayBase).Columns * initializedSquareSize > MIN_SIDE)
                         {
                             if(pageObject.XPosition + (pageObject as ACLPArrayBase).Columns * initializedSquareSize + 2 * LABEL_LENGTH <= page.Width && pageObject.YPosition + (pageObject as ACLPArrayBase).Rows * initializedSquareSize + 2 * LABEL_LENGTH <= page.Height)
                             {
@@ -2683,7 +2682,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         }
                         else
                         {
-                            (pageObject as ACLPArrayBase).SizeArrayToGridLevel(pageObjectMinSide / Math.Min((pageObject as ACLPArrayBase).Rows, (pageObject as ACLPArrayBase).Columns));
+                            (pageObject as ACLPArrayBase).SizeArrayToGridLevel(MIN_SIDE / Math.Min((pageObject as ACLPArrayBase).Rows, (pageObject as ACLPArrayBase).Columns));
                         }
                     }
                     initialGridsquareSize = initializedSquareSize;
