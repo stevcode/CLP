@@ -189,6 +189,8 @@ namespace CLP.Entities
                 SetValue(RemainderTilesProperty, value);
                 if(value == null)
                 {
+                    RemainderTilesID = null;
+                    RemainderTilesOwnerID = null;
                     return;
                 }
                 RemainderTilesID = value.ID;
