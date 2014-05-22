@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Linq;
 using System.Windows.Data;
 using Classroom_Learning_Partner.ViewModels;
 using CLP.Entities;
@@ -25,21 +27,32 @@ namespace Classroom_Learning_Partner.Converters
                     studentList.Add(Person.TestSubmitter);
                 }
             }
-            foreach (Person student in studentList) {
-                CLPPage foundSubmission = null;
-                if(pageSubmissions != null)
+
+            var latestSubmissions = new List<CLPPage>();
+            if(pageSubmissions == null)
+            {
+                return submissionsWithBlanks;
+            }
+
+            foreach(var pageSubmission in pageSubmissions)
+            {
+                var submissionFromSameStudent = latestSubmissions.FirstOrDefault(latestSubmission => pageSubmission.OwnerID == latestSubmission.OwnerID && 
+                                                                                                     pageSubmission.VersionIndex > latestSubmission.VersionIndex);
+
+                if(submissionFromSameStudent != null)
                 {
-                    foreach(CLPPage submission in pageSubmissions)
-                    {
-                        if(submission.OwnerID == student.ID)
-                        {
-                            foundSubmission = submission;
-                            break;
-                        }
-                    }
+                    latestSubmissions.Remove(submissionFromSameStudent);
                 }
+                
+                latestSubmissions.Add(pageSubmission);
+            }
+
+            foreach(var student in studentList)
+            {
+                var foundSubmission = latestSubmissions.FirstOrDefault(pageSubmission => pageSubmission.OwnerID == student.ID);
                 submissionsWithBlanks.Add(new StudentProgressInfo(student, foundSubmission));
             }
+
             return submissionsWithBlanks;
         }
 
