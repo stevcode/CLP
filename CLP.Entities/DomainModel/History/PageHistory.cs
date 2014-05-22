@@ -266,6 +266,9 @@ namespace CLP.Entities
             {
                 UndoItems.Clear();
                 RedoItems.Clear();
+                TrashedInkStrokes.Clear();
+                SerializedTrashedInkStrokes.Clear();
+                TrashedPageObjects.Clear();
                 _isUndoingOperation = false;
             }
             UpdateTicks();
