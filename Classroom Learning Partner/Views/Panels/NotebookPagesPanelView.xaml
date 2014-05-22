@@ -93,8 +93,13 @@
                                         </TransformGroup>
                                     </TextBlock.LayoutTransform>
                                 </TextBlock>
+                                
+                                <views:CLPPagePreviewView x:Name="PagePreviewView"
+                                                          Grid.Column="1" Margin="5"
+                                                          DataContext="{Binding}"
+                                                          ClipToBounds="True" />
 
-                                <Control Grid.Column="1" Margin="5">
+                                <!--<Control Grid.Column="1" Margin="5">
                                     <Control.Resources>
                                         <ControlTemplate x:Key="ThumbnailTemplate">
                                             <Image Source="{Binding PageThumbnail, Mode=OneWay}"/>
@@ -109,7 +114,7 @@
                                     <Control.Style>
                                         <Style TargetType="{x:Type Control}">
                                             <Style.Triggers>
-                                                <!--Thumbnail trigger-->
+                                                --><!--Thumbnail trigger--><!--
                                                 <MultiDataTrigger>
                                                     <MultiDataTrigger.Conditions>
                                                         <Condition Value="True">
@@ -124,7 +129,7 @@
                                                     <Setter Property="Template" Value="{StaticResource ThumbnailTemplate}" />
                                                 </MultiDataTrigger>
 
-                                                <!--PagePreview trigger-->
+                                                --><!--PagePreview trigger--><!--
                                                 <MultiDataTrigger>
                                                     <MultiDataTrigger.Conditions>
                                                         <Condition Value="False">
@@ -141,7 +146,7 @@
                                             </Style.Triggers>
                                         </Style>
                                     </Control.Style>
-                                </Control>
+                                </Control>-->
 
                                 <Rectangle Grid.Column="1"
                                            Margin="5"

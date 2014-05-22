@@ -151,18 +151,19 @@ namespace Classroom_Learning_Partner.ViewModels
             if(notebookWorkspaceViewModel.CurrentDisplay == null)
             {
                 // save a thumbnail of page being navigated away from
-                var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(CurrentPage).First(x => (x is CLPPageViewModel) && !(x as CLPPageViewModel).IsPagePreview);
-                UIElement pageView = (UIElement)CLPServiceAgent.Instance.GetViewFromViewModel(pageViewModel);
-                var thumbnail = CLPServiceAgent.Instance.GetJpgImage(pageView, 1.0, 100, true);
+                // TODO: Move to own method, possibly call in CurrentPage {set;}
+                //var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(CurrentPage).First(x => (x is CLPPageViewModel) && !(x as CLPPageViewModel).IsPagePreview);
+                //UIElement pageView = (UIElement)CLPServiceAgent.Instance.GetViewFromViewModel(pageViewModel);
+                //var thumbnail = CLPServiceAgent.Instance.GetJpgImage(pageView, 1.0, 100, true);
 
-                var bitmapImage = new BitmapImage();
-                bitmapImage.BeginInit();
-                bitmapImage.CacheOption = BitmapCacheOption.OnDemand;
-                bitmapImage.StreamSource = new MemoryStream(thumbnail);
-                bitmapImage.EndInit();
-                bitmapImage.Freeze();
+                //var bitmapImage = new BitmapImage();
+                //bitmapImage.BeginInit();
+                //bitmapImage.CacheOption = BitmapCacheOption.OnDemand;
+                //bitmapImage.StreamSource = new MemoryStream(thumbnail);
+                //bitmapImage.EndInit();
+                //bitmapImage.Freeze();
 
-                CurrentPage.PageThumbnail = bitmapImage;
+                //CurrentPage.PageThumbnail = bitmapImage;
 
                 // actually set current page
                 CurrentPage = page;
