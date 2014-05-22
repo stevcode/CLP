@@ -2583,11 +2583,14 @@ namespace Classroom_Learning_Partner.ViewModels
             //if fail, resize all other arrays to newArray
             //squareSize will be the grid size of the most recently placed array, or 0 if there are no non-background arrays
             double squareSize = 0.0;
-            foreach(var pageObject in page.PageObjects)
+            if(!(firstArray is FuzzyFactorCard))
             {
-                if(pageObject is CLPArray || pageObject is FuzzyFactorCard && pageObject.CreatorID != Person.Author.ID)
+                foreach(var pageObject in page.PageObjects)
                 {
-                    squareSize = (pageObject as ACLPArrayBase).ArrayHeight / (pageObject as ACLPArrayBase).Rows;
+                    if(pageObject is CLPArray || pageObject is FuzzyFactorCard && pageObject.CreatorID != Person.Author.ID)
+                    {
+                        squareSize = (pageObject as ACLPArrayBase).ArrayHeight / (pageObject as ACLPArrayBase).Rows;
+                    }
                 }
             }
 
@@ -2688,6 +2691,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     initialGridsquareSize = initializedSquareSize;
                 }
             }
+
 
             double MAX_HEIGHT = page.Height - 400.0;
             if(squareSize == 0.0)
