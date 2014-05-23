@@ -43,8 +43,7 @@
                         Width="40"
                         Height="40"
                         Canvas.Left="-40"
-                        Canvas.Top="-40"
-                        Visibility="{Binding IsDefaultAdornerVisible}">
+                        Canvas.Top="-40">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Grid>
