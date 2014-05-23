@@ -29,12 +29,13 @@ namespace CLP.Entities
         {
             Dividend = dividend;
             IsSnappable = true;
-            if(isRemainderRegionDisplayed)
+            if(!isRemainderRegionDisplayed)
             {
-                RemainderTiles = new RemainderTiles(parentPage, this);
-                parentPage.PageObjects.Add(RemainderTiles);
-                UpdateRemainderRegion();
+                return;
             }
+            RemainderTiles = new RemainderTiles(parentPage, this);
+            parentPage.PageObjects.Add(RemainderTiles);
+            UpdateRemainderRegion();
         }
 
         /// <summary>
