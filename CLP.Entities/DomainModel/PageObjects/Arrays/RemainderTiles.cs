@@ -22,6 +22,7 @@ namespace CLP.Entities
         public RemainderTiles(CLPPage parentPage, FuzzyFactorCard fuzzyFactorCard)
             : base(parentPage)
         {
+            ParentFuzzyFactorCard = fuzzyFactorCard;
             Height = Math.Ceiling(fuzzyFactorCard.CurrentRemainder / 5.0) * 61.0; 
             Width = 305.0; 
         }
@@ -37,6 +38,26 @@ namespace CLP.Entities
         #endregion //Constructors
 
         #region Properties
+
+        /// <summary>
+        /// The FFC which the region corresponds to.
+        /// </summary>
+        public FuzzyFactorCard ParentFuzzyFactorCard
+        {
+            get
+            {
+                return GetValue<FuzzyFactorCard>(ParentFuzzyFactorCardProperty);
+            }
+            set
+            {
+                SetValue(ParentFuzzyFactorCardProperty, value);
+            }
+        }
+
+        /// <summary>
+        /// Register the ParentFuzzyFactorCard property so it is known in the class.
+        /// </summary>
+        public static readonly PropertyData ParentFuzzyFactorCardProperty = RegisterProperty("ParentFuzzyFactorCard", typeof(FuzzyFactorCard), null);
 
         public override bool IsBackgroundInteractable
         {
@@ -72,6 +93,12 @@ namespace CLP.Entities
             newRemainderTiles.ParentPage = ParentPage;
 
             return newRemainderTiles;
+        }
+
+        public override void OnDeleted()
+        {
+            base.OnDeleted();
+            ParentFuzzyFactorCard.RemainderTiles = null;
         }
 
         #endregion //Methods
