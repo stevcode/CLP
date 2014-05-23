@@ -22,7 +22,7 @@ namespace CLP.Entities
         public RemainderTiles(CLPPage parentPage, FuzzyFactorCard fuzzyFactorCard)
             : base(parentPage)
         {
-            ParentFuzzyFactorCard = fuzzyFactorCard;
+            FuzzyFactorCardID = fuzzyFactorCard.ID;
             Height = Math.Ceiling(fuzzyFactorCard.CurrentRemainder / 5.0) * 61.0; 
             Width = 305.0; 
         }
@@ -40,24 +40,15 @@ namespace CLP.Entities
         #region Properties
 
         /// <summary>
-        /// The FFC which the region corresponds to.
+        /// Unique Identifier of the <see cref="FuzzyFactorCard" /> this <see cref="RemainderTiles" /> is attached to.
         /// </summary>
-        public FuzzyFactorCard ParentFuzzyFactorCard
+        public string FuzzyFactorCardID
         {
-            get
-            {
-                return GetValue<FuzzyFactorCard>(ParentFuzzyFactorCardProperty);
-            }
-            set
-            {
-                SetValue(ParentFuzzyFactorCardProperty, value);
-            }
+            get { return GetValue<string>(FuzzyFactorCardIDProperty); }
+            set { SetValue(FuzzyFactorCardIDProperty, value); }
         }
 
-        /// <summary>
-        /// Register the ParentFuzzyFactorCard property so it is known in the class.
-        /// </summary>
-        public static readonly PropertyData ParentFuzzyFactorCardProperty = RegisterProperty("ParentFuzzyFactorCard", typeof(FuzzyFactorCard), null);
+        public static readonly PropertyData FuzzyFactorCardIDProperty = RegisterProperty("FuzzyFactorCardID", typeof(string), string.Empty);
 
         public override bool IsBackgroundInteractable
         {
@@ -97,8 +88,12 @@ namespace CLP.Entities
 
         public override void OnDeleted()
         {
+            var fuzzyFactorCard = ParentPage.GetPageObjectByID(FuzzyFactorCardID) as FuzzyFactorCard;
+            if(fuzzyFactorCard != null)
+            {
+                fuzzyFactorCard.RemainderTiles = null;
+            }
             base.OnDeleted();
-            ParentFuzzyFactorCard.RemainderTiles = null;
         }
 
         #endregion //Methods
