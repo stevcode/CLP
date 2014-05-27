@@ -196,6 +196,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converters\AddLengthConverter.cs" />
+    <Compile Include="Converters\StringsEqualMultiConverter.cs" />
     <Compile Include="Converters\PassMultipleValuesConverter.cs" />
     <Compile Include="Converters\AllBoolToColorMultiConverter.cs" />
     <Compile Include="Converters\AllBoolToVisibilityMultiConverter.cs" />

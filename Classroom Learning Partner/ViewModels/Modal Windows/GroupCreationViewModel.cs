@@ -28,6 +28,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             GroupChangeCommand = new Command<object[]>(OnGroupChangeCommandExecute);
             AddGroupCommand = new Command(OnAddGroupCommandExecute);
+            RemoveGroupCommand = new Command(OnRemoveGroupCommandExecute);
         }
 
         public ObservableCollection<Group> Groups
@@ -83,6 +84,26 @@ namespace Classroom_Learning_Partner.ViewModels
             string nextLabel = "" + (char)(lastLabel[0] + 1);
             Group newGroup = new Group(nextLabel);
             Groups.Add(newGroup);
+        }
+
+        public Command RemoveGroupCommand
+        {
+            get;
+            private set;
+        }
+
+        public void OnRemoveGroupCommandExecute()
+        {
+            if(Groups.Count <= 1)
+            {
+                return;
+            }
+            Group lastGroup = Groups[Groups.Count - 1];
+            foreach(Person student in lastGroup.Members)
+            {
+                StudentsNotInGroup.Add(student);
+            }
+            Groups.Remove(lastGroup);
         }
     }
 }

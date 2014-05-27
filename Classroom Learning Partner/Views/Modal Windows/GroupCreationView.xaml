@@ -10,6 +10,7 @@
     <catel:DataWindow.Resources>
         <ResourceDictionary>
             <conv:PassMultipleValuesConverter x:Key="PassMultipleValuesConverter" />
+            <conv:StringsEqualMultiConverter x:Key="StringsEqualMultiConverter" />
         </ResourceDictionary>
     </catel:DataWindow.Resources>
     <Grid>
@@ -29,7 +30,7 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0">
+                            <TextBlock Grid.Row="0" FontWeight="Bold" HorizontalAlignment="Center">
                                 <Run Text="Group"/>
                                 <Run Text="{Binding Label}" />
                             </TextBlock>
@@ -62,10 +63,44 @@
                                                                        VerticalAlignment="Center">
                                                                 <Run Text="{Binding Label}"/>
                                                             </TextBlock>
-                                                            <Ellipse Fill="Transparent" Stroke="{StaticResource GrayEdgeColor}" Height="15" Width="15"
+                                                            <Ellipse Fill="Transparent" Height="15" Width="15"
                                                                      Margin="2"
                                                                      HorizontalAlignment="Center"
                                                                      VerticalAlignment="Center" >
+                                                                <Ellipse.Style>
+                                                                    <Style TargetType="Ellipse">
+                                                                        <Style.Triggers>
+                                                                            <MultiDataTrigger>
+                                                                                <MultiDataTrigger.Conditions>
+                                                                                    <Condition Value="True">
+                                                                                        <Condition.Binding>
+                                                                                            <MultiBinding Converter="{StaticResource StringsEqualMultiConverter}">
+                                                                                                <Binding RelativeSource="{RelativeSource AncestorType={x:Type ItemsControl}, AncestorLevel=2}"
+                                                                                                         Path="DataContext.Label"/>
+                                                                                                <Binding Path="Label"/>
+                                                                                            </MultiBinding>
+                                                                                        </Condition.Binding>
+                                                                                    </Condition>
+                                                                                </MultiDataTrigger.Conditions>
+                                                                                <Setter Property="Stroke" Value="LawnGreen"/>
+                                                                            </MultiDataTrigger>
+                                                                            <MultiDataTrigger>
+                                                                                <MultiDataTrigger.Conditions>
+                                                                                    <Condition Value="False">
+                                                                                        <Condition.Binding>
+                                                                                            <MultiBinding Converter="{StaticResource StringsEqualMultiConverter}">
+                                                                                                <Binding RelativeSource="{RelativeSource AncestorType={x:Type ItemsControl}, AncestorLevel=2}"
+                                                                                                         Path="DataContext.Label"/>
+                                                                                                <Binding Path="Label"/>
+                                                                                            </MultiBinding>
+                                                                                        </Condition.Binding>
+                                                                                    </Condition>
+                                                                                </MultiDataTrigger.Conditions>
+                                                                                <Setter Property="Stroke" Value="{StaticResource GrayEdgeColor}"/>
+                                                                            </MultiDataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </Ellipse.Style>
                                                                 <i:Interaction.Triggers>
                                                                     <i:EventTrigger EventName="MouseUp">
                                                                         <catel:EventToCommand Command="{Binding DataContext.GroupChangeCommand, ElementName=NotGroupedBox}"
@@ -94,7 +129,10 @@
             </ItemsControl.ItemTemplate>
         </ItemsControl>
 
-        <Button Grid.Row="1" Content="Add Group" Command="{Binding AddGroupCommand}"/>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center">
+            <Button Content="Fewer Groups" Command="{Binding RemoveGroupCommand}"/>
+            <Button Content="More Groups" Command="{Binding AddGroupCommand}"/>
+        </StackPanel>
 
         <Border Margin="2" BorderBrush="{StaticResource GrayEdgeColor}"
                 BorderThickness="1,1,1,1" Grid.Row="2"
@@ -113,7 +151,7 @@
                             <ItemsControl x:Name="GroupSelect" Grid.Column="1" ItemsSource="{Binding DataContext.Groups, ElementName=NotGroupedBox}">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
-                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Top" />
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" />
                                     </ItemsPanelTemplate>
                                 </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemTemplate>
