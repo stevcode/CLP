@@ -137,61 +137,66 @@
         <Border Margin="2" BorderBrush="{StaticResource GrayEdgeColor}"
                 BorderThickness="1,1,1,1" Grid.Row="2"
                 x:Name="NotGroupedBox">
-            <ItemsControl ItemsSource="{Binding StudentsNotInGroup}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" VerticalAlignment="Center">
-                                <Run Text="{Binding FullName}"/>
-                            </TextBlock>
-                            <ItemsControl x:Name="GroupSelect" Grid.Column="1" ItemsSource="{Binding DataContext.Groups, ElementName=NotGroupedBox}">
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" />
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition/>
-                                            </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" >
+                <TextBlock FontWeight="Bold" HorizontalAlignment="Center">
+                    <Run Text="Students not in any group"/>
+                </TextBlock>
+                <ItemsControl ItemsSource="{Binding StudentsNotInGroup}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" VerticalAlignment="Center">
+                                    <Run Text="{Binding FullName}"/>
+                                </TextBlock>
+                                <ItemsControl x:Name="GroupSelect" Grid.Column="1" ItemsSource="{Binding DataContext.Groups, ElementName=NotGroupedBox}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition/>
+                                                </Grid.ColumnDefinitions>
 
-                                            <TextBlock Grid.Column="0" Margin="2" 
-                                                 HorizontalAlignment="Center"
-                                                 VerticalAlignment="Center">
-                                                <Run Text="{Binding Label}"/>
-                                            </TextBlock>
-                                            <Ellipse Fill="Transparent" Stroke="{StaticResource GrayEdgeColor}" Height="15" Width="15"
-                                                 Margin="2"
-                                                 HorizontalAlignment="Center"
-                                                 VerticalAlignment="Center" >
-                                                <i:Interaction.Triggers>
-                                                    <i:EventTrigger EventName="MouseUp">
-                                                        <catel:EventToCommand Command="{Binding DataContext.GroupChangeCommand, ElementName=NotGroupedBox}"
+                                                <TextBlock Grid.Column="0" Margin="2" 
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center">
+                                                    <Run Text="{Binding Label}"/>
+                                                </TextBlock>
+                                                <Ellipse Fill="Transparent" Stroke="{StaticResource GrayEdgeColor}" Height="15" Width="15"
+                                                         Margin="2"
+                                                         HorizontalAlignment="Center"
+                                                         VerticalAlignment="Center" >
+                                                    <i:Interaction.Triggers>
+                                                        <i:EventTrigger EventName="MouseUp">
+                                                            <catel:EventToCommand Command="{Binding DataContext.GroupChangeCommand, ElementName=NotGroupedBox}"
                                                                               PassEventArgsToCommand="False">
-                                                            <catel:EventToCommand.CommandParameter>
-                                                                <MultiBinding Converter="{StaticResource PassMultipleValuesConverter}">
-                                                                    <Binding Path=""/>
-                                                                    <Binding Path="DataContext" RelativeSource="{RelativeSource AncestorType={x:Type ItemsControl}}"/>
-                                                                </MultiBinding>
-                                                            </catel:EventToCommand.CommandParameter>
-                                                        </catel:EventToCommand>
-                                                    </i:EventTrigger>
-                                                </i:Interaction.Triggers>
-                                            </Ellipse>
-                                        </Grid>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </Grid>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+                                                                <catel:EventToCommand.CommandParameter>
+                                                                    <MultiBinding Converter="{StaticResource PassMultipleValuesConverter}">
+                                                                        <Binding Path=""/>
+                                                                        <Binding Path="DataContext" RelativeSource="{RelativeSource AncestorType={x:Type ItemsControl}}"/>
+                                                                    </MultiBinding>
+                                                                </catel:EventToCommand.CommandParameter>
+                                                            </catel:EventToCommand>
+                                                        </i:EventTrigger>
+                                                    </i:Interaction.Triggers>
+                                                </Ellipse>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
         </Border>
     </Grid>
 </catel:DataWindow>

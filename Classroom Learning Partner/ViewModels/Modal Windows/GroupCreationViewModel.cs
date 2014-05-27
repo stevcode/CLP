@@ -16,15 +16,38 @@ namespace Classroom_Learning_Partner.ViewModels
             else
             {
                 StudentsNotInGroup = new ObservableCollection<Person>();
-                for(int i = 1; i <= 10; i++)
-                {
-                    StudentsNotInGroup.Add(Person.TestSubmitter);
-                }
             }
 
             Groups = new ObservableCollection<Group>();
-            Groups.Add(new Group("A"));
-            Groups.Add(new Group("B"));
+
+            foreach(Person student in new ObservableCollection<Person>(StudentsNotInGroup))
+            {
+                if(student.CurrentDifferentiationLevel != "")
+                {
+                    bool added = false;
+                    foreach(Group existingGroup in Groups)
+                    {
+                        if(existingGroup.Label == student.CurrentDifferentiationLevel)
+                        {
+                            existingGroup.Add(student);
+                            added = true;
+                            break;
+                        }
+                    }
+                    if(!added)
+                    {
+                        Group newGroup = new Group(student.CurrentDifferentiationLevel);
+                        newGroup.Add(student);
+                        Groups.Add(newGroup);
+                    }
+                    StudentsNotInGroup.Remove(student);
+                }
+            }
+
+            if(Groups.Count == 0)
+            {
+                Groups.Add(new Group("A"));
+            }
 
             GroupChangeCommand = new Command<object[]>(OnGroupChangeCommandExecute);
             AddGroupCommand = new Command(OnAddGroupCommandExecute);

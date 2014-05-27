@@ -1741,10 +1741,17 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnMakeGroupsCommandExecute()
         {
-            var groupCreationView = new GroupCreationView(new GroupCreationViewModel());
+            var groupCreationViewModel = new GroupCreationViewModel();
+            var groupCreationView = new GroupCreationView(groupCreationViewModel);
             groupCreationView.ShowDialog();
-
-            //TODO save results somewhere
+            if(groupCreationView.DialogResult == true)
+            {
+                foreach (var group in groupCreationViewModel.Groups) {
+                    foreach (Person student in group.Members) {
+                        student.CurrentDifferentiationLevel = group.Label;
+                    }
+                }
+            }
         }
 
         #endregion //Testing

@@ -89,6 +89,15 @@ namespace CLP.Entities
 
         public static readonly PropertyData IsStudentProperty = RegisterProperty("IsStudent", typeof(bool), true);
 
+        public string CurrentDifferentiationLevel
+        {
+            get { return GetValue<string>(CurrentDifferentiationLevelProperty); }
+            set { SetValue(CurrentDifferentiationLevelProperty, value); }
+        }
+
+        public static readonly PropertyData CurrentDifferentiationLevelProperty = RegisterProperty("CurrentDifferentiationLevel", typeof(string), "");
+
+
         #endregion //Properties
 
         #region Static Persons
