@@ -196,6 +196,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converters\AddLengthConverter.cs" />
+    <Compile Include="Converters\PassMultipleValuesConverter.cs" />
     <Compile Include="Converters\AllBoolToColorMultiConverter.cs" />
     <Compile Include="Converters\AllBoolToVisibilityMultiConverter.cs" />
     <Compile Include="Converters\BooleanToOppositeVisibilityConverter.cs" />
@@ -241,6 +242,7 @@
     <Compile Include="Network\StudentService.cs" />
     <Compile Include="Resources\Converters.cs" />
     <Compile Include="Resources\InkInterpretation.cs" />
+    <Compile Include="ViewModels\Modal Windows\GroupCreationViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\PersonCreationViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\RemainderTilesViewModel.cs" />
     <Compile Include="ViewModels\Pages\CLPAnimationPageViewModel.cs" />
@@ -265,6 +267,9 @@
     <Compile Include="ViewModels\Panels\SubmissionHistoryPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\SubmissionsPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\WebcamPanelViewModel.cs" />
+    <Compile Include="Views\Modal Windows\GroupCreationView.xaml.cs">
+      <DependentUpon>GroupCreationView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Modal Windows\ClassPeriodChooserView.xaml.cs">
       <DependentUpon>ClassPeriodChooserView.xaml</DependentUpon>
     </Compile>
@@ -484,6 +489,10 @@
     <Page Include="Resources\CLPFlatTheme.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Modal Windows\GroupCreationView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Modal Windows\ClassPeriodChooserView.xaml">
       <SubType>Designer</SubType>

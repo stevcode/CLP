@@ -170,6 +170,7 @@ namespace Classroom_Learning_Partner.ViewModels
             ReplacePageCommand = new Command(OnReplacePageCommandExecute);
             CreatePageSubmissionCommand = new Command(OnCreatePageSubmissionCommandExecute);
             ShowTagsCommand = new Command(OnShowTagsCommandExecute);
+            MakeGroupsCommand = new Command(OnMakeGroupsCommandExecute);
 
             //Page
             AddNewPageCommand = new Command<string>(OnAddNewPageCommandExecute);
@@ -1734,6 +1735,16 @@ namespace Classroom_Learning_Partner.ViewModels
             var tagsView = new SimpleTextWindowView("Tags for this page", tags);
             tagsView.Owner = Application.Current.MainWindow;
             tagsView.ShowDialog();
+        }
+
+        public Command MakeGroupsCommand { get; private set; }
+
+        private void OnMakeGroupsCommandExecute()
+        {
+            var groupCreationView = new GroupCreationView(new GroupCreationViewModel());
+            groupCreationView.ShowDialog();
+
+            //TODO save results somewhere
         }
 
         #endregion //Testing

@@ -803,6 +803,10 @@
                 <RibbonButton Label="Turn Off Webcam Sharing"
                               LargeImageSource="..\Images\LargeIcon.png"
                               Command="{Binding TurnOffWebcamSharing}" />
+                
+                <RibbonButton Label="Make Groups"
+                              LargeImageSource="..\Images\LargeIcon.png"
+                              Command="{Binding MakeGroupsCommand}" />
 
             </RibbonGroup>
 
