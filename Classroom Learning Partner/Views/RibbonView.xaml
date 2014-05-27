@@ -78,6 +78,11 @@
                                            ImageSource="pack://application:,,,/Resources/Images/GroupSubmit32.png"
                                            Command="{Binding StartClassPeriodCommand}"
                                            Visibility="{Binding InstructorVisibility}" />
+                
+                <RibbonApplicationMenuItem Header="View All Work"
+                                           ImageSource="pack://application:,,,/Resources/Images/GroupSubmit32.png"
+                                           Command="{Binding ViewAllWorkCommand}"
+                                           Visibility="{Binding InstructorVisibility}" />
 
                 <RibbonSeparator />
 

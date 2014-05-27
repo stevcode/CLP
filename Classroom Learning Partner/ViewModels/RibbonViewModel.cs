@@ -114,6 +114,7 @@ namespace Classroom_Learning_Partner.ViewModels
             ConvertPageSubmissionToXPSCommand = new Command(OnConvertPageSubmissionToXPSCommandExecute);
             ConvertAllSubmissionsToXPSCommand = new Command(OnConvertAllSubmissionsToXPSCommandExecute);
             StartClassPeriodCommand = new Command(OnStartClassPeriodCommandExecute);
+            ViewAllWorkCommand = new Command(OnViewAllWorkCommandExecute);
             RefreshNetworkCommand = new Command(OnRefreshNetworkCommandExecute);
             ToggleThumbnailsCommand = new Command(OnToggleThumbnailsCommandExecute);
             ExitCommand = new Command(OnExitCommandExecute);
@@ -1082,6 +1083,16 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnStartClassPeriodCommandExecute()
         {
             MainWindowViewModel.OpenClassPeriod();
+        }
+
+        /// <summary>
+        /// Creates and starts a ClassPeriod with all Student Work.
+        /// </summary>
+        public Command ViewAllWorkCommand { get; private set; }
+
+        private void OnViewAllWorkCommandExecute()
+        {
+            MainWindowViewModel.ViewAllWork();
         }
 
         /// <summary>
