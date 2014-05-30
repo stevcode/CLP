@@ -40,6 +40,9 @@
 
                     </Grid>
 
+                    <!--Build Filters here. Starts with Add Filter button, choose from available filters, adds to listbox of all filters
+                        have X next to each filter to remove said filter.-->
+                    
                 </Grid>
 
                 <Slider DockPanel.Dock="Top"
@@ -50,14 +53,19 @@
                 <Button DockPanel.Dock="Bottom"
                         Height="30"
                         Content="Clear"
-                        Command="{Binding ClearStagedPagesCommand}" />
+                        Command="{Binding ClearStageCommand}" />
 
-                <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                         Background="Lavender"
-                         ItemsSource="{Binding FilteredSubmissions.View}"
-                         SelectedValue="{Binding CurrentPage}"
+                <ListBox Background="Lavender"
                          ItemContainerStyle="{StaticResource PageSidebarContainer}"
-                         SelectionMode="Single">
+                         ItemsSource="{Binding FilteredSubmissions.View, IsAsync=True}"
+                         SelectedValue="{Binding CurrentPage}"
+                         SelectionMode="Single"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         VirtualizingPanel.IsVirtualizing="True"
+                         VirtualizingPanel.IsVirtualizingWhenGrouping="True"
+                         VirtualizingStackPanel.CacheLength="2,3"
+                         VirtualizingStackPanel.CacheLengthUnit="Page"
+                         VirtualizingStackPanel.ScrollUnit="Pixel">
                     <ListBox.ItemsPanel>
                         <ItemsPanelTemplate>
                             <WrapPanel />

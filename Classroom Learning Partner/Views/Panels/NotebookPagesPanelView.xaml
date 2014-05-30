@@ -55,7 +55,12 @@
                          ItemContainerStyle="{StaticResource PageSidebarContainer}"
                          SelectionMode="Single"
                          x:Name="PagesListBox"
-                         extenders:ListBoxExtenders.AutoScrollToCurrentItem="True">
+                         extenders:ListBoxExtenders.AutoScrollToCurrentItem="True"
+                         VirtualizingPanel.IsVirtualizing="True"
+                         VirtualizingPanel.IsVirtualizingWhenGrouping="True"
+                         VirtualizingStackPanel.CacheLength="2,3"
+                         VirtualizingStackPanel.CacheLengthUnit="Page"
+                         VirtualizingStackPanel.ScrollUnit="Pixel">
 
                     <ListBox.ItemTemplate>
                         <DataTemplate>
