@@ -66,10 +66,7 @@ namespace Classroom_Learning_Partner.ViewModels
             SetCurrentPageCommand = new Command<CLPPage>(OnSetCurrentPageCommandExecute);
         }
 
-        void SubmissionsPanelViewModel_Initialized(object sender, EventArgs e)
-        {
-            Length = InitialLength;
-        }
+        void SubmissionsPanelViewModel_Initialized(object sender, EventArgs e) { Length = InitialLength; }
 
         public override string Title
         {

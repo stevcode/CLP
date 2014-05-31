@@ -10,27 +10,63 @@ namespace Classroom_Learning_Partner.ViewModels
 {
     public class StagingPanelViewModel : APanelBaseViewModel
     {
+        private static readonly PropertyGroupDescription OwnerFullNameGroup = new PropertyGroupDescription("Owner.FullName");
+        private static readonly PropertyGroupDescription PageNumberGroup = new PropertyGroupDescription("PageNumber");
+
         private static readonly SortDescription OwnerFullNameAscendingSort = new SortDescription("Owner.FullName", ListSortDirection.Ascending);
         private static readonly SortDescription SubmissionTimeAscendingSort = new SortDescription("SubmissionTime", ListSortDirection.Ascending);
         private static readonly SortDescription SubmissionTimeDescendingSort = new SortDescription("SubmissionTime", ListSortDirection.Descending);
         private static readonly SortDescription PageNumberAscendingSort = new SortDescription("PageNumber", ListSortDirection.Ascending);
         private static readonly SortDescription PageNumberDescendingSort = new SortDescription("PageNumber", ListSortDirection.Descending);
 
+        #region Constructor
+
         public StagingPanelViewModel(Notebook notebook)
         {
+            Notebook = notebook;
+
             Initialized += StagingPanelViewModel_Initialized;
 
             RemovePageFromStageCommand = new Command<CLPPage>(OnRemovePageFromStageCommandExecute);
             ClearStageCommand = new Command(OnClearStageCommandExecute);
-
-           // var pagesSortedByTime = from page in notebook.Pages[0].Submissions
-
         }
 
-        void StagingPanelViewModel_Initialized(object sender, EventArgs e)
+        void StagingPanelViewModel_Initialized(object sender, EventArgs e) { Length = InitialLength; }
+
+        public override string Title
         {
-            
+            get { return "StagingPanelVM"; }
         }
+
+        #endregion //Constructor
+
+        #region Model
+
+        /// <summary>
+        /// The Model for this ViewModel.
+        /// </summary>
+        [Model(SupportIEditableObject = false)]
+        public Notebook Notebook
+        {
+            get { return GetValue<Notebook>(NotebookProperty); }
+            private set { SetValue(NotebookProperty, value); }
+        }
+
+        public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof(Notebook));
+
+        /// <summary>
+        /// Current, selected submission.
+        /// </summary>
+        [ViewModelToModel("Notebook")]
+        public CLPPage CurrentPage
+        {
+            get { return GetValue<CLPPage>(CurrentPageProperty); }
+            set { SetValue(CurrentPageProperty, value); }
+        }
+
+        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage));
+
+        #endregion //Model
 
         //observablecollection of PageGroup. PageGroup.GroupName = SubmitterName?
 
@@ -99,6 +135,8 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             SortedAndGroupedPages.GroupDescriptions.Clear();
             SortedAndGroupedPages.SortDescriptions.Clear();
+
+            SortedAndGroupedPages.GroupDescriptions.Add(OwnerFullNameGroup);
             SortedAndGroupedPages.SortDescriptions.Add(OwnerFullNameAscendingSort);
             SortedAndGroupedPages.SortDescriptions.Add(PageNumberAscendingSort);
             SortedAndGroupedPages.SortDescriptions.Add(SubmissionTimeAscendingSort);
@@ -108,7 +146,11 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             SortedAndGroupedPages.GroupDescriptions.Clear();
             SortedAndGroupedPages.SortDescriptions.Clear();
+
+            SortedAndGroupedPages.GroupDescriptions.Add(PageNumberGroup);
             SortedAndGroupedPages.SortDescriptions.Add(PageNumberAscendingSort);
+
+            SortedAndGroupedPages.GroupDescriptions.Add(OwnerFullNameGroup);
             SortedAndGroupedPages.SortDescriptions.Add(OwnerFullNameAscendingSort);
             SortedAndGroupedPages.SortDescriptions.Add(SubmissionTimeAscendingSort);
         }
@@ -117,6 +159,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             SortedAndGroupedPages.GroupDescriptions.Clear();
             SortedAndGroupedPages.SortDescriptions.Clear();
+
             SortedAndGroupedPages.SortDescriptions.Add(SubmissionTimeAscendingSort);
         }
 
