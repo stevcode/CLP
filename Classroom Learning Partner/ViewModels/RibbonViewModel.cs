@@ -2775,11 +2775,15 @@ namespace Classroom_Learning_Partner.ViewModels
                         array.OwnerID = App.MainWindowViewModel.CurrentUser.ID;
                         break;
                     case "FFCREMAINDER":
-                        array = new FuzzyFactorCard(page, columns, rows, dividend, true);
+                        bool isRemainderRegionDisplayed = (dividend <= 50);
+                        array = new FuzzyFactorCard(page, columns, rows, dividend, isRemainderRegionDisplayed);
                         // HACK: Find better way to set this
                         array.CreatorID = App.MainWindowViewModel.CurrentUser.ID;
-                        (array as FuzzyFactorCard).RemainderTiles.CreatorID = array.CreatorID;
-                        (array as FuzzyFactorCard).RemainderTiles.OwnerID = array.OwnerID;
+                        if(isRemainderRegionDisplayed)
+                        {
+                            (array as FuzzyFactorCard).RemainderTiles.CreatorID = array.CreatorID;
+                            (array as FuzzyFactorCard).RemainderTiles.OwnerID = array.OwnerID;
+                        }
                         break;
                     case "ARRAYCARD":
                         array = new CLPArray(page, columns, rows, ArrayTypes.ArrayCard);
@@ -2831,7 +2835,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 ACLPPageBaseViewModel.AddPageObjectToPage(firstArray);
 
-                if(arrayType == "FFCREMAINDER")
+                if(arrayType == "FFCREMAINDER" && dividend <= 50)
                 {
                     if(xPosition + firstArray.Width + 20.0 + (firstArray as FuzzyFactorCard).RemainderTiles.Width <= page.Width)
                     {
