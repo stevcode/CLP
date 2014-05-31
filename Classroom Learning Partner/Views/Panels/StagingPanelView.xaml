@@ -72,7 +72,7 @@
 
                 <ListBox Background="Lavender"
                          ItemContainerStyle="{StaticResource ListBoxItemBlankStyle}"
-                         ItemsSource="{Binding FilteredSubmissions.View, IsAsync=True}"
+                         ItemsSource="{Binding SortedAndGroupedPages.View, IsAsync=True}"
                          SelectedValue="{Binding CurrentPage, Mode=OneWay}"
                          SelectionMode="Single"
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
