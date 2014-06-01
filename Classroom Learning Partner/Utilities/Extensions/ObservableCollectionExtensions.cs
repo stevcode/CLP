@@ -14,6 +14,11 @@ namespace Classroom_Learning_Partner
             return Observable.Create<ObservableCollectionOperation<T>>(o =>
             {
                 var local = new List<T>(@this);
+                var initials = local.Select(ObservableCollectionOperation<T>.Add).ToArray();
+                foreach(var op in initials)
+                {
+                    o.OnNext(op);
+                }
 
                 Func<NotifyCollectionChangedEventArgs, ObservableCollectionOperation<T>[]> getAdds = eventArgs =>
                     {
@@ -56,7 +61,7 @@ namespace Classroom_Learning_Partner
                     let adds = getAdds(eventPattern.EventArgs)
                     let removes = getRemoves(eventPattern.EventArgs)
                     let clears = getClears(eventPattern.EventArgs)
-                    from x in clears.Concat(removes).Concat(adds).ToObservable()
+                    from x in initials.Concat(clears).Concat(removes).Concat(adds).ToObservable()
                     select x;
 
                 return changes.Subscribe(o);

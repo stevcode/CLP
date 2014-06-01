@@ -140,9 +140,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public void AppendCollectionOfPagesToStage(ObservableCollection<CLPPage> pages)
         {
-            var collectionOperations = pages.ToOperations();
+            var collectionOperations = pages.ToOperations(x => true);
 
-            var subscription = collectionOperations.Distinct().Subscribe(FilteredPages);
+            var subscription = collectionOperations.Subscribe(FilteredPages);
         }
 
         #endregion //Filters
