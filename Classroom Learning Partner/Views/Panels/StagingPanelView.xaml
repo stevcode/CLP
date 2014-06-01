@@ -116,9 +116,9 @@
                                                         <TextBlock Margin="5"
                                                                    FontWeight="Bold"
                                                                    HorizontalAlignment="Left">
-                                                            <Run Text="{Binding GroupName}" />
+                                                            <Run Text="{Binding Name, Mode=OneWay}" />
                                                             <Run Text="     " />
-                                                            <Run Text="{Binding ItemCount}" />
+                                                            <Run Text="{Binding ItemCount, Mode=OneWay}" />
                                                         </TextBlock>
                                                     </ToggleButton>
 

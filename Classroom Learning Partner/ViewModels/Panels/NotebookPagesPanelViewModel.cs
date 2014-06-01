@@ -133,6 +133,7 @@ namespace Classroom_Learning_Partner.ViewModels
             stagingPanel.IsVisible = true;
 
             stagingPanel.AppendCollectionOfPagesToStage(page.Submissions);
+            stagingPanel.ApplySortAndGroupByName();
         }
 
         #endregion //Commands
