@@ -27,7 +27,7 @@ namespace Classroom_Learning_Partner.ViewModels
             SetCurrentPageCommand = new Command<CLPPage>(OnSetCurrentPageCommandExecute);
             ShowSubmissionsCommand = new Command<CLPPage>(OnShowSubmissionsCommandExecute);
 
-            StagingPanel = new SubmissionsPanelViewModel(notebook)
+            StagingPanel = new StagingPanelViewModel(notebook)
                            {
                                IsVisible = false
                            };
@@ -124,16 +124,15 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnShowSubmissionsCommandExecute(CLPPage page)
         {
-            // TODO: Entities, convert to StagingPanel
-            var submissionsPanel = StagingPanel as SubmissionsPanelViewModel;
-            if(submissionsPanel == null)
+            var stagingPanel = StagingPanel as StagingPanelViewModel;
+            if(stagingPanel == null)
             {
                 return;
             }
 
-            submissionsPanel.IsVisible = true;
+            stagingPanel.IsVisible = true;
 
-            submissionsPanel.SubmissionPages = page.Submissions;
+            stagingPanel.AppendCollectionOfPagesToStage(page.Submissions);
         }
 
         #endregion //Commands

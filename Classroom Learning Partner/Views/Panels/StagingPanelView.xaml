@@ -10,6 +10,8 @@
         <!-- Converters -->
         <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
         <conv:PanelLocationToThicknessConverter x:Key="PanelLocationToThicknessConverter" />
+        <conv:ItemSelectedToColorConverter x:Key="PageOrDisplaySelectionColorConverter" />
+        <conv:ShouldUseThumbnailConverter x:Key="ShouldUseThumbnailConverter" />
         
         <!-- Style to override ListBoxItem selection visuals for Pages -->
         <Style x:Key="ListBoxItemBlankStyle"
@@ -75,6 +77,7 @@
                          ItemsSource="{Binding SortedAndGroupedPages.View, IsAsync=True}"
                          SelectedValue="{Binding CurrentPage, Mode=OneWay}"
                          SelectionMode="Single"
+                         x:Name="PagesListBox"
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          VirtualizingPanel.IsVirtualizing="True"
                          VirtualizingPanel.IsVirtualizingWhenGrouping="True"
@@ -112,7 +115,7 @@
                                                                   Height="40">
                                                         <TextBlock Margin="5"
                                                                    FontWeight="Bold"
-                                                                   VerticalAlignment="Left">
+                                                                   HorizontalAlignment="Left">
                                                             <Run Text="{Binding GroupName}" />
                                                             <Run Text="     " />
                                                             <Run Text="{Binding ItemCount}" />
@@ -173,14 +176,14 @@
                                            Margin="0 5 0 0"
                                            Foreground="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
                                            FontWeight="Bold"
-                                           VerticalAlignment="Left">
+                                           HorizontalAlignment="Left">
                                     <Run Text="{Binding Owner.FullName}" />
                                     <Run Text="   (" />
                                     <Run Text="{Binding SubmissionTime}" />
                                     <Run Text=")" />
                                 </TextBlock>
 
-                                <Control Grid.Row="1"
+                                <!--<Control Grid.Row="1"
                                          Grid.Column="1"
                                          Margin="5 5 5 0">
                                     <Control.Resources>
@@ -201,12 +204,12 @@
                                         <Style TargetType="{x:Type Control}">
                                             <Style.Triggers>
 
-                                                <!--CLPPagePreviewView Fallback if Thumbnail is absent-->
+                                                --><!--CLPPagePreviewView Fallback if Thumbnail is absent--><!--
                                                 <DataTrigger Binding="{Binding PageThumbnail, Converter={StaticResource ByteArrayToBoolConverter}}" Value="False">
                                                     <Setter Property="Template" Value="{StaticResource PagePreviewTemplate}" />
                                                 </DataTrigger>
 
-                                                <!--Thumbnail-->
+                                                --><!--Thumbnail--><!--
                                                 <DataTrigger Binding="{Binding PageThumbnail, Converter={StaticResource ByteArrayToBoolConverter}}" Value="True">
                                                     <Setter Property="Template" Value="{StaticResource ThumbnailTemplate}" />
                                                 </DataTrigger>
@@ -214,6 +217,57 @@
                                             </Style.Triggers>
                                         </Style>
 
+                                    </Control.Style>
+                                </Control>-->
+                                
+                                <Control Grid.Row="1"
+                                         Grid.Column="1"
+                                         Margin="5 5 5 0">
+                                    <Control.Resources>
+                                        <ControlTemplate x:Key="ThumbnailTemplate">
+                                            <Image Source="{Binding PageThumbnail, Mode=OneWay}"/>
+                                        </ControlTemplate>
+
+                                        <ControlTemplate x:Key="PagePreviewTemplate">
+                                            <views:CLPPagePreviewView x:Name="PagePreviewView"
+                                                          DataContext="{Binding}"
+                                                          ClipToBounds="True" />
+                                        </ControlTemplate>
+                                    </Control.Resources>
+                                    <Control.Style>
+                                        <Style TargetType="{x:Type Control}">
+                                            <Style.Triggers>
+                                                <!--Thumbnail trigger-->
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Value="True">
+                                                            <Condition.Binding>
+                                                                <MultiBinding Converter="{StaticResource ShouldUseThumbnailConverter}">
+                                                                    <Binding ElementName="PagesListBox" Path="DataContext.CurrentPage"/>
+                                                                    <Binding Path=""/>
+                                                                </MultiBinding>
+                                                            </Condition.Binding>
+                                                        </Condition>
+                                                    </MultiDataTrigger.Conditions>
+                                                    <Setter Property="Template" Value="{StaticResource ThumbnailTemplate}" />
+                                                </MultiDataTrigger>
+
+                                                <!--PagePreview trigger-->
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Value="False">
+                                                            <Condition.Binding>
+                                                                <MultiBinding Converter="{StaticResource ShouldUseThumbnailConverter}">
+                                                                    <Binding ElementName="PagesListBox" Path="DataContext.CurrentPage"/>
+                                                                    <Binding Path=""/>
+                                                                </MultiBinding>
+                                                            </Condition.Binding>
+                                                        </Condition>
+                                                    </MultiDataTrigger.Conditions>
+                                                    <Setter Property="Template" Value="{StaticResource PagePreviewTemplate}" />
+                                                </MultiDataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
                                     </Control.Style>
                                 </Control>
 

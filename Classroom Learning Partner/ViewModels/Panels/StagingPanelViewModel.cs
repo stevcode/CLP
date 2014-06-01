@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Reactive.Linq;
 using System.Windows.Data;
 using Catel.Data;
 using Catel.MVVM;
@@ -25,6 +26,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public StagingPanelViewModel(Notebook notebook)
         {
             Notebook = notebook;
+            SortedAndGroupedPages.Source = FilteredPages;
 
             Initialized += StagingPanelViewModel_Initialized;
 
@@ -71,7 +73,16 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Properties
 
-         
+        /// <summary>
+        /// Source collection of filtered <see cref="CLPPage" />s used by the SortedAndGroupedPages <see cref="CollectionViewSource" />.
+        /// </summary>
+        public ObservableCollection<CLPPage> FilteredPages
+        {
+            get { return GetValue<ObservableCollection<CLPPage>>(FilteredPagesProperty); }
+            set { SetValue(FilteredPagesProperty, value); }
+        }
+
+        public static readonly PropertyData FilteredPagesProperty = RegisterProperty("FilteredPages", typeof(ObservableCollection<CLPPage>), () => new ObservableCollection<CLPPage>());
 
         #endregion //Properties
 
@@ -129,7 +140,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public void AppendCollectionOfPagesToStage(ObservableCollection<CLPPage> pages)
         {
-            
+            var collectionOperations = pages.ToOperations();
+
+            var subscription = collectionOperations.Distinct().Subscribe(FilteredPages);
         }
 
         #endregion //Filters
