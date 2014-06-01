@@ -14,6 +14,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private static readonly PropertyGroupDescription PageNumberGroup = new PropertyGroupDescription("PageNumber");
 
         private static readonly SortDescription OwnerFullNameAscendingSort = new SortDescription("Owner.FullName", ListSortDirection.Ascending);
+        private static readonly SortDescription OwnerFullNameDescendingSort = new SortDescription("Owner.FullName", ListSortDirection.Descending);
         private static readonly SortDescription SubmissionTimeAscendingSort = new SortDescription("SubmissionTime", ListSortDirection.Ascending);
         private static readonly SortDescription SubmissionTimeDescendingSort = new SortDescription("SubmissionTime", ListSortDirection.Descending);
         private static readonly SortDescription PageNumberAscendingSort = new SortDescription("PageNumber", ListSortDirection.Ascending);
@@ -68,7 +69,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Model
 
-        //observablecollection of PageGroup. PageGroup.GroupName = SubmitterName?
+        #region Properties
+
+         
+
+        #endregion //Properties
 
         #region Bindings
 

@@ -265,6 +265,8 @@
     <Compile Include="Network\StudentService.cs" />
     <Compile Include="Resources\Converters.cs" />
     <Compile Include="Resources\InkInterpretation.cs" />
+    <Compile Include="Utilities\Extensions\ObservableCollectionExtensions.cs" />
+    <Compile Include="Utilities\ObservableCollectionOperation.cs" />
     <Compile Include="ViewModels\Modal Windows\PersonCreationViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\RemainderTilesViewModel.cs" />
     <Compile Include="ViewModels\Pages\CLPAnimationPageViewModel.cs" />
