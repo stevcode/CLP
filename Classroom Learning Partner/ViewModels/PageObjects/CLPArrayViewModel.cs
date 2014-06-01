@@ -553,14 +553,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                             //Add a new division and remove snapping array
                             PageObject.ParentPage.PageObjects.Remove(PageObject);
-                            if(factorCard.IsHorizontallyAligned)
-                            {
-                                factorCard.SnapInArray(snappingArray.Columns);
-                            }
-                            else
-                            {
-                                factorCard.SnapInArray(snappingArray.Rows);
-                            }
+                            factorCard.SnapInArray(snappingArray.Columns);
 
                             ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new FFCArraySnappedInHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, pageObject.ID, snappingArray));
                             return;

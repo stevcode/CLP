@@ -56,15 +56,15 @@ namespace CLP.Entities
         }
 
         /// <summary>
-        /// Offsets of each tile
+        /// Colors of each tile
         /// </summary>
-        public ObservableCollection<string> TileOffsets
+        public ObservableCollection<string> TileColors
         {
-            get { return GetValue<ObservableCollection<string>>(TileOffsetsProperty); }
-            set { SetValue(TileOffsetsProperty, value); }
+            get { return GetValue<ObservableCollection<string>>(TileColorsProperty); }
+            set { SetValue(TileColorsProperty, value); }
         }
 
-        public static readonly PropertyData TileOffsetsProperty = RegisterProperty("TileOffsets", typeof(ObservableCollection<string>), () => new ObservableCollection<string>());
+        public static readonly PropertyData TileColorsProperty = RegisterProperty("TileColors", typeof(ObservableCollection<string>), () => new ObservableCollection<string>());
 
         #endregion //Properties
 

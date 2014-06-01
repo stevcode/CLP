@@ -103,14 +103,7 @@ namespace CLP.Entities
 
             ParentPage.PageObjects.Remove(snappedInArray);
             ParentPage.History.TrashedPageObjects.Add(snappedInArray);
-            if(fuzzyFactorCard.IsHorizontallyAligned)
-            {
-                fuzzyFactorCard.SnapInArray(snappedInArray.Columns);
-            }
-            else
-            {
-                fuzzyFactorCard.SnapInArray(snappedInArray.Rows);
-            }
+            fuzzyFactorCard.SnapInArray(snappedInArray.Columns);
         }
 
         /// <summary>
