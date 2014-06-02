@@ -110,7 +110,6 @@
 
                                                     <ToggleButton Grid.Row="0" 
                                                                   x:Name="GroupVisibilityToggle" 
-                                                                  IsChecked="True"
                                                                   Margin="10 0"
                                                                   Height="40">
                                                         <TextBlock Margin="5"
@@ -122,16 +121,16 @@
                                                         </TextBlock>
                                                     </ToggleButton>
 
-                                                    <Border Grid.Row="0" 
+                                                    <Border Grid.Row="1" 
                                                             Background="Transparent"
                                                             BorderBrush="LightGray"
                                                             BorderThickness="1 0 1 1"
                                                             CornerRadius="3"
-                                                            Visibility="{Binding IsChecked, ElementName=GroupVisibilityToggle, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}"/>
-
+                                                            Visibility="{Binding IsChecked, ElementName=GroupVisibilityToggle, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
                                                     
-                                                    <ItemsPresenter Grid.Row="1" 
-                                                                    Visibility="{Binding IsChecked, ElementName=GroupVisibilityToggle, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />
+                                                        <ItemsPresenter Visibility="{Binding IsChecked, ElementName=GroupVisibilityToggle, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />
+                                                    
+                                                    </Border>
                                                 </Grid>
                                             </ControlTemplate>
                                         </Setter.Value>

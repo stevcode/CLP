@@ -76,13 +76,39 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Source collection of filtered <see cref="CLPPage" />s used by the SortedAndGroupedPages <see cref="CollectionViewSource" />.
         /// </summary>
-        public ObservableCollection<CLPPage> FilteredPages
-        {
-            get { return GetValue<ObservableCollection<CLPPage>>(FilteredPagesProperty); }
-            set { SetValue(FilteredPagesProperty, value); }
-        }
+        public ObservableCollection<CLPPage> FilteredPages { get; set; }
 
-        public static readonly PropertyData FilteredPagesProperty = RegisterProperty("FilteredPages", typeof(ObservableCollection<CLPPage>), () => new ObservableCollection<CLPPage>());
+        /// <summary>
+        /// <see cref="CLPPage" />s that have been individually added to the Staging Panel.
+        /// </summary>
+        public ObservableCollection<CLPPage> SingleAddedPages { get; set; }
+
+        /// <summary>
+        /// <see cref="CLPPage" />s that have been individually removed from the Staging Panel.
+        /// </summary>
+        public ObservableCollection<CLPPage> SingleRemovedPages { get; set; }
+
+        /// <summary>
+        /// All active operations the occur on any appended collection of pages.
+        /// </summary>
+        public IObservable<ObservableCollectionOperation<CLPPage>> AllCollectionOperations { get; set; } 
+
+        /// <summary>
+        /// <see cref="IDisposable" /> that holds the current Subscription for AllCollectionOperations.
+        /// </summary>
+        private IDisposable _stagingPanelSubscription;
+        public IDisposable StagingPanelSubscription
+        {
+            get { return _stagingPanelSubscription; }
+            set
+            {
+                if(_stagingPanelSubscription != null)
+                {
+                    _stagingPanelSubscription.Dispose();
+                }
+                _stagingPanelSubscription = value;
+            }
+        }
 
         #endregion //Properties
 
@@ -130,19 +156,21 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public void AddPageToStage(CLPPage page)
         {
-            
+            SingleAddedPages.Add(page);
         }
 
         public void RemovePageFromStage(CLPPage page)
         {
-            //remove from FilteredPages and add to listoftrashed pages Rx will ignore.
+            SingleRemovedPages.Add(page);
         }
 
         public void AppendCollectionOfPagesToStage(ObservableCollection<CLPPage> pages)
         {
-            var collectionOperations = pages.ToOperations(x => true);
+            var appendedPagesOperations = pages.ToOperations(x => !SingleRemovedPages.Contains(x));
 
-            var subscription = collectionOperations.Subscribe(FilteredPages);
+            AllCollectionOperations = AllCollectionOperations == null ? appendedPagesOperations : AllCollectionOperations.Merge(appendedPagesOperations);
+
+            StagingPanelSubscription = AllCollectionOperations.Distinct().Subscribe(FilteredPages);
         }
 
         #endregion //Filters
