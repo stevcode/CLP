@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Reactive.Linq;
 using System.Windows.Data;
 using Catel.Data;
@@ -76,17 +77,35 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Source collection of filtered <see cref="CLPPage" />s used by the SortedAndGroupedPages <see cref="CollectionViewSource" />.
         /// </summary>
-        public ObservableCollection<CLPPage> FilteredPages { get; set; }
+        public ObservableCollection<CLPPage> FilteredPages
+        {
+            get { return GetValue<ObservableCollection<CLPPage>>(FilteredPagesProperty); }
+            set { SetValue(FilteredPagesProperty, value); }
+        }
+
+        public static readonly PropertyData FilteredPagesProperty = RegisterProperty("FilteredPages", typeof(ObservableCollection<CLPPage>), () => new ObservableCollection<CLPPage>());
 
         /// <summary>
         /// <see cref="CLPPage" />s that have been individually added to the Staging Panel.
         /// </summary>
-        public ObservableCollection<CLPPage> SingleAddedPages { get; set; }
+        public ObservableCollection<CLPPage> SingleAddedPages
+        {
+            get { return GetValue<ObservableCollection<CLPPage>>(SingleAddedPagesProperty); }
+            set { SetValue(SingleAddedPagesProperty, value); }
+        }
+
+        public static readonly PropertyData SingleAddedPagesProperty = RegisterProperty("SingleAddedPages", typeof(ObservableCollection<CLPPage>), () => new ObservableCollection<CLPPage>());
 
         /// <summary>
         /// <see cref="CLPPage" />s that have been individually removed from the Staging Panel.
         /// </summary>
-        public ObservableCollection<CLPPage> SingleRemovedPages { get; set; }
+        public ObservableCollection<CLPPage> SingleRemovedPages
+        {
+            get { return GetValue<ObservableCollection<CLPPage>>(SingleRemovedPagesProperty); }
+            set { SetValue(SingleRemovedPagesProperty, value); }
+        }
+
+        public static readonly PropertyData SingleRemovedPagesProperty = RegisterProperty("SingleRemovedPages", typeof(ObservableCollection<CLPPage>), () => new ObservableCollection<CLPPage>());
 
         /// <summary>
         /// All active operations the occur on any appended collection of pages.
@@ -151,7 +170,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public void ClearStage()
         {
-            
+            SingleAddedPages.Clear();
+            SingleRemovedPages.Clear();
+            FilteredPages.Clear();
+            StagingPanelSubscription = null;
+            AllCollectionOperations = null;
         }
 
         public void AddPageToStage(CLPPage page)
@@ -173,7 +196,16 @@ namespace Classroom_Learning_Partner.ViewModels
             StagingPanelSubscription = AllCollectionOperations.Distinct().Subscribe(FilteredPages);
         }
 
-        #endregion //Filters
+        public void AppendCollectionOfPagesToStage(ObservableCollection<CLPPage> pages, Func<CLPPage, bool> filter)
+        {
+            var appendedPagesOperations = pages.ToOperations(x => !SingleRemovedPages.Contains(x) && filter(x));
+
+            AllCollectionOperations = AllCollectionOperations == null ? appendedPagesOperations : AllCollectionOperations.Merge(appendedPagesOperations);
+
+            StagingPanelSubscription = AllCollectionOperations.Distinct().Subscribe(FilteredPages);
+        }
+
+        #endregion //Filters 
 
         #region Sorts
 
@@ -210,6 +242,49 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //Sorts
+
+        #region Shortcuts
+
+        public void AppendSubmissionsForPage(CLPPage page)
+        {
+            AppendCollectionOfPagesToStage(page.Submissions);
+
+            //TODO: keep CurrentSort and skip this if already sorted that way.
+            ApplySortAndGroupByName();
+        }
+
+        public void SetSubmissionsForPage(CLPPage page)
+        {
+            ClearStage();
+            AppendSubmissionsForPage(page);
+        }
+
+        public void AppendStudentNotebook(Person student)
+        {
+            foreach(var page in App.MainWindowViewModel.OpenNotebooks.First(x => x.Name == App.MainWindowViewModel.CurrentNotebookName).Pages)
+            {
+                AppendCollectionOfPagesToStage(page.Submissions, x => x.OwnerID == student.ID);
+            }
+
+            //TODO: keep CurrentSort and skip this if already sorted that way.
+            ApplySortAndGroupByName();
+        }
+
+        public void SetStudentNotebook(Person student)
+        {
+            ClearStage();
+            AppendStudentNotebook(student);
+        }
+
+        public void AppendStarredSubmissionsForPage(CLPPage page)
+        {
+            AppendCollectionOfPagesToStage(page.Submissions, x => x.Tags.FirstOrDefault(t => t is StarredTag && t.Value == StarredTag.AcceptedValues.Starred.ToString()) != null);
+
+            //TODO: keep CurrentSort and skip this if already sorted that way.
+            ApplySortAndGroupByName();
+        }
+
+        #endregion //Shortcuts
 
         #endregion //Methods
     }
