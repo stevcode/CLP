@@ -162,10 +162,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnSetCurrentPageCommandExecute(CLPPage page)
         {
-            Logger.Instance.WriteToLog("Set current page");
-            //TODO staging panel
             if(page != null)
             {
+                //Take thumbnail of page before navigating away from it.
+                ACLPPageBaseViewModel.TakePageThumbnail(CurrentPage);
                 Notebook.CurrentPage = page;
             }
         }

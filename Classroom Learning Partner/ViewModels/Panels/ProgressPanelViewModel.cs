@@ -175,6 +175,8 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             if(page != null)
             {
+                //Take thumbnail of page before navigating away from it.
+                ACLPPageBaseViewModel.TakePageThumbnail(CurrentPage);
                 Notebook.CurrentPage = page;
             }
         }

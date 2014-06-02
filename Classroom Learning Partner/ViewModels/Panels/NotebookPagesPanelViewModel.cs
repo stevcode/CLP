@@ -149,35 +149,13 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if(notebookWorkspaceViewModel.CurrentDisplay == null)
             {
-                // save a thumbnail of page being navigated away from
-                // TODO: Move to own method, possibly call in CurrentPage {set;}
-                //var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(CurrentPage).First(x => (x is CLPPageViewModel) && !(x as CLPPageViewModel).IsPagePreview);
-                //UIElement pageView = (UIElement)CLPServiceAgent.Instance.GetViewFromViewModel(pageViewModel);
-                //var thumbnail = CLPServiceAgent.Instance.GetJpgImage(pageView, 1.0, 100, true);
-
-                //var bitmapImage = new BitmapImage();
-                //bitmapImage.BeginInit();
-                //bitmapImage.CacheOption = BitmapCacheOption.OnDemand;
-                //bitmapImage.StreamSource = new MemoryStream(thumbnail);
-                //bitmapImage.EndInit();
-                //bitmapImage.Freeze();
-
-                //CurrentPage.PageThumbnail = bitmapImage;
-
-                // actually set current page
+                //Take thumbnail of page before navigating away from it.
+                ACLPPageBaseViewModel.TakePageThumbnail(CurrentPage);
                 CurrentPage = page;
                 return;
             }
 
             notebookWorkspaceViewModel.CurrentDisplay.AddPageToDisplay(page);
-
-            // TODO: Entities, History of submissions
-            //var historyPanel = GetSubmissionHistoryPanelViewModel();
-            //if(historyPanel != null)
-            //{
-            //    historyPanel.CurrentPage = null;
-            //    historyPanel.IsSubmissionHistoryVisible = false;
-            //}
         }
 
         #endregion //Methods

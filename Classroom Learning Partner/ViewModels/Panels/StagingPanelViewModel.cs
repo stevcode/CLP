@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Windows;
 using System.Windows.Data;
+using System.Windows.Media.Imaging;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Entities;
@@ -31,6 +34,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             Initialized += StagingPanelViewModel_Initialized;
 
+            SetCurrentPageCommand = new Command<CLPPage>(OnSetCurrentPageCommandExecute);
             RemovePageFromStageCommand = new Command<CLPPage>(OnRemovePageFromStageCommandExecute);
             ClearStageCommand = new Command(OnClearStageCommandExecute);
         }
@@ -149,6 +153,13 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Commands
 
         /// <summary>
+        /// Sets the current selected page in the listbox.
+        /// </summary>
+        public Command<CLPPage> SetCurrentPageCommand { get; private set; }
+
+        private void OnSetCurrentPageCommandExecute(CLPPage page) { SetCurrentPage(page); }
+
+        /// <summary>
         /// Removes given page from the Staging Panel.
         /// </summary>
         public Command<CLPPage> RemovePageFromStageCommand { get; private set; }
@@ -165,6 +176,25 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Commands
 
         #region Methods
+
+        public void SetCurrentPage(CLPPage page)
+        {
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null)
+            {
+                return;
+            }
+
+            if(notebookWorkspaceViewModel.CurrentDisplay == null)
+            {
+                //Take thumbnail of page before navigating away from it.
+                ACLPPageBaseViewModel.TakePageThumbnail(CurrentPage);
+                CurrentPage = page;
+                return;
+            }
+
+            notebookWorkspaceViewModel.CurrentDisplay.AddPageToDisplay(page);
+        }
 
         #region Filters
 
