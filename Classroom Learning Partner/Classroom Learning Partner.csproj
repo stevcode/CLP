@@ -148,6 +148,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>External Libraries\IAWinFX.dll</HintPath>
     </Reference>
+    <Reference Include="itextsharp, Version=5.5.1.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>External Libraries\itextsharp.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Ink, Version=1.7.2600.2180, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>External Libraries\Microsoft.Ink.dll</HintPath>
@@ -866,6 +870,7 @@
     <Content Include="External Libraries\Catel.MVVM.pdb" />
     <Content Include="External Libraries\EntityFramework.dll" />
     <Content Include="External Libraries\EntityFramework.SqlServer.dll" />
+    <Content Include="External Libraries\itextsharp.dll" />
     <Content Include="External Libraries\lame.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

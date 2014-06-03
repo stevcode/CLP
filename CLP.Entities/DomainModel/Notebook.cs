@@ -531,10 +531,10 @@ namespace CLP.Entities
                     {
                         Directory.CreateDirectory(thumbnailsFolderPath);
                     }
-                    var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, "p;" + page.PageNumber + ";" + page.ID + ";" + page.DifferentiationLevel + ";" + page.VersionIndex + ".png");
+                    var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, "p;" + submission.PageNumber + ";" + submission.ID + ";" + submission.DifferentiationLevel + ";" + submission.VersionIndex + ".png");
 
                     var pngEncoder = new PngBitmapEncoder();
-                    pngEncoder.Frames.Add(BitmapFrame.Create(page.PageThumbnail as BitmapSource));
+                    pngEncoder.Frames.Add(BitmapFrame.Create(submission.PageThumbnail as BitmapSource));
                     using(var outputStream = new MemoryStream())
                     {
                         pngEncoder.Save(outputStream);
@@ -563,10 +563,10 @@ namespace CLP.Entities
                             {
                                 Directory.CreateDirectory(thumbnailsFolderPath);
                             }
-                            var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, "p;" + page.PageNumber + ";" + page.ID + ";" + page.DifferentiationLevel + ";" + page.VersionIndex + ".png");
+                            var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, "p;" + submission.PageNumber + ";" + submission.ID + ";" + submission.DifferentiationLevel + ";" + submission.VersionIndex + ".png");
 
                             var pngEncoder = new PngBitmapEncoder();
-                            pngEncoder.Frames.Add(BitmapFrame.Create(page.PageThumbnail as BitmapSource));
+                            pngEncoder.Frames.Add(BitmapFrame.Create(submission.PageThumbnail as BitmapSource));
                             using(var outputStream = new MemoryStream())
                             {
                                 pngEncoder.Save(outputStream);
