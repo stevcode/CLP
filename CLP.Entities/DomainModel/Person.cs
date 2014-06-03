@@ -89,13 +89,13 @@ namespace CLP.Entities
 
         public static readonly PropertyData IsStudentProperty = RegisterProperty("IsStudent", typeof(bool), true);
 
-        public string CurrentDifferentiationLevel
+        public string CurrentDifferentiationGroup
         {
-            get { return GetValue<string>(CurrentDifferentiationLevelProperty); }
-            set { SetValue(CurrentDifferentiationLevelProperty, value); }
+            get { return GetValue<string>(CurrentDifferentiationGroupProperty); }
+            set { SetValue(CurrentDifferentiationGroupProperty, value); }
         }
 
-        public static readonly PropertyData CurrentDifferentiationLevelProperty = RegisterProperty("CurrentDifferentiationLevel", typeof(string), "");
+        public static readonly PropertyData CurrentDifferentiationGroupProperty = RegisterProperty("CurrentDifferentiationGroup", typeof(string), "");
 
 
         #endregion //Properties

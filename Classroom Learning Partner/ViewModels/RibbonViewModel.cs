@@ -1746,9 +1746,11 @@ namespace Classroom_Learning_Partner.ViewModels
             groupCreationView.ShowDialog();
             if(groupCreationView.DialogResult == true)
             {
-                foreach (var group in groupCreationViewModel.Groups) {
-                    foreach (Person student in group.Members) {
-                        student.CurrentDifferentiationLevel = group.Label;
+                foreach(var group in groupCreationViewModel.Groups)
+                {
+                    foreach(Person student in group.Members)
+                    {
+                        student.CurrentDifferentiationGroup = group.Label;
                     }
                 }
             }

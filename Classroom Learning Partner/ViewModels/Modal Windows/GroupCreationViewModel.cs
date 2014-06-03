@@ -1,4 +1,6 @@
 ﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Windows.Data;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Entities;
@@ -7,6 +9,7 @@ namespace Classroom_Learning_Partner.ViewModels
 {
     public class GroupCreationViewModel : ViewModelBase
     {
+
         public GroupCreationViewModel()
         {
             if(App.MainWindowViewModel.CurrentClassPeriod != null)
@@ -22,12 +25,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
             foreach(Person student in new ObservableCollection<Person>(StudentsNotInGroup))
             {
-                if(student.CurrentDifferentiationLevel != "")
+                if(student.CurrentDifferentiationGroup != "")
                 {
                     bool added = false;
                     foreach(Group existingGroup in Groups)
                     {
-                        if(existingGroup.Label == student.CurrentDifferentiationLevel)
+                        if(existingGroup.Label == student.CurrentDifferentiationGroup)
                         {
                             existingGroup.Add(student);
                             added = true;
@@ -36,7 +39,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                     if(!added)
                     {
-                        Group newGroup = new Group(student.CurrentDifferentiationLevel);
+                        Group newGroup = new Group(student.CurrentDifferentiationGroup);
                         newGroup.Add(student);
                         Groups.Add(newGroup);
                     }
@@ -68,7 +71,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(StudentsNotInGroupProperty, value); }
         }
 
-        public static readonly PropertyData StudentsNotInGroupProperty = RegisterProperty("StudentsNotInGroup", typeof(ObservableCollection<Person>));
+        public static readonly PropertyData StudentsNotInGroupProperty = RegisterProperty("Students", typeof(ObservableCollection<Person>));
     
         public Command<object[]> GroupChangeCommand { get; private set; }
 
@@ -149,9 +152,20 @@ public class Group : ViewModelBase
 
     public static readonly PropertyData MembersProperty = RegisterProperty("Members", typeof(ObservableCollection<Person>));
 
+    public CollectionViewSource SortedMembers
+    {
+        get { return GetValue<CollectionViewSource>(SortedMembersProperty); }
+        set { SetValue(SortedMembersProperty, value); }
+    }
+
+    public static readonly PropertyData SortedMembersProperty = RegisterProperty("SortedMembers", typeof(CollectionViewSource), () => new CollectionViewSource());
+
     public Group(string label)
     {
         Members = new ObservableCollection<Person>();
+        SortedMembers.Source = Members;
+        SortDescription StudentNameSort = new SortDescription("FullName", ListSortDirection.Ascending);
+        SortedMembers.SortDescriptions.Add(StudentNameSort);
         Label = label;
     }
 
