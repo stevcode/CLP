@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -12,6 +13,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Ribbon;
 using System.Windows.Documents;
 using System.Windows.Ink;
+using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Xps.Packaging;
@@ -25,6 +27,8 @@ using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Entities;
 using System.Windows.Threading;
 using System.ServiceModel;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -114,6 +118,7 @@ namespace Classroom_Learning_Partner.ViewModels
             ConvertPageSubmissionToXPSCommand = new Command(OnConvertPageSubmissionToXPSCommandExecute);
             ConvertAllSubmissionsToXPSCommand = new Command(OnConvertAllSubmissionsToXPSCommandExecute);
             StartClassPeriodCommand = new Command(OnStartClassPeriodCommandExecute);
+            ViewAllWorkCommand = new Command(OnViewAllWorkCommandExecute);
             RefreshNetworkCommand = new Command(OnRefreshNetworkCommandExecute);
             ToggleThumbnailsCommand = new Command(OnToggleThumbnailsCommandExecute);
             ExitCommand = new Command(OnExitCommandExecute);
@@ -880,87 +885,116 @@ namespace Classroom_Learning_Partner.ViewModels
                     Directory.CreateDirectory(directoryPath);
                 }
 
-                var fileName = notebook.Name + ".xps";
+                var fileName = notebook.Name + ".pdf";
                 var filePath = Path.Combine(directoryPath, fileName);
                 if(File.Exists(filePath))
                 {
                     File.Delete(filePath);
                 }
 
-                var document = new FixedDocument();
-                document.DocumentPaginator.PageSize = new Size(96 * 11, 96 * 8.5);
-
-                foreach(var page in notebook.Pages)
+                var doc = new Document();
+                try
                 {
-                    page.TrimPage();
-                    var printHeight = page.Width / page.InitialAspectRatio;
+                    PdfWriter.GetInstance(doc, new FileStream(filePath, FileMode.Create));
+                    doc.Open();
 
-                    double transformAmount = 0;
-                    do
+                    foreach(var page in notebook.Pages)
                     {
-                        var currentPageView = new CLPPagePreviewView { DataContext = page };
-                        currentPageView.UpdateLayout();
-
-                        var grid = new Grid();
-                        grid.Children.Add(currentPageView);
-
-                        var pageNumberOffset = 5.0;
-                        if(page.SubmissionType != SubmissionTypes.Unsubmitted)
+                        var pngEncoder = new PngBitmapEncoder();
+                        pngEncoder.Frames.Add(BitmapFrame.Create(page.PageThumbnail as BitmapSource));
+                        using(var outputStream = new MemoryStream())
                         {
-                            var submitterLabel = new Label
-                            {
-                                FontSize = 20,
-                                FontWeight = FontWeights.Bold,
-                                FontStyle = FontStyles.Oblique,
-                                HorizontalAlignment = HorizontalAlignment.Right,
-                                VerticalAlignment = VerticalAlignment.Top,
-                                Content = page.Owner.FullName,
-                                Margin = new Thickness(0, transformAmount + 5, 5, 0)
-                            };
-                            grid.Children.Add(submitterLabel);
-                            pageNumberOffset = 30.0;
+                            pngEncoder.Save(outputStream);
+                            var image = System.Drawing.Image.FromStream(outputStream);
+                            var pdfImage = iTextSharp.text.Image.GetInstance(image, ImageFormat.Png);
+                            doc.NewPage();
+                            doc.Add(pdfImage);
                         }
-
-                        var pageIndexlabel = new Label
-                        {
-                            FontSize = 20,
-                            FontWeight = FontWeights.Bold,
-                            FontStyle = FontStyles.Oblique,
-                            HorizontalAlignment = HorizontalAlignment.Right,
-                            VerticalAlignment = VerticalAlignment.Top,
-                            Content = "Page " + page.PageNumber,
-                            Margin = new Thickness(0, transformAmount + pageNumberOffset, 5, 0)
-                        };
-                        grid.Children.Add(pageIndexlabel);
-                        grid.UpdateLayout();
-
-                        var transform = new TransformGroup();
-                        var translate = new TranslateTransform(0, -transformAmount);
-                        transform.Children.Add(translate);
-                        if(Math.Abs(page.Width - CLPPage.LANDSCAPE_WIDTH) < 0.001)
-                        {
-                            var rotate = new RotateTransform(90.0);
-                            var translate2 = new TranslateTransform(816, 0);
-                            transform.Children.Add(rotate);
-                            transform.Children.Add(translate2);
-                        }
-                        grid.RenderTransform = transform;
-                        transformAmount += printHeight;
-
-                        var pageContent = new PageContent();
-                        var fixedPage = new FixedPage();
-                        fixedPage.Children.Add(grid);
-
-                        ((System.Windows.Markup.IAddChild)pageContent).AddChild(fixedPage);
-                        document.Pages.Add(pageContent);
-                    } while(page.Height > transformAmount);
+                    }
+                }
+                finally
+                {
+                    doc.Close();
                 }
 
-                //Save the document
-                var xpsDocument = new XpsDocument(filePath, FileAccess.ReadWrite);
-                var documentWriter = XpsDocument.CreateXpsDocumentWriter(xpsDocument);
-                documentWriter.Write(document);
-                xpsDocument.Close();
+                #region XPS
+
+                //var document = new FixedDocument();
+                //document.DocumentPaginator.PageSize = new Size(96 * 11, 96 * 8.5);
+
+                //foreach(var page in notebook.Pages)
+                //{
+                //    page.TrimPage();
+                //    var printHeight = page.Width / page.InitialAspectRatio;
+
+                //    double transformAmount = 0;
+                //    do
+                //    {
+                //        var currentPageView = new CLPPagePreviewView { DataContext = page };
+                //        currentPageView.UpdateLayout();
+
+                //        var grid = new Grid();
+                //        grid.Children.Add(currentPageView);
+
+                //        var pageNumberOffset = 5.0;
+                //        if(page.SubmissionType != SubmissionTypes.Unsubmitted)
+                //        {
+                //            var submitterLabel = new Label
+                //                                 {
+                //                                     FontSize = 20,
+                //                                     FontWeight = FontWeights.Bold,
+                //                                     FontStyle = FontStyles.Oblique,
+                //                                     HorizontalAlignment = HorizontalAlignment.Right,
+                //                                     VerticalAlignment = VerticalAlignment.Top,
+                //                                     Content = page.Owner.FullName,
+                //                                     Margin = new Thickness(0, transformAmount + 5, 5, 0)
+                //                                 };
+                //            grid.Children.Add(submitterLabel);
+                //            pageNumberOffset = 30.0;
+                //        }
+
+                //        var pageIndexlabel = new Label
+                //                             {
+                //                                 FontSize = 20,
+                //                                 FontWeight = FontWeights.Bold,
+                //                                 FontStyle = FontStyles.Oblique,
+                //                                 HorizontalAlignment = HorizontalAlignment.Right,
+                //                                 VerticalAlignment = VerticalAlignment.Top,
+                //                                 Content = "Page " + page.PageNumber,
+                //                                 Margin = new Thickness(0, transformAmount + pageNumberOffset, 5, 0)
+                //                             };
+                //        grid.Children.Add(pageIndexlabel);
+                //        grid.UpdateLayout();
+
+                //        var transform = new TransformGroup();
+                //        var translate = new TranslateTransform(0, -transformAmount);
+                //        transform.Children.Add(translate);
+                //        if(Math.Abs(page.Width - CLPPage.LANDSCAPE_WIDTH) < 0.001)
+                //        {
+                //            var rotate = new RotateTransform(90.0);
+                //            var translate2 = new TranslateTransform(816, 0);
+                //            transform.Children.Add(rotate);
+                //            transform.Children.Add(translate2);
+                //        }
+                //        grid.RenderTransform = transform;
+                //        transformAmount += printHeight;
+
+                //        var pageContent = new PageContent();
+                //        var fixedPage = new FixedPage();
+                //        fixedPage.Children.Add(grid);
+
+                //        ((IAddChild)pageContent).AddChild(fixedPage);
+                //        document.Pages.Add(pageContent);
+                //    } while(page.Height > transformAmount);
+                //}
+
+                ////Save the document
+                //var xpsDocument = new XpsDocument(filePath, FileAccess.ReadWrite);
+                //var documentWriter = XpsDocument.CreateXpsDocumentWriter(xpsDocument);
+                //documentWriter.Write(document);
+                //xpsDocument.Close();
+
+                #endregion //XPS
 
             }, null, "Converting Notebook Pages to XPS");
         }
@@ -1083,6 +1117,16 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnStartClassPeriodCommandExecute()
         {
             MainWindowViewModel.OpenClassPeriod();
+        }
+
+        /// <summary>
+        /// Creates and starts a ClassPeriod with all Student Work.
+        /// </summary>
+        public Command ViewAllWorkCommand { get; private set; }
+
+        private void OnViewAllWorkCommandExecute()
+        {
+            MainWindowViewModel.ViewAllWork();
         }
 
         /// <summary>

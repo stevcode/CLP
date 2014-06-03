@@ -27,7 +27,7 @@ namespace Classroom_Learning_Partner.ViewModels
             SetCurrentPageCommand = new Command<CLPPage>(OnSetCurrentPageCommandExecute);
             ShowSubmissionsCommand = new Command<CLPPage>(OnShowSubmissionsCommandExecute);
 
-            StagingPanel = new SubmissionsPanelViewModel(notebook)
+            StagingPanel = new StagingPanelViewModel(notebook)
                            {
                                IsVisible = false
                            };
@@ -124,16 +124,15 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnShowSubmissionsCommandExecute(CLPPage page)
         {
-            // TODO: Entities, convert to StagingPanel
-            var submissionsPanel = StagingPanel as SubmissionsPanelViewModel;
-            if(submissionsPanel == null)
+            var stagingPanel = StagingPanel as StagingPanelViewModel;
+            if(stagingPanel == null)
             {
                 return;
             }
 
-            submissionsPanel.IsVisible = true;
+            stagingPanel.IsVisible = true;
 
-            submissionsPanel.SubmissionPages = page.Submissions;
+            stagingPanel.SetSubmissionsForPage(page);
         }
 
         #endregion //Commands
@@ -150,35 +149,13 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if(notebookWorkspaceViewModel.CurrentDisplay == null)
             {
-                // save a thumbnail of page being navigated away from
-                // TODO: Move to own method, possibly call in CurrentPage {set;}
-                //var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(CurrentPage).First(x => (x is CLPPageViewModel) && !(x as CLPPageViewModel).IsPagePreview);
-                //UIElement pageView = (UIElement)CLPServiceAgent.Instance.GetViewFromViewModel(pageViewModel);
-                //var thumbnail = CLPServiceAgent.Instance.GetJpgImage(pageView, 1.0, 100, true);
-
-                //var bitmapImage = new BitmapImage();
-                //bitmapImage.BeginInit();
-                //bitmapImage.CacheOption = BitmapCacheOption.OnDemand;
-                //bitmapImage.StreamSource = new MemoryStream(thumbnail);
-                //bitmapImage.EndInit();
-                //bitmapImage.Freeze();
-
-                //CurrentPage.PageThumbnail = bitmapImage;
-
-                // actually set current page
+                //Take thumbnail of page before navigating away from it.
+                ACLPPageBaseViewModel.TakePageThumbnail(CurrentPage);
                 CurrentPage = page;
                 return;
             }
 
             notebookWorkspaceViewModel.CurrentDisplay.AddPageToDisplay(page);
-
-            // TODO: Entities, History of submissions
-            //var historyPanel = GetSubmissionHistoryPanelViewModel();
-            //if(historyPanel != null)
-            //{
-            //    historyPanel.CurrentPage = null;
-            //    historyPanel.IsSubmissionHistoryVisible = false;
-            //}
         }
 
         #endregion //Methods

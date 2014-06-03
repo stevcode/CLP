@@ -419,20 +419,20 @@ namespace CLP.Entities
                 }
                 var pageFilePath = Path.Combine(pagesFolderPath, "p;" + page.PageNumber + ";" + page.ID + ";" + page.DifferentiationLevel + ";" + page.VersionIndex + ".xml");
                 page.ToXML(pageFilePath);
-                //var thumbnailsFolderPath = Path.Combine(pagesFolderPath, "Thumbnails");
-                //if(!Directory.Exists(thumbnailsFolderPath))
-                //{
-                //    Directory.CreateDirectory(thumbnailsFolderPath);
-                //}
-                //var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, "p;" + page.PageNumber + ";" + page.ID + ";" + page.DifferentiationLevel + ";" + page.VersionIndex + ".png");
+                var thumbnailsFolderPath = Path.Combine(pagesFolderPath, "Thumbnails");
+                if(!Directory.Exists(thumbnailsFolderPath))
+                {
+                    Directory.CreateDirectory(thumbnailsFolderPath);
+                }
+                var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, "p;" + page.PageNumber + ";" + page.ID + ";" + page.DifferentiationLevel + ";" + page.VersionIndex + ".png");
 
-                //var pngEncoder = new PngBitmapEncoder();
-                //pngEncoder.Frames.Add(BitmapFrame.Create(page.PageThumbnail as BitmapSource));
-                //using(var outputStream = new MemoryStream())
-                //{
-                //    pngEncoder.Save(outputStream);
-                //    File.WriteAllBytes(thumbnailFilePath, outputStream.ToArray());
-                //}
+                var pngEncoder = new PngBitmapEncoder();
+                pngEncoder.Frames.Add(BitmapFrame.Create(page.PageThumbnail as BitmapSource));
+                using(var outputStream = new MemoryStream())
+                {
+                    pngEncoder.Save(outputStream);
+                    File.WriteAllBytes(thumbnailFilePath, outputStream.ToArray());
+                }
             }
 
             //var pageFilePaths = Directory.EnumerateFiles(pagesFolderPath, "*.xml").ToList();
@@ -496,6 +496,20 @@ namespace CLP.Entities
             {
                 var pageFilePath = Path.Combine(pagesFolderPath, "p;" + page.PageNumber + ";" + page.ID + ";" + page.DifferentiationLevel + ";" + page.VersionIndex + ".xml");
                 page.ToXML(pageFilePath, serializeInkStrokes);
+                var thumbnailsFolderPath = Path.Combine(pagesFolderPath, "Thumbnails");
+                if(!Directory.Exists(thumbnailsFolderPath))
+                {
+                    Directory.CreateDirectory(thumbnailsFolderPath);
+                }
+                var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, "p;" + page.PageNumber + ";" + page.ID + ";" + page.DifferentiationLevel + ";" + page.VersionIndex + ".png");
+
+                var pngEncoder = new PngBitmapEncoder();
+                pngEncoder.Frames.Add(BitmapFrame.Create(page.PageThumbnail as BitmapSource));
+                using(var outputStream = new MemoryStream())
+                {
+                    pngEncoder.Save(outputStream);
+                    File.WriteAllBytes(thumbnailFilePath, outputStream.ToArray());
+                }
             }
         }
 
@@ -512,6 +526,20 @@ namespace CLP.Entities
                 {
                     var pageFilePath = Path.Combine(folderPath, "p;" + submission.PageNumber + ";" + submission.ID + ";" + submission.DifferentiationLevel + ";" + submission.VersionIndex + ".xml");
                     submission.ToXML(pageFilePath);
+                    var thumbnailsFolderPath = Path.Combine(folderPath, "Thumbnails");
+                    if(!Directory.Exists(thumbnailsFolderPath))
+                    {
+                        Directory.CreateDirectory(thumbnailsFolderPath);
+                    }
+                    var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, "p;" + submission.PageNumber + ";" + submission.ID + ";" + submission.DifferentiationLevel + ";" + submission.VersionIndex + ".png");
+
+                    var pngEncoder = new PngBitmapEncoder();
+                    pngEncoder.Frames.Add(BitmapFrame.Create(submission.PageThumbnail as BitmapSource));
+                    using(var outputStream = new MemoryStream())
+                    {
+                        pngEncoder.Save(outputStream);
+                        File.WriteAllBytes(thumbnailFilePath, outputStream.ToArray());
+                    }
                 }
             }
         }
@@ -530,6 +558,20 @@ namespace CLP.Entities
                             var pagesPath = Path.Combine(notebookFolderPath, "Pages");
                             var pageFilePath = Path.Combine(pagesPath, "p;" + submission.PageNumber + ";" + submission.ID + ";" + submission.DifferentiationLevel + ";" + submission.VersionIndex + ".xml");
                             submission.ToXML(pageFilePath);
+                            var thumbnailsFolderPath = Path.Combine(pagesPath, "Thumbnails");
+                            if(!Directory.Exists(thumbnailsFolderPath))
+                            {
+                                Directory.CreateDirectory(thumbnailsFolderPath);
+                            }
+                            var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, "p;" + submission.PageNumber + ";" + submission.ID + ";" + submission.DifferentiationLevel + ";" + submission.VersionIndex + ".png");
+
+                            var pngEncoder = new PngBitmapEncoder();
+                            pngEncoder.Frames.Add(BitmapFrame.Create(submission.PageThumbnail as BitmapSource));
+                            using(var outputStream = new MemoryStream())
+                            {
+                                pngEncoder.Save(outputStream);
+                                File.WriteAllBytes(thumbnailFilePath, outputStream.ToArray());
+                            }
                         }
                     }
                 }
@@ -571,8 +613,8 @@ namespace CLP.Entities
                         notebook.CurrentPage = page;
                     }
 
-                    //var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, pageAndHistoryFileName + ".png");
-                    //page.PageThumbnail = CLPImage.GetImageFromPath(thumbnailFilePath);
+                    var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, pageAndHistoryFileName + ".png");
+                    page.PageThumbnail = CLPImage.GetImageFromPath(thumbnailFilePath);
 
                     pages.Add(page);
                 }

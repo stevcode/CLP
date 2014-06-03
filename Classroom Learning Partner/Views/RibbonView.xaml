@@ -57,11 +57,11 @@
                                            ImageSource="pack://application:,,,/Resources/Images/SaveNotebook32.png"
                                            Command="{Binding ForceSaveNotebookCommand}" />
 
-                <!--<RibbonApplicationMenuItem Header="Convert Notebook Pages To XPS"
+                <RibbonApplicationMenuItem Header="Convert Notebook Pages To PDF"
                                            ImageSource="pack://application:,,,/Resources/Images/ConvertToXPS32.png"
                                            Command="{Binding ConvertToXPSCommand}" />
 
-                <RibbonApplicationMenuItem Header="Convert Submissions for this page to XPS"
+                <!--<RibbonApplicationMenuItem Header="Convert Submissions for this page to XPS"
                                            ImageSource="pack://application:,,,/Resources/Images/ConvertToXPS32.png"
                                            Command="{Binding ConvertPageSubmissionToXPSCommand}"
                                            Visibility="{Binding InstructorVisibility}" />
@@ -77,6 +77,11 @@
                 <RibbonApplicationMenuItem Header="Start Current Class Period"
                                            ImageSource="pack://application:,,,/Resources/Images/GroupSubmit32.png"
                                            Command="{Binding StartClassPeriodCommand}"
+                                           Visibility="{Binding InstructorVisibility}" />
+                
+                <RibbonApplicationMenuItem Header="View All Work"
+                                           ImageSource="pack://application:,,,/Resources/Images/GroupSubmit32.png"
+                                           Command="{Binding ViewAllWorkCommand}"
                                            Visibility="{Binding InstructorVisibility}" />
 
                 <RibbonSeparator />

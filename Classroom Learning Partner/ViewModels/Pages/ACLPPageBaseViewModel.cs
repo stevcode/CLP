@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Ink;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Catel.Data;
 using Catel.MVVM;
@@ -1008,6 +1010,22 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Page Interaction methods
 
         #region Static Methods
+
+        public static void TakePageThumbnail(CLPPage page)
+        {
+            var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(page).First(x => (x is CLPPageViewModel) && !(x as CLPPageViewModel).IsPagePreview);
+                var pageView = (UIElement)CLPServiceAgent.Instance.GetViewFromViewModel(pageViewModel);
+                var thumbnail = CLPServiceAgent.Instance.GetJpgImage(pageView, 1.0, 100, true);
+
+                var bitmapImage = new BitmapImage();
+                bitmapImage.BeginInit();
+                bitmapImage.CacheOption = BitmapCacheOption.OnDemand;
+                bitmapImage.StreamSource = new MemoryStream(thumbnail);
+                bitmapImage.EndInit();
+                bitmapImage.Freeze();
+
+                page.PageThumbnail = bitmapImage;
+        }
 
         public static bool IsPointOverPageObject(IPageObject pageObject, Point point)
         {

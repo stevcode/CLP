@@ -55,7 +55,12 @@
                          ItemContainerStyle="{StaticResource PageSidebarContainer}"
                          SelectionMode="Single"
                          x:Name="PagesListBox"
-                         extenders:ListBoxExtenders.AutoScrollToCurrentItem="True">
+                         extenders:ListBoxExtenders.AutoScrollToCurrentItem="True"
+                         VirtualizingPanel.IsVirtualizing="True"
+                         VirtualizingPanel.IsVirtualizingWhenGrouping="True"
+                         VirtualizingStackPanel.CacheLength="2,3"
+                         VirtualizingStackPanel.CacheLengthUnit="Page"
+                         VirtualizingStackPanel.ScrollUnit="Pixel">
 
                     <ListBox.ItemTemplate>
                         <DataTemplate>
@@ -94,12 +99,12 @@
                                     </TextBlock.LayoutTransform>
                                 </TextBlock>
                                 
-                                <views:CLPPagePreviewView x:Name="PagePreviewView"
+                                <!--<views:CLPPagePreviewView x:Name="PagePreviewView"
                                                           Grid.Column="1" Margin="5"
                                                           DataContext="{Binding}"
-                                                          ClipToBounds="True" />
+                                                          ClipToBounds="True" />-->
 
-                                <!--<Control Grid.Column="1" Margin="5">
+                                <Control Grid.Column="1" Margin="5">
                                     <Control.Resources>
                                         <ControlTemplate x:Key="ThumbnailTemplate">
                                             <Image Source="{Binding PageThumbnail, Mode=OneWay}"/>
@@ -114,7 +119,7 @@
                                     <Control.Style>
                                         <Style TargetType="{x:Type Control}">
                                             <Style.Triggers>
-                                                --><!--Thumbnail trigger--><!--
+                                                <!--Thumbnail trigger-->
                                                 <MultiDataTrigger>
                                                     <MultiDataTrigger.Conditions>
                                                         <Condition Value="True">
@@ -129,7 +134,7 @@
                                                     <Setter Property="Template" Value="{StaticResource ThumbnailTemplate}" />
                                                 </MultiDataTrigger>
 
-                                                --><!--PagePreview trigger--><!--
+                                                <!--PagePreview trigger-->
                                                 <MultiDataTrigger>
                                                     <MultiDataTrigger.Conditions>
                                                         <Condition Value="False">
@@ -146,7 +151,7 @@
                                             </Style.Triggers>
                                         </Style>
                                     </Control.Style>
-                                </Control>-->
+                                </Control>
 
                                 <Rectangle Grid.Column="1"
                                            Margin="5"
@@ -260,8 +265,7 @@
 
         </Border>
 
-        <!--TODO: Entities, StagingPanel-->
-        <views:SubmissionsPanelView DataContext="{Binding StagingPanel}"
+        <views:StagingPanelView DataContext="{Binding StagingPanel}"
                                     Grid.Column="1"
                                     Visibility="{Binding IsVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />
 

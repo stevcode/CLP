@@ -7,7 +7,24 @@
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views">
 
     <UserControl.Resources>
+        <!-- Converters -->
+        <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
         <conv:PanelLocationToThicknessConverter x:Key="PanelLocationToThicknessConverter" />
+        <conv:ItemSelectedToColorConverter x:Key="PageOrDisplaySelectionColorConverter" />
+        <conv:ShouldUseThumbnailConverter x:Key="ShouldUseThumbnailConverter" />
+        
+        <!-- Style to override ListBoxItem selection visuals for Pages -->
+        <Style x:Key="ListBoxItemBlankStyle"
+               TargetType="{x:Type ListBoxItem}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                        <ContentPresenter />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
     </UserControl.Resources>
 
     <Border Background="{StaticResource GrayBackgroundColor}"
@@ -40,6 +57,9 @@
 
                     </Grid>
 
+                    <!--Build Filters here. Starts with Add Filter button, choose from available filters, adds to listbox of all filters
+                        have X next to each filter to remove said filter.-->
+                    
                 </Grid>
 
                 <Slider DockPanel.Dock="Top"
@@ -50,109 +70,126 @@
                 <Button DockPanel.Dock="Bottom"
                         Height="30"
                         Content="Clear"
-                        Command="{Binding ClearStagedPagesCommand}" />
+                        Command="{Binding ClearStageCommand}" />
 
-                <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                         Background="Lavender"
-                         ItemsSource="{Binding FilteredSubmissions.View}"
-                         SelectedValue="{Binding CurrentPage}"
-                         ItemContainerStyle="{StaticResource PageSidebarContainer}"
-                         SelectionMode="Single">
-                    <ListBox.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel />
-                        </ItemsPanelTemplate>
-                    </ListBox.ItemsPanel>
+                <ListBox Background="Lavender"
+                         ItemContainerStyle="{StaticResource ListBoxItemBlankStyle}"
+                         ItemsSource="{Binding SortedAndGroupedPages.View, IsAsync=True}"
+                         SelectedValue="{Binding CurrentPage, Mode=OneWay}"
+                         SelectionMode="Single"
+                         x:Name="PagesListBox"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         VirtualizingPanel.IsVirtualizing="True"
+                         VirtualizingPanel.IsVirtualizingWhenGrouping="True"
+                         VirtualizingStackPanel.CacheLength="2,3"
+                         VirtualizingStackPanel.CacheLengthUnit="Page"
+                         VirtualizingStackPanel.ScrollUnit="Pixel">
+                    
                     <ListBox.GroupStyle>
                         <GroupStyle>
                             <GroupStyle.ContainerStyle>
-                                <Style x:Name="GroupItemStyle" TargetType="{x:Type GroupItem}">
-                                    <Setter Property="Template" Value="{StaticResource StudentNameTemplate}" />
-                                    <!--<Style.Triggers>
-                                        <DataTrigger Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Group Submissions">
-                                            <Setter Property="Template" Value="{StaticResource StudentNameForGroupTemplate}" />
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Time In - Ascending">
-                                            <Setter Property="Template" Value="{StaticResource StudentNameForTimeTemplate}" />
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Time In - Descending">
-                                            <Setter Property="Template" Value="{StaticResource StudentNameForTimeTemplate}" />
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Path=Name, Converter={StaticResource tagConverter}}" Value="True">
-                                            <Setter Property="Template" Value="{StaticResource TagLabelTemplate}" />
-                                        </DataTrigger>
+                                <Style TargetType="{x:Type GroupItem}">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type GroupItem}">
 
-                                        <MultiDataTrigger>
-                                            <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding Path=Name, Converter={StaticResource tagConverter}}" Value="False" />
-                                                <Condition Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Correctness" />
-                                            </MultiDataTrigger.Conditions>
-                                            <Setter Property="Template" Value="{StaticResource StudentNameForTagTemplate}" />
-                                        </MultiDataTrigger>
-                                        <MultiDataTrigger>
-                                            <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding Path=Name, Converter={StaticResource tagConverter}}" Value="False" />
-                                                <Condition Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Starred" />
-                                            </MultiDataTrigger.Conditions>
-                                            <Setter Property="Template" Value="{StaticResource StudentNameForTagTemplate}" />
-                                        </MultiDataTrigger>
+                                                <Grid Margin="0 1">
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition Height="*" />
+                                                    </Grid.RowDefinitions>
+                                                    
+                                                    <Border Grid.Row="0" 
+                                                            Background="Transparent"
+                                                            BorderBrush="LightGray"
+                                                            BorderThickness="1 1 1 0"
+                                                            CornerRadius="3"
+                                                            VerticalAlignment="Bottom"
+                                                            Height="40"
+                                                            Visibility="{Binding IsChecked, ElementName=GroupVisibilityToggle, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}"/>
 
-                                        <MultiDataTrigger>
-                                            <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding Path=Name, Converter={StaticResource timeConverter}}" Value="True" />
-                                                <Condition Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Time In - Ascending" />
-                                            </MultiDataTrigger.Conditions>
-                                            <Setter Property="Template" Value="{StaticResource TimeTemplate}" />
-                                        </MultiDataTrigger>
-                                        <MultiDataTrigger>
-                                            <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding Path=Name, Converter={StaticResource timeConverter}}" Value="True" />
-                                                <Condition Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Time In - Descending" />
-                                            </MultiDataTrigger.Conditions>
-                                            <Setter Property="Template" Value="{StaticResource TimeTemplate}" />
-                                        </MultiDataTrigger>
-                                        <MultiDataTrigger>
-                                            <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding Path=Name, Converter={StaticResource gConverter}}" Value="True" />
-                                                <Condition Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Group Submissions" />
-                                            </MultiDataTrigger.Conditions>
-                                            <Setter Property="Template" Value="{StaticResource GroupSubmissionsByGroupTemplate}" />
-                                        </MultiDataTrigger>
-                                        <MultiDataTrigger>
-                                            <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding Path=Name, Converter={StaticResource gConverter}}" Value="True" />
-                                                <Condition Binding="{Binding ElementName=SortComboBox, Path=SelectedItem}" Value="Submissions By Group Name" />
-                                            </MultiDataTrigger.Conditions>
-                                            <Setter Property="Template" Value="{StaticResource IndividualSubmissionsByGroupTemplate}" />
-                                        </MultiDataTrigger>
-                                    </Style.Triggers>-->
+                                                    <ToggleButton Grid.Row="0" 
+                                                                  x:Name="GroupVisibilityToggle" 
+                                                                  Margin="10 0"
+                                                                  Height="40">
+                                                        <TextBlock Margin="5"
+                                                                   FontWeight="Bold"
+                                                                   HorizontalAlignment="Left">
+                                                            <Run Text="{Binding Name, Mode=OneWay}" />
+                                                            <Run Text="     " />
+                                                            <Run Text="{Binding ItemCount, Mode=OneWay}" />
+                                                        </TextBlock>
+                                                    </ToggleButton>
 
+                                                    <Border Grid.Row="1" 
+                                                            Background="Transparent"
+                                                            BorderBrush="LightGray"
+                                                            BorderThickness="1 0 1 1"
+                                                            CornerRadius="3"
+                                                            Visibility="{Binding IsChecked, ElementName=GroupVisibilityToggle, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
+                                                    
+                                                        <ItemsPresenter Visibility="{Binding IsChecked, ElementName=GroupVisibilityToggle, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />
+                                                    
+                                                    </Border>
+                                                </Grid>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
                                 </Style>
                             </GroupStyle.ContainerStyle>
-                            <!--<GroupStyle.Panel>
-                                <ItemsPanelTemplate>
-                                    <WrapPanel Orientation="Horizontal"
-                                               HorizontalAlignment="Stretch"
-                                               VerticalAlignment="Stretch"
-                                               Width="{Binding ElementName=SubmissionsSideBar,Path=ActualWidth,Mode=OneWay}" />
-                                </ItemsPanelTemplate>
-                            </GroupStyle.Panel>-->
                         </GroupStyle>
                     </ListBox.GroupStyle>
 
                     <ListBox.ItemTemplate>
-                        <DataTemplate x:Name="SortTrigger">
+                        <DataTemplate>
                             <Grid>
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="*" />
                                     <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
                                 </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                
+                                <TextBlock Grid.Column="0"
+                                           Grid.Row="1"
+                                           Margin="5 0 0 0"
+                                           Foreground="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
+                                           FontWeight="Bold"
+                                           VerticalAlignment="Center">
+                                    <Run Text="Page " />
+                                    <Run Text="{Binding PageNumber}" />
+                                    <TextBlock.LayoutTransform>
+                                        <TransformGroup>
+                                            <ScaleTransform />
+                                            <SkewTransform />
+                                            <RotateTransform Angle="-90" />
+                                            <TranslateTransform />
+                                        </TransformGroup>
+                                    </TextBlock.LayoutTransform>
+                                </TextBlock>
+                                
+                                <TextBlock Grid.Column="1"
+                                           Grid.Row="0"
+                                           Margin="0 5 0 0"
+                                           Foreground="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
+                                           FontWeight="Bold"
+                                           HorizontalAlignment="Left">
+                                    <Run Text="{Binding Owner.FullName}" />
+                                    <Run Text="   (" />
+                                    <Run Text="{Binding SubmissionTime}" />
+                                    <Run Text=")" />
+                                </TextBlock>
 
-                                <Control Grid.Row="0" Margin="5 5 5 0">
+                                <!--<Control Grid.Row="1"
+                                         Grid.Column="1"
+                                         Margin="5 5 5 0">
                                     <Control.Resources>
 
                                         <ControlTemplate x:Key="PagePreviewTemplate">
-                                            <views:CLPPagePreviewView DataContext="{Binding}" />
+                                            <views:CLPPagePreviewView DataContext="{Binding}"
+                                                                      ClipToBounds="True" />
                                         </ControlTemplate>
 
                                         <ControlTemplate x:Key="ThumbnailTemplate">
@@ -166,12 +203,12 @@
                                         <Style TargetType="{x:Type Control}">
                                             <Style.Triggers>
 
-                                                <!--CLPPagePreviewView Fallback if Thumbnail is absent-->
+                                                --><!--CLPPagePreviewView Fallback if Thumbnail is absent--><!--
                                                 <DataTrigger Binding="{Binding PageThumbnail, Converter={StaticResource ByteArrayToBoolConverter}}" Value="False">
                                                     <Setter Property="Template" Value="{StaticResource PagePreviewTemplate}" />
                                                 </DataTrigger>
 
-                                                <!--Thumbnail-->
+                                                --><!--Thumbnail--><!--
                                                 <DataTrigger Binding="{Binding PageThumbnail, Converter={StaticResource ByteArrayToBoolConverter}}" Value="True">
                                                     <Setter Property="Template" Value="{StaticResource ThumbnailTemplate}" />
                                                 </DataTrigger>
@@ -180,9 +217,62 @@
                                         </Style>
 
                                     </Control.Style>
+                                </Control>-->
+                                
+                                <Control Grid.Row="1"
+                                         Grid.Column="1"
+                                         Margin="5 5 5 0">
+                                    <Control.Resources>
+                                        <ControlTemplate x:Key="ThumbnailTemplate">
+                                            <Image Source="{Binding PageThumbnail, Mode=OneWay}"/>
+                                        </ControlTemplate>
+
+                                        <ControlTemplate x:Key="PagePreviewTemplate">
+                                            <views:CLPPagePreviewView x:Name="PagePreviewView"
+                                                          DataContext="{Binding}"
+                                                          ClipToBounds="True" />
+                                        </ControlTemplate>
+                                    </Control.Resources>
+                                    <Control.Style>
+                                        <Style TargetType="{x:Type Control}">
+                                            <Style.Triggers>
+                                                <!--Thumbnail trigger-->
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Value="True">
+                                                            <Condition.Binding>
+                                                                <MultiBinding Converter="{StaticResource ShouldUseThumbnailConverter}">
+                                                                    <Binding ElementName="PagesListBox" Path="DataContext.CurrentPage"/>
+                                                                    <Binding Path=""/>
+                                                                </MultiBinding>
+                                                            </Condition.Binding>
+                                                        </Condition>
+                                                    </MultiDataTrigger.Conditions>
+                                                    <Setter Property="Template" Value="{StaticResource ThumbnailTemplate}" />
+                                                </MultiDataTrigger>
+
+                                                <!--PagePreview trigger-->
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Value="False">
+                                                            <Condition.Binding>
+                                                                <MultiBinding Converter="{StaticResource ShouldUseThumbnailConverter}">
+                                                                    <Binding ElementName="PagesListBox" Path="DataContext.CurrentPage"/>
+                                                                    <Binding Path=""/>
+                                                                </MultiBinding>
+                                                            </Condition.Binding>
+                                                        </Condition>
+                                                    </MultiDataTrigger.Conditions>
+                                                    <Setter Property="Template" Value="{StaticResource PagePreviewTemplate}" />
+                                                </MultiDataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Control.Style>
                                 </Control>
 
-                                <Rectangle Grid.Row="0" Margin="5 5 5 0"
+                                <Rectangle Grid.Row="1" 
+                                           Grid.Column="1"
+                                           Margin="5 5 5 0"
                                            Stroke="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
                                            StrokeThickness="2"
                                            Fill="Transparent">
@@ -195,8 +285,6 @@
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
                                 </Rectangle>
-
-                                <views:HoverBoxView Grid.Row="1" Width="150" DataContext="{Binding}" />
 
                             </Grid>
                         </DataTemplate>

@@ -311,6 +311,8 @@ namespace Classroom_Learning_Partner
             }
 
             page.TrimPage();
+            //Take thumbnail of page before submitting it.
+            ACLPPageBaseViewModel.TakePageThumbnail(page);
 
             var t = new Thread(() =>
                                {

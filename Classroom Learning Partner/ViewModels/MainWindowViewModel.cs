@@ -645,6 +645,175 @@ namespace Classroom_Learning_Partner.ViewModels
             App.MainWindowViewModel.AvailableUsers = App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.StudentList;
         }
 
+        public static void ViewAllWork()
+        {
+            //TODO: This is very hacky.
+            var classPeriodFilePaths = Directory.GetFiles(App.ClassCacheDirectory);
+            string closestClassPeriodFilePath = null;
+            var closestTimeSpan = TimeSpan.MaxValue;
+            var now = DateTime.Now;
+            foreach(var classPeriodFilePath in classPeriodFilePaths)
+            {
+                var classFileName = Path.GetFileNameWithoutExtension(classPeriodFilePath);
+                var classInfo = classFileName.Split(';');
+                if(classInfo.Length != 3 ||
+                   classInfo[0] != "period")
+                {
+                    continue;
+                }
+                var time = classInfo[1];
+                var timeParts = time.Split('.');
+                var year = Int32.Parse(timeParts[0]);
+                var month = Int32.Parse(timeParts[1]);
+                var day = Int32.Parse(timeParts[2]);
+                var hour = Int32.Parse(timeParts[3]);
+                var minute = Int32.Parse(timeParts[4]);
+                var dateTime = new DateTime(year, month, day, hour, minute, 0);
+                
+                var timeSpan = now - dateTime;
+                if(timeSpan.Duration() >= closestTimeSpan.Duration())
+                {
+                    continue;
+                }
+                closestTimeSpan = timeSpan;
+                closestClassPeriodFilePath = classPeriodFilePath;
+            }
+
+            if(string.IsNullOrEmpty(closestClassPeriodFilePath))
+            {
+                MessageBox.Show("ERROR: Could not find ClassPeriod.");
+                return;
+            }
+
+            var classPeriod = ClassPeriod.OpenClassPeriod(closestClassPeriodFilePath);
+            if(classPeriod == null)
+            {
+                MessageBox.Show("ERROR: Could not open ClassPeriod.");
+                return;
+            }
+
+            App.MainWindowViewModel.CurrentClassPeriod = classPeriod;
+
+            var notebookFolderPath = GetNotebookFolderPathByCompositeID(App.MainWindowViewModel.CurrentClassPeriod.NotebookID, Person.Author.ID);
+            if(notebookFolderPath == null)
+            {
+                MessageBox.Show("ERROR: Could not find Notebook for latest ClassPeriod.");
+                return;
+            }
+
+            if(!Directory.Exists(notebookFolderPath))
+            {
+                MessageBox.Show("Notebook doesn't exist");
+                return;
+            }
+
+
+            App.MainWindowViewModel.CurrentClassPeriod.PageIDs.Clear();
+            var notebookPagesFolderPath = Path.Combine(notebookFolderPath, "Pages");
+            var pageAndHistoryFilePaths = Directory.EnumerateFiles(notebookPagesFolderPath, "*.xml");
+            foreach(var pageAndHistoryFilePath in pageAndHistoryFilePaths)
+            {
+                var pageAndHistoryFileName = Path.GetFileNameWithoutExtension(pageAndHistoryFilePath);
+                var pageAndHistoryInfo = pageAndHistoryFileName.Split(';');
+                if(pageAndHistoryInfo.Length != 5 ||
+                    pageAndHistoryInfo[0] != "p")
+                {
+                    continue;
+                }
+                if(pageAndHistoryInfo[4] != "0")
+                {
+                    continue;
+                }
+
+                App.MainWindowViewModel.CurrentClassPeriod.PageIDs.Add(pageAndHistoryInfo[2]);
+            }
+
+            var notebook = Notebook.OpenPartialNotebook(notebookFolderPath, App.MainWindowViewModel.CurrentClassPeriod.PageIDs, new List<string>());
+
+            if(notebook == null)
+            {
+                MessageBox.Show("Notebook could not be opened. Check error log.");
+                return;
+            }
+
+            App.MainWindowViewModel.CurrentNotebookName = notebook.Name;
+            if(notebook.LastSavedDate != null)
+            {
+                App.MainWindowViewModel.LastSavedTime = notebook.LastSavedDate.Value.ToString("yyyy/MM/dd - HH:mm:ss");
+            }
+            notebook.CurrentPage = notebook.Pages.First();
+            App.MainWindowViewModel.OpenNotebooks.Add(notebook);
+
+            var copiedNotebook = notebook.CopyForNewOwner(App.MainWindowViewModel.CurrentUser);
+            var notebookToUse = copiedNotebook;
+
+            var storedNotebookFolderName = copiedNotebook.Name + ";" + copiedNotebook.ID + ";" + copiedNotebook.Owner.FullName + ";" + copiedNotebook.OwnerID;
+            var storedNotebookFolderPath = Path.Combine(App.NotebookCacheDirectory, storedNotebookFolderName);
+            if(Directory.Exists(storedNotebookFolderPath))
+            {
+                var pageIDs = App.MainWindowViewModel.CurrentClassPeriod.PageIDs;
+                var storedNotebook = Notebook.OpenPartialNotebook(storedNotebookFolderPath, pageIDs, new List<string>());
+                if(storedNotebook != null)
+                {
+                    var loadedPageIDs = storedNotebook.Pages.Select(page => page.ID).ToList();
+                    foreach(var page in copiedNotebook.Pages.Where(page => !loadedPageIDs.Contains(page.ID)))
+                    {
+                        storedNotebook.Pages.Add(page);
+                    }
+                    var orderedPages = storedNotebook.Pages.OrderBy(x => x.PageNumber).ToList();
+                    storedNotebook.Pages = new ObservableCollection<CLPPage>(orderedPages);
+                    notebookToUse = storedNotebook;
+                }
+            }
+
+            foreach(var page in notebookToUse.Pages)
+            {
+                foreach(var notebookName in AvailableLocalNotebookNames)
+                {
+                    var notebookInfo = notebookName.Split(';');
+                    if(notebookInfo.Length != 4 ||
+                       notebookInfo[3] == Person.Author.ID ||
+                       notebookInfo[3] == Person.Emily.ID ||
+                       notebookInfo[3] == Person.EmilyProjector.ID)
+                    {
+                        continue;
+                    }
+
+                    var folderPath = Path.Combine(App.NotebookCacheDirectory, notebookName);
+                    if(!Directory.Exists(folderPath))
+                    {
+                        continue;
+                    }
+
+                    var submissionsPath = Path.Combine(folderPath, "Pages");
+                    if(!Directory.Exists(submissionsPath))
+                    {
+                        continue;
+                    }
+
+                    var submissionPaths = Directory.EnumerateFiles(submissionsPath, "*.xml");
+
+                    foreach(var submissionPath in submissionPaths)
+                    {
+                        var submissionFileName = Path.GetFileNameWithoutExtension(submissionPath);
+                        var submissionInfo = submissionFileName.Split(';');
+                        if(submissionInfo.Length == 5 &&
+                           submissionInfo[2] == page.ID &&
+                           submissionInfo[4] != "0")
+                        {
+                            var submission = Load<CLPPage>(submissionPath, SerializationMode.Xml);
+                            page.Submissions.Add(submission);
+                        }
+                    }
+                }
+            }
+            notebookToUse.CurrentPage = notebookToUse.Pages.FirstOrDefault();
+            App.MainWindowViewModel.OpenNotebooks.Add(notebookToUse);
+            App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(notebookToUse);
+            App.MainWindowViewModel.AvailableUsers = App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.StudentList;
+
+        }
+
         public static string GetNotebookFolderPathByCompositeID(string id, string ownerID)
         {
             var notebookFolderPaths = Directory.GetDirectories(App.NotebookCacheDirectory);
