@@ -558,6 +558,10 @@ namespace CLP.Entities
                             var pagesPath = Path.Combine(notebookFolderPath, "Pages");
                             var pageFilePath = Path.Combine(pagesPath, "p;" + submission.PageNumber + ";" + submission.ID + ";" + submission.DifferentiationLevel + ";" + submission.VersionIndex + ".xml");
                             submission.ToXML(pageFilePath);
+                            if(submission.PageThumbnail == null)
+                            {
+                                continue;
+                            }
                             var thumbnailsFolderPath = Path.Combine(pagesPath, "Thumbnails");
                             if(!Directory.Exists(thumbnailsFolderPath))
                             {

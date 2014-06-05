@@ -724,7 +724,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             catch(Exception ex)
             {
-                Console.WriteLine(@"PageObjectCollectionChanged Exception: " + ex.Message);
+                Console.WriteLine("PageObjectCollectionChanged Exception: " + ex.Message);
             }
         }
 
@@ -1014,17 +1014,17 @@ namespace Classroom_Learning_Partner.ViewModels
         public static void TakePageThumbnail(CLPPage page)
         {
             var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(page).First(x => (x is CLPPageViewModel) && !(x as CLPPageViewModel).IsPagePreview);
-                var pageView = (UIElement)CLPServiceAgent.Instance.GetViewFromViewModel(pageViewModel);
-                var thumbnail = CLPServiceAgent.Instance.GetJpgImage(pageView, 1.0, 100, true);
+            var pageView = (UIElement)CLPServiceAgent.Instance.GetViewFromViewModel(pageViewModel);
+            var thumbnail = CLPServiceAgent.Instance.UIElementToImageByteArray(pageView, 492);
 
-                var bitmapImage = new BitmapImage();
-                bitmapImage.BeginInit();
-                bitmapImage.CacheOption = BitmapCacheOption.OnDemand;
-                bitmapImage.StreamSource = new MemoryStream(thumbnail);
-                bitmapImage.EndInit();
-                bitmapImage.Freeze();
+            var bitmapImage = new BitmapImage();
+            bitmapImage.BeginInit();
+            bitmapImage.CacheOption = BitmapCacheOption.OnDemand;
+            bitmapImage.StreamSource = new MemoryStream(thumbnail);
+            bitmapImage.EndInit();
+            bitmapImage.Freeze();
 
-                page.PageThumbnail = bitmapImage;
+            page.PageThumbnail = bitmapImage;
         }
 
         public static bool IsPointOverPageObject(IPageObject pageObject, Point point)

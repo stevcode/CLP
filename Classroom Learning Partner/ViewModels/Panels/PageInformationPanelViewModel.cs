@@ -13,6 +13,8 @@ namespace Classroom_Learning_Partner.ViewModels
             Notebook = notebook;
             Initialized += PageInformationPanelViewModel_Initialized;
             IsVisible = false;
+
+            PageScreenshotCommand = new Command(OnPageScreenshotCommandExecute);
         }
 
         void PageInformationPanelViewModel_Initialized(object sender, System.EventArgs e)
@@ -87,6 +89,20 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData PageNumberProperty = RegisterProperty("PageNumber", typeof(decimal), 1);
 
         #endregion //Model
+
+        #region Commands
+
+        /// <summary>
+        /// Takes and saves a hi-res screenshot of the current page.
+        /// </summary>
+        public Command PageScreenshotCommand { get; private set; }
+
+        private void OnPageScreenshotCommandExecute()
+        {
+            
+        }
+
+        #endregion //Commands
          
     }
 }

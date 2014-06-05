@@ -37,6 +37,9 @@
             
             <TextBox Text="{Binding PageNumber}" />
             
+            <Button Content="Take Screenshot of Page"
+                    Command="{Binding PageScreenshotCommand}" />
+            
         </StackPanel>
 
     </Border>
