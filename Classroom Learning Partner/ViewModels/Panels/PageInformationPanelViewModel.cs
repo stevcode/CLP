@@ -116,8 +116,6 @@ namespace Classroom_Learning_Partner.ViewModels
             bitmapImage.EndInit();
             bitmapImage.Freeze();
 
-
-            
             var thumbnailsFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Thumbnails");
             var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, "Page - " + CurrentPage.PageNumber + ";" + CurrentPage.DifferentiationLevel + ";" + CurrentPage.VersionIndex + ";" + DateTime.Now.ToString("yyyy-M-d,hh.mm.ss") + ".png");
 

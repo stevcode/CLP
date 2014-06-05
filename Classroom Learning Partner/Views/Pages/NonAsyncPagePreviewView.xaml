@@ -1,0 +1,52 @@
+﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.NonAsyncPagePreviewView"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:catel="http://catel.codeplex.com"
+                   xmlns:Views="clr-namespace:Classroom_Learning_Partner.Views">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Resources/CLPPageResources.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Viewbox Stretch="Uniform">
+
+        <Canvas Width="{Binding Width}"
+                Height="{Binding Height}"
+                Background="White">
+
+            <ItemsControl IsHitTestVisible="False"
+                          ItemsSource="{Binding PageObjects}"
+                          ItemContainerStyle="{StaticResource ContainerStyle}"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch">
+
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas Width="{Binding Width}"
+                                Height="{Binding Height}"
+                                Background="Transparent" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Views:PageObjectContainerView DataContext="{Binding}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+
+            </ItemsControl>
+
+            <InkPresenter Strokes="{Binding InkStrokes}"
+                          ClipToBounds="True"
+                          Width="{Binding Width}"
+                          Height="{Binding Height}" />
+
+        </Canvas>
+
+    </Viewbox>
+
+</catel:UserControl>

@@ -186,6 +186,28 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData IsPenDownActivatedProperty = RegisterProperty("IsPenDownActivated", typeof(bool), false);
 
         /// <summary>
+        /// Whether or not the ConvertingToPDF Screen has been activated.
+        /// </summary>
+        public bool IsConvertingToPDF
+        {
+            get { return GetValue<bool>(IsConvertingToPDFProperty); }
+            set { SetValue(IsConvertingToPDFProperty, value); }
+        }
+
+        public static readonly PropertyData IsConvertingToPDFProperty = RegisterProperty("IsConvertingToPDF", typeof(bool), false);
+
+        /// <summary>
+        /// The page that is currently being converted to PDF.
+        /// </summary>
+        public CLPPage CurrentConvertingPage
+        {
+            get { return GetValue<CLPPage>(CurrentConvertingPageProperty); }
+            set { SetValue(CurrentConvertingPageProperty, value); }
+        }
+
+        public static readonly PropertyData CurrentConvertingPageProperty = RegisterProperty("CurrentConvertingPage", typeof(CLPPage));
+
+        /// <summary>
         /// SUMMARY
         /// </summary>
         public Handedness Handedness
