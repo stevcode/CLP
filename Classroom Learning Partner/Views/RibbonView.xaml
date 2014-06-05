@@ -61,16 +61,16 @@
                                            ImageSource="pack://application:,,,/Resources/Images/ConvertToXPS32.png"
                                            Command="{Binding ConvertToXPSCommand}" />
 
-                <!--<RibbonApplicationMenuItem Header="Convert Submissions for this page to XPS"
+                <RibbonApplicationMenuItem Header="Convert Submissions for this page to PDF"
                                            ImageSource="pack://application:,,,/Resources/Images/ConvertToXPS32.png"
                                            Command="{Binding ConvertPageSubmissionToXPSCommand}"
                                            Visibility="{Binding InstructorVisibility}" />
 
-                <RibbonApplicationMenuItem Header="Convert All Submissions To XPS"
+                <RibbonApplicationMenuItem Header="Convert All Submissions To PDF"
                                            ImageSource="pack://application:,,,/Resources/Images/ConvertToXPS32.png"
                                            Command="{Binding ConvertAllSubmissionsToXPSCommand}" />
 
-                <RibbonApplicationMenuItem Header="Convert Displays To XPS"
+                <!--<RibbonApplicationMenuItem Header="Convert Displays To XPS"
                                            ImageSource="pack://application:,,,/Resources/Images/ConvertToXPS32.png"
                                            Command="{Binding ConvertDisplaysToXPSCommand}" />-->
                 

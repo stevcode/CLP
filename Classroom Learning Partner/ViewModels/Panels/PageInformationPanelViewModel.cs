@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using Catel.Data;
@@ -23,7 +22,7 @@ namespace Classroom_Learning_Partner.ViewModels
             PageScreenshotCommand = new Command(OnPageScreenshotCommandExecute);
         }
 
-        void PageInformationPanelViewModel_Initialized(object sender, System.EventArgs e)
+        void PageInformationPanelViewModel_Initialized(object sender, EventArgs e)
         {
             Length = InitialLength;
             Location = PanelLocations.Right;
@@ -107,7 +106,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(CurrentPage).First(x => (x is CLPPageViewModel) && !(x as CLPPageViewModel).IsPagePreview);
             var pageView = CLPServiceAgent.Instance.GetViewFromViewModel(pageViewModel);
-            var thumbnail = CLPServiceAgent.Instance.UIElementToImageByteArray(pageView as UIElement, CurrentPage.Width);
+            var thumbnail = CLPServiceAgent.Instance.UIElementToImageByteArray(pageView as UIElement, CurrentPage.Width, dpi:300);
 
             var bitmapImage = new BitmapImage();
             bitmapImage.BeginInit();

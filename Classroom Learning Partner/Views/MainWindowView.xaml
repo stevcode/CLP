@@ -181,7 +181,7 @@
         <Grid Grid.Row="0"
               Grid.RowSpan="3"
               Background="Gray"
-              Opacity="0.5"
+              Opacity="0.9"
               HorizontalAlignment="Stretch"
               VerticalAlignment="Stretch"
               Visibility="{Binding IsConvertingToPDF, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
@@ -220,7 +220,7 @@
         <Grid Grid.Row="0"
               Grid.RowSpan="3"
               Background="Gray"
-              Opacity="0.5"
+              Opacity="0.9"
               HorizontalAlignment="Stretch"
               VerticalAlignment="Stretch"
               Visibility="{Binding IsPenDownActivated, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
