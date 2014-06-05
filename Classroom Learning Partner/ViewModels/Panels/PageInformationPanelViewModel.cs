@@ -1,4 +1,10 @@
-﻿using Catel.Data;
+﻿using System;
+using System.IO;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Windows;
+using System.Windows.Media.Imaging;
+using Catel.Data;
 using Catel.MVVM;
 using CLP.Entities;
 
@@ -99,7 +105,34 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnPageScreenshotCommandExecute()
         {
+            var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(CurrentPage).First(x => (x is CLPPageViewModel) && !(x as CLPPageViewModel).IsPagePreview);
+            var pageView = (UIElement)CLPServiceAgent.Instance.GetViewFromViewModel(pageViewModel);
+            var thumbnail = CLPServiceAgent.Instance.UIElementToImageByteArray(pageView, CurrentPage.Width);
+
+            var bitmapImage = new BitmapImage();
+            bitmapImage.BeginInit();
+            bitmapImage.CacheOption = BitmapCacheOption.OnDemand;
+            bitmapImage.StreamSource = new MemoryStream(thumbnail);
+            bitmapImage.EndInit();
+            bitmapImage.Freeze();
+
+
             
+            var thumbnailsFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Thumbnails");
+            var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, "Page - " + CurrentPage.PageNumber + ";" + CurrentPage.DifferentiationLevel + ";" + CurrentPage.VersionIndex + ";" + DateTime.Now.ToString("yyyy-M-d,hh.mm.ss") + ".png");
+
+            if(!Directory.Exists(thumbnailsFolderPath))
+            {
+                Directory.CreateDirectory(thumbnailsFolderPath);
+            }
+
+            var pngEncoder = new PngBitmapEncoder();
+            pngEncoder.Frames.Add(BitmapFrame.Create(bitmapImage));
+            using(var outputStream = new MemoryStream())
+            {
+                pngEncoder.Save(outputStream);
+                File.WriteAllBytes(thumbnailFilePath, outputStream.ToArray());
+            }
         }
 
         #endregion //Commands
