@@ -106,8 +106,8 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnPageScreenshotCommandExecute()
         {
             var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(CurrentPage).First(x => (x is CLPPageViewModel) && !(x as CLPPageViewModel).IsPagePreview);
-            var pageView = (UIElement)CLPServiceAgent.Instance.GetViewFromViewModel(pageViewModel);
-            var thumbnail = CLPServiceAgent.Instance.UIElementToImageByteArray(pageView, CurrentPage.Width);
+            var pageView = CLPServiceAgent.Instance.GetViewFromViewModel(pageViewModel);
+            var thumbnail = CLPServiceAgent.Instance.UIElementToImageByteArray(pageView as UIElement, CurrentPage.Width);
 
             var bitmapImage = new BitmapImage();
             bitmapImage.BeginInit();

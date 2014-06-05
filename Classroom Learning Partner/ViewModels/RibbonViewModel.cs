@@ -915,7 +915,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                     await Task.Delay(500);
 
-                    var screenshot = CLPServiceAgent.Instance.UIElementToImageByteArray(currentPageView as UIElement, dpi:300);
+                    var screenshot = CLPServiceAgent.Instance.UIElementToImageByteArray(currentPageView as UIElement, page.Width, dpi:300);
                     var bitmapImage = new BitmapImage();
                     bitmapImage.BeginInit();
                     bitmapImage.CacheOption = BitmapCacheOption.OnDemand;
@@ -928,8 +928,28 @@ namespace Classroom_Learning_Partner.ViewModels
                     using(var outputStream = new MemoryStream())
                     {
                         pngEncoder.Save(outputStream);
+
+                        var thumbnailsFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Thumbnails Of PDF");
+                        var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, "Page - " + CurrentPage.PageNumber + ";" + CurrentPage.DifferentiationLevel + ";" + CurrentPage.VersionIndex + ";" + DateTime.Now.ToString("yyyy-M-d,hh.mm.ss") + ".png");
+                        if(!Directory.Exists(thumbnailsFolderPath))
+                        {
+                            Directory.CreateDirectory(thumbnailsFolderPath);
+                        }
+                        File.WriteAllBytes(thumbnailFilePath, outputStream.ToArray());
+
                         var image = System.Drawing.Image.FromStream(outputStream);
                         var pdfImage = iTextSharp.text.Image.GetInstance(image, ImageFormat.Png);
+                        var isPortrait = page.Height >= page.Width;
+                        if(!isPortrait)
+                        {
+                            pdfImage.RotationDegrees = 270f;
+                        }
+
+                        pdfImage.ScaleToFit(doc.PageSize.Width - 74f, doc.PageSize.Height - 74f);
+
+                        pdfImage.Border = Rectangle.BOX;
+                        pdfImage.BorderColor = BaseColor.BLACK;
+                        pdfImage.BorderWidth = 1f;
                         doc.NewPage();
                         doc.Add(pdfImage);
                     }
@@ -941,13 +961,6 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             App.MainWindowViewModel.IsConvertingToPDF = false;
-        }
-
-        private TaskCompletionSource<bool> tcs; 
-
-        private void Size_Changed(object s, EventArgs e)
-        {
-            tcs.SetResult(true);
         }
 
         /// <summary>

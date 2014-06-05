@@ -71,12 +71,14 @@ namespace Classroom_Learning_Partner
 
         public byte[] UIElementToImageByteArray(UIElement source, double imageWidth = -1.0, double scale = 1.0, double dpi = 96, BitmapEncoder encoder = null)
         {
+            const double SCREEN_DPI = 96.0;
             var actualWidth = imageWidth <= 0.0 ? source.RenderSize.Width : imageWidth;
             var actualHeight = actualWidth * source.RenderSize.Height / source.RenderSize.Width;
 
-            var renderWidth = actualWidth * scale;
-            var renderHeight = actualHeight * scale;
+            var renderWidth = actualWidth * scale * dpi / SCREEN_DPI;
+            var renderHeight = actualHeight * scale * dpi / SCREEN_DPI;
 
+            // TODO: DPI seems to affect scaling, so test and compensate for that if you use DPI
             var renderTarget = new RenderTargetBitmap((int)renderWidth, (int)renderHeight, dpi, dpi, PixelFormats.Pbgra32);
             var sourceBrush = new VisualBrush(source);
 
