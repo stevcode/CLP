@@ -137,7 +137,7 @@
             </Rectangle>
 
             <!--The Tiles-->
-            <ItemsControl ItemsSource="{Binding TileOffsets}"
+            <ItemsControl ItemsSource="{Binding TileColors}"
                           AlternationCount="100">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>

@@ -113,18 +113,6 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData VerticalDivisionsProperty = RegisterProperty("VerticalDivisions", typeof(ObservableCollection<CLPArrayDivision>));
 
         /// <summary>
-        /// True if FFC is aligned so that fuzzy edge is on the right
-        /// </summary>
-        [ViewModelToModel("PageObject")]
-        public bool IsHorizontallyAligned
-        {
-            get { return GetValue<bool>(IsHorizontallyAlignedProperty); }
-            set { SetValue(IsHorizontallyAlignedProperty, value); }
-        }
-
-        public static readonly PropertyData IsHorizontallyAlignedProperty = RegisterProperty("IsHorizontallyAligned", typeof(bool));
-
-        /// <summary>
         /// Value of the Dividend.
         /// </summary>
         [ViewModelToModel("PageObject")]
@@ -236,7 +224,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 newArrayHeight = (ArrayWidth + e.HorizontalChange) / Columns * Rows;
             }
 
-            //TODO Liz - make min dimension depend on horizontal vs vertical alignment
             const double MIN_HEIGHT = 150.0; 
             const double MIN_WIDTH = 50.0;
 
@@ -261,7 +248,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 newSquareSize = newArrayHeight / Rows;
                 newArrayWidth = newSquareSize * Columns;
             }
-            //TODO Liz - update this when rotating is enabled
+
             if(newArrayWidth + clpArray.LargeLabelLength + clpArray.LabelLength + XPosition > clpArray.ParentPage.Width)
             {
                 newArrayWidth = clpArray.ParentPage.Width - XPosition - clpArray.LargeLabelLength - clpArray.LabelLength;

@@ -127,17 +127,6 @@ namespace CLP.Entities
 
         public static readonly PropertyData DividendProperty = RegisterProperty("Dividend", typeof(int), 1);
 
-        /// <summary>
-        /// Orientation of the <see cref="FuzzyFactorCard" />.
-        /// </summary>
-        public bool IsHorizontallyAligned
-        {
-            get { return GetValue<bool>(IsHorizontallyAlignedProperty); }
-            set { SetValue(IsHorizontallyAlignedProperty, value); }
-        }
-
-        public static readonly PropertyData IsHorizontallyAlignedProperty = RegisterProperty("IsHorizontallyAligned", typeof(bool), true);
-
         #region Navigation Properties
 
         /// <summary>
@@ -269,13 +258,11 @@ namespace CLP.Entities
 
         public override void SizeArrayToGridLevel(double toSquareSize = -1, bool recalculateDivisions = true)
         {
-            var rightLabelLength = IsHorizontallyAligned ? LargeLabelLength : LabelLength;
-            var bottomLabelLength = IsHorizontallyAligned ? LabelLength : LargeLabelLength;
             var initialSquareSize = 45.0;
             if(toSquareSize <= 0)
             {
-                while(XPosition + LabelLength + rightLabelLength + initialSquareSize * Columns >= ParentPage.Width ||
-                      YPosition + LabelLength + bottomLabelLength + initialSquareSize * Rows >= ParentPage.Height)
+                while(XPosition + LabelLength + LargeLabelLength + initialSquareSize * Columns >= ParentPage.Width ||
+                      YPosition + 2 * LabelLength + initialSquareSize * Rows >= ParentPage.Height)
                 {
                     initialSquareSize = Math.Abs(initialSquareSize - 45.0) < .0001 ? 22.5 : initialSquareSize / 4 * 3;
                 }
@@ -285,8 +272,8 @@ namespace CLP.Entities
                 initialSquareSize = toSquareSize;
             }
 
-            Height = (initialSquareSize * Rows) + LabelLength + bottomLabelLength;
-            Width = (initialSquareSize * Columns) + LabelLength + rightLabelLength;
+            Height = (initialSquareSize * Rows) + 2 * LabelLength;
+            Width = (initialSquareSize * Columns) + LabelLength + LargeLabelLength;
 
             if(recalculateDivisions)
             {
@@ -424,55 +411,50 @@ namespace CLP.Entities
                                                                                                                                                 });
             numberOfBlackTiles = Math.Min(numberOfBlackTiles, CurrentRemainder);
 
-            if(RemainderTiles.TileOffsets == null)
+            if(RemainderTiles.TileColors == null)
             {
-                RemainderTiles.TileOffsets = new ObservableCollection<string>();
+                RemainderTiles.TileColors = new ObservableCollection<string>();
             }
             else
             {
-                RemainderTiles.TileOffsets.Clear();
+                RemainderTiles.TileColors.Clear();
             }
             for(var i = 0; i < CurrentRemainder - numberOfBlackTiles; i++)
             {
-                RemainderTiles.TileOffsets.Add("DodgerBlue");
+                RemainderTiles.TileColors.Add("DodgerBlue");
             }
             for(var i = 0; i < numberOfBlackTiles; i++)
             {
-                RemainderTiles.TileOffsets.Add("Black");
+                RemainderTiles.TileColors.Add("Black");
             }
 
-            RemainderTiles.Height = Math.Ceiling(RemainderTiles.TileOffsets.Count / 5.0) * 61.0;
+            RemainderTiles.Height = Math.Ceiling(RemainderTiles.TileColors.Count / 5.0) * 61.0;
             RemainderTiles.Width = 305.0;
         }
 
         public void SnapInArray(int value)
         {
-            if(IsHorizontallyAligned)
+            var position = LastDivisionPosition + value * (ArrayHeight / Rows);
+            var divAbove = FindDivisionAbove(position, VerticalDivisions);
+            var divBelow = FindDivisionBelow(position, VerticalDivisions);
+
+            CLPArrayDivision topDiv;
+            if(divAbove == null)
             {
-                var position = LastDivisionPosition + value * (ArrayHeight / Rows);
-                var divAbove = FindDivisionAbove(position, VerticalDivisions);
-                var divBelow = FindDivisionBelow(position, VerticalDivisions);
-
-                CLPArrayDivision topDiv;
-                if(divAbove == null)
-                {
-                    topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, 0, position, value);
-                }
-                else
-                {
-                    topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, divAbove.Position, position - divAbove.Position, value);
-                    VerticalDivisions.Remove(divAbove);
-                }
-                VerticalDivisions.Add(topDiv);
-                CLPArrayDivision bottomDiv;
-                bottomDiv = divBelow == null
-                                ? new CLPArrayDivision(ArrayDivisionOrientation.Vertical, position, ArrayWidth - position, 0)
-                                : new CLPArrayDivision(ArrayDivisionOrientation.Vertical, position, divBelow.Position - position, 0);
-                VerticalDivisions.Add(bottomDiv);
-                UpdateRemainderRegion();
+                topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, 0, position, value);
             }
-
-            //TODO Liz: Add ability to snap in arrays when rotated
+            else
+            {
+                topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, divAbove.Position, position - divAbove.Position, value);
+                VerticalDivisions.Remove(divAbove);
+            }
+            VerticalDivisions.Add(topDiv);
+            CLPArrayDivision bottomDiv;
+            bottomDiv = divBelow == null
+                            ? new CLPArrayDivision(ArrayDivisionOrientation.Vertical, position, ArrayWidth - position, 0)
+                            : new CLPArrayDivision(ArrayDivisionOrientation.Vertical, position, divBelow.Position - position, 0);
+            VerticalDivisions.Add(bottomDiv);
+            UpdateRemainderRegion();
 
             RaisePropertyChanged("GroupsSubtracted");
             RaisePropertyChanged("CurrentRemainder");
