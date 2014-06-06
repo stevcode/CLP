@@ -7,7 +7,7 @@
                    xmlns:app="clr-namespace:Classroom_Learning_Partner">
     
     <UserControl.Resources>
-        <conv:ItemsControlItemIndexConverter x:Key="ItemsControlItemIndexConverter" />
+        <conv:NumberIncrementConverter x:Key="NumberIncrementConverter" />
         <conv:EnumToBoolConverter x:Key="EnumToBoolConverter" />
     </UserControl.Resources>
 
@@ -28,6 +28,7 @@
         </Grid.RowDefinitions>
 
         <ItemsControl x:Name="ItemsControl"
+                      AlternationCount="100"
                       Grid.Row="0"
                       Background="Transparent"
                       ItemsSource="{Binding Pages}"
@@ -112,7 +113,7 @@
                                                  StrokeThickness="3"
                                                  VerticalAlignment="Stretch"
                                                  HorizontalAlignment="Stretch" />
-                                        <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Converter={StaticResource ItemsControlItemIndexConverter}}"
+                                        <TextBlock Text="{Binding TemplatedParent.(ItemsControl.AlternationIndex), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource NumberIncrementConverter}, ConverterParameter=1}"
                                                    Foreground="{StaticResource MainColor}"
                                                    FontWeight="Bold"
                                                    FontSize="20"

@@ -245,6 +245,7 @@
     <Compile Include="Converters\IntToVisibilityConverter.cs" />
     <Compile Include="Converters\IsNullConverter.cs" />
     <Compile Include="Converters\ItemsControlItemIndexConverter.cs" />
+    <Compile Include="Converters\NumberIncrementConverter.cs" />
     <Compile Include="Converters\ShouldUseThumbnailConverter.cs" />
     <Compile Include="Converters\PersonToSubmissionsCountConverter.cs" />
     <Compile Include="Converters\PageMatchToColorConverter.cs" />
