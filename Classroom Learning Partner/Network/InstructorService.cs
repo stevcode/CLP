@@ -25,7 +25,7 @@ namespace Classroom_Learning_Partner
         void CollectStudentNotebook(string zippedNotebook, string studentName);
 
         [OperationContract]
-        string StudentLogin(string studentID, string machineName, string machineAddress, bool useClassPeriod = true);
+        string StudentLogin(string studentName, string studentID, string machineName, string machineAddress, bool useClassPeriod = true);
 
         [OperationContract]
         void StudentLogout(string studentID);
@@ -173,15 +173,17 @@ namespace Classroom_Learning_Partner
                                   });
         }
 
-        public string StudentLogin(string studentID, string machineName, string machineAddress, bool useClassPeriod = true)
+        public string StudentLogin(string studentName, string studentID, string machineName, string machineAddress, bool useClassPeriod = true)
         {
             var task = Task<string>.Factory.StartNew(() =>
             {
                 var student = App.MainWindowViewModel.AvailableUsers.FirstOrDefault(x => x.ID == studentID);
                 if(student == null)
                 {
-                    Logger.Instance.WriteToLog("Failed to log in student. student is null.");
-                    return string.Empty;
+                    student = new Person();
+                    student.ID = studentID;
+                    student.FullName = studentName;
+                    student.IsStudent = true;
                 }
                 student.CurrentMachineAddress = machineAddress;
                 student.CurrentMachineName = machineName;

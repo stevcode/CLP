@@ -45,7 +45,11 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command AllowLoginCommand { get; private set; }
 
-        private void OnAllowLoginCommandExecute() { IsAllowLoginPromptActivated = false; }
+        private void OnAllowLoginCommandExecute()
+        {
+            App.MainWindowViewModel.AvailableUsers.Add(Person.Guest);
+            IsAllowLoginPromptActivated = false;
+        }
 
         /// <summary>
         /// Gets the LogInCommand command.
@@ -76,7 +80,8 @@ namespace Classroom_Learning_Partner.ViewModels
                            {
                                try
                                {
-                                   var zippedNotebook = App.Network.InstructorProxy.StudentLogin(App.MainWindowViewModel.CurrentUser.ID,
+                                   var zippedNotebook = App.Network.InstructorProxy.StudentLogin(App.MainWindowViewModel.CurrentUser.FullName,
+                                                                                                 App.MainWindowViewModel.CurrentUser.ID,
                                                                                                  App.Network.CurrentMachineName,
                                                                                                  App.Network.CurrentMachineAddress);
                                    if(String.IsNullOrEmpty(zippedNotebook))
