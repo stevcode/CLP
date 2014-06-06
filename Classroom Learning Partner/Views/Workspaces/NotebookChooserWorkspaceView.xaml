@@ -11,7 +11,8 @@
     </UserControl.Resources>
 
     <ListBox ItemsSource="{Binding NotebookNames}"
-             ScrollViewer.HorizontalScrollBarVisibility="Hidden">
+             ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+             ManipulationBoundaryFeedback="UIElement_OnManipulationBoundaryFeedback">
         <ListBox.ItemTemplate>
             <DataTemplate>
                 <Button Command="{Binding DataContext.SelectNotebookCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:NotebookChooserWorkspaceView}}}"

@@ -60,7 +60,8 @@
                          VirtualizingPanel.IsVirtualizingWhenGrouping="True"
                          VirtualizingStackPanel.CacheLength="2,3"
                          VirtualizingStackPanel.CacheLengthUnit="Page"
-                         VirtualizingStackPanel.ScrollUnit="Pixel">
+                         VirtualizingStackPanel.ScrollUnit="Pixel"
+                         ManipulationBoundaryFeedback="PagesListBox_OnManipulationBoundaryFeedback">
 
                     <ListBox.ItemTemplate>
                         <DataTemplate>

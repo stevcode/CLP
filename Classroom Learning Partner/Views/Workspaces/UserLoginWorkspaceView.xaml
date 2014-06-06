@@ -6,12 +6,13 @@
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources"
                    Background="CadetBlue">
     <UserControl.Resources>
-        <conv:UserNameGroupTrimConverter x:Key="UserNameGroupTrimConverter" />
+        
     </UserControl.Resources>
 
     <Grid x:Name="grid">
         <ListBox ItemsSource="{Binding MainWindowViewModel.AvailableUsers, Source={x:Static Application.Current}}"
-                 ScrollViewer.HorizontalScrollBarVisibility="Hidden">
+                 ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                 ManipulationBoundaryFeedback="UIElement_OnManipulationBoundaryFeedback">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Button Command="{Binding DataContext.LogInCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type views:UserLoginWorkspaceView}}}"

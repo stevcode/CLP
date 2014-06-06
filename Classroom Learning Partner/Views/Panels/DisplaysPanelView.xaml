@@ -168,7 +168,8 @@
                      SelectedValue="{Binding CurrentDisplay}"
                      ItemContainerStyle="{StaticResource DisplaySidebarContainer}"
                      SelectionMode="Single"
-                     extenders:ListBoxExtenders.AutoScrollToCurrentItem="True">
+                     extenders:ListBoxExtenders.AutoScrollToCurrentItem="True"
+                     ManipulationBoundaryFeedback="UIElement_OnManipulationBoundaryFeedback">
 
                 <ListBox.ItemTemplate>
                     <DataTemplate>

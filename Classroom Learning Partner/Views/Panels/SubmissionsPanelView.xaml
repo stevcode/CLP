@@ -280,7 +280,8 @@
                          ItemsSource="{Binding FilteredSubmissions.View}"
                          SelectedValue="{Binding CurrentPage}"
                          ItemContainerStyle="{StaticResource PageSidebarContainer}"
-                         SelectionMode="Single">
+                         SelectionMode="Single"
+                         ManipulationBoundaryFeedback="UIElement_OnManipulationBoundaryFeedback">
                     <ListBox.ItemsPanel>
                         <ItemsPanelTemplate>
                             <WrapPanel />

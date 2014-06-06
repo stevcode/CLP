@@ -63,7 +63,8 @@
                      SelectedValue="{Binding CurrentPage}"
                      ItemContainerStyle="{StaticResource PageContainer}"
                      SelectionMode="Single"
-                     extenders:ListBoxExtenders.AutoScrollToCurrentItem="True">
+                     extenders:ListBoxExtenders.AutoScrollToCurrentItem="True"
+                     ManipulationBoundaryFeedback="UIElement_OnManipulationBoundaryFeedback">
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel Orientation="Horizontal" />

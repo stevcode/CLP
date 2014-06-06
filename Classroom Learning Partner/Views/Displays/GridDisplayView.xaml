@@ -30,7 +30,8 @@
         <ItemsControl x:Name="ItemsControl"
                       Grid.Row="0"
                       Background="Transparent"
-                      ItemsSource="{Binding Pages}">
+                      ItemsSource="{Binding Pages}"
+                      ManipulationBoundaryFeedback="ItemsControl_OnManipulationBoundaryFeedback">
 
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
