@@ -179,6 +179,15 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData NumberOfDistinctSubmissionsProperty = RegisterProperty("NumberOfDistinctSubmissions", typeof(int));
 
+        [ViewModelToModel("Page")]
+        public PageHistory History
+        {
+            get { return GetValue<PageHistory>(HistoryProperty); }
+            set { SetValue(HistoryProperty, value); }
+        }
+
+        public static readonly PropertyData HistoryProperty = RegisterProperty("History", typeof(PageHistory));
+
         #endregion //Model
 
         #region Properties

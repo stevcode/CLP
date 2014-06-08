@@ -58,6 +58,7 @@ namespace CLP.Entities
             CreationDate = DateTime.Now;
             ID = Guid.NewGuid().ToCompactID();
             InitialAspectRatio = Width / Height;
+            History = new PageHistory();
 
             Submissions.CollectionChanged += Submissions_CollectionChanged;
         }
@@ -75,6 +76,7 @@ namespace CLP.Entities
             Height = height;
             Width = width;
             InitialAspectRatio = Width / Height;
+            History = new PageHistory();
 
             Submissions.CollectionChanged += Submissions_CollectionChanged;
         }
@@ -451,7 +453,7 @@ namespace CLP.Entities
             set { SetValue(HistoryProperty, value); }
         }
 
-        public static readonly PropertyData HistoryProperty = RegisterProperty("History", typeof(PageHistory), () => new PageHistory());
+        public static readonly PropertyData HistoryProperty = RegisterProperty("History", typeof(PageHistory));
 
         #region Calculated Properties
 

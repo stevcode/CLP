@@ -78,7 +78,6 @@ namespace Classroom_Learning_Partner
             var renderWidth = actualWidth * scale * dpi / SCREEN_DPI;
             var renderHeight = actualHeight * scale * dpi / SCREEN_DPI;
 
-            // TODO: DPI seems to affect scaling, so test and compensate for that if you use DPI
             var renderTarget = new RenderTargetBitmap((int)renderWidth, (int)renderHeight, dpi, dpi, PixelFormats.Pbgra32);
             var sourceBrush = new VisualBrush(source);
 
