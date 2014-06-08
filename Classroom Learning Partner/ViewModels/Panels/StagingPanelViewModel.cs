@@ -291,13 +291,15 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public void AppendStudentNotebook(Person student)
         {
-            foreach(var page in App.MainWindowViewModel.OpenNotebooks.First(x => x.Name == App.MainWindowViewModel.CurrentNotebookName).Pages)
+            //TODO: There are 2 open notebooks in the normal case, AUTHOR and the teacher's; we 
+            // want the teacher's.  Probably there's a better way to select that one than "Last".
+            foreach(var page in App.MainWindowViewModel.OpenNotebooks.Last(x => x.Name == App.MainWindowViewModel.CurrentNotebookName).Pages)
             {
                 AppendCollectionOfPagesToStage(page.Submissions, x => x.OwnerID == student.ID);
             }
 
             //TODO: keep CurrentSort and skip this if already sorted that way.
-            ApplySortAndGroupByName();
+            ApplySortAndGroupByPageNumber();
         }
 
         public void SetStudentNotebook(Person student)
