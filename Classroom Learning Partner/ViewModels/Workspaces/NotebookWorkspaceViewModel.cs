@@ -38,8 +38,12 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             SingleDisplay = new SingleDisplayViewModel(notebook);
 
-            NotebookPagesPanel = new NotebookPagesPanelViewModel(notebook);
-            StudentWorkPanel = new StudentWorkPanelViewModel(notebook);
+            StagingPanel = new StagingPanelViewModel(notebook)
+                           {
+                               IsVisible = false
+                           };
+            NotebookPagesPanel = new NotebookPagesPanelViewModel(notebook, StagingPanel);
+            StudentWorkPanel = new StudentWorkPanelViewModel(notebook, StagingPanel);
             ProgressPanel = new ProgressPanelViewModel(notebook);
             if(App.MainWindowViewModel.Ribbon.CurrentLeftPanel == Panels.Progress)
             {
@@ -239,6 +243,17 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData SubmissionHistoryPanelProperty = RegisterProperty("SubmissionHistoryPanel", typeof(SubmissionHistoryPanelViewModel));
+
+        /// <summary>
+        /// Staging Panel for submissions
+        /// </summary>
+        public StagingPanelViewModel StagingPanel
+        {
+            get { return GetValue<StagingPanelViewModel>(StagingPanelProperty); }
+            set { SetValue(StagingPanelProperty, value); }
+        }
+
+        public static readonly PropertyData StagingPanelProperty = RegisterProperty("StagingPanel", typeof(StagingPanelViewModel)); 
          
         #endregion //Panels
 

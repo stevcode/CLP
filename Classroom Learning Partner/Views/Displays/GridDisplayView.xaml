@@ -145,7 +145,7 @@
                                               Stroke="Red"
                                               StrokeThickness="3"
                                               Margin="5"
-                                              Data="M0,0 L1,1 M0,1 L1,0" />
+                                              Data="M0,0.5 L1,0.5" />
                                     </Grid>
                                 </ControlTemplate>
                             </Button.Template>

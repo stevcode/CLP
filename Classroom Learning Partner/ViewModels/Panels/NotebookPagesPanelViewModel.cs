@@ -1,14 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using Catel.Data;
-using Path = Catel.IO.Path;
 using Catel.MVVM;
 using CLP.Entities;
-using System.IO;
-using System.Windows;
-using System.Windows.Media.Imaging;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -19,21 +13,19 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="NotebookPagesPanelViewModel" /> class.
         /// </summary>
-        public NotebookPagesPanelViewModel(Notebook notebook)
+        public NotebookPagesPanelViewModel(Notebook notebook, StagingPanelViewModel stagingPanel)
         {
             Notebook = notebook;
             Initialized += NotebookPagesPanelViewModel_Initialized;
             
             SetCurrentPageCommand = new Command<CLPPage>(OnSetCurrentPageCommandExecute);
             ShowSubmissionsCommand = new Command<CLPPage>(OnShowSubmissionsCommandExecute);
+            AddPageToStageCommand = new Command<CLPPage>(OnAddPageToStageCommandExecute);
 
-            StagingPanel = new StagingPanelViewModel(notebook)
-                           {
-                               IsVisible = false
-                           };
+            StagingPanel = stagingPanel;
         }
 
-        void NotebookPagesPanelViewModel_Initialized(object sender, System.EventArgs e)
+        void NotebookPagesPanelViewModel_Initialized(object sender, EventArgs e)
         {
             Length = InitialLength;
         }
@@ -98,13 +90,13 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Staging Panel for submissions
         /// </summary>
-        public IPanel StagingPanel
+        public StagingPanelViewModel StagingPanel
         {
-            get { return GetValue<IPanel>(StagingPanelProperty); }
+            get { return GetValue<StagingPanelViewModel>(StagingPanelProperty); }
             set { SetValue(StagingPanelProperty, value); }
         }
 
-        public static readonly PropertyData StagingPanelProperty = RegisterProperty("StagingPanel", typeof(IPanel)); 
+        public static readonly PropertyData StagingPanelProperty = RegisterProperty("StagingPanel", typeof(StagingPanelViewModel)); 
 
         #endregion //Bindings
 
@@ -124,15 +116,18 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnShowSubmissionsCommandExecute(CLPPage page)
         {
-            var stagingPanel = StagingPanel as StagingPanelViewModel;
-            if(stagingPanel == null)
-            {
-                return;
-            }
+            StagingPanel.IsVisible = true;
+            StagingPanel.SetSubmissionsForPage(page);
+        }
 
-            stagingPanel.IsVisible = true;
+        /// <summary>
+        /// Adds individual page to the Staging Panel
+        /// </summary>
+        public Command<CLPPage> AddPageToStageCommand { get; private set; }
 
-            stagingPanel.SetSubmissionsForPage(page);
+        private void OnAddPageToStageCommandExecute(CLPPage page)
+        {
+            StagingPanel.AddPageToStage(page);
         }
 
         #endregion //Commands

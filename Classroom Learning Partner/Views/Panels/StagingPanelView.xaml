@@ -4,7 +4,8 @@
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views">
+                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
+                   xmlns:entities="clr-namespace:CLP.Entities;assembly=CLP.Entities">
 
     <UserControl.Resources>
         <!-- Converters -->
@@ -12,6 +13,7 @@
         <conv:PanelLocationToThicknessConverter x:Key="PanelLocationToThicknessConverter" />
         <conv:ItemSelectedToColorConverter x:Key="PageOrDisplaySelectionColorConverter" />
         <conv:ShouldUseThumbnailConverter x:Key="ShouldUseThumbnailConverter" />
+        <conv:EnumToBoolConverter x:Key="EnumToBoolConverter" />
         
         <!-- Style to override ListBoxItem selection visuals for Pages -->
         <Style x:Key="ListBoxItemBlankStyle"
@@ -250,13 +252,68 @@
                                     </i:Interaction.Triggers>
                                 </Rectangle>
                                 
-                                <Grid Grid.Row="1"
-                                      Grid.Column="1"
-                                      Margin="5 5 5 0"
-                                      HorizontalAlignment="Right"
-                                      VerticalAlignment="Bottom">
+                                <Button Grid.Column="1"
+                                        Grid.Row="1"
+                                        Width="30"
+                                        Height="30"
+                                        Margin="-20 0 0 -20"
+                                        Cursor="Hand"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Top"
+                                        Command="{Binding DataContext.RemovePageFromStageCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                        CommandParameter="{Binding}">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="{x:Type Button}">
+                                            <Grid>
+                                                <Ellipse Fill="White"
+                                                         Stroke="Black"
+                                                         StrokeThickness="3"
+                                                         VerticalAlignment="Stretch"
+                                                         HorizontalAlignment="Stretch" />
+                                                <Path Stretch="Fill"
+                                                      Stroke="Red"
+                                                      StrokeThickness="3"
+                                                      Margin="5"
+                                                      Data="M0,0.5 L1,0.5" />
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                                
+                                <StackPanel Grid.Column="1"
+                                            Height="16"
+                                            IsHitTestVisible="False"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Bottom"
+                                            Orientation="Horizontal">
                                     
-                                </Grid>
+                                    <Image Height="16"
+                                           Width="16"
+                                           IsHitTestVisible="False"
+                                           Source="pack://application:,,,/Resources/Images/AnimationIndicator16.png">
+                                        <Image.Style>
+                                            <Style TargetType="Image">
+                                                <Setter Property="Visibility"
+                                                        Value="Collapsed" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding PageType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static entities:PageTypes.Animation}}"
+                                                                 Value="True">
+                                                        <Setter Property="Visibility"
+                                                                Value="Visible" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Image.Style>
+                                    </Image>
+                                    
+                                </StackPanel>
+                                
+                                <StackPanel Grid.Row="1"
+                                            Grid.Column="1"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Bottom">
+                                    
+                                </StackPanel>
 
                             </Grid>
                         </DataTemplate>
