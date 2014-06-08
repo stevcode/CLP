@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Entities;
@@ -25,7 +26,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData StudentProperty = RegisterProperty("Student", typeof(Person));
 
         /// <summary>
-        /// The page
+        /// The page to display
         /// </summary>
         public CLPPage Page
         {
@@ -34,5 +35,14 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData PageProperty = RegisterProperty("Page", typeof(CLPPage));
+
+        public List<CLPPage> AllPages
+        {
+            get { return GetValue<List<CLPPage>>(AllPagesProperty); }
+            set { SetValue(AllPagesProperty, value); }
+        }
+
+        public static readonly PropertyData AllPagesProperty = RegisterProperty("AllPages", typeof(List<CLPPage>), () => new List<CLPPage>());
+
     }
 }

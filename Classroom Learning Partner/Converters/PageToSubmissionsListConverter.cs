@@ -20,14 +20,8 @@ namespace Classroom_Learning_Partner.Converters
             {
                 studentList = App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.StudentList;
             }
-            else
-            {
-                for(int i = 1; i <= 10; i++)
-                {
-                    studentList.Add(Person.TestSubmitter);
-                }
-            }
 
+            var allSubmissions = new List<CLPPage>();
             var latestSubmissions = new List<CLPPage>();
             if(pageSubmissions == null)
             {
@@ -43,14 +37,18 @@ namespace Classroom_Learning_Partner.Converters
                 {
                     latestSubmissions.Remove(submissionFromSameStudent);
                 }
-                
+
+                allSubmissions.Add(pageSubmission);
                 latestSubmissions.Add(pageSubmission);
             }
 
             foreach(var student in studentList)
             {
-                var foundSubmission = latestSubmissions.FirstOrDefault(pageSubmission => pageSubmission.OwnerID == student.ID);
-                submissionsWithBlanks.Add(new StudentProgressInfo(student, foundSubmission));
+                var thisStudentLatestSubmission = latestSubmissions.FirstOrDefault(pageSubmission => pageSubmission.OwnerID == student.ID);
+                var thisStudentAllSubmissions = allSubmissions.FindAll(pageSubmission => pageSubmission.OwnerID == student.ID);
+                StudentProgressInfo studentData = new StudentProgressInfo(student, thisStudentLatestSubmission);
+                studentData.AllPages = thisStudentAllSubmissions;
+                submissionsWithBlanks.Add(studentData);
             }
 
             return submissionsWithBlanks;

@@ -293,7 +293,7 @@
                                                     <Run Text="{Binding FullName}" />
                                                 </TextBlock>
                                             </StackPanel>
-                                            <TextBlock FontWeight="Bold" HorizontalAlignment="Center">
+                                            <!--<TextBlock FontWeight="Bold" HorizontalAlignment="Center">
                                                 <Run x:Name="SubmissionsCount">
                                                     <Run.Text>
                                                         <MultiBinding Converter="{StaticResource PersonToSubmissionsCountConverter}">
@@ -304,12 +304,12 @@
                                                 </Run>
                                                 <Run Text="/" />
                                                 <Run Text="{Binding Mode=OneWay, ElementName=StudentNames, Path=DataContext.CurrentPages.Count}" />
-                                            </TextBlock>
-                                            <Button HorizontalAlignment="Center"
+                                            </TextBlock>-->
+                                            <Button Margin="10 0 0 0"
                                                     x:Name="WholeNotebookButton"
                                                     Command="{Binding DataContext.StageStudentNotebookCommand, ElementName=StudentNames}"
                                                     CommandParameter="{Binding}">
-                                                <Image Source="pack://application:,,,/Resources/Images/OpenNotebook16.png" />
+                                                <Image Source="pack://application:,,,/Resources/Images/OpenNotebook32.png" />
                                             </Button>
                                         </StackPanel>
                                     </StackPanel>
@@ -337,11 +337,7 @@
                                                 <RowDefinition Height="*"/>
                                                 <RowDefinition Height="Auto"/>
                                             </Grid.RowDefinitions>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="25"/>
-                                            </Grid.ColumnDefinitions>
-                                            <Control Grid.Row="0" Grid.Column="0" Margin="5">
+                                            <Control Grid.Row="0" Margin="5">
                                                 <Control.Resources>
                                                     <ControlTemplate x:Key="FirstPageThumbnailTemplate">
                                                         <Image Source="{Binding Page.PageThumbnail, Mode=OneWay}"/>
@@ -389,7 +385,7 @@
                                                     </Style>
                                                 </Control.Style>
                                             </Control>
-                                            <Rectangle Grid.Row="0" Grid.Column="0" Margin="0" Fill="Transparent" StrokeThickness="2">
+                                            <Rectangle Grid.Row="0" Margin="0" Fill="Transparent" StrokeThickness="2">
                                                 <Rectangle.Stroke>
                                                     <MultiBinding Converter="{StaticResource PageMatchToColorConverter}">
                                                         <Binding ElementName="FirstPageSubmissions" Path="DataContext.CurrentPage"/>
@@ -404,13 +400,30 @@
                                                     </i:EventTrigger>
                                                 </i:Interaction.Triggers>
                                             </Rectangle>
-                                            <Button Grid.Row="0" Grid.Column="1" VerticalAlignment="Center"
-                                                    x:Name="FirstPagePlusButton"
-                                                    Command="{Binding DataContext.AppendSingleSubmissionCommand, ElementName=FirstPageSubmissions}"
-                                                    CommandParameter="{Binding Page}">
-                                                    <Image Source="pack://application:,,,/Resources/Images/GrayPlus16.png" />
+                                            <Button Grid.Row="0" Width="30"
+                                                    Height="30" Margin="-20 0 0 -20"
+                                                    Cursor="Hand" HorizontalAlignment="Right"
+                                                    VerticalAlignment="Top"
+                                                    Command="{Binding DataContext.AddPageToStageCommand, ElementName=FirstPageSubmissions}"
+                                                    CommandParameter="{Binding}"
+                                                    Visibility="{Binding DataContext.StagingPanel.IsVisible, ElementName=FirstPageSubmissions}">
+                                                <Button.Template>
+                                                    <ControlTemplate TargetType="{x:Type Button}">
+                                                        <Grid>
+                                                            <Ellipse Fill="White" Stroke="Black"
+                                                                     StrokeThickness="3"
+                                                                     VerticalAlignment="Stretch"
+                                                                     HorizontalAlignment="Stretch" />
+                                                            <Path Stretch="Fill"
+                                                                  Stroke="Green"
+                                                                  StrokeThickness="3"
+                                                                  Margin="5"
+                                                                  Data="M0,0.5 L1,0.5 M0.5,0 L0.5,1" />
+                                                        </Grid>
+                                                    </ControlTemplate>
+                                                </Button.Template>
                                             </Button>
-                                            <views:HoverBoxView Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"  Width="150" DataContext="{Binding Path=Page}" />
+                                            <views:HoverBoxView Grid.Row="1" Width="150" DataContext="{Binding Path=Page}" />
                                         </Grid>
                                     </Border>
                                 </DataTemplate>
@@ -438,12 +451,8 @@
                                                 <RowDefinition Height="*"/>
                                                 <RowDefinition Height="Auto"/>
                                             </Grid.RowDefinitions>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="25"/>
-                                            </Grid.ColumnDefinitions>
 
-                                            <Control Grid.Row="0" Grid.Column="0" Margin="5">
+                                            <Control Grid.Row="0" Margin="5">
                                                 <Control.Resources>
                                                     <ControlTemplate x:Key="SecondPageThumbnailTemplate">
                                                         <Image Source="{Binding Page.PageThumbnail, Mode=OneWay}"/>
@@ -492,7 +501,7 @@
                                                     </Style>
                                                 </Control.Style>
                                             </Control>
-                                            <Rectangle Grid.Row="0" Grid.Column="0"  Margin="0" Fill="Transparent" StrokeThickness="2">
+                                            <Rectangle Grid.Row="0" Margin="0" Fill="Transparent" StrokeThickness="2">
                                                 <Rectangle.Stroke>
                                                     <MultiBinding Converter="{StaticResource PageMatchToColorConverter}">
                                                         <Binding ElementName="SecondPageSubmissions" Path="DataContext.CurrentPage"/>
@@ -507,13 +516,30 @@
                                                     </i:EventTrigger>
                                                 </i:Interaction.Triggers>
                                             </Rectangle>
-                                            <Button Grid.Row="0" Grid.Column="1" VerticalAlignment="Center"
-                                                    x:Name="SecondPagePlusButton"
-                                                    Command="{Binding DataContext.AppendSingleSubmissionCommand, ElementName=SecondPageSubmissions}"
-                                                    CommandParameter="{Binding Page}">
-                                                <Image Source="pack://application:,,,/Resources/Images/GrayPlus16.png" />
+                                            <Button Grid.Row="0" Width="30"
+                                                    Height="30" Margin="-20 0 0 -20"
+                                                    Cursor="Hand" HorizontalAlignment="Right"
+                                                    VerticalAlignment="Top"
+                                                    Command="{Binding DataContext.AddPageToStageCommand, ElementName=SecondPageSubmissions}"
+                                                    CommandParameter="{Binding}"
+                                                    Visibility="{Binding DataContext.StagingPanel.IsVisible, ElementName=SecondPageSubmissions}">
+                                                <Button.Template>
+                                                    <ControlTemplate TargetType="{x:Type Button}">
+                                                        <Grid>
+                                                            <Ellipse Fill="White" Stroke="Black"
+                                                                     StrokeThickness="3"
+                                                                     VerticalAlignment="Stretch"
+                                                                     HorizontalAlignment="Stretch" />
+                                                            <Path Stretch="Fill"
+                                                                  Stroke="Green"
+                                                                  StrokeThickness="3"
+                                                                  Margin="5"
+                                                                  Data="M0,0.5 L1,0.5 M0.5,0 L0.5,1" />
+                                                        </Grid>
+                                                    </ControlTemplate>
+                                                </Button.Template>
                                             </Button>
-                                            <views:HoverBoxView Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Width="150" DataContext="{Binding Path=Page}" />
+                                            <views:HoverBoxView Grid.Row="1" Width="150" DataContext="{Binding Path=Page}" />
                                         </Grid>
                                     </Border>
                                 </DataTemplate>

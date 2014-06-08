@@ -49,7 +49,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             SetCurrentPageCommand = new Command<CLPPage>(OnSetCurrentPageCommandExecute);
             ShowSubmissionsCommand = new Command<CLPPage>(OnShowSubmissionsCommandExecute);
-            AppendSingleSubmissionCommand = new Command<CLPPage>(OnAppendSingleSubmissionCommandExecute);
+            AddPageToStageCommand = new Command<StudentProgressInfo>(OnAddPageToStageCommandExecute);
             StageStudentNotebookCommand = new Command<Person>(OnStageStudentNotebookCommandExecute);
             PageHeightUpdateCommand = new Command(OnPageHeightUpdateCommandExecute);
             BackCommand = new Command(OnBackCommandExecute);
@@ -220,22 +220,16 @@ namespace Classroom_Learning_Partner.ViewModels
             stagingPanel.SetStudentNotebook(student);
         }
 
-        /// <summary>
-        /// Appends submissions for the given student/page combo to the staging panel
+       /// <summary>
+        /// Adds individual page to the Staging Panel
         /// </summary>
-        public Command<CLPPage> AppendSingleSubmissionCommand { get; private set; }
+        public Command<StudentProgressInfo> AddPageToStageCommand { get; private set; }
 
-        private void OnAppendSingleSubmissionCommandExecute(CLPPage page)
+        private void OnAddPageToStageCommandExecute(StudentProgressInfo info)
         {
-            var stagingPanel = StagingPanel as StagingPanelViewModel;
-            if(stagingPanel == null)
-            {
-                return;
+            foreach(CLPPage page in info.AllPages) {
+                StagingPanel.AddPageToStage(page);
             }
-
-            stagingPanel.IsVisible = true;
-
-            stagingPanel.AddPageToStage(page);
         }
 
         /// <summary>
