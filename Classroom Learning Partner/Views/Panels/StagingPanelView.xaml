@@ -249,6 +249,14 @@
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
                                 </Rectangle>
+                                
+                                <Grid Grid.Row="1"
+                                      Grid.Column="1"
+                                      Margin="5 5 5 0"
+                                      HorizontalAlignment="Right"
+                                      VerticalAlignment="Bottom">
+                                    
+                                </Grid>
 
                             </Grid>
                         </DataTemplate>

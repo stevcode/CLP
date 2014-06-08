@@ -89,6 +89,18 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData PageProperty = RegisterProperty("Page", typeof(CLPPage));
 
         /// <summary>
+        /// The type of page.
+        /// </summary>
+        [ViewModelToModel("Page")]
+        public PageTypes PageType
+        {
+            get { return GetValue<PageTypes>(PageTypeProperty); }
+            set { SetValue(PageTypeProperty, value); }
+        }
+
+        public static readonly PropertyData PageTypeProperty = RegisterProperty("PageType", typeof(PageTypes));
+
+        /// <summary>
         /// Gets or sets the property value.
         /// </summary>
         [ViewModelToModel("Page")]
@@ -1011,7 +1023,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static void TakePageThumbnail(CLPPage page)
         {
-            var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(page).First(x => (x is CLPPageViewModel) && !(x as CLPPageViewModel).IsPagePreview);
+            var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(page).First(x => (x is ACLPPageBaseViewModel) && !(x as ACLPPageBaseViewModel).IsPagePreview);
             var pageView = (UIElement)CLPServiceAgent.Instance.GetViewFromViewModel(pageViewModel);
             var thumbnail = CLPServiceAgent.Instance.UIElementToImageByteArray(pageView, 492);
 

@@ -1871,16 +1871,17 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             var index = notebookPanel.Pages.IndexOf(currentPage);
             index++;
-            // TODO: Entities
-            //var page = new CLPAnimationPage();
-            //if(pageOrientation == "Portrait")
-            //{
-            //    page.Height = ACLPPageBase.PORTRAIT_HEIGHT;
-            //    page.Width = ACLPPageBase.PORTRAIT_WIDTH;
-            //    page.InitialAspectRatio = page.Width / page.Height;
-            //}
-            //page.ParentNotebookID = notebookPanel.Notebook.UniqueID;
-            //notebookPanel.Notebook.InsertPageAt(index, page);
+            var page = new CLPPage(App.MainWindowViewModel.CurrentUser)
+                       {
+                           PageType = PageTypes.Animation
+                       };
+            if(pageOrientation == "Portrait")
+            {
+                page.Height = CLPPage.PORTRAIT_HEIGHT;
+                page.Width = CLPPage.PORTRAIT_WIDTH;
+                page.InitialAspectRatio = page.Width / page.Height;
+            }
+            notebookPanel.Notebook.InsertPageAt(index, page);
         }
 
         /// <summary>
