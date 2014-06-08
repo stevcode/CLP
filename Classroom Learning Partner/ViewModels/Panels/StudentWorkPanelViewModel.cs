@@ -19,8 +19,12 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             Notebook = notebook;
             Initialized += StudentWorkPanelViewModel_Initialized;
-            //    LinkedPanel = new SubmissionsPanelViewModel(notebook); // TODO: Entities, staging panel
-            
+            // TODO: NotebookPagesPanelViewModel and this should share a StagingPanel?
+            StagingPanel = new StagingPanelViewModel(notebook)
+            {
+                IsVisible = false
+            };
+
             // TODO: DATABASE - inject IPersonService to grab student names
             if(App.MainWindowViewModel.CurrentClassPeriod != null)
             {
@@ -48,6 +52,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 SecondPage = CurrentPages[1];
             }
             SetCurrentPageCommand = new Command<CLPPage>(OnSetCurrentPageCommandExecute);
+            ShowSubmissionsCommand = new Command<CLPPage>(OnShowSubmissionsCommandExecute);
+            AppendSingleSubmissionCommand = new Command<CLPPage>(OnAppendSingleSubmissionCommandExecute);
+            StageStudentNotebookCommand = new Command<Person>(OnStageStudentNotebookCommandExecute);
             PageHeightUpdateCommand = new Command(OnPageHeightUpdateCommandExecute);
             BackCommand = new Command(OnBackCommandExecute);
             ForwardCommand = new Command(OnForwardCommandExecute);
@@ -98,6 +105,17 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Model
 
         #region Bindings
+
+        /// <summary>
+        /// Staging Panel for submissions
+        /// </summary>
+        public IPanel StagingPanel
+        {
+            get { return GetValue<IPanel>(StagingPanelProperty); }
+            set { SetValue(StagingPanelProperty, value); }
+        }
+
+        public static readonly PropertyData StagingPanelProperty = RegisterProperty("StagingPanel", typeof(IPanel)); 
 
         public double PageHeight
         {
@@ -168,6 +186,60 @@ namespace Classroom_Learning_Partner.ViewModels
                 ACLPPageBaseViewModel.TakePageThumbnail(CurrentPage);
                 Notebook.CurrentPage = page;
             }
+        }
+
+        /// <summary>
+        /// Shows the submissions for the selected page.
+        /// </summary>
+        public Command<CLPPage> ShowSubmissionsCommand { get; private set; }
+
+        private void OnShowSubmissionsCommandExecute(CLPPage page)
+        {
+            var stagingPanel = StagingPanel as StagingPanelViewModel;
+            if(stagingPanel == null)
+            {
+                return;
+            }
+
+            stagingPanel.IsVisible = true;
+
+            stagingPanel.SetSubmissionsForPage(page);
+        }
+
+        /// <summary>
+        /// Appends submissions for the given student/page combo to the staging panel
+        /// </summary>
+        public Command<Person> StageStudentNotebookCommand { get; private set; }
+
+        private void OnStageStudentNotebookCommandExecute(Person student)
+        {
+            var stagingPanel = StagingPanel as StagingPanelViewModel;
+            if(stagingPanel == null)
+            {
+                return;
+            }
+
+            stagingPanel.IsVisible = true;
+
+            stagingPanel.SetStudentNotebook(student);
+        }
+
+        /// <summary>
+        /// Appends submissions for the given student/page combo to the staging panel
+        /// </summary>
+        public Command<CLPPage> AppendSingleSubmissionCommand { get; private set; }
+
+        private void OnAppendSingleSubmissionCommandExecute(CLPPage page)
+        {
+            var stagingPanel = StagingPanel as StagingPanelViewModel;
+            if(stagingPanel == null)
+            {
+                return;
+            }
+
+            stagingPanel.IsVisible = true;
+
+            stagingPanel.AddPageToStage(page);
         }
 
         /// <summary>
