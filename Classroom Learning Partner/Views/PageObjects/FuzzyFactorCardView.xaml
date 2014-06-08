@@ -188,26 +188,6 @@
                     </Thumb.Template>
                 </Thumb>
 
-                <!--TO DO Liz : re-enable rotate later on-->
-                <!--Rotate Array Button-->
-                <!--<Button Command="{Binding RotateArrayCommand}"
-                        Width="40" Height="40"
-                        Canvas.Right="-50"
-                        Canvas.Top="20"
-                        Visibility="{Binding IsRotateAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <Button.Template>
-                        <ControlTemplate TargetType="{x:Type Button}">
-                            <Grid>
-                                <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
-                                         VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
-                                <Image Source="pack://application:,,,/Resources/Images/AdornerImages/ArrayRotate64.png"
-                                       Height="25" Width="25" Margin="6"
-                                       HorizontalAlignment="Left" VerticalAlignment="Top" />
-                            </Grid>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>-->
-
                 <!--Take Away Last Array Button-->
                 <Button Command="{Binding RemoveLastArrayCommand}"
                         Cursor="Hand"
@@ -236,7 +216,6 @@
             </Canvas>
         </ac:AdornedControl.AdornerContent>
 
-        <!--<ColumnDefinition Width="{Binding ArrayWidth, Converter={StaticResource LengthConverter}, ConverterParameter=3}"}" />-->
         <Grid Width="{Binding Width}"
               Height="{Binding Height}">
             <Grid.RowDefinitions>
@@ -247,7 +226,6 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="{Binding PageObject.LabelLength}" />
                 <ColumnDefinition Width="{Binding ArrayWidth}" />
-                <!-- TODO Liz: Make this width depend on IsHorizontallyAligned -->
                 <ColumnDefinition Width="{Binding PageObject.LargeLabelLength}" />
             </Grid.ColumnDefinitions>
 
@@ -261,8 +239,7 @@
                        FontSize="22"
                        Foreground="{StaticResource LeftLabelColor}"
                        Height="22"
-                       Width="{Binding ArrayHeight}"
-                       Visibility="{Binding IsHorizontallyAligned, Converter={StaticResource BooleanToVisibilityConverter}}">
+                       Width="{Binding ArrayHeight}">
                 <TextBlock.LayoutTransform>
                     <TransformGroup>
                         <ScaleTransform />
@@ -311,18 +288,6 @@
                   Visibility="{Binding PageObject.CurrentRemainder, Converter={StaticResource IntToVisibilityConverter}}"
                   Data="M -1,0 L 1,0 C 1,0 2,1 1,2 C 1,2 0,3 1,4 C 1,4 2,5 1,6 C 1,6 0,7 1,8 C 1,8 2,9 1,10 C 1,10 0,11 1,12 C 1,12 2,13 1,14 C 1,14 0,15 1,16 C 1,16 2,17 1,18 C 1,18 0,19 1,20 C 1,20 2,21 1,22 C 1,22 0,23 1,24 C 1,24 2,25 1,26 M 1,26 L -1,26" />
 
-            <!--Data="M -1,0 L 1,0 C 1,0 2,1 1,2 C 1,2 0,3 1,4 C 1,4 2,5 1,6 C 1,6 0,7 1,8 C 1,8 2,9 1,10 C 1,10 0,11 1,12 C 1,12 2,13 1,14 C 1,14 0,15 1,16 C 1,16 2,17 1,18 C 1,18 0,19 1,20 C 1,20 2,21 1,22 C 1,22 0,23 1,24 C 1,24 2,25 1,26 M 1,26 L -1,26" />-->
-
-            <!--Bottom Fuzzy Edge-->
-            <!-- TODO Liz - make fixes as in right fuzzy edge-->
-            <!--<Path Grid.Row="2" Grid.Column="1"
-                  VerticalAlignment="Bottom"
-                  SnapsToDevicePixels="True"
-                  Data="M 0,-1 L 0,0 C 0,0 1,1 2,0 C 2,0 3,-1 4,0 M 4,0 C 4,0 5,1 6,0 C 6,0 7,-1 8,0 C 8,0 9,1 10,0 C 10,0 11,-1 12,0 C 12,0 13,1 14,0 C 14,0 15,-1 16,0 C 16,0 17,1 18,0 C 18,0 19,-1 20,0 C 20,0 21,1 22,0 C 22,0 23,-1 24,0 C 24,0 25,1 26,0  M 26,0 L 26,-1"
-                  Stretch="Fill" Margin="0"
-                  Stroke="{Binding FuzzyEdgeColor}" StrokeThickness="3" 
-                  Visibility="{Binding IsHorizontallyAligned, Converter={StaticResource BooleanToOppositeVisibilityConverter}}"/>-->
-
             <!--Grid seperated at at last divider-->
             <Grid Grid.Column="1"
                   Grid.Row="1"
@@ -331,10 +296,6 @@
                     <ColumnDefinition Width="{Binding PageObject.LastDivisionPosition}" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <!--<Grid.RowDefinitions>
-                    <RowDefinition Height="{Binding ArrayHeight}" />
-                </Grid.RowDefinitions>-->
-                <!--TODO Liz: Add rows for rotating-->
 
                 <Border Grid.Column="0"
                         Grid.Row="0"
@@ -588,19 +549,6 @@
                        Margin="0 28 0 0"
                        Visibility="{Binding PageObject.GroupsSubtracted, Converter={StaticResource IntToOppositeVisibilityConverter}}"
                        Text="{Binding Dividend}" />
-
-            <!--Right edge-->
-            <Border Grid.Row="1"
-                    Grid.Column="1"
-                    Height="{Binding ArrayHeight}"
-                    Width="{Binding ArrayWidth}"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    BorderBrush="{Binding BorderColor}"
-                    BorderThickness="0 0 3 0"
-                    Margin="0"
-                    SnapsToDevicePixels="True"
-                    Visibility="{Binding IsHorizontallyAligned, Converter={StaticResource BooleanToOppositeVisibilityConverter}}" />
 
             <!--Array hit box-->
             <Rectangle Grid.Row="1"

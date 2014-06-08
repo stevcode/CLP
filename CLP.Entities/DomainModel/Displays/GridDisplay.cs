@@ -96,7 +96,7 @@ namespace CLP.Entities
                 var page = notebook.GetPageByCompositeKeys(id, ownerID, differentiationlevel, versionIndex);
                 if(page == null)
                 {
-                    return null;
+                    continue;
                 }
 
                 gridDisplay.Pages.Add(page);

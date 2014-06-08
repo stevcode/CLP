@@ -71,8 +71,9 @@ namespace ConsoleScripts
                     Console.WriteLine("Loaded page {0}, differentiation {1}, version {2}", page.PageNumber, page.DifferentiationLevel, page.VersionIndex);
                     //Do stuff to each page here.
 
-                    if(page.LastVersionIndex == null ||
-                       page.VersionIndex != 0)
+                    if(page.VersionIndex != 0 ||
+                       page.PageNumber <= 0 ||
+                       page.PageNumber > 32)
                     {
                         continue;
                     }

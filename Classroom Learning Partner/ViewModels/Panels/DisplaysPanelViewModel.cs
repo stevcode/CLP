@@ -272,7 +272,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         if(notebookWorkspaceViewModel != null)
                         {
                             var singleDisplayView = CLPServiceAgent.Instance.GetViewFromViewModel(notebookWorkspaceViewModel.SingleDisplay);
-                            screenShotByteSource = CLPServiceAgent.Instance.GetScreenShot(singleDisplayView as UIElement);
+                            screenShotByteSource = CLPServiceAgent.Instance.UIElementToImageByteArray(singleDisplayView as UIElement);
                         }
 
                         
@@ -284,7 +284,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                                        where displayViewModel is GridDisplayViewModel && (displayViewModel as GridDisplayViewModel).IsDisplayPreview == false
                                                        select CLPServiceAgent.Instance.GetViewFromViewModel(displayViewModel)) 
                                                        {
-                                                           screenShotByteSource = CLPServiceAgent.Instance.GetScreenShot(gridDisplayView as UIElement);
+                                                           screenShotByteSource = CLPServiceAgent.Instance.UIElementToImageByteArray(gridDisplayView as UIElement);
                                                        }
                     }
 

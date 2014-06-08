@@ -5,11 +5,11 @@ using CLP.Entities;
 namespace Classroom_Learning_Partner.Views
 {
     /// <summary>
-    /// Interaction logic for CLPPageView.xaml
+    /// Interaction logic for CLPPagePreviewView.xaml
     /// </summary>
-    public partial class CLPPageView
+    public partial class NonAsyncPagePreviewView
     {
-        public CLPPageView() { InitializeComponent(); }
+        public NonAsyncPagePreviewView() { InitializeComponent(); }
 
         protected override Type GetViewModelType() { return typeof(ACLPPageBaseViewModel); }
 
@@ -30,17 +30,6 @@ namespace Classroom_Learning_Partner.Views
                 default:
                     return null;
             }
-        }
-
-        protected override void OnViewModelChanged()
-        {
-            if(ViewModel is ACLPPageBaseViewModel)
-            {
-                (ViewModel as ACLPPageBaseViewModel).TopCanvas = TopCanvas;
-                (ViewModel as ACLPPageBaseViewModel).IsPagePreview = false;
-            }
-
-            base.OnViewModelChanged();
         }
     }
 }

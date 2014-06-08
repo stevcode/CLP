@@ -61,16 +61,16 @@
                                            ImageSource="pack://application:,,,/Resources/Images/ConvertToXPS32.png"
                                            Command="{Binding ConvertToXPSCommand}" />
 
-                <!--<RibbonApplicationMenuItem Header="Convert Submissions for this page to XPS"
+                <RibbonApplicationMenuItem Header="Convert Submissions for this page to PDF"
                                            ImageSource="pack://application:,,,/Resources/Images/ConvertToXPS32.png"
                                            Command="{Binding ConvertPageSubmissionToXPSCommand}"
                                            Visibility="{Binding InstructorVisibility}" />
 
-                <RibbonApplicationMenuItem Header="Convert All Submissions To XPS"
+                <RibbonApplicationMenuItem Header="Convert All Submissions To PDF"
                                            ImageSource="pack://application:,,,/Resources/Images/ConvertToXPS32.png"
                                            Command="{Binding ConvertAllSubmissionsToXPSCommand}" />
 
-                <RibbonApplicationMenuItem Header="Convert Displays To XPS"
+                <!--<RibbonApplicationMenuItem Header="Convert Displays To XPS"
                                            ImageSource="pack://application:,,,/Resources/Images/ConvertToXPS32.png"
                                            Command="{Binding ConvertDisplaysToXPSCommand}" />-->
                 
@@ -171,12 +171,25 @@
                         </Style>
                     </RibbonToggleButton.Style>
                 </RibbonToggleButton>
-
-                <!--<RibbonToggleButton Label="Staging Panel"
-                                    LargeImageSource="pack://application:,,,/Resources/Images/DisplaySubmissionsButton50x25.png"
-                                    IsChecked="{Binding CurrentLeftPanel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.Progress}}"
-                                    IsEnabled="False"
-                                    Visibility="{Binding InstructorVisibility}" />-->
+                
+                <RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/Clipboard32.png"
+                                    IsChecked="{Binding MainWindow.Workspace.StagingPanel.IsVisible}"
+                                    IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
+                                    Visibility="{Binding InstructorVisibility}">
+                    <RibbonToggleButton.Style>
+                        <Style TargetType="{x:Type RibbonToggleButton}">
+                            <Setter Property="Label"
+                                    Value="Show Stage" />
+                            <Style.Triggers>
+                                <Trigger Property="IsChecked"
+                                         Value="True">
+                                    <Setter Property="Label"
+                                            Value="Hide Stage" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </RibbonToggleButton.Style>
+                </RibbonToggleButton>
 
                 <RibbonButton Label="Previous Page"
                               LargeImageSource="pack://application:,,,/Resources/Images/PreviousPage32.png"
@@ -541,6 +554,20 @@
 
             </RibbonGroup>
             
+            <RibbonGroup Header="Notebook">
+            
+                <RibbonButton Label="Previous Page"
+                              LargeImageSource="pack://application:,,,/Resources/Images/PreviousPage32.png"
+                              SmallImageSource="pack://application:,,,/Resources/Images/PreviousPage16.png"
+                              Command="{Binding PreviousPageCommand}" />
+
+                <RibbonButton Label="Next Page"
+                              LargeImageSource="pack://application:,,,/Resources/Images/NextPage32.png"
+                              SmallImageSource="pack://application:,,,/Resources/Images/NextPage16.png"
+                              Command="{Binding NextPageCommand}" />
+
+            </RibbonGroup>
+
         </RibbonTab>
 
         <!--Insert Tab-->

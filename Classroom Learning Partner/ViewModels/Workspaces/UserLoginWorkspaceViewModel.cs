@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
+using Catel.Data;
 using Catel.MVVM;
 using CLP.Entities;
 using Microsoft.Ink;
@@ -17,6 +18,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public UserLoginWorkspaceViewModel()
         {
+            AllowLoginCommand = new Command(OnAllowLoginCommandExecute);
             LogInCommand = new Command<Person>(OnLogInCommandExecute);
 
             // TODO: DATABASE - inject IPersonService that can grab the available student names?
@@ -25,6 +27,28 @@ namespace Classroom_Learning_Partner.ViewModels
         public override string Title
         {
             get { return "UserLoginWorkspaceVM"; }
+        }
+
+        /// <summary>
+        /// Initially hides student names to avoid accidental clicks.
+        /// </summary>
+        public bool IsAllowLoginPromptActivated
+        {
+            get { return GetValue<bool>(IsAllowLoginPromptActivatedProperty); }
+            set { SetValue(IsAllowLoginPromptActivatedProperty, value); }
+        }
+
+        public static readonly PropertyData IsAllowLoginPromptActivatedProperty = RegisterProperty("IsAllowLoginPromptActivated", typeof(bool), true);
+
+        /// <summary>
+        /// Toggles the safety screen off and allows students to log in.
+        /// </summary>
+        public Command AllowLoginCommand { get; private set; }
+
+        private void OnAllowLoginCommandExecute()
+        {
+            App.MainWindowViewModel.AvailableUsers.Add(Person.Guest);
+            IsAllowLoginPromptActivated = false;
         }
 
         /// <summary>
@@ -56,7 +80,8 @@ namespace Classroom_Learning_Partner.ViewModels
                            {
                                try
                                {
-                                   var zippedNotebook = App.Network.InstructorProxy.StudentLogin(App.MainWindowViewModel.CurrentUser.ID,
+                                   var zippedNotebook = App.Network.InstructorProxy.StudentLogin(App.MainWindowViewModel.CurrentUser.FullName,
+                                                                                                 App.MainWindowViewModel.CurrentUser.ID,
                                                                                                  App.Network.CurrentMachineName,
                                                                                                  App.Network.CurrentMachineAddress);
                                    if(String.IsNullOrEmpty(zippedNotebook))
@@ -147,6 +172,11 @@ namespace Classroom_Learning_Partner.ViewModels
                                _isLoggingIn = false;
                            }
                        }).Start();
+        }
+
+        private async void LogUserIn(Person user)
+        {
+            
         }
     }
 }

@@ -102,7 +102,9 @@ namespace Classroom_Learning_Partner.Views
             }
             else if(productNum >= 51)
             {
-                MessageBox.Show("Your product is too big a number. Please keep it below " + 51 + ".", "Oops");
+                MessageBox.Show("Cannot create tiles for values above " + 50 + ".", "Oops");
+                var answer = productNum / (double)factorNum;
+                DialogResult = true;
             }
             else if(factorNum >= MAX_ARRAY_ROWSCOLUMNS)
             {

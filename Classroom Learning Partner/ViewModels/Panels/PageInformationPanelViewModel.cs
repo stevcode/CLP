@@ -1,4 +1,9 @@
-﻿using Catel.Data;
+﻿using System;
+using System.IO;
+using System.Linq;
+using System.Windows;
+using System.Windows.Media.Imaging;
+using Catel.Data;
 using Catel.MVVM;
 using CLP.Entities;
 
@@ -13,9 +18,11 @@ namespace Classroom_Learning_Partner.ViewModels
             Notebook = notebook;
             Initialized += PageInformationPanelViewModel_Initialized;
             IsVisible = false;
+
+            PageScreenshotCommand = new Command(OnPageScreenshotCommandExecute);
         }
 
-        void PageInformationPanelViewModel_Initialized(object sender, System.EventArgs e)
+        void PageInformationPanelViewModel_Initialized(object sender, EventArgs e)
         {
             Length = InitialLength;
             Location = PanelLocations.Right;
@@ -87,6 +94,45 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData PageNumberProperty = RegisterProperty("PageNumber", typeof(decimal), 1);
 
         #endregion //Model
+
+        #region Commands
+
+        /// <summary>
+        /// Takes and saves a hi-res screenshot of the current page.
+        /// </summary>
+        public Command PageScreenshotCommand { get; private set; }
+
+        private void OnPageScreenshotCommandExecute()
+        {
+            var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(CurrentPage).First(x => (x is CLPPageViewModel) && !(x as CLPPageViewModel).IsPagePreview);
+            var pageView = CLPServiceAgent.Instance.GetViewFromViewModel(pageViewModel);
+            var thumbnail = CLPServiceAgent.Instance.UIElementToImageByteArray(pageView as UIElement, CurrentPage.Width, dpi:300);
+
+            var bitmapImage = new BitmapImage();
+            bitmapImage.BeginInit();
+            bitmapImage.CacheOption = BitmapCacheOption.OnDemand;
+            bitmapImage.StreamSource = new MemoryStream(thumbnail);
+            bitmapImage.EndInit();
+            bitmapImage.Freeze();
+
+            var thumbnailsFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Thumbnails");
+            var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, "Page - " + CurrentPage.PageNumber + ";" + CurrentPage.DifferentiationLevel + ";" + CurrentPage.VersionIndex + ";" + DateTime.Now.ToString("yyyy-M-d,hh.mm.ss") + ".png");
+
+            if(!Directory.Exists(thumbnailsFolderPath))
+            {
+                Directory.CreateDirectory(thumbnailsFolderPath);
+            }
+
+            var pngEncoder = new PngBitmapEncoder();
+            pngEncoder.Frames.Add(BitmapFrame.Create(bitmapImage));
+            using(var outputStream = new MemoryStream())
+            {
+                pngEncoder.Save(outputStream);
+                File.WriteAllBytes(thumbnailFilePath, outputStream.ToArray());
+            }
+        }
+
+        #endregion //Commands
          
     }
 }

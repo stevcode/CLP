@@ -7,7 +7,7 @@
                    xmlns:app="clr-namespace:Classroom_Learning_Partner">
     
     <UserControl.Resources>
-        <conv:ItemsControlItemIndexConverter x:Key="ItemsControlItemIndexConverter" />
+        <conv:NumberIncrementConverter x:Key="NumberIncrementConverter" />
         <conv:EnumToBoolConverter x:Key="EnumToBoolConverter" />
     </UserControl.Resources>
 
@@ -28,9 +28,11 @@
         </Grid.RowDefinitions>
 
         <ItemsControl x:Name="ItemsControl"
+                      AlternationCount="100"
                       Grid.Row="0"
                       Background="Transparent"
-                      ItemsSource="{Binding Pages}">
+                      ItemsSource="{Binding Pages}"
+                      ManipulationBoundaryFeedback="ItemsControl_OnManipulationBoundaryFeedback">
 
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -111,7 +113,7 @@
                                                  StrokeThickness="3"
                                                  VerticalAlignment="Stretch"
                                                  HorizontalAlignment="Stretch" />
-                                        <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType=Grid}, Converter={StaticResource ItemsControlItemIndexConverter}}"
+                                        <TextBlock Text="{Binding TemplatedParent.(ItemsControl.AlternationIndex), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource NumberIncrementConverter}, ConverterParameter=1}"
                                                    Foreground="{StaticResource MainColor}"
                                                    FontWeight="Bold"
                                                    FontSize="20"
@@ -143,7 +145,7 @@
                                               Stroke="Red"
                                               StrokeThickness="3"
                                               Margin="5"
-                                              Data="M0,0 L1,1 M0,1 L1,0" />
+                                              Data="M0,0.5 L1,0.5" />
                                     </Grid>
                                 </ControlTemplate>
                             </Button.Template>

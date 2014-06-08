@@ -36,7 +36,8 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
-        <Border Background="{StaticResource GrayBackgroundColor}"
+        <Border Grid.Column="0"
+                Background="{StaticResource GrayBackgroundColor}"
                 BorderBrush="{StaticResource GrayEdgeColor}"
                 BorderThickness="{Binding Location, Converter={StaticResource PanelLocationToThicknessConverter}, ConverterParameter=7.0}"
                 Width="{Binding Length}">

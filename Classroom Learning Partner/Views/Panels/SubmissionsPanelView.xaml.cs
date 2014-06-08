@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using System.Windows.Media;
 using Classroom_Learning_Partner.ViewModels;
 
@@ -531,5 +532,7 @@ namespace Classroom_Learning_Partner.Views
             }
             return children;
         }
+
+        private void UIElement_OnManipulationBoundaryFeedback(object sender, ManipulationBoundaryFeedbackEventArgs e) { e.Handled = true; }
     }
 }

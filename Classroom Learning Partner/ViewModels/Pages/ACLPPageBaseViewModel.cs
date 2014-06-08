@@ -49,7 +49,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
             InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
             PageObjects.CollectionChanged += PageObjects_CollectionChanged;
-            Submissions.CollectionChanged += Submissions_CollectionChanged;
 
             MouseMoveCommand = new Command<MouseEventArgs>(OnMouseMoveCommandExecute);
             MouseDownCommand = new Command<MouseEventArgs>(OnMouseDownCommandExecute);
@@ -63,7 +62,6 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
             PageObjects.CollectionChanged -= PageObjects_CollectionChanged;
-            Submissions.CollectionChanged -= Submissions_CollectionChanged;
             base.OnClosing();
         }
 
@@ -89,6 +87,18 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData PageProperty = RegisterProperty("Page", typeof(CLPPage));
+
+        /// <summary>
+        /// The type of page.
+        /// </summary>
+        [ViewModelToModel("Page")]
+        public PageTypes PageType
+        {
+            get { return GetValue<PageTypes>(PageTypeProperty); }
+            set { SetValue(PageTypeProperty, value); }
+        }
+
+        public static readonly PropertyData PageTypeProperty = RegisterProperty("PageType", typeof(PageTypes));
 
         /// <summary>
         /// Gets or sets the property value.
@@ -149,6 +159,34 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData SubmissionsProperty = RegisterProperty("Submissions", typeof(ObservableCollection<CLPPage>));
+
+        /// <summary>
+        /// Whether the page has submissions or not.
+        /// </summary>
+        [ViewModelToModel("Page")]
+        public bool HasSubmissions
+        {
+            get { return GetValue<bool>(HasSubmissionsProperty); }
+        }
+
+        public static readonly PropertyData HasSubmissionsProperty = RegisterProperty("HasSubmissions", typeof(bool));
+
+        [ViewModelToModel("Page")]
+        public int NumberOfDistinctSubmissions
+        { 
+            get { return GetValue<int>(NumberOfDistinctSubmissionsProperty); }
+        }
+
+        public static readonly PropertyData NumberOfDistinctSubmissionsProperty = RegisterProperty("NumberOfDistinctSubmissions", typeof(int));
+
+        [ViewModelToModel("Page")]
+        public PageHistory History
+        {
+            get { return GetValue<PageHistory>(HistoryProperty); }
+            set { SetValue(HistoryProperty, value); }
+        }
+
+        public static readonly PropertyData HistoryProperty = RegisterProperty("History", typeof(PageHistory));
 
         #endregion //Model
 
@@ -381,19 +419,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData IsUsingCustomCursorsProperty = RegisterProperty("IsUsingCustomCursors", typeof(bool), false);
 
-        /// <summary>
-        /// Whether the page has submissions or not.
-        /// </summary>
-        public bool HasSubmissions
-        {
-            get { return Submissions.Any() || Page.LastVersionIndex != null; }
-        }
-
-        public int NumberOfDistinctSubmissions
-        { 
-            get { return Submissions.Select(submission => submission.OwnerID).Distinct().Count(); }
-        }
-
         #endregion //Bindings
 
         #region Commands
@@ -512,7 +537,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         protected void PageObjects_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if(IsPagePreview || PageInteractionMode == PageInteractionMode.None)
+            if(IsPagePreview || PageInteractionMode == PageInteractionMode.None || History.IsAnimating)
             {
                 return;
             }
@@ -553,7 +578,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         protected void InkStrokes_StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
         {
-            if(IsPagePreview)
+            if(IsPagePreview || History.IsAnimating)
             {
                 return;
             }
@@ -611,12 +636,6 @@ namespace Classroom_Learning_Partner.ViewModels
                     RemoveStroke(e.Removed, e.Added);
                     break;
             }
-        }
-
-        protected void Submissions_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            RaisePropertyChanged("HasSubmissions");
-            RaisePropertyChanged("NumberOfDistinctSubmissions");
         }
 
         protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
@@ -724,7 +743,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             catch(Exception ex)
             {
-                Console.WriteLine(@"PageObjectCollectionChanged Exception: " + ex.Message);
+                Console.WriteLine("PageObjectCollectionChanged Exception: " + ex.Message);
             }
         }
 
@@ -1013,18 +1032,18 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static void TakePageThumbnail(CLPPage page)
         {
-            var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(page).First(x => (x is CLPPageViewModel) && !(x as CLPPageViewModel).IsPagePreview);
-                var pageView = (UIElement)CLPServiceAgent.Instance.GetViewFromViewModel(pageViewModel);
-                var thumbnail = CLPServiceAgent.Instance.GetJpgImage(pageView, 1.0, 100, true);
+            var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(page).First(x => (x is ACLPPageBaseViewModel) && !(x as ACLPPageBaseViewModel).IsPagePreview);
+            var pageView = (UIElement)CLPServiceAgent.Instance.GetViewFromViewModel(pageViewModel);
+            var thumbnail = CLPServiceAgent.Instance.UIElementToImageByteArray(pageView, 492);
 
-                var bitmapImage = new BitmapImage();
-                bitmapImage.BeginInit();
-                bitmapImage.CacheOption = BitmapCacheOption.OnDemand;
-                bitmapImage.StreamSource = new MemoryStream(thumbnail);
-                bitmapImage.EndInit();
-                bitmapImage.Freeze();
+            var bitmapImage = new BitmapImage();
+            bitmapImage.BeginInit();
+            bitmapImage.CacheOption = BitmapCacheOption.OnDemand;
+            bitmapImage.StreamSource = new MemoryStream(thumbnail);
+            bitmapImage.EndInit();
+            bitmapImage.Freeze();
 
-                page.PageThumbnail = bitmapImage;
+            page.PageThumbnail = bitmapImage;
         }
 
         public static bool IsPointOverPageObject(IPageObject pageObject, Point point)

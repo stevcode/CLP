@@ -15,15 +15,11 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="ProgressPanelViewModel" /> class.
         /// </summary>
-        public StudentWorkPanelViewModel(Notebook notebook)
+        public StudentWorkPanelViewModel(Notebook notebook, StagingPanelViewModel stagingPanel)
         {
             Notebook = notebook;
             Initialized += StudentWorkPanelViewModel_Initialized;
-            // TODO: NotebookPagesPanelViewModel and this should share a StagingPanel?
-            StagingPanel = new StagingPanelViewModel(notebook)
-            {
-                IsVisible = false
-            };
+            StagingPanel = stagingPanel;
 
             // TODO: DATABASE - inject IPersonService to grab student names
             if(App.MainWindowViewModel.CurrentClassPeriod != null)
@@ -106,17 +102,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Bindings
 
-        /// <summary>
-        /// Staging Panel for submissions
-        /// </summary>
-        public IPanel StagingPanel
-        {
-            get { return GetValue<IPanel>(StagingPanelProperty); }
-            set { SetValue(StagingPanelProperty, value); }
-        }
-
-        public static readonly PropertyData StagingPanelProperty = RegisterProperty("StagingPanel", typeof(IPanel)); 
-
         public double PageHeight
         {
             get { return GetValue<double>(PageHeightProperty); }
@@ -168,6 +153,17 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData StudentListProperty = RegisterProperty("StudentList",
                                                                                    typeof(ObservableCollection<Person>),
                                                                                    () => new ObservableCollection<Person>());
+
+        /// <summary>
+        /// Staging Panel for submissions
+        /// </summary>
+        public StagingPanelViewModel StagingPanel
+        {
+            get { return GetValue<StagingPanelViewModel>(StagingPanelProperty); }
+            set { SetValue(StagingPanelProperty, value); }
+        }
+
+        public static readonly PropertyData StagingPanelProperty = RegisterProperty("StagingPanel", typeof(StagingPanelViewModel)); 
 
         #endregion //Bindings
 

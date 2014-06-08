@@ -68,64 +68,17 @@ namespace Classroom_Learning_Partner
             return result;
         }
 
-        public byte[] GetJpgImage(UIElement source, double scale = 1.0, int quality = 100, bool png = false)
+
+        public byte[] UIElementToImageByteArray(UIElement source, double imageWidth = -1.0, double scale = 1.0, double dpi = 96, BitmapEncoder encoder = null)
         {
-            // These are like this because they're making nicely-sized page thumbnails.
-            // TODO make the values constants dependent on something or other.
-            var actualHeight = 492 * source.RenderSize.Height / source.RenderSize.Width; //source.RenderSize.Height;
-            var actualWidth = 492; //source.RenderSize.Width;
+            const double SCREEN_DPI = 96.0;
+            var actualWidth = imageWidth <= 0.0 ? source.RenderSize.Width : imageWidth;
+            var actualHeight = actualWidth * source.RenderSize.Height / source.RenderSize.Width;
 
-            var renderHeight = actualHeight * scale;
-            var renderWidth = actualWidth * scale;
+            var renderWidth = actualWidth * scale * dpi / SCREEN_DPI;
+            var renderHeight = actualHeight * scale * dpi / SCREEN_DPI;
 
-            var renderTarget = new RenderTargetBitmap((int)renderWidth, (int)renderHeight, 96, 96, PixelFormats.Pbgra32);
-            var sourceBrush = new VisualBrush(source);
-
-            var drawingVisual = new DrawingVisual();
-            var drawingContext = drawingVisual.RenderOpen();
-
-            using(drawingContext)
-            {
-                drawingContext.PushTransform(new ScaleTransform(scale, scale));
-                drawingContext.DrawRectangle(sourceBrush, null, new Rect(new Point(0, 0), new Point(actualWidth, actualHeight)));
-            }
-            renderTarget.Render(drawingVisual);
-            
-            byte[] imageArray;
-
-            if(png)
-            {
-                var pngEncoder = new PngBitmapEncoder();
-                pngEncoder.Frames.Add(BitmapFrame.Create(renderTarget));
-                using(var outputStream = new MemoryStream())
-                {
-                    pngEncoder.Save(outputStream);
-                    imageArray = outputStream.ToArray();
-                }
-            }
-            else
-            {
-                var jpgEncoder = new JpegBitmapEncoder { QualityLevel = quality };
-                jpgEncoder.Frames.Add(BitmapFrame.Create(renderTarget));
-
-                using(var outputStream = new MemoryStream())
-                {
-                    jpgEncoder.Save(outputStream);
-                    imageArray = outputStream.ToArray();
-                }
-            }
-            return imageArray;
-        }
-
-        public byte[] GetScreenShot(UIElement source, double scale = 1.0, int quality = 100)
-        {
-            var actualHeight = source.RenderSize.Height;
-            var actualWidth = source.RenderSize.Width;
-
-            var renderHeight = actualHeight * scale;
-            var renderWidth = actualWidth * scale;
-
-            var renderTarget = new RenderTargetBitmap((int)renderWidth, (int)renderHeight, 96, 96, PixelFormats.Pbgra32);
+            var renderTarget = new RenderTargetBitmap((int)renderWidth, (int)renderHeight, dpi, dpi, PixelFormats.Pbgra32);
             var sourceBrush = new VisualBrush(source);
 
             var drawingVisual = new DrawingVisual();
@@ -138,14 +91,16 @@ namespace Classroom_Learning_Partner
             }
             renderTarget.Render(drawingVisual);
 
-            var jpgEncoder = new JpegBitmapEncoder { QualityLevel = quality };
-            jpgEncoder.Frames.Add(BitmapFrame.Create(renderTarget));
-
             byte[] imageArray;
+            if(encoder == null)
+            {
+                encoder = new PngBitmapEncoder();
+            }
 
+            encoder.Frames.Add(BitmapFrame.Create(renderTarget));
             using(var outputStream = new MemoryStream())
             {
-                jpgEncoder.Save(outputStream);
+                encoder.Save(outputStream);
                 imageArray = outputStream.ToArray();
             }
 

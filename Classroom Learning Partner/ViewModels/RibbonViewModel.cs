@@ -13,15 +13,17 @@ using System.Windows.Controls;
 using System.Windows.Controls.Ribbon;
 using System.Windows.Documents;
 using System.Windows.Ink;
+using System.Windows.Interop;
 using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Xps.Packaging;
 using Catel.Collections;
 using Catel.Data;
 using Catel.IoC;
 using Catel.MVVM;
 using Catel.MVVM.Services;
+using Catel.Windows;
+using Catel.Windows.Controls;
 using Classroom_Learning_Partner.Views;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Entities;
@@ -637,6 +639,226 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Bindings
 
+        
+        #region Methods
+
+        public int MatchArrayGridSize(List<ACLPArrayBase> arraysToAdd)
+        {
+            int numberOfArrays = arraysToAdd.Count;
+            var firstArray = arraysToAdd.First();
+            int rows = firstArray.Rows;
+            int columns = firstArray.Columns;
+
+            const double MIN_SIDE = 20.0;
+            const double MIN_FFC_SIDE = 185.0;
+            const double LABEL_LENGTH = 22.0;
+
+            var arrayStacks = 1;
+            var isHorizontallyAligned = CurrentPage.Width / columns > CurrentPage.Height / 4 * 3 / rows;
+            firstArray.SizeArrayToGridLevel();
+            var initialGridsquareSize = firstArray.GridSquareSize;
+            var xPosition = 0.0;
+            var yPosition = 150.0;
+
+            //attempt to size newArray to lastArray
+            //if fail, resize all other arrays to newArray
+            //squareSize will be the grid size of the most recently placed array, or 0 if there are no non-background arrays
+            double squareSize = 0.0;
+            if(!(firstArray is FuzzyFactorCard))
+            {
+                foreach(var pageObject in CurrentPage.PageObjects)
+                {
+                    if((pageObject is CLPArray || pageObject is FuzzyFactorCard) && pageObject.CreatorID != Person.Author.ID)
+                    {
+                        squareSize = (pageObject as ACLPArrayBase).ArrayHeight / (pageObject as ACLPArrayBase).Rows;
+                    }
+                }
+            }
+
+            var minSide = (firstArray is FuzzyFactorCard)
+                ? MIN_FFC_SIDE :
+                MIN_SIDE;
+            var defaultSquareSize = (firstArray is FuzzyFactorCard) ?
+                Math.Max(45.0, (MIN_FFC_SIDE / (Math.Min(rows, columns)))) :
+                45.0;
+            var initializedSquareSize = (squareSize > 0) ? Math.Max(squareSize, (minSide / (Math.Min(rows, columns)))) : defaultSquareSize;
+            if((firstArray is FuzzyFactorCard)&& xPosition + initializedSquareSize * columns + LABEL_LENGTH * 3.0 + 12.0 > CurrentPage.Width)
+            {
+                initializedSquareSize = minSide / (Math.Min(rows, columns));
+            }
+
+            while(xPosition + 2 * LABEL_LENGTH + initializedSquareSize * columns >= CurrentPage.Width || yPosition + 2 * LABEL_LENGTH + initializedSquareSize * rows >= CurrentPage.Height)
+            {
+                initializedSquareSize = Math.Abs(initializedSquareSize - 45.0) < .0001 ? 22.5 : initializedSquareSize / 4 * 3;
+            }
+            if(numberOfArrays > 1)
+            {
+                if(isHorizontallyAligned)
+                {
+                    while(xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH >= CurrentPage.Width)
+                    {
+                        initializedSquareSize = Math.Abs(initializedSquareSize - 45.0) < .0001 ? 22.5 : initializedSquareSize / 4 * 3;
+
+                        if(numberOfArrays < 5 || xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH < CurrentPage.Width)
+                        {
+                            continue;
+                        }
+
+                        if(xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 2) + LABEL_LENGTH < CurrentPage.Width &&
+                           yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * 2 + LABEL_LENGTH < CurrentPage.Height)
+                        {
+                            arrayStacks = 2;
+                            break;
+                        }
+
+                        if(xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 3) + LABEL_LENGTH < CurrentPage.Width &&
+                           yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * 3 + LABEL_LENGTH < CurrentPage.Height)
+                        {
+                            arrayStacks = 3;
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    yPosition = 100;
+                    while(yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH >= CurrentPage.Height)
+                    {
+                        initializedSquareSize = Math.Abs(initializedSquareSize - 45.0) < .0001 ? 22.5 : initializedSquareSize / 4 * 3;
+
+                        if(numberOfArrays < 5 || yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH < CurrentPage.Height)
+                        {
+                            continue;
+                        }
+
+                        if(yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 2) + LABEL_LENGTH < CurrentPage.Height &&
+                           xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * 2 + LABEL_LENGTH < CurrentPage.Width)
+                        {
+                            arrayStacks = 2;
+                            break;
+                        }
+
+                        if(yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 3) + LABEL_LENGTH < CurrentPage.Height &&
+                           xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * 3 + LABEL_LENGTH < CurrentPage.Width)
+                        {
+                            arrayStacks = 3;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // If it doesn't fit, resize all other non-background arrays on page to match new array grid size
+            if(squareSize > 0.0 && initializedSquareSize != squareSize)
+            {
+                Dictionary<string, Point> oldDimensions = new Dictionary<string, Point>();
+                foreach(var pageObject in CurrentPage.PageObjects)
+                {
+                    if(pageObject is CLPArray && pageObject.CreatorID != Person.Author.ID)
+                    {
+                        oldDimensions.Add(pageObject.ID, new Point(pageObject.Width, pageObject.Height));
+                        if((pageObject as ACLPArrayBase).Rows * initializedSquareSize > MIN_SIDE && (pageObject as ACLPArrayBase).Columns * initializedSquareSize > MIN_SIDE)
+                        {
+                            if(pageObject.XPosition + (pageObject as ACLPArrayBase).Columns * initializedSquareSize + 2 * LABEL_LENGTH <= CurrentPage.Width && pageObject.YPosition + (pageObject as ACLPArrayBase).Rows * initializedSquareSize + 2 * LABEL_LENGTH <= CurrentPage.Height)
+                            {
+                                (pageObject as ACLPArrayBase).SizeArrayToGridLevel(initializedSquareSize);
+                            }
+                        }
+                        else
+                        {
+                            (pageObject as ACLPArrayBase).SizeArrayToGridLevel(MIN_SIDE / Math.Min((pageObject as ACLPArrayBase).Rows, (pageObject as ACLPArrayBase).Columns));
+                        }
+                    }
+                    initialGridsquareSize = initializedSquareSize;
+                }
+            }
+
+
+            double MAX_HEIGHT = CurrentPage.Height - 400.0;
+            if(squareSize == 0.0)
+            {
+                initializedSquareSize = Math.Min(initialGridsquareSize, MAX_HEIGHT / rows);
+            }
+
+            firstArray.SizeArrayToGridLevel(initializedSquareSize);
+
+            return arrayStacks;
+        }
+
+        public void PlaceArrayNextToExistingArray(List<ACLPArrayBase> arraysToAdd)
+        {
+            const double LABEL_LENGTH = 22.0;
+            int numberOfArrays = arraysToAdd.Count;
+            var firstArray = arraysToAdd.First();
+            int rows = firstArray.Rows;
+            int columns = firstArray.Columns;
+            var isHorizontallyAligned = CurrentPage.Width / columns > CurrentPage.Height / 4 * 3 / rows;
+            double initializedSquareSize = firstArray.ArrayHeight / rows;
+            var xPosition = firstArray.XPosition;
+            var yPosition = firstArray.YPosition;
+
+            //if there is exactly one other array on the page, keep track of it for placement
+            ACLPArrayBase onlyArray = null;
+            foreach(var pageObject in CurrentPage.PageObjects)
+            {
+                if(pageObject is CLPArray)
+                {
+                    onlyArray = (onlyArray == null) ? pageObject as CLPArray : null;
+                }
+                else if(pageObject is FuzzyFactorCard)
+                {
+                    onlyArray = (onlyArray == null) ? pageObject as FuzzyFactorCard : null;
+                }
+            }
+
+            //Position to not overlap with first array on page if possible
+            if(onlyArray != null)
+            {
+                if(isHorizontallyAligned)
+                {
+                    const double GAP = 35.0;
+                    if(!(onlyArray is FuzzyFactorCard && (onlyArray as FuzzyFactorCard).RemainderTiles != null) && onlyArray.XPosition + onlyArray.Width + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH + GAP <= CurrentPage.Width
+                        && rows * initializedSquareSize + LABEL_LENGTH < CurrentPage.Height)
+                    {
+                        xPosition = onlyArray.XPosition + onlyArray.Width + GAP;
+                        yPosition = onlyArray.YPosition;
+                    }
+                    else if(onlyArray.XPosition + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH <= CurrentPage.Width
+                        && onlyArray.YPosition + onlyArray.Height + rows * initializedSquareSize + LABEL_LENGTH + GAP < CurrentPage.Height)
+                    {
+                        yPosition = onlyArray.YPosition + onlyArray.Height + GAP;
+                        xPosition = onlyArray.XPosition;
+                    }
+                    else
+                    {
+                        yPosition = CurrentPage.Height - rows * initializedSquareSize - 2 * LABEL_LENGTH;
+                        xPosition = onlyArray.XPosition;
+                    }
+                }
+                else
+                {
+                    const double GAP = 35.0;
+                    if(!(onlyArray is FuzzyFactorCard && (onlyArray as FuzzyFactorCard).RemainderTiles != null) && onlyArray.YPosition + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH <= CurrentPage.Height
+                        && onlyArray.XPosition + onlyArray.Width + columns * initializedSquareSize + LABEL_LENGTH + GAP < CurrentPage.Width)
+                    {
+                        xPosition = onlyArray.XPosition + onlyArray.Width + GAP;
+                        yPosition = onlyArray.YPosition;
+                    }
+                    else if(onlyArray.YPosition + onlyArray.Height + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH + GAP <= CurrentPage.Width
+                        && onlyArray.XPosition + rows * initializedSquareSize + LABEL_LENGTH < CurrentPage.Height)
+                    {
+                        yPosition = onlyArray.YPosition + onlyArray.Height + GAP;
+                        xPosition = onlyArray.XPosition;
+                    }
+                }
+            }
+
+            firstArray.XPosition = xPosition;
+            firstArray.YPosition = yPosition;
+        }
+
+        #endregion //Methods
+
         #region Commands
 
         #region File Menu
@@ -797,72 +1019,6 @@ namespace Classroom_Learning_Partner.ViewModels
             //}, null, "Converting Notebook Displays to XPS", 0.0 / 0.0);
         }
 
-        private void AddCLPPageToXPSDocument(CLPPage page, ref FixedDocument document)
-        {
-            page.TrimPage();
-            var printHeight = page.Width / page.InitialAspectRatio;
-
-            double transformAmount = 0;
-            do
-            {
-                var currentPageView = new CLPPagePreviewView { DataContext = page };
-                currentPageView.UpdateLayout();
-
-                var grid = new Grid();
-                grid.Children.Add(currentPageView);
-
-                var pageNumberOffset = 5.0;
-                if(page.SubmissionType != SubmissionTypes.Unsubmitted)
-                {
-                    var submitterLabel = new Label
-                    {
-                        FontSize = 20,
-                        FontWeight = FontWeights.Bold,
-                        FontStyle = FontStyles.Oblique,
-                        HorizontalAlignment = HorizontalAlignment.Right,
-                        VerticalAlignment = VerticalAlignment.Top,
-                        Content = page.Owner.FullName,
-                        Margin = new Thickness(0, transformAmount + 5, 5, 0)
-                    };
-                    grid.Children.Add(submitterLabel);
-                    pageNumberOffset = 30.0;
-                }
-
-                var pageIndexlabel = new Label
-                {
-                    FontSize = 20,
-                    FontWeight = FontWeights.Bold,
-                    FontStyle = FontStyles.Oblique,
-                    HorizontalAlignment = HorizontalAlignment.Right,
-                    VerticalAlignment = VerticalAlignment.Top,
-                    Content = "Page " + page.PageNumber,
-                    Margin = new Thickness(0, transformAmount + pageNumberOffset, 5, 0)
-                };
-                grid.Children.Add(pageIndexlabel);
-                grid.UpdateLayout();
-
-                var transform = new TransformGroup();
-                var translate = new TranslateTransform(0, -transformAmount);
-                transform.Children.Add(translate);
-                if(Math.Abs(page.Width - CLPPage.LANDSCAPE_WIDTH) < 0.001)
-                {
-                    var rotate = new RotateTransform(90.0);
-                    var translate2 = new TranslateTransform(816, 0);
-                    transform.Children.Add(rotate);
-                    transform.Children.Add(translate2);
-                }
-                grid.RenderTransform = transform;
-                transformAmount += printHeight;
-
-                var pageContent = new PageContent();
-                var fixedPage = new FixedPage();
-                fixedPage.Children.Add(grid);
-
-                ((System.Windows.Markup.IAddChild)pageContent).AddChild(fixedPage);
-                document.Pages.Add(pageContent);
-            } while(page.Height > transformAmount);
-        }
-
         /// <summary>
         /// Converts Notebook Pages to XPS.
         /// </summary>
@@ -876,127 +1032,88 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            Catel.Windows.PleaseWaitHelper.Show(() =>
+            var notebook = notebookWorkspaceViewModel.Notebook;
+
+            ConvertPagesToXPS(notebook.Pages, notebook);
+        }
+
+        private async void ConvertPagesToXPS(IEnumerable<CLPPage> pages, Notebook notebook, string fileNameSuffix = "", bool useLabels = true)
+        {
+            App.MainWindowViewModel.IsConvertingToPDF = true;
+
+            var directoryPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop),"Notebooks - PDF");
+            if(!Directory.Exists(directoryPath))
             {
-                var notebook = notebookWorkspaceViewModel.Notebook;
-                var directoryPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop),"Notebooks - XPS");
-                if(!Directory.Exists(directoryPath))
-                {
-                    Directory.CreateDirectory(directoryPath);
-                }
+                Directory.CreateDirectory(directoryPath);
+            }
 
-                var fileName = notebook.Name + ".pdf";
-                var filePath = Path.Combine(directoryPath, fileName);
-                if(File.Exists(filePath))
-                {
-                    File.Delete(filePath);
-                }
+            var fileName = notebook.Name + " - " + notebook.Owner.FullName + " - " + fileNameSuffix + " [" + DateTime.Now.ToString("yyyy-M-d hh.mm.ss") + "].pdf";
+            var filePath = Path.Combine(directoryPath, fileName);
+            if(File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
 
-                var doc = new Document();
-                try
-                {
-                    PdfWriter.GetInstance(doc, new FileStream(filePath, FileMode.Create));
-                    doc.Open();
+            var doc = new Document();
 
-                    foreach(var page in notebook.Pages)
+            try
+            {
+                PdfWriter.GetInstance(doc, new FileStream(filePath, FileMode.Create));
+                doc.Open();
+
+                foreach(var page in pages)
+                {
+                    App.MainWindowViewModel.CurrentConvertingPage = null;
+                    App.MainWindowViewModel.CurrentConvertingPage = page;
+
+                    var currentPageViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(page);
+                    var currentPageView = CLPServiceAgent.Instance.GetViewFromViewModel(currentPageViewModels.Last());
+
+                    await Task.Delay(500);
+
+                    var screenshot = CLPServiceAgent.Instance.UIElementToImageByteArray(currentPageView as UIElement, page.Width, dpi:300);
+                    var bitmapImage = new BitmapImage();
+                    bitmapImage.BeginInit();
+                    bitmapImage.CacheOption = BitmapCacheOption.OnDemand;
+                    bitmapImage.StreamSource = new MemoryStream(screenshot);
+                    bitmapImage.EndInit();
+                    bitmapImage.Freeze();
+
+                    var pngEncoder = new PngBitmapEncoder();
+                    pngEncoder.Frames.Add(BitmapFrame.Create(bitmapImage));
+                    using(var outputStream = new MemoryStream())
                     {
-                        var pngEncoder = new PngBitmapEncoder();
-                        pngEncoder.Frames.Add(BitmapFrame.Create(page.PageThumbnail as BitmapSource));
-                        using(var outputStream = new MemoryStream())
+                        pngEncoder.Save(outputStream);
+                        var image = System.Drawing.Image.FromStream(outputStream);
+                        var pdfImage = iTextSharp.text.Image.GetInstance(image, ImageFormat.Png);
+                        var isPortrait = page.Height >= page.Width;
+                        if(!isPortrait)
                         {
-                            pngEncoder.Save(outputStream);
-                            var image = System.Drawing.Image.FromStream(outputStream);
-                            var pdfImage = iTextSharp.text.Image.GetInstance(image, ImageFormat.Png);
-                            doc.NewPage();
-                            doc.Add(pdfImage);
+                            pdfImage.RotationDegrees = 270f;
                         }
+
+                        pdfImage.ScaleToFit(doc.PageSize.Width - 74f, doc.PageSize.Height - 74f);
+
+                        pdfImage.Border = Rectangle.BOX;
+                        pdfImage.BorderColor = BaseColor.BLACK;
+                        pdfImage.BorderWidth = 1f;
+
+                        var labelText = notebook.Name + ", Page " + page.PageNumber + ", Submission Time: " + page.SubmissionTime + ", Owner: " + page.Owner.FullName; 
+                        var label = new iTextSharp.text.Paragraph(labelText);
+                        label.Alignment = Element.ALIGN_CENTER;
+
+                        doc.NewPage();
+                        doc.Add(label);
+                        doc.Add(pdfImage);
                     }
                 }
-                finally
-                {
-                    doc.Close();
-                }
+            }
+            finally
+            {
+                doc.Close();
+            }
 
-                #region XPS
-
-                //var document = new FixedDocument();
-                //document.DocumentPaginator.PageSize = new Size(96 * 11, 96 * 8.5);
-
-                //foreach(var page in notebook.Pages)
-                //{
-                //    page.TrimPage();
-                //    var printHeight = page.Width / page.InitialAspectRatio;
-
-                //    double transformAmount = 0;
-                //    do
-                //    {
-                //        var currentPageView = new CLPPagePreviewView { DataContext = page };
-                //        currentPageView.UpdateLayout();
-
-                //        var grid = new Grid();
-                //        grid.Children.Add(currentPageView);
-
-                //        var pageNumberOffset = 5.0;
-                //        if(page.SubmissionType != SubmissionTypes.Unsubmitted)
-                //        {
-                //            var submitterLabel = new Label
-                //                                 {
-                //                                     FontSize = 20,
-                //                                     FontWeight = FontWeights.Bold,
-                //                                     FontStyle = FontStyles.Oblique,
-                //                                     HorizontalAlignment = HorizontalAlignment.Right,
-                //                                     VerticalAlignment = VerticalAlignment.Top,
-                //                                     Content = page.Owner.FullName,
-                //                                     Margin = new Thickness(0, transformAmount + 5, 5, 0)
-                //                                 };
-                //            grid.Children.Add(submitterLabel);
-                //            pageNumberOffset = 30.0;
-                //        }
-
-                //        var pageIndexlabel = new Label
-                //                             {
-                //                                 FontSize = 20,
-                //                                 FontWeight = FontWeights.Bold,
-                //                                 FontStyle = FontStyles.Oblique,
-                //                                 HorizontalAlignment = HorizontalAlignment.Right,
-                //                                 VerticalAlignment = VerticalAlignment.Top,
-                //                                 Content = "Page " + page.PageNumber,
-                //                                 Margin = new Thickness(0, transformAmount + pageNumberOffset, 5, 0)
-                //                             };
-                //        grid.Children.Add(pageIndexlabel);
-                //        grid.UpdateLayout();
-
-                //        var transform = new TransformGroup();
-                //        var translate = new TranslateTransform(0, -transformAmount);
-                //        transform.Children.Add(translate);
-                //        if(Math.Abs(page.Width - CLPPage.LANDSCAPE_WIDTH) < 0.001)
-                //        {
-                //            var rotate = new RotateTransform(90.0);
-                //            var translate2 = new TranslateTransform(816, 0);
-                //            transform.Children.Add(rotate);
-                //            transform.Children.Add(translate2);
-                //        }
-                //        grid.RenderTransform = transform;
-                //        transformAmount += printHeight;
-
-                //        var pageContent = new PageContent();
-                //        var fixedPage = new FixedPage();
-                //        fixedPage.Children.Add(grid);
-
-                //        ((IAddChild)pageContent).AddChild(fixedPage);
-                //        document.Pages.Add(pageContent);
-                //    } while(page.Height > transformAmount);
-                //}
-
-                ////Save the document
-                //var xpsDocument = new XpsDocument(filePath, FileAccess.ReadWrite);
-                //var documentWriter = XpsDocument.CreateXpsDocumentWriter(xpsDocument);
-                //documentWriter.Write(document);
-                //xpsDocument.Close();
-
-                #endregion //XPS
-
-            }, null, "Converting Notebook Pages to XPS");
+            App.MainWindowViewModel.IsConvertingToPDF = false;
         }
 
         /// <summary>
@@ -1006,54 +1123,16 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnConvertPageSubmissionToXPSCommandExecute()
         {
-            // TODO: Entities
-            //var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
-            //if(notebookWorkspaceViewModel == null)
-            //{
-            //    return;
-            //}
+            var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null)
+            {
+                return;
+            }
 
-            //Catel.Windows.PleaseWaitHelper.Show(() =>
-            //{
-            //    var notebook = notebookWorkspaceViewModel.Notebook;
-            //    string directoryPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\";
-            //    if(!Directory.Exists(directoryPath))
-            //    {
-            //        Directory.CreateDirectory(directoryPath);
-            //    }
+            var notebook = notebookWorkspaceViewModel.Notebook;
+            var sortedPages = notebook.CurrentPage.Submissions.ToList().OrderBy(page => page.Owner.FullName).ThenBy(page => page.VersionIndex);
 
-            //    var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
-            //    if(currentPage == null)
-            //    {
-            //        return;
-            //    }
-
-            //    string fileName = notebook.NotebookName + " - Page " + currentPage.PageIndex + " Submissions.xps";
-            //    string filePath = directoryPath + fileName;
-            //    if(File.Exists(filePath))
-            //    {
-            //        File.Delete(filePath);
-            //    }
-
-            //    if(!notebook.Submissions[currentPage.UniqueID].Any())
-            //    {
-            //        return;
-            //    }
-
-            //    var document = new FixedDocument();
-            //    document.DocumentPaginator.PageSize = new Size(96 * 11, 96 * 8.5);
-
-            //    foreach(var page in notebook.Submissions[currentPage.UniqueID])
-            //    {
-    
-            //    }
-
-            //    //Save the document
-            //    var xpsDocument = new XpsDocument(filePath, FileAccess.ReadWrite);
-            //    var documentWriter = XpsDocument.CreateXpsDocumentWriter(xpsDocument);
-            //    documentWriter.Write(document);
-            //    xpsDocument.Close();
-            //}, null, "Converting Submissions for this page to XPS", 0.0 / 0.0);
+            ConvertPagesToXPS(sortedPages, notebook, "Page " + notebook.CurrentPage.PageNumber + " Submissions");
         }
 
         /// <summary>
@@ -1063,50 +1142,21 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnConvertAllSubmissionsToXPSCommandExecute()
         {
-            // TODO: Entities
-            //var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
-            //if(notebookWorkspaceViewModel == null)
-            //{
-            //    return;
-            //}
+            var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null)
+            {
+                return;
+            }
 
-            //Catel.Windows.PleaseWaitHelper.Show(() =>
-            //{
-            //    var notebook = notebookWorkspaceViewModel.Notebook;
-            //    string directoryPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Notebooks - XPS\";
-            //    if(!Directory.Exists(directoryPath))
-            //    {
-            //        Directory.CreateDirectory(directoryPath);
-            //    }
-
-            //    string fileName = notebook.NotebookName + " - All Submissions.xps";
-            //    string filePath = directoryPath + fileName;
-            //    if(File.Exists(filePath))
-            //    {
-            //        File.Delete(filePath);
-            //    }
-
-            //    var document = new FixedDocument();
-            //    document.DocumentPaginator.PageSize = new Size(96 * 11, 96 * 8.5);
-
-                
-            //    foreach(var clpPage in notebook.Pages)
-            //    {
-            //        foreach(var page in notebook.Submissions[clpPage.UniqueID])
-                   
-               
-            //  //  foreach(var page in notebook.Submissions.Keys.SelectMany(pageID => notebook.Submissions[pageID]))
-            //    {
-         
-            //    }
-            //         }
-
-            //    //Save the document
-            //    var xpsDocument = new XpsDocument(filePath, FileAccess.ReadWrite);
-            //    var documentWriter = XpsDocument.CreateXpsDocumentWriter(xpsDocument);
-            //    documentWriter.Write(document);
-            //    xpsDocument.Close();
-            //}, null, "Converting All Submissions to XPS", 0.0 / 0.0);
+            var notebook = notebookWorkspaceViewModel.Notebook;
+            var allPages = new List<CLPPage>();
+            foreach(var page in notebook.Pages)
+            {
+                allPages.AddRange(page.Submissions);
+            }
+            var allSortedPages = allPages.OrderBy(page => page.PageNumber).ThenBy(page => page.DifferentiationLevel).ThenBy(page => page.Owner.FullName).ThenBy(page => page.VersionIndex);
+            
+            ConvertPagesToXPS(allSortedPages, notebook, "All Submissions");
         }
 
         /// <summary>
@@ -1841,16 +1891,17 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             var index = notebookPanel.Pages.IndexOf(currentPage);
             index++;
-            // TODO: Entities
-            //var page = new CLPAnimationPage();
-            //if(pageOrientation == "Portrait")
-            //{
-            //    page.Height = ACLPPageBase.PORTRAIT_HEIGHT;
-            //    page.Width = ACLPPageBase.PORTRAIT_WIDTH;
-            //    page.InitialAspectRatio = page.Width / page.Height;
-            //}
-            //page.ParentNotebookID = notebookPanel.Notebook.UniqueID;
-            //notebookPanel.Notebook.InsertPageAt(index, page);
+            var page = new CLPPage(App.MainWindowViewModel.CurrentUser)
+                       {
+                           PageType = PageTypes.Animation
+                       };
+            if(pageOrientation == "Portrait")
+            {
+                page.Height = CLPPage.PORTRAIT_HEIGHT;
+                page.Width = CLPPage.PORTRAIT_WIDTH;
+                page.InitialAspectRatio = page.Width / page.Height;
+            }
+            notebookPanel.Notebook.InsertPageAt(index, page);
         }
 
         /// <summary>
@@ -2608,11 +2659,15 @@ namespace Classroom_Learning_Partner.ViewModels
                         array.OwnerID = App.MainWindowViewModel.CurrentUser.ID;
                         break;
                     case "FFCREMAINDER":
-                        array = new FuzzyFactorCard(page, columns, rows, dividend, true);
+                        bool isRemainderRegionDisplayed = (dividend <= 50);
+                        array = new FuzzyFactorCard(page, columns, rows, dividend, isRemainderRegionDisplayed);
                         // HACK: Find better way to set this
                         array.CreatorID = App.MainWindowViewModel.CurrentUser.ID;
-                        (array as FuzzyFactorCard).RemainderTiles.CreatorID = array.CreatorID;
-                        (array as FuzzyFactorCard).RemainderTiles.OwnerID = array.OwnerID;
+                        if(isRemainderRegionDisplayed)
+                        {
+                            (array as FuzzyFactorCard).RemainderTiles.CreatorID = array.CreatorID;
+                            (array as FuzzyFactorCard).RemainderTiles.OwnerID = array.OwnerID;
+                        }
                         break;
                     case "ARRAYCARD":
                         array = new CLPArray(page, columns, rows, ArrayTypes.ArrayCard);
@@ -2627,139 +2682,12 @@ namespace Classroom_Learning_Partner.ViewModels
                 arraysToAdd.Add(array);
             }
 
-            const double MIN_SIDE = 20.0;
-            const double MIN_FFC_SIDE = 185.0;
-            const double LABEL_LENGTH = 22.0;
-
-            var arrayStacks = 1;
-            var isHorizontallyAligned = page.Width / columns > page.Height / 4 * 3 / rows;
+            int arrayStacks = MatchArrayGridSize(arraysToAdd);
+            
+            var isHorizontallyAligned = CurrentPage.Width / columns > CurrentPage.Height / 4 * 3 / rows;
             var firstArray = arraysToAdd.First();
-            firstArray.SizeArrayToGridLevel();
-            var initialGridsquareSize = firstArray.GridSquareSize;
-            var xPosition = 0.0;
-            var yPosition = 150.0;
+            double initializedSquareSize = firstArray.ArrayHeight / firstArray.Rows;
 
-            //attempt to size newArray to lastArray
-            //if fail, resize all other arrays to newArray
-            //squareSize will be the grid size of the most recently placed array, or 0 if there are no non-background arrays
-            double squareSize = 0.0;
-            if(!(firstArray is FuzzyFactorCard))
-            {
-                foreach(var pageObject in page.PageObjects)
-                {
-                    if(pageObject is CLPArray || pageObject is FuzzyFactorCard && pageObject.CreatorID != Person.Author.ID)
-                    {
-                        squareSize = (pageObject as ACLPArrayBase).ArrayHeight / (pageObject as ACLPArrayBase).Rows;
-                    }
-                }
-            }
-
-            var minSide = (firstArray is FuzzyFactorCard)
-                ? MIN_FFC_SIDE :
-                MIN_SIDE;
-            var defaultSquareSize = (firstArray is FuzzyFactorCard) ?
-                Math.Max(45.0, (minSide / (Math.Min(rows, columns)))) :
-                45.0;
-            var initializedSquareSize = (squareSize > 0) ? Math.Max(squareSize, (minSide / (Math.Min(rows, columns)))) : defaultSquareSize;
-            if((firstArray is FuzzyFactorCard)&& xPosition + initializedSquareSize * columns + LABEL_LENGTH * 3.0 + 12.0 > page.Width)
-            {
-                initializedSquareSize = minSide / (Math.Min(rows, columns));
-            }
-
-            while(xPosition + 2 * LABEL_LENGTH + initializedSquareSize * columns >= page.Width || yPosition + 2 * LABEL_LENGTH + initializedSquareSize * rows >= page.Height)
-            {
-                initializedSquareSize = Math.Abs(initializedSquareSize - 45.0) < .0001 ? 22.5 : initializedSquareSize / 4 * 3;
-            }
-            if(numberOfArrays > 1)
-            {
-                if(isHorizontallyAligned)
-                {
-                    while(xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH >= page.Width)
-                    {
-                        initializedSquareSize = Math.Abs(initializedSquareSize - 45.0) < .0001 ? 22.5 : initializedSquareSize / 4 * 3;
-
-                        if(numberOfArrays < 5 || xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH < page.Width)
-                        {
-                            continue;
-                        }
-
-                        if(xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 2) + LABEL_LENGTH < page.Width &&
-                           yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * 2 + LABEL_LENGTH < page.Height)
-                        {
-                            arrayStacks = 2;
-                            break;
-                        }
-
-                        if(xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 3) + LABEL_LENGTH < page.Width &&
-                           yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * 3 + LABEL_LENGTH < page.Height)
-                        {
-                            arrayStacks = 3;
-                            break;
-                        }
-                    }
-                }
-                else
-                {
-                    yPosition = 100;
-                    while(yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH >= page.Height)
-                    {
-                        initializedSquareSize = Math.Abs(initializedSquareSize - 45.0) < .0001 ? 22.5 : initializedSquareSize / 4 * 3;
-
-                        if(numberOfArrays < 5 || yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH < page.Height)
-                        {
-                            continue;
-                        }
-
-                        if(yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 2) + LABEL_LENGTH < page.Height &&
-                           xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * 2 + LABEL_LENGTH < page.Width)
-                        {
-                            arrayStacks = 2;
-                            break;
-                        }
-
-                        if(yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 3) + LABEL_LENGTH < page.Height &&
-                           xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * 3 + LABEL_LENGTH < page.Width)
-                        {
-                            arrayStacks = 3;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            // If it doesn't fit, resize all other non-background arrays on page to match new array grid size
-            if(squareSize > 0.0 && initializedSquareSize != squareSize)
-            {
-                Dictionary<string, Point> oldDimensions = new Dictionary<string, Point>();
-                foreach(var pageObject in page.PageObjects)
-                {
-                    if(pageObject is CLPArray && pageObject.CreatorID != Person.Author.ID)
-                    {
-                        oldDimensions.Add(pageObject.ID, new Point(pageObject.Width, pageObject.Height));
-                        if((pageObject as ACLPArrayBase).Rows * initializedSquareSize > MIN_SIDE && (pageObject as ACLPArrayBase).Columns * initializedSquareSize > MIN_SIDE)
-                        {
-                            if(pageObject.XPosition + (pageObject as ACLPArrayBase).Columns * initializedSquareSize + 2 * LABEL_LENGTH <= page.Width && pageObject.YPosition + (pageObject as ACLPArrayBase).Rows * initializedSquareSize + 2 * LABEL_LENGTH <= page.Height)
-                            {
-                                (pageObject as ACLPArrayBase).SizeArrayToGridLevel(initializedSquareSize);
-                            }
-                        }
-                        else
-                        {
-                            (pageObject as ACLPArrayBase).SizeArrayToGridLevel(MIN_SIDE / Math.Min((pageObject as ACLPArrayBase).Rows, (pageObject as ACLPArrayBase).Columns));
-                        }
-                    }
-                    initialGridsquareSize = initializedSquareSize;
-                }
-            }
-
-
-            double MAX_HEIGHT = page.Height - 400.0;
-            if(squareSize == 0.0)
-            {
-                initializedSquareSize = Math.Min(initialGridsquareSize, MAX_HEIGHT / rows);
-            }
-
-            firstArray.SizeArrayToGridLevel(initializedSquareSize);
             firstArray.XPosition = 0.0;
             if(295.0 + firstArray.Height < page.Height)
             {
@@ -2770,69 +2698,14 @@ namespace Classroom_Learning_Partner.ViewModels
                 firstArray.YPosition = page.Height - firstArray.Height;
             }
             ACLPArrayBase.ApplyDistinctPosition(firstArray, App.MainWindowViewModel.CurrentUser.ID);
-            xPosition = firstArray.XPosition;
-            yPosition = firstArray.YPosition;
 
-            //if there is exactly one other array on the page, keep track of it for placement
-            ACLPArrayBase onlyArray = null;
-            foreach(var pageObject in page.PageObjects)
-            {
-                if(pageObject is CLPArray)
-                {
-                    onlyArray = (onlyArray == null) ? pageObject as CLPArray : null;
-                }
-                else if(pageObject is FuzzyFactorCard)
-                {
-                    onlyArray = (onlyArray == null) ? pageObject as FuzzyFactorCard : null;
-                }
-            }
+            PlaceArrayNextToExistingArray(arraysToAdd);
+            double xPosition = firstArray.XPosition;
+            double yPosition = firstArray.YPosition;
 
-            //Position to not overlap with first array on page if possible
-            if(onlyArray != null)
-            {
-                if(isHorizontallyAligned)
-                {
-                    const double GAP = 35.0;
-                    if(!(onlyArray is FuzzyFactorCard && (onlyArray as FuzzyFactorCard).RemainderTiles != null) && onlyArray.XPosition + onlyArray.Width + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH + GAP <= page.Width
-                        && rows * initializedSquareSize + LABEL_LENGTH < page.Height)
-                    {
-                        xPosition = onlyArray.XPosition + onlyArray.Width + GAP;
-                        yPosition = onlyArray.YPosition;
-                    }
-                    else if(onlyArray.XPosition + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH <= page.Width
-                        && onlyArray.YPosition + onlyArray.Height + rows * initializedSquareSize + LABEL_LENGTH + GAP < page.Height)
-                    {
-                        yPosition = onlyArray.YPosition + onlyArray.Height + GAP;
-                        xPosition = onlyArray.XPosition;
-                    }
-                    else
-                    {
-                        yPosition = page.Height - rows * initializedSquareSize - 2 * LABEL_LENGTH;
-                        xPosition = onlyArray.XPosition;
-                    }
-                }
-                else
-                {
-                    const double GAP = 35.0;
-                    if(!(onlyArray is FuzzyFactorCard && (onlyArray as FuzzyFactorCard).RemainderTiles != null) && onlyArray.YPosition + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH <= page.Height
-                        && onlyArray.XPosition + onlyArray.Width + columns * initializedSquareSize + LABEL_LENGTH + GAP < page.Width)
-                    {
-                        xPosition = onlyArray.XPosition + onlyArray.Width + GAP;
-                        yPosition = onlyArray.YPosition;
-                    }
-                    else if(onlyArray.YPosition + onlyArray.Height + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH + GAP <= page.Width
-                        && onlyArray.XPosition + rows * initializedSquareSize + LABEL_LENGTH < page.Height)
-                    {
-                        yPosition = onlyArray.YPosition + onlyArray.Height + GAP;
-                        xPosition = onlyArray.XPosition;
-                    }
-                }
-            }
-
+            //Place arrays on the page
             if(arraysToAdd.Count == 1)
             {
-                firstArray.XPosition = xPosition;
-                firstArray.YPosition = yPosition;
                 firstArray.SizeArrayToGridLevel(initializedSquareSize);
 
                 if(firstArray.XPosition + firstArray.Width >= firstArray.ParentPage.Width)
@@ -2846,7 +2719,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 ACLPPageBaseViewModel.AddPageObjectToPage(firstArray);
 
-                if(arrayType == "FFCREMAINDER")
+                if(arrayType == "FFCREMAINDER" && dividend <= 50)
                 {
                     if(xPosition + firstArray.Width + 20.0 + (firstArray as FuzzyFactorCard).RemainderTiles.Width <= page.Width)
                     {
@@ -2868,7 +2741,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             else
             {
-                initialGridsquareSize = initializedSquareSize;
+                double initialGridsquareSize = initializedSquareSize;
                 if(isHorizontallyAligned)
                 {
                     while(xPosition + (firstArray.LabelLength + columns * initialGridsquareSize) * numberOfArrays + firstArray.LabelLength >= page.Width)

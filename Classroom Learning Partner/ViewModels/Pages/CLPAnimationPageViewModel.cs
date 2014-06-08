@@ -33,7 +33,7 @@ namespace Classroom_Learning_Partner.ViewModels
            base.OnClosing();
        }
 
-       private bool _isClosing = false;
+       private bool _isClosing;
 
        #endregion
 
@@ -88,6 +88,7 @@ namespace Classroom_Learning_Partner.ViewModels
        private void OnRecordAnimationCommandExecute()
        {
            IsPlaying = false;
+           History.IsAnimating = false;
            if(IsRecording)
            {
                StopAnimation();
@@ -95,28 +96,27 @@ namespace Classroom_Learning_Partner.ViewModels
            }
 
            IsRecording = true;
-           // TODO: Entities
-           //if(PageHistory.IsAnimation)
-           //{
-           //    var eraseRedoAnimation = MessageBox.Show("Do you wish to Record from this spot? If you do, any animation after this point will be erased!",
-           //                                             "", MessageBoxButton.YesNo) == MessageBoxResult.Yes;
-           //    if(!eraseRedoAnimation)
-           //    {
-           //        return;
-           //    }
+           if(History.IsAnimation)
+           {
+               var eraseRedoAnimation = MessageBox.Show("Do you wish to Record from this spot? If you do, any animation after this point will be erased!",
+                                                        "", MessageBoxButton.YesNo) == MessageBoxResult.Yes;
+               if(!eraseRedoAnimation)
+               {
+                   return;
+               }
 
-           //    PageHistory.RedoItems.Clear();
-           //    var firstUndoItem = PageHistory.UndoItems.FirstOrDefault() as CLPAnimationIndicator;
-           //    if(firstUndoItem != null && firstUndoItem.AnimationIndicatorType == AnimationIndicatorType.Stop)
-           //    {
-           //        PageHistory.UndoItems.Remove(firstUndoItem);
-           //    }
-           //    PageHistory.UpdateTicks();
-           //}
-           //else
-           //{
-           //    PageHistory.AddHistoryItem(new CLPAnimationIndicator(Page, AnimationIndicatorType.Record));
-           //}
+               History.RedoItems.Clear();
+               var firstUndoItem = History.UndoItems.FirstOrDefault() as AnimationIndicator;
+               if(firstUndoItem != null && firstUndoItem.AnimationIndicatorType == AnimationIndicatorType.Stop)
+               {
+                   History.UndoItems.Remove(firstUndoItem);
+               }
+               History.UpdateTicks();
+           }
+           else
+           {
+               History.AddHistoryItem(new AnimationIndicator(Page, App.MainWindowViewModel.CurrentUser, AnimationIndicatorType.Record));
+           }
        }
 
        /// <summary>
@@ -131,27 +131,28 @@ namespace Classroom_Learning_Partner.ViewModels
                StopAnimation();
            }
 
-           // TODO: Entities
-           //if(!PageHistory.IsAnimation) 
-           //{
-           //    return;
-           //}
+           if(!History.IsAnimation) 
+           {
+               return;
+           }
 
-           //_oldPageInteractionMode = PageInteractionMode;
-           //PageInteractionMode = PageInteractionMode.None;
+           _oldPageInteractionMode = PageInteractionMode == PageInteractionMode.None ? PageInteractionMode.Pen : PageInteractionMode;
+           PageInteractionMode = PageInteractionMode.None;
+           History.IsAnimating = true;
 
-           //IsPlaying = true;
-           //while(PageHistory.UndoItems.Any())
-           //{
-           //    var clpAnimationIndicator = PageHistory.UndoItems.First() as CLPAnimationIndicator;
-           //    PageHistory.Undo();
-           //    if(clpAnimationIndicator != null && clpAnimationIndicator.AnimationIndicatorType == AnimationIndicatorType.Record)
-           //    {
-           //        break;
-           //    }
-           //}
+           IsPlaying = true;
+           while(History.UndoItems.Any())
+           {
+               var animationIndicator = History.UndoItems.First() as AnimationIndicator;
+               History.Undo();
+               if(animationIndicator != null && animationIndicator.AnimationIndicatorType == AnimationIndicatorType.Record)
+               {
+                   break;
+               }
+           }
            IsPlaying = false;
            PageInteractionMode = _oldPageInteractionMode;
+           History.IsAnimating = false;
        }
 
        /// <summary>
@@ -161,54 +162,54 @@ namespace Classroom_Learning_Partner.ViewModels
 
        private void OnPlayAnimationCommandExecute()
        {
-           // TODO: Entities
-           //if(IsRecording)
-           //{
-           //    return;
-           //}
+           if(IsRecording)
+           {
+               return;
+           }
 
-           //if(IsPlaying)
-           //{
-           //    IsPlaying = false;
-           //    return;
-           //}
-           //
-           //var t = new Thread(() =>
-           //                       {
-           //                           InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
-           //                           IsPlaying = true;
-           //                           _oldPageInteractionMode = (PageInteractionMode == PageInteractionMode.None) ? PageInteractionMode.Pen : PageInteractionMode;
-           //                           PageInteractionMode = PageInteractionMode.None;
+           if(IsPlaying)
+           {
+               IsPlaying = false;
+               return;
+           }
 
-           //                           while(PageHistory.RedoItems.Any() && IsPlaying)
-           //                           {
-           //                               var historyItemAnimationDelay = Convert.ToInt32(Math.Round(Page.PageHistory.CurrentAnimationDelay / CurrentPlaybackSpeed));
-           //                               Application.Current.Dispatcher.Invoke(DispatcherPriority.DataBind,
-           //                                                                     (DispatcherOperationCallback)delegate
-           //                                                                                                      {
-           //                                                                                                          PageHistory.Redo(true);
-           //                                                                                                          return null;
-           //                                                                                                      }, null);
-           //                               Thread.Sleep(historyItemAnimationDelay);
-           //                           }
-           //                           IsPlaying = false;
-           //                           PageInteractionMode = _oldPageInteractionMode;
-           //                           InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
-           //                       });
+           var t = new Thread(() =>
+                              {
+                                  History.IsAnimating = true;
+                                  IsPlaying = true;
+                                  _oldPageInteractionMode = PageInteractionMode == PageInteractionMode.None ? PageInteractionMode.Pen : PageInteractionMode;
+                                  PageInteractionMode = PageInteractionMode.None;
 
-           //t.Start();
+                                  while(History.RedoItems.Any() && IsPlaying)
+                                  {
+                                      var historyItemAnimationDelay = Convert.ToInt32(Math.Round(Page.History.CurrentAnimationDelay / CurrentPlaybackSpeed));
+                                      Application.Current.Dispatcher.Invoke(DispatcherPriority.DataBind,
+                                                                            (DispatcherOperationCallback)delegate
+                                                                                                         {
+                                                                                                             History.Redo(true);
+                                                                                                             return null;
+                                                                                                         },
+                                                                            null);
+                                      Thread.Sleep(historyItemAnimationDelay);
+                                  }
+                                  IsPlaying = false;
+                                  PageInteractionMode = _oldPageInteractionMode;
+                                  History.IsAnimating = false;
+                              });
+
+           t.Start();
        }
 
        private void StopAnimation()
        {
            PageInteractionMode = _oldPageInteractionMode;
-           // TODO: Entities
-           //if(IsRecording)
-           //{
-           //    PageHistory.AddHistoryItem(new CLPAnimationIndicator(Page, AnimationIndicatorType.Stop)); 
-           //}
+           if(IsRecording)
+           {
+               History.AddHistoryItem(new AnimationIndicator(Page, App.MainWindowViewModel.CurrentUser, AnimationIndicatorType.Stop)); 
+           }
            IsPlaying = false;
            IsRecording = false;
+           History.IsAnimating = false;
        }
 
        /// <summary>
@@ -218,12 +219,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
        private void OnSliderChangedCommandExecute(RoutedPropertyChangedEventArgs<double> e)
        {
-           // TODO: Entities
-           //if(IsPlaying || IsRecording || _isClosing)
-           //{
-           //    return;
-           //}
-           //PageHistory.MoveToHistoryPoint(e.OldValue, e.NewValue);
+           if(IsPlaying || IsRecording || _isClosing)
+           {
+               return;
+           }
+           History.MoveToHistoryPoint(e.OldValue, e.NewValue);
        }
 
        #endregion //Commands

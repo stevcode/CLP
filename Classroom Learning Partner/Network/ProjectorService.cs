@@ -60,7 +60,7 @@ namespace Classroom_Learning_Partner
                                                                                             if(notebookWorkspaceViewModel.CurrentDisplay == null)
                                                                                             {
                                                                                                 var singleDisplayView = CLPServiceAgent.Instance.GetViewFromViewModel(notebookWorkspaceViewModel.SingleDisplay);
-                                                                                                screenShotByteSource = CLPServiceAgent.Instance.GetScreenShot(singleDisplayView as UIElement);
+                                                                                                screenShotByteSource = CLPServiceAgent.Instance.UIElementToImageByteArray(singleDisplayView as UIElement);
                                                                                             }
                                                                                             else
                                                                                             {
@@ -69,7 +69,7 @@ namespace Classroom_Learning_Partner
                                                                                                                                where displayViewModel is GridDisplayViewModel && (displayViewModel as GridDisplayViewModel).IsDisplayPreview == false
                                                                                                                                select CLPServiceAgent.Instance.GetViewFromViewModel(displayViewModel))
                                                                                                 {
-                                                                                                    screenShotByteSource = CLPServiceAgent.Instance.GetScreenShot(gridDisplayView as UIElement);
+                                                                                                    screenShotByteSource = CLPServiceAgent.Instance.UIElementToImageByteArray(gridDisplayView as UIElement);
                                                                                                 }
                                                                                             }
 

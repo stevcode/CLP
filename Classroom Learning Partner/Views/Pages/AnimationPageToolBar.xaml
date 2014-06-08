@@ -20,7 +20,6 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type Thumb}">
-                            <!--<Rectangle Fill="Black" Stroke="Black" Height="15" Width="15" />-->
                             <Polygon Points="0,0 15,0 15,20 7.5,25 0,20" Fill="LightGray" StrokeThickness="1" Stroke="Black" />
                         </ControlTemplate>
                     </Setter.Value>
@@ -236,7 +235,7 @@
 
         <!--Animation Progress Bar-->
         <Grid Grid.Row="1"
-              Visibility="{Binding PageHistory.IsAnimation, Converter={StaticResource BooleanToHidingVisibilityConverter}}">
+              Visibility="{Binding History.IsAnimation, Converter={StaticResource BooleanToHidingVisibilityConverter}}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
@@ -269,8 +268,8 @@
                     HorizontalAlignment="Center" VerticalAlignment="Center"
                     Style="{StaticResource AnimationSliderStyle}"
                     Height="25" Width="{Binding ActualWidth, ElementName=PlaybackControls, Converter={StaticResource AddLengthConverter}, ConverterParameter=-75}"
-                    Minimum="0" Maximum="{Binding PageHistory.TotalHistoryTicks}"
-                    Value="{Binding PageHistory.CurrentHistoryTick}"
+                    Minimum="0" Maximum="{Binding History.TotalHistoryTicks}"
+                    Value="{Binding History.CurrentHistoryTick}"
                     IsSnapToTickEnabled="True" TickFrequency="1.0" IsMoveToPointEnabled="True">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="ValueChanged">
