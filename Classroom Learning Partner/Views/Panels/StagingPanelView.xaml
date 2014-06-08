@@ -78,6 +78,7 @@
                          SelectedValue="{Binding CurrentPage, Mode=OneWay}"
                          SelectionMode="Single"
                          x:Name="PagesListBox"
+                         Margin="5 0"
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          VirtualizingPanel.IsVirtualizing="True"
                          VirtualizingPanel.IsVirtualizingWhenGrouping="True"
@@ -182,43 +183,6 @@
                                     <Run Text="{Binding SubmissionTime}" />
                                     <Run Text=")" />
                                 </TextBlock>
-
-                                <!--<Control Grid.Row="1"
-                                         Grid.Column="1"
-                                         Margin="5 5 5 0">
-                                    <Control.Resources>
-
-                                        <ControlTemplate x:Key="PagePreviewTemplate">
-                                            <views:CLPPagePreviewView DataContext="{Binding}"
-                                                                      ClipToBounds="True" />
-                                        </ControlTemplate>
-
-                                        <ControlTemplate x:Key="ThumbnailTemplate">
-                                            <Image Source="{Binding PageThumbnail, Converter={StaticResource BytesToImageSourceConverter}, IsAsync=True}" />
-                                        </ControlTemplate>
-
-                                    </Control.Resources>
-
-                                    <Control.Style>
-
-                                        <Style TargetType="{x:Type Control}">
-                                            <Style.Triggers>
-
-                                                --><!--CLPPagePreviewView Fallback if Thumbnail is absent--><!--
-                                                <DataTrigger Binding="{Binding PageThumbnail, Converter={StaticResource ByteArrayToBoolConverter}}" Value="False">
-                                                    <Setter Property="Template" Value="{StaticResource PagePreviewTemplate}" />
-                                                </DataTrigger>
-
-                                                --><!--Thumbnail--><!--
-                                                <DataTrigger Binding="{Binding PageThumbnail, Converter={StaticResource ByteArrayToBoolConverter}}" Value="True">
-                                                    <Setter Property="Template" Value="{StaticResource ThumbnailTemplate}" />
-                                                </DataTrigger>
-
-                                            </Style.Triggers>
-                                        </Style>
-
-                                    </Control.Style>
-                                </Control>-->
                                 
                                 <Control Grid.Row="1"
                                          Grid.Column="1"

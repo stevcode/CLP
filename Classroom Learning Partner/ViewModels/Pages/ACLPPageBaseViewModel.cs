@@ -49,7 +49,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
             InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
             PageObjects.CollectionChanged += PageObjects_CollectionChanged;
-            Submissions.CollectionChanged += Submissions_CollectionChanged;
 
             MouseMoveCommand = new Command<MouseEventArgs>(OnMouseMoveCommandExecute);
             MouseDownCommand = new Command<MouseEventArgs>(OnMouseDownCommandExecute);
@@ -63,7 +62,6 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
             PageObjects.CollectionChanged -= PageObjects_CollectionChanged;
-            Submissions.CollectionChanged -= Submissions_CollectionChanged;
             base.OnClosing();
         }
 
@@ -149,6 +147,25 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData SubmissionsProperty = RegisterProperty("Submissions", typeof(ObservableCollection<CLPPage>));
+
+        /// <summary>
+        /// Whether the page has submissions or not.
+        /// </summary>
+        [ViewModelToModel("Page")]
+        public bool HasSubmissions
+        {
+            get { return GetValue<bool>(HasSubmissionsProperty); }
+        }
+
+        public static readonly PropertyData HasSubmissionsProperty = RegisterProperty("HasSubmissions", typeof(bool));
+
+        [ViewModelToModel("Page")]
+        public int NumberOfDistinctSubmissions
+        { 
+            get { return GetValue<int>(NumberOfDistinctSubmissionsProperty); }
+        }
+
+        public static readonly PropertyData NumberOfDistinctSubmissionsProperty = RegisterProperty("NumberOfDistinctSubmissions", typeof(int));
 
         #endregion //Model
 
@@ -381,19 +398,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData IsUsingCustomCursorsProperty = RegisterProperty("IsUsingCustomCursors", typeof(bool), false);
 
-        /// <summary>
-        /// Whether the page has submissions or not.
-        /// </summary>
-        public bool HasSubmissions
-        {
-            get { return Submissions.Any() || Page.LastVersionIndex != null; }
-        }
-
-        public int NumberOfDistinctSubmissions
-        { 
-            get { return Submissions.Select(submission => submission.OwnerID).Distinct().Count(); }
-        }
-
         #endregion //Bindings
 
         #region Commands
@@ -611,12 +615,6 @@ namespace Classroom_Learning_Partner.ViewModels
                     RemoveStroke(e.Removed, e.Added);
                     break;
             }
-        }
-
-        protected void Submissions_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            RaisePropertyChanged("HasSubmissions");
-            RaisePropertyChanged("NumberOfDistinctSubmissions");
         }
 
         protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
