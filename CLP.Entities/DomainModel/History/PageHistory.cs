@@ -143,6 +143,17 @@ namespace CLP.Entities
 
         public static readonly PropertyData UseHistoryProperty = RegisterProperty("UseHistory", typeof(bool), true);
 
+        /// <summary>
+        /// Flag to signify history is currently playing or rewinding.
+        /// </summary>
+        public bool IsAnimating
+        {
+            get { return GetValue<bool>(IsAnimatingProperty); }
+            set { SetValue(IsAnimatingProperty, value); }
+        }
+
+        public static readonly PropertyData IsAnimatingProperty = RegisterProperty("IsAnimating", typeof(bool), false);
+
         public bool CanUndo
         {
             get

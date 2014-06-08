@@ -537,7 +537,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         protected void PageObjects_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if(IsPagePreview || PageInteractionMode == PageInteractionMode.None)
+            if(IsPagePreview || PageInteractionMode == PageInteractionMode.None || History.IsAnimating)
             {
                 return;
             }
@@ -578,7 +578,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         protected void InkStrokes_StrokesChanged(object sender, StrokeCollectionChangedEventArgs e)
         {
-            if(IsPagePreview)
+            if(IsPagePreview || History.IsAnimating)
             {
                 return;
             }
