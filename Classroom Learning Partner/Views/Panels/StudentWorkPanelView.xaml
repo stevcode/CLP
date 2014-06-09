@@ -187,7 +187,7 @@
                                                 Height="30" Margin="-20 0 0 -20"
                                                 Cursor="Hand" HorizontalAlignment="Right"
                                                 VerticalAlignment="Top"
-                                                Command="{Binding DataContext.AddPageToStageCommand, ElementName=TeacherPages}"
+                                                Command="{Binding DataContext.AddTeacherPageToStageCommand, ElementName=TeacherPages}"
                                                 CommandParameter="{Binding}"
                                                 Visibility="{Binding DataContext.StagingPanel.IsVisible, ElementName=TeacherPages, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
                                             <Button.Template>
@@ -247,27 +247,27 @@
                                         <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal">
                                             <Button
                                     x:Name="AppendStarred"
-                                    Height="50"
+                                    Height="29"
                                     Width="25"
                                     Command="{Binding DataContext.AppendStarredCommand, ElementName=TeacherPages}"
                                     CommandParameter="{Binding}">
-                                                <Image Source="pack://application:,,,/Resources/Images/DisplayStarredSubmissionsButton50x25.png" />
+                                                <Image Source="pack://application:,,,/Resources/Images/DisplayStarredSubmissionsButton29x25.png" />
                                             </Button>
                                             <Button
                                     x:Name="AppendCorrect"
-                                    Height="50"
+                                    Height="29"
                                     Width="25"
                                     Command="{Binding DataContext.AppendCorrectCommand, ElementName=TeacherPages}"
                                     CommandParameter="{Binding}">
-                                                <Image Source="pack://application:,,,/Resources/Images/DisplayCorrectSubmissionsButton50x25.png" />
+                                                <Image Source="pack://application:,,,/Resources/Images/DisplayCorrectSubmissionsButton29x25.png" />
                                             </Button>
                                             <Button
                                     x:Name="AppendIncorrect"
-                                    Height="50"
+                                    Height="29"
                                     Width="25"
                                     Command="{Binding DataContext.AppendIncorrectCommand, ElementName=TeacherPages}"
                                     CommandParameter="{Binding}">
-                                                <Image Source="pack://application:,,,/Resources/Images/DisplayIncorrectSubmissionsButton50x25.png" />
+                                                <Image Source="pack://application:,,,/Resources/Images/DisplayIncorrectSubmissionsButton29x25.png" />
                                             </Button>
                                         </StackPanel>
                                     </Grid>
@@ -339,7 +339,9 @@
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <Border Margin="3" BorderBrush="{StaticResource GrayEdgeColor}"
-                                        BorderThickness="1,1,1,1" Height="{Binding ElementName=DisplayedPages, Path=DataContext.PageHeight}">
+                                                        BorderThickness="1,1,1,1" 
+                                                        Height="{Binding ElementName=DisplayedPages, Path=DataContext.PageHeight}"
+                                                        Width="{Binding ElementName=DisplayedPages, Path=DataContext.PageWidth}">
                                                     <Grid>
                                                         <Grid.RowDefinitions>
                                                             <RowDefinition Height="*"/>
