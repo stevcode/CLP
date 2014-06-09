@@ -2,11 +2,7 @@
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com"
-                   xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
-                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
-                   xmlns:system="clr-namespace:System;assembly=mscorlib"
-                   xmlns:extenders="clr-namespace:Classroom_Learning_Partner.Views.Extenders">
+                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters">
 
     <UserControl.Resources>
         <conv:PanelLocationToThicknessConverter x:Key="PanelLocationToThicknessConverter" />
@@ -14,33 +10,103 @@
 
     <Border Background="{StaticResource GrayBackgroundColor}"
             BorderBrush="{StaticResource GrayEdgeColor}"
-            BorderThickness="{Binding Location, Converter={StaticResource PanelLocationToThicknessConverter}, ConverterParameter=7.0}"
+            BorderThickness="{Binding Location, Converter={StaticResource PanelLocationToThicknessConverter}, ConverterParameter={StaticResource PanelBorderThickeness}}"
             Width="{Binding Length}">
         
-        <StackPanel>
+        <catel:StackGrid Margin="5 0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
             
-            <TextBlock>
-                <Run Text="Page ID: " />
-                
-            </TextBlock>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
             
-            <TextBox Text="{Binding ID}" />
+            <TextBlock Text="ID:" />
+            <TextBox Text="{Binding ID}"
+                     IsReadOnly="True" />
             
-            <TextBlock>
-                <Run Text="Page VersionIndex: " />
-                <Run Text="{Binding VersionIndex}" />
-            </TextBlock>
+            <TextBlock Text="DifferentiationLevel:" />
+            <TextBox Text="{Binding DifferentiationLevel}"
+                     IsReadOnly="True" />
             
-            <TextBlock>
-                <Run Text="Page Number: " />
-            </TextBlock>
+            <TextBlock Text="VersionIndex:" />
+            <TextBox Text="{Binding VersionIndex}"
+                     IsReadOnly="True" />
             
+            <TextBlock Text="Page Number:" />
             <TextBox Text="{Binding PageNumber}" />
             
-            <Button Content="Take Screenshot of Page"
-                    Command="{Binding PageScreenshotCommand}" />
+            <Button Content="Add Page:"
+                    Command="{Binding AddPageCommand}"
+                    Height="30"
+                    Margin="1" />
             
-        </StackPanel>
+            <ComboBox ItemsSource="{Binding PageOrientations}"
+                      SelectedItem="{Binding SelectedPageOrientation}"
+                      Height="25"
+                      Margin="1"
+                      VerticalAlignment="Center"
+                      VerticalContentAlignment="Center" />
+            
+            <Button Content="Move Page Up"
+                    Command="{Binding MovePageUpCommand}"
+                    Height="30"
+                    Margin="1" />
+            
+            <Button Content="Move Page Down"
+                    Command="{Binding MovePageDownCommand}"
+                    Height="30"
+                    Margin="1" />
+            
+            <Button Content="Make Page Longer"
+                    Command="{Binding MakePageLongerCommand}"
+                    Height="30"
+                    Margin="1" />
+            
+            <Button Content="Trim Page"
+                    Command="{Binding TrimPageCommand}"
+                    Height="30"
+                    Margin="1" />
+            
+            <Button Content="Switch Page Orientation"
+                    Command="{Binding SwitchPageLayoutCommand}"
+                    Height="30"
+                    Margin="1" />
+            
+            <Button Content="Clear Page"
+                    Command="{Binding ClearPageCommand}"
+                    Height="30"
+                    Margin="1" />
+            
+            <Button Content="Copy This Page"
+                    Command="{Binding CopyPageCommand}"
+                    Height="30"
+                    Margin="1" />
+            
+            <Button Content="Delete This Page"
+                    Command="{Binding DeletePageCommand}"
+                    Height="30"
+                    Margin="1" />
+            
+            <Button Content="Take Screenshot of Page"
+                    Command="{Binding PageScreenshotCommand}"
+                    Grid.ColumnSpan="2"
+                    Height="30"
+                    Margin="1" />
+            
+        </catel:StackGrid>
 
     </Border>
 

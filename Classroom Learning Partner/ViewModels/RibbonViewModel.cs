@@ -180,17 +180,8 @@ namespace Classroom_Learning_Partner.ViewModels
             MakeGroupsCommand = new Command(OnMakeGroupsCommandExecute);
 
             //Page
-            AddNewPageCommand = new Command<string>(OnAddNewPageCommandExecute);
-            AddNewProofPageCommand = new Command<string>(OnAddNewProofPageCommandExecute);
-            MovePageUpCommand = new Command(OnMovePageUpCommandExecute, OnMovePageUpCanExecute);
-            MovePageDownCommand = new Command(OnMovePageDownCommandExecute, OnMovePageDownCanExecute);
-            SwitchPageLayoutCommand = new Command(OnSwitchPageLayoutCommandExecute);
             SwitchPageTypeCommand = new Command(OnSwitchPageTypeCommandExecute);
-
-            DeletePageCommand = new Command(OnDeletePageCommandExecute, OnInsertPageObjectCanExecute);
-            CopyPageCommand = new Command(OnCopyPageCommandExecute, OnInsertPageObjectCanExecute);
             MakePageLongerCommand = new Command(OnMakePageLongerCommandExecute, OnInsertPageObjectCanExecute);
-            TrimPageCommand = new Command(OnTrimPageCommandExecute, OnInsertPageObjectCanExecute);
             ClearPageCommand = new Command(OnClearPageCommandExecute, OnInsertPageObjectCanExecute);
 
             //Metadata
@@ -1854,211 +1845,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Page Commands
 
-        /// <summary>
-        /// Adds a new page to the notebook.
-        /// </summary>
-        public Command<string> AddNewPageCommand { get; private set; }
-
-        private void OnAddNewPageCommandExecute(string pageOrientation)
-        {
-            var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
-            var notebookPanel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
-            if(notebookPanel == null || currentPage == null)
-            {
-                return;
-            }
-            var index = notebookPanel.Pages.IndexOf(currentPage);
-            index++;
-            var page = new CLPPage(App.MainWindowViewModel.CurrentUser);
-            if(pageOrientation == "Portrait")
-            {
-                page.Height = CLPPage.PORTRAIT_HEIGHT;
-                page.Width = CLPPage.PORTRAIT_WIDTH;
-                page.InitialAspectRatio = page.Width / page.Height;
-            }
-            notebookPanel.Notebook.InsertPageAt(index, page);
-        }
-
-        public Command<string> AddNewProofPageCommand { get; private set; }
-
-        private void OnAddNewProofPageCommandExecute(string pageOrientation)
-        {
-            var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
-            var notebookPanel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
-            if(notebookPanel == null || currentPage == null)
-            {
-                return;
-            }
-            var index = notebookPanel.Pages.IndexOf(currentPage);
-            index++;
-            var page = new CLPPage(App.MainWindowViewModel.CurrentUser)
-                       {
-                           PageType = PageTypes.Animation
-                       };
-            if(pageOrientation == "Portrait")
-            {
-                page.Height = CLPPage.PORTRAIT_HEIGHT;
-                page.Width = CLPPage.PORTRAIT_WIDTH;
-                page.InitialAspectRatio = page.Width / page.Height;
-            }
-            notebookPanel.Notebook.InsertPageAt(index, page);
-        }
-
-        /// <summary>
-        /// Moves the CurrentPage Up in the notebook.
-        /// </summary>
-        public Command MovePageUpCommand { get; private set; }
-
-        private void OnMovePageUpCommandExecute()
-        {
-            var currentPage = CurrentPage;
-            var notebookPanel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
-            var currentPageIndex = notebookPanel.Pages.IndexOf(currentPage);
-            var previousPage = notebookPanel.Pages[currentPageIndex - 1];
-            currentPage.PageNumber--;
-            previousPage.PageNumber++;
-
-            notebookPanel.Pages.MoveItemUp(currentPage);
-            notebookPanel.CurrentPage = notebookPanel.Pages[currentPageIndex - 1];
-        }
-
-        private bool OnMovePageUpCanExecute()
-        {
-            var currentPage = CurrentPage;
-            var notebookPanel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
-            if(notebookPanel == null || currentPage == null)
-            {
-                return false;
-            }
-            
-            return notebookPanel.Pages.CanMoveItemUp(currentPage);
-        }
-
-        /// <summary>
-        /// Moves the CurrentPage Down in the notebook.
-        /// </summary>
-        public Command MovePageDownCommand { get; private set; }
-
-        private void OnMovePageDownCommandExecute()
-        {
-            var currentPage = CurrentPage;
-            var notebookPanel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
-            var currentPageIndex = notebookPanel.Pages.IndexOf(currentPage);
-            var nextPage = notebookPanel.Pages[currentPageIndex + 1];
-            currentPage.PageNumber++;
-            nextPage.PageNumber--;
-
-            notebookPanel.Pages.MoveItemDown(currentPage);
-            notebookPanel.CurrentPage = notebookPanel.Pages[currentPageIndex + 1];
-        }
-
-        private bool OnMovePageDownCanExecute()
-        {
-            var currentPage = CurrentPage;
-            var notebookPanel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
-            if(notebookPanel == null || currentPage == null)
-            {
-                return false;
-            }
-
-            return notebookPanel.Pages.CanMoveItemDown(currentPage);
-        }
-
-        /// <summary>
-        /// Converts current page between landscape and portrait.
-        /// </summary>
-        public Command SwitchPageLayoutCommand { get; private set; }
-       
-        private void OnSwitchPageLayoutCommandExecute()
-        {
-            var page = CurrentPage;
-
-            if(Math.Abs(page.InitialAspectRatio - CLPPage.LANDSCAPE_WIDTH / CLPPage.LANDSCAPE_HEIGHT) < 0.01)
-            {
-                foreach(var pageObject in page.PageObjects)
-                {
-                    if (pageObject.XPosition + pageObject.Width > CLPPage.PORTRAIT_WIDTH)
-                    {
-                        pageObject.XPosition = CLPPage.PORTRAIT_WIDTH - pageObject.Width;
-                    }
-                    if(pageObject.YPosition + pageObject.Height > CLPPage.PORTRAIT_HEIGHT)
-                    {
-                        pageObject.YPosition = CLPPage.PORTRAIT_HEIGHT - pageObject.Height;
-                    }
-                }
-
-                page.Width = CLPPage.PORTRAIT_WIDTH;
-                page.Height = CLPPage.PORTRAIT_HEIGHT;
-                page.InitialAspectRatio = page.Width / page.Height;
-            }
-            else if(Math.Abs(page.InitialAspectRatio - CLPPage.PORTRAIT_WIDTH / CLPPage.PORTRAIT_HEIGHT) < 0.01)
-            {
-                foreach(var pageObject in page.PageObjects)
-                {
-                    if(pageObject.XPosition + pageObject.Width > CLPPage.LANDSCAPE_WIDTH)
-                    {
-                        pageObject.XPosition = CLPPage.LANDSCAPE_WIDTH - pageObject.Width;
-                    }
-                    if(pageObject.YPosition + pageObject.Height > CLPPage.LANDSCAPE_HEIGHT)
-                    {
-                        pageObject.YPosition = CLPPage.LANDSCAPE_HEIGHT - pageObject.Height;
-                    }
-                }
-
-                page.Width = CLPPage.LANDSCAPE_WIDTH;
-                page.Height = CLPPage.LANDSCAPE_HEIGHT;
-                page.InitialAspectRatio = page.Width / page.Height;
-            }
-        }
-
         public Command SwitchPageTypeCommand { get; private set; }
 
         public void OnSwitchPageTypeCommandExecute()
         {
             var page = CurrentPage;
             page.PageType = page.PageType == PageTypes.Animation ? PageTypes.Default : PageTypes.Animation;
-        }
-
-        /// <summary>
-        /// Deletes current page from the notebook.
-        /// </summary>
-        public Command DeletePageCommand { get; private set; }
-
-        private void OnDeletePageCommandExecute()
-        {
-            var page = CurrentPage;
-            var panel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
-            if(page == null || panel == null)
-            {
-                return;
-            }
-
-            var index = panel.Notebook.Pages.IndexOf(page);
-            if(index == -1)
-            {
-                return;
-            }
-            panel.Notebook.RemovePageAt(index);
-        }
-
-        /// <summary>
-        /// Makes a duplicate of the current page.
-        /// </summary>
-        public Command CopyPageCommand { get; private set; }
-
-        private void OnCopyPageCommandExecute()
-        {
-            var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
-            var notebookPanel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
-            if(notebookPanel == null || currentPage == null)
-            {
-                return;
-            }
-            var index = notebookPanel.Pages.IndexOf(currentPage);
-            index++;
-
-            var newPage = currentPage.DuplicatePage();
-            notebookPanel.Notebook.InsertPageAt(index, newPage);
         }
 
         /// <summary>
@@ -2090,20 +1882,6 @@ namespace Classroom_Learning_Partner.ViewModels
             catch(Exception)
             {
 
-            }
-        }
-
-        /// <summary>
-        /// Trims the current page's excess height if free of ink strokes and pageObjects.
-        /// </summary>
-        public Command TrimPageCommand { get; private set; }
-
-        private void OnTrimPageCommandExecute()
-        {
-            if((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay == null)
-            {
-                var page = CurrentPage;
-                page.TrimPage();
             }
         }
 
