@@ -100,7 +100,11 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <Control Grid.Column="0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Control Grid.Column="0" Grid.Row="0">
                                 <Control.Resources>
                                     <ControlTemplate x:Key="FirstTeacherPageThumbnailTemplate">
                                         <Image Source="{Binding FirstPage.PageThumbnail, Mode=OneWay}"/>
@@ -148,7 +152,7 @@
                                     </Style>
                                 </Control.Style>
                             </Control>
-                            <Rectangle Grid.Column="0" Fill="Transparent" StrokeThickness="2">
+                            <Rectangle Grid.Column="0" Grid.Row="0" Fill="Transparent" StrokeThickness="2">
                                 <Rectangle.Stroke>
                                     <MultiBinding Converter="{StaticResource PageMatchToColorConverter}">
                                         <Binding Path="CurrentPage"/>
@@ -163,7 +167,7 @@
                                     </i:EventTrigger>
                                 </i:Interaction.Triggers>
                             </Rectangle>
-                            <Grid Grid.Column="1"
+                            <Grid Grid.Column="1" Grid.Row="0"
                                   VerticalAlignment="Center"
                                   Margin="0 0 0 0"
                                   Visibility="{Binding MainWindowViewModel.Ribbon.InstructorVisibility, Source={x:Static Application.Current}}">
@@ -185,6 +189,40 @@
                                     TextAlignment="Center"
                                     Width="25" />
                             </Grid>
+                            <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal">
+                                <Button
+                                    x:Name="FirstPageAppendStarred"
+                                    Height="50"
+                                    Width="25"
+                                    Command="{Binding AppendStarredCommand}"
+                                    CommandParameter="{Binding FirstPage}">
+                                    <Image Source="pack://application:,,,/Resources/Images/DisplaySubmissionsButton50x25.png" />
+                                </Button>
+                                <Button
+                                    x:Name="FirstPageAppendCorrect"
+                                    Height="50"
+                                    Width="25"
+                                    Command="{Binding AppendCorrectCommand}"
+                                    CommandParameter="{Binding FirstPage}">
+                                    <Image Source="pack://application:,,,/Resources/Images/DisplaySubmissionsButton50x25.png" />
+                                </Button>
+                                <Button
+                                    x:Name="FirstPageAppendAlmostCorrect"
+                                    Height="50"
+                                    Width="25"
+                                    Command="{Binding AppendAlmostCorrectCommand}"
+                                    CommandParameter="{Binding FirstPage}">
+                                    <Image Source="pack://application:,,,/Resources/Images/DisplaySubmissionsButton50x25.png" />
+                                </Button>
+                                <Button
+                                    x:Name="FirstPageAppendIncorrect"
+                                    Height="50"
+                                    Width="25"
+                                    Command="{Binding AppendIncorrectCommand}"
+                                    CommandParameter="{Binding FirstPage}">
+                                    <Image Source="pack://application:,,,/Resources/Images/DisplaySubmissionsButton50x25.png" />
+                                </Button>
+                            </StackPanel>
                         </Grid>
                         <Grid Grid.Row="0" Grid.Column="3" Margin="5">
                             <Grid.ColumnDefinitions>
