@@ -902,6 +902,11 @@
     <Content Include="External Libraries\System.Reactive.Providers.dll" />
     <Content Include="External Libraries\System.Reactive.Windows.Threading.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
+    <Resource Include="Resources\Images\BackArrow16.png" />
+    <Resource Include="Resources\Images\ForwardArrow16.png" />
+    <Resource Include="Resources\Images\DisplayCorrectSubmissionsButton50x25.png" />
+    <Resource Include="Resources\Images\DisplayIncorrectSubmissionsButton50x25.png" />
+    <Resource Include="Resources\Images\DisplayStarredSubmissionsButton50x25.png" />
     <Resource Include="Resources\Images\BlankPage64.png" />
     <Resource Include="Resources\Images\PageInformation16.png" />
     <Resource Include="Resources\Images\PageInformation32.png" />
