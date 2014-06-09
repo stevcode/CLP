@@ -192,7 +192,6 @@ namespace Classroom_Learning_Partner.ViewModels
             //Debug
             CreateClassSubjectCommand = new Command(OnCreateClassSubjectCommandExecute);
             InterpretPageCommand = new Command(OnInterpretPageCommandExecute);
-            UpdateObjectPropertiesCommand = new Command(OnUpdateObjectPropertiesCommandExecute);
 
             //Authoring
             EditPageDefinitionCommand = new Command(OnEditPageDefinitionCommandExecute);
@@ -2971,10 +2970,6 @@ namespace Classroom_Learning_Partner.ViewModels
             classSubject.SaveClassSubject(App.ClassCacheDirectory);
         }
 
-        // TODO: Move line below to constructor.
-        
-        // TODO: Move line above to constructor.
-
         /// <summary>
         /// Runs interpretation methods of all pageObjects on current page.
         /// </summary>
@@ -2991,16 +2986,6 @@ namespace Classroom_Learning_Partner.ViewModels
             //        CLPServiceAgent.Instance.InterpretRegion(pageObject as ACLPInkRegion);
             //    }
             //}
-        }
-
-        /// <summary>
-        /// Gets the UpdateObjectPropertiesCommand command.
-        /// </summary>
-        public Command UpdateObjectPropertiesCommand { get; private set; }
-
-        private void OnUpdateObjectPropertiesCommandExecute()
-        {
-            PageInteractionMode = PageInteractionMode.EditObjectProperties;
         }
 
         #endregion //Debug Commands

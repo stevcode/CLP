@@ -1259,6 +1259,29 @@ namespace Classroom_Learning_Partner.ViewModels
             RemovePageObjectFromPage(parentPage, pageObject, addToHistory);
         }
 
+        public static void RemovePageObjectsFromPage(CLPPage page, List<IPageObject> pageObjects, bool addToHistory = true)
+        {
+            if(page == null)
+            {
+                Logger.Instance.WriteToLog("ParentPage for pageObject not set in RemovePageObjectFromPage().");
+                return;
+            }
+
+            if(addToHistory)
+            {
+                AddHistoryItemToPage(page,
+                                     new PageObjectsRemovedHistoryItem(page,
+                                                                       App.MainWindowViewModel.CurrentUser,
+                                                                       pageObjects));
+            }
+
+            foreach(var pageObject in pageObjects)
+            {
+                page.PageObjects.Remove(pageObject);
+                pageObject.OnDeleted();
+            }
+        }
+
         #endregion //Static Methods
     }
 }

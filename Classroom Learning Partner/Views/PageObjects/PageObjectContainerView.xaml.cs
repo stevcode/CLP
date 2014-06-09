@@ -48,7 +48,10 @@ namespace Classroom_Learning_Partner.Views
             {
                 return typeof(CLPArrayViewModel);
             }
-            //if (dataContext is CLPRegion) return typeof(CLPRegionViewModel);
+            if(dataContext is LassoRegion)
+            {
+                return typeof(LassoRegionViewModel);
+            }
 
             return null;
         }

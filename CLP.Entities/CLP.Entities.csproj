@@ -125,6 +125,7 @@
     <Compile Include="DomainModel\PageObjects\Arrays\FuzzyFactorCard.cs" />
     <Compile Include="DomainModel\PageObjects\Arrays\RemainderTiles.cs" />
     <Compile Include="DomainModel\PageObjects\CLPImage.cs" />
+    <Compile Include="DomainModel\PageObjects\LassoRegion.cs" />
     <Compile Include="DomainModel\PageObjects\PageObject Interfaces\ICountable.cs" />
     <Compile Include="DomainModel\PageObjects\PageObject Interfaces\ICuttable.cs" />
     <Compile Include="DomainModel\PageObjects\PageObject Interfaces\IPageObject.cs" />
