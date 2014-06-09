@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Catel.Data;
 using Catel.MVVM;
+using Classroom_Learning_Partner.Views;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -16,6 +13,8 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             ClassSubject = classSubject;
             ClassSubject.Teacher = new Person();
+
+            AddStudentCommand = new Command(OnAddStudentCommandExecute);
         }
 
         #region Model
@@ -144,5 +143,28 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData StudentListProperty = RegisterProperty("StudentList", typeof(ObservableCollection<Person>));
 
         #endregion //Model
+
+        /// <summary>
+        /// SUMMARY
+        /// </summary>
+        public Command AddStudentCommand { get; private set; }
+
+        private void OnAddStudentCommandExecute()
+        {
+            var person = new Person
+                         {
+                             IsStudent = true
+                         };
+            var personCreationView = new PersonCreationView(new PersonCreationViewModel(person));
+            personCreationView.ShowDialog();
+
+            if(personCreationView.DialogResult == null ||
+               personCreationView.DialogResult != true)
+            {
+                return;
+            }
+
+            StudentList.Add(person);
+        }
     }
 }

@@ -2966,6 +2966,9 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 return;
             }
+
+            classSubject.Projector = classSubject.Teacher;
+            classSubject.SaveClassSubject(App.ClassCacheDirectory);
         }
 
         // TODO: Move line below to constructor.

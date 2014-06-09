@@ -29,8 +29,9 @@
             <RowDefinition />
         </catel:StackGrid.RowDefinitions>
 
-        <Label Content="Subject Name" />
-        <TextBox Text="{Binding ID}" />
+        <Label Content="ID" />
+        <TextBox Text="{Binding ID}" 
+                 IsTabStop="False" />
 
         <Label Content="Name" />
         <TextBox Text="{Binding FullName}" />
