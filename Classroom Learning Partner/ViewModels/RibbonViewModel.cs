@@ -22,6 +22,7 @@ using Catel.Data;
 using Catel.IoC;
 using Catel.MVVM;
 using Catel.MVVM.Services;
+using Catel.MVVM.Views;
 using Catel.Windows;
 using Catel.Windows.Controls;
 using Classroom_Learning_Partner.Views;
@@ -1057,12 +1058,18 @@ namespace Classroom_Learning_Partner.ViewModels
                     App.MainWindowViewModel.CurrentConvertingPage = null;
                     App.MainWindowViewModel.CurrentConvertingPage = page;
 
-                    var currentPageViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(page);
-                    var currentPageView = CLPServiceAgent.Instance.GetViewFromViewModel(currentPageViewModels.Last());
+                    var currentPageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(page).Last();
+                    var viewManager = Catel.IoC.ServiceLocator.Default.ResolveType<IViewManager>();
+                    var views = viewManager.GetViewsOfViewModel(currentPageViewModel);
+                    var currentPageView = views.FirstOrDefault(view => view is CLPPageView) as CLPPageView;
+                    if(currentPageView == null)
+                    {
+                        return;
+                    }
 
                     await Task.Delay(500);
 
-                    var screenshot = CLPServiceAgent.Instance.UIElementToImageByteArray(currentPageView as UIElement, page.Width, dpi:300);
+                    var screenshot = CLPServiceAgent.Instance.UIElementToImageByteArray(currentPageView, page.Width, dpi:300);
                     var bitmapImage = new BitmapImage();
                     bitmapImage.BeginInit();
                     bitmapImage.CacheOption = BitmapCacheOption.OnDemand;

@@ -244,10 +244,10 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnDragStartPageObjectCommandExecute(DragStartedEventArgs e)
         {
-            PageObject.ParentPage.History.BeginBatch(new PageObjectMoveBatchHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser,
-                                                                                           PageObject.ID,
-                                                                                           new Point(PageObject.XPosition,
-                                                                                                     PageObject.YPosition)));
+            PageObject.ParentPage.History.BeginBatch(new PageObjectMoveBatchHistoryItem(PageObject.ParentPage,
+                                                                                         App.MainWindowViewModel.CurrentUser,
+                                                                                         PageObject.ID,
+                                                                                         new Point(PageObject.XPosition, PageObject.YPosition)));
         }
 
         /// <summary>
@@ -257,12 +257,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnDragStopPageObjectCommandExecute(DragCompletedEventArgs e)
         {
-            // TODO: Entities
             var batch = PageObject.ParentPage.History.CurrentHistoryBatch;
             if(batch is PageObjectMoveBatchHistoryItem)
             {
-                (batch as PageObjectMoveBatchHistoryItem).AddPositionPointToBatch(PageObject.ID,
-                                                                                 new Point(PageObject.XPosition,
+                (batch as PageObjectMoveBatchHistoryItem).AddPositionPointToBatch(PageObject.ID, new Point(PageObject.XPosition,
                                                                                            PageObject.YPosition));
             }
             var batchHistoryItem = PageObject.ParentPage.History.EndBatch();
