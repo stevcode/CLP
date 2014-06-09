@@ -516,7 +516,8 @@ namespace CLP.Entities
                               Tags = Tags,
                               Height = Height,
                               Width = Width,
-                              InitialAspectRatio = InitialAspectRatio
+                              InitialAspectRatio = InitialAspectRatio,
+                              PageType = PageType
                           };
 
             foreach(var s in InkStrokes.Select(stroke => stroke.Clone())) 
