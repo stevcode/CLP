@@ -5,7 +5,9 @@
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
-                   xmlns:entities="clr-namespace:CLP.Entities;assembly=CLP.Entities">
+                   xmlns:viewModels="clr-namespace:Classroom_Learning_Partner.ViewModels"
+                   xmlns:entities="clr-namespace:CLP.Entities;assembly=CLP.Entities"
+                   xmlns:system="clr-namespace:System;assembly=mscorlib">
 
     <UserControl.Resources>
         <!-- Converters -->
@@ -26,6 +28,14 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        
+        <ObjectDataProvider x:Key="dataFromEnum" 
+                            MethodName="GetValues"
+                            ObjectType="{x:Type system:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="viewModels:SortAndGroupTypes" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
         
     </UserControl.Resources>
 
@@ -50,12 +60,12 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <Label Grid.Column="0">Sort By: Student Name</Label>
-                        <!--Populating ComboBox with Sorting Options-->
-                        <!--<ComboBox x:Name="SortComboBox" Grid.Column="1"
-                                  ItemsSource="{Binding FilterTypes}"
-                                  SelectedItem="{Binding SelectedFilterType, Mode=TwoWay}"
-                                  SelectedIndex="0" />-->
+                        <Label Grid.Column="0">Sort By: </Label>
+    
+                        <ComboBox Grid.Column="1"
+                                  ItemsSource="{Binding Source={StaticResource dataFromEnum}}"
+                                  SelectedItem="{Binding CurrentSortAndGroupType, Mode=TwoWay}"
+                                  VerticalContentAlignment="Center" />
 
                     </Grid>
 
