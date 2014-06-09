@@ -54,6 +54,7 @@ namespace Classroom_Learning_Partner.ViewModels
             AppendCorrectCommand = new Command<CLPPage>(OnAppendCorrectCommandExecute);
             AppendAlmostCorrectCommand = new Command<CLPPage>(OnAppendAlmostCorrectCommandExecute);
             AppendIncorrectCommand = new Command<CLPPage>(OnAppendIncorrectCommandExecute);
+            AddTeacherPageToStageCommand = new Command<CLPPage>(OnAddTeacherPageToStageCommandExecute);
             AddPageToStageCommand = new Command<StudentProgressInfo>(OnAddPageToStageCommandExecute);
             StageStudentNotebookCommand = new Command<Person>(OnStageStudentNotebookCommandExecute);
             PageHeightUpdateCommand = new Command(OnPageHeightUpdateCommandExecute);
@@ -304,8 +305,18 @@ namespace Classroom_Learning_Partner.ViewModels
             stagingPanel.SetStudentNotebook(student);
         }
 
-       /// <summary>
-        /// Adds individual page to the Staging Panel
+        /// <summary>
+        /// Adds individual teacher page to the Staging Panel
+        /// </summary>
+        public Command<CLPPage> AddTeacherPageToStageCommand { get; private set; }
+
+        private void OnAddTeacherPageToStageCommandExecute(CLPPage page)
+        {
+            StagingPanel.AddPageToStage(page);
+        }
+
+        /// <summary>
+        /// Adds individual student submission-set to the Staging Panel
         /// </summary>
         public Command<StudentProgressInfo> AddPageToStageCommand { get; private set; }
 

@@ -7,14 +7,16 @@
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
                    xmlns:res="clr-namespace:Classroom_Learning_Partner.Resources"
                    xmlns:system="clr-namespace:System;assembly=mscorlib"
-                   xmlns:extenders="clr-namespace:Classroom_Learning_Partner.Views.Extenders">
+                   xmlns:extenders="clr-namespace:Classroom_Learning_Partner.Views.Extenders"
+                   xmlns:entities="clr-namespace:CLP.Entities;assembly=CLP.Entities">
     <UserControl.Resources>
         <ResourceDictionary>
             <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
             <catel:BooleanToHidingVisibilityConverter x:Key="BooleanToHidingVisibilityConverter" />
+            <conv:EnumToBoolConverter x:Key="EnumToBoolConverter" />
             <conv:PageToSubmissionsListConverter x:Key="PageToSubmissionsListConverter" />
-            <conv:PanelLocationToThicknessConverter x:Key="PanelLocationToThicknessConverter" />
             <conv:PageMatchToColorConverter x:Key="PageMatchToColorConverter" />
+            <conv:PanelLocationToThicknessConverter x:Key="PanelLocationToThicknessConverter" />
             <conv:PersonToSubmissionsCountConverter x:Key="PersonToSubmissionsCountConverter" />
             <conv:ShouldUseThumbnailConverter x:Key="ShouldUseThumbnailConverter" />
             
@@ -181,6 +183,50 @@
                                                 </i:EventTrigger>
                                             </i:Interaction.Triggers>
                                         </Rectangle>
+                                        <Button Grid.Column="0" Grid.Row="0" Width="30"
+                                                Height="30" Margin="-20 0 0 -20"
+                                                Cursor="Hand" HorizontalAlignment="Right"
+                                                VerticalAlignment="Top"
+                                                Command="{Binding DataContext.AddTeacherPageToStageCommand, ElementName=TeacherPages}"
+                                                CommandParameter="{Binding}"
+                                                Visibility="{Binding DataContext.StagingPanel.IsVisible, ElementName=TeacherPages, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
+                                            <Button.Template>
+                                                <ControlTemplate TargetType="{x:Type Button}">
+                                                    <Grid>
+                                                        <Ellipse Fill="White" Stroke="Black"
+                                                                     StrokeThickness="3"
+                                                                     VerticalAlignment="Stretch"
+                                                                     HorizontalAlignment="Stretch" />
+                                                        <Path Stretch="Fill"
+                                                                  Stroke="Green"
+                                                                  StrokeThickness="3"
+                                                                  Margin="5"
+                                                                  Data="M0,0.5 L1,0.5 M0.5,0 L0.5,1" />
+                                                    </Grid>
+                                                </ControlTemplate>
+                                            </Button.Template>
+                                        </Button>
+                                        <StackPanel Grid.Column="0" Grid.Row="0" Height="16"
+                                                                    IsHitTestVisible="False"
+                                                                    HorizontalAlignment="Left"
+                                                                    VerticalAlignment="Bottom"
+                                                                    Orientation="Horizontal">
+                                            <Image Height="16" Width="16"
+                                                   IsHitTestVisible="False"
+                                                   Source="pack://application:,,,/Resources/Images/AnimationIndicator16.png">
+                                                <Image.Style>
+                                                    <Style TargetType="Image">
+                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding PageType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static entities:PageTypes.Animation}}"
+                                                                                         Value="True">
+                                                                <Setter Property="Visibility" Value="Visible" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Image.Style>
+                                            </Image>
+                                        </StackPanel>
                                         <Grid Grid.Column="1" Grid.Row="0" VerticalAlignment="Center">
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="Auto" />
@@ -201,27 +247,27 @@
                                         <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal">
                                             <Button
                                     x:Name="AppendStarred"
-                                    Height="50"
+                                    Height="29"
                                     Width="25"
                                     Command="{Binding DataContext.AppendStarredCommand, ElementName=TeacherPages}"
                                     CommandParameter="{Binding}">
-                                                <Image Source="pack://application:,,,/Resources/Images/DisplayStarredSubmissionsButton50x25.png" />
+                                                <Image Source="pack://application:,,,/Resources/Images/DisplayStarredSubmissionsButton29x25.png" />
                                             </Button>
                                             <Button
                                     x:Name="AppendCorrect"
-                                    Height="50"
+                                    Height="29"
                                     Width="25"
                                     Command="{Binding DataContext.AppendCorrectCommand, ElementName=TeacherPages}"
                                     CommandParameter="{Binding}">
-                                                <Image Source="pack://application:,,,/Resources/Images/DisplayCorrectSubmissionsButton50x25.png" />
+                                                <Image Source="pack://application:,,,/Resources/Images/DisplayCorrectSubmissionsButton29x25.png" />
                                             </Button>
                                             <Button
                                     x:Name="AppendIncorrect"
-                                    Height="50"
+                                    Height="29"
                                     Width="25"
                                     Command="{Binding DataContext.AppendIncorrectCommand, ElementName=TeacherPages}"
                                     CommandParameter="{Binding}">
-                                                <Image Source="pack://application:,,,/Resources/Images/DisplayIncorrectSubmissionsButton50x25.png" />
+                                                <Image Source="pack://application:,,,/Resources/Images/DisplayIncorrectSubmissionsButton29x25.png" />
                                             </Button>
                                         </StackPanel>
                                     </Grid>
@@ -293,7 +339,9 @@
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <Border Margin="3" BorderBrush="{StaticResource GrayEdgeColor}"
-                                        BorderThickness="1,1,1,1" Height="{Binding ElementName=DisplayedPages, Path=DataContext.PageHeight}">
+                                                        BorderThickness="1,1,1,1" 
+                                                        Height="{Binding ElementName=DisplayedPages, Path=DataContext.PageHeight}"
+                                                        Width="{Binding ElementName=DisplayedPages, Path=DataContext.PageWidth}">
                                                     <Grid>
                                                         <Grid.RowDefinitions>
                                                             <RowDefinition Height="*"/>
@@ -385,6 +433,27 @@
                                                                 </ControlTemplate>
                                                             </Button.Template>
                                                         </Button>
+                                                        <StackPanel Grid.Row="0" Height="16"
+                                                                    IsHitTestVisible="False"
+                                                                    HorizontalAlignment="Left"
+                                                                    VerticalAlignment="Bottom"
+                                                                    Orientation="Horizontal">
+                                                            <Image Height="16" Width="16"
+                                                                   IsHitTestVisible="False"
+                                                                   Source="pack://application:,,,/Resources/Images/AnimationIndicator16.png">
+                                                                <Image.Style>
+                                                                    <Style TargetType="Image">
+                                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding Page.PageType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static entities:PageTypes.Animation}}"
+                                                                                         Value="True">
+                                                                                <Setter Property="Visibility" Value="Visible" />
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </Image.Style>
+                                                            </Image>
+                                                        </StackPanel>
                                                         <views:HoverBoxView Grid.Row="1" Width="150" DataContext="{Binding Path=Page}" />
                                                     </Grid>
                                                 </Border>
