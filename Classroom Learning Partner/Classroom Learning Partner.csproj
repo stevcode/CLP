@@ -907,6 +907,9 @@
     <Resource Include="Resources\Images\DisplayCorrectSubmissionsButton50x25.png" />
     <Resource Include="Resources\Images\DisplayIncorrectSubmissionsButton50x25.png" />
     <Resource Include="Resources\Images\DisplayStarredSubmissionsButton50x25.png" />
+    <Resource Include="Resources\Images\StagingPanel16.png" />
+    <Resource Include="Resources\Images\StagingPanel32.png" />
+    <Resource Include="Resources\Images\StagingPanel64.png" />
     <Resource Include="Resources\Images\BlankPage64.png" />
     <Resource Include="Resources\Images\PageInformation16.png" />
     <Resource Include="Resources\Images\PageInformation32.png" />

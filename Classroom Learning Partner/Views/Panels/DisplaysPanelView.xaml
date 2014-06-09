@@ -38,7 +38,7 @@
 
     <Border Background="{StaticResource GrayBackgroundColor}"
             BorderBrush="{StaticResource GrayEdgeColor}"
-            BorderThickness="{Binding Location, Converter={StaticResource PanelLocationToThicknessConverter}, ConverterParameter=7.0}"
+            BorderThickness="{Binding Location, Converter={StaticResource PanelLocationToThicknessConverter}, ConverterParameter={StaticResource PanelBorderThickeness}}"
             Width="{Binding Length}">
 
         <Grid>
@@ -262,8 +262,8 @@
             <Thumb Grid.Row="0"
                    Grid.RowSpan="6"
                    Cursor="ScrollWE"
-                   Width="7"
-                   Margin="-7 0 0 0"
+                   Width="{StaticResource PanelBorderThickeness}"
+                   Margin="-10 0 0 0"
                    VerticalAlignment="Stretch"
                    HorizontalAlignment="Left">
                 <i:Interaction.Triggers>

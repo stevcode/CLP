@@ -13,6 +13,13 @@ using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
+    public enum SortAndGroupTypes
+    {
+        SortAndGroupByName,
+        SortAndGroupByPageNumber,
+        SortByTime
+    }
+
     public class StagingPanelViewModel : APanelBaseViewModel
     {
         private static readonly PropertyGroupDescription OwnerFullNameGroup = new PropertyGroupDescription("Owner.FullName");
@@ -37,6 +44,10 @@ namespace Classroom_Learning_Partner.ViewModels
             SetCurrentPageCommand = new Command<CLPPage>(OnSetCurrentPageCommandExecute);
             RemovePageFromStageCommand = new Command<CLPPage>(OnRemovePageFromStageCommandExecute);
             ClearStageCommand = new Command(OnClearStageCommandExecute);
+
+            AppendCollectionOfPagesToStage(SingleAddedPages);
+            FilterCollectionOfPagesFromStage(SingleRemovedPages);
+            CurrentSortAndGroupType = SortAndGroupTypes.SortAndGroupByPageNumber;
         }
 
         void StagingPanelViewModel_Initialized(object sender, EventArgs e) { Length = InitialLength; }
@@ -148,6 +159,21 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData SortedAndGroupedPagesProperty = RegisterProperty("SortedAndGroupedPages", typeof(CollectionViewSource), () => new CollectionViewSource());
 
+        /// <summary>
+        /// Current Sort and Group method applied.
+        /// </summary>
+        public SortAndGroupTypes CurrentSortAndGroupType
+        {
+            get { return GetValue<SortAndGroupTypes>(CurrentSortAndGroupTypeProperty); }
+            set
+            {
+                SetValue(CurrentSortAndGroupTypeProperty, value);
+                ApplySortAndGroup();
+            }
+        }
+
+        public static readonly PropertyData CurrentSortAndGroupTypeProperty = RegisterProperty("CurrentSortAndGroupType", typeof(SortAndGroupTypes));
+
         #endregion //Bindings
 
         #region Commands
@@ -205,32 +231,53 @@ namespace Classroom_Learning_Partner.ViewModels
             FilteredPages.Clear();
             StagingPanelSubscription = null;
             AllCollectionOperations = null;
+            AppendCollectionOfPagesToStage(SingleAddedPages);
+            FilterCollectionOfPagesFromStage(SingleRemovedPages);
         }
 
         public void AddPageToStage(CLPPage page)
         {
+            if(SingleRemovedPages.Contains(page))
+            {
+                SingleRemovedPages.Remove(page);
+            }
+            
             SingleAddedPages.Add(page);
         }
 
         public void RemovePageFromStage(CLPPage page)
         {
+            if(SingleAddedPages.Contains(page))
+            {
+                SingleAddedPages.Remove(page);
+            }
+
             SingleRemovedPages.Add(page);
         }
 
-        public void AppendCollectionOfPagesToStage(ObservableCollection<CLPPage> pages)
+        public void AppendCollectionOfPagesToStage(ObservableCollection<CLPPage> pages, bool includeRemovesAndClears = true)
         {
             FilteredPages.Clear();
-            var appendedPagesOperations = pages.ToOperations(x => !SingleRemovedPages.Contains(x));
+            var appendedPagesOperations = pages.ToOperations(x => !SingleRemovedPages.Contains(x), includeRemovesAndClears);
 
             AllCollectionOperations = AllCollectionOperations == null ? appendedPagesOperations : AllCollectionOperations.Merge(appendedPagesOperations);
 
             StagingPanelSubscription = AllCollectionOperations.Distinct().Subscribe(FilteredPages);
         }
 
-        public void AppendCollectionOfPagesToStage(ObservableCollection<CLPPage> pages, Func<CLPPage, bool> filter)
+        public void AppendCollectionOfPagesToStage(ObservableCollection<CLPPage> pages, Func<CLPPage, bool> filter, bool includeRemovesAndClears = true)
         {
             FilteredPages.Clear();
-            var appendedPagesOperations = pages.ToOperations(x => !SingleRemovedPages.Contains(x) && filter(x));
+            var appendedPagesOperations = pages.ToOperations(x => !SingleRemovedPages.Contains(x) && filter(x), includeRemovesAndClears);
+
+            AllCollectionOperations = AllCollectionOperations == null ? appendedPagesOperations : AllCollectionOperations.Merge(appendedPagesOperations);
+
+            StagingPanelSubscription = AllCollectionOperations.Distinct().Subscribe(FilteredPages);
+        }
+
+        public void FilterCollectionOfPagesFromStage(ObservableCollection<CLPPage> pages, bool includeRemovesAndClears = true)
+        {
+            var appendedPagesOperations = pages.ToOppositeOperations(includeRemovesAndClears);
 
             AllCollectionOperations = AllCollectionOperations == null ? appendedPagesOperations : AllCollectionOperations.Merge(appendedPagesOperations);
 
@@ -240,6 +287,25 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Filters 
 
         #region Sorts
+
+        public void ApplySortAndGroup()
+        {
+            switch(CurrentSortAndGroupType)
+            {
+                case SortAndGroupTypes.SortAndGroupByName:
+                    ApplySortAndGroupByName();
+                    break;
+                case SortAndGroupTypes.SortAndGroupByPageNumber:
+                    ApplySortAndGroupByPageNumber();
+                    break;
+                case SortAndGroupTypes.SortByTime:
+                    ApplySortByTime();
+                    break;
+                default:
+                    ApplySortAndGroupByName();
+                    break;
+            }
+        }
 
         public void ApplySortAndGroupByName()
         {

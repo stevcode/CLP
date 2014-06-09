@@ -419,6 +419,11 @@ namespace CLP.Entities
                 }
                 var pageFilePath = Path.Combine(pagesFolderPath, "p;" + page.PageNumber + ";" + page.ID + ";" + page.DifferentiationLevel + ";" + page.VersionIndex + ".xml");
                 page.ToXML(pageFilePath);
+                if(page.PageThumbnail == null)
+                {
+                    continue;
+                }
+
                 var thumbnailsFolderPath = Path.Combine(pagesFolderPath, "Thumbnails");
                 if(!Directory.Exists(thumbnailsFolderPath))
                 {

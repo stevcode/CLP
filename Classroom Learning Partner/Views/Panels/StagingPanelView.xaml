@@ -281,6 +281,7 @@
                                 </Button>
                                 
                                 <StackPanel Grid.Column="1"
+                                            Grid.Row="1"
                                             Height="16"
                                             IsHitTestVisible="False"
                                             HorizontalAlignment="Left"
