@@ -172,7 +172,8 @@
                     </RibbonToggleButton.Style>
                 </RibbonToggleButton>
                 
-                <RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/Clipboard32.png"
+                <RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/StagingPanel32.png"
+                                    SmallImageSource="pack://application:,,,/Resources/Images/StagingPanel16.png"
                                     IsChecked="{Binding MainWindow.Workspace.StagingPanel.IsVisible}"
                                     IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
                                     Visibility="{Binding InstructorVisibility}">
@@ -332,7 +333,7 @@
                               Command="{Binding InsertArrayCommand}"
                               CommandParameter="FACTORCARD" />-->
 
-                <RibbonButton Label="Division Tool"
+                <!--<RibbonButton Label="Division Tool"
                               LargeImageSource="pack://application:,,,/Resources/Images/FuzzyFactorCard32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/FuzzyFactorCard16.png"
                               Command="{Binding InsertArrayCommand}"
@@ -342,7 +343,7 @@
                               LargeImageSource="pack://application:,,,/Resources/Images/FuzzyFactorCard32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/FuzzyFactorCard16.png"
                               Command="{Binding InsertArrayCommand}"
-                              CommandParameter="FFCREMAINDER" />
+                              CommandParameter="FFCREMAINDER" />-->
 
                 <!--<RibbonButton Label="Stamp"
                               LargeImageSource="pack://application:,,,/Resources/Images/Stamp32.png"
