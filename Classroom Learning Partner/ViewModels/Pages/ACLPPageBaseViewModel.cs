@@ -13,7 +13,10 @@ using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Catel.Data;
+using Catel.IoC;
 using Catel.MVVM;
+using Catel.MVVM.Views;
+using Classroom_Learning_Partner.Views;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -1033,7 +1036,16 @@ namespace Classroom_Learning_Partner.ViewModels
         public static void TakePageThumbnail(CLPPage page)
         {
             var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(page).First(x => (x is ACLPPageBaseViewModel) && !(x as ACLPPageBaseViewModel).IsPagePreview);
-            var pageView = (UIElement)CLPServiceAgent.Instance.GetViewFromViewModel(pageViewModel);
+           // var pageView = (UIElement)CLPServiceAgent.Instance.GetViewFromViewModel(pageViewModel);
+
+            var viewManager = Catel.IoC.ServiceLocator.Default.ResolveType<IViewManager>();
+            var views = viewManager.GetViewsOfViewModel(pageViewModel);
+            var pageView = views.FirstOrDefault(view => view is CLPPageView) as CLPPageView;
+            if(pageView == null)
+            {
+                return;
+            }
+
             var thumbnail = CLPServiceAgent.Instance.UIElementToImageByteArray(pageView, 492);
 
             var bitmapImage = new BitmapImage();
