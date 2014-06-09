@@ -29,7 +29,7 @@
             <RowDefinition />
         </catel:StackGrid.RowDefinitions>
 
-        <Label Content="ID" />
+        <Label Content="Subject Name" />
         <TextBox Text="{Binding ID}" />
 
         <Label Content="Name" />

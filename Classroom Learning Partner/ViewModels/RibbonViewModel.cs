@@ -190,6 +190,7 @@ namespace Classroom_Learning_Partner.ViewModels
             SetNotebookCurriculumCommand = new Command(OnSetNotebookCurriculumCommandExecute);
 
             //Debug
+            CreateClassSubjectCommand = new Command(OnCreateClassSubjectCommandExecute);
             InterpretPageCommand = new Command(OnInterpretPageCommandExecute);
             UpdateObjectPropertiesCommand = new Command(OnUpdateObjectPropertiesCommandExecute);
 
@@ -2948,6 +2949,28 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Insert Commands
 
         #region Debug Commands
+
+        /// <summary>
+        /// SUMMARY
+        /// </summary>
+        public Command CreateClassSubjectCommand { get; private set; }
+
+        private void OnCreateClassSubjectCommandExecute()
+        {
+            var classSubject = new ClassSubject();
+            var classSubjectCreationView = new ClassSubjectCreationView(new ClassSubjectCreationViewModel(classSubject));
+            classSubjectCreationView.ShowDialog();
+
+            if(classSubjectCreationView.DialogResult == null ||
+               classSubjectCreationView.DialogResult != true)
+            {
+                return;
+            }
+        }
+
+        // TODO: Move line below to constructor.
+        
+        // TODO: Move line above to constructor.
 
         /// <summary>
         /// Runs interpretation methods of all pageObjects on current page.

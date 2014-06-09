@@ -627,8 +627,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     var notebookInfo = notebookName.Split(';');
                     if(notebookInfo.Length != 4 ||
                        notebookInfo[3] == Person.Author.ID ||
-                       notebookInfo[3] == Person.Emily.ID ||
-                       notebookInfo[3] == Person.EmilyProjector.ID)
+                       notebookInfo[3] == Person.Emily.ID)
                     {
                         continue;
                     }
@@ -795,8 +794,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     var notebookInfo = notebookName.Split(';');
                     if(notebookInfo.Length != 4 ||
                        notebookInfo[3] == Person.Author.ID ||
-                       notebookInfo[3] == Person.Emily.ID ||
-                       notebookInfo[3] == Person.EmilyProjector.ID)
+                       notebookInfo[3] == Person.Emily.ID)
                     {
                         continue;
                     }

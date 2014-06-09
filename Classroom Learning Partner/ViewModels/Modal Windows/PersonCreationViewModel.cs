@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using Catel.Data;
+﻿using Catel.Data;
 using Catel.MVVM;
 using CLP.Entities;
 

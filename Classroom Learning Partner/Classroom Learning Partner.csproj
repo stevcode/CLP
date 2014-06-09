@@ -274,6 +274,7 @@
     <Compile Include="Resources\InkInterpretation.cs" />
     <Compile Include="Utilities\Extensions\ObservableCollectionExtensions.cs" />
     <Compile Include="Utilities\ObservableCollectionOperation.cs" />
+    <Compile Include="ViewModels\Modal Windows\ClassSubjectCreationViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\GroupCreationViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\PersonCreationViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\RemainderTilesViewModel.cs" />
@@ -299,7 +300,10 @@
     <Compile Include="ViewModels\Panels\SubmissionHistoryPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\SubmissionsPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\WebcamPanelViewModel.cs" />
-    <Compile Include="Views\Modal Windows\GroupCreationView.xaml.cs">
+    <Compile Include="Views\Modal Windows\MVVM\ClassSubjectCreationView.xaml.cs">
+      <DependentUpon>ClassSubjectCreationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Modal Windows\MVVM\GroupCreationView.xaml.cs">
       <DependentUpon>GroupCreationView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Modal Windows\ClassPeriodChooserView.xaml.cs">
@@ -308,7 +312,7 @@
     <Compile Include="Views\Modal Windows\FuzzyFactorCardWithTiles.xaml.cs">
       <DependentUpon>FuzzyFactorCardWithTiles.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\PersonCreationView.xaml.cs">
+    <Compile Include="Views\Modal Windows\MVVM\PersonCreationView.xaml.cs">
       <DependentUpon>PersonCreationView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Modal Windows\SimpleTextWindowView.xaml.cs">
@@ -525,7 +529,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\GroupCreationView.xaml">
+    <Page Include="Views\Modal Windows\MVVM\ClassSubjectCreationView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Modal Windows\MVVM\GroupCreationView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -537,7 +545,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\PersonCreationView.xaml">
+    <Page Include="Views\Modal Windows\MVVM\PersonCreationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

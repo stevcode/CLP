@@ -172,6 +172,8 @@ namespace CLP.Entities
                                                              IsStudent = false
                                                          };
 
+
+
         #endregion //Static Persons
 
         #region IConnectedPerson Members

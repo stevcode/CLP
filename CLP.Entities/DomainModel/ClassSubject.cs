@@ -61,7 +61,7 @@ namespace CLP.Entities
             set { SetValue(GradeLevelProperty, value); }
         }
 
-        public static readonly PropertyData GradeLevelProperty = RegisterProperty("GradeLevel", typeof(string), "unknown");
+        public static readonly PropertyData GradeLevelProperty = RegisterProperty("GradeLevel", typeof(string), string.Empty);
 
         /// <summary>
         /// Start date of the <see cref="ClassSubject" />.
