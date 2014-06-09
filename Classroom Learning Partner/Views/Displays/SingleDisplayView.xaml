@@ -5,7 +5,7 @@
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views">
-    <Grid>
+    <Grid x:Name="TopGrid">
         <Grid.Style>
             <Style TargetType="Grid">
                 <Setter Property="Background" Value="PaleGreen" />
@@ -27,32 +27,25 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <Control Grid.Column="1"
-                     Grid.Row="0"
-                     Width="{Binding BorderWidth}">
-                <Control.Resources>
-
-                    <ControlTemplate x:Key="AnimationBarTemplate">
-                        <views:AnimationPageToolBar DataContext="{Binding CurrentPage}" />
-                    </ControlTemplate>
-
-                </Control.Resources>
-
-                <Control.Style>
-
-                    <Style TargetType="{x:Type Control}">
+            <views:AnimationPageToolBar x:Name="AnimationPageToolBar"
+                                        Grid.Column="1" 
+                                        Grid.Row="0" 
+                                        Width="{Binding DataContext.BorderWidth, ElementName=TopGrid}">
+                <views:AnimationPageToolBar.Style>
+                    <Style TargetType="{x:Type views:AnimationPageToolBar}">
+                        <Setter Property="Visibility" Value="Collapsed" />
                         <Style.Triggers>
                             <!--Animitation Page ToolBar-->
-                            <DataTrigger Binding="{Binding CurrentPage.PageType}"
+                            <DataTrigger Binding="{Binding PageType}"
                                          Value="Animation">
-                                <Setter Property="Template"
-                                        Value="{StaticResource AnimationBarTemplate}" />
+                                <Setter Property="Visibility"
+                                        Value="Visible" />
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
-
-                </Control.Style>
-            </Control>
+                </views:AnimationPageToolBar.Style>
+                
+            </views:AnimationPageToolBar>
 
             <TextBlock Grid.Column="0"
                        Grid.Row="1"
@@ -109,7 +102,9 @@
                     <Grid Width="{Binding DimensionWidth}"
                           Height="{Binding DimensionHeight}">
 
-                        <views:CLPPageView DataContext="{Binding CurrentPage}" />
+                        <views:CLPPageView x:Name="CLPPageView" 
+                                           DataContext="{Binding CurrentPage}"
+                                           ViewModelChanged="CLPPageView_OnViewModelChanged"/>
 
                     </Grid>
                 </ScrollViewer>

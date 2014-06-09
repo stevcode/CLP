@@ -72,8 +72,8 @@
                 <views:CLPArrayView DataContext="{Binding}" />
             </ControlTemplate>
 
-            <ControlTemplate x:Key="CLPRegionTemplate">
-                <views:CLPRegionView DataContext="{Binding}" />
+            <ControlTemplate x:Key="LassoRegionTemplate">
+                <views:LassoRegionView DataContext="{Binding}" />
             </ControlTemplate>
 
         </Control.Resources>
@@ -157,9 +157,9 @@
                         <Setter Property="Template" Value="{StaticResource CLPArrayTemplate}" />
                     </DataTrigger>
 
-                    <!-- CLPRegion trigger -->
-                    <DataTrigger Binding="{Binding PageObject, Converter={StaticResource TypeToStringConverter}}" Value="Region">
-                        <Setter Property="Template" Value="{StaticResource CLPRegionTemplate}" />
+                    <!-- LassoRegion trigger -->
+                    <DataTrigger Binding="{Binding PageObject, Converter={StaticResource TypeToStringConverter}}" Value="LassoRegion">
+                        <Setter Property="Template" Value="{StaticResource LassoRegionTemplate}" />
                     </DataTrigger>
 
                 </Style.Triggers>

@@ -277,16 +277,17 @@
     <Compile Include="ViewModels\Modal Windows\ClassSubjectCreationViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\GroupCreationViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\PersonCreationViewModel.cs" />
-    <Compile Include="ViewModels\PageObjects\RemainderTilesViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\Arrays\RemainderTilesViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\LassoRegionViewModel.cs" />
     <Compile Include="ViewModels\Pages\CLPAnimationPageViewModel.cs" />
     <Compile Include="ViewModels\Pages\CLPPageViewModel.cs" />
     <Compile Include="ViewModels\Displays\SingleDisplayViewModel.cs" />
     <Compile Include="ViewModels\HoverBoxViewModel.cs" />
     <Compile Include="ViewModels\Math\ProductRelationViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPAggregationDataTableViewModel.cs" />
-    <Compile Include="ViewModels\PageObjects\CLPArrayViewModel.cs" />
-    <Compile Include="ViewModels\PageObjects\CLPFactorCardViewModel.cs" />
-    <Compile Include="ViewModels\PageObjects\FuzzyFactorCardViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\Arrays\CLPArrayViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\Arrays\CLPFactorCardViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\Arrays\FuzzyFactorCardViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPRegionViewModel.cs" />
     <Compile Include="ViewModels\Panels\APanelBaseViewModel.cs" />
     <Compile Include="ViewModels\Panels\ClassPeriodForDisplay.cs" />
@@ -324,7 +325,10 @@
     <Compile Include="Views\Modal Windows\NotebookMetadataWindowView.xaml.cs">
       <DependentUpon>NotebookMetadataWindowView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PageObjects\RemainderTilesView.xaml.cs">
+    <Compile Include="Views\PageObjects\LassoRegionView.xaml.cs">
+      <DependentUpon>LassoRegionView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PageObjects\Arrays\RemainderTilesView.xaml.cs">
       <DependentUpon>RemainderTilesView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Pages\AnimationPageToolBar.xaml.cs">
@@ -333,10 +337,10 @@
     <Compile Include="Views\Modal Windows\FuzzyFactorCardCreationView.xaml.cs">
       <DependentUpon>FuzzyFactorCardCreationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PageObjects\CLPFactorCardView.xaml.cs">
+    <Compile Include="Views\PageObjects\Arrays\CLPFactorCardView.xaml.cs">
       <DependentUpon>CLPFactorCardView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PageObjects\FuzzyFactorCardView.xaml.cs">
+    <Compile Include="Views\PageObjects\Arrays\FuzzyFactorCardView.xaml.cs">
       <DependentUpon>FuzzyFactorCardView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\CLPRegionView.xaml.cs">
@@ -365,8 +369,8 @@
     <Compile Include="ViewModels\PageObjects\Ink Regions\CLPShadingRegionViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\ShapeViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPImageViewModel.cs" />
-    <Compile Include="ViewModels\PageObjects\CLPStampViewModel.cs" />
-    <Compile Include="ViewModels\PageObjects\CLPStampCopyViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\Stamps\CLPStampViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\Stamps\CLPStampCopyViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPTextBoxViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\IPageObjectAdorners.cs" />
     <Compile Include="ViewModels\PageObjects\StrokePathViewModel.cs" />
@@ -437,7 +441,7 @@
     <Compile Include="Views\PageObjects\CLPAggregationDataTableView.xaml.cs">
       <DependentUpon>CLPAggregationDataTableView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PageObjects\CLPArrayView.xaml.cs">
+    <Compile Include="Views\PageObjects\Arrays\CLPArrayView.xaml.cs">
       <DependentUpon>CLPArrayView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\CLPAudioView.xaml.cs">
@@ -449,7 +453,7 @@
     <Compile Include="Views\PageObjects\ShapeView.xaml.cs">
       <DependentUpon>ShapeView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PageObjects\CLPStampView.xaml.cs">
+    <Compile Include="Views\PageObjects\Stamps\CLPStampView.xaml.cs">
       <DependentUpon>CLPStampView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\Regions\CLPInkShapeRegionView.xaml.cs">
@@ -464,7 +468,7 @@
     <Compile Include="Views\PageObjects\Regions\CLPGroupingRegionView.xaml.cs">
       <DependentUpon>CLPGroupingRegionView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PageObjects\CLPStampCopyView.xaml.cs">
+    <Compile Include="Views\PageObjects\Stamps\CLPStampCopyView.xaml.cs">
       <DependentUpon>CLPStampCopyView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\PageObjectContainerView.xaml.cs">
@@ -561,7 +565,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PageObjects\RemainderTilesView.xaml">
+    <Page Include="Views\PageObjects\LassoRegionView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PageObjects\Arrays\RemainderTilesView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -573,11 +581,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PageObjects\CLPFactorCardView.xaml">
+    <Page Include="Views\PageObjects\Arrays\CLPFactorCardView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PageObjects\FuzzyFactorCardView.xaml">
+    <Page Include="Views\PageObjects\Arrays\FuzzyFactorCardView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -685,7 +693,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PageObjects\CLPArrayView.xaml">
+    <Page Include="Views\PageObjects\Arrays\CLPArrayView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -701,7 +709,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PageObjects\CLPStampView.xaml">
+    <Page Include="Views\PageObjects\Stamps\CLPStampView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -721,7 +729,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\PageObjects\CLPStampCopyView.xaml">
+    <Page Include="Views\PageObjects\Stamps\CLPStampCopyView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
