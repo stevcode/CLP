@@ -40,14 +40,14 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 CurrentPages.Add(page);
             }
-            if(CurrentPages.Count > 0)
+            for(int i = 0; i <= 1; i++)
             {
-                FirstPage = CurrentPages[0];
+                if(i < CurrentPages.Count)
+                {
+                    DisplayedPages.Add(CurrentPages[i]);
+                }
             }
-            if(CurrentPages.Count > 1)
-            {
-                SecondPage = CurrentPages[1];
-            }
+
             SetCurrentPageCommand = new Command<CLPPage>(OnSetCurrentPageCommandExecute);
             ShowSubmissionsCommand = new Command<CLPPage>(OnShowSubmissionsCommandExecute);
             AppendStarredCommand = new Command<CLPPage>(OnAppendStarredCommandExecute);
@@ -115,6 +115,23 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData PageHeightProperty = RegisterProperty("PageHeight", typeof(double));
 
+        public double PageWidth
+        {
+            get { return GetValue<double>(PageWidthProperty); }
+            set { SetValue(PageWidthProperty, value); }
+        }
+
+        public static readonly PropertyData PageWidthProperty = RegisterProperty("PageWidth", typeof(double));
+
+
+        public ObservableCollection<CLPPage> DisplayedPages
+        {
+            get { return GetValue<ObservableCollection<CLPPage>>(DisplayedPagesProperty); }
+            set { SetValue(DisplayedPagesProperty, value); }
+        }
+
+        public static readonly PropertyData DisplayedPagesProperty = RegisterProperty("DisplayedPages", typeof(ObservableCollection<CLPPage>), () => new ObservableCollection<CLPPage>());
+
         /// <summary>
         /// Current, selected page in the notebook.
         /// </summary>
@@ -126,28 +143,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage));
-
-        /// <summary>
-        /// First of the two pages displayed.
-        /// </summary>
-        public CLPPage FirstPage
-        {
-            get { return GetValue<CLPPage>(FirstPageProperty); }
-            set { SetValue(FirstPageProperty, value); }
-        }
-
-        public static readonly PropertyData FirstPageProperty = RegisterProperty("FirstPage", typeof(CLPPage));
-        
-        /// <summary>
-        /// Second of the two pages displayed.
-        /// </summary>
-        public CLPPage SecondPage
-        {
-            get { return GetValue<CLPPage>(SecondPageProperty); }
-            set { SetValue(SecondPageProperty, value); }
-        }
-
-        public static readonly PropertyData SecondPageProperty = RegisterProperty("SecondPage", typeof(CLPPage));
 
         public ObservableCollection<Person> StudentList
         {
@@ -332,7 +327,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnPageHeightUpdateCommandExecute()
         {
-            PageHeight = ((Length - 100) / 2 - 6) * CLPPage.LANDSCAPE_HEIGHT / CLPPage.LANDSCAPE_WIDTH;
+            //TODO (Casey): numbers arrived at experimentally and not understood.  Work reasonably well for default settings.
+            PageHeight = ((Length - 50) / DisplayedPages.Count - 6) * CLPPage.LANDSCAPE_HEIGHT / CLPPage.LANDSCAPE_WIDTH;
+            PageWidth = ((Length - 116) / DisplayedPages.Count - 6);
         }
 
         /// <summary>
@@ -342,14 +339,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnForwardCommandExecute()
         {
-            if(SecondPage != null) // don't go forward if there's only one page
+            var nextIndex = CurrentPages.IndexOf(DisplayedPages[DisplayedPages.Count - 1]) + 1;
+            if(nextIndex < CurrentPages.Count)
             {
-                var nextIndex = CurrentPages.IndexOf(SecondPage) + 1;
-                if(nextIndex < CurrentPages.Count)
-                {
-                    FirstPage = SecondPage;
-                    SecondPage = CurrentPages[nextIndex];
-                }
+                DisplayedPages.RemoveAt(0);
+                DisplayedPages.Add(CurrentPages[nextIndex]);
             }
         }
 
@@ -360,11 +354,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnBackCommandExecute()
         {
-            var prevIndex = CurrentPages.IndexOf(FirstPage) - 1;
+            var prevIndex = CurrentPages.IndexOf(DisplayedPages[0]) - 1;
             if(prevIndex >= 0)
             {
-                SecondPage = FirstPage;
-                FirstPage = CurrentPages[prevIndex];
+                DisplayedPages.RemoveAt(DisplayedPages.Count - 1);
+                DisplayedPages.Insert(0, CurrentPages[prevIndex]);
             }
         }
 
