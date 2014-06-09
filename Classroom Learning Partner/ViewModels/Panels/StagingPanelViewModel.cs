@@ -257,6 +257,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public void AppendCollectionOfPagesToStage(ObservableCollection<CLPPage> pages, bool includeRemovesAndClears = true)
         {
+            FilteredPages.Clear();
             var appendedPagesOperations = pages.ToOperations(x => !SingleRemovedPages.Contains(x), includeRemovesAndClears);
 
             AllCollectionOperations = AllCollectionOperations == null ? appendedPagesOperations : AllCollectionOperations.Merge(appendedPagesOperations);
@@ -266,6 +267,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public void AppendCollectionOfPagesToStage(ObservableCollection<CLPPage> pages, Func<CLPPage, bool> filter, bool includeRemovesAndClears = true)
         {
+            FilteredPages.Clear();
             var appendedPagesOperations = pages.ToOperations(x => !SingleRemovedPages.Contains(x) && filter(x), includeRemovesAndClears);
 
             AllCollectionOperations = AllCollectionOperations == null ? appendedPagesOperations : AllCollectionOperations.Merge(appendedPagesOperations);

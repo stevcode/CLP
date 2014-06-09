@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Entities;
@@ -49,6 +50,10 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             SetCurrentPageCommand = new Command<CLPPage>(OnSetCurrentPageCommandExecute);
             ShowSubmissionsCommand = new Command<CLPPage>(OnShowSubmissionsCommandExecute);
+            AppendStarredCommand = new Command<CLPPage>(OnAppendStarredCommandExecute);
+            AppendCorrectCommand = new Command<CLPPage>(OnAppendCorrectCommandExecute);
+            AppendAlmostCorrectCommand = new Command<CLPPage>(OnAppendAlmostCorrectCommandExecute);
+            AppendIncorrectCommand = new Command<CLPPage>(OnAppendIncorrectCommandExecute);
             AddPageToStageCommand = new Command<StudentProgressInfo>(OnAddPageToStageCommandExecute);
             StageStudentNotebookCommand = new Command<Person>(OnStageStudentNotebookCommandExecute);
             PageHeightUpdateCommand = new Command(OnPageHeightUpdateCommandExecute);
@@ -200,6 +205,90 @@ namespace Classroom_Learning_Partner.ViewModels
             stagingPanel.IsVisible = true;
 
             stagingPanel.SetSubmissionsForPage(page);
+        }
+
+        /// <summary>
+        /// Stages starred submissions for the page.
+        /// </summary>
+        public Command<CLPPage> AppendStarredCommand { get; private set; }
+
+        private void OnAppendStarredCommandExecute(CLPPage page)
+        {
+            var stagingPanel = StagingPanel as StagingPanelViewModel;
+            if(stagingPanel == null)
+            {
+                return;
+            }
+
+            stagingPanel.IsVisible = true;
+
+            stagingPanel.AppendStarredSubmissionsForPage(page);
+        }
+
+        /// <summary>
+        /// Stages correct submissions for the page.
+        /// </summary>
+        public Command<CLPPage> AppendCorrectCommand { get; private set; }
+
+        private void OnAppendCorrectCommandExecute(CLPPage page)
+        {
+            var stagingPanel = StagingPanel as StagingPanelViewModel;
+            if(stagingPanel == null)
+            {
+                return;
+            }
+
+            stagingPanel.IsVisible = true;
+
+            stagingPanel.AppendCollectionOfPagesToStage(page.Submissions, 
+                x => x.Tags.FirstOrDefault(t => t is CorrectnessTag && t.Value == CorrectnessTag.AcceptedValues.Correct.ToString()) != null);
+
+            //TODO: keep CurrentSort and skip this if already sorted that way.
+            stagingPanel.ApplySortAndGroupByName();
+        }
+
+        /// <summary>
+        /// Stages almost-correct submissions for the page.
+        /// </summary>
+        public Command<CLPPage> AppendAlmostCorrectCommand { get; private set; }
+
+        private void OnAppendAlmostCorrectCommandExecute(CLPPage page)
+        {
+            var stagingPanel = StagingPanel as StagingPanelViewModel;
+            if(stagingPanel == null)
+            {
+                return;
+            }
+
+            stagingPanel.IsVisible = true;
+
+            stagingPanel.AppendCollectionOfPagesToStage(page.Submissions, 
+                x => x.Tags.FirstOrDefault(t => t is CorrectnessTag && t.Value == CorrectnessTag.AcceptedValues.AlmostCorrect.ToString()) != null);
+
+            //TODO: keep CurrentSort and skip this if already sorted that way.
+            stagingPanel.ApplySortAndGroupByName();
+        }
+
+        /// <summary>
+        /// Stages incorrect submissions for the page.
+        /// </summary>
+        public Command<CLPPage> AppendIncorrectCommand { get; private set; }
+
+        private void OnAppendIncorrectCommandExecute(CLPPage page)
+        {
+            var stagingPanel = StagingPanel as StagingPanelViewModel;
+            if(stagingPanel == null)
+            {
+                return;
+            }
+
+            stagingPanel.IsVisible = true;
+
+            stagingPanel.AppendCollectionOfPagesToStage(page.Submissions, 
+                x => x.Tags.FirstOrDefault(t => t is CorrectnessTag && t.Value == CorrectnessTag.AcceptedValues.Incorrect.ToString()) != null);
+
+            //TODO: keep CurrentSort and skip this if already sorted that way.
+            stagingPanel.ApplySortAndGroupByName();
         }
 
         /// <summary>
