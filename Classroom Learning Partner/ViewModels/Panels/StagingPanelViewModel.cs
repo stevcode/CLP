@@ -295,6 +295,7 @@ namespace Classroom_Learning_Partner.ViewModels
             // want the teacher's.  Probably there's a better way to select that one than "Last".
             foreach(var page in App.MainWindowViewModel.OpenNotebooks.Last(x => x.Name == App.MainWindowViewModel.CurrentNotebookName).Pages)
             {
+                FilteredPages.Clear();
                 AppendCollectionOfPagesToStage(page.Submissions, x => x.OwnerID == student.ID);
             }
 
