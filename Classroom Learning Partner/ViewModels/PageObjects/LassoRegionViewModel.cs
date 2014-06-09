@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls.Primitives;
+using Catel.Data;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Entities;
@@ -17,7 +19,35 @@ namespace Classroom_Learning_Partner.ViewModels
             RemovePageObjectsCommand = new Command(OnRemovePageObjectsCommandExecute);
             DuplicateCommand = new Command(OnDuplicateCommandExecute);
             UnselectRegionCommand = new Command(OnUnselectRegionCommandExecute);
+
+            DragLassoCommand = new Command<DragDeltaEventArgs>(OnDragLassoCommandExecute);
+            DragStartLassoCommand = new Command<DragStartedEventArgs>(OnDragStartLassoCommandExecute);
+            DragStopLassoCommand = new Command<DragCompletedEventArgs>(OnDragStopLassoCommandExecute);
         }
+
+        /// <summary>
+        /// List of all the IDs of the <see cref="IPageObject" />s inside the <see cref="LassoRegion" />.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public List<string> ContainedPageObjectIDs
+        {
+            get { return GetValue<List<string>>(ContainedPageObjectIDsProperty); }
+            set { SetValue(ContainedPageObjectIDsProperty, value); }
+        }
+
+        public static readonly PropertyData ContainedPageObjectIDsProperty = RegisterProperty("ContainedPageObjectIDs", typeof(List<string>), () => new List<string>());
+
+        /// <summary>
+        /// List of all the IDs of the <see cref="StrokeDTO" />s inside the <see cref="LassoRegion" />.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public List<string> ContainedInkStrokeIDs
+        {
+            get { return GetValue<List<string>>(ContainedInkStrokeIDsProperty); }
+            set { SetValue(ContainedInkStrokeIDsProperty, value); }
+        }
+
+        public static readonly PropertyData ContainedInkStrokeIDsProperty = RegisterProperty("ContainedInkStrokeIDs", typeof(List<string>), () => new List<string>());
 
         public override void ClearAdorners()
         {
@@ -94,6 +124,86 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnUnselectRegionCommandExecute()
         {
             ACLPPageBaseViewModel.RemovePageObjectFromPage(PageObject, false);
+        }
+
+        /// <summary>
+        /// Gets the DragPageObjectCommand command.
+        /// </summary>
+        public Command<DragDeltaEventArgs> DragLassoCommand { get; set; }
+
+        private void OnDragLassoCommandExecute(DragDeltaEventArgs e)
+        {
+            var parentPage = PageObject.ParentPage;
+
+            var newX = Math.Max(0, PageObject.XPosition + e.HorizontalChange);
+            newX = Math.Min(newX, parentPage.Width - PageObject.Width);
+            var newY = Math.Max(0, PageObject.YPosition + e.VerticalChange);
+            newY = Math.Min(newY, parentPage.Height - PageObject.Height);
+
+            var oldXPos = PageObject.XPosition;
+            var oldYPos = PageObject.YPosition;
+            var xDelta = newX - oldXPos;
+            var yDelta = newY - oldYPos;
+
+            var xDiff = Math.Abs(xDelta);
+            var yDiff = Math.Abs(yDelta);
+            var diff = xDiff + yDiff;
+            //if(diff > PageHistory.SAMPLE_RATE)
+            //{
+            //    var batch = pageObject.ParentPage.History.CurrentHistoryBatch;
+            //    if(batch is PageObjectMoveBatchHistoryItem)
+            //    {
+            //        (batch as PageObjectMoveBatchHistoryItem).AddPositionPointToBatch(pageObject.ID, new Point(newX, newY));
+            //    }
+            //    else
+            //    {
+            //        Logger.Instance.WriteToLog("Error: Current Batch not ChangePositionBatch.");
+            //        var batchHistoryItem = pageObject.ParentPage.History.EndBatch();
+            //        ACLPPageBaseViewModel.AddHistoryItemToPage(pageObject.ParentPage, batchHistoryItem, true);
+            //    }
+            //}
+
+            PageObject.XPosition = newX;
+            PageObject.YPosition = newY;
+
+            //foreach(var pageObject in ContainedPageObjectIDs.Select(parentPage.GetPageObjectByID))
+            //{
+            //    ChangePageObjectPosition(PageObject, newX, newY, false);
+            //}
+        }
+
+        /// <summary>
+        /// Gets the DragStartPageObjectCommand command.
+        /// </summary>
+        public Command<DragStartedEventArgs> DragStartLassoCommand { get; set; }
+
+        /// <summary>
+        /// Method to invoke when the DragStartPageObjectCommand command is executed.
+        /// </summary>
+        private void OnDragStartLassoCommandExecute(DragStartedEventArgs e)
+        {
+            PageObject.ParentPage.History.BeginBatch(new PageObjectsMoveBatchHistoryItem(PageObject.ParentPage,
+                                                                                         App.MainWindowViewModel.CurrentUser,
+                                                                                         ContainedPageObjectIDs,
+                                                                                         new Point(PageObject.XPosition, PageObject.YPosition)));
+        }
+
+        /// <summary>
+        /// Gets the DragStopPageObjectCommand command.
+        /// </summary>
+        public Command<DragCompletedEventArgs> DragStopLassoCommand { get; set; }
+
+        private void OnDragStopLassoCommandExecute(DragCompletedEventArgs e)
+        {
+            var batch = PageObject.ParentPage.History.CurrentHistoryBatch;
+            if(batch is PageObjectsMoveBatchHistoryItem)
+            {
+                (batch as PageObjectsMoveBatchHistoryItem).AddPositionPointToBatch(new Point(PageObject.XPosition,
+                                                                                           PageObject.YPosition));
+            }
+            var batchHistoryItem = PageObject.ParentPage.History.EndBatch();
+            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, batchHistoryItem, true);
+            PageObject.OnMoved();
         }
 
         #endregion //Commands

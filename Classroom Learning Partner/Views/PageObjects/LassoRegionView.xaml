@@ -53,13 +53,13 @@
                        Canvas.Right="-40" Canvas.Top="-40">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="DragDelta">
-                            <catel:EventToCommand Command="{Binding DragPageObjectCommand}" PassEventArgsToCommand="True" />
+                            <catel:EventToCommand Command="{Binding DragLassoCommand}" PassEventArgsToCommand="True" />
                         </i:EventTrigger>
                         <i:EventTrigger EventName="DragStarted">
-                            <catel:EventToCommand Command="{Binding DragStartPageObjectCommand}" PassEventArgsToCommand="True" />
+                            <catel:EventToCommand Command="{Binding DragStartLassoCommand}" PassEventArgsToCommand="True" />
                         </i:EventTrigger>
                         <i:EventTrigger EventName="DragCompleted">
-                            <catel:EventToCommand Command="{Binding DragStopPageObjectCommand}" PassEventArgsToCommand="True" />
+                            <catel:EventToCommand Command="{Binding DragStopLassoCommand}" PassEventArgsToCommand="True" />
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                     <Thumb.Template>
@@ -85,7 +85,7 @@
                 </Thumb>
 
                 <!--Duplicate Button-->
-                <Button Command="{Binding DuplicateCommand}"
+                <!--<Button Command="{Binding DuplicateCommand}"
                         Cursor="Hand"
                         Width="40" Height="40"
                         Canvas.Left="-40"
@@ -101,7 +101,7 @@
                             </Grid>
                         </ControlTemplate>
                     </Button.Template>
-                </Button>
+                </Button>-->
             </Canvas>
         </ac:AdornedControl.AdornerContent>
 

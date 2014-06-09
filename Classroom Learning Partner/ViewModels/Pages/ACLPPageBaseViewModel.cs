@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Ink;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Catel.Data;
@@ -503,8 +504,13 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
+            var pageObjectsToRemove = PageObjects.Where(pageObject => App.MainWindowViewModel.CurrentUser.ID == pageObject.CreatorID).ToList();
+            foreach(var pageObject in pageObjectsToRemove)
+            {
+                PageObjects.Remove(pageObject);
+            }
+
             Page.InkStrokes.Clear();
-            Page.PageObjects.Clear();
             Page.SerializedStrokes.Clear();
             Page.History.ClearHistory();
         }
@@ -841,102 +847,97 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void LassoStroke(Stroke stroke)
         {
-            // TODO: Entities
-            //InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
-            //PageObjects.CollectionChanged -= PageObjects_CollectionChanged;
+            InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
+            PageObjects.CollectionChanged -= PageObjects_CollectionChanged;
 
-            //var lassoedPageObjects = new List<ICLPPageObject>();
+            var lassoedPageObjects = new List<IPageObject>();
+            var lassoedStrokes = new List<Stroke>();
 
-            //var strokeGeometry = new PathGeometry();
-            //var pathFigure = new PathFigure();
-            //pathFigure.StartPoint = stroke.StylusPoints.First().ToPoint();
-            //pathFigure.Segments = new PathSegmentCollection();
-            //var polyLine = new PolyLineSegment
-            //{
-            //    Points = new PointCollection((Point[])stroke.StylusPoints)
-            //                                           {
-            //                                               stroke.StylusPoints.First().ToPoint()
-            //                                           }
-            //};
-            //pathFigure.Segments.Add(polyLine);
+            var strokeGeometry = new PathGeometry();
+            var pathFigure = new PathFigure
+                             {
+                                 StartPoint = stroke.StylusPoints.First().ToPoint(),
+                                 Segments = new PathSegmentCollection()
+                             };
+            var polyLine = new PolyLineSegment
+            {
+                Points = new PointCollection((Point[])stroke.StylusPoints)
+                                                       {
+                                                           stroke.StylusPoints.First().ToPoint()
+                                                       }
+            };
+            pathFigure.Segments.Add(polyLine);
 
-            //strokeGeometry.Figures.Add(pathFigure);
+            strokeGeometry.Figures.Add(pathFigure);
 
-            //foreach(var pageObject in PageObjects)
-            //{
-            //    if(pageObject.IsBackground && !App.MainWindowViewModel.IsAuthoring)
-            //    {
-            //        continue;
-            //    }
-            //    RectangleGeometry pageObjectGeometry;
-            //    if(pageObject.Width > 10.0 || pageObject.Height > 10.0)
-            //    {
-            //        pageObjectGeometry =
-            //          new RectangleGeometry(new Rect(pageObject.XPosition + Math.Max(pageObject.Width / 2 - 5.0, 0.0),
-            //                                         pageObject.YPosition + Math.Max(pageObject.Height / 2 - 5.0, 0.0),
-            //                                         Math.Min(10.0, pageObject.Width),
-            //                                         Math.Min(10.0, pageObject.Height)));
-            //    }
-            //    else
-            //    {
-            //        pageObjectGeometry =
-            //            new RectangleGeometry(new Rect(pageObject.XPosition, pageObject.YPosition, pageObject.Width,
-            //                                           pageObject.Height));
-            //    }
+            foreach(var pageObject in PageObjects)
+            {
+                if(App.MainWindowViewModel.CurrentUser.ID != pageObject.CreatorID)
+                {
+                    continue;
+                }
 
-            //    if(strokeGeometry.FillContains(pageObjectGeometry))
-            //    {
-            //        lassoedPageObjects.Add(pageObject);
-            //    }
-            //}
+                RectangleGeometry pageObjectGeometry;
+                if(pageObject.Width > 10.0 || pageObject.Height > 10.0)
+                {
+                    pageObjectGeometry =
+                      new RectangleGeometry(new Rect(pageObject.XPosition + Math.Max(pageObject.Width / 2 - 5.0, 0.0),
+                                                     pageObject.YPosition + Math.Max(pageObject.Height / 2 - 5.0, 0.0),
+                                                     Math.Min(10.0, pageObject.Width),
+                                                     Math.Min(10.0, pageObject.Height)));
+                }
+                else
+                {
+                    pageObjectGeometry =
+                        new RectangleGeometry(new Rect(pageObject.XPosition, pageObject.YPosition, pageObject.Width,
+                                                       pageObject.Height));
+                }
 
-            //if(lassoedPageObjects.Count > 0)
-            //{
-            //    double xPosition = lassoedPageObjects.First().XPosition;
-            //    double yPosition = lassoedPageObjects.First().YPosition;
-            //    double endXPosition = lassoedPageObjects.First().XPosition + lassoedPageObjects.First().Width;
-            //    double endYPosition = lassoedPageObjects.First().YPosition + lassoedPageObjects.First().Height;
-            //    foreach(var pageObject in lassoedPageObjects)
-            //    {
-            //        if(pageObject.XPosition < xPosition)
-            //        {
-            //            xPosition = pageObject.XPosition;
-            //        }
-            //        if(pageObject.YPosition < yPosition)
-            //        {
-            //            yPosition = pageObject.YPosition;
-            //        }
-            //        if(pageObject.XPosition + pageObject.Width > endXPosition)
-            //        {
-            //            endXPosition = pageObject.XPosition + pageObject.Width;
-            //        }
-            //        if(pageObject.YPosition + pageObject.Height > endYPosition)
-            //        {
-            //            endYPosition = pageObject.YPosition + pageObject.Height;
-            //        }
-            //    }
+                if(strokeGeometry.FillContains(pageObjectGeometry))
+                {
+                    lassoedPageObjects.Add(pageObject);
+                }
+            }
 
-            //    var pageObjectIDs = new ObservableCollection<string>();
-            //    foreach(var pageObject in lassoedPageObjects)
-            //    {
-            //        pageObjectIDs.Add(pageObject.UniqueID);
-            //    }
-            //    var width = endXPosition - xPosition;
-            //    var height = endYPosition - yPosition;
+            if(lassoedPageObjects.Count > 0)
+            {
+                var xPosition = lassoedPageObjects.First().XPosition;
+                var yPosition = lassoedPageObjects.First().YPosition;
+                var endXPosition = lassoedPageObjects.First().XPosition + lassoedPageObjects.First().Width;
+                var endYPosition = lassoedPageObjects.First().YPosition + lassoedPageObjects.First().Height;
+                foreach(var pageObject in lassoedPageObjects)
+                {
+                    if(pageObject.XPosition < xPosition)
+                    {
+                        xPosition = pageObject.XPosition;
+                    }
+                    if(pageObject.YPosition < yPosition)
+                    {
+                        yPosition = pageObject.YPosition;
+                    }
+                    if(pageObject.XPosition + pageObject.Width > endXPosition)
+                    {
+                        endXPosition = pageObject.XPosition + pageObject.Width;
+                    }
+                    if(pageObject.YPosition + pageObject.Height > endYPosition)
+                    {
+                        endYPosition = pageObject.YPosition + pageObject.Height;
+                    }
+                }
 
-            //    var region = new CLPRegion(pageObjectIDs, xPosition, yPosition, height, width, Page);
-            //    AddPageObjectToPage(region, false);
-            //}
+                var pageObjectIDs = lassoedPageObjects.Select(pageObject => pageObject.ID).ToList();
+                var strokeIDs = lassoedStrokes.Select(s => s.GetStrokeID()).ToList();
+                var width = endXPosition - xPosition;
+                var height = endYPosition - yPosition;
 
-            //if(!stroke.ContainsPropertyData(ACLPPageBase.StrokeIDKey))
-            //{
-            //    var newUniqueID = Guid.NewGuid().ToString();
-            //    stroke.AddPropertyData(ACLPPageBase.StrokeIDKey, newUniqueID);
-            //}
-            //Page.InkStrokes.Remove(stroke);
+                var region = new LassoRegion(Page, pageObjectIDs, strokeIDs, xPosition, yPosition, height, width);
+                AddPageObjectToPage(region, false);
+            }
 
-            //InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
-            //PageObjects.CollectionChanged += PageObjects_CollectionChanged;
+            Page.InkStrokes.Remove(stroke);
+
+            InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
+            PageObjects.CollectionChanged += PageObjects_CollectionChanged;
         }
 
         private void AddStroke(Stroke stroke)
@@ -1036,7 +1037,6 @@ namespace Classroom_Learning_Partner.ViewModels
         public static void TakePageThumbnail(CLPPage page)
         {
             var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(page).First(x => (x is ACLPPageBaseViewModel) && !(x as ACLPPageBaseViewModel).IsPagePreview);
-           // var pageView = (UIElement)CLPServiceAgent.Instance.GetViewFromViewModel(pageViewModel);
 
             var viewManager = Catel.IoC.ServiceLocator.Default.ResolveType<IViewManager>();
             var views = viewManager.GetViewsOfViewModel(pageViewModel);
