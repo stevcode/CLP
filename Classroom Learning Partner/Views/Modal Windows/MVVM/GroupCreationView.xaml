@@ -13,7 +13,7 @@
             <conv:StringsEqualMultiConverter x:Key="StringsEqualMultiConverter" />
         </ResourceDictionary>
     </catel:DataWindow.Resources>
-    <Grid>
+    <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
@@ -25,7 +25,7 @@
                 <DataTemplate>
                     <Border Margin="2" BorderBrush="{StaticResource GrayEdgeColor}"
                             BorderThickness="1,1,1,1">
-                        <Grid>
+                        <Grid Margin="5">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="*" />
@@ -34,7 +34,33 @@
                                 <Run Text="Group"/>
                                 <Run Text="{Binding Label}" />
                             </TextBlock>
-                            <ItemsControl Grid.Row="1" ItemsSource="{Binding Members}">
+                            <Button Grid.Row="0"
+                                        Width="15"
+                                        Height="15"
+                                        Margin="-10 0 0 -10"
+                                        Cursor="Hand"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Top"
+                                        Command="{Binding DataContext.RemoveGroupCommand, ElementName=GroupsList}"
+                                        CommandParameter="{Binding}">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="{x:Type Button}">
+                                        <Grid>
+                                            <Ellipse Fill="White"
+                                                         Stroke="Black"
+                                                         StrokeThickness="1"
+                                                         VerticalAlignment="Stretch"
+                                                         HorizontalAlignment="Stretch" />
+                                            <Path Stretch="Fill"
+                                                      Stroke="Red"
+                                                      StrokeThickness="2"
+                                                      Margin="2"
+                                                      Data="M0,0.5 L1,0.5" />
+                                        </Grid>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                            <ItemsControl Grid.Row="1" ItemsSource="{Binding SortedMembers.View, IsAsync=True}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <Grid>
@@ -42,7 +68,7 @@
                                                 <ColumnDefinition />
                                                 <ColumnDefinition />
                                             </Grid.ColumnDefinitions>
-                                            <TextBlock Grid.Column="0">
+                                            <TextBlock Grid.Column="0" VerticalAlignment="Center">
                                                 <Run Text="{Binding FullName}"/>
                                             </TextBlock>
                                             <ItemsControl x:Name="GroupSelect" Grid.Column="1" ItemsSource="{Binding DataContext.Groups, ElementName=GroupsList}">
@@ -63,7 +89,7 @@
                                                                        VerticalAlignment="Center">
                                                                 <Run Text="{Binding Label}"/>
                                                             </TextBlock>
-                                                            <Ellipse Fill="Transparent" Height="15" Width="15"
+                                                            <Ellipse Fill="Transparent" Height="20" Width="20"
                                                                      Margin="2"
                                                                      HorizontalAlignment="Center"
                                                                      VerticalAlignment="Center" >
@@ -129,19 +155,16 @@
             </ItemsControl.ItemTemplate>
         </ItemsControl>
 
-        <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center">
-            <Button Content="Fewer Groups" Command="{Binding RemoveGroupCommand}"/>
-            <Button Content="More Groups" Command="{Binding AddGroupCommand}"/>
-        </StackPanel>
-
+        <Button Grid.Row="1" Margin="2" Content="Add a Group" Command="{Binding AddGroupCommand}" HorizontalAlignment="Center" />
+        
         <Border Margin="2" BorderBrush="{StaticResource GrayEdgeColor}"
                 BorderThickness="1,1,1,1" Grid.Row="2"
                 x:Name="NotGroupedBox">
-            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" >
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="5">
                 <TextBlock FontWeight="Bold" HorizontalAlignment="Center">
                     <Run Text="Students not in any group"/>
                 </TextBlock>
-                <ItemsControl ItemsSource="{Binding StudentsNotInGroup}">
+                <ItemsControl ItemsSource="{Binding SortedStudentsNotInGroup.View, IsAsync=True}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Grid>
@@ -170,7 +193,7 @@
                                                            VerticalAlignment="Center">
                                                     <Run Text="{Binding Label}"/>
                                                 </TextBlock>
-                                                <Ellipse Fill="Transparent" Stroke="{StaticResource GrayEdgeColor}" Height="15" Width="15"
+                                                <Ellipse Fill="Transparent" Stroke="{StaticResource GrayEdgeColor}" Height="20" Width="20"
                                                          Margin="2"
                                                          HorizontalAlignment="Center"
                                                          VerticalAlignment="Center" >

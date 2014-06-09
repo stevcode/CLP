@@ -16,10 +16,10 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 StudentsNotInGroup = new ObservableCollection<Person>(App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.StudentList);
             }
-            else
-            {
-                StudentsNotInGroup = new ObservableCollection<Person>();
-            }
+
+            SortedStudentsNotInGroup.Source = StudentsNotInGroup;
+            SortDescription StudentNameSort = new SortDescription("FullName", ListSortDirection.Ascending);
+            SortedStudentsNotInGroup.SortDescriptions.Add(StudentNameSort);
 
             Groups = new ObservableCollection<Group>();
 
@@ -41,7 +41,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         Group newGroup = new Group(student.CurrentDifferentiationGroup);
                         newGroup.Add(student);
-                        Groups.Add(newGroup);
+                        AddGroupInOrder(newGroup);
                     }
                     StudentsNotInGroup.Remove(student);
                 }
@@ -50,11 +50,12 @@ namespace Classroom_Learning_Partner.ViewModels
             if(Groups.Count == 0)
             {
                 Groups.Add(new Group("A"));
+                Groups.Add(new Group("B"));
             }
 
             GroupChangeCommand = new Command<object[]>(OnGroupChangeCommandExecute);
             AddGroupCommand = new Command(OnAddGroupCommandExecute);
-            RemoveGroupCommand = new Command(OnRemoveGroupCommandExecute);
+            RemoveGroupCommand = new Command<Group>(OnRemoveGroupCommandExecute);
         }
 
         public ObservableCollection<Group> Groups
@@ -71,8 +72,16 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(StudentsNotInGroupProperty, value); }
         }
 
-        public static readonly PropertyData StudentsNotInGroupProperty = RegisterProperty("Students", typeof(ObservableCollection<Person>));
+        public static readonly PropertyData StudentsNotInGroupProperty = RegisterProperty("StudentsNotInGroup", typeof(ObservableCollection<Person>), () => new ObservableCollection<Person>());
     
+        public CollectionViewSource SortedStudentsNotInGroup
+        {
+            get { return GetValue<CollectionViewSource>(SortedStudentsNotInGroupProperty); }
+            set { SetValue(SortedStudentsNotInGroupProperty, value); }
+        }
+
+        public static readonly PropertyData SortedStudentsNotInGroupProperty = RegisterProperty("SortedStudentsNotInGroup", typeof(CollectionViewSource), () => new CollectionViewSource());
+
         public Command<object[]> GroupChangeCommand { get; private set; }
 
         public void OnGroupChangeCommandExecute(object[] parameters)
@@ -106,30 +115,48 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public void OnAddGroupCommandExecute()
         {
-            string lastLabel = Groups[Groups.Count - 1].Label;
-            string nextLabel = "" + (char)(lastLabel[0] + 1);
-            Group newGroup = new Group(nextLabel);
-            Groups.Add(newGroup);
+            for(int i = 0; i < Groups.Count; i++)
+            {
+                string expectedLabel = "" + (char)('A' + i);
+                if(Groups[i].Label != expectedLabel)
+                {
+                    Groups.Insert(i, new Group(expectedLabel));
+                    return;
+                }
+            }
+
+            // fall through to here if there are no gaps in the group labels
+            string endLabel = "" + (char)('A' + Groups.Count);
+            Groups.Add(new Group(endLabel));
         }
 
-        public Command RemoveGroupCommand
+        public Command<Group> RemoveGroupCommand
         {
             get;
             private set;
         }
 
-        public void OnRemoveGroupCommandExecute()
+        public void OnRemoveGroupCommandExecute(Group removed)
         {
-            if(Groups.Count <= 1)
-            {
-                return;
-            }
-            Group lastGroup = Groups[Groups.Count - 1];
-            foreach(Person student in lastGroup.Members)
+            foreach(Person student in removed.Members)
             {
                 StudentsNotInGroup.Add(student);
             }
-            Groups.Remove(lastGroup);
+            Groups.Remove(removed);
+        }
+
+        private void AddGroupInOrder(Group newGroup)
+        {
+            for(int i = 0; i < Groups.Count; i++)
+            {
+                if(Groups[i].Label.CompareTo(newGroup.Label) > 0)
+                {
+                    Groups.Insert(i, newGroup);
+                    return;
+                }
+            }
+            //Fall through to here if the group comes after any/all existing groups.
+            Groups.Add(newGroup);
         }
     }
 }
