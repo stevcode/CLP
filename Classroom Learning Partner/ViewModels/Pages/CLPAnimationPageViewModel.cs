@@ -173,28 +173,35 @@ namespace Classroom_Learning_Partner.ViewModels
                return;
            }
 
+           History.IsAnimating = true;
+           IsPlaying = true;
+           _oldPageInteractionMode = PageInteractionMode == PageInteractionMode.None ? PageInteractionMode.Pen : PageInteractionMode;
+           PageInteractionMode = PageInteractionMode.None;
+
            var t = new Thread(() =>
                               {
-                                  History.IsAnimating = true;
-                                  IsPlaying = true;
-                                  _oldPageInteractionMode = PageInteractionMode == PageInteractionMode.None ? PageInteractionMode.Pen : PageInteractionMode;
-                                  PageInteractionMode = PageInteractionMode.None;
-
                                   while(History.RedoItems.Any() && IsPlaying)
                                   {
                                       var historyItemAnimationDelay = Convert.ToInt32(Math.Round(Page.History.CurrentAnimationDelay / CurrentPlaybackSpeed));
                                       Application.Current.Dispatcher.Invoke(DispatcherPriority.DataBind,
                                                                             (DispatcherOperationCallback)delegate
                                                                                                          {
-                                                                                                             History.Redo(true);
-                                                                                                             return null;
+                                                                                                              History.Redo(true);
+                                                                                                              return null;
                                                                                                          },
                                                                             null);
                                       Thread.Sleep(historyItemAnimationDelay);
                                   }
-                                  IsPlaying = false;
-                                  PageInteractionMode = _oldPageInteractionMode;
-                                  History.IsAnimating = false;
+
+                                  Application.Current.Dispatcher.Invoke(DispatcherPriority.DataBind,
+                                                                            (DispatcherOperationCallback)delegate
+                                                                                                         {
+                                                                                                              IsPlaying = false;
+                                                                                                              PageInteractionMode = _oldPageInteractionMode;
+                                                                                                              History.IsAnimating = false;
+                                                                                                              return null;
+                                                                                                         },
+                                                                            null);
                               });
 
            t.Start();

@@ -22,6 +22,9 @@ namespace Classroom_Learning_Partner
         void SwitchProjectorDisplay(string displayID, int displayNumber);
 
         [OperationContract]
+        void CreateGridDisplayAndAddPage(string displayID, int displayNumber, string pageID, string pageOwnerID, string differentiationLevel, uint pageVersionIndex);
+
+        [OperationContract]
         void AddPageToDisplay(string pageID, string pageOwnerID, string differentiationLevel, uint pageVersionIndex, string displayID);
 
         [OperationContract]
@@ -35,6 +38,9 @@ namespace Classroom_Learning_Partner
         
         [OperationContract]
         void MakeCurrentPageLonger();
+
+        [OperationContract]
+        void RewindCurrentPage();
     }
 
     [ServiceBehavior(IncludeExceptionDetailInFaults = true)]
@@ -42,8 +48,6 @@ namespace Classroom_Learning_Partner
     {
         public void FreezeProjector(bool isFreezing)
         {
-            
-            
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                        (DispatcherOperationCallback)delegate
                                                                                     {
@@ -139,6 +143,50 @@ namespace Classroom_Learning_Partner
                                                                                                 notebookWorkspaceViewModel.CurrentDisplay = newGridDisplay;
                                                                                             }
                                                                                         }
+
+                                                                                        return null;
+                                                                                    },
+                                                       null);
+        }
+
+        public void CreateGridDisplayAndAddPage(string displayID, int displayNumber, string pageID, string pageOwnerID, string differentiationLevel, uint pageVersionIndex)
+        {
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null ||
+               App.CurrentUserMode != App.UserMode.Projector)
+            {
+                return;
+            }
+
+            CLPPage page = null;
+            foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
+            {
+                page = notebook.GetPageByCompositeKeys(pageID, pageOwnerID, differentiationLevel, pageVersionIndex);
+
+                if(page != null)
+                {
+                    break;
+                }
+            }
+
+            if(page == null)
+            {
+                return;
+            }
+
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                                                       (DispatcherOperationCallback)delegate
+                                                                                    {
+                                                                                        var newGridDisplay = new GridDisplay
+                                                                                                                {
+                                                                                                                    ID = displayID,
+                                                                                                                    DisplayNumber = displayNumber,
+                                                                                                                    NotebookID = notebookWorkspaceViewModel.Notebook.ID
+                                                                                                                };
+                                                                                        newGridDisplay.AddPageToDisplay(page);
+                                                                                        notebookWorkspaceViewModel.Notebook.Displays.Add(newGridDisplay);
+                                                                                        notebookWorkspaceViewModel.CurrentDisplay = null;
+                                                                                        notebookWorkspaceViewModel.CurrentDisplay = newGridDisplay;
 
                                                                                         return null;
                                                                                     },
@@ -324,6 +372,50 @@ namespace Classroom_Learning_Partner
                                                                                         return null;
                                                                                     }, null);
         }
+
+        #region Animation Commands
+
+        public void RewindCurrentPage()
+        {
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                                                       (DispatcherOperationCallback)delegate
+                                                                                    {
+
+
+                                                                                        //if(IsPlaying || IsRecording)
+                                                                                        //{
+                                                                                        //    StopAnimation();
+                                                                                        //}
+
+                                                                                        //if(!History.IsAnimation) 
+                                                                                        //{
+                                                                                        //    return;
+                                                                                        //}
+
+                                                                                        //_oldPageInteractionMode = PageInteractionMode == PageInteractionMode.None ? PageInteractionMode.Pen : PageInteractionMode;
+                                                                                        //PageInteractionMode = PageInteractionMode.None;
+                                                                                        //History.IsAnimating = true;
+
+                                                                                        //IsPlaying = true;
+                                                                                        //while(History.UndoItems.Any())
+                                                                                        //{
+                                                                                        //    var animationIndicator = History.UndoItems.First() as AnimationIndicator;
+                                                                                        //    History.Undo();
+                                                                                        //    if(animationIndicator != null && animationIndicator.AnimationIndicatorType == AnimationIndicatorType.Record)
+                                                                                        //    {
+                                                                                        //        break;
+                                                                                        //    }
+                                                                                        //}
+                                                                                        //IsPlaying = false;
+                                                                                        //PageInteractionMode = _oldPageInteractionMode;
+                                                                                        //History.IsAnimating = false;
+
+                                                                                        return null;
+                                                                                    },
+                                                       null);
+        }
+
+        #endregion //Animation Commands
 
         #region INotebookContract Members
 
