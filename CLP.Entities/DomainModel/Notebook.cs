@@ -771,6 +771,11 @@ namespace CLP.Entities
                 notebook.Pages = new ObservableCollection<CLPPage>(notebookPages.OrderBy(x => x.PageNumber));
 
                 var displaysFolderPath = Path.Combine(folderPath, "Displays");
+                if(!Directory.Exists(displaysFolderPath))
+                {
+                    return notebook;
+                }
+
                 var displayFilePaths = Directory.EnumerateFiles(displaysFolderPath, "*.xml");
                 var displays = new List<IDisplay>();
                 foreach(var displayFilePath in displayFilePaths)
