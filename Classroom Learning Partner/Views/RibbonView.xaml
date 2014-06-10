@@ -399,7 +399,7 @@
                 <RibbonButton Background="Aquamarine" />
                 <RibbonButton Background="SlateGray" />
                 <RibbonButton Background="SkyBlue"  />
-                <RibbonButton Background="Turquoise"
+                <RibbonButton Background="DeepSkyBlue"
                               Visibility="{Binding InstructorVisibility}" />
                 <Border BorderBrush="Black"
                         BorderThickness="2"
