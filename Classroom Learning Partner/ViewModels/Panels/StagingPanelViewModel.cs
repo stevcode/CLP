@@ -3,6 +3,8 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Windows;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using Catel.Data;
 using Catel.MVVM;
@@ -41,6 +43,7 @@ namespace Classroom_Learning_Partner.ViewModels
             SetCurrentPageCommand = new Command<CLPPage>(OnSetCurrentPageCommandExecute);
             RemovePageFromStageCommand = new Command<CLPPage>(OnRemovePageFromStageCommandExecute);
             ClearStageCommand = new Command(OnClearStageCommandExecute);
+            ToggleNoSubmissionsCommand = new Command<RoutedEventArgs>(OnToggleNoSubmissionsCommandExecute);
 
             AppendCollectionOfPagesToStage(SingleAddedPages);
             FilterCollectionOfPagesFromStage(SingleRemovedPages);
@@ -195,6 +198,78 @@ namespace Classroom_Learning_Partner.ViewModels
         public Command ClearStageCommand { get; private set; }
 
         private void OnClearStageCommandExecute() { ClearStage(); }
+
+        /// <summary>
+        /// Toggles the panel that shows the student names who haven't submitted.
+        /// </summary>
+        public Command<RoutedEventArgs> ToggleNoSubmissionsCommand { get; private set; }
+
+        private void OnToggleNoSubmissionsCommandExecute(RoutedEventArgs e)
+        {
+            var toggleButton = e.Source as ToggleButton;
+            if(toggleButton == null)
+            {
+                return;
+            }
+            if(toggleButton.IsChecked != null &&
+               !(bool)toggleButton.IsChecked)
+            {
+                return;
+            }
+
+            StudentsWithNoSubmissions = GetStudentsWithNoSubmissions();
+        }
+
+        /// <summary>
+        /// List of student names who don't have submissions for the CurrentPage.
+        /// </summary>
+        public ObservableCollection<string> StudentsWithNoSubmissions
+        {
+            get { return GetValue<ObservableCollection<string>>(StudentsWithNoSubmissionsProperty); }
+            set { SetValue(StudentsWithNoSubmissionsProperty, value); }
+        }
+
+        public static readonly PropertyData StudentsWithNoSubmissionsProperty = RegisterProperty("StudentsWithNoSubmissions",
+                                                                                                 typeof(ObservableCollection<string>),
+                                                                                                 () => new ObservableCollection<string>());
+
+        /// <summary>
+        /// Whether the panel showing students with no submissions is visible.
+        /// </summary>
+        public bool IsStudentsWithNoSubmissionsVisible
+        {
+            get { return GetValue<bool>(IsStudentsWithNoSubmissionsVisibleProperty); }
+            set { SetValue(IsStudentsWithNoSubmissionsVisibleProperty, value); }
+        }
+
+        public static readonly PropertyData IsStudentsWithNoSubmissionsVisibleProperty = RegisterProperty("IsStudentsWithNoSubmissionsVisible", typeof(bool), false);
+
+        /// <summary>
+        /// SUMMARY
+        /// </summary>
+        public CLPPage LastFilteredPage
+        {
+            get { return GetValue<CLPPage>(LastFilteredPageProperty); }
+            set { SetValue(LastFilteredPageProperty, value); }
+        }
+
+        public static readonly PropertyData LastFilteredPageProperty = RegisterProperty("LastFilteredPage", typeof(CLPPage));
+
+        public ObservableCollection<string> GetStudentsWithNoSubmissions()
+        {
+            var userNames = new ObservableCollection<string>();
+
+            foreach(var availableUser in App.MainWindowViewModel.AvailableUsers)
+            {
+                userNames.Add(availableUser.FullName);
+            }
+
+            foreach(var p in LastFilteredPage.Submissions.Where(p => userNames.Contains(p.Owner.FullName))) 
+            {
+                userNames.Remove(p.Owner.FullName);
+            }
+            return userNames;
+        }
 
         #endregion //Commands
 

@@ -118,6 +118,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             StagingPanel.IsVisible = true;
             StagingPanel.SetSubmissionsForPage(page);
+            StagingPanel.LastFilteredPage = page;
         }
 
         /// <summary>
