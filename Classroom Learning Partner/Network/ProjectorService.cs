@@ -251,7 +251,7 @@ namespace Classroom_Learning_Partner
             }
             submission.InkStrokes = StrokeDTO.LoadInkStrokes(submission.SerializedStrokes);
             submission.History.TrashedInkStrokes = StrokeDTO.LoadInkStrokes(submission.History.SerializedTrashedInkStrokes);
-            var currentNotebook = App.MainWindowViewModel.OpenNotebooks.FirstOrDefault(notebook => notebookID == notebook.ID && notebook.OwnerID == Person.Emily.ID);
+            var currentNotebook = App.MainWindowViewModel.OpenNotebooks.FirstOrDefault(notebook => notebookID == notebook.ID && notebook.OwnerID == App.MainWindowViewModel.CurrentUser.ID);
 
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                        (DispatcherOperationCallback)delegate
@@ -352,6 +352,7 @@ namespace Classroom_Learning_Partner
                                                                                     {
                                                                                         App.MainWindowViewModel.CurrentClassPeriod = classPeriod;
                                                                                         App.MainWindowViewModel.AvailableUsers = classPeriod.ClassSubject.StudentList;
+                                                                                        App.MainWindowViewModel.CurrentUser = App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.Teacher;
 
                                                                                         return null;
                                                                                     },
@@ -367,6 +368,9 @@ namespace Classroom_Learning_Partner
                 Logger.Instance.WriteToLog("Failed to load notebook.");
                 return;
             }
+
+            App.MainWindowViewModel.CurrentUser = App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.Teacher;
+
             notebook.CurrentPage = notebook.Pages.First();
             foreach(var page in notebook.Pages)
             {
@@ -381,7 +385,7 @@ namespace Classroom_Learning_Partner
                     var notebookInfo = notebookName.Split(';');
                     if(notebookInfo.Length != 4 ||
                        notebookInfo[3] == Person.Author.ID ||
-                       notebookInfo[3] == Person.Emily.ID)
+                       notebookInfo[3] == App.MainWindowViewModel.CurrentUser.ID)
                     {
                         continue;
                     }

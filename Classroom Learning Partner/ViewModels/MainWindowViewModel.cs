@@ -301,12 +301,12 @@ namespace Classroom_Learning_Partner.ViewModels
                     break;
                 case App.UserMode.Instructor:
                     //TODO: Remove after database established
-                    CurrentUser = Person.Emily;
+                    CurrentUser = Person.Author;
                     Workspace = new NotebookChooserWorkspaceViewModel();
                     break;
                 case App.UserMode.Projector:
                     //TODO: Remove after database established
-                    CurrentUser = Person.Emily;
+                    CurrentUser = Person.Author;
                     Workspace = new NotebookChooserWorkspaceViewModel();
                     break;
                 case App.UserMode.Student:
@@ -557,7 +557,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if(string.IsNullOrEmpty(closestClassPeriodFilePath))
             {
-                MessageBox.Show("ERROR: Could not find ClassPeriod.");
+                MessageBox.Show("ERROR: Could not find ClassPeriod .xml file.");
                 return;
             }
 
@@ -589,6 +589,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 MessageBox.Show("Notebook could not be opened. Check error log.");
                 return;
             }
+
+            App.MainWindowViewModel.CurrentUser = App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.Teacher;
 
             App.MainWindowViewModel.CurrentNotebookName = notebook.Name;
             if(notebook.LastSavedDate != null)
@@ -627,7 +629,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     var notebookInfo = notebookName.Split(';');
                     if(notebookInfo.Length != 4 ||
                        notebookInfo[3] == Person.Author.ID ||
-                       notebookInfo[3] == Person.Emily.ID)
+                       notebookInfo[3] == App.MainWindowViewModel.CurrentUser.ID)
                     {
                         continue;
                     }
@@ -728,7 +730,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-
             App.MainWindowViewModel.CurrentClassPeriod.PageIDs.Clear();
             var notebookPagesFolderPath = Path.Combine(notebookFolderPath, "Pages");
             var pageAndHistoryFilePaths = Directory.EnumerateFiles(notebookPagesFolderPath, "*.xml");
@@ -756,6 +757,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 MessageBox.Show("Notebook could not be opened. Check error log.");
                 return;
             }
+
+            App.MainWindowViewModel.CurrentUser = App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.Teacher;
 
             App.MainWindowViewModel.CurrentNotebookName = notebook.Name;
             if(notebook.LastSavedDate != null)
@@ -794,7 +797,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     var notebookInfo = notebookName.Split(';');
                     if(notebookInfo.Length != 4 ||
                        notebookInfo[3] == Person.Author.ID ||
-                       notebookInfo[3] == Person.Emily.ID)
+                       notebookInfo[3] == App.MainWindowViewModel.CurrentUser.ID)
                     {
                         continue;
                     }

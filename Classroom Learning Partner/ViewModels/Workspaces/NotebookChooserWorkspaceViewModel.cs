@@ -44,18 +44,10 @@ namespace Classroom_Learning_Partner.ViewModels
                                             OwnerID = nameAndID[3],
                                             IsLocal = true
                                         }).ToList();
-            var authorNotebookName = notebookNames.FirstOrDefault(x => x.OwnerID == Person.Author.ID);
-            var emilyNotebookName = notebookNames.FirstOrDefault(x => x.OwnerID == Person.Emily.ID);
-            notebookNames.RemoveAll(x => x.OwnerID == Person.Emily.ID || x.OwnerID == Person.Author.ID);
+            var authorNotebookNames = notebookNames.Where(x => x.OwnerID == Person.Author.ID).ToList();
+            notebookNames.RemoveAll(x => x.OwnerID == Person.Author.ID);
             var sortedNotebookNames = notebookNames.OrderBy(x => x.OwnerName);
-            if(authorNotebookName != null)
-            {
-                NotebookNames.Add(authorNotebookName);
-            }
-            if(emilyNotebookName != null)
-            {
-                NotebookNames.Add(emilyNotebookName);
-            }
+            NotebookNames.AddRange(authorNotebookNames);
             NotebookNames.AddRange(sortedNotebookNames);
         }
 
