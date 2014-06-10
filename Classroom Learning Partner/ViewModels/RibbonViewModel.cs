@@ -77,9 +77,11 @@ namespace Classroom_Learning_Partner.ViewModels
                     break;
                 case App.UserMode.Projector:
                     IsMinimized = true;
+                    NotInstructorVisibility = Visibility.Visible;
                     break;
                 case App.UserMode.Student:
                     StudentVisibility = Visibility.Visible;
+                    NotInstructorVisibility = Visibility.Visible;
                     break;
             }
 
@@ -514,6 +516,17 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData StudentVisibilityProperty = RegisterProperty("StudentVisibility", typeof(Visibility), Visibility.Collapsed);
+
+        /// <summary>
+        /// SUMMARY
+        /// </summary>
+        public Visibility NotInstructorVisibility
+        {
+            get { return GetValue<Visibility>(NotInstructorVisibilityProperty); }
+            set { SetValue(NotInstructorVisibilityProperty, value); }
+        }
+
+        public static readonly PropertyData NotInstructorVisibilityProperty = RegisterProperty("NotInstructorVisibility", typeof(Visibility), Visibility.Collapsed);
 
         /// <summary>
         /// Gets or sets the property value.

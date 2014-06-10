@@ -196,13 +196,13 @@
                               LargeImageSource="pack://application:,,,/Resources/Images/PreviousPage32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/PreviousPage16.png"
                               Command="{Binding PreviousPageCommand}"
-                              Visibility="{Binding StudentVisibility}" />
+                              Visibility="{Binding NotInstructorVisibility}" />
 
                 <RibbonButton Label="Next Page"
                               LargeImageSource="pack://application:,,,/Resources/Images/NextPage32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/NextPage16.png"
                               Command="{Binding NextPageCommand}"
-                              Visibility="{Binding StudentVisibility}" />
+                              Visibility="{Binding NotInstructorVisibility}" />
 
             </RibbonGroup>
 
