@@ -1058,18 +1058,23 @@ namespace Classroom_Learning_Partner.ViewModels
                     App.MainWindowViewModel.CurrentConvertingPage = null;
                     App.MainWindowViewModel.CurrentConvertingPage = page;
 
-                    var currentPageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(page).Last();
+                    var currentPageViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(page);
                     var viewManager = Catel.IoC.ServiceLocator.Default.ResolveType<IViewManager>();
-                    var views = viewManager.GetViewsOfViewModel(currentPageViewModel);
-                    var currentPageView = views.FirstOrDefault(view => view is CLPPageView) as CLPPageView;
-                    if(currentPageView == null)
+
+                    NonAsyncPagePreviewView currentPagePreviewView = null;
+                    foreach(var views in currentPageViewModels.Select(viewManager.GetViewsOfViewModel)) 
                     {
-                        return;
+                        currentPagePreviewView = views.FirstOrDefault(view => view is NonAsyncPagePreviewView) as NonAsyncPagePreviewView;
+                    }
+
+                    if(currentPagePreviewView == null)
+                    {
+                        continue;
                     }
 
                     await Task.Delay(500);
 
-                    var screenshot = CLPServiceAgent.Instance.UIElementToImageByteArray(currentPageView, page.Width, dpi:300);
+                    var screenshot = CLPServiceAgent.Instance.UIElementToImageByteArray(currentPagePreviewView, page.Width, dpi:300);
                     var bitmapImage = new BitmapImage();
                     bitmapImage.BeginInit();
                     bitmapImage.CacheOption = BitmapCacheOption.OnDemand;
