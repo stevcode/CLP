@@ -6,6 +6,8 @@ using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Catel.Data;
+using Catel.IoC;
+using Catel.MVVM.Views;
 using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Views;
 using CLP.Entities;
@@ -377,38 +379,23 @@ namespace Classroom_Learning_Partner
 
         public void RewindCurrentPage()
         {
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null)
+            {
+                return;
+            }
+
+            var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(notebookWorkspaceViewModel.Notebook.CurrentPage).First(x => (x is CLPAnimationPageViewModel) && !(x as ACLPPageBaseViewModel).IsPagePreview) as CLPAnimationPageViewModel;
+            if(pageViewModel == null)
+            {
+                return;
+            }
+
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                        (DispatcherOperationCallback)delegate
                                                                                     {
 
-
-                                                                                        //if(IsPlaying || IsRecording)
-                                                                                        //{
-                                                                                        //    StopAnimation();
-                                                                                        //}
-
-                                                                                        //if(!History.IsAnimation) 
-                                                                                        //{
-                                                                                        //    return;
-                                                                                        //}
-
-                                                                                        //_oldPageInteractionMode = PageInteractionMode == PageInteractionMode.None ? PageInteractionMode.Pen : PageInteractionMode;
-                                                                                        //PageInteractionMode = PageInteractionMode.None;
-                                                                                        //History.IsAnimating = true;
-
-                                                                                        //IsPlaying = true;
-                                                                                        //while(History.UndoItems.Any())
-                                                                                        //{
-                                                                                        //    var animationIndicator = History.UndoItems.First() as AnimationIndicator;
-                                                                                        //    History.Undo();
-                                                                                        //    if(animationIndicator != null && animationIndicator.AnimationIndicatorType == AnimationIndicatorType.Record)
-                                                                                        //    {
-                                                                                        //        break;
-                                                                                        //    }
-                                                                                        //}
-                                                                                        //IsPlaying = false;
-                                                                                        //PageInteractionMode = _oldPageInteractionMode;
-                                                                                        //History.IsAnimating = false;
+                                                                                        CLPAnimationPageViewModel.Rewind(pageViewModel);
 
                                                                                         return null;
                                                                                     },
