@@ -1106,6 +1106,13 @@ namespace Classroom_Learning_Partner.ViewModels
                         label.Alignment = Element.ALIGN_CENTER;
 
                         doc.NewPage();
+
+                        //if(page.PageType == PageTypes.Animation)
+                        //{
+                        //    var animationIndicator = iTextSharp.text.Image.GetInstance(new Uri(@"pack://application:,,,/Resources/Images/AnimationIndicator32.png"));
+                        //    doc.Add(animationIndicator);
+                        //}
+
                         doc.Add(label);
                         doc.Add(pdfImage);
                     }
