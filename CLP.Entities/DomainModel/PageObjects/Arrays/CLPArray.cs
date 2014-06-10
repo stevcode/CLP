@@ -127,6 +127,8 @@ namespace CLP.Entities
             }
         }
 
+        public override void OnResized() { SizeArrayToGridLevel(GridSquareSize); }
+
         #endregion //Overrides of APageObjectBase
 
         public override void SizeArrayToGridLevel(double toSquareSize = -1, bool recalculateDivisions = true)
@@ -152,7 +154,6 @@ namespace CLP.Entities
             {
                 ResizeDivisions();
             }
-            OnResized();
         }
 
         public int[,] GetPartialProducts()

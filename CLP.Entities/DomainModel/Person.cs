@@ -142,38 +142,6 @@ namespace CLP.Entities
                                                          IsStudent = true
                                                      };
 
-        //TODO: Remove once database established
-        private const string EMILY_ID = "AAAAAAAAAAAiIgAAAAAAAg";
-
-        public static Person Emily
-        {
-            get { return TeacherPerson; }
-        }
-
-        private static readonly Person TeacherPerson = new Person
-                                                       {
-                                                           ID = EMILY_ID,
-                                                           FullName = "Emily Sparks",
-                                                           IsStudent = false
-                                                       };
-
-        private const string EMILY_PROJECTOR_ID = "AAAAAAAAAAAiIgAAAAAAAw";
-
-        public static Person EmilyProjector
-        {
-            get { return ProjectorPerson; }
-        }
-
-        private static readonly Person ProjectorPerson = new Person
-                                                         {
-                                                             ID = EMILY_PROJECTOR_ID,
-                                                             FullName = "Projector",
-                                                             Alias = "Emily Sparks",
-                                                             IsStudent = false
-                                                         };
-
-
-
         #endregion //Static Persons
 
         #region IConnectedPerson Members
