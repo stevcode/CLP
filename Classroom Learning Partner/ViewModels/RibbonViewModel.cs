@@ -1115,17 +1115,14 @@ namespace Classroom_Learning_Partner.ViewModels
                         pdfImage.BorderWidth = 1f;
 
                         var labelText = notebook.Name + ", Page " + page.PageNumber + ", Submission Time: " + page.SubmissionTime + ", Owner: " + page.Owner.FullName; 
+                        if(page.PageType == PageTypes.Animation)
+                        {
+                            labelText = notebook.Name + ", [ANIMATION] Page " + page.PageNumber + ", Submission Time: " + page.SubmissionTime + ", Owner: " + page.Owner.FullName; 
+                        }
                         var label = new iTextSharp.text.Paragraph(labelText);
                         label.Alignment = Element.ALIGN_CENTER;
 
                         doc.NewPage();
-
-                        //if(page.PageType == PageTypes.Animation)
-                        //{
-                        //    var animationIndicator = iTextSharp.text.Image.GetInstance(new Uri(@"pack://application:,,,/Resources/Images/AnimationIndicator32.png"));
-                        //    doc.Add(animationIndicator);
-                        //}
-
                         doc.Add(label);
                         doc.Add(pdfImage);
                     }
