@@ -374,5 +374,35 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion
+
+        public void ScrollToCurrentPage()
+        {
+            if(Notebook.CurrentPage != null)
+            {
+                string pageID = Notebook.CurrentPageID;
+                var currentpageindex = -1;
+                for(int index = 0; index < CurrentPages.Count; index++)
+                {
+                    if(CurrentPages[index].ID == pageID)
+                    {
+                        currentpageindex = index;
+                        break;
+                    }
+                }
+                if(currentpageindex != -1)
+                {
+                    DisplayedPages.Clear();
+                    DisplayedPages.Add(CurrentPages[currentpageindex]);
+                    if(currentpageindex + 1 < CurrentPages.Count)
+                    {
+                        DisplayedPages.Add(CurrentPages[currentpageindex + 1]);
+                    }
+                    else if(currentpageindex > 0)
+                    {
+                        DisplayedPages.Insert(0, CurrentPages[currentpageindex - 1]);
+                    }
+                }
+            }
+        }
     }
 }

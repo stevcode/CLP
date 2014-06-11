@@ -282,6 +282,7 @@ namespace Classroom_Learning_Partner.ViewModels
                             break;
                         case Panels.StudentWork:
                             LeftPanel = StudentWorkPanel;
+                            StudentWorkPanel.ScrollToCurrentPage();
                             LeftPanel.IsVisible = true;
                             break;
                         case Panels.Progress:
