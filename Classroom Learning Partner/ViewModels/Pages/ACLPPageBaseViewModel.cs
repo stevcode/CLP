@@ -94,6 +94,18 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData PageProperty = RegisterProperty("Page", typeof(CLPPage));
 
         /// <summary>
+        /// The thumbnail for the <see cref="CLPPage" />
+        /// </summary>
+        [ViewModelToModel("Page")]
+        public ImageSource PageThumbnail
+        {
+            get { return GetValue<ImageSource>(PageThumbnailProperty); }
+            set { SetValue(PageThumbnailProperty, value); }
+        }
+
+        public static readonly PropertyData PageThumbnailProperty = RegisterProperty("PageThumbnail", typeof(ImageSource));
+
+        /// <summary>
         /// The type of page.
         /// </summary>
         [ViewModelToModel("Page")]

@@ -100,11 +100,18 @@
                                         </TransformGroup>
                                     </TextBlock.LayoutTransform>
                                 </TextBlock>
+                                
+                                <views:CLPPagePreviewView x:Name="PagePreviewView"
+                                                          Grid.Column="1" Margin="5"
+                                                          DataContext="{Binding}"
+                                                          ClipToBounds="True" />
 
-                                <Control Grid.Column="1" Margin="5">
+                                <!--<Control Grid.Column="1" Margin="5">
                                     <Control.Resources>
                                         <ControlTemplate x:Key="ThumbnailTemplate">
-                                            <Image Source="{Binding PageThumbnail, Mode=OneWay}"/>
+                                            <views:CLPPageThumbnailView x:Name="PageThumbnailView"
+                                                                        DataContext="{Binding}"
+                                                                        ClipToBounds="True" />
                                         </ControlTemplate>
 
                                         <ControlTemplate x:Key="PagePreviewTemplate">
@@ -116,7 +123,7 @@
                                     <Control.Style>
                                         <Style TargetType="{x:Type Control}">
                                             <Style.Triggers>
-                                                <!--Thumbnail trigger-->
+                                                --><!--Thumbnail trigger--><!--
                                                 <MultiDataTrigger>
                                                     <MultiDataTrigger.Conditions>
                                                         <Condition Value="True">
@@ -131,7 +138,7 @@
                                                     <Setter Property="Template" Value="{StaticResource ThumbnailTemplate}" />
                                                 </MultiDataTrigger>
 
-                                                <!--PagePreview trigger-->
+                                                --><!--PagePreview trigger--><!--
                                                 <MultiDataTrigger>
                                                     <MultiDataTrigger.Conditions>
                                                         <Condition Value="False">
@@ -148,7 +155,7 @@
                                             </Style.Triggers>
                                         </Style>
                                     </Control.Style>
-                                </Control>
+                                </Control>-->
 
                                 <Rectangle Grid.Column="1"
                                            Margin="5"
@@ -223,7 +230,7 @@
                                            Width="16"
                                            IsHitTestVisible="False"
                                            Source="pack://application:,,,/Resources/Images/Check16.png"
-                                           Visibility="{Binding HasSubmissions, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />
+                                           Visibility="{Binding ViewModel.HasSubmissions, ElementName=PagePreviewView, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />
                                     
                                 </StackPanel>
 
@@ -245,7 +252,7 @@
                                         <Image Source="pack://application:,,,/Resources/Images/DisplaySubmissionsButton50x25.png" />
                                     </ToggleButton>
                                     <TextBlock Grid.Row="1"
-                                               Text="{Binding NumberOfDistinctSubmissions}"
+                                               Text="{Binding ViewModel.NumberOfDistinctSubmissions, ElementName=PagePreviewView}"
                                                TextAlignment="Center"
                                                Width="25" />
                                 </Grid>

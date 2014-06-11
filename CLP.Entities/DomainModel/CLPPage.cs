@@ -75,8 +75,6 @@ namespace CLP.Entities
             Width = width;
             InitialAspectRatio = Width / Height;
             History = new PageHistory();
-
-            Submissions.CollectionChanged += Submissions_CollectionChanged;
         }
 
         /// <summary>
@@ -482,8 +480,6 @@ namespace CLP.Entities
         #endregion
 
         #region Methods
-
-        
 
         public CLPPage DuplicatePage()
         {

@@ -429,6 +429,9 @@
     <Compile Include="Views\Pages\CLPPagePreviewView.xaml.cs">
       <DependentUpon>CLPPagePreviewView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Pages\CLPPageThumbnailView.xaml.cs">
+      <DependentUpon>CLPPageThumbnailView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Pages\CLPPageView.xaml.cs">
       <DependentUpon>CLPPageView.xaml</DependentUpon>
     </Compile>
@@ -674,6 +677,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Pages\CLPPagePreviewView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Pages\CLPPageThumbnailView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
