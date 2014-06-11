@@ -275,6 +275,7 @@
     <Compile Include="Utilities\Extensions\ObservableCollectionExtensions.cs" />
     <Compile Include="Utilities\ObservableCollectionOperation.cs" />
     <Compile Include="ViewModels\Modal Windows\ClassSubjectCreationViewModel.cs" />
+    <Compile Include="ViewModels\Modal Windows\ExitCardCreationViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\GroupCreationViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\PersonCreationViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Arrays\RemainderTilesViewModel.cs" />
@@ -303,6 +304,9 @@
     <Compile Include="ViewModels\Panels\WebcamPanelViewModel.cs" />
     <Compile Include="Views\Modal Windows\MVVM\ClassSubjectCreationView.xaml.cs">
       <DependentUpon>ClassSubjectCreationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Modal Windows\MVVM\ExitCardCreationView.xaml.cs">
+      <DependentUpon>ExitCardCreationView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Modal Windows\MVVM\GroupCreationView.xaml.cs">
       <DependentUpon>GroupCreationView.xaml</DependentUpon>
@@ -539,6 +543,10 @@
     <Page Include="Views\Modal Windows\MVVM\ClassSubjectCreationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Modal Windows\MVVM\ExitCardCreationView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Modal Windows\MVVM\GroupCreationView.xaml">
       <Generator>MSBuild:Compile</Generator>

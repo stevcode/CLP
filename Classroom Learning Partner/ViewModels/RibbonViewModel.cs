@@ -181,6 +181,7 @@ namespace Classroom_Learning_Partner.ViewModels
             CreatePageSubmissionCommand = new Command(OnCreatePageSubmissionCommandExecute);
             ShowTagsCommand = new Command(OnShowTagsCommandExecute);
             MakeGroupsCommand = new Command(OnMakeGroupsCommandExecute);
+            MakeExitCardsCommand = new Command(OnMakeExitCardsCommandExecute);
 
             //Page
             SwitchPageTypeCommand = new Command(OnSwitchPageTypeCommandExecute);
@@ -1866,6 +1867,30 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         student.CurrentDifferentiationGroup = group.Label;
                     }
+                }
+            }
+        }
+
+        public Command MakeExitCardsCommand { get; private set; }
+
+        private void OnMakeExitCardsCommandExecute()
+        {
+            var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
+            if(notebookWorkspaceViewModel == null)
+            {
+                return;
+            }
+
+            var notebook = notebookWorkspaceViewModel.Notebook;
+
+            var exitCardCreationViewModel = new ExitCardCreationViewModel();
+            var exitCardCreationView = new ExitCardCreationView(exitCardCreationViewModel);
+            exitCardCreationView.ShowDialog();
+            if(exitCardCreationView.DialogResult == true)
+            {
+                foreach(CLPPage exitCard in exitCardCreationViewModel.ExitCards)
+                {
+                    notebook.Pages.Add(exitCard);
                 }
             }
         }

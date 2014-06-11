@@ -82,7 +82,14 @@ namespace CLP.Entities
         {
             Argument.IsNotNull("stroke", stroke);
 
-            return stroke.GetPropertyData(StrokeDifferentiationGroupKey) as string;
+            if(stroke.ContainsPropertyData(StrokeDifferentiationGroupKey))
+            {
+                return stroke.GetPropertyData(StrokeDifferentiationGroupKey) as string;
+            }
+            else
+            {
+                return "0";
+            }
         }
 
         public static void SetStrokeDifferentiationGroup(this Stroke stroke, string group)
