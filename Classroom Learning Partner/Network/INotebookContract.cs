@@ -21,8 +21,6 @@ namespace Classroom_Learning_Partner
         [OperationContract]
         void AddNewPage(string zippedPage, int index);
 
-        //AddDifferentiatedPage
-
         [OperationContract]
         void ReplacePage(string zippedPage, int index);
     }

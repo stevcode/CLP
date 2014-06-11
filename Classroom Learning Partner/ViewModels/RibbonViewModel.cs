@@ -1897,6 +1897,23 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
 
+            //send freeze command to projector
+            if(App.Network.ProjectorProxy != null)
+            {
+                try
+                {
+                    foreach(CLPPage exitTicket in exitTicketCreationViewModel.ExitTickets)
+                    {
+                        App.Network.ProjectorProxy.AddNewPage(CLPServiceAgent.Instance.Zip(ObjectSerializer.ToString(exitTicket)), 999);                  
+                    }
+                }
+                catch(Exception)
+                {
+                }
+            }
+
+            //TODO send to projector
+
             if(App.MainWindowViewModel.AvailableUsers.Any())
             {
                 Parallel.ForEach(App.MainWindowViewModel.AvailableUsers,
