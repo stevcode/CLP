@@ -181,7 +181,7 @@ namespace Classroom_Learning_Partner.ViewModels
             CreatePageSubmissionCommand = new Command(OnCreatePageSubmissionCommandExecute);
             ShowTagsCommand = new Command(OnShowTagsCommandExecute);
             MakeGroupsCommand = new Command(OnMakeGroupsCommandExecute);
-            MakeExitCardsCommand = new Command(OnMakeExitCardsCommandExecute);
+            MakeExitTicketsCommand = new Command(OnMakeExitTicketsCommandExecute);
 
             //Page
             SwitchPageTypeCommand = new Command(OnSwitchPageTypeCommandExecute);
@@ -1871,9 +1871,9 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        public Command MakeExitCardsCommand { get; private set; }
+        public Command MakeExitTicketsCommand { get; private set; }
 
-        private void OnMakeExitCardsCommandExecute()
+        private void OnMakeExitTicketsCommandExecute()
         {
             var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel == null)
@@ -1883,14 +1883,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var notebook = notebookWorkspaceViewModel.Notebook;
 
-            var exitCardCreationViewModel = new ExitCardCreationViewModel();
-            var exitCardCreationView = new ExitCardCreationView(exitCardCreationViewModel);
-            exitCardCreationView.ShowDialog();
-            if(exitCardCreationView.DialogResult == true)
+            var exitTicketCreationViewModel = new ExitTicketCreationViewModel();
+            var exitTicketCreationView = new ExitTicketCreationView(exitTicketCreationViewModel);
+            exitTicketCreationView.ShowDialog();
+            if(exitTicketCreationView.DialogResult == true)
             {
-                foreach(CLPPage exitCard in exitCardCreationViewModel.ExitCards)
+                foreach(CLPPage exitTicket in exitTicketCreationViewModel.ExitTickets)
                 {
-                    notebook.Pages.Add(exitCard);
+                    notebook.Pages.Add(exitTicket);
                 }
             }
         }

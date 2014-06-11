@@ -7,10 +7,10 @@ using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    public class ExitCardCreationViewModel : ViewModelBase
+    public class ExitTicketCreationViewModel : ViewModelBase
     {
 
-        public ExitCardCreationViewModel()
+        public ExitTicketCreationViewModel()
         {
             CLPPage basePage = new CLPPage();
 
@@ -36,16 +36,16 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     stroke.SetStrokeDifferentiationGroup(differentiatedPage.DifferentiationLevel);
                 }
-                ExitCards.Add(differentiatedPage);
+                ExitTickets.Add(differentiatedPage);
             }
         }
 
-        public ObservableCollection<CLPPage> ExitCards
+        public ObservableCollection<CLPPage> ExitTickets
         {
-            get { return GetValue<ObservableCollection<CLPPage>>(ExitCardsProperty); }
-            set { SetValue(ExitCardsProperty, value); }
+            get { return GetValue<ObservableCollection<CLPPage>>(ExitTicketsProperty); }
+            set { SetValue(ExitTicketsProperty, value); }
         }
 
-        public static readonly PropertyData ExitCardsProperty = RegisterProperty("ExitCards", typeof(ObservableCollection<CLPPage>), () => new ObservableCollection<CLPPage>());
+        public static readonly PropertyData ExitTicketsProperty = RegisterProperty("ExitTickets", typeof(ObservableCollection<CLPPage>), () => new ObservableCollection<CLPPage>());
     }
 }

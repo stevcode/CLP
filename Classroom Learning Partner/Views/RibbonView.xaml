@@ -859,9 +859,9 @@
                 <RibbonButton Label="Make Groups"
                               LargeImageSource="..\Images\LargeIcon.png"
                               Command="{Binding MakeGroupsCommand}" />
-                <RibbonButton Label="Make Exit Cards"
+                <RibbonButton Label="Make Exit Tickets"
                               LargeImageSource="..\Images\LargeIcon.png"
-                              Command="{Binding MakeExitCardsCommand}" />
+                              Command="{Binding MakeExitTicketsCommand}" />
 
             </RibbonGroup>
 

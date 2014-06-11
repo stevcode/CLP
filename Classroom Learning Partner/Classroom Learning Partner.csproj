@@ -224,6 +224,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converters\AddLengthConverter.cs" />
+    <Compile Include="Converters\DifferentiationGroupDisplayConverter.cs" />
     <Compile Include="Converters\StringsEqualMultiConverter.cs" />
     <Compile Include="Converters\PassMultipleValuesConverter.cs" />
     <Compile Include="Converters\AllBoolToColorMultiConverter.cs" />
@@ -275,7 +276,7 @@
     <Compile Include="Utilities\Extensions\ObservableCollectionExtensions.cs" />
     <Compile Include="Utilities\ObservableCollectionOperation.cs" />
     <Compile Include="ViewModels\Modal Windows\ClassSubjectCreationViewModel.cs" />
-    <Compile Include="ViewModels\Modal Windows\ExitCardCreationViewModel.cs" />
+    <Compile Include="ViewModels\Modal Windows\ExitTicketCreationViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\GroupCreationViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\PersonCreationViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Arrays\RemainderTilesViewModel.cs" />
@@ -305,8 +306,8 @@
     <Compile Include="Views\Modal Windows\MVVM\ClassSubjectCreationView.xaml.cs">
       <DependentUpon>ClassSubjectCreationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\MVVM\ExitCardCreationView.xaml.cs">
-      <DependentUpon>ExitCardCreationView.xaml</DependentUpon>
+    <Compile Include="Views\Modal Windows\MVVM\ExitTicketCreationView.xaml.cs">
+      <DependentUpon>ExitTicketCreationView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Modal Windows\MVVM\GroupCreationView.xaml.cs">
       <DependentUpon>GroupCreationView.xaml</DependentUpon>
@@ -544,7 +545,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\MVVM\ExitCardCreationView.xaml">
+    <Page Include="Views\Modal Windows\MVVM\ExitTicketCreationView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

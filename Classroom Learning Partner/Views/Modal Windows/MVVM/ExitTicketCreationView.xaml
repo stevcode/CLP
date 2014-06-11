@@ -1,4 +1,4 @@
-﻿<catel:DataWindow x:Class="Classroom_Learning_Partner.Views.ExitCardCreationView"
+﻿<catel:DataWindow x:Class="Classroom_Learning_Partner.Views.ExitTicketCreationView"
                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:catel="http://catel.codeplex.com"
@@ -7,12 +7,12 @@
                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
                   xmlns:sys="clr-namespace:System;assembly=mscorlib"
                   xmlns:entities="clr-namespace:CLP.Entities;assembly=CLP.Entities"
-                  Title="Make Exit Cards">
+                  Title="Make Exit Tickets">
     <ItemsControl x:Name="ItemsControl" Height="600"
                       AlternationCount="100"
                       Grid.Row="0"
                       Background="Transparent"
-                      ItemsSource="{Binding ExitCards}"
+                      ItemsSource="{Binding ExitTickets}"
                       ManipulationBoundaryFeedback="ItemsControl_OnManipulationBoundaryFeedback">
 
         <ItemsControl.ItemsPanel>

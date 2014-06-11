@@ -9,6 +9,7 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <catel:BooleanToHidingVisibilityConverter x:Key="BooleanToHidingVisibilityConverter" />
+            <conv:DifferentiationGroupDisplayConverter x:Key="DifferentiationGroupDisplayConverter" />
             <conv:PageToSubmissionsListConverter x:Key="PageToSubmissionsListConverter" />
             <conv:PageToStarredVisibilityConverter x:Key="PageToStarredVisibilityConverter" />
             <conv:PageToSubmissionVisibilityConverter x:Key="PageToSubmissionVisibilityConverter" />
@@ -186,6 +187,7 @@
                                            VerticalAlignment="Center"
                                            HorizontalAlignment="Center">
                                     <Run Text="{Binding PageNumber}" />
+                                    <Run Text="{Binding DifferentiationLevel, Converter={StaticResource DifferentiationGroupDisplayConverter}}" />
                                     </TextBlock>
                                     <ItemsControl Grid.Row="2">
                                         <ItemsControl.ItemsSource>

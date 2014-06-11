@@ -5,11 +5,11 @@ using Classroom_Learning_Partner.ViewModels;
 namespace Classroom_Learning_Partner.Views
 {
     /// <summary>
-    /// Interaction logic for ExitCardCreationView.xaml
+    /// Interaction logic for ExitTicketCreationView.xaml
     /// </summary>
-    public partial class ExitCardCreationView : DataWindow
+    public partial class ExitTicketCreationView : DataWindow
     {
-        public ExitCardCreationView(ExitCardCreationViewModel viewModel)
+        public ExitTicketCreationView(ExitTicketCreationViewModel viewModel)
             : base(viewModel)
         {
             InitializeComponent();

@@ -16,8 +16,9 @@
 
             <!-- Converters -->
             <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
-            <conv:ItemSelectedToColorConverter x:Key="PageOrDisplaySelectionColorConverter" />
+            <conv:DifferentiationGroupDisplayConverter x:Key="DifferentiationGroupDisplayConverter" />
             <conv:EnumToBoolConverter x:Key="EnumToBoolConverter" />
+            <conv:ItemSelectedToColorConverter x:Key="PageOrDisplaySelectionColorConverter" />
             <conv:PanelLocationToThicknessConverter x:Key="PanelLocationToThicknessConverter" />
             <conv:ShouldUseThumbnailConverter x:Key="ShouldUseThumbnailConverter" />
 
@@ -91,6 +92,7 @@
                                            VerticalAlignment="Center">
                                     <Run Text="Page " />
                                     <Run Text="{Binding PageNumber}" />
+                                    <Run Text="{Binding DifferentiationLevel, Converter={StaticResource DifferentiationGroupDisplayConverter}}" />
                                     <TextBlock.LayoutTransform>
                                         <TransformGroup>
                                             <ScaleTransform />

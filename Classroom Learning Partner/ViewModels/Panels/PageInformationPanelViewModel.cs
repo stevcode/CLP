@@ -385,7 +385,9 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             CLPPage originalPage = CurrentPage;
             originalPage.DifferentiationLevel = "A";
-            var index = Notebook.Pages.IndexOf(CurrentPage);
+            var index = Notebook.Pages.IndexOf(originalPage);
+            Notebook.Pages.Remove(originalPage);
+            Notebook.Pages.Insert(index, originalPage);
             foreach(var pageObject in originalPage.PageObjects)
             {
                 pageObject.DifferentiationLevel = originalPage.DifferentiationLevel;
