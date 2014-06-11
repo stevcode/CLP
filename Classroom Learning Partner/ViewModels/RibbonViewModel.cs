@@ -77,9 +77,11 @@ namespace Classroom_Learning_Partner.ViewModels
                     break;
                 case App.UserMode.Projector:
                     IsMinimized = true;
+                    NotInstructorVisibility = Visibility.Visible;
                     break;
                 case App.UserMode.Student:
                     StudentVisibility = Visibility.Visible;
+                    NotInstructorVisibility = Visibility.Visible;
                     break;
             }
 
@@ -514,6 +516,17 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData StudentVisibilityProperty = RegisterProperty("StudentVisibility", typeof(Visibility), Visibility.Collapsed);
+
+        /// <summary>
+        /// SUMMARY
+        /// </summary>
+        public Visibility NotInstructorVisibility
+        {
+            get { return GetValue<Visibility>(NotInstructorVisibilityProperty); }
+            set { SetValue(NotInstructorVisibilityProperty, value); }
+        }
+
+        public static readonly PropertyData NotInstructorVisibilityProperty = RegisterProperty("NotInstructorVisibility", typeof(Visibility), Visibility.Collapsed);
 
         /// <summary>
         /// Gets or sets the property value.
@@ -1058,18 +1071,23 @@ namespace Classroom_Learning_Partner.ViewModels
                     App.MainWindowViewModel.CurrentConvertingPage = null;
                     App.MainWindowViewModel.CurrentConvertingPage = page;
 
-                    var currentPageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(page).Last();
+                    var currentPageViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(page);
                     var viewManager = Catel.IoC.ServiceLocator.Default.ResolveType<IViewManager>();
-                    var views = viewManager.GetViewsOfViewModel(currentPageViewModel);
-                    var currentPageView = views.FirstOrDefault(view => view is CLPPageView) as CLPPageView;
-                    if(currentPageView == null)
+
+                    NonAsyncPagePreviewView currentPagePreviewView = null;
+                    foreach(var views in currentPageViewModels.Select(viewManager.GetViewsOfViewModel)) 
                     {
-                        return;
+                        currentPagePreviewView = views.FirstOrDefault(view => view is NonAsyncPagePreviewView) as NonAsyncPagePreviewView;
+                    }
+
+                    if(currentPagePreviewView == null)
+                    {
+                        continue;
                     }
 
                     await Task.Delay(500);
 
-                    var screenshot = CLPServiceAgent.Instance.UIElementToImageByteArray(currentPageView, page.Width, dpi:300);
+                    var screenshot = CLPServiceAgent.Instance.UIElementToImageByteArray(currentPagePreviewView, page.Width, dpi:300);
                     var bitmapImage = new BitmapImage();
                     bitmapImage.BeginInit();
                     bitmapImage.CacheOption = BitmapCacheOption.OnDemand;
@@ -1097,6 +1115,10 @@ namespace Classroom_Learning_Partner.ViewModels
                         pdfImage.BorderWidth = 1f;
 
                         var labelText = notebook.Name + ", Page " + page.PageNumber + ", Submission Time: " + page.SubmissionTime + ", Owner: " + page.Owner.FullName; 
+                        if(page.PageType == PageTypes.Animation)
+                        {
+                            labelText = notebook.Name + ", [ANIMATION] Page " + page.PageNumber + ", Submission Time: " + page.SubmissionTime + ", Owner: " + page.Owner.FullName; 
+                        }
                         var label = new iTextSharp.text.Paragraph(labelText);
                         label.Alignment = Element.ALIGN_CENTER;
 
@@ -2323,14 +2345,14 @@ namespace Classroom_Learning_Partner.ViewModels
                         columns = 1;
                     }
 
-                    //try
-                    //{
-                    //    numberOfArrays = Convert.ToInt32(arrayCreationView.NumberOfArrays.Text);
-                    //}
-                    //catch(FormatException)
-                    //{
-                    //    numberOfArrays = 1;
-                    //}
+                    try
+                    {
+                        numberOfArrays = Convert.ToInt32(arrayCreationView.NumberOfArrays.Text);
+                    }
+                    catch(FormatException)
+                    {
+                        numberOfArrays = 1;
+                    }
                     break;
                 case "FUZZYFACTORCARD":
                     var factorCreationView = new FuzzyFactorCardCreationView{ Owner = Application.Current.MainWindow};

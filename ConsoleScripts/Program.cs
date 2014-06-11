@@ -72,8 +72,8 @@ namespace ConsoleScripts
                     //Do stuff to each page here.
 
                     if(page.VersionIndex != 0 ||
-                       page.PageNumber <= 0 ||
-                       page.PageNumber > 32)
+                       page.LastVersionIndex == null ||
+                       page.PageNumber < 4)
                     {
                         continue;
                     }

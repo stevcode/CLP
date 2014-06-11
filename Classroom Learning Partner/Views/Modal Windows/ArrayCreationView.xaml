@@ -57,6 +57,7 @@
 
                     <TextBox x:Name="Columns" 
                              Grid.Column="1" Margin="5"
+                             MaxLength="4"
                              Width="{Binding ElementName=NumberOfArrays, Path=ActualWidth}"
                              Height="{Binding ElementName=NumberOfArrays, Path=ActualHeight}"
                              Foreground="DarkOrange" BorderThickness="1" BorderBrush="Black" PreviewMouseUp="TextBox_OnMouseUp"
@@ -77,6 +78,7 @@
 
                     <TextBox x:Name="Rows" 
                              Grid.Column="1" Margin="5"
+                             MaxLength="4"
                              Width="{Binding ElementName=NumberOfArrays, Path=ActualWidth}"
                              Height="{Binding ElementName=NumberOfArrays, Path=ActualHeight}"
                              Foreground="Blue" BorderThickness="1" BorderBrush="Black" PreviewMouseUp="TextBox_OnMouseUp"
@@ -110,10 +112,10 @@
                        Text="How many arrays do you want?" />
 
             <TextBox x:Name="NumberOfArrays" 
+                     MaxLength="2"
                      Grid.Column="1" Grid.Row="0" Margin="5"
                      Height="32" Width="74"
                      BorderThickness="1" BorderBrush="Black" PreviewMouseUp="TextBox_OnMouseUp"
-                     IsEnabled="False"
                      Text="1" FontSize="24" TextAlignment="Right" />
 
             <!--<TextBlock Grid.Column="0" Grid.Row="1" Margin="10"

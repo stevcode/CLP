@@ -78,7 +78,29 @@
                         Margin="10"
                         Minimum="1"
                         Maximum="4" />
+                
+                <Border DockPanel.Dock="Bottom"  
+                        BorderBrush="{StaticResource GrayEdgeColor}" BorderThickness="0,5,0,0">
+                    <DockPanel LastChildFill="True">
+                        <ToggleButton DockPanel.Dock="Top" Height="30"
+                                      HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                                      Content="Students With No Submissions"
+                                      IsChecked="{Binding IsStudentsWithNoSubmissionsVisible}">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="Click">
+                                    <catel:EventToCommand Command="{Binding ToggleNoSubmissionsCommand}"
+                                                          PassEventArgsToCommand="True" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ToggleButton>
 
+                        <ListBox ItemsSource="{Binding StudentsWithNoSubmissions}"
+                                 HorizontalContentAlignment="Center"
+                                 Height="300"
+                                 Visibility="{Binding IsStudentsWithNoSubmissionsVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />
+                    </DockPanel>
+                </Border>
+                
                 <Button DockPanel.Dock="Bottom"
                         Height="30"
                         Content="Clear"
