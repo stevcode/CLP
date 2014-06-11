@@ -1891,7 +1891,46 @@ namespace Classroom_Learning_Partner.ViewModels
                 foreach(CLPPage exitTicket in exitTicketCreationViewModel.ExitTickets)
                 {
                     notebook.Pages.Add(exitTicket);
+                    exitTicket.History.ClearHistory();
+                    exitTicket.SerializedStrokes = StrokeDTO.SaveInkStrokes(exitTicket.InkStrokes);
+                    exitTicket.History.SerializedTrashedInkStrokes = StrokeDTO.SaveInkStrokes(exitTicket.History.TrashedInkStrokes);
                 }
+            }
+
+            if(App.MainWindowViewModel.AvailableUsers.Any())
+            {
+                Parallel.ForEach(App.MainWindowViewModel.AvailableUsers,
+                                 student =>
+                                 {
+                                     try
+                                     {
+                                         var binding = new NetTcpBinding
+                                         {
+                                             Security =
+                                             {
+                                                 Mode = SecurityMode.None
+                                             }
+                                         };
+                                         var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(binding, new EndpointAddress(student.CurrentMachineAddress));
+                                         CLPPage correctExitTicket = exitTicketCreationViewModel.ExitTickets.FirstOrDefault(x => x.DifferentiationLevel == student.CurrentDifferentiationGroup);
+                                         if (correctExitTicket == null) 
+                                         {
+                                             correctExitTicket = exitTicketCreationViewModel.ExitTickets.First();
+                                         }
+                                         //TODO: The number 999 is used in place of "infinity".
+                                         //Also I'm doing the serialization step per-student instead of per-exit-ticket which'll be somewhat slower.
+                                         studentProxy.AddNewPage(CLPServiceAgent.Instance.Zip(ObjectSerializer.ToString(correctExitTicket)), 999);
+                                         (studentProxy as ICommunicationObject).Close();
+                                     }
+                                     catch(Exception ex)
+                                     {
+                                         Console.WriteLine(ex.Message);
+                                     }
+                                 });
+            }
+            else
+            {
+                Logger.Instance.WriteToLog("No Students Found");
             }
         }
 

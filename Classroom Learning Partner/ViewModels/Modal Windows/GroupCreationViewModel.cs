@@ -51,6 +51,8 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 Groups.Add(new Group("A"));
                 Groups.Add(new Group("B"));
+                Groups.Add(new Group("C"));
+                Groups.Add(new Group("D"));
             }
 
             GroupChangeCommand = new Command<object[]>(OnGroupChangeCommandExecute);

@@ -134,6 +134,10 @@ namespace Classroom_Learning_Partner
                 Logger.Instance.WriteToLog("Failed to add broadcasted page.");
                 return;
             }
+
+            page.InkStrokes = StrokeDTO.LoadInkStrokes(page.SerializedStrokes);
+            page.History.TrashedInkStrokes = StrokeDTO.LoadInkStrokes(page.History.SerializedTrashedInkStrokes);
+
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                        (DispatcherOperationCallback)delegate
                                                                                     {

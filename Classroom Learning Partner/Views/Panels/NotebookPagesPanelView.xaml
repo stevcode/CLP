@@ -89,10 +89,10 @@
                                            Margin="5 0 0 0"
                                            Foreground="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
                                            FontWeight="Bold"
-                                           VerticalAlignment="Center">
+                                           VerticalAlignment="Center"
+                                           Visibility="{Binding MainWindowViewModel.Ribbon.NotInstructorVisibility, Source={x:Static Application.Current}}">
                                     <Run Text="Page " />
                                     <Run Text="{Binding PageNumber}" />
-                                    <Run Text="{Binding DifferentiationLevel, Converter={StaticResource DifferentiationGroupDisplayConverter}}" />
                                     <TextBlock.LayoutTransform>
                                         <TransformGroup>
                                             <ScaleTransform />
@@ -102,7 +102,27 @@
                                         </TransformGroup>
                                     </TextBlock.LayoutTransform>
                                 </TextBlock>
-                                
+
+                                <TextBlock Grid.Column="0"
+                                           Margin="5 0 0 0"
+                                           Foreground="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
+                                           FontWeight="Bold"
+                                           VerticalAlignment="Center"
+                                           Visibility="{Binding MainWindowViewModel.Ribbon.InstructorVisibility, Source={x:Static Application.Current}}">
+                                    <Run Text="Page " />
+                                    <Run Text="{Binding PageNumber}" />
+                                    <Run Text="{Binding DifferentiationLevel, Converter={StaticResource DifferentiationGroupDisplayConverter}}"/>
+
+                                    <TextBlock.LayoutTransform>
+                                        <TransformGroup>
+                                            <ScaleTransform />
+                                            <SkewTransform />
+                                            <RotateTransform Angle="-90" />
+                                            <TranslateTransform />
+                                        </TransformGroup>
+                                    </TextBlock.LayoutTransform>
+                                </TextBlock>
+
                                 <views:CLPPagePreviewView x:Name="PagePreviewView"
                                                           Grid.Column="1" Margin="5"
                                                           DataContext="{Binding}"
