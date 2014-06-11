@@ -14,6 +14,7 @@ namespace CLP.Entities
         private static readonly Guid StrokeIDKey = new Guid("00000000-0000-0000-0000-000000000001");
         private static readonly Guid StrokeOwnerIDKey = new Guid("00000000-0000-0000-0000-000000000002");
         private static readonly Guid StrokeVersionIndexKey = new Guid("00000000-0000-0000-0000-000000000003");
+        private static readonly Guid StrokeDifferentiationGroupKey = new Guid("00000000-0000-0000-0000-000000000004");
 
         public static StrokeDTO ToStrokeDTO(this Stroke stroke)
         {
@@ -23,6 +24,7 @@ namespace CLP.Entities
                             {
                                 ID = stroke.GetStrokeID(),
                                 PersonID = stroke.GetStrokeOwnerID(),
+                                DifferentiationGroup = stroke.GetStrokeDifferentiationGroup(),
                                 Height = stroke.DrawingAttributes.Height,
                                 Width = stroke.DrawingAttributes.Width,
                                 IsHighlighter = stroke.DrawingAttributes.IsHighlighter,
@@ -74,6 +76,20 @@ namespace CLP.Entities
             Argument.IsNotNull("stroke", stroke);
 
             stroke.AddPropertyData(StrokeOwnerIDKey, uniqueID);
+        }
+
+        public static string GetStrokeDifferentiationGroup(this Stroke stroke)
+        {
+            Argument.IsNotNull("stroke", stroke);
+
+            return stroke.GetPropertyData(StrokeDifferentiationGroupKey) as string;
+        }
+
+        public static void SetStrokeDifferentiationGroup(this Stroke stroke, string group)
+        {
+            Argument.IsNotNull("stroke", stroke);
+
+            stroke.AddPropertyData(StrokeDifferentiationGroupKey, group);
         }
 
         public static string GetStrokeVersionIndex(this Stroke stroke)

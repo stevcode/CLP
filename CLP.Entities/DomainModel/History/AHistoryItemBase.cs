@@ -96,6 +96,14 @@ namespace CLP.Entities
 
         public static readonly PropertyData LastVersionIndexProperty = RegisterProperty("LastVersionIndex", typeof(uint?));
 
+        public string DifferentiationGroup
+        {
+            get { return GetValue<string>(DifferentiationGroupProperty); }
+            set { SetValue(DifferentiationGroupProperty, value); }
+        }
+
+        public static readonly PropertyData DifferentiationGroupProperty = RegisterProperty("DifferentiationGroup", typeof(string));
+
         #region Navigation Properties
 
         /// <summary>

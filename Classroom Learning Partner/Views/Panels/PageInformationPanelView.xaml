@@ -31,6 +31,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             
             <TextBlock Text="ID:" />
@@ -94,7 +95,12 @@
                     Command="{Binding CopyPageCommand}"
                     Height="30"
                     Margin="1" />
-            
+
+            <Button Content="Differentiate This Page"
+                    Command="{Binding DifferentiatePageCommand}"
+                    Height="30"
+                    Margin="1" />
+
             <Button Content="Delete This Page"
                     Command="{Binding DeletePageCommand}"
                     Height="30"

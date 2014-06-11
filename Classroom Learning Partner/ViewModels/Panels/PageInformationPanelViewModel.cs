@@ -10,6 +10,7 @@ using Catel.IoC;
 using Catel.MVVM;
 using Catel.MVVM.Views;
 using Classroom_Learning_Partner.Views;
+using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -38,6 +39,7 @@ namespace Classroom_Learning_Partner.ViewModels
             SwitchPageLayoutCommand = new Command(OnSwitchPageLayoutCommandExecute);
             ClearPageCommand = new Command(OnClearPageCommandExecute);
             CopyPageCommand = new Command(OnCopyPageCommandExecute);
+            DifferentiatePageCommand = new Command(OnDifferentiatePageCommandExecute);
             DeletePageCommand = new Command(OnDeletePageCommandExecute);
             PageScreenshotCommand = new Command(OnPageScreenshotCommandExecute);
         }
@@ -362,10 +364,80 @@ namespace Classroom_Learning_Partner.ViewModels
             Notebook.InsertPageAt(index, newPage);
         }
 
+        public Command DifferentiatePageCommand { get; private set; }
+
+        private void OnDifferentiatePageCommandExecute()
+        {
+            var notebook = (App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).Notebook;
+            KeypadWindowView numberPageVersions = new KeypadWindowView();
+            numberPageVersions.Owner = Application.Current.MainWindow;
+            numberPageVersions.QuestionText.Text = "How many versions of the page?";
+            numberPageVersions.NumbersEntered.Text = "4";
+
+            numberPageVersions.ShowDialog();
+            if(numberPageVersions.DialogResult == true)
+            {
+                Differentiate(Convert.ToInt32(numberPageVersions.NumbersEntered.Text));
+            }
+        }
+
+        public void Differentiate(int groups)
+        {
+            CLPPage originalPage = CurrentPage;
+            originalPage.DifferentiationLevel = "A";
+            var index = Notebook.Pages.IndexOf(CurrentPage);
+            foreach(var pageObject in originalPage.PageObjects)
+            {
+                pageObject.DifferentiationLevel = originalPage.DifferentiationLevel;
+            }
+            foreach(var historyItem in originalPage.History.UndoItems)
+            {
+                historyItem.DifferentiationGroup = originalPage.DifferentiationLevel;
+            }
+            foreach(var historyItem in originalPage.History.RedoItems)
+            {
+                historyItem.DifferentiationGroup = originalPage.DifferentiationLevel;
+            }
+            foreach(var stroke in originalPage.InkStrokes)
+            {
+                stroke.SetStrokeDifferentiationGroup(originalPage.DifferentiationLevel);
+            }
+
+            for(int i = 1; i < groups; i++)
+            {
+                CLPPage differentiatedPage = originalPage.DuplicatePage();
+                differentiatedPage.ID = originalPage.ID;
+                differentiatedPage.PageNumber = originalPage.PageNumber;
+                differentiatedPage.DifferentiationLevel = "" + (char)('A' + i);
+                foreach(var pageObject in differentiatedPage.PageObjects)
+                {
+                    pageObject.DifferentiationLevel = differentiatedPage.DifferentiationLevel;
+                }
+                foreach(var historyItem in differentiatedPage.History.UndoItems)
+                {
+                    historyItem.DifferentiationGroup = differentiatedPage.DifferentiationLevel;
+                }
+                foreach(var historyItem in differentiatedPage.History.RedoItems)
+                {
+                    historyItem.DifferentiationGroup = differentiatedPage.DifferentiationLevel;
+                }
+                foreach(var stroke in differentiatedPage.InkStrokes)
+                {
+                    stroke.SetStrokeDifferentiationGroup(differentiatedPage.DifferentiationLevel);
+                }
+                Notebook.Pages.Insert(index + i, differentiatedPage);
+            }
+            
+        }
+
         /// <summary>
         /// Deletes current page from the notebook.
         /// </summary>
-        public Command DeletePageCommand { get; private set; }
+        public Command DeletePageCommand
+        {
+            get;
+            private set;
+        }
 
         private void OnDeletePageCommandExecute()
         {

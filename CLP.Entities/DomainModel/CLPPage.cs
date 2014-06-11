@@ -174,11 +174,11 @@ namespace CLP.Entities
         /// </summary>
         public string DifferentiationLevel
         {
-            get { return GetValue<string>(DifferentiationLevelProperty); }
-            set { SetValue(DifferentiationLevelProperty, value); }
+            get { return GetValue<string>(DifferentiationGroupProperty); }
+            set { SetValue(DifferentiationGroupProperty, value); }
         }
 
-        public static readonly PropertyData DifferentiationLevelProperty = RegisterProperty("DifferentiationLevel", typeof(string), "0");
+        public static readonly PropertyData DifferentiationGroupProperty = RegisterProperty("DifferentiationGroup", typeof(string), "0");
 
         /// <summary>
         /// The type of page.

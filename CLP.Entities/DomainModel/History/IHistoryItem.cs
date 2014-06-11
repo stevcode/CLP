@@ -6,6 +6,7 @@
         string OwnerID { get; set; }
         uint VersionIndex { get; set; }
         uint? LastVersionIndex { get; set; }
+        string DifferentiationGroup { get; set; }
         int AnimationDelay { get; }
         string ParentPageID { get; set; }
         string ParentPageOwnerID { get; set; }

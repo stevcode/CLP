@@ -41,6 +41,11 @@ namespace CLP.Entities
         /// </remarks>
         public string PersonID { get; set; }
 
+        /// <summary>
+        /// Differentiation group of the page the stroke is on.
+        /// </summary>
+        public string DifferentiationGroup { get; set; }
+
         public int VersionIndex { get; set; }
 
         /// <summary>
