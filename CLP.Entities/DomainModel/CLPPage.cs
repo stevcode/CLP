@@ -59,8 +59,6 @@ namespace CLP.Entities
             ID = Guid.NewGuid().ToCompactID();
             InitialAspectRatio = Width / Height;
             History = new PageHistory();
-
-            Submissions.CollectionChanged += Submissions_CollectionChanged;
         }
 
         /// <summary>
@@ -455,23 +453,6 @@ namespace CLP.Entities
 
         public static readonly PropertyData HistoryProperty = RegisterProperty("History", typeof(PageHistory));
 
-        #region Calculated Properties
-
-        /// <summary>
-        /// Whether the page has submissions or not.
-        /// </summary>
-        public bool HasSubmissions
-        {
-            get { return Submissions.Any() || LastVersionIndex != null; }
-        }
-
-        public int NumberOfDistinctSubmissions
-        { 
-            get { return Submissions.Select(submission => submission.OwnerID).Distinct().Count(); }
-        }
-
-        #endregion //Calculated Properties
-
         #endregion //Properties
 
         #region Overrides of ObservableObject
@@ -502,11 +483,7 @@ namespace CLP.Entities
 
         #region Methods
 
-        protected void Submissions_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            RaisePropertyChanged("HasSubmissions");
-            RaisePropertyChanged("NumberOfDistinctSubmissions");
-        }
+        
 
         public CLPPage DuplicatePage()
         {
