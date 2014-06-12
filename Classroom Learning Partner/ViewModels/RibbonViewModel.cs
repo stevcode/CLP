@@ -1888,16 +1888,22 @@ namespace Classroom_Learning_Partner.ViewModels
             exitTicketCreationView.ShowDialog();
             if(exitTicketCreationView.DialogResult == true)
             {
-                foreach(CLPPage exitTicket in exitTicketCreationViewModel.ExitTickets)
+                for(int i = 0; i < exitTicketCreationViewModel.ExitTickets.Count; i++) 
                 {
+                    var exitTicket = exitTicketCreationViewModel.ExitTickets[i];
                     notebook.Pages.Add(exitTicket);
                     exitTicket.History.ClearHistory();
                     exitTicket.SerializedStrokes = StrokeDTO.SaveInkStrokes(exitTicket.InkStrokes);
                     exitTicket.History.SerializedTrashedInkStrokes = StrokeDTO.SaveInkStrokes(exitTicket.History.TrashedInkStrokes);
+                
+                    foreach(Person student in exitTicketCreationViewModel.GroupCreationViewModel.Groups[i].Members)
+                    {
+                        student.CurrentDifferentiationGroup = exitTicket.DifferentiationLevel;
+                    }
                 }
             }
 
-            //send freeze command to projector
+            //send exit tickets to projector
             if(App.Network.ProjectorProxy != null)
             {
                 try
@@ -1912,8 +1918,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
 
-            //TODO send to projector
-
+            //send an exit ticket to each student
             if(App.MainWindowViewModel.AvailableUsers.Any())
             {
                 Parallel.ForEach(App.MainWindowViewModel.AvailableUsers,

@@ -500,9 +500,6 @@
             <RibbonGroup Header="Extras"
                          Visibility="{Binding InstructorVisibility}">
 
-                <RibbonButton Label="Make Groups"
-                              LargeImageSource="..\Resources\Images\GroupSubmit32.png"
-                              Command="{Binding MakeGroupsCommand}" />
                 <RibbonButton Label="Make Exit Tickets"
                               LargeImageSource="..\Resources\Images\IndexCards32.png"
                               Command="{Binding MakeExitTicketsCommand}" />
@@ -574,6 +571,12 @@
                               SmallImageSource="pack://application:,,,/Resources/Images/NextPage16.png"
                               Command="{Binding NextPageCommand}" />
 
+            </RibbonGroup>
+
+            <RibbonGroup Header="Differentiation">
+            <RibbonButton Label="Make Groups"
+                              LargeImageSource="..\Resources\Images\GroupSubmit32.png"
+                              Command="{Binding MakeGroupsCommand}" />
             </RibbonGroup>
 
         </RibbonTab>

@@ -494,6 +494,9 @@
     <Compile Include="Views\Panels\DisplaysPanelView.xaml.cs">
       <DependentUpon>DisplaysPanelView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Panels\GroupCreationPanel.xaml.cs">
+      <DependentUpon>GroupCreationPanel.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Panels\NotebookPagesPanelView.xaml.cs">
       <DependentUpon>NotebookPagesPanelView.xaml</DependentUpon>
     </Compile>
@@ -766,6 +769,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Panels\DisplaysPanelView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Panels\GroupCreationPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -12,33 +12,48 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public ExitTicketCreationViewModel()
         {
-            CLPPage basePage = new CLPPage();
+            GroupCreationViewModel = new GroupCreationViewModel();
+            BasePage = new CLPPage();
 
-            for(int i = 0; i < 4; i++)
+            foreach (Group group in GroupCreationViewModel.Groups)
             {
-                CLPPage differentiatedPage = basePage.DuplicatePage();
-                differentiatedPage.ID = basePage.ID;
-                differentiatedPage.PageNumber = 999;
-                differentiatedPage.DifferentiationLevel = "" + (char)('A' + i);
-                foreach(var pageObject in differentiatedPage.PageObjects)
+                ExitTickets.Add(DifferentiatePage(BasePage, group.Label));
+            }
+
+            GroupCreationViewModel.Groups.CollectionChanged += Groups_CollectionChanged;
+        }
+
+        void Groups_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if(e.NewItems != null)
+            {
+                foreach(Group newGroup in e.NewItems)
                 {
-                    pageObject.DifferentiationLevel = differentiatedPage.DifferentiationLevel;
+                    ExitTickets.Insert(e.NewStartingIndex, DifferentiatePage(BasePage, newGroup.Label));
                 }
-                foreach(var historyItem in differentiatedPage.History.UndoItems)
-                {
-                    historyItem.DifferentiationGroup = differentiatedPage.DifferentiationLevel;
-                }
-                foreach(var historyItem in differentiatedPage.History.RedoItems)
-                {
-                    historyItem.DifferentiationGroup = differentiatedPage.DifferentiationLevel;
-                }
-                foreach(var stroke in differentiatedPage.InkStrokes)
-                {
-                    stroke.SetStrokeDifferentiationGroup(differentiatedPage.DifferentiationLevel);
-                }
-                ExitTickets.Add(differentiatedPage);
+            }
+
+            if(e.OldItems != null)
+            {
+                ExitTickets.RemoveAt(e.OldStartingIndex);
             }
         }
+
+        public CLPPage BasePage
+        {
+            get { return GetValue<CLPPage>(BasePageProperty); }
+            set { SetValue(BasePageProperty, value); }
+        }
+
+        public static readonly PropertyData BasePageProperty = RegisterProperty("BasePage", typeof(CLPPage), () => new CLPPage());
+
+        public GroupCreationViewModel GroupCreationViewModel
+        {
+            get { return GetValue<GroupCreationViewModel>(GroupCreationViewModelProperty); }
+            set { SetValue(GroupCreationViewModelProperty, value); }
+        }
+
+        public static readonly PropertyData GroupCreationViewModelProperty = RegisterProperty("GroupCreationViewModel", typeof(GroupCreationViewModel), () => new GroupCreationViewModel());
 
         public ObservableCollection<CLPPage> ExitTickets
         {
@@ -47,5 +62,30 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData ExitTicketsProperty = RegisterProperty("ExitTickets", typeof(ObservableCollection<CLPPage>), () => new ObservableCollection<CLPPage>());
+        
+        private static CLPPage DifferentiatePage(CLPPage original, string label)
+        {
+            CLPPage differentiatedPage = original.DuplicatePage();
+            differentiatedPage.ID = original.ID;
+            differentiatedPage.PageNumber = 999;
+            differentiatedPage.DifferentiationLevel = label;
+            foreach(var pageObject in differentiatedPage.PageObjects)
+            {
+                pageObject.DifferentiationLevel = differentiatedPage.DifferentiationLevel;
+            }
+            foreach(var historyItem in differentiatedPage.History.UndoItems)
+            {
+                historyItem.DifferentiationGroup = differentiatedPage.DifferentiationLevel;
+            }
+            foreach(var historyItem in differentiatedPage.History.RedoItems)
+            {
+                historyItem.DifferentiationGroup = differentiatedPage.DifferentiationLevel;
+            }
+            foreach(var stroke in differentiatedPage.InkStrokes)
+            {
+                stroke.SetStrokeDifferentiationGroup(differentiatedPage.DifferentiationLevel);
+            }
+            return differentiatedPage;
+        }
     }
 }

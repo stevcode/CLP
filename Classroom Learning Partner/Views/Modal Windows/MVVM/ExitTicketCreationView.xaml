@@ -8,61 +8,68 @@
                   xmlns:sys="clr-namespace:System;assembly=mscorlib"
                   xmlns:entities="clr-namespace:CLP.Entities;assembly=CLP.Entities"
                   Title="Make Exit Tickets">
-    <ItemsControl x:Name="ItemsControl" Height="600"
+    <Grid Height="700">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <views:GroupCreationPanel Grid.Column="0" DataContext="{Binding GroupCreationViewModel}"/>
+        <ItemsControl x:Name="ItemsControl" Grid.Column="1"
                       AlternationCount="100"
                       Grid.Row="0"
                       Background="Transparent"
                       ItemsSource="{Binding ExitTickets}"
                       ManipulationBoundaryFeedback="ItemsControl_OnManipulationBoundaryFeedback">
 
-        <ItemsControl.ItemsPanel>
-            <ItemsPanelTemplate>
-                <UniformGrid Rows="2" />
-            </ItemsPanelTemplate>
-        </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Rows="2" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
 
-        <ItemsControl.ItemTemplate>
-            <DataTemplate>
-                <Grid HorizontalAlignment="Center"
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid HorizontalAlignment="Center"
                           VerticalAlignment="Center"
                           Margin="5">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
 
-                    <TextBlock Grid.Column="0"
+                        <TextBlock Grid.Column="0"
                                Grid.Row="1"
                                Foreground="{StaticResource MainColor}"
                                FontWeight="Bold"
                                VerticalAlignment="Center">
                         <Run Text="Group" />
                         <Run Text="{Binding DifferentiationLevel}" />
-                        <TextBlock.LayoutTransform>
-                            <TransformGroup>
-                                <ScaleTransform />
-                                <SkewTransform />
-                                <RotateTransform Angle="-90" />
-                                <TranslateTransform />
-                            </TransformGroup>
-                        </TextBlock.LayoutTransform>
-                    </TextBlock>
+                            <TextBlock.LayoutTransform>
+                                <TransformGroup>
+                                    <ScaleTransform />
+                                    <SkewTransform />
+                                    <RotateTransform Angle="-90" />
+                                    <TranslateTransform />
+                                </TransformGroup>
+                            </TextBlock.LayoutTransform>
+                        </TextBlock>
 
-                    <Border Grid.Column="1"
+                        <Border Grid.Column="1"
                                 Grid.Row="1"
                                 BorderThickness="1"
                                 BorderBrush="{StaticResource GrayBorderColor}">
-                        <views:CLPPageView DataContext="{Binding}"
+                            <views:CLPPageView DataContext="{Binding}"
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center" />
-                    </Border>
-                </Grid>
-            </DataTemplate>
-        </ItemsControl.ItemTemplate>
-    </ItemsControl>
+                        </Border>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Grid>
 </catel:DataWindow>

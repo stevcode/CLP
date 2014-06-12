@@ -1,0 +1,226 @@
+﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.GroupCreationPanel"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:catel="http://catel.codeplex.com"
+                   xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
+                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
+                   xmlns:extenders="clr-namespace:Classroom_Learning_Partner.Views.Extenders"
+                   xmlns:entities="clr-namespace:CLP.Entities;assembly=CLP.Entities">
+
+    <catel:UserControl.Resources>
+        <ResourceDictionary>
+            <conv:PassMultipleValuesConverter x:Key="PassMultipleValuesConverter" />
+            <conv:StringsEqualMultiConverter x:Key="StringsEqualMultiConverter" />
+        </ResourceDictionary>
+    </catel:UserControl.Resources>
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <ItemsControl x:Name="GroupsList" Grid.Row="0" ItemsSource="{Binding Groups}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border Margin="2" BorderBrush="{StaticResource GrayEdgeColor}"
+                            BorderThickness="1,1,1,1">
+                        <Grid Margin="5">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" FontWeight="Bold" HorizontalAlignment="Center">
+                                <Run Text="Group"/>
+                                <Run Text="{Binding Label}" />
+                            </TextBlock>
+                            <Button Grid.Row="0"
+                                        Width="15"
+                                        Height="15"
+                                        Margin="-10 0 0 -10"
+                                        Cursor="Hand"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Top"
+                                        Command="{Binding DataContext.RemoveGroupCommand, ElementName=GroupsList}"
+                                        CommandParameter="{Binding}">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="{x:Type Button}">
+                                        <Grid>
+                                            <Ellipse Fill="White"
+                                                         Stroke="Black"
+                                                         StrokeThickness="1"
+                                                         VerticalAlignment="Stretch"
+                                                         HorizontalAlignment="Stretch" />
+                                            <Path Stretch="Fill"
+                                                      Stroke="Red"
+                                                      StrokeThickness="2"
+                                                      Margin="2"
+                                                      Data="M0,0.5 L1,0.5" />
+                                        </Grid>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                            <ItemsControl Grid.Row="1" ItemsSource="{Binding SortedMembers.View, IsAsync=True}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition />
+                                                <ColumnDefinition />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" VerticalAlignment="Center">
+                                                <Run Text="{Binding FullName}"/>
+                                            </TextBlock>
+                                            <ItemsControl x:Name="GroupSelect" Grid.Column="1" ItemsSource="{Binding DataContext.Groups, ElementName=GroupsList}">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Top" />
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition/>
+                                                            </Grid.ColumnDefinitions>
+
+                                                            <TextBlock Grid.Column="0" Margin="2" 
+                                                                       HorizontalAlignment="Center"
+                                                                       VerticalAlignment="Center">
+                                                                <Run Text="{Binding Label}"/>
+                                                            </TextBlock>
+                                                            <Ellipse Fill="Transparent" Height="20" Width="20"
+                                                                     Margin="2"
+                                                                     HorizontalAlignment="Center"
+                                                                     VerticalAlignment="Center" >
+                                                                <Ellipse.Style>
+                                                                    <Style TargetType="Ellipse">
+                                                                        <Style.Triggers>
+                                                                            <MultiDataTrigger>
+                                                                                <MultiDataTrigger.Conditions>
+                                                                                    <Condition Value="True">
+                                                                                        <Condition.Binding>
+                                                                                            <MultiBinding Converter="{StaticResource StringsEqualMultiConverter}">
+                                                                                                <Binding RelativeSource="{RelativeSource AncestorType={x:Type ItemsControl}, AncestorLevel=2}"
+                                                                                                         Path="DataContext.Label"/>
+                                                                                                <Binding Path="Label"/>
+                                                                                            </MultiBinding>
+                                                                                        </Condition.Binding>
+                                                                                    </Condition>
+                                                                                </MultiDataTrigger.Conditions>
+                                                                                <Setter Property="Stroke" Value="LawnGreen"/>
+                                                                            </MultiDataTrigger>
+                                                                            <MultiDataTrigger>
+                                                                                <MultiDataTrigger.Conditions>
+                                                                                    <Condition Value="False">
+                                                                                        <Condition.Binding>
+                                                                                            <MultiBinding Converter="{StaticResource StringsEqualMultiConverter}">
+                                                                                                <Binding RelativeSource="{RelativeSource AncestorType={x:Type ItemsControl}, AncestorLevel=2}"
+                                                                                                         Path="DataContext.Label"/>
+                                                                                                <Binding Path="Label"/>
+                                                                                            </MultiBinding>
+                                                                                        </Condition.Binding>
+                                                                                    </Condition>
+                                                                                </MultiDataTrigger.Conditions>
+                                                                                <Setter Property="Stroke" Value="{StaticResource GrayEdgeColor}"/>
+                                                                            </MultiDataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </Ellipse.Style>
+                                                                <i:Interaction.Triggers>
+                                                                    <i:EventTrigger EventName="MouseUp">
+                                                                        <catel:EventToCommand Command="{Binding DataContext.GroupChangeCommand, ElementName=NotGroupedBox}"
+                                                                              PassEventArgsToCommand="False">
+                                                                            <catel:EventToCommand.CommandParameter>
+                                                                                <MultiBinding Converter="{StaticResource PassMultipleValuesConverter}">
+                                                                                    <Binding Path=""/>
+                                                                                    <Binding Path="DataContext" RelativeSource="{RelativeSource AncestorType={x:Type ItemsControl}}"/>
+                                                                                </MultiBinding>
+                                                                            </catel:EventToCommand.CommandParameter>
+                                                                        </catel:EventToCommand>
+                                                                    </i:EventTrigger>
+                                                                </i:Interaction.Triggers>
+                                                            </Ellipse>
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <Button Grid.Row="1" Margin="2" Content="Add a Group" Command="{Binding AddGroupCommand}" HorizontalAlignment="Center" />
+
+        <Border Margin="2" BorderBrush="{StaticResource GrayEdgeColor}"
+                BorderThickness="1,1,1,1" Grid.Row="2"
+                x:Name="NotGroupedBox">
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="5">
+                <TextBlock FontWeight="Bold" HorizontalAlignment="Center">
+                    <Run Text="Students not in any group"/>
+                </TextBlock>
+                <ItemsControl ItemsSource="{Binding SortedStudentsNotInGroup.View, IsAsync=True}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" VerticalAlignment="Center">
+                                    <Run Text="{Binding FullName}"/>
+                                </TextBlock>
+                                <ItemsControl x:Name="GroupSelect" Grid.Column="1" ItemsSource="{Binding DataContext.Groups, ElementName=NotGroupedBox}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <TextBlock Grid.Column="0" Margin="2" 
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center">
+                                                    <Run Text="{Binding Label}"/>
+                                                </TextBlock>
+                                                <Ellipse Fill="Transparent" Stroke="{StaticResource GrayEdgeColor}" Height="20" Width="20"
+                                                         Margin="2"
+                                                         HorizontalAlignment="Center"
+                                                         VerticalAlignment="Center" >
+                                                    <i:Interaction.Triggers>
+                                                        <i:EventTrigger EventName="MouseUp">
+                                                            <catel:EventToCommand Command="{Binding DataContext.GroupChangeCommand, ElementName=NotGroupedBox}"
+                                                                              PassEventArgsToCommand="False">
+                                                                <catel:EventToCommand.CommandParameter>
+                                                                    <MultiBinding Converter="{StaticResource PassMultipleValuesConverter}">
+                                                                        <Binding Path=""/>
+                                                                        <Binding Path="DataContext" RelativeSource="{RelativeSource AncestorType={x:Type ItemsControl}}"/>
+                                                                    </MultiBinding>
+                                                                </catel:EventToCommand.CommandParameter>
+                                                            </catel:EventToCommand>
+                                                        </i:EventTrigger>
+                                                    </i:Interaction.Triggers>
+                                                </Ellipse>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </Border>
+    </Grid>
+</catel:UserControl>
