@@ -348,8 +348,50 @@
                                 
                                 <StackPanel Grid.Row="1"
                                             Grid.Column="1"
+                                            Height="16"
+                                            Margin="0 0 7 2"
                                             HorizontalAlignment="Right"
-                                            VerticalAlignment="Bottom">
+                                            VerticalAlignment="Bottom"
+                                            Orientation="Horizontal">
+                                    <StackPanel.Style>
+                                        <Style>
+                                            <Style.Resources>
+                                                <Style TargetType="ToggleButton">
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                                                <Grid Background="{TemplateBinding Background}">
+                                                                    <ContentPresenter />
+                                                                </Grid>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                    <Setter Property="Background" Value="Transparent" />
+                                                    <Style.Triggers>
+                                                        <Trigger Property="IsChecked" Value="True">
+                                                            <Setter Property="Background" Value="Blue" />
+                                                        </Trigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Style.Resources>
+                                        </Style>
+                                    </StackPanel.Style>
+                                    
+                                    <ToggleButton Width="20">
+                                        <Image Source="pack://application:,,,/Resources/Images/Starred16.png" />
+                                    </ToggleButton>
+                                    
+                                    <ToggleButton Width="20">
+                                        <Image Source="pack://application:,,,/Resources/Images/Correct16.png" />
+                                    </ToggleButton>
+                                    
+                                    <ToggleButton Width="20">
+                                        <Image Source="pack://application:,,,/Resources/Images/Incorrect16.png" />
+                                    </ToggleButton>
+                                    
+                                    <ToggleButton Width="20">
+                                        <Image Source="pack://application:,,,/Resources/Images/Unknown16.png" />
+                                    </ToggleButton>
                                     
                                 </StackPanel>
 
