@@ -218,7 +218,7 @@
                                                                 <ColumnDefinition />
                                                             </Grid.ColumnDefinitions>
                                                             <Image Grid.Column="0"
-                                                               Source="pack://application:,,,/Resources/Images/YellowStar16.png"
+                                                               Source="pack://application:,,,/Resources/Images/Starred16.png"
                                                                Visibility="{Binding Converter={StaticResource PageToStarredVisibilityConverter}}" />
 
                                                             <Image Grid.Column="1"

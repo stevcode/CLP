@@ -24,7 +24,7 @@ namespace CLP.Entities
                             {
                                 ID = stroke.GetStrokeID(),
                                 PersonID = stroke.GetStrokeOwnerID(),
-                                DifferentiationGroup = stroke.GetStrokeDifferentiationGroup(),
+                                //DifferentiationGroup = stroke.GetStrokeDifferentiationGroup(),
                                 Height = stroke.DrawingAttributes.Height,
                                 Width = stroke.DrawingAttributes.Width,
                                 IsHighlighter = stroke.DrawingAttributes.IsHighlighter,
@@ -54,7 +54,12 @@ namespace CLP.Entities
         {
             Argument.IsNotNull("stroke", stroke);
 
-            return stroke.GetPropertyData(StrokeIDKey) as string;
+            if(stroke.ContainsPropertyData(StrokeIDKey))
+            {
+                return stroke.GetPropertyData(StrokeIDKey) as string;
+            }
+
+            return "noStrokeID";
         }
 
         public static void SetStrokeID(this Stroke stroke, string uniqueID)
@@ -67,8 +72,13 @@ namespace CLP.Entities
         public static string GetStrokeOwnerID(this Stroke stroke)
         {
             Argument.IsNotNull("stroke", stroke);
+            
+            if(stroke.ContainsPropertyData(StrokeOwnerIDKey))
+            {
+                return stroke.GetPropertyData(StrokeOwnerIDKey) as string;
+            }
 
-            return stroke.GetPropertyData(StrokeOwnerIDKey) as string;
+            return "noStrokeOwnerID";
         }
 
         public static void SetStrokeOwnerID(this Stroke stroke, string uniqueID)
@@ -86,10 +96,8 @@ namespace CLP.Entities
             {
                 return stroke.GetPropertyData(StrokeDifferentiationGroupKey) as string;
             }
-            else
-            {
-                return "0";
-            }
+
+            return "noStrokeDifferentiationGroup";
         }
 
         public static void SetStrokeDifferentiationGroup(this Stroke stroke, string group)
@@ -103,7 +111,13 @@ namespace CLP.Entities
         {
             Argument.IsNotNull("stroke", stroke);
 
-            return stroke.GetPropertyData(StrokeVersionIndexKey) as string;
+            
+            if(stroke.ContainsPropertyData(StrokeVersionIndexKey))
+            {
+                return stroke.GetPropertyData(StrokeVersionIndexKey) as string;
+            }
+
+            return "noStrokeVersionIndex";
         }
 
         public static void SetStrokeVersionIndex(this Stroke stroke, int index)
