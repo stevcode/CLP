@@ -140,15 +140,20 @@
                                                             Background="Transparent"
                                                             BorderBrush="LightGray"
                                                             BorderThickness="2 2 2 0"
-                                                            Height="15"
+                                                            Height="10"
                                                             Visibility="{Binding IsChecked, ElementName=GroupVisibilityToggle, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}"/>
 
                                                     <ToggleButton Grid.Row="0" 
                                                                   x:Name="GroupVisibilityToggle" 
-                                                                  Margin="10 0"
-                                                                  Height="30"
+                                                                  Margin="10 0 20 0"
+                                                                  Height="20"
                                                                   Width="175">
-                                                        <TextBlock Margin="5"
+                                                        <ToggleButton.Style>
+                                                            <Style TargetType="ToggleButton">
+                                                                <Setter Property="IsChecked" Value="True" />
+                                                            </Style>
+                                                        </ToggleButton.Style>
+                                                        <TextBlock Margin="5 0"
                                                                    FontWeight="Bold"
                                                                    HorizontalAlignment="Left">
                                                             <Run Text="{Binding Name, Mode=OneWay}" />
