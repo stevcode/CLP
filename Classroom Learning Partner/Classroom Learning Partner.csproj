@@ -934,6 +934,15 @@
     <Content Include="External Libraries\System.Reactive.Providers.dll" />
     <Content Include="External Libraries\System.Reactive.Windows.Threading.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
+    <Resource Include="Resources\Images\NotCorrect16.png" />
+    <Resource Include="Resources\Images\NotCorrect32.png" />
+    <Resource Include="Resources\Images\NotCorrect64.png" />
+    <Resource Include="Resources\Images\NotIncorrect16.png" />
+    <Resource Include="Resources\Images\NotIncorrect32.png" />
+    <Resource Include="Resources\Images\NotIncorrect64.png" />
+    <Resource Include="Resources\Images\NotUnknown16.png" />
+    <Resource Include="Resources\Images\NotUnknown32.png" />
+    <Resource Include="Resources\Images\NotUnknown64.png" />
     <Resource Include="Resources\Images\Unknown16.png" />
     <Resource Include="Resources\Images\Unknown32.png" />
     <Resource Include="Resources\Images\Unknown64.png" />

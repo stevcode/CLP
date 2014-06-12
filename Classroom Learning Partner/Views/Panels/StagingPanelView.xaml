@@ -353,44 +353,105 @@
                                             HorizontalAlignment="Right"
                                             VerticalAlignment="Bottom"
                                             Orientation="Horizontal">
-                                    <StackPanel.Style>
-                                        <Style>
-                                            <Style.Resources>
-                                                <Style TargetType="ToggleButton">
-                                                    <Setter Property="Template">
-                                                        <Setter.Value>
-                                                            <ControlTemplate TargetType="{x:Type ToggleButton}">
-                                                                <Grid Background="{TemplateBinding Background}">
-                                                                    <ContentPresenter />
-                                                                </Grid>
-                                                            </ControlTemplate>
-                                                        </Setter.Value>
-                                                    </Setter>
-                                                    <Setter Property="Background" Value="Transparent" />
-                                                    <Style.Triggers>
-                                                        <Trigger Property="IsChecked" Value="True">
-                                                            <Setter Property="Background" Value="Blue" />
-                                                        </Trigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </Style.Resources>
-                                        </Style>
-                                    </StackPanel.Style>
-                                    
+
                                     <ToggleButton Width="20">
-                                        <Image Source="pack://application:,,,/Resources/Images/Starred16.png" />
+                                        <ToggleButton.Style>
+                                            <Style TargetType="ToggleButton">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                                            <Image x:Name="ButtonImage" Source="pack://application:,,,/Resources/Images/UnStarred16.png" />
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsChecked" Value="True">
+                                                        <Setter Property="Template">
+                                                            <Setter.Value>
+                                                                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                                                    <Image x:Name="ButtonImage" Source="pack://application:,,,/Resources/Images/Starred16.png" />
+                                                                </ControlTemplate>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </ToggleButton.Style>
                                     </ToggleButton>
                                     
                                     <ToggleButton Width="20">
-                                        <Image Source="pack://application:,,,/Resources/Images/Correct16.png" />
+                                        <ToggleButton.Style>
+                                            <Style TargetType="ToggleButton">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                                            <Image x:Name="ButtonImage" Source="pack://application:,,,/Resources/Images/NotCorrect16.png" />
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsChecked" Value="True">
+                                                        <Setter Property="Template">
+                                                            <Setter.Value>
+                                                                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                                                    <Image x:Name="ButtonImage" Source="pack://application:,,,/Resources/Images/Correct16.png" />
+                                                                </ControlTemplate>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </ToggleButton.Style>
                                     </ToggleButton>
                                     
                                     <ToggleButton Width="20">
-                                        <Image Source="pack://application:,,,/Resources/Images/Incorrect16.png" />
+                                        <ToggleButton.Style>
+                                            <Style TargetType="ToggleButton">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                                            <Image x:Name="ButtonImage" Source="pack://application:,,,/Resources/Images/NotIncorrect16.png" />
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsChecked" Value="True">
+                                                        <Setter Property="Template">
+                                                            <Setter.Value>
+                                                                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                                                    <Image x:Name="ButtonImage" Source="pack://application:,,,/Resources/Images/Incorrect16.png" />
+                                                                </ControlTemplate>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </ToggleButton.Style>
                                     </ToggleButton>
                                     
                                     <ToggleButton Width="20">
-                                        <Image Source="pack://application:,,,/Resources/Images/Unknown16.png" />
+                                        <ToggleButton.Style>
+                                            <Style TargetType="ToggleButton">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                                            <Image x:Name="ButtonImage" Source="pack://application:,,,/Resources/Images/NotUnknown16.png" />
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsChecked" Value="True">
+                                                        <Setter Property="Template">
+                                                            <Setter.Value>
+                                                                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                                                    <Image x:Name="ButtonImage" Source="pack://application:,,,/Resources/Images/Unknown16.png" />
+                                                                </ControlTemplate>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </ToggleButton.Style>
                                     </ToggleButton>
                                     
                                 </StackPanel>
