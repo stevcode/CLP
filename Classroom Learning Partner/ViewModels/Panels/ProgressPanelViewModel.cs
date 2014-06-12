@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
+using System.Linq;
 using Catel.Data;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Views;
@@ -223,17 +224,13 @@ namespace Classroom_Learning_Partner.ViewModels
         private void SetCurrentPagesFromList(List<string> PageIDList)
         {
             CurrentPages.Clear();
-            foreach(string pageID in PageIDList)
+            var pageList = PageIDList.ConvertAll<CLPPage>(id => Notebook.GetPageByCompositeKeys(id, Notebook.OwnerID, "0", 0));
+            var sortedPageList = pageList.OrderBy(page => Notebook.Pages.IndexOf(page));
+            foreach(CLPPage page in sortedPageList)
             {
-                //TODO: Make this work with Differentiated Pages
-                CLPPage page = Notebook.GetPageByCompositeKeys(pageID, Notebook.OwnerID, "0", 0);
                 if(page != null)
                 {
                     CurrentPages.Add(page);
-                }
-                else
-                {
-                    Logger.Instance.WriteToLog("Page not found: " + pageID);
                 }
             }
             setWidth();
