@@ -361,7 +361,7 @@
                                             VerticalAlignment="Bottom"
                                             Orientation="Horizontal">
 
-                                    <ToggleButton Width="20">
+                                    <ToggleButton Width="20" IsChecked="{Binding IsStarred}">
                                         <ToggleButton.Style>
                                             <Style TargetType="ToggleButton">
                                                 <Setter Property="Template">

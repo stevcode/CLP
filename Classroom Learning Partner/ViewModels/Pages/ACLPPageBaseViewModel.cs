@@ -417,6 +417,30 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData IsUsingCustomCursorsProperty = RegisterProperty("IsUsingCustomCursors", typeof(bool), false);
 
+        public bool IsStarred
+        {
+            get 
+            {
+                StarredTag starredTag = Page.Tags.FirstOrDefault(x => x is StarredTag) as StarredTag;
+                if(starredTag == null)
+                {
+                    return false;
+                }
+                return starredTag.Value == StarredTag.AcceptedValues.Starred.ToString();
+            }
+            set 
+            {
+                if(value == true)
+                {
+                    Page.AddTag(new StarredTag(Page, StarredTag.AcceptedValues.Starred));
+                }
+                else
+                {
+                    Page.AddTag(new StarredTag(Page, StarredTag.AcceptedValues.Unstarred));
+                }
+            }
+        }
+
         #region Calculated Properties
 
         /// <summary>
