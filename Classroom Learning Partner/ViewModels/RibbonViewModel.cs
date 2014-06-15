@@ -905,11 +905,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnSaveNotebookCommandExecute()
         {
-            if(App.MainWindowViewModel.Workspace is NotebookWorkspaceViewModel)
+            if(!(App.MainWindowViewModel.Workspace is NotebookWorkspaceViewModel))
             {
-                Catel.Windows.PleaseWaitHelper.Show(() =>
-                    MainWindowViewModel.SaveNotebook((App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).Notebook), null, "Saving Notebook");
+                return;
             }
+
+            PleaseWaitHelper.Show(() => MainWindowViewModel.SaveNotebook((App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).Notebook), null, "Saving Notebook");
         }
 
         /// <summary>
