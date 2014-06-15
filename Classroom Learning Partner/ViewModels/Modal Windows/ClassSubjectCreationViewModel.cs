@@ -15,9 +15,12 @@ namespace Classroom_Learning_Partner.ViewModels
             ClassSubject.Teacher = new Person();
 
             GroupCreationViewModel = new GroupCreationViewModel();
+            TempGroupCreationViewModel = new GroupCreationViewModel("Temp");
 
             AddStudentCommand = new Command(OnAddStudentCommandExecute);
         }
+
+        public override string Title { get { return "Class Subject Creation Window."; } }
 
         #region Model
 
@@ -146,14 +149,21 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Model
 
-        
         public GroupCreationViewModel GroupCreationViewModel
         {
             get { return GetValue<GroupCreationViewModel>(GroupCreationViewModelProperty); }
             set { SetValue(GroupCreationViewModelProperty, value); }
         }
 
-        public static readonly PropertyData GroupCreationViewModelProperty = RegisterProperty("GroupCreationViewModel", typeof(GroupCreationViewModel), () => new GroupCreationViewModel());
+        public static readonly PropertyData GroupCreationViewModelProperty = RegisterProperty("GroupCreationViewModel", typeof(GroupCreationViewModel));
+
+        public GroupCreationViewModel TempGroupCreationViewModel
+        {
+            get { return GetValue<GroupCreationViewModel>(TempGroupCreationViewModelProperty); }
+            set { SetValue(TempGroupCreationViewModelProperty, value); }
+        }
+
+        public static readonly PropertyData TempGroupCreationViewModelProperty = RegisterProperty("TempGroupCreationViewModel", typeof(GroupCreationViewModel));
 
         /// <summary>
         /// SUMMARY
@@ -177,6 +187,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             StudentList.Add(person);
             GroupCreationViewModel.StudentsNotInGroup.Add(person);
+            TempGroupCreationViewModel.StudentsNotInGroup.Add(person);
         }
     }
 }

@@ -23,6 +23,8 @@ namespace Classroom_Learning_Partner.ViewModels
             GroupCreationViewModel.Groups.CollectionChanged += Groups_CollectionChanged;
         }
 
+        public override string Title { get { return "Exit Ticket Creation Window."; } }
+
         void Groups_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             if(e.NewItems != null)

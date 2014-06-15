@@ -222,7 +222,14 @@
                                     <Run Text=")" />
                                 </TextBlock>
                                 
-                                <Control Grid.Row="1"
+                                <views:CLPPagePreviewView x:Name="PagePreviewView"
+                                                          Grid.Column="1"
+                                                          Grid.Row="1"
+                                                          Margin="5 5 5 0"
+                                                          DataContext="{Binding}"
+                                                          ClipToBounds="True" />
+                                
+                                <!--<Control Grid.Row="1"
                                          Grid.Column="1"
                                          Margin="5 5 5 0">
                                     <Control.Resources>
@@ -239,7 +246,7 @@
                                     <Control.Style>
                                         <Style TargetType="{x:Type Control}">
                                             <Style.Triggers>
-                                                <!--Thumbnail trigger-->
+                                                --><!--Thumbnail trigger--><!--
                                                 <MultiDataTrigger>
                                                     <MultiDataTrigger.Conditions>
                                                         <Condition Value="True">
@@ -254,7 +261,7 @@
                                                     <Setter Property="Template" Value="{StaticResource ThumbnailTemplate}" />
                                                 </MultiDataTrigger>
 
-                                                <!--PagePreview trigger-->
+                                                --><!--PagePreview trigger--><!--
                                                 <MultiDataTrigger>
                                                     <MultiDataTrigger.Conditions>
                                                         <Condition Value="False">
@@ -271,7 +278,7 @@
                                             </Style.Triggers>
                                         </Style>
                                     </Control.Style>
-                                </Control>
+                                </Control>-->
 
                                 <Rectangle Grid.Row="1" 
                                            Grid.Column="1"

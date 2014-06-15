@@ -95,7 +95,7 @@ namespace CLP.Entities
             set { SetValue(CurrentDifferentiationGroupProperty, value); }
         }
 
-        public static readonly PropertyData CurrentDifferentiationGroupProperty = RegisterProperty("CurrentDifferentiationGroup", typeof(string), "");
+        public static readonly PropertyData CurrentDifferentiationGroupProperty = RegisterProperty("CurrentDifferentiationGroup", typeof(string), string.Empty);
 
         public string TempDifferentiationGroup
         {
@@ -103,7 +103,7 @@ namespace CLP.Entities
             set { SetValue(TempDifferentiationGroupProperty, value); }
         }
 
-        public static readonly PropertyData TempDifferentiationGroupProperty = RegisterProperty("TempDifferentiationGroup", typeof(string), "");
+        public static readonly PropertyData TempDifferentiationGroupProperty = RegisterProperty("TempDifferentiationGroup", typeof(string), string.Empty);
 
 
         #endregion //Properties

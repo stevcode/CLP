@@ -75,29 +75,9 @@
 
         </catel:StackGrid>
         
-        <Grid Grid.Column="1"
-              Width="250">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            
-            <Label Grid.Row="0"  
-                   Content="Students:"
-                   HorizontalAlignment="Center" />
-
-            <ItemsControl Grid.Row="1" 
-                          ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
-                          ItemsSource="{Binding StudentList}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding FullName}" />
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-
-        </Grid>
-        <views:GroupCreationPanel Grid.Column="2" DataContext="{Binding GroupCreationViewModel}"/>
+        <views:GroupCreationPanel Grid.Column="1" DataContext="{Binding GroupCreationViewModel}"/>
+        
+        <views:GroupCreationPanel Grid.Column="2" DataContext="{Binding TempGroupCreationViewModel}"/>
     </Grid>
     
     

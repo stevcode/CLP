@@ -10,6 +10,8 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             Person = person;
         }
+        
+        public override string Title { get { return "Person Creation Window."; } }
 
         /// <summary>
         /// SUMMARY
