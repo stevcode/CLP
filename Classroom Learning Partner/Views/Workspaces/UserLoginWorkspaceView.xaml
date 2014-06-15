@@ -44,5 +44,30 @@
                     Command="{Binding AllowLoginCommand}" />
                     
         </Grid>
+        
+        <Grid Background="Gray"
+              HorizontalAlignment="Stretch"
+              VerticalAlignment="Stretch"
+              Opacity="0.9"
+              Visibility="{Binding IsLoggingIn, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
+            
+            <Border BorderBrush="White"
+                    BorderThickness="7"
+                    CornerRadius="7"
+                    Background="Black"
+                    Opacity="1"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+                <TextBlock FontSize="40"
+                           FontWeight="Bold"
+                           Foreground="White"
+                           Margin="20"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center">
+                    Logging In
+                </TextBlock>
+            </Border>
+                    
+        </Grid>
     </Grid>
 </catel:UserControl>

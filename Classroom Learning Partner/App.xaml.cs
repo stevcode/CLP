@@ -31,7 +31,7 @@ namespace Classroom_Learning_Partner
             Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
             base.OnStartup(e);
 
-            _currentUserMode = UserMode.Instructor;
+            _currentUserMode = UserMode.Student;
 
             InitializeCatelSettings();
             InitializeLocalCache();
@@ -196,7 +196,7 @@ namespace Classroom_Learning_Partner
         public static string ClassCacheDirectory { get; private set; }
         public static string ImageCacheDirectory { get; private set; }
 
-        private static UserMode _currentUserMode = UserMode.Instructor;
+        private static UserMode _currentUserMode = UserMode.Student;
         public static UserMode CurrentUserMode
         {
             get { return _currentUserMode; }
