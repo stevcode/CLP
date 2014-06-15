@@ -567,11 +567,11 @@ namespace Classroom_Learning_Partner
                                                                                     {
                                                                                         if(index < notebookWorkspaceViewModel.Notebook.Pages.Count)
                                                                                         {
-                                                                                            notebookWorkspaceViewModel.Notebook.InsertPageAt(index, page);
+                                                                                            notebookWorkspaceViewModel.Notebook.Pages.Insert(index, page);
                                                                                         }
                                                                                         else
                                                                                         {
-                                                                                            notebookWorkspaceViewModel.Notebook.AddCLPPageToNotebook(page);
+                                                                                            notebookWorkspaceViewModel.Notebook.Pages.Add(page);
                                                                                         }
 
                                                                                         return null;
