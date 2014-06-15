@@ -644,7 +644,6 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //TextBox
 
         #endregion //Bindings
-
         
         #region Methods
 

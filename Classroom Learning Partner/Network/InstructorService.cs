@@ -177,20 +177,37 @@ namespace Classroom_Learning_Partner
         {
             var task = Task<string>.Factory.StartNew(() =>
             {
-                var student = App.MainWindowViewModel.AvailableUsers.FirstOrDefault(x => x.ID == studentID);
-                if(student == null)
+                var student = App.MainWindowViewModel.AvailableUsers.FirstOrDefault(x => x.ID == studentID) ?? new Person
+                                                                                                           {
+                                                                                                               ID = studentID,
+                                                                                                               FullName = studentName,
+                                                                                                               IsStudent = true
+                                                                                                           };
+                if(student.IsConnected)
                 {
-                    student = new Person();
-                    student.ID = studentID;
-                    student.FullName = studentName;
-                    student.IsStudent = true;
+                    try
+                    {
+                        var binding = new NetTcpBinding
+                                        {
+                                            Security = {
+                                                            Mode = SecurityMode.None
+                                                        }
+                                        };
+                        var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(binding, new EndpointAddress(student.CurrentMachineAddress));
+                        studentProxy.ForceLogOut(machineName);
+                        (studentProxy as ICommunicationObject).Close();
+                    }
+                    catch(Exception)
+                    {
+                    }
                 }
+
                 student.CurrentMachineAddress = machineAddress;
                 student.CurrentMachineName = machineName;
                 student.IsConnected = true;
 
                 if(!useClassPeriod ||
-                   App.MainWindowViewModel.CurrentClassPeriod == null)
+                    App.MainWindowViewModel.CurrentClassPeriod == null)
                 {
                     return string.Empty;
                 }

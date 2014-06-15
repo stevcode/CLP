@@ -16,6 +16,9 @@ namespace Classroom_Learning_Partner
 
         [OperationContract]
         void AddWebcamImage(List<byte> image);
+
+        [OperationContract]
+        void ForceLogOut(string machineName);
     }
 
     [ServiceBehavior(IncludeExceptionDetailInFaults = true)]
@@ -61,6 +64,24 @@ namespace Classroom_Learning_Partner
 
             //            return null;
             //        }, null);
+        }
+
+        public void ForceLogOut(string machineName)
+        {
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                                                       (DispatcherOperationCallback)delegate
+                                                                                    {
+                                                                                        MessageBox.Show("Some one else logged in with your name on machine " + machineName +
+                                                                                                        ". You will now be logged out.",
+                                                                                                        "Double Login",
+                                                                                                        MessageBoxButton.OK);
+
+                                                                                        App.MainWindowViewModel.OpenNotebooks.Clear();
+                                                                                        App.MainWindowViewModel.SetWorkspace();
+
+                                                                                        return null;
+                                                                                    },
+                                                       null);
         }
 
         #endregion
