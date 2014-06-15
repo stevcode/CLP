@@ -48,5 +48,15 @@ namespace Classroom_Learning_Partner.Views
                 toggleButton.IsChecked = true;
             }*/
         }
+
+        private void CorrectnessTagButtons_OnClick(object sender, RoutedEventArgs e)
+        {
+            var toggleButton = e.Source as ToggleButton;
+            if(toggleButton == null)
+            {
+                return;
+            }
+            toggleButton.IsChecked = true;
+        }
     }
 }
