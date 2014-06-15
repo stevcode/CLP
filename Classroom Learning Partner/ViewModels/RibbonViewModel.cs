@@ -1865,7 +1865,14 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     foreach(Person student in group.Members)
                     {
-                        student.CurrentDifferentiationGroup = group.Label;
+                        if(groupCreationViewModel.GroupType == "Temp")
+                        {
+                            student.TempDifferentiationGroup = group.Label;
+                        }
+                        else
+                        {
+                            student.CurrentDifferentiationGroup = group.Label;
+                        }
                     }
                 }
             }
@@ -1898,7 +1905,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 
                     foreach(Person student in exitTicketCreationViewModel.GroupCreationViewModel.Groups[i].Members)
                     {
-                        student.CurrentDifferentiationGroup = exitTicket.DifferentiationLevel;
+                        student.TempDifferentiationGroup = exitTicket.DifferentiationLevel;
                     }
                 }
             }
@@ -1934,7 +1941,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                              }
                                          };
                                          var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(binding, new EndpointAddress(student.CurrentMachineAddress));
-                                         CLPPage correctExitTicket = exitTicketCreationViewModel.ExitTickets.FirstOrDefault(x => x.DifferentiationLevel == student.CurrentDifferentiationGroup);
+                                         CLPPage correctExitTicket = exitTicketCreationViewModel.ExitTickets.FirstOrDefault(x => x.DifferentiationLevel == student.TempDifferentiationGroup);
                                          if (correctExitTicket == null) 
                                          {
                                              correctExitTicket = exitTicketCreationViewModel.ExitTickets.First();
