@@ -97,6 +97,15 @@ namespace CLP.Entities
 
         public static readonly PropertyData CurrentDifferentiationGroupProperty = RegisterProperty("CurrentDifferentiationGroup", typeof(string), "");
 
+        public string TempDifferentiationGroup
+        {
+            get { return GetValue<string>(TempDifferentiationGroupProperty); }
+            set { SetValue(TempDifferentiationGroupProperty, value); }
+        }
+
+        public static readonly PropertyData TempDifferentiationGroupProperty = RegisterProperty("TempDifferentiationGroup", typeof(string), "");
+
+
         #endregion //Properties
 
         #region Static Persons

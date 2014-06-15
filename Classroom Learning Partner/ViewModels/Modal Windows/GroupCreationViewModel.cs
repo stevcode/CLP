@@ -9,8 +9,20 @@ namespace Classroom_Learning_Partner.ViewModels
 {
     public class GroupCreationViewModel : ViewModelBase
     {
+        public string GroupType;
+
+        public GroupCreationViewModel(string groupType)
+        {
+            GroupType = groupType;
+            init();
+        }
 
         public GroupCreationViewModel()
+        {
+            init();
+        }
+
+        private void init()
         {
             if(App.MainWindowViewModel.CurrentClassPeriod != null)
             {
@@ -25,12 +37,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
             foreach(Person student in new ObservableCollection<Person>(StudentsNotInGroup))
             {
-                if(student.CurrentDifferentiationGroup != "")
+                if(GetDifferentiationGroup(student) != "")
                 {
                     bool added = false;
                     foreach(Group existingGroup in Groups)
                     {
-                        if(existingGroup.Label == student.CurrentDifferentiationGroup)
+                        if(existingGroup.Label == GetDifferentiationGroup(student))
                         {
                             existingGroup.Add(student);
                             added = true;
@@ -39,7 +51,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                     if(!added)
                     {
-                        Group newGroup = new Group(student.CurrentDifferentiationGroup);
+                        Group newGroup = new Group(GetDifferentiationGroup(student));
                         newGroup.Add(student);
                         AddGroupInOrder(newGroup);
                     }
@@ -159,6 +171,18 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             //Fall through to here if the group comes after any/all existing groups.
             Groups.Add(newGroup);
+        }
+
+        private string GetDifferentiationGroup(Person student)
+        {
+            if(GroupType == "Temp")
+            {
+                return student.TempDifferentiationGroup;
+            }
+            else
+            {
+                return student.CurrentDifferentiationGroup;
+            }
         }
     }
 }

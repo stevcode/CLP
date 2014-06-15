@@ -1858,6 +1858,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             var groupCreationViewModel = new GroupCreationViewModel();
             var groupCreationView = new GroupCreationView(groupCreationViewModel);
+            groupCreationView.Owner = Application.Current.MainWindow;
             groupCreationView.ShowDialog();
             if(groupCreationView.DialogResult == true)
             {
@@ -1865,7 +1866,14 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     foreach(Person student in group.Members)
                     {
-                        student.CurrentDifferentiationGroup = group.Label;
+                        if(groupCreationViewModel.GroupType == "Temp")
+                        {
+                            student.TempDifferentiationGroup = group.Label;
+                        }
+                        else
+                        {
+                            student.CurrentDifferentiationGroup = group.Label;
+                        }
                     }
                 }
             }
@@ -1885,6 +1893,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var exitTicketCreationViewModel = new ExitTicketCreationViewModel();
             var exitTicketCreationView = new ExitTicketCreationView(exitTicketCreationViewModel);
+            exitTicketCreationView.Owner = Application.Current.MainWindow;
             exitTicketCreationView.ShowDialog();
             if(exitTicketCreationView.DialogResult == true)
             {
@@ -1898,7 +1907,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 
                     foreach(Person student in exitTicketCreationViewModel.GroupCreationViewModel.Groups[i].Members)
                     {
-                        student.CurrentDifferentiationGroup = exitTicket.DifferentiationLevel;
+                        student.TempDifferentiationGroup = exitTicket.DifferentiationLevel;
                     }
                 }
             }
@@ -1934,7 +1943,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                              }
                                          };
                                          var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(binding, new EndpointAddress(student.CurrentMachineAddress));
-                                         CLPPage correctExitTicket = exitTicketCreationViewModel.ExitTickets.FirstOrDefault(x => x.DifferentiationLevel == student.CurrentDifferentiationGroup);
+                                         CLPPage correctExitTicket = exitTicketCreationViewModel.ExitTickets.FirstOrDefault(x => x.DifferentiationLevel == student.TempDifferentiationGroup);
                                          if (correctExitTicket == null) 
                                          {
                                              correctExitTicket = exitTicketCreationViewModel.ExitTickets.First();
@@ -3072,13 +3081,29 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnCreateClassSubjectCommandExecute()
         {
             var classSubject = new ClassSubject();
-            var classSubjectCreationView = new ClassSubjectCreationView(new ClassSubjectCreationViewModel(classSubject));
+            var classSubjectCreationViewModel = new ClassSubjectCreationViewModel(classSubject);
+            var classSubjectCreationView = new ClassSubjectCreationView(classSubjectCreationViewModel);
             classSubjectCreationView.ShowDialog();
 
             if(classSubjectCreationView.DialogResult == null ||
                classSubjectCreationView.DialogResult != true)
             {
                 return;
+            }
+
+            foreach(var group in classSubjectCreationViewModel.GroupCreationViewModel.Groups)
+            {
+                foreach(Person student in group.Members)
+                {
+                    if(classSubjectCreationViewModel.GroupCreationViewModel.GroupType == "Temp")
+                    {
+                        student.TempDifferentiationGroup = group.Label;
+                    }
+                    else
+                    {
+                        student.CurrentDifferentiationGroup = group.Label;
+                    }
+                }
             }
 
             classSubject.Projector = classSubject.Teacher;

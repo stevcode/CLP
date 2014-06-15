@@ -14,6 +14,8 @@ namespace Classroom_Learning_Partner.ViewModels
             ClassSubject = classSubject;
             ClassSubject.Teacher = new Person();
 
+            GroupCreationViewModel = new GroupCreationViewModel();
+
             AddStudentCommand = new Command(OnAddStudentCommandExecute);
         }
 
@@ -144,6 +146,15 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Model
 
+        
+        public GroupCreationViewModel GroupCreationViewModel
+        {
+            get { return GetValue<GroupCreationViewModel>(GroupCreationViewModelProperty); }
+            set { SetValue(GroupCreationViewModelProperty, value); }
+        }
+
+        public static readonly PropertyData GroupCreationViewModelProperty = RegisterProperty("GroupCreationViewModel", typeof(GroupCreationViewModel), () => new GroupCreationViewModel());
+
         /// <summary>
         /// SUMMARY
         /// </summary>
@@ -165,6 +176,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             StudentList.Add(person);
+            GroupCreationViewModel.StudentsNotInGroup.Add(person);
         }
     }
 }

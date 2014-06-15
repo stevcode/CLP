@@ -12,7 +12,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public ExitTicketCreationViewModel()
         {
-            GroupCreationViewModel = new GroupCreationViewModel();
+            GroupCreationViewModel = new GroupCreationViewModel("Temp");
             BasePage = new CLPPage();
 
             foreach (Group group in GroupCreationViewModel.Groups)
