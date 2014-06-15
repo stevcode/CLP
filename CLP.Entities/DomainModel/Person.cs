@@ -97,7 +97,6 @@ namespace CLP.Entities
 
         public static readonly PropertyData CurrentDifferentiationGroupProperty = RegisterProperty("CurrentDifferentiationGroup", typeof(string), "");
 
-
         #endregion //Properties
 
         #region Static Persons

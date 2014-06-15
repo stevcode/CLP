@@ -21,6 +21,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Notebook = notebook;
             Initialized += StudentWorkPanelViewModel_Initialized;
             StagingPanel = stagingPanel;
+            ThrottlingRate = new TimeSpan(0, 0, 0, 5, 0);
 
             // TODO: DATABASE - inject IPersonService to grab student names
             if(App.MainWindowViewModel.CurrentClassPeriod != null)

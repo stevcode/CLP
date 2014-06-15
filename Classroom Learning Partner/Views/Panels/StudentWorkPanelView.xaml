@@ -20,10 +20,10 @@
             <conv:PanelLocationToThicknessConverter x:Key="PanelLocationToThicknessConverter" />
             <conv:PersonToSubmissionsCountConverter x:Key="PersonToSubmissionsCountConverter" />
             <conv:ShouldUseThumbnailConverter x:Key="ShouldUseThumbnailConverter" />
-            
+
             <!-- Style to override ListBoxItem selection visuals for Pages -->
             <Style x:Key="PageSidebarContainer"
-               TargetType="{x:Type ListBoxItem}">
+                   TargetType="{x:Type ListBoxItem}">
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type ListBoxItem}">
@@ -35,37 +35,41 @@
 
         </ResourceDictionary>
     </UserControl.Resources>
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
+
         <Border Grid.Column="0"
                 Background="{StaticResource GrayBackgroundColor}"
                 BorderBrush="{StaticResource GrayEdgeColor}"
                 BorderThickness="{Binding Location, Converter={StaticResource PanelLocationToThicknessConverter}, ConverterParameter=7.0}"
                 Width="{Binding Length}">
+
             <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                <Grid Grid.Column="0" Grid.Row="0">
+
+                <Grid Grid.Row="0">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="60"/>
-                        <!-- names -->
-                        <ColumnDefinition Width="25"/>
-                        <ColumnDefinition />
-                        <!-- pages -->
-                        <ColumnDefinition Width="25"/>
+                        <ColumnDefinition Width="60" />
+                        <ColumnDefinition Width="25" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="25" />
                     </Grid.ColumnDefinitions>
-                    <Button Grid.Column="1" Command="{Binding BackCommand}">
-                        <Image Source="pack://application:,,,/Resources/Images/BackArrow16.png"/>
+
+                    <Button Grid.Column="1"
+                            Command="{Binding BackCommand}">
+                        <Image Source="pack://application:,,,/Resources/Images/BackArrow16.png" />
                     </Button>
-                    <ItemsControl x:Name="PageNumbers" Grid.Column="2" ItemsSource="{Binding DisplayedPages}">
+
+                    <ItemsControl x:Name="PageNumbers"
+                                  Grid.Column="2"
+                                  ItemsSource="{Binding DisplayedPages}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <StackPanel Orientation="Horizontal" />
@@ -73,37 +77,48 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="3" Width="{Binding DataContext.PageWidth, ElementName=PageNumbers}">
+                                <TextBlock FontWeight="Bold"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Margin="3"
+                                           Width="{Binding DataContext.PageWidth, ElementName=PageNumbers}">
                                     <Run Text="Page" />
-                                    <Run Text="{Binding PageNumber}"/>
+                                    <Run Text="{Binding PageNumber}" />
                                     <Run Text="{Binding DifferentiationLevel, Converter={StaticResource DifferentiationGroupDisplayConverter}}" />
                                 </TextBlock>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
-                    <Button Grid.Column="3" Command="{Binding ForwardCommand}">
-                        <Image Source="pack://application:,,,/Resources/Images/ForwardArrow16.png"/>
+
+                    <Button Grid.Column="3"
+                            Command="{Binding ForwardCommand}">
+                        <Image Source="pack://application:,,,/Resources/Images/ForwardArrow16.png" />
                     </Button>
+
                 </Grid>
-                <ScrollViewer Grid.Column="0" Grid.Row="1"  HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+
+                <ScrollViewer Grid.Row="1"
+                              HorizontalScrollBarVisibility="Disabled"
+                              VerticalScrollBarVisibility="Auto">
                     <ScrollViewer.Resources>
                         <system:Double x:Key="{x:Static SystemParameters.VerticalScrollBarWidthKey}">25</system:Double>
                     </ScrollViewer.Resources>
+
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="60"/>
-                            <!-- names -->
-                            <ColumnDefinition Width="25"/>
-                            <ColumnDefinition />
-                            <!-- pages -->
+                            <ColumnDefinition Width="85" />
+                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
+
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="{Binding PageHeight}"/>
-                            <!-- top row -->
-                            <RowDefinition />
-                            <!-- lower rows -->
+                            <RowDefinition Height="{Binding PageHeight}" />
+                            <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
-                        <ItemsControl x:Name="TeacherPages" Grid.Row="0" Grid.Column="2" ItemsSource="{Binding DisplayedPages}">
+
+                        <ItemsControl x:Name="TeacherPages"
+                                      Grid.Row="0"
+                                      Grid.Column="1"
+                                      ItemsSource="{Binding DisplayedPages, IsAsync=True}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <StackPanel Orientation="Horizontal" />
@@ -111,26 +126,23 @@
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Grid Margin="3" Width="{Binding DataContext.PageWidth, ElementName=TeacherPages}">
+                                    <Grid Margin="3"
+                                          Width="{Binding DataContext.PageWidth, ElementName=TeacherPages}">
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="*"/>
-                                            <RowDefinition Height="Auto"/>
-                                        </Grid.RowDefinitions>
 
-                                        <Control Grid.Column="0" Grid.Row="0">
+                                        <Control Grid.Column="0">
                                             <Control.Resources>
                                                 <ControlTemplate x:Key="TeacherPageThumbnailTemplate">
-                                                    <Image Source="{Binding PageThumbnail, Mode=OneWay}"/>
+                                                    <Image Source="{Binding PageThumbnail, Mode=OneWay}" />
                                                 </ControlTemplate>
 
                                                 <ControlTemplate x:Key="TeacherPagePreviewTemplate">
                                                     <views:CLPPagePreviewView x:Name="TeacherPagePreviewView"
-                                                                  DataContext="{Binding}"
-                                                                  ClipToBounds="True" />
+                                                                              DataContext="{Binding}"
+                                                                              ClipToBounds="True" />
                                                 </ControlTemplate>
                                             </Control.Resources>
                                             <Control.Style>
@@ -142,13 +154,15 @@
                                                                 <Condition Value="True">
                                                                     <Condition.Binding>
                                                                         <MultiBinding Converter="{StaticResource ShouldUseThumbnailConverter}">
-                                                                            <Binding Path="DataContext.CurrentPage" ElementName="TeacherPages"/>
-                                                                            <Binding Path=""/>
+                                                                            <Binding Path="DataContext.CurrentPage"
+                                                                                     ElementName="TeacherPages" />
+                                                                            <Binding Path="" />
                                                                         </MultiBinding>
                                                                     </Condition.Binding>
                                                                 </Condition>
                                                             </MultiDataTrigger.Conditions>
-                                                            <Setter Property="Template" Value="{StaticResource TeacherPageThumbnailTemplate}" />
+                                                            <Setter Property="Template"
+                                                                    Value="{StaticResource TeacherPageThumbnailTemplate}" />
                                                         </MultiDataTrigger>
 
                                                         <!--PagePreview trigger-->
@@ -157,37 +171,46 @@
                                                                 <Condition Value="False">
                                                                     <Condition.Binding>
                                                                         <MultiBinding Converter="{StaticResource ShouldUseThumbnailConverter}">
-                                                                            <Binding Path="DataContext.CurrentPage" ElementName="TeacherPages"/>
-                                                                            <Binding Path=""/>
+                                                                            <Binding Path="DataContext.CurrentPage"
+                                                                                     ElementName="TeacherPages" />
+                                                                            <Binding Path="" />
                                                                         </MultiBinding>
                                                                     </Condition.Binding>
                                                                 </Condition>
                                                             </MultiDataTrigger.Conditions>
-                                                            <Setter Property="Template" Value="{StaticResource TeacherPagePreviewTemplate}" />
+                                                            <Setter Property="Template"
+                                                                    Value="{StaticResource TeacherPagePreviewTemplate}" />
                                                         </MultiDataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
                                             </Control.Style>
                                         </Control>
 
-                                        <Rectangle Grid.Column="0" Grid.Row="0" Fill="Transparent" StrokeThickness="2">
+                                        <Rectangle Grid.Column="0"
+                                                   Fill="Transparent"
+                                                   StrokeThickness="2">
                                             <Rectangle.Stroke>
                                                 <MultiBinding Converter="{StaticResource PageMatchToColorConverter}">
-                                                    <Binding Path="DataContext.CurrentPage" ElementName="TeacherPages"/>
-                                                    <Binding Path=""/>
+                                                    <Binding Path="DataContext.CurrentPage"
+                                                             ElementName="TeacherPages" />
+                                                    <Binding Path="" />
                                                 </MultiBinding>
                                             </Rectangle.Stroke>
                                             <i:Interaction.Triggers>
                                                 <i:EventTrigger EventName="MouseUp">
                                                     <catel:EventToCommand Command="{Binding DataContext.SetCurrentPageCommand, ElementName=TeacherPages}"
-                                                              PassEventArgsToCommand="False"
-                                                              CommandParameter="{Binding}" />
+                                                                          PassEventArgsToCommand="False"
+                                                                          CommandParameter="{Binding}" />
                                                 </i:EventTrigger>
                                             </i:Interaction.Triggers>
                                         </Rectangle>
-                                        <Button Grid.Column="0" Grid.Row="0" Width="30"
-                                                Height="30" Margin="-20 0 0 -20"
-                                                Cursor="Hand" HorizontalAlignment="Right"
+
+                                        <Button Grid.Column="0"
+                                                Width="30"
+                                                Height="30"
+                                                Margin="-20 0 0 -20"
+                                                Cursor="Hand"
+                                                HorizontalAlignment="Right"
                                                 VerticalAlignment="Top"
                                                 Command="{Binding DataContext.AddTeacherPageToStageCommand, ElementName=TeacherPages}"
                                                 CommandParameter="{Binding}"
@@ -195,41 +218,74 @@
                                             <Button.Template>
                                                 <ControlTemplate TargetType="{x:Type Button}">
                                                     <Grid>
-                                                        <Ellipse Fill="White" Stroke="Black"
-                                                                     StrokeThickness="3"
-                                                                     VerticalAlignment="Stretch"
-                                                                     HorizontalAlignment="Stretch" />
+                                                        <Ellipse Fill="White"
+                                                                 Stroke="Black"
+                                                                 StrokeThickness="3"
+                                                                 VerticalAlignment="Stretch"
+                                                                 HorizontalAlignment="Stretch" />
                                                         <Path Stretch="Fill"
-                                                                  Stroke="Green"
-                                                                  StrokeThickness="3"
-                                                                  Margin="5"
-                                                                  Data="M0,0.5 L1,0.5 M0.5,0 L0.5,1" />
+                                                              Stroke="Green"
+                                                              StrokeThickness="3"
+                                                              Margin="5"
+                                                              Data="M0,0.5 L1,0.5 M0.5,0 L0.5,1" />
                                                     </Grid>
                                                 </ControlTemplate>
                                             </Button.Template>
                                         </Button>
-                                        <StackPanel Grid.Column="0" Grid.Row="0" Height="16"
-                                                                    IsHitTestVisible="False"
-                                                                    HorizontalAlignment="Left"
-                                                                    VerticalAlignment="Bottom"
-                                                                    Orientation="Horizontal">
-                                            <Image Height="16" Width="16"
+
+                                        <StackPanel Grid.Column="0"
+                                                    Height="16"
+                                                    IsHitTestVisible="False"
+                                                    HorizontalAlignment="Left"
+                                                    VerticalAlignment="Bottom"
+                                                    Orientation="Horizontal">
+                                            <Image Height="16"
+                                                   Width="16"
                                                    IsHitTestVisible="False"
                                                    Source="pack://application:,,,/Resources/Images/AnimationIndicator16.png">
                                                 <Image.Style>
                                                     <Style TargetType="Image">
-                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                        <Setter Property="Visibility"
+                                                                Value="Collapsed" />
                                                         <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding PageType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static entities:PageTypes.Animation}}"
-                                                                                         Value="True">
-                                                                <Setter Property="Visibility" Value="Visible" />
+                                                            <DataTrigger
+                                                                Binding="{Binding PageType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static entities:PageTypes.Animation}}"
+                                                                Value="True">
+                                                                <Setter Property="Visibility"
+                                                                        Value="Visible" />
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
                                                 </Image.Style>
                                             </Image>
                                         </StackPanel>
-                                        <Grid Grid.Column="1" Grid.Row="0" VerticalAlignment="Center">
+                                        
+                                        <StackPanel Grid.Column="0"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Bottom"
+                                                    Orientation="Horizontal">
+                                            <Button Height="29"
+                                                    Width="25"
+                                                    Command="{Binding DataContext.AppendStarredCommand, ElementName=TeacherPages}"
+                                                    CommandParameter="{Binding}">
+                                                <Image Source="pack://application:,,,/Resources/Images/DisplayStarredSubmissionsButton29x25.png" />
+                                            </Button>
+                                            <Button Height="29"
+                                                    Width="25"
+                                                    Command="{Binding DataContext.AppendCorrectCommand, ElementName=TeacherPages}"
+                                                    CommandParameter="{Binding}">
+                                                <Image Source="pack://application:,,,/Resources/Images/DisplayCorrectSubmissionsButton29x25.png" />
+                                            </Button>
+                                            <Button Height="29"
+                                                    Width="25"
+                                                    Command="{Binding DataContext.AppendIncorrectCommand, ElementName=TeacherPages}"
+                                                    CommandParameter="{Binding}">
+                                                <Image Source="pack://application:,,,/Resources/Images/DisplayIncorrectSubmissionsButton29x25.png" />
+                                            </Button>
+                                        </StackPanel>
+
+                                        <Grid Grid.Column="1"
+                                              VerticalAlignment="Center">
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="Auto" />
                                                 <RowDefinition Height="Auto" />
@@ -243,54 +299,38 @@
                                                           CommandParameter="{Binding}">
                                                 <Image Source="pack://application:,,,/Resources/Images/DisplaySubmissionsButton50x25.png" />
                                             </ToggleButton>
-                                            <TextBlock Grid.Row="1" Text="{Binding NumberOfDistinctSubmissions}"
-                                                       TextAlignment="Center" Width="25" />
+                                            <TextBlock Grid.Row="1"
+                                                       Text="{Binding NumberOfDistinctSubmissions}"
+                                                       TextAlignment="Center"
+                                                       Width="25" />
                                         </Grid>
-                                        <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal">
-                                            <Button
-                                    x:Name="AppendStarred"
-                                    Height="29"
-                                    Width="25"
-                                    Command="{Binding DataContext.AppendStarredCommand, ElementName=TeacherPages}"
-                                    CommandParameter="{Binding}">
-                                                <Image Source="pack://application:,,,/Resources/Images/DisplayStarredSubmissionsButton29x25.png" />
-                                            </Button>
-                                            <Button
-                                    x:Name="AppendCorrect"
-                                    Height="29"
-                                    Width="25"
-                                    Command="{Binding DataContext.AppendCorrectCommand, ElementName=TeacherPages}"
-                                    CommandParameter="{Binding}">
-                                                <Image Source="pack://application:,,,/Resources/Images/DisplayCorrectSubmissionsButton29x25.png" />
-                                            </Button>
-                                            <Button
-                                    x:Name="AppendIncorrect"
-                                    Height="29"
-                                    Width="25"
-                                    Command="{Binding DataContext.AppendIncorrectCommand, ElementName=TeacherPages}"
-                                    CommandParameter="{Binding}">
-                                                <Image Source="pack://application:,,,/Resources/Images/DisplayIncorrectSubmissionsButton29x25.png" />
-                                            </Button>
-                                        </StackPanel>
+
                                     </Grid>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
-                        <ItemsControl Name="StudentNames" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"
-                                      ItemsSource="{Binding StudentList}"
+
+                        <ItemsControl Name="StudentNames"
+                                      Grid.Column="0"
+                                      Grid.Row="1"
+                                      ItemsSource="{Binding StudentList, IsAsync=True}"
                                       Margin="5 0 0 0">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Horizontal" Margin="3" Height="{Binding ElementName=StudentNames, Path=DataContext.PageHeight}">
-                                        <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+                                    <StackPanel Orientation="Horizontal"
+                                                Margin="3"
+                                                Height="{Binding ElementName=StudentNames, Path=DataContext.PageHeight}">
+                                        <StackPanel Orientation="Vertical"
+                                                    VerticalAlignment="Center">
                                             <StackPanel Orientation="Horizontal">
                                                 <Ellipse Height="7"
-                                                     Width="7"
-                                                     Fill="LawnGreen"
-                                                     Margin="3 0 3 0"
-                                                     VerticalAlignment="Center"
-                                                     Visibility="{Binding IsConnected, Converter={StaticResource BooleanToHidingVisibilityConverter}}"/>
-                                                <TextBlock FontWeight="Bold" VerticalAlignment="Center">
+                                                         Width="7"
+                                                         Fill="LawnGreen"
+                                                         Margin="3 0 3 0"
+                                                         VerticalAlignment="Center"
+                                                         Visibility="{Binding IsConnected, Converter={StaticResource BooleanToHidingVisibilityConverter}}" />
+                                                <TextBlock FontWeight="Bold"
+                                                           VerticalAlignment="Center">
                                                     <Run Text="{Binding FullName}" />
                                                 </TextBlock>
                                             </StackPanel>
@@ -317,7 +357,11 @@
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
-                        <ItemsControl Name="DisplayedPages" Grid.Column="2" Grid.Row="1" ItemsSource="{Binding DisplayedPages}">
+
+                        <ItemsControl Name="DisplayedPages"
+                                      Grid.Column="1"
+                                      Grid.Row="1"
+                                      ItemsSource="{Binding DisplayedPages, IsAsync=True}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <StackPanel Orientation="Horizontal" />
@@ -328,8 +372,8 @@
                                     <ItemsControl Name="PageSubmissions">
                                         <ItemsControl.ItemsSource>
                                             <MultiBinding Converter="{StaticResource PageToSubmissionsListConverter}">
-                                                <Binding Path="Submissions"/>
-                                                <Binding Path="Submissions.Count"/>
+                                                <Binding Path="Submissions" />
+                                                <Binding Path="Submissions.Count" />
                                                 <!-- hack to update on collection change -->
                                             </MultiBinding>
                                         </ItemsControl.ItemsSource>
@@ -340,25 +384,27 @@
                                         </ItemsControl.ItemsPanel>
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <Border Margin="3" BorderBrush="{StaticResource GrayEdgeColor}"
-                                                        BorderThickness="1,1,1,1" 
+                                                <Border Margin="3"
+                                                        BorderBrush="{StaticResource GrayEdgeColor}"
+                                                        BorderThickness="1,1,1,1"
                                                         Height="{Binding ElementName=DisplayedPages, Path=DataContext.PageHeight}"
                                                         Width="{Binding ElementName=DisplayedPages, Path=DataContext.PageWidth}">
                                                     <Grid>
                                                         <Grid.RowDefinitions>
-                                                            <RowDefinition Height="*"/>
-                                                            <RowDefinition Height="Auto"/>
+                                                            <RowDefinition Height="*" />
+                                                            <RowDefinition Height="Auto" />
                                                         </Grid.RowDefinitions>
-                                                        <Control Grid.Row="0" Margin="5">
+                                                        <Control Grid.Row="0"
+                                                                 Margin="5">
                                                             <Control.Resources>
                                                                 <ControlTemplate x:Key="PageThumbnailTemplate">
-                                                                    <Image Source="{Binding Page.PageThumbnail, Mode=OneWay}"/>
+                                                                    <Image Source="{Binding Page.PageThumbnail, Mode=OneWay}" />
                                                                 </ControlTemplate>
 
                                                                 <ControlTemplate x:Key="PagePreviewTemplate">
                                                                     <views:CLPPagePreviewView x:Name="PagePreviewView"
-                                                              DataContext="{Binding Page}"
-                                                              ClipToBounds="True" />
+                                                                                              DataContext="{Binding Page}"
+                                                                                              ClipToBounds="True" />
                                                                 </ControlTemplate>
                                                             </Control.Resources>
                                                             <Control.Style>
@@ -370,13 +416,15 @@
                                                                                 <Condition Value="True">
                                                                                     <Condition.Binding>
                                                                                         <MultiBinding Converter="{StaticResource ShouldUseThumbnailConverter}">
-                                                                                            <Binding ElementName="DisplayedPages" Path="DataContext.CurrentPage"/>
-                                                                                            <Binding Path="Page"/>
+                                                                                            <Binding ElementName="DisplayedPages"
+                                                                                                     Path="DataContext.CurrentPage" />
+                                                                                            <Binding Path="Page" />
                                                                                         </MultiBinding>
                                                                                     </Condition.Binding>
                                                                                 </Condition>
                                                                             </MultiDataTrigger.Conditions>
-                                                                            <Setter Property="Template" Value="{StaticResource PageThumbnailTemplate}" />
+                                                                            <Setter Property="Template"
+                                                                                    Value="{StaticResource PageThumbnailTemplate}" />
                                                                         </MultiDataTrigger>
 
                                                                         <!--PagePreview trigger-->
@@ -385,78 +433,212 @@
                                                                                 <Condition Value="False">
                                                                                     <Condition.Binding>
                                                                                         <MultiBinding Converter="{StaticResource ShouldUseThumbnailConverter}">
-                                                                                            <Binding ElementName="DisplayedPages" Path="DataContext.CurrentPage"/>
-                                                                                            <Binding Path="Page"/>
+                                                                                            <Binding ElementName="DisplayedPages"
+                                                                                                     Path="DataContext.CurrentPage" />
+                                                                                            <Binding Path="Page" />
                                                                                         </MultiBinding>
                                                                                     </Condition.Binding>
                                                                                 </Condition>
                                                                             </MultiDataTrigger.Conditions>
-                                                                            <Setter Property="Template" Value="{StaticResource PagePreviewTemplate}" />
+                                                                            <Setter Property="Template"
+                                                                                    Value="{StaticResource PagePreviewTemplate}" />
                                                                         </MultiDataTrigger>
                                                                     </Style.Triggers>
                                                                 </Style>
                                                             </Control.Style>
                                                         </Control>
-                                                        <Rectangle Grid.Row="0" Margin="0" Fill="Transparent" StrokeThickness="2">
+                                                        <Rectangle Grid.Row="0"
+                                                                   Margin="0"
+                                                                   Fill="Transparent"
+                                                                   StrokeThickness="2">
                                                             <Rectangle.Stroke>
                                                                 <MultiBinding Converter="{StaticResource PageMatchToColorConverter}">
-                                                                    <Binding ElementName="DisplayedPages" Path="DataContext.CurrentPage"/>
-                                                                    <Binding Path="Page"/>
+                                                                    <Binding ElementName="DisplayedPages"
+                                                                             Path="DataContext.CurrentPage" />
+                                                                    <Binding Path="Page" />
                                                                 </MultiBinding>
                                                             </Rectangle.Stroke>
                                                             <i:Interaction.Triggers>
                                                                 <i:EventTrigger EventName="MouseUp">
                                                                     <catel:EventToCommand Command="{Binding DataContext.SetCurrentPageCommand, ElementName=DisplayedPages}"
-                                                                                              PassEventArgsToCommand="False"
-                                                                                              CommandParameter="{Binding Page}" />
+                                                                                          PassEventArgsToCommand="False"
+                                                                                          CommandParameter="{Binding Page}" />
                                                                 </i:EventTrigger>
                                                             </i:Interaction.Triggers>
                                                         </Rectangle>
-                                                        <Button Grid.Row="0" Width="30"
-                                                    Height="30" Margin="-20 0 0 -20"
-                                                    Cursor="Hand" HorizontalAlignment="Right"
-                                                    VerticalAlignment="Top"
-                                                    Command="{Binding DataContext.AddPageToStageCommand, ElementName=DisplayedPages}"
-                                                    CommandParameter="{Binding}"
-                                                    Visibility="{Binding DataContext.StagingPanel.IsVisible, ElementName=DisplayedPages, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
+                                                        <Button Grid.Row="0"
+                                                                Width="30"
+                                                                Height="30"
+                                                                Margin="-20 0 0 -20"
+                                                                Cursor="Hand"
+                                                                HorizontalAlignment="Right"
+                                                                VerticalAlignment="Top"
+                                                                Command="{Binding DataContext.AddPageToStageCommand, ElementName=DisplayedPages}"
+                                                                CommandParameter="{Binding}"
+                                                                Visibility="{Binding DataContext.StagingPanel.IsVisible, ElementName=DisplayedPages, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
                                                             <Button.Template>
                                                                 <ControlTemplate TargetType="{x:Type Button}">
                                                                     <Grid>
-                                                                        <Ellipse Fill="White" Stroke="Black"
-                                                                     StrokeThickness="3"
-                                                                     VerticalAlignment="Stretch"
-                                                                     HorizontalAlignment="Stretch" />
+                                                                        <Ellipse Fill="White"
+                                                                                 Stroke="Black"
+                                                                                 StrokeThickness="3"
+                                                                                 VerticalAlignment="Stretch"
+                                                                                 HorizontalAlignment="Stretch" />
                                                                         <Path Stretch="Fill"
-                                                                  Stroke="Green"
-                                                                  StrokeThickness="3"
-                                                                  Margin="5"
-                                                                  Data="M0,0.5 L1,0.5 M0.5,0 L0.5,1" />
+                                                                              Stroke="Green"
+                                                                              StrokeThickness="3"
+                                                                              Margin="5"
+                                                                              Data="M0,0.5 L1,0.5 M0.5,0 L0.5,1" />
                                                                     </Grid>
                                                                 </ControlTemplate>
                                                             </Button.Template>
                                                         </Button>
-                                                        <StackPanel Grid.Row="0" Height="16"
+                                                        <StackPanel Grid.Row="0"
+                                                                    Height="16"
                                                                     IsHitTestVisible="False"
                                                                     HorizontalAlignment="Left"
                                                                     VerticalAlignment="Bottom"
                                                                     Orientation="Horizontal">
-                                                            <Image Height="16" Width="16"
+                                                            <Image Height="16"
+                                                                   Width="16"
                                                                    IsHitTestVisible="False"
                                                                    Source="pack://application:,,,/Resources/Images/AnimationIndicator16.png">
                                                                 <Image.Style>
                                                                     <Style TargetType="Image">
-                                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                                        <Setter Property="Visibility"
+                                                                                Value="Collapsed" />
                                                                         <Style.Triggers>
-                                                                            <DataTrigger Binding="{Binding Page.PageType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static entities:PageTypes.Animation}}"
-                                                                                         Value="True">
-                                                                                <Setter Property="Visibility" Value="Visible" />
+                                                                            <DataTrigger
+                                                                                Binding="{Binding Page.PageType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static entities:PageTypes.Animation}}"
+                                                                                Value="True">
+                                                                                <Setter Property="Visibility"
+                                                                                        Value="Visible" />
                                                                             </DataTrigger>
                                                                         </Style.Triggers>
                                                                     </Style>
                                                                 </Image.Style>
                                                             </Image>
                                                         </StackPanel>
-                                                        <views:HoverBoxView Grid.Row="1" Width="150" DataContext="{Binding Path=Page}" />
+                                                        <StackPanel Grid.Row="0"
+                                                                    Height="20"
+                                                                    Margin="0 0 7 2"
+                                                                    HorizontalAlignment="Right"
+                                                                    VerticalAlignment="Bottom"
+                                                                    Orientation="Horizontal">
+
+                                                            <ToggleButton Width="20">
+                                                                <ToggleButton.Style>
+                                                                    <Style TargetType="ToggleButton">
+                                                                        <Setter Property="Template">
+                                                                            <Setter.Value>
+                                                                                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                                                                    <Image x:Name="ButtonImage"
+                                                                                           Source="pack://application:,,,/Resources/Images/UnStarred16.png" />
+                                                                                </ControlTemplate>
+                                                                            </Setter.Value>
+                                                                        </Setter>
+                                                                        <Style.Triggers>
+                                                                            <Trigger Property="IsChecked"
+                                                                                     Value="True">
+                                                                                <Setter Property="Template">
+                                                                                    <Setter.Value>
+                                                                                        <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                                                                            <Image x:Name="ButtonImage"
+                                                                                                   Source="pack://application:,,,/Resources/Images/Starred16.png" />
+                                                                                        </ControlTemplate>
+                                                                                    </Setter.Value>
+                                                                                </Setter>
+                                                                            </Trigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </ToggleButton.Style>
+                                                            </ToggleButton>
+
+                                                            <ToggleButton Width="20">
+                                                                <ToggleButton.Style>
+                                                                    <Style TargetType="ToggleButton">
+                                                                        <Setter Property="Template">
+                                                                            <Setter.Value>
+                                                                                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                                                                    <Image x:Name="ButtonImage"
+                                                                                           Source="pack://application:,,,/Resources/Images/NotCorrect16.png" />
+                                                                                </ControlTemplate>
+                                                                            </Setter.Value>
+                                                                        </Setter>
+                                                                        <Style.Triggers>
+                                                                            <Trigger Property="IsChecked"
+                                                                                     Value="True">
+                                                                                <Setter Property="Template">
+                                                                                    <Setter.Value>
+                                                                                        <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                                                                            <Image x:Name="ButtonImage"
+                                                                                                   Source="pack://application:,,,/Resources/Images/Correct16.png" />
+                                                                                        </ControlTemplate>
+                                                                                    </Setter.Value>
+                                                                                </Setter>
+                                                                            </Trigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </ToggleButton.Style>
+                                                            </ToggleButton>
+
+                                                            <ToggleButton Width="20">
+                                                                <ToggleButton.Style>
+                                                                    <Style TargetType="ToggleButton">
+                                                                        <Setter Property="Template">
+                                                                            <Setter.Value>
+                                                                                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                                                                    <Image x:Name="ButtonImage"
+                                                                                           Source="pack://application:,,,/Resources/Images/NotIncorrect16.png" />
+                                                                                </ControlTemplate>
+                                                                            </Setter.Value>
+                                                                        </Setter>
+                                                                        <Style.Triggers>
+                                                                            <Trigger Property="IsChecked"
+                                                                                     Value="True">
+                                                                                <Setter Property="Template">
+                                                                                    <Setter.Value>
+                                                                                        <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                                                                            <Image x:Name="ButtonImage"
+                                                                                                   Source="pack://application:,,,/Resources/Images/Incorrect16.png" />
+                                                                                        </ControlTemplate>
+                                                                                    </Setter.Value>
+                                                                                </Setter>
+                                                                            </Trigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </ToggleButton.Style>
+                                                            </ToggleButton>
+
+                                                            <ToggleButton Width="20">
+                                                                <ToggleButton.Style>
+                                                                    <Style TargetType="ToggleButton">
+                                                                        <Setter Property="Template">
+                                                                            <Setter.Value>
+                                                                                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                                                                    <Image x:Name="ButtonImage"
+                                                                                           Source="pack://application:,,,/Resources/Images/NotUnknown16.png" />
+                                                                                </ControlTemplate>
+                                                                            </Setter.Value>
+                                                                        </Setter>
+                                                                        <Style.Triggers>
+                                                                            <Trigger Property="IsChecked"
+                                                                                     Value="True">
+                                                                                <Setter Property="Template">
+                                                                                    <Setter.Value>
+                                                                                        <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                                                                            <Image x:Name="ButtonImage"
+                                                                                                   Source="pack://application:,,,/Resources/Images/Unknown16.png" />
+                                                                                        </ControlTemplate>
+                                                                                    </Setter.Value>
+                                                                                </Setter>
+                                                                            </Trigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </ToggleButton.Style>
+                                                            </ToggleButton>
+
+                                                        </StackPanel>   
                                                     </Grid>
                                                 </Border>
                                             </DataTemplate>
@@ -464,51 +646,57 @@
                                     </ItemsControl>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
-                        </ItemsControl>      
+                        </ItemsControl>
+                        
                     </Grid>
                 </ScrollViewer>
+
                 <Thumb Cursor="ScrollWE"
-                           Grid.Column="1" Grid.Row="0" Grid.RowSpan="2"
-                               Width="7"
-                               Margin="0 0 -7 0"
-                               VerticalAlignment="Stretch"
-                               HorizontalAlignment="Right">
+                       Grid.Row="0"
+                       Grid.RowSpan="2"
+                       Width="7"
+                       Margin="0 0 -7 0"
+                       VerticalAlignment="Stretch"
+                       HorizontalAlignment="Right">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="DragDelta">
                             <catel:EventToCommand Command="{Binding PanelResizeDragCommand}"
-                                                          PassEventArgsToCommand="True" />
-                            <catel:EventToCommand Command="{Binding PageHeightUpdateCommand}"/>
+                                                  PassEventArgsToCommand="True" />
+                            <catel:EventToCommand Command="{Binding PageHeightUpdateCommand}" />
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                     <Thumb.Template>
                         <ControlTemplate>
                             <Grid VerticalAlignment="Stretch"
-                                          Background="Transparent">
+                                  Background="Transparent">
                                 <UniformGrid Columns="1"
-                                                     Height="30"
-                                                     Background="Transparent">
+                                             Height="30"
+                                             Background="Transparent">
                                     <Ellipse StrokeThickness="0"
-                                                     Fill="{StaticResource HighlightColor}"
-                                                     Height="3"
-                                                     Width="3" />
+                                             Fill="{StaticResource HighlightColor}"
+                                             Height="3"
+                                             Width="3" />
                                     <Ellipse StrokeThickness="0"
-                                                     Fill="{StaticResource HighlightColor}"
-                                                     Height="3"
-                                                     Width="3" />
+                                             Fill="{StaticResource HighlightColor}"
+                                             Height="3"
+                                             Width="3" />
                                     <Ellipse StrokeThickness="0"
-                                                     Fill="{StaticResource HighlightColor}"
-                                                     Height="3"
-                                                     Width="3" />
+                                             Fill="{StaticResource HighlightColor}"
+                                             Height="3"
+                                             Width="3" />
                                 </UniformGrid>
                             </Grid>
                         </ControlTemplate>
                     </Thumb.Template>
                 </Thumb>
+
             </Grid>
+
         </Border>
+
         <views:StagingPanelView DataContext="{Binding StagingPanel}"
-                                        Grid.Column="1"
-                                        Visibility="{Binding IsVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />
+                                Grid.Column="1"
+                                Visibility="{Binding IsVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />
 
     </Grid>
 </catel:UserControl>
