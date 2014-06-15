@@ -417,9 +417,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData IsUsingCustomCursorsProperty = RegisterProperty("IsUsingCustomCursors", typeof(bool), false);
 
+        #region Calculated Properties
+
         public bool IsStarred
         {
-            get 
+            get
             {
                 StarredTag starredTag = Page.Tags.FirstOrDefault(x => x is StarredTag) as StarredTag;
                 if(starredTag == null)
@@ -428,7 +430,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
                 return starredTag.Value == StarredTag.AcceptedValues.Starred.ToString();
             }
-            set 
+            set
             {
                 if(value == true)
                 {
@@ -441,7 +443,37 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        #region Calculated Properties
+        public CorrectnessTag.AcceptedValues Correctness
+        {
+            get
+            {
+                CorrectnessTag correctnessTag = Page.Tags.FirstOrDefault(x => x is CorrectnessTag) as CorrectnessTag;
+                if(correctnessTag == null)
+                {
+                    return CorrectnessTag.AcceptedValues.Unknown;
+                }
+                switch(correctnessTag.Value)
+                {
+                    case "Correct":
+                        return CorrectnessTag.AcceptedValues.Correct;
+                    case "Incorrect":
+                        return CorrectnessTag.AcceptedValues.Incorrect;
+                    case "AlmostCorrect":
+                        return CorrectnessTag.AcceptedValues.AlmostCorrect;
+                    case "Unknown":
+                    default:
+                        return CorrectnessTag.AcceptedValues.Unknown;
+                }
+            }
+            set
+            {
+                Page.AddTag(new CorrectnessTag(Page, value));
+                SetValue(CorrectnessProperty, value);
+            }
+        }
+
+        public static readonly PropertyData CorrectnessProperty = RegisterProperty("Correctness", typeof(CorrectnessTag.AcceptedValues), CorrectnessTag.AcceptedValues.Unknown);
+
 
         /// <summary>
         /// Whether the page has submissions or not.

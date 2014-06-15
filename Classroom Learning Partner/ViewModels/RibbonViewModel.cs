@@ -1859,6 +1859,8 @@ namespace Classroom_Learning_Partner.ViewModels
             var groupCreationViewModel = new GroupCreationViewModel();
             var groupCreationView = new GroupCreationView(groupCreationViewModel);
             groupCreationView.Owner = Application.Current.MainWindow;
+            groupCreationView.WindowStartupLocation = WindowStartupLocation.Manual;
+            groupCreationView.Top = 0;
             groupCreationView.ShowDialog();
             if(groupCreationView.DialogResult == true)
             {
