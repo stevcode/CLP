@@ -554,7 +554,9 @@
                                                                 </ToggleButton.Style>
                                                             </ToggleButton>
 
-                                                            <ToggleButton Width="20" IsChecked="{Binding ViewModel.Correctness, 
+                                                            <ToggleButton Width="20" 
+                                                                          Click="CorrectnessTagButtons_OnClick"
+                                                                          IsChecked="{Binding ViewModel.Correctness, 
                                                                           ElementName=PagePreviewView, 
                                                                           Converter={StaticResource EnumToBoolConverter}, 
                                                                           ConverterParameter={x:Static entities:CorrectnessTag+AcceptedValues.Correct}}">
@@ -591,7 +593,9 @@
                                                                 </ToggleButton.Style>
                                                             </ToggleButton>
 
-                                                            <ToggleButton Width="20" IsChecked="{Binding ViewModel.Correctness, 
+                                                            <ToggleButton Width="20" 
+                                                                          Click="CorrectnessTagButtons_OnClick"
+                                                                          IsChecked="{Binding ViewModel.Correctness, 
                                                                           ElementName=PagePreviewView, 
                                                                           Converter={StaticResource EnumToBoolConverter}, 
                                                                           ConverterParameter={x:Static entities:CorrectnessTag+AcceptedValues.Incorrect}}">
@@ -628,7 +632,9 @@
                                                                 </ToggleButton.Style>
                                                             </ToggleButton>
 
-                                                            <ToggleButton Width="20" IsChecked="{Binding ViewModel.Correctness, 
+                                                            <ToggleButton Width="20" 
+                                                                          Click="CorrectnessTagButtons_OnClick"
+                                                                          IsChecked="{Binding ViewModel.Correctness, 
                                                                           ElementName=PagePreviewView, 
                                                                           Converter={StaticResource EnumToBoolConverter}, 
                                                                           ConverterParameter={x:Static entities:CorrectnessTag+AcceptedValues.Unknown}}">
@@ -664,7 +670,6 @@
                                                                     </Style>
                                                                 </ToggleButton.Style>
                                                             </ToggleButton>
-
                                                         </StackPanel>
                                                     </Grid>
                                                 </Border>
@@ -674,7 +679,6 @@
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
-                        
                     </Grid>
                 </ScrollViewer>
 

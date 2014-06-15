@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Windows;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using Classroom_Learning_Partner.ViewModels;
 
@@ -13,6 +15,16 @@ namespace Classroom_Learning_Partner.Views
         {
             InitializeComponent();
             CloseViewModelOnUnloaded = false;
+        }
+
+        private void CorrectnessTagButtons_OnClick(object sender, RoutedEventArgs e)
+        {
+            var toggleButton = e.Source as ToggleButton;
+            if(toggleButton == null)
+            {
+                return;
+            }
+            toggleButton.IsChecked = true;
         }
 
         protected override Type GetViewModelType() { return typeof(StagingPanelViewModel); }
