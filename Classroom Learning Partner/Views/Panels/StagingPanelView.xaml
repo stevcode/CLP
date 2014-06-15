@@ -361,7 +361,7 @@
                                             VerticalAlignment="Bottom"
                                             Orientation="Horizontal">
 
-                                    <ToggleButton Width="20" IsChecked="{Binding IsStarred}">
+                                    <ToggleButton Width="20" IsChecked="{Binding ViewModel.IsStarred, ElementName=PagePreviewView}">
                                         <ToggleButton.Style>
                                             <Style TargetType="ToggleButton">
                                                 <Setter Property="Template">
