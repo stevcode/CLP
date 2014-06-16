@@ -111,6 +111,11 @@ namespace CLP.Entities
             }
 
             var pageObject = ParentPage.GetPageObjectByID(PageObjectID);
+            if(pageObject == null)
+            {
+                CurrentBatchTickIndex--;
+                return;
+            }
 
             if(isAnimationUndo && CurrentBatchTickIndex > 0)
             {
