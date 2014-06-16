@@ -135,7 +135,7 @@ namespace Classroom_Learning_Partner
                                                                                         {
                                                                                             if(currentNotebook != null)
                                                                                             {
-                                                                                                var page = currentNotebook.Pages.FirstOrDefault(x => x.ID == submission.ID);
+                                                                                                var page = currentNotebook.Pages.FirstOrDefault(x => x.ID == submission.ID && x.DifferentiationLevel == submission.DifferentiationLevel);
                                                                                                 if(page == null)
                                                                                                 {
                                                                                                     return null;
