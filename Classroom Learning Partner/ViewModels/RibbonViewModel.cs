@@ -3108,6 +3108,21 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
 
+            foreach(var group in classSubjectCreationViewModel.TempGroupCreationViewModel.Groups)
+            {
+                foreach(Person student in group.Members)
+                {
+                    if(classSubjectCreationViewModel.TempGroupCreationViewModel.GroupType == "Temp")
+                    {
+                        student.TempDifferentiationGroup = group.Label;
+                    }
+                    else
+                    {
+                        student.CurrentDifferentiationGroup = group.Label;
+                    }
+                }
+            }
+
             classSubject.Projector = classSubject.Teacher;
             classSubject.SaveClassSubject(App.ClassCacheDirectory);
         }

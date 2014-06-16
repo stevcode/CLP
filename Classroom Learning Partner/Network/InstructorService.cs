@@ -177,12 +177,18 @@ namespace Classroom_Learning_Partner
         {
             var task = Task<string>.Factory.StartNew(() =>
             {
-                var student = App.MainWindowViewModel.AvailableUsers.FirstOrDefault(x => x.ID == studentID) ?? new Person
-                                                                                                           {
-                                                                                                               ID = studentID,
-                                                                                                               FullName = studentName,
-                                                                                                               IsStudent = true
-                                                                                                           };
+                var student = App.MainWindowViewModel.AvailableUsers.FirstOrDefault(x => x.ID == studentID);
+
+                if(student == null)
+                {
+                    student = new Person
+                              {
+                                  ID = studentID,
+                                  FullName = studentName,
+                                  IsStudent = true
+                              };
+                }
+
                 if(student.IsConnected)
                 {
                     try

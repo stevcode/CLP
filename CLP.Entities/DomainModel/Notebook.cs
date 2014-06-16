@@ -353,7 +353,18 @@ namespace CLP.Entities
             newNotebook.CurrentPage = CurrentPage.CopyForNewOwner(owner);
             foreach(var newPage in Pages.Select(page => page.CopyForNewOwner(owner))) 
             {
-                newNotebook.Pages.Add(newPage);
+                if(newPage.DifferentiationLevel == string.Empty ||
+                   newPage.DifferentiationLevel == "0" ||
+                   newPage.DifferentiationLevel == owner.CurrentDifferentiationGroup)
+                {
+                    newNotebook.Pages.Add(newPage);
+                }
+
+                if(owner.CurrentDifferentiationGroup == string.Empty &&
+                   newPage.DifferentiationLevel == "A")
+                {
+                    newNotebook.Pages.Add(newPage);
+                }
             }
 
             return newNotebook;
