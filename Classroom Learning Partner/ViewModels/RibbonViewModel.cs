@@ -1877,6 +1877,14 @@ namespace Classroom_Learning_Partner.ViewModels
                         }
                     }
                 }
+                try
+                {
+                    App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.SaveClassSubject(App.ClassCacheDirectory);
+                }
+                catch
+                {
+                    Logger.Instance.WriteToLog("Failed to save class subject after making groups.");
+                }
             }
         }
 
@@ -1898,71 +1906,79 @@ namespace Classroom_Learning_Partner.ViewModels
             exitTicketCreationView.ShowDialog();
             if(exitTicketCreationView.DialogResult == true)
             {
-                for(int i = 0; i < exitTicketCreationViewModel.ExitTickets.Count; i++) 
+                for(int i = 0; i < exitTicketCreationViewModel.ExitTickets.Count; i++)
                 {
                     var exitTicket = exitTicketCreationViewModel.ExitTickets[i];
                     notebook.Pages.Add(exitTicket);
                     exitTicket.History.ClearHistory();
                     exitTicket.SerializedStrokes = StrokeDTO.SaveInkStrokes(exitTicket.InkStrokes);
                     exitTicket.History.SerializedTrashedInkStrokes = StrokeDTO.SaveInkStrokes(exitTicket.History.TrashedInkStrokes);
-                
+
                     foreach(Person student in exitTicketCreationViewModel.GroupCreationViewModel.Groups[i].Members)
                     {
                         student.TempDifferentiationGroup = exitTicket.DifferentiationLevel;
                     }
                 }
-            }
-
-            //send exit tickets to projector
-            if(App.Network.ProjectorProxy != null)
-            {
                 try
                 {
-                    foreach(CLPPage exitTicket in exitTicketCreationViewModel.ExitTickets)
+                    App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.SaveClassSubject(App.ClassCacheDirectory);
+                }
+                catch
+                {
+                    Logger.Instance.WriteToLog("Failed to save class subject after making exit tickets.");
+                }
+
+                //send exit tickets to projector
+                if(App.Network.ProjectorProxy != null)
+                {
+                    try
                     {
-                        App.Network.ProjectorProxy.AddNewPage(CLPServiceAgent.Instance.Zip(ObjectSerializer.ToString(exitTicket)), 999);                  
+                        foreach(CLPPage exitTicket in exitTicketCreationViewModel.ExitTickets)
+                        {
+                            App.Network.ProjectorProxy.AddNewPage(CLPServiceAgent.Instance.Zip(ObjectSerializer.ToString(exitTicket)), 999);
+                        }
+                    }
+                    catch(Exception)
+                    {
                     }
                 }
-                catch(Exception)
-                {
-                }
-            }
 
-            //send an exit ticket to each student
-            if(App.MainWindowViewModel.AvailableUsers.Any())
-            {
-                Parallel.ForEach(App.MainWindowViewModel.AvailableUsers,
-                                 student =>
-                                 {
-                                     try
+                //send an exit ticket to each student
+                if(App.MainWindowViewModel.AvailableUsers.Any())
+                {
+                    Parallel.ForEach(App.MainWindowViewModel.AvailableUsers,
+                                     student =>
                                      {
-                                         var binding = new NetTcpBinding
+                                         try
                                          {
-                                             Security =
+                                             var binding = new NetTcpBinding
                                              {
-                                                 Mode = SecurityMode.None
+                                                 Security =
+                                                 {
+                                                     Mode = SecurityMode.None
+                                                 }
+                                             };
+                                             var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(binding, new EndpointAddress(student.CurrentMachineAddress));
+                                             CLPPage correctExitTicket = exitTicketCreationViewModel.ExitTickets.FirstOrDefault(x => x.DifferentiationLevel == student.TempDifferentiationGroup);
+                                             if(correctExitTicket == null)
+                                             {
+                                                 correctExitTicket = exitTicketCreationViewModel.ExitTickets.First();
                                              }
-                                         };
-                                         var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(binding, new EndpointAddress(student.CurrentMachineAddress));
-                                         CLPPage correctExitTicket = exitTicketCreationViewModel.ExitTickets.FirstOrDefault(x => x.DifferentiationLevel == student.TempDifferentiationGroup);
-                                         if (correctExitTicket == null) 
-                                         {
-                                             correctExitTicket = exitTicketCreationViewModel.ExitTickets.First();
+                                             //TODO: The number 999 is used in place of "infinity".
+                                             //Also I'm doing the serialization step per-student instead of per-exit-ticket which'll be somewhat slower.
+                                             studentProxy.AddNewPage(CLPServiceAgent.Instance.Zip(ObjectSerializer.ToString(correctExitTicket)), 999);
+                                             (studentProxy as ICommunicationObject).Close();
                                          }
-                                         //TODO: The number 999 is used in place of "infinity".
-                                         //Also I'm doing the serialization step per-student instead of per-exit-ticket which'll be somewhat slower.
-                                         studentProxy.AddNewPage(CLPServiceAgent.Instance.Zip(ObjectSerializer.ToString(correctExitTicket)), 999);
-                                         (studentProxy as ICommunicationObject).Close();
-                                     }
-                                     catch(Exception ex)
-                                     {
-                                         Console.WriteLine(ex.Message);
-                                     }
-                                 });
-            }
-            else
-            {
-                Logger.Instance.WriteToLog("No Students Found");
+                                         catch(Exception ex)
+                                         {
+                                             Console.WriteLine(ex.Message);
+                                         }
+                                     });
+                }
+                else
+                {
+                    Logger.Instance.WriteToLog("No Students Found");
+                }
             }
         }
 
