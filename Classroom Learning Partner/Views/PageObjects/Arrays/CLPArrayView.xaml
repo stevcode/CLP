@@ -443,13 +443,13 @@
                 </Button>-->
 
                 <!--Duplicate Array Button-->
-                <!--<Button Command="{Binding DuplicateArrayCommand}"
+                <Button Command="{Binding DuplicateArrayCommand}"
                         Cursor="Hand"
                         Width="40"
                         Height="40"
                         Canvas.Left="-40"
                         Canvas.Bottom="-40"
-                        Visibility="{Binding IsDefaultAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        Visibility="{Binding IsDuplicateAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Grid>
@@ -466,7 +466,7 @@
                             </Grid>
                         </ControlTemplate>
                     </Button.Template>
-                </Button>-->
+                </Button>
 
                 <!--Left Divisor Line-->
                 <!--<Rectangle IsHitTestVisible="False"
@@ -597,6 +597,15 @@
                     </TransformGroup>
                 </TextBlock.LayoutTransform>
             </TextBlock>
+
+            <Rectangle x:Name="ArrayBackground"
+                       Grid.Row="1"
+                       Grid.Column="1"
+                       Width="{Binding ArrayWidth}"
+                       Height="{Binding ArrayHeight}"
+                       Fill="{Binding Transparency}"
+                       Stroke="Black"
+                       StrokeThickness="3"/>
 
             <!--This is the actual array-->
             <Rectangle x:Name="Array"

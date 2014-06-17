@@ -11,7 +11,8 @@ namespace CLP.Entities
     {
         Array,
         ArrayCard,
-        FactorCard
+        FactorCard,
+        TenByTen
     }
 
     [Serializable]

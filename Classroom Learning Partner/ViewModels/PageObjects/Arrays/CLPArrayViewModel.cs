@@ -224,6 +224,21 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData LeftArrowPositionProperty = RegisterProperty("LeftArrowPosition", typeof(double), 0.0);
 
+        public string Transparency
+        {
+            get
+            {
+                if((PageObject as CLPArray).ArrayType == ArrayTypes.TenByTen)
+                {
+                    return "White";
+                }
+                else
+                {
+                    return "Transparent";
+                }
+            }
+        }
+
         /// <summary>
         /// Whether or not default adorners are on.
         /// </summary>
@@ -236,6 +251,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 RaisePropertyChanged("IsToggleGridAdornerVisible");
                 RaisePropertyChanged("IsToggleDivisionAdornerVisible");
                 RaisePropertyChanged("IsRotateAdornerVisible");
+                RaisePropertyChanged("IsDuplicateAdornerVisible");
             }
         }
 
@@ -268,7 +284,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public bool IsToggleGridAdornerVisible
         {
-            get { return IsDefaultAdornerVisible && Rows < 71 && Columns < 71; }
+            get { return IsDefaultAdornerVisible && Rows < 71 && Columns < 71 && (PageObject as CLPArray).ArrayType != ArrayTypes.TenByTen; }
         }
 
         public bool IsToggleDivisionAdornerVisible
@@ -278,7 +294,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public bool IsRotateAdornerVisible
         {
-            get { return IsDefaultAdornerVisible; }
+            get { return IsDefaultAdornerVisible && (PageObject as CLPArray).ArrayType != ArrayTypes.TenByTen; }
+        }
+
+        public bool IsDuplicateAdornerVisible
+        {
+            get { return IsDefaultAdornerVisible && (PageObject as CLPArray).ArrayType == ArrayTypes.TenByTen; }
         }
 
         #endregion //Bindings

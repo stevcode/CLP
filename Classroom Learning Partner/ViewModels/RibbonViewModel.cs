@@ -2431,6 +2431,11 @@ namespace Classroom_Learning_Partner.ViewModels
             int rows, columns, dividend = 1, numberOfArrays = 1;
             switch(arrayType)
             {
+                case "TENBYTEN":
+                    rows = 10;
+                    columns = 10;
+                    numberOfArrays = 1;
+                    break;
                 case "ARRAY":
                     var arrayCreationView = new ArrayCreationView {Owner = Application.Current.MainWindow};
                     arrayCreationView.ShowDialog();
@@ -2569,6 +2574,12 @@ namespace Classroom_Learning_Partner.ViewModels
                 ACLPArrayBase array;
                 switch(arrayType)
                 {
+                    case "TENBYTEN":
+                        array = new CLPArray(page, columns, rows, ArrayTypes.TenByTen);
+                        array.IsSnappable = false;
+                        array.IsTopLabelVisible = false;
+                        array.IsSideLabelVisible = false;
+                        break;
                     case "ARRAY":
                         array = new CLPArray(page, columns, rows, ArrayTypes.Array);
                         break;
