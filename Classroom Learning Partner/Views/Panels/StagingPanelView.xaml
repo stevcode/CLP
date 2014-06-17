@@ -48,6 +48,28 @@
 
             <DockPanel LastChildFill="True">
 
+                <Border DockPanel.Dock="Top"  
+                        BorderBrush="{StaticResource GrayEdgeColor}" BorderThickness="0 0 0 5">
+                    <DockPanel LastChildFill="True">
+                        <ToggleButton DockPanel.Dock="Top" Height="30"
+                                      HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                                      Content="Students With No Submissions"
+                                      IsChecked="{Binding IsStudentsWithNoSubmissionsVisible}">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="Click">
+                                    <catel:EventToCommand Command="{Binding ToggleNoSubmissionsCommand}"
+                                                          PassEventArgsToCommand="True" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </ToggleButton>
+
+                        <ListBox ItemsSource="{Binding StudentsWithNoSubmissions}"
+                                 HorizontalContentAlignment="Center"
+                                 Height="300"
+                                 Visibility="{Binding IsStudentsWithNoSubmissionsVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />
+                    </DockPanel>
+                </Border>
+                
                 <Grid DockPanel.Dock="Top">
                     <Grid.RowDefinitions>
                         <RowDefinition />
@@ -78,29 +100,7 @@
                         Margin="10"
                         Minimum="1"
                         Maximum="4" />
-                
-                <Border DockPanel.Dock="Bottom"  
-                        BorderBrush="{StaticResource GrayEdgeColor}" BorderThickness="0,5,0,0">
-                    <DockPanel LastChildFill="True">
-                        <ToggleButton DockPanel.Dock="Top" Height="30"
-                                      HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
-                                      Content="Students With No Submissions"
-                                      IsChecked="{Binding IsStudentsWithNoSubmissionsVisible}">
-                            <i:Interaction.Triggers>
-                                <i:EventTrigger EventName="Click">
-                                    <catel:EventToCommand Command="{Binding ToggleNoSubmissionsCommand}"
-                                                          PassEventArgsToCommand="True" />
-                                </i:EventTrigger>
-                            </i:Interaction.Triggers>
-                        </ToggleButton>
 
-                        <ListBox ItemsSource="{Binding StudentsWithNoSubmissions}"
-                                 HorizontalContentAlignment="Center"
-                                 Height="300"
-                                 Visibility="{Binding IsStudentsWithNoSubmissionsVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />
-                    </DockPanel>
-                </Border>
-                
                 <Button DockPanel.Dock="Bottom"
                         Height="30"
                         Content="Clear"
@@ -138,16 +138,17 @@
                                                     <Border Grid.Row="0" 
                                                             VerticalAlignment="Bottom"
                                                             Background="Transparent"
-                                                            BorderBrush="LightGray"
+                                                            BorderBrush="Black"
                                                             BorderThickness="2 2 2 0"
+                                                            Margin="0 0 2 0"
                                                             Height="10"
                                                             Visibility="{Binding IsChecked, ElementName=GroupVisibilityToggle, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}"/>
 
                                                     <ToggleButton Grid.Row="0" 
                                                                   x:Name="GroupVisibilityToggle" 
-                                                                  Margin="10 0 20 0"
+                                                                  Margin="10 0 50 0"
                                                                   Height="20"
-                                                                  Width="175">
+                                                                  MinWidth="100">
                                                         <ToggleButton.Style>
                                                             <Style TargetType="ToggleButton">
                                                                 <Setter Property="IsChecked" Value="True" />
@@ -164,8 +165,9 @@
 
                                                     <Border Grid.Row="1" 
                                                             Background="Transparent"
-                                                            BorderBrush="LightGray"
+                                                            BorderBrush="Black"
                                                             BorderThickness="2 0 2 2"
+                                                            Margin="0 0 2 2"
                                                             Visibility="{Binding IsChecked, ElementName=GroupVisibilityToggle, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
                                                     
                                                         <ItemsPresenter Visibility="{Binding IsChecked, ElementName=GroupVisibilityToggle, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />
@@ -183,22 +185,19 @@
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="*" />
-                                </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 
                                 <TextBlock Grid.Column="0"
-                                           Grid.Row="1"
-                                           Margin="5 0 0 0"
+                                           Margin="5 5 -3 3"
                                            Foreground="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
                                            FontWeight="Bold"
-                                           VerticalAlignment="Center">
-                                    <Run Text="Page " />
+                                           VerticalAlignment="Bottom">
+                                    <Run Text="{Binding Owner.FullName}" />
+                                    <Run Text="   Page " />
                                     <Run Text="{Binding PageNumber}" />
                                     <TextBlock.LayoutTransform>
                                         <TransformGroup>
@@ -210,27 +209,29 @@
                                     </TextBlock.LayoutTransform>
                                 </TextBlock>
                                 
-                                <TextBlock Grid.Column="1"
-                                           Grid.Row="0"
-                                           Margin="0 5 0 0"
+                                <TextBlock Grid.Column="2"
+                                           Margin="-3 0 5 0"
                                            Foreground="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
                                            FontWeight="Bold"
-                                           HorizontalAlignment="Left">
-                                    <Run Text="{Binding Owner.FullName}" />
-                                    <Run Text="   (" />
-                                    <Run Text="{Binding SubmissionTime}" />
-                                    <Run Text=")" />
+                                           VerticalAlignment="Center">
+                                    <Run Text="{Binding SubmissionTime, StringFormat=MM/dd - HH:mm}" />
+                                    <TextBlock.LayoutTransform>
+                                        <TransformGroup>
+                                            <ScaleTransform />
+                                            <SkewTransform />
+                                            <RotateTransform Angle="-90" />
+                                            <TranslateTransform />
+                                        </TransformGroup>
+                                    </TextBlock.LayoutTransform>
                                 </TextBlock>
-                                
+
                                 <views:CLPPagePreviewView x:Name="PagePreviewView"
                                                           Grid.Column="1"
-                                                          Grid.Row="1"
                                                           Margin="5 5 5 0"
                                                           DataContext="{Binding}"
                                                           ClipToBounds="True" />
                                 
-                                <!--<Control Grid.Row="1"
-                                         Grid.Column="1"
+                                <!--<Control Grid.Column="1"
                                          Margin="5 5 5 0">
                                     <Control.Resources>
                                         <ControlTemplate x:Key="ThumbnailTemplate">
@@ -280,8 +281,7 @@
                                     </Control.Style>
                                 </Control>-->
 
-                                <Rectangle Grid.Row="1" 
-                                           Grid.Column="1"
+                                <Rectangle Grid.Column="1"
                                            Margin="5 5 5 0"
                                            Stroke="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
                                            StrokeThickness="2"
@@ -297,7 +297,6 @@
                                 </Rectangle>
                                 
                                 <Button Grid.Column="1"
-                                        Grid.Row="1"
                                         Width="30"
                                         Height="30"
                                         Margin="-20 0 0 -20"
@@ -325,7 +324,6 @@
                                 </Button>
                                 
                                 <StackPanel Grid.Column="1"
-                                            Grid.Row="1"
                                             Height="16"
                                             IsHitTestVisible="False"
                                             HorizontalAlignment="Left"
@@ -353,10 +351,9 @@
                                     
                                 </StackPanel>
                                 
-                                <StackPanel Grid.Row="1"
-                                            Grid.Column="1"
+                                <StackPanel Grid.Column="1"
                                             Width="20"
-                                            Margin="0 0 2 7"
+                                            Margin="0 0 2 0"
                                             HorizontalAlignment="Right"
                                             VerticalAlignment="Bottom"
                                             Orientation="Vertical">

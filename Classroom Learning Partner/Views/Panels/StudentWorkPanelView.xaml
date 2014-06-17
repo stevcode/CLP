@@ -714,13 +714,13 @@
                        Margin="0 0 -7 0"
                        VerticalAlignment="Stretch"
                        HorizontalAlignment="Right">
-                    <i:Interaction.Triggers>
+                    <!--<i:Interaction.Triggers>
                         <i:EventTrigger EventName="DragDelta">
                             <catel:EventToCommand Command="{Binding PanelResizeDragCommand}"
                                                   PassEventArgsToCommand="True" />
                             <catel:EventToCommand Command="{Binding PageHeightUpdateCommand}" />
                         </i:EventTrigger>
-                    </i:Interaction.Triggers>
+                    </i:Interaction.Triggers>-->
                     <Thumb.Template>
                         <ControlTemplate>
                             <Grid VerticalAlignment="Stretch"
