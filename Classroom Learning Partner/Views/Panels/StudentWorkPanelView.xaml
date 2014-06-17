@@ -523,11 +523,11 @@
                                                             </Image>
                                                         </StackPanel>
                                                         <StackPanel Grid.Row="0"
-                                                                    Height="20"
+                                                                    Width="20"
                                                                     Margin="0 0 7 2"
                                                                     HorizontalAlignment="Right"
                                                                     VerticalAlignment="Bottom"
-                                                                    Orientation="Horizontal">
+                                                                    Orientation="Vertical">
 
                                                             <ToggleButton Width="20" IsChecked="{Binding ViewModel.IsStarred, ElementName=PagePreviewView}">
                                                                 <ToggleButton.Style>
@@ -545,6 +545,31 @@
                                                                                     <Setter.Value>
                                                                                         <ControlTemplate TargetType="{x:Type ToggleButton}">
                                                                                             <Image x:Name="ButtonImage" Source="pack://application:,,,/Resources/Images/Starred16.png" />
+                                                                                        </ControlTemplate>
+                                                                                    </Setter.Value>
+                                                                                </Setter>
+                                                                            </Trigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </ToggleButton.Style>
+                                                            </ToggleButton>
+
+                                                            <ToggleButton Width="20" IsChecked="{Binding ViewModel.IsDotted, ElementName=PagePreviewView}">
+                                                                <ToggleButton.Style>
+                                                                    <Style TargetType="ToggleButton">
+                                                                        <Setter Property="Template">
+                                                                            <Setter.Value>
+                                                                                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                                                                    <Image x:Name="ButtonImage" Source="pack://application:,,,/Resources/Images/NotDotted16.png" />
+                                                                                </ControlTemplate>
+                                                                            </Setter.Value>
+                                                                        </Setter>
+                                                                        <Style.Triggers>
+                                                                            <Trigger Property="IsChecked" Value="True">
+                                                                                <Setter Property="Template">
+                                                                                    <Setter.Value>
+                                                                                        <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                                                                            <Image x:Name="ButtonImage" Source="pack://application:,,,/Resources/Images/Dotted16.png" />
                                                                                         </ControlTemplate>
                                                                                     </Setter.Value>
                                                                                 </Setter>

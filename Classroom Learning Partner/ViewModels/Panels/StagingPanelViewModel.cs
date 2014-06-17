@@ -16,6 +16,7 @@ namespace Classroom_Learning_Partner.ViewModels
     {
         SortAndGroupByName,
         SortAndGroupByPageNumber,
+        SortAndGroupByStarred,
         SortByTime
     }
 
@@ -23,6 +24,7 @@ namespace Classroom_Learning_Partner.ViewModels
     {
         private static readonly PropertyGroupDescription OwnerFullNameGroup = new PropertyGroupDescription("Owner.FullName");
         private static readonly PropertyGroupDescription PageNumberGroup = new PropertyGroupDescription("PageNumber");
+        private static readonly PropertyGroupDescription StarredGroup = new PropertyGroupDescription("IsStarred");
 
         private static readonly SortDescription OwnerFullNameAscendingSort = new SortDescription("Owner.FullName", ListSortDirection.Ascending);
         private static readonly SortDescription OwnerFullNameDescendingSort = new SortDescription("Owner.FullName", ListSortDirection.Descending);
@@ -30,6 +32,8 @@ namespace Classroom_Learning_Partner.ViewModels
         private static readonly SortDescription SubmissionTimeDescendingSort = new SortDescription("SubmissionTime", ListSortDirection.Descending);
         private static readonly SortDescription PageNumberAscendingSort = new SortDescription("PageNumber", ListSortDirection.Ascending);
         private static readonly SortDescription PageNumberDescendingSort = new SortDescription("PageNumber", ListSortDirection.Descending);
+        private static readonly SortDescription StarredAscendingSort = new SortDescription("IsStarred", ListSortDirection.Ascending);
+        private static readonly SortDescription StarredDescendingSort = new SortDescription("IsStarred", ListSortDirection.Descending);
 
         #region Constructor
 
@@ -373,6 +377,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 case SortAndGroupTypes.SortByTime:
                     ApplySortByTime();
                     break;
+                case SortAndGroupTypes.SortAndGroupByStarred:
+                    ApplySortAndGroupByStarred();
+                    break;
                 default:
                     ApplySortAndGroupByName();
                     break;
@@ -403,6 +410,21 @@ namespace Classroom_Learning_Partner.ViewModels
             SortedAndGroupedPages.SortDescriptions.Add(SubmissionTimeAscendingSort);
         }
 
+        public void ApplySortAndGroupByStarred()
+        {
+            SortedAndGroupedPages.GroupDescriptions.Clear();
+            SortedAndGroupedPages.SortDescriptions.Clear();
+
+            SortedAndGroupedPages.GroupDescriptions.Add(StarredGroup);
+            SortedAndGroupedPages.SortDescriptions.Add(StarredAscendingSort);
+
+            SortedAndGroupedPages.GroupDescriptions.Add(PageNumberGroup);
+            SortedAndGroupedPages.SortDescriptions.Add(PageNumberAscendingSort);
+
+            SortedAndGroupedPages.SortDescriptions.Add(OwnerFullNameAscendingSort);
+            SortedAndGroupedPages.SortDescriptions.Add(SubmissionTimeAscendingSort);
+        }
+
         public void ApplySortByTime()
         {
             SortedAndGroupedPages.GroupDescriptions.Clear();
@@ -419,8 +441,10 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             AppendCollectionOfPagesToStage(page.Submissions);
 
-            //TODO: keep CurrentSort and skip this if already sorted that way.
-            ApplySortAndGroupByName();
+            if(CurrentSortAndGroupType != SortAndGroupTypes.SortAndGroupByName)
+            {
+                CurrentSortAndGroupType = SortAndGroupTypes.SortAndGroupByName;
+            }
         }
 
         public void SetSubmissionsForPage(CLPPage page)
@@ -438,8 +462,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 AppendCollectionOfPagesToStage(page.Submissions, x => x.OwnerID == student.ID);
             }
 
-            //TODO: keep CurrentSort and skip this if already sorted that way.
-            ApplySortAndGroupByPageNumber();
+            if(CurrentSortAndGroupType != SortAndGroupTypes.SortAndGroupByPageNumber)
+            {
+                CurrentSortAndGroupType = SortAndGroupTypes.SortAndGroupByPageNumber;
+            }
         }
 
         public void SetStudentNotebook(Person student)
@@ -452,8 +478,10 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             AppendCollectionOfPagesToStage(page.Submissions, x => x.Tags.FirstOrDefault(t => t is StarredTag && t.Value == StarredTag.AcceptedValues.Starred.ToString()) != null);
 
-            //TODO: keep CurrentSort and skip this if already sorted that way.
-            ApplySortAndGroupByName();
+            if(CurrentSortAndGroupType != SortAndGroupTypes.SortAndGroupByStarred)
+            {
+                CurrentSortAndGroupType = SortAndGroupTypes.SortAndGroupByStarred;
+            }
         }
 
         #endregion //Shortcuts
