@@ -520,6 +520,13 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 App.MainWindowViewModel.LastSavedTime = notebook.LastSavedDate.Value.ToString("yyyy/MM/dd - HH:mm:ss");
             }
+
+            if(App.CurrentUserMode == App.UserMode.Instructor &&
+               App.MainWindowViewModel.CurrentClassPeriod != null &&
+               App.MainWindowViewModel.CurrentClassPeriod.ClassSubject != null)
+            {
+                App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.SaveClassSubject(App.ClassCacheDirectory);
+            }
         }
 
         public static void OpenClassPeriod()
@@ -666,6 +673,11 @@ namespace Classroom_Learning_Partner.ViewModels
             App.MainWindowViewModel.OpenNotebooks.Add(notebookToUse);
             App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(notebookToUse);
             App.MainWindowViewModel.AvailableUsers = App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.StudentList;
+        }
+
+        public static void SaveClassPeriod(ClassPeriod classPeriod)
+        {
+            
         }
 
         public static void ViewAllWork()

@@ -121,28 +121,34 @@ namespace CLP.Entities
                 return;
             }
 
-            var cuttingStroke = ParentPage.History.GetStrokeByID(CuttingStrokeID);
-            if(isAnimationUndo)
+            try
             {
-                ParentPage.InkStrokes.Add(cuttingStroke);
-                PageHistory.UISleep(STROKE_CUT_DELAY);
-            }
-            foreach(var halvedPageObject in HalvedPageObjectIDs.Select(halvedPageObjectID => ParentPage.GetPageObjectByID(halvedPageObjectID)))
-            {
-                ParentPage.PageObjects.Remove(halvedPageObject);
-                ParentPage.History.TrashedPageObjects.Add(halvedPageObject);
-            }
+                var cuttingStroke = ParentPage.History.GetStrokeByID(CuttingStrokeID);
+                if(isAnimationUndo)
+                {
+                    ParentPage.InkStrokes.Add(cuttingStroke);
+                    PageHistory.UISleep(STROKE_CUT_DELAY);
+                }
+                foreach(var halvedPageObject in HalvedPageObjectIDs.Select(halvedPageObjectID => ParentPage.GetPageObjectByID(halvedPageObjectID)))
+                {
+                    ParentPage.PageObjects.Remove(halvedPageObject);
+                    ParentPage.History.TrashedPageObjects.Add(halvedPageObject);
+                }
 
-            foreach(var cutPageObject in CutPageObjectIDs.Select(cutPageObjectID => ParentPage.History.GetPageObjectByID(cutPageObjectID)))
-            {
-                ParentPage.History.TrashedPageObjects.Remove(cutPageObject);
-                ParentPage.PageObjects.Add(cutPageObject);
-                //cutPageObject.RefreshStrokeParentIDs(); //TODO: find way to do this after CutStroke removal if is an animation.
+                foreach(var cutPageObject in CutPageObjectIDs.Select(cutPageObjectID => ParentPage.History.GetPageObjectByID(cutPageObjectID)))
+                {
+                    ParentPage.History.TrashedPageObjects.Remove(cutPageObject);
+                    ParentPage.PageObjects.Add(cutPageObject);
+                    //cutPageObject.RefreshStrokeParentIDs(); //TODO: find way to do this after CutStroke removal if is an animation.
+                }
+                if(isAnimationUndo)
+                {
+                    PageHistory.UISleep(STROKE_CUT_DELAY);
+                    ParentPage.InkStrokes.Remove(cuttingStroke);
+                }
             }
-            if(isAnimationUndo)
+            catch(Exception e)
             {
-                PageHistory.UISleep(STROKE_CUT_DELAY);
-                ParentPage.InkStrokes.Remove(cuttingStroke);
             }
         }
 
@@ -156,28 +162,34 @@ namespace CLP.Entities
                 return;
             }
 
-            var cuttingStroke = ParentPage.History.GetStrokeByID(CuttingStrokeID);
-            if(isAnimationRedo)
+            try
             {
-                ParentPage.InkStrokes.Add(cuttingStroke);
-                PageHistory.UISleep(STROKE_CUT_DELAY);
-            }
-            foreach(var cutPageObject in CutPageObjectIDs.Select(cutPageObjectID => ParentPage.GetPageObjectByID(cutPageObjectID)))
-            {
-                ParentPage.PageObjects.Remove(cutPageObject);
-                ParentPage.History.TrashedPageObjects.Add(cutPageObject);
-            }
+                var cuttingStroke = ParentPage.History.GetStrokeByID(CuttingStrokeID);
+                if(isAnimationRedo)
+                {
+                    ParentPage.InkStrokes.Add(cuttingStroke);
+                    PageHistory.UISleep(STROKE_CUT_DELAY);
+                }
+                foreach(var cutPageObject in CutPageObjectIDs.Select(cutPageObjectID => ParentPage.GetPageObjectByID(cutPageObjectID)))
+                {
+                    ParentPage.PageObjects.Remove(cutPageObject);
+                    ParentPage.History.TrashedPageObjects.Add(cutPageObject);
+                }
 
-            foreach(var halvedPageObject in HalvedPageObjectIDs.Select(halvedPageObjectID => ParentPage.History.GetPageObjectByID(halvedPageObjectID)))
-            {
-                ParentPage.History.TrashedPageObjects.Remove(halvedPageObject);
-                ParentPage.PageObjects.Add(halvedPageObject);
-                //halvedPageObject.RefreshStrokeParentIDs(); //TODO: find way to do this after CutStroke removal if is an animation.
+                foreach(var halvedPageObject in HalvedPageObjectIDs.Select(halvedPageObjectID => ParentPage.History.GetPageObjectByID(halvedPageObjectID)))
+                {
+                    ParentPage.History.TrashedPageObjects.Remove(halvedPageObject);
+                    ParentPage.PageObjects.Add(halvedPageObject);
+                    //halvedPageObject.RefreshStrokeParentIDs(); //TODO: find way to do this after CutStroke removal if is an animation.
+                }
+                if(isAnimationRedo)
+                {
+                    PageHistory.UISleep(STROKE_CUT_DELAY);
+                    ParentPage.InkStrokes.Remove(cuttingStroke);
+                }
             }
-            if(isAnimationRedo)
+            catch(Exception e)
             {
-                PageHistory.UISleep(STROKE_CUT_DELAY);
-                ParentPage.InkStrokes.Remove(cuttingStroke);
             }
         }
 

@@ -905,11 +905,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnSaveNotebookCommandExecute()
         {
-            if(App.MainWindowViewModel.Workspace is NotebookWorkspaceViewModel)
+            if(!(App.MainWindowViewModel.Workspace is NotebookWorkspaceViewModel))
             {
-                Catel.Windows.PleaseWaitHelper.Show(() =>
-                    MainWindowViewModel.SaveNotebook((App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).Notebook), null, "Saving Notebook");
+                return;
             }
+
+            PleaseWaitHelper.Show(() => MainWindowViewModel.SaveNotebook((App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).Notebook), null, "Saving Notebook");
         }
 
         /// <summary>
@@ -3113,6 +3114,21 @@ namespace Classroom_Learning_Partner.ViewModels
                 foreach(Person student in group.Members)
                 {
                     if(classSubjectCreationViewModel.GroupCreationViewModel.GroupType == "Temp")
+                    {
+                        student.TempDifferentiationGroup = group.Label;
+                    }
+                    else
+                    {
+                        student.CurrentDifferentiationGroup = group.Label;
+                    }
+                }
+            }
+
+            foreach(var group in classSubjectCreationViewModel.TempGroupCreationViewModel.Groups)
+            {
+                foreach(Person student in group.Members)
+                {
+                    if(classSubjectCreationViewModel.TempGroupCreationViewModel.GroupType == "Temp")
                     {
                         student.TempDifferentiationGroup = group.Label;
                     }

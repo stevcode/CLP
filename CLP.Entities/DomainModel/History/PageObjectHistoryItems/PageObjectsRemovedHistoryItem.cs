@@ -81,15 +81,17 @@ namespace CLP.Entities
         /// </summary>
         protected override void UndoAction(bool isAnimationUndo)
         {
-            foreach(var pageObject in PageObjectIDs.Select(pageObjectID => ParentPage.History.GetPageObjectByID(pageObjectID)))
+            try
             {
-                try
+                foreach(var pageObject in PageObjectIDs.Select(pageObjectID => ParentPage.History.GetPageObjectByID(pageObjectID)))
                 {
                     ParentPage.History.TrashedPageObjects.Remove(pageObject);
                     ParentPage.PageObjects.Add(pageObject);
                     pageObject.OnAdded();
                 }
-                catch(Exception ex) { }
+            }
+            catch(Exception e)
+            {
             }
         }
 
@@ -98,15 +100,17 @@ namespace CLP.Entities
         /// </summary>
         protected override void RedoAction(bool isAnimationRedo)
         {
-            foreach(var pageObject in PageObjectIDs.Select(pageObjectID => ParentPage.GetPageObjectByID(pageObjectID)))
+            try
             {
-                try
+                foreach(var pageObject in PageObjectIDs.Select(pageObjectID => ParentPage.GetPageObjectByID(pageObjectID)))
                 {
                     ParentPage.PageObjects.Remove(pageObject);
                     pageObject.OnDeleted();
                     ParentPage.History.TrashedPageObjects.Add(pageObject);
                 }
-                catch(Exception ex) { }
+            }
+            catch(Exception e)
+            {
             }
         }
 

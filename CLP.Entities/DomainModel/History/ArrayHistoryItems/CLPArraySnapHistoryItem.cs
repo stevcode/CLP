@@ -174,6 +174,10 @@ namespace CLP.Entities
             }
 
             var snappedArray = ParentPage.History.GetPageObjectByID(SnappedArrayID) as CLPArray;
+            if(snappedArray == null)
+            {
+                return;
+            }
 
             snappedArray.SizeArrayToGridLevel(SnappedArraySquareSize);
             snappedArray.ParentPage = ParentPage;
