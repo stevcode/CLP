@@ -443,6 +443,30 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+        public bool IsDotted
+        {
+            get
+            {
+                DottedTag dottedTag = Page.Tags.FirstOrDefault(x => x is DottedTag) as DottedTag;
+                if(dottedTag == null)
+                {
+                    return false;
+                }
+                return dottedTag.Value == DottedTag.AcceptedValues.Dotted.ToString();
+            }
+            set
+            {
+                if(value == true)
+                {
+                    Page.AddTag(new DottedTag(Page, DottedTag.AcceptedValues.Dotted));
+                }
+                else
+                {
+                    Page.AddTag(new DottedTag(Page, DottedTag.AcceptedValues.Undotted));
+                }
+            }
+        }
+
         public CorrectnessTag.AcceptedValues Correctness
         {
             get
