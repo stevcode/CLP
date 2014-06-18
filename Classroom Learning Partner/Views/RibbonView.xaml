@@ -322,8 +322,8 @@
                               CommandParameter="ARRAY" />
 
                 <RibbonButton Label="10x10"
-                              LargeImageSource="pack://application:,,,/Resources/Images/Array32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/Array16.png"
+                              LargeImageSource="pack://application:,,,/Resources/Images/PresetArray32.png"
+                              SmallImageSource="pack://application:,,,/Resources/Images/PresetArray16.png"
                               Command="{Binding InsertArrayCommand}"
                               CommandParameter="TENBYTEN" />
 

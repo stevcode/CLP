@@ -29,7 +29,10 @@ namespace CLP.Entities
             : base(parentPage, owner)
         {
             CuttingStrokeID = cuttingStroke.GetStrokeID();
-            ParentPage.History.TrashedInkStrokes.Add(cuttingStroke);
+            if(!ParentPage.History.TrashedInkStrokes.Contains(cuttingStroke))
+            {
+                ParentPage.History.TrashedInkStrokes.Add(cuttingStroke);
+            }
             HalvedPageObjectIDs = halvedPageObjectIDs;
             foreach(var cutPageObject in cutPageObjects)
             {

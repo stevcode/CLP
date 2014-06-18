@@ -949,6 +949,9 @@
     <Content Include="External Libraries\System.Reactive.Providers.dll" />
     <Content Include="External Libraries\System.Reactive.Windows.Threading.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
+    <Resource Include="Resources\Images\PresetArray16.png" />
+    <Resource Include="Resources\Images\PresetArray32.png" />
+    <Resource Include="Resources\Images\PresetArray64.png" />
     <Resource Include="Resources\Images\Dotted16.png" />
     <Resource Include="Resources\Images\NotDotted16.png" />
     <Resource Include="Resources\Images\NotCorrect16.png" />
