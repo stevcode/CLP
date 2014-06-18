@@ -334,11 +334,19 @@ namespace CLP.Entities
 
         public void GeneratePageNumbers()
         {
-            var initialPageNumber = Pages.Any() ? Pages.First().PageNumber : 1;
+            var initialPageNumber = Pages.Any() ? Pages.First().PageNumber - 1 : 0;
+            CLPPage lastPage = null;
             foreach(var page in Pages)
             {
-                page.PageNumber = initialPageNumber;
-                initialPageNumber++;
+                if(lastPage == null || page.ID != lastPage.ID)
+                {
+                    initialPageNumber++;
+                }
+                if(page.PageNumber != 999) // TODO: less stupid special case for exit tickets?
+                {
+                    page.PageNumber = initialPageNumber;
+                }
+                lastPage = page;
             }
         }
 
