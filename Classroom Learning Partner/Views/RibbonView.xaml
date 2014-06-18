@@ -588,7 +588,11 @@
                 <RibbonButton Label="Make Exit Tickets"
                               LargeImageSource="..\Resources\Images\IndexCards32.png"
                               Command="{Binding MakeExitTicketsCommand}" />
-                
+
+                <RibbonButton Label="Exit Tickets from Current Page"
+                              LargeImageSource="..\Resources\Images\IndexCards32.png"
+                              Command="{Binding MakeExitTicketsFromCurrentPageCommand}" />
+
             </RibbonGroup>
 
         </RibbonTab>

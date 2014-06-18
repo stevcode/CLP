@@ -37,25 +37,8 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             
             ClassPeriodsForDisplay = new ObservableCollection<ClassPeriodForDisplay>();
-            
-            ClassPeriod everything = new ClassPeriod();
-            List<string> pageIDs = new List<string>();
-            foreach(CLPPage page in Notebook.Pages) {
-                pageIDs.Add(page.ID);
-            }
-            everything.PageIDs = pageIDs;
-            everything.StartTime = DateTime.Now;
-            
-            if(App.MainWindowViewModel.CurrentClassPeriod != null)
-            {
-                ClassPeriodsForDisplay.Add(new ClassPeriodForDisplay(App.MainWindowViewModel.CurrentClassPeriod, true));
-                SetCurrentPagesFromList(App.MainWindowViewModel.CurrentClassPeriod.PageIDs);
-            }
-            else
-            {
-                ClassPeriodsForDisplay.Add(new ClassPeriodForDisplay(everything, true));
-                SetCurrentPagesFromList(everything.PageIDs);
-            }
+
+            CurrentPages = Notebook.Pages;
 
             SetCurrentPageCommand = new Command<CLPPage>(OnSetCurrentPageCommandExecute);
             ChooseClassPeriodCommand = new Command(OnChooseClassPeriodCommandExecute);
@@ -194,7 +177,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnChooseClassPeriodCommandExecute()
         {
-            
+            /*
             ClassPeriodChooserView classPeriodChooser = new ClassPeriodChooserView(ClassPeriodsForDisplay);
             classPeriodChooser.Owner = Application.Current.MainWindow;
             classPeriodChooser.ShowDialog();
@@ -216,12 +199,12 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                 }
                 SetCurrentPagesFromList(pageIdsToShow);
-            }
+            }*/
         }
 
         #endregion
 
-        private void SetCurrentPagesFromList(List<string> PageIDList)
+        /*private void SetCurrentPagesFromList(List<string> PageIDList)
         {
             CurrentPages.Clear();
             var pageList = PageIDList.ConvertAll<CLPPage>(id => Notebook.GetPageByCompositeKeys(id, Notebook.OwnerID, "0", 0));
@@ -234,6 +217,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
             setWidth();
-        }
+        }*/
     }
 }

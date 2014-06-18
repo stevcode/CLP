@@ -17,7 +17,7 @@ namespace Classroom_Learning_Partner.Converters
             CLPPage current = values[0] as CLPPage;
             CLPPage compared = values[1] as CLPPage;
 
-            if(current != null && compared != null && current.ID == compared.ID && current.OwnerID == compared.OwnerID)
+            if(current != null && compared != null && current.ID == compared.ID && current.OwnerID == compared.OwnerID && current.DifferentiationLevel == compared.DifferentiationLevel)
             {
                  return dict["MainColor"];
             }

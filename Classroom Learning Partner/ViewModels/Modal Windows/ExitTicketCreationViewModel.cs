@@ -10,6 +10,19 @@ namespace Classroom_Learning_Partner.ViewModels
     public class ExitTicketCreationViewModel : ViewModelBase
     {
 
+        public ExitTicketCreationViewModel(CLPPage basePage)
+        {
+            GroupCreationViewModel = new GroupCreationViewModel("Temp");
+            BasePage = basePage.DuplicatePage();
+
+            foreach(Group group in GroupCreationViewModel.Groups)
+            {
+                ExitTickets.Add(DifferentiatePage(BasePage, group.Label));
+            }
+
+            GroupCreationViewModel.Groups.CollectionChanged += Groups_CollectionChanged;
+        }
+
         public ExitTicketCreationViewModel()
         {
             GroupCreationViewModel = new GroupCreationViewModel("Temp");
