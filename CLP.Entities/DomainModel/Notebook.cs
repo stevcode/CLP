@@ -353,11 +353,18 @@ namespace CLP.Entities
             newNotebook.CurrentPage = CurrentPage.CopyForNewOwner(owner);
             foreach(var newPage in Pages.Select(page => page.CopyForNewOwner(owner))) 
             {
+                if(!owner.IsStudent)
+                {
+                    newNotebook.Pages.Add(newPage);
+                    continue;
+                }
+
                 if(newPage.DifferentiationLevel == string.Empty ||
                    newPage.DifferentiationLevel == "0" ||
                    newPage.DifferentiationLevel == owner.CurrentDifferentiationGroup)
                 {
                     newNotebook.Pages.Add(newPage);
+                    continue;
                 }
 
                 if(owner.CurrentDifferentiationGroup == string.Empty &&
@@ -678,6 +685,10 @@ namespace CLP.Entities
                 notebook.Pages = new ObservableCollection<CLPPage>(notebookPages.OrderBy(x => x.PageNumber));
 
                 var displaysFolderPath = Path.Combine(folderPath, "Displays");
+                if(!Directory.Exists(displaysFolderPath))
+                {
+                    return notebook;
+                }
                 var displayFilePaths = Directory.EnumerateFiles(displaysFolderPath, "*.xml");
                 var displays = new List<IDisplay>();
                 foreach(var displayFilePath in displayFilePaths)
@@ -772,6 +783,7 @@ namespace CLP.Entities
                     {
                         if(submission.ID == notebookPage.ID &&
                            submission.OwnerID == notebookPage.OwnerID &&
+                           submission.DifferentiationLevel == notebookPage.DifferentiationLevel &&
                            submission.VersionIndex != 0)
                         {
                             notebookPage.Submissions.Add(submission);

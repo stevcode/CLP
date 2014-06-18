@@ -414,18 +414,18 @@ namespace CLP.Entities
 
         public static readonly PropertyData TagsProperty = RegisterProperty("Tags", typeof(ObservableCollection<ITag>), () => new ObservableCollection<ITag>());
 
-        public virtual string IsStarred
-        {
-            get
-            {
-                StarredTag starredTag = Tags.FirstOrDefault(x => x is StarredTag) as StarredTag;
-                if(starredTag != null && starredTag.Value == StarredTag.AcceptedValues.Starred.ToString())
-                {
-                    return "Starred";
-                }
-                return "Unstarred";
-            }
-        }
+        //public virtual string IsStarred
+        //{
+        //    get
+        //    {
+        //        StarredTag starredTag = Tags.FirstOrDefault(x => x is StarredTag) as StarredTag;
+        //        if(starredTag != null && starredTag.Value == StarredTag.AcceptedValues.Starred.ToString())
+        //        {
+        //            return "Starred";
+        //        }
+        //        return "Unstarred";
+        //    }
+        //}
 
         public static readonly PropertyData IsStarredProperty = RegisterProperty("IsStarred", typeof(string));
 

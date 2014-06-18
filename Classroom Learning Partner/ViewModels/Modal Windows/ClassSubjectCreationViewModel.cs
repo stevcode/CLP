@@ -12,7 +12,10 @@ namespace Classroom_Learning_Partner.ViewModels
         public ClassSubjectCreationViewModel(ClassSubject classSubject)
         {
             ClassSubject = classSubject;
-            ClassSubject.Teacher = new Person();
+            ClassSubject.Teacher = new Person
+                                   {
+                                       IsStudent = false
+                                   };
 
             GroupCreationViewModel = new GroupCreationViewModel();
             TempGroupCreationViewModel = new GroupCreationViewModel("Temp");

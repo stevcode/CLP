@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.ServiceModel;
 using System.Windows;
@@ -112,7 +113,7 @@ namespace Classroom_Learning_Partner
                                                        (DispatcherOperationCallback)delegate
                                                                                     {
                                                                                         App.MainWindowViewModel.CurrentClassPeriod = classPeriod;
-                                                                                        App.MainWindowViewModel.AvailableUsers = classPeriod.ClassSubject.StudentList;
+                                                                                        App.MainWindowViewModel.AvailableUsers = new ObservableCollection<Person>(classPeriod.ClassSubject.StudentList.OrderBy(x => x.FullName));
 
                                                                                         return null;
                                                                                     },

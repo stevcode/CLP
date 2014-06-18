@@ -661,6 +661,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         var submissionInfo = submissionFileName.Split(';');
                         if(submissionInfo.Length == 5 &&
                            submissionInfo[2] == page.ID &&
+                           submissionInfo[3] == page.DifferentiationLevel &&
                            submissionInfo[4] != "0")
                         {
                             var submission = Load<CLPPage>(submissionPath, SerializationMode.Xml);
