@@ -1116,11 +1116,21 @@ namespace Classroom_Learning_Partner.ViewModels
                         pdfImage.BorderColor = BaseColor.BLACK;
                         pdfImage.BorderWidth = 1f;
 
-                        var labelText = notebook.Name + ", Page " + page.PageNumber + ", Submission Time: " + page.SubmissionTime + ", Owner: " + page.Owner.FullName; 
+                        var labelText = notebook.Name;
                         if(page.PageType == PageTypes.Animation)
                         {
-                            labelText = notebook.Name + ", [ANIMATION] Page " + page.PageNumber + ", Submission Time: " + page.SubmissionTime + ", Owner: " + page.Owner.FullName; 
+                            labelText += ", [ANIMATION] Page ";
                         }
+                        else
+                        {
+                            labelText += ", Page ";
+                        }
+                        labelText += page.PageNumber;
+                        if(page.DifferentiationLevel != "0")
+                        {
+                            labelText += " " + page.DifferentiationLevel;
+                        }
+                        labelText += ", Submission Time: " + page.SubmissionTime + ", Owner: " + page.Owner.FullName; 
                         var label = new iTextSharp.text.Paragraph(labelText);
                         label.Alignment = Element.ALIGN_CENTER;
 
