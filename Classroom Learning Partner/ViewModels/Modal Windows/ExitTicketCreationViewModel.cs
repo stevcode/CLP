@@ -14,6 +14,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             GroupCreationViewModel = new GroupCreationViewModel("Temp");
             BasePage = basePage.DuplicatePage();
+            BasePage.Owner = App.MainWindowViewModel.CurrentUser;
 
             foreach(Group group in GroupCreationViewModel.Groups)
             {
@@ -27,6 +28,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             GroupCreationViewModel = new GroupCreationViewModel("Temp");
             BasePage = new CLPPage();
+            BasePage.Owner = App.MainWindowViewModel.CurrentUser;
 
             foreach (Group group in GroupCreationViewModel.Groups)
             {
@@ -81,6 +83,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private static CLPPage DifferentiatePage(CLPPage original, string label)
         {
             CLPPage differentiatedPage = original.DuplicatePage();
+            differentiatedPage.Owner = App.MainWindowViewModel.CurrentUser;
             differentiatedPage.ID = original.ID;
             differentiatedPage.PageNumber = 999;
             differentiatedPage.DifferentiationLevel = label;
