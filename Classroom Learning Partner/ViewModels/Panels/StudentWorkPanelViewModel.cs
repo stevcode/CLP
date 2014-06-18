@@ -36,11 +36,8 @@ namespace Classroom_Learning_Partner.ViewModels
                     StudentList.Add(Person.TestSubmitter);
                 }
             }
-            
-            foreach(CLPPage page in Notebook.Pages)
-            {
-                CurrentPages.Add(page);
-            }
+
+            CurrentPages = Notebook.Pages;
             for(int i = 0; i <= 1; i++)
             {
                 if(i < CurrentPages.Count)
