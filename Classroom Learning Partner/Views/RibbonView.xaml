@@ -559,9 +559,9 @@
                               LargeImageSource="pack://application:,,,/Resources/Images/BlankPage64.png"
                               Command="{Binding CreateSubPageCommand}" /> 
 
-                <RibbonButton Label="Broadcast This Page"
+                <RibbonButton Label="Send Page To Student(s)"
                               LargeImageSource="pack://application:,,,/Resources/Images/BlankPage64.png"
-                              Command="{Binding BroadcastPageCommand}" />
+                              Command="{Binding SendPageToStudentCommand}" />
 
             </RibbonGroup>
             

@@ -177,6 +177,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //Testing
             TurnOffWebcamSharing = new Command(OnTurnOffWebcamSharingExecute);
             BroadcastPageCommand = new Command(OnBroadcastPageCommandExecute);
+            SendPageToStudentCommand = new Command(OnSendPageToStudentCommandExecute);
             ReplacePageCommand = new Command(OnReplacePageCommandExecute);
             CreatePageSubmissionCommand = new Command(OnCreatePageSubmissionCommandExecute);
             ShowTagsCommand = new Command(OnShowTagsCommandExecute);
@@ -1887,6 +1888,53 @@ namespace Classroom_Learning_Partner.ViewModels
                     Logger.Instance.WriteToLog("Failed to save class subject after making groups.");
                 }
             }
+        }
+
+        public Command SendPageToStudentCommand { get; private set; }
+
+        private void OnSendPageToStudentCommandExecute()
+        {
+            if(!App.MainWindowViewModel.AvailableUsers.Any()) 
+            {
+                Logger.Instance.WriteToLog("No Students Found");
+                return;
+            }
+
+            var studentSelectorViewModel = new StudentSelectorViewModel();
+            var studentSelectorView = new StudentSelectorView(studentSelectorViewModel);
+            studentSelectorView.Owner = Application.Current.MainWindow;
+            studentSelectorView.ShowDialog();
+            if(studentSelectorView.DialogResult != true)
+            {
+                return;
+            }
+
+            CurrentPage.History.ClearHistory();
+            CurrentPage.SerializedStrokes = StrokeDTO.SaveInkStrokes(CurrentPage.InkStrokes);
+            CurrentPage.History.SerializedTrashedInkStrokes = StrokeDTO.SaveInkStrokes(CurrentPage.History.TrashedInkStrokes);
+            var serializedCurrentPage = CLPServiceAgent.Instance.Zip(ObjectSerializer.ToString(CurrentPage));
+            Parallel.ForEach(studentSelectorViewModel.SelectedStudents,
+                student =>
+                {
+                    try
+                    {
+                        var binding = new NetTcpBinding
+                        {
+                            Security =
+                            {
+                                Mode = SecurityMode.None
+                            }
+                        };
+                        var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(binding, 
+                            new EndpointAddress(student.CurrentMachineAddress));
+                        studentProxy.AddNewPage(serializedCurrentPage, 999);
+                        (studentProxy as ICommunicationObject).Close();
+                    }
+                    catch(Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                });
         }
 
         public Command MakeExitTicketsCommand { get; private set; }
