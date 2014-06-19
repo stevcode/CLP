@@ -195,9 +195,8 @@
                                 </Rectangle>
                                 
                                 <Button Grid.Column="1"
-                                        Width="30"
-                                        Height="30"
-                                        Margin="-20 0 0 -20"
+                                        Width="25"
+                                        Height="25"
                                         Cursor="Hand"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Top"

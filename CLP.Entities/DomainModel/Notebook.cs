@@ -358,7 +358,7 @@ namespace CLP.Entities
                 return null;
             }
             newNotebook.Owner = owner;
-            newNotebook.CurrentPage = CurrentPage.CopyForNewOwner(owner);
+            newNotebook.CurrentPage = CurrentPage == null ? null : CurrentPage.CopyForNewOwner(owner);
             foreach(var newPage in Pages.Select(page => page.CopyForNewOwner(owner))) 
             {
                 if(!owner.IsStudent)
