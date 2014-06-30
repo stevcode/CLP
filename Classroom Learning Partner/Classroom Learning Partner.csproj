@@ -378,8 +378,8 @@
     <Compile Include="ViewModels\PageObjects\Ink Regions\CLPShadingRegionViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\ShapeViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPImageViewModel.cs" />
-    <Compile Include="ViewModels\PageObjects\Stamps\CLPStampViewModel.cs" />
-    <Compile Include="ViewModels\PageObjects\Stamps\CLPStampCopyViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\Stamps\StampViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\Stamps\StampedObjectViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPTextBoxViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\IPageObjectAdorners.cs" />
     <Compile Include="ViewModels\PageObjects\StrokePathViewModel.cs" />
@@ -465,8 +465,8 @@
     <Compile Include="Views\PageObjects\ShapeView.xaml.cs">
       <DependentUpon>ShapeView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PageObjects\Stamps\CLPStampView.xaml.cs">
-      <DependentUpon>CLPStampView.xaml</DependentUpon>
+    <Compile Include="Views\PageObjects\Stamps\StampView.xaml.cs">
+      <DependentUpon>StampView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\Regions\CLPInkShapeRegionView.xaml.cs">
       <DependentUpon>CLPInkShapeRegionView.xaml</DependentUpon>
@@ -480,8 +480,8 @@
     <Compile Include="Views\PageObjects\Regions\CLPGroupingRegionView.xaml.cs">
       <DependentUpon>CLPGroupingRegionView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PageObjects\Stamps\CLPStampCopyView.xaml.cs">
-      <DependentUpon>CLPStampCopyView.xaml</DependentUpon>
+    <Compile Include="Views\PageObjects\Stamps\StampedObjectView.xaml.cs">
+      <DependentUpon>StampedObjectView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\PageObjectContainerView.xaml.cs">
       <DependentUpon>PageObjectContainerView.xaml</DependentUpon>
@@ -736,7 +736,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PageObjects\Stamps\CLPStampView.xaml">
+    <Page Include="Views\PageObjects\Stamps\StampView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -756,7 +756,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\PageObjects\Stamps\CLPStampCopyView.xaml">
+    <Page Include="Views\PageObjects\Stamps\StampedObjectView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

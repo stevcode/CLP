@@ -280,7 +280,11 @@ namespace CLP.Entities
 
         public virtual void OnDeleted() { }
 
+        public virtual void OnMoving() { }
+
         public virtual void OnMoved() { }
+
+        public virtual void OnResizing() { }
 
         public virtual void OnResized() { }
 

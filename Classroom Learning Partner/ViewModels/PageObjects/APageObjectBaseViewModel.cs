@@ -34,12 +34,12 @@ namespace Classroom_Learning_Partner.ViewModels
             RemovePageObjectCommand = new Command(OnRemovePageObjectCommandExecute);
             ErasePageObjectCommand = new Command<MouseEventArgs>(OnErasePageObjectCommandExecute);
 
-            DragPageObjectCommand = new Command<DragDeltaEventArgs>(OnDragPageObjectCommandExecute);
             DragStartPageObjectCommand = new Command<DragStartedEventArgs>(OnDragStartPageObjectCommandExecute);
+            DragPageObjectCommand = new Command<DragDeltaEventArgs>(OnDragPageObjectCommandExecute);
             DragStopPageObjectCommand = new Command<DragCompletedEventArgs>(OnDragStopPageObjectCommandExecute);
 
-            ResizePageObjectCommand = new Command<DragDeltaEventArgs>(OnResizePageObjectCommandExecute);
             ResizeStartPageObjectCommand = new Command<DragStartedEventArgs>(OnResizeStartPageObjectCommandExecute);
+            ResizePageObjectCommand = new Command<DragDeltaEventArgs>(OnResizePageObjectCommandExecute);
             ResizeStopPageObjectCommand = new Command<DragCompletedEventArgs>(OnResizeStopPageObjectCommandExecute);
 
             ToggleMainAdornersCommand = new Command<MouseButtonEventArgs>(OnToggleMainAdornersCommandExecute);
@@ -218,6 +218,22 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
+        /// Gets the DragStartPageObjectCommand command.
+        /// </summary>
+        public Command<DragStartedEventArgs> DragStartPageObjectCommand { get; set; }
+
+        /// <summary>
+        /// Method to invoke when the DragStartPageObjectCommand command is executed.
+        /// </summary>
+        private void OnDragStartPageObjectCommandExecute(DragStartedEventArgs e)
+        {
+            PageObject.ParentPage.History.BeginBatch(new PageObjectMoveBatchHistoryItem(PageObject.ParentPage,
+                                                                                         App.MainWindowViewModel.CurrentUser,
+                                                                                         PageObject.ID,
+                                                                                         new Point(PageObject.XPosition, PageObject.YPosition)));
+        }
+
+        /// <summary>
         /// Gets the DragPageObjectCommand command.
         /// </summary>
         public Command<DragDeltaEventArgs> DragPageObjectCommand { get; set; }
@@ -232,22 +248,7 @@ namespace Classroom_Learning_Partner.ViewModels
             newY = Math.Min(newY, parentPage.Height - PageObject.Height);
 
             ChangePageObjectPosition(PageObject, newX, newY);
-        }
-
-        /// <summary>
-        /// Gets the DragStartPageObjectCommand command.
-        /// </summary>
-        public Command<DragStartedEventArgs> DragStartPageObjectCommand { get; set; }
-
-        /// <summary>
-        /// Method to invoke when the DragStartPageObjectCommand command is executed.
-        /// </summary>
-        private void OnDragStartPageObjectCommandExecute(DragStartedEventArgs e)
-        {
-            PageObject.ParentPage.History.BeginBatch(new PageObjectMoveBatchHistoryItem(PageObject.ParentPage,
-                                                                                         App.MainWindowViewModel.CurrentUser,
-                                                                                         PageObject.ID,
-                                                                                         new Point(PageObject.XPosition, PageObject.YPosition)));
+            PageObject.OnMoving();
         }
 
         /// <summary>
@@ -269,6 +270,19 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
+        /// Gets the ResizeStartPageObjectCommand command.
+        /// </summary>
+        public Command<DragStartedEventArgs> ResizeStartPageObjectCommand { get; set; }
+
+        private void OnResizeStartPageObjectCommandExecute(DragStartedEventArgs e)
+        {
+            PageObject.ParentPage.History.BeginBatch(new PageObjectResizeBatchHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser,
+                                                                                           PageObject.ID,
+                                                                                           new Point(PageObject.Width,
+                                                                                                     PageObject.Height)));
+        }
+
+        /// <summary>
         /// Gets the ResizePageObjectCommand command.
         /// </summary>
         public Command<DragDeltaEventArgs> ResizePageObjectCommand { get; set; }
@@ -285,19 +299,7 @@ namespace Classroom_Learning_Partner.ViewModels
             newHeight = Math.Min(newHeight, parentPage.Height - PageObject.YPosition);
             
             ChangePageObjectDimensions(PageObject, newHeight, newWidth);
-        }
-
-        /// <summary>
-        /// Gets the ResizeStartPageObjectCommand command.
-        /// </summary>
-        public Command<DragStartedEventArgs> ResizeStartPageObjectCommand { get; set; }
-
-        private void OnResizeStartPageObjectCommandExecute(DragStartedEventArgs e)
-        {
-            PageObject.ParentPage.History.BeginBatch(new PageObjectResizeBatchHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser,
-                                                                                           PageObject.ID,
-                                                                                           new Point(PageObject.Width,
-                                                                                                     PageObject.Height)));
+            PageObject.OnResizing();
         }
 
         /// <summary>

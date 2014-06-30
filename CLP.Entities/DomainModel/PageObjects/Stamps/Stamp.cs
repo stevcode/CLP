@@ -4,7 +4,7 @@ using Catel.Data;
 
 namespace CLP.Entities
 {
-    public class Stamp : APageObjectBase
+    public class Stamp : APageObjectBase, ICountable
     {
         #region Constructors
 
@@ -32,6 +32,53 @@ namespace CLP.Entities
 
         #region Properties
 
+        public virtual double HandleHeight
+        {
+            get { return 35; }
+        }
+
+        public virtual double PartsHeight
+        {
+            get { return 70; }
+        }
+
+        /// <summary>
+        /// Designates the <see cref="Stamp" /> as a CollectionStamp that can accept <see cref="IPageObject" />s.
+        /// </summary>
+        public bool IsCollectionStamp
+        {
+            get { return GetValue<bool>(IsCollectionStampProperty); }
+            set { SetValue(IsCollectionStampProperty, value); }
+        }
+
+        public static readonly PropertyData IsCollectionStampProperty = RegisterProperty("IsCollectionStamp", typeof(bool), false);
+
+        #region ICountable Members
+
+        /// <summary>
+        /// Number of parts the <see cref="Stamp" /> represents.
+        /// </summary>
+        public int Parts
+        {
+            get { return GetValue<int>(PartsProperty); }
+            set { SetValue(PartsProperty, value); }
+        }
+
+        public static readonly PropertyData PartsProperty = RegisterProperty("Parts", typeof(int), 0);
+
+        /// <summary>
+        /// Is an <see cref="ICountable" /> that doesn't accept inner parts.
+        /// </summary>
+        public bool IsInnerPart
+        {
+            get { return GetValue<bool>(IsInnerPartProperty); }
+            set { SetValue(IsInnerPartProperty, value); }
+        }
+
+        public static readonly PropertyData IsInnerPartProperty = RegisterProperty("IsInnerPart", typeof(bool), false);
+
+        #endregion
+
         #endregion //Properties
 
         #region Methods
@@ -45,6 +92,13 @@ namespace CLP.Entities
         {
             get { return true; }
         }
+
+        public override void OnResizing()
+        {
+
+        }
+
+        public override void OnResized() { OnResizing(); }
 
         #endregion
 
@@ -65,5 +119,7 @@ namespace CLP.Entities
         }
 
         #endregion //Methods
+
+        
     }
 }

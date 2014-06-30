@@ -13,35 +13,35 @@ namespace Classroom_Learning_Partner.ViewModels
     /// <summary>
     /// UserControl view model.
     /// </summary>
-    public class CLPStampCopyViewModel : APageObjectBaseViewModel
+    public class StampedObjectViewModel : APageObjectBaseViewModel
     {
         #region Constructor
 
-        ///// <summary>
-        ///// Initializes a new instance of the <see cref="CLPStampCopyViewModel"/> class.
-        ///// </summary>
-        //public CLPStampCopyViewModel(CLPStampCopy container)
-        //{
-        //    PageObject = container;
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StampedObjectViewModel"/> class.
+        /// </summary>
+        public StampedObjectViewModel(CLPStampCopy container)
+        {
+            PageObject = container;
 
-        //    if(container.ImageID != string.Empty)
-        //    {
-        //        try
-        //        {
-        //            var byteSource = container.ParentPage.ImagePool[container.ImageID];
-        //            LoadImageFromByteSource(byteSource.ToArray());
-        //        }
-        //        catch(Exception ex)
-        //        {
-        //            Logger.Instance.WriteToLog("ImageVM failed to load Image from ByteSource, container.ParentPage likely null. Error: " + ex.Message);
-        //        }
-        //    }
+            if(container.ImageID != string.Empty)
+            {
+                try
+                {
+                    var byteSource = container.ParentPage.ImagePool[container.ImageID];
+                    LoadImageFromByteSource(byteSource.ToArray());
+                }
+                catch(Exception ex)
+                {
+                    Logger.Instance.WriteToLog("ImageVM failed to load Image from ByteSource, container.ParentPage likely null. Error: " + ex.Message);
+                }
+            }
 
-        //    if(container.IsStamped)
-        //    {
-        //        ScribblesToStrokePaths();
-        //    }
-        //}
+            if(container.IsStamped)
+            {
+                ScribblesToStrokePaths();
+            }
+        }
 
         /// <summary>
         /// Gets the title of the view model.
