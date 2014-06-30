@@ -44,7 +44,7 @@ namespace Classroom_Learning_Partner.ViewModels
                            };
             NotebookPagesPanel = new NotebookPagesPanelViewModel(notebook, StagingPanel);
             StudentWorkPanel = new StudentWorkPanelViewModel(notebook, StagingPanel);
-            ProgressPanel = new ProgressPanelViewModel(notebook);
+            ProgressPanel = new ProgressPanelViewModel(notebook, StagingPanel);
             if(App.MainWindowViewModel.Ribbon.CurrentLeftPanel == Panels.Progress)
             {
                 LeftPanel = ProgressPanel;
@@ -278,11 +278,6 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         case Panels.NotebookPages:
                             LeftPanel = NotebookPagesPanel;
-                            LeftPanel.IsVisible = true;
-                            break;
-                        case Panels.StudentWork:
-                            LeftPanel = StudentWorkPanel;
-                            StudentWorkPanel.ScrollToCurrentPage();
                             LeftPanel.IsVisible = true;
                             break;
                         case Panels.Progress:
