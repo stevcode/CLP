@@ -604,7 +604,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 App.MainWindowViewModel.LastSavedTime = notebook.LastSavedDate.Value.ToString("yyyy/MM/dd - HH:mm:ss");
             }
-            notebook.CurrentPage = notebook.Pages.First();
+            notebook.CurrentPage = notebook.Pages.FirstOrDefault();
             App.MainWindowViewModel.OpenNotebooks.Add(notebook);
 
             var copiedNotebook = notebook.CopyForNewOwner(App.MainWindowViewModel.CurrentUser);
@@ -671,6 +671,28 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
             notebookToUse.CurrentPage = notebookToUse.Pages.FirstOrDefault();
+
+            //HACK: To load gridDisplays after all submissions are loaded
+            foreach(var gridDisplay in notebookToUse.Displays)
+            {
+                foreach(var compositePageID in gridDisplay.CompositePageIDs)
+                {
+                    var compositeSections = compositePageID.Split(';');
+                    var id = compositeSections[0];
+                    var ownerID = compositeSections[1];
+                    var differentiationlevel = compositeSections[2];
+                    var versionIndex = Convert.ToUInt32(compositeSections[3]);
+
+                    var page = notebookToUse.GetPageByCompositeKeys(id, ownerID, differentiationlevel, versionIndex);
+                    if(page == null)
+                    {
+                        continue;
+                    }
+
+                    gridDisplay.Pages.Add(page);
+                }
+            }
+
             App.MainWindowViewModel.OpenNotebooks.Add(notebookToUse);
             App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(notebookToUse);
             App.MainWindowViewModel.AvailableUsers = App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.StudentList;

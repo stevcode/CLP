@@ -1088,7 +1088,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         continue;
                     }
 
-                    await Task.Delay(500);
+                    await Task.Delay(1000);
 
                     var screenshot = CLPServiceAgent.Instance.UIElementToImageByteArray(currentPagePreviewView, page.Width, dpi:300);
                     var bitmapImage = new BitmapImage();
@@ -1130,6 +1130,10 @@ namespace Classroom_Learning_Partner.ViewModels
                         if(page.DifferentiationLevel != "0")
                         {
                             labelText += " " + page.DifferentiationLevel;
+                        }
+                        if(page.Owner == null)
+                        {
+                            page.Owner = App.MainWindowViewModel.CurrentUser;
                         }
                         labelText += ", Submission Time: " + page.SubmissionTime + ", Owner: " + page.Owner.FullName; 
                         var label = new iTextSharp.text.Paragraph(labelText);

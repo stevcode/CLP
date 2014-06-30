@@ -321,11 +321,11 @@
                               Command="{Binding InsertArrayCommand}"
                               CommandParameter="ARRAY" />
 
-                <RibbonButton Label="10x10"
+                <!--<RibbonButton Label="10x10"
                               LargeImageSource="pack://application:,,,/Resources/Images/PresetArray32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/PresetArray16.png"
                               Command="{Binding InsertArrayCommand}"
-                              CommandParameter="TENBYTEN" />
+                              CommandParameter="TENBYTEN" />-->
 
                 <!--<RibbonButton Label="Array Card"
                               LargeImageSource="pack://application:,,,/Resources/Images/ArrayCard32.png"
