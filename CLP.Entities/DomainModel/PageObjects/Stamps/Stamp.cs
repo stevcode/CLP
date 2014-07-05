@@ -4,6 +4,7 @@ using Catel.Data;
 
 namespace CLP.Entities
 {
+    [Serializable]
     public class Stamp : APageObjectBase, ICountable
     {
         #region Constructors
@@ -14,11 +15,25 @@ namespace CLP.Entities
         public Stamp() { }
 
         /// <summary>
-        /// Initializes <see cref="Stamp" /> from 
+        /// Initializes <see cref="Stamp" /> from
         /// </summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="Stamp" /> belongs to.</param>
-        public Stamp(CLPPage parentPage)
-            : base(parentPage) { }
+        public Stamp(CLPPage parentPage, string imageHashID, bool isCollectionStamp)
+            : base(parentPage)
+        {
+            IsCollectionStamp = isCollectionStamp;
+            Width = isCollectionStamp ? 125 : 75;
+            Height = isCollectionStamp ? 230 : 180;
+            InternalStampedObject = new StampedObject(parentPage, ID, imageHashID, isCollectionStamp);
+            OnResizing();
+        }
+
+        /// <summary>
+        /// Initializes <see cref="Stamp" /> from
+        /// </summary>
+        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="Stamp" /> belongs to.</param>
+        public Stamp(CLPPage parentPage, bool isCollectionStamp)
+            : this(parentPage, string.Empty, isCollectionStamp) { }
 
         /// <summary>
         /// Initializes <see cref="Stamp" /> based on <see cref="SerializationInfo" />.
@@ -31,6 +46,14 @@ namespace CLP.Entities
         #endregion //Constructors
 
         #region Properties
+
+        /// <summary>
+        /// Determines whether the <see cref="IPageObject" /> has properties can be changed by a <see cref="Person" /> anyone at any time.
+        /// </summary>
+        public override bool IsBackgroundInteractable
+        {
+            get { return true; }
+        }
 
         public virtual double HandleHeight
         {
@@ -52,6 +75,17 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData IsCollectionStampProperty = RegisterProperty("IsCollectionStamp", typeof(bool), false);
+
+        /// <summary>
+        /// <see cref="StampedObject" /> that will be left behind once the <see cref="Stamp" /> is stamped onto the <see cref="CLPPage" />.
+        /// </summary>
+        public StampedObject InternalStampedObject
+        {
+            get { return GetValue<StampedObject>(InternalStampedObjectProperty); }
+            set { SetValue(InternalStampedObjectProperty, value); }
+        }
+
+        public static readonly PropertyData InternalStampedObjectProperty = RegisterProperty("InternalStampedObject", typeof(StampedObject));
 
         #region ICountable Members
 
@@ -85,17 +119,10 @@ namespace CLP.Entities
 
         #region Overrides of APageObjectBase
 
-        /// <summary>
-        /// Determines whether the <see cref="IPageObject" /> has properties can be changed by a <see cref="Person" /> anyone at any time.
-        /// </summary>
-        public override bool IsBackgroundInteractable
-        {
-            get { return true; }
-        }
-
         public override void OnResizing()
         {
-
+            InternalStampedObject.Width = Width;
+            InternalStampedObject.Height = Height - HandleHeight - PartsHeight;
         }
 
         public override void OnResized() { OnResizing(); }
@@ -119,7 +146,5 @@ namespace CLP.Entities
         }
 
         #endregion //Methods
-
-        
     }
 }

@@ -27,8 +27,6 @@ namespace Classroom_Learning_Partner.ViewModels
         public CLPArrayViewModel(CLPArray array)
         {
             PageObject = array;
-            hoverTimer.Interval = 2300;
-            CloseAdornerTimeOut = 0.15;
 
             //Commands
             ResizeArrayCommand = new Command<DragDeltaEventArgs>(OnResizeArrayCommandExecute);

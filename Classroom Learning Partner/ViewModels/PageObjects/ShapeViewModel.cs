@@ -13,8 +13,6 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public ShapeViewModel(Shape shape)
         {
-            hoverTimer.Interval = 2300;
-            CloseAdornerTimeOut = 0.15;
             PageObject = shape;
 
             ResizeShapeCommand = new Command<DragDeltaEventArgs>(OnResizeShapeCommandExecute);

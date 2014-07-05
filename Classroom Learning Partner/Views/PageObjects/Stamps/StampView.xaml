@@ -2,51 +2,68 @@
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:ac="clr-namespace:AdornedControl"
-				   xmlns:catel="http://catel.codeplex.com"
+                   xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
-                   xmlns:resources="clr-namespace:Classroom_Learning_Partner.Resources"
-                   xmlns:entities="clr-namespace:CLP.Entities;assembly=CLP.Entities">
-    
+                   xmlns:resources="clr-namespace:Classroom_Learning_Partner.Resources">
+
     <UserControl.Resources>
         <catel:BooleanToHidingVisibilityConverter x:Key="BooleanToHidingVisibilityConverter" />
+        <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
         <catel:BooleanToOppositeBooleanConverter x:Key="BooleanToOppositeBooleanConverter" />
-        <resources:LengthConverter x:Key="LengthConverter"/>
+        <resources:LengthConverter x:Key="LengthConverter" />
         <conv:BoolToDoubleConverter x:Key="BoolToDoubleConverter" />
         <conv:BoolZeroToQuestionMarkMultiConverter x:Key="BoolZeroToQuestionMarkMultiConverter" />
     </UserControl.Resources>
 
-    <ac:AdornedControl HorizontalAlignment="Center" VerticalAlignment="Center"
-                       HorizontalAdornerPlacement="Outside" VerticalAdornerPlacement="Outside"
+    <ac:AdornedControl HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       HorizontalAdornerPlacement="Outside"
+                       VerticalAdornerPlacement="Outside"
                        IsAdornerVisible="{Binding IsAdornerVisible, Mode=TwoWay}"
                        IsMouseOverShowEnabled="{Binding IsMouseOverShowEnabled}"
                        OpenAdornerTimeOut="{Binding OpenAdornerTimeOut}"
                        CloseAdornerTimeOut="{Binding CloseAdornerTimeOut}">
         <!--This is the adorner-->
-        <ac:AdornedControl.AdornerContent >
-            <Canvas HorizontalAlignment="Center" VerticalAlignment="Center"
-                    Width="{Binding Width}" Height="{Binding Height}">
+        <ac:AdornedControl.AdornerContent>
+            <Canvas HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Width="{Binding Width}"
+                    Height="{Binding Height}">
 
-                <Rectangle Stroke="Black" StrokeDashArray="0.5 1.0 0.3" StrokeThickness="2" 
-                           RadiusX="10" RadiusY="10"
-                           Canvas.Top="-5" Canvas.Left="-5"
+                <Rectangle Stroke="Black"
+                           StrokeDashArray="0.5 1.0 0.3"
+                           StrokeThickness="2"
+                           RadiusX="10"
+                           RadiusY="10"
+                           Canvas.Top="-5"
+                           Canvas.Left="-5"
                            Width="{Binding Width, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
-                           Height="{Binding Height, Converter={StaticResource LengthConverter}, ConverterParameter=10}" />
+                           Height="{Binding Height, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
+                           Visibility="{Binding IsDefaultAdornersVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />
 
                 <!--Close Button-->
                 <Button Command="{Binding RemovePageObjectCommand}"
                         Cursor="Hand"
-                        Width="40" Height="40"
-                        Canvas.Left="-40" Canvas.Top="-40">
+                        Width="40"
+                        Height="40"
+                        Canvas.Left="-40"
+                        Canvas.Top="-40"
+                        Visibility="{Binding IsDefaultAdornersVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Grid>
-                                <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
-                                         VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
-                                <Path Data="M0,0 L1,1 M0,1 L1,0" 
-                                      Stretch="Fill" Margin="5"
-                                      Stroke="Red" StrokeThickness="3" />
+                                <Ellipse Stroke="Black"
+                                         StrokeThickness="3"
+                                         Fill="White"
+                                         VerticalAlignment="Stretch"
+                                         HorizontalAlignment="Stretch" />
+                                <Path Data="M0,0 L1,1 M0,1 L1,0"
+                                      Stretch="Fill"
+                                      Margin="5"
+                                      Stroke="Red"
+                                      StrokeThickness="3" />
                             </Grid>
                         </ControlTemplate>
                     </Button.Template>
@@ -54,35 +71,56 @@
 
                 <!--Drag Thumb-->
                 <Thumb Cursor="ScrollAll"
-                       Width="40" Height="40"
-                       Canvas.Right="-40" Canvas.Top="-40">
+                       Width="40"
+                       Height="40"
+                       Canvas.Right="-40"
+                       Canvas.Top="-40"
+                       Visibility="{Binding IsDefaultAdornersVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
                     <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="DragDelta">
-                            <catel:EventToCommand Command="{Binding DragPageObjectCommand}" PassEventArgsToCommand="True" />
-                        </i:EventTrigger>
                         <i:EventTrigger EventName="DragStarted">
-                            <catel:EventToCommand Command="{Binding DragStartPageObjectCommand}" PassEventArgsToCommand="True" />
+                            <catel:EventToCommand Command="{Binding DragStartPageObjectCommand}"
+                                                  PassEventArgsToCommand="True" />
+                        </i:EventTrigger>
+                        <i:EventTrigger EventName="DragDelta">
+                            <catel:EventToCommand Command="{Binding DragPageObjectCommand}"
+                                                  PassEventArgsToCommand="True" />
                         </i:EventTrigger>
                         <i:EventTrigger EventName="DragCompleted">
-                            <catel:EventToCommand Command="{Binding DragStopPageObjectCommand}" PassEventArgsToCommand="True" />
+                            <catel:EventToCommand Command="{Binding DragStopPageObjectCommand}"
+                                                  PassEventArgsToCommand="True" />
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                     <Thumb.Template>
                         <ControlTemplate>
                             <Grid>
-                                <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
-                                         VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
-                                <Path Stroke="Black" StrokeThickness="1" Fill="Black"
+                                <Ellipse Stroke="Black"
+                                         StrokeThickness="3"
+                                         Fill="White"
+                                         VerticalAlignment="Stretch"
+                                         HorizontalAlignment="Stretch" />
+                                <Path Stroke="Black"
+                                      StrokeThickness="1"
+                                      Fill="Black"
                                       Data="M 5,20 L 10,15 L 10,25 L 5,20" />
-                                <Path Stroke="Black" StrokeThickness="1" Fill="Black"
+                                <Path Stroke="Black"
+                                      StrokeThickness="1"
+                                      Fill="Black"
                                       Data="M 35,20 L 30,15 L 30,25 L 35,20" />
-                                <Path Stroke="Black" StrokeThickness="1" Fill="Black"
+                                <Path Stroke="Black"
+                                      StrokeThickness="1"
+                                      Fill="Black"
                                       Data="M 20,5 L 20,35" />
-                                <Path Stroke="Black" StrokeThickness="1" Fill="Black"
+                                <Path Stroke="Black"
+                                      StrokeThickness="1"
+                                      Fill="Black"
                                       Data="M 20,35 L 15,30 L 25,30 L 20,35" />
-                                <Path Stroke="Black" StrokeThickness="1" Fill="Black"
+                                <Path Stroke="Black"
+                                      StrokeThickness="1"
+                                      Fill="Black"
                                       Data="M 20,5 L 15,10 L 25,10 L 20,5" />
-                                <Path Stroke="Black" StrokeThickness="1" Fill="Black"
+                                <Path Stroke="Black"
+                                      StrokeThickness="1"
+                                      Fill="Black"
                                       Data="M 5,20 L 35,20" />
                             </Grid>
                         </ControlTemplate>
@@ -91,50 +129,102 @@
 
                 <!--Resize Thumb-->
                 <Thumb Cursor="SizeNWSE"
-                       Width="40" Height="40"
-                       Canvas.Right="-40" Canvas.Bottom="-40">
+                       Width="40"
+                       Height="40"
+                       Canvas.Right="-40"
+                       Canvas.Bottom="-40"
+                       Visibility="{Binding IsDefaultAdornersVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
                     <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="DragDelta">
-                            <catel:EventToCommand Command="{Binding ResizePageObjectCommand}" PassEventArgsToCommand="True" />
-                        </i:EventTrigger>
                         <i:EventTrigger EventName="DragStarted">
-                            <catel:EventToCommand Command="{Binding ResizeStartPageObjectCommand}" PassEventArgsToCommand="True" />
+                            <catel:EventToCommand Command="{Binding ResizeStartPageObjectCommand}"
+                                                  PassEventArgsToCommand="True" />
+                        </i:EventTrigger>
+                        <i:EventTrigger EventName="DragDelta">
+                            <catel:EventToCommand Command="{Binding ResizePageObjectCommand}"
+                                                  PassEventArgsToCommand="True" />
                         </i:EventTrigger>
                         <i:EventTrigger EventName="DragCompleted">
-                            <catel:EventToCommand Command="{Binding ResizeStopPageObjectCommand}" PassEventArgsToCommand="True" />
+                            <catel:EventToCommand Command="{Binding ResizeStopPageObjectCommand}"
+                                                  PassEventArgsToCommand="True" />
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                     <Thumb.Template>
                         <ControlTemplate>
                             <Grid>
-                                <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
-                                         VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
-                                <Path Stroke="Black" StrokeThickness="1"
+                                <Ellipse Stroke="Black"
+                                         StrokeThickness="3"
+                                         Fill="White"
+                                         VerticalAlignment="Stretch"
+                                         HorizontalAlignment="Stretch" />
+                                <Path Stroke="Black"
+                                      StrokeThickness="1"
                                       Data="M 8,23 L 23,23 L 23,8" />
-                                <Path Stroke="Black" StrokeThickness="1"
+                                <Path Stroke="Black"
+                                      StrokeThickness="1"
                                       Data="M 12,27 L 27,27 L 27,12" />
                             </Grid>
                         </ControlTemplate>
                     </Thumb.Template>
                 </Thumb>
-                
+
                 <!--Multiple Stamp Copies Button-->
                 <Button Command="{Binding ParameterizeStampCommand}"
                         Cursor="Hand"
-                        Width="40" Height="40"
-                        Canvas.Left="-40" Canvas.Bottom="-40">
+                        Width="40"
+                        Height="40"
+                        Canvas.Left="-40"
+                        Canvas.Bottom="-40"
+                        Visibility="{Binding IsDefaultAdornersVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Grid>
-                                <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
-                                         VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
-                                <Path Data="M0.5,0 L0.5,1 M0,0.5 L1,0.5" 
-                                      Stretch="Fill" Margin="5"
-                                      Stroke="Green" StrokeThickness="3" />
+                                <Ellipse Stroke="Black"
+                                         StrokeThickness="3"
+                                         Fill="White"
+                                         VerticalAlignment="Stretch"
+                                         HorizontalAlignment="Stretch" />
+                                <Path Data="M0.5,0 L0.5,1 M0,0.5 L1,0.5"
+                                      Stretch="Fill"
+                                      Margin="5"
+                                      Stroke="Green"
+                                      StrokeThickness="3" />
                             </Grid>
                         </ControlTemplate>
                     </Button.Template>
                 </Button>
+                
+                <!--Ghost Image of Stamp for making StampedObjects-->
+                <Grid Canvas.Left="{Binding GhostOffsetX}"
+                      Canvas.Top="{Binding GhostOffsetY}"
+                      Visibility="{Binding IsGhostVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+
+                    <Polygon Grid.Row="0" 
+                             Height="{Binding PageObject.HandleHeight}"
+                            Width="{Binding Width}"
+                            MinWidth="50"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Bottom"
+                            Margin="0"
+                            Stretch="Fill"
+                            Stroke="Black"
+                            StrokeThickness="0"
+                            Fill="Green"
+                            Points="0,0 3,0 2,1 1,1" />
+
+                    <Border Grid.Row="1"
+                            Height="{Binding InternalStampedObject.Height}"
+                            Width="{Binding Width}"
+                            BorderBrush="Black"
+                            BorderThickness="2"
+                            CornerRadius="{Binding IsCollectionStamp, Converter={StaticResource BoolToDoubleConverter}, ConverterParameter=5}"
+                            VerticalAlignment="Top"
+                            Margin="0">
+                    </Border>
+                </Grid>
 
             </Canvas>
         </ac:AdornedControl.AdornerContent>
@@ -145,77 +235,94 @@
                 <RowDefinition />
                 <RowDefinition />
             </Grid.RowDefinitions>
-            
-            <Thumb Grid.Row="0" 
+
+            <Thumb Grid.Row="0"
                    MouseEnter="StampHandleHitBox_MouseEnter"
                    MouseLeave="StampHandleHitBox_MouseLeave">
                 <Thumb.Template>
                     <ControlTemplate>
-                        <Polygon Tag="StampHandleHitBox"  
+                        <Polygon Tag="StampHandleHitBox"
                                  Height="{Binding PageObject.HandleHeight}"
-                                 Width="{Binding Width}" MinWidth="50"  
-                                 HorizontalAlignment="Center" VerticalAlignment="Bottom" 
-                                 Margin="0" Stretch="Fill"
-                                 Stroke="Black" StrokeThickness="0" Fill="{Binding StampHandleColor}" 
-                                 Points="0,0 3,0 2,1 1,1" >
-                        </Polygon>
+                                 Width="{Binding Width}"
+                                 MinWidth="50"
+                                 HorizontalAlignment="Center"
+                                 VerticalAlignment="Bottom"
+                                 Margin="0"
+                                 Stretch="Fill"
+                                 Stroke="Black"
+                                 StrokeThickness="0"
+                                 Fill="{Binding StampHandleColor}"
+                                 Points="0,0 3,0 2,1 1,1" />
                     </ControlTemplate>
                 </Thumb.Template>
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="DragStarted">
-                        <catel:EventToCommand Command="{Binding CopyStampCommand}"/>
+                        <catel:EventToCommand Command="{Binding StartDragStampCommand}" />
                     </i:EventTrigger>
                     <i:EventTrigger EventName="DragDelta">
-                        <catel:EventToCommand Command="{Binding DragStampCommand}" PassEventArgsToCommand="True"/>
+                        <catel:EventToCommand Command="{Binding DragStampCommand}"
+                                              PassEventArgsToCommand="True" />
                     </i:EventTrigger>
                     <i:EventTrigger EventName="DragCompleted">
-                        <catel:EventToCommand Command="{Binding PlaceStampCommand}"/>
+                        <catel:EventToCommand Command="{Binding PlaceStampCommand}" />
                     </i:EventTrigger>
                     <i:EventTrigger EventName="MouseEnter">
-                        <catel:EventToCommand Command="{Binding ErasePageObjectCommand}" PassEventArgsToCommand="True" />
+                        <catel:EventToCommand Command="{Binding ErasePageObjectCommand}"
+                                              PassEventArgsToCommand="True" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </Thumb>
-            
-            <Border Grid.Row="1" 
-                    Height="{Binding StampCopy.Height}" 
-                    Width="{Binding Width}" 
-                    BorderBrush="Black" BorderThickness="2"
+
+            <Border Grid.Row="1"
+                    Height="{Binding InternalStampedObject.Height}"
+                    Width="{Binding Width}"
+                    BorderBrush="Black"
+                    BorderThickness="2"
                     CornerRadius="{Binding IsCollectionStamp, Converter={StaticResource BoolToDoubleConverter}, ConverterParameter=5}"
-                    VerticalAlignment="Top" Margin="0">
+                    VerticalAlignment="Top"
+                    Margin="0">
                 <Grid x:Name="StampBodyGrid">
-                    <views:CLPStampCopyView DataContext="{Binding StampCopy}"
-                                            Height="{Binding Height}"
-                                            Width="{Binding Width}" />
-                    <Rectangle Tag="StampBodyHitBox" Fill="Transparent"
+                    <views:StampedObjectView DataContext="{Binding InternalStampedObject}"
+                                             Height="{Binding Height}"
+                                             Width="{Binding Width}" />
+                    <Rectangle Tag="StampBodyHitBox"
+                               Fill="Transparent"
                                Height="{Binding ElementName=StampBodyGrid, Path=Height}"
                                Width="{Binding ElementName=StampBodyGrid, Path=Width}">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="MouseUp">
-                                <catel:EventToCommand Command="{Binding ToggleMainAdornersCommand}" PassEventArgsToCommand="True" />
+                                <catel:EventToCommand Command="{Binding ToggleMainAdornersCommand}"
+                                                      PassEventArgsToCommand="True" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
                     </Rectangle>
                 </Grid>
             </Border>
-            
-            <Grid Grid.Row="2" Visibility="{Binding PartsRegionVisibility}">
+
+            <Grid Grid.Row="2"
+                  Visibility="{Binding PartsRegionVisibility}">
 
                 <Border IsHitTestVisible="False"
-                        BorderBrush="Black" BorderThickness="0,0,0,2"
+                        BorderBrush="Black"
+                        BorderThickness="0,0,0,2"
                         Height="{Binding PageObject.PartsHeight}"
                         Width="{Binding Width}"
-                        HorizontalAlignment="Center" Margin="0"
+                        HorizontalAlignment="Center"
+                        Margin="0"
                         Visibility="{Binding IsCollectionStamp, Converter={StaticResource BooleanToHidingVisibilityConverter}, ConverterParameter=False}" />
 
                 <TextBlock Text="collection"
-                           FontFamily="pack://application:,,,/Resources/Fonts/#SketchFlow Print" FontSize="16"
-                           TextAlignment="Center" VerticalAlignment="Top"
+                           FontFamily="pack://application:,,,/Resources/Fonts/#SketchFlow Print"
+                           FontSize="16"
+                           TextAlignment="Center"
+                           VerticalAlignment="Top"
                            Width="{Binding Width}"
                            Visibility="{Binding IsCollectionStamp, Converter={StaticResource BooleanToHidingVisibilityConverter}}" />
 
-                <TextBlock FontFamily="pack://application:,,,/Resources/Fonts/#SketchFlow Print" FontSize="60"
-                           TextAlignment="Center" VerticalAlignment="Bottom"
+                <TextBlock FontFamily="pack://application:,,,/Resources/Fonts/#SketchFlow Print"
+                           FontSize="60"
+                           TextAlignment="Center"
+                           VerticalAlignment="Bottom"
                            Width="{Binding Width}">
                     <TextBlock.Text>
                         <MultiBinding Converter="{StaticResource BoolZeroToQuestionMarkMultiConverter}">
@@ -224,9 +331,11 @@
                         </MultiBinding>
                     </TextBlock.Text>
                 </TextBlock>
-                
-                <Rectangle Tag="PartsHitBox" IsHitTestVisible="{Binding IsCollectionStamp, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
-                           StrokeThickness="0" Fill="Transparent"
+
+                <Rectangle Tag="PartsHitBox"
+                           IsHitTestVisible="{Binding IsCollectionStamp, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
+                           StrokeThickness="0"
+                           Fill="Transparent"
                            Height="{Binding PageObject.PartsHeight}"
                            Width="{Binding Width}">
                     <i:Interaction.Triggers>
@@ -235,9 +344,9 @@
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </Rectangle>
-                
+
             </Grid>
-            
+
         </Grid>
 
     </ac:AdornedControl>

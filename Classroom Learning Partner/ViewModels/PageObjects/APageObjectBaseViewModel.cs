@@ -1,33 +1,18 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
+﻿using System;
 using System.Windows;
 using System.Windows.Controls.Primitives;
-using System.Windows.Ink;
 using System.Windows.Input;
-using System.Windows.Media;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Entities;
-using System.Windows.Threading;
-using System;
-using System.Timers;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    abstract public class APageObjectBaseViewModel : ViewModelBase, IPageObjectAdorners
+    public abstract class APageObjectBaseViewModel : ViewModelBase, IPageObjectAdorners
     {
         #region Constructor
 
-        protected APageObjectBaseViewModel()
-        {
-            InitializeCommands();
-
-            //TODO: Steve - move this to Adorner.cs and expand adorner API
-            hoverTimer = new Timer();
-            hoverTimer.Interval = 800;
-            hoverTimer.Elapsed += hoverTimer_Elapsed;
-        }
+        protected APageObjectBaseViewModel() { InitializeCommands(); }
 
         private void InitializeCommands()
         {
@@ -45,7 +30,10 @@ namespace Classroom_Learning_Partner.ViewModels
             ToggleMainAdornersCommand = new Command<MouseButtonEventArgs>(OnToggleMainAdornersCommandExecute);
         }
 
-        public override string Title { get { return "APageObjectBaseVM"; } }
+        public override string Title
+        {
+            get { return "APageObjectBaseVM"; }
+        }
 
         #endregion //Constructor
 
@@ -141,7 +129,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData IsMouseOverShowEnabledProperty = RegisterProperty("IsMouseOverShowEnabled", typeof(bool), false);
 
         /// <summary>
-        /// Specifies the time (in seconds) after the mouse cursor moves over the 
+        /// Specifies the time (in seconds) after the mouse cursor moves over the
         /// adorned control (or the adorner) when the adorner begins to fade in.
         /// </summary>
         public double OpenAdornerTimeOut
@@ -153,7 +141,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData OpenAdornerTimeOutProperty = RegisterProperty("OpenAdornerTimeOut", typeof(double), 0.0);
 
         /// <summary>
-        /// Specifies the time (in seconds) after the mouse cursor moves away from the 
+        /// Specifies the time (in seconds) after the mouse cursor moves away from the
         /// adorned control (or the adorner) when the adorner begins to fade out.
         /// </summary>
         public double CloseAdornerTimeOut
@@ -164,24 +152,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData CloseAdornerTimeOutProperty = RegisterProperty("CloseAdornerTimeOut", typeof(double), 1.0);
 
-        protected Timer hoverTimer;
-
-        protected bool hoverTimeElapsed = false;
-
-        protected bool timerRunning = false;
-        void hoverTimer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            hoverTimer.Stop();
-            timerRunning = false;
-            hoverTimeElapsed = true;
-        }
-
         #endregion //IPageObjectAdorners
 
-        public virtual void ClearAdorners()
-        {
-            IsAdornerVisible = false;
-        }
+        public virtual void ClearAdorners() { IsAdornerVisible = false; }
 
         #region Commands
 
@@ -192,10 +165,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command RemovePageObjectCommand { get; set; }
 
-        private void OnRemovePageObjectCommandExecute()
-        {
-            ACLPPageBaseViewModel.RemovePageObjectFromPage(PageObject);
-        }
+        private void OnRemovePageObjectCommandExecute() { ACLPPageBaseViewModel.RemovePageObjectFromPage(PageObject); }
 
         /// <summary>
         /// Removes pageObject from page if back of pen (or middle mouse button)
@@ -211,7 +181,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            if((e.StylusDevice != null && e.StylusDevice.Inverted && e.LeftButton == MouseButtonState.Pressed) || e.MiddleButton == MouseButtonState.Pressed)
+            if((e.StylusDevice != null && e.StylusDevice.Inverted && e.LeftButton == MouseButtonState.Pressed) ||
+               e.MiddleButton == MouseButtonState.Pressed)
             {
                 ACLPPageBaseViewModel.RemovePageObjectFromPage(PageObject);
             }
@@ -228,9 +199,9 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnDragStartPageObjectCommandExecute(DragStartedEventArgs e)
         {
             PageObject.ParentPage.History.BeginBatch(new PageObjectMoveBatchHistoryItem(PageObject.ParentPage,
-                                                                                         App.MainWindowViewModel.CurrentUser,
-                                                                                         PageObject.ID,
-                                                                                         new Point(PageObject.XPosition, PageObject.YPosition)));
+                                                                                        App.MainWindowViewModel.CurrentUser,
+                                                                                        PageObject.ID,
+                                                                                        new Point(PageObject.XPosition, PageObject.YPosition)));
         }
 
         /// <summary>
@@ -243,9 +214,9 @@ namespace Classroom_Learning_Partner.ViewModels
             var parentPage = PageObject.ParentPage;
 
             var newX = Math.Max(0, PageObject.XPosition + e.HorizontalChange);
-            newX = Math.Min(newX, parentPage.Width - PageObject.Width);
+            newX = Math.Min(newX, parentPage.Width - Width);
             var newY = Math.Max(0, PageObject.YPosition + e.VerticalChange);
-            newY = Math.Min(newY, parentPage.Height - PageObject.Height);
+            newY = Math.Min(newY, parentPage.Height - Height);
 
             ChangePageObjectPosition(PageObject, newX, newY);
             PageObject.OnMoving();
@@ -261,8 +232,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var batch = PageObject.ParentPage.History.CurrentHistoryBatch;
             if(batch is PageObjectMoveBatchHistoryItem)
             {
-                (batch as PageObjectMoveBatchHistoryItem).AddPositionPointToBatch(PageObject.ID, new Point(PageObject.XPosition,
-                                                                                           PageObject.YPosition));
+                (batch as PageObjectMoveBatchHistoryItem).AddPositionPointToBatch(PageObject.ID, new Point(PageObject.XPosition, PageObject.YPosition));
             }
             var batchHistoryItem = PageObject.ParentPage.History.EndBatch();
             ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, batchHistoryItem, true);
@@ -276,10 +246,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnResizeStartPageObjectCommandExecute(DragStartedEventArgs e)
         {
-            PageObject.ParentPage.History.BeginBatch(new PageObjectResizeBatchHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser,
-                                                                                           PageObject.ID,
-                                                                                           new Point(PageObject.Width,
-                                                                                                     PageObject.Height)));
+            PageObject.ParentPage.History.BeginBatch(new PageObjectResizeBatchHistoryItem(PageObject.ParentPage,
+                                                                                          App.MainWindowViewModel.CurrentUser,
+                                                                                          PageObject.ID,
+                                                                                          new Point(PageObject.Width, PageObject.Height)));
         }
 
         /// <summary>
@@ -297,7 +267,7 @@ namespace Classroom_Learning_Partner.ViewModels
             newWidth = Math.Min(newWidth, parentPage.Width - PageObject.XPosition);
             var newHeight = Math.Max(MIN_HEIGHT, PageObject.Height + e.VerticalChange);
             newHeight = Math.Min(newHeight, parentPage.Height - PageObject.YPosition);
-            
+
             ChangePageObjectDimensions(PageObject, newHeight, newWidth);
             PageObject.OnResizing();
         }
@@ -312,9 +282,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var batch = PageObject.ParentPage.History.CurrentHistoryBatch;
             if(batch is PageObjectResizeBatchHistoryItem)
             {
-                (batch as PageObjectResizeBatchHistoryItem).AddResizePointToBatch(PageObject.ID,
-                                                                                 new Point(PageObject.Width,
-                                                                                           PageObject.Height));
+                (batch as PageObjectResizeBatchHistoryItem).AddResizePointToBatch(PageObject.ID, new Point(PageObject.Width, PageObject.Height));
             }
             var batchHistoryItem = PageObject.ParentPage.History.EndBatch();
             ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, batchHistoryItem, true);
@@ -338,12 +306,15 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            if(e.ChangedButton == MouseButton.Left && !(e.StylusDevice != null && e.StylusDevice.Inverted))
+            if(e.ChangedButton != MouseButton.Left ||
+               e.StylusDevice != null && e.StylusDevice.Inverted)
             {
-                var tempAdornerState = IsAdornerVisible;
-                ACLPPageBaseViewModel.ClearAdorners(PageObject.ParentPage);
-                IsAdornerVisible = !tempAdornerState;
+                return;
             }
+
+            var tempAdornerState = IsAdornerVisible;
+            ACLPPageBaseViewModel.ClearAdorners(PageObject.ParentPage);
+            IsAdornerVisible = !tempAdornerState;
         }
 
         #endregion //Control Adorners
@@ -413,8 +384,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 var batch = pageObject.ParentPage.History.CurrentHistoryBatch;
                 if(batch is PageObjectResizeBatchHistoryItem)
                 {
-                    (batch as PageObjectResizeBatchHistoryItem).AddResizePointToBatch(pageObject.ID,
-                                                                                     new Point(width, height));
+                    (batch as PageObjectResizeBatchHistoryItem).AddResizePointToBatch(pageObject.ID, new Point(width, height));
                 }
                 else
                 {

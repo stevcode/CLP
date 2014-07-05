@@ -48,12 +48,12 @@
                 <views:ShapeView DataContext="{Binding}" />
             </ControlTemplate>
 
-            <ControlTemplate x:Key="CLPStampTemplate">
-                <views:CLPStampView DataContext="{Binding}" />
+            <ControlTemplate x:Key="StampTemplate">
+                <views:StampView DataContext="{Binding}" />
             </ControlTemplate>
 
-            <ControlTemplate x:Key="CLPStampCopyTemplate">
-                <views:CLPStampCopyView DataContext="{Binding}" />
+            <ControlTemplate x:Key="StampedObjectTemplate">
+                <views:StampedObjectView DataContext="{Binding}" />
             </ControlTemplate>
 
             <ControlTemplate x:Key="CLPTextBoxTemplate">
@@ -127,14 +127,14 @@
                         <Setter Property="Template" Value="{StaticResource ShapeTemplate}" />
                     </DataTrigger>
 
-                    <!-- CLPStamp trigger -->
+                    <!-- Stamp trigger -->
                     <DataTrigger Binding="{Binding PageObject, Converter={StaticResource TypeToStringConverter}}" Value="Stamp">
-                        <Setter Property="Template" Value="{StaticResource CLPStampTemplate}" />
+                        <Setter Property="Template" Value="{StaticResource StampTemplate}" />
                     </DataTrigger>
 
-                    <!-- CLPStampCopy trigger -->
-                    <DataTrigger Binding="{Binding PageObject, Converter={StaticResource TypeToStringConverter}}" Value="StampCopy">
-                        <Setter Property="Template" Value="{StaticResource CLPStampCopyTemplate}" />
+                    <!-- StampedObject trigger -->
+                    <DataTrigger Binding="{Binding PageObject, Converter={StaticResource TypeToStringConverter}}" Value="StampedObject">
+                        <Setter Property="Template" Value="{StaticResource StampedObjectTemplate}" />
                     </DataTrigger>
 
                     <!-- CLPTextBox trigger -->

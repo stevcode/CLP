@@ -15,8 +15,6 @@ namespace Classroom_Learning_Partner.ViewModels
         public RemainderTilesViewModel(RemainderTiles remainderTiles)
         {
             PageObject = remainderTiles;
-            hoverTimer.Interval = 2300;
-            CloseAdornerTimeOut = 0.15;
         }
 
         #endregion //Constructor

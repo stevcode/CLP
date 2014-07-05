@@ -2490,35 +2490,21 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command InsertBlankStampCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the InsertBlankStampCommand command is executed.
-        /// </summary>
         private void OnInsertBlankStampCommandExecute()
         {
-            // TODO: Entities
-            //CLPStamp stamp = new CLPStamp(((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as CLPMirrorDisplay).CurrentPage, string.Empty);
-            //ACLPPageBaseViewModel.AddPageObjectToPage(stamp);
+            var stamp = new Stamp(CurrentPage, false);
+            ACLPPageBaseViewModel.AddPageObjectToPage(stamp);
         }
 
         /// <summary>
         /// Gets the InsertBlankContainerStampCommand command.
         /// </summary>
-        public Command InsertBlankContainerStampCommand
-        {
-            get;
-            private set;
-        }
+        public Command InsertBlankContainerStampCommand { get; private set; }
 
-        /// <summary>
-        /// Method to invoke when the InsertBlankContainerStampCommand command is executed.
-        /// </summary>
         private void OnInsertBlankContainerStampCommandExecute()
         {
-            // TODO: Entities
-            //var stamp = new CLPStamp(((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as CLPMirrorDisplay).CurrentPage,
-            //    string.Empty,
-            //    true);
-            //ACLPPageBaseViewModel.AddPageObjectToPage(stamp);
+            var stamp = new Stamp(CurrentPage, true);
+            ACLPPageBaseViewModel.AddPageObjectToPage(stamp);
         }
 
         /// <summary>

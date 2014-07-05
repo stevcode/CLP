@@ -140,6 +140,7 @@
     <Compile Include="DomainModel\Person.cs" />
     <Compile Include="DomainModel\Strokes\Extensions\StrokeExtension.cs" />
     <Compile Include="DomainModel\Strokes\StrokeDTO.cs" />
+    <Compile Include="DomainModel\Strokes\StrokePathDTO.cs" />
     <Compile Include="DomainModel\Tags\ArrayDivisionCorrectnessTag.cs" />
     <Compile Include="DomainModel\Tags\ArrayOrientationTag.cs" />
     <Compile Include="DomainModel\Tags\ArrayPartialProductsStrategyTag.cs" />

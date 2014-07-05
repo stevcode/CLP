@@ -29,8 +29,14 @@ namespace Classroom_Learning_Partner.Views
             {
                 return typeof(ShapeViewModel);
             }
-            //if (dataContext is CLPStamp) return typeof(CLPStampViewModel);
-            //if (dataContext is CLPStampCopy) return typeof(CLPStampCopyViewModel);
+            if(dataContext is Stamp)
+            {
+                return typeof(StampViewModel);
+            }
+            if(dataContext is StampedObject)
+            {
+                return typeof(StampedObjectViewModel);
+            }
             if(dataContext is CLPTextBox)
             {
                 return typeof(CLPTextBoxViewModel);
