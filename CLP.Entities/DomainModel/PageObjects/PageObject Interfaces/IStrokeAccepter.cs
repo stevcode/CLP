@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
 using System.Windows.Ink;
 
 namespace CLP.Entities
@@ -7,7 +7,7 @@ namespace CLP.Entities
     {
         bool CanAcceptStrokes { get; set; }
         StrokeCollection AcceptedStrokes { get; }
-        ObservableCollection<string> AcceptedStrokeParentIDs { get; set; }
+        List<string> AcceptedStrokeParentIDs { get; set; }
 
         void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes);
         void RefreshAcceptedStrokes();

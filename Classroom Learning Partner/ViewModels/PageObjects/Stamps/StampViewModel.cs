@@ -58,18 +58,6 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData IsCollectionStampProperty = RegisterProperty("IsCollectionStamp", typeof(bool));
 
         /// <summary>
-        /// <see cref="StampedObject" /> that will be left behind once the <see cref="Stamp" /> is stamped onto the <see cref="CLPPage" />.
-        /// </summary>
-        [ViewModelToModel("PageObject")]
-        public StampedObject InternalStampedObject
-        {
-            get { return GetValue<StampedObject>(InternalStampedObjectProperty); }
-            set { SetValue(InternalStampedObjectProperty, value); }
-        }
-
-        public static readonly PropertyData InternalStampedObjectProperty = RegisterProperty("InternalStampedObject", typeof(StampedObject));
-
-        /// <summary>
         /// The number of parts the stamp represents.
         /// </summary>
         [ViewModelToModel("PageObject")]

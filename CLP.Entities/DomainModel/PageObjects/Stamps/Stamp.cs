@@ -1,11 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
+using System.Windows;
+using System.Windows.Ink;
+using System.Xml.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
 {
     [Serializable]
-    public class Stamp : APageObjectBase, ICountable
+    public class Stamp : APageObjectBase, ICountable, IStrokeAccepter
     {
         #region Constructors
 
@@ -24,8 +29,6 @@ namespace CLP.Entities
             IsCollectionStamp = isCollectionStamp;
             Width = isCollectionStamp ? 125 : 75;
             Height = isCollectionStamp ? 230 : 180;
-            InternalStampedObject = new StampedObject(parentPage, ID, imageHashID, isCollectionStamp);
-            OnResizing();
         }
 
         /// <summary>
@@ -76,17 +79,6 @@ namespace CLP.Entities
 
         public static readonly PropertyData IsCollectionStampProperty = RegisterProperty("IsCollectionStamp", typeof(bool), false);
 
-        /// <summary>
-        /// <see cref="StampedObject" /> that will be left behind once the <see cref="Stamp" /> is stamped onto the <see cref="CLPPage" />.
-        /// </summary>
-        public StampedObject InternalStampedObject
-        {
-            get { return GetValue<StampedObject>(InternalStampedObjectProperty); }
-            set { SetValue(InternalStampedObjectProperty, value); }
-        }
-
-        public static readonly PropertyData InternalStampedObjectProperty = RegisterProperty("InternalStampedObject", typeof(StampedObject));
-
         #region ICountable Members
 
         /// <summary>
@@ -113,21 +105,53 @@ namespace CLP.Entities
 
         #endregion
 
+        #region IStrokeAccepter Members
+
+        /// <summary>
+        /// Determines whether the <see cref="Stamp" /> can currently accept <see cref="Stroke" />s.
+        /// </summary>
+        public bool CanAcceptStrokes
+        {
+            get { return GetValue<bool>(CanAcceptStrokesProperty); }
+            set { SetValue(CanAcceptStrokesProperty, value); }
+        }
+
+        public static readonly PropertyData CanAcceptStrokesProperty = RegisterProperty("CanAcceptStrokes", typeof(bool), true);
+
+        /// <summary>
+        /// The currently accepted <see cref="Stroke" />s.
+        /// </summary>
+        [XmlIgnore]
+        public StrokeCollection AcceptedStrokes
+        {
+            get { return GetValue<StrokeCollection>(AcceptedStrokesProperty); }
+            set { SetValue(AcceptedStrokesProperty, value); }
+        }
+
+        public static readonly PropertyData AcceptedStrokesProperty = RegisterProperty("AcceptedStrokes", typeof(StrokeCollection), () => new StrokeCollection());
+
+        /// <summary>
+        /// The IDs of the <see cref="Stroke" />s that have been accepted.
+        /// </summary>
+        public List<string> AcceptedStrokeParentIDs
+        {
+            get { return GetValue<List<string>>(AcceptedStrokeParentIDsProperty); }
+            set { SetValue(AcceptedStrokeParentIDsProperty, value); }
+        }
+
+        public static readonly PropertyData AcceptedStrokeParentIDsProperty = RegisterProperty("AcceptedStrokeParentIDs", typeof(List<string>), () => new List<string>());
+
+        #endregion //IStrokeAccepter Members
+
         #endregion //Properties
 
         #region Methods
 
-        #region Overrides of APageObjectBase
-
         public override void OnResizing()
         {
-            InternalStampedObject.Width = Width;
-            InternalStampedObject.Height = Height - HandleHeight - PartsHeight;
         }
 
         public override void OnResized() { OnResizing(); }
-
-        #endregion
 
         public override IPageObject Duplicate()
         {
@@ -144,6 +168,48 @@ namespace CLP.Entities
 
             return newStamp;
         }
+
+        #region IStrokeAccepter Methods
+
+        public void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
+        {
+            if(!CanAcceptStrokes)
+            {
+                return;
+            }
+
+            foreach(var stroke in removedStrokes.Where(stroke => AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
+            {
+                AcceptedStrokes.Remove(stroke);
+                AcceptedStrokeParentIDs.Remove(stroke.GetStrokeID());
+            }
+
+            var stampBodyBoundingBox = new Rect(XPosition, YPosition + HandleHeight, Width, Height - HandleHeight - PartsHeight);
+            foreach(var stroke in addedStrokes.Where(stroke => stroke.HitTest(stampBodyBoundingBox, 50) && !AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
+            {
+                AcceptedStrokes.Add(stroke);
+                AcceptedStrokeParentIDs.Add(stroke.GetStrokeID());
+            }
+        }
+
+        public void RefreshAcceptedStrokes()
+        {
+            AcceptedStrokes.Clear();
+            AcceptedStrokeParentIDs.Clear();
+            if(!CanAcceptStrokes)
+            {
+                return;
+            }
+
+            var stampBodyBoundingBox = new Rect(XPosition, YPosition + HandleHeight, Width, Height - HandleHeight - PartsHeight);
+            var strokesOverObject = from stroke in ParentPage.InkStrokes
+                                    where stroke.HitTest(stampBodyBoundingBox, 50) //Stroke must be at least 50 contained by Stamp body.
+                                    select stroke;
+
+            AcceptStrokes(new StrokeCollection(strokesOverObject), new StrokeCollection());
+        }
+
+        #endregion //IStrokeAccepter Methods
 
         #endregion //Methods
     }

@@ -196,16 +196,16 @@
                 <!--Ghost Image of Stamp for making StampedObjects-->
                 <Grid Canvas.Left="{Binding GhostOffsetX}"
                       Canvas.Top="{Binding GhostOffsetY}"
+                      Width="{Binding Width}"
                       Visibility="{Binding IsGhostVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
                     <Grid.RowDefinitions>
-                        <RowDefinition />
-                        <RowDefinition />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
                     <Polygon Grid.Row="0" 
                              Height="{Binding PageObject.HandleHeight}"
-                            Width="{Binding Width}"
-                            MinWidth="50"
+                             MinWidth="50"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Bottom"
                             Margin="0"
@@ -216,12 +216,11 @@
                             Points="0,0 3,0 2,1 1,1" />
 
                     <Border Grid.Row="1"
-                            Height="{Binding InternalStampedObject.Height}"
-                            Width="{Binding Width}"
+                            Height="{Binding ActualHeight, Source={x:Reference StampBody}}"
                             BorderBrush="Black"
                             BorderThickness="2"
                             CornerRadius="{Binding IsCollectionStamp, Converter={StaticResource BoolToDoubleConverter}, ConverterParameter=5}"
-                            VerticalAlignment="Top"
+                            VerticalAlignment="Stretch"
                             Margin="0">
                     </Border>
                 </Grid>
@@ -229,11 +228,12 @@
             </Canvas>
         </ac:AdornedControl.AdornerContent>
 
-        <Grid>
+        <Grid Height="{Binding Height}"
+              Width="{Binding Width}">
             <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <Thumb Grid.Row="0"
@@ -243,7 +243,6 @@
                     <ControlTemplate>
                         <Polygon Tag="StampHandleHitBox"
                                  Height="{Binding PageObject.HandleHeight}"
-                                 Width="{Binding Width}"
                                  MinWidth="50"
                                  HorizontalAlignment="Center"
                                  VerticalAlignment="Bottom"
@@ -274,21 +273,20 @@
             </Thumb>
 
             <Border Grid.Row="1"
-                    Height="{Binding InternalStampedObject.Height}"
-                    Width="{Binding Width}"
+                    x:Name="StampBody"
                     BorderBrush="Black"
                     BorderThickness="2"
                     CornerRadius="{Binding IsCollectionStamp, Converter={StaticResource BoolToDoubleConverter}, ConverterParameter=5}"
-                    VerticalAlignment="Top"
+                    VerticalAlignment="Stretch"
                     Margin="0">
-                <Grid x:Name="StampBodyGrid">
-                    <views:StampedObjectView DataContext="{Binding InternalStampedObject}"
+                <Grid>
+                    <!--<views:StampedObjectView DataContext="{Binding InternalStampedObject}"
                                              Height="{Binding Height}"
-                                             Width="{Binding Width}" />
+                                             Width="{Binding Width}" />-->
                     <Rectangle Tag="StampBodyHitBox"
                                Fill="Transparent"
-                               Height="{Binding ElementName=StampBodyGrid, Path=Height}"
-                               Width="{Binding ElementName=StampBodyGrid, Path=Width}">
+                               Height="{Binding ActualHeight, ElementName=StampBody}"
+                               Width="{Binding ActualWidth, ElementName=StampBody}">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="MouseUp">
                                 <catel:EventToCommand Command="{Binding ToggleMainAdornersCommand}"
@@ -306,7 +304,6 @@
                         BorderBrush="Black"
                         BorderThickness="0,0,0,2"
                         Height="{Binding PageObject.PartsHeight}"
-                        Width="{Binding Width}"
                         HorizontalAlignment="Center"
                         Margin="0"
                         Visibility="{Binding IsCollectionStamp, Converter={StaticResource BooleanToHidingVisibilityConverter}, ConverterParameter=False}" />
@@ -316,14 +313,12 @@
                            FontSize="16"
                            TextAlignment="Center"
                            VerticalAlignment="Top"
-                           Width="{Binding Width}"
                            Visibility="{Binding IsCollectionStamp, Converter={StaticResource BooleanToHidingVisibilityConverter}}" />
 
                 <TextBlock FontFamily="pack://application:,,,/Resources/Fonts/#SketchFlow Print"
                            FontSize="60"
                            TextAlignment="Center"
-                           VerticalAlignment="Bottom"
-                           Width="{Binding Width}">
+                           VerticalAlignment="Bottom">
                     <TextBlock.Text>
                         <MultiBinding Converter="{StaticResource BoolZeroToQuestionMarkMultiConverter}">
                             <Binding Path="Parts" />
@@ -336,8 +331,7 @@
                            IsHitTestVisible="{Binding IsCollectionStamp, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
                            StrokeThickness="0"
                            Fill="Transparent"
-                           Height="{Binding PageObject.PartsHeight}"
-                           Width="{Binding Width}">
+                           Height="{Binding PageObject.PartsHeight}">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="MouseUp">
                             <catel:EventToCommand Command="{Binding ShowKeyPadCommand}" />
