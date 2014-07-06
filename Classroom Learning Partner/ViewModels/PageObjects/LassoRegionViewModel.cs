@@ -195,6 +195,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnDragStopLassoCommandExecute(DragCompletedEventArgs e)
         {
+            var initialX = XPosition;
+            var initialY = YPosition;
+
             var batch = PageObject.ParentPage.History.CurrentHistoryBatch;
             if(batch is PageObjectsMoveBatchHistoryItem)
             {
@@ -203,7 +206,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             var batchHistoryItem = PageObject.ParentPage.History.EndBatch();
             ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, batchHistoryItem, true);
-            PageObject.OnMoved();
+            PageObject.OnMoved(initialX, initialY);
         }
 
         #endregion //Commands

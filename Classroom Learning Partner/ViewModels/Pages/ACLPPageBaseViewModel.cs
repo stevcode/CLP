@@ -860,8 +860,9 @@ namespace Classroom_Learning_Partner.ViewModels
         private bool AcceptStrokes(IEnumerable<Stroke> addedStrokes, IEnumerable<Stroke> removedStrokes)
         {
             var addedStrokesEnumerable = addedStrokes as IList<Stroke> ?? addedStrokes.ToList();
+            var removedStrokesEnumerable = removedStrokes as IList<Stroke> ?? removedStrokes.ToList();
             if(addedStrokesEnumerable.Count() == 1 &&
-               !removedStrokes.Any())
+               !removedStrokesEnumerable.Any())
             {
                 var stroke = addedStrokesEnumerable.First();
                 var wasArrayDivided = false;
@@ -885,11 +886,16 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
 
+            foreach(var pageObject in PageObjects.OfType<IStrokeAccepter>().Where(x => x.CreatorID == App.MainWindowViewModel.CurrentUser.ID || x.IsBackgroundInteractable))
+            {
+                pageObject.AcceptStrokes(addedStrokesEnumerable, removedStrokesEnumerable);
+            }
+
             return false;
 
             /** TODO: implement below
              * All IStokeAcceptors go here
-             * Switch statement to call state method on pageObject's viewmodel AcceptStrokes
+             * Switch statement to call static method on pageObject's viewmodel AcceptStrokes
              * most will default to calling pageObject.AcceptStrokes()
              * array will first test for stroke that can create division
              * if true, call CreateDivisions, public method on ArrayViewModel, cut method from clparray

@@ -214,9 +214,9 @@ namespace CLP.Entities
             return newFuzzyFactorCard;
         }
 
-        public override void OnResized()
+        public override void OnResized(double oldWidth, double oldHeight)
         {
-            base.OnResized();
+            base.OnResized(oldWidth, oldHeight);
             RaisePropertyChanged("LastDivisionPosition");
         }
 
@@ -258,6 +258,8 @@ namespace CLP.Entities
 
         public override void SizeArrayToGridLevel(double toSquareSize = -1, bool recalculateDivisions = true)
         {
+            var initialWidth = Width;
+            var initialHeight = Height;
             var initialSquareSize = 45.0;
             if(toSquareSize <= 0)
             {
@@ -279,7 +281,7 @@ namespace CLP.Entities
             {
                 ResizeDivisions();
             }
-            OnResized();
+            OnResized(initialWidth, initialHeight);
         }
 
         public void AnalyzeArrays()

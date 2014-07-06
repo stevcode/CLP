@@ -280,13 +280,13 @@ namespace CLP.Entities
 
         public virtual void OnDeleted() { }
 
-        public virtual void OnMoving() { }
+        public virtual void OnMoving(double oldX, double oldY) { }
 
-        public virtual void OnMoved() { }
+        public virtual void OnMoved(double oldX, double oldY) { }
 
-        public virtual void OnResizing() { }
+        public virtual void OnResizing(double oldWidth, double oldHeight) { }
 
-        public virtual void OnResized() { }
+        public virtual void OnResized(double oldWidth, double oldHeight) { }
 
         public virtual bool PageObjectIsOver(IPageObject pageObject, double percentage)
         {

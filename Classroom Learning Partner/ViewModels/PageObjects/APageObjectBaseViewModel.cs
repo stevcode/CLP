@@ -211,6 +211,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnDragPageObjectCommandExecute(DragDeltaEventArgs e)
         {
+            var initialX = XPosition;
+            var initialY = YPosition;
+
             var parentPage = PageObject.ParentPage;
 
             var newX = Math.Max(0, PageObject.XPosition + e.HorizontalChange);
@@ -219,7 +222,7 @@ namespace Classroom_Learning_Partner.ViewModels
             newY = Math.Min(newY, parentPage.Height - Height);
 
             ChangePageObjectPosition(PageObject, newX, newY);
-            PageObject.OnMoving();
+            PageObject.OnMoving(initialX, initialY);
         }
 
         /// <summary>
@@ -229,6 +232,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnDragStopPageObjectCommandExecute(DragCompletedEventArgs e)
         {
+            var initialX = XPosition;
+            var initialY = YPosition;
+
             var batch = PageObject.ParentPage.History.CurrentHistoryBatch;
             if(batch is PageObjectMoveBatchHistoryItem)
             {
@@ -236,7 +242,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             var batchHistoryItem = PageObject.ParentPage.History.EndBatch();
             ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, batchHistoryItem, true);
-            PageObject.OnMoved();
+            PageObject.OnMoved(initialX, initialY);
         }
 
         /// <summary>
@@ -259,17 +265,19 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnResizePageObjectCommandExecute(DragDeltaEventArgs e)
         {
+            var initialWidth = Width;
+            var initialHeight = Height;
             var parentPage = PageObject.ParentPage;
             const int MIN_WIDTH = 20;
             const int MIN_HEIGHT = 20;
 
-            var newWidth = Math.Max(MIN_WIDTH, PageObject.Width + e.HorizontalChange);
-            newWidth = Math.Min(newWidth, parentPage.Width - PageObject.XPosition);
-            var newHeight = Math.Max(MIN_HEIGHT, PageObject.Height + e.VerticalChange);
-            newHeight = Math.Min(newHeight, parentPage.Height - PageObject.YPosition);
+            var newWidth = Math.Max(MIN_WIDTH, Width + e.HorizontalChange);
+            newWidth = Math.Min(newWidth, parentPage.Width - XPosition);
+            var newHeight = Math.Max(MIN_HEIGHT, Height + e.VerticalChange);
+            newHeight = Math.Min(newHeight, parentPage.Height - YPosition);
 
             ChangePageObjectDimensions(PageObject, newHeight, newWidth);
-            PageObject.OnResizing();
+            PageObject.OnResizing(initialWidth, initialHeight);
         }
 
         /// <summary>
@@ -279,14 +287,16 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnResizeStopPageObjectCommandExecute(DragCompletedEventArgs e)
         {
+            var initialWidth = Width;
+            var initialHeight = Height;
             var batch = PageObject.ParentPage.History.CurrentHistoryBatch;
             if(batch is PageObjectResizeBatchHistoryItem)
             {
-                (batch as PageObjectResizeBatchHistoryItem).AddResizePointToBatch(PageObject.ID, new Point(PageObject.Width, PageObject.Height));
+                (batch as PageObjectResizeBatchHistoryItem).AddResizePointToBatch(PageObject.ID, new Point(Width, Height));
             }
             var batchHistoryItem = PageObject.ParentPage.History.EndBatch();
             ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, batchHistoryItem, true);
-            PageObject.OnResized();
+            PageObject.OnResized(initialWidth, initialHeight);
         }
 
         #endregion //Default Adorners

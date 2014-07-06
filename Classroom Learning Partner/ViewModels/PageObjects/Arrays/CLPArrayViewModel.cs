@@ -396,6 +396,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnDragStopAndSnapCommandExecute(DragCompletedEventArgs e)
         {
+            var initialX = XPosition;
+            var initialY = YPosition;
+
             var movementBatch = PageObject.ParentPage.History.CurrentHistoryBatch as PageObjectMoveBatchHistoryItem;
             if(movementBatch != null)
             {
@@ -403,7 +406,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             var batchHistoryItem = PageObject.ParentPage.History.EndBatch();
             ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, batchHistoryItem, true);
-            PageObject.OnMoved();
+            PageObject.OnMoved(initialX, initialY);
 
             var snappingArray = PageObject as CLPArray;
             if(snappingArray == null)

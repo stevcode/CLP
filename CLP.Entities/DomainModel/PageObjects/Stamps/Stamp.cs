@@ -122,13 +122,13 @@ namespace CLP.Entities
         /// The currently accepted <see cref="Stroke" />s.
         /// </summary>
         [XmlIgnore]
-        public StrokeCollection AcceptedStrokes
+        public List<Stroke> AcceptedStrokes
         {
-            get { return GetValue<StrokeCollection>(AcceptedStrokesProperty); }
+            get { return GetValue<List<Stroke>>(AcceptedStrokesProperty); }
             set { SetValue(AcceptedStrokesProperty, value); }
         }
 
-        public static readonly PropertyData AcceptedStrokesProperty = RegisterProperty("AcceptedStrokes", typeof(StrokeCollection), () => new StrokeCollection());
+        public static readonly PropertyData AcceptedStrokesProperty = RegisterProperty("AcceptedStrokes", typeof(List<Stroke>), () => new List<Stroke>());
 
         /// <summary>
         /// The IDs of the <see cref="Stroke" />s that have been accepted.
@@ -147,11 +147,16 @@ namespace CLP.Entities
 
         #region Methods
 
-        public override void OnResizing()
+        public override void OnResizing(double oldWidth, double oldHeight)
         {
         }
 
-        public override void OnResized() { OnResizing(); }
+        public override void OnResized(double oldWidth, double oldHeight) { OnResizing(oldWidth, oldHeight); }
+
+        public override void OnMoving(double oldX, double oldY)
+        {
+            
+        }
 
         public override IPageObject Duplicate()
         {
@@ -171,7 +176,7 @@ namespace CLP.Entities
 
         #region IStrokeAccepter Methods
 
-        public void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes)
+        public void AcceptStrokes(IEnumerable<Stroke> addedStrokes, IEnumerable<Stroke> removedStrokes)
         {
             if(!CanAcceptStrokes)
             {

@@ -117,6 +117,9 @@ namespace CLP.Entities
                 return;
             }
 
+            var initialWidth = pageObject.Width;
+            var initialHeight = pageObject.Height;
+
             if(isAnimationUndo && CurrentBatchTickIndex > 0)
             {
                 var stretchedDimension = StretchedDimensions[CurrentBatchTickIndex - 1];
@@ -131,7 +134,7 @@ namespace CLP.Entities
                 pageObject.Height = originalDimension.Y;
                 CurrentBatchTickIndex = -1;
             }
-            pageObject.OnResized();
+            pageObject.OnResized(initialWidth, initialHeight);
         }
 
         /// <summary>
@@ -149,6 +152,14 @@ namespace CLP.Entities
             }
 
             var pageObject = ParentPage.GetPageObjectByID(PageObjectID);
+            if(pageObject == null)
+            {
+                CurrentBatchTickIndex++;
+                return;
+            }
+
+            var initialWidth = pageObject.Width;
+            var initialHeight = pageObject.Height;
 
             if(isAnimationRedo)
             {
@@ -164,7 +175,7 @@ namespace CLP.Entities
                 pageObject.Height = lastDimensions.Y;
                 CurrentBatchTickIndex = NumberOfBatchTicks + 1;
             }
-            pageObject.OnResized();
+            pageObject.OnResized(initialWidth, initialHeight);
         }
 
         public void ClearBatchAfterCurrentIndex()

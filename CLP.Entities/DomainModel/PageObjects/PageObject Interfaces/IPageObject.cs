@@ -28,10 +28,10 @@ namespace CLP.Entities
         IPageObject Duplicate();
         void OnAdded();
         void OnDeleted();
-        void OnMoving();
-        void OnMoved();
-        void OnResizing();
-        void OnResized();
+        void OnMoving(double oldX, double oldY);
+        void OnMoved(double oldX, double oldY);
+        void OnResizing(double oldWidth, double oldHeight);
+        void OnResized(double oldWidth, double oldHeight);
         bool PageObjectIsOver(IPageObject pageObject, double percentage);
     }
 }

@@ -128,7 +128,7 @@ namespace CLP.Entities
             }
         }
 
-        public override void OnResized() { SizeArrayToGridLevel(GridSquareSize); }
+        public override void OnResized(double oldWidth, double oldHeight) { SizeArrayToGridLevel(GridSquareSize); }
 
         #endregion //Overrides of APageObjectBase
 

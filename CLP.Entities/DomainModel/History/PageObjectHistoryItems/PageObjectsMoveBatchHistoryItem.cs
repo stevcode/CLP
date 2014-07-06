@@ -111,6 +111,9 @@ namespace CLP.Entities
                     continue;
                 }
 
+                var initialX = pageObject.XPosition;
+                var initialY = pageObject.YPosition;
+
                 if(isAnimationUndo && CurrentBatchTickIndex > 0)
                 {
                     var travelledPosition = TravelledPositions[CurrentBatchTickIndex - 1];
@@ -157,7 +160,7 @@ namespace CLP.Entities
                     pageObject.YPosition = originalPosition.Y;
                     CurrentBatchTickIndex = -1;
                 }
-                pageObject.OnMoved();
+                pageObject.OnMoved(initialX, initialY);
             }
         }
 
@@ -182,6 +185,9 @@ namespace CLP.Entities
                     Console.WriteLine("ERROR: PageObject not  found on page for REDO of PageObjectMoveBatch.");
                     continue;
                 }
+
+                var initialX = pageObject.XPosition;
+                var initialY = pageObject.YPosition;
 
                 if(isAnimationRedo)
                 {
@@ -227,7 +233,7 @@ namespace CLP.Entities
                     pageObject.YPosition = lastPosition.Y;
                     CurrentBatchTickIndex = NumberOfBatchTicks + 1;
                 }
-                pageObject.OnMoved();
+                pageObject.OnMoved(initialX, initialY);
             }
         }
 

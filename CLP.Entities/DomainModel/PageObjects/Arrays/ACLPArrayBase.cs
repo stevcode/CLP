@@ -346,6 +346,9 @@ namespace CLP.Entities
 
         public virtual void RotateArray()
         {
+            var initialWidth = Width;
+            var initialHeight = Height;
+
             var tempGridSquareSize = GridSquareSize;
             var tempCols = Columns;
             Columns = Rows;
@@ -374,7 +377,7 @@ namespace CLP.Entities
             }
 
             //RefreshStrokeParentIDs();
-            OnResized();
+            OnResized(initialWidth, initialHeight);
         }
 
         public override bool PageObjectIsOver(IPageObject pageObject, double percentage)

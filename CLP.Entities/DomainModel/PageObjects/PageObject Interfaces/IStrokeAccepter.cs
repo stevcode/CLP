@@ -6,10 +6,10 @@ namespace CLP.Entities
     public interface IStrokeAccepter : IPageObject
     {
         bool CanAcceptStrokes { get; set; }
-        StrokeCollection AcceptedStrokes { get; }
+        List<Stroke> AcceptedStrokes { get; }
         List<string> AcceptedStrokeParentIDs { get; set; }
 
-        void AcceptStrokes(StrokeCollection addedStrokes, StrokeCollection removedStrokes);
+        void AcceptStrokes(IEnumerable<Stroke> addedStrokes, IEnumerable<Stroke> removedStrokes);
         void RefreshAcceptedStrokes();
     }
 }

@@ -118,6 +118,9 @@ namespace CLP.Entities
                 return;
             }
 
+            var initialX = pageObject.XPosition;
+            var initialY = pageObject.YPosition;
+
             pageObject.ParentPage = ParentPage; // BUG, ParentPage should already be there and not null. See Dutch-Investigation4-Page4, array with no parent page.
 
             if(isAnimationUndo && CurrentBatchTickIndex > 0)
@@ -166,7 +169,7 @@ namespace CLP.Entities
                 pageObject.YPosition = originalPosition.Y;
                 CurrentBatchTickIndex = -1;
             }
-            pageObject.OnMoved();
+            pageObject.OnMoved(initialX, initialY);
         }
 
         /// <summary>
@@ -190,6 +193,9 @@ namespace CLP.Entities
                 CurrentBatchTickIndex = NumberOfBatchTicks;
                 return;
             }
+
+            var initialX = pageObject.XPosition;
+            var initialY = pageObject.YPosition;
 
             if(isAnimationRedo)
             {
@@ -235,7 +241,7 @@ namespace CLP.Entities
                 pageObject.YPosition = lastPosition.Y;
                 CurrentBatchTickIndex = NumberOfBatchTicks + 1;
             }
-            pageObject.OnMoved();
+            pageObject.OnMoved(initialX, initialY);
         }
 
         public void ClearBatchAfterCurrentIndex()
