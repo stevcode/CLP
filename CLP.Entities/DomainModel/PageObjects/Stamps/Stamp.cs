@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Ink;
+using System.Windows.Media;
 using System.Xml.Serialization;
 using Catel.Data;
 
@@ -155,7 +157,21 @@ namespace CLP.Entities
 
         public override void OnMoving(double oldX, double oldY)
         {
-            
+            var deltaX = XPosition - oldX;
+            var deltaY = YPosition - oldY;
+
+            if(!CanAcceptStrokes)
+            {
+                return;
+            }
+
+            Parallel.ForEach(AcceptedStrokes,
+                             stroke =>
+                             {
+                                 var transform = new Matrix();
+                                 transform.Translate(deltaX, deltaY);
+                                 stroke.Transform(transform, true);
+                             });
         }
 
         public override IPageObject Duplicate()
