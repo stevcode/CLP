@@ -1,22 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls.Primitives;
-using System.Windows.Ink;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Catel.Data;
 using Catel.IoC;
 using Catel.MVVM;
 using Catel.MVVM.Views;
-using Catel.Windows.Controls;
 using Classroom_Learning_Partner.Views;
 using CLP.Entities;
-using Classroom_Learning_Partner.Views.Modal_Windows;
-
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -33,6 +28,30 @@ namespace Classroom_Learning_Partner.ViewModels
         public StampViewModel(Stamp stamp)
         {
             PageObject = stamp;
+            if(App.MainWindowViewModel.ImagePool.ContainsKey(stamp.ImageHashID))
+            {
+                SourceImage = App.MainWindowViewModel.ImagePool[stamp.ImageHashID];
+            }
+            else
+            {
+                var filePath = string.Empty;
+                var imageFilePaths = Directory.EnumerateFiles(App.ImageCacheDirectory);
+                foreach(var imageFilePath in from imageFilePath in imageFilePaths
+                                             let imageHashID = Path.GetFileNameWithoutExtension(imageFilePath)
+                                             where imageHashID == stamp.ImageHashID
+                                             select imageFilePath) 
+                                             {
+                                                 filePath = imageFilePath;
+                                                 break;
+                                             }
+
+                var bitmapImage = CLPImage.GetImageFromPath(filePath);
+                if(bitmapImage != null)
+                {
+                    SourceImage = bitmapImage;
+                    App.MainWindowViewModel.ImagePool.Add(stamp.ImageHashID, bitmapImage);
+                }
+            }
 
             ParameterizeStampCommand = new Command(OnParameterizeStampCommandExecute);
             StartDragStampCommand = new Command(OnStartDragStampCommandExecute);
@@ -111,6 +130,17 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData GhostBodyImageProperty = RegisterProperty("GhostBodyImage", typeof(ImageSource));
+
+        /// <summary>
+        /// The visible image, loaded from the ImageCache.
+        /// </summary>
+        public ImageSource SourceImage
+        {
+            get { return GetValue<ImageSource>(SourceImageProperty); }
+            set { SetValue(SourceImageProperty, value); }
+        }
+
+        public static readonly PropertyData SourceImageProperty = RegisterProperty("SourceImage", typeof (ImageSource));
 
         /// <summary>
         /// Gets or sets the property value.
@@ -434,7 +464,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
             
-            var stampedObject = new StampedObject(stamp.ParentPage, stamp.ID, string.Empty, IsCollectionStamp)
+            var stampedObject = new StampedObject(stamp.ParentPage, stamp.ID, stamp.ImageHashID, IsCollectionStamp)
                                 {
                                     Width = Width,
                                     Height = Height - stamp.HandleHeight - stamp.PartsHeight,

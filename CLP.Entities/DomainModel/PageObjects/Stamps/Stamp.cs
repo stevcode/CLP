@@ -11,7 +11,7 @@ using Catel.Data;
 namespace CLP.Entities
 {
     [Serializable]
-    public class Stamp : APageObjectBase, ICountable, IStrokeAccepter
+    public class Stamp : APageObjectBase, ICountable, IStrokeAccepter, IPageObjectAccepter
     {
         #region Constructors
 
@@ -28,8 +28,10 @@ namespace CLP.Entities
             : base(parentPage)
         {
             IsCollectionStamp = isCollectionStamp;
+            CanAcceptPageObjects = isCollectionStamp;
             Width = isCollectionStamp ? 125 : 75;
             Height = isCollectionStamp ? 230 : 180;
+            ImageHashID = imageHashID;
         }
 
         /// <summary>
@@ -68,6 +70,17 @@ namespace CLP.Entities
         {
             get { return 70; }
         }
+
+        /// <summary>
+        /// The unique Hash of the image this <see cref="Stamp" /> contains.
+        /// </summary>
+        public string ImageHashID
+        {
+            get { return GetValue<string>(ImageHashIDProperty); }
+            set { SetValue(ImageHashIDProperty, value); }
+        }
+
+        public static readonly PropertyData ImageHashIDProperty = RegisterProperty("ImageHashID", typeof(string), string.Empty);
 
         /// <summary>
         /// Designates the <see cref="Stamp" /> as a CollectionStamp that can accept <see cref="IPageObject" />s.
@@ -144,6 +157,44 @@ namespace CLP.Entities
 
         #endregion //IStrokeAccepter Members
 
+        #region IPageObjectAccepter Members
+
+        /// <summary>
+        /// Determines whether the <see cref="Stamp" /> can currently accept <see cref="IPageObject" />s.
+        /// </summary>
+        public bool CanAcceptPageObjects
+        {
+            get { return GetValue<bool>(CanAcceptPageObjectsProperty); }
+            set { SetValue(CanAcceptPageObjectsProperty, value); }
+        }
+
+        public static readonly PropertyData CanAcceptPageObjectsProperty = RegisterProperty("CanAcceptPageObjects", typeof(bool), false);
+
+        /// <summary>
+        /// The currently accepted <see cref="IPageObject" />s.
+        /// </summary>
+        [XmlIgnore]
+        public List<IPageObject> AcceptedPageObjects
+        {
+            get { return GetValue<List<IPageObject>>(AcceptedPageObjectsProperty); }
+            set { SetValue(AcceptedPageObjectsProperty, value); }
+        }
+
+        public static readonly PropertyData AcceptedPageObjectsProperty = RegisterProperty("AcceptedPageObjects", typeof(List<IPageObject>), () => new List<IPageObject>());
+
+        /// <summary>
+        /// The IDs of the <see cref="IPageObject" />s that have been accepted.
+        /// </summary>
+        public List<string> AcceptedPageObjectIDs
+        {
+            get { return GetValue<List<string>>(AcceptedPageObjectIDsProperty); }
+            set { SetValue(AcceptedPageObjectIDsProperty, value); }
+        }
+
+        public static readonly PropertyData AcceptedPageObjectIDsProperty = RegisterProperty("AcceptedPageObjectIDs", typeof(List<string>), () => new List<string>());
+
+        #endregion //IPageObjectAccepter Members
+
         #endregion //Properties
 
         #region Methods
@@ -159,16 +210,23 @@ namespace CLP.Entities
             var deltaX = XPosition - oldX;
             var deltaY = YPosition - oldY;
 
-            if(!CanAcceptStrokes)
+            if(CanAcceptStrokes)
             {
-                return;
+                foreach(var stroke in AcceptedStrokes)
+                {
+                    var transform = new Matrix();
+                    transform.Translate(deltaX, deltaY);
+                    stroke.Transform(transform, true);
+                }
             }
 
-            foreach(var stroke in AcceptedStrokes)
+            if(CanAcceptPageObjects)
             {
-                var transform = new Matrix();
-                transform.Translate(deltaX, deltaY);
-                stroke.Transform(transform, true);
+                foreach(var pageObject in AcceptedPageObjects)
+                {
+                    pageObject.XPosition += deltaX;
+                    pageObject.YPosition += deltaX;
+                }
             }
         }
 
@@ -188,6 +246,29 @@ namespace CLP.Entities
             return newStamp;
         }
 
+        public override bool PageObjectIsOver(IPageObject pageObject, double percentage)
+        {
+            var areaObject = pageObject.Height * pageObject.Width;
+            var area = (Height - HandleHeight - PartsHeight) * Width;
+            var top = Math.Max(YPosition + HandleHeight, pageObject.YPosition);
+            var bottom = Math.Min(YPosition + Height - PartsHeight, pageObject.YPosition + pageObject.Height);
+            var left = Math.Max(XPosition, pageObject.XPosition);
+            var right = Math.Min(XPosition + Width, pageObject.XPosition + pageObject.Width);
+            var deltaY = bottom - top;
+            var deltaX = right - left;
+            var intersectionArea = deltaY * deltaX;
+            return deltaY >= 0 && deltaX >= 0 && (intersectionArea / areaObject >= percentage || intersectionArea / area >= percentage);
+        }
+
+        public void RefreshParts()
+        {
+            Parts = 0;
+            foreach(var pageObject in AcceptedPageObjects.OfType<ICountable>())
+            {
+                Parts += pageObject.Parts;
+            }
+        }
+
         #region IStrokeAccepter Methods
 
         public void AcceptStrokes(IEnumerable<Stroke> addedStrokes, IEnumerable<Stroke> removedStrokes)
@@ -204,7 +285,8 @@ namespace CLP.Entities
             }
 
             var stampBodyBoundingBox = new Rect(XPosition, YPosition + HandleHeight, Width, Height - HandleHeight - PartsHeight);
-            foreach(var stroke in addedStrokes.Where(stroke => stroke.HitTest(stampBodyBoundingBox, 50) && !AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
+            foreach(var stroke in addedStrokes.Where(stroke => stroke.HitTest(stampBodyBoundingBox, 50) && 
+                                                               !AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
             {
                 AcceptedStrokes.Add(stroke);
                 AcceptedStrokeParentIDs.Add(stroke.GetStrokeID());
@@ -222,13 +304,61 @@ namespace CLP.Entities
 
             var stampBodyBoundingBox = new Rect(XPosition, YPosition + HandleHeight, Width, Height - HandleHeight - PartsHeight);
             var strokesOverObject = from stroke in ParentPage.InkStrokes
-                                    where stroke.HitTest(stampBodyBoundingBox, 50) //Stroke must be at least 50 contained by Stamp body.
+                                    where stroke.HitTest(stampBodyBoundingBox, 50) //Stroke must be at least 50% contained by Stamp body.
                                     select stroke;
 
             AcceptStrokes(new StrokeCollection(strokesOverObject), new StrokeCollection());
         }
 
         #endregion //IStrokeAccepter Methods
+
+        #region IPageObjectAccepter Methods
+
+        public void AcceptPageObjects(IEnumerable<IPageObject> addedPageObjects, IEnumerable<IPageObject> removedPageObjects)
+        {
+            if(!CanAcceptPageObjects)
+            {
+                return;
+            }
+
+            foreach(var pageObject in removedPageObjects.Where(pageObject => AcceptedPageObjectIDs.Contains(pageObject.ID)))
+            {
+                AcceptedPageObjects.Remove(pageObject);
+                AcceptedPageObjectIDs.Remove(pageObject.ID);
+            }
+
+            foreach(var pageObject in addedPageObjects.Where(pageObject => !AcceptedPageObjectIDs.Contains(pageObject.ID) && 
+                                                                           pageObject.GetType() == typeof(ICountable))) 
+            {
+                if(pageObject is Stamp ||
+                   (pageObject is StampedObject && (pageObject as StampedObject).IsStampedCollection))
+                {
+                    continue;
+                }
+                AcceptedPageObjects.Add(pageObject);
+                AcceptedPageObjectIDs.Add(pageObject.ID);
+            }
+
+            RefreshParts();
+        }
+
+        public void RefreshAcceptedPageObjects()
+        {
+            AcceptedPageObjects.Clear();
+            AcceptedPageObjectIDs.Clear();
+            if(!CanAcceptPageObjects)
+            {
+                return;
+            }
+
+            var pageObjectsOverStamp = from pageObject in ParentPage.PageObjects
+                                        where PageObjectIsOver(pageObject, .90) //PageObject must be at least 90% contained by Stamp body.
+                                        select pageObject;
+
+            AcceptPageObjects(pageObjectsOverStamp, new List<IPageObject>());
+        }
+
+        #endregion //IPageObjectAccepter Methods
 
         #endregion //Methods
     }

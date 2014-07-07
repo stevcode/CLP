@@ -35,12 +35,11 @@ namespace Classroom_Learning_Partner.ViewModels
                                              }
 
                 var bitmapImage = CLPImage.GetImageFromPath(filePath);
-                if(bitmapImage == null)
+                if(bitmapImage != null)
                 {
-                    return;
+                    SourceImage = bitmapImage;
+                    App.MainWindowViewModel.ImagePool.Add(image.ImageHashID, bitmapImage);
                 }
-                SourceImage = bitmapImage;
-                App.MainWindowViewModel.ImagePool.Add(image.ImageHashID, bitmapImage);
             }
 
             ResizeImageCommand = new Command<DragDeltaEventArgs>(OnResizeImageCommandExecute);

@@ -292,6 +292,10 @@
                     VerticalAlignment="Stretch"
                     Margin="0">
                 <Grid>
+                    <Image Source="{Binding SourceImage, Mode=OneWay}"
+                           Height="{Binding ActualHeight, ElementName=StampBody}"
+                           Width="{Binding ActualWidth, ElementName=StampBody}" />
+                    
                     <Rectangle Tag="StampBodyHitBox"
                                Fill="Transparent"
                                Height="{Binding ActualHeight, ElementName=StampBody}"
