@@ -11,6 +11,7 @@ using Catel.IoC;
 using Catel.MVVM;
 using Catel.MVVM.Views;
 using Classroom_Learning_Partner.Views;
+using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -289,6 +290,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command StartDragStampCommand { get; private set; }
 
+        bool _copyFailed;
         private void OnStartDragStampCommandExecute()
         {
             StampHandleColor = new SolidColorBrush(Colors.Black);
@@ -354,66 +356,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.Select;
                 _copyFailed = true;
             }  
-        }
-
-        double _originalX;
-        double _originalY;
-        bool _copyFailed = false;
-
-        private void CopyStamp(int stampIndex)
-        {
-            PartsRegionVisibility = Visibility.Collapsed;
-            IsAdornerVisible = false;
-
-            //try
-            //{
-            //    var leftBehindStamp = PageObject.Duplicate() as CLPStamp;
-            //    var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
-            //    if(notebookWorkspaceViewModel == null || leftBehindStamp == null)
-            //    {
-            //        return;
-            //    }
-
-            //    leftBehindStamp.UniqueID = PageObject.UniqueID;
-            //    leftBehindStamp.PageObjectObjectParentIDs = new ObservableCollection<string>();
-
-            //    _originalX = leftBehindStamp.XPosition;
-            //    _originalY = leftBehindStamp.YPosition;
-
-            //    PageObject.CanAcceptStrokes = false;
-            //    PageObject.CanAcceptPageObjects = false;
-            //    if(PageObject.PageObjectObjectParentIDs.Any())
-            //    {
-            //        foreach(var pageObject in PageObject.GetPageObjectsOverPageObject())
-            //        {
-            //            var clonePageObject = pageObject.Duplicate();
-
-            //            // New object stays put, old object leaves, but we shuffle around IDs for ID continuity.
-            //            PageObject.PageObjectObjectParentIDs.Remove(pageObject.UniqueID);
-            //            var tempID = pageObject.UniqueID;
-            //            pageObject.UniqueID = clonePageObject.UniqueID;
-            //            clonePageObject.UniqueID = tempID;
-            //            PageObject.PageObjectObjectParentIDs.Add(pageObject.UniqueID);
-
-            //            var index = PageObject.ParentPage.PageObjects.IndexOf(PageObject);
-            //            ACLPPageBaseViewModel.AddPageObjectToPage(clonePageObject, false, false, index);
-            //            leftBehindStamp.PageObjectObjectParentIDs.Add(clonePageObject.UniqueID);
-            //        }
-            //    }
-
-            //    if(stampIndex > -1)
-            //    {
-            //        ACLPPageBaseViewModel.AddPageObjectToPage(PageObject.ParentPage, leftBehindStamp, false, false, stampIndex);
-            //    }
-            //    else
-            //    {
-            //        ACLPPageBaseViewModel.AddPageObjectToPage(PageObject.ParentPage, leftBehindStamp, false);
-            //    }
-            //}
-            //catch(Exception ex)
-            //{
-            //    Logger.Instance.WriteToLog("[ERROR]: Failed to copy left behind container. " + ex.Message);
-            //}
         }
 
         /// <summary>
@@ -530,29 +472,35 @@ namespace Classroom_Learning_Partner.ViewModels
         
         private void OnShowKeyPadCommandExecute()
         {
-            //var clpStamp = PageObject as Stamp;
-            //if(clpStamp != null && (App.MainWindowViewModel.IsAuthoring || !clpStamp.PartsAuthorGenerated))
-            //{
-            //    var keyPad = new KeypadWindowView("How many things?", 100)
-            //        {
-            //            Owner = Application.Current.MainWindow,
-            //            WindowStartupLocation = WindowStartupLocation.Manual,
-            //            Top = 100,
-            //            Left = 100
-            //        };
-            //    keyPad.ShowDialog();
-            //    if(keyPad.DialogResult == true && keyPad.NumbersEntered.Text.Length > 0)
-            //    {
-            //        var oldParts = PageObject.Parts;
-            //        var parts = Int32.Parse(keyPad.NumbersEntered.Text);
-            //        PageObject.Parts = parts;
-            //        ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryPartsChanged(PageObject.ParentPage, PageObject.UniqueID, oldParts));
-            //        if(App.MainWindowViewModel.IsAuthoring)
-            //        {
-            //            (PageObject as Stamp).PartsAuthorGenerated = true;
-            //        }
-            //    }
-            //}
+            var stamp = PageObject as Stamp;
+            if(stamp == null ||
+               (!App.MainWindowViewModel.IsAuthoring && stamp.IsPartsAutoGenerated))
+            {
+                return;
+            }
+
+            var keyPad = new KeypadWindowView("How many things?", 100)
+                         {
+                             Owner = Application.Current.MainWindow,
+                             WindowStartupLocation = WindowStartupLocation.Manual,
+                             Top = 100,
+                             Left = 100
+                         };
+            keyPad.ShowDialog();
+            if(keyPad.DialogResult != true ||
+               keyPad.NumbersEntered.Text.Length <= 0)
+            {
+                return;
+            }
+
+            var oldParts = stamp.Parts;
+            var parts = Int32.Parse(keyPad.NumbersEntered.Text);
+            stamp.Parts = parts;
+        //    ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryPartsChanged(PageObject.ParentPage, PageObject.UniqueID, oldParts));
+            if(App.MainWindowViewModel.IsAuthoring)
+            {
+                stamp.IsPartsAutoGenerated = true;
+            }
         }
 
         #endregion //Commands
@@ -561,13 +509,18 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private bool HasParts()
         {
-            //var clpStamp = PageObject as CLPStamp;
-            //if (clpStamp != null && clpStamp.PartsAuthorGenerated)
-            //{
-            //    return true;
-            //}
-            //return PageObject.Parts > 0;
-            return true;
+            var stamp = PageObject as Stamp;
+            if (stamp == null)
+            {
+                return false;
+            }
+
+            if(stamp.IsPartsAutoGenerated)
+            {
+                return true;
+            }
+
+            return stamp.Parts > 0;
         }
 
         #endregion //Methods
