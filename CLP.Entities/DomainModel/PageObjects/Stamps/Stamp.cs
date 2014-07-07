@@ -171,14 +171,6 @@ namespace CLP.Entities
                 transform.Translate(deltaX, deltaY);
                 stroke.Transform(transform, true);
             }
-
-            //Parallel.ForEach(AcceptedStrokes,
-            //                 stroke =>
-            //                 {
-            //                     var transform = new Matrix();
-            //                     transform.Translate(deltaX, deltaY);
-            //                     stroke.Transform(transform, true);
-            //                 });
         }
 
         public override IPageObject Duplicate()
