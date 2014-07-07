@@ -93,15 +93,15 @@ namespace CLP.Entities
         public static readonly PropertyData IsStampedCollectionProperty = RegisterProperty("IsStampedCollection", typeof(bool), false);
 
         /// <summary>
-        /// List of <see cref="StrokePathDTO" />s that make up the <see cref="StampedObject" />.
+        /// List of <see cref="StrokeDTO" />s that make up the <see cref="StampedObject" />.
         /// </summary>
-        public List<StrokePathDTO> StrokePaths
+        public List<StrokeDTO> SerializedStrokes
         {
-            get { return GetValue<List<StrokePathDTO>>(StrokePathsProperty); }
-            set { SetValue(StrokePathsProperty, value); }
+            get { return GetValue<List<StrokeDTO>>(SerializedStrokesProperty); }
+            set { SetValue(SerializedStrokesProperty, value); }
         }
 
-        public static readonly PropertyData StrokePathsProperty = RegisterProperty("StrokePaths", typeof(List<StrokePathDTO>), () => new List<StrokePathDTO>());
+        public static readonly PropertyData SerializedStrokesProperty = RegisterProperty("SerializedStrokes", typeof(List<StrokeDTO>), () => new List<StrokeDTO>());
 
         #region ICountable Members
 

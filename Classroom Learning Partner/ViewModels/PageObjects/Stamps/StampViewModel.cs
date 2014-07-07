@@ -446,46 +446,49 @@ namespace Classroom_Learning_Partner.ViewModels
             foreach (var stroke in stamp.AcceptedStrokes)
             {
                 var newStroke = stroke.ToStrokeDTO().ToStroke();
+                newStroke.SetStrokeID(Guid.NewGuid().ToCompactID());
                 var transform = new Matrix();
                 transform.Translate(-XPosition, -YPosition - stamp.HandleHeight);
                 newStroke.Transform(transform, true);
-                stampedObject.StrokePaths.Add(new StrokePathDTO(newStroke));
+                stampedObject.SerializedStrokes.Add(newStroke.ToStrokeDTO());
             }
 
-            //var xPosition = stampedObject.XPosition;
-            //var yPosition = stampedObject.YPosition;
-            //if(!IsCollectionStamp && 
-            //   stampedObject.ImageHashID == string.Empty) //Shrinks StampCopy to bounds of all strokePaths
-            //{
-            //    var x1 = Double.MaxValue;
-            //    var y1 = Double.MaxValue;
-            //    var x2 = 0.0;
-            //    var y2 = 0.0;
-            //    var copyStrokes = StrokeDTO.LoadInkStrokes(StampCopy.SerializedStrokes);
-            //    foreach(var bounds in copyStrokes.Select(stroke => stroke.GetBounds()))
-            //    {
-            //        x1 = Math.Min(x1, bounds.Left);
-            //        y1 = Math.Min(y1, bounds.Top);
-            //        x2 = Math.Max(x2, bounds.Right);
-            //        y2 = Math.Max(y2, bounds.Bottom);
-            //    }
+            var xPosition = stampedObject.XPosition;
+            var yPosition = stampedObject.YPosition;
+            if(!IsCollectionStamp && 
+               stampedObject.ImageHashID == string.Empty) //Shrinks StampCopy to bounds of all strokePaths
+            {
+                var x1 = Double.MaxValue;
+                var y1 = Double.MaxValue;
+                var x2 = 0.0;
+                var y2 = 0.0;
+                foreach(var bounds in stampedObject.SerializedStrokes.Select(serializedStroke => serializedStroke.ToStroke().GetBounds()))
+                {
+                    x1 = Math.Min(x1, bounds.Left);
+                    y1 = Math.Min(y1, bounds.Top);
+                    x2 = Math.Max(x2, bounds.Right);
+                    y2 = Math.Max(y2, bounds.Bottom);
+                }
 
-            //    xPosition += x1;
-            //    yPosition += y1;
-            //    stampedObject.Width = Math.Max(x2 - x1, 20); //TODO: center if too small?
-            //    stampedObject.Height = Math.Max(y2 - y1, 20);
+                xPosition += x1;
+                yPosition += y1;
+                stampedObject.Width = Math.Max(x2 - x1, 20); //TODO: center if too small?
+                stampedObject.Height = Math.Max(y2 - y1, 20);
 
-            //    foreach(var stroke in copyStrokes)
-            //    {
-            //        var transform = new Matrix();
-            //        transform.Translate(-x1, -y1);
-            //        stroke.Transform(transform, true);
-            //    }
-            //    stampedObject.SerializedStrokes = StrokeDTO.SaveInkStrokes(copyStrokes);
-            //}
+                var transformedSerializedStrokes = new List<StrokeDTO>();
+                foreach(var serializedStroke in stampedObject.SerializedStrokes)
+                {
+                    var stroke = serializedStroke.ToStroke();
+                    var transform = new Matrix();
+                    transform.Translate(-x1, -y1);
+                    stroke.Transform(transform, true);
+                    transformedSerializedStrokes.Add(stroke.ToStrokeDTO());
+                }
+                stampedObject.SerializedStrokes = transformedSerializedStrokes;
+            }
 
-            //stampedObject.XPosition = xPosition;
-            //stampedObject.YPosition = yPosition;
+            stampedObject.XPosition = xPosition;
+            stampedObject.YPosition = yPosition;
 
             ACLPPageBaseViewModel.AddPageObjectToPage(stampedObject);
         }

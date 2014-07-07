@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Windows.Media;
@@ -39,12 +40,16 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
 
                 var bitmapImage = CLPImage.GetImageFromPath(filePath);
-                if(bitmapImage == null)
+                if(bitmapImage != null)
                 {
-                    return;
+                    SourceImage = bitmapImage;
+                    App.MainWindowViewModel.ImagePool.Add(stampedObject.ImageHashID, bitmapImage);
                 }
-                SourceImage = bitmapImage;
-                App.MainWindowViewModel.ImagePool.Add(stampedObject.ImageHashID, bitmapImage);
+            }
+
+            foreach(var strokePath in stampedObject.SerializedStrokes.Select(serializedStroke => serializedStroke.ToStroke()).Select(stroke => new StrokePathDTO(stroke))) 
+            {
+                StrokePaths.Add(strokePath);
             }
         }
 
@@ -75,18 +80,6 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData IsStampedCollectionProperty = RegisterProperty("IsStampedCollection", typeof(bool));
 
         /// <summary>
-        /// List of <see cref="StrokePathDTO" />s that make up the <see cref="StampedObject" />.
-        /// </summary>
-        [ViewModelToModel("PageObject")]
-        public List<StrokePathDTO> StrokePaths
-        {
-            get { return GetValue<List<StrokePathDTO>>(StrokePathsProperty); }
-            set { SetValue(StrokePathsProperty, value); }
-        }
-
-        public static readonly PropertyData StrokePathsProperty = RegisterProperty("StrokePaths", typeof(List<StrokePathDTO>));
-
-        /// <summary>
         /// Number of parts represented by the StampCopy. Only visible for collection copies.
         /// This property is automatically mapped to the corresponding property in PageObject.
         /// </summary>
@@ -113,6 +106,17 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData SourceImageProperty = RegisterProperty("SourceImage", typeof(ImageSource));
+
+        /// <summary>
+        /// List of <see cref="StrokePathDTO" />s that make up the <see cref="StampedObject" />.
+        /// </summary>
+        public ObservableCollection<StrokePathDTO> StrokePaths
+        {
+            get { return GetValue<ObservableCollection<StrokePathDTO>>(StrokePathsProperty); }
+            set { SetValue(StrokePathsProperty, value); }
+        }
+
+        public static readonly PropertyData StrokePathsProperty = RegisterProperty("StrokePaths", typeof(ObservableCollection<StrokePathDTO>), () => new ObservableCollection<StrokePathDTO>());
 
         #endregion //Binding
     }
