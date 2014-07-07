@@ -72,7 +72,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(IsStampedCollectionProperty, value); }
         }
 
-        public static readonly PropertyData IsStampedCollectionProperty = RegisterProperty("IsStampedCollection", typeof(bool), false);
+        public static readonly PropertyData IsStampedCollectionProperty = RegisterProperty("IsStampedCollection", typeof(bool));
 
         /// <summary>
         /// List of <see cref="StrokePathDTO" />s that make up the <see cref="StampedObject" />.

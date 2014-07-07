@@ -214,14 +214,26 @@
                             StrokeThickness="0"
                             Fill="Green"
                             Points="0,0 3,0 2,1 1,1" />
+                    
+                    <!--<Image Grid.Row="1" 
+                            Source="{Binding GhostBodyImage}"
+                            Height="{Binding ActualHeight, Source={x:Reference StampBody}}"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            Margin="0" />-->
 
                     <Border Grid.Row="1"
+                            ClipToBounds="True"
                             Height="{Binding ActualHeight, Source={x:Reference StampBody}}"
                             BorderBrush="Black"
                             BorderThickness="2"
                             CornerRadius="{Binding IsCollectionStamp, Converter={StaticResource BoolToDoubleConverter}, ConverterParameter=5}"
                             VerticalAlignment="Stretch"
                             Margin="0">
+                        <Image Source="{Binding GhostBodyImage}"
+                               HorizontalAlignment="Stretch"
+                               VerticalAlignment="Stretch"
+                               Margin="0" />
                     </Border>
                 </Grid>
 
@@ -280,9 +292,6 @@
                     VerticalAlignment="Stretch"
                     Margin="0">
                 <Grid>
-                    <!--<views:StampedObjectView DataContext="{Binding InternalStampedObject}"
-                                             Height="{Binding Height}"
-                                             Width="{Binding Width}" />-->
                     <Rectangle Tag="StampBodyHitBox"
                                Fill="Transparent"
                                Height="{Binding ActualHeight, ElementName=StampBody}"
@@ -303,8 +312,8 @@
                 <Border IsHitTestVisible="False"
                         BorderBrush="Black"
                         BorderThickness="0,0,0,2"
-                        Height="{Binding PageObject.PartsHeight}"
-                        HorizontalAlignment="Center"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
                         Margin="0"
                         Visibility="{Binding IsCollectionStamp, Converter={StaticResource BooleanToHidingVisibilityConverter}, ConverterParameter=False}" />
 

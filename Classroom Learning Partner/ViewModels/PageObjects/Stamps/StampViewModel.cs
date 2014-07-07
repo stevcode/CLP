@@ -1,14 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Ink;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Catel.Data;
+using Catel.IoC;
 using Catel.MVVM;
+using Catel.MVVM.Views;
 using Catel.Windows.Controls;
+using Classroom_Learning_Partner.Views;
 using CLP.Entities;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 
@@ -95,6 +100,17 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData GhostOffsetYProperty = RegisterProperty("GhostOffsetY", typeof(double), 0.0);
+
+        /// <summary>
+        /// Screenshot of the <see cref="Stamp" />'s body.
+        /// </summary>
+        public ImageSource GhostBodyImage
+        {
+            get { return GetValue<ImageSource>(GhostBodyImageProperty); }
+            set { SetValue(GhostBodyImageProperty, value); }
+        }
+
+        public static readonly PropertyData GhostBodyImageProperty = RegisterProperty("GhostBodyImage", typeof(ImageSource));
 
         /// <summary>
         /// Gets or sets the property value.
@@ -251,12 +267,55 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 GhostOffsetX = 0.0;
                 GhostOffsetY = 0.0;
-                IsGhostVisible = true;
                 
-                //TODO: Take image of StampBodyGrid and add to Ghost border.
+                //Take image of StampBody and add to Ghost border.
+                var stamp = PageObject as Stamp;
+                var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(PageObject.ParentPage).First(x => (x is CLPPageViewModel) && !(x as CLPPageViewModel).IsPagePreview);
+                var viewManager = Catel.IoC.ServiceLocator.Default.ResolveType<IViewManager>();
+                var views = viewManager.GetViewsOfViewModel(pageViewModel);
+                var pageView = views.FirstOrDefault(view => view is CLPPageView) as CLPPageView;
+                if(pageView == null ||
+                   stamp == null)
+                {
+                    _copyFailed = true;
+                    return;
+                }
 
+                const double SCREEN_DPI = 96.0;
 
-                //CopyStamp(PageObject.ParentPage.PageObjects.IndexOf(PageObject));
+                var renderTarget = new RenderTargetBitmap((int)PageObject.ParentPage.Width, (int)PageObject.ParentPage.Height, SCREEN_DPI, SCREEN_DPI, PixelFormats.Pbgra32);
+                var sourceBrush = new VisualBrush(pageView);
+
+                var drawingVisual = new DrawingVisual();
+                var drawingContext = drawingVisual.RenderOpen();
+
+                using(drawingContext)
+                {
+                    drawingContext.PushTransform(new ScaleTransform(1.0, 1.0));
+                    drawingContext.DrawRectangle(sourceBrush, null, new Rect(new Point(0, 0), new Point(PageObject.ParentPage.Width, PageObject.ParentPage.Height)));
+                }
+                renderTarget.Render(drawingVisual);
+
+                var crop = new CroppedBitmap(renderTarget, new Int32Rect((int)(XPosition + 2), (int)(YPosition + stamp.HandleHeight + 2), (int)(Width - 4), (int)(Height - stamp.HandleHeight - stamp.PartsHeight - 4)));
+                
+                byte[] imageArray;
+                var encoder = new PngBitmapEncoder();
+                encoder.Frames.Add(BitmapFrame.Create(crop));
+                using(var outputStream = new MemoryStream())
+                {
+                    encoder.Save(outputStream);
+                    imageArray = outputStream.ToArray();
+                }
+
+                var bitmapImage = new BitmapImage();
+                bitmapImage.BeginInit();
+                bitmapImage.CacheOption = BitmapCacheOption.OnDemand;
+                bitmapImage.StreamSource = new MemoryStream(imageArray);
+                bitmapImage.EndInit();
+                bitmapImage.Freeze();
+
+                GhostBodyImage = bitmapImage;
+                IsGhostVisible = true;
             } 
             else 
             {
@@ -366,11 +425,11 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            var deltaX = Math.Abs(GhostOffsetX - XPosition);
-            var deltaY = Math.Abs(GhostOffsetY - YPosition);
+            var deltaX = Math.Abs(GhostOffsetX);
+            var deltaY = Math.Abs(GhostOffsetY);
 
             if(deltaX < Width + 5 &&
-               deltaY < Height)
+               deltaY < Height - stamp.PartsHeight)
             {
                 return;
             }
@@ -383,9 +442,6 @@ namespace Classroom_Learning_Partner.ViewModels
                                     YPosition = stamp.YPosition + GhostOffsetY + stamp.HandleHeight,
                                     Parts = stamp.Parts
                                 };
-
-
-            var clonedStrokes = new StrokeCollection();
 
             foreach (var stroke in stamp.AcceptedStrokes)
             {
