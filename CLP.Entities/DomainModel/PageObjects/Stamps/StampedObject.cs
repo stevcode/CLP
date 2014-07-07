@@ -82,17 +82,6 @@ namespace CLP.Entities
         public static readonly PropertyData ImageHashIDProperty = RegisterProperty("ImageHashID", typeof(string), string.Empty);
 
         /// <summary>
-        /// Whether or not the <see cref="StampedObject" /> has been stamped onto the page.
-        /// </summary>
-        public bool IsStamped
-        {
-            get { return GetValue<bool>(IsStampedProperty); }
-            set { SetValue(IsStampedProperty, value); }
-        }
-
-        public static readonly PropertyData IsStampedProperty = RegisterProperty("IsStamped", typeof(bool), false);
-
-        /// <summary>
         /// Whether or not the <see cref="StampedObject" /> is a stamp from a collection stamp.
         /// </summary>
         public bool IsStampedCollection

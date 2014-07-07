@@ -8,6 +8,7 @@ using System.Windows.Ink;
 using System.Windows.Media;
 using Catel.Data;
 using Catel.MVVM;
+using Catel.Windows.Controls;
 using CLP.Entities;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 
@@ -256,21 +257,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
 
                 //CopyStamp(PageObject.ParentPage.PageObjects.IndexOf(PageObject));
-
-                //var originalStrokes = PageObject.GetStrokesOverPageObject();
-                //var clonedStrokes = new StrokeCollection();
-
-                //foreach (var stroke in originalStrokes)
-                //{
-                //    var newStroke = stroke.ToStrokeDTO().ToStroke();
-                //    var transform = new Matrix();
-                //    transform.Translate(-XPosition, -YPosition - CLPStamp.HandleHeight);
-                //    newStroke.Transform(transform, true);
-                //    clonedStrokes.Add(newStroke);
-                //}
-                //PageObject.CanAcceptStrokes = false;
-                //StampCopy.SerializedStrokes = StrokeDTO.SaveInkStrokes(clonedStrokes);
-                //StampCopy.IsStamped = true;
             } 
             else 
             {
@@ -372,33 +358,48 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnPlaceStampCommandExecute()
         {
-            if(_copyFailed)
-            {
-                IsGhostVisible = false;
-                return;
-            }
-
-            if(!HasParts() && !IsCollectionStamp)
-            {
-                IsGhostVisible = false;
-                return;
-            }
-
             IsGhostVisible = false;
-
-            var deltaX = Math.Abs(PageObject.XPosition - _originalX);
-            var deltaY = Math.Abs(PageObject.YPosition - _originalY);
-
-            if(deltaX < PageObject.Width + 5 &&
-               deltaY < PageObject.Height)
+            var stamp = PageObject as Stamp;
+            if(_copyFailed ||
+               stamp == null)
             {
                 return;
             }
 
+            var deltaX = Math.Abs(GhostOffsetX - XPosition);
+            var deltaY = Math.Abs(GhostOffsetY - YPosition);
 
-            //var xPosition = PageObject.XPosition;
-            //var yPosition = PageObject.YPosition + CLPStamp.HandleHeight;
-            //if(!IsCollectionStamp && StampCopy.ImageID == string.Empty) //Shrinks StampCopy to bounds of all strokePaths
+            if(deltaX < Width + 5 &&
+               deltaY < Height)
+            {
+                return;
+            }
+            
+            var stampedObject = new StampedObject(stamp.ParentPage, stamp.ID, string.Empty, IsCollectionStamp)
+                                {
+                                    Width = Width,
+                                    Height = Height - stamp.HandleHeight - stamp.PartsHeight,
+                                    XPosition = stamp.XPosition + GhostOffsetX,
+                                    YPosition = stamp.YPosition + GhostOffsetY + stamp.HandleHeight,
+                                    Parts = stamp.Parts
+                                };
+
+
+            var clonedStrokes = new StrokeCollection();
+
+            foreach (var stroke in stamp.AcceptedStrokes)
+            {
+                var newStroke = stroke.ToStrokeDTO().ToStroke();
+                var transform = new Matrix();
+                transform.Translate(-XPosition, -YPosition - stamp.HandleHeight);
+                newStroke.Transform(transform, true);
+                stampedObject.StrokePaths.Add(new StrokePathDTO(newStroke));
+            }
+
+            //var xPosition = stampedObject.XPosition;
+            //var yPosition = stampedObject.YPosition;
+            //if(!IsCollectionStamp && 
+            //   stampedObject.ImageHashID == string.Empty) //Shrinks StampCopy to bounds of all strokePaths
             //{
             //    var x1 = Double.MaxValue;
             //    var y1 = Double.MaxValue;
@@ -415,8 +416,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //    xPosition += x1;
             //    yPosition += y1;
-            //    StampCopy.Width = Math.Max(x2 - x1, 20); //TODO: center if too small?
-            //    StampCopy.Height = Math.Max(y2 - y1, 20);
+            //    stampedObject.Width = Math.Max(x2 - x1, 20); //TODO: center if too small?
+            //    stampedObject.Height = Math.Max(y2 - y1, 20);
 
             //    foreach(var stroke in copyStrokes)
             //    {
@@ -424,32 +425,13 @@ namespace Classroom_Learning_Partner.ViewModels
             //        transform.Translate(-x1, -y1);
             //        stroke.Transform(transform, true);
             //    }
-            //    StampCopy.SerializedStrokes = StrokeDTO.SaveInkStrokes(copyStrokes);
+            //    stampedObject.SerializedStrokes = StrokeDTO.SaveInkStrokes(copyStrokes);
             //}
 
-            
-            //StampCopy.ParentID = PageObject.UniqueID;
-            //StampCopy.UniqueID = Guid.NewGuid().ToString();
-            //StampCopy.Parts = PageObject.Parts;
-            //StampCopy.IsInternalPageObject = false;
-            //StampCopy.IsCollectionCopy = IsCollectionStamp;
-            //StampCopy.CanAcceptPageObjects = IsCollectionStamp;
-            //StampCopy.PageObjectObjectParentIDs = PageObject.PageObjectObjectParentIDs;
+            //stampedObject.XPosition = xPosition;
+            //stampedObject.YPosition = yPosition;
 
-            //var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
-            //if(notebookWorkspaceViewModel != null)
-            //{
-            //    var parentPage = notebookWorkspaceViewModel.Notebook.GetNotebookPageByID(PageObject.ParentPageID);
-            //    var minIndex = parentPage.PageObjects.Count - 1;
-            //    minIndex = StampCopy.GetPageObjectsOverPageObject().Select(pageObject => parentPage.PageObjects.IndexOf(pageObject)).Concat(new[] {minIndex}).Min();
-
-            //    ACLPPageBaseViewModel.AddPageObjectToPage(parentPage, StampCopy, false, false, minIndex);
-            //    StampCopy.XPosition = xPosition;
-            //    StampCopy.YPosition = yPosition;
-            //}
-
-            //ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryStampPlace(PageObject.ParentPage, StampCopy.UniqueID));
-            //StampCopy.OnAdded();
+            ACLPPageBaseViewModel.AddPageObjectToPage(stampedObject);
         }
 
         /// <summary>

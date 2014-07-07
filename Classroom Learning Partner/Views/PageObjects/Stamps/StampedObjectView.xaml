@@ -29,8 +29,7 @@
             <Canvas HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Width="{Binding Width}"
-                    Height="{Binding Height}"
-                    Visibility="{Binding IsStamped, Converter={StaticResource BooleanToHidingVisibilityConverter}}">
+                    Height="{Binding Height}">
 
                 <Rectangle Stroke="Black"
                            StrokeDashArray="0.5 1.0 0.3"
@@ -138,8 +137,7 @@
                           Width="{Binding Width}"
                           Height="{Binding Height}"
                           HorizontalAlignment="Stretch"
-                          VerticalAlignment="Stretch"
-                          Visibility="{Binding IsStamped, Converter={StaticResource BooleanToHidingVisibilityConverter}}">
+                          VerticalAlignment="Stretch">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <Canvas Height="{Binding Height}"

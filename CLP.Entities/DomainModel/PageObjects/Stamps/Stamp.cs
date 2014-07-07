@@ -165,13 +165,20 @@ namespace CLP.Entities
                 return;
             }
 
-            Parallel.ForEach(AcceptedStrokes,
-                             stroke =>
-                             {
-                                 var transform = new Matrix();
-                                 transform.Translate(deltaX, deltaY);
-                                 stroke.Transform(transform, true);
-                             });
+            foreach(var stroke in AcceptedStrokes)
+            {
+                var transform = new Matrix();
+                transform.Translate(deltaX, deltaY);
+                stroke.Transform(transform, true);
+            }
+
+            //Parallel.ForEach(AcceptedStrokes,
+            //                 stroke =>
+            //                 {
+            //                     var transform = new Matrix();
+            //                     transform.Translate(deltaX, deltaY);
+            //                     stroke.Transform(transform, true);
+            //                 });
         }
 
         public override IPageObject Duplicate()

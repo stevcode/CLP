@@ -62,18 +62,6 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Model
 
         /// <summary>
-        /// Whether the stamp copy has been copied to the page.
-        /// </summary>
-        [ViewModelToModel("PageObject")]
-        public bool IsStamped
-        {
-            get { return GetValue<bool>(IsStampedProperty); }
-            set { SetValue(IsStampedProperty, value); }
-        }
-
-        public static readonly PropertyData IsStampedProperty = RegisterProperty("IsStamped", typeof(bool));
-
-        /// <summary>
         /// Whether or not the StampCopy is a copy of a Collection Stamp.
         /// This property is automatically mapped to the corresponding property in PageObject.
         /// </summary>
