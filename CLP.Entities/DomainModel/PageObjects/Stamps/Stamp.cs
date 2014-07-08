@@ -236,7 +236,7 @@ namespace CLP.Entities
                 foreach(var pageObject in AcceptedPageObjects)
                 {
                     pageObject.XPosition += deltaX;
-                    pageObject.YPosition += deltaX;
+                    pageObject.YPosition += deltaY;
                 }
             }
         }

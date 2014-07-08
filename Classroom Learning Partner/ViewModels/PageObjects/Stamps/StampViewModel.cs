@@ -462,7 +462,19 @@ namespace Classroom_Learning_Partner.ViewModels
             stampedObject.XPosition = xPosition;
             stampedObject.YPosition = yPosition;
 
-            ACLPPageBaseViewModel.AddPageObjectToPage(stampedObject);
+            var combinedPageObjects = new List<IPageObject>
+                                      {
+                                          stampedObject
+                                      };
+            foreach(var pageObject in stamp.AcceptedPageObjects)
+            {
+                var newPageObject = pageObject.Duplicate();
+                newPageObject.XPosition = pageObject.XPosition + GhostOffsetX;
+                newPageObject.YPosition = pageObject.YPosition + GhostOffsetY;
+                combinedPageObjects.Add(newPageObject);
+            }
+
+            ACLPPageBaseViewModel.AddPageObjectsToPage(stampedObject.ParentPage, combinedPageObjects);
         }
 
         /// <summary>

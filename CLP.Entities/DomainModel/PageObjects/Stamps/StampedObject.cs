@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
 {
     [Serializable]
-    public class StampedObject : APageObjectBase, ICountable //, IPageObjectAccepter
+    public class StampedObject : APageObjectBase, ICountable, IPageObjectAccepter
     {
         #region Constructors
 
@@ -25,6 +27,7 @@ namespace CLP.Entities
             ParentStampID = parentStampID;
             ImageHashID = imageHashID;
             IsStampedCollection = isStampedCollection;
+            CanAcceptPageObjects = isStampedCollection;
         }
 
         /// <summary>
@@ -140,9 +143,62 @@ namespace CLP.Entities
 
         #endregion
 
+        #region IPageObjectAccepter Members
+
+        /// <summary>
+        /// Determines whether the <see cref="Stamp" /> can currently accept <see cref="IPageObject" />s.
+        /// </summary>
+        public bool CanAcceptPageObjects
+        {
+            get { return GetValue<bool>(CanAcceptPageObjectsProperty); }
+            set { SetValue(CanAcceptPageObjectsProperty, value); }
+        }
+
+        public static readonly PropertyData CanAcceptPageObjectsProperty = RegisterProperty("CanAcceptPageObjects", typeof(bool), false);
+
+        /// <summary>
+        /// The currently accepted <see cref="IPageObject" />s.
+        /// </summary>
+        [XmlIgnore]
+        public List<IPageObject> AcceptedPageObjects
+        {
+            get { return GetValue<List<IPageObject>>(AcceptedPageObjectsProperty); }
+            set { SetValue(AcceptedPageObjectsProperty, value); }
+        }
+
+        public static readonly PropertyData AcceptedPageObjectsProperty = RegisterProperty("AcceptedPageObjects", typeof(List<IPageObject>), () => new List<IPageObject>());
+
+        /// <summary>
+        /// The IDs of the <see cref="IPageObject" />s that have been accepted.
+        /// </summary>
+        public List<string> AcceptedPageObjectIDs
+        {
+            get { return GetValue<List<string>>(AcceptedPageObjectIDsProperty); }
+            set { SetValue(AcceptedPageObjectIDsProperty, value); }
+        }
+
+        public static readonly PropertyData AcceptedPageObjectIDsProperty = RegisterProperty("AcceptedPageObjectIDs", typeof(List<string>), () => new List<string>());
+
+        #endregion //IPageObjectAccepter Members
+
         #endregion //Properties
 
         #region Methods
+
+        public override void OnMoving(double oldX, double oldY)
+        {
+            var deltaX = XPosition - oldX;
+            var deltaY = YPosition - oldY;
+
+            if(CanAcceptPageObjects)
+            {
+                foreach(var pageObject in AcceptedPageObjects)
+                {
+                    pageObject.XPosition += deltaX;
+                    pageObject.YPosition += deltaY;
+                }
+            }
+        }
 
         public override IPageObject Duplicate()
         {
@@ -159,6 +215,63 @@ namespace CLP.Entities
 
             return newStampedObject;
         }
+
+        public void RefreshParts()
+        {
+            Parts = 0;
+            foreach(var pageObject in AcceptedPageObjects.OfType<ICountable>())
+            {
+                Parts += pageObject.Parts;
+            }
+        }
+
+        #region IPageObjectAccepter Methods
+
+        public void AcceptPageObjects(IEnumerable<IPageObject> addedPageObjects, IEnumerable<IPageObject> removedPageObjects)
+        {
+            if(!CanAcceptPageObjects)
+            {
+                return;
+            }
+
+            foreach(var pageObject in removedPageObjects.Where(pageObject => AcceptedPageObjectIDs.Contains(pageObject.ID)))
+            {
+                AcceptedPageObjects.Remove(pageObject);
+                AcceptedPageObjectIDs.Remove(pageObject.ID);
+            }
+
+            foreach(var pageObject in addedPageObjects.OfType<ICountable>()) 
+            {
+                if(AcceptedPageObjectIDs.Contains(pageObject.ID) ||
+                   pageObject is Stamp ||
+                   (pageObject is StampedObject && (pageObject as StampedObject).IsStampedCollection))
+                {
+                    continue;
+                }
+                AcceptedPageObjects.Add(pageObject);
+                AcceptedPageObjectIDs.Add(pageObject.ID);
+            }
+
+            RefreshParts();
+        }
+
+        public void RefreshAcceptedPageObjects()
+        {
+            AcceptedPageObjects.Clear();
+            AcceptedPageObjectIDs.Clear();
+            if(!CanAcceptPageObjects)
+            {
+                return;
+            }
+
+            var pageObjectsOverStamp = from pageObject in ParentPage.PageObjects
+                                        where PageObjectIsOver(pageObject, .90) //PageObject must be at least 90% contained by Stamp body.
+                                        select pageObject;
+
+            AcceptPageObjects(pageObjectsOverStamp, new List<IPageObject>());
+        }
+
+        #endregion //IPageObjectAccepter Methods
 
         #endregion //Methods
     }
