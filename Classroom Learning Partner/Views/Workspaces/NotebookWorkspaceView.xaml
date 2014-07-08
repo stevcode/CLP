@@ -15,8 +15,7 @@
                LastChildFill="True">
 
         <!--Left Panel-->
-        <Control DockPanel.Dock="Left"
-                 Visibility="{Binding LeftPanel.IsVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
+        <Control DockPanel.Dock="Left">
             <Control.Resources>
 
                 <ControlTemplate x:Key="NotebookPagesPanelTemplate">

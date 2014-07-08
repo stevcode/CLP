@@ -18,10 +18,11 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="ProgressPanelViewModel" /> class.
         /// </summary>
-        public ProgressPanelViewModel(Notebook notebook)
+        public ProgressPanelViewModel(Notebook notebook, StagingPanelViewModel stagingPanel)
         {
             Notebook = notebook;
             Initialized += ProgressPanelViewModel_Initialized;
+            StagingPanel = stagingPanel;
 
             if(App.MainWindowViewModel.CurrentClassPeriod != null)
             {
@@ -42,6 +43,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             SetCurrentPageCommand = new Command<CLPPage>(OnSetCurrentPageCommandExecute);
             ChooseClassPeriodCommand = new Command(OnChooseClassPeriodCommandExecute);
+            StageStudentNotebookCommand = new Command<Person>(OnStageStudentNotebookCommandExecute);
         }
 
         void ProgressPanelViewModel_Initialized(object sender, EventArgs e)
@@ -51,7 +53,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         void setWidth()
         {
-            var calculatedWidth = CurrentPages.Count * 40 + 90;
+            var calculatedWidth = CurrentPages.Count * 40 + 110;
             if(App.Current.MainWindow.ActualWidth < calculatedWidth * 2)
             {
                 Length = App.Current.MainWindow.ActualWidth / 2;
@@ -129,6 +131,16 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData ClassPeriodsForDisplayProperty = RegisterProperty("ClassPeriodsForDisplay", typeof(ObservableCollection<ClassPeriodForDisplay>), () => new ObservableCollection<ClassPeriodForDisplay>());
 
+        /// <summary>
+        /// Staging Panel for submissions
+        /// </summary>
+        public StagingPanelViewModel StagingPanel
+        {
+            get { return GetValue<StagingPanelViewModel>(StagingPanelProperty); }
+            set { SetValue(StagingPanelProperty, value); }
+        }
+
+        public static readonly PropertyData StagingPanelProperty = RegisterProperty("StagingPanel", typeof(StagingPanelViewModel)); 
 
         #endregion //Bindings
 
@@ -165,9 +177,27 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+        /// <summary>
+        /// Appends submissions for the given student/page combo to the staging panel
+        /// </summary>
+        public Command<Person> StageStudentNotebookCommand { get; private set; }
+
+        private void OnStageStudentNotebookCommandExecute(Person student)
+        {
+            var stagingPanel = StagingPanel as StagingPanelViewModel;
+            if(stagingPanel == null)
+            {
+                return;
+            }
+
+            stagingPanel.IsVisible = true;
+
+            stagingPanel.SetStudentNotebook(student);
+        }
 
         /// <summary>
-        /// Sets the current selected page in the listbox.
+        /// Meant to allow for looking at progress outside the class period.
+        /// TODO: Loading stuff from outside the current class period isn't really supported.
         /// </summary>
         public Command ChooseClassPeriodCommand
         {
@@ -177,46 +207,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnChooseClassPeriodCommandExecute()
         {
-            /*
-            ClassPeriodChooserView classPeriodChooser = new ClassPeriodChooserView(ClassPeriodsForDisplay);
-            classPeriodChooser.Owner = Application.Current.MainWindow;
-            classPeriodChooser.ShowDialog();
-
-            if(classPeriodChooser.DialogResult == true)
-            {
-                List<string> pageIdsToShow = new List<String>();
-                foreach(ClassPeriodForDisplay classPeriod in ClassPeriodsForDisplay)
-                {
-                    if(classPeriod.Showing)
-                    {
-                        foreach(string pageId in classPeriod.Data.PageIDs)
-                        {
-                            if(!pageIdsToShow.Contains(pageId))
-                            {
-                                pageIdsToShow.Add(pageId);
-                            }
-                        }
-                    }
-                }
-                SetCurrentPagesFromList(pageIdsToShow);
-            }*/
         }
 
         #endregion
-
-        /*private void SetCurrentPagesFromList(List<string> PageIDList)
-        {
-            CurrentPages.Clear();
-            var pageList = PageIDList.ConvertAll<CLPPage>(id => Notebook.GetPageByCompositeKeys(id, Notebook.OwnerID, "0", 0));
-            var sortedPageList = pageList.OrderBy(page => Notebook.Pages.IndexOf(page));
-            foreach(CLPPage page in sortedPageList)
-            {
-                if(page != null)
-                {
-                    CurrentPages.Add(page);
-                }
-            }
-            setWidth();
-        }*/
     }
 }

@@ -48,7 +48,8 @@
                 BorderBrush="{StaticResource GrayEdgeColor}"
                 BorderThickness="{Binding Location, Converter={StaticResource PanelLocationToThicknessConverter}, ConverterParameter=7.0}"
                 Grid.Column="0"
-                Width="{Binding Length}">
+                Width="{Binding Length}"
+                Visibility="{Binding IsVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
 
             <Grid>
                 <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -253,6 +254,31 @@
                                            Source="pack://application:,,,/Resources/Images/Check16.png"
                                            Visibility="{Binding ViewModel.HasSubmissions, ElementName=PagePreviewView, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />
                                     
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="1"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Bottom"
+                                            Orientation="Horizontal"
+                                            Visibility="{Binding DataContext.StagingPanel.IsVisible, ElementName=PagesListBox, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" >
+                                    <Button Height="29"
+                                                    Width="25"
+                                                    Command="{Binding DataContext.AppendStarredCommand, ElementName=PagesListBox}"
+                                                    CommandParameter="{Binding}">
+                                        <Image Source="pack://application:,,,/Resources/Images/DisplayStarredSubmissionsButton29x25.png" />
+                                    </Button>
+                                    <Button Height="29"
+                                                    Width="25"
+                                                    Command="{Binding DataContext.AppendCorrectCommand, ElementName=PagesListBox}"
+                                                    CommandParameter="{Binding}">
+                                        <Image Source="pack://application:,,,/Resources/Images/DisplayCorrectSubmissionsButton29x25.png" />
+                                    </Button>
+                                    <Button Height="29"
+                                                    Width="25"
+                                                    Command="{Binding DataContext.AppendIncorrectCommand, ElementName=PagesListBox}"
+                                                    CommandParameter="{Binding}">
+                                        <Image Source="pack://application:,,,/Resources/Images/DisplayIncorrectSubmissionsButton29x25.png" />
+                                    </Button>
                                 </StackPanel>
 
                                 <Grid Grid.Column="2"
