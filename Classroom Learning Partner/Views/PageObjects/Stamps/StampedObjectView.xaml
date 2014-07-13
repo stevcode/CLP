@@ -162,7 +162,7 @@
                        VerticalAlignment="Bottom"
                        FontFamily="pack://application:,,,/Resources/Fonts/#SketchFlow Print"
                        FontSize="18"
-                       Visibility="{Binding IsStampedCollection, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, Mode=OneWay}">
+                       Visibility="{Binding IsStampedCollection, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, Mode=OneWay, FallbackValue=Collapsed}">
                 <Run Text="collection " />
                 <Run Text="{Binding Parts}" />
             </TextBlock>
