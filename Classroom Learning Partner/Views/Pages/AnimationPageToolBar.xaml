@@ -77,7 +77,7 @@
         <DockPanel Name="PlaybackControls"
                    Grid.Row="0"
                    Height="30"
-                   Background="Blue"
+                   Background="LightSkyBlue"
                    LastChildFill="False">
             
             <!--Record Button-->
@@ -242,7 +242,7 @@
             </Grid.ColumnDefinitions>
             <!--Rewind Button-->
             <Button Grid.Column="0"
-                    Width="70" Background="Purple"
+                    Width="70" Background="MediumPurple"
                     Margin="0 0 5 0"
                     Command="{Binding RewindAnimationCommand}"
                     IsEnabled="{Binding IsPlaying, Converter={StaticResource BooleanToOppositeBooleanConverter}}">
