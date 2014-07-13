@@ -956,6 +956,7 @@
     <Content Include="External Libraries\System.Reactive.Providers.dll" />
     <Content Include="External Libraries\System.Reactive.Windows.Threading.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
+    <Resource Include="Resources\Images\ConvertToPDF32.png" />
     <Resource Include="Resources\Images\DisplayAllSubmissionsButton29x25.png" />
     <Resource Include="Resources\Images\PresetArray16.png" />
     <Resource Include="Resources\Images\PresetArray32.png" />
@@ -1081,7 +1082,6 @@
     <Resource Include="Resources\Images\Exit64.png" />
     <Resource Include="Resources\Images\ReconnectToNetwork32.png" />
     <Resource Include="Resources\Images\TempIcon32.png" />
-    <Resource Include="Resources\Images\ConvertToXPS32.png" />
     <Resource Include="Resources\Images\SaveAllNotebooks32.png" />
     <Resource Include="Resources\Images\SaveNotebook32.png" />
     <Resource Include="Resources\Images\EditNotebook32.png" />

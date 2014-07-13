@@ -58,20 +58,20 @@
                                            Command="{Binding ForceSaveNotebookCommand}" />
 
                 <RibbonApplicationMenuItem Header="Convert Notebook Pages To PDF"
-                                           ImageSource="pack://application:,,,/Resources/Images/ConvertToXPS32.png"
+                                           ImageSource="pack://application:,,,/Resources/Images/ConvertToPDF32.png"
                                            Command="{Binding ConvertToXPSCommand}" />
 
                 <RibbonApplicationMenuItem Header="Convert Submissions for this page to PDF"
-                                           ImageSource="pack://application:,,,/Resources/Images/ConvertToXPS32.png"
+                                           ImageSource="pack://application:,,,/Resources/Images/ConvertToPDF32.png"
                                            Command="{Binding ConvertPageSubmissionToXPSCommand}"
                                            Visibility="{Binding InstructorVisibility}" />
 
                 <RibbonApplicationMenuItem Header="Convert All Submissions To PDF"
-                                           ImageSource="pack://application:,,,/Resources/Images/ConvertToXPS32.png"
+                                           ImageSource="pack://application:,,,/Resources/Images/ConvertToPDF32.png"
                                            Command="{Binding ConvertAllSubmissionsToXPSCommand}" />
 
                 <!--<RibbonApplicationMenuItem Header="Convert Displays To XPS"
-                                           ImageSource="pack://application:,,,/Resources/Images/ConvertToXPS32.png"
+                                           ImageSource="pack://application:,,,/Resources/Images/ConvertToPDF32.png"
                                            Command="{Binding ConvertDisplaysToXPSCommand}" />-->
                 
                 <RibbonApplicationMenuItem Header="Start Current Class Period"
