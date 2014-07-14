@@ -25,6 +25,7 @@ namespace Classroom_Learning_Partner.ViewModels
             AddPageToStageCommand = new Command<CLPPage>(OnAddPageToStageCommandExecute);
             
             StagingPanel = stagingPanel;
+            SubmissionHistoryPanel = new SubmissionHistoryPanelViewModel(notebook);
         }
 
         void NotebookPagesPanelViewModel_Initialized(object sender, EventArgs e)
@@ -98,7 +99,18 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(StagingPanelProperty, value); }
         }
 
-        public static readonly PropertyData StagingPanelProperty = RegisterProperty("StagingPanel", typeof(StagingPanelViewModel)); 
+        public static readonly PropertyData StagingPanelProperty = RegisterProperty("StagingPanel", typeof(StagingPanelViewModel));
+
+        /// <summary>
+        /// Submissions History Panel for the submissions of a student's page.
+        /// </summary>
+        public SubmissionHistoryPanelViewModel SubmissionHistoryPanel
+        {
+            get { return GetValue<SubmissionHistoryPanelViewModel>(SubmissionHistoryPanelProperty); }
+            set { SetValue(SubmissionHistoryPanelProperty, value); }
+        }
+
+        public static readonly PropertyData SubmissionHistoryPanelProperty = RegisterProperty("SubmissionHistoryPanel", typeof(SubmissionHistoryPanelViewModel));
 
         #endregion //Bindings
 

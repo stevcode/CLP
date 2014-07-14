@@ -24,7 +24,7 @@ namespace Classroom_Learning_Partner.Converters
                 }
             }
 
-            return result ? Visibility.Visible : Visibility.Hidden;
+            return result ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)

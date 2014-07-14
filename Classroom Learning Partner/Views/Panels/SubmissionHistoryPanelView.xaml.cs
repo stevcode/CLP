@@ -9,7 +9,11 @@ namespace Classroom_Learning_Partner.Views
     /// </summary>
     public partial class SubmissionHistoryPanelView
     {
-        public SubmissionHistoryPanelView() { InitializeComponent(); }
+        public SubmissionHistoryPanelView()
+        {
+            InitializeComponent(); 
+            CloseViewModelOnUnloaded = false;
+        }
 
         protected override Type GetViewModelType() { return typeof(SubmissionHistoryPanelViewModel); }
         private void UIElement_OnManipulationBoundaryFeedback(object sender, ManipulationBoundaryFeedbackEventArgs e) { e.Handled = true; }

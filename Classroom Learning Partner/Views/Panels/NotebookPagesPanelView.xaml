@@ -6,7 +6,8 @@
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
                    xmlns:extenders="clr-namespace:Classroom_Learning_Partner.Views.Extenders"
-                   xmlns:entities="clr-namespace:CLP.Entities;assembly=CLP.Entities">
+                   xmlns:entities="clr-namespace:CLP.Entities;assembly=CLP.Entities"
+                   xmlns:clp="clr-namespace:Classroom_Learning_Partner">
 
     <UserControl.Resources>
         <ResourceDictionary>
@@ -21,6 +22,7 @@
             <conv:ItemSelectedToColorConverter x:Key="PageOrDisplaySelectionColorConverter" />
             <conv:PanelLocationToThicknessConverter x:Key="PanelLocationToThicknessConverter" />
             <conv:ShouldUseThumbnailConverter x:Key="ShouldUseThumbnailConverter" />
+            <conv:AllBoolToVisibilityMultiConverter x:Key="AllBoolToVisibilityMultiConverter" />
 
             <!-- Style to override ListBoxItem selection visuals for Pages -->
             <Style x:Key="PageSidebarContainer"
@@ -40,6 +42,7 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
@@ -322,10 +325,33 @@
 
         </Border>
 
+        
         <views:StagingPanelView DataContext="{Binding StagingPanel}"
-                                Grid.Column="1"
-                                Visibility="{Binding IsVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />
+                                Grid.Column="1">
+            <views:StagingPanelView.Visibility>
+                <MultiBinding Converter="{StaticResource AllBoolToVisibilityMultiConverter}">
+                    <Binding Path="IsVisible" />
+                    <Binding Path="CurrentUserMode" 
+                             Source="{x:Static Application.Current}"
+                             Converter="{StaticResource EnumToBoolConverter}"
+                             ConverterParameter="{x:Static clp:App+UserMode.Instructor}" />
+                </MultiBinding>
+            </views:StagingPanelView.Visibility>
+            
+        </views:StagingPanelView>
 
+        <views:SubmissionHistoryPanelView DataContext="{Binding SubmissionHistoryPanel}"
+                                          Grid.Column="2">
+            <views:SubmissionHistoryPanelView.Visibility>
+                <MultiBinding Converter="{StaticResource AllBoolToVisibilityMultiConverter}">
+                    <Binding Path="CurrentUserMode"
+                             Source="{x:Static Application.Current}"
+                             Converter="{StaticResource EnumToBoolConverter}"
+                             ConverterParameter="{x:Static clp:App+UserMode.Student}" />
+                </MultiBinding>
+            </views:SubmissionHistoryPanelView.Visibility>
+        </views:SubmissionHistoryPanelView>
+        
     </Grid>
 
 </catel:UserControl>
