@@ -49,9 +49,9 @@ namespace Classroom_Learning_Partner.ViewModels
             ClearStageCommand = new Command(OnClearStageCommandExecute);
             ToggleNoSubmissionsCommand = new Command<RoutedEventArgs>(OnToggleNoSubmissionsCommandExecute);
 
-            AppendCollectionOfPagesToStage(SingleAddedPages);
-            FilterCollectionOfPagesFromStage(SingleRemovedPages);
-            CurrentSortAndGroupType = SortAndGroupTypes.SortAndGroupByPageNumber;
+         //   AppendCollectionOfPagesToStage(SingleAddedPages);
+         //   FilterCollectionOfPagesFromStage(SingleRemovedPages);
+        //    CurrentSortAndGroupType = SortAndGroupTypes.SortAndGroupByPageNumber;
         }
 
         void StagingPanelViewModel_Initialized(object sender, EventArgs e) { Length = InitialLength; }

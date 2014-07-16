@@ -146,8 +146,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region IPanel Override
 
-        #region Overrides of APanelBaseViewModel
-
         /// <summary>
         /// Initial Length of the Panel, before any resizing.
         /// </summary>
@@ -155,8 +153,6 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             get { return 400; }
         }
-
-        #endregion
 
         #endregion //IPanel Override
 
