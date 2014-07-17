@@ -51,7 +51,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
          //   AppendCollectionOfPagesToStage(SingleAddedPages);
          //   FilterCollectionOfPagesFromStage(SingleRemovedPages);
-        //    CurrentSortAndGroupType = SortAndGroupTypes.SortAndGroupByPageNumber;
+            CurrentSortAndGroupType = SortAndGroupTypes.SortAndGroupByPageNumber;
         }
 
         void StagingPanelViewModel_Initialized(object sender, EventArgs e) { Length = InitialLength; }

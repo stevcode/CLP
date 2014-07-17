@@ -534,7 +534,7 @@
 
         </RibbonTab>
         
-        <RibbonTab Header="Overflow"
+        <RibbonTab Header="Extras"
                    Visibility="{Binding InstructorVisibility}">
             
             <RibbonGroup Header="Page">
@@ -594,6 +594,14 @@
                 <RibbonButton Label="Exit Tickets from Current Page"
                               LargeImageSource="..\Resources\Images\IndexCards32.png"
                               Command="{Binding MakeExitTicketsFromCurrentPageCommand}" />
+
+            </RibbonGroup>
+            
+            <RibbonGroup Header="History">
+
+                <RibbonButton Label="Replay"
+                              LargeImageSource="..\Images\video.png"
+                              Command="{Binding ReplayCommand}" />
 
             </RibbonGroup>
 
@@ -898,14 +906,6 @@
                 <RibbonButton Label="Analyze Stamps"
                               LargeImageSource="..\Images\AddPathStamp.png"
                               Command="{Binding AnalyzeStampsCommand}" />
-            </RibbonGroup>
-
-            <RibbonGroup Header="History">
-
-                <RibbonButton Label="Replay"
-                              LargeImageSource="..\Images\video.png"
-                              Command="{Binding ReplayCommand}" />
-
             </RibbonGroup>
             
             <RibbonGroup Header="Creation Stuff">
