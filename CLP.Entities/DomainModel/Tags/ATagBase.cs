@@ -147,7 +147,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData ValueProperty = RegisterProperty("Value", typeof(string), string.Empty);
 
-         #region Navigation Properties
+        #region Navigation Properties
 
         /// <summary>
         /// Unique Identifier for the <see cref="IPageObject" />'s parent <see cref="CLPPage" />.

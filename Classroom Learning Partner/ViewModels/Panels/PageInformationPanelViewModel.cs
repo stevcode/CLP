@@ -135,6 +135,18 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData PageNumberProperty = RegisterProperty("PageNumber", typeof(decimal), 1);
 
+        /// <summary>
+        /// <see cref="ATagBase" />s for the <see cref="CLPPage" />.
+        /// </summary>
+        [ViewModelToModel("CurrentPage")]
+        public ObservableCollection<ITag> Tags
+        {
+            get { return GetValue<ObservableCollection<ITag>>(TagsProperty); }
+            set { SetValue(TagsProperty, value); }
+        }
+
+        public static readonly PropertyData TagsProperty = RegisterProperty("Tags", typeof(ObservableCollection<ITag>));
+
         #endregion //Model
 
         #region Bindings

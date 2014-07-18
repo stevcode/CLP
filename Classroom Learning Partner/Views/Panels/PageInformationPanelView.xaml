@@ -6,19 +6,32 @@
 
     <UserControl.Resources>
         <conv:PanelLocationToThicknessConverter x:Key="PanelLocationToThicknessConverter" />
+        <conv:TypeToStringConverter x:Key="TypeToStringConverter" />
+
+        <!-- Style to override ListBoxItem selection visuals for Pages -->
+        <Style x:Key="ListBoxItemBlankStyle"
+               TargetType="{x:Type ListBoxItem}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                        <ContentPresenter />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
 
     <Border Background="{StaticResource GrayBackgroundColor}"
             BorderBrush="{StaticResource GrayEdgeColor}"
             BorderThickness="{Binding Location, Converter={StaticResource PanelLocationToThicknessConverter}, ConverterParameter={StaticResource PanelBorderThickeness}}"
             Width="{Binding Length}">
-        
+
         <catel:StackGrid Margin="5 0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            
+
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -34,73 +47,75 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            
+
             <TextBlock Text="ID:" />
             <TextBox Text="{Binding ID}"
                      IsReadOnly="True" />
-            
+
             <TextBlock Text="DifferentiationLevel:" />
             <TextBox Text="{Binding DifferentiationLevel}"
                      IsReadOnly="True" />
-            
+
             <TextBlock Text="VersionIndex:" />
             <TextBox Text="{Binding VersionIndex}"
                      IsReadOnly="True" />
-            
+
             <TextBlock Text="Page Number:" />
             <TextBox Text="{Binding PageNumber}" />
-            
+
             <TextBlock Text="History Length:" />
             <TextBox Text="{Binding CurrentPage.History.HistoryLength, Mode=OneWay}"
                      IsReadOnly="True" />
-            
+
             <TextBlock Text="Animation Length:" />
             <TextBox Text="{Binding CurrentPage.History.TotalHistoryTicks, Mode=OneWay}"
                      IsReadOnly="True" />
-            
+
             <Button Content="Add Page:"
                     Command="{Binding AddPageCommand}"
                     Height="30"
                     Margin="1" />
-            
+
             <ComboBox ItemsSource="{Binding PageOrientations}"
                       SelectedItem="{Binding SelectedPageOrientation}"
                       Height="25"
                       Margin="1"
                       VerticalAlignment="Center"
                       VerticalContentAlignment="Center" />
-            
+
             <Button Content="Move Page Up"
                     Command="{Binding MovePageUpCommand}"
                     Height="30"
                     Margin="1" />
-            
+
             <Button Content="Move Page Down"
                     Command="{Binding MovePageDownCommand}"
                     Height="30"
                     Margin="1" />
-            
+
             <Button Content="Make Page Longer"
                     Command="{Binding MakePageLongerCommand}"
                     Height="30"
                     Margin="1" />
-            
+
             <Button Content="Trim Page"
                     Command="{Binding TrimPageCommand}"
                     Height="30"
                     Margin="1" />
-            
+
             <Button Content="Switch Page Orientation"
                     Command="{Binding SwitchPageLayoutCommand}"
                     Height="30"
                     Margin="1" />
-            
+
             <Button Content="Clear Page"
                     Command="{Binding ClearPageCommand}"
                     Height="30"
                     Margin="1" />
-            
+
             <Button Content="Copy This Page"
                     Command="{Binding CopyPageCommand}"
                     Height="30"
@@ -115,13 +130,112 @@
                     Command="{Binding DeletePageCommand}"
                     Height="30"
                     Margin="1" />
-            
+
             <Button Content="Take Screenshot of Page"
                     Command="{Binding PageScreenshotCommand}"
                     Grid.ColumnSpan="2"
                     Height="30"
                     Margin="1" />
-            
+
+            <TextBlock Text="TAGS"
+                       HorizontalAlignment="Center"
+                       Grid.ColumnSpan="2" />
+
+            <ListBox Grid.ColumnSpan="2"
+                     ItemContainerStyle="{StaticResource ListBoxItemBlankStyle}"
+                     ItemsSource="{Binding Tags, IsAsync=True}"
+                     SelectionMode="Single"
+                     Margin="5 0"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     VirtualizingPanel.IsVirtualizing="True"
+                     VirtualizingPanel.IsVirtualizingWhenGrouping="True"
+                     VirtualizingStackPanel.CacheLength="2,3"
+                     VirtualizingStackPanel.CacheLengthUnit="Page"
+                     VirtualizingStackPanel.ScrollUnit="Pixel"
+                     ManipulationBoundaryFeedback="TagsListBox_OnManipulationBoundaryFeedback">
+
+                <!--<ListBox.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.ContainerStyle>
+                                <Style TargetType="{x:Type GroupItem}">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type GroupItem}">
+
+                                                <Grid Margin="0 2">
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition Height="*" />
+                                                    </Grid.RowDefinitions>
+                                                    
+                                                    <Border Grid.Row="0" 
+                                                            VerticalAlignment="Bottom"
+                                                            Background="Transparent"
+                                                            BorderBrush="Black"
+                                                            BorderThickness="2 2 2 0"
+                                                            Margin="0 0 2 0"
+                                                            Height="10"
+                                                            Visibility="{Binding IsChecked, ElementName=GroupVisibilityToggle, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}"/>
+
+                                                    <ToggleButton Grid.Row="0" 
+                                                                  x:Name="GroupVisibilityToggle" 
+                                                                  Margin="10 0 50 0"
+                                                                  Height="20"
+                                                                  MinWidth="100">
+                                                        <ToggleButton.Style>
+                                                            <Style TargetType="ToggleButton">
+                                                                <Setter Property="IsChecked" Value="True" />
+                                                            </Style>
+                                                        </ToggleButton.Style>
+                                                        <TextBlock Margin="5 0"
+                                                                   FontWeight="Bold"
+                                                                   HorizontalAlignment="Left">
+                                                            <Run Text="{Binding Name, Mode=OneWay}" />
+                                                            <Run Text="     " />
+                                                            <Run Text="{Binding ItemCount, Mode=OneWay}" />
+                                                        </TextBlock>
+                                                    </ToggleButton>
+
+                                                    <Border Grid.Row="1" 
+                                                            Background="Transparent"
+                                                            BorderBrush="Black"
+                                                            BorderThickness="2 0 2 2"
+                                                            Margin="0 0 2 2"
+                                                            Visibility="{Binding IsChecked, ElementName=GroupVisibilityToggle, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
+                                                    
+                                                        <ItemsPresenter Visibility="{Binding IsChecked, ElementName=GroupVisibilityToggle, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />
+                                                    
+                                                    </Border>
+                                                </Grid>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </GroupStyle.ContainerStyle>
+                        </GroupStyle>
+                    </ListBox.GroupStyle>-->
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0"
+                                       FontWeight="Bold"
+                                       Text="{Binding Converter={StaticResource TypeToStringConverter}}" />
+
+                            <TextBlock Grid.Row="1"
+                                       Text="{Binding Value}" />
+
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+
+            </ListBox>
+
         </catel:StackGrid>
 
     </Border>

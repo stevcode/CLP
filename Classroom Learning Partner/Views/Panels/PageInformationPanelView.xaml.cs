@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Input;
 using Classroom_Learning_Partner.ViewModels;
 
 namespace Classroom_Learning_Partner.Views
@@ -15,5 +16,7 @@ namespace Classroom_Learning_Partner.Views
         }
 
         protected override Type GetViewModelType() { return typeof(PageInformationPanelViewModel); }
+
+        private void TagsListBox_OnManipulationBoundaryFeedback(object sender, ManipulationBoundaryFeedbackEventArgs e) { e.Handled = true; }
     }
 }
