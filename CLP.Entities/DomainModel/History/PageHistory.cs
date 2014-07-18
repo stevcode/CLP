@@ -207,6 +207,39 @@ namespace CLP.Entities
             }
         }
 
+        public int HistoryLength
+        {
+            get
+            {
+                var totalTicks = 0;
+                foreach(var clpHistoryItem in UndoItems)
+                {
+                    if(clpHistoryItem is IHistoryBatch)
+                    {
+                        totalTicks += (clpHistoryItem as IHistoryBatch).NumberOfBatchTicks;
+                    }
+                    else
+                    {
+                        totalTicks++;
+                    }
+                }
+
+                foreach(var clpHistoryItem in RedoItems)
+                {
+                    if(clpHistoryItem is IHistoryBatch)
+                    {
+                        totalTicks += (clpHistoryItem as IHistoryBatch).NumberOfBatchTicks;
+                    }
+                    else
+                    {
+                        totalTicks++;
+                    }
+                }
+
+                return totalTicks;
+            }
+        }
+
         /// <summary>
         /// A list of all the <see cref="IPageObject" />s that have been removed from a <see cref="CLPPage" />, but are needed for the <see cref="PageHistory" />.
         /// </summary>
@@ -322,6 +355,8 @@ namespace CLP.Entities
         {
             lock(_historyLock)
             {
+                RaisePropertyChanged("HistoryLength");
+
                 var totalTicks = 0;
                 var currentTick = 0;
 

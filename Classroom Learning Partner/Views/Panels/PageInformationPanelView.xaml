@@ -32,6 +32,8 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             
             <TextBlock Text="ID:" />
@@ -48,6 +50,14 @@
             
             <TextBlock Text="Page Number:" />
             <TextBox Text="{Binding PageNumber}" />
+            
+            <TextBlock Text="History Length:" />
+            <TextBox Text="{Binding CurrentPage.History.HistoryLength, Mode=OneWay}"
+                     IsReadOnly="True" />
+            
+            <TextBlock Text="Animation Length:" />
+            <TextBox Text="{Binding CurrentPage.History.TotalHistoryTicks, Mode=OneWay}"
+                     IsReadOnly="True" />
             
             <Button Content="Add Page:"
                     Command="{Binding AddPageCommand}"

@@ -2997,10 +2997,9 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnAnalyzeFuzzyFactorCardCommandExecute()
         {
             // Get the page's math definition, or be sad if it doesn't have one
-            var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
-            if(currentPage != null)
+            if(CurrentPage != null)
             {
-                TagAnalysis.AnalyzeFuzzyFactorCard(currentPage);
+                TagAnalysis.AnalyzeFuzzyFactorCard(CurrentPage);
             }
         }
 
