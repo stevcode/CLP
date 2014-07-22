@@ -56,6 +56,8 @@
                                            KeyTip="S"
                                            ImageSource="pack://application:,,,/Resources/Images/SaveNotebook32.png"
                                            Command="{Binding ForceSaveNotebookCommand}" />
+                
+                <RibbonSeparator />
 
                 <RibbonApplicationMenuItem Header="Convert Notebook Pages To PDF"
                                            ImageSource="pack://application:,,,/Resources/Images/ConvertToPDF32.png"
@@ -73,6 +75,13 @@
                 <!--<RibbonApplicationMenuItem Header="Convert Displays To XPS"
                                            ImageSource="pack://application:,,,/Resources/Images/ConvertToPDF32.png"
                                            Command="{Binding ConvertDisplaysToXPSCommand}" />-->
+                
+                <RibbonSeparator />
+                
+                <RibbonApplicationMenuItem Header="Open Class Period"
+                                           ImageSource="pack://application:,,,/Resources/Images/GroupSubmit32.png"
+                                           Command="{Binding OpenClassPeriodCommand}"
+                                           Visibility="{Binding InstructorVisibility}" />
                 
                 <RibbonApplicationMenuItem Header="Start Current Class Period"
                                            ImageSource="pack://application:,,,/Resources/Images/GroupSubmit32.png"

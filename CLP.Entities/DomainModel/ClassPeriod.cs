@@ -121,15 +121,15 @@ namespace CLP.Entities
 
         #region Cache
 
-        public void ToXML(string fileName)
+        public void ToXML(string filePath)
         {
-            var fileInfo = new FileInfo(fileName);
+            var fileInfo = new FileInfo(filePath);
             if(!Directory.Exists(fileInfo.DirectoryName))
             {
                 Directory.CreateDirectory(fileInfo.DirectoryName);
             }
 
-            using(Stream stream = new FileStream(fileName, FileMode.Create))
+            using(Stream stream = new FileStream(filePath, FileMode.Create))
             {
                 var xmlSerializer = SerializationFactory.GetXmlSerializer();
                 xmlSerializer.Serialize(this, stream);
@@ -139,8 +139,8 @@ namespace CLP.Entities
 
         public void SaveClassPeriod(string folderPath)
         {
-            var fileName = Path.Combine(folderPath, "period;" + StartTime.ToString("yyyy.M.dd.HH.mm") + ";" + ID + ".xml");
-            ToXML(fileName);
+            var filePath = Path.Combine(folderPath, "period;" + StartTime.ToString("yyyy.M.dd.HH.mm") + ";" + ID + ".xml");
+            ToXML(filePath);
         }
 
         public static ClassPeriod OpenClassPeriod(string filePath)

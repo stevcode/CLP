@@ -122,6 +122,7 @@ namespace Classroom_Learning_Partner.ViewModels
             ConvertToXPSCommand = new Command(OnConvertToXPSCommandExecute);
             ConvertPageSubmissionToXPSCommand = new Command(OnConvertPageSubmissionToXPSCommandExecute);
             ConvertAllSubmissionsToXPSCommand = new Command(OnConvertAllSubmissionsToXPSCommandExecute);
+            OpenClassPeriodCommand = new Command(OnOpenClassPeriodCommandExecute);
             StartClassPeriodCommand = new Command(OnStartClassPeriodCommandExecute);
             ViewAllWorkCommand = new Command(OnViewAllWorkCommandExecute);
             RefreshNetworkCommand = new Command(OnRefreshNetworkCommandExecute);
@@ -1199,6 +1200,16 @@ namespace Classroom_Learning_Partner.ViewModels
             var allSortedPages = allPages.OrderBy(page => page.PageNumber).ThenBy(page => page.DifferentiationLevel).ThenBy(page => page.Owner.FullName).ThenBy(page => page.VersionIndex);
             
             ConvertPagesToXPS(allSortedPages, notebook, "All Submissions");
+        }
+
+        /// <summary>
+        /// SUMMARY
+        /// </summary>
+        public Command OpenClassPeriodCommand { get; private set; }
+
+        private void OnOpenClassPeriodCommandExecute()
+        {
+            
         }
 
         /// <summary>
