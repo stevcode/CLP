@@ -1559,7 +1559,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                {
                                    while(currentPage.History.RedoItems.Any())
                                    {
-                                       var historyItemAnimationDelay = Convert.ToInt32(Math.Round(currentPage.History.CurrentAnimationDelay / 2.0));
+                                       var historyItemAnimationDelay = Convert.ToInt32(Math.Round(currentPage.History.CurrentAnimationDelay / 1.0));
                                        Application.Current.Dispatcher.Invoke(DispatcherPriority.DataBind,
                                                                              (DispatcherOperationCallback)delegate
                                                                                                           {

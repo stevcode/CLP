@@ -695,7 +695,7 @@ namespace CLP.Models
                     var yAxisValue = (horizDivs > 1 ? HorizontalDivisions[i].Value : Rows);
                     var xAxisValue = (vertDivs > 1 ? VerticalDivisions[j].Value : Columns);
 
-                    partialProducts[i, j] = yAxisValue * xAxisValue;
+                    partialProducts[i, j] = yAxisValue * xAxisValue; //Product of 1 region in an array.
                 }
             }
 

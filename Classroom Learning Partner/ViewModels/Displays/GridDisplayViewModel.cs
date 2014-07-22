@@ -2,6 +2,9 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Threading;
+using System.Windows;
+using System.Windows.Threading;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Entities;
@@ -21,6 +24,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Pages.CollectionChanged += Pages_CollectionChanged;
             UGridRows = Pages.Count < 3 ? 1 : 0;
             RemovePageFromGridDisplayCommand = new Command<CLPPage>(OnRemovePageFromGridDisplayCommandExecute);
+            ReplayHistoryCommand = new Command<CLPPage>(OnReplayHistoryCommandExecute);
         }
 
         #region Overrides of ViewModelBase
@@ -155,6 +159,41 @@ namespace Classroom_Learning_Partner.ViewModels
         public Command<CLPPage> RemovePageFromGridDisplayCommand { get; private set; }
 
         public void OnRemovePageFromGridDisplayCommandExecute(CLPPage page) { GridDisplay.RemovePageFromDisplay(page); }
+
+        /// <summary>
+        /// Replays the interaction history of the page on the Grid Display.
+        /// </summary>
+        public Command<CLPPage> ReplayHistoryCommand { get; private set; }
+
+        private void OnReplayHistoryCommandExecute(CLPPage page)
+        {
+            var currentPage = page;
+            if(currentPage == null) { return; }
+
+            var oldPageInteractionMode = (App.MainWindowViewModel.Ribbon.PageInteractionMode == PageInteractionMode.None) ? PageInteractionMode.Pen : App.MainWindowViewModel.Ribbon.PageInteractionMode;
+            App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.None;
+
+            while(currentPage.History.UndoItems.Any()) { currentPage.History.Undo(); }
+
+            var t = new Thread(() =>
+                               {
+                                   while(currentPage.History.RedoItems.Any())
+                                   {
+                                       var historyItemAnimationDelay = Convert.ToInt32(Math.Round(currentPage.History.CurrentAnimationDelay / 1.0));
+                                       Application.Current.Dispatcher.Invoke(DispatcherPriority.DataBind,
+                                                                             (DispatcherOperationCallback)delegate
+                                                                                                          {
+                                                                                                              currentPage.History.Redo(true);
+                                                                                                              return null;
+                                                                                                          },
+                                                                             null);
+                                       Thread.Sleep(historyItemAnimationDelay);
+                                   }
+                                   App.MainWindowViewModel.Ribbon.PageInteractionMode = oldPageInteractionMode;
+                               });
+
+            t.Start();
+        }
 
         #endregion //Commands
     }
