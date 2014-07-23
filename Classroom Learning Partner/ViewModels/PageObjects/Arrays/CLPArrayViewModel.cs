@@ -297,7 +297,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public bool IsDuplicateAdornerVisible
         {
-            get { return IsDefaultAdornerVisible && (PageObject as CLPArray).ArrayType == ArrayTypes.TenByTen; }
+            get { return IsDefaultAdornerVisible; } // && (PageObject as CLPArray).ArrayType == ArrayTypes.TenByTen; }
         }
 
         #endregion //Bindings
