@@ -48,6 +48,12 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
@@ -72,6 +78,30 @@
 
             <TextBlock Text="Animation Length:" />
             <TextBox Text="{Binding CurrentPage.History.TotalHistoryTicks, Mode=OneWay}"
+                     IsReadOnly="True" />
+            
+            <TextBlock Text="Min History Length:" />
+            <TextBox Text="{Binding CurrentPage.MinSubmissionHistoryLength, Mode=OneWay}"
+                     IsReadOnly="True" />
+            
+            <TextBlock Text="Max History Length:" />
+            <TextBox Text="{Binding CurrentPage.MaxSubmissionHistoryLength, Mode=OneWay}"
+                     IsReadOnly="True" />
+            
+            <TextBlock Text="Average History Length:" />
+            <TextBox Text="{Binding CurrentPage.AverageSubmissionHistoryLength, Mode=OneWay}"
+                     IsReadOnly="True" />
+            
+            <TextBlock Text="Min Animation Length:" />
+            <TextBox Text="{Binding CurrentPage.MinSubmissionAnimationLength, Mode=OneWay}"
+                     IsReadOnly="True" />
+            
+            <TextBlock Text="Max Animation Length:" />
+            <TextBox Text="{Binding CurrentPage.MaxSubmissionAnimationLength, Mode=OneWay}"
+                     IsReadOnly="True" />
+            
+            <TextBlock Text="Average Animation Length:" />
+            <TextBox Text="{Binding CurrentPage.AverageSubmissionAnimationLength, Mode=OneWay}"
                      IsReadOnly="True" />
 
             <Button Content="Add Page:"

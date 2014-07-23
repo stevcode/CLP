@@ -82,10 +82,7 @@ namespace CLP.Entities
         /// </summary>
         /// <param name="owner">The owner of the <see cref="CLPPage" />.</param>
         public CLPPage(Person owner)
-            : this()
-        {
-            Owner = owner;
-        }
+            : this() { Owner = owner; }
 
         /// <summary>
         /// Initializes <see cref="CLPPage" /> based on <see cref="SerializationInfo" />.
@@ -381,7 +378,7 @@ namespace CLP.Entities
         public virtual ObservableCollection<CLPPage> Submissions
         {
             get { return GetValue<ObservableCollection<CLPPage>>(SubmissionsProperty); }
-            set { SetValue(SubmissionsProperty, value);}  
+            set { SetValue(SubmissionsProperty, value); }
         }
 
         public static readonly PropertyData SubmissionsProperty = RegisterProperty("Submissions", typeof(ObservableCollection<CLPPage>), () => new ObservableCollection<CLPPage>());
@@ -419,7 +416,8 @@ namespace CLP.Entities
             get
             {
                 var starredTag = Tags.FirstOrDefault(x => x is StarredTag) as StarredTag;
-                if(starredTag != null && starredTag.Value == StarredTag.AcceptedValues.Starred.ToString())
+                if(starredTag != null &&
+                   starredTag.Value == StarredTag.AcceptedValues.Starred.ToString())
                 {
                     return "Starred";
                 }
@@ -464,6 +462,36 @@ namespace CLP.Entities
 
         public static readonly PropertyData HistoryProperty = RegisterProperty("History", typeof(PageHistory));
 
+        public int MinSubmissionHistoryLength
+        {
+            get { return !Submissions.Any() ? -1 : Submissions.Select(submission => submission.History.HistoryLength).Concat(new[] {Int32.MaxValue}).Min(); }
+        }
+
+        public int MaxSubmissionHistoryLength
+        {
+            get { return !Submissions.Any() ? -1 : Submissions.Select(submission => submission.History.HistoryLength).Concat(new[] {0}).Max(); }
+        }
+
+        public double AverageSubmissionHistoryLength
+        {
+            get { return !Submissions.Any() ? -1 : Submissions.Select(submission => submission.History.HistoryLength).Average(); }
+        }
+
+        public double MinSubmissionAnimationLength
+        {
+            get { return !Submissions.Any() ? -1 : Submissions.Select(submission => submission.History.TotalHistoryTicks).Concat(new[] {Double.MaxValue}).Min(); }
+        }
+
+        public double MaxSubmissionAnimationLength
+        {
+            get { return !Submissions.Any() ? -1 : Submissions.Select(submission => submission.History.TotalHistoryTicks).Concat(new[] {0.0}).Max(); }
+        }
+
+        public double AverageSubmissionAnimationLength
+        {
+            get { return !Submissions.Any() ? -1 : Submissions.Select(submission => submission.History.TotalHistoryTicks).Average(); }
+        }
+
         #endregion //Properties
 
         #region Overrides of ObservableObject
@@ -505,7 +533,7 @@ namespace CLP.Entities
                               PageType = PageType
                           };
 
-            foreach(var s in InkStrokes.Select(stroke => stroke.Clone())) 
+            foreach(var s in InkStrokes.Select(stroke => stroke.Clone()))
             {
                 // TODO: Make sure all accepted strokes change appropriate strokeIDs lists
                 s.SetStrokeID(Guid.NewGuid().ToCompactID());
@@ -602,7 +630,7 @@ namespace CLP.Entities
             if(newHeight < Height)
             {
                 Height = newHeight;
-            }   
+            }
         }
 
         public void AddTag(ITag newTag)
@@ -664,7 +692,7 @@ namespace CLP.Entities
                 SerializedStrokes = StrokeDTO.SaveInkStrokes(InkStrokes);
                 History.SerializedTrashedInkStrokes = StrokeDTO.SaveInkStrokes(History.TrashedInkStrokes);
             }
-            
+
             var fileInfo = new FileInfo(fileName);
             if(!Directory.Exists(fileInfo.DirectoryName))
             {
@@ -685,7 +713,7 @@ namespace CLP.Entities
         protected override void OnDeserialized()
         {
             base.OnDeserialized();
-                    
+
             InkStrokes = StrokeDTO.LoadInkStrokes(SerializedStrokes);
             History.TrashedInkStrokes = StrokeDTO.LoadInkStrokes(History.SerializedTrashedInkStrokes);
             IsCached = true;
