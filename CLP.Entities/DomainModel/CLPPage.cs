@@ -499,7 +499,6 @@ namespace CLP.Entities
             var newPage = new CLPPage
                           {
                               Owner = Owner,
-                              Tags = Tags,
                               Height = Height,
                               Width = Width,
                               InitialAspectRatio = InitialAspectRatio,
