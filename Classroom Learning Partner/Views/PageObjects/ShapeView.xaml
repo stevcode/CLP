@@ -112,6 +112,31 @@
                         </ControlTemplate>
                     </Thumb.Template>
                 </Thumb>
+                
+                <!--Duplicate Shape Button-->
+                <Button Command="{Binding DuplicateShapeCommand}"
+                        Cursor="Hand"
+                        Width="40"
+                        Height="40"
+                        Canvas.Left="-40"
+                        Canvas.Bottom="-40">
+                    <Button.Template>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Grid>
+                                <Ellipse Stroke="Black"
+                                         StrokeThickness="3"
+                                         Fill="White"
+                                         VerticalAlignment="Stretch"
+                                         HorizontalAlignment="Stretch" />
+                                <Path Data="M0.5,0 L0.5,1 M0,0.5 L1,0.5"
+                                      Stretch="Fill"
+                                      Margin="5"
+                                      Stroke="Green"
+                                      StrokeThickness="3" />
+                            </Grid>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
 
             </Canvas>
         </ac:AdornedControl.AdornerContent>

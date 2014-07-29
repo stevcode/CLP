@@ -17,6 +17,16 @@ namespace CLP.Entities
         StudentPageObjectGenerated
     }
 
+    public enum Category
+    {
+        Array,
+        DivisionTemplate,
+        Stamp,
+        PageInformation,
+        CurriculumInformation,
+        MetaInformation
+    }
+
     [Serializable]
     public abstract class ATagBase : AEntityBase, ITag
     {
@@ -124,7 +134,9 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData OriginProperty = RegisterProperty("Origin", typeof(Origin), Origin.Author);
- 
+
+        public abstract Category Category { get; }
+
         /// <summary>
         /// Determines if the <see cref="ATagBase" /> can have more than one value.
         /// </summary>

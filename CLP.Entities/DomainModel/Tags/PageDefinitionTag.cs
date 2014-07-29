@@ -33,5 +33,7 @@ namespace CLP.Entities
             : base(info, context) { }
 
         #endregion //Constructors
+
+        public override Category Category { get { return Category.MetaInformation; } }
     }
 }

@@ -42,5 +42,7 @@ namespace CLP.Entities
         }
 
         #endregion //Constructors
+
+        public override Category Category { get { return Category.DivisionTemplate; } }
     }
 }

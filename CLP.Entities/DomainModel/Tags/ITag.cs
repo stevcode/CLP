@@ -45,6 +45,11 @@ namespace CLP.Entities
         Origin Origin { get; set; }
 
         /// <summary>
+        /// <see cref="Category" /> the <see cref="ITag" /> falls into for sorting purposes.
+        /// </summary>
+        Category Category { get; }
+
+        /// <summary>
         /// Determines if the <see cref="ATagBase" /> can have more than one value.
         /// </summary>
         bool IsSingleValueTag { get; set; }

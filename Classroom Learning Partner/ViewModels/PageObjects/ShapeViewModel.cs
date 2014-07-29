@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
 using System.Windows.Controls.Primitives;
 using Catel.Data;
 using Catel.MVVM;
+using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -16,6 +20,7 @@ namespace Classroom_Learning_Partner.ViewModels
             PageObject = shape;
 
             ResizeShapeCommand = new Command<DragDeltaEventArgs>(OnResizeShapeCommandExecute);
+            DuplicateShapeCommand = new Command(OnDuplicateShapeCommandExecute);
         }
 
         /// <summary>
@@ -61,6 +66,71 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             
             ChangePageObjectDimensions(PageObject, newHeight, newWidth);
+        }
+
+        /// <summary>
+        /// Duplicates the shape a given number of times.
+        /// </summary>
+        public Command DuplicateShapeCommand { get; private set; }
+
+        private void OnDuplicateShapeCommandExecute()
+        {
+            var keyPad = new KeypadWindowView("How many copies?", 21)
+                         {
+                             Owner = Application.Current.MainWindow,
+                             WindowStartupLocation = WindowStartupLocation.Manual,
+                             Top = 100,
+                             Left = 100
+                         };
+            keyPad.ShowDialog();
+            if(keyPad.DialogResult != true ||
+               keyPad.NumbersEntered.Text.Length <= 0)
+            {
+                return;
+            }
+            var numberOfShapes = Int32.Parse(keyPad.NumbersEntered.Text);
+
+            var xPosition = 10.0;
+            var yPosition = 160.0;
+            if(YPosition + 2 * Height + 10.0 < PageObject.ParentPage.Height)
+            {
+                yPosition = YPosition + Height + 10.0;
+            }
+            else if(XPosition + 2 * Width + 10.0 < PageObject.ParentPage.Width)
+            {
+                yPosition = YPosition;
+                xPosition = XPosition + Width + 10.0;
+            }
+            
+            var shapesToAdd = new List<Shape>();
+            foreach(var index in Enumerable.Range(1, numberOfShapes))
+            {
+                var shape = PageObject.Duplicate() as Shape;
+                shape.XPosition = xPosition;
+                shape.YPosition = yPosition;
+
+                if(xPosition + 2 * shape.Width <= PageObject.ParentPage.Width)
+                {
+                    xPosition += shape.Width;
+                }
+                    //If there isn't room, diagonally pile the rest
+                else if((xPosition + shape.Width + 20.0 <= PageObject.ParentPage.Width) &&
+                        (yPosition + shape.Height + 20.0 <= PageObject.ParentPage.Height))
+                {
+                    xPosition += 20.0;
+                    yPosition += 20.0;
+                }
+                shapesToAdd.Add(shape);
+            }
+
+            if(shapesToAdd.Count == 1)
+            {
+                ACLPPageBaseViewModel.AddPageObjectToPage(shapesToAdd.First());
+            }
+            else
+            {
+                ACLPPageBaseViewModel.AddPageObjectsToPage(PageObject.ParentPage, shapesToAdd);
+            }
         }
     }
 }
