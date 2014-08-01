@@ -278,6 +278,8 @@ namespace CLP.Entities
 
         public virtual void OnAdded() { }
 
+        public virtual void OnRestoredFromHistory() { }
+
         public virtual void OnDeleted() { }
 
         public virtual void OnMoving(double oldX, double oldY) { }

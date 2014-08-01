@@ -27,6 +27,7 @@ namespace CLP.Entities
 
         IPageObject Duplicate();
         void OnAdded();
+        void OnRestoredFromHistory();
         void OnDeleted();
         void OnMoving(double oldX, double oldY);
         void OnMoved(double oldX, double oldY);

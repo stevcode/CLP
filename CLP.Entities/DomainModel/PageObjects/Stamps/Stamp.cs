@@ -210,6 +210,31 @@ namespace CLP.Entities
 
         #region Methods
 
+        public override void OnRestoredFromHistory()
+        {
+            if(!CanAcceptStrokes ||
+               !AcceptedStrokes.Any())
+            {
+                return;
+            }
+
+            //BUG: This is going to cause issues if you use Undo or Redo while not in Select Mode
+            ParentPage.InkStrokes.Add(new StrokeCollection(AcceptedStrokes));
+            ParentPage.History.TrashedInkStrokes.Remove(new StrokeCollection(AcceptedStrokes));
+        }
+
+        public override void OnDeleted()
+        {
+            if(!CanAcceptStrokes ||
+               !AcceptedStrokes.Any())
+            {
+                return;
+            }
+
+            ParentPage.InkStrokes.Remove(new StrokeCollection(AcceptedStrokes));
+            ParentPage.History.TrashedInkStrokes.Add(new StrokeCollection(AcceptedStrokes));
+        }
+
         public override void OnResizing(double oldWidth, double oldHeight)
         {
         }
