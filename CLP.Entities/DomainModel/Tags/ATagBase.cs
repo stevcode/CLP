@@ -22,9 +22,8 @@ namespace CLP.Entities
         Array,
         DivisionTemplate,
         Stamp,
-        PageInformation,
         CurriculumInformation,
-        MetaInformation
+        OtherPageInformation
     }
 
     [Serializable]
@@ -158,6 +157,11 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData ValueProperty = RegisterProperty("Value", typeof(string), string.Empty);
+
+        public virtual string FormattedValue
+        {
+            get { return Value; }
+        }
 
         #region Navigation Properties
 

@@ -42,6 +42,11 @@ namespace CLP.Entities
 
         #endregion //Constructors
 
-        public override Category Category { get { return Category.MetaInformation; } }
+        public override Category Category { get { return Category.OtherPageInformation; } }
+
+        public override string FormattedValue
+        {
+            get { return Value; }
+        }
     }
 }

@@ -146,7 +146,7 @@
                     Height="30"
                     Margin="1" />
 
-            <Button Content="Copy This Page"
+            <Button Content="Duplicate This Page"
                     Command="{Binding CopyPageCommand}"
                     Height="30"
                     Margin="1" />
