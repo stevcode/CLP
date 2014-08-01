@@ -872,8 +872,7 @@ namespace Classroom_Learning_Partner.ViewModels
                        App.MainWindowViewModel.Ribbon.PageInteractionMode == PageInteractionMode.Pen &&
                        App.MainWindowViewModel.CurrentUser.ID == array.CreatorID)
                     {
-                        wasArrayDivided = CLPArrayViewModel.CreateDivision(array, stroke);
-                        break;
+                        wasArrayDivided = CLPArrayViewModel.CreateDivision(array, stroke) || wasArrayDivided;
                     }
                 }
                 if(wasArrayDivided)
