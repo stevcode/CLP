@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Media.Imaging;
 using Catel.Collections;
 using Catel.Data;
@@ -22,6 +24,10 @@ namespace Classroom_Learning_Partner.ViewModels
         public PageInformationPanelViewModel(Notebook notebook)
         {
             Notebook = notebook;
+            SortedTags.Source = Tags;
+            SortedTags.GroupDescriptions.Add(new PropertyGroupDescription("Category"));
+            SortedTags.SortDescriptions.Add(new SortDescription("Category", ListSortDirection.Ascending));
+
             Initialized += PageInformationPanelViewModel_Initialized;
             IsVisible = false;
 
@@ -42,6 +48,7 @@ namespace Classroom_Learning_Partner.ViewModels
             DifferentiatePageCommand = new Command(OnDifferentiatePageCommandExecute);
             DeletePageCommand = new Command(OnDeletePageCommandExecute);
             PageScreenshotCommand = new Command(OnPageScreenshotCommandExecute);
+            DeleteTagCommand = new Command<ITag>(OnDeleteTagCommandExecute);
         }
 
         void PageInformationPanelViewModel_Initialized(object sender, EventArgs e)
@@ -172,6 +179,17 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData SelectedPageOrientationProperty = RegisterProperty("SelectedPageOrientation", typeof(string));
+
+        /// <summary>
+        /// Sorted list of <see cref="ITag" />s by category.
+        /// </summary>
+        public CollectionViewSource SortedTags
+        {
+            get { return GetValue<CollectionViewSource>(SortedTagsProperty); }
+            set { SetValue(SortedTagsProperty, value); }
+        }
+
+        public static readonly PropertyData SortedTagsProperty = RegisterProperty("SortedTags", typeof(CollectionViewSource), () => new CollectionViewSource());
 
         #endregion //Bindings
 
@@ -504,6 +522,21 @@ namespace Classroom_Learning_Partner.ViewModels
                 pngEncoder.Save(outputStream);
                 File.WriteAllBytes(thumbnailFilePath, outputStream.ToArray());
             }
+        }
+
+        /// <summary>
+        /// Deletes an <see cref="ITag" /> from the <see cref="CLPPage" />.
+        /// </summary>
+        public Command<ITag> DeleteTagCommand { get; private set; }
+
+        private void OnDeleteTagCommandExecute(ITag tag)
+        {
+            if(!CurrentPage.Tags.Contains(tag))
+            {
+                return;
+            }
+
+            CurrentPage.Tags.Remove(tag);
         }
 
         #endregion //Commands
