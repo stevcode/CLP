@@ -1,45 +1,42 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Catel.Data;
 using System.Runtime.Serialization;
+using Catel.Data;
 
 namespace CLP.Entities
 {
-
     /// <summary>
     /// ProductRelation Data object class which fully supports serialization, property changed notifications,
     /// backwards compatibility and error checking.
     /// </summary>
-#if !SILVERLIGHT
     [Serializable]
-#endif
-
     public class ProductRelation : MathRelation
     {
-
-        public enum ProductRelationTypes { GenericProduct, EqualGroups, Area };
+        public enum ProductRelationTypes
+        {
+            GenericProduct,
+            EqualGroups,
+            Area
+        };
 
         #region Fields
+
         #endregion
 
         #region Constructors
+
         /// <summary>
         /// Initializes a new object from scratch.
         /// </summary>
         public ProductRelation() { }
 
-#if !SILVERLIGHT
         /// <summary>
-        /// Initializes a new object based on <see cref="SerializationInfo"/>.
+        /// Initializes a new object based on <see cref="SerializationInfo" />.
         /// </summary>
-        /// <param name="info"><see cref="SerializationInfo"/> that contains the information.</param>
-        /// <param name="context"><see cref="StreamingContext"/>.</param>
+        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
+        /// <param name="context"><see cref="StreamingContext" />.</param>
         protected ProductRelation(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
-#endif
+
         #endregion
 
         #region Properties
@@ -224,52 +221,52 @@ namespace CLP.Entities
         /// Register the ProductLabel property so it is known in the class.
         /// </summary>
         public static readonly PropertyData ProductLabelProperty = RegisterProperty("ProductLabel", typeof(String), "Product");
+
         #endregion
 
         #region Methods
 
         public override String GetExampleNumberSentence()
         {
-            String factor1String = (Factor1Given ? Factor1 : "[" + Factor1 + "]");
-            String factor2String = (Factor2Given ? Factor2 : "[" + Factor2 + "]");
-            String productString = (ProductGiven ? Product : "[" + Product + "]");
+            var factor1String = (Factor1Given ? Factor1 : "[" + Factor1 + "]");
+            var factor2String = (Factor2Given ? Factor2 : "[" + Factor2 + "]");
+            var productString = (ProductGiven ? Product : "[" + Product + "]");
             return factor1String + " * " + factor2String + " = " + productString;
         }
 
         public static String toString(ProductRelation p)
         {
-            return "factor1:" + p.Factor1 + "," + p.Factor1Given + "," + p.Factor1Label + "\n" +
-                   "factor2:" + p.Factor2 + "," + p.Factor2Given + "," + p.Factor2Label + "\n" +
-                   "product:" + p.Product + "," + p.ProductGiven + "," + p.ProductLabel + "\n" +
-                   p.TypeLabel;
+            return "factor1:" + p.Factor1 + "," + p.Factor1Given + "," + p.Factor1Label + "\n" + "factor2:" + p.Factor2 + "," + p.Factor2Given + "," + p.Factor2Label + "\n" + "product:" + p.Product +
+                   "," + p.ProductGiven + "," + p.ProductLabel + "\n" + p.TypeLabel;
         }
 
         public static ProductRelation fromString(String source)
         {
-            ProductRelation p = new ProductRelation();
-            string[] lines = source.Split('\n');
+            var p = new ProductRelation();
+            var lines = source.Split('\n');
             if(lines[0].StartsWith("factor1:"))
             {
-                string[] factor1info = lines[0].Substring(8).Split(',');
+                var factor1info = lines[0].Substring(8).Split(',');
                 p.Factor1 = factor1info[0];
                 p.Factor1Given = Boolean.Parse(factor1info[1]);
                 p.Factor1Label = factor1info[2];
             }
             if(lines[1].StartsWith("factor2:"))
             {
-                string[] factor2info = lines[1].Substring(8).Split(',');
+                var factor2info = lines[1].Substring(8).Split(',');
                 p.Factor2 = factor2info[0];
                 p.Factor2Given = Boolean.Parse(factor2info[1]);
                 p.Factor2Label = factor2info[2];
             }
             if(lines[2].StartsWith("product:"))
             {
-                string[] productinfo = lines[2].Substring(8).Split(',');
+                var productinfo = lines[2].Substring(8).Split(',');
                 p.Product = productinfo[0];
                 p.ProductGiven = Boolean.Parse(productinfo[1]);
                 p.ProductLabel = productinfo[2];
             }
-            switch(lines[3]) {
+            switch(lines[3])
+            {
                 case "Equal Groups":
                     p.RelationType = ProductRelationTypes.EqualGroups;
                     break;
@@ -286,5 +283,4 @@ namespace CLP.Entities
 
         #endregion
     }
-
 }

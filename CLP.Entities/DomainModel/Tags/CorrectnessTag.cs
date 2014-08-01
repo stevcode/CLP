@@ -25,11 +25,12 @@ namespace CLP.Entities
         /// Initializes <see cref="CorrectnessTag" /> from <see cref="AcceptedValues" />.
         /// </summary>
         /// <param name="value">The value of the <see cref="CorrectnessTag" />, parsed from <see cref="AcceptedValues" />.</param>
-        public CorrectnessTag(CLPPage parentPage, AcceptedValues value)
+        public CorrectnessTag(CLPPage parentPage, Origin origin, AcceptedValues value)
             : base(parentPage)
         {
-            Value = value.ToString();
+            Origin = origin;
             IsSingleValueTag = true;
+            Value = value.ToString();
         }
 
         /// <summary>

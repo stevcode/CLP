@@ -24,10 +24,10 @@ namespace CLP.Entities
         /// Initializes <see cref="CLPArrayTriedWrongDividerValues" /> from a set of values.
         /// </summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="CLPArrayTriedWrongDividerValues" /> belongs to.</param>
-        public CLPArrayTriedWrongDividerValues(CLPPage parentPage, string arrayID, int rows, int columns, DividerValuesOrientation dividerValuesOrientation, List<int> dividerValues)
+        public CLPArrayTriedWrongDividerValues(CLPPage parentPage, Origin origin, string arrayID, int rows, int columns, DividerValuesOrientation dividerValuesOrientation, List<int> dividerValues)
             : base(parentPage)
         {
-            Origin = Origin.StudentPageObjectGenerated;
+            Origin = origin;
             ArrayID = arrayID;
             Rows = rows;
             Columns = columns;

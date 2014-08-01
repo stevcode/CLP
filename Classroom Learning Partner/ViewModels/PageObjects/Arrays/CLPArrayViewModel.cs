@@ -1056,7 +1056,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                 }
 
-                PageObject.ParentPage.AddTag(new CLPArrayTriedWrongDividerValues(PageObject.ParentPage, PageObject.ID, Rows, Columns, DividerValuesOrientation.Vertical, dividerValues));
+                PageObject.ParentPage.AddTag(new CLPArrayTriedWrongDividerValues(PageObject.ParentPage, Origin.StudentPageObjectGenerated, PageObject.ID, Rows, Columns, DividerValuesOrientation.Vertical, dividerValues));
                 MessageBox.Show("The side of the array is " + Rows + ". You broke the side into " + labelsString + ", which don’t add up to " + Rows + ".", "Oops");
             }
             else
@@ -1098,7 +1098,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                 }
 
-                PageObject.ParentPage.AddTag(new CLPArrayTriedWrongDividerValues(PageObject.ParentPage, PageObject.ID, Rows, Columns, DividerValuesOrientation.Horizontal, dividerValues));
+                PageObject.ParentPage.AddTag(new CLPArrayTriedWrongDividerValues(PageObject.ParentPage, Origin.StudentPageObjectGenerated, PageObject.ID, Rows, Columns, DividerValuesOrientation.Horizontal, dividerValues));
                 MessageBox.Show("The side of the array is " + Columns + ". You broke the side into " + labelsString + ", which don’t add up to " + Columns + ".", "Oops");
             }
         }

@@ -54,6 +54,8 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
@@ -166,10 +168,31 @@
                     Grid.ColumnSpan="2"
                     Height="30"
                     Margin="1" />
+            
+            <Rectangle Grid.ColumnSpan="2"
+                       Height="1"
+                       Margin="1 5"
+                       Stroke="{StaticResource GrayBorderColor}" />
+            
+            <Button Content="Add Answer Definition" IsEnabled="False"
+                    Command="{Binding AddAnswerDefinitionCommand}"
+                    Height="30"
+                    Margin="1" />
+            
+            <Button Content="Run Page Analysis" IsEnabled="False"
+                    Command="{Binding AnalyzePageCommand}"
+                    Height="30"
+                    Margin="1" />
+            
+            <Button Content="Run History Analysis" IsEnabled="False"
+                    Command="{Binding AnalyzePageHistoryCommand}"
+                    Grid.ColumnSpan="2"
+                    Height="30"
+                    Margin="1" />
 
             <TextBlock Text="TAGS"
                        FontWeight="Bold"
-                       FontSize="20"
+                       FontSize="16"
                        HorizontalAlignment="Center"
                        Grid.ColumnSpan="2" />
 

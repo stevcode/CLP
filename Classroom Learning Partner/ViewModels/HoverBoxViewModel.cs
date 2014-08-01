@@ -154,7 +154,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 IsIncorrect = false;
                 IsUnknown = false;
-                Page.AddTag(new CorrectnessTag(Page, CorrectnessTag.AcceptedValues.Correct));
+                Page.AddTag(new CorrectnessTag(Page, Origin.Teacher, CorrectnessTag.AcceptedValues.Correct));
             }
         }
 
@@ -171,7 +171,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 IsCorrect = false;
                 IsUnknown = false;
-                Page.AddTag(new CorrectnessTag(Page, CorrectnessTag.AcceptedValues.Incorrect));
+                Page.AddTag(new CorrectnessTag(Page, Origin.Teacher, CorrectnessTag.AcceptedValues.Incorrect));
             }
         }
 
@@ -189,7 +189,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 IsCorrect = false;
                 IsIncorrect = false;
-                Page.AddTag(new CorrectnessTag(Page, CorrectnessTag.AcceptedValues.Unknown));
+                Page.AddTag(new CorrectnessTag(Page, Origin.Teacher, CorrectnessTag.AcceptedValues.Unknown));
             }
         }
 

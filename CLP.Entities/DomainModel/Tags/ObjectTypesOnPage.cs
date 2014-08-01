@@ -24,6 +24,7 @@ namespace CLP.Entities
             : base(parentPage)
         {
             Origin = origin;
+            IsSingleValueTag = true;
             ObjectTypes = parentPage.PageObjects.Where(pageObject => pageObject.OwnerID == currentUserID).Select(pageObject => pageObject.GetType()).Distinct().ToList();
             if(parentPage.InkStrokes.Any(stroke => stroke.GetStrokeOwnerID() == currentUserID))
             {
