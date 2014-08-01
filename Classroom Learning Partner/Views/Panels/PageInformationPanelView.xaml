@@ -262,7 +262,7 @@
 
                             <TextBlock Grid.Row="1"
                                        Grid.Column="0"
-                                       Text="{Binding Value}" />
+                                       Text="{Binding FormattedValue, Mode=OneWay}" />
                             
                             <Button Grid.Row="0"
                                     Grid.RowSpan="2"

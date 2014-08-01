@@ -1016,6 +1016,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                                        new CLPArrayDivisionValueChangedHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, PageObject.ID, isHorizontalDivision, divisionIndex, previousValue));
 
             // Check if array labels add up to larger array dimension
+            var dividerValues = new List<int>();
             if(division.Orientation == ArrayDivisionOrientation.Horizontal)
             {
                 var total = 0;
@@ -1026,6 +1027,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         total = Rows;
                         break;
                     }
+                    dividerValues.Add(div.Value);
                     total += div.Value;
                 }
 
@@ -1053,6 +1055,8 @@ namespace Classroom_Learning_Partner.ViewModels
                         }
                     }
                 }
+
+                PageObject.ParentPage.AddTag(new CLPArrayTriedWrongDividerValues(PageObject.ParentPage, PageObject.ID, Rows, Columns, DividerValuesOrientation.Vertical, dividerValues));
                 MessageBox.Show("The side of the array is " + Rows + ". You broke the side into " + labelsString + ", which don’t add up to " + Rows + ".", "Oops");
             }
             else
@@ -1065,6 +1069,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         total = Columns;
                         break;
                     }
+                    dividerValues.Add(div.Value);
                     total += div.Value;
                 }
 
@@ -1092,6 +1097,8 @@ namespace Classroom_Learning_Partner.ViewModels
                         }
                     }
                 }
+
+                PageObject.ParentPage.AddTag(new CLPArrayTriedWrongDividerValues(PageObject.ParentPage, PageObject.ID, Rows, Columns, DividerValuesOrientation.Horizontal, dividerValues));
                 MessageBox.Show("The side of the array is " + Columns + ". You broke the side into " + labelsString + ", which don’t add up to " + Columns + ".", "Oops");
             }
         }

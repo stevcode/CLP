@@ -55,15 +55,10 @@ namespace CLP.Entities
         bool IsSingleValueTag { get; set; }
 
         /// <summary>
-        /// Value of the <see cref="ATagBase" />.
-        /// </summary>
-        string Value { get; set; }  //TODO: Change to Object?
-
-        /// <summary>
         /// Produces a human-readable string that describes the value of the tag.
         /// </summary>
         string FormattedValue { get; }
-
+        string Value { get; set; }
         /// <summary>
         /// Unique Identifier for the <see cref="IPageObject" />'s parent <see cref="CLPPage" />.
         /// </summary>
