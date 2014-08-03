@@ -5,36 +5,39 @@ using Catel.Data;
 namespace CLP.Entities
 {
     [Serializable]
-    public class ArrayOrientationTag : ATagBase
+    public class StarredTag : ATagBase
     {
         public enum AcceptedValues
         {
-            FirstFactorWidth,
-            FirstFactorHeight,
-            Unknown
+            Starred,
+            Unstarred
         }
 
         #region Constructors
 
         /// <summary>
-        /// Initializes <see cref="ArrayOrientationTag" /> from scratch.
+        /// Initializes <see cref="StarredTag" /> from scratch.
         /// </summary>
-        public ArrayOrientationTag() { }
+        public StarredTag() { }
 
         /// <summary>
-        /// Initializes <see cref="ArrayOrientationTag" /> from <see cref="AcceptedValues" />.
+        /// Initializes <see cref="StarredTag" />.
         /// </summary>
-        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="ArrayOrientationTag" /> belongs to.</param>
-        /// <param name="value">The value of the <see cref="ArrayOrientationTag" />, parsed from <see cref="AcceptedValues" />.</param>
-        public ArrayOrientationTag(CLPPage parentPage, Origin origin, AcceptedValues value)
-            : base(parentPage, origin) { Value = value; }
+        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="StarredTag" /> belongs to.</param>
+        /// <param name="value">The value of the <see cref="DottedTag" />, parsed from <see cref="AcceptedValues" />.</param>
+        public StarredTag(CLPPage parentPage, Origin origin, AcceptedValues value)
+            : base(parentPage, origin)
+        {
+            Value = value;
+            IsSingleValueTag = true;
+        }
 
         /// <summary>
-        /// Initializes <see cref="ArrayOrientationTag" /> based on <see cref="SerializationInfo" />.
+        /// Initializes <see cref="StarredTag" /> based on <see cref="SerializationInfo" />.
         /// </summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext" />.</param>
-        public ArrayOrientationTag(SerializationInfo info, StreamingContext context)
+        public StarredTag(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
         #endregion //Constructors
@@ -56,7 +59,7 @@ namespace CLP.Entities
 
         public override Category Category
         {
-            get { return Category.Array; }
+            get { return Category.OtherPageInformation; }
         }
 
         public override string FormattedValue

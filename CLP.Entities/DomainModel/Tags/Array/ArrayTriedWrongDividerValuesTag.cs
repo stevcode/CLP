@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using Catel.Data;
@@ -11,23 +12,23 @@ namespace CLP.Entities
         Vertical
     }
 
-    public class CLPArrayTriedWrongDividerValues : ATagBase
+    [Serializable]
+    public class ArrayTriedWrongDividerValuesTag : ATagBase
     {
         #region Constructors
 
         /// <summary>
-        /// Initializes <see cref="CLPArrayTriedWrongDividerValues" /> from scratch.
+        /// Initializes <see cref="ArrayTriedWrongDividerValuesTag" /> from scratch.
         /// </summary>
-        public CLPArrayTriedWrongDividerValues() { }
+        public ArrayTriedWrongDividerValuesTag() { }
 
         /// <summary>
-        /// Initializes <see cref="CLPArrayTriedWrongDividerValues" /> from a set of values.
+        /// Initializes <see cref="ArrayTriedWrongDividerValuesTag" /> from a set of values.
         /// </summary>
-        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="CLPArrayTriedWrongDividerValues" /> belongs to.</param>
-        public CLPArrayTriedWrongDividerValues(CLPPage parentPage, Origin origin, string arrayID, int rows, int columns, DividerValuesOrientation dividerValuesOrientation, List<int> dividerValues)
-            : base(parentPage)
+        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="ArrayTriedWrongDividerValuesTag" /> belongs to.</param>
+        public ArrayTriedWrongDividerValuesTag(CLPPage parentPage, Origin origin, string arrayID, int rows, int columns, DividerValuesOrientation dividerValuesOrientation, List<int> dividerValues)
+            : base(parentPage, origin)
         {
-            Origin = origin;
             ArrayID = arrayID;
             Rows = rows;
             Columns = columns;
@@ -36,11 +37,11 @@ namespace CLP.Entities
         }
 
         /// <summary>
-        /// Initializes <see cref="CLPArrayTriedWrongDividerValues" /> based on <see cref="SerializationInfo" />.
+        /// Initializes <see cref="ArrayTriedWrongDividerValuesTag" /> based on <see cref="SerializationInfo" />.
         /// </summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext" />.</param>
-        public CLPArrayTriedWrongDividerValues(SerializationInfo info, StreamingContext context)
+        public ArrayTriedWrongDividerValuesTag(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
         #endregion //Constructors
@@ -103,6 +104,8 @@ namespace CLP.Entities
 
         public static readonly PropertyData DividerValuesProperty = RegisterProperty("DividerValues", typeof(List<int>), () => new List<int>());
 
+        #region ATagBase Overrides
+
         public override Category Category
         {
             get { return Category.Array; }
@@ -120,6 +123,8 @@ namespace CLP.Entities
                                      DividerValuesOrientation == DividerValuesOrientation.Horizontal ? "Columns" : "Rows");
             }
         }
+
+        #endregion //ATagBase Overrides
 
         #endregion //Properties
     }

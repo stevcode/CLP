@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
+using Catel.Data;
 
 namespace CLP.Entities
 {
@@ -9,11 +11,8 @@ namespace CLP.Entities
         public enum AcceptedValues
         {
             PlaceValue, // e.g. 43 -> 40 | 3
-            Half, // e.g., 18 -> 9 | 9
-            Tens, // e.g. 43 -> 10 | 10 | 10 | 10 | 3
-            Fives,
-            Twos,
-            Singles,
+            Repeated, // e.g. 28 / 4 -> 4 x 3 | 4 x 3 | 4 x 1
+            EvenSplit, // e.g. 28 / 2 -> 2 x 14 | 2 x 14
             NoDividers,
             Other
         }
@@ -30,8 +29,12 @@ namespace CLP.Entities
         /// </summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="ArrayXAxisStrategyTag" /> belongs to.</param>
         /// <param name="value">The value of the <see cref="ArrayXAxisStrategyTag" />, parsed from <see cref="AcceptedValues" />.</param>
-        public ArrayXAxisStrategyTag(CLPPage parentPage, AcceptedValues value)
-            : base(parentPage) { Value = value.ToString(); }
+        public ArrayXAxisStrategyTag(CLPPage parentPage, Origin origin, AcceptedValues value, List<int> dividerValues)
+            : base(parentPage, origin)
+        {
+            Value = value;
+            DividerValues = dividerValues;
+        }
 
         /// <summary>
         /// Initializes <see cref="ArrayXAxisStrategyTag" /> based on <see cref="SerializationInfo" />.
@@ -43,6 +46,44 @@ namespace CLP.Entities
 
         #endregion //Constructors
 
-        public override Category Category { get { return Category.Array; } }
+        #region Properties
+
+        /// <summary>
+        /// Value of the Starred Tag.
+        /// </summary>
+        public AcceptedValues Value
+        {
+            get { return GetValue<AcceptedValues>(ValueProperty); }
+            set { SetValue(ValueProperty, value); }
+        }
+
+        public static readonly PropertyData ValueProperty = RegisterProperty("Value", typeof(AcceptedValues));
+
+        /// <summary>
+        /// A list of all the values of each Divider.
+        /// </summary>
+        public List<int> DividerValues
+        {
+            get { return GetValue<List<int>>(DividerValuesProperty); }
+            set { SetValue(DividerValuesProperty, value); }
+        }
+
+        public static readonly PropertyData DividerValuesProperty = RegisterProperty("DividerValues", typeof(List<int>), () => new List<int>());
+
+        #region ATagBase Overrides
+
+        public override Category Category
+        {
+            get { return Category.Array; }
+        }
+
+        public override string FormattedValue
+        {
+            get { return string.Format("{0}:{1}", Value, string.Join(",", DividerValues)); }
+        }
+
+        #endregion //ATagBase Overrides
+
+        #endregion //Properties
     }
 }

@@ -7,6 +7,7 @@ using Catel.Data;
 
 namespace CLP.Entities
 {
+    [Serializable]
     public class ObjectTypesOnPage : ATagBase
     {
         #region Constructors
@@ -21,9 +22,8 @@ namespace CLP.Entities
         /// </summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="ObjectTypesOnPage" /> belongs to.</param>
         public ObjectTypesOnPage(CLPPage parentPage, Origin origin, string currentUserID)
-            : base(parentPage)
+            : base(parentPage, origin)
         {
-            Origin = origin;
             IsSingleValueTag = true;
             ObjectTypes = parentPage.PageObjects.Where(pageObject => pageObject.OwnerID == currentUserID).Select(pageObject => pageObject.GetType()).Distinct().ToList();
             if(parentPage.InkStrokes.Any(stroke => stroke.GetStrokeOwnerID() == currentUserID))
@@ -55,6 +55,8 @@ namespace CLP.Entities
 
         public static readonly PropertyData ObjectTypesProperty = RegisterProperty("ObjectTypes", typeof(List<Type>), () => new List<Type>());
 
+        #region ATagBase Overrides
+
         public override Category Category
         {
             get { return Category.OtherPageInformation; }
@@ -64,6 +66,8 @@ namespace CLP.Entities
         {
             get { return string.Format("Object Types on Page: {0}", string.Join(", ", ObjectTypes)); }
         }
+
+        #endregion //ATagBase Overrides
 
         #endregion //Properties
     }

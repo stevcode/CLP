@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using Catel.Data;
 
 namespace CLP.Entities
 {
@@ -24,10 +25,10 @@ namespace CLP.Entities
         /// </summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="DottedTag" /> belongs to.</param>
         /// <param name="value">The value of the <see cref="DottedTag" />, parsed from <see cref="AcceptedValues" />.</param>
-        public DottedTag(CLPPage parentPage, AcceptedValues value)
-            : base(parentPage)
+        public DottedTag(CLPPage parentPage, Origin origin, AcceptedValues value)
+            : base(parentPage, origin)
         {
-            Value = value.ToString();
+            Value = value;
             IsSingleValueTag = true;
         }
 
@@ -41,6 +42,33 @@ namespace CLP.Entities
 
         #endregion //Constructors
 
-        public override Category Category { get { return Category.OtherPageInformation; } }
+        #region Properties
+
+        /// <summary>
+        /// Value of the Dotted Tag.
+        /// </summary>
+        public AcceptedValues Value
+        {
+            get { return GetValue<AcceptedValues>(ValueProperty); }
+            set { SetValue(ValueProperty, value); }
+        }
+
+        public static readonly PropertyData ValueProperty = RegisterProperty("Value", typeof(AcceptedValues));
+
+        #region ATagBase Overrides
+
+        public override Category Category
+        {
+            get { return Category.OtherPageInformation; }
+        }
+
+        public override string FormattedValue
+        {
+            get { return Value.ToString(); }
+        }
+
+        #endregion //ATagBase Overrides
+
+        #endregion //Properties
     }
 }

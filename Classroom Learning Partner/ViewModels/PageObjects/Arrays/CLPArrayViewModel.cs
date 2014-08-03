@@ -466,16 +466,16 @@ namespace Classroom_Learning_Partner.ViewModels
                                 {
                                     foreach(var tag in PageObject.ParentPage.Tags.ToList())
                                     {
-                                        if(tag is FuzzyFactorCardFailedSnapTag &&
-                                           tag.Value == FuzzyFactorCardFailedSnapTag.AcceptedValues.SnappedWrongOrientationMultipleTimes.ToString())
+                                        if(tag is DivisionTemplateFailedSnapTag &&
+                                           tag.Value == DivisionTemplateFailedSnapTag.AcceptedValues.SnappedWrongOrientationMultipleTimes.ToString())
                                         {
                                             hasTag = true;
                                             break;
                                         }
-                                        if(tag is FuzzyFactorCardFailedSnapTag &&
-                                           tag.Value == FuzzyFactorCardFailedSnapTag.AcceptedValues.SnappedWrongOrientation.ToString())
+                                        if(tag is DivisionTemplateFailedSnapTag &&
+                                           tag.Value == DivisionTemplateFailedSnapTag.AcceptedValues.SnappedWrongOrientation.ToString())
                                         {
-                                            tag.Value = FuzzyFactorCardFailedSnapTag.AcceptedValues.SnappedWrongOrientationMultipleTimes.ToString();
+                                            tag.Value = DivisionTemplateFailedSnapTag.AcceptedValues.SnappedWrongOrientationMultipleTimes.ToString();
                                             hasTag = true;
                                             break;
                                         }
@@ -483,7 +483,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                     //Apply tag to note that the student tried to snap array in wrong orientation
                                     if(!hasTag)
                                     {
-                                        var tag = new FuzzyFactorCardFailedSnapTag(PageObject.ParentPage, FuzzyFactorCardFailedSnapTag.AcceptedValues.SnappedWrongOrientation);
+                                        var tag = new DivisionTemplateFailedSnapTag(PageObject.ParentPage, DivisionTemplateFailedSnapTag.AcceptedValues.SnappedWrongOrientation);
                                         PageObject.ParentPage.Tags.Add(tag);
                                     }
                                 }
@@ -491,16 +491,16 @@ namespace Classroom_Learning_Partner.ViewModels
                                 {
                                     foreach(var tag in PageObject.ParentPage.Tags.ToList())
                                     {
-                                        if(tag is FuzzyFactorCardFailedSnapTag &&
-                                           tag.Value == FuzzyFactorCardFailedSnapTag.AcceptedValues.SnappedIncorrectDimensionMultipleTimes.ToString())
+                                        if(tag is DivisionTemplateFailedSnapTag &&
+                                           tag.Value == DivisionTemplateFailedSnapTag.AcceptedValues.SnappedIncorrectDimensionMultipleTimes.ToString())
                                         {
                                             hasTag = true;
                                             break;
                                         }
-                                        if(tag is FuzzyFactorCardFailedSnapTag &&
-                                           tag.Value == FuzzyFactorCardFailedSnapTag.AcceptedValues.SnappedIncorrectDimension.ToString())
+                                        if(tag is DivisionTemplateFailedSnapTag &&
+                                           tag.Value == DivisionTemplateFailedSnapTag.AcceptedValues.SnappedIncorrectDimension.ToString())
                                         {
-                                            tag.Value = FuzzyFactorCardFailedSnapTag.AcceptedValues.SnappedIncorrectDimensionMultipleTimes.ToString();
+                                            tag.Value = DivisionTemplateFailedSnapTag.AcceptedValues.SnappedIncorrectDimensionMultipleTimes.ToString();
                                             hasTag = true;
                                             break;
                                         }
@@ -508,7 +508,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                     //Apply tag to note that the student tried to snap array in wrong orientation
                                     if(!hasTag)
                                     {
-                                        var tag = new FuzzyFactorCardFailedSnapTag(PageObject.ParentPage, FuzzyFactorCardFailedSnapTag.AcceptedValues.SnappedIncorrectDimension);
+                                        var tag = new DivisionTemplateFailedSnapTag(PageObject.ParentPage, DivisionTemplateFailedSnapTag.AcceptedValues.SnappedIncorrectDimension);
                                         PageObject.ParentPage.Tags.Add(tag);
                                     }
                                 }
@@ -530,16 +530,16 @@ namespace Classroom_Learning_Partner.ViewModels
                                 var hasTag = false;
                                 foreach(var tag in PageObject.ParentPage.Tags.ToList())
                                 {
-                                    if(tag is FuzzyFactorCardFailedSnapTag &&
-                                       tag.Value == FuzzyFactorCardFailedSnapTag.AcceptedValues.TooManyMultipleTimes.ToString())
+                                    if(tag is DivisionTemplateFailedSnapTag &&
+                                       tag.Value == DivisionTemplateFailedSnapTag.AcceptedValues.TooManyMultipleTimes.ToString())
                                     {
                                         hasTag = true;
                                         break;
                                     }
-                                    if(tag is FuzzyFactorCardFailedSnapTag &&
-                                       tag.Value == FuzzyFactorCardFailedSnapTag.AcceptedValues.TooMany.ToString())
+                                    if(tag is DivisionTemplateFailedSnapTag &&
+                                       tag.Value == DivisionTemplateFailedSnapTag.AcceptedValues.TooMany.ToString())
                                     {
-                                        tag.Value = FuzzyFactorCardFailedSnapTag.AcceptedValues.TooManyMultipleTimes.ToString();
+                                        tag.Value = DivisionTemplateFailedSnapTag.AcceptedValues.TooManyMultipleTimes.ToString();
                                         hasTag = true;
                                         break;
                                     }
@@ -547,7 +547,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                 //Apply tag to note that the student tried to snap array in wrong orientation
                                 if(!hasTag)
                                 {
-                                    var tag = new FuzzyFactorCardFailedSnapTag(PageObject.ParentPage, FuzzyFactorCardFailedSnapTag.AcceptedValues.TooMany);
+                                    var tag = new DivisionTemplateFailedSnapTag(PageObject.ParentPage, DivisionTemplateFailedSnapTag.AcceptedValues.TooMany);
                                     PageObject.ParentPage.Tags.Add(tag);
                                 }
 
@@ -1056,7 +1056,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                 }
 
-                PageObject.ParentPage.AddTag(new CLPArrayTriedWrongDividerValues(PageObject.ParentPage, Origin.StudentPageObjectGenerated, PageObject.ID, Rows, Columns, DividerValuesOrientation.Vertical, dividerValues));
+                PageObject.ParentPage.AddTag(new ArrayTriedWrongDividerValuesTag(PageObject.ParentPage, Origin.StudentPageObjectGenerated, PageObject.ID, Rows, Columns, DividerValuesOrientation.Vertical, dividerValues));
                 MessageBox.Show("The side of the array is " + Rows + ". You broke the side into " + labelsString + ", which don’t add up to " + Rows + ".", "Oops");
             }
             else
@@ -1098,7 +1098,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                 }
 
-                PageObject.ParentPage.AddTag(new CLPArrayTriedWrongDividerValues(PageObject.ParentPage, Origin.StudentPageObjectGenerated, PageObject.ID, Rows, Columns, DividerValuesOrientation.Horizontal, dividerValues));
+                PageObject.ParentPage.AddTag(new ArrayTriedWrongDividerValuesTag(PageObject.ParentPage, Origin.StudentPageObjectGenerated, PageObject.ID, Rows, Columns, DividerValuesOrientation.Horizontal, dividerValues));
                 MessageBox.Show("The side of the array is " + Columns + ". You broke the side into " + labelsString + ", which don’t add up to " + Columns + ".", "Oops");
             }
         }

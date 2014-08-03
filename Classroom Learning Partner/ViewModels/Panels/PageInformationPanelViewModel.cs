@@ -49,6 +49,7 @@ namespace Classroom_Learning_Partner.ViewModels
             DeletePageCommand = new Command(OnDeletePageCommandExecute);
             PageScreenshotCommand = new Command(OnPageScreenshotCommandExecute);
             DeleteTagCommand = new Command<ITag>(OnDeleteTagCommandExecute);
+            AddAnswerDefinitionCommand = new Command(OnAddAnswerDefinitionCommandExecute);
         }
 
         void PageInformationPanelViewModel_Initialized(object sender, EventArgs e)
@@ -537,6 +538,34 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             CurrentPage.Tags.Remove(tag);
+        }
+
+        /// <summary>
+        /// Adds a Definiton Tag to the <see cref="CLPPage" />.
+        /// </summary>
+        public Command AddAnswerDefinitionCommand { get; private set; }
+
+        private void OnAddAnswerDefinitionCommandExecute()
+        {
+            // If the page already has a ProductDefinitionTag, start from that one
+            var productDefinition = new ProductDefinitionTag(CurrentPage, Origin.Author);
+            //foreach(var tag in CurrentPage.Tags.OfType<ProductDefinitionTag>()) 
+            //{
+            //    productDefinition = tag;
+            //    break;
+            //}
+
+            //var viewModel = new ProductRelationViewModel(productDefinition);
+            //PageDefinitionView definitionView = new PageDefinitionView(viewModel);
+            //definitionView.Owner = Application.Current.MainWindow;
+            //definitionView.ShowDialog();
+
+            //if(definitionView.DialogResult == true)
+            //{
+            //    // Update this page's definition tag
+            //    var newTag = new PageDefinitionTag(CurrentPage, productDefinition);
+            //    CurrentPage.AddTag(newTag);
+            //}
         }
 
         #endregion //Commands

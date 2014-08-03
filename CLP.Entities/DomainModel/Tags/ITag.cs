@@ -58,7 +58,7 @@ namespace CLP.Entities
         /// Produces a human-readable string that describes the value of the tag.
         /// </summary>
         string FormattedValue { get; }
-        string Value { get; set; }
+
         /// <summary>
         /// Unique Identifier for the <see cref="IPageObject" />'s parent <see cref="CLPPage" />.
         /// </summary>

@@ -6,30 +6,29 @@ using Catel.Data;
 namespace CLP.Entities
 {
     [Serializable]
-    public class ArrayYAxisStrategyTag : ATagBase
+    public class DivisionTemplateStrategyTag : ATagBase
     {
         public enum AcceptedValues
         {
-            PlaceValue, // e.g. 43 -> 40 | 3
+            OneArray, // Only one array snapped in
             Repeated, // e.g. 28 / 4 -> 4 x 3 | 4 x 3 | 4 x 1
             EvenSplit, // e.g. 28 / 2 -> 2 x 14 | 2 x 14
-            NoDividers,
             Other
         }
 
         #region Constructors
 
         /// <summary>
-        /// Initializes <see cref="ArrayYAxisStrategyTag" /> from scratch.
+        /// Initializes <see cref="DivisionTemplateStrategyTag" /> from scratch.
         /// </summary>
-        public ArrayYAxisStrategyTag() { }
+        public DivisionTemplateStrategyTag() { }
 
         /// <summary>
-        /// Initializes <see cref="ArrayYAxisStrategyTag" /> from <see cref="AcceptedValues" />.
+        /// Initializes <see cref="DivisionTemplateStrategyTag" /> from <see cref="AcceptedValues" />.
         /// </summary>
-        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="ArrayYAxisStrategyTag" /> belongs to.</param>
-        /// <param name="value">The value of the <see cref="ArrayYAxisStrategyTag" />, parsed from <see cref="AcceptedValues" />.</param>
-        public ArrayYAxisStrategyTag(CLPPage parentPage, Origin origin, AcceptedValues value, List<int> dividerValues)
+        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="DivisionTemplateStrategyTag" /> belongs to.</param>
+        /// <param name="value">The value of the <see cref="DivisionTemplateStrategyTag" />, parsed from <see cref="AcceptedValues" />.</param>
+        public DivisionTemplateStrategyTag(CLPPage parentPage, Origin origin, AcceptedValues value, List<int> dividerValues)
             : base(parentPage, origin)
         {
             Value = value;
@@ -37,11 +36,11 @@ namespace CLP.Entities
         }
 
         /// <summary>
-        /// Initializes <see cref="ArrayYAxisStrategyTag" /> based on <see cref="SerializationInfo" />.
+        /// Initializes <see cref="DivisionTemplateStrategyTag" /> based on <see cref="SerializationInfo" />.
         /// </summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext" />.</param>
-        public ArrayYAxisStrategyTag(SerializationInfo info, StreamingContext context)
+        public DivisionTemplateStrategyTag(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
         #endregion //Constructors
@@ -60,7 +59,7 @@ namespace CLP.Entities
         public static readonly PropertyData ValueProperty = RegisterProperty("Value", typeof(AcceptedValues));
 
         /// <summary>
-        /// A list of all the values of each Divider.
+        /// List of all divider values used to fill up the Division Template.
         /// </summary>
         public List<int> DividerValues
         {
@@ -74,7 +73,7 @@ namespace CLP.Entities
 
         public override Category Category
         {
-            get { return Category.Array; }
+            get { return Category.DivisionTemplate; }
         }
 
         public override string FormattedValue

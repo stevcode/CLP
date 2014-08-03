@@ -245,12 +245,12 @@ namespace CLP.Entities
                 if(product == Dividend &&
                    ((factor1 == Rows && relation.Factor1Given) || (factor2 == Rows && relation.Factor2Given)))
                 {
-                    var tag = new FuzzyFactorCardDeletedTag(ParentPage, ("Deleted correct division object: " + Dividend + "/" + Rows));
+                    var tag = new DivisionTemplateDeletedTag(ParentPage, ("Deleted correct division object: " + Dividend + "/" + Rows));
                     ParentPage.Tags.Add(tag);
                 }
                 else
                 {
-                    var tag = new FuzzyFactorCardDeletedTag(ParentPage, ("Deleted incorrect division object: " + Dividend + "/" + Rows));
+                    var tag = new DivisionTemplateDeletedTag(ParentPage, ("Deleted incorrect division object: " + Dividend + "/" + Rows));
                     ParentPage.Tags.Add(tag);
                 }
             }
@@ -300,8 +300,8 @@ namespace CLP.Entities
                         var hasTag = false;
                         foreach(var tag in ParentPage.Tags.ToList())
                         {
-                            if(tag is FuzzyFactorCardIncorrectArrayCreationTag &&
-                               tag.Value == FuzzyFactorCardIncorrectArrayCreationTag.AcceptedValues.ProductAsDimension.ToString())
+                            if(tag is DivisionTemplateIncorrectArrayCreationTag &&
+                               tag.Value == DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.ProductAsDimension.ToString())
                             {
                                 hasTag = true;
                                 continue;
@@ -309,7 +309,7 @@ namespace CLP.Entities
                         }
                         if(!hasTag)
                         {
-                            var tag = new FuzzyFactorCardIncorrectArrayCreationTag(ParentPage, FuzzyFactorCardIncorrectArrayCreationTag.AcceptedValues.ProductAsDimension);
+                            var tag = new DivisionTemplateIncorrectArrayCreationTag(ParentPage, DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.ProductAsDimension);
                             ParentPage.Tags.Add(tag);
                         }
                     }
@@ -320,8 +320,8 @@ namespace CLP.Entities
                         var hasTag = false;
                         foreach(var tag in ParentPage.Tags.ToList())
                         {
-                            if(tag is FuzzyFactorCardIncorrectArrayCreationTag &&
-                               tag.Value == FuzzyFactorCardIncorrectArrayCreationTag.AcceptedValues.WrongOrientation.ToString())
+                            if(tag is DivisionTemplateIncorrectArrayCreationTag &&
+                               tag.Value == DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.WrongOrientation.ToString())
                             {
                                 hasTag = true;
                                 continue;
@@ -329,7 +329,7 @@ namespace CLP.Entities
                         }
                         if(!hasTag)
                         {
-                            var tag = new FuzzyFactorCardIncorrectArrayCreationTag(ParentPage, FuzzyFactorCardIncorrectArrayCreationTag.AcceptedValues.WrongOrientation);
+                            var tag = new DivisionTemplateIncorrectArrayCreationTag(ParentPage, DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.WrongOrientation);
                             ParentPage.Tags.Add(tag);
                         }
                     }
@@ -339,8 +339,8 @@ namespace CLP.Entities
                         var hasTag = false;
                         foreach(var tag in ParentPage.Tags.ToList())
                         {
-                            if(tag is FuzzyFactorCardIncorrectArrayCreationTag &&
-                               tag.Value == FuzzyFactorCardIncorrectArrayCreationTag.AcceptedValues.IncorrectDimension.ToString())
+                            if(tag is DivisionTemplateIncorrectArrayCreationTag &&
+                               tag.Value == DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.IncorrectDimension.ToString())
                             {
                                 hasTag = true;
                                 continue;
@@ -348,7 +348,7 @@ namespace CLP.Entities
                         }
                         if(!hasTag)
                         {
-                            var tag = new FuzzyFactorCardIncorrectArrayCreationTag(ParentPage, FuzzyFactorCardIncorrectArrayCreationTag.AcceptedValues.IncorrectDimension);
+                            var tag = new DivisionTemplateIncorrectArrayCreationTag(ParentPage, DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.IncorrectDimension);
                             ParentPage.Tags.Add(tag);
                         }
                     }
@@ -360,8 +360,8 @@ namespace CLP.Entities
                 var hasTag = false;
                 foreach(var tag in ParentPage.Tags.ToList())
                 {
-                    if(tag is FuzzyFactorCardIncorrectArrayCreationTag &&
-                       tag.Value == FuzzyFactorCardIncorrectArrayCreationTag.AcceptedValues.TooMany.ToString())
+                    if(tag is DivisionTemplateIncorrectArrayCreationTag &&
+                       tag.Value == DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.TooMany.ToString())
                     {
                         hasTag = true;
                         continue;
@@ -369,7 +369,7 @@ namespace CLP.Entities
                 }
                 if(!hasTag)
                 {
-                    var tag = new FuzzyFactorCardIncorrectArrayCreationTag(ParentPage, FuzzyFactorCardIncorrectArrayCreationTag.AcceptedValues.TooMany);
+                    var tag = new DivisionTemplateIncorrectArrayCreationTag(ParentPage, DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.TooMany);
                     ParentPage.Tags.Add(tag);
                 }
             }

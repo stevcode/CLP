@@ -22,6 +22,7 @@ namespace CLP.Entities
         Array,
         DivisionTemplate,
         Stamp,
+        Definition,
         CurriculumInformation,
         OtherPageInformation
     }
@@ -44,8 +45,12 @@ namespace CLP.Entities
         /// Initializes <see cref="ATagBase" /> using <see cref="CLPPage" />.
         /// </summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="ATagBase" /> belongs to.</param>
-        protected ATagBase(CLPPage parentPage)
-            : this() { ParentPage = parentPage; }
+        protected ATagBase(CLPPage parentPage, Origin origin)
+            : this()
+        {
+            ParentPage = parentPage;
+            Origin = origin;
+        }
 
         /// <summary>
         /// Initializes <see cref="ATagBase" /> based on <see cref="SerializationInfo" />.
@@ -147,21 +152,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData IsSingleValueTagProperty = RegisterProperty("IsSingleValueTag", typeof(bool), false);
 
-        /// <summary>
-        /// Value of the <see cref="ATagBase" />.
-        /// </summary>
-        public string Value
-        {
-            get { return GetValue<string>(ValueProperty); }
-            set { SetValue(ValueProperty, value); }
-        }
-
-        public static readonly PropertyData ValueProperty = RegisterProperty("Value", typeof(string), string.Empty);
-
-        public virtual string FormattedValue
-        {
-            get { return Value; }
-        }
+        public abstract string FormattedValue { get; }
 
         #region Navigation Properties
 

@@ -6,13 +6,11 @@ using Catel.Data;
 namespace CLP.Entities
 {
     [Serializable]
-    public class ArrayYAxisStrategyTag : ATagBase
+    public class ArrayRegionStrategyTag : ATagBase
     {
         public enum AcceptedValues
         {
-            PlaceValue, // e.g. 43 -> 40 | 3
-            Repeated, // e.g. 28 / 4 -> 4 x 3 | 4 x 3 | 4 x 1
-            EvenSplit, // e.g. 28 / 2 -> 2 x 14 | 2 x 14
+            FriendlyPartialProducts,
             NoDividers,
             Other
         }
@@ -20,28 +18,28 @@ namespace CLP.Entities
         #region Constructors
 
         /// <summary>
-        /// Initializes <see cref="ArrayYAxisStrategyTag" /> from scratch.
+        /// Initializes <see cref="ArrayRegionStrategyTag" /> from scratch.
         /// </summary>
-        public ArrayYAxisStrategyTag() { }
+        public ArrayRegionStrategyTag() { }
 
         /// <summary>
-        /// Initializes <see cref="ArrayYAxisStrategyTag" /> from <see cref="AcceptedValues" />.
+        /// Initializes <see cref="ArrayRegionStrategyTag" /> from <see cref="AcceptedValues" />.
         /// </summary>
-        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="ArrayYAxisStrategyTag" /> belongs to.</param>
-        /// <param name="value">The value of the <see cref="ArrayYAxisStrategyTag" />, parsed from <see cref="AcceptedValues" />.</param>
-        public ArrayYAxisStrategyTag(CLPPage parentPage, Origin origin, AcceptedValues value, List<int> dividerValues)
+        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="ArrayRegionStrategyTag" /> belongs to.</param>
+        /// <param name="value">The value of the <see cref="ArrayRegionStrategyTag" />, parsed from <see cref="AcceptedValues" />.</param>
+        public ArrayRegionStrategyTag(CLPPage parentPage, Origin origin, AcceptedValues value, List<string> regionDimensions)
             : base(parentPage, origin)
         {
             Value = value;
-            DividerValues = dividerValues;
+            RegionDimensions = regionDimensions;
         }
 
         /// <summary>
-        /// Initializes <see cref="ArrayYAxisStrategyTag" /> based on <see cref="SerializationInfo" />.
+        /// Initializes <see cref="ArrayRegionStrategyTag" /> based on <see cref="SerializationInfo" />.
         /// </summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext" />.</param>
-        public ArrayYAxisStrategyTag(SerializationInfo info, StreamingContext context)
+        public ArrayRegionStrategyTag(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
         #endregion //Constructors
@@ -60,15 +58,15 @@ namespace CLP.Entities
         public static readonly PropertyData ValueProperty = RegisterProperty("Value", typeof(AcceptedValues));
 
         /// <summary>
-        /// A list of all the values of each Divider.
+        /// Dimensions of all the Regions in the Array.
         /// </summary>
-        public List<int> DividerValues
+        public List<string> RegionDimensions
         {
-            get { return GetValue<List<int>>(DividerValuesProperty); }
-            set { SetValue(DividerValuesProperty, value); }
+            get { return GetValue<List<string>>(RegionDimensionsProperty); }
+            set { SetValue(RegionDimensionsProperty, value); }
         }
 
-        public static readonly PropertyData DividerValuesProperty = RegisterProperty("DividerValues", typeof(List<int>), () => new List<int>());
+        public static readonly PropertyData RegionDimensionsProperty = RegisterProperty("RegionDimensions", typeof(List<string>));
 
         #region ATagBase Overrides
 
@@ -79,7 +77,7 @@ namespace CLP.Entities
 
         public override string FormattedValue
         {
-            get { return string.Format("{0}:{1}", Value, string.Join(",", DividerValues)); }
+            get { return string.Format("{0}:{1}", Value, string.Join(",", RegionDimensions)); }
         }
 
         #endregion //ATagBase Overrides

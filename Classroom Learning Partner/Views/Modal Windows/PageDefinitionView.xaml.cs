@@ -5,8 +5,6 @@ using Catel.Windows;
 using Classroom_Learning_Partner.ViewModels;
 using CLP.Entities;
 
-// TODO (someday): Automatically populate combobox with all possible relation types
-
 namespace Classroom_Learning_Partner.Views.Modal_Windows
 {
     /// <summary>

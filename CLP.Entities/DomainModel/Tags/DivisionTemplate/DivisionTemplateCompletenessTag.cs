@@ -5,36 +5,36 @@ using Catel.Data;
 namespace CLP.Entities
 {
     [Serializable]
-    public class ArrayOrientationTag : ATagBase
+    public class DivisionTemplateCompletenessTag : ATagBase
     {
         public enum AcceptedValues
         {
-            FirstFactorWidth,
-            FirstFactorHeight,
-            Unknown
+            NoArrays,
+            NotEnoughArrays,
+            Complete
         }
 
         #region Constructors
 
         /// <summary>
-        /// Initializes <see cref="ArrayOrientationTag" /> from scratch.
+        /// Initializes <see cref="DivisionTemplateCompletenessTag" /> from scratch.
         /// </summary>
-        public ArrayOrientationTag() { }
+        public DivisionTemplateCompletenessTag() { }
 
         /// <summary>
-        /// Initializes <see cref="ArrayOrientationTag" /> from <see cref="AcceptedValues" />.
+        /// Initializes <see cref="DivisionTemplateCompletenessTag" /> from <see cref="AcceptedValues" />.
         /// </summary>
-        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="ArrayOrientationTag" /> belongs to.</param>
-        /// <param name="value">The value of the <see cref="ArrayOrientationTag" />, parsed from <see cref="AcceptedValues" />.</param>
-        public ArrayOrientationTag(CLPPage parentPage, Origin origin, AcceptedValues value)
+        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="DivisionTemplateCompletenessTag" /> belongs to.</param>
+        /// <param name="value">The value of the <see cref="DivisionTemplateCompletenessTag" />, parsed from <see cref="AcceptedValues" />.</param>
+        public DivisionTemplateCompletenessTag(CLPPage parentPage, Origin origin, AcceptedValues value)
             : base(parentPage, origin) { Value = value; }
 
         /// <summary>
-        /// Initializes <see cref="ArrayOrientationTag" /> based on <see cref="SerializationInfo" />.
+        /// Initializes <see cref="DivisionTemplateCompletenessTag" /> based on <see cref="SerializationInfo" />.
         /// </summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext" />.</param>
-        public ArrayOrientationTag(SerializationInfo info, StreamingContext context)
+        public DivisionTemplateCompletenessTag(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
         #endregion //Constructors
@@ -56,7 +56,7 @@ namespace CLP.Entities
 
         public override Category Category
         {
-            get { return Category.Array; }
+            get { return Category.DivisionTemplate; }
         }
 
         public override string FormattedValue

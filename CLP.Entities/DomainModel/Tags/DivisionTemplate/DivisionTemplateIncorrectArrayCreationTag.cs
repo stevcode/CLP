@@ -5,36 +5,37 @@ using Catel.Data;
 namespace CLP.Entities
 {
     [Serializable]
-    public class ArrayOrientationTag : ATagBase
+    public class DivisionTemplateIncorrectArrayCreationTag : ATagBase
     {
         public enum AcceptedValues
         {
-            FirstFactorWidth,
-            FirstFactorHeight,
-            Unknown
+            ArrayTooLarge,
+            IncorrectDimension,
+            WrongOrientation,
+            ProductAsDimension
         }
 
         #region Constructors
 
         /// <summary>
-        /// Initializes <see cref="ArrayOrientationTag" /> from scratch.
+        /// Initializes <see cref="DivisionTemplateIncorrectArrayCreationTag" /> from scratch.
         /// </summary>
-        public ArrayOrientationTag() { }
+        public DivisionTemplateIncorrectArrayCreationTag() { }
 
         /// <summary>
-        /// Initializes <see cref="ArrayOrientationTag" /> from <see cref="AcceptedValues" />.
+        /// Initializes <see cref="DivisionTemplateIncorrectArrayCreationTag" /> from <see cref="AcceptedValues" />.
         /// </summary>
-        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="ArrayOrientationTag" /> belongs to.</param>
-        /// <param name="value">The value of the <see cref="ArrayOrientationTag" />, parsed from <see cref="AcceptedValues" />.</param>
-        public ArrayOrientationTag(CLPPage parentPage, Origin origin, AcceptedValues value)
+        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="DivisionTemplateIncorrectArrayCreationTag" /> belongs to.</param>
+        /// <param name="value">The value of the <see cref="DivisionTemplateIncorrectArrayCreationTag" />, parsed from <see cref="AcceptedValues" />.</param>
+        public DivisionTemplateIncorrectArrayCreationTag(CLPPage parentPage, Origin origin, AcceptedValues value)
             : base(parentPage, origin) { Value = value; }
 
         /// <summary>
-        /// Initializes <see cref="ArrayOrientationTag" /> based on <see cref="SerializationInfo" />.
+        /// Initializes <see cref="DivisionTemplateIncorrectArrayCreationTag" /> based on <see cref="SerializationInfo" />.
         /// </summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext" />.</param>
-        public ArrayOrientationTag(SerializationInfo info, StreamingContext context)
+        public DivisionTemplateIncorrectArrayCreationTag(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
         #endregion //Constructors
@@ -56,7 +57,7 @@ namespace CLP.Entities
 
         public override Category Category
         {
-            get { return Category.Array; }
+            get { return Category.DivisionTemplate; }
         }
 
         public override string FormattedValue
