@@ -26,11 +26,11 @@ namespace CLP.Entities
         /// </summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="DivisionTemplateFailedSnapTag" /> belongs to.</param>
         /// <param name="value">The value of the <see cref="DivisionTemplateFailedSnapTag" />, parsed from <see cref="AcceptedValues" />.</param>
-        public DivisionTemplateFailedSnapTag(CLPPage parentPage, Origin origin, AcceptedValues value, int previousNumberOfAttempts)
+        public DivisionTemplateFailedSnapTag(CLPPage parentPage, Origin origin, AcceptedValues value, int numberOfAttempts)
             : base(parentPage, origin)
         {
             Value = value;
-            NumberOfAttempts = previousNumberOfAttempts + 1;
+            NumberOfAttempts = numberOfAttempts;
         }
 
         /// <summary>

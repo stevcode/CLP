@@ -43,7 +43,6 @@ namespace Classroom_Learning_Partner.ViewModels
                                IsVisible = false
                            };
             NotebookPagesPanel = new NotebookPagesPanelViewModel(notebook, StagingPanel);
-            StudentWorkPanel = new StudentWorkPanelViewModel(notebook, StagingPanel);
             ProgressPanel = new ProgressPanelViewModel(notebook, StagingPanel);
             if(App.MainWindowViewModel.Ribbon.CurrentLeftPanel == Panels.Progress)
             {
@@ -187,17 +186,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData NotebookPagesPanelProperty = RegisterProperty("NotebookPagesPanel", typeof(NotebookPagesPanelViewModel));
-
-        /// <summary>
-        /// StudentWorkPanel.
-        /// </summary>
-        public StudentWorkPanelViewModel StudentWorkPanel
-        {
-            get { return GetValue<StudentWorkPanelViewModel>(StudentWorkPanelProperty); }
-            set { SetValue(StudentWorkPanelProperty, value); }
-        }
-
-        public static readonly PropertyData StudentWorkPanelProperty = RegisterProperty("StudentWorkPanel", typeof(StudentWorkPanelViewModel));
 
         /// <summary>
         /// ProgressPanel.

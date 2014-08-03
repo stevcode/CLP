@@ -893,29 +893,6 @@
                               Command="{Binding CreatePageSubmissionCommand}" />
 
             </RibbonGroup>
-
-            <RibbonGroup Header="Page Analysis">
-
-                <RibbonButton Label="Show Tags"
-                              LargeImageSource="..\Images\Array.png"
-                              Command="{Binding ShowTagsCommand}" />
-
-                <RibbonButton Label="Page Definition"
-                              LargeImageSource="..\Images\Array.png"
-                              Command="{Binding EditPageDefinitionCommand}" />
-
-                <RibbonButton Label="Analyze Array"
-                              LargeImageSource="..\Images\Array.png"
-                              Command="{Binding AnalyzeArrayCommand}" />
-
-                <RibbonButton Label="Analyze Division Object"
-                              LargeImageSource="pack://application:,,,/Resources/Images/FuzzyFactorCard32.png"
-                              Command="{Binding AnalyzeFuzzyFactorCardCommand}" />
-
-                <RibbonButton Label="Analyze Stamps"
-                              LargeImageSource="..\Images\AddPathStamp.png"
-                              Command="{Binding AnalyzeStampsCommand}" />
-            </RibbonGroup>
             
             <RibbonGroup Header="Creation Stuff">
                 

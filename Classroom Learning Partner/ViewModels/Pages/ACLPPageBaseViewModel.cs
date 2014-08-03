@@ -423,71 +423,36 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             get
             {
-                StarredTag starredTag = Page.Tags.FirstOrDefault(x => x is StarredTag) as StarredTag;
+                var starredTag = Page.Tags.FirstOrDefault(x => x is StarredTag) as StarredTag;
                 if(starredTag == null)
                 {
                     return false;
                 }
-                return starredTag.Value == StarredTag.AcceptedValues.Starred.ToString();
+                return starredTag.Value == StarredTag.AcceptedValues.Starred;
             }
-            set
-            {
-                if(value == true)
-                {
-                    Page.AddTag(new StarredTag(Page, StarredTag.AcceptedValues.Starred));
-                }
-                else
-                {
-                    Page.AddTag(new StarredTag(Page, StarredTag.AcceptedValues.Unstarred));
-                }
-            }
+            set { Page.AddTag(value ? new StarredTag(Page, Origin.Teacher, StarredTag.AcceptedValues.Starred) : new StarredTag(Page, Origin.Teacher, StarredTag.AcceptedValues.Unstarred)); }
         }
 
         public bool IsDotted
         {
             get
             {
-                DottedTag dottedTag = Page.Tags.FirstOrDefault(x => x is DottedTag) as DottedTag;
+                var dottedTag = Page.Tags.FirstOrDefault(x => x is DottedTag) as DottedTag;
                 if(dottedTag == null)
                 {
                     return false;
                 }
-                return dottedTag.Value == DottedTag.AcceptedValues.Dotted.ToString();
+                return dottedTag.Value == DottedTag.AcceptedValues.Dotted;
             }
-            set
-            {
-                if(value == true)
-                {
-                    Page.AddTag(new DottedTag(Page, DottedTag.AcceptedValues.Dotted));
-                }
-                else
-                {
-                    Page.AddTag(new DottedTag(Page, DottedTag.AcceptedValues.Undotted));
-                }
-            }
+            set { Page.AddTag(value ? new DottedTag(Page, Origin.Teacher, DottedTag.AcceptedValues.Dotted) : new DottedTag(Page, Origin.Teacher, DottedTag.AcceptedValues.Undotted)); }
         }
 
-        public CorrectnessTag.AcceptedValues Correctness
+        public Correctness Correctness
         {
             get
             {
-                CorrectnessTag correctnessTag = Page.Tags.FirstOrDefault(x => x is CorrectnessTag) as CorrectnessTag;
-                if(correctnessTag == null)
-                {
-                    return CorrectnessTag.AcceptedValues.Unknown;
-                }
-                switch(correctnessTag.Value)
-                {
-                    case "Correct":
-                        return CorrectnessTag.AcceptedValues.Correct;
-                    case "Incorrect":
-                        return CorrectnessTag.AcceptedValues.Incorrect;
-                    case "AlmostCorrect":
-                        return CorrectnessTag.AcceptedValues.AlmostCorrect;
-                    case "Unknown":
-                    default:
-                        return CorrectnessTag.AcceptedValues.Unknown;
-                }
+                var correctnessTag = Page.Tags.FirstOrDefault(x => x is CorrectnessTag) as CorrectnessTag;
+                return correctnessTag == null ? Correctness.Unknown : correctnessTag.Correctness;
             }
             set
             {
@@ -496,7 +461,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        public static readonly PropertyData CorrectnessProperty = RegisterProperty("Correctness", typeof(CorrectnessTag.AcceptedValues), CorrectnessTag.AcceptedValues.Unknown);
+        public static readonly PropertyData CorrectnessProperty = RegisterProperty("Correctness", typeof(Correctness), Correctness.Unknown);
 
 
         /// <summary>

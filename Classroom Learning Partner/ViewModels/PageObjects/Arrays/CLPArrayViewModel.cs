@@ -181,7 +181,6 @@ namespace Classroom_Learning_Partner.ViewModels
         private static void Divisions_Changed(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
         {
             //throw new NotImplementedException();
-            
         }
 
         /// <summary>
@@ -464,53 +463,39 @@ namespace Classroom_Learning_Partner.ViewModels
                                 var hasTag = false;
                                 if(snappingArray.Columns == factorCard.Rows)
                                 {
-                                    foreach(var tag in PageObject.ParentPage.Tags.ToList())
+                                    var existingTag =
+                                        pageObject.ParentPage.Tags.OfType<DivisionTemplateFailedSnapTag>()
+                                                  .FirstOrDefault(x => x.Value == DivisionTemplateFailedSnapTag.AcceptedValues.SnappedWrongOrientation);
+
+                                    var previousNumberOfAttempts = 0;
+                                    if(existingTag != null)
                                     {
-                                        if(tag is DivisionTemplateFailedSnapTag &&
-                                           tag.Value == DivisionTemplateFailedSnapTag.AcceptedValues.SnappedWrongOrientationMultipleTimes.ToString())
-                                        {
-                                            hasTag = true;
-                                            break;
-                                        }
-                                        if(tag is DivisionTemplateFailedSnapTag &&
-                                           tag.Value == DivisionTemplateFailedSnapTag.AcceptedValues.SnappedWrongOrientation.ToString())
-                                        {
-                                            tag.Value = DivisionTemplateFailedSnapTag.AcceptedValues.SnappedWrongOrientationMultipleTimes.ToString();
-                                            hasTag = true;
-                                            break;
-                                        }
+                                        previousNumberOfAttempts = existingTag.NumberOfAttempts;
+                                        pageObject.ParentPage.Tags.Remove(existingTag);
                                     }
-                                    //Apply tag to note that the student tried to snap array in wrong orientation
-                                    if(!hasTag)
-                                    {
-                                        var tag = new DivisionTemplateFailedSnapTag(PageObject.ParentPage, DivisionTemplateFailedSnapTag.AcceptedValues.SnappedWrongOrientation);
-                                        PageObject.ParentPage.Tags.Add(tag);
-                                    }
+                                    var newTag = new DivisionTemplateFailedSnapTag(pageObject.ParentPage,
+                                                                                   App.CurrentUserMode == App.UserMode.Student ? Origin.StudentPageObjectGenerated : Origin.TeacherPageObjectGenerated,
+                                                                                   DivisionTemplateFailedSnapTag.AcceptedValues.SnappedWrongOrientation,
+                                                                                   previousNumberOfAttempts + 1);
+                                    pageObject.ParentPage.Tags.Add(newTag);
                                 }
                                 else
                                 {
-                                    foreach(var tag in PageObject.ParentPage.Tags.ToList())
+                                    var existingTag =
+                                        pageObject.ParentPage.Tags.OfType<DivisionTemplateFailedSnapTag>()
+                                                  .FirstOrDefault(x => x.Value == DivisionTemplateFailedSnapTag.AcceptedValues.SnappedIncorrectDimension);
+
+                                    var previousNumberOfAttempts = 0;
+                                    if(existingTag != null)
                                     {
-                                        if(tag is DivisionTemplateFailedSnapTag &&
-                                           tag.Value == DivisionTemplateFailedSnapTag.AcceptedValues.SnappedIncorrectDimensionMultipleTimes.ToString())
-                                        {
-                                            hasTag = true;
-                                            break;
-                                        }
-                                        if(tag is DivisionTemplateFailedSnapTag &&
-                                           tag.Value == DivisionTemplateFailedSnapTag.AcceptedValues.SnappedIncorrectDimension.ToString())
-                                        {
-                                            tag.Value = DivisionTemplateFailedSnapTag.AcceptedValues.SnappedIncorrectDimensionMultipleTimes.ToString();
-                                            hasTag = true;
-                                            break;
-                                        }
+                                        previousNumberOfAttempts = existingTag.NumberOfAttempts;
+                                        pageObject.ParentPage.Tags.Remove(existingTag);
                                     }
-                                    //Apply tag to note that the student tried to snap array in wrong orientation
-                                    if(!hasTag)
-                                    {
-                                        var tag = new DivisionTemplateFailedSnapTag(PageObject.ParentPage, DivisionTemplateFailedSnapTag.AcceptedValues.SnappedIncorrectDimension);
-                                        PageObject.ParentPage.Tags.Add(tag);
-                                    }
+                                    var newTag = new DivisionTemplateFailedSnapTag(pageObject.ParentPage,
+                                                                                   App.CurrentUserMode == App.UserMode.Student ? Origin.StudentPageObjectGenerated : Origin.TeacherPageObjectGenerated,
+                                                                                   DivisionTemplateFailedSnapTag.AcceptedValues.SnappedIncorrectDimension,
+                                                                                   previousNumberOfAttempts + 1);
+                                    pageObject.ParentPage.Tags.Add(newTag);
                                 }
 
                                 var factorCardViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(factorCard);
@@ -527,37 +512,21 @@ namespace Classroom_Learning_Partner.ViewModels
                                 //var oldY = 10.0;
                                 //APageObjectBaseViewModel.ChangePageObjectPosition(snappingArray, oldX, oldY, false);
 
-                                var hasTag = false;
-                                foreach(var tag in PageObject.ParentPage.Tags.ToList())
-                                {
-                                    if(tag is DivisionTemplateFailedSnapTag &&
-                                       tag.Value == DivisionTemplateFailedSnapTag.AcceptedValues.TooManyMultipleTimes.ToString())
-                                    {
-                                        hasTag = true;
-                                        break;
-                                    }
-                                    if(tag is DivisionTemplateFailedSnapTag &&
-                                       tag.Value == DivisionTemplateFailedSnapTag.AcceptedValues.TooMany.ToString())
-                                    {
-                                        tag.Value = DivisionTemplateFailedSnapTag.AcceptedValues.TooManyMultipleTimes.ToString();
-                                        hasTag = true;
-                                        break;
-                                    }
-                                }
-                                //Apply tag to note that the student tried to snap array in wrong orientation
-                                if(!hasTag)
-                                {
-                                    var tag = new DivisionTemplateFailedSnapTag(PageObject.ParentPage, DivisionTemplateFailedSnapTag.AcceptedValues.TooMany);
-                                    PageObject.ParentPage.Tags.Add(tag);
-                                }
+                                var existingTag =
+                                        pageObject.ParentPage.Tags.OfType<DivisionTemplateFailedSnapTag>()
+                                                  .FirstOrDefault(x => x.Value == DivisionTemplateFailedSnapTag.AcceptedValues.SnappedArrayTooLarge);
 
-                                ////Apply tag to note that the student tried to snap too many
-                                //if(!hasTag)
-                                //{
-                                //    var tag = new Tag(Tag.Origins.Generated, FuzzyFactorCardFailedSnapTagType.Instance);
-                                //    tag.AddTagOptionValue(new TagOptionValue("too many"));
-                                //    PageObject.ParentPage.PageTags.Add(tag);
-                                //}
+                                    var previousNumberOfAttempts = 0;
+                                    if(existingTag != null)
+                                    {
+                                        previousNumberOfAttempts = existingTag.NumberOfAttempts;
+                                        pageObject.ParentPage.Tags.Remove(existingTag);
+                                    }
+                                    var newTag = new DivisionTemplateFailedSnapTag(pageObject.ParentPage,
+                                                                                   App.CurrentUserMode == App.UserMode.Student ? Origin.StudentPageObjectGenerated : Origin.TeacherPageObjectGenerated,
+                                                                                   DivisionTemplateFailedSnapTag.AcceptedValues.SnappedArrayTooLarge,
+                                                                                   previousNumberOfAttempts + 1);
+                                    pageObject.ParentPage.Tags.Add(newTag);
 
                                 var factorCardViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(factorCard);
                                 foreach(var viewModel in factorCardViewModels)
@@ -577,7 +546,8 @@ namespace Classroom_Learning_Partner.ViewModels
                             PageObject.ParentPage.PageObjects.Remove(PageObject);
                             factorCard.SnapInArray(snappingArray.Columns);
 
-                            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new FFCArraySnappedInHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, pageObject.ID, snappingArray));
+                            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
+                                                                       new FFCArraySnappedInHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, pageObject.ID, snappingArray));
                             return;
                         }
                     }
@@ -869,7 +839,8 @@ namespace Classroom_Learning_Partner.ViewModels
             var initXPos = PageObject.XPosition;
             var initYPos = PageObject.YPosition;
             (PageObject as CLPArray).RotateArray();
-            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPArrayRotateHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, PageObject.ID, initXPos, initYPos));
+            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
+                                                       new CLPArrayRotateHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, PageObject.ID, initXPos, initYPos));
         }
 
         /// <summary>
@@ -922,7 +893,12 @@ namespace Classroom_Learning_Partner.ViewModels
             HorizontalDivisions.Add(bottomDiv);
             addedDivisions.Add(bottomDiv);
 
-            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPArrayDivisionsChangedHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, PageObject.ID, addedDivisions, removedDivisions));
+            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
+                                                       new CLPArrayDivisionsChangedHistoryItem(PageObject.ParentPage,
+                                                                                               App.MainWindowViewModel.CurrentUser,
+                                                                                               PageObject.ID,
+                                                                                               addedDivisions,
+                                                                                               removedDivisions));
         }
 
         /// <summary>
@@ -975,7 +951,12 @@ namespace Classroom_Learning_Partner.ViewModels
             VerticalDivisions.Add(bottomDiv);
             addedDivisions.Add(bottomDiv);
 
-            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPArrayDivisionsChangedHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, PageObject.ID, addedDivisions, removedDivisions));
+            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
+                                                       new CLPArrayDivisionsChangedHistoryItem(PageObject.ParentPage,
+                                                                                               App.MainWindowViewModel.CurrentUser,
+                                                                                               PageObject.ID,
+                                                                                               addedDivisions,
+                                                                                               removedDivisions));
         }
 
         /// <summary>
@@ -1013,7 +994,12 @@ namespace Classroom_Learning_Partner.ViewModels
             var divisionIndex = isHorizontalDivision ? array.HorizontalDivisions.IndexOf(division) : array.VerticalDivisions.IndexOf(division);
 
             ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
-                                                       new CLPArrayDivisionValueChangedHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, PageObject.ID, isHorizontalDivision, divisionIndex, previousValue));
+                                                       new CLPArrayDivisionValueChangedHistoryItem(PageObject.ParentPage,
+                                                                                                   App.MainWindowViewModel.CurrentUser,
+                                                                                                   PageObject.ID,
+                                                                                                   isHorizontalDivision,
+                                                                                                   divisionIndex,
+                                                                                                   previousValue));
 
             // Check if array labels add up to larger array dimension
             var dividerValues = new List<int>();
@@ -1056,7 +1042,13 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                 }
 
-                PageObject.ParentPage.AddTag(new ArrayTriedWrongDividerValuesTag(PageObject.ParentPage, Origin.StudentPageObjectGenerated, PageObject.ID, Rows, Columns, DividerValuesOrientation.Vertical, dividerValues));
+                PageObject.ParentPage.AddTag(new ArrayTriedWrongDividerValuesTag(PageObject.ParentPage,
+                                                                                 Origin.StudentPageObjectGenerated,
+                                                                                 PageObject.ID,
+                                                                                 Rows,
+                                                                                 Columns,
+                                                                                 DividerValuesOrientation.Vertical,
+                                                                                 dividerValues));
                 MessageBox.Show("The side of the array is " + Rows + ". You broke the side into " + labelsString + ", which don’t add up to " + Rows + ".", "Oops");
             }
             else
@@ -1098,7 +1090,13 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                 }
 
-                PageObject.ParentPage.AddTag(new ArrayTriedWrongDividerValuesTag(PageObject.ParentPage, Origin.StudentPageObjectGenerated, PageObject.ID, Rows, Columns, DividerValuesOrientation.Horizontal, dividerValues));
+                PageObject.ParentPage.AddTag(new ArrayTriedWrongDividerValuesTag(PageObject.ParentPage,
+                                                                                 Origin.StudentPageObjectGenerated,
+                                                                                 PageObject.ID,
+                                                                                 Rows,
+                                                                                 Columns,
+                                                                                 DividerValuesOrientation.Horizontal,
+                                                                                 dividerValues));
                 MessageBox.Show("The side of the array is " + Columns + ". You broke the side into " + labelsString + ", which don’t add up to " + Columns + ".", "Oops");
             }
         }
@@ -1162,7 +1160,12 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
 
-            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPArrayDivisionsChangedHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, PageObject.ID, addedDivisions, removedDivisions));
+            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
+                                                       new CLPArrayDivisionsChangedHistoryItem(PageObject.ParentPage,
+                                                                                               App.MainWindowViewModel.CurrentUser,
+                                                                                               PageObject.ID,
+                                                                                               addedDivisions,
+                                                                                               removedDivisions));
         }
 
         /// <summary>
@@ -1344,8 +1347,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 array.VerticalDivisions.Add(bottomDiv);
                 addedDivisions.Add(bottomDiv);
 
-                ACLPPageBaseViewModel.AddHistoryItemToPage(array.ParentPage, new CLPArrayDivisionsChangedHistoryItem(array.ParentPage, App.MainWindowViewModel.CurrentUser, array.ID, addedDivisions, removedDivisions));
-                return true; 
+                ACLPPageBaseViewModel.AddHistoryItemToPage(array.ParentPage,
+                                                           new CLPArrayDivisionsChangedHistoryItem(array.ParentPage, App.MainWindowViewModel.CurrentUser, array.ID, addedDivisions, removedDivisions));
+                return true;
             }
             else if(Math.Abs(strokeLeft - strokeRight) > Math.Abs(strokeTop - strokeBottom) &&
                     strokeBottom <= cuttableBottom &&
@@ -1399,7 +1403,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 array.HorizontalDivisions.Add(bottomDiv);
                 addedDivisions.Add(bottomDiv);
 
-                ACLPPageBaseViewModel.AddHistoryItemToPage(array.ParentPage, new CLPArrayDivisionsChangedHistoryItem(array.ParentPage, App.MainWindowViewModel.CurrentUser, array.ID, addedDivisions, removedDivisions));
+                ACLPPageBaseViewModel.AddHistoryItemToPage(array.ParentPage,
+                                                           new CLPArrayDivisionsChangedHistoryItem(array.ParentPage, App.MainWindowViewModel.CurrentUser, array.ID, addedDivisions, removedDivisions));
                 return true;
             }
 

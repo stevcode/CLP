@@ -181,7 +181,6 @@ namespace Classroom_Learning_Partner.ViewModels
             SendPageToStudentCommand = new Command(OnSendPageToStudentCommandExecute);
             ReplacePageCommand = new Command(OnReplacePageCommandExecute);
             CreatePageSubmissionCommand = new Command(OnCreatePageSubmissionCommandExecute);
-            ShowTagsCommand = new Command(OnShowTagsCommandExecute);
             MakeGroupsCommand = new Command(OnMakeGroupsCommandExecute);
             MakeExitTicketsCommand = new Command(OnMakeExitTicketsCommandExecute);
             MakeExitTicketsFromCurrentPageCommand = new Command(OnMakeExitTicketsFromCurrentPageCommandExecute);
@@ -201,13 +200,7 @@ namespace Classroom_Learning_Partner.ViewModels
             InterpretPageCommand = new Command(OnInterpretPageCommandExecute);
 
             //Authoring
-            EditPageDefinitionCommand = new Command(OnEditPageDefinitionCommandExecute);
             SetEntireNotebookAsAuthoredCommand = new Command(OnSetEntireNotebookAsAuthoredCommandExecute);
-
-            //Analysis
-            AnalyzeArrayCommand = new Command(OnAnalyzeArrayCommandExecute);
-            AnalyzeFuzzyFactorCardCommand = new Command(OnAnalyzeFuzzyFactorCardCommandExecute);
-            AnalyzeStampsCommand = new Command(OnAnalyzeStampsCommandExecute);
         }
 
         /// <summary>
@@ -1866,24 +1859,6 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentPage.Submissions.Add(submission);
         }
 
-        public Command ShowTagsCommand { get; private set; }
-
-        private void OnShowTagsCommandExecute()
-        {
-            // TODO: Entities
-            var page = NotebookPagesPanelViewModel.GetCurrentPage();
-
-            string tags = "";
-            foreach(var t in page.Tags)
-            {
-                tags = tags + t.GetType().ToString() + " = " + t.Value + "\n";
-            }
-
-            var tagsView = new SimpleTextWindowView("Tags for this page", tags);
-            tagsView.Owner = Application.Current.MainWindow;
-            tagsView.ShowDialog();
-        }
-
         public Command MakeGroupsCommand { get; private set; }
 
         private void OnMakeGroupsCommandExecute()
@@ -2904,45 +2879,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
-        /// Gets the EditPageDefinitionCommand command.
-        /// </summary>
-        public Command EditPageDefinitionCommand { get; private set; }
-
-        /// <summary>
-        /// Method to invoke when the EditPageDefinitionCommand command is executed.
-        /// </summary>
-        private void OnEditPageDefinitionCommandExecute()
-        {
-            if(CurrentPage == null)
-            {
-                return;
-            }
-
-            // If the page already has a Page Definition tag, start from that one
-            ProductRelation productRelation = new ProductRelation();
-            foreach(var tag in CurrentPage.Tags)
-            {
-                if(tag is PageDefinitionTag)
-                {
-                    productRelation = ProductRelation.fromString(tag.Value);
-                    break;
-                }
-            }
-
-            ProductRelationViewModel viewModel = new ProductRelationViewModel(productRelation);
-            PageDefinitionView definitionView = new PageDefinitionView(viewModel);
-            definitionView.Owner = Application.Current.MainWindow;
-            definitionView.ShowDialog();
-
-            if(definitionView.DialogResult == true)
-            {
-                // Update this page's definition tag
-                PageDefinitionTag newTag = new PageDefinitionTag(CurrentPage, productRelation);
-                CurrentPage.AddTag(newTag);
-            }
-        }
-
-        /// <summary>
         /// Recursively sets the OwnerID of every page, stroke, and pageObject as Author.ID
         /// </summary>
         public Command SetEntireNotebookAsAuthoredCommand { get; private set; }
@@ -2976,56 +2912,6 @@ namespace Classroom_Learning_Partner.ViewModels
                     tag.ParentPage = page;
                 }
             }
-        }
-
-        /// <summary>
-        /// Gets the AnalyzeArrayCommand command.
-        /// </summary>
-        public Command AnalyzeArrayCommand { get; private set; }
-
-        private void OnAnalyzeArrayCommandExecute()
-        {
-            // TODO: Entities
-            //Logger.Instance.WriteToLog("Start of OnAnalyzeArrayCommandExecute()");
-
-            // Get the page's math definition, or be sad if it doesn't have one
-            var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
-            if(currentPage != null)
-            {
-                TagAnalysis.AnalyzeArray(currentPage);
-            }
-        }
-
-        /// <summary>
-        /// Gets the AnalyzeFuzzyFactorCardCommand command.
-        /// </summary>
-        public Command AnalyzeFuzzyFactorCardCommand
-        {
-            get;
-            private set;
-        }
-
-        private void OnAnalyzeFuzzyFactorCardCommandExecute()
-        {
-            // Get the page's math definition, or be sad if it doesn't have one
-            if(CurrentPage != null)
-            {
-                TagAnalysis.AnalyzeFuzzyFactorCard(CurrentPage);
-            }
-        }
-
-        /// <summary>
-        /// Gets the AnalyzeStampsCommand command.
-        /// </summary>
-        public Command AnalyzeStampsCommand { get; private set; }
-
-        private void OnAnalyzeStampsCommandExecute()
-        {
-            // TODO: Entities
-            //// Get the page's math definition, or be sad if it doesn't have one
-            //var page = ((MainWindow.Workspace as NotebookWorkspaceViewModel).CurrentDisplay as CLPMirrorDisplay).CurrentPage;
-
-            //PageAnalysis.AnalyzeStamps(page);
         }
 
         /// <summary>

@@ -50,6 +50,7 @@ namespace Classroom_Learning_Partner.ViewModels
             PageScreenshotCommand = new Command(OnPageScreenshotCommandExecute);
             DeleteTagCommand = new Command<ITag>(OnDeleteTagCommandExecute);
             AddAnswerDefinitionCommand = new Command(OnAddAnswerDefinitionCommandExecute);
+            AnalyzePageCommand = new Command(OnAnalyzePageCommandExecute);
         }
 
         void PageInformationPanelViewModel_Initialized(object sender, EventArgs e)
@@ -93,7 +94,19 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(CurrentPageProperty, value); }
         }
 
-        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage));
+        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage), propertyChangedEventHandler:CurrentPageChanged);
+
+        private static void CurrentPageChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
+        {
+            var viewModel = sender as PageInformationPanelViewModel;
+            if(!advancedPropertyChangedEventArgs.IsNewValueMeaningful ||
+               viewModel == null)
+            {
+                return;
+            }
+
+            viewModel.SortedTags.Source = viewModel.CurrentPage.Tags;
+        }
 
         /// <summary>
         /// Unique Identifier for the <see cref="CLPPage" />.
@@ -555,17 +568,29 @@ namespace Classroom_Learning_Partner.ViewModels
             //    break;
             //}
 
-            //var viewModel = new ProductRelationViewModel(productDefinition);
-            //PageDefinitionView definitionView = new PageDefinitionView(viewModel);
-            //definitionView.Owner = Application.Current.MainWindow;
-            //definitionView.ShowDialog();
+            var definitionViewModel = new ProductDefinitionTagViewModel(productDefinition);
+            var definitionView = new ProductDefinitionTagView(definitionViewModel)
+                                 {
+                                     Owner = Application.Current.MainWindow
+                                 };
+            definitionView.ShowDialog();
 
-            //if(definitionView.DialogResult == true)
-            //{
-            //    // Update this page's definition tag
-            //    var newTag = new PageDefinitionTag(CurrentPage, productDefinition);
-            //    CurrentPage.AddTag(newTag);
-            //}
+            if(definitionView.DialogResult == true)
+            {
+                CurrentPage.AddTag(productDefinition);
+            }
+        }
+
+        /// <summary>
+        /// Runs analysis routines on the page.
+        /// </summary>
+        public Command AnalyzePageCommand { get; private set; }
+
+        private void OnAnalyzePageCommandExecute()
+        {
+            CurrentPage.AddTag(new ObjectTypesOnPage(CurrentPage, Origin.StudentPageGenerated, App.MainWindowViewModel.CurrentUser.ID));
+            DivisionTemplateAnalysis.Analyze(CurrentPage);
+            ArrayAnalysis.Analyze(CurrentPage);
         }
 
         #endregion //Commands

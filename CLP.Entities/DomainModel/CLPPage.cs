@@ -417,7 +417,7 @@ namespace CLP.Entities
             {
                 var starredTag = Tags.FirstOrDefault(x => x is StarredTag) as StarredTag;
                 if(starredTag != null &&
-                   starredTag.Value == StarredTag.AcceptedValues.Starred.ToString())
+                   starredTag.Value == StarredTag.AcceptedValues.Starred)
                 {
                     return "Starred";
                 }
@@ -644,8 +644,6 @@ namespace CLP.Entities
                 }
             }
 
-            newTag.ParentPage = this;
-            newTag.OwnerID = OwnerID;
             Tags.Add(newTag);
         }
 

@@ -476,7 +476,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public void AppendStarredSubmissionsForPage(CLPPage page)
         {
-            AppendCollectionOfPagesToStage(page.Submissions, x => x.Tags.FirstOrDefault(t => t is StarredTag && t.Value == StarredTag.AcceptedValues.Starred.ToString()) != null);
+            AppendCollectionOfPagesToStage(page.Submissions, x => x.Tags.FirstOrDefault(t => t is StarredTag && (t as StarredTag).Value == StarredTag.AcceptedValues.Starred) != null);
 
             if(CurrentSortAndGroupType != SortAndGroupTypes.SortAndGroupByStarred)
             {

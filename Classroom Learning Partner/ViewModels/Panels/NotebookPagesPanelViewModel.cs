@@ -157,7 +157,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 case AdvancedStagingView.StagingTypes.Correct:
                     StagingPanel.IsVisible = true;
                     StagingPanel.AppendCollectionOfPagesToStage(page.Submissions,
-                        x => x.Tags.FirstOrDefault(t => t is CorrectnessTag && t.Value == CorrectnessTag.AcceptedValues.Correct.ToString()) != null);
+                        x => x.Tags.FirstOrDefault(t => t is CorrectnessTag && (t as CorrectnessTag).Correctness == Correctness.Correct) != null);
 
                     //TODO: keep CurrentSort and skip this if already sorted that way.
                     StagingPanel.ApplySortAndGroupByName();
@@ -165,7 +165,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 case AdvancedStagingView.StagingTypes.Incorrect:
                     StagingPanel.IsVisible = true;
                     StagingPanel.AppendCollectionOfPagesToStage(page.Submissions,
-                        x => x.Tags.FirstOrDefault(t => t is CorrectnessTag && t.Value == CorrectnessTag.AcceptedValues.Incorrect.ToString()) != null);
+                        x => x.Tags.FirstOrDefault(t => t is CorrectnessTag && (t as CorrectnessTag).Correctness == Correctness.Incorrect) != null);
 
                     //TODO: keep CurrentSort and skip this if already sorted that way.
                     StagingPanel.ApplySortAndGroupByName();

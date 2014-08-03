@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Catel.Data;
 
@@ -25,11 +26,11 @@ namespace CLP.Entities
         /// <summary>
         /// Initializes <see cref="ArrayInterpretedCorrectnessTag" />.
         /// </summary>
-        public ArrayInterpretedCorrectnessTag(CLPPage parentPage, Origin origin, Correctness correctness, ArrayIncorrectReason incorrectReason = ArrayIncorrectReason.Other)
+        public ArrayInterpretedCorrectnessTag(CLPPage parentPage, Origin origin, Correctness correctness, List<ArrayIncorrectReason> incorrectReasons)
             : base(parentPage, origin)
         {
             Correctness = correctness;
-            ArrayIncorrectReason = incorrectReason;
+            ArrayIncorrectReasons = incorrectReasons;
         }
 
         /// <summary>
@@ -58,13 +59,13 @@ namespace CLP.Entities
         /// <summary>
         /// Reason the Interpreted Correctness was set to Incorrect.
         /// </summary>
-        public ArrayIncorrectReason ArrayIncorrectReason
+        public List<ArrayIncorrectReason> ArrayIncorrectReasons
         {
-            get { return GetValue<ArrayIncorrectReason>(ArrayIncorrectReasonProperty); }
-            set { SetValue(ArrayIncorrectReasonProperty, value); }
+            get { return GetValue<List<ArrayIncorrectReason>>(ArrayIncorrectReasonsProperty); }
+            set { SetValue(ArrayIncorrectReasonsProperty, value); }
         }
 
-        public static readonly PropertyData ArrayIncorrectReasonProperty = RegisterProperty("ArrayIncorrectReason", typeof(ArrayIncorrectReason));
+        public static readonly PropertyData ArrayIncorrectReasonsProperty = RegisterProperty("ArrayIncorrectReasons", typeof(List<ArrayIncorrectReason>));
 
         #region ATagBase Overrides
 
@@ -75,10 +76,12 @@ namespace CLP.Entities
 
         public override string FormattedValue
         {
-            get { return string.Format("{0}{1}", 
-                                       Correctness,
-                                       Correctness == Correctness.Correct ||
-                                       Correctness == Correctness.Unknown ? string.Empty : "Incorrect due to: " + ArrayIncorrectReason); }
+            get
+            {
+                return string.Format("{0}{1}",
+                                     Correctness,
+                                     Correctness == Correctness.Correct || Correctness == Correctness.Unknown ? string.Empty : ", due to: " + string.Join(", ", ArrayIncorrectReasons));
+            }
         }
 
         #endregion //ATagBase Overrides

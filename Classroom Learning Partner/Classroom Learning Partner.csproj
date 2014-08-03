@@ -285,8 +285,7 @@
     <Compile Include="ViewModels\Pages\CLPAnimationPageViewModel.cs" />
     <Compile Include="ViewModels\Pages\CLPPageViewModel.cs" />
     <Compile Include="ViewModels\Displays\SingleDisplayViewModel.cs" />
-    <Compile Include="ViewModels\HoverBoxViewModel.cs" />
-    <Compile Include="ViewModels\Math\ProductRelationViewModel.cs" />
+    <Compile Include="ViewModels\Math\ProductDefinitionTagViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPAggregationDataTableViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Arrays\CLPArrayViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Arrays\CLPFactorCardViewModel.cs" />
@@ -298,11 +297,9 @@
     <Compile Include="ViewModels\Panels\NotebookPagesPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\PageInformationPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\StagingPanelViewModel.cs" />
-    <Compile Include="ViewModels\Panels\StudentWorkPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\ProgressPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\StudentProgressInfo.cs" />
     <Compile Include="ViewModels\Panels\SubmissionHistoryPanelViewModel.cs" />
-    <Compile Include="ViewModels\Panels\SubmissionsPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\WebcamPanelViewModel.cs" />
     <Compile Include="Views\Modal Windows\AdvancedStagingView.xaml.cs">
       <DependentUpon>AdvancedStagingView.xaml</DependentUpon>
@@ -393,17 +390,11 @@
     <Compile Include="ViewModels\Workspaces\NotebookWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\UserLoginWorkspaceViewModel.cs" />
     <Compile Include="Views\Controls\BindableRichTextBox.cs" />
-    <Compile Include="Views\Controls\FilteredPagesSideBar.xaml.cs">
-      <DependentUpon>FilteredPagesSideBar.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Displays\GridDisplayPreviewView.xaml.cs">
       <DependentUpon>GridDisplayPreviewView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Displays\SingleDisplayView.xaml.cs">
       <DependentUpon>SingleDisplayView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\HoverBoxView.xaml.cs">
-      <DependentUpon>HoverBoxView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Modal Windows\ArrayCreationView.xaml.cs">
       <DependentUpon>ArrayCreationView.xaml</DependentUpon>
@@ -414,8 +405,8 @@
     <Compile Include="Views\Modal Windows\LassoedPageObjectParameterizationView.xaml.cs">
       <DependentUpon>LassoedPageObjectParameterizationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\PageDefinitionView.xaml.cs">
-      <DependentUpon>PageDefinitionView.xaml</DependentUpon>
+    <Compile Include="Views\Modal Windows\ProductDefinitionTagView.xaml.cs">
+      <DependentUpon>ProductDefinitionTagView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Modal Windows\PageTopicWindowView.xaml.cs">
       <DependentUpon>PageTopicWindowView.xaml</DependentUpon>
@@ -513,17 +504,11 @@
     <Compile Include="Views\Panels\StagingPanelView.xaml.cs">
       <DependentUpon>StagingPanelView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Panels\StudentWorkPanelView.xaml.cs">
-      <DependentUpon>StudentWorkPanelView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Panels\ProgressPanelView.xaml.cs">
       <DependentUpon>ProgressPanelView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Panels\SubmissionHistoryPanelView.xaml.cs">
       <DependentUpon>SubmissionHistoryPanelView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Panels\SubmissionsPanelView.xaml.cs">
-      <DependentUpon>SubmissionsPanelView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Panels\WebcamPanelView.xaml.cs">
       <DependentUpon>WebcamPanelView.xaml</DependentUpon>
@@ -623,10 +608,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Controls\FilteredPagesSideBar.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\Displays\GridDisplayPreviewView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -634,10 +615,6 @@
     <Page Include="Views\Displays\SingleDisplayView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\HoverBoxView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\MainWindowView.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -671,7 +648,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\PageDefinitionView.xaml">
+    <Page Include="Views\Modal Windows\ProductDefinitionTagView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -803,19 +780,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Panels\StudentWorkPanelView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Views\Panels\ProgressPanelView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Panels\SubmissionHistoryPanelView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Panels\SubmissionsPanelView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

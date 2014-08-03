@@ -413,7 +413,7 @@
                                                   IsChecked="{Binding ViewModel.Correctness, 
                                                     ElementName=PagePreviewView, 
                                                     Converter={StaticResource EnumToBoolConverter}, 
-                                                    ConverterParameter={x:Static entities:CorrectnessTag+AcceptedValues.Correct}}">
+                                                    ConverterParameter={x:Static entities:Correctness.Correct}}">
                                         <ToggleButton.Style>
                                             <Style TargetType="ToggleButton">
                                                 <Setter Property="Template">
@@ -452,7 +452,7 @@
                                                   IsChecked="{Binding ViewModel.Correctness, 
                                         ElementName=PagePreviewView, 
                                         Converter={StaticResource EnumToBoolConverter}, 
-                                        ConverterParameter={x:Static entities:CorrectnessTag+AcceptedValues.Incorrect}}">
+                                        ConverterParameter={x:Static entities:Correctness.Incorrect}}">
                                         <ToggleButton.Style>
                                             <Style TargetType="ToggleButton">
                                                 <Setter Property="Template">
@@ -491,7 +491,7 @@
                                                   IsChecked="{Binding ViewModel.Correctness, 
                                         ElementName=PagePreviewView, 
                                         Converter={StaticResource EnumToBoolConverter}, 
-                                        ConverterParameter={x:Static entities:CorrectnessTag+AcceptedValues.Unknown}}">
+                                        ConverterParameter={x:Static entities:Correctness.Unknown}}">
                                         <ToggleButton.Style>
                                             <Style TargetType="ToggleButton">
                                                 <Setter Property="Template">

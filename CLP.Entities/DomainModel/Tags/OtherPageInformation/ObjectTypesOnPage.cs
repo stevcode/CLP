@@ -25,10 +25,10 @@ namespace CLP.Entities
             : base(parentPage, origin)
         {
             IsSingleValueTag = true;
-            ObjectTypes = parentPage.PageObjects.Where(pageObject => pageObject.OwnerID == currentUserID).Select(pageObject => pageObject.GetType()).Distinct().ToList();
+            ObjectTypes = parentPage.PageObjects.Where(pageObject => pageObject.OwnerID == currentUserID).Select(pageObject => pageObject.GetType().Name).Distinct().ToList();
             if(parentPage.InkStrokes.Any(stroke => stroke.GetStrokeOwnerID() == currentUserID))
             {
-                ObjectTypes.Add(typeof(Stroke));
+                ObjectTypes.Add(typeof(Stroke).Name);
             }
         }
 
@@ -47,13 +47,13 @@ namespace CLP.Entities
         /// <summary>
         /// List of all the <see cref="Type" />s of the relevant <see cref="IPageObject" />s on the <see cref="CLPPage" /> as well as Ink.
         /// </summary>
-        public List<Type> ObjectTypes
+        public List<string> ObjectTypes
         {
-            get { return GetValue<List<Type>>(ObjectTypesProperty); }
+            get { return GetValue<List<string>>(ObjectTypesProperty); }
             set { SetValue(ObjectTypesProperty, value); }
         }
 
-        public static readonly PropertyData ObjectTypesProperty = RegisterProperty("ObjectTypes", typeof(List<Type>), () => new List<Type>());
+        public static readonly PropertyData ObjectTypesProperty = RegisterProperty("ObjectTypes", typeof(List<string>), () => new List<string>());
 
         #region ATagBase Overrides
 
@@ -64,7 +64,7 @@ namespace CLP.Entities
 
         public override string FormattedValue
         {
-            get { return string.Format("Object Types on Page: {0}", string.Join(", ", ObjectTypes)); }
+            get { return string.Format("Object Types on Page:\n{0}", string.Join("\n", ObjectTypes)); }
         }
 
         #endregion //ATagBase Overrides

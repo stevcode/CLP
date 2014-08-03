@@ -49,6 +49,7 @@ namespace CLP.Entities
             : this()
         {
             ParentPage = parentPage;
+            OwnerID = ParentPageOwnerID;
             Origin = origin;
         }
 

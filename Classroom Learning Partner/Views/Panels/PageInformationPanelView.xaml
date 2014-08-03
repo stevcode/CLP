@@ -26,178 +26,181 @@
             BorderThickness="{Binding Location, Converter={StaticResource PanelLocationToThicknessConverter}, ConverterParameter={StaticResource PanelBorderThickeness}}"
             Width="{Binding Length}">
 
-        <catel:StackGrid Margin="5 0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
+        <DockPanel LastChildFill="True">
 
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
+            <catel:StackGrid DockPanel.Dock="Top"
+                             Margin="5 0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
 
-            <TextBlock Text="ID:" />
-            <TextBox Text="{Binding ID}"
-                     IsReadOnly="True" />
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-            <TextBlock Text="DifferentiationLevel:" />
-            <TextBox Text="{Binding DifferentiationLevel}"
-                     IsReadOnly="True" />
+                <TextBlock Text="ID:" />
+                <TextBox Text="{Binding ID}"
+                         IsReadOnly="True" />
 
-            <TextBlock Text="VersionIndex:" />
-            <TextBox Text="{Binding VersionIndex}"
-                     IsReadOnly="True" />
+                <TextBlock Text="DifferentiationLevel:" />
+                <TextBox Text="{Binding DifferentiationLevel}"
+                         IsReadOnly="True" />
 
-            <TextBlock Text="Page Number:" />
-            <TextBox Text="{Binding PageNumber}" />
+                <TextBlock Text="VersionIndex:" />
+                <TextBox Text="{Binding VersionIndex}"
+                         IsReadOnly="True" />
 
-            <TextBlock Text="History Length:" />
-            <TextBox Text="{Binding CurrentPage.History.HistoryLength, Mode=OneWay}"
-                     IsReadOnly="True" />
+                <TextBlock Text="Page Number:" />
+                <TextBox Text="{Binding PageNumber}" />
 
-            <TextBlock Text="Animation Length:" />
-            <TextBox Text="{Binding CurrentPage.History.TotalHistoryTicks, Mode=OneWay}"
-                     IsReadOnly="True" />
+                <TextBlock Text="History Length:" />
+                <TextBox Text="{Binding CurrentPage.History.HistoryLength, Mode=OneWay}"
+                         IsReadOnly="True" />
 
-            <TextBlock Text="Min History Length:" />
-            <TextBox Text="{Binding CurrentPage.MinSubmissionHistoryLength, Mode=OneWay}"
-                     IsReadOnly="True" />
+                <TextBlock Text="Animation Length:" />
+                <TextBox Text="{Binding CurrentPage.History.TotalHistoryTicks, Mode=OneWay}"
+                         IsReadOnly="True" />
 
-            <TextBlock Text="Max History Length:" />
-            <TextBox Text="{Binding CurrentPage.MaxSubmissionHistoryLength, Mode=OneWay}"
-                     IsReadOnly="True" />
+                <TextBlock Text="Min History Length:" />
+                <TextBox Text="{Binding CurrentPage.MinSubmissionHistoryLength, Mode=OneWay}"
+                         IsReadOnly="True" />
 
-            <TextBlock Text="Average History Length:" />
-            <TextBox Text="{Binding CurrentPage.AverageSubmissionHistoryLength, Mode=OneWay}"
-                     IsReadOnly="True" />
+                <TextBlock Text="Max History Length:" />
+                <TextBox Text="{Binding CurrentPage.MaxSubmissionHistoryLength, Mode=OneWay}"
+                         IsReadOnly="True" />
 
-            <TextBlock Text="Min Animation Length:" />
-            <TextBox Text="{Binding CurrentPage.MinSubmissionAnimationLength, Mode=OneWay}"
-                     IsReadOnly="True" />
+                <TextBlock Text="Average History Length:" />
+                <TextBox Text="{Binding CurrentPage.AverageSubmissionHistoryLength, Mode=OneWay}"
+                         IsReadOnly="True" />
 
-            <TextBlock Text="Max Animation Length:" />
-            <TextBox Text="{Binding CurrentPage.MaxSubmissionAnimationLength, Mode=OneWay}"
-                     IsReadOnly="True" />
+                <TextBlock Text="Min Animation Length:" />
+                <TextBox Text="{Binding CurrentPage.MinSubmissionAnimationLength, Mode=OneWay}"
+                         IsReadOnly="True" />
 
-            <TextBlock Text="Average Animation Length:" />
-            <TextBox Text="{Binding CurrentPage.AverageSubmissionAnimationLength, Mode=OneWay}"
-                     IsReadOnly="True" />
+                <TextBlock Text="Max Animation Length:" />
+                <TextBox Text="{Binding CurrentPage.MaxSubmissionAnimationLength, Mode=OneWay}"
+                         IsReadOnly="True" />
 
-            <Button Content="Add Page:"
-                    Command="{Binding AddPageCommand}"
-                    Height="30"
-                    Margin="1" />
+                <TextBlock Text="Average Animation Length:" />
+                <TextBox Text="{Binding CurrentPage.AverageSubmissionAnimationLength, Mode=OneWay}"
+                         IsReadOnly="True" />
 
-            <ComboBox ItemsSource="{Binding PageOrientations}"
-                      SelectedItem="{Binding SelectedPageOrientation}"
-                      Height="25"
-                      Margin="1"
-                      VerticalAlignment="Center"
-                      VerticalContentAlignment="Center" />
+                <Button Content="Add Page:"
+                        Command="{Binding AddPageCommand}"
+                        Height="20"
+                        Margin="1" />
 
-            <Button Content="Move Page Up"
-                    Command="{Binding MovePageUpCommand}"
-                    Height="30"
-                    Margin="1" />
+                <ComboBox ItemsSource="{Binding PageOrientations}"
+                          SelectedItem="{Binding SelectedPageOrientation}"
+                          Height="18"
+                          Margin="1"
+                          VerticalAlignment="Center"
+                          VerticalContentAlignment="Center" />
 
-            <Button Content="Move Page Down"
-                    Command="{Binding MovePageDownCommand}"
-                    Height="30"
-                    Margin="1" />
+                <Button Content="Move Page Up"
+                        Command="{Binding MovePageUpCommand}"
+                        Height="20"
+                        Margin="1" />
 
-            <Button Content="Make Page Longer"
-                    Command="{Binding MakePageLongerCommand}"
-                    Height="30"
-                    Margin="1" />
+                <Button Content="Move Page Down"
+                        Command="{Binding MovePageDownCommand}"
+                        Height="20"
+                        Margin="1" />
 
-            <Button Content="Trim Page"
-                    Command="{Binding TrimPageCommand}"
-                    Height="30"
-                    Margin="1" />
+                <Button Content="Make Page Longer"
+                        Command="{Binding MakePageLongerCommand}"
+                        Height="20"
+                        Margin="1" />
 
-            <Button Content="Switch Page Orientation"
-                    Command="{Binding SwitchPageLayoutCommand}"
-                    Height="30"
-                    Margin="1" />
+                <Button Content="Trim Page"
+                        Command="{Binding TrimPageCommand}"
+                        Height="20"
+                        Margin="1" />
 
-            <Button Content="Clear Page"
-                    Command="{Binding ClearPageCommand}"
-                    Height="30"
-                    Margin="1" />
+                <Button Content="Switch Page Orientation"
+                        Command="{Binding SwitchPageLayoutCommand}"
+                        Height="20"
+                        Margin="1" />
 
-            <Button Content="Duplicate This Page"
-                    Command="{Binding CopyPageCommand}"
-                    Height="30"
-                    Margin="1" />
+                <Button Content="Clear Page"
+                        Command="{Binding ClearPageCommand}"
+                        Height="20"
+                        Margin="1" />
 
-            <Button Content="Differentiate This Page"
-                    Command="{Binding DifferentiatePageCommand}"
-                    Height="30"
-                    Margin="1" />
+                <Button Content="Duplicate This Page"
+                        Command="{Binding CopyPageCommand}"
+                        Height="20"
+                        Margin="1" />
 
-            <Button Content="Delete This Page"
-                    Command="{Binding DeletePageCommand}"
-                    Height="30"
-                    Margin="1" />
+                <Button Content="Differentiate This Page"
+                        Command="{Binding DifferentiatePageCommand}"
+                        Height="20"
+                        Margin="1" />
 
-            <Button Content="Take Screenshot of Page"
-                    Command="{Binding PageScreenshotCommand}"
-                    Grid.ColumnSpan="2"
-                    Height="30"
-                    Margin="1" />
-            
-            <Rectangle Grid.ColumnSpan="2"
-                       Height="1"
-                       Margin="1 5"
-                       Stroke="{StaticResource GrayBorderColor}" />
-            
-            <Button Content="Add Answer Definition" IsEnabled="False"
-                    Command="{Binding AddAnswerDefinitionCommand}"
-                    Height="30"
-                    Margin="1" />
-            
-            <Button Content="Run Page Analysis" IsEnabled="False"
-                    Command="{Binding AnalyzePageCommand}"
-                    Height="30"
-                    Margin="1" />
-            
-            <Button Content="Run History Analysis" IsEnabled="False"
-                    Command="{Binding AnalyzePageHistoryCommand}"
-                    Grid.ColumnSpan="2"
-                    Height="30"
-                    Margin="1" />
+                <Button Content="Delete This Page"
+                        Command="{Binding DeletePageCommand}"
+                        Height="20"
+                        Margin="1" />
 
-            <TextBlock Text="TAGS"
-                       FontWeight="Bold"
-                       FontSize="16"
-                       HorizontalAlignment="Center"
-                       Grid.ColumnSpan="2" />
+                <Button Content="Take Screenshot of Page"
+                        Command="{Binding PageScreenshotCommand}"
+                        Grid.ColumnSpan="2"
+                        Height="20"
+                        Margin="1" />
 
-            <ListBox Grid.ColumnSpan="2"
-                     ItemContainerStyle="{StaticResource ListBoxItemBlankStyle}"
+                <Rectangle Grid.ColumnSpan="2"
+                           Height="1"
+                           Margin="1 5"
+                           Stroke="{StaticResource GrayBorderColor}" />
+
+                <Button Content="Add Answer Definition"
+                        Command="{Binding AddAnswerDefinitionCommand}"
+                        Height="20"
+                        Margin="1" />
+
+                <Button Content="Run Page Analysis"
+                        Command="{Binding AnalyzePageCommand}"
+                        Height="20"
+                        Margin="1" />
+
+                <Button Content="Run History Analysis"
+                        IsEnabled="False"
+                        Command="{Binding AnalyzePageHistoryCommand}"
+                        Grid.ColumnSpan="2"
+                        Height="20"
+                        Margin="1" />
+
+                <TextBlock Text="TAGS"
+                           FontWeight="Bold"
+                           FontSize="16"
+                           HorizontalAlignment="Center"
+                           Grid.ColumnSpan="2" />
+
+            </catel:StackGrid>
+            <ListBox ItemContainerStyle="{StaticResource ListBoxItemBlankStyle}"
                      ItemsSource="{Binding SortedTags.View, IsAsync=True}"
                      SelectionMode="Single"
                      Margin="5 0"
@@ -244,7 +247,7 @@
                                                                VerticalAlignment="Center">
                                                         <Run Text="{Binding Name, Mode=OneWay}" />
                                                     </TextBlock>
-                                                    
+
                                                 </Border>
 
                                                 <Border Grid.Row="1"
@@ -272,7 +275,7 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
-                            
+
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
@@ -286,7 +289,7 @@
                             <TextBlock Grid.Row="1"
                                        Grid.Column="0"
                                        Text="{Binding FormattedValue, Mode=OneWay}" />
-                            
+
                             <Button Grid.Row="0"
                                     Grid.RowSpan="2"
                                     Grid.Column="1"
@@ -319,8 +322,7 @@
                 </ListBox.ItemTemplate>
 
             </ListBox>
-
-        </catel:StackGrid>
+        </DockPanel>
 
     </Border>
 

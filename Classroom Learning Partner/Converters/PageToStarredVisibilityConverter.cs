@@ -17,7 +17,7 @@ namespace Classroom_Learning_Partner.Converters
                 {
                     if(t is StarredTag)
                     {
-                        if(t.Value == "Starred")
+                        if((t as StarredTag).Value.ToString() == "Starred")
                         {
                             return "Visible";
                         }

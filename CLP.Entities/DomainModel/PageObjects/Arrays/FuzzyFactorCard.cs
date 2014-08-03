@@ -224,36 +224,8 @@ namespace CLP.Entities
         {
             base.OnDeleted();
 
-            // FFC deleted tag
-            ObservableCollection<ITag> tags = ParentPage.Tags;
-            ProductRelation relation = null;
-            foreach(ATagBase tag in tags)
-            {
-                if(tag is PageDefinitionTag)
-                {
-                    relation = ProductRelation.fromString(tag.Value);
-                    break;
-                }
-            }
-
-            if(relation != null)
-            {
-                var factor1 = Convert.ToInt32(relation.Factor1);
-                var factor2 = Convert.ToInt32(relation.Factor2);
-                var product = Convert.ToInt32(relation.Product);
-
-                if(product == Dividend &&
-                   ((factor1 == Rows && relation.Factor1Given) || (factor2 == Rows && relation.Factor2Given)))
-                {
-                    var tag = new DivisionTemplateDeletedTag(ParentPage, ("Deleted correct division object: " + Dividend + "/" + Rows));
-                    ParentPage.Tags.Add(tag);
-                }
-                else
-                {
-                    var tag = new DivisionTemplateDeletedTag(ParentPage, ("Deleted incorrect division object: " + Dividend + "/" + Rows));
-                    ParentPage.Tags.Add(tag);
-                }
-            }
+            var tag = new DivisionTemplateDeletedTag(ParentPage, Origin.StudentPageObjectGenerated, Dividend, Rows);
+            ParentPage.Tags.Add(tag);
         }
 
         public override void SizeArrayToGridLevel(double toSquareSize = -1, bool recalculateDivisions = true)
@@ -296,82 +268,74 @@ namespace CLP.Entities
                     if((pageObject as CLPArray).Columns == Dividend ||
                        ((pageObject as CLPArray).Rows == Dividend))
                     {
-                        //Array with product as array dimension added
-                        var hasTag = false;
-                        foreach(var tag in ParentPage.Tags.ToList())
+                        var existingTag =
+                            ParentPage.Tags.OfType<DivisionTemplateIncorrectArrayCreationTag>().FirstOrDefault(x => x.Value == DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.ProductAsDimension);
+
+                        var previousNumberOfAttempts = 0;
+                        if(existingTag != null)
                         {
-                            if(tag is DivisionTemplateIncorrectArrayCreationTag &&
-                               tag.Value == DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.ProductAsDimension.ToString())
-                            {
-                                hasTag = true;
-                                continue;
-                            }
+                            previousNumberOfAttempts = existingTag.NumberOfAttempts;
+                            ParentPage.Tags.Remove(existingTag);
                         }
-                        if(!hasTag)
-                        {
-                            var tag = new DivisionTemplateIncorrectArrayCreationTag(ParentPage, DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.ProductAsDimension);
-                            ParentPage.Tags.Add(tag);
-                        }
+                        var newTag = new DivisionTemplateIncorrectArrayCreationTag(ParentPage,
+                                                                                   Origin.StudentPageObjectGenerated,
+                                                                                   DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.ProductAsDimension,
+                                                                                   previousNumberOfAttempts + 1);
+                        ParentPage.Tags.Add(newTag);
                     }
                     if((pageObject as CLPArray).Rows != Rows &&
                        (pageObject as CLPArray).Columns == Rows)
                     {
-                        //Array with wrong orientation added
-                        var hasTag = false;
-                        foreach(var tag in ParentPage.Tags.ToList())
+                        var existingTag =
+                            ParentPage.Tags.OfType<DivisionTemplateIncorrectArrayCreationTag>().FirstOrDefault(x => x.Value == DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.WrongOrientation);
+
+                        var previousNumberOfAttempts = 0;
+                        if(existingTag != null)
                         {
-                            if(tag is DivisionTemplateIncorrectArrayCreationTag &&
-                               tag.Value == DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.WrongOrientation.ToString())
-                            {
-                                hasTag = true;
-                                continue;
-                            }
+                            previousNumberOfAttempts = existingTag.NumberOfAttempts;
+                            ParentPage.Tags.Remove(existingTag);
                         }
-                        if(!hasTag)
-                        {
-                            var tag = new DivisionTemplateIncorrectArrayCreationTag(ParentPage, DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.WrongOrientation);
-                            ParentPage.Tags.Add(tag);
-                        }
+                        var newTag = new DivisionTemplateIncorrectArrayCreationTag(ParentPage,
+                                                                                   Origin.StudentPageObjectGenerated,
+                                                                                   DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.WrongOrientation,
+                                                                                   previousNumberOfAttempts + 1);
+                        ParentPage.Tags.Add(newTag);
                     }
                     else if((pageObject as CLPArray).Rows != Rows)
                     {
-                        //Array with incorrect dimension added
-                        var hasTag = false;
-                        foreach(var tag in ParentPage.Tags.ToList())
+                        var existingTag =
+                            ParentPage.Tags.OfType<DivisionTemplateIncorrectArrayCreationTag>().FirstOrDefault(x => x.Value == DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.IncorrectDimension);
+
+                        var previousNumberOfAttempts = 0;
+                        if(existingTag != null)
                         {
-                            if(tag is DivisionTemplateIncorrectArrayCreationTag &&
-                               tag.Value == DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.IncorrectDimension.ToString())
-                            {
-                                hasTag = true;
-                                continue;
-                            }
+                            previousNumberOfAttempts = existingTag.NumberOfAttempts;
+                            ParentPage.Tags.Remove(existingTag);
                         }
-                        if(!hasTag)
-                        {
-                            var tag = new DivisionTemplateIncorrectArrayCreationTag(ParentPage, DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.IncorrectDimension);
-                            ParentPage.Tags.Add(tag);
-                        }
+                        var newTag = new DivisionTemplateIncorrectArrayCreationTag(ParentPage,
+                                                                                   Origin.StudentPageObjectGenerated,
+                                                                                   DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.IncorrectDimension,
+                                                                                   previousNumberOfAttempts + 1);
+                        ParentPage.Tags.Add(newTag);
                     }
                 }
             }
             if(arrayArea > CurrentRemainder)
             {
-                //Too many arrays added
-                var hasTag = false;
-                foreach(var tag in ParentPage.Tags.ToList())
+                var existingTag =
+                    ParentPage.Tags.OfType<DivisionTemplateIncorrectArrayCreationTag>().FirstOrDefault(x => x.Value == DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.ArrayTooLarge);
+
+                var previousNumberOfAttempts = 0;
+                if(existingTag != null)
                 {
-                    if(tag is DivisionTemplateIncorrectArrayCreationTag &&
-                       tag.Value == DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.TooMany.ToString())
-                    {
-                        hasTag = true;
-                        continue;
-                    }
+                    previousNumberOfAttempts = existingTag.NumberOfAttempts;
+                    ParentPage.Tags.Remove(existingTag);
                 }
-                if(!hasTag)
-                {
-                    var tag = new DivisionTemplateIncorrectArrayCreationTag(ParentPage, DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.TooMany);
-                    ParentPage.Tags.Add(tag);
-                }
+                var newTag = new DivisionTemplateIncorrectArrayCreationTag(ParentPage,
+                                                                           Origin.StudentPageObjectGenerated,
+                                                                           DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.ArrayTooLarge,
+                                                                           previousNumberOfAttempts + 1);
+                ParentPage.Tags.Add(newTag);
             }
         }
 
@@ -393,24 +357,15 @@ namespace CLP.Entities
                 ParentPage.PageObjects.Add(RemainderTiles);
             }
 
-            var numberOfBlackTiles =
-                ParentPage.PageObjects.Where(pageObject => pageObject is CLPArray && (pageObject as CLPArray).ArrayType == ArrayTypes.Array).Sum(pageObject =>
-                                                                                                                                                {
-                                                                                                                                                    var
-                                                                                                                                                        clpArray
-                                                                                                                                                            =
-                                                                                                                                                            pageObject
-                                                                                                                                                            as
-                                                                                                                                                            CLPArray;
-                                                                                                                                                    return
-                                                                                                                                                        clpArray !=
-                                                                                                                                                        null
-                                                                                                                                                            ? clpArray
-                                                                                                                                                                .Rows *
-                                                                                                                                                            clpArray
-                                                                                                                                                                .Columns
-                                                                                                                                                            : 0;
-                                                                                                                                                });
+            var numberOfBlackTiles = ParentPage.PageObjects.Where(pageObject => pageObject is CLPArray && (pageObject as CLPArray).ArrayType == ArrayTypes.Array).Sum(pageObject =>
+                                                                                                                                                                      {
+                                                                                                                                                                          var clpArray =
+                                                                                                                                                                              pageObject as CLPArray;
+                                                                                                                                                                          return clpArray != null
+                                                                                                                                                                                     ? clpArray.Rows *
+                                                                                                                                                                                       clpArray.Columns
+                                                                                                                                                                                     : 0;
+                                                                                                                                                                      });
             numberOfBlackTiles = Math.Min(numberOfBlackTiles, CurrentRemainder);
 
             if(RemainderTiles.TileColors == null)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Catel.Data;
 
@@ -26,14 +27,11 @@ namespace CLP.Entities
         /// Initializes <see cref="DivisionTemplateInterpretedCorrectnessTag" />.
         /// </summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="DivisionTemplateInterpretedCorrectnessTag" /> belongs to.</param>
-        public DivisionTemplateInterpretedCorrectnessTag(CLPPage parentPage,
-                                                         Origin origin,
-                                                         Correctness correctness,
-                                                         DivisionTemplateIncorrectReason incorrectReason = DivisionTemplateIncorrectReason.Other)
+        public DivisionTemplateInterpretedCorrectnessTag(CLPPage parentPage, Origin origin, Correctness correctness, List<DivisionTemplateIncorrectReason> incorrectReasons)
             : base(parentPage, origin)
         {
             Correctness = correctness;
-            DivisionTemplateIncorrectReason = incorrectReason;
+            DivisionTemplateIncorrectReasons = incorrectReasons;
         }
 
         /// <summary>
@@ -60,15 +58,15 @@ namespace CLP.Entities
         public static readonly PropertyData CorrectnessProperty = RegisterProperty("Correctness", typeof(Correctness));
 
         /// <summary>
-        /// Reason the Interpreted Correctness was set to Incorrect.
+        /// Reasons the Interpreted Correctness was set to Incorrect.
         /// </summary>
-        public DivisionTemplateIncorrectReason DivisionTemplateIncorrectReason
+        public List<DivisionTemplateIncorrectReason> DivisionTemplateIncorrectReasons
         {
-            get { return GetValue<DivisionTemplateIncorrectReason>(DivisionTemplateIncorrectReasonProperty); }
-            set { SetValue(DivisionTemplateIncorrectReasonProperty, value); }
+            get { return GetValue<List<DivisionTemplateIncorrectReason>>(DivisionTemplateIncorrectReasonsProperty); }
+            set { SetValue(DivisionTemplateIncorrectReasonsProperty, value); }
         }
 
-        public static readonly PropertyData DivisionTemplateIncorrectReasonProperty = RegisterProperty("DivisionTemplateIncorrectReason", typeof(DivisionTemplateIncorrectReason));
+        public static readonly PropertyData DivisionTemplateIncorrectReasonsProperty = RegisterProperty("DivisionTemplateIncorrectReasons", typeof(List<DivisionTemplateIncorrectReason>));
 
         #region ATagBase Overrides
 
@@ -83,7 +81,9 @@ namespace CLP.Entities
             {
                 return string.Format("{0}{1}",
                                      Correctness,
-                                     Correctness == Correctness.Correct || Correctness == Correctness.Unknown ? string.Empty : "Incorrect due to: " + DivisionTemplateIncorrectReason);
+                                     Correctness == Correctness.Correct || Correctness == Correctness.Unknown
+                                         ? string.Empty
+                                         : "Incorrect due to: " + string.Join(", ", DivisionTemplateIncorrectReasons));
             }
         }
 
