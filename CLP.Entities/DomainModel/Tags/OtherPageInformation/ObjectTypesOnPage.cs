@@ -64,7 +64,7 @@ namespace CLP.Entities
 
         public override string FormattedValue
         {
-            get { return string.Format("Object Types on Page:\n{0}", string.Join("\n", ObjectTypes)); }
+            get { return string.Join("\n", ObjectTypes); }
         }
 
         #endregion //ATagBase Overrides
