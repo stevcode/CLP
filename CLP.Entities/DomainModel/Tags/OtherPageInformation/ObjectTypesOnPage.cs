@@ -25,8 +25,44 @@ namespace CLP.Entities
             : base(parentPage, origin)
         {
             IsSingleValueTag = true;
-            ObjectTypes = parentPage.PageObjects.Where(pageObject => pageObject.OwnerID == parentPage.OwnerID).Select(pageObject => pageObject.GetType().Name).Distinct().ToList();
-            if(parentPage.InkStrokes.Any(stroke => stroke.GetStrokeOwnerID() == currentUserID))
+
+            foreach(var pageObject in parentPage.PageObjects.Where(pageObject => pageObject.OwnerID == parentPage.OwnerID))
+            {
+                if(pageObject is FuzzyFactorCard)
+                {
+                    ObjectTypes.Add("Division Templates");
+                    return;
+                }
+
+                if(pageObject is CLPArray)
+                {
+                    ObjectTypes.Add("Arrays");
+                    return;
+                }
+
+                if(pageObject is RemainderTiles)
+                {
+                    ObjectTypes.Add("Remainder Tiles");
+                    return;
+                }
+
+                if(pageObject is Stamp)
+                {
+                    ObjectTypes.Add("Stamps");
+                    return;
+                }
+
+                if(pageObject is Shape)
+                {
+                    ObjectTypes.Add("Shapes");
+                    return;
+                }
+            }
+
+            ObjectTypes = ObjectTypes.Distinct().ToList();
+
+           // ObjectTypes = parentPage.PageObjects.Where(pageObject => pageObject.OwnerID == parentPage.OwnerID).Select(pageObject => pageObject.GetType().Name).Distinct().ToList();
+            if(parentPage.InkStrokes.Any(stroke => stroke.GetStrokeOwnerID() == parentPage.OwnerID))
             {
                 ObjectTypes.Add(typeof(Stroke).Name);
             }

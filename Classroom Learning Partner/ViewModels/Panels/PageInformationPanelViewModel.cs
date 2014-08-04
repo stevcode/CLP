@@ -578,9 +578,21 @@ namespace Classroom_Learning_Partner.ViewModels
                                  };
             definitionView.ShowDialog();
 
-            if(definitionView.DialogResult == true)
+            if(definitionView.DialogResult != true)
             {
-                CurrentPage.AddTag(productDefinition);
+                return;
+            }
+
+            CurrentPage.AddTag(productDefinition);
+            if(CurrentPage.SubmissionType != SubmissionTypes.Unsubmitted)
+            {
+                
+                return;
+            }
+
+            foreach(var submission in CurrentPage.Submissions)
+            {
+                submission.AddTag(productDefinition);
             }
         }
 
@@ -594,6 +606,18 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentPage.AddTag(new ObjectTypesOnPage(CurrentPage, Origin.StudentPageGenerated, App.MainWindowViewModel.CurrentUser.ID));
             ArrayAnalysis.Analyze(CurrentPage);
             DivisionTemplateAnalysis.Analyze(CurrentPage);
+
+            if(CurrentPage.SubmissionType != SubmissionTypes.Unsubmitted)
+            {
+                return;
+            }
+
+            foreach(var submission in CurrentPage.Submissions)
+            {
+                submission.AddTag(new ObjectTypesOnPage(submission, Origin.StudentPageGenerated, App.MainWindowViewModel.CurrentUser.ID));
+                ArrayAnalysis.Analyze(submission);
+                DivisionTemplateAnalysis.Analyze(submission);
+            }
         }
 
         /// <summary>

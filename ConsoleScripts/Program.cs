@@ -71,16 +71,22 @@ namespace ConsoleScripts
                     Console.WriteLine("Loaded page {0}, differentiation {1}, version {2}", page.PageNumber, page.DifferentiationLevel, page.VersionIndex);
                     //Do stuff to each page here.
 
-                    if(page.VersionIndex != 0 ||
-                       page.LastVersionIndex == null ||
-                       page.PageNumber < 4)
-                    {
-                        continue;
-                    }
+                    var savedTags = page.Tags.Where(tag => tag is StarredTag || tag is DottedTag || tag is CorrectnessTag).ToList();
+                    page.Tags = null;
+                    page.Tags = new ObservableCollection<ITag>(savedTags);
 
-                    var submission = page.NextVersionCopy();
-                    var submissionFilePath = Path.Combine(pagesFolderPath, "p;" + submission.PageNumber + ";" + submission.ID + ";" + submission.DifferentiationLevel + ";" + submission.VersionIndex + ".xml");
-                    submission.ToXML(submissionFilePath);
+                    if(page.Owner.ID != Person.Author.ID)
+                    {
+                       // ArrayAnalysis.AnalyzeHistory(page);
+                        DivisionTemplateAnalysis.AnalyzeHistory(page);
+
+                        if(page.VersionIndex != 0)
+                        {
+                            page.AddTag(new DottedTag(page, Origin.TeacherPageGenerated, DottedTag.AcceptedValues.Undotted));
+                            page.AddTag(new StarredTag(page, Origin.TeacherPageGenerated, StarredTag.AcceptedValues.Unstarred));
+                            page.AddTag(new CorrectnessTag(page, Origin.TeacherPageGenerated, Correctness.Unknown));
+                        }
+                    }
 
                     //Finished doing stuff to page, it'll save below.
                     page.ToXML(pageFilePath, true);

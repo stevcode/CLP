@@ -635,7 +635,7 @@ namespace CLP.Entities
 
         public Stroke GetStrokeByID(string id) { return !TrashedInkStrokes.Any() ? null : TrashedInkStrokes.FirstOrDefault(stroke => stroke.GetStrokeID() == id); }
 
-        public IPageObject GetPageObjectByID(string id) { return !TrashedPageObjects.Any() ? null : TrashedPageObjects.FirstOrDefault(pageObject => pageObject.ID == id); }
+        public IPageObject GetPageObjectByID(string id) { return !TrashedPageObjects.Any() ? null : TrashedPageObjects.FirstOrDefault(pageObject => pageObject != null && pageObject.ID == id); }
 
         #endregion //Methods
 
