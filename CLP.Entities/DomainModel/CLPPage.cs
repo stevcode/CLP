@@ -425,6 +425,19 @@ namespace CLP.Entities
             }
         }
 
+        public virtual Correctness Correctness
+        {
+            get
+            {
+                var correctnessTag = Tags.FirstOrDefault(x => x is CorrectnessTag) as CorrectnessTag;
+                if(correctnessTag != null)
+                {
+                    return correctnessTag.Correctness;
+                }
+                return Correctness.Unknown;
+            }
+        }
+
         /// <summary>
         /// Unserialized <see cref="Stroke" />s of the <see cref="CLPPage" />.
         /// </summary>

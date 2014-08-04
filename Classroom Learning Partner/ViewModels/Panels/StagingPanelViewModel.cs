@@ -17,6 +17,7 @@ namespace Classroom_Learning_Partner.ViewModels
         SortAndGroupByName,
         SortAndGroupByPageNumber,
         SortAndGroupByStarred,
+        SortAndGroupByCorrectness,
         SortByTime
     }
 
@@ -25,6 +26,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private static readonly PropertyGroupDescription OwnerFullNameGroup = new PropertyGroupDescription("Owner.FullName");
         private static readonly PropertyGroupDescription PageNumberGroup = new PropertyGroupDescription("PageNumber");
         private static readonly PropertyGroupDescription StarredGroup = new PropertyGroupDescription("IsStarred");
+        private static readonly PropertyGroupDescription CorrectnessGroup = new PropertyGroupDescription("Correctness");
 
         private static readonly SortDescription OwnerFullNameAscendingSort = new SortDescription("Owner.FullName", ListSortDirection.Ascending);
         private static readonly SortDescription OwnerFullNameDescendingSort = new SortDescription("Owner.FullName", ListSortDirection.Descending);
@@ -34,6 +36,8 @@ namespace Classroom_Learning_Partner.ViewModels
         private static readonly SortDescription PageNumberDescendingSort = new SortDescription("PageNumber", ListSortDirection.Descending);
         private static readonly SortDescription StarredAscendingSort = new SortDescription("IsStarred", ListSortDirection.Ascending);
         private static readonly SortDescription StarredDescendingSort = new SortDescription("IsStarred", ListSortDirection.Descending);
+        private static readonly SortDescription CorrectnessAscendingSort = new SortDescription("Correctness", ListSortDirection.Ascending);
+        private static readonly SortDescription CorrectnessDescendingSort = new SortDescription("Correctness", ListSortDirection.Descending);
 
         #region Constructor
 
@@ -380,6 +384,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 case SortAndGroupTypes.SortAndGroupByStarred:
                     ApplySortAndGroupByStarred();
                     break;
+                case SortAndGroupTypes.SortAndGroupByCorrectness:
+                    ApplySortAndGroupByCorrectness();
+                    break;
                 default:
                     ApplySortAndGroupByName();
                     break;
@@ -417,6 +424,21 @@ namespace Classroom_Learning_Partner.ViewModels
 
             SortedAndGroupedPages.GroupDescriptions.Add(StarredGroup);
             SortedAndGroupedPages.SortDescriptions.Add(StarredAscendingSort);
+
+            SortedAndGroupedPages.GroupDescriptions.Add(PageNumberGroup);
+            SortedAndGroupedPages.SortDescriptions.Add(PageNumberAscendingSort);
+
+            SortedAndGroupedPages.SortDescriptions.Add(OwnerFullNameAscendingSort);
+            SortedAndGroupedPages.SortDescriptions.Add(SubmissionTimeAscendingSort);
+        }
+
+        public void ApplySortAndGroupByCorrectness()
+        {
+            SortedAndGroupedPages.GroupDescriptions.Clear();
+            SortedAndGroupedPages.SortDescriptions.Clear();
+
+            SortedAndGroupedPages.GroupDescriptions.Add(CorrectnessGroup);
+            SortedAndGroupedPages.SortDescriptions.Add(CorrectnessAscendingSort);
 
             SortedAndGroupedPages.GroupDescriptions.Add(PageNumberGroup);
             SortedAndGroupedPages.SortDescriptions.Add(PageNumberAscendingSort);
