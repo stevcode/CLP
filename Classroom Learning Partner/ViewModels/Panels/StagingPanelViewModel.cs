@@ -18,6 +18,8 @@ namespace Classroom_Learning_Partner.ViewModels
         SortAndGroupByPageNumber,
         SortAndGroupByStarred,
         SortAndGroupByCorrectness,
+        SortAndGroupByIncorrectArrayCreation,
+        SortAndGroupByDivisionTemplateStrategy,
         SortByTime
     }
 
@@ -27,6 +29,8 @@ namespace Classroom_Learning_Partner.ViewModels
         private static readonly PropertyGroupDescription PageNumberGroup = new PropertyGroupDescription("PageNumber");
         private static readonly PropertyGroupDescription StarredGroup = new PropertyGroupDescription("IsStarred");
         private static readonly PropertyGroupDescription CorrectnessGroup = new PropertyGroupDescription("Correctness");
+        private static readonly PropertyGroupDescription IncorrectArrayCreationGroup = new PropertyGroupDescription("DivisionTemplateIncorrectArrayCreation");
+        private static readonly PropertyGroupDescription DivisionTemplateStrategyGroup = new PropertyGroupDescription("DivisionTemplateStrategy");
 
         private static readonly SortDescription OwnerFullNameAscendingSort = new SortDescription("Owner.FullName", ListSortDirection.Ascending);
         private static readonly SortDescription OwnerFullNameDescendingSort = new SortDescription("Owner.FullName", ListSortDirection.Descending);
@@ -38,6 +42,10 @@ namespace Classroom_Learning_Partner.ViewModels
         private static readonly SortDescription StarredDescendingSort = new SortDescription("IsStarred", ListSortDirection.Descending);
         private static readonly SortDescription CorrectnessAscendingSort = new SortDescription("Correctness", ListSortDirection.Ascending);
         private static readonly SortDescription CorrectnessDescendingSort = new SortDescription("Correctness", ListSortDirection.Descending);
+        private static readonly SortDescription IncorrectArrayCreationAscendingSort = new SortDescription("DivisionTemplateIncorrectArrayCreation", ListSortDirection.Ascending);
+        private static readonly SortDescription IncorrectArrayCreationDescendingSort = new SortDescription("DivisionTemplateIncorrectArrayCreation", ListSortDirection.Descending);
+        private static readonly SortDescription DivisionTemplateStrategyAscendingSort = new SortDescription("DivisionTemplateStrategy", ListSortDirection.Ascending);
+        private static readonly SortDescription DivisionTemplateStrategyDescendingSort = new SortDescription("DivisionTemplateStrategy", ListSortDirection.Descending);
 
         #region Constructor
 
@@ -387,6 +395,12 @@ namespace Classroom_Learning_Partner.ViewModels
                 case SortAndGroupTypes.SortAndGroupByCorrectness:
                     ApplySortAndGroupByCorrectness();
                     break;
+                case SortAndGroupTypes.SortAndGroupByIncorrectArrayCreation:
+                    ApplySortAndGroupByIncorrectArrayCreation();
+                    break;
+                case SortAndGroupTypes.SortAndGroupByDivisionTemplateStrategy:
+                    ApplySortAndGroupByDivisionTemplateStrategy();
+                    break;
                 default:
                     ApplySortAndGroupByName();
                     break;
@@ -439,6 +453,36 @@ namespace Classroom_Learning_Partner.ViewModels
 
             SortedAndGroupedPages.GroupDescriptions.Add(CorrectnessGroup);
             SortedAndGroupedPages.SortDescriptions.Add(CorrectnessAscendingSort);
+
+            SortedAndGroupedPages.GroupDescriptions.Add(PageNumberGroup);
+            SortedAndGroupedPages.SortDescriptions.Add(PageNumberAscendingSort);
+
+            SortedAndGroupedPages.SortDescriptions.Add(OwnerFullNameAscendingSort);
+            SortedAndGroupedPages.SortDescriptions.Add(SubmissionTimeAscendingSort);
+        }
+
+        public void ApplySortAndGroupByIncorrectArrayCreation()
+        {
+            SortedAndGroupedPages.GroupDescriptions.Clear();
+            SortedAndGroupedPages.SortDescriptions.Clear();
+
+            SortedAndGroupedPages.GroupDescriptions.Add(IncorrectArrayCreationGroup);
+            SortedAndGroupedPages.SortDescriptions.Add(IncorrectArrayCreationAscendingSort);
+
+            SortedAndGroupedPages.GroupDescriptions.Add(PageNumberGroup);
+            SortedAndGroupedPages.SortDescriptions.Add(PageNumberAscendingSort);
+
+            SortedAndGroupedPages.SortDescriptions.Add(OwnerFullNameAscendingSort);
+            SortedAndGroupedPages.SortDescriptions.Add(SubmissionTimeAscendingSort);
+        }
+
+        public void ApplySortAndGroupByDivisionTemplateStrategy()
+        {
+            SortedAndGroupedPages.GroupDescriptions.Clear();
+            SortedAndGroupedPages.SortDescriptions.Clear();
+
+            SortedAndGroupedPages.GroupDescriptions.Add(DivisionTemplateStrategyGroup);
+            SortedAndGroupedPages.SortDescriptions.Add(DivisionTemplateStrategyAscendingSort);
 
             SortedAndGroupedPages.GroupDescriptions.Add(PageNumberGroup);
             SortedAndGroupedPages.SortDescriptions.Add(PageNumberAscendingSort);

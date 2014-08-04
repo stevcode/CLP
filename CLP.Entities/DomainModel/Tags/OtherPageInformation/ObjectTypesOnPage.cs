@@ -31,31 +31,31 @@ namespace CLP.Entities
                 if(pageObject is FuzzyFactorCard)
                 {
                     ObjectTypes.Add("Division Templates");
-                    return;
+                    continue;
                 }
 
                 if(pageObject is CLPArray)
                 {
                     ObjectTypes.Add("Arrays");
-                    return;
+                    continue;
                 }
 
                 if(pageObject is RemainderTiles)
                 {
                     ObjectTypes.Add("Remainder Tiles");
-                    return;
+                    continue;
                 }
 
                 if(pageObject is Stamp)
                 {
                     ObjectTypes.Add("Stamps");
-                    return;
+                    continue;
                 }
 
                 if(pageObject is Shape)
                 {
                     ObjectTypes.Add("Shapes");
-                    return;
+                    continue;
                 }
             }
 

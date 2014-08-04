@@ -430,11 +430,25 @@ namespace CLP.Entities
             get
             {
                 var correctnessTag = Tags.FirstOrDefault(x => x is CorrectnessTag) as CorrectnessTag;
-                if(correctnessTag != null)
-                {
-                    return correctnessTag.Correctness;
-                }
-                return Correctness.Unknown;
+                return correctnessTag != null ? correctnessTag.Correctness : Correctness.Unknown;
+            }
+        }
+
+        public virtual string DivisionTemplateIncorrectArrayCreation
+        {
+            get
+            {
+                var incorrectReasonTag = Tags.FirstOrDefault(x => x is DivisionTemplateIncorrectArrayCreationTag) as DivisionTemplateIncorrectArrayCreationTag;
+                return incorrectReasonTag != null ? incorrectReasonTag.Value.ToString() : "Not Set";
+            }
+        }
+
+        public virtual string DivisionTemplateStrategy
+        {
+            get
+            {
+                var strategyTag = Tags.FirstOrDefault(x => x is DivisionTemplateStrategyTag) as DivisionTemplateStrategyTag;
+                return strategyTag != null ? strategyTag.Value.ToString() : "Not Set";
             }
         }
 
