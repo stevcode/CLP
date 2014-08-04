@@ -187,7 +187,6 @@
                         Margin="1" />
 
                 <Button Content="Run History Analysis"
-                        IsEnabled="False"
                         Command="{Binding AnalyzePageHistoryCommand}"
                         Grid.ColumnSpan="2"
                         Height="20"
@@ -200,6 +199,7 @@
                            Grid.ColumnSpan="2" />
 
             </catel:StackGrid>
+            
             <ListBox ItemContainerStyle="{StaticResource ListBoxItemBlankStyle}"
                      ItemsSource="{Binding SortedTags.View, IsAsync=True}"
                      SelectionMode="Single"

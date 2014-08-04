@@ -35,6 +35,11 @@ namespace CLP.Entities
             }
         }
 
+        public static void AnalyzeHistory(CLPPage page)
+        {
+            
+        }
+
         public static void InterpretStrategy(CLPPage page, FuzzyFactorCard divisionTemplate)
         {
             var dividerValues = divisionTemplate.VerticalDivisions.Select(x => x.Value).ToList();

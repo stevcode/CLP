@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Ink;
 using System.Windows.Media.Imaging;
 using Catel.Collections;
 using Catel.Data;
@@ -51,6 +53,7 @@ namespace Classroom_Learning_Partner.ViewModels
             DeleteTagCommand = new Command<ITag>(OnDeleteTagCommandExecute);
             AddAnswerDefinitionCommand = new Command(OnAddAnswerDefinitionCommandExecute);
             AnalyzePageCommand = new Command(OnAnalyzePageCommandExecute);
+            AnalyzePageHistoryCommand = new Command(OnAnalyzePageHistoryCommandExecute);
         }
 
         void PageInformationPanelViewModel_Initialized(object sender, EventArgs e)
@@ -591,6 +594,21 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentPage.AddTag(new ObjectTypesOnPage(CurrentPage, Origin.StudentPageGenerated, App.MainWindowViewModel.CurrentUser.ID));
             DivisionTemplateAnalysis.Analyze(CurrentPage);
             ArrayAnalysis.Analyze(CurrentPage);
+        }
+
+        /// <summary>
+        /// Analyzes the history of the <see cref="CLPPage" /> to determine potential <see cref="ITag" />s.
+        /// </summary>
+        public Command AnalyzePageHistoryCommand { get; private set; }
+
+        private void OnAnalyzePageHistoryCommandExecute()
+        {
+            var savedTags = CurrentPage.Tags.Where(tag => tag is StarredTag || tag is DottedTag || tag is CorrectnessTag).ToList();
+            CurrentPage.Tags = null;
+            CurrentPage.Tags = new ObservableCollection<ITag>(savedTags);
+
+            ArrayAnalysis.AnalyzeHistory(CurrentPage);
+            SortedTags.Source = CurrentPage.Tags;
         }
 
         #endregion //Commands

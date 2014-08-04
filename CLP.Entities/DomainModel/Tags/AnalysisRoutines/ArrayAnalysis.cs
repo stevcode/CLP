@@ -12,8 +12,7 @@ namespace CLP.Entities
         public static void AnalyzeRegion(CLPPage page, Rect region)
         {
             // First, clear out any old ArrayTags generated via Analysis.
-            foreach(var tag in page.Tags.ToList().Where(tag => tag.Category == Category.Array &&
-                                                               !(tag is ArrayTriedWrongDividerValuesTag)))
+            foreach(var tag in page.Tags.ToList().Where(tag => tag.Category == Category.Array && !(tag is ArrayTriedWrongDividerValuesTag)))
             {
                 page.Tags.Remove(tag);
             }
@@ -33,6 +32,105 @@ namespace CLP.Entities
                     InterpretOrientation(page, productDefinitionTag, array);
                     InterpretStrategies(page, array);
                     InterpretCorrectness(page, productDefinitionTag, array);
+                }
+            }
+        }
+
+        public static void AnalyzeHistory(CLPPage page)
+        {
+            var completeOrderedHistory = page.History.UndoItems.Reverse().Concat(page.History.RedoItems);
+
+            //ArrayTriedWrongDividerValuesTag
+            var divisionValueChangedHistoryForArrays = new Dictionary<string, List<CLPArrayDivisionValueChangedHistoryItem>>();
+            foreach(var arrayDivisionValueChangedHistoryItem in completeOrderedHistory.OfType<CLPArrayDivisionValueChangedHistoryItem>())
+            {
+                if(!divisionValueChangedHistoryForArrays.ContainsKey(arrayDivisionValueChangedHistoryItem.ArrayID))
+                {
+                    divisionValueChangedHistoryForArrays.Add(arrayDivisionValueChangedHistoryItem.ArrayID, new List<CLPArrayDivisionValueChangedHistoryItem>());
+                }
+
+                divisionValueChangedHistoryForArrays[arrayDivisionValueChangedHistoryItem.ArrayID].Add(arrayDivisionValueChangedHistoryItem);
+            }
+
+            foreach(var divisionValueChangedHistoryForArray in divisionValueChangedHistoryForArrays)
+            {
+                var array = page.GetPageObjectByID(divisionValueChangedHistoryForArray.Key) as CLPArray ?? page.History.GetPageObjectByID(divisionValueChangedHistoryForArray.Key) as CLPArray;
+                if(array == null)
+                {
+                    continue;
+                }
+
+                var rowValueSum = array.HorizontalDivisions.Sum(x => x.Value);
+                var columnValueSum = array.VerticalDivisions.Sum(x => x.Value);
+
+                if(columnValueSum > array.Columns)
+                {
+                    page.AddTag(new ArrayTriedWrongDividerValuesTag(page,
+                                                                    Origin.StudentPageObjectGenerated,
+                                                                    array.ID,
+                                                                    array.Rows,
+                                                                    array.Columns,
+                                                                    DividerValuesOrientation.Horizontal,
+                                                                    array.HorizontalDivisions.Select(x => x.Value).ToList()));
+                }
+
+                if(rowValueSum > array.Rows)
+                {
+                    page.AddTag(new ArrayTriedWrongDividerValuesTag(page,
+                                                                    Origin.StudentPageObjectGenerated,
+                                                                    array.ID,
+                                                                    array.Rows,
+                                                                    array.Columns,
+                                                                    DividerValuesOrientation.Vertical,
+                                                                    array.VerticalDivisions.Select(x => x.Value).ToList()));
+                }
+
+                var divisionValueChangedHistory = divisionValueChangedHistoryForArray.Value;
+
+                foreach(var arrayDivisionValueChangedHistoryItem in divisionValueChangedHistory)
+                {
+                    if(arrayDivisionValueChangedHistoryItem.IsHorizontalDivision)
+                    {
+                        rowValueSum -= array.HorizontalDivisions[arrayDivisionValueChangedHistoryItem.DivisionIndex].Value;
+                        rowValueSum += arrayDivisionValueChangedHistoryItem.PreviousValue;
+                        if(rowValueSum > array.Rows)
+                        {
+                            var dividerValues =
+                                array.HorizontalDivisions.Select((t, i) => arrayDivisionValueChangedHistoryItem.DivisionIndex == i ? arrayDivisionValueChangedHistoryItem.PreviousValue : t.Value)
+                                     .ToList();
+
+                            page.AddTag(new ArrayTriedWrongDividerValuesTag(page,
+                                                                            Origin.StudentPageObjectGenerated,
+                                                                            array.ID,
+                                                                            array.Rows,
+                                                                            array.Columns,
+                                                                            DividerValuesOrientation.Vertical,
+                                                                            dividerValues));
+                        }
+                        rowValueSum += array.HorizontalDivisions[arrayDivisionValueChangedHistoryItem.DivisionIndex].Value;
+                        rowValueSum -= arrayDivisionValueChangedHistoryItem.PreviousValue;
+                    }
+                    else
+                    {
+                        columnValueSum -= array.VerticalDivisions[arrayDivisionValueChangedHistoryItem.DivisionIndex].Value;
+                        columnValueSum += arrayDivisionValueChangedHistoryItem.PreviousValue;
+                        if(columnValueSum > array.Columns)
+                        {
+                            var dividerValues =
+                                array.VerticalDivisions.Select((t, i) => arrayDivisionValueChangedHistoryItem.DivisionIndex == i ? arrayDivisionValueChangedHistoryItem.PreviousValue : t.Value)
+                                     .ToList();
+
+                            page.AddTag(new ArrayTriedWrongDividerValuesTag(page,
+                                                                            Origin.StudentPageObjectGenerated,
+                                                                            array.ID,
+                                                                            array.Rows,
+                                                                            array.Columns,
+                                                                            DividerValuesOrientation.Horizontal,
+                                                                            dividerValues));
+                        }
+                        columnValueSum += array.VerticalDivisions[arrayDivisionValueChangedHistoryItem.DivisionIndex].Value;
+                        columnValueSum -= arrayDivisionValueChangedHistoryItem.PreviousValue;
+                    }
                 }
             }
         }
@@ -129,7 +227,7 @@ namespace CLP.Entities
 
         public static void InterpretRegionStrategies(CLPPage page, CLPArray array)
         {
-            
+            //TODO
         }
 
         private static IEnumerable<int> PlaceValueStrategyDivisions(int startingValue)
