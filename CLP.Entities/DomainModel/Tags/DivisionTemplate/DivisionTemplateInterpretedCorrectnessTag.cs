@@ -83,7 +83,7 @@ namespace CLP.Entities
                                      Correctness,
                                      Correctness == Correctness.Correct || Correctness == Correctness.Unknown
                                          ? string.Empty
-                                         : "Incorrect due to: " + string.Join(", ", DivisionTemplateIncorrectReasons));
+                                         : ", due to:\n" + string.Join("\n", DivisionTemplateIncorrectReasons));
             }
         }
 

@@ -609,7 +609,7 @@ namespace Classroom_Learning_Partner.ViewModels
             SortedTags.Source = CurrentPage.Tags;
 
             ArrayAnalysis.AnalyzeHistory(CurrentPage);
-            DivisionTemplateAnalysis.Analyze(CurrentPage);
+            DivisionTemplateAnalysis.AnalyzeHistory(CurrentPage);
         }
 
         #endregion //Commands

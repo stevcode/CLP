@@ -55,10 +55,11 @@ namespace CLP.Entities
             }
 
             //DivisionTemplateIncorrectArrayCreationTag
+            var divisionTemplatesOnPage = new List<FuzzyFactorCard>();
+            var arraysOnPage = new List<CLPArray>();
             foreach(var historyItem in completeOrderedHistory)
             {
-                var divisionTemplatesOnPage = new List<FuzzyFactorCard>();
-                var arraysOnPage = new List<CLPArray>();
+                
 
                 var removedPageObjectsHistoryItem = historyItem as PageObjectsRemovedHistoryItem;
                 if(removedPageObjectsHistoryItem != null)
@@ -242,6 +243,7 @@ namespace CLP.Entities
             {
                 var correctTag = new DivisionTemplateInterpretedCorrectnessTag(page, Origin.StudentPageGenerated, Correctness.Correct, incorrectReasons);
                 page.Tags.Add(correctTag);
+                return;
             }
 
             // Incorrect
