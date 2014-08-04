@@ -592,8 +592,8 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnAnalyzePageCommandExecute()
         {
             CurrentPage.AddTag(new ObjectTypesOnPage(CurrentPage, Origin.StudentPageGenerated, App.MainWindowViewModel.CurrentUser.ID));
-            DivisionTemplateAnalysis.Analyze(CurrentPage);
             ArrayAnalysis.Analyze(CurrentPage);
+            DivisionTemplateAnalysis.Analyze(CurrentPage);
         }
 
         /// <summary>
@@ -606,9 +606,10 @@ namespace Classroom_Learning_Partner.ViewModels
             var savedTags = CurrentPage.Tags.Where(tag => tag is StarredTag || tag is DottedTag || tag is CorrectnessTag).ToList();
             CurrentPage.Tags = null;
             CurrentPage.Tags = new ObservableCollection<ITag>(savedTags);
+            SortedTags.Source = CurrentPage.Tags;
 
             ArrayAnalysis.AnalyzeHistory(CurrentPage);
-            SortedTags.Source = CurrentPage.Tags;
+            DivisionTemplateAnalysis.Analyze(CurrentPage);
         }
 
         #endregion //Commands

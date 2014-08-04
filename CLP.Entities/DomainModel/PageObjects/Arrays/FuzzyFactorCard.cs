@@ -269,7 +269,8 @@ namespace CLP.Entities
                        ((pageObject as CLPArray).Rows == Dividend))
                     {
                         var existingTag =
-                            ParentPage.Tags.OfType<DivisionTemplateIncorrectArrayCreationTag>().FirstOrDefault(x => x.Value == DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.ProductAsDimension);
+                            ParentPage.Tags.OfType<DivisionTemplateIncorrectArrayCreationTag>()
+                                      .FirstOrDefault(x => x.Value == DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.ProductAsDimension);
 
                         var previousNumberOfAttempts = 0;
                         if(existingTag != null)
@@ -287,7 +288,8 @@ namespace CLP.Entities
                        (pageObject as CLPArray).Columns == Rows)
                     {
                         var existingTag =
-                            ParentPage.Tags.OfType<DivisionTemplateIncorrectArrayCreationTag>().FirstOrDefault(x => x.Value == DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.WrongOrientation);
+                            ParentPage.Tags.OfType<DivisionTemplateIncorrectArrayCreationTag>()
+                                      .FirstOrDefault(x => x.Value == DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.WrongOrientation);
 
                         var previousNumberOfAttempts = 0;
                         if(existingTag != null)
@@ -304,7 +306,8 @@ namespace CLP.Entities
                     else if((pageObject as CLPArray).Rows != Rows)
                     {
                         var existingTag =
-                            ParentPage.Tags.OfType<DivisionTemplateIncorrectArrayCreationTag>().FirstOrDefault(x => x.Value == DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.IncorrectDimension);
+                            ParentPage.Tags.OfType<DivisionTemplateIncorrectArrayCreationTag>()
+                                      .FirstOrDefault(x => x.Value == DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.IncorrectDimension);
 
                         var previousNumberOfAttempts = 0;
                         if(existingTag != null)
