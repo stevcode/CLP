@@ -477,7 +477,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                    App.CurrentUserMode == App.UserMode.Student ? Origin.StudentPageObjectGenerated : Origin.TeacherPageObjectGenerated,
                                                                                    DivisionTemplateFailedSnapTag.AcceptedValues.SnappedWrongOrientation,
                                                                                    previousNumberOfAttempts + 1);
-                                    pageObject.ParentPage.Tags.Add(newTag);
+                                    pageObject.ParentPage.AddTag(newTag);
                                 }
                                 else
                                 {
@@ -495,7 +495,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                    App.CurrentUserMode == App.UserMode.Student ? Origin.StudentPageObjectGenerated : Origin.TeacherPageObjectGenerated,
                                                                                    DivisionTemplateFailedSnapTag.AcceptedValues.SnappedIncorrectDimension,
                                                                                    previousNumberOfAttempts + 1);
-                                    pageObject.ParentPage.Tags.Add(newTag);
+                                    pageObject.ParentPage.AddTag(newTag);
                                 }
 
                                 var factorCardViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(factorCard);
@@ -526,7 +526,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                    App.CurrentUserMode == App.UserMode.Student ? Origin.StudentPageObjectGenerated : Origin.TeacherPageObjectGenerated,
                                                                                    DivisionTemplateFailedSnapTag.AcceptedValues.SnappedArrayTooLarge,
                                                                                    previousNumberOfAttempts + 1);
-                                    pageObject.ParentPage.Tags.Add(newTag);
+                                    pageObject.ParentPage.AddTag(newTag);
 
                                 var factorCardViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(factorCard);
                                 foreach(var viewModel in factorCardViewModels)

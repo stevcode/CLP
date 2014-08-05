@@ -170,6 +170,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var currentPage = page;
             if(currentPage == null) { return; }
 
+            currentPage.IsTagAddPrevented = true;
             var oldPageInteractionMode = (App.MainWindowViewModel.Ribbon.PageInteractionMode == PageInteractionMode.None) ? PageInteractionMode.Pen : App.MainWindowViewModel.Ribbon.PageInteractionMode;
             App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.None;
 
@@ -189,6 +190,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                              null);
                                        Thread.Sleep(historyItemAnimationDelay);
                                    }
+                                   currentPage.IsTagAddPrevented = false;
                                    App.MainWindowViewModel.Ribbon.PageInteractionMode = oldPageInteractionMode;
                                });
 

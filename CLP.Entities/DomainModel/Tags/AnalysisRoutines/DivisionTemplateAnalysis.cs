@@ -139,7 +139,7 @@ namespace CLP.Entities
                                                                                        Origin.StudentPageObjectGenerated,
                                                                                        DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.ProductAsDimension,
                                                                                        previousNumberOfAttempts + 1);
-                            page.Tags.Add(newTag);
+                            page.AddTag(newTag);
                         }
 
                         if(array.Rows != divisionTemplateAndRemainder.DivisionTemplate.Rows &&
@@ -158,7 +158,7 @@ namespace CLP.Entities
                                                                                        Origin.StudentPageObjectGenerated,
                                                                                        DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.WrongOrientation,
                                                                                        previousNumberOfAttempts + 1);
-                            page.Tags.Add(newTag);
+                            page.AddTag(newTag);
                         }
                         else if(array.Rows != divisionTemplateAndRemainder.DivisionTemplate.Rows)
                         {
@@ -176,7 +176,7 @@ namespace CLP.Entities
                                                                                        Origin.StudentPageObjectGenerated,
                                                                                        DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.IncorrectDimension,
                                                                                        previousNumberOfAttempts + 1);
-                            page.Tags.Add(newTag);
+                            page.AddTag(newTag);
                         }
 
                         if(arrayArea > divisionTemplateAndRemainder.Remainder)
@@ -194,7 +194,7 @@ namespace CLP.Entities
                                                                                        Origin.StudentPageObjectGenerated,
                                                                                        DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.ArrayTooLarge,
                                                                                        previousNumberOfAttempts + 1);
-                            page.Tags.Add(newTag);
+                            page.AddTag(newTag);
                         }
                     }
                 }
@@ -216,24 +216,24 @@ namespace CLP.Entities
 
             if(dividerValues.Count == 2)
             {
-                page.Tags.Add(new DivisionTemplateStrategyTag(page, Origin.StudentPageGenerated, DivisionTemplateStrategyTag.AcceptedValues.OneArray, dividerValues));
+                page.AddTag(new DivisionTemplateStrategyTag(page, Origin.StudentPageGenerated, DivisionTemplateStrategyTag.AcceptedValues.OneArray, dividerValues));
                 return;
             }
 
             if(Math.Abs(dividerValues.First() - dividerValues.Average()) < 0.001)
             {
-                page.Tags.Add(new DivisionTemplateStrategyTag(page, Origin.StudentPageGenerated, DivisionTemplateStrategyTag.AcceptedValues.EvenSplit, dividerValues));
+                page.AddTag(new DivisionTemplateStrategyTag(page, Origin.StudentPageGenerated, DivisionTemplateStrategyTag.AcceptedValues.EvenSplit, dividerValues));
                 return;
             }
 
             // HACK - This only compares the first 2 values to see if they are the same to determine Repeated Strategy. Find a way to determine this by frequency.
             if(dividerValues.First() == dividerValues.ElementAt(1))
             {
-                page.Tags.Add(new DivisionTemplateStrategyTag(page, Origin.StudentPageGenerated, DivisionTemplateStrategyTag.AcceptedValues.Repeated, dividerValues));
+                page.AddTag(new DivisionTemplateStrategyTag(page, Origin.StudentPageGenerated, DivisionTemplateStrategyTag.AcceptedValues.Repeated, dividerValues));
                 return;
             }
 
-            page.Tags.Add(new DivisionTemplateStrategyTag(page, Origin.StudentPageGenerated, DivisionTemplateStrategyTag.AcceptedValues.Other, dividerValues));
+            page.AddTag(new DivisionTemplateStrategyTag(page, Origin.StudentPageGenerated, DivisionTemplateStrategyTag.AcceptedValues.Other, dividerValues));
         }
 
         public static void InterpretCorrectness(CLPPage page, ProductDefinitionTag productDefinition, FuzzyFactorCard divisionTemplate)
@@ -243,18 +243,18 @@ namespace CLP.Entities
             if(divisionTemplate.VerticalDivisions.Count < 2)
             {
                 var tag = new DivisionTemplateCompletenessTag(page, Origin.StudentPageGenerated, DivisionTemplateCompletenessTag.AcceptedValues.NoArrays);
-                page.Tags.Add(tag);
+                page.AddTag(tag);
             }
             else if(divisionTemplate.VerticalDivisions.Sum(x => x.Value) == divisionTemplate.Columns)
             {
                 var tag = new DivisionTemplateCompletenessTag(page, Origin.StudentPageGenerated, DivisionTemplateCompletenessTag.AcceptedValues.Complete);
-                page.Tags.Add(tag);
+                page.AddTag(tag);
                 isDivisionTemplateComplete = true;
             }
             else
             {
                 var tag = new DivisionTemplateCompletenessTag(page, Origin.StudentPageGenerated, DivisionTemplateCompletenessTag.AcceptedValues.NotEnoughArrays);
-                page.Tags.Add(tag);
+                page.AddTag(tag);
             }
 
             // Apply a Correctness tag.
@@ -267,7 +267,7 @@ namespace CLP.Entities
                 (productDefinition.SecondFactor == divisionTemplate.Rows && productDefinition.UngivenProductPart != ProductPart.SecondFactor)))
             {
                 var correctTag = new DivisionTemplateInterpretedCorrectnessTag(page, Origin.StudentPageGenerated, Correctness.Correct, incorrectReasons);
-                page.Tags.Add(correctTag);
+                page.AddTag(correctTag);
                 return;
             }
 
@@ -294,7 +294,7 @@ namespace CLP.Entities
             }
 
             var incorrectTag = new DivisionTemplateInterpretedCorrectnessTag(page, Origin.StudentPageGenerated, Correctness.Incorrect, incorrectReasons);
-            page.Tags.Add(incorrectTag);
+            page.AddTag(incorrectTag);
         }
     }
 }

@@ -45,7 +45,7 @@ namespace CLP.Entities
             //////////       !friendlyFound)
             //////////    {
             //////////        var tag = new ArrayRegionStrategyTag(page, ArrayRegionStrategyTag.AcceptedValues.FriendlyNumbers);
-            //////////        page.Tags.Add(tag);
+            //////////        page.AddTag(tag);
             //////////        friendlyFound = true;
             //////////    }
 
@@ -61,7 +61,7 @@ namespace CLP.Entities
             //////////       foundProducts.Count < (horizDivs.Count * vertDivs.Count))
             //////////    {
             //////////        var tag = new ArrayRegionStrategyTag(page, ArrayRegionStrategyTag.AcceptedValues.SomeRepeated);
-            //////////        page.Tags.Add(tag);
+            //////////        page.AddTag(tag);
             //////////    }
             //////////    else
             //////////    {
@@ -69,7 +69,7 @@ namespace CLP.Entities
             //////////           (horizDivs.Count * vertDivs.Count) > 1)
             //////////        {
             //////////            var tag = new ArrayRegionStrategyTag(page, ArrayRegionStrategyTag.AcceptedValues.AllRepeated);
-            //////////            page.Tags.Add(tag);
+            //////////            page.AddTag(tag);
             //////////        }
             //////////    }
             //////////}

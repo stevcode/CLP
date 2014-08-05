@@ -1543,6 +1543,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var currentPage = CurrentPage;
             if(currentPage == null) { return; }
 
+            currentPage.IsTagAddPrevented = true;
             var oldPageInteractionMode = (PageInteractionMode == PageInteractionMode.None) ? PageInteractionMode.Pen : PageInteractionMode;
             PageInteractionMode = PageInteractionMode.None;
 
@@ -1562,6 +1563,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                              null);
                                        Thread.Sleep(historyItemAnimationDelay);
                                    }
+                                   currentPage.IsTagAddPrevented = false;
                                    PageInteractionMode = oldPageInteractionMode;
                                });
 

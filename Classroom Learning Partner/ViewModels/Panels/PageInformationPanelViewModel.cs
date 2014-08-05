@@ -169,7 +169,19 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(TagsProperty, value); }
         }
 
-        public static readonly PropertyData TagsProperty = RegisterProperty("Tags", typeof(ObservableCollection<ITag>));
+        public static readonly PropertyData TagsProperty = RegisterProperty("Tags", typeof(ObservableCollection<ITag>), propertyChangedEventHandler:TagsChanged);
+
+        private static void TagsChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
+        {
+            var viewModel = sender as PageInformationPanelViewModel;
+            if(!advancedPropertyChangedEventArgs.IsNewValueMeaningful ||
+               viewModel == null)
+            {
+                return;
+            }
+
+            viewModel.SortedTags.Source = viewModel.Tags;
+        }
 
         #endregion //Model
 
@@ -630,10 +642,25 @@ namespace Classroom_Learning_Partner.ViewModels
             var savedTags = CurrentPage.Tags.Where(tag => tag is StarredTag || tag is DottedTag || tag is CorrectnessTag).ToList();
             CurrentPage.Tags = null;
             CurrentPage.Tags = new ObservableCollection<ITag>(savedTags);
-            SortedTags.Source = CurrentPage.Tags;
+       //     SortedTags.Source = CurrentPage.Tags;
 
             ArrayAnalysis.AnalyzeHistory(CurrentPage);
             DivisionTemplateAnalysis.AnalyzeHistory(CurrentPage);
+
+            if(CurrentPage.SubmissionType != SubmissionTypes.Unsubmitted)
+            {
+                return;
+            }
+
+            foreach(var submission in CurrentPage.Submissions)
+            {
+                var savedSubmissionTags = submission.Tags.Where(tag => tag is StarredTag || tag is DottedTag || tag is CorrectnessTag).ToList();
+                submission.Tags = null;
+                submission.Tags = new ObservableCollection<ITag>(savedSubmissionTags);
+
+                ArrayAnalysis.AnalyzeHistory(submission);
+                DivisionTemplateAnalysis.AnalyzeHistory(submission);
+            }
         }
 
         #endregion //Commands

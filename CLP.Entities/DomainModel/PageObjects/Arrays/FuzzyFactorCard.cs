@@ -225,7 +225,7 @@ namespace CLP.Entities
             base.OnDeleted();
 
             var tag = new DivisionTemplateDeletedTag(ParentPage, Origin.StudentPageObjectGenerated, Dividend, Rows);
-            ParentPage.Tags.Add(tag);
+            ParentPage.AddTag(tag);
         }
 
         public override void SizeArrayToGridLevel(double toSquareSize = -1, bool recalculateDivisions = true)
@@ -282,7 +282,7 @@ namespace CLP.Entities
                                                                                    Origin.StudentPageObjectGenerated,
                                                                                    DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.ProductAsDimension,
                                                                                    previousNumberOfAttempts + 1);
-                        ParentPage.Tags.Add(newTag);
+                        ParentPage.AddTag(newTag);
                     }
                     if((pageObject as CLPArray).Rows != Rows &&
                        (pageObject as CLPArray).Columns == Rows)
@@ -301,7 +301,7 @@ namespace CLP.Entities
                                                                                    Origin.StudentPageObjectGenerated,
                                                                                    DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.WrongOrientation,
                                                                                    previousNumberOfAttempts + 1);
-                        ParentPage.Tags.Add(newTag);
+                        ParentPage.AddTag(newTag);
                     }
                     else if((pageObject as CLPArray).Rows != Rows)
                     {
@@ -319,7 +319,7 @@ namespace CLP.Entities
                                                                                    Origin.StudentPageObjectGenerated,
                                                                                    DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.IncorrectDimension,
                                                                                    previousNumberOfAttempts + 1);
-                        ParentPage.Tags.Add(newTag);
+                        ParentPage.AddTag(newTag);
                     }
                 }
             }
@@ -338,7 +338,7 @@ namespace CLP.Entities
                                                                            Origin.StudentPageObjectGenerated,
                                                                            DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.ArrayTooLarge,
                                                                            previousNumberOfAttempts + 1);
-                ParentPage.Tags.Add(newTag);
+                ParentPage.AddTag(newTag);
             }
         }
 

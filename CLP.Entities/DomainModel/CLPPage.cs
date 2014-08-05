@@ -660,8 +660,14 @@ namespace CLP.Entities
             }
         }
 
+        public bool IsTagAddPrevented = false;
         public void AddTag(ITag newTag)
         {
+            if(IsTagAddPrevented)
+            {
+                return;
+            }
+
             if(newTag.IsSingleValueTag)
             {
                 var toRemove = Tags.Where(t => t.GetType() == newTag.GetType()).ToList();

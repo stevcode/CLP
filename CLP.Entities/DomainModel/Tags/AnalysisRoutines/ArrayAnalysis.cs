@@ -140,16 +140,16 @@ namespace CLP.Entities
             if(productDefinition.FirstFactor == array.Columns &&
                productDefinition.SecondFactor == array.Rows)
             {
-                page.Tags.Add(new ArrayOrientationTag(page, Origin.StudentPageGenerated, ArrayOrientationTag.AcceptedValues.FirstFactorWidth));
+                page.AddTag(new ArrayOrientationTag(page, Origin.StudentPageGenerated, ArrayOrientationTag.AcceptedValues.FirstFactorWidth));
             }
             else if(productDefinition.FirstFactor == array.Rows &&
                     productDefinition.SecondFactor == array.Columns)
             {
-                page.Tags.Add(new ArrayOrientationTag(page, Origin.StudentPageGenerated, ArrayOrientationTag.AcceptedValues.FirstFactorHeight));
+                page.AddTag(new ArrayOrientationTag(page, Origin.StudentPageGenerated, ArrayOrientationTag.AcceptedValues.FirstFactorHeight));
             }
             else
             {
-                page.Tags.Add(new ArrayOrientationTag(page, Origin.StudentPageGenerated, ArrayOrientationTag.AcceptedValues.Unknown));
+                page.AddTag(new ArrayOrientationTag(page, Origin.StudentPageGenerated, ArrayOrientationTag.AcceptedValues.Unknown));
             }
         }
 
@@ -166,11 +166,11 @@ namespace CLP.Entities
             {
                 if(isXAxisStrategy)
                 {
-                    page.Tags.Add(new ArrayXAxisStrategyTag(page, Origin.StudentPageGenerated, ArrayXAxisStrategyTag.AcceptedValues.NoDividers, dividerValues));
+                    page.AddTag(new ArrayXAxisStrategyTag(page, Origin.StudentPageGenerated, ArrayXAxisStrategyTag.AcceptedValues.NoDividers, dividerValues));
                 }
                 else
                 {
-                    page.Tags.Add(new ArrayYAxisStrategyTag(page, Origin.StudentPageGenerated, ArrayYAxisStrategyTag.AcceptedValues.NoDividers, dividerValues));
+                    page.AddTag(new ArrayYAxisStrategyTag(page, Origin.StudentPageGenerated, ArrayYAxisStrategyTag.AcceptedValues.NoDividers, dividerValues));
                 }
                 return;
             }
@@ -179,11 +179,11 @@ namespace CLP.Entities
             {
                 if(isXAxisStrategy)
                 {
-                    page.Tags.Add(new ArrayXAxisStrategyTag(page, Origin.StudentPageGenerated, ArrayXAxisStrategyTag.AcceptedValues.EvenSplit, dividerValues));
+                    page.AddTag(new ArrayXAxisStrategyTag(page, Origin.StudentPageGenerated, ArrayXAxisStrategyTag.AcceptedValues.EvenSplit, dividerValues));
                 }
                 else
                 {
-                    page.Tags.Add(new ArrayYAxisStrategyTag(page, Origin.StudentPageGenerated, ArrayYAxisStrategyTag.AcceptedValues.EvenSplit, dividerValues));
+                    page.AddTag(new ArrayYAxisStrategyTag(page, Origin.StudentPageGenerated, ArrayYAxisStrategyTag.AcceptedValues.EvenSplit, dividerValues));
                 }
                 return;
             }
@@ -192,11 +192,11 @@ namespace CLP.Entities
             {
                 if(isXAxisStrategy)
                 {
-                    page.Tags.Add(new ArrayXAxisStrategyTag(page, Origin.StudentPageGenerated, ArrayXAxisStrategyTag.AcceptedValues.PlaceValue, dividerValues));
+                    page.AddTag(new ArrayXAxisStrategyTag(page, Origin.StudentPageGenerated, ArrayXAxisStrategyTag.AcceptedValues.PlaceValue, dividerValues));
                 }
                 else
                 {
-                    page.Tags.Add(new ArrayYAxisStrategyTag(page, Origin.StudentPageGenerated, ArrayYAxisStrategyTag.AcceptedValues.PlaceValue, dividerValues));
+                    page.AddTag(new ArrayYAxisStrategyTag(page, Origin.StudentPageGenerated, ArrayYAxisStrategyTag.AcceptedValues.PlaceValue, dividerValues));
                 }
                 return;
             }
@@ -206,22 +206,22 @@ namespace CLP.Entities
             {
                 if(isXAxisStrategy)
                 {
-                    page.Tags.Add(new ArrayXAxisStrategyTag(page, Origin.StudentPageGenerated, ArrayXAxisStrategyTag.AcceptedValues.Repeated, dividerValues));
+                    page.AddTag(new ArrayXAxisStrategyTag(page, Origin.StudentPageGenerated, ArrayXAxisStrategyTag.AcceptedValues.Repeated, dividerValues));
                 }
                 else
                 {
-                    page.Tags.Add(new ArrayYAxisStrategyTag(page, Origin.StudentPageGenerated, ArrayYAxisStrategyTag.AcceptedValues.Repeated, dividerValues));
+                    page.AddTag(new ArrayYAxisStrategyTag(page, Origin.StudentPageGenerated, ArrayYAxisStrategyTag.AcceptedValues.Repeated, dividerValues));
                 }
                 return;
             }
 
             if(isXAxisStrategy)
             {
-                page.Tags.Add(new ArrayXAxisStrategyTag(page, Origin.StudentPageGenerated, ArrayXAxisStrategyTag.AcceptedValues.Other, dividerValues));
+                page.AddTag(new ArrayXAxisStrategyTag(page, Origin.StudentPageGenerated, ArrayXAxisStrategyTag.AcceptedValues.Other, dividerValues));
             }
             else
             {
-                page.Tags.Add(new ArrayYAxisStrategyTag(page, Origin.StudentPageGenerated, ArrayYAxisStrategyTag.AcceptedValues.Other, dividerValues));
+                page.AddTag(new ArrayYAxisStrategyTag(page, Origin.StudentPageGenerated, ArrayYAxisStrategyTag.AcceptedValues.Other, dividerValues));
             }
         }
 
@@ -275,7 +275,7 @@ namespace CLP.Entities
             if(productDefinition.FirstFactor == array.Rows &&
                productDefinition.SecondFactor == array.Columns)
             {
-                page.Tags.Add(new ArrayInterpretedCorrectnessTag(page, Origin.StudentPageGenerated, Correctness.Correct, incorrectReasons));
+                page.AddTag(new ArrayInterpretedCorrectnessTag(page, Origin.StudentPageGenerated, Correctness.Correct, incorrectReasons));
                 return;
             }
 
@@ -284,7 +284,7 @@ namespace CLP.Entities
             {
                 if(productDefinition.ProductType != ProductType.Area) //HACK - This seems...weird to me. Order of Factors only matters when calculating area?
                 {
-                    page.Tags.Add(new ArrayInterpretedCorrectnessTag(page, Origin.StudentPageGenerated, Correctness.Correct, incorrectReasons));
+                    page.AddTag(new ArrayInterpretedCorrectnessTag(page, Origin.StudentPageGenerated, Correctness.Correct, incorrectReasons));
                     return;
                 }
 
@@ -326,7 +326,7 @@ namespace CLP.Entities
                 incorrectReasons.Add(ArrayIncorrectReason.WrongFactors);
             }
 
-            page.Tags.Add(new ArrayInterpretedCorrectnessTag(page, Origin.StudentPageGenerated, Correctness.Incorrect, incorrectReasons));
+            page.AddTag(new ArrayInterpretedCorrectnessTag(page, Origin.StudentPageGenerated, Correctness.Incorrect, incorrectReasons));
         }
     }
 }
