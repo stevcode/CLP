@@ -55,9 +55,9 @@ namespace CLP.Entities
 
         public static readonly PropertyData CorrectnessProperty = RegisterProperty("Correctness", typeof(Correctness));
 
-        public bool IsCorrectnessInterpreted
+        public bool IsCorrectnessManuallySet
         {
-            get { return Origin != Origin.Teacher; }
+            get { return Origin == Origin.Teacher; }
         }
 
         #region ATagBase Overrides
@@ -69,7 +69,7 @@ namespace CLP.Entities
 
         public override string FormattedValue
         {
-            get { return string.Format("{0}, {1}", Correctness, IsCorrectnessInterpreted ? "Interpreted" : "Manually Set by Teacher"); }
+            get { return string.Format("{0}, {1}", Correctness, IsCorrectnessManuallySet ? "Manually Set by Teacher" : "Interpreted"); }
         }
 
         #endregion //ATagBase Overrides

@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
-using System.Windows.Ink;
 using System.Windows.Media.Imaging;
 using Catel.Collections;
 using Catel.Data;
@@ -56,7 +54,7 @@ namespace Classroom_Learning_Partner.ViewModels
             AnalyzePageHistoryCommand = new Command(OnAnalyzePageHistoryCommandExecute);
         }
 
-        void PageInformationPanelViewModel_Initialized(object sender, EventArgs e)
+        private void PageInformationPanelViewModel_Initialized(object sender, EventArgs e)
         {
             Length = InitialLength;
             Location = PanelLocations.Right;
@@ -97,7 +95,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(CurrentPageProperty, value); }
         }
 
-        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage), propertyChangedEventHandler:CurrentPageChanged);
+        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage), propertyChangedEventHandler: CurrentPageChanged);
 
         private static void CurrentPageChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
         {
@@ -169,7 +167,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(TagsProperty, value); }
         }
 
-        public static readonly PropertyData TagsProperty = RegisterProperty("Tags", typeof(ObservableCollection<ITag>), propertyChangedEventHandler:TagsChanged);
+        public static readonly PropertyData TagsProperty = RegisterProperty("Tags", typeof(ObservableCollection<ITag>), propertyChangedEventHandler: TagsChanged);
 
         private static void TagsChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
         {
@@ -247,7 +245,6 @@ namespace Classroom_Learning_Partner.ViewModels
                     isAnimation = true;
                     isPortrait = true;
                     break;
-
             }
 
             var index = Notebook.Pages.IndexOf(CurrentPage);
@@ -282,10 +279,7 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentPage = Notebook.Pages[currentPageIndex - 1];
         }
 
-        private bool OnMovePageUpCanExecute()
-        {
-            return Notebook.Pages.CanMoveItemUp(CurrentPage);
-        }
+        private bool OnMovePageUpCanExecute() { return Notebook.Pages.CanMoveItemUp(CurrentPage); }
 
         /// <summary>
         /// Moves the CurrentPage Down in the notebook.
@@ -303,16 +297,13 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentPage = Notebook.Pages[currentPageIndex + 1];
         }
 
-        private bool OnMovePageDownCanExecute()
-        {
-            return Notebook.Pages.CanMoveItemDown(CurrentPage);
-        }
+        private bool OnMovePageDownCanExecute() { return Notebook.Pages.CanMoveItemDown(CurrentPage); }
 
         /// <summary>
         /// Add 200 pixels to the height of the current page.
         /// </summary>
         public Command MakePageLongerCommand { get; private set; }
-        
+
         private void OnMakePageLongerCommandExecute()
         {
             var initialHeight = CurrentPage.Width / CurrentPage.InitialAspectRatio;
@@ -323,7 +314,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 CurrentPage.Height += PAGE_INCREASE_AMOUNT;
             }
 
-            if(App.CurrentUserMode != App.UserMode.Instructor || 
+            if(App.CurrentUserMode != App.UserMode.Instructor ||
                App.Network.ProjectorProxy == null)
             {
                 return;
@@ -333,10 +324,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 App.Network.ProjectorProxy.MakeCurrentPageLonger();
             }
-            catch(Exception)
-            {
-
-            }
+            catch(Exception) { }
         }
 
         /// <summary>
@@ -344,16 +332,13 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command TrimPageCommand { get; private set; }
 
-        private void OnTrimPageCommandExecute()
-        {
-            CurrentPage.TrimPage();
-        }
+        private void OnTrimPageCommandExecute() { CurrentPage.TrimPage(); }
 
         /// <summary>
         /// Converts current page between landscape and portrait.
         /// </summary>
         public Command SwitchPageLayoutCommand { get; private set; }
-       
+
         private void OnSwitchPageLayoutCommandExecute()
         {
             var page = CurrentPage;
@@ -362,7 +347,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 foreach(var pageObject in page.PageObjects)
                 {
-                    if (pageObject.XPosition + pageObject.Width > CLPPage.PORTRAIT_WIDTH)
+                    if(pageObject.XPosition + pageObject.Width > CLPPage.PORTRAIT_WIDTH)
                     {
                         pageObject.XPosition = CLPPage.PORTRAIT_WIDTH - pageObject.Width;
                     }
@@ -428,7 +413,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnDifferentiatePageCommandExecute()
         {
             var notebook = (App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).Notebook;
-            KeypadWindowView numberPageVersions = new KeypadWindowView();
+            var numberPageVersions = new KeypadWindowView();
             numberPageVersions.Owner = Application.Current.MainWindow;
             numberPageVersions.QuestionText.Text = "How many versions of the page?";
             numberPageVersions.NumbersEntered.Text = "4";
@@ -442,7 +427,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public void Differentiate(int groups)
         {
-            CLPPage originalPage = CurrentPage;
+            var originalPage = CurrentPage;
             originalPage.DifferentiationLevel = "A";
             var index = Notebook.Pages.IndexOf(originalPage);
             Notebook.Pages.Remove(originalPage);
@@ -464,9 +449,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 stroke.SetStrokeDifferentiationGroup(originalPage.DifferentiationLevel);
             }
 
-            for(int i = 1; i < groups; i++)
+            for(var i = 1; i < groups; i++)
             {
-                CLPPage differentiatedPage = originalPage.DuplicatePage();
+                var differentiatedPage = originalPage.DuplicatePage();
                 differentiatedPage.ID = originalPage.ID;
                 differentiatedPage.PageNumber = originalPage.PageNumber;
                 differentiatedPage.DifferentiationLevel = "" + (char)('A' + i);
@@ -488,17 +473,12 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
                 Notebook.Pages.Insert(index + i, differentiatedPage);
             }
-            
         }
 
         /// <summary>
         /// Deletes current page from the notebook.
         /// </summary>
-        public Command DeletePageCommand
-        {
-            get;
-            private set;
-        }
+        public Command DeletePageCommand { get; private set; }
 
         private void OnDeletePageCommandExecute()
         {
@@ -527,7 +507,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            var thumbnail = CLPServiceAgent.Instance.UIElementToImageByteArray(pageView as UIElement, CurrentPage.Width, dpi:300);
+            var thumbnail = CLPServiceAgent.Instance.UIElementToImageByteArray(pageView as UIElement, CurrentPage.Width, dpi: 300);
 
             var bitmapImage = new BitmapImage();
             bitmapImage.BeginInit();
@@ -537,7 +517,9 @@ namespace Classroom_Learning_Partner.ViewModels
             bitmapImage.Freeze();
 
             var thumbnailsFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Thumbnails");
-            var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, "Page - " + CurrentPage.PageNumber + ";" + CurrentPage.DifferentiationLevel + ";" + CurrentPage.VersionIndex + ";" + DateTime.Now.ToString("yyyy-M-d,hh.mm.ss") + ".png");
+            var thumbnailFilePath = Path.Combine(thumbnailsFolderPath,
+                                                 "Page - " + CurrentPage.PageNumber + ";" + CurrentPage.DifferentiationLevel + ";" + CurrentPage.VersionIndex + ";" +
+                                                 DateTime.Now.ToString("yyyy-M-d,hh.mm.ss") + ".png");
 
             if(!Directory.Exists(thumbnailsFolderPath))
             {
@@ -598,7 +580,6 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentPage.AddTag(productDefinition);
             if(CurrentPage.SubmissionType != SubmissionTypes.Unsubmitted)
             {
-                
                 return;
             }
 
@@ -618,6 +599,7 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentPage.AddTag(new ObjectTypesOnPage(CurrentPage, Origin.StudentPageGenerated, App.MainWindowViewModel.CurrentUser.ID));
             ArrayAnalysis.Analyze(CurrentPage);
             DivisionTemplateAnalysis.Analyze(CurrentPage);
+            ApplyInterpretedCorrectness(CurrentPage);
 
             if(CurrentPage.SubmissionType != SubmissionTypes.Unsubmitted)
             {
@@ -629,7 +611,62 @@ namespace Classroom_Learning_Partner.ViewModels
                 submission.AddTag(new ObjectTypesOnPage(submission, Origin.StudentPageGenerated, App.MainWindowViewModel.CurrentUser.ID));
                 ArrayAnalysis.Analyze(submission);
                 DivisionTemplateAnalysis.Analyze(submission);
+                ApplyInterpretedCorrectness(submission);
             }
+        }
+
+        public static void ApplyInterpretedCorrectness(CLPPage page)
+        {
+            var correctnessTag = page.Tags.FirstOrDefault(x => x is CorrectnessTag) as CorrectnessTag;
+            if(correctnessTag != null &&
+               correctnessTag.IsCorrectnessManuallySet)
+            {
+                return;
+            }
+
+            var correctnessTags =
+                page.Tags.OfType<DivisionTemplateInterpretedCorrectnessTag>()
+                    .Select(divisionTemplateCorrectnessTag => new CorrectnessTag(page, Origin.StudentPageGenerated, divisionTemplateCorrectnessTag.Correctness)).ToList();
+            correctnessTags.AddRange(page.Tags.OfType<ArrayInterpretedCorrectnessTag>()
+                                         .Select(arrayCorrectnessTag => new CorrectnessTag(page, Origin.StudentPageGenerated, arrayCorrectnessTag.Correctness)));
+
+            if(!correctnessTags.Any())
+            {
+                return;
+            }
+
+            var correctnessSum = Correctness.Unknown;
+            foreach(var tag in correctnessTags)
+            {
+                if(correctnessSum == tag.Correctness)
+                {
+                    continue;
+                }
+
+                if(correctnessSum == Correctness.Unknown)
+                {
+                    correctnessSum = tag.Correctness;
+                    continue;
+                }
+
+                if(correctnessSum == Correctness.Correct &&
+                   (tag.Correctness == Correctness.Incorrect ||
+                    tag.Correctness == Correctness.PartiallyCorrect))
+                {
+                    correctnessSum = Correctness.PartiallyCorrect;
+                    break;
+                }
+
+                if(tag.Correctness == Correctness.Correct &&
+                   (correctnessSum == Correctness.Incorrect ||
+                    correctnessSum == Correctness.PartiallyCorrect))
+                {
+                    correctnessSum = Correctness.PartiallyCorrect;
+                    break;
+                }
+            }
+
+            page.AddTag(new CorrectnessTag(page, Origin.StudentPageGenerated, correctnessSum));
         }
 
         /// <summary>
@@ -642,7 +679,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var savedTags = CurrentPage.Tags.Where(tag => tag is StarredTag || tag is DottedTag || tag is CorrectnessTag).ToList();
             CurrentPage.Tags = null;
             CurrentPage.Tags = new ObservableCollection<ITag>(savedTags);
-       //     SortedTags.Source = CurrentPage.Tags;
+            //     SortedTags.Source = CurrentPage.Tags;
 
             ArrayAnalysis.AnalyzeHistory(CurrentPage);
             DivisionTemplateAnalysis.AnalyzeHistory(CurrentPage);

@@ -501,7 +501,7 @@ namespace CLP.Entities
 
         public double AverageSubmissionHistoryLength
         {
-            get { return !Submissions.Any() ? -1 : Submissions.Select(submission => submission.History.HistoryLength).Average(); }
+            get { return !Submissions.Any() ? -1 : Math.Round(Submissions.Select(submission => submission.History.HistoryLength).Average()); }
         }
 
         public double MinSubmissionAnimationLength
@@ -516,7 +516,7 @@ namespace CLP.Entities
 
         public double AverageSubmissionAnimationLength
         {
-            get { return !Submissions.Any() ? -1 : Submissions.Select(submission => submission.History.TotalHistoryTicks).Average(); }
+            get { return !Submissions.Any() ? -1 : Math.Round(Submissions.Select(submission => submission.History.TotalHistoryTicks).Average()); }
         }
 
         #endregion //Properties
