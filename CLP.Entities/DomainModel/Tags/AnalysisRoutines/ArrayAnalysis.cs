@@ -155,8 +155,8 @@ namespace CLP.Entities
 
         public static void InterpretStrategies(CLPPage page, CLPArray array)
         {
-            InterpretAxisStrategies(page, array, array.HorizontalDivisions.Select(x => x.Value).ToList(), true);
-            InterpretAxisStrategies(page, array, array.VerticalDivisions.Select(x => x.Value).ToList(), false);
+            InterpretAxisStrategies(page, array, array.VerticalDivisions.Select(x => x.Value).ToList(), true);
+            InterpretAxisStrategies(page, array, array.HorizontalDivisions.Select(x => x.Value).ToList(), false);
             InterpretRegionStrategies(page, array);
         }
 
@@ -188,7 +188,7 @@ namespace CLP.Entities
                 return;
             }
 
-            if(dividerValues.SequenceEqual(PlaceValueStrategyDivisions(isXAxisStrategy ? array.Columns : array.Rows)))
+            if(dividerValues.OrderBy(x => x).SequenceEqual(PlaceValueStrategyDivisions(isXAxisStrategy ? array.Columns : array.Rows).OrderBy(x => x)))
             {
                 if(isXAxisStrategy)
                 {

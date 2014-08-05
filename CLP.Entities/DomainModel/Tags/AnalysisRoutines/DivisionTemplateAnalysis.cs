@@ -35,6 +35,18 @@ namespace CLP.Entities
             }
         }
 
+        private class DivisionTemplateAndRemainder
+        {
+            public DivisionTemplateAndRemainder(FuzzyFactorCard divisionTemplate, int remainder)
+            {
+                DivisionTemplate = divisionTemplate;
+                Remainder = remainder;
+            }
+
+            public FuzzyFactorCard DivisionTemplate;
+            public int Remainder;
+        }
+
         public static void AnalyzeHistory(CLPPage page)
         {
             var completeOrderedHistory = page.History.UndoItems.Reverse().Concat(page.History.RedoItems).ToList();
@@ -55,20 +67,33 @@ namespace CLP.Entities
             }
 
             //DivisionTemplateIncorrectArrayCreationTag
-            var divisionTemplatesOnPage = new List<FuzzyFactorCard>();
+            var divisionTemplatesOnPage = new List<DivisionTemplateAndRemainder>();
             var arraysOnPage = new List<CLPArray>();
             foreach(var historyItem in completeOrderedHistory)
             {
-                
-
                 var removedPageObjectsHistoryItem = historyItem as PageObjectsRemovedHistoryItem;
                 if(removedPageObjectsHistoryItem != null)
                 {
                     foreach(var pageObjectID in removedPageObjectsHistoryItem.PageObjectIDs)
                     {
-                        divisionTemplatesOnPage.RemoveAll(x => x.ID == pageObjectID);
+                        divisionTemplatesOnPage.RemoveAll(x => x.DivisionTemplate.ID == pageObjectID);
                         arraysOnPage.RemoveAll(x => x.ID == pageObjectID);
                     }
+                    continue;
+                }
+
+                var arraySnappedInHistoryItem = historyItem as FFCArraySnappedInHistoryItem;
+                if(arraySnappedInHistoryItem != null)
+                {
+                    var arrayToRemove = arraysOnPage.FirstOrDefault(x => x.ID == arraySnappedInHistoryItem.SnappedInArrayID);
+                    var divisionTemplateAndRemainder = divisionTemplatesOnPage.FirstOrDefault(x => x.DivisionTemplate.ID == arraySnappedInHistoryItem.FuzzyFactorCardID);
+                    if(divisionTemplateAndRemainder != null &&
+                       arrayToRemove != null)
+                    {
+                        arraysOnPage.Remove(arrayToRemove);
+                        divisionTemplateAndRemainder.Remainder -= (arrayToRemove.Rows * arrayToRemove.Columns);
+                    }
+                    continue;
                 }
 
                 var addedPageObjectHistoryItem = historyItem as PageObjectsAddedHistoryItem;
@@ -82,7 +107,7 @@ namespace CLP.Entities
                     var pageObject = page.GetPageObjectByID(pageObjectID) ?? page.History.GetPageObjectByID(pageObjectID);
                     if(pageObject is FuzzyFactorCard)
                     {
-                        divisionTemplatesOnPage.Add(pageObject as FuzzyFactorCard);
+                        divisionTemplatesOnPage.Add(new DivisionTemplateAndRemainder((pageObject as FuzzyFactorCard), (pageObject as FuzzyFactorCard).Dividend));
                         continue;
                     }
 
@@ -95,10 +120,10 @@ namespace CLP.Entities
                     arraysOnPage.Add(array);
                     var arrayArea = arraysOnPage.Sum(x => x.Rows * x.Columns);
 
-                    foreach(var divisionTemplate in divisionTemplatesOnPage)
+                    foreach(var divisionTemplateAndRemainder in divisionTemplatesOnPage)
                     {
-                        if(array.Columns == divisionTemplate.Dividend ||
-                           (array.Rows == divisionTemplate.Dividend))
+                        if(array.Columns == divisionTemplateAndRemainder.DivisionTemplate.Dividend ||
+                           (array.Rows == divisionTemplateAndRemainder.DivisionTemplate.Dividend))
                         {
                             var existingTag =
                                 page.Tags.OfType<DivisionTemplateIncorrectArrayCreationTag>()
@@ -117,8 +142,8 @@ namespace CLP.Entities
                             page.Tags.Add(newTag);
                         }
 
-                        if(array.Rows != divisionTemplate.Rows &&
-                           array.Columns == divisionTemplate.Rows)
+                        if(array.Rows != divisionTemplateAndRemainder.DivisionTemplate.Rows &&
+                           array.Columns == divisionTemplateAndRemainder.DivisionTemplate.Rows)
                         {
                             var existingTag =
                                 page.Tags.OfType<DivisionTemplateIncorrectArrayCreationTag>().FirstOrDefault(x => x.Value == DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.WrongOrientation);
@@ -135,7 +160,7 @@ namespace CLP.Entities
                                                                                        previousNumberOfAttempts + 1);
                             page.Tags.Add(newTag);
                         }
-                        else if(array.Rows != divisionTemplate.Rows)
+                        else if(array.Rows != divisionTemplateAndRemainder.DivisionTemplate.Rows)
                         {
                             var existingTag =
                                 page.Tags.OfType<DivisionTemplateIncorrectArrayCreationTag>()
@@ -154,7 +179,7 @@ namespace CLP.Entities
                             page.Tags.Add(newTag);
                         }
 
-                        if(arrayArea > divisionTemplate.CurrentRemainder)
+                        if(arrayArea > divisionTemplateAndRemainder.Remainder)
                         {
                             var existingTag =
                                 page.Tags.OfType<DivisionTemplateIncorrectArrayCreationTag>().FirstOrDefault(x => x.Value == DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.ArrayTooLarge);

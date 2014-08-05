@@ -58,7 +58,7 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
-                    <!--<RowDefinition Height="Auto" />-->
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <TextBlock Text="ID:" />
@@ -186,11 +186,11 @@
                         Height="20"
                         Margin="1" />
 
-                <!--<Button Content="Run History Analysis"
+                <Button Content="Run History Analysis"
                         Command="{Binding AnalyzePageHistoryCommand}"
                         Grid.ColumnSpan="2"
                         Height="20"
-                        Margin="1" />-->
+                        Margin="1" />
 
                 <TextBlock Text="TAGS"
                            FontWeight="Bold"
