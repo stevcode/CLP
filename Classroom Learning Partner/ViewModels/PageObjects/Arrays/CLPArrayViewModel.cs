@@ -471,7 +471,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                     if(existingTag != null)
                                     {
                                         previousNumberOfAttempts = existingTag.NumberOfAttempts;
-                                        pageObject.ParentPage.Tags.Remove(existingTag);
+                                        pageObject.ParentPage.RemoveTag(existingTag);
                                     }
                                     var newTag = new DivisionTemplateFailedSnapTag(pageObject.ParentPage,
                                                                                    App.CurrentUserMode == App.UserMode.Student ? Origin.StudentPageObjectGenerated : Origin.TeacherPageObjectGenerated,
@@ -489,7 +489,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                     if(existingTag != null)
                                     {
                                         previousNumberOfAttempts = existingTag.NumberOfAttempts;
-                                        pageObject.ParentPage.Tags.Remove(existingTag);
+                                        pageObject.ParentPage.RemoveTag(existingTag);
                                     }
                                     var newTag = new DivisionTemplateFailedSnapTag(pageObject.ParentPage,
                                                                                    App.CurrentUserMode == App.UserMode.Student ? Origin.StudentPageObjectGenerated : Origin.TeacherPageObjectGenerated,
@@ -520,7 +520,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                     if(existingTag != null)
                                     {
                                         previousNumberOfAttempts = existingTag.NumberOfAttempts;
-                                        pageObject.ParentPage.Tags.Remove(existingTag);
+                                        pageObject.ParentPage.RemoveTag(existingTag);
                                     }
                                     var newTag = new DivisionTemplateFailedSnapTag(pageObject.ParentPage,
                                                                                    App.CurrentUserMode == App.UserMode.Student ? Origin.StudentPageObjectGenerated : Origin.TeacherPageObjectGenerated,

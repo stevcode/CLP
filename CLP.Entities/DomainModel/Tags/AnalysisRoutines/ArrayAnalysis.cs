@@ -14,7 +14,7 @@ namespace CLP.Entities
             // First, clear out any old ArrayTags generated via Analysis.
             foreach(var tag in page.Tags.ToList().Where(tag => tag.Category == Category.Array && !(tag is ArrayTriedWrongDividerValuesTag)))
             {
-                page.Tags.Remove(tag);
+                page.RemoveTag(tag);
             }
 
             var productDefinitionTags = page.Tags.OfType<ProductDefinitionTag>().ToList();

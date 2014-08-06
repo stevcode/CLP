@@ -276,7 +276,7 @@ namespace CLP.Entities
                         if(existingTag != null)
                         {
                             previousNumberOfAttempts = existingTag.NumberOfAttempts;
-                            ParentPage.Tags.Remove(existingTag);
+                            ParentPage.RemoveTag(existingTag);
                         }
                         var newTag = new DivisionTemplateIncorrectArrayCreationTag(ParentPage,
                                                                                    Origin.StudentPageObjectGenerated,
@@ -295,7 +295,7 @@ namespace CLP.Entities
                         if(existingTag != null)
                         {
                             previousNumberOfAttempts = existingTag.NumberOfAttempts;
-                            ParentPage.Tags.Remove(existingTag);
+                            ParentPage.RemoveTag(existingTag);
                         }
                         var newTag = new DivisionTemplateIncorrectArrayCreationTag(ParentPage,
                                                                                    Origin.StudentPageObjectGenerated,
@@ -313,7 +313,7 @@ namespace CLP.Entities
                         if(existingTag != null)
                         {
                             previousNumberOfAttempts = existingTag.NumberOfAttempts;
-                            ParentPage.Tags.Remove(existingTag);
+                            ParentPage.RemoveTag(existingTag);
                         }
                         var newTag = new DivisionTemplateIncorrectArrayCreationTag(ParentPage,
                                                                                    Origin.StudentPageObjectGenerated,
@@ -332,7 +332,7 @@ namespace CLP.Entities
                 if(existingTag != null)
                 {
                     previousNumberOfAttempts = existingTag.NumberOfAttempts;
-                    ParentPage.Tags.Remove(existingTag);
+                    ParentPage.RemoveTag(existingTag);
                 }
                 var newTag = new DivisionTemplateIncorrectArrayCreationTag(ParentPage,
                                                                            Origin.StudentPageObjectGenerated,

@@ -14,7 +14,7 @@ namespace CLP.Entities
             // First, clear out any old DivisionTemplateTags generated via Analysis.
             foreach(var tag in page.Tags.ToList().Where(tag => tag is DivisionTemplateInterpretedCorrectnessTag || tag is DivisionTemplateStrategyTag || tag is DivisionTemplateCompletenessTag))
             {
-                page.Tags.Remove(tag);
+                page.RemoveTag(tag);
             }
 
             var productDefinitionTags = page.Tags.OfType<ProductDefinitionTag>().ToList();
@@ -133,7 +133,7 @@ namespace CLP.Entities
                             if(existingTag != null)
                             {
                                 previousNumberOfAttempts = existingTag.NumberOfAttempts;
-                                page.Tags.Remove(existingTag);
+                                page.RemoveTag(existingTag);
                             }
                             var newTag = new DivisionTemplateIncorrectArrayCreationTag(page,
                                                                                        Origin.StudentPageObjectGenerated,
@@ -152,7 +152,7 @@ namespace CLP.Entities
                             if(existingTag != null)
                             {
                                 previousNumberOfAttempts = existingTag.NumberOfAttempts;
-                                page.Tags.Remove(existingTag);
+                                page.RemoveTag(existingTag);
                             }
                             var newTag = new DivisionTemplateIncorrectArrayCreationTag(page,
                                                                                        Origin.StudentPageObjectGenerated,
@@ -170,7 +170,7 @@ namespace CLP.Entities
                             if(existingTag != null)
                             {
                                 previousNumberOfAttempts = existingTag.NumberOfAttempts;
-                                page.Tags.Remove(existingTag);
+                                page.RemoveTag(existingTag);
                             }
                             var newTag = new DivisionTemplateIncorrectArrayCreationTag(page,
                                                                                        Origin.StudentPageObjectGenerated,
@@ -188,7 +188,7 @@ namespace CLP.Entities
                             if(existingTag != null)
                             {
                                 previousNumberOfAttempts = existingTag.NumberOfAttempts;
-                                page.Tags.Remove(existingTag);
+                                page.RemoveTag(existingTag);
                             }
                             var newTag = new DivisionTemplateIncorrectArrayCreationTag(page,
                                                                                        Origin.StudentPageObjectGenerated,

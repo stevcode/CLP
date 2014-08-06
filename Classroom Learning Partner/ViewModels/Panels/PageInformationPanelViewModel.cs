@@ -547,7 +547,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            CurrentPage.Tags.Remove(tag);
+            CurrentPage.RemoveTag(tag);
         }
 
         /// <summary>

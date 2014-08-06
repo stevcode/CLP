@@ -680,6 +680,16 @@ namespace CLP.Entities
             Tags.Add(newTag);
         }
 
+        public void RemoveTag(ITag tag)
+        {
+            if(IsTagAddPrevented)
+            {
+                return;
+            }
+
+            Tags.Remove(tag);
+        }
+
         public CLPPage CopyForNewOwner(Person owner)
         {
             var newPage = Clone() as CLPPage;
