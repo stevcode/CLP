@@ -596,7 +596,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnAnalyzePageCommandExecute()
         {
-            CurrentPage.AddTag(new ObjectTypesOnPage(CurrentPage, Origin.StudentPageGenerated, App.MainWindowViewModel.CurrentUser.ID));
+            CurrentPage.AddTag(new ObjectTypesOnPageTag(CurrentPage, Origin.StudentPageGenerated, App.MainWindowViewModel.CurrentUser.ID));
+            CurrentPage.AddTag(new ObjectTypesInHistoryTag(CurrentPage, Origin.StudentPageGenerated));
             ArrayAnalysis.Analyze(CurrentPage);
             DivisionTemplateAnalysis.Analyze(CurrentPage);
             ApplyInterpretedCorrectness(CurrentPage);
@@ -608,7 +609,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
             foreach(var submission in CurrentPage.Submissions)
             {
-                submission.AddTag(new ObjectTypesOnPage(submission, Origin.StudentPageGenerated, App.MainWindowViewModel.CurrentUser.ID));
+                submission.AddTag(new ObjectTypesOnPageTag(submission, Origin.StudentPageGenerated, App.MainWindowViewModel.CurrentUser.ID));
+                submission.AddTag(new ObjectTypesInHistoryTag(submission, Origin.StudentPageGenerated));
                 ArrayAnalysis.Analyze(submission);
                 DivisionTemplateAnalysis.Analyze(submission);
                 ApplyInterpretedCorrectness(submission);

@@ -161,7 +161,8 @@
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateInterpretedCorrectnessTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateStrategyTag.cs" />
     <Compile Include="DomainModel\Tags\ITag.cs" />
-    <Compile Include="DomainModel\Tags\OtherPageInformation\ObjectTypesOnPage.cs" />
+    <Compile Include="DomainModel\Tags\OtherPageInformation\ObjectTypesInHistoryTag.cs" />
+    <Compile Include="DomainModel\Tags\OtherPageInformation\ObjectTypesOnPageTag.cs" />
     <Compile Include="DomainModel\Tags\CurriculumInformation\PageTopicTag.cs" />
     <Compile Include="DomainModel\Tags\OtherPageInformation\DottedTag.cs" />
     <Compile Include="DomainModel\Tags\OtherPageInformation\StarredTag.cs" />
