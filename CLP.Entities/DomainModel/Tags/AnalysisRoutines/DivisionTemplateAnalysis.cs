@@ -127,7 +127,7 @@ namespace CLP.Entities
                         {
                             var existingTag =
                                 page.Tags.OfType<DivisionTemplateIncorrectArrayCreationTag>()
-                                    .FirstOrDefault(x => x.Value == DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.ProductAsDimension);
+                                    .FirstOrDefault(x => x.Value == DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.DividendAsDivisor);
 
                             var previousNumberOfAttempts = 0;
                             if(existingTag != null)
@@ -137,7 +137,7 @@ namespace CLP.Entities
                             }
                             var newTag = new DivisionTemplateIncorrectArrayCreationTag(page,
                                                                                        Origin.StudentPageObjectGenerated,
-                                                                                       DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.ProductAsDimension,
+                                                                                       DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.DividendAsDivisor,
                                                                                        previousNumberOfAttempts + 1);
                             page.AddTag(newTag);
                         }
@@ -279,13 +279,13 @@ namespace CLP.Entities
 
             if(productDefinition.Product != divisionTemplate.Dividend)
             {
-                incorrectReasons.Add(DivisionTemplateIncorrectReason.WrongProduct);
+                incorrectReasons.Add(DivisionTemplateIncorrectReason.WrongDividend);
             }
 
             if((productDefinition.FirstFactor == divisionTemplate.Rows && productDefinition.UngivenProductPart != ProductPart.FirstFactor) ||
                (productDefinition.SecondFactor == divisionTemplate.Rows && productDefinition.UngivenProductPart != ProductPart.SecondFactor))
             {
-                incorrectReasons.Add(DivisionTemplateIncorrectReason.WrongFactor);
+                incorrectReasons.Add(DivisionTemplateIncorrectReason.WrongDivisor);
             }
 
             if(!incorrectReasons.Any())

@@ -270,7 +270,7 @@ namespace CLP.Entities
                     {
                         var existingTag =
                             ParentPage.Tags.OfType<DivisionTemplateIncorrectArrayCreationTag>()
-                                      .FirstOrDefault(x => x.Value == DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.ProductAsDimension);
+                                      .FirstOrDefault(x => x.Value == DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.DividendAsDivisor);
 
                         var previousNumberOfAttempts = 0;
                         if(existingTag != null)
@@ -280,7 +280,7 @@ namespace CLP.Entities
                         }
                         var newTag = new DivisionTemplateIncorrectArrayCreationTag(ParentPage,
                                                                                    Origin.StudentPageObjectGenerated,
-                                                                                   DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.ProductAsDimension,
+                                                                                   DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.DividendAsDivisor,
                                                                                    previousNumberOfAttempts + 1);
                         ParentPage.AddTag(newTag);
                     }

@@ -12,7 +12,7 @@ namespace CLP.Entities
             ArrayTooLarge,
             IncorrectDimension,
             WrongOrientation,
-            ProductAsDimension
+            DividendAsDivisor
         }
 
         #region Constructors
