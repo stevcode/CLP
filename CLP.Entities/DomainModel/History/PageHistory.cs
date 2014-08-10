@@ -177,7 +177,7 @@ namespace CLP.Entities
         }
 
         /// <summary>
-        /// Total Number of actions in the entire history.
+        /// Total Number of actions in the animation.
         /// </summary>
         public double TotalHistoryTicks
         {

@@ -60,9 +60,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Location = PanelLocations.Right;
         }
 
-        /// <summary>
-        /// Initial Length of the Panel, before any resizing.
-        /// </summary>
+        /// <summary>Initial Length of the Panel, before any resizing.</summary>
         public override double InitialLength
         {
             get { return 315.0; }
@@ -72,9 +70,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Model
 
-        /// <summary>
-        /// The Model for this ViewModel.
-        /// </summary>
+        /// <summary>The Model for this ViewModel.</summary>
         [Model(SupportIEditableObject = false)]
         public Notebook Notebook
         {
@@ -82,11 +78,9 @@ namespace Classroom_Learning_Partner.ViewModels
             private set { SetValue(NotebookProperty, value); }
         }
 
-        public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof(Notebook));
+        public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof (Notebook));
 
-        /// <summary>
-        /// Currently selected <see cref="CLPPage" /> of the <see cref="Notebook" />.
-        /// </summary>
+        /// <summary>Currently selected <see cref="CLPPage" /> of the <see cref="Notebook" />.</summary>
         [ViewModelToModel("Notebook")]
         [Model(SupportIEditableObject = false)]
         public CLPPage CurrentPage
@@ -95,23 +89,25 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(CurrentPageProperty, value); }
         }
 
-        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage), propertyChangedEventHandler: CurrentPageChanged);
+        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage",
+                                                                                   typeof (CLPPage),
+                                                                                   propertyChangedEventHandler: CurrentPageChanged);
 
         private static void CurrentPageChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
         {
             var viewModel = sender as PageInformationPanelViewModel;
-            if(!advancedPropertyChangedEventArgs.IsNewValueMeaningful ||
-               viewModel == null)
+            if (!advancedPropertyChangedEventArgs.IsNewValueMeaningful ||
+                viewModel == null)
             {
                 return;
             }
 
             viewModel.SortedTags.Source = viewModel.CurrentPage.Tags;
+            viewModel.RaisePropertyChanged("StandardDeviationZScore");
+            viewModel.RaisePropertyChanged("AnimationStandardDeviationZScore");
         }
 
-        /// <summary>
-        /// Unique Identifier for the <see cref="CLPPage" />.
-        /// </summary>
+        /// <summary>Unique Identifier for the <see cref="CLPPage" />.</summary>
         [ViewModelToModel("CurrentPage")]
         public string ID
         {
@@ -119,11 +115,9 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(IDProperty, value); }
         }
 
-        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string));
+        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof (string));
 
-        /// <summary>
-        /// Version Index of the <see cref="CLPPage" />.
-        /// </summary>
+        /// <summary>Version Index of the <see cref="CLPPage" />.</summary>
         [ViewModelToModel("CurrentPage")]
         public uint VersionIndex
         {
@@ -131,11 +125,9 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(VersionIndexProperty, value); }
         }
 
-        public static readonly PropertyData VersionIndexProperty = RegisterProperty("VersionIndex", typeof(uint));
+        public static readonly PropertyData VersionIndexProperty = RegisterProperty("VersionIndex", typeof (uint));
 
-        /// <summary>
-        /// DifferentiationLevel of the <see cref="CLPPage" />.
-        /// </summary>
+        /// <summary>DifferentiationLevel of the <see cref="CLPPage" />.</summary>
         [ViewModelToModel("CurrentPage")]
         public string DifferentiationLevel
         {
@@ -143,11 +135,9 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(DifferentiationLevelProperty, value); }
         }
 
-        public static readonly PropertyData DifferentiationLevelProperty = RegisterProperty("DifferentiationLevel", typeof(string));
+        public static readonly PropertyData DifferentiationLevelProperty = RegisterProperty("DifferentiationLevel", typeof (string));
 
-        /// <summary>
-        /// Page Number of the <see cref="CLPPage" /> within the <see cref="Notebook" />.
-        /// </summary>
+        /// <summary>Page Number of the <see cref="CLPPage" /> within the <see cref="Notebook" />.</summary>
         [ViewModelToModel("CurrentPage")]
         public decimal PageNumber
         {
@@ -155,10 +145,10 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(PageNumberProperty, value); }
         }
 
-        public static readonly PropertyData PageNumberProperty = RegisterProperty("PageNumber", typeof(decimal), 1);
+        public static readonly PropertyData PageNumberProperty = RegisterProperty("PageNumber", typeof (decimal), 1);
 
         /// <summary>
-        /// <see cref="ATagBase" />s for the <see cref="CLPPage" />.
+        ///     <see cref="ATagBase" />s for the <see cref="CLPPage" />.
         /// </summary>
         [ViewModelToModel("CurrentPage")]
         public ObservableCollection<ITag> Tags
@@ -167,13 +157,15 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(TagsProperty, value); }
         }
 
-        public static readonly PropertyData TagsProperty = RegisterProperty("Tags", typeof(ObservableCollection<ITag>), propertyChangedEventHandler: TagsChanged);
+        public static readonly PropertyData TagsProperty = RegisterProperty("Tags",
+                                                                            typeof (ObservableCollection<ITag>),
+                                                                            propertyChangedEventHandler: TagsChanged);
 
         private static void TagsChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
         {
             var viewModel = sender as PageInformationPanelViewModel;
-            if(!advancedPropertyChangedEventArgs.IsNewValueMeaningful ||
-               viewModel == null)
+            if (!advancedPropertyChangedEventArgs.IsNewValueMeaningful ||
+                viewModel == null)
             {
                 return;
             }
@@ -185,53 +177,102 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Bindings
 
-        /// <summary>
-        /// List of possible page orientations for page creation.
-        /// </summary>
+        /// <summary>List of possible page orientations for page creation.</summary>
         public ObservableCollection<string> PageOrientations
         {
             get { return GetValue<ObservableCollection<string>>(PageOrientationsProperty); }
             set { SetValue(PageOrientationsProperty, value); }
         }
 
-        public static readonly PropertyData PageOrientationsProperty = RegisterProperty("PageOrientations", typeof(ObservableCollection<string>), () => new ObservableCollection<string>());
+        public static readonly PropertyData PageOrientationsProperty = RegisterProperty("PageOrientations",
+                                                                                        typeof (ObservableCollection<string>),
+                                                                                        () => new ObservableCollection<string>());
 
-        /// <summary>
-        /// The currently selected Page Orientation.
-        /// </summary>
+        /// <summary>The currently selected Page Orientation.</summary>
         public string SelectedPageOrientation
         {
             get { return GetValue<string>(SelectedPageOrientationProperty); }
             set { SetValue(SelectedPageOrientationProperty, value); }
         }
 
-        public static readonly PropertyData SelectedPageOrientationProperty = RegisterProperty("SelectedPageOrientation", typeof(string));
+        public static readonly PropertyData SelectedPageOrientationProperty = RegisterProperty("SelectedPageOrientation", typeof (string));
 
-        /// <summary>
-        /// Sorted list of <see cref="ITag" />s by category.
-        /// </summary>
+        /// <summary>Sorted list of <see cref="ITag" />s by category.</summary>
         public CollectionViewSource SortedTags
         {
             get { return GetValue<CollectionViewSource>(SortedTagsProperty); }
             set { SetValue(SortedTagsProperty, value); }
         }
 
-        public static readonly PropertyData SortedTagsProperty = RegisterProperty("SortedTags", typeof(CollectionViewSource), () => new CollectionViewSource());
+        public static readonly PropertyData SortedTagsProperty = RegisterProperty("SortedTags",
+                                                                                  typeof (CollectionViewSource),
+                                                                                  () => new CollectionViewSource());
+
+        public double StandardDeviationZScore
+        {
+            get
+            {
+                if (CurrentPage.SubmissionType == SubmissionTypes.Unsubmitted)
+                {
+                    return Double.NaN;
+                }
+
+                var parentPage =
+                    Notebook.Pages.FirstOrDefault(
+                                                  x =>
+                                                  x.ID == CurrentPage.ID && x.DifferentiationLevel == CurrentPage.DifferentiationLevel &&
+                                                  x.VersionIndex == 0);
+                if (parentPage == null)
+                {
+                    return Double.NaN;
+                }
+
+                var mean = parentPage.AverageSubmissionHistoryLength;
+                var standardDeviation =
+                    Math.Sqrt(parentPage.Submissions.Select(x => (double)x.History.HistoryLength).Average(x => Math.Pow(x - mean, 2)));
+                var zScore = (CurrentPage.History.HistoryLength - mean) / standardDeviation;
+                return Math.Round(zScore, 4, MidpointRounding.AwayFromZero);
+            }
+        }
+
+        public double AnimationStandardDeviationZScore
+        {
+            get
+            {
+                if (CurrentPage.SubmissionType == SubmissionTypes.Unsubmitted)
+                {
+                    return Double.NaN;
+                }
+
+                var parentPage =
+                    Notebook.Pages.FirstOrDefault(
+                                                  x =>
+                                                  x.ID == CurrentPage.ID && x.DifferentiationLevel == CurrentPage.DifferentiationLevel &&
+                                                  x.VersionIndex == 0);
+                if (parentPage == null)
+                {
+                    return Double.NaN;
+                }
+
+                var mean = parentPage.AverageSubmissionAnimationLength;
+                var standardDeviation = Math.Sqrt(parentPage.Submissions.Select(x => x.History.TotalHistoryTicks).Average(x => Math.Pow(x - mean, 2)));
+                var zScore = (CurrentPage.History.TotalHistoryTicks - mean) / standardDeviation;
+                return Math.Round(zScore, 4, MidpointRounding.AwayFromZero);
+            }
+        }
 
         #endregion //Bindings
 
         #region Commands
 
-        /// <summary>
-        /// Adds a new page to the notebook.
-        /// </summary>
+        /// <summary>Adds a new page to the notebook.</summary>
         public Command AddPageCommand { get; private set; }
 
         private void OnAddPageCommandExecute()
         {
             var isPortrait = false;
             var isAnimation = false;
-            switch(SelectedPageOrientation)
+            switch (SelectedPageOrientation)
             {
                 case "Default - Landscape":
                     break;
@@ -250,22 +291,20 @@ namespace Classroom_Learning_Partner.ViewModels
             var index = Notebook.Pages.IndexOf(CurrentPage);
             index++;
             var page = new CLPPage(App.MainWindowViewModel.CurrentUser);
-            if(isPortrait)
+            if (isPortrait)
             {
                 page.Height = CLPPage.PORTRAIT_HEIGHT;
                 page.Width = CLPPage.PORTRAIT_WIDTH;
                 page.InitialAspectRatio = page.Width / page.Height;
             }
-            if(isAnimation)
+            if (isAnimation)
             {
                 page.PageType = PageTypes.Animation;
             }
             Notebook.InsertPageAt(index, page);
         }
 
-        /// <summary>
-        /// Moves the CurrentPage Up in the notebook.
-        /// </summary>
+        /// <summary>Moves the CurrentPage Up in the notebook.</summary>
         public Command MovePageUpCommand { get; private set; }
 
         private void OnMovePageUpCommandExecute()
@@ -281,9 +320,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private bool OnMovePageUpCanExecute() { return Notebook.Pages.CanMoveItemUp(CurrentPage); }
 
-        /// <summary>
-        /// Moves the CurrentPage Down in the notebook.
-        /// </summary>
+        /// <summary>Moves the CurrentPage Down in the notebook.</summary>
         public Command MovePageDownCommand { get; private set; }
 
         private void OnMovePageDownCommandExecute()
@@ -299,9 +336,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private bool OnMovePageDownCanExecute() { return Notebook.Pages.CanMoveItemDown(CurrentPage); }
 
-        /// <summary>
-        /// Add 200 pixels to the height of the current page.
-        /// </summary>
+        /// <summary>Add 200 pixels to the height of the current page.</summary>
         public Command MakePageLongerCommand { get; private set; }
 
         private void OnMakePageLongerCommandExecute()
@@ -309,13 +344,13 @@ namespace Classroom_Learning_Partner.ViewModels
             var initialHeight = CurrentPage.Width / CurrentPage.InitialAspectRatio;
             const int MAX_INCREASE_TIMES = 2;
             const double PAGE_INCREASE_AMOUNT = 200.0;
-            if(CurrentPage.Height < initialHeight + PAGE_INCREASE_AMOUNT * MAX_INCREASE_TIMES)
+            if (CurrentPage.Height < initialHeight + PAGE_INCREASE_AMOUNT * MAX_INCREASE_TIMES)
             {
                 CurrentPage.Height += PAGE_INCREASE_AMOUNT;
             }
 
-            if(App.CurrentUserMode != App.UserMode.Instructor ||
-               App.Network.ProjectorProxy == null)
+            if (App.CurrentUserMode != App.UserMode.Instructor ||
+                App.Network.ProjectorProxy == null)
             {
                 return;
             }
@@ -324,34 +359,30 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 App.Network.ProjectorProxy.MakeCurrentPageLonger();
             }
-            catch(Exception) { }
+            catch (Exception) { }
         }
 
-        /// <summary>
-        /// Trims the current page's excess height if free of ink strokes and pageObjects.
-        /// </summary>
+        /// <summary>Trims the current page's excess height if free of ink strokes and pageObjects.</summary>
         public Command TrimPageCommand { get; private set; }
 
         private void OnTrimPageCommandExecute() { CurrentPage.TrimPage(); }
 
-        /// <summary>
-        /// Converts current page between landscape and portrait.
-        /// </summary>
+        /// <summary>Converts current page between landscape and portrait.</summary>
         public Command SwitchPageLayoutCommand { get; private set; }
 
         private void OnSwitchPageLayoutCommandExecute()
         {
             var page = CurrentPage;
 
-            if(Math.Abs(page.InitialAspectRatio - CLPPage.LANDSCAPE_WIDTH / CLPPage.LANDSCAPE_HEIGHT) < 0.01)
+            if (Math.Abs(page.InitialAspectRatio - CLPPage.LANDSCAPE_WIDTH / CLPPage.LANDSCAPE_HEIGHT) < 0.01)
             {
-                foreach(var pageObject in page.PageObjects)
+                foreach (var pageObject in page.PageObjects)
                 {
-                    if(pageObject.XPosition + pageObject.Width > CLPPage.PORTRAIT_WIDTH)
+                    if (pageObject.XPosition + pageObject.Width > CLPPage.PORTRAIT_WIDTH)
                     {
                         pageObject.XPosition = CLPPage.PORTRAIT_WIDTH - pageObject.Width;
                     }
-                    if(pageObject.YPosition + pageObject.Height > CLPPage.PORTRAIT_HEIGHT)
+                    if (pageObject.YPosition + pageObject.Height > CLPPage.PORTRAIT_HEIGHT)
                     {
                         pageObject.YPosition = CLPPage.PORTRAIT_HEIGHT - pageObject.Height;
                     }
@@ -361,15 +392,15 @@ namespace Classroom_Learning_Partner.ViewModels
                 page.Height = CLPPage.PORTRAIT_HEIGHT;
                 page.InitialAspectRatio = page.Width / page.Height;
             }
-            else if(Math.Abs(page.InitialAspectRatio - CLPPage.PORTRAIT_WIDTH / CLPPage.PORTRAIT_HEIGHT) < 0.01)
+            else if (Math.Abs(page.InitialAspectRatio - CLPPage.PORTRAIT_WIDTH / CLPPage.PORTRAIT_HEIGHT) < 0.01)
             {
-                foreach(var pageObject in page.PageObjects)
+                foreach (var pageObject in page.PageObjects)
                 {
-                    if(pageObject.XPosition + pageObject.Width > CLPPage.LANDSCAPE_WIDTH)
+                    if (pageObject.XPosition + pageObject.Width > CLPPage.LANDSCAPE_WIDTH)
                     {
                         pageObject.XPosition = CLPPage.LANDSCAPE_WIDTH - pageObject.Width;
                     }
-                    if(pageObject.YPosition + pageObject.Height > CLPPage.LANDSCAPE_HEIGHT)
+                    if (pageObject.YPosition + pageObject.Height > CLPPage.LANDSCAPE_HEIGHT)
                     {
                         pageObject.YPosition = CLPPage.LANDSCAPE_HEIGHT - pageObject.Height;
                     }
@@ -381,9 +412,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        /// <summary>
-        /// Completely clears a page of ink strokes and pageObjects.
-        /// </summary>
+        /// <summary>Completely clears a page of ink strokes and pageObjects.</summary>
         public Command ClearPageCommand { get; private set; }
 
         private void OnClearPageCommandExecute()
@@ -394,9 +423,7 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentPage.SerializedStrokes.Clear();
         }
 
-        /// <summary>
-        /// Makes a duplicate of the current page.
-        /// </summary>
+        /// <summary>Makes a duplicate of the current page.</summary>
         public Command CopyPageCommand { get; private set; }
 
         private void OnCopyPageCommandExecute()
@@ -419,7 +446,7 @@ namespace Classroom_Learning_Partner.ViewModels
             numberPageVersions.NumbersEntered.Text = "4";
 
             numberPageVersions.ShowDialog();
-            if(numberPageVersions.DialogResult == true)
+            if (numberPageVersions.DialogResult == true)
             {
                 Differentiate(Convert.ToInt32(numberPageVersions.NumbersEntered.Text));
             }
@@ -432,42 +459,42 @@ namespace Classroom_Learning_Partner.ViewModels
             var index = Notebook.Pages.IndexOf(originalPage);
             Notebook.Pages.Remove(originalPage);
             Notebook.Pages.Insert(index, originalPage);
-            foreach(var pageObject in originalPage.PageObjects)
+            foreach (var pageObject in originalPage.PageObjects)
             {
                 pageObject.DifferentiationLevel = originalPage.DifferentiationLevel;
             }
-            foreach(var historyItem in originalPage.History.UndoItems)
+            foreach (var historyItem in originalPage.History.UndoItems)
             {
                 historyItem.DifferentiationGroup = originalPage.DifferentiationLevel;
             }
-            foreach(var historyItem in originalPage.History.RedoItems)
+            foreach (var historyItem in originalPage.History.RedoItems)
             {
                 historyItem.DifferentiationGroup = originalPage.DifferentiationLevel;
             }
-            foreach(var stroke in originalPage.InkStrokes)
+            foreach (var stroke in originalPage.InkStrokes)
             {
                 stroke.SetStrokeDifferentiationGroup(originalPage.DifferentiationLevel);
             }
 
-            for(var i = 1; i < groups; i++)
+            for (var i = 1; i < groups; i++)
             {
                 var differentiatedPage = originalPage.DuplicatePage();
                 differentiatedPage.ID = originalPage.ID;
                 differentiatedPage.PageNumber = originalPage.PageNumber;
                 differentiatedPage.DifferentiationLevel = "" + (char)('A' + i);
-                foreach(var pageObject in differentiatedPage.PageObjects)
+                foreach (var pageObject in differentiatedPage.PageObjects)
                 {
                     pageObject.DifferentiationLevel = differentiatedPage.DifferentiationLevel;
                 }
-                foreach(var historyItem in differentiatedPage.History.UndoItems)
+                foreach (var historyItem in differentiatedPage.History.UndoItems)
                 {
                     historyItem.DifferentiationGroup = differentiatedPage.DifferentiationLevel;
                 }
-                foreach(var historyItem in differentiatedPage.History.RedoItems)
+                foreach (var historyItem in differentiatedPage.History.RedoItems)
                 {
                     historyItem.DifferentiationGroup = differentiatedPage.DifferentiationLevel;
                 }
-                foreach(var stroke in differentiatedPage.InkStrokes)
+                foreach (var stroke in differentiatedPage.InkStrokes)
                 {
                     stroke.SetStrokeDifferentiationGroup(differentiatedPage.DifferentiationLevel);
                 }
@@ -475,34 +502,32 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        /// <summary>
-        /// Deletes current page from the notebook.
-        /// </summary>
+        /// <summary>Deletes current page from the notebook.</summary>
         public Command DeletePageCommand { get; private set; }
 
         private void OnDeletePageCommandExecute()
         {
             var index = Notebook.Pages.IndexOf(CurrentPage);
-            if(index == -1)
+            if (index == -1)
             {
                 return;
             }
             Notebook.RemovePageAt(index);
         }
 
-        /// <summary>
-        /// Takes and saves a hi-res screenshot of the current page.
-        /// </summary>
+        /// <summary>Takes and saves a hi-res screenshot of the current page.</summary>
         public Command PageScreenshotCommand { get; private set; }
 
         private void OnPageScreenshotCommandExecute()
         {
-            var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(CurrentPage).First(x => (x is CLPPageViewModel) && !(x as CLPPageViewModel).IsPagePreview);
+            var pageViewModel =
+                CLPServiceAgent.Instance.GetViewModelsFromModel(CurrentPage)
+                               .First(x => (x is CLPPageViewModel) && !(x as CLPPageViewModel).IsPagePreview);
 
             var viewManager = Catel.IoC.ServiceLocator.Default.ResolveType<IViewManager>();
             var views = viewManager.GetViewsOfViewModel(pageViewModel);
             var pageView = views.FirstOrDefault(view => view is CLPPageView) as CLPPageView;
-            if(pageView == null)
+            if (pageView == null)
             {
                 return;
             }
@@ -518,31 +543,29 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var thumbnailsFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Thumbnails");
             var thumbnailFilePath = Path.Combine(thumbnailsFolderPath,
-                                                 "Page - " + CurrentPage.PageNumber + ";" + CurrentPage.DifferentiationLevel + ";" + CurrentPage.VersionIndex + ";" +
-                                                 DateTime.Now.ToString("yyyy-M-d,hh.mm.ss") + ".png");
+                                                 "Page - " + CurrentPage.PageNumber + ";" + CurrentPage.DifferentiationLevel + ";" +
+                                                 CurrentPage.VersionIndex + ";" + DateTime.Now.ToString("yyyy-M-d,hh.mm.ss") + ".png");
 
-            if(!Directory.Exists(thumbnailsFolderPath))
+            if (!Directory.Exists(thumbnailsFolderPath))
             {
                 Directory.CreateDirectory(thumbnailsFolderPath);
             }
 
             var pngEncoder = new PngBitmapEncoder();
             pngEncoder.Frames.Add(BitmapFrame.Create(bitmapImage));
-            using(var outputStream = new MemoryStream())
+            using (var outputStream = new MemoryStream())
             {
                 pngEncoder.Save(outputStream);
                 File.WriteAllBytes(thumbnailFilePath, outputStream.ToArray());
             }
         }
 
-        /// <summary>
-        /// Deletes an <see cref="ITag" /> from the <see cref="CLPPage" />.
-        /// </summary>
+        /// <summary>Deletes an <see cref="ITag" /> from the <see cref="CLPPage" />.</summary>
         public Command<ITag> DeleteTagCommand { get; private set; }
 
         private void OnDeleteTagCommandExecute(ITag tag)
         {
-            if(!CurrentPage.Tags.Contains(tag))
+            if (!CurrentPage.Tags.Contains(tag))
             {
                 return;
             }
@@ -550,9 +573,7 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentPage.RemoveTag(tag);
         }
 
-        /// <summary>
-        /// Adds a Definiton Tag to the <see cref="CLPPage" />.
-        /// </summary>
+        /// <summary>Adds a Definiton Tag to the <see cref="CLPPage" />.</summary>
         public Command AddAnswerDefinitionCommand { get; private set; }
 
         private void OnAddAnswerDefinitionCommandExecute()
@@ -572,26 +593,24 @@ namespace Classroom_Learning_Partner.ViewModels
                                  };
             definitionView.ShowDialog();
 
-            if(definitionView.DialogResult != true)
+            if (definitionView.DialogResult != true)
             {
                 return;
             }
 
             CurrentPage.AddTag(productDefinition);
-            if(CurrentPage.SubmissionType != SubmissionTypes.Unsubmitted)
+            if (CurrentPage.SubmissionType != SubmissionTypes.Unsubmitted)
             {
                 return;
             }
 
-            foreach(var submission in CurrentPage.Submissions)
+            foreach (var submission in CurrentPage.Submissions)
             {
                 submission.AddTag(productDefinition);
             }
         }
 
-        /// <summary>
-        /// Runs analysis routines on the page.
-        /// </summary>
+        /// <summary>Runs analysis routines on the page.</summary>
         public Command AnalyzePageCommand { get; private set; }
 
         private void OnAnalyzePageCommandExecute()
@@ -602,12 +621,12 @@ namespace Classroom_Learning_Partner.ViewModels
             DivisionTemplateAnalysis.Analyze(CurrentPage);
             ApplyInterpretedCorrectness(CurrentPage);
 
-            if(CurrentPage.SubmissionType != SubmissionTypes.Unsubmitted)
+            if (CurrentPage.SubmissionType != SubmissionTypes.Unsubmitted)
             {
                 return;
             }
 
-            foreach(var submission in CurrentPage.Submissions)
+            foreach (var submission in CurrentPage.Submissions)
             {
                 submission.AddTag(new ObjectTypesOnPageTag(submission, Origin.StudentPageGenerated, App.MainWindowViewModel.CurrentUser.ID));
                 submission.AddTag(new ObjectTypesInHistoryTag(submission, Origin.StudentPageGenerated));
@@ -620,48 +639,52 @@ namespace Classroom_Learning_Partner.ViewModels
         public static void ApplyInterpretedCorrectness(CLPPage page)
         {
             var correctnessTag = page.Tags.FirstOrDefault(x => x is CorrectnessTag) as CorrectnessTag;
-            if(correctnessTag != null &&
-               correctnessTag.IsCorrectnessManuallySet)
+            if (correctnessTag != null &&
+                correctnessTag.IsCorrectnessManuallySet)
             {
                 return;
             }
 
             var correctnessTags =
                 page.Tags.OfType<DivisionTemplateInterpretedCorrectnessTag>()
-                    .Select(divisionTemplateCorrectnessTag => new CorrectnessTag(page, Origin.StudentPageGenerated, divisionTemplateCorrectnessTag.Correctness)).ToList();
-            correctnessTags.AddRange(page.Tags.OfType<ArrayInterpretedCorrectnessTag>()
-                                         .Select(arrayCorrectnessTag => new CorrectnessTag(page, Origin.StudentPageGenerated, arrayCorrectnessTag.Correctness)));
+                    .Select(
+                            divisionTemplateCorrectnessTag =>
+                            new CorrectnessTag(page, Origin.StudentPageGenerated, divisionTemplateCorrectnessTag.Correctness))
+                    .ToList();
+            correctnessTags.AddRange(
+                                     page.Tags.OfType<ArrayInterpretedCorrectnessTag>()
+                                         .Select(
+                                                 arrayCorrectnessTag =>
+                                                 new CorrectnessTag(page, Origin.StudentPageGenerated, arrayCorrectnessTag.Correctness)));
 
-            if(!correctnessTags.Any())
+            if (!correctnessTags.Any())
             {
                 return;
             }
 
             var correctnessSum = Correctness.Unknown;
-            foreach(var tag in correctnessTags)
+            foreach (var tag in correctnessTags)
             {
-                if(correctnessSum == tag.Correctness)
+                if (correctnessSum == tag.Correctness)
                 {
                     continue;
                 }
 
-                if(correctnessSum == Correctness.Unknown)
+                if (correctnessSum == Correctness.Unknown)
                 {
                     correctnessSum = tag.Correctness;
                     continue;
                 }
 
-                if(correctnessSum == Correctness.Correct &&
-                   (tag.Correctness == Correctness.Incorrect ||
-                    tag.Correctness == Correctness.PartiallyCorrect))
+                if (correctnessSum == Correctness.Correct &&
+                    (tag.Correctness == Correctness.Incorrect || tag.Correctness == Correctness.PartiallyCorrect))
                 {
                     correctnessSum = Correctness.PartiallyCorrect;
                     break;
                 }
 
-                if(tag.Correctness == Correctness.Correct &&
-                   (correctnessSum == Correctness.Incorrect ||
-                    correctnessSum == Correctness.PartiallyCorrect))
+                if (tag.Correctness == Correctness.Correct &&
+                    (correctnessSum == Correctness.Incorrect || correctnessSum == Correctness.PartiallyCorrect))
                 {
                     correctnessSum = Correctness.PartiallyCorrect;
                     break;
@@ -671,9 +694,7 @@ namespace Classroom_Learning_Partner.ViewModels
             page.AddTag(new CorrectnessTag(page, Origin.StudentPageGenerated, correctnessSum));
         }
 
-        /// <summary>
-        /// Analyzes the history of the <see cref="CLPPage" /> to determine potential <see cref="ITag" />s.
-        /// </summary>
+        /// <summary>Analyzes the history of the <see cref="CLPPage" /> to determine potential <see cref="ITag" />s.</summary>
         public Command AnalyzePageHistoryCommand { get; private set; }
 
         private void OnAnalyzePageHistoryCommandExecute()
@@ -686,12 +707,12 @@ namespace Classroom_Learning_Partner.ViewModels
             ArrayAnalysis.AnalyzeHistory(CurrentPage);
             DivisionTemplateAnalysis.AnalyzeHistory(CurrentPage);
 
-            if(CurrentPage.SubmissionType != SubmissionTypes.Unsubmitted)
+            if (CurrentPage.SubmissionType != SubmissionTypes.Unsubmitted)
             {
                 return;
             }
 
-            foreach(var submission in CurrentPage.Submissions)
+            foreach (var submission in CurrentPage.Submissions)
             {
                 var savedSubmissionTags = submission.Tags.Where(tag => tag is StarredTag || tag is DottedTag || tag is CorrectnessTag).ToList();
                 submission.Tags = null;

@@ -56,8 +56,6 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
                     <!--<RowDefinition Height="Auto" />-->
                 </Grid.RowDefinitions>
 
@@ -80,33 +78,45 @@
                 <TextBox Text="{Binding CurrentPage.History.HistoryLength, Mode=OneWay}"
                          IsReadOnly="True" />
 
+                <TextBlock Text="History Z-Score:" />
+                <TextBox Text="{Binding StandardDeviationZScore, Mode=OneWay}"
+                         IsReadOnly="True" />
+
+                <TextBlock Text="Min/Max/Avg:" />
+                <TextBox IsReadOnly="True">
+                    <TextBox.Text>
+                        <MultiBinding StringFormat="{}{0} / {1} / {2}">
+                            <Binding Path="CurrentPage.MinSubmissionHistoryLength"
+                                     Mode="OneWay" />
+                            <Binding Path="CurrentPage.MaxSubmissionHistoryLength"
+                                     Mode="OneWay" />
+                            <Binding Path="CurrentPage.AverageSubmissionHistoryLength"
+                                     Mode="OneWay" />
+                        </MultiBinding>
+                    </TextBox.Text>
+                </TextBox>
+
                 <TextBlock Text="Animation Length:" />
                 <TextBox Text="{Binding CurrentPage.History.TotalHistoryTicks, Mode=OneWay}"
                          IsReadOnly="True" />
 
-                <TextBlock Text="Min History Length:" />
-                <TextBox Text="{Binding CurrentPage.MinSubmissionHistoryLength, Mode=OneWay}"
+                <TextBlock Text="Animation Z-Score:" />
+                <TextBox Text="{Binding AnimationStandardDeviationZScore, Mode=OneWay}"
                          IsReadOnly="True" />
 
-                <TextBlock Text="Max History Length:" />
-                <TextBox Text="{Binding CurrentPage.MaxSubmissionHistoryLength, Mode=OneWay}"
-                         IsReadOnly="True" />
-
-                <TextBlock Text="Average History Length:" />
-                <TextBox Text="{Binding CurrentPage.AverageSubmissionHistoryLength, Mode=OneWay}"
-                         IsReadOnly="True" />
-
-                <TextBlock Text="Min Animation Length:" />
-                <TextBox Text="{Binding CurrentPage.MinSubmissionAnimationLength, Mode=OneWay}"
-                         IsReadOnly="True" />
-
-                <TextBlock Text="Max Animation Length:" />
-                <TextBox Text="{Binding CurrentPage.MaxSubmissionAnimationLength, Mode=OneWay}"
-                         IsReadOnly="True" />
-
-                <TextBlock Text="Average Animation Length:" />
-                <TextBox Text="{Binding CurrentPage.AverageSubmissionAnimationLength, Mode=OneWay}"
-                         IsReadOnly="True" />
+                <TextBlock Text="Min/Max/Avg:" />
+                <TextBox IsReadOnly="True">
+                    <TextBox.Text>
+                        <MultiBinding StringFormat="{}{0} / {1} / {2}">
+                            <Binding Path="CurrentPage.MinSubmissionAnimationLength"
+                                     Mode="OneWay" />
+                            <Binding Path="CurrentPage.MaxSubmissionAnimationLength"
+                                     Mode="OneWay" />
+                            <Binding Path="CurrentPage.AverageSubmissionAnimationLength"
+                                     Mode="OneWay" />
+                        </MultiBinding>
+                    </TextBox.Text>
+                </TextBox>
 
                 <Button Content="Add Page:"
                         Command="{Binding AddPageCommand}"
