@@ -4,14 +4,24 @@
                    xmlns:sys="clr-namespace:System;assembly=mscorlib"
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views">
+                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
+                   xmlns:viewModels="clr-namespace:Classroom_Learning_Partner.ViewModels"
+                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters">
+
+    <UserControl.Resources>
+        <conv:EnumToBoolConverter x:Key="EnumToBoolConverter" />
+    </UserControl.Resources>
+    
     <Grid x:Name="TopGrid">
         <Grid.Style>
             <Style TargetType="Grid">
-                <Setter Property="Background" Value="PaleGreen" />
+                <Setter Property="Background"
+                        Value="PaleGreen" />
                 <Style.Triggers>
-                    <DataTrigger Binding="{Binding MainWindowViewModel.Ribbon.IsProjectorFrozen, Source={x:Static Application.Current}}" Value="True">
-                        <Setter Property="Background" Value="Transparent" />
+                    <DataTrigger Binding="{Binding MainWindowViewModel.Ribbon.IsProjectorFrozen, Source={x:Static Application.Current}}"
+                                 Value="True">
+                        <Setter Property="Background"
+                                Value="Transparent" />
                     </DataTrigger>
                 </Style.Triggers>
             </Style>
@@ -25,15 +35,17 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
             <views:AnimationPageToolBar x:Name="AnimationPageToolBar"
-                                        Grid.Column="1" 
-                                        Grid.Row="0" 
+                                        Grid.Column="1"
+                                        Grid.Row="0"
                                         Width="{Binding DataContext.BorderWidth, ElementName=TopGrid}">
                 <views:AnimationPageToolBar.Style>
                     <Style TargetType="{x:Type views:AnimationPageToolBar}">
-                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Setter Property="Visibility"
+                                Value="Collapsed" />
                         <Style.Triggers>
                             <!--Animitation Page ToolBar-->
                             <DataTrigger Binding="{Binding PageType}"
@@ -44,7 +56,7 @@
                         </Style.Triggers>
                     </Style>
                 </views:AnimationPageToolBar.Style>
-                
+
             </views:AnimationPageToolBar>
 
             <TextBlock Grid.Column="0"
@@ -102,9 +114,9 @@
                     <Grid Width="{Binding DimensionWidth}"
                           Height="{Binding DimensionHeight}">
 
-                        <views:CLPPageView x:Name="CLPPageView" 
+                        <views:CLPPageView x:Name="CLPPageView"
                                            DataContext="{Binding CurrentPage}"
-                                           ViewModelChanged="CLPPageView_OnViewModelChanged"/>
+                                           ViewModelChanged="CLPPageView_OnViewModelChanged" />
 
                     </Grid>
                 </ScrollViewer>
@@ -116,6 +128,58 @@
                        Stroke="{StaticResource GrayBorderColor}"
                        Width="{Binding BorderWidth}"
                        Height="{Binding BorderHeight}" />
+
+            <ToggleButton Grid.Column="2"
+                          Grid.Row="1"
+                          Width="30"
+                          Height="30"
+                          Margin="-20 0 0 0"
+                          Cursor="Hand"
+                          IsChecked="{Binding MainWindowViewModel.Ribbon.CurrentRightPanel, Source={x:Static Application.Current}, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.PageInformation}}"
+                          Visibility="{Binding MainWindowViewModel.Ribbon.InstructorVisibility, Source={x:Static Application.Current}}"
+                          VerticalAlignment="Top">
+
+                <ToggleButton.Style>
+                    <Style TargetType="{x:Type ToggleButton}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                    <Image Source="pack://application:,,,/Resources/Images/Info32.png" />
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <Trigger Property="IsChecked"
+                                     Value="True">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                            <Image Source="pack://application:,,,/Resources/Images/Info32.png"
+                                                   Opacity="0.5" />
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ToggleButton.Style>
+            </ToggleButton>
+
+            <Button Grid.Column="2"
+                    Grid.Row="1"
+                    Width="30"
+                    Height="30"
+                    Margin="-20 40 0 0"
+                    Cursor="Hand"
+                    Visibility="{Binding MainWindowViewModel.Ribbon.InstructorVisibility, Source={x:Static Application.Current}}"
+                    Command="{Binding ReplayHistoryCommand}"
+                    VerticalAlignment="Top">
+                <Button.Template>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Image Source="pack://application:,,,/Images/video.png" />
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
 
         </Grid>
     </Grid>

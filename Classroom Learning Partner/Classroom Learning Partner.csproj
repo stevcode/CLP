@@ -925,6 +925,10 @@
     <Content Include="External Libraries\System.Reactive.Providers.dll" />
     <Content Include="External Libraries\System.Reactive.Windows.Threading.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
+    <Resource Include="Resources\Images\Info128.png" />
+    <Resource Include="Resources\Images\Info16.png" />
+    <Resource Include="Resources\Images\Info32.png" />
+    <Resource Include="Resources\Images\Info64.png" />
     <Resource Include="Resources\Images\ConvertToPDF32.png" />
     <Resource Include="Resources\Images\DisplayAllSubmissionsButton29x25.png" />
     <Resource Include="Resources\Images\PresetArray16.png" />

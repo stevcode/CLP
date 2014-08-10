@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Entities;
@@ -20,6 +23,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             Notebook = notebook;
             PageScrollCommand = new Command<ScrollChangedEventArgs>(OnPageScrollCommandExecute);
+            ReplayHistoryCommand = new Command(OnReplayHistoryCommandExecute);
         }
 
         public override string Title
@@ -204,6 +208,43 @@ namespace Classroom_Learning_Partner.ViewModels
             {
 
             }
+        }
+
+        /// <summary>
+        /// Replays the interaction history of the page on the Grid Display.
+        /// </summary>
+        public Command ReplayHistoryCommand { get; private set; }
+
+        private void OnReplayHistoryCommandExecute()
+        {
+            var currentPage = CurrentPage;
+            if (currentPage == null) { return; }
+
+            currentPage.IsTagAddPrevented = true;
+            var oldPageInteractionMode = (App.MainWindowViewModel.Ribbon.PageInteractionMode == PageInteractionMode.None) ? PageInteractionMode.Pen : App.MainWindowViewModel.Ribbon.PageInteractionMode;
+            App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.None;
+
+            while (currentPage.History.UndoItems.Any()) { currentPage.History.Undo(); }
+
+            var t = new Thread(() =>
+            {
+                while (currentPage.History.RedoItems.Any())
+                {
+                    var historyItemAnimationDelay = Convert.ToInt32(Math.Round(currentPage.History.CurrentAnimationDelay / 1.0));
+                    Application.Current.Dispatcher.Invoke(DispatcherPriority.DataBind,
+                                                          (DispatcherOperationCallback)delegate
+                                                          {
+                                                              currentPage.History.Redo(true);
+                                                              return null;
+                                                          },
+                                                          null);
+                    Thread.Sleep(historyItemAnimationDelay);
+                }
+                currentPage.IsTagAddPrevented = false;
+                App.MainWindowViewModel.Ribbon.PageInteractionMode = oldPageInteractionMode;
+            });
+
+            t.Start();
         }
 
         #endregion //Commands

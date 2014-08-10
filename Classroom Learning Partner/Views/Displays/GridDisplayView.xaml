@@ -3,21 +3,22 @@
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
-                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
-                   xmlns:app="clr-namespace:Classroom_Learning_Partner">
-    
+                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views">
+
     <UserControl.Resources>
         <conv:NumberIncrementConverter x:Key="NumberIncrementConverter" />
-        <conv:EnumToBoolConverter x:Key="EnumToBoolConverter" />
     </UserControl.Resources>
 
     <Grid>
         <Grid.Style>
             <Style TargetType="Grid">
-                <Setter Property="Background" Value="PaleGreen" />
+                <Setter Property="Background"
+                        Value="PaleGreen" />
                 <Style.Triggers>
-                    <DataTrigger Binding="{Binding MainWindowViewModel.Ribbon.IsProjectorFrozen, Source={x:Static Application.Current}}" Value="True">
-                        <Setter Property="Background" Value="Transparent" />
+                    <DataTrigger Binding="{Binding MainWindowViewModel.Ribbon.IsProjectorFrozen, Source={x:Static Application.Current}}"
+                                 Value="True">
+                        <Setter Property="Background"
+                                Value="Transparent" />
                     </DataTrigger>
                 </Style.Triggers>
             </Style>
@@ -54,23 +55,23 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        
+
                         <TextBlock Grid.Column="0"
-                               Grid.Row="1"
-                               Foreground="{StaticResource MainColor}"
-                               FontWeight="Bold"
-                               VerticalAlignment="Center">
+                                   Grid.Row="1"
+                                   Foreground="{StaticResource MainColor}"
+                                   FontWeight="Bold"
+                                   VerticalAlignment="Center">
                         <Run Text="Page" />
                         <Run Text="{Binding PageNumber}" />
-                        <TextBlock.LayoutTransform>
-                            <TransformGroup>
-                                <ScaleTransform />
-                                <SkewTransform />
-                                <RotateTransform Angle="-90" />
-                                <TranslateTransform />
-                            </TransformGroup>
-                        </TextBlock.LayoutTransform>
-                    </TextBlock>
+                            <TextBlock.LayoutTransform>
+                                <TransformGroup>
+                                    <ScaleTransform />
+                                    <SkewTransform />
+                                    <RotateTransform Angle="-90" />
+                                    <TranslateTransform />
+                                </TransformGroup>
+                            </TextBlock.LayoutTransform>
+                        </TextBlock>
 
                         <TextBlock Grid.Column="0"
                                    Grid.Row="1"
@@ -98,7 +99,7 @@
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center" />
                         </Border>
-                        
+
                         <Button Grid.Column="0"
                                 Grid.Row="0"
                                 Width="30"
@@ -150,7 +151,7 @@
                                 </ControlTemplate>
                             </Button.Template>
                         </Button>
-                        
+
                         <Button Grid.Column="2"
                                 Grid.Row="0"
                                 Width="30"
