@@ -17,6 +17,12 @@ using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
+    public enum AnswerDefinitions
+    {
+        Multiplication,
+        Division
+    }
+
     public class PageInformationPanelViewModel : APanelBaseViewModel
     {
         #region Constructor
@@ -196,6 +202,17 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData SelectedPageOrientationProperty = RegisterProperty("SelectedPageOrientation", typeof (string));
+
+        /// <summary>
+        /// Currently selected Answer Definition to add to the page.
+        /// </summary>
+        public AnswerDefinitions SelectedAnswerDefinition
+        {
+            get { return GetValue<AnswerDefinitions>(SelectedAnswerDefinitionProperty); }
+            set { SetValue(SelectedAnswerDefinitionProperty, value); }
+        }
+
+        public static readonly PropertyData SelectedAnswerDefinitionProperty = RegisterProperty("SelectedAnswerDefinition", typeof (AnswerDefinitions));
 
         /// <summary>Sorted list of <see cref="ITag" />s by category.</summary>
         public CollectionViewSource SortedTags
@@ -578,27 +595,39 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnAddAnswerDefinitionCommandExecute()
         {
-            // If the page already has a ProductDefinitionTag, start from that one
-            var productDefinition = new ProductDefinitionTag(CurrentPage, Origin.Author);
-            //foreach(var tag in CurrentPage.Tags.OfType<ProductDefinitionTag>()) 
-            //{
-            //    productDefinition = tag;
-            //    break;
-            //}
-
-            var definitionViewModel = new ProductDefinitionTagViewModel(productDefinition);
-            var definitionView = new ProductDefinitionTagView(definitionViewModel)
-                                 {
-                                     Owner = Application.Current.MainWindow
-                                 };
-            definitionView.ShowDialog();
-
-            if (definitionView.DialogResult != true)
+            ITag answerDefinition = null;
+            switch (SelectedAnswerDefinition)
             {
-                return;
+                case AnswerDefinitions.Multiplication:
+                    answerDefinition = new MultiplicationRelationDefinitionTag(CurrentPage, Origin.Author);
+
+                    var definitionViewModel = new MultiplicationRelationDefinitionTagViewModel(answerDefinition as MultiplicationRelationDefinitionTag);
+                    var definitionView = new MultiplicationRelationDefinitionTagView(definitionViewModel)
+                                         {
+                                             Owner = Application.Current.MainWindow
+                                         };
+                    definitionView.ShowDialog();
+
+                    if (definitionView.DialogResult != true)
+                    {
+                        return;
+                    }
+
+                    (answerDefinition as MultiplicationRelationDefinitionTag).Factors.Clear();
+
+                    foreach (var containerValue in definitionViewModel.Factors)
+                    {
+                        (answerDefinition as MultiplicationRelationDefinitionTag).Factors.Add(containerValue.ContainedValue);
+                    }
+
+                    break;
+                case AnswerDefinitions.Division:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
 
-            CurrentPage.AddTag(productDefinition);
+            CurrentPage.AddTag(answerDefinition);
             if (CurrentPage.SubmissionType != SubmissionTypes.Unsubmitted)
             {
                 return;
@@ -606,7 +635,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             foreach (var submission in CurrentPage.Submissions)
             {
-                submission.AddTag(productDefinition);
+                submission.AddTag(answerDefinition);
             }
         }
 

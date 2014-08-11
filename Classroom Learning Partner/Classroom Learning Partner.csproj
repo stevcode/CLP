@@ -285,7 +285,7 @@
     <Compile Include="ViewModels\Pages\CLPAnimationPageViewModel.cs" />
     <Compile Include="ViewModels\Pages\CLPPageViewModel.cs" />
     <Compile Include="ViewModels\Displays\SingleDisplayViewModel.cs" />
-    <Compile Include="ViewModels\Math\ProductDefinitionTagViewModel.cs" />
+    <Compile Include="ViewModels\Math\MultiplicationRelationDefinitionTagViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPAggregationDataTableViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Arrays\CLPArrayViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Arrays\CLPFactorCardViewModel.cs" />
@@ -405,8 +405,8 @@
     <Compile Include="Views\Modal Windows\LassoedPageObjectParameterizationView.xaml.cs">
       <DependentUpon>LassoedPageObjectParameterizationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\ProductDefinitionTagView.xaml.cs">
-      <DependentUpon>ProductDefinitionTagView.xaml</DependentUpon>
+    <Compile Include="Views\Modal Windows\MultiplicationRelationDefinitionTagView.xaml.cs">
+      <DependentUpon>MultiplicationRelationDefinitionTagView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Modal Windows\PageTopicWindowView.xaml.cs">
       <DependentUpon>PageTopicWindowView.xaml</DependentUpon>
@@ -648,7 +648,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\ProductDefinitionTagView.xaml">
+    <Page Include="Views\Modal Windows\MultiplicationRelationDefinitionTagView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
