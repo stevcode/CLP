@@ -17,6 +17,12 @@ using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
+    public enum AnswerDefinitions
+    {
+        Multiplication,
+        Division
+    }
+
     public class PageInformationPanelViewModel : APanelBaseViewModel
     {
         #region Constructor
@@ -196,6 +202,15 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData SelectedPageOrientationProperty = RegisterProperty("SelectedPageOrientation", typeof (string));
+
+        /// <summary>Currently selected Answer Definition to add to the page.</summary>
+        public AnswerDefinitions SelectedAnswerDefinition
+        {
+            get { return GetValue<AnswerDefinitions>(SelectedAnswerDefinitionProperty); }
+            set { SetValue(SelectedAnswerDefinitionProperty, value); }
+        }
+
+        public static readonly PropertyData SelectedAnswerDefinitionProperty = RegisterProperty("SelectedAnswerDefinition", typeof (AnswerDefinitions));
 
         /// <summary>Sorted list of <see cref="ITag" />s by category.</summary>
         public CollectionViewSource SortedTags
@@ -439,11 +454,18 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnDifferentiatePageCommandExecute()
         {
-            var notebook = (App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).Notebook;
-            var numberPageVersions = new KeypadWindowView();
-            numberPageVersions.Owner = Application.Current.MainWindow;
-            numberPageVersions.QuestionText.Text = "How many versions of the page?";
-            numberPageVersions.NumbersEntered.Text = "4";
+            var numberPageVersions = new KeypadWindowView
+                                     {
+                                         Owner = Application.Current.MainWindow,
+                                         QuestionText =
+                                         {
+                                             Text = "How many versions of the page?"
+                                         },
+                                         NumbersEntered =
+                                         {
+                                             Text = "4"
+                                         }
+                                     };
 
             numberPageVersions.ShowDialog();
             if (numberPageVersions.DialogResult == true)
@@ -532,7 +554,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            var thumbnail = CLPServiceAgent.Instance.UIElementToImageByteArray(pageView as UIElement, CurrentPage.Width, dpi: 300);
+            var thumbnail = CLPServiceAgent.Instance.UIElementToImageByteArray(pageView, CurrentPage.Width, dpi: 300);
 
             var bitmapImage = new BitmapImage();
             bitmapImage.BeginInit();
@@ -578,27 +600,53 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnAddAnswerDefinitionCommandExecute()
         {
-            // If the page already has a ProductDefinitionTag, start from that one
-            var productDefinition = new ProductDefinitionTag(CurrentPage, Origin.Author);
-            //foreach(var tag in CurrentPage.Tags.OfType<ProductDefinitionTag>()) 
-            //{
-            //    productDefinition = tag;
-            //    break;
-            //}
-
-            var definitionViewModel = new ProductDefinitionTagViewModel(productDefinition);
-            var definitionView = new ProductDefinitionTagView(definitionViewModel)
-                                 {
-                                     Owner = Application.Current.MainWindow
-                                 };
-            definitionView.ShowDialog();
-
-            if (definitionView.DialogResult != true)
+            ITag answerDefinition = null;
+            switch (SelectedAnswerDefinition)
             {
-                return;
+                case AnswerDefinitions.Multiplication:
+                    answerDefinition = new MultiplicationRelationDefinitionTag(CurrentPage, Origin.Author);
+
+                    var multiplicationViewModel = new MultiplicationRelationDefinitionTagViewModel(answerDefinition as MultiplicationRelationDefinitionTag);
+                    var multiplicationView = new MultiplicationRelationDefinitionTagView(multiplicationViewModel)
+                                         {
+                                             Owner = Application.Current.MainWindow
+                                         };
+                    multiplicationView.ShowDialog();
+
+                    if (multiplicationView.DialogResult != true)
+                    {
+                        return;
+                    }
+
+                    (answerDefinition as MultiplicationRelationDefinitionTag).Factors.Clear();
+
+                    foreach (var containerValue in multiplicationViewModel.Factors)
+                    {
+                        (answerDefinition as MultiplicationRelationDefinitionTag).Factors.Add(containerValue.ContainedValue);
+                    }
+
+                    break;
+                case AnswerDefinitions.Division:
+                    answerDefinition = new DivisionRelationDefinitionTag(CurrentPage, Origin.Author);
+
+                    var divisionViewModel = new DivisionRelationDefinitionTagViewModel(answerDefinition as DivisionRelationDefinitionTag);
+                    var divisionView = new DivisionRelationDefinitionTagView(divisionViewModel)
+                                         {
+                                             Owner = Application.Current.MainWindow
+                                         };
+                    divisionView.ShowDialog();
+
+                    if (divisionView.DialogResult != true)
+                    {
+                        return;
+                    }
+
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
 
-            CurrentPage.AddTag(productDefinition);
+            CurrentPage.AddTag(answerDefinition);
             if (CurrentPage.SubmissionType != SubmissionTypes.Unsubmitted)
             {
                 return;
@@ -606,7 +654,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             foreach (var submission in CurrentPage.Submissions)
             {
-                submission.AddTag(productDefinition);
+                submission.AddTag(answerDefinition);
             }
         }
 

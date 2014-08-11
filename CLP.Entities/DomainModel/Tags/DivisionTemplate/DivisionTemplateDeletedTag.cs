@@ -9,25 +9,19 @@ namespace CLP.Entities
     {
         #region Constructors
 
-        /// <summary>
-        /// Initializes <see cref="DivisionTemplateDeletedTag" /> from scratch.
-        /// </summary>
+        /// <summary>Initializes <see cref="DivisionTemplateDeletedTag" /> from scratch.</summary>
         public DivisionTemplateDeletedTag() { }
 
-        /// <summary>
-        /// Initializes <see cref="DivisionTemplateDeletedTag" />.
-        /// </summary>
+        /// <summary>Initializes <see cref="DivisionTemplateDeletedTag" />.</summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="DivisionTemplateDeletedTag" /> belongs to.</param>
-        public DivisionTemplateDeletedTag(CLPPage parentPage, Origin origin, int dividend, int givenFactor)
+        public DivisionTemplateDeletedTag(CLPPage parentPage, Origin origin, int dividend, int divisor)
             : base(parentPage, origin)
         {
             Dividend = dividend;
-            GivenFactor = givenFactor;
+            Divisor = divisor;
         }
 
-        /// <summary>
-        /// Initializes <see cref="DivisionTemplateDeletedTag" /> based on <see cref="SerializationInfo" />.
-        /// </summary>
+        /// <summary>Initializes <see cref="DivisionTemplateDeletedTag" /> based on <see cref="SerializationInfo" />.</summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext" />.</param>
         public DivisionTemplateDeletedTag(SerializationInfo info, StreamingContext context)
@@ -37,27 +31,23 @@ namespace CLP.Entities
 
         #region Properties
 
-        /// <summary>
-        /// Dividend of the deleted Division Template.
-        /// </summary>
+        /// <summary>Dividend of the deleted Division Template.</summary>
         public int Dividend
         {
             get { return GetValue<int>(DividendProperty); }
             set { SetValue(DividendProperty, value); }
         }
 
-        public static readonly PropertyData DividendProperty = RegisterProperty("Dividend", typeof(int));
+        public static readonly PropertyData DividendProperty = RegisterProperty("Dividend", typeof (int));
 
-        /// <summary>
-        /// Given Factor of the deleted Division Template.
-        /// </summary>
-        public int GivenFactor
+        /// <summary>Divisor of the division relation.</summary>
+        public double Divisor
         {
-            get { return GetValue<int>(GivenFactorProperty); }
-            set { SetValue(GivenFactorProperty, value); }
+            get { return GetValue<double>(DivisorProperty); }
+            set { SetValue(DivisorProperty, value); }
         }
 
-        public static readonly PropertyData GivenFactorProperty = RegisterProperty("GivenFactor", typeof(int));
+        public static readonly PropertyData DivisorProperty = RegisterProperty("Divisor", typeof (double));
 
         #region ATagBase Overrides
 
@@ -68,9 +58,7 @@ namespace CLP.Entities
 
         public override string FormattedValue
         {
-            get { return string.Format("Dividend: {0}\n" + "Given Factor: {1}", 
-                                       Dividend,
-                                       GivenFactor); }
+            get { return string.Format("Dividend: {0}\n" + "Given Factor: {1}", Dividend, Divisor); }
         }
 
         #endregion //ATagBase Overrides

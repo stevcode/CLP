@@ -146,7 +146,8 @@
     <Compile Include="DomainModel\Strokes\Extensions\StrokeExtension.cs" />
     <Compile Include="DomainModel\Strokes\StrokeDTO.cs" />
     <Compile Include="DomainModel\Strokes\StrokePathDTO.cs" />
-    <Compile Include="DomainModel\Tags\Definition\ProductDefinitionTag.cs" />
+    <Compile Include="DomainModel\Tags\Definition\DivisionRelationDefinitionTag.cs" />
+    <Compile Include="DomainModel\Tags\Definition\MultiplicationRelationDefinitionTag.cs" />
     <Compile Include="DomainModel\Tags\Array\ArrayOrientationTag.cs" />
     <Compile Include="DomainModel\Tags\Array\ArrayRegionStrategyTag.cs" />
     <Compile Include="DomainModel\Tags\Array\ArrayInterpretedCorrectnessTag.cs" />

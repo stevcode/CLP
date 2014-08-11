@@ -7,8 +7,8 @@ namespace CLP.Entities
 {
     public enum DivisionTemplateIncorrectReason
     {
-        WrongProduct,
-        WrongFactor,
+        WrongDividend,
+        WrongDivisor,
         Incomplete,
         Other
     }

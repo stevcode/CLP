@@ -17,21 +17,21 @@ namespace CLP.Entities
                 page.RemoveTag(tag);
             }
 
-            var productDefinitionTags = page.Tags.OfType<ProductDefinitionTag>().ToList();
+            var multiplicationRelationDefinitionTags = page.Tags.OfType<MultiplicationRelationDefinitionTag>().ToList();
             var arrays = page.PageObjects.OfType<CLPArray>().ToList();
-            if(!productDefinitionTags.Any() ||
+            if (!multiplicationRelationDefinitionTags.Any() ||
                !arrays.Any())
             {
                 return;
             }
 
-            foreach(var productDefinitionTag in productDefinitionTags)
+            foreach (var multiplicationRelationDefinition in multiplicationRelationDefinitionTags)
             {
                 foreach(var array in arrays)
                 {
-                    InterpretOrientation(page, productDefinitionTag, array);
+                    InterpretOrientation(page, multiplicationRelationDefinition, array);
                     InterpretStrategies(page, array);
-                    InterpretCorrectness(page, productDefinitionTag, array);
+                    InterpretCorrectness(page, multiplicationRelationDefinition, array);
                 }
             }
         }
@@ -135,15 +135,23 @@ namespace CLP.Entities
             }
         }
 
-        public static void InterpretOrientation(CLPPage page, ProductDefinitionTag productDefinition, CLPArray array)
+        public static void InterpretOrientation(CLPPage page, MultiplicationRelationDefinitionTag multiplicationRelationDefinition, CLPArray array)
         {
-            if(productDefinition.FirstFactor == array.Columns &&
-               productDefinition.SecondFactor == array.Rows)
+            if (multiplicationRelationDefinition.Factors.Count > 2)
+            {
+                return;
+            }
+
+            var firstFactor = multiplicationRelationDefinition.Factors[0];
+            var secondFactor = multiplicationRelationDefinition.Factors[1];
+
+            if(firstFactor == array.Columns &&
+               secondFactor == array.Rows)
             {
                 page.AddTag(new ArrayOrientationTag(page, Origin.StudentPageGenerated, ArrayOrientationTag.AcceptedValues.FirstFactorWidth));
             }
-            else if(productDefinition.FirstFactor == array.Rows &&
-                    productDefinition.SecondFactor == array.Columns)
+            else if(firstFactor == array.Rows &&
+                    secondFactor == array.Columns)
             {
                 page.AddTag(new ArrayOrientationTag(page, Origin.StudentPageGenerated, ArrayOrientationTag.AcceptedValues.FirstFactorHeight));
             }
@@ -249,12 +257,12 @@ namespace CLP.Entities
             return output;
         }
 
-        public static void InterpretCorrectness(CLPPage page, ProductDefinitionTag productDefinition, CLPArray array)
+        public static void InterpretCorrectness(CLPPage page, MultiplicationRelationDefinitionTag multiplicationRelationDefinition, CLPArray array)
         {
             switch(array.ArrayType)
             {
                 case ArrayTypes.Array:
-                    InterpretArrayCorrectness(page, productDefinition, array);
+                    InterpretArrayCorrectness(page, multiplicationRelationDefinition, array);
                     break;
                 case ArrayTypes.ArrayCard:
                     // TODO
@@ -268,21 +276,30 @@ namespace CLP.Entities
             }
         }
 
-        public static void InterpretArrayCorrectness(CLPPage page, ProductDefinitionTag productDefinition, CLPArray array)
+        public static void InterpretArrayCorrectness(CLPPage page, MultiplicationRelationDefinitionTag multiplicationRelationDefinition, CLPArray array)
         {
             var incorrectReasons = new List<ArrayIncorrectReason>();
+            if (multiplicationRelationDefinition.Factors.Count > 2)
+            {
+                incorrectReasons.Add(ArrayIncorrectReason.Other);
+                page.AddTag(new ArrayInterpretedCorrectnessTag(page, Origin.StudentPageGenerated, Correctness.Incorrect, incorrectReasons));
+                return;
+            }
 
-            if(productDefinition.FirstFactor == array.Rows &&
-               productDefinition.SecondFactor == array.Columns)
+            var firstFactor = multiplicationRelationDefinition.Factors[0];
+            var secondFactor = multiplicationRelationDefinition.Factors[1];
+
+            if(firstFactor == array.Rows &&
+               secondFactor == array.Columns)
             {
                 page.AddTag(new ArrayInterpretedCorrectnessTag(page, Origin.StudentPageGenerated, Correctness.Correct, incorrectReasons));
                 return;
             }
 
-            if(productDefinition.SecondFactor == array.Rows &&
-               productDefinition.FirstFactor == array.Columns)
+            if(secondFactor == array.Rows &&
+               firstFactor == array.Columns)
             {
-                if(productDefinition.ProductType != ProductType.Area) //HACK - This seems...weird to me. Order of Factors only matters when calculating area?
+                if (multiplicationRelationDefinition.RelationType != MultiplicationRelationDefinitionTag.RelationTypes.Area) //BUG - This seems...weird to me. Order of Factors only matters when calculating area?
                 {
                     page.AddTag(new ArrayInterpretedCorrectnessTag(page, Origin.StudentPageGenerated, Correctness.Correct, incorrectReasons));
                     return;
@@ -291,22 +308,11 @@ namespace CLP.Entities
                 incorrectReasons.Add(ArrayIncorrectReason.SwappedFactors);
             }
 
-            var givenValues = new List<double?>();
-            switch(productDefinition.UngivenProductPart)
-            {
-                case ProductPart.FirstFactor:
-                    givenValues.Add(productDefinition.SecondFactor);
-                    givenValues.Add(productDefinition.Product);
-                    break;
-                case ProductPart.SecondFactor:
-                    givenValues.Add(productDefinition.FirstFactor);
-                    givenValues.Add(productDefinition.Product);
-                    break;
-                case ProductPart.Product:
-                    givenValues.Add(productDefinition.FirstFactor);
-                    givenValues.Add(productDefinition.SecondFactor);
-                    break;
-            }
+            var givenValues = new List<double?>
+                              {
+                                  firstFactor,
+                                  secondFactor
+                              };
 
             var numbersUsed = new List<double?>
                               {

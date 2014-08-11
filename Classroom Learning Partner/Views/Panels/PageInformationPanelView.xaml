@@ -2,11 +2,21 @@
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com"
-                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters">
+                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
+                   xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                   xmlns:viewModel="clr-namespace:Classroom_Learning_Partner.ViewModels">
 
     <UserControl.Resources>
         <conv:PanelLocationToThicknessConverter x:Key="PanelLocationToThicknessConverter" />
         <conv:TypeToStringConverter x:Key="TypeToStringConverter" />
+        
+        <ObjectDataProvider x:Key="AnswerDefinitions"
+                            MethodName="GetValues"
+                            ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="viewModel:AnswerDefinitions" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
 
         <!-- Style to override ListBoxItem selection visuals for Pages -->
         <Style x:Key="ListBoxItemBlankStyle"
@@ -36,6 +46,7 @@
                 </Grid.ColumnDefinitions>
 
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -186,15 +197,23 @@
                            Margin="1 5"
                            Stroke="{StaticResource GrayBorderColor}" />
 
-                <Button Content="Add Answer Definition"
+                <Button Content="Add Answer Definition:"
                         Command="{Binding AddAnswerDefinitionCommand}"
                         Height="20"
                         Margin="1" />
 
+                <ComboBox ItemsSource="{Binding Source={StaticResource AnswerDefinitions}}"
+                          SelectedItem="{Binding SelectedAnswerDefinition}"
+                          Height="18"
+                          Margin="1"
+                          VerticalAlignment="Center"
+                          VerticalContentAlignment="Center" />
+
                 <Button Content="Run Page Analysis"
                         Command="{Binding AnalyzePageCommand}"
                         Height="20"
-                        Margin="1" />
+                        Margin="1"
+                        Grid.ColumnSpan="2" />
 
                 <!--<Button Content="Run History Analysis"
                         Command="{Binding AnalyzePageHistoryCommand}"
