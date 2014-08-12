@@ -208,7 +208,7 @@
                           Margin="1"
                           VerticalAlignment="Center"
                           VerticalContentAlignment="Center" />
-
+                
                 <Button Content="Run Page Analysis"
                         Command="{Binding AnalyzePageCommand}"
                         Height="20"

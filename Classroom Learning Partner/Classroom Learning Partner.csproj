@@ -308,6 +308,9 @@
     <Compile Include="Views\Modal Windows\DivisionRelationDefinitionTagView.xaml.cs">
       <DependentUpon>DivisionRelationDefinitionTagView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Modal Windows\MVVM\ButtonBoxView.xaml.cs">
+      <DependentUpon>ButtonBoxView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Modal Windows\MVVM\ClassSubjectCreationView.xaml.cs">
       <DependentUpon>ClassSubjectCreationView.xaml</DependentUpon>
     </Compile>
@@ -545,6 +548,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Modal Windows\DivisionRelationDefinitionTagView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Modal Windows\MVVM\ButtonBoxView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
