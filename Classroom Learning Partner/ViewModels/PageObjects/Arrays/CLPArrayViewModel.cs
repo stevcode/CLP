@@ -446,7 +446,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 //    ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryPageObjectRemove(PageObject.ParentPage, remainderRegion, currentIndex));
                 //}
 
-                //Fuzzy Factor Card array snapping in - for now this will override array snapping even if an array might be closer
+                //Fuzzy Factor Card array snapping in - HACK: for now this will override array snapping even if an array might be closer
 
                 #region Snap to FFC
 

@@ -12,7 +12,10 @@ namespace CLP.Entities
         public static void AnalyzeRegion(CLPPage page, Rect region)
         {
             // First, clear out any old DivisionTemplateTags generated via Analysis.
-            foreach(var tag in page.Tags.ToList().Where(tag => tag is DivisionTemplateInterpretedCorrectnessTag || tag is DivisionTemplateStrategyTag || tag is DivisionTemplateCompletenessTag))
+            foreach (
+                var tag in
+                    page.Tags.ToList()
+                        .Where(tag => tag is DivisionTemplateInterpretedCorrectnessTag || tag is DivisionTemplateStrategyTag || tag is DivisionTemplateCompletenessTag))
             {
                 page.RemoveTag(tag);
             }
@@ -20,14 +23,14 @@ namespace CLP.Entities
             var divisionDefinitionTags = page.Tags.OfType<DivisionRelationDefinitionTag>().ToList();
             var divisionTemplates = page.PageObjects.OfType<FuzzyFactorCard>().ToList();
             if (!divisionDefinitionTags.Any() ||
-               !divisionTemplates.Any())
+                !divisionTemplates.Any())
             {
                 return;
             }
 
             foreach (var divisionDefinitionTag in divisionDefinitionTags)
             {
-                foreach(var divisionTemplate in divisionTemplates)
+                foreach (var divisionTemplate in divisionTemplates)
                 {
                     InterpretStrategy(page, divisionTemplate);
                     InterpretCorrectness(page, divisionDefinitionTag, divisionTemplate);
@@ -52,12 +55,12 @@ namespace CLP.Entities
             var completeOrderedHistory = page.History.UndoItems.Reverse().Concat(page.History.RedoItems).ToList();
 
             //DivisionTemplateDeletedTag
-            foreach(var historyItem in completeOrderedHistory.OfType<PageObjectsRemovedHistoryItem>())
+            foreach (var historyItem in completeOrderedHistory.OfType<PageObjectsRemovedHistoryItem>())
             {
-                foreach(var pageObjectID in historyItem.PageObjectIDs)
+                foreach (var pageObjectID in historyItem.PageObjectIDs)
                 {
                     var divisionTemplate = page.GetPageObjectByID(pageObjectID) as FuzzyFactorCard ?? page.History.GetPageObjectByID(pageObjectID) as FuzzyFactorCard;
-                    if(divisionTemplate == null)
+                    if (divisionTemplate == null)
                     {
                         continue;
                     }
@@ -66,15 +69,14 @@ namespace CLP.Entities
                 }
             }
 
-            //DivisionTemplateIncorrectArrayCreationTag
             var divisionTemplatesOnPage = new List<DivisionTemplateAndRemainder>();
             var arraysOnPage = new List<CLPArray>();
-            foreach(var historyItem in completeOrderedHistory)
+            foreach (var historyItem in completeOrderedHistory)
             {
                 var removedPageObjectsHistoryItem = historyItem as PageObjectsRemovedHistoryItem;
-                if(removedPageObjectsHistoryItem != null)
+                if (removedPageObjectsHistoryItem != null)
                 {
-                    foreach(var pageObjectID in removedPageObjectsHistoryItem.PageObjectIDs)
+                    foreach (var pageObjectID in removedPageObjectsHistoryItem.PageObjectIDs)
                     {
                         divisionTemplatesOnPage.RemoveAll(x => x.DivisionTemplate.ID == pageObjectID);
                         arraysOnPage.RemoveAll(x => x.ID == pageObjectID);
@@ -83,12 +85,12 @@ namespace CLP.Entities
                 }
 
                 var arraySnappedInHistoryItem = historyItem as FFCArraySnappedInHistoryItem;
-                if(arraySnappedInHistoryItem != null)
+                if (arraySnappedInHistoryItem != null)
                 {
                     var arrayToRemove = arraysOnPage.FirstOrDefault(x => x.ID == arraySnappedInHistoryItem.SnappedInArrayID);
                     var divisionTemplateAndRemainder = divisionTemplatesOnPage.FirstOrDefault(x => x.DivisionTemplate.ID == arraySnappedInHistoryItem.FuzzyFactorCardID);
-                    if(divisionTemplateAndRemainder != null &&
-                       arrayToRemove != null)
+                    if (divisionTemplateAndRemainder != null &&
+                        arrayToRemove != null)
                     {
                         arraysOnPage.Remove(arrayToRemove);
                         divisionTemplateAndRemainder.Remainder -= (arrayToRemove.Rows * arrayToRemove.Columns);
@@ -96,138 +98,267 @@ namespace CLP.Entities
                     continue;
                 }
 
+                //DivisionTemplateIncorrectArrayCreationTag
                 var addedPageObjectHistoryItem = historyItem as PageObjectsAddedHistoryItem;
-                if(addedPageObjectHistoryItem == null)
+                if (addedPageObjectHistoryItem != null)
                 {
+                    foreach (
+                        var pageObject in
+                            addedPageObjectHistoryItem.PageObjectIDs.Select(pageObjectID => page.GetPageObjectByID(pageObjectID) ?? page.History.GetPageObjectByID(pageObjectID)))
+                    {
+                        if (pageObject is FuzzyFactorCard)
+                        {
+                            divisionTemplatesOnPage.Add(new DivisionTemplateAndRemainder((pageObject as FuzzyFactorCard), (pageObject as FuzzyFactorCard).Dividend));
+                            continue;
+                        }
+
+                        var array = pageObject as CLPArray;
+                        if (array == null)
+                        {
+                            continue;
+                        }
+
+                        arraysOnPage.Add(array);
+                        var arrayArea = arraysOnPage.Sum(x => x.Rows * x.Columns);
+
+                        foreach (var divisionTemplateAndRemainder in divisionTemplatesOnPage)
+                        {
+                            if (array.Columns == divisionTemplateAndRemainder.DivisionTemplate.Dividend ||
+                                (array.Rows == divisionTemplateAndRemainder.DivisionTemplate.Dividend))
+                            {
+                                var existingTag =
+                                    page.Tags.OfType<DivisionTemplateIncorrectArrayCreationTag>()
+                                        .FirstOrDefault(x => x.Value == DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.DividendAsDivisor);
+
+                                var previousNumberOfAttempts = 0;
+                                if (existingTag != null)
+                                {
+                                    previousNumberOfAttempts = existingTag.NumberOfAttempts;
+                                    page.RemoveTag(existingTag);
+                                }
+                                var newTag = new DivisionTemplateIncorrectArrayCreationTag(page,
+                                                                                           Origin.StudentPageObjectGenerated,
+                                                                                           DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.DividendAsDivisor,
+                                                                                           previousNumberOfAttempts + 1);
+                                page.AddTag(newTag);
+                            }
+
+                            if (array.Rows != divisionTemplateAndRemainder.DivisionTemplate.Rows &&
+                                array.Columns == divisionTemplateAndRemainder.DivisionTemplate.Rows)
+                            {
+                                var existingTag =
+                                    page.Tags.OfType<DivisionTemplateIncorrectArrayCreationTag>()
+                                        .FirstOrDefault(x => x.Value == DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.WrongOrientation);
+
+                                var previousNumberOfAttempts = 0;
+                                if (existingTag != null)
+                                {
+                                    previousNumberOfAttempts = existingTag.NumberOfAttempts;
+                                    page.RemoveTag(existingTag);
+                                }
+                                var newTag = new DivisionTemplateIncorrectArrayCreationTag(page,
+                                                                                           Origin.StudentPageObjectGenerated,
+                                                                                           DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.WrongOrientation,
+                                                                                           previousNumberOfAttempts + 1);
+                                page.AddTag(newTag);
+                            }
+                            else if (array.Rows != divisionTemplateAndRemainder.DivisionTemplate.Rows)
+                            {
+                                var existingTag =
+                                    page.Tags.OfType<DivisionTemplateIncorrectArrayCreationTag>()
+                                        .FirstOrDefault(x => x.Value == DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.IncorrectDimension);
+
+                                var previousNumberOfAttempts = 0;
+                                if (existingTag != null)
+                                {
+                                    previousNumberOfAttempts = existingTag.NumberOfAttempts;
+                                    page.RemoveTag(existingTag);
+                                }
+                                var newTag = new DivisionTemplateIncorrectArrayCreationTag(page,
+                                                                                           Origin.StudentPageObjectGenerated,
+                                                                                           DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.IncorrectDimension,
+                                                                                           previousNumberOfAttempts + 1);
+                                page.AddTag(newTag);
+                            }
+
+                            if (arrayArea > divisionTemplateAndRemainder.Remainder)
+                            {
+                                var existingTag =
+                                    page.Tags.OfType<DivisionTemplateIncorrectArrayCreationTag>()
+                                        .FirstOrDefault(x => x.Value == DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.ArrayTooLarge);
+
+                                var previousNumberOfAttempts = 0;
+                                if (existingTag != null)
+                                {
+                                    previousNumberOfAttempts = existingTag.NumberOfAttempts;
+                                    page.RemoveTag(existingTag);
+                                }
+                                var newTag = new DivisionTemplateIncorrectArrayCreationTag(page,
+                                                                                           Origin.StudentPageObjectGenerated,
+                                                                                           DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.ArrayTooLarge,
+                                                                                           previousNumberOfAttempts + 1);
+                                page.AddTag(newTag);
+                            }
+                        }
+                    }
                     continue;
                 }
 
-                foreach(var pageObjectID in addedPageObjectHistoryItem.PageObjectIDs)
-                {
-                    var pageObject = page.GetPageObjectByID(pageObjectID) ?? page.History.GetPageObjectByID(pageObjectID);
-                    if(pageObject is FuzzyFactorCard)
-                    {
-                        divisionTemplatesOnPage.Add(new DivisionTemplateAndRemainder((pageObject as FuzzyFactorCard), (pageObject as FuzzyFactorCard).Dividend));
-                        continue;
-                    }
+                //DivisionTemplateFailedSnapTag
+                //var pageObjectMovedHistoryItem = historyItem as PageObjectMoveBatchHistoryItem;
+                //if (pageObjectMovedHistoryItem != null)
+                //{
+                //    var array = page.GetPageObjectByID(pageObjectMovedHistoryItem.PageObjectID) as CLPArray ??
+                //                page.History.GetPageObjectByID(pageObjectMovedHistoryItem.PageObjectID) as CLPArray;
+                //    if (array == null)
+                //    {
+                //        continue;
+                //    }
 
-                    var array = pageObject as CLPArray;
-                    if(array == null)
-                    {
-                        continue;
-                    }
+                //    var endPosition = pageObjectMovedHistoryItem.TravelledPositions.Last();
+                //    foreach (var divisionTemplateAndRemainder in divisionTemplatesOnPage)
+                //    {
+                //        var divisionTemplate = divisionTemplateAndRemainder.DivisionTemplate;
 
-                    arraysOnPage.Add(array);
-                    var arrayArea = arraysOnPage.Sum(x => x.Rows * x.Columns);
+                //        var top = Math.Max(endPosition.Y + array.LabelLength, divisionTemplate.YPosition + divisionTemplate.LabelLength);
+                //        var bottom = Math.Min(endPosition.Y + array.LabelLength + array.ArrayHeight,
+                //                              persistingArray.YPosition + persistingArray.LabelLength + persistingArray.ArrayHeight);
+                //        var verticalIntersectionLength = bottom - top;
+                //        var isVerticalIntersection = verticalIntersectionLength > persistingArray.ArrayHeight / 2 || verticalIntersectionLength > snappingArray.ArrayHeight / 2;
 
-                    foreach(var divisionTemplateAndRemainder in divisionTemplatesOnPage)
-                    {
-                        if(array.Columns == divisionTemplateAndRemainder.DivisionTemplate.Dividend ||
-                           (array.Rows == divisionTemplateAndRemainder.DivisionTemplate.Dividend))
-                        {
-                            var existingTag =
-                                page.Tags.OfType<DivisionTemplateIncorrectArrayCreationTag>()
-                                    .FirstOrDefault(x => x.Value == DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.DividendAsDivisor);
+                //        var left = Math.Max(snappingArray.XPosition + snappingArray.LabelLength, persistingArray.XPosition + persistingArray.LabelLength);
+                //        var right = Math.Min(snappingArray.XPosition + snappingArray.LabelLength + snappingArray.ArrayWidth,
+                //                             persistingArray.XPosition + persistingArray.LabelLength + persistingArray.ArrayWidth);
+                //        var horizontalIntersectionLength = right - left;
+                //        var isHorizontalIntersection = horizontalIntersectionLength > persistingArray.ArrayWidth / 2 || horizontalIntersectionLength > snappingArray.ArrayWidth / 2;
 
-                            var previousNumberOfAttempts = 0;
-                            if(existingTag != null)
-                            {
-                                previousNumberOfAttempts = existingTag.NumberOfAttempts;
-                                page.RemoveTag(existingTag);
-                            }
-                            var newTag = new DivisionTemplateIncorrectArrayCreationTag(page,
-                                                                                       Origin.StudentPageObjectGenerated,
-                                                                                       DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.DividendAsDivisor,
-                                                                                       previousNumberOfAttempts + 1);
-                            page.AddTag(newTag);
-                        }
 
-                        if(array.Rows != divisionTemplateAndRemainder.DivisionTemplate.Rows &&
-                           array.Columns == divisionTemplateAndRemainder.DivisionTemplate.Rows)
-                        {
-                            var existingTag =
-                                page.Tags.OfType<DivisionTemplateIncorrectArrayCreationTag>().FirstOrDefault(x => x.Value == DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.WrongOrientation);
+                //        if (isVerticalIntersection)
+                //        {
+                //            var diff = Math.Abs(snappingArray.XPosition + snappingArray.LabelLength - (persistingArray.XPosition + persistingArray.LabelLength + divisionTemplate.LastDivisionPosition));
+                //            if (diff < 50)
+                //            {
+                //                if (snappingArray.Rows != divisionTemplate.Rows)
+                //                {
+                //                    var hasTag = false;
+                //                    if (snappingArray.Columns == divisionTemplate.Rows)
+                //                    {
+                //                        var existingTag =
+                //                            pageObject.ParentPage.Tags.OfType<DivisionTemplateFailedSnapTag>()
+                //                                      .FirstOrDefault(x => x.Value == DivisionTemplateFailedSnapTag.AcceptedValues.SnappedWrongOrientation);
 
-                            var previousNumberOfAttempts = 0;
-                            if(existingTag != null)
-                            {
-                                previousNumberOfAttempts = existingTag.NumberOfAttempts;
-                                page.RemoveTag(existingTag);
-                            }
-                            var newTag = new DivisionTemplateIncorrectArrayCreationTag(page,
-                                                                                       Origin.StudentPageObjectGenerated,
-                                                                                       DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.WrongOrientation,
-                                                                                       previousNumberOfAttempts + 1);
-                            page.AddTag(newTag);
-                        }
-                        else if(array.Rows != divisionTemplateAndRemainder.DivisionTemplate.Rows)
-                        {
-                            var existingTag =
-                                page.Tags.OfType<DivisionTemplateIncorrectArrayCreationTag>()
-                                    .FirstOrDefault(x => x.Value == DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.IncorrectDimension);
+                //                        var previousNumberOfAttempts = 0;
+                //                        if (existingTag != null)
+                //                        {
+                //                            previousNumberOfAttempts = existingTag.NumberOfAttempts;
+                //                            pageObject.ParentPage.RemoveTag(existingTag);
+                //                        }
+                //                        var newTag = new DivisionTemplateFailedSnapTag(pageObject.ParentPage,
+                //                                                                       App.CurrentUserMode == App.UserMode.Student ? Origin.StudentPageObjectGenerated : Origin.TeacherPageObjectGenerated,
+                //                                                                       DivisionTemplateFailedSnapTag.AcceptedValues.SnappedWrongOrientation,
+                //                                                                       previousNumberOfAttempts + 1);
+                //                        pageObject.ParentPage.AddTag(newTag);
+                //                    }
+                //                    else
+                //                    {
+                //                        var existingTag =
+                //                            pageObject.ParentPage.Tags.OfType<DivisionTemplateFailedSnapTag>()
+                //                                      .FirstOrDefault(x => x.Value == DivisionTemplateFailedSnapTag.AcceptedValues.SnappedIncorrectDimension);
 
-                            var previousNumberOfAttempts = 0;
-                            if(existingTag != null)
-                            {
-                                previousNumberOfAttempts = existingTag.NumberOfAttempts;
-                                page.RemoveTag(existingTag);
-                            }
-                            var newTag = new DivisionTemplateIncorrectArrayCreationTag(page,
-                                                                                       Origin.StudentPageObjectGenerated,
-                                                                                       DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.IncorrectDimension,
-                                                                                       previousNumberOfAttempts + 1);
-                            page.AddTag(newTag);
-                        }
+                //                        var previousNumberOfAttempts = 0;
+                //                        if (existingTag != null)
+                //                        {
+                //                            previousNumberOfAttempts = existingTag.NumberOfAttempts;
+                //                            pageObject.ParentPage.RemoveTag(existingTag);
+                //                        }
+                //                        var newTag = new DivisionTemplateFailedSnapTag(pageObject.ParentPage,
+                //                                                                       App.CurrentUserMode == App.UserMode.Student ? Origin.StudentPageObjectGenerated : Origin.TeacherPageObjectGenerated,
+                //                                                                       DivisionTemplateFailedSnapTag.AcceptedValues.SnappedIncorrectDimension,
+                //                                                                       previousNumberOfAttempts + 1);
+                //                        pageObject.ParentPage.AddTag(newTag);
+                //                    }
 
-                        if(arrayArea > divisionTemplateAndRemainder.Remainder)
-                        {
-                            var existingTag =
-                                page.Tags.OfType<DivisionTemplateIncorrectArrayCreationTag>().FirstOrDefault(x => x.Value == DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.ArrayTooLarge);
+                //                    var factorCardViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(divisionTemplate);
+                //                    foreach (var viewModel in factorCardViewModels)
+                //                    {
+                //                        (viewModel as FuzzyFactorCardViewModel).RejectSnappedArray();
+                //                    }
+                //                    continue;
+                //                }
+                //                if (divisionTemplate.CurrentRemainder < divisionTemplate.Rows * snappingArray.Columns)
+                //                {
+                //                    //TODO Liz - get old position - maybe from move batch? (Steve will email about this)
+                //                    //var oldX = 10.0;
+                //                    //var oldY = 10.0;
+                //                    //APageObjectBaseViewModel.ChangePageObjectPosition(snappingArray, oldX, oldY, false);
 
-                            var previousNumberOfAttempts = 0;
-                            if(existingTag != null)
-                            {
-                                previousNumberOfAttempts = existingTag.NumberOfAttempts;
-                                page.RemoveTag(existingTag);
-                            }
-                            var newTag = new DivisionTemplateIncorrectArrayCreationTag(page,
-                                                                                       Origin.StudentPageObjectGenerated,
-                                                                                       DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.ArrayTooLarge,
-                                                                                       previousNumberOfAttempts + 1);
-                            page.AddTag(newTag);
-                        }
-                    }
-                }
+                //                    var existingTag =
+                //                            pageObject.ParentPage.Tags.OfType<DivisionTemplateFailedSnapTag>()
+                //                                      .FirstOrDefault(x => x.Value == DivisionTemplateFailedSnapTag.AcceptedValues.SnappedArrayTooLarge);
+
+                //                    var previousNumberOfAttempts = 0;
+                //                    if (existingTag != null)
+                //                    {
+                //                        previousNumberOfAttempts = existingTag.NumberOfAttempts;
+                //                        pageObject.ParentPage.RemoveTag(existingTag);
+                //                    }
+                //                    var newTag = new DivisionTemplateFailedSnapTag(pageObject.ParentPage,
+                //                                                                   App.CurrentUserMode == App.UserMode.Student ? Origin.StudentPageObjectGenerated : Origin.TeacherPageObjectGenerated,
+                //                                                                   DivisionTemplateFailedSnapTag.AcceptedValues.SnappedArrayTooLarge,
+                //                                                                   previousNumberOfAttempts + 1);
+                //                    pageObject.ParentPage.AddTag(newTag);
+
+                //                    var factorCardViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(divisionTemplate);
+                //                    foreach (var viewModel in factorCardViewModels)
+                //                    {
+                //                        (viewModel as FuzzyFactorCardViewModel).RejectSnappedArray();
+                //                    }
+                //                    continue;
+                //                }
+
+                //                //If first division - update IsGridOn to match new array
+                //                if (divisionTemplate.LastDivisionPosition == 0)
+                //                {
+                //                    divisionTemplate.IsGridOn = snappingArray.IsGridOn;
+                //                }
+
+                //                //Add a new division and remove snapping array
+                //                PageObject.ParentPage.PageObjects.Remove(PageObject);
+                //                divisionTemplate.SnapInArray(snappingArray.Columns);
+
+                //                ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
+                //                                                           new FFCArraySnappedInHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, pageObject.ID, snappingArray));
+                //                return;
+                //            }
+                //        }
+                //    }
+                //}
             }
-
-            //DivisionTemplateFailedSnapTag
-            //TODO: Doesn't seem to be enough information to re-create this Tag. Could possibly analyze PageObjectMoveBatchHistoryItem
-            //to see if Array stops close to a DivisionTemplate, but it's not a guarantee.
         }
 
         public static void InterpretStrategy(CLPPage page, FuzzyFactorCard divisionTemplate)
         {
             var dividerValues = divisionTemplate.VerticalDivisions.Select(x => x.Value).ToList();
 
-            if(!dividerValues.Any())
+            if (!dividerValues.Any())
             {
                 return;
             }
 
-            if(dividerValues.Count == 2)
+            if (dividerValues.Count == 2)
             {
                 page.AddTag(new DivisionTemplateStrategyTag(page, Origin.StudentPageGenerated, DivisionTemplateStrategyTag.AcceptedValues.OneArray, dividerValues));
                 return;
             }
 
-            if(Math.Abs(dividerValues.First() - dividerValues.Average()) < 0.001)
+            if (Math.Abs(dividerValues.First() - dividerValues.Average()) < 0.001)
             {
                 page.AddTag(new DivisionTemplateStrategyTag(page, Origin.StudentPageGenerated, DivisionTemplateStrategyTag.AcceptedValues.EvenSplit, dividerValues));
                 return;
             }
 
             // HACK - This only compares the first 2 values to see if they are the same to determine Repeated Strategy. Find a way to determine this by frequency.
-            if(dividerValues.First() == dividerValues.ElementAt(1))
+            if (dividerValues.First() == dividerValues.ElementAt(1))
             {
                 page.AddTag(new DivisionTemplateStrategyTag(page, Origin.StudentPageGenerated, DivisionTemplateStrategyTag.AcceptedValues.Repeated, dividerValues));
                 return;
@@ -240,12 +371,12 @@ namespace CLP.Entities
         {
             // Apply a Completeness tag.
             var isDivisionTemplateComplete = false;
-            if(divisionTemplate.VerticalDivisions.Count < 2)
+            if (divisionTemplate.VerticalDivisions.Count < 2)
             {
                 var tag = new DivisionTemplateCompletenessTag(page, Origin.StudentPageGenerated, DivisionTemplateCompletenessTag.AcceptedValues.NoArrays);
                 page.AddTag(tag);
             }
-            else if(divisionTemplate.VerticalDivisions.Sum(x => x.Value) == divisionTemplate.Columns)
+            else if (divisionTemplate.VerticalDivisions.Sum(x => x.Value) == divisionTemplate.Columns)
             {
                 var tag = new DivisionTemplateCompletenessTag(page, Origin.StudentPageGenerated, DivisionTemplateCompletenessTag.AcceptedValues.Complete);
                 page.AddTag(tag);
@@ -262,9 +393,9 @@ namespace CLP.Entities
 
             // Correct
             if (divisionRelationDefinition.Dividend == divisionTemplate.Dividend &&
-               isDivisionTemplateComplete &&
-               divisionRelationDefinition.Divisor == divisionTemplate.Rows &&
-               divisionRelationDefinition.Quotient == divisionTemplate.Columns)
+                isDivisionTemplateComplete &&
+                divisionRelationDefinition.Divisor == divisionTemplate.Rows &&
+                divisionRelationDefinition.Quotient == divisionTemplate.Columns)
             {
                 var correctTag = new DivisionTemplateInterpretedCorrectnessTag(page, Origin.StudentPageGenerated, Correctness.Correct, incorrectReasons);
                 page.AddTag(correctTag);
@@ -272,7 +403,7 @@ namespace CLP.Entities
             }
 
             // Incorrect
-            if(!isDivisionTemplateComplete)
+            if (!isDivisionTemplateComplete)
             {
                 incorrectReasons.Add(DivisionTemplateIncorrectReason.Incomplete);
             }
@@ -287,7 +418,7 @@ namespace CLP.Entities
                 incorrectReasons.Add(DivisionTemplateIncorrectReason.WrongDivisor);
             }
 
-            if(!incorrectReasons.Any())
+            if (!incorrectReasons.Any())
             {
                 incorrectReasons.Add(DivisionTemplateIncorrectReason.Other);
             }
