@@ -246,6 +246,13 @@
                                 <Rectangle VerticalAlignment="Center"
                                            StrokeThickness="0"
                                            Fill="Black"
+                                           Height="1"
+                                           Width="150" />
+                            </RibbonGalleryItem>
+                            <RibbonGalleryItem Height="30">
+                                <Rectangle VerticalAlignment="Center"
+                                           StrokeThickness="0"
+                                           Fill="Black"
                                            Height="2"
                                            Width="150" />
                             </RibbonGalleryItem>
