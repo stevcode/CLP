@@ -88,7 +88,7 @@ namespace CLP.Entities
 
         public override string FormattedValue
         {
-            get { return string.Format("Relation Type: {0}\n" + "{1} \\ {2} = {3} R{4}", RelationType, Dividend, Divisor, Quotient, Remainder); }
+            get { return string.Format("Relation Type: {0}\n" + "{1} / {2} = {3} R{4}", RelationType, Dividend, Divisor, Quotient, Remainder); }
         }
 
         #endregion //ATagBase Overrides

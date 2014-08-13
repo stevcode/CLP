@@ -58,7 +58,7 @@ namespace CLP.Entities
 
         public override string FormattedValue
         {
-            get { return string.Format("Dividend: {0}\n" + "Given Factor: {1}", Dividend, Divisor); }
+            get { return string.Format("Dividend: {0}\n" + "Divisor: {1}", Dividend, Divisor); }
         }
 
         #endregion //ATagBase Overrides
