@@ -456,7 +456,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             set
             {
-                Page.AddTag(new CorrectnessTag(Page, Origin.Teacher, value));
+                Page.AddTag(new CorrectnessTag(Page, Origin.Teacher, value, false));
                 SetValue(CorrectnessProperty, value);
             }
         }

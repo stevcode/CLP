@@ -780,13 +780,13 @@ namespace Classroom_Learning_Partner.ViewModels
                 page.Tags.OfType<DivisionTemplateRepresentationCorrectnessTag>()
                     .Select(
                             divisionTemplateCorrectnessTag =>
-                            new CorrectnessTag(page, Origin.StudentPageGenerated, divisionTemplateCorrectnessTag.Correctness))
+                            new CorrectnessTag(page, Origin.StudentPageGenerated, divisionTemplateCorrectnessTag.Correctness, true))
                     .ToList();
             correctnessTags.AddRange(
                                      page.Tags.OfType<ArrayRepresentationCorrectnessTag>()
                                          .Select(
                                                  arrayCorrectnessTag =>
-                                                 new CorrectnessTag(page, Origin.StudentPageGenerated, arrayCorrectnessTag.Correctness)));
+                                                 new CorrectnessTag(page, Origin.StudentPageGenerated, arrayCorrectnessTag.Correctness, true)));
 
             if (!correctnessTags.Any())
             {
@@ -822,7 +822,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
 
-            page.AddTag(new CorrectnessTag(page, Origin.StudentPageGenerated, correctnessSum));
+            page.AddTag(new CorrectnessTag(page, Origin.StudentPageGenerated, correctnessSum, true));
         }
 
         /// <summary>Analyzes the history of the <see cref="CLPPage" /> to determine potential <see cref="ITag" />s.</summary>
