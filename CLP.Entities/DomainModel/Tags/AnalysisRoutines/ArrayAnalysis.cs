@@ -173,6 +173,7 @@ namespace CLP.Entities
         {
             InterpretAxisStrategies(page, array, array.VerticalDivisions.Select(x => x.Value).ToList(), true);
             InterpretAxisStrategies(page, array, array.HorizontalDivisions.Select(x => x.Value).ToList(), false);
+            
             InterpretRegionStrategies(page, array);
         }
 
@@ -221,8 +222,10 @@ namespace CLP.Entities
                 return;
             }
 
-            // HACK - This only compares the first 2 values to see if they are the same to determine Repeated Strategy. Find a way to determine this by frequency.
-            if (dividerValues.First() == dividerValues.ElementAt(1))
+            var mode = dividerValues.GroupBy(i => i).OrderByDescending(g => g.Count()).Select(g => g.Key).First();
+            var modeFrequency = dividerValues.Count(i => i == mode);
+
+            if (modeFrequency >= dividerValues.Count())
             {
                 if (isXAxisStrategy)
                 {
@@ -280,6 +283,8 @@ namespace CLP.Entities
             switch (array.ArrayType)
             {
                 case ArrayTypes.Array:
+                    InterpretAxisDividerCorrectness(page, array, array.VerticalDivisions.Select(x => x.Value).ToList(), true);
+                    InterpretAxisDividerCorrectness(page, array, array.HorizontalDivisions.Select(x => x.Value).ToList(), false);
                     InterpretArrayCorrectness(page, multiplicationRelationDefinition, array);
                     break;
                 case ArrayTypes.ArrayCard:
@@ -292,6 +297,69 @@ namespace CLP.Entities
                     // TODO
                     break;
             }
+        }
+
+        public static void InterpretAxisDividerCorrectness(CLPPage page, CLPArray array, List<int> dividerValues, bool isXAxisDivider)
+        {
+            if (!dividerValues.Any())
+            {
+                return;
+            }
+
+            if (dividerValues.Contains(0))
+            {
+                if (isXAxisDivider)
+                {
+                    page.AddTag(new ArrayXAxisDividerCorrectnessTag(page,
+                                                                    Origin.StudentPageGenerated,
+                                                                    Correctness.Incorrect,
+                                                                    new List<ArrayAxisIncorrectReason>
+                                                                    {
+                                                                        ArrayAxisIncorrectReason.IncompleteDividerValues
+                                                                    }));
+                }
+                else
+                {
+                    page.AddTag(new ArrayYAxisDividerCorrectnessTag(page,
+                                                                    Origin.StudentPageGenerated,
+                                                                    Correctness.Incorrect,
+                                                                    new List<ArrayAxisIncorrectReason>
+                                                                    {
+                                                                        ArrayAxisIncorrectReason.IncompleteDividerValues
+                                                                    }));
+                }
+                return;
+            }
+
+            if (isXAxisDivider && dividerValues.Sum() != array.Columns)
+            {
+                page.AddTag(new ArrayXAxisDividerCorrectnessTag(page,
+                                                                Origin.StudentPageGenerated,
+                                                                Correctness.Incorrect,
+                                                                new List<ArrayAxisIncorrectReason>
+                                                                {
+                                                                    ArrayAxisIncorrectReason.WrongDividerSum
+                                                                }));
+                return;
+            }
+
+            if (!isXAxisDivider &&
+                dividerValues.Sum() != array.Rows)
+            {
+                page.AddTag(new ArrayYAxisDividerCorrectnessTag(page,
+                                                                Origin.StudentPageGenerated,
+                                                                Correctness.Incorrect,
+                                                                new List<ArrayAxisIncorrectReason>
+                                                                {
+                                                                    ArrayAxisIncorrectReason.WrongDividerSum
+                                                                }));
+                return;
+            }
+
+            page.AddTag(new ArrayYAxisDividerCorrectnessTag(page,
+                                                            Origin.StudentPageGenerated,
+                                                            Correctness.Correct,
+                                                            new List<ArrayAxisIncorrectReason>()));
         }
 
         public static void InterpretArrayCorrectness(CLPPage page,
@@ -321,7 +389,7 @@ namespace CLP.Entities
             {
                 incorrectReasons.Add(ArrayIncorrectReason.ProductAsFactor);
             }
-            
+
             if (firstFactor == array.Rows ||
                 secondFactor == array.Rows ||
                 firstFactor == array.Columns ||

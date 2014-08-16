@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
 using Catel.Data;
 
@@ -17,60 +16,12 @@ namespace CLP.Entities
         /// <summary>Initializes <see cref="ObjectTypesInHistoryTag" />.</summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="ObjectTypesInHistoryTag" /> belongs to.</param>
         /// <param name="origin"></param>
-        public ObjectTypesInHistoryTag(CLPPage parentPage, Origin origin)
+        public ObjectTypesInHistoryTag(CLPPage parentPage, Origin origin, List<string> objectTypes)
             : base(parentPage, origin)
         {
             IsSingleValueTag = true;
 
-            foreach (
-                var pageObject in
-                    parentPage.PageObjects.Where(pageObject => pageObject.OwnerID == parentPage.OwnerID)
-                              .Concat(parentPage.History.TrashedPageObjects.Where(pageObject => pageObject.OwnerID == parentPage.OwnerID)))
-            {
-                if (pageObject is FuzzyFactorCard)
-                {
-                    ObjectTypes.Add("Division Templates");
-                    continue;
-                }
-
-                if (pageObject is CLPArray)
-                {
-                    ObjectTypes.Add("Arrays");
-                    continue;
-                }
-
-                if (pageObject is RemainderTiles)
-                {
-                    ObjectTypes.Add("Remainder Tiles");
-                    continue;
-                }
-
-                if (pageObject is Stamp)
-                {
-                    ObjectTypes.Add("Stamps");
-                    continue;
-                }
-
-                if (pageObject is Shape)
-                {
-                    ObjectTypes.Add("Shapes");
-                    continue;
-                }
-            }
-
-            ObjectTypes = ObjectTypes.Distinct().ToList();
-
-            if (parentPage.InkStrokes.Any(stroke => stroke.GetStrokeOwnerID() == parentPage.OwnerID) ||
-                parentPage.History.TrashedInkStrokes.Any(stroke => stroke.GetStrokeOwnerID() == parentPage.OwnerID))
-            {
-                ObjectTypes.Add("Ink");
-            }
-
-            if (parentPage.InkStrokes.Any(stroke => stroke.GetStrokeOwnerID() == parentPage.OwnerID && stroke.DrawingAttributes.IsHighlighter) ||
-                parentPage.History.TrashedInkStrokes.Any(stroke => stroke.GetStrokeOwnerID() == parentPage.OwnerID && stroke.DrawingAttributes.IsHighlighter))
-            {
-                ObjectTypes.Add("Highlighter");
-            }
+            ObjectTypes = objectTypes;
         }
 
         /// <summary>Initializes <see cref="ObjectTypesInHistoryTag" /> based on <see cref="SerializationInfo" />.</summary>
@@ -90,7 +41,7 @@ namespace CLP.Entities
             set { SetValue(ObjectTypesProperty, value); }
         }
 
-        public static readonly PropertyData ObjectTypesProperty = RegisterProperty("ObjectTypes", typeof (List<string>), () => new List<string>());
+        public static readonly PropertyData ObjectTypesProperty = RegisterProperty("ObjectTypes", typeof (List<string>));
 
         #region ATagBase Overrides
 
@@ -101,7 +52,7 @@ namespace CLP.Entities
 
         public override string FormattedValue
         {
-            get { return string.Join("\n", ObjectTypes); }
+            get { return string.Join(",", ObjectTypes); }
         }
 
         #endregion //ATagBase Overrides

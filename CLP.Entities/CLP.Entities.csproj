@@ -110,6 +110,8 @@
     <Compile Include="DomainModel\History\ArrayHistoryItems\CLPArraySnapHistoryItem.cs" />
     <Compile Include="DomainModel\Tags\AnalysisRoutines\ArrayAnalysis.cs" />
     <Compile Include="DomainModel\Tags\AnalysisRoutines\DivisionTemplateAnalysis.cs" />
+    <Compile Include="DomainModel\Tags\AnalysisRoutines\PageAnalysis.cs" />
+    <Compile Include="DomainModel\Tags\Array\ArrayCorrectnessTag.cs" />
     <Compile Include="DomainModel\Tags\Array\ArrayTriedWrongDividerValuesTag.cs" />
     <Compile Include="DomainModel\History\FuzzyFactorCardHistoryItems\FFCArrayRemovedHistoryItem.cs" />
     <Compile Include="DomainModel\History\FuzzyFactorCardHistoryItems\FFCArraySnappedInHistoryItem.cs" />
@@ -165,6 +167,7 @@
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateRepresentationCorrectnessTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateStrategyTag.cs" />
     <Compile Include="DomainModel\Tags\ITag.cs" />
+    <Compile Include="DomainModel\Tags\OtherPageInformation\HighlightedObjectTypesOnPageTag.cs" />
     <Compile Include="DomainModel\Tags\OtherPageInformation\ObjectTypesInHistoryTag.cs" />
     <Compile Include="DomainModel\Tags\OtherPageInformation\ObjectTypesOnPageTag.cs" />
     <Compile Include="DomainModel\Tags\CurriculumInformation\PageTopicTag.cs" />

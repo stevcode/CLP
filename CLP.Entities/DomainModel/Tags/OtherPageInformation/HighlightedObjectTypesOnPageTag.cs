@@ -6,18 +6,20 @@ using Catel.Data;
 namespace CLP.Entities
 {
     [Serializable]
-    public class ObjectTypesOnPageTag : ATagBase
+    public class HighlightedObjectTypesOnPageTag : ATagBase
     {
         #region Constructors
 
-        /// <summary>Initializes <see cref="ObjectTypesOnPageTag" /> from scratch.</summary>
-        public ObjectTypesOnPageTag() { }
+        /// <summary>
+        /// Initializes <see cref="HighlightedObjectTypesOnPageTag" /> from scratch.
+        /// </summary>
+        public HighlightedObjectTypesOnPageTag() { }
 
-        /// <summary>Initializes <see cref="ObjectTypesOnPageTag" /> from values.</summary>
-        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="ObjectTypesOnPageTag" /> belongs to.</param>
-        /// <param name="origin"></param>
-        /// <param name="currentUserID"></param>
-        public ObjectTypesOnPageTag(CLPPage parentPage, Origin origin, List<string> objectTypes)
+        /// <summary>
+        /// Initializes <see cref="HighlightedObjectTypesOnPageTag" />.
+        /// </summary>
+        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="HighlightedObjectTypesOnPageTag" /> belongs to.</param>
+        public HighlightedObjectTypesOnPageTag(CLPPage parentPage, Origin origin, List<string> objectTypes)
             : base(parentPage, origin)
         {
             IsSingleValueTag = true;
@@ -25,10 +27,12 @@ namespace CLP.Entities
             ObjectTypes = objectTypes;
         }
 
-        /// <summary>Initializes <see cref="ObjectTypesOnPageTag" /> based on <see cref="SerializationInfo" />.</summary>
+        /// <summary>
+        /// Initializes <see cref="HighlightedObjectTypesOnPageTag" /> based on <see cref="SerializationInfo" />.
+        /// </summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext" />.</param>
-        public ObjectTypesOnPageTag(SerializationInfo info, StreamingContext context)
+        public HighlightedObjectTypesOnPageTag(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
         #endregion //Constructors
@@ -42,7 +46,7 @@ namespace CLP.Entities
             set { SetValue(ObjectTypesProperty, value); }
         }
 
-        public static readonly PropertyData ObjectTypesProperty = RegisterProperty("ObjectTypes", typeof (List<string>));
+        public static readonly PropertyData ObjectTypesProperty = RegisterProperty("ObjectTypes", typeof(List<string>), () => new List<string>());
 
         #region ATagBase Overrides
 

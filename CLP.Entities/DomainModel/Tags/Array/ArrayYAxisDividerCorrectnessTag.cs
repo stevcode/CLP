@@ -19,7 +19,7 @@ namespace CLP.Entities
         /// Initializes <see cref="ArrayYAxisDividerCorrectnessTag" />.
         /// </summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="ArrayYAxisDividerCorrectnessTag" /> belongs to.</param>
-        public ArrayYAxisDividerCorrectnessTag(CLPPage parentPage, Origin origin, Correctness correctness, List<ArrayIncorrectReason> incorrectReasons)
+        public ArrayYAxisDividerCorrectnessTag(CLPPage parentPage, Origin origin, Correctness correctness, List<ArrayAxisIncorrectReason> incorrectReasons)
             : base(parentPage, origin)
         {
             Correctness = correctness;
@@ -48,14 +48,14 @@ namespace CLP.Entities
         public static readonly PropertyData CorrectnessProperty = RegisterProperty("Correctness", typeof(Correctness));
 
         /// <summary>Reason the Interpreted Correctness was set to Incorrect.</summary>
-        public List<ArrayIncorrectReason> ArrayIncorrectReasons
+        public List<ArrayAxisIncorrectReason> ArrayIncorrectReasons
         {
-            get { return GetValue<List<ArrayIncorrectReason>>(ArrayIncorrectReasonsProperty); }
+            get { return GetValue<List<ArrayAxisIncorrectReason>>(ArrayIncorrectReasonsProperty); }
             set { SetValue(ArrayIncorrectReasonsProperty, value); }
         }
 
         public static readonly PropertyData ArrayIncorrectReasonsProperty = RegisterProperty("ArrayIncorrectReasons",
-                                                                                             typeof(List<ArrayIncorrectReason>));
+                                                                                             typeof(List<ArrayAxisIncorrectReason>));
 
         #region ATagBase Overrides
 
