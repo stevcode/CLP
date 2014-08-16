@@ -358,7 +358,7 @@ namespace CLP.Entities
                 return;
             }
 
-            if(!ParentPage.PageObjects.Contains(RemainderTiles))
+            if (!ParentPage.PageObjects.Contains(RemainderTiles))
             {
                 ParentPage.PageObjects.Add(RemainderTiles);
             }

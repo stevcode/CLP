@@ -110,7 +110,7 @@ namespace CLP.Entities
         {
             base.OnAdded();
             // If FFC with remainder on page, update
-            foreach(var ffc in ParentPage.PageObjects.OfType<FuzzyFactorCard>())
+            foreach(var ffc in ParentPage.PageObjects.OfType<FuzzyFactorCard>().ToList())
             {
                 ffc.AnalyzeArrays();
                 ffc.UpdateRemainderRegion();

@@ -56,7 +56,7 @@ namespace CLP.Entities
 
         public override string FormattedValue
         {
-            get { return string.Format("{0}", Category); }
+            get { return string.Format("{0}", Correctness); }
         }
 
         #endregion //ATagBase Overrides
