@@ -15,7 +15,7 @@ namespace CLP.Entities
             foreach (
                 var tag in
                     page.Tags.ToList()
-                        .Where(tag => tag is DivisionTemplateInterpretedCorrectnessTag || tag is DivisionTemplateStrategyTag || tag is DivisionTemplateCompletenessTag))
+                        .Where(tag => tag is DivisionTemplateRepresentationCorrectnessTag || tag is DivisionTemplateStrategyTag || tag is DivisionTemplateCompletenessTag))
             {
                 page.RemoveTag(tag);
             }
@@ -397,7 +397,7 @@ namespace CLP.Entities
                 divisionRelationDefinition.Divisor == divisionTemplate.Rows &&
                 divisionRelationDefinition.Quotient == divisionTemplate.Columns)
             {
-                var correctTag = new DivisionTemplateInterpretedCorrectnessTag(page, Origin.StudentPageGenerated, Correctness.Correct, incorrectReasons);
+                var correctTag = new DivisionTemplateRepresentationCorrectnessTag(page, Origin.StudentPageGenerated, Correctness.Correct, incorrectReasons);
                 page.AddTag(correctTag);
                 return;
             }
@@ -423,7 +423,7 @@ namespace CLP.Entities
                 incorrectReasons.Add(DivisionTemplateIncorrectReason.Other);
             }
 
-            var incorrectTag = new DivisionTemplateInterpretedCorrectnessTag(page, Origin.StudentPageGenerated, Correctness.Incorrect, incorrectReasons);
+            var incorrectTag = new DivisionTemplateRepresentationCorrectnessTag(page, Origin.StudentPageGenerated, Correctness.Incorrect, incorrectReasons);
             page.AddTag(incorrectTag);
         }
     }

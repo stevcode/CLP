@@ -1,4 +1,5 @@
-﻿using Catel.Data;
+﻿using System;
+using Catel.Data;
 using Catel.MVVM;
 using CLP.Entities;
 
@@ -11,6 +12,8 @@ namespace Classroom_Learning_Partner.ViewModels
         public DivisionRelationDefinitionTagViewModel(DivisionRelationDefinitionTag divisionRelationDefinition)
         {
             Model = divisionRelationDefinition;
+
+            CalculateQuotientCommand = new Command(OnCalculateQuotientCommandExecute);
         }
 
         /// <summary>Gets the title of the view model.</summary>
@@ -80,5 +83,21 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData RelationTypeProperty = RegisterProperty("RelationType",
                                                                                     typeof (DivisionRelationDefinitionTag.RelationTypes));
+
+        /// <summary>
+        /// Calculates the Quotient and Remainder given the Dividend and Divisor.
+        /// </summary>
+        public Command CalculateQuotientCommand { get; private set; }
+
+        private void OnCalculateQuotientCommandExecute()
+        {
+            if (Divisor == 0)
+            {
+                return;
+            }
+
+            Quotient = Math.Floor(Dividend / Divisor);
+            Remainder = Dividend % Divisor;
+        }
     }
 }

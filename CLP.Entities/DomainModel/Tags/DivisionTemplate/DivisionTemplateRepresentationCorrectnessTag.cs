@@ -14,20 +14,20 @@ namespace CLP.Entities
     }
 
     [Serializable]
-    public class DivisionTemplateInterpretedCorrectnessTag : ATagBase
+    public class DivisionTemplateRepresentationCorrectnessTag : ATagBase
     {
         #region Constructors
 
         /// <summary>
-        /// Initializes <see cref="DivisionTemplateInterpretedCorrectnessTag" /> from scratch.
+        /// Initializes <see cref="DivisionTemplateRepresentationCorrectnessTag" /> from scratch.
         /// </summary>
-        public DivisionTemplateInterpretedCorrectnessTag() { }
+        public DivisionTemplateRepresentationCorrectnessTag() { }
 
         /// <summary>
-        /// Initializes <see cref="DivisionTemplateInterpretedCorrectnessTag" />.
+        /// Initializes <see cref="DivisionTemplateRepresentationCorrectnessTag" />.
         /// </summary>
-        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="DivisionTemplateInterpretedCorrectnessTag" /> belongs to.</param>
-        public DivisionTemplateInterpretedCorrectnessTag(CLPPage parentPage, Origin origin, Correctness correctness, List<DivisionTemplateIncorrectReason> incorrectReasons)
+        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="DivisionTemplateRepresentationCorrectnessTag" /> belongs to.</param>
+        public DivisionTemplateRepresentationCorrectnessTag(CLPPage parentPage, Origin origin, Correctness correctness, List<DivisionTemplateIncorrectReason> incorrectReasons)
             : base(parentPage, origin)
         {
             Correctness = correctness;
@@ -35,11 +35,11 @@ namespace CLP.Entities
         }
 
         /// <summary>
-        /// Initializes <see cref="ArrayInterpretedCorrectnessTag" /> based on <see cref="SerializationInfo" />.
+        /// Initializes <see cref="ArrayRepresentationCorrectnessTag" /> based on <see cref="SerializationInfo" />.
         /// </summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext" />.</param>
-        public DivisionTemplateInterpretedCorrectnessTag(SerializationInfo info, StreamingContext context)
+        public DivisionTemplateRepresentationCorrectnessTag(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
         #endregion //Constructors

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Entities;
@@ -21,6 +22,8 @@ namespace Classroom_Learning_Partner.ViewModels
             Factors.Add(new ValueContainer(0));
             Factors.Add(new ValueContainer(0));
             Product = 0;
+
+            CalculateProductCommand = new Command(OnCalculateProductCommandExecute);
         }
 
         /// <summary>Gets the title of the view model.</summary>
@@ -69,5 +72,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData RelationTypeProperty = RegisterProperty("RelationType",
                                                                                     typeof (MultiplicationRelationDefinitionTag.RelationTypes));
+
+        /// <summary>Calculates the value of the product</summary>
+        public Command CalculateProductCommand { get; private set; }
+
+        private void OnCalculateProductCommandExecute() { Product = Factors.Select(x => x.ContainedValue).Aggregate((x, y) => x * y); }
     }
 }

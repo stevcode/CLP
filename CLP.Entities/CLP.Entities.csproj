@@ -146,11 +146,13 @@
     <Compile Include="DomainModel\Strokes\Extensions\StrokeExtension.cs" />
     <Compile Include="DomainModel\Strokes\StrokeDTO.cs" />
     <Compile Include="DomainModel\Strokes\StrokePathDTO.cs" />
+    <Compile Include="DomainModel\Tags\Array\ArrayXAxisDividerCorrectnessTag.cs" />
+    <Compile Include="DomainModel\Tags\Array\ArrayYAxisDividerCorrectnessTag.cs" />
     <Compile Include="DomainModel\Tags\Definition\DivisionRelationDefinitionTag.cs" />
     <Compile Include="DomainModel\Tags\Definition\MultiplicationRelationDefinitionTag.cs" />
     <Compile Include="DomainModel\Tags\Array\ArrayOrientationTag.cs" />
     <Compile Include="DomainModel\Tags\Array\ArrayRegionStrategyTag.cs" />
-    <Compile Include="DomainModel\Tags\Array\ArrayInterpretedCorrectnessTag.cs" />
+    <Compile Include="DomainModel\Tags\Array\ArrayRepresentationCorrectnessTag.cs" />
     <Compile Include="DomainModel\Tags\Array\ArrayXAxisStrategyTag.cs" />
     <Compile Include="DomainModel\Tags\Array\ArrayYAxisStrategyTag.cs" />
     <Compile Include="DomainModel\Tags\ATagBase.cs" />
@@ -160,7 +162,7 @@
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateDeletedTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateFailedSnapTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateIncorrectArrayCreationTag.cs" />
-    <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateInterpretedCorrectnessTag.cs" />
+    <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateRepresentationCorrectnessTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateStrategyTag.cs" />
     <Compile Include="DomainModel\Tags\ITag.cs" />
     <Compile Include="DomainModel\Tags\OtherPageInformation\ObjectTypesInHistoryTag.cs" />

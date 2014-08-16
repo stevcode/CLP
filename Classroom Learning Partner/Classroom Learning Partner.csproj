@@ -305,7 +305,7 @@
     <Compile Include="Views\Modal Windows\AdvancedStagingView.xaml.cs">
       <DependentUpon>AdvancedStagingView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\DivisionRelationDefinitionTagView.xaml.cs">
+    <Compile Include="Views\Modal Windows\MVVM\DivisionRelationDefinitionTagView.xaml.cs">
       <DependentUpon>DivisionRelationDefinitionTagView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Modal Windows\MVVM\ButtonBoxView.xaml.cs">
@@ -412,7 +412,7 @@
     <Compile Include="Views\Modal Windows\LassoedPageObjectParameterizationView.xaml.cs">
       <DependentUpon>LassoedPageObjectParameterizationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\MultiplicationRelationDefinitionTagView.xaml.cs">
+    <Compile Include="Views\Modal Windows\MVVM\MultiplicationRelationDefinitionTagView.xaml.cs">
       <DependentUpon>MultiplicationRelationDefinitionTagView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Modal Windows\PageTopicWindowView.xaml.cs">
@@ -547,7 +547,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Modal Windows\DivisionRelationDefinitionTagView.xaml">
+    <Page Include="Views\Modal Windows\MVVM\DivisionRelationDefinitionTagView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -663,7 +663,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\MultiplicationRelationDefinitionTagView.xaml">
+    <Page Include="Views\Modal Windows\MVVM\MultiplicationRelationDefinitionTagView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

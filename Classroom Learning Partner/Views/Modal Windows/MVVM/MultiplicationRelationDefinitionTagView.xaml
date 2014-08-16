@@ -1,4 +1,4 @@
-﻿<catel:DataWindow x:Class="Classroom_Learning_Partner.Views.Modal_Windows.MultiplicationRelationDefinitionTagView"
+﻿<catel:DataWindow x:Class="Classroom_Learning_Partner.Views.MultiplicationRelationDefinitionTagView"
                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:catel="http://catel.codeplex.com"
@@ -24,6 +24,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -49,7 +50,8 @@
         <Label Grid.Row="1"
                Grid.Column="0"
                Content="Factors"
-               HorizontalAlignment="Center" />
+               HorizontalAlignment="Center"
+               VerticalAlignment="Center" />
 
         <ItemsControl Grid.Row="1"
                       Grid.Column="1" 
@@ -79,6 +81,13 @@
                  VerticalAlignment="Top"
                  Text="{Binding Product}"
                  TabIndex="2" />
+        
+        <Button Grid.Row="2"
+                Grid.Column="2"
+                Grid.ColumnSpan="2"
+                Margin="5 0"
+                Content="Calculate Product"
+                Command="{Binding CalculateProductCommand}" />
     </Grid>
 
 </catel:DataWindow>

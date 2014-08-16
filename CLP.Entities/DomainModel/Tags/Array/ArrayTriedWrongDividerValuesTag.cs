@@ -119,7 +119,7 @@ namespace CLP.Entities
                                      ArrayID,
                                      Rows,
                                      Columns,
-                                     string.Join("+", DividerValues) + " = " + DividerValues.Sum(),
+                                     string.Join("+", DividerValues.Select(x => x == 0 ? "?" : x.ToString())) + " = " + DividerValues.Sum(),
                                      DividerValuesOrientation == DividerValuesOrientation.Horizontal ? "Columns" : "Rows");
             }
         }

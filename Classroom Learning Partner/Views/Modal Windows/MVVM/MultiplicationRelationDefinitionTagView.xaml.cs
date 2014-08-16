@@ -1,10 +1,9 @@
-﻿using Catel.Windows;
-using Classroom_Learning_Partner.ViewModels;
+﻿using Classroom_Learning_Partner.ViewModels;
 
-namespace Classroom_Learning_Partner.Views.Modal_Windows
+namespace Classroom_Learning_Partner.Views
 {
     /// <summary>Interaction logic for MultiplicationRelationDefinitionTagView.xaml.</summary>
-    public partial class MultiplicationRelationDefinitionTagView : DataWindow
+    public partial class MultiplicationRelationDefinitionTagView
     {
         /// <summary>Initializes a new instance of the <see cref="MultiplicationRelationDefinitionTagView" /> class.</summary>
         public MultiplicationRelationDefinitionTagView(MultiplicationRelationDefinitionTagViewModel viewModel)

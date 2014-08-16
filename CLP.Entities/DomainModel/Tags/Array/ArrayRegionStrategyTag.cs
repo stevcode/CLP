@@ -11,7 +11,6 @@ namespace CLP.Entities
         public enum AcceptedValues
         {
             FriendlyPartialProducts,
-            NoDividers,
             Other
         }
 

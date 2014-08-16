@@ -12,7 +12,7 @@ namespace CLP.Entities
         public static void AnalyzeRegion(CLPPage page, Rect region)
         {
             // First, clear out any old ArrayTags generated via Analysis.
-            foreach(var tag in page.Tags.ToList().Where(tag => tag.Category == Category.Array && !(tag is ArrayTriedWrongDividerValuesTag)))
+            foreach (var tag in page.Tags.ToList().Where(tag => tag.Category == Category.Array && !(tag is ArrayTriedWrongDividerValuesTag)))
             {
                 page.RemoveTag(tag);
             }
@@ -20,14 +20,14 @@ namespace CLP.Entities
             var multiplicationRelationDefinitionTags = page.Tags.OfType<MultiplicationRelationDefinitionTag>().ToList();
             var arrays = page.PageObjects.OfType<CLPArray>().ToList();
             if (!multiplicationRelationDefinitionTags.Any() ||
-               !arrays.Any())
+                !arrays.Any())
             {
                 return;
             }
 
             foreach (var multiplicationRelationDefinition in multiplicationRelationDefinitionTags)
             {
-                foreach(var array in arrays)
+                foreach (var array in arrays)
                 {
                     InterpretOrientation(page, multiplicationRelationDefinition, array);
                     InterpretStrategies(page, array);
@@ -42,20 +42,22 @@ namespace CLP.Entities
 
             //ArrayTriedWrongDividerValuesTag
             var divisionValueChangedHistoryForArrays = new Dictionary<string, List<CLPArrayDivisionValueChangedHistoryItem>>();
-            foreach(var arrayDivisionValueChangedHistoryItem in completeOrderedHistory.OfType<CLPArrayDivisionValueChangedHistoryItem>())
+            foreach (var arrayDivisionValueChangedHistoryItem in completeOrderedHistory.OfType<CLPArrayDivisionValueChangedHistoryItem>())
             {
-                if(!divisionValueChangedHistoryForArrays.ContainsKey(arrayDivisionValueChangedHistoryItem.ArrayID))
+                if (!divisionValueChangedHistoryForArrays.ContainsKey(arrayDivisionValueChangedHistoryItem.ArrayID))
                 {
-                    divisionValueChangedHistoryForArrays.Add(arrayDivisionValueChangedHistoryItem.ArrayID, new List<CLPArrayDivisionValueChangedHistoryItem>());
+                    divisionValueChangedHistoryForArrays.Add(arrayDivisionValueChangedHistoryItem.ArrayID,
+                                                             new List<CLPArrayDivisionValueChangedHistoryItem>());
                 }
 
                 divisionValueChangedHistoryForArrays[arrayDivisionValueChangedHistoryItem.ArrayID].Add(arrayDivisionValueChangedHistoryItem);
             }
 
-            foreach(var divisionValueChangedHistoryForArray in divisionValueChangedHistoryForArrays)
+            foreach (var divisionValueChangedHistoryForArray in divisionValueChangedHistoryForArrays)
             {
-                var array = page.GetPageObjectByID(divisionValueChangedHistoryForArray.Key) as CLPArray ?? page.History.GetPageObjectByID(divisionValueChangedHistoryForArray.Key) as CLPArray;
-                if(array == null)
+                var array = page.GetPageObjectByID(divisionValueChangedHistoryForArray.Key) as CLPArray ??
+                            page.History.GetPageObjectByID(divisionValueChangedHistoryForArray.Key) as CLPArray;
+                if (array == null)
                 {
                     continue;
                 }
@@ -63,7 +65,7 @@ namespace CLP.Entities
                 var rowValueSum = array.HorizontalDivisions.Sum(x => x.Value);
                 var columnValueSum = array.VerticalDivisions.Sum(x => x.Value);
 
-                if(columnValueSum > array.Columns)
+                if (columnValueSum > array.Columns)
                 {
                     page.AddTag(new ArrayTriedWrongDividerValuesTag(page,
                                                                     Origin.StudentPageObjectGenerated,
@@ -74,7 +76,7 @@ namespace CLP.Entities
                                                                     array.HorizontalDivisions.Select(x => x.Value).ToList()));
                 }
 
-                if(rowValueSum > array.Rows)
+                if (rowValueSum > array.Rows)
                 {
                     page.AddTag(new ArrayTriedWrongDividerValuesTag(page,
                                                                     Origin.StudentPageObjectGenerated,
@@ -87,17 +89,20 @@ namespace CLP.Entities
 
                 var divisionValueChangedHistory = divisionValueChangedHistoryForArray.Value;
 
-                foreach(var arrayDivisionValueChangedHistoryItem in divisionValueChangedHistory)
+                foreach (var arrayDivisionValueChangedHistoryItem in divisionValueChangedHistory)
                 {
-                    if(arrayDivisionValueChangedHistoryItem.IsHorizontalDivision)
+                    if (arrayDivisionValueChangedHistoryItem.IsHorizontalDivision)
                     {
                         rowValueSum -= array.HorizontalDivisions[arrayDivisionValueChangedHistoryItem.DivisionIndex].Value;
                         rowValueSum += arrayDivisionValueChangedHistoryItem.PreviousValue;
-                        if(rowValueSum > array.Rows)
+                        if (rowValueSum > array.Rows)
                         {
                             var dividerValues =
-                                array.HorizontalDivisions.Select((t, i) => arrayDivisionValueChangedHistoryItem.DivisionIndex == i ? arrayDivisionValueChangedHistoryItem.PreviousValue : t.Value)
-                                     .ToList();
+                                array.HorizontalDivisions.Select(
+                                                                 (t, i) =>
+                                                                 arrayDivisionValueChangedHistoryItem.DivisionIndex == i
+                                                                     ? arrayDivisionValueChangedHistoryItem.PreviousValue
+                                                                     : t.Value).ToList();
 
                             page.AddTag(new ArrayTriedWrongDividerValuesTag(page,
                                                                             Origin.StudentPageObjectGenerated,
@@ -114,11 +119,14 @@ namespace CLP.Entities
                     {
                         columnValueSum -= array.VerticalDivisions[arrayDivisionValueChangedHistoryItem.DivisionIndex].Value;
                         columnValueSum += arrayDivisionValueChangedHistoryItem.PreviousValue;
-                        if(columnValueSum > array.Columns)
+                        if (columnValueSum > array.Columns)
                         {
                             var dividerValues =
-                                array.VerticalDivisions.Select((t, i) => arrayDivisionValueChangedHistoryItem.DivisionIndex == i ? arrayDivisionValueChangedHistoryItem.PreviousValue : t.Value)
-                                     .ToList();
+                                array.VerticalDivisions.Select(
+                                                               (t, i) =>
+                                                               arrayDivisionValueChangedHistoryItem.DivisionIndex == i
+                                                                   ? arrayDivisionValueChangedHistoryItem.PreviousValue
+                                                                   : t.Value).ToList();
 
                             page.AddTag(new ArrayTriedWrongDividerValuesTag(page,
                                                                             Origin.StudentPageObjectGenerated,
@@ -145,13 +153,13 @@ namespace CLP.Entities
             var firstFactor = multiplicationRelationDefinition.Factors[0];
             var secondFactor = multiplicationRelationDefinition.Factors[1];
 
-            if(firstFactor == array.Columns &&
-               secondFactor == array.Rows)
+            if (firstFactor == array.Columns &&
+                secondFactor == array.Rows)
             {
                 page.AddTag(new ArrayOrientationTag(page, Origin.StudentPageGenerated, ArrayOrientationTag.AcceptedValues.FirstFactorWidth));
             }
-            else if(firstFactor == array.Rows &&
-                    secondFactor == array.Columns)
+            else if (firstFactor == array.Rows &&
+                     secondFactor == array.Columns)
             {
                 page.AddTag(new ArrayOrientationTag(page, Origin.StudentPageGenerated, ArrayOrientationTag.AcceptedValues.FirstFactorHeight));
             }
@@ -170,60 +178,70 @@ namespace CLP.Entities
 
         public static void InterpretAxisStrategies(CLPPage page, CLPArray array, List<int> dividerValues, bool isXAxisStrategy)
         {
-            if(!dividerValues.Any())
+            if (!dividerValues.Any())
             {
-                if(isXAxisStrategy)
+                return;
+            }
+
+            if (Math.Abs(dividerValues.First() - dividerValues.Average()) < 0.001)
+            {
+                if (isXAxisStrategy)
                 {
-                    page.AddTag(new ArrayXAxisStrategyTag(page, Origin.StudentPageGenerated, ArrayXAxisStrategyTag.AcceptedValues.NoDividers, dividerValues));
+                    page.AddTag(new ArrayXAxisStrategyTag(page,
+                                                          Origin.StudentPageGenerated,
+                                                          ArrayXAxisStrategyTag.AcceptedValues.EvenSplit,
+                                                          dividerValues));
                 }
                 else
                 {
-                    page.AddTag(new ArrayYAxisStrategyTag(page, Origin.StudentPageGenerated, ArrayYAxisStrategyTag.AcceptedValues.NoDividers, dividerValues));
+                    page.AddTag(new ArrayYAxisStrategyTag(page,
+                                                          Origin.StudentPageGenerated,
+                                                          ArrayYAxisStrategyTag.AcceptedValues.EvenSplit,
+                                                          dividerValues));
                 }
                 return;
             }
 
-            if(Math.Abs(dividerValues.First() - dividerValues.Average()) < 0.001)
+            if (dividerValues.OrderBy(x => x).SequenceEqual(PlaceValueStrategyDivisions(isXAxisStrategy ? array.Columns : array.Rows).OrderBy(x => x)))
             {
-                if(isXAxisStrategy)
+                if (isXAxisStrategy)
                 {
-                    page.AddTag(new ArrayXAxisStrategyTag(page, Origin.StudentPageGenerated, ArrayXAxisStrategyTag.AcceptedValues.EvenSplit, dividerValues));
+                    page.AddTag(new ArrayXAxisStrategyTag(page,
+                                                          Origin.StudentPageGenerated,
+                                                          ArrayXAxisStrategyTag.AcceptedValues.PlaceValue,
+                                                          dividerValues));
                 }
                 else
                 {
-                    page.AddTag(new ArrayYAxisStrategyTag(page, Origin.StudentPageGenerated, ArrayYAxisStrategyTag.AcceptedValues.EvenSplit, dividerValues));
-                }
-                return;
-            }
-
-            if(dividerValues.OrderBy(x => x).SequenceEqual(PlaceValueStrategyDivisions(isXAxisStrategy ? array.Columns : array.Rows).OrderBy(x => x)))
-            {
-                if(isXAxisStrategy)
-                {
-                    page.AddTag(new ArrayXAxisStrategyTag(page, Origin.StudentPageGenerated, ArrayXAxisStrategyTag.AcceptedValues.PlaceValue, dividerValues));
-                }
-                else
-                {
-                    page.AddTag(new ArrayYAxisStrategyTag(page, Origin.StudentPageGenerated, ArrayYAxisStrategyTag.AcceptedValues.PlaceValue, dividerValues));
+                    page.AddTag(new ArrayYAxisStrategyTag(page,
+                                                          Origin.StudentPageGenerated,
+                                                          ArrayYAxisStrategyTag.AcceptedValues.PlaceValue,
+                                                          dividerValues));
                 }
                 return;
             }
 
             // HACK - This only compares the first 2 values to see if they are the same to determine Repeated Strategy. Find a way to determine this by frequency.
-            if(dividerValues.First() == dividerValues.ElementAt(1))
+            if (dividerValues.First() == dividerValues.ElementAt(1))
             {
-                if(isXAxisStrategy)
+                if (isXAxisStrategy)
                 {
-                    page.AddTag(new ArrayXAxisStrategyTag(page, Origin.StudentPageGenerated, ArrayXAxisStrategyTag.AcceptedValues.Repeated, dividerValues));
+                    page.AddTag(new ArrayXAxisStrategyTag(page,
+                                                          Origin.StudentPageGenerated,
+                                                          ArrayXAxisStrategyTag.AcceptedValues.Repeated,
+                                                          dividerValues));
                 }
                 else
                 {
-                    page.AddTag(new ArrayYAxisStrategyTag(page, Origin.StudentPageGenerated, ArrayYAxisStrategyTag.AcceptedValues.Repeated, dividerValues));
+                    page.AddTag(new ArrayYAxisStrategyTag(page,
+                                                          Origin.StudentPageGenerated,
+                                                          ArrayYAxisStrategyTag.AcceptedValues.Repeated,
+                                                          dividerValues));
                 }
                 return;
             }
 
-            if(isXAxisStrategy)
+            if (isXAxisStrategy)
             {
                 page.AddTag(new ArrayXAxisStrategyTag(page, Origin.StudentPageGenerated, ArrayXAxisStrategyTag.AcceptedValues.Other, dividerValues));
             }
@@ -243,9 +261,9 @@ namespace CLP.Entities
             var currentValue = startingValue;
             var currentPlace = 1;
             var output = new List<int>();
-            while(currentValue > 0)
+            while (currentValue > 0)
             {
-                if(currentValue % 10 > 0)
+                if (currentValue % 10 > 0)
                 {
                     output.Add((currentValue % 10) * currentPlace);
                 }
@@ -259,7 +277,7 @@ namespace CLP.Entities
 
         public static void InterpretCorrectness(CLPPage page, MultiplicationRelationDefinitionTag multiplicationRelationDefinition, CLPArray array)
         {
-            switch(array.ArrayType)
+            switch (array.ArrayType)
             {
                 case ArrayTypes.Array:
                     InterpretArrayCorrectness(page, multiplicationRelationDefinition, array);
@@ -276,63 +294,50 @@ namespace CLP.Entities
             }
         }
 
-        public static void InterpretArrayCorrectness(CLPPage page, MultiplicationRelationDefinitionTag multiplicationRelationDefinition, CLPArray array)
+        public static void InterpretArrayCorrectness(CLPPage page,
+                                                     MultiplicationRelationDefinitionTag multiplicationRelationDefinition,
+                                                     CLPArray array)
         {
             var incorrectReasons = new List<ArrayIncorrectReason>();
             if (multiplicationRelationDefinition.Factors.Count > 2)
             {
                 incorrectReasons.Add(ArrayIncorrectReason.Other);
-                page.AddTag(new ArrayInterpretedCorrectnessTag(page, Origin.StudentPageGenerated, Correctness.Incorrect, incorrectReasons));
+                page.AddTag(new ArrayRepresentationCorrectnessTag(page, Origin.StudentPageGenerated, Correctness.Incorrect, incorrectReasons));
                 return;
             }
 
             var firstFactor = multiplicationRelationDefinition.Factors[0];
             var secondFactor = multiplicationRelationDefinition.Factors[1];
 
-            if(firstFactor == array.Rows &&
-               secondFactor == array.Columns)
+            if ((firstFactor == array.Rows && secondFactor == array.Columns) ||
+                (firstFactor == array.Columns && secondFactor == array.Rows))
             {
-                page.AddTag(new ArrayInterpretedCorrectnessTag(page, Origin.StudentPageGenerated, Correctness.Correct, incorrectReasons));
+                page.AddTag(new ArrayRepresentationCorrectnessTag(page, Origin.StudentPageGenerated, Correctness.Correct, incorrectReasons));
                 return;
             }
 
-            if(secondFactor == array.Rows &&
-               firstFactor == array.Columns)
+            if (array.Rows == multiplicationRelationDefinition.Product ||
+                array.Columns == multiplicationRelationDefinition.Product)
             {
-                if (multiplicationRelationDefinition.RelationType != MultiplicationRelationDefinitionTag.RelationTypes.Area) //BUG - This seems...weird to me. Order of Factors only matters when calculating area?
-                {
-                    page.AddTag(new ArrayInterpretedCorrectnessTag(page, Origin.StudentPageGenerated, Correctness.Correct, incorrectReasons));
-                    return;
-                }
-
-                incorrectReasons.Add(ArrayIncorrectReason.SwappedFactors);
+                incorrectReasons.Add(ArrayIncorrectReason.ProductAsFactor);
+            }
+            
+            if (firstFactor == array.Rows ||
+                secondFactor == array.Rows ||
+                firstFactor == array.Columns ||
+                secondFactor == array.Columns)
+            {
+                incorrectReasons.Add(ArrayIncorrectReason.OneDimensionCorrect);
+                page.AddTag(new ArrayRepresentationCorrectnessTag(page, Origin.StudentPageGenerated, Correctness.PartiallyCorrect, incorrectReasons));
+                return;
             }
 
-            var givenValues = new List<double?>
-                              {
-                                  firstFactor,
-                                  secondFactor
-                              };
-
-            var numbersUsed = new List<double?>
-                              {
-                                  array.Rows,
-                                  array.Columns,
-                                  array.Rows * array.Columns
-                              };
-
-            if(givenValues.Count == 2 &&
-               numbersUsed.Contains(givenValues[0]) &&
-               numbersUsed.Contains(givenValues[1]))
-            {
-                incorrectReasons.Add(ArrayIncorrectReason.MisusedGivens);
-            }
-            else
+            if (!incorrectReasons.Any())
             {
                 incorrectReasons.Add(ArrayIncorrectReason.WrongFactors);
             }
 
-            page.AddTag(new ArrayInterpretedCorrectnessTag(page, Origin.StudentPageGenerated, Correctness.Incorrect, incorrectReasons));
+            page.AddTag(new ArrayRepresentationCorrectnessTag(page, Origin.StudentPageGenerated, Correctness.Incorrect, incorrectReasons));
         }
     }
 }
