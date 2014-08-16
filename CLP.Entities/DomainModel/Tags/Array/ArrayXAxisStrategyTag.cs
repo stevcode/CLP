@@ -79,7 +79,7 @@ namespace CLP.Entities
 
         public override string FormattedValue
         {
-            get { return string.Format("{0}:{1}", Value, string.Join(",", DividerValues.Select(x => x == 0 ? "?" : x.ToString()))); }
+            get { return string.Format("{0}: {1}", Value, string.Join(",", DividerValues.Select(x => x == 0 ? "?" : x.ToString()))); }
         }
 
         #endregion //ATagBase Overrides

@@ -115,8 +115,7 @@ namespace CLP.Entities
         {
             get
             {
-                return string.Format("ID: {0}, a {1}x{2} array.\n" + "Values: {3}.\n" + "Values compared against {4}.",
-                                     ArrayID,
+                return string.Format("A {0}x{1} array.\n" + "Values: {2}.\n" + "Values compared against {3}.",
                                      Rows,
                                      Columns,
                                      string.Join("+", DividerValues.Select(x => x == 0 ? "?" : x.ToString())) + " = " + DividerValues.Sum(),

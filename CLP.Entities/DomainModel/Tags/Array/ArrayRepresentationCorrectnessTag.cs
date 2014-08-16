@@ -5,7 +5,7 @@ using Catel.Data;
 
 namespace CLP.Entities
 {
-    public enum ArrayIncorrectReason
+    public enum ArrayRepresentationIncorrectReason
     {
         SwappedFactors,
         WrongFactors,
@@ -27,7 +27,7 @@ namespace CLP.Entities
         /// <summary>
         /// Initializes <see cref="ArrayRepresentationCorrectnessTag" />.
         /// </summary>
-        public ArrayRepresentationCorrectnessTag(CLPPage parentPage, Origin origin, Correctness correctness, List<ArrayIncorrectReason> incorrectReasons)
+        public ArrayRepresentationCorrectnessTag(CLPPage parentPage, Origin origin, Correctness correctness, List<ArrayRepresentationIncorrectReason> incorrectReasons)
             : base(parentPage, origin)
         {
             Correctness = correctness;
@@ -60,13 +60,13 @@ namespace CLP.Entities
         /// <summary>
         /// Reason the Interpreted Correctness was set to Incorrect.
         /// </summary>
-        public List<ArrayIncorrectReason> ArrayIncorrectReasons
+        public List<ArrayRepresentationIncorrectReason> ArrayIncorrectReasons
         {
-            get { return GetValue<List<ArrayIncorrectReason>>(ArrayIncorrectReasonsProperty); }
+            get { return GetValue<List<ArrayRepresentationIncorrectReason>>(ArrayIncorrectReasonsProperty); }
             set { SetValue(ArrayIncorrectReasonsProperty, value); }
         }
 
-        public static readonly PropertyData ArrayIncorrectReasonsProperty = RegisterProperty("ArrayIncorrectReasons", typeof(List<ArrayIncorrectReason>));
+        public static readonly PropertyData ArrayIncorrectReasonsProperty = RegisterProperty("ArrayIncorrectReasons", typeof(List<ArrayRepresentationIncorrectReason>));
 
         #region ATagBase Overrides
 

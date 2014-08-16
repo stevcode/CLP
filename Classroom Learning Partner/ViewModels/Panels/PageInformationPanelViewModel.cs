@@ -783,7 +783,7 @@ namespace Classroom_Learning_Partner.ViewModels
                             new CorrectnessTag(page, Origin.StudentPageGenerated, divisionTemplateCorrectnessTag.Correctness, true))
                     .ToList();
             correctnessTags.AddRange(
-                                     page.Tags.OfType<ArrayRepresentationCorrectnessTag>()
+                                     page.Tags.OfType<ArrayCorrectnessTag>()
                                          .Select(
                                                  arrayCorrectnessTag =>
                                                  new CorrectnessTag(page, Origin.StudentPageGenerated, arrayCorrectnessTag.Correctness, true)));

@@ -56,16 +56,14 @@ namespace CLP.Entities
 
         public static readonly PropertyData ValueProperty = RegisterProperty("Value", typeof(AcceptedValues));
 
-        /// <summary>
-        /// Dimensions of all the Regions in the Array.
-        /// </summary>
+        /// <summary>Dimensions of all the Regions in the Array.</summary>
         public List<string> RegionDimensions
         {
             get { return GetValue<List<string>>(RegionDimensionsProperty); }
             set { SetValue(RegionDimensionsProperty, value); }
         }
 
-        public static readonly PropertyData RegionDimensionsProperty = RegisterProperty("RegionDimensions", typeof(List<string>));
+        public static readonly PropertyData RegionDimensionsProperty = RegisterProperty("RegionDimensions", typeof (List<string>));
 
         #region ATagBase Overrides
 
@@ -76,7 +74,7 @@ namespace CLP.Entities
 
         public override string FormattedValue
         {
-            get { return string.Format("{0}:{1}", Value, string.Join(",", RegionDimensions)); }
+            get { return string.Format("{0}: {1}", Value, string.Join(",", RegionDimensions)); }
         }
 
         #endregion //ATagBase Overrides

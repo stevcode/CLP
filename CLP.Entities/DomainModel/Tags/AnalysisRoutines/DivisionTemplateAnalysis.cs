@@ -12,10 +12,12 @@ namespace CLP.Entities
         public static void AnalyzeRegion(CLPPage page, Rect region)
         {
             // First, clear out any old DivisionTemplateTags generated via Analysis.
-            foreach (
-                var tag in
-                    page.Tags.ToList()
-                        .Where(tag => tag is DivisionTemplateRepresentationCorrectnessTag || tag is DivisionTemplateStrategyTag || tag is DivisionTemplateCompletenessTag))
+            foreach (var tag in
+                page.Tags.ToList()
+                    .Where(
+                           tag =>
+                           tag is DivisionTemplateRepresentationCorrectnessTag || tag is DivisionTemplateStrategyTag ||
+                           tag is DivisionTemplateCompletenessTag || tag is DivisionTemplateCorrectnessTag))
             {
                 page.RemoveTag(tag);
             }
@@ -32,10 +34,12 @@ namespace CLP.Entities
             {
                 foreach (var divisionTemplate in divisionTemplates)
                 {
-                    InterpretStrategy(page, divisionTemplate);
-                    InterpretCorrectness(page, divisionDefinitionTag, divisionTemplate);
+                    AnalyzeStrategy(page, divisionTemplate);
+                    AnalyzeRepresentationCorrectness(page, divisionDefinitionTag, divisionTemplate);
                 }
             }
+
+            AnalyzeDivisionTemplateCorrectness(page);
         }
 
         private class DivisionTemplateAndRemainder
@@ -59,13 +63,24 @@ namespace CLP.Entities
             {
                 foreach (var pageObjectID in historyItem.PageObjectIDs)
                 {
-                    var divisionTemplate = page.GetPageObjectByID(pageObjectID) as FuzzyFactorCard ?? page.History.GetPageObjectByID(pageObjectID) as FuzzyFactorCard;
+                    var divisionTemplate = page.GetPageObjectByID(pageObjectID) as FuzzyFactorCard ??
+                                           page.History.GetPageObjectByID(pageObjectID) as FuzzyFactorCard;
                     if (divisionTemplate == null)
                     {
                         continue;
                     }
 
-                    page.AddTag(new DivisionTemplateDeletedTag(page, Origin.StudentPageObjectGenerated, divisionTemplate.Dividend, divisionTemplate.Rows));
+                    var arrayDimensions =
+                        divisionTemplate.VerticalDivisions.Where(division => division.Value != 0)
+                                        .Select(division => divisionTemplate.Rows + "x" + division.Value)
+                                        .ToList();
+
+                    page.AddTag(new DivisionTemplateDeletedTag(page,
+                                                               Origin.StudentPageObjectGenerated,
+                                                               divisionTemplate.ID,
+                                                               divisionTemplate.Dividend,
+                                                               divisionTemplate.Rows,
+                                                               arrayDimensions));
                 }
             }
 
@@ -88,7 +103,8 @@ namespace CLP.Entities
                 if (arraySnappedInHistoryItem != null)
                 {
                     var arrayToRemove = arraysOnPage.FirstOrDefault(x => x.ID == arraySnappedInHistoryItem.SnappedInArrayID);
-                    var divisionTemplateAndRemainder = divisionTemplatesOnPage.FirstOrDefault(x => x.DivisionTemplate.ID == arraySnappedInHistoryItem.FuzzyFactorCardID);
+                    var divisionTemplateAndRemainder =
+                        divisionTemplatesOnPage.FirstOrDefault(x => x.DivisionTemplate.ID == arraySnappedInHistoryItem.FuzzyFactorCardID);
                     if (divisionTemplateAndRemainder != null &&
                         arrayToRemove != null)
                     {
@@ -102,13 +118,16 @@ namespace CLP.Entities
                 var addedPageObjectHistoryItem = historyItem as PageObjectsAddedHistoryItem;
                 if (addedPageObjectHistoryItem != null)
                 {
-                    foreach (
-                        var pageObject in
-                            addedPageObjectHistoryItem.PageObjectIDs.Select(pageObjectID => page.GetPageObjectByID(pageObjectID) ?? page.History.GetPageObjectByID(pageObjectID)))
+                    foreach (var pageObject in
+                        addedPageObjectHistoryItem.PageObjectIDs.Select(
+                                                                        pageObjectID =>
+                                                                        page.GetPageObjectByID(pageObjectID) ??
+                                                                        page.History.GetPageObjectByID(pageObjectID)))
                     {
                         if (pageObject is FuzzyFactorCard)
                         {
-                            divisionTemplatesOnPage.Add(new DivisionTemplateAndRemainder((pageObject as FuzzyFactorCard), (pageObject as FuzzyFactorCard).Dividend));
+                            divisionTemplatesOnPage.Add(new DivisionTemplateAndRemainder((pageObject as FuzzyFactorCard),
+                                                                                         (pageObject as FuzzyFactorCard).Dividend));
                             continue;
                         }
 
@@ -138,7 +157,8 @@ namespace CLP.Entities
                                 }
                                 var newTag = new DivisionTemplateIncorrectArrayCreationTag(page,
                                                                                            Origin.StudentPageObjectGenerated,
-                                                                                           DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.DividendAsDivisor,
+                                                                                           DivisionTemplateIncorrectArrayCreationTag.AcceptedValues
+                                                                                                                                    .DividendAsDivisor,
                                                                                            previousNumberOfAttempts + 1);
                                 page.AddTag(newTag);
                             }
@@ -158,7 +178,8 @@ namespace CLP.Entities
                                 }
                                 var newTag = new DivisionTemplateIncorrectArrayCreationTag(page,
                                                                                            Origin.StudentPageObjectGenerated,
-                                                                                           DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.WrongOrientation,
+                                                                                           DivisionTemplateIncorrectArrayCreationTag.AcceptedValues
+                                                                                                                                    .WrongOrientation,
                                                                                            previousNumberOfAttempts + 1);
                                 page.AddTag(newTag);
                             }
@@ -176,7 +197,8 @@ namespace CLP.Entities
                                 }
                                 var newTag = new DivisionTemplateIncorrectArrayCreationTag(page,
                                                                                            Origin.StudentPageObjectGenerated,
-                                                                                           DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.IncorrectDimension,
+                                                                                           DivisionTemplateIncorrectArrayCreationTag.AcceptedValues
+                                                                                                                                    .IncorrectDimension,
                                                                                            previousNumberOfAttempts + 1);
                                 page.AddTag(newTag);
                             }
@@ -195,7 +217,8 @@ namespace CLP.Entities
                                 }
                                 var newTag = new DivisionTemplateIncorrectArrayCreationTag(page,
                                                                                            Origin.StudentPageObjectGenerated,
-                                                                                           DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.ArrayTooLarge,
+                                                                                           DivisionTemplateIncorrectArrayCreationTag.AcceptedValues
+                                                                                                                                    .ArrayTooLarge,
                                                                                            previousNumberOfAttempts + 1);
                                 page.AddTag(newTag);
                             }
@@ -231,7 +254,6 @@ namespace CLP.Entities
                 //                             persistingArray.XPosition + persistingArray.LabelLength + persistingArray.ArrayWidth);
                 //        var horizontalIntersectionLength = right - left;
                 //        var isHorizontalIntersection = horizontalIntersectionLength > persistingArray.ArrayWidth / 2 || horizontalIntersectionLength > snappingArray.ArrayWidth / 2;
-
 
                 //        if (isVerticalIntersection)
                 //        {
@@ -336,7 +358,7 @@ namespace CLP.Entities
             }
         }
 
-        public static void InterpretStrategy(CLPPage page, FuzzyFactorCard divisionTemplate)
+        public static void AnalyzeStrategy(CLPPage page, FuzzyFactorCard divisionTemplate)
         {
             var dividerValues = divisionTemplate.VerticalDivisions.Select(x => x.Value).ToList();
 
@@ -347,44 +369,64 @@ namespace CLP.Entities
 
             if (dividerValues.Count == 2)
             {
-                page.AddTag(new DivisionTemplateStrategyTag(page, Origin.StudentPageGenerated, DivisionTemplateStrategyTag.AcceptedValues.OneArray, dividerValues));
+                page.AddTag(new DivisionTemplateStrategyTag(page,
+                                                            Origin.StudentPageGenerated,
+                                                            DivisionTemplateStrategyTag.AcceptedValues.OneArray,
+                                                            dividerValues));
                 return;
             }
 
             if (Math.Abs(dividerValues.First() - dividerValues.Average()) < 0.001)
             {
-                page.AddTag(new DivisionTemplateStrategyTag(page, Origin.StudentPageGenerated, DivisionTemplateStrategyTag.AcceptedValues.EvenSplit, dividerValues));
+                page.AddTag(new DivisionTemplateStrategyTag(page,
+                                                            Origin.StudentPageGenerated,
+                                                            DivisionTemplateStrategyTag.AcceptedValues.EvenSplit,
+                                                            dividerValues));
                 return;
             }
 
             // HACK - This only compares the first 2 values to see if they are the same to determine Repeated Strategy. Find a way to determine this by frequency.
             if (dividerValues.First() == dividerValues.ElementAt(1))
             {
-                page.AddTag(new DivisionTemplateStrategyTag(page, Origin.StudentPageGenerated, DivisionTemplateStrategyTag.AcceptedValues.Repeated, dividerValues));
+                page.AddTag(new DivisionTemplateStrategyTag(page,
+                                                            Origin.StudentPageGenerated,
+                                                            DivisionTemplateStrategyTag.AcceptedValues.Repeated,
+                                                            dividerValues));
                 return;
             }
 
-            page.AddTag(new DivisionTemplateStrategyTag(page, Origin.StudentPageGenerated, DivisionTemplateStrategyTag.AcceptedValues.Other, dividerValues));
+            page.AddTag(new DivisionTemplateStrategyTag(page,
+                                                        Origin.StudentPageGenerated,
+                                                        DivisionTemplateStrategyTag.AcceptedValues.Other,
+                                                        dividerValues));
         }
 
-        public static void InterpretCorrectness(CLPPage page, DivisionRelationDefinitionTag divisionRelationDefinition, FuzzyFactorCard divisionTemplate)
+        public static void AnalyzeRepresentationCorrectness(CLPPage page,
+                                                            DivisionRelationDefinitionTag divisionRelationDefinition,
+                                                            FuzzyFactorCard divisionTemplate)
         {
             // Apply a Completeness tag.
             var isDivisionTemplateComplete = false;
             if (divisionTemplate.VerticalDivisions.Count < 2)
             {
-                var tag = new DivisionTemplateCompletenessTag(page, Origin.StudentPageGenerated, DivisionTemplateCompletenessTag.AcceptedValues.NoArrays);
+                var tag = new DivisionTemplateCompletenessTag(page,
+                                                              Origin.StudentPageGenerated,
+                                                              DivisionTemplateCompletenessTag.AcceptedValues.NoArrays);
                 page.AddTag(tag);
             }
             else if (divisionTemplate.VerticalDivisions.Sum(x => x.Value) == divisionTemplate.Columns)
             {
-                var tag = new DivisionTemplateCompletenessTag(page, Origin.StudentPageGenerated, DivisionTemplateCompletenessTag.AcceptedValues.Complete);
+                var tag = new DivisionTemplateCompletenessTag(page,
+                                                              Origin.StudentPageGenerated,
+                                                              DivisionTemplateCompletenessTag.AcceptedValues.Complete);
                 page.AddTag(tag);
                 isDivisionTemplateComplete = true;
             }
             else
             {
-                var tag = new DivisionTemplateCompletenessTag(page, Origin.StudentPageGenerated, DivisionTemplateCompletenessTag.AcceptedValues.NotEnoughArrays);
+                var tag = new DivisionTemplateCompletenessTag(page,
+                                                              Origin.StudentPageGenerated,
+                                                              DivisionTemplateCompletenessTag.AcceptedValues.NotEnoughArrays);
                 page.AddTag(tag);
             }
 
@@ -397,7 +439,10 @@ namespace CLP.Entities
                 divisionRelationDefinition.Divisor == divisionTemplate.Rows &&
                 divisionRelationDefinition.Quotient == divisionTemplate.Columns)
             {
-                var correctTag = new DivisionTemplateRepresentationCorrectnessTag(page, Origin.StudentPageGenerated, Correctness.Correct, incorrectReasons);
+                var correctTag = new DivisionTemplateRepresentationCorrectnessTag(page,
+                                                                                  Origin.StudentPageGenerated,
+                                                                                  Correctness.Correct,
+                                                                                  incorrectReasons);
                 page.AddTag(correctTag);
                 return;
             }
@@ -408,14 +453,22 @@ namespace CLP.Entities
                 incorrectReasons.Add(DivisionTemplateIncorrectReason.Incomplete);
             }
 
-            if (divisionRelationDefinition.Dividend != divisionTemplate.Dividend)
+            if (divisionRelationDefinition.Dividend != divisionTemplate.Dividend &&
+                divisionRelationDefinition.Divisor != divisionTemplate.Rows)
             {
-                incorrectReasons.Add(DivisionTemplateIncorrectReason.WrongDividend);
+                incorrectReasons.Add(DivisionTemplateIncorrectReason.WrongDividendAndDivisor);
             }
-
-            if (divisionRelationDefinition.Divisor != divisionTemplate.Rows)
+            else
             {
-                incorrectReasons.Add(DivisionTemplateIncorrectReason.WrongDivisor);
+                if (divisionRelationDefinition.Dividend != divisionTemplate.Dividend)
+                {
+                    incorrectReasons.Add(DivisionTemplateIncorrectReason.WrongDividend);
+                }
+
+                if (divisionRelationDefinition.Divisor != divisionTemplate.Rows)
+                {
+                    incorrectReasons.Add(DivisionTemplateIncorrectReason.WrongDivisor);
+                }
             }
 
             if (!incorrectReasons.Any())
@@ -423,8 +476,64 @@ namespace CLP.Entities
                 incorrectReasons.Add(DivisionTemplateIncorrectReason.Other);
             }
 
-            var incorrectTag = new DivisionTemplateRepresentationCorrectnessTag(page, Origin.StudentPageGenerated, Correctness.Incorrect, incorrectReasons);
+            var incorrectTag = new DivisionTemplateRepresentationCorrectnessTag(page,
+                                                                                Origin.StudentPageGenerated,
+                                                                                Correctness.Incorrect,
+                                                                                incorrectReasons);
             page.AddTag(incorrectTag);
+        }
+
+        public static void AnalyzeDivisionTemplateCorrectness(CLPPage page)
+        {
+            var representationCorrectnessTags = page.Tags.OfType<DivisionTemplateRepresentationCorrectnessTag>().ToList();
+
+            if (!representationCorrectnessTags.Any())
+            {
+                return;
+            }
+
+            var isCorrectOnce = false;
+            var isPartiallyCorrectOnce = false;
+            var isIncorrectOnce = false;
+            foreach (var arrayRepresentationCorrectnessTag in representationCorrectnessTags)
+            {
+                switch (arrayRepresentationCorrectnessTag.Correctness)
+                {
+                    case Correctness.Correct:
+                        isCorrectOnce = true;
+                        break;
+                    case Correctness.PartiallyCorrect:
+                        isPartiallyCorrectOnce = true;
+                        break;
+                    case Correctness.Incorrect:
+                        isIncorrectOnce = true;
+                        break;
+                    case Correctness.Unknown:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+
+            var correctnessSum = Correctness.Unknown;
+            if (isPartiallyCorrectOnce)
+            {
+                correctnessSum = Correctness.PartiallyCorrect;
+            }
+            else if (isCorrectOnce && isIncorrectOnce)
+            {
+                correctnessSum = Correctness.PartiallyCorrect;
+            }
+            else if (isCorrectOnce)
+            {
+                correctnessSum = Correctness.Correct;
+            }
+            else if (isIncorrectOnce)
+            {
+                correctnessSum = Correctness.Incorrect;
+            }
+
+            page.AddTag(new DivisionTemplateCorrectnessTag(page, Origin.StudentPageGenerated, correctnessSum));
         }
     }
 }

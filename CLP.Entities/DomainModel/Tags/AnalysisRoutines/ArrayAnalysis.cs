@@ -29,11 +29,13 @@ namespace CLP.Entities
             {
                 foreach (var array in arrays)
                 {
-                    InterpretOrientation(page, multiplicationRelationDefinition, array);
-                    InterpretStrategies(page, array);
-                    InterpretCorrectness(page, multiplicationRelationDefinition, array);
+                    AnalyzeOrientation(page, multiplicationRelationDefinition, array);
+                    AnalyzeStrategies(page, array);
+                    AnalyzeCorrectness(page, multiplicationRelationDefinition, array);
                 }
             }
+
+            AnalyzeArrayCorrectness(page);
         }
 
         public static void AnalyzeHistory(CLPPage page)
@@ -143,7 +145,7 @@ namespace CLP.Entities
             }
         }
 
-        public static void InterpretOrientation(CLPPage page, MultiplicationRelationDefinitionTag multiplicationRelationDefinition, CLPArray array)
+        public static void AnalyzeOrientation(CLPPage page, MultiplicationRelationDefinitionTag multiplicationRelationDefinition, CLPArray array)
         {
             if (multiplicationRelationDefinition.Factors.Count > 2)
             {
@@ -169,15 +171,15 @@ namespace CLP.Entities
             }
         }
 
-        public static void InterpretStrategies(CLPPage page, CLPArray array)
+        public static void AnalyzeStrategies(CLPPage page, CLPArray array)
         {
-            InterpretAxisStrategies(page, array, array.VerticalDivisions.Select(x => x.Value).ToList(), true);
-            InterpretAxisStrategies(page, array, array.HorizontalDivisions.Select(x => x.Value).ToList(), false);
-            
-            InterpretRegionStrategies(page, array);
+            AnalyzeAxisStrategies(page, array, array.VerticalDivisions.Select(x => x.Value).ToList(), true);
+            AnalyzeAxisStrategies(page, array, array.HorizontalDivisions.Select(x => x.Value).ToList(), false);
+
+            AnalyzeRegionStrategies(page, array);
         }
 
-        public static void InterpretAxisStrategies(CLPPage page, CLPArray array, List<int> dividerValues, bool isXAxisStrategy)
+        public static void AnalyzeAxisStrategies(CLPPage page, CLPArray array, List<int> dividerValues, bool isXAxisStrategy)
         {
             if (!dividerValues.Any())
             {
@@ -254,7 +256,7 @@ namespace CLP.Entities
             }
         }
 
-        public static void InterpretRegionStrategies(CLPPage page, CLPArray array)
+        public static void AnalyzeRegionStrategies(CLPPage page, CLPArray array)
         {
             //TODO
         }
@@ -278,14 +280,14 @@ namespace CLP.Entities
             return output;
         }
 
-        public static void InterpretCorrectness(CLPPage page, MultiplicationRelationDefinitionTag multiplicationRelationDefinition, CLPArray array)
+        public static void AnalyzeCorrectness(CLPPage page, MultiplicationRelationDefinitionTag multiplicationRelationDefinition, CLPArray array)
         {
             switch (array.ArrayType)
             {
                 case ArrayTypes.Array:
-                    InterpretAxisDividerCorrectness(page, array, array.VerticalDivisions.Select(x => x.Value).ToList(), true);
-                    InterpretAxisDividerCorrectness(page, array, array.HorizontalDivisions.Select(x => x.Value).ToList(), false);
-                    InterpretArrayCorrectness(page, multiplicationRelationDefinition, array);
+                    AnalyzeAxisDividerCorrectness(page, array, array.VerticalDivisions.Select(x => x.Value).ToList(), true);
+                    AnalyzeAxisDividerCorrectness(page, array, array.HorizontalDivisions.Select(x => x.Value).ToList(), false);
+                    AnalyzeRepresentationArrayCorrectness(page, multiplicationRelationDefinition, array);
                     break;
                 case ArrayTypes.ArrayCard:
                     // TODO
@@ -299,7 +301,7 @@ namespace CLP.Entities
             }
         }
 
-        public static void InterpretAxisDividerCorrectness(CLPPage page, CLPArray array, List<int> dividerValues, bool isXAxisDivider)
+        public static void AnalyzeAxisDividerCorrectness(CLPPage page, CLPArray array, List<int> dividerValues, bool isXAxisDivider)
         {
             if (!dividerValues.Any())
             {
@@ -362,14 +364,14 @@ namespace CLP.Entities
                                                             new List<ArrayAxisIncorrectReason>()));
         }
 
-        public static void InterpretArrayCorrectness(CLPPage page,
-                                                     MultiplicationRelationDefinitionTag multiplicationRelationDefinition,
-                                                     CLPArray array)
+        public static void AnalyzeRepresentationArrayCorrectness(CLPPage page,
+                                                                   MultiplicationRelationDefinitionTag multiplicationRelationDefinition,
+                                                                   CLPArray array)
         {
-            var incorrectReasons = new List<ArrayIncorrectReason>();
+            var incorrectReasons = new List<ArrayRepresentationIncorrectReason>();
             if (multiplicationRelationDefinition.Factors.Count > 2)
             {
-                incorrectReasons.Add(ArrayIncorrectReason.Other);
+                incorrectReasons.Add(ArrayRepresentationIncorrectReason.Other);
                 page.AddTag(new ArrayRepresentationCorrectnessTag(page, Origin.StudentPageGenerated, Correctness.Incorrect, incorrectReasons));
                 return;
             }
@@ -387,7 +389,7 @@ namespace CLP.Entities
             if (array.Rows == multiplicationRelationDefinition.Product ||
                 array.Columns == multiplicationRelationDefinition.Product)
             {
-                incorrectReasons.Add(ArrayIncorrectReason.ProductAsFactor);
+                incorrectReasons.Add(ArrayRepresentationIncorrectReason.ProductAsFactor);
             }
 
             if (firstFactor == array.Rows ||
@@ -395,17 +397,126 @@ namespace CLP.Entities
                 firstFactor == array.Columns ||
                 secondFactor == array.Columns)
             {
-                incorrectReasons.Add(ArrayIncorrectReason.OneDimensionCorrect);
+                incorrectReasons.Add(ArrayRepresentationIncorrectReason.OneDimensionCorrect);
                 page.AddTag(new ArrayRepresentationCorrectnessTag(page, Origin.StudentPageGenerated, Correctness.PartiallyCorrect, incorrectReasons));
                 return;
             }
 
             if (!incorrectReasons.Any())
             {
-                incorrectReasons.Add(ArrayIncorrectReason.WrongFactors);
+                incorrectReasons.Add(ArrayRepresentationIncorrectReason.WrongFactors);
             }
 
             page.AddTag(new ArrayRepresentationCorrectnessTag(page, Origin.StudentPageGenerated, Correctness.Incorrect, incorrectReasons));
+        }
+
+        public static void AnalyzeArrayCorrectness(CLPPage page)
+        {
+            var representationCorrectnessTags = page.Tags.OfType<ArrayRepresentationCorrectnessTag>().ToList();
+            var xAxisCorrectnessTags = page.Tags.OfType<ArrayXAxisDividerCorrectnessTag>().ToList();
+            var yAxisCorrectnessTags = page.Tags.OfType<ArrayYAxisDividerCorrectnessTag>().ToList();
+
+
+            if (!representationCorrectnessTags.Any() &&
+                !xAxisCorrectnessTags.Any() &&
+                !yAxisCorrectnessTags.Any())
+            {
+                return;
+            }
+
+
+            var incorrectReasons = new List<ArrayIncorrectReasons>();
+            var isCorrectOnce = false;
+            var isPartiallyCorrectOnce = false;
+            var isIncorrectOnce = false;
+            foreach (var arrayRepresentationCorrectnessTag in representationCorrectnessTags)
+            {
+                switch (arrayRepresentationCorrectnessTag.Correctness)
+                {
+                    case Correctness.Correct:
+                        isCorrectOnce = true;
+                        break;
+                    case Correctness.PartiallyCorrect:
+                        isPartiallyCorrectOnce = true;
+                        incorrectReasons.Add(ArrayIncorrectReasons.Representation);
+                        break;
+                    case Correctness.Incorrect:
+                        isIncorrectOnce = true;
+                        incorrectReasons.Add(ArrayIncorrectReasons.Representation);
+                        break;
+                    case Correctness.Unknown:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+
+            foreach (var xAxisCorrectnessTag in xAxisCorrectnessTags)
+            {
+                switch (xAxisCorrectnessTag.Correctness)
+                {
+                    case Correctness.Correct:
+                        isCorrectOnce = true;
+                        break;
+                    case Correctness.PartiallyCorrect:
+                        isPartiallyCorrectOnce = true;
+                        incorrectReasons.Add(ArrayIncorrectReasons.XAxisDivider);
+                        break;
+                    case Correctness.Incorrect:
+                        isIncorrectOnce = true;
+                        incorrectReasons.Add(ArrayIncorrectReasons.XAxisDivider);
+                        break;
+                    case Correctness.Unknown:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+
+            foreach (var yAxisCorrectnessTag in yAxisCorrectnessTags)
+            {
+                switch (yAxisCorrectnessTag.Correctness)
+                {
+                    case Correctness.Correct:
+                        isCorrectOnce = true;
+                        break;
+                    case Correctness.PartiallyCorrect:
+                        isPartiallyCorrectOnce = true;
+                        incorrectReasons.Add(ArrayIncorrectReasons.YAxisDivider);
+                        break;
+                    case Correctness.Incorrect:
+                        isIncorrectOnce = true;
+                        incorrectReasons.Add(ArrayIncorrectReasons.YAxisDivider);
+                        break;
+                    case Correctness.Unknown:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+
+            incorrectReasons = incorrectReasons.Distinct().ToList();
+
+            var correctnessSum = Correctness.Unknown;
+            if (isPartiallyCorrectOnce)
+            {
+                correctnessSum = Correctness.PartiallyCorrect;
+            }
+            else if (isCorrectOnce &&
+                     isIncorrectOnce)
+            {
+                correctnessSum = Correctness.PartiallyCorrect;
+            }
+            else if (isCorrectOnce)
+            {
+                correctnessSum = Correctness.Correct;
+            }
+            else if (isIncorrectOnce)
+            {
+                correctnessSum = Correctness.Incorrect;
+            }
+
+            page.AddTag(new ArrayCorrectnessTag(page, Origin.StudentPageGenerated, correctnessSum, incorrectReasons));
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -224,7 +225,9 @@ namespace CLP.Entities
         {
             base.OnDeleted();
 
-            var tag = new DivisionTemplateDeletedTag(ParentPage, Origin.StudentPageObjectGenerated, Dividend, Rows);
+            var arrayDimensions = VerticalDivisions.Where(division => division.Value != 0).Select(division => Rows + "x" + division.Value).ToList();
+
+            var tag = new DivisionTemplateDeletedTag(ParentPage, Origin.StudentPageObjectGenerated, ID, Dividend, Rows, arrayDimensions);
             ParentPage.AddTag(tag);
         }
 

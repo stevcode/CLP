@@ -9,6 +9,7 @@ namespace CLP.Entities
     {
         WrongDividend,
         WrongDivisor,
+        WrongDividendAndDivisor,
         Incomplete,
         Other
     }
@@ -18,25 +19,22 @@ namespace CLP.Entities
     {
         #region Constructors
 
-        /// <summary>
-        /// Initializes <see cref="DivisionTemplateRepresentationCorrectnessTag" /> from scratch.
-        /// </summary>
+        /// <summary>Initializes <see cref="DivisionTemplateRepresentationCorrectnessTag" /> from scratch.</summary>
         public DivisionTemplateRepresentationCorrectnessTag() { }
 
-        /// <summary>
-        /// Initializes <see cref="DivisionTemplateRepresentationCorrectnessTag" />.
-        /// </summary>
+        /// <summary>Initializes <see cref="DivisionTemplateRepresentationCorrectnessTag" />.</summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="DivisionTemplateRepresentationCorrectnessTag" /> belongs to.</param>
-        public DivisionTemplateRepresentationCorrectnessTag(CLPPage parentPage, Origin origin, Correctness correctness, List<DivisionTemplateIncorrectReason> incorrectReasons)
+        public DivisionTemplateRepresentationCorrectnessTag(CLPPage parentPage,
+                                                            Origin origin,
+                                                            Correctness correctness,
+                                                            List<DivisionTemplateIncorrectReason> incorrectReasons)
             : base(parentPage, origin)
         {
             Correctness = correctness;
             DivisionTemplateIncorrectReasons = incorrectReasons;
         }
 
-        /// <summary>
-        /// Initializes <see cref="ArrayRepresentationCorrectnessTag" /> based on <see cref="SerializationInfo" />.
-        /// </summary>
+        /// <summary>Initializes <see cref="ArrayRepresentationCorrectnessTag" /> based on <see cref="SerializationInfo" />.</summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext" />.</param>
         public DivisionTemplateRepresentationCorrectnessTag(SerializationInfo info, StreamingContext context)
@@ -46,27 +44,24 @@ namespace CLP.Entities
 
         #region Properties
 
-        /// <summary>
-        /// Type of correctness.
-        /// </summary>
+        /// <summary>Type of correctness.</summary>
         public Correctness Correctness
         {
             get { return GetValue<Correctness>(CorrectnessProperty); }
             set { SetValue(CorrectnessProperty, value); }
         }
 
-        public static readonly PropertyData CorrectnessProperty = RegisterProperty("Correctness", typeof(Correctness));
+        public static readonly PropertyData CorrectnessProperty = RegisterProperty("Correctness", typeof (Correctness));
 
-        /// <summary>
-        /// Reasons the Interpreted Correctness was set to Incorrect.
-        /// </summary>
+        /// <summary>Reasons the Interpreted Correctness was set to Incorrect.</summary>
         public List<DivisionTemplateIncorrectReason> DivisionTemplateIncorrectReasons
         {
             get { return GetValue<List<DivisionTemplateIncorrectReason>>(DivisionTemplateIncorrectReasonsProperty); }
             set { SetValue(DivisionTemplateIncorrectReasonsProperty, value); }
         }
 
-        public static readonly PropertyData DivisionTemplateIncorrectReasonsProperty = RegisterProperty("DivisionTemplateIncorrectReasons", typeof(List<DivisionTemplateIncorrectReason>));
+        public static readonly PropertyData DivisionTemplateIncorrectReasonsProperty = RegisterProperty("DivisionTemplateIncorrectReasons",
+                                                                                                        typeof (List<DivisionTemplateIncorrectReason>));
 
         #region ATagBase Overrides
 
@@ -83,7 +78,7 @@ namespace CLP.Entities
                                      Correctness,
                                      Correctness == Correctness.Correct || Correctness == Correctness.Unknown
                                          ? string.Empty
-                                         : ", due to:\n" + string.Join("\n", DivisionTemplateIncorrectReasons));
+                                         : " due to:\n" + string.Join("\n", DivisionTemplateIncorrectReasons));
             }
         }
 
