@@ -55,6 +55,11 @@ namespace CLP.Entities
         bool IsSingleValueTag { get; set; }
 
         /// <summary>
+        /// Produces a human-readable string that describes the name of the tag.
+        /// </summary>
+        string FormattedName { get; }
+
+        /// <summary>
         /// Produces a human-readable string that describes the value of the tag.
         /// </summary>
         string FormattedValue { get; }

@@ -63,7 +63,11 @@ namespace CLP.Entities
         public int ArrayTooLargeAttempts
         {
             get { return GetValue<int>(ArrayTooLargeAttemptsProperty); }
-            set { SetValue(ArrayTooLargeAttemptsProperty, value); }
+            set
+            {
+                SetValue(ArrayTooLargeAttemptsProperty, value);
+                RaisePropertyChanged("FormattedValue");
+            }
         }
 
         public static readonly PropertyData ArrayTooLargeAttemptsProperty = RegisterProperty("ArrayTooLargeAttempts", typeof (int), 0);
@@ -72,7 +76,11 @@ namespace CLP.Entities
         public int FailedSnapAttempts
         {
             get { return GetValue<int>(FailedSnapAttemptsProperty); }
-            set { SetValue(FailedSnapAttemptsProperty, value); }
+            set
+            {
+                SetValue(FailedSnapAttemptsProperty, value);
+                RaisePropertyChanged("FormattedValue");
+            }
         }
 
         public static readonly PropertyData FailedSnapAttemptsProperty = RegisterProperty("FailedSnapAttempts", typeof (int), 0);
@@ -81,7 +89,11 @@ namespace CLP.Entities
         public int OrientationChangedAttempts
         {
             get { return GetValue<int>(OrientationChangedAttemptsProperty); }
-            set { SetValue(OrientationChangedAttemptsProperty, value); }
+            set
+            {
+                SetValue(OrientationChangedAttemptsProperty, value);
+                RaisePropertyChanged("FormattedValue");
+            }
         }
 
         public static readonly PropertyData OrientationChangedAttemptsProperty = RegisterProperty("OrientationChangedAttempts", typeof (int), 0);
@@ -91,6 +103,11 @@ namespace CLP.Entities
         public override Category Category
         {
             get { return Category.DivisionTemplate; }
+        }
+
+        public override string FormattedName
+        {
+            get { return "Trouble With Remainders"; }
         }
 
         public override string FormattedValue

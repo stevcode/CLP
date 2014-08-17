@@ -313,7 +313,7 @@
                             <TextBlock Grid.Row="0"
                                        Grid.Column="0"
                                        FontWeight="Bold"
-                                       Text="{Binding Converter={StaticResource TypeToStringConverter}}" />
+                                       Text="{Binding FormattedName, Mode=OneWay}" />
 
                             <TextBlock Grid.Row="1"
                                        Grid.Column="0"

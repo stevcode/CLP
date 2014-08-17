@@ -153,6 +153,11 @@ namespace CLP.Entities
 
         public static readonly PropertyData IsSingleValueTagProperty = RegisterProperty("IsSingleValueTag", typeof(bool), false);
 
+        public virtual string FormattedName
+        {
+            get { return GetType().Name; }
+        }
+
         public abstract string FormattedValue { get; }
 
         #region Navigation Properties
