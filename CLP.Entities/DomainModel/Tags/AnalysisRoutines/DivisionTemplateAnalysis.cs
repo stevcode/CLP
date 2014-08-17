@@ -27,6 +27,7 @@ namespace CLP.Entities
             if (!divisionDefinitionTags.Any() ||
                 !divisionTemplates.Any())
             {
+                InterpretDivisionTemplateTroubleWithRemainders(page, true);
                 return;
             }
 
@@ -39,8 +40,11 @@ namespace CLP.Entities
                 }
             }
 
+            InterpretDivisionTemplateTroubleWithRemainders(page);
             AnalyzeDivisionTemplateCorrectness(page);
         }
+
+        #region Analysis
 
         private class DivisionTemplateAndRemainder
         {
@@ -535,5 +539,30 @@ namespace CLP.Entities
 
             page.AddTag(new DivisionTemplateCorrectnessTag(page, Origin.StudentPageGenerated, correctnessSum));
         }
+
+        #endregion //Analysis
+
+        #region Interpretation
+
+        public static void InterpretDivisionTemplateTroubleWithRemainders(CLPPage page, bool purgeAllTempTags = false)
+        {
+            var troubleWithRemaindersTags = page.Tags.OfType<DivisionTemplateTroubleWithRemaindersTag>().ToList();
+            const int ATTEMPT_TOLERANCE = 4;
+
+            foreach (var troubleWithRemaindersTag in troubleWithRemaindersTags)
+            {
+                var trackedVariablesSum = troubleWithRemaindersTag.ArrayTooLargeAttempts + troubleWithRemaindersTag.FailedSnapAttempts +
+                                          troubleWithRemaindersTag.OrientationChangedAttempts;
+
+
+                if (trackedVariablesSum < ATTEMPT_TOLERANCE ||
+                    purgeAllTempTags)
+                {
+                    page.RemoveTag(troubleWithRemaindersTag);
+                }
+            }
+        }
+
+        #endregion //Interpretation
     }
 }
