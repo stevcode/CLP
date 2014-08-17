@@ -225,11 +225,65 @@ namespace CLP.Entities
                                                                                                                                     .ArrayTooLarge,
                                                                                            previousNumberOfAttempts + 1);
                                 page.AddTag(newTag);
+
+                                // Only increase ArrayTooLarge attempt if Division Template already full.
+                                if (divisionTemplateAndRemainder.Remainder != divisionTemplateAndRemainder.DivisionTemplate.Dividend % divisionTemplateAndRemainder.DivisionTemplate.Rows)
+                                {
+                                    continue;
+                                }
+
+                                var existingTroubleWithRemaindersTag =
+                                    page.Tags.OfType<DivisionTemplateTroubleWithRemaindersTag>().FirstOrDefault(x => x.DivisionTemplateID == divisionTemplateAndRemainder.DivisionTemplate.ID);
+
+                                if (existingTroubleWithRemaindersTag == null)
+                                {
+                                    existingTroubleWithRemaindersTag = new DivisionTemplateTroubleWithRemaindersTag(page,
+                                                                                                                    Origin.StudentPageGenerated,
+                                                                                                                    divisionTemplateAndRemainder.DivisionTemplate.ID,
+                                                                                                                    divisionTemplateAndRemainder.DivisionTemplate.Dividend,
+                                                                                                                    divisionTemplateAndRemainder.DivisionTemplate.Rows);
+                                    page.AddTag(existingTroubleWithRemaindersTag);
+                                }
+
+                                existingTroubleWithRemaindersTag.ArrayTooLargeAttempts++;
                             }
                         }
                     }
                     continue;
                 }
+
+                //DivisionTemplateTroubleWithRemaindersTag.OrientationChangedAttempts
+                var arrayRotateHistoryItem = historyItem as CLPArrayRotateHistoryItem;
+                if (arrayRotateHistoryItem != null)
+                {
+                    foreach (var divisionTemplateAndRemainder in divisionTemplatesOnPage)
+                    {
+                        // Only increase OrientationChanged attempt if Division Template already full.
+                        if (divisionTemplateAndRemainder.Remainder != divisionTemplateAndRemainder.DivisionTemplate.Dividend % divisionTemplateAndRemainder.DivisionTemplate.Rows)
+                        {
+                            continue;
+                        }
+
+                        var existingTroubleWithRemaindersTag =
+                            page.Tags.OfType<DivisionTemplateTroubleWithRemaindersTag>()
+                                      .FirstOrDefault(x => x.DivisionTemplateID == divisionTemplateAndRemainder.DivisionTemplate.ID);
+
+                        if (existingTroubleWithRemaindersTag == null)
+                        {
+                            existingTroubleWithRemaindersTag = new DivisionTemplateTroubleWithRemaindersTag(page,
+                                                                                                            Origin.StudentPageGenerated,
+                                                                                                            divisionTemplateAndRemainder.DivisionTemplate.ID,
+                                                                                                            divisionTemplateAndRemainder.DivisionTemplate.Dividend,
+                                                                                                            divisionTemplateAndRemainder.DivisionTemplate.Rows);
+                            page.AddTag(existingTroubleWithRemaindersTag);
+                        }
+
+                        existingTroubleWithRemaindersTag.OrientationChangedAttempts++;
+                    }
+
+                    continue;
+                }
+
 
                 //DivisionTemplateFailedSnapTag
                 //var pageObjectMovedHistoryItem = historyItem as PageObjectMoveBatchHistoryItem;
