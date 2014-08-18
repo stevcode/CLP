@@ -128,6 +128,8 @@ namespace CLP.Entities
                 }
             }
 
+            objectTypes = objectTypes.Distinct().ToList();
+
             if (objectTypes.Any())
             {
                 page.AddTag(new HighlightedObjectTypesOnPageTag(page, Origin.StudentPageGenerated, objectTypes));
