@@ -21,7 +21,12 @@ namespace Classroom_Learning_Partner.ViewModels
     public enum AnswerDefinitions
     {
         Multiplication,
-        Division,
+        Division
+    }
+
+    public enum ManualTags
+    {
+        TroubleWithRemainders,
         FailedSnap
     }
 
@@ -58,6 +63,7 @@ namespace Classroom_Learning_Partner.ViewModels
             PageScreenshotCommand = new Command(OnPageScreenshotCommandExecute);
             DeleteTagCommand = new Command<ITag>(OnDeleteTagCommandExecute);
             AddAnswerDefinitionCommand = new Command(OnAddAnswerDefinitionCommandExecute);
+            AddTagCommand = new Command(OnAddTagCommandExecute);
             AnalyzePageCommand = new Command(OnAnalyzePageCommandExecute);
             AnalyzePageHistoryCommand = new Command(OnAnalyzePageHistoryCommandExecute);
         }
@@ -213,6 +219,15 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData SelectedAnswerDefinitionProperty = RegisterProperty("SelectedAnswerDefinition", typeof (AnswerDefinitions));
+
+        /// <summary>Currently selected Tag to add to the page.</summary>
+        public ManualTags SelectedTag
+        {
+            get { return GetValue<ManualTags>(SelectedTagProperty); }
+            set { SetValue(SelectedTagProperty, value); }
+        }
+
+        public static readonly PropertyData SelectedTagProperty = RegisterProperty("SelectedTag", typeof (ManualTags));
 
         /// <summary>Sorted list of <see cref="ITag" />s by category.</summary>
         public CollectionViewSource SortedTags
@@ -602,7 +617,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnAddAnswerDefinitionCommandExecute()
         {
-            ITag answerDefinition = null;
+            ITag answerDefinition;
             switch (SelectedAnswerDefinition)
             {
                 case AnswerDefinitions.Multiplication:
@@ -645,7 +660,38 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
 
                     break;
-                case AnswerDefinitions.FailedSnap:
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            if (answerDefinition == null)
+            {
+                return;
+            }
+
+            CurrentPage.AddTag(answerDefinition);
+            if (CurrentPage.SubmissionType != SubmissionTypes.Unsubmitted)
+            {
+                return;
+            }
+
+            foreach (var submission in CurrentPage.Submissions)
+            {
+                submission.AddTag(answerDefinition);
+            }
+        }
+
+        /// <summary>Manually adds a Tag to the page.</summary>
+        public Command AddTagCommand { get; private set; }
+
+        private void OnAddTagCommandExecute()
+        {
+            ITag tag = null;
+            switch (SelectedTag)
+            {
+                case ManualTags.TroubleWithRemainders:
+                    break;
+                case ManualTags.FailedSnap:
                     var failReasons = new List<string>
                                       {
                                           "Snapped Array Too Large",
@@ -674,12 +720,10 @@ namespace Classroom_Learning_Partner.ViewModels
                                 CurrentPage.RemoveTag(existingTag);
                             }
 
-                            var failedSnapTag = new DivisionTemplateFailedSnapTag(CurrentPage,
-                                                                                  Origin.StudentPageGenerated,
-                                                                                  DivisionTemplateFailedSnapTag.AcceptedValues.SnappedArrayTooLarge,
-                                                                                  previousNumberOfAttempts + 1);
-
-                            CurrentPage.AddTag(failedSnapTag);
+                            tag = new DivisionTemplateFailedSnapTag(CurrentPage,
+                                                                    Origin.StudentPageGenerated,
+                                                                    DivisionTemplateFailedSnapTag.AcceptedValues.SnappedArrayTooLarge,
+                                                                    previousNumberOfAttempts + 1);
                             break;
                         case "Snapped Incorrect Dimension":
                             var existingTag1 =
@@ -693,12 +737,10 @@ namespace Classroom_Learning_Partner.ViewModels
                                 CurrentPage.RemoveTag(existingTag1);
                             }
 
-                            var failedSnapTag1 = new DivisionTemplateFailedSnapTag(CurrentPage,
-                                                                                  Origin.StudentPageGenerated,
-                                                                                  DivisionTemplateFailedSnapTag.AcceptedValues.SnappedIncorrectDimension,
-                                                                                  previousNumberOfAttempts1 + 1);
-
-                            CurrentPage.AddTag(failedSnapTag1);
+                            tag = new DivisionTemplateFailedSnapTag(CurrentPage,
+                                                                    Origin.StudentPageGenerated,
+                                                                    DivisionTemplateFailedSnapTag.AcceptedValues.SnappedIncorrectDimension,
+                                                                    previousNumberOfAttempts1 + 1);
                             break;
                         case "Snapped Wrong Orientation":
                             var existingTag2 =
@@ -712,35 +754,23 @@ namespace Classroom_Learning_Partner.ViewModels
                                 CurrentPage.RemoveTag(existingTag2);
                             }
 
-                            var failedSnapTag2 = new DivisionTemplateFailedSnapTag(CurrentPage,
-                                                                                  Origin.StudentPageGenerated,
-                                                                                  DivisionTemplateFailedSnapTag.AcceptedValues.SnappedWrongOrientation,
-                                                                                  previousNumberOfAttempts2 + 1);
-
-                            CurrentPage.AddTag(failedSnapTag2);
+                            tag = new DivisionTemplateFailedSnapTag(CurrentPage,
+                                                                    Origin.StudentPageGenerated,
+                                                                    DivisionTemplateFailedSnapTag.AcceptedValues.SnappedWrongOrientation,
+                                                                    previousNumberOfAttempts2 + 1);
                             break;
                     }
-
-                    return;
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
 
-            if (answerDefinition == null)
+            if (tag == null)
             {
                 return;
             }
 
-            CurrentPage.AddTag(answerDefinition);
-            if (CurrentPage.SubmissionType != SubmissionTypes.Unsubmitted)
-            {
-                return;
-            }
-
-            foreach (var submission in CurrentPage.Submissions)
-            {
-                submission.AddTag(answerDefinition);
-            }
+            CurrentPage.AddTag(tag);
         }
 
         /// <summary>Runs analysis routines on the page.</summary>

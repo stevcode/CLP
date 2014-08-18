@@ -18,6 +18,14 @@
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
 
+        <ObjectDataProvider x:Key="ManualTags"
+                            MethodName="GetValues"
+                            ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="viewModel:ManualTags" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+
         <!-- Style to override ListBoxItem selection visuals for Pages -->
         <Style x:Key="ListBoxItemBlankStyle"
                TargetType="{x:Type ListBoxItem}">
@@ -46,6 +54,7 @@
                 </Grid.ColumnDefinitions>
 
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -208,7 +217,19 @@
                           Margin="1"
                           VerticalAlignment="Center"
                           VerticalContentAlignment="Center" />
-                
+
+                <Button Content="Add Tag:"
+                        Command="{Binding AddTagCommand}"
+                        Height="20"
+                        Margin="1" />
+
+                <ComboBox ItemsSource="{Binding Source={StaticResource ManualTags}}"
+                          SelectedItem="{Binding SelectedTag}"
+                          Height="18"
+                          Margin="1"
+                          VerticalAlignment="Center"
+                          VerticalContentAlignment="Center" />
+
                 <Button Content="Run Page Analysis"
                         Command="{Binding AnalyzePageCommand}"
                         Height="20"
