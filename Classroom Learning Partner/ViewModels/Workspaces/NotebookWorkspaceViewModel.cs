@@ -64,7 +64,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //    BottomPanel = SubmissionHistoryPanel;
             //}
 
-            if(App.CurrentUserMode == App.UserMode.Projector)
+            if(MainWindowViewModel.CurrentProgramMode == App.UserMode.Projector)
             {
                 NotebookPagesPanel.IsVisible = false;
             }

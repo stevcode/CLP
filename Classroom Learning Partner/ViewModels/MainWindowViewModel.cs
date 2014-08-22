@@ -141,7 +141,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(CurrentNotebookNameProperty, value); }
         }
 
-        public static readonly PropertyData CurrentNotebookNameProperty = RegisterProperty("CurrentNotebookName", typeof(string), string.Empty);
+        public static readonly PropertyData CurrentNotebookNameProperty = RegisterProperty("CurrentNotebookName", typeof(string), String.Empty);
 
         /// <summary>
         /// Shows the last time the notebook was saved during the current session.
@@ -152,7 +152,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(LastSavedTimeProperty, value); }
         }
 
-        public static readonly PropertyData LastSavedTimeProperty = RegisterProperty("LastSavedTime", typeof(string), string.Empty);
+        public static readonly PropertyData LastSavedTimeProperty = RegisterProperty("LastSavedTime", typeof(string), String.Empty);
 
         /// <summary>
         /// Gets or sets the property value.
@@ -295,7 +295,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public void SetWorkspace()
         {
             IsAuthoring = false;
-            switch(App.CurrentUserMode)
+            switch(CurrentProgramMode)
             {
                 case App.UserMode.Server:
                     break;
@@ -329,16 +329,16 @@ namespace Classroom_Learning_Partner.ViewModels
             switch(userMode)
             {
                 case "INSTRUCTOR":
-                    App.CurrentUserMode = App.UserMode.Instructor;
+                    CurrentProgramMode = App.UserMode.Instructor;
                     break;
                 case "PROJECTOR":
-                    App.CurrentUserMode = App.UserMode.Projector;
+                    CurrentProgramMode = App.UserMode.Projector;
                     break;
                 case "STUDENT":
-                    App.CurrentUserMode = App.UserMode.Student;
+                    CurrentProgramMode = App.UserMode.Student;
                     break;
                 default:
-                    App.CurrentUserMode = App.UserMode.Instructor;
+                    CurrentProgramMode = App.UserMode.Instructor;
                     break;
             }
 
@@ -494,7 +494,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             notebook.SaveNotebook(folderPath, isFullSaveForced);
 
-            switch(App.CurrentUserMode)
+            switch(CurrentProgramMode)
             {
                 case App.UserMode.Server:
                     break;
@@ -521,7 +521,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 App.MainWindowViewModel.LastSavedTime = notebook.LastSavedDate.Value.ToString("yyyy/MM/dd - HH:mm:ss");
             }
 
-            if(App.CurrentUserMode == App.UserMode.Instructor &&
+            if(CurrentProgramMode == App.UserMode.Instructor &&
                App.MainWindowViewModel.CurrentClassPeriod != null &&
                App.MainWindowViewModel.CurrentClassPeriod.ClassSubject != null)
             {
@@ -562,7 +562,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 closestClassPeriodFilePath = classPeriodFilePath;
             }
 
-            if(string.IsNullOrEmpty(closestClassPeriodFilePath))
+            if(String.IsNullOrEmpty(closestClassPeriodFilePath))
             {
                 MessageBox.Show("ERROR: Could not find ClassPeriod .xml file.");
                 return;
@@ -737,7 +737,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 closestClassPeriodFilePath = classPeriodFilePath;
             }
 
-            if(string.IsNullOrEmpty(closestClassPeriodFilePath))
+            if(String.IsNullOrEmpty(closestClassPeriodFilePath))
             {
                 MessageBox.Show("ERROR: Could not find ClassPeriod.");
                 return;
@@ -927,5 +927,11 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //Temp Methods
+
+        public static ProgramModes CurrentProgramMode
+        {
+            get { return App._currentUserMode; }
+            set { App._currentUserMode = value; }
+        }
     }
 }

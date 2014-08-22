@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Classroom_Learning_Partner.ViewModels;
 
 namespace Classroom_Learning_Partner
 {
@@ -13,7 +14,7 @@ namespace Classroom_Learning_Partner
         }
 
         private string fileDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\Logs";
-        private string fileName = "CLPLog" + App.CurrentUserMode.ToString() + ".log";
+        private string fileName = "CLPLog" + MainWindowViewModel.CurrentProgramMode.ToString() + ".log";
         
         private string filePath;
 

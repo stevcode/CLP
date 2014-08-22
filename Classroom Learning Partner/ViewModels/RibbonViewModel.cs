@@ -67,7 +67,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             InitializeCommands();
 
-            switch(App.CurrentUserMode)
+            switch(MainWindowViewModel.CurrentProgramMode)
             {
                 case App.UserMode.Server:
                     ServerVisibility = Visibility.Visible;
@@ -106,7 +106,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             PageInteractionMode = PageInteractionMode.Pen;
             CurrentLeftPanel = Panels.NotebookPages;
-            IsProjectorFrozen = App.CurrentUserMode != App.UserMode.Projector;
+            IsProjectorFrozen = MainWindowViewModel.CurrentProgramMode != App.UserMode.Projector;
         }
 
         private void InitializeCommands()
@@ -2105,7 +2105,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 page.Height += PAGE_INCREASE_AMOUNT;
             }
 
-            if(App.CurrentUserMode != App.UserMode.Instructor || 
+            if(MainWindowViewModel.CurrentProgramMode != App.UserMode.Instructor || 
                App.Network.ProjectorProxy == null)
             {
                 return;

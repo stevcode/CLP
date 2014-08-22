@@ -134,7 +134,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
             if(displayListPanelViewModel == null ||
                notebookWorkspaceViewModel == null ||
-               App.CurrentUserMode != App.UserMode.Instructor ||
+               MainWindowViewModel.CurrentProgramMode != App.UserMode.Instructor ||
                args.NewValue == null)
             {
                 return;

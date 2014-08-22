@@ -49,7 +49,7 @@ namespace Classroom_Learning_Partner
             App.MainWindowViewModel.OnlineStatus = "CONNECTING...";    
 
             ServiceHost host = null;
-            switch(App.CurrentUserMode)
+            switch(MainWindowViewModel.CurrentProgramMode)
             {
                 case App.UserMode.Server:
                     break;
@@ -82,7 +82,7 @@ namespace Classroom_Learning_Partner
 
         public void DiscoverServices()
         {
-            switch(App.CurrentUserMode)
+            switch(MainWindowViewModel.CurrentProgramMode)
             {
                 case App.UserMode.Server:
                     break;

@@ -197,11 +197,6 @@ namespace Classroom_Learning_Partner
         public static string ImageCacheDirectory { get; private set; }
 
         private static UserMode _currentUserMode = UserMode.Instructor;
-        public static UserMode CurrentUserMode
-        {
-            get { return _currentUserMode; }
-            set { _currentUserMode = value; }
-        }
 
         #endregion //Properties
     }
