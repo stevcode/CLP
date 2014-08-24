@@ -4,7 +4,6 @@
               xmlns:catel="http://catel.codeplex.com"
               xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
               xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
-              xmlns:clp="clr-namespace:Classroom_Learning_Partner"
               xmlns:viewModels="clr-namespace:Classroom_Learning_Partner.ViewModels"
               UseLayoutRounding="True"
               SnapsToDevicePixels="True"
@@ -30,12 +29,15 @@
     </Window.Resources>
 
     <Window.InputBindings>
-        <!--<KeyBinding Command="{Binding SetUserModeCommand}"
-                    Gesture="CTRL+SHIFT+I" />
         <KeyBinding Command="{Binding SetUserModeCommand}"
+                    CommandParameter="TEACHER"
+                    Gesture="CTRL+SHIFT+T" />
+        <KeyBinding Command="{Binding SetUserModeCommand}"
+                    CommandParameter="STUDENT"
                     Gesture="CTRL+SHIFT+S" />
         <KeyBinding Command="{Binding SetUserModeCommand}"
-                    Gesture="CTRL+SHIFT+P" />-->
+                    CommandParameter="PROJECTOR"
+                    Gesture="CTRL+SHIFT+P" />
         <KeyBinding Command="{Binding ToggleDebugCommand}"
                     Gesture="CTRL+SHIFT+K" />
         <KeyBinding Command="{Binding ToggleExtrasCommand}"

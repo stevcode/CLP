@@ -348,7 +348,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             switch (userMode)
             {
-                case "INSTRUCTOR":
+                case "TEACHER":
                     CurrentProgramMode = ProgramModes.Teacher;
                     break;
                 case "PROJECTOR":
