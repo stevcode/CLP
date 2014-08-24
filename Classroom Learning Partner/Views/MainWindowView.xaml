@@ -5,6 +5,7 @@
               xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
               xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
               xmlns:clp="clr-namespace:Classroom_Learning_Partner"
+              xmlns:viewModels="clr-namespace:Classroom_Learning_Partner.ViewModels"
               UseLayoutRounding="True"
               SnapsToDevicePixels="True"
               Icon="..\Images\InkWell.ico"
@@ -122,7 +123,7 @@
                     <Style.Triggers>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding CurrentUserMode, Source={x:Static Application.Current}, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static clp:App+UserMode.Projector}}"
+                                <Condition Binding="{Binding MainWindowViewModel.CurrentProgramMode, Source={x:Static Application.Current}, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:ProgramModes.Projector}}"
                                             Value="True" />
                                 <Condition Binding="{Binding MainWindowViewModel.Ribbon.IsProjectorFrozen, Source={x:Static Application.Current}}" Value="True" />
                             </MultiDataTrigger.Conditions>

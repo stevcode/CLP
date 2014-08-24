@@ -106,7 +106,7 @@ namespace Classroom_Learning_Partner
         {
             var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel == null ||
-               MainWindowViewModel.CurrentProgramMode != App.UserMode.Projector)
+               App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Projector)
             {
                 return;
             }
@@ -155,7 +155,7 @@ namespace Classroom_Learning_Partner
         {
             var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel == null ||
-               MainWindowViewModel.CurrentProgramMode != App.UserMode.Projector)
+               App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Projector)
             {
                 return;
             }
@@ -199,7 +199,7 @@ namespace Classroom_Learning_Partner
         {
             var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel == null ||
-               MainWindowViewModel.CurrentProgramMode != App.UserMode.Projector)
+               App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Projector)
             {
                 return;
             }
@@ -246,7 +246,7 @@ namespace Classroom_Learning_Partner
         {
             var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel == null ||
-               MainWindowViewModel.CurrentProgramMode != App.UserMode.Projector)
+               App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Projector)
             {
                 return;
             }

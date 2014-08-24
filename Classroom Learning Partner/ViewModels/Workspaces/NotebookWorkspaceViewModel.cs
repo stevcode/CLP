@@ -58,13 +58,13 @@ namespace Classroom_Learning_Partner.ViewModels
             RightPanel = DisplaysPanel;
 
             // TODO: Use StagingPanel instead?
-            //if(App.CurrentUserMode == App.UserMode.Student)
+            //if(App.CurrentUserMode == ProgramModes.Student)
             //{
             //    SubmissionHistoryPanel = new SubmissionHistoryPanelViewModel(notebook);
             //    BottomPanel = SubmissionHistoryPanel;
             //}
 
-            if(MainWindowViewModel.CurrentProgramMode == App.UserMode.Projector)
+            if (App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Projector)
             {
                 NotebookPagesPanel.IsVisible = false;
             }

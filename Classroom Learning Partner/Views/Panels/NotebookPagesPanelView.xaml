@@ -7,7 +7,8 @@
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
                    xmlns:extenders="clr-namespace:Classroom_Learning_Partner.Views.Extenders"
                    xmlns:entities="clr-namespace:CLP.Entities;assembly=CLP.Entities"
-                   xmlns:clp="clr-namespace:Classroom_Learning_Partner">
+                   xmlns:clp="clr-namespace:Classroom_Learning_Partner"
+                   xmlns:viewModels="clr-namespace:Classroom_Learning_Partner.ViewModels">
 
     <UserControl.Resources>
         <ResourceDictionary>
@@ -331,10 +332,10 @@
             <views:StagingPanelView.Visibility>
                 <MultiBinding Converter="{StaticResource AllBoolToVisibilityMultiConverter}">
                     <Binding Path="IsVisible" />
-                    <Binding Path="CurrentUserMode" 
+                    <Binding Path="MainWindowViewModel.CurrentProgramMode" 
                              Source="{x:Static Application.Current}"
                              Converter="{StaticResource EnumToBoolConverter}"
-                             ConverterParameter="{x:Static clp:App+UserMode.Instructor}" />
+                             ConverterParameter="{x:Static viewModels:ProgramModes.Teacher}" />
                 </MultiBinding>
             </views:StagingPanelView.Visibility>
             
@@ -344,10 +345,10 @@
                                           Grid.Column="2">
             <views:SubmissionHistoryPanelView.Visibility>
                 <MultiBinding Converter="{StaticResource AllBoolToVisibilityMultiConverter}">
-                    <Binding Path="CurrentUserMode"
+                    <Binding Path="MainWindowViewModel.CurrentProgramMode"
                              Source="{x:Static Application.Current}"
                              Converter="{StaticResource EnumToBoolConverter}"
-                             ConverterParameter="{x:Static clp:App+UserMode.Student}" />
+                             ConverterParameter="{x:Static viewModels:ProgramModes.Student}" />
                 </MultiBinding>
             </views:SubmissionHistoryPanelView.Visibility>
         </views:SubmissionHistoryPanelView>

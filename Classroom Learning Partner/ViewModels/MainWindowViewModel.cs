@@ -33,8 +33,10 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Initializes a new instance of the MainWindowViewModel class.
         /// </summary>
-        public MainWindowViewModel()
+        public MainWindowViewModel(ProgramModes currentProgramModes)
         {
+            CurrentProgramMode = currentProgramModes;
+
             InitializeCommands();
             TitleBarText = CLP_TEXT;
             CurrentUser = Person.Guest;
@@ -234,6 +236,17 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Properties
 
         /// <summary>
+        /// Current program mode for CLP.
+        /// </summary>
+        public ProgramModes CurrentProgramMode
+        {
+            get { return GetValue<ProgramModes>(CurrentProgramModeProperty); }
+            set { SetValue(CurrentProgramModeProperty, value); }
+        }
+
+        public static readonly PropertyData CurrentProgramModeProperty = RegisterProperty("CurrentProgramMode", typeof (ProgramModes), ProgramModes.Teacher);
+
+        /// <summary>
         /// ImagePool for the current CLP instance, populated by all open notebooks.
         /// </summary>
         public Dictionary<string, BitmapImage> ImagePool
@@ -297,19 +310,20 @@ namespace Classroom_Learning_Partner.ViewModels
             IsAuthoring = false;
             switch(CurrentProgramMode)
             {
-                case App.UserMode.Server:
+                case ProgramModes.Author:
+                case ProgramModes.Database:
                     break;
-                case App.UserMode.Instructor:
+                case ProgramModes.Teacher:
                     //TODO: Remove after database established
                     CurrentUser = Person.Author;
                     Workspace = new NotebookChooserWorkspaceViewModel();
                     break;
-                case App.UserMode.Projector:
+                case ProgramModes.Projector:
                     //TODO: Remove after database established
                     CurrentUser = Person.Author;
                     Workspace = new NotebookChooserWorkspaceViewModel();
                     break;
-                case App.UserMode.Student:
+                case ProgramModes.Student:
                     Workspace = new UserLoginWorkspaceViewModel();
                     break;
             }
@@ -329,16 +343,16 @@ namespace Classroom_Learning_Partner.ViewModels
             switch(userMode)
             {
                 case "INSTRUCTOR":
-                    CurrentProgramMode = App.UserMode.Instructor;
+                    CurrentProgramMode = ProgramModes.Teacher;
                     break;
                 case "PROJECTOR":
-                    CurrentProgramMode = App.UserMode.Projector;
+                    CurrentProgramMode = ProgramModes.Projector;
                     break;
                 case "STUDENT":
-                    CurrentProgramMode = App.UserMode.Student;
+                    CurrentProgramMode = ProgramModes.Student;
                     break;
                 default:
-                    CurrentProgramMode = App.UserMode.Instructor;
+                    CurrentProgramMode = ProgramModes.Teacher;
                     break;
             }
 
@@ -494,17 +508,18 @@ namespace Classroom_Learning_Partner.ViewModels
 
             notebook.SaveNotebook(folderPath, isFullSaveForced);
 
-            switch(CurrentProgramMode)
+            switch (App.MainWindowViewModel.CurrentProgramMode)
             {
-                case App.UserMode.Server:
+                case ProgramModes.Author:
+                case ProgramModes.Database:
                     break;
-                case App.UserMode.Instructor:
+                case ProgramModes.Teacher:
                     notebook.SaveOthersSubmissions(App.NotebookCacheDirectory);
                     break;
-                case App.UserMode.Projector:
+                case ProgramModes.Projector:
                     notebook.SaveOthersSubmissions(App.NotebookCacheDirectory);
                     break;
-                case App.UserMode.Student:
+                case ProgramModes.Student:
                     var submissionsPath = Path.Combine(folderPath, "Pages");
                     notebook.SaveSubmissions(submissionsPath);
                     if(App.Network.InstructorProxy != null)
@@ -521,7 +536,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 App.MainWindowViewModel.LastSavedTime = notebook.LastSavedDate.Value.ToString("yyyy/MM/dd - HH:mm:ss");
             }
 
-            if(CurrentProgramMode == App.UserMode.Instructor &&
+            if (App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Teacher &&
                App.MainWindowViewModel.CurrentClassPeriod != null &&
                App.MainWindowViewModel.CurrentClassPeriod.ClassSubject != null)
             {
@@ -927,11 +942,5 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //Temp Methods
-
-        public static ProgramModes CurrentProgramMode
-        {
-            get { return App._currentUserMode; }
-            set { App._currentUserMode = value; }
-        }
     }
 }

@@ -18,28 +18,20 @@ namespace Classroom_Learning_Partner
     /// </summary>
     public partial class App
     {
-        public enum UserMode
-        {
-            Server,
-            Instructor,
-            Projector,
-            Student
-        }
-
         protected override void OnStartup(StartupEventArgs e)
         {
             Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
             base.OnStartup(e);
 
-            _currentUserMode = UserMode.Instructor;
+            var currentProgramMode = ProgramModes.Teacher;
 
             InitializeCatelSettings();
-            InitializeLocalCache();
+            InitializeLocalCache(currentProgramMode);
 
             Logger.Instance.InitializeLog();
             CLPServiceAgent.Instance.Initialize();
 
-            MainWindowViewModel = new MainWindowViewModel();
+            MainWindowViewModel = new MainWindowViewModel(currentProgramMode);
             var window = new MainWindowView {DataContext = MainWindowViewModel};
             MainWindowViewModel.Workspace = new BlankWorkspaceViewModel();
             window.Show();
@@ -68,22 +60,25 @@ namespace Classroom_Learning_Partner
             xmlSerializer.Warmup(typesToWarmup);
         }
 
-        private static void InitializeLocalCache()
+        private static void InitializeLocalCache(ProgramModes currentProgramMode)
         {
             string variant;
-            switch(_currentUserMode)
+            switch (currentProgramMode)
             {
-                case UserMode.Server:
-                    variant = "D";
+                case ProgramModes.Author:
+                    variant = "A";
                     break;
-                case UserMode.Instructor:
+                case ProgramModes.Teacher:
                     variant = "T";
                     break;
-                case UserMode.Projector:
+                case ProgramModes.Student:
+                    variant = "S";
+                    break;
+                case ProgramModes.Projector:
                     variant = "P";
                     break;
-                case UserMode.Student:
-                    variant = "S";
+                case ProgramModes.Database:
+                    variant = "D";
                     break;
                 default:
                     variant = string.Empty;
@@ -195,8 +190,6 @@ namespace Classroom_Learning_Partner
         public static string CurrentNotebookCacheDirectory { get; set; }
         public static string ClassCacheDirectory { get; private set; }
         public static string ImageCacheDirectory { get; private set; }
-
-        private static UserMode _currentUserMode = UserMode.Instructor;
 
         #endregion //Properties
     }
