@@ -70,7 +70,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             singleDisplayViewModel.OnPageResize();
 
-            if(App.CurrentUserMode != App.UserMode.Instructor || 
+            if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher || 
                App.Network.ProjectorProxy == null)
             {
                 return;
@@ -191,7 +191,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnPageScrollCommandExecute(ScrollChangedEventArgs e)
         {
-            if(App.CurrentUserMode != App.UserMode.Instructor || 
+            if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher || 
                App.Network.ProjectorProxy == null ||
                Math.Abs(e.VerticalChange) < 0.001)
             {

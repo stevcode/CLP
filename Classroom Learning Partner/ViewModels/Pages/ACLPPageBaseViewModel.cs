@@ -1184,7 +1184,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 page.History.AddHistoryItem(historyItem);
             }
 
-            if(App.CurrentUserMode != App.UserMode.Instructor || App.Network.ProjectorProxy == null || App.MainWindowViewModel.Ribbon.IsBroadcastHistoryDisabled)
+            if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher || App.Network.ProjectorProxy == null || App.MainWindowViewModel.Ribbon.IsBroadcastHistoryDisabled)
             {
                 return;
             }

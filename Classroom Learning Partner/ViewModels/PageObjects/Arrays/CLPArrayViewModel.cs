@@ -437,7 +437,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                         pageObject.ParentPage.RemoveTag(existingTag);
                                     }
                                     var newTag = new DivisionTemplateFailedSnapTag(pageObject.ParentPage,
-                                                                                   App.CurrentUserMode == App.UserMode.Student
+                                                                                   App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Student
                                                                                        ? Origin.StudentPageObjectGenerated
                                                                                        : Origin.TeacherPageObjectGenerated,
                                                                                    DivisionTemplateFailedSnapTag.AcceptedValues
@@ -460,7 +460,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                         pageObject.ParentPage.RemoveTag(existingTag);
                                     }
                                     var newTag = new DivisionTemplateFailedSnapTag(pageObject.ParentPage,
-                                                                                   App.CurrentUserMode == App.UserMode.Student
+                                                                                   App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Student
                                                                                        ? Origin.StudentPageObjectGenerated
                                                                                        : Origin.TeacherPageObjectGenerated,
                                                                                    DivisionTemplateFailedSnapTag.AcceptedValues
@@ -494,7 +494,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                     pageObject.ParentPage.RemoveTag(existingTag);
                                 }
                                 var newTag = new DivisionTemplateFailedSnapTag(pageObject.ParentPage,
-                                                                               App.CurrentUserMode == App.UserMode.Student
+                                                                               App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Student
                                                                                    ? Origin.StudentPageObjectGenerated
                                                                                    : Origin.TeacherPageObjectGenerated,
                                                                                DivisionTemplateFailedSnapTag.AcceptedValues.SnappedArrayTooLarge,

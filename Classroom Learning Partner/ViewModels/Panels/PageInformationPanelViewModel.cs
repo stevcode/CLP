@@ -381,7 +381,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 CurrentPage.Height += PAGE_INCREASE_AMOUNT;
             }
 
-            if (App.CurrentUserMode != App.UserMode.Instructor ||
+            if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher ||
                 App.Network.ProjectorProxy == null)
             {
                 return;

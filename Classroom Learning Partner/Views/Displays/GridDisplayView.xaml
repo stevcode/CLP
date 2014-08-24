@@ -15,7 +15,7 @@
                 <Setter Property="Background"
                         Value="PaleGreen" />
                 <Style.Triggers>
-                    <DataTrigger Binding="{Binding MainWindowViewModel.Ribbon.IsProjectorFrozen, Source={x:Static Application.Current}}"
+                    <DataTrigger Binding="{Binding MainWindowViewModel.IsProjectorFrozen, Source={x:Static Application.Current}}"
                                  Value="True">
                         <Setter Property="Background"
                                 Value="Transparent" />
@@ -80,7 +80,7 @@
                                    Foreground="{StaticResource MainColor}"
                                    FontWeight="Bold"
                                    VerticalAlignment="Bottom"
-                                   Visibility="{Binding MainWindowViewModel.Ribbon.InstructorVisibility, Source={x:Static Application.Current}}">
+                                   Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}">
                             <TextBlock.LayoutTransform>
                                 <TransformGroup>
                                     <ScaleTransform />
@@ -131,7 +131,7 @@
                                 Height="30"
                                 Margin="-20 0 0 -20"
                                 Cursor="Hand"
-                                Visibility="{Binding MainWindowViewModel.Ribbon.InstructorVisibility, Source={x:Static Application.Current}}"
+                                Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}"
                                 Command="{Binding ElementName=ItemsControl, Path=DataContext.RemovePageFromGridDisplayCommand}"
                                 CommandParameter="{Binding}">
                             <Button.Template>
@@ -158,7 +158,7 @@
                                 Height="30"
                                 Margin="-20 0 0 -100"
                                 Cursor="Hand"
-                                Visibility="{Binding MainWindowViewModel.Ribbon.InstructorVisibility, Source={x:Static Application.Current}}"
+                                Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}"
                                 Command="{Binding ElementName=ItemsControl, Path=DataContext.ReplayHistoryCommand}"
                                 CommandParameter="{Binding}">
                             <Button.Template>
