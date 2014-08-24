@@ -57,7 +57,7 @@
                     Background="PaleGreen"
                     BorderThickness="2"
                     BorderBrush="Black"
-                    Visibility="{Binding MainWindowViewModel.Ribbon.IsProjectorFrozen, Source={x:Static Application.Current}, Converter={StaticResource OppositeBooleanToCollapsingVisibilityConverter}}">
+                    Visibility="{Binding MainWindowViewModel.IsProjectorFrozen, Source={x:Static Application.Current}, Converter={StaticResource OppositeBooleanToCollapsingVisibilityConverter}}">
                 <Grid>
                     <Image Source="{Binding MainWindowViewModel.FrozenDisplayImageSource, Source={x:Static Application.Current}}" 
                            Height="135"
@@ -182,7 +182,7 @@
                                             <MultiDataTrigger.Conditions>
                                                 <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}}"
                                                            Value="True" />
-                                                <Condition Binding="{Binding MainWindowViewModel.Ribbon.IsProjectorFrozen, Source={x:Static Application.Current}}" Value="False" />
+                                                <Condition Binding="{Binding MainWindowViewModel.IsProjectorFrozen, Source={x:Static Application.Current}}" Value="False" />
                                             </MultiDataTrigger.Conditions>
                                             <MultiDataTrigger.Setters>
                                                 <Setter Property="Background" Value="PaleGreen" />

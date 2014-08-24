@@ -25,11 +25,11 @@ namespace Classroom_Learning_Partner
 
             var currentProgramMode = ProgramModes.Teacher;
 
+            Logger.Instance.InitializeLog(currentProgramMode);
+            CLPServiceAgent.Instance.Initialize();
+
             InitializeCatelSettings();
             InitializeLocalCache(currentProgramMode);
-
-            Logger.Instance.InitializeLog();
-            CLPServiceAgent.Instance.Initialize();
 
             MainWindowViewModel = new MainWindowViewModel(currentProgramMode);
             var window = new MainWindowView {DataContext = MainWindowViewModel};

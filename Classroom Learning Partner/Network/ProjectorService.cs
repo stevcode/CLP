@@ -95,7 +95,7 @@ namespace Classroom_Learning_Partner
                                                                                             App.MainWindowViewModel.FrozenDisplayImageSource = bitmapImage;
 
                                                                                         }
-                                                                                        App.MainWindowViewModel.Ribbon.IsProjectorFrozen = isFreezing;
+                                                                                        App.MainWindowViewModel.IsProjectorFrozen = isFreezing;
 
                                                                                         return null;
                                                                                     },

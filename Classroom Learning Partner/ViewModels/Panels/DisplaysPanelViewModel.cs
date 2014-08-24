@@ -205,7 +205,7 @@ namespace Classroom_Learning_Partner.ViewModels
             dict.Source = uri;
             var color = dict["MainColor"].ToString();
             SingleDisplaySelectedColor = color;
-            SingleDisplaySelectedBackgroundColor = App.MainWindowViewModel.Ribbon.IsProjectorFrozen ? "Transparent" : "PaleGreen";
+            SingleDisplaySelectedBackgroundColor = App.MainWindowViewModel.IsProjectorFrozen ? "Transparent" : "PaleGreen";
             CurrentDisplay = null;
 
             var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
@@ -258,9 +258,9 @@ namespace Classroom_Learning_Partner.ViewModels
         protected override void OnViewModelPropertyChanged(IViewModel viewModel, string propertyName)
         {
             if(propertyName == "IsProjectorFrozen" &&
-               viewModel is RibbonViewModel)
+               viewModel is MainWindowViewModel)
             {
-                if((viewModel as RibbonViewModel).IsProjectorFrozen)
+                if ((viewModel as MainWindowViewModel).IsProjectorFrozen)
                 {
                     SingleDisplaySelectedBackgroundColor = "Transparent";
 

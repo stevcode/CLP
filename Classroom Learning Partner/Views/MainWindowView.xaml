@@ -125,7 +125,7 @@
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding MainWindowViewModel.CurrentProgramMode, Source={x:Static Application.Current}, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:ProgramModes.Projector}}"
                                             Value="True" />
-                                <Condition Binding="{Binding MainWindowViewModel.Ribbon.IsProjectorFrozen, Source={x:Static Application.Current}}" Value="True" />
+                                <Condition Binding="{Binding MainWindowViewModel.IsProjectorFrozen, Source={x:Static Application.Current}}" Value="True" />
                             </MultiDataTrigger.Conditions>
                             <MultiDataTrigger.Setters>
                                 <Setter Property="Visibility" Value="Visible" />

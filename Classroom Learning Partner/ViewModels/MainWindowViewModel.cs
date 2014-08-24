@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -30,16 +29,15 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Constructor
 
-        /// <summary>
-        /// Initializes a new instance of the MainWindowViewModel class.
-        /// </summary>
-        public MainWindowViewModel(ProgramModes currentProgramModes)
+        /// <summary>Initializes a new instance of the MainWindowViewModel class.</summary>
+        public MainWindowViewModel(ProgramModes currentProgramMode)
         {
-            CurrentProgramMode = currentProgramModes;
+            CurrentProgramMode = currentProgramMode;
 
             InitializeCommands();
             TitleBarText = CLP_TEXT;
             CurrentUser = Person.Guest;
+            IsProjectorFrozen = CurrentProgramMode != ProgramModes.Projector;
         }
 
         public override string Title
@@ -60,9 +58,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Bindings
 
-        /// <summary>
-        /// Screenshot of the frozen display.
-        /// </summary>
+        /// <summary>Screenshot of the frozen display.</summary>
         public ImageSource FrozenDisplayImageSource
         {
             get { return GetValue<ImageSource>(FrozenDisplayImageSourceProperty); }
@@ -71,50 +67,42 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData FrozenDisplayImageSourceProperty = RegisterProperty("FrozenDisplayImageSource", typeof (ImageSource));
 
-        /// <summary>
-        /// Gets or sets the Title Bar text of the window.
-        /// </summary>
+        /// <summary>Gets or sets the Title Bar text of the window.</summary>
         public string TitleBarText
         {
             get { return GetValue<string>(TitleBarTextProperty); }
             set { SetValue(TitleBarTextProperty, value); }
         }
 
-        public static readonly PropertyData TitleBarTextProperty = RegisterProperty("TitleBarText", typeof(string));
+        public static readonly PropertyData TitleBarTextProperty = RegisterProperty("TitleBarText", typeof (string));
 
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
+        /// <summary>Gets or sets the property value.</summary>
         public RibbonViewModel Ribbon
         {
             get { return GetValue<RibbonViewModel>(RibbonProperty); }
             set { SetValue(RibbonProperty, value); }
         }
 
-        public static readonly PropertyData RibbonProperty = RegisterProperty("Ribbon", typeof(RibbonViewModel), new RibbonViewModel());
+        public static readonly PropertyData RibbonProperty = RegisterProperty("Ribbon", typeof (RibbonViewModel), new RibbonViewModel());
 
-        /// <summary>
-        /// The Workspace of the <see cref="MainWindowViewModel" />.
-        /// </summary>
+        /// <summary>The Workspace of the <see cref="MainWindowViewModel" />.</summary>
         public ViewModelBase Workspace
         {
             get { return GetValue<ViewModelBase>(WorkspaceProperty); }
             set { SetValue(WorkspaceProperty, value); }
         }
 
-        public static readonly PropertyData WorkspaceProperty = RegisterProperty("Workspace", typeof(ViewModelBase), new BlankWorkspaceViewModel());
+        public static readonly PropertyData WorkspaceProperty = RegisterProperty("Workspace", typeof (ViewModelBase), new BlankWorkspaceViewModel());
 
-        /// <summary>
-        /// Gets or sets the Authoring flag.
-        /// </summary>
+        /// <summary>Gets or sets the Authoring flag.</summary>
         public bool IsAuthoring
         {
             get { return GetValue<bool>(IsAuthoringProperty); }
             set
             {
-                if(value != IsAuthoring)
+                if (value != IsAuthoring)
                 {
-                    if(value)
+                    if (value)
                     {
                         _tempCurrentUser = CurrentUser;
                         CurrentUser = Person.Author;
@@ -130,54 +118,46 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private Person _tempCurrentUser;
 
-        public static readonly PropertyData IsAuthoringProperty = RegisterProperty("IsAuthoring", typeof(bool), false);
+        public static readonly PropertyData IsAuthoringProperty = RegisterProperty("IsAuthoring", typeof (bool), false);
 
         #region Status Bar Bindings
 
-        /// <summary>
-        /// The name of the current open Notebook.
-        /// </summary>
+        /// <summary>The name of the current open Notebook.</summary>
         public string CurrentNotebookName
         {
             get { return GetValue<string>(CurrentNotebookNameProperty); }
             set { SetValue(CurrentNotebookNameProperty, value); }
         }
 
-        public static readonly PropertyData CurrentNotebookNameProperty = RegisterProperty("CurrentNotebookName", typeof(string), String.Empty);
+        public static readonly PropertyData CurrentNotebookNameProperty = RegisterProperty("CurrentNotebookName", typeof (string), String.Empty);
 
-        /// <summary>
-        /// Shows the last time the notebook was saved during the current session.
-        /// </summary>
+        /// <summary>Shows the last time the notebook was saved during the current session.</summary>
         public string LastSavedTime
         {
             get { return GetValue<string>(LastSavedTimeProperty); }
             set { SetValue(LastSavedTimeProperty, value); }
         }
 
-        public static readonly PropertyData LastSavedTimeProperty = RegisterProperty("LastSavedTime", typeof(string), String.Empty);
+        public static readonly PropertyData LastSavedTimeProperty = RegisterProperty("LastSavedTime", typeof (string), String.Empty);
 
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
+        /// <summary>Gets or sets the property value.</summary>
         public string OnlineStatus
         {
             get { return GetValue<string>(OnlineStatusProperty); }
             set { SetValue(OnlineStatusProperty, value); }
         }
 
-        public static readonly PropertyData OnlineStatusProperty = RegisterProperty("OnlineStatus", typeof(string), "DISCONNECTED");
+        public static readonly PropertyData OnlineStatusProperty = RegisterProperty("OnlineStatus", typeof (string), "DISCONNECTED");
 
         #endregion //Status Bar Bindings
 
-        /// <summary>
-        /// Whether or not the Pens Down Screen has been activated.
-        /// </summary>
+        /// <summary>Whether or not the Pens Down Screen has been activated.</summary>
         public bool IsPenDownActivated
         {
             get { return GetValue<bool>(IsPenDownActivatedProperty); }
             set
             {
-                if(value)
+                if (value)
                 {
                     ACLPPageBaseViewModel.ClearAdorners(RibbonViewModel.CurrentPage);
                 }
@@ -185,121 +165,149 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        public static readonly PropertyData IsPenDownActivatedProperty = RegisterProperty("IsPenDownActivated", typeof(bool), false);
+        public static readonly PropertyData IsPenDownActivatedProperty = RegisterProperty("IsPenDownActivated", typeof (bool), false);
 
-        /// <summary>
-        /// Whether or not the ConvertingToPDF Screen has been activated.
-        /// </summary>
+        /// <summary>Whether or not the ConvertingToPDF Screen has been activated.</summary>
         public bool IsConvertingToPDF
         {
             get { return GetValue<bool>(IsConvertingToPDFProperty); }
             set { SetValue(IsConvertingToPDFProperty, value); }
         }
 
-        public static readonly PropertyData IsConvertingToPDFProperty = RegisterProperty("IsConvertingToPDF", typeof(bool), false);
+        public static readonly PropertyData IsConvertingToPDFProperty = RegisterProperty("IsConvertingToPDF", typeof (bool), false);
 
-        /// <summary>
-        /// The page that is currently being converted to PDF.
-        /// </summary>
+        /// <summary>The page that is currently being converted to PDF.</summary>
         public CLPPage CurrentConvertingPage
         {
             get { return GetValue<CLPPage>(CurrentConvertingPageProperty); }
             set { SetValue(CurrentConvertingPageProperty, value); }
         }
 
-        public static readonly PropertyData CurrentConvertingPageProperty = RegisterProperty("CurrentConvertingPage", typeof(CLPPage));
+        public static readonly PropertyData CurrentConvertingPageProperty = RegisterProperty("CurrentConvertingPage", typeof (CLPPage));
 
-        /// <summary>
-        /// SUMMARY
-        /// </summary>
+        /// <summary>SUMMARY</summary>
         public Handedness Handedness
         {
             get { return GetValue<Handedness>(HandednessProperty); }
             set { SetValue(HandednessProperty, value); }
         }
 
-        public static readonly PropertyData HandednessProperty = RegisterProperty("Handedness", typeof(Handedness), Handedness.Right);
+        public static readonly PropertyData HandednessProperty = RegisterProperty("Handedness", typeof (Handedness), Handedness.Right);
 
-        /// <summary>
-        /// Signifies navigation through the notebook is disabled and can only  be ahieved through network commands.
-        /// </summary>
+        /// <summary>Signifies navigation through the notebook is disabled and can only  be ahieved through network commands.</summary>
         public bool IsLinked
         {
             get { return GetValue<bool>(IsLinkedProperty); }
             set { SetValue(IsLinkedProperty, value); }
         }
 
-        public static readonly PropertyData IsLinkedProperty = RegisterProperty("IsLinked", typeof(bool), false);
+        public static readonly PropertyData IsLinkedProperty = RegisterProperty("IsLinked", typeof (bool), false);
+
+        /// <summary>Whether or not to mirror the displays to the projector.</summary>
+        public bool IsProjectorFrozen
+        {
+            get { return GetValue<bool>(IsProjectorFrozenProperty); }
+            set { SetValue(IsProjectorFrozenProperty, value); }
+        }
+
+        public static readonly PropertyData IsProjectorFrozenProperty = RegisterProperty("IsProjectorFrozen", typeof (bool), true);
+
+        #region Visibilities
+
+        public Visibility TeacherOnlyVisibility
+        {
+            get { return CurrentProgramMode == ProgramModes.Teacher ? Visibility.Visible : Visibility.Collapsed; }
+        }
+
+        public Visibility ProjectorOnlyVisibility
+        {
+            get { return CurrentProgramMode == ProgramModes.Projector ? Visibility.Visible : Visibility.Collapsed; }
+        }
+
+        public Visibility StudentOnlyVisibility
+        {
+            get { return CurrentProgramMode == ProgramModes.Student ? Visibility.Visible : Visibility.Collapsed; }
+        }
+
+        public Visibility NotTeacherVisibility
+        {
+            get { return CurrentProgramMode == ProgramModes.Teacher ? Visibility.Collapsed : Visibility.Visible; }
+        }
+
+        #endregion //Visibilities
 
         #endregion //Bindings
 
         #region Properties
 
-        /// <summary>
-        /// Current program mode for CLP.
-        /// </summary>
+        /// <summary>Current program mode for CLP.</summary>
         public ProgramModes CurrentProgramMode
         {
             get { return GetValue<ProgramModes>(CurrentProgramModeProperty); }
-            set { SetValue(CurrentProgramModeProperty, value); }
+            set
+            {
+                SetValue(CurrentProgramModeProperty, value);
+                RaisePropertyChanged("TeacherOnlyVisibility");
+                RaisePropertyChanged("ProjectorOnlyVisibility");
+                RaisePropertyChanged("StudentOnlyVisibility");
+                RaisePropertyChanged("NotTeacherVisibility");
+            }
         }
 
-        public static readonly PropertyData CurrentProgramModeProperty = RegisterProperty("CurrentProgramMode", typeof (ProgramModes), ProgramModes.Teacher);
+        public static readonly PropertyData CurrentProgramModeProperty = RegisterProperty("CurrentProgramMode",
+                                                                                          typeof (ProgramModes),
+                                                                                          ProgramModes.Teacher);
 
-        /// <summary>
-        /// ImagePool for the current CLP instance, populated by all open notebooks.
-        /// </summary>
+        /// <summary>ImagePool for the current CLP instance, populated by all open notebooks.</summary>
         public Dictionary<string, BitmapImage> ImagePool
         {
             get { return GetValue<Dictionary<string, BitmapImage>>(ImagePoolProperty); }
             set { SetValue(ImagePoolProperty, value); }
         }
 
-        public static readonly PropertyData ImagePoolProperty = RegisterProperty("ImagePool", typeof(Dictionary<string, BitmapImage>), () => new Dictionary<string, BitmapImage>());
+        public static readonly PropertyData ImagePoolProperty = RegisterProperty("ImagePool",
+                                                                                 typeof (Dictionary<string, BitmapImage>),
+                                                                                 () => new Dictionary<string, BitmapImage>());
 
-        /// <summary>
-        /// The <see cref="Person" /> using the program.
-        /// </summary>
+        /// <summary>The <see cref="Person" /> using the program.</summary>
         public Person CurrentUser
         {
             get { return GetValue<Person>(CurrentUserProperty); }
             set { SetValue(CurrentUserProperty, value); }
         }
 
-        public static readonly PropertyData CurrentUserProperty = RegisterProperty("CurrentUser", typeof(Person));
+        public static readonly PropertyData CurrentUserProperty = RegisterProperty("CurrentUser", typeof (Person));
 
-        /// <summary>
-        /// List of all available <see cref="Person" />s.
-        /// </summary>
+        /// <summary>List of all available <see cref="Person" />s.</summary>
         public ObservableCollection<Person> AvailableUsers
         {
             get { return GetValue<ObservableCollection<Person>>(AvailableUsersProperty); }
             set { SetValue(AvailableUsersProperty, value); }
         }
 
-        public static readonly PropertyData AvailableUsersProperty = RegisterProperty("AvailableUsers", typeof(ObservableCollection<Person>), () => new ObservableCollection<Person>());
+        public static readonly PropertyData AvailableUsersProperty = RegisterProperty("AvailableUsers",
+                                                                                      typeof (ObservableCollection<Person>),
+                                                                                      () => new ObservableCollection<Person>());
 
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
+        /// <summary>Gets or sets the property value.</summary>
         public ObservableCollection<Notebook> OpenNotebooks
         {
             get { return GetValue<ObservableCollection<Notebook>>(OpenNotebooksProperty); }
             set { SetValue(OpenNotebooksProperty, value); }
         }
 
-        public static readonly PropertyData OpenNotebooksProperty = RegisterProperty("OpenNotebooks", typeof(ObservableCollection<Notebook>), () => new ObservableCollection<Notebook>());
+        public static readonly PropertyData OpenNotebooksProperty = RegisterProperty("OpenNotebooks",
+                                                                                     typeof (ObservableCollection<Notebook>),
+                                                                                     () => new ObservableCollection<Notebook>());
 
-        /// <summary>
-        /// The current <see cref="ClassPeriod" /> the program will attemp to use to load the day's <see cref="CLPPage" />s.
-        /// </summary>
+        /// <summary>The current <see cref="ClassPeriod" /> the program will attemp to use to load the day's <see cref="CLPPage" />s.</summary>
         public ClassPeriod CurrentClassPeriod
         {
             get { return GetValue<ClassPeriod>(CurrentClassPeriodProperty); }
             set { SetValue(CurrentClassPeriodProperty, value); }
         }
 
-        public static readonly PropertyData CurrentClassPeriodProperty = RegisterProperty("CurrentClassPeriod", typeof(ClassPeriod));
+        public static readonly PropertyData CurrentClassPeriodProperty = RegisterProperty("CurrentClassPeriod", typeof (ClassPeriod));
 
         #endregion //Properties
 
@@ -308,7 +316,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public void SetWorkspace()
         {
             IsAuthoring = false;
-            switch(CurrentProgramMode)
+            switch (CurrentProgramMode)
             {
                 case ProgramModes.Author:
                 case ProgramModes.Database:
@@ -333,14 +341,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Commands
 
-        /// <summary>
-        /// Sets the UserMode of the program.
-        /// </summary>
+        /// <summary>Sets the UserMode of the program.</summary>
         public Command<string> SetUserModeCommand { get; private set; }
 
         private void OnSetUserModeCommandExecute(string userMode)
         {
-            switch(userMode)
+            switch (userMode)
             {
                 case "INSTRUCTOR":
                     CurrentProgramMode = ProgramModes.Teacher;
@@ -359,23 +365,23 @@ namespace Classroom_Learning_Partner.ViewModels
             SetWorkspace();
         }
 
-        /// <summary>
-        /// Toggles Debug Tab.
-        /// </summary>
+        /// <summary>Toggles Debug Tab.</summary>
         public Command ToggleDebugCommand { get; private set; }
 
-        private void OnToggleDebugCommandExecute() { Ribbon.DebugTabVisibility = Ribbon.DebugTabVisibility == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed; }
+        private void OnToggleDebugCommandExecute()
+        {
+            Ribbon.DebugTabVisibility = Ribbon.DebugTabVisibility == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
+        }
 
-        /// <summary>
-        /// Toggles Extras Tab.
-        /// </summary>
+        /// <summary>Toggles Extras Tab.</summary>
         public Command ToggleExtrasCommand { get; private set; }
 
-        private void OnToggleExtrasCommandExecute() { Ribbon.ExtrasTabVisibility = Ribbon.ExtrasTabVisibility == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed; }
+        private void OnToggleExtrasCommandExecute()
+        {
+            Ribbon.ExtrasTabVisibility = Ribbon.ExtrasTabVisibility == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
+        }
 
-        /// <summary>
-        /// Toggles the Pen Down screen.
-        /// </summary>
+        /// <summary>Toggles the Pen Down screen.</summary>
         public Command TogglePenDownCommand { get; private set; }
 
         private void OnTogglePenDownCommandExecute() { IsPenDownActivated = !IsPenDownActivated; }
@@ -411,7 +417,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                   Owner = Application.Current.MainWindow
                               };
             nameChooser.ShowDialog();
-            if(nameChooser.DialogResult != true)
+            if (nameChooser.DialogResult != true)
             {
                 return;
             }
@@ -425,11 +431,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var folderName = newNotebook.Name + ";" + newNotebook.ID + ";" + newNotebook.Owner.FullName + ";" + newNotebook.OwnerID;
             var folderPath = Path.Combine(App.NotebookCacheDirectory, folderName);
-            if(Directory.Exists(folderPath))
+            if (Directory.Exists(folderPath))
             {
                 return;
             }
-            
+
             // TODO: Reimplement when autosave returns
             //SaveNotebook(newNotebook);
 
@@ -443,37 +449,39 @@ namespace Classroom_Learning_Partner.ViewModels
         public static void OpenNotebook(string notebookFolderName, bool forceCache = false, bool forceDatabase = false)
         {
             //TODO: find way to bypass this if partial notebook is currently open and you try to open full notebook (or vis versa).
-            foreach(var otherNotebook in
-                    App.MainWindowViewModel.OpenNotebooks.Where(otherNotebook => otherNotebook.ID == notebookFolderName.Split(';')[1] && 
-                                                                                 otherNotebook.OwnerID == notebookFolderName.Split(';')[2]))
+            foreach (var otherNotebook in
+                App.MainWindowViewModel.OpenNotebooks.Where(
+                                                            otherNotebook =>
+                                                            otherNotebook.ID == notebookFolderName.Split(';')[1] &&
+                                                            otherNotebook.OwnerID == notebookFolderName.Split(';')[2]))
             {
                 App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(otherNotebook);
                 return;
             }
 
             var folderPath = Path.Combine(App.NotebookCacheDirectory, notebookFolderName);
-            if(!Directory.Exists(folderPath))
+            if (!Directory.Exists(folderPath))
             {
                 MessageBox.Show("Notebook doesn't exist");
                 return;
             }
 
             var notebook = Notebook.OpenNotebook(folderPath);
-            if(notebook == null)
+            if (notebook == null)
             {
                 MessageBox.Show("Notebook could not be opened. Check error log.");
                 return;
             }
 
             App.MainWindowViewModel.CurrentNotebookName = notebook.Name;
-            if(notebook.LastSavedDate != null)
+            if (notebook.LastSavedDate != null)
             {
                 App.MainWindowViewModel.LastSavedTime = notebook.LastSavedDate.Value.ToString("yyyy/MM/dd - HH:mm:ss");
             }
 
             App.MainWindowViewModel.OpenNotebooks.Add(notebook);
             App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(notebook);
-            if(notebook.OwnerID == Person.Author.ID)
+            if (notebook.OwnerID == Person.Author.ID)
             {
                 App.MainWindowViewModel.IsAuthoring = true;
             }
@@ -481,15 +489,16 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static void SaveNotebook(Notebook notebook, bool isFullSaveForced = false)
         {
-            var folderPath = Path.Combine(App.NotebookCacheDirectory, notebook.Name + ";" + notebook.ID + ";" + notebook.Owner.FullName + ";" + notebook.OwnerID);
+            var folderPath = Path.Combine(App.NotebookCacheDirectory,
+                                          notebook.Name + ";" + notebook.ID + ";" + notebook.Owner.FullName + ";" + notebook.OwnerID);
 
-            if(App.MainWindowViewModel.CurrentUser.ID == Person.Author.ID)
+            if (App.MainWindowViewModel.CurrentUser.ID == Person.Author.ID)
             {
                 var pagesFolderPath = Path.Combine(folderPath, "Pages");
-                if(Directory.Exists(pagesFolderPath))
+                if (Directory.Exists(pagesFolderPath))
                 {
                     var pageFilePaths = Directory.EnumerateFiles(pagesFolderPath, "*.xml").ToList();
-                    foreach(var pageFilePath in pageFilePaths)
+                    foreach (var pageFilePath in pageFilePaths)
                     {
                         File.Delete(pageFilePath);
                     }
@@ -500,8 +509,8 @@ namespace Classroom_Learning_Partner.ViewModels
             //{
             //    folderPath += " - FORCED";
             //}
-            
-            if(!Directory.Exists(folderPath))
+
+            if (!Directory.Exists(folderPath))
             {
                 Directory.CreateDirectory(folderPath);
             }
@@ -522,7 +531,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 case ProgramModes.Student:
                     var submissionsPath = Path.Combine(folderPath, "Pages");
                     notebook.SaveSubmissions(submissionsPath);
-                    if(App.Network.InstructorProxy != null)
+                    if (App.Network.InstructorProxy != null)
                     {
                         var sNotebook = ObjectSerializer.ToString(notebook);
                         var zippedNotebook = CLPServiceAgent.Instance.Zip(sNotebook);
@@ -530,15 +539,15 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                     break;
             }
-            
-            if(notebook.LastSavedDate != null)
+
+            if (notebook.LastSavedDate != null)
             {
                 App.MainWindowViewModel.LastSavedTime = notebook.LastSavedDate.Value.ToString("yyyy/MM/dd - HH:mm:ss");
             }
 
             if (App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Teacher &&
-               App.MainWindowViewModel.CurrentClassPeriod != null &&
-               App.MainWindowViewModel.CurrentClassPeriod.ClassSubject != null)
+                App.MainWindowViewModel.CurrentClassPeriod != null &&
+                App.MainWindowViewModel.CurrentClassPeriod.ClassSubject != null)
             {
                 App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.SaveClassSubject(App.ClassCacheDirectory);
             }
@@ -550,12 +559,12 @@ namespace Classroom_Learning_Partner.ViewModels
             string closestClassPeriodFilePath = null;
             var closestTimeSpan = TimeSpan.MaxValue;
             var now = DateTime.Now;
-            foreach(var classPeriodFilePath in classPeriodFilePaths)
+            foreach (var classPeriodFilePath in classPeriodFilePaths)
             {
                 var classFileName = Path.GetFileNameWithoutExtension(classPeriodFilePath);
                 var classInfo = classFileName.Split(';');
-                if(classInfo.Length != 3 ||
-                   classInfo[0] != "period")
+                if (classInfo.Length != 3 ||
+                    classInfo[0] != "period")
                 {
                     continue;
                 }
@@ -567,9 +576,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 var hour = Int32.Parse(timeParts[3]);
                 var minute = Int32.Parse(timeParts[4]);
                 var dateTime = new DateTime(year, month, day, hour, minute, 0);
-                
+
                 var timeSpan = now - dateTime;
-                if(timeSpan.Duration() >= closestTimeSpan.Duration())
+                if (timeSpan.Duration() >= closestTimeSpan.Duration())
                 {
                     continue;
                 }
@@ -577,14 +586,14 @@ namespace Classroom_Learning_Partner.ViewModels
                 closestClassPeriodFilePath = classPeriodFilePath;
             }
 
-            if(String.IsNullOrEmpty(closestClassPeriodFilePath))
+            if (String.IsNullOrEmpty(closestClassPeriodFilePath))
             {
                 MessageBox.Show("ERROR: Could not find ClassPeriod .xml file.");
                 return;
             }
 
             var classPeriod = ClassPeriod.OpenClassPeriod(closestClassPeriodFilePath);
-            if(classPeriod == null)
+            if (classPeriod == null)
             {
                 MessageBox.Show("ERROR: Could not open ClassPeriod.");
                 return;
@@ -592,13 +601,13 @@ namespace Classroom_Learning_Partner.ViewModels
             App.MainWindowViewModel.CurrentClassPeriod = classPeriod;
 
             var notebookFolderPath = GetNotebookFolderPathByCompositeID(App.MainWindowViewModel.CurrentClassPeriod.NotebookID, Person.Author.ID);
-            if(notebookFolderPath == null)
+            if (notebookFolderPath == null)
             {
                 MessageBox.Show("ERROR: Could not find Notebook for latest ClassPeriod.");
                 return;
             }
 
-            if(!Directory.Exists(notebookFolderPath))
+            if (!Directory.Exists(notebookFolderPath))
             {
                 MessageBox.Show("Notebook doesn't exist");
                 return;
@@ -606,7 +615,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var notebook = Notebook.OpenPartialNotebook(notebookFolderPath, App.MainWindowViewModel.CurrentClassPeriod.PageIDs, new List<string>());
 
-            if(notebook == null)
+            if (notebook == null)
             {
                 MessageBox.Show("Notebook could not be opened. Check error log.");
                 return;
@@ -615,7 +624,7 @@ namespace Classroom_Learning_Partner.ViewModels
             App.MainWindowViewModel.CurrentUser = App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.Teacher;
 
             App.MainWindowViewModel.CurrentNotebookName = notebook.Name;
-            if(notebook.LastSavedDate != null)
+            if (notebook.LastSavedDate != null)
             {
                 App.MainWindowViewModel.LastSavedTime = notebook.LastSavedDate.Value.ToString("yyyy/MM/dd - HH:mm:ss");
             }
@@ -625,16 +634,17 @@ namespace Classroom_Learning_Partner.ViewModels
             var copiedNotebook = notebook.CopyForNewOwner(App.MainWindowViewModel.CurrentUser);
             var notebookToUse = copiedNotebook;
 
-            var storedNotebookFolderName = copiedNotebook.Name + ";" + copiedNotebook.ID + ";" + copiedNotebook.Owner.FullName + ";" + copiedNotebook.OwnerID;
+            var storedNotebookFolderName = copiedNotebook.Name + ";" + copiedNotebook.ID + ";" + copiedNotebook.Owner.FullName + ";" +
+                                           copiedNotebook.OwnerID;
             var storedNotebookFolderPath = Path.Combine(App.NotebookCacheDirectory, storedNotebookFolderName);
-            if(Directory.Exists(storedNotebookFolderPath))
+            if (Directory.Exists(storedNotebookFolderPath))
             {
                 var pageIDs = App.MainWindowViewModel.CurrentClassPeriod.PageIDs;
                 var storedNotebook = Notebook.OpenPartialNotebook(storedNotebookFolderPath, pageIDs, new List<string>());
-                if(storedNotebook != null)
+                if (storedNotebook != null)
                 {
                     var loadedPageIDs = storedNotebook.Pages.Select(page => page.ID).ToList();
-                    foreach(var page in copiedNotebook.Pages.Where(page => !loadedPageIDs.Contains(page.ID)))
+                    foreach (var page in copiedNotebook.Pages.Where(page => !loadedPageIDs.Contains(page.ID)))
                     {
                         storedNotebook.Pages.Add(page);
                     }
@@ -644,40 +654,40 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
 
-            foreach(var page in notebookToUse.Pages)
+            foreach (var page in notebookToUse.Pages)
             {
-                foreach(var notebookName in AvailableLocalNotebookNames)
+                foreach (var notebookName in AvailableLocalNotebookNames)
                 {
                     var notebookInfo = notebookName.Split(';');
-                    if(notebookInfo.Length != 4 ||
-                       notebookInfo[3] == Person.Author.ID ||
-                       notebookInfo[3] == App.MainWindowViewModel.CurrentUser.ID)
+                    if (notebookInfo.Length != 4 ||
+                        notebookInfo[3] == Person.Author.ID ||
+                        notebookInfo[3] == App.MainWindowViewModel.CurrentUser.ID)
                     {
                         continue;
                     }
 
                     var folderPath = Path.Combine(App.NotebookCacheDirectory, notebookName);
-                    if(!Directory.Exists(folderPath))
+                    if (!Directory.Exists(folderPath))
                     {
                         continue;
                     }
 
                     var submissionsPath = Path.Combine(folderPath, "Pages");
-                    if(!Directory.Exists(submissionsPath))
+                    if (!Directory.Exists(submissionsPath))
                     {
                         continue;
                     }
 
                     var submissionPaths = Directory.EnumerateFiles(submissionsPath, "*.xml");
 
-                    foreach(var submissionPath in submissionPaths)
+                    foreach (var submissionPath in submissionPaths)
                     {
                         var submissionFileName = Path.GetFileNameWithoutExtension(submissionPath);
                         var submissionInfo = submissionFileName.Split(';');
-                        if(submissionInfo.Length == 5 &&
-                           submissionInfo[2] == page.ID &&
-                           submissionInfo[3] == page.DifferentiationLevel &&
-                           submissionInfo[4] != "0")
+                        if (submissionInfo.Length == 5 &&
+                            submissionInfo[2] == page.ID &&
+                            submissionInfo[3] == page.DifferentiationLevel &&
+                            submissionInfo[4] != "0")
                         {
                             var submission = Load<CLPPage>(submissionPath, SerializationMode.Xml);
                             page.Submissions.Add(submission);
@@ -688,9 +698,9 @@ namespace Classroom_Learning_Partner.ViewModels
             notebookToUse.CurrentPage = notebookToUse.Pages.FirstOrDefault();
 
             //HACK: To load gridDisplays after all submissions are loaded
-            foreach(var gridDisplay in notebookToUse.Displays)
+            foreach (var gridDisplay in notebookToUse.Displays)
             {
-                foreach(var compositePageID in gridDisplay.CompositePageIDs)
+                foreach (var compositePageID in gridDisplay.CompositePageIDs)
                 {
                     var compositeSections = compositePageID.Split(';');
                     var id = compositeSections[0];
@@ -699,7 +709,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     var versionIndex = Convert.ToUInt32(compositeSections[3]);
 
                     var page = notebookToUse.GetPageByCompositeKeys(id, ownerID, differentiationlevel, versionIndex);
-                    if(page == null)
+                    if (page == null)
                     {
                         continue;
                     }
@@ -713,10 +723,7 @@ namespace Classroom_Learning_Partner.ViewModels
             App.MainWindowViewModel.AvailableUsers = App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.StudentList;
         }
 
-        public static void SaveClassPeriod(ClassPeriod classPeriod)
-        {
-            
-        }
+        public static void SaveClassPeriod(ClassPeriod classPeriod) { }
 
         public static void ViewAllWork()
         {
@@ -725,12 +732,12 @@ namespace Classroom_Learning_Partner.ViewModels
             string closestClassPeriodFilePath = null;
             var closestTimeSpan = TimeSpan.MaxValue;
             var now = DateTime.Now;
-            foreach(var classPeriodFilePath in classPeriodFilePaths)
+            foreach (var classPeriodFilePath in classPeriodFilePaths)
             {
                 var classFileName = Path.GetFileNameWithoutExtension(classPeriodFilePath);
                 var classInfo = classFileName.Split(';');
-                if(classInfo.Length != 3 ||
-                   classInfo[0] != "period")
+                if (classInfo.Length != 3 ||
+                    classInfo[0] != "period")
                 {
                     continue;
                 }
@@ -742,9 +749,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 var hour = Int32.Parse(timeParts[3]);
                 var minute = Int32.Parse(timeParts[4]);
                 var dateTime = new DateTime(year, month, day, hour, minute, 0);
-                
+
                 var timeSpan = now - dateTime;
-                if(timeSpan.Duration() >= closestTimeSpan.Duration())
+                if (timeSpan.Duration() >= closestTimeSpan.Duration())
                 {
                     continue;
                 }
@@ -752,14 +759,14 @@ namespace Classroom_Learning_Partner.ViewModels
                 closestClassPeriodFilePath = classPeriodFilePath;
             }
 
-            if(String.IsNullOrEmpty(closestClassPeriodFilePath))
+            if (String.IsNullOrEmpty(closestClassPeriodFilePath))
             {
                 MessageBox.Show("ERROR: Could not find ClassPeriod.");
                 return;
             }
 
             var classPeriod = ClassPeriod.OpenClassPeriod(closestClassPeriodFilePath);
-            if(classPeriod == null)
+            if (classPeriod == null)
             {
                 MessageBox.Show("ERROR: Could not open ClassPeriod.");
                 return;
@@ -768,13 +775,13 @@ namespace Classroom_Learning_Partner.ViewModels
             App.MainWindowViewModel.CurrentClassPeriod = classPeriod;
 
             var notebookFolderPath = GetNotebookFolderPathByCompositeID(App.MainWindowViewModel.CurrentClassPeriod.NotebookID, Person.Author.ID);
-            if(notebookFolderPath == null)
+            if (notebookFolderPath == null)
             {
                 MessageBox.Show("ERROR: Could not find Notebook for latest ClassPeriod.");
                 return;
             }
 
-            if(!Directory.Exists(notebookFolderPath))
+            if (!Directory.Exists(notebookFolderPath))
             {
                 MessageBox.Show("Notebook doesn't exist");
                 return;
@@ -783,16 +790,16 @@ namespace Classroom_Learning_Partner.ViewModels
             App.MainWindowViewModel.CurrentClassPeriod.PageIDs.Clear();
             var notebookPagesFolderPath = Path.Combine(notebookFolderPath, "Pages");
             var pageAndHistoryFilePaths = Directory.EnumerateFiles(notebookPagesFolderPath, "*.xml");
-            foreach(var pageAndHistoryFilePath in pageAndHistoryFilePaths)
+            foreach (var pageAndHistoryFilePath in pageAndHistoryFilePaths)
             {
                 var pageAndHistoryFileName = Path.GetFileNameWithoutExtension(pageAndHistoryFilePath);
                 var pageAndHistoryInfo = pageAndHistoryFileName.Split(';');
-                if(pageAndHistoryInfo.Length != 5 ||
+                if (pageAndHistoryInfo.Length != 5 ||
                     pageAndHistoryInfo[0] != "p")
                 {
                     continue;
                 }
-                if(pageAndHistoryInfo[4] != "0")
+                if (pageAndHistoryInfo[4] != "0")
                 {
                     continue;
                 }
@@ -802,7 +809,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var notebook = Notebook.OpenPartialNotebook(notebookFolderPath, App.MainWindowViewModel.CurrentClassPeriod.PageIDs, new List<string>());
 
-            if(notebook == null)
+            if (notebook == null)
             {
                 MessageBox.Show("Notebook could not be opened. Check error log.");
                 return;
@@ -811,7 +818,7 @@ namespace Classroom_Learning_Partner.ViewModels
             App.MainWindowViewModel.CurrentUser = App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.Teacher;
 
             App.MainWindowViewModel.CurrentNotebookName = notebook.Name;
-            if(notebook.LastSavedDate != null)
+            if (notebook.LastSavedDate != null)
             {
                 App.MainWindowViewModel.LastSavedTime = notebook.LastSavedDate.Value.ToString("yyyy/MM/dd - HH:mm:ss");
             }
@@ -821,16 +828,17 @@ namespace Classroom_Learning_Partner.ViewModels
             var copiedNotebook = notebook.CopyForNewOwner(App.MainWindowViewModel.CurrentUser);
             var notebookToUse = copiedNotebook;
 
-            var storedNotebookFolderName = copiedNotebook.Name + ";" + copiedNotebook.ID + ";" + copiedNotebook.Owner.FullName + ";" + copiedNotebook.OwnerID;
+            var storedNotebookFolderName = copiedNotebook.Name + ";" + copiedNotebook.ID + ";" + copiedNotebook.Owner.FullName + ";" +
+                                           copiedNotebook.OwnerID;
             var storedNotebookFolderPath = Path.Combine(App.NotebookCacheDirectory, storedNotebookFolderName);
-            if(Directory.Exists(storedNotebookFolderPath))
+            if (Directory.Exists(storedNotebookFolderPath))
             {
                 var pageIDs = App.MainWindowViewModel.CurrentClassPeriod.PageIDs;
                 var storedNotebook = Notebook.OpenPartialNotebook(storedNotebookFolderPath, pageIDs, new List<string>());
-                if(storedNotebook != null)
+                if (storedNotebook != null)
                 {
                     var loadedPageIDs = storedNotebook.Pages.Select(page => page.ID).ToList();
-                    foreach(var page in copiedNotebook.Pages.Where(page => !loadedPageIDs.Contains(page.ID)))
+                    foreach (var page in copiedNotebook.Pages.Where(page => !loadedPageIDs.Contains(page.ID)))
                     {
                         storedNotebook.Pages.Add(page);
                     }
@@ -840,40 +848,40 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
 
-            foreach(var page in notebookToUse.Pages)
+            foreach (var page in notebookToUse.Pages)
             {
-                foreach(var notebookName in AvailableLocalNotebookNames)
+                foreach (var notebookName in AvailableLocalNotebookNames)
                 {
                     var notebookInfo = notebookName.Split(';');
-                    if(notebookInfo.Length != 4 ||
-                       notebookInfo[3] == Person.Author.ID ||
-                       notebookInfo[3] == App.MainWindowViewModel.CurrentUser.ID)
+                    if (notebookInfo.Length != 4 ||
+                        notebookInfo[3] == Person.Author.ID ||
+                        notebookInfo[3] == App.MainWindowViewModel.CurrentUser.ID)
                     {
                         continue;
                     }
 
                     var folderPath = Path.Combine(App.NotebookCacheDirectory, notebookName);
-                    if(!Directory.Exists(folderPath))
+                    if (!Directory.Exists(folderPath))
                     {
                         continue;
                     }
 
                     var submissionsPath = Path.Combine(folderPath, "Pages");
-                    if(!Directory.Exists(submissionsPath))
+                    if (!Directory.Exists(submissionsPath))
                     {
                         continue;
                     }
 
                     var submissionPaths = Directory.EnumerateFiles(submissionsPath, "*.xml");
 
-                    foreach(var submissionPath in submissionPaths)
+                    foreach (var submissionPath in submissionPaths)
                     {
                         var submissionFileName = Path.GetFileNameWithoutExtension(submissionPath);
                         var submissionInfo = submissionFileName.Split(';');
-                        if(submissionInfo.Length == 5 &&
-                           submissionInfo[2] == page.ID &&
-                           submissionInfo[3] == page.DifferentiationLevel &&
-                           submissionInfo[4] != "0")
+                        if (submissionInfo.Length == 5 &&
+                            submissionInfo[2] == page.ID &&
+                            submissionInfo[3] == page.DifferentiationLevel &&
+                            submissionInfo[4] != "0")
                         {
                             var submission = Load<CLPPage>(submissionPath, SerializationMode.Xml);
                             page.Submissions.Add(submission);
@@ -885,7 +893,6 @@ namespace Classroom_Learning_Partner.ViewModels
             App.MainWindowViewModel.OpenNotebooks.Add(notebookToUse);
             App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(notebookToUse);
             App.MainWindowViewModel.AvailableUsers = App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.StudentList;
-
         }
 
         public static string GetNotebookFolderPathByCompositeID(string id, string ownerID)
@@ -903,7 +910,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public static void CopyNotebookForNewOwner()
         {
             var notebook = App.MainWindowViewModel.OpenNotebooks.FirstOrDefault(n => n.OwnerID == Person.Author.ID);
-            if(notebook == null)
+            if (notebook == null)
             {
                 return;
             }
@@ -912,8 +919,8 @@ namespace Classroom_Learning_Partner.ViewModels
             var personCreationView = new PersonCreationView(new PersonCreationViewModel(person));
             personCreationView.ShowDialog();
 
-            if(personCreationView.DialogResult == null ||
-               personCreationView.DialogResult != true)
+            if (personCreationView.DialogResult == null ||
+                personCreationView.DialogResult != true)
             {
                 return;
             }
@@ -933,7 +940,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public static void ConvertStudentIDsToCompactIDs()
         {
             var classPeriod = ClassSubject.OpenClassSubject(@"C:\Users\Steve\Desktop\CacheT\Classes\ClassSubject;AAAAABERAAAAAAAAAAAAAQ.xml");
-            foreach(var student in classPeriod.StudentList)
+            foreach (var student in classPeriod.StudentList)
             {
                 student.ID = new Guid(student.ID).ToCompactID();
             }

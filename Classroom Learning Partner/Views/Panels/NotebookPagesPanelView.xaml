@@ -95,7 +95,7 @@
                                            Foreground="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
                                            FontWeight="Bold"
                                            VerticalAlignment="Center"
-                                           Visibility="{Binding MainWindowViewModel.Ribbon.NotInstructorVisibility, Source={x:Static Application.Current}}">
+                                           Visibility="{Binding MainWindowViewModel.NotTeacherVisibility, Source={x:Static Application.Current}}">
                                     <Run Text="Page " />
                                     <Run Text="{Binding PageNumber}" />
                                     <TextBlock.LayoutTransform>
@@ -113,7 +113,7 @@
                                            Foreground="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
                                            FontWeight="Bold"
                                            VerticalAlignment="Center"
-                                           Visibility="{Binding MainWindowViewModel.Ribbon.InstructorVisibility, Source={x:Static Application.Current}}">
+                                           Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}">
                                     <Run Text="Page " />
                                     <Run Text="{Binding PageNumber}" />
                                     <Run Text="{Binding DifferentiationLevel, Converter={StaticResource DifferentiationGroupDisplayConverter}}"/>
@@ -263,7 +263,7 @@
                                 <Grid Grid.Column="2"
                                       VerticalAlignment="Center"
                                       Margin="-5 0 5 0"
-                                      Visibility="{Binding MainWindowViewModel.Ribbon.InstructorVisibility, Source={x:Static Application.Current}}">
+                                      Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
