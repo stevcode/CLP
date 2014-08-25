@@ -8,6 +8,7 @@
                    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
 
     <UserControl.Resources>
+        <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
         <conv:PanelLocationToThicknessConverter x:Key="PanelLocationToThicknessConverter" />
         <conv:TypeToStringConverter x:Key="TypeToStringConverter" />
         
@@ -47,15 +48,35 @@
 
         <DockPanel LastChildFill="True">
 
+            <ToggleButton DockPanel.Dock="Top"
+                          Name="PageInfoToggleButton"
+                          IsChecked="False"
+                          Height="20"
+                          Margin="1 1 1 5">
+                <ToggleButton.Style>
+                    <Style TargetType="{x:Type ToggleButton}">
+                        <Setter Property="Content"
+                                Value="Show Page Info" />
+                        <Style.Triggers>
+                            <Trigger Property="IsChecked"
+                                     Value="True">
+                                <Setter Property="Content"
+                                        Value="Hide Page Info" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ToggleButton.Style>
+            </ToggleButton>
+
             <catel:StackGrid DockPanel.Dock="Top"
-                             Margin="5 0">
+                             Margin="5 0"
+                             Visibility="{Binding IsChecked, ElementName=PageInfoToggleButton, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -243,13 +264,15 @@
                         Height="20"
                         Margin="1" />-->
 
-                <TextBlock Text="TAGS"
-                           FontWeight="Bold"
-                           FontSize="16"
-                           HorizontalAlignment="Center"
-                           Grid.ColumnSpan="2" />
+                
 
             </catel:StackGrid>
+
+            <TextBlock Text="TAGS"
+                       FontWeight="Bold"
+                       FontSize="16"
+                       HorizontalAlignment="Center"
+                       DockPanel.Dock="Top" />
 
             <ListBox ItemContainerStyle="{StaticResource ListBoxItemBlankStyle}"
                      ItemsSource="{Binding SortedTags.View, IsAsync=True}"
@@ -381,6 +404,7 @@
                 </ListBox.ItemTemplate>
 
             </ListBox>
+
         </DockPanel>
 
     </Border>
