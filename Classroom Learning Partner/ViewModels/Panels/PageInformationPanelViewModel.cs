@@ -61,6 +61,7 @@ namespace Classroom_Learning_Partner.ViewModels
             DifferentiatePageCommand = new Command(OnDifferentiatePageCommandExecute);
             DeletePageCommand = new Command(OnDeletePageCommandExecute);
             PageScreenshotCommand = new Command(OnPageScreenshotCommandExecute);
+            EditTagCommand = new Command<ITag>(OnEditTagCommandExecute);
             DeleteTagCommand = new Command<ITag>(OnDeleteTagCommandExecute);
             AddAnswerDefinitionCommand = new Command(OnAddAnswerDefinitionCommandExecute);
             AddTagCommand = new Command(OnAddTagCommandExecute);
@@ -597,6 +598,25 @@ namespace Classroom_Learning_Partner.ViewModels
                 pngEncoder.Save(outputStream);
                 File.WriteAllBytes(thumbnailFilePath, outputStream.ToArray());
             }
+        }
+
+        /// <summary>Edits an <see cref="ITag" /> on the <see cref="CLPPage" />.</summary>
+        public Command<ITag> EditTagCommand { get; private set; }
+
+        private void OnEditTagCommandExecute(ITag tag)
+        {
+            var troubleWithRemaindersTag = tag as DivisionTemplateTroubleWithRemaindersTag;
+            if (troubleWithRemaindersTag == null)
+            {
+                return;
+            }
+
+            var troubleWithRemaindersVM = new DivisionTemplateTroubleWithRemaindersTagViewModel(troubleWithRemaindersTag);
+            var troubleWithRemaindersView = new DivisionTemplateTroubleWithRemaindersTagView(troubleWithRemaindersVM)
+                                            {
+                                                Owner = Application.Current.MainWindow
+                                            };
+            troubleWithRemaindersView.ShowDialog();
         }
 
         /// <summary>Deletes an <see cref="ITag" /> from the <see cref="CLPPage" />.</summary>

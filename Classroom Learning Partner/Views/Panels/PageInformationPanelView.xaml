@@ -4,7 +4,8 @@
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
                    xmlns:sys="clr-namespace:System;assembly=mscorlib"
-                   xmlns:viewModel="clr-namespace:Classroom_Learning_Partner.ViewModels">
+                   xmlns:viewModel="clr-namespace:Classroom_Learning_Partner.ViewModels"
+                   xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
 
     <UserControl.Resources>
         <conv:PanelLocationToThicknessConverter x:Key="PanelLocationToThicknessConverter" />
@@ -338,7 +339,15 @@
 
                             <TextBlock Grid.Row="1"
                                        Grid.Column="0"
-                                       Text="{Binding FormattedValue, Mode=OneWay}" />
+                                       Text="{Binding FormattedValue, Mode=OneWay}">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="MouseUp">
+                                        <catel:EventToCommand Command="{Binding DataContext.EditTagCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                                              CommandParameter="{Binding}"
+                                                              PassEventArgsToCommand="False" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </TextBlock>
 
                             <Button Grid.Row="0"
                                     Grid.RowSpan="2"
