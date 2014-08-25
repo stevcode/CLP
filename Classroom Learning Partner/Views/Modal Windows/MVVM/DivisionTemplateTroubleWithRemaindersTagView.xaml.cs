@@ -2,10 +2,10 @@
 
 namespace Classroom_Learning_Partner.Views
 {
-    /// <summary>Interaction logic for MultiplicationRelationDefinitionTagView.xaml.</summary>
+    /// <summary>Interaction logic for DivisionTemplateTroubleWithRemaindersTagView.xaml.</summary>
     public partial class DivisionTemplateTroubleWithRemaindersTagView
     {
-        /// <summary>Initializes a new instance of the <see cref="MultiplicationRelationDefinitionTagView" /> class.</summary>
+        /// <summary>Initializes a new instance of the <see cref="DivisionTemplateTroubleWithRemaindersTagView" /> class.</summary>
         public DivisionTemplateTroubleWithRemaindersTagView(DivisionTemplateTroubleWithRemaindersTagViewModel viewModel)
             : base(viewModel) { InitializeComponent(); }
     }

@@ -46,7 +46,7 @@ namespace CLP.Entities
         #region Properties
 
         /// <summary>
-        /// Value of the Starred Tag.
+        /// Value of the Tag.
         /// </summary>
         public AcceptedValues Value
         {

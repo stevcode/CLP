@@ -16,7 +16,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <value>The title.</value>
         public override string Title
         {
-            get { return "MultiplicationRelationDefinitionTagVM"; }
+            get { return "DivisionTemplateTroubleWithRemaindersTagVM"; }
         }
 
         #region Model

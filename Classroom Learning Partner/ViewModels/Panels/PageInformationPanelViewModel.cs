@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
@@ -606,17 +605,30 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnEditTagCommandExecute(ITag tag)
         {
             var troubleWithRemaindersTag = tag as DivisionTemplateTroubleWithRemaindersTag;
-            if (troubleWithRemaindersTag == null)
+            if (troubleWithRemaindersTag != null)
             {
+                var troubleWithRemaindersVM = new DivisionTemplateTroubleWithRemaindersTagViewModel(troubleWithRemaindersTag);
+                var troubleWithRemaindersView = new DivisionTemplateTroubleWithRemaindersTagView(troubleWithRemaindersVM)
+                                                {
+                                                    Owner = Application.Current.MainWindow
+                                                };
+                troubleWithRemaindersView.ShowDialog();
                 return;
             }
 
-            var troubleWithRemaindersVM = new DivisionTemplateTroubleWithRemaindersTagViewModel(troubleWithRemaindersTag);
-            var troubleWithRemaindersView = new DivisionTemplateTroubleWithRemaindersTagView(troubleWithRemaindersVM)
-                                            {
-                                                Owner = Application.Current.MainWindow
-                                            };
-            troubleWithRemaindersView.ShowDialog();
+            var failedSnapTag = tag as DivisionTemplateFailedSnapTag;
+            if (failedSnapTag != null)
+            {
+                var failedSnapTagVM = new DivisionTemplateFailedSnapTagViewModel(failedSnapTag);
+                var failedSnapView = new DivisionTemplateFailedSnapTagView(failedSnapTagVM)
+                                     {
+                                         Owner = Application.Current.MainWindow
+                                     };
+                failedSnapView.ShowDialog();
+                CurrentPage.RemoveTag(failedSnapTag);
+                CurrentPage.AddTag(failedSnapTag);
+                return;
+            }
         }
 
         /// <summary>Deletes an <see cref="ITag" /> from the <see cref="CLPPage" />.</summary>
@@ -712,74 +724,93 @@ namespace Classroom_Learning_Partner.ViewModels
                 case ManualTags.TroubleWithRemainders:
                     break;
                 case ManualTags.FailedSnap:
-                    var failReasons = new List<string>
-                                      {
-                                          "Snapped Array Too Large",
-                                          "Snapped Incorrect Dimension",
-                                          "Snapped Wrong Orientation"
-                                      };
-                    var buttonBox = new ButtonBoxView("Reason for Failed Snap:", failReasons);
-                    buttonBox.ShowDialog();
-                    if (buttonBox.DialogResult == false ||
-                        buttonBox.DialogResult == null)
+                    var newTag = new DivisionTemplateFailedSnapTag(CurrentPage,
+                                                                   Origin.StudentPageObjectGenerated,
+                                                                   DivisionTemplateFailedSnapTag.AcceptedValues.SnappedArrayTooLarge,
+                                                                   0);
+                    var failedSnapTagVM = new DivisionTemplateFailedSnapTagViewModel(newTag);
+                    var failedSnapView = new DivisionTemplateFailedSnapTagView(failedSnapTagVM)
+                                         {
+                                             Owner = Application.Current.MainWindow
+                                         };
+                    failedSnapView.ShowDialog();
+
+                    var existingTag = CurrentPage.Tags.OfType<DivisionTemplateFailedSnapTag>().FirstOrDefault(x => x.Value == newTag.Value);
+                    if (existingTag != null)
                     {
-                        return;
+                        CurrentPage.RemoveTag(existingTag);
                     }
 
-                    switch (buttonBox.ButtonBoxReturnValue)
-                    {
-                        case "Snapped Array Too Large":
-                            var existingTag =
-                                CurrentPage.Tags.OfType<DivisionTemplateFailedSnapTag>()
-                                           .FirstOrDefault(x => x.Value == DivisionTemplateFailedSnapTag.AcceptedValues.SnappedArrayTooLarge);
+                    CurrentPage.AddTag(newTag);
 
-                            var previousNumberOfAttempts = 0;
-                            if (existingTag != null)
-                            {
-                                previousNumberOfAttempts = existingTag.NumberOfAttempts;
-                                CurrentPage.RemoveTag(existingTag);
-                            }
+                    //var failReasons = new List<string>
+                    //                  {
+                    //                      "Snapped Array Too Large",
+                    //                      "Snapped Incorrect Dimension",
+                    //                      "Snapped Wrong Orientation"
+                    //                  };
+                    //var buttonBox = new ButtonBoxView("Reason for Failed Snap:", failReasons);
+                    //buttonBox.ShowDialog();
+                    //if (buttonBox.DialogResult == false ||
+                    //    buttonBox.DialogResult == null)
+                    //{
+                    //    return;
+                    //}
 
-                            tag = new DivisionTemplateFailedSnapTag(CurrentPage,
-                                                                    Origin.StudentPageGenerated,
-                                                                    DivisionTemplateFailedSnapTag.AcceptedValues.SnappedArrayTooLarge,
-                                                                    previousNumberOfAttempts + 1);
-                            break;
-                        case "Snapped Incorrect Dimension":
-                            var existingTag1 =
-                                CurrentPage.Tags.OfType<DivisionTemplateFailedSnapTag>()
-                                           .FirstOrDefault(x => x.Value == DivisionTemplateFailedSnapTag.AcceptedValues.SnappedIncorrectDimension);
+                    //switch (buttonBox.ButtonBoxReturnValue)
+                    //{
+                    //    case "Snapped Array Too Large":
+                    //        var existingTag =
+                    //            CurrentPage.Tags.OfType<DivisionTemplateFailedSnapTag>()
+                    //                       .FirstOrDefault(x => x.Value == DivisionTemplateFailedSnapTag.AcceptedValues.SnappedArrayTooLarge);
 
-                            var previousNumberOfAttempts1 = 0;
-                            if (existingTag1 != null)
-                            {
-                                previousNumberOfAttempts1 = existingTag1.NumberOfAttempts;
-                                CurrentPage.RemoveTag(existingTag1);
-                            }
+                    //        var previousNumberOfAttempts = 0;
+                    //        if (existingTag != null)
+                    //        {
+                    //            previousNumberOfAttempts = existingTag.NumberOfAttempts;
+                    //            CurrentPage.RemoveTag(existingTag);
+                    //        }
 
-                            tag = new DivisionTemplateFailedSnapTag(CurrentPage,
-                                                                    Origin.StudentPageGenerated,
-                                                                    DivisionTemplateFailedSnapTag.AcceptedValues.SnappedIncorrectDimension,
-                                                                    previousNumberOfAttempts1 + 1);
-                            break;
-                        case "Snapped Wrong Orientation":
-                            var existingTag2 =
-                                CurrentPage.Tags.OfType<DivisionTemplateFailedSnapTag>()
-                                           .FirstOrDefault(x => x.Value == DivisionTemplateFailedSnapTag.AcceptedValues.SnappedWrongOrientation);
+                    //        tag = new DivisionTemplateFailedSnapTag(CurrentPage,
+                    //                                                Origin.StudentPageGenerated,
+                    //                                                DivisionTemplateFailedSnapTag.AcceptedValues.SnappedArrayTooLarge,
+                    //                                                previousNumberOfAttempts + 1);
+                    //        break;
+                    //    case "Snapped Incorrect Dimension":
+                    //        var existingTag1 =
+                    //            CurrentPage.Tags.OfType<DivisionTemplateFailedSnapTag>()
+                    //                       .FirstOrDefault(x => x.Value == DivisionTemplateFailedSnapTag.AcceptedValues.SnappedIncorrectDimension);
 
-                            var previousNumberOfAttempts2 = 0;
-                            if (existingTag2 != null)
-                            {
-                                previousNumberOfAttempts2 = existingTag2.NumberOfAttempts;
-                                CurrentPage.RemoveTag(existingTag2);
-                            }
+                    //        var previousNumberOfAttempts1 = 0;
+                    //        if (existingTag1 != null)
+                    //        {
+                    //            previousNumberOfAttempts1 = existingTag1.NumberOfAttempts;
+                    //            CurrentPage.RemoveTag(existingTag1);
+                    //        }
 
-                            tag = new DivisionTemplateFailedSnapTag(CurrentPage,
-                                                                    Origin.StudentPageGenerated,
-                                                                    DivisionTemplateFailedSnapTag.AcceptedValues.SnappedWrongOrientation,
-                                                                    previousNumberOfAttempts2 + 1);
-                            break;
-                    }
+                    //        tag = new DivisionTemplateFailedSnapTag(CurrentPage,
+                    //                                                Origin.StudentPageGenerated,
+                    //                                                DivisionTemplateFailedSnapTag.AcceptedValues.SnappedIncorrectDimension,
+                    //                                                previousNumberOfAttempts1 + 1);
+                    //        break;
+                    //    case "Snapped Wrong Orientation":
+                    //        var existingTag2 =
+                    //            CurrentPage.Tags.OfType<DivisionTemplateFailedSnapTag>()
+                    //                       .FirstOrDefault(x => x.Value == DivisionTemplateFailedSnapTag.AcceptedValues.SnappedWrongOrientation);
+
+                    //        var previousNumberOfAttempts2 = 0;
+                    //        if (existingTag2 != null)
+                    //        {
+                    //            previousNumberOfAttempts2 = existingTag2.NumberOfAttempts;
+                    //            CurrentPage.RemoveTag(existingTag2);
+                    //        }
+
+                    //        tag = new DivisionTemplateFailedSnapTag(CurrentPage,
+                    //                                                Origin.StudentPageGenerated,
+                    //                                                DivisionTemplateFailedSnapTag.AcceptedValues.SnappedWrongOrientation,
+                    //                                                previousNumberOfAttempts2 + 1);
+                    //        break;
+                    //}
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
