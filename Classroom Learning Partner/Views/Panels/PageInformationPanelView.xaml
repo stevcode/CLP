@@ -358,7 +358,15 @@
                             <TextBlock Grid.Row="0"
                                        Grid.Column="0"
                                        FontWeight="Bold"
-                                       Text="{Binding FormattedName, Mode=OneWay}" />
+                                       Text="{Binding FormattedName, Mode=OneWay}">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="MouseUp">
+                                        <catel:EventToCommand Command="{Binding DataContext.EditTagCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                                              CommandParameter="{Binding}"
+                                                              PassEventArgsToCommand="False" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </TextBlock>
 
                             <TextBlock Grid.Row="1"
                                        Grid.Column="0"
