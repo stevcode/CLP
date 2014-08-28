@@ -147,6 +147,11 @@ namespace CLP.Entities
                 if (pageObject is FuzzyFactorCard)
                 {
                     objectTypes.Add("Division Templates");
+                    var divisionTemplate = pageObject as FuzzyFactorCard;
+                    if (divisionTemplate.RemainderTiles != null)
+                    {
+                        objectTypes.Add("Remainder Tiles");
+                    }
                     continue;
                 }
 

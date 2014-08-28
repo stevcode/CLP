@@ -554,25 +554,7 @@
                    Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}">
             
             <RibbonGroup Header="Page">
-                
-                <RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/PageInformation32.png"
-                                    IsChecked="{Binding CurrentRightPanel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.PageInformation}}"
-                                    IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}">
-                    <RibbonToggleButton.Style>
-                        <Style TargetType="{x:Type RibbonToggleButton}">
-                            <Setter Property="Label"
-                                    Value="Show Page Info" />
-                            <Style.Triggers>
-                                <Trigger Property="IsChecked"
-                                         Value="True">
-                                    <Setter Property="Label"
-                                            Value="Hide PageInfo" />
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </RibbonToggleButton.Style>
-                </RibbonToggleButton>
-                 
+
                 <RibbonButton Label="Create Sub-Page"
                               LargeImageSource="pack://application:,,,/Resources/Images/BlankPage64.png"
                               Command="{Binding CreateSubPageCommand}" /> 
@@ -610,14 +592,6 @@
                 <RibbonButton Label="Exit Tickets from Current Page"
                               LargeImageSource="..\Resources\Images\IndexCards32.png"
                               Command="{Binding MakeExitTicketsFromCurrentPageCommand}" />
-
-            </RibbonGroup>
-            
-            <RibbonGroup Header="History">
-
-                <RibbonButton Label="Replay"
-                              LargeImageSource="..\Images\video.png"
-                              Command="{Binding ReplayCommand}" />
 
             </RibbonGroup>
 
