@@ -125,18 +125,8 @@
                          IsReadOnly="True" />
 
                 <TextBlock Text="Min/Max/Avg:" />
-                <TextBox IsReadOnly="True">
-                    <TextBox.Text>
-                        <MultiBinding StringFormat="{}{0} / {1} / {2}">
-                            <Binding Path="CurrentPage.MinSubmissionHistoryLength"
-                                     Mode="OneWay" />
-                            <Binding Path="CurrentPage.MaxSubmissionHistoryLength"
-                                     Mode="OneWay" />
-                            <Binding Path="CurrentPage.AverageSubmissionHistoryLength"
-                                     Mode="OneWay" />
-                        </MultiBinding>
-                    </TextBox.Text>
-                </TextBox>
+                <TextBox IsReadOnly="True"
+                         Text="{Binding FormattedMinMaxAverageHistoryLength}" />
 
                 <TextBlock Text="Animation Length:" />
                 <TextBox Text="{Binding CurrentPage.History.TotalHistoryTicks, Mode=OneWay}"
@@ -147,18 +137,8 @@
                          IsReadOnly="True" />
 
                 <TextBlock Text="Min/Max/Avg:" />
-                <TextBox IsReadOnly="True">
-                    <TextBox.Text>
-                        <MultiBinding StringFormat="{}{0} / {1} / {2}">
-                            <Binding Path="CurrentPage.MinSubmissionAnimationLength"
-                                     Mode="OneWay" />
-                            <Binding Path="CurrentPage.MaxSubmissionAnimationLength"
-                                     Mode="OneWay" />
-                            <Binding Path="CurrentPage.AverageSubmissionAnimationLength"
-                                     Mode="OneWay" />
-                        </MultiBinding>
-                    </TextBox.Text>
-                </TextBox>
+                <TextBox IsReadOnly="True"
+                         Text="{Binding FormattedMinMaxAverageAnimationLength}" />
 
                 <Button Content="Add Page:"
                         Command="{Binding AddPageCommand}"

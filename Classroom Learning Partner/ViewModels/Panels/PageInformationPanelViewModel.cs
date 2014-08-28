@@ -103,9 +103,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(CurrentPageProperty, value); }
         }
 
-        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage",
-                                                                                   typeof (CLPPage),
-                                                                                   propertyChangedEventHandler: CurrentPageChanged);
+        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof (CLPPage), propertyChangedEventHandler: CurrentPageChanged);
 
         private static void CurrentPageChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
         {
@@ -119,6 +117,8 @@ namespace Classroom_Learning_Partner.ViewModels
             viewModel.SortedTags.Source = viewModel.CurrentPage.Tags;
             viewModel.RaisePropertyChanged("StandardDeviationZScore");
             viewModel.RaisePropertyChanged("AnimationStandardDeviationZScore");
+            viewModel.RaisePropertyChanged("FormattedMinMaxAverageHistoryLength");
+            viewModel.RaisePropertyChanged("FormattedMinMaxAverageAnimationLength");
         }
 
         /// <summary>Unique Identifier for the <see cref="CLPPage" />.</summary>
@@ -171,9 +171,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(TagsProperty, value); }
         }
 
-        public static readonly PropertyData TagsProperty = RegisterProperty("Tags",
-                                                                            typeof (ObservableCollection<ITag>),
-                                                                            propertyChangedEventHandler: TagsChanged);
+        public static readonly PropertyData TagsProperty = RegisterProperty("Tags", typeof (ObservableCollection<ITag>), propertyChangedEventHandler: TagsChanged);
 
         private static void TagsChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
         {
@@ -236,9 +234,21 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(SortedTagsProperty, value); }
         }
 
-        public static readonly PropertyData SortedTagsProperty = RegisterProperty("SortedTags",
-                                                                                  typeof (CollectionViewSource),
-                                                                                  () => new CollectionViewSource());
+        public static readonly PropertyData SortedTagsProperty = RegisterProperty("SortedTags", typeof (CollectionViewSource), () => new CollectionViewSource());
+
+        public string FormattedMinMaxAverageHistoryLength
+        {
+            get
+            {
+                var parentPage = CurrentPage.SubmissionType == SubmissionTypes.Unsubmitted
+                                     ? CurrentPage
+                                     : Notebook.Pages.FirstOrDefault(
+                                                                     x =>
+                                                                     x.ID == CurrentPage.ID && x.DifferentiationLevel == CurrentPage.DifferentiationLevel && x.VersionIndex == 0);
+
+                return string.Format("{0} / {1} / {2}", parentPage.MinSubmissionHistoryLength, parentPage.MaxSubmissionHistoryLength, parentPage.AverageSubmissionHistoryLength);
+            }
+        }
 
         public double StandardDeviationZScore
         {
@@ -249,21 +259,30 @@ namespace Classroom_Learning_Partner.ViewModels
                     return Double.NaN;
                 }
 
-                var parentPage =
-                    Notebook.Pages.FirstOrDefault(
-                                                  x =>
-                                                  x.ID == CurrentPage.ID && x.DifferentiationLevel == CurrentPage.DifferentiationLevel &&
-                                                  x.VersionIndex == 0);
+                var parentPage = Notebook.Pages.FirstOrDefault(x => x.ID == CurrentPage.ID && x.DifferentiationLevel == CurrentPage.DifferentiationLevel && x.VersionIndex == 0);
                 if (parentPage == null)
                 {
                     return Double.NaN;
                 }
 
                 var mean = parentPage.AverageSubmissionHistoryLength;
-                var standardDeviation =
-                    Math.Sqrt(parentPage.Submissions.Select(x => (double)x.History.HistoryLength).Average(x => Math.Pow(x - mean, 2)));
+                var standardDeviation = Math.Sqrt(parentPage.Submissions.Select(x => (double)x.History.HistoryLength).Average(x => Math.Pow(x - mean, 2)));
                 var zScore = (CurrentPage.History.HistoryLength - mean) / standardDeviation;
                 return Math.Round(zScore, 4, MidpointRounding.AwayFromZero);
+            }
+        }
+
+        public string FormattedMinMaxAverageAnimationLength
+        {
+            get
+            {
+                var parentPage = CurrentPage.SubmissionType == SubmissionTypes.Unsubmitted
+                                     ? CurrentPage
+                                     : Notebook.Pages.FirstOrDefault(
+                                                                     x =>
+                                                                     x.ID == CurrentPage.ID && x.DifferentiationLevel == CurrentPage.DifferentiationLevel && x.VersionIndex == 0);
+
+                return string.Format("{0} / {1} / {2}", parentPage.MinSubmissionAnimationLength, parentPage.MaxSubmissionAnimationLength, parentPage.AverageSubmissionAnimationLength);
             }
         }
 
@@ -276,11 +295,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     return Double.NaN;
                 }
 
-                var parentPage =
-                    Notebook.Pages.FirstOrDefault(
-                                                  x =>
-                                                  x.ID == CurrentPage.ID && x.DifferentiationLevel == CurrentPage.DifferentiationLevel &&
-                                                  x.VersionIndex == 0);
+                var parentPage = Notebook.Pages.FirstOrDefault(x => x.ID == CurrentPage.ID && x.DifferentiationLevel == CurrentPage.DifferentiationLevel && x.VersionIndex == 0);
                 if (parentPage == null)
                 {
                     return Double.NaN;
@@ -559,9 +574,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnPageScreenshotCommandExecute()
         {
-            var pageViewModel =
-                CLPServiceAgent.Instance.GetViewModelsFromModel(CurrentPage)
-                               .First(x => (x is ACLPPageBaseViewModel) && !(x as ACLPPageBaseViewModel).IsPagePreview);
+            var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(CurrentPage).First(x => (x is ACLPPageBaseViewModel) && !(x as ACLPPageBaseViewModel).IsPagePreview);
 
             var viewManager = Catel.IoC.ServiceLocator.Default.ResolveType<IViewManager>();
             var views = viewManager.GetViewsOfViewModel(pageViewModel);
@@ -582,8 +595,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var thumbnailsFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Thumbnails");
             var thumbnailFilePath = Path.Combine(thumbnailsFolderPath,
-                                                 "Page - " + CurrentPage.PageNumber + ";" + CurrentPage.DifferentiationLevel + ";" +
-                                                 CurrentPage.VersionIndex + ";" + DateTime.Now.ToString("yyyy-M-d,hh.mm.ss") + ".png");
+                                                 "Page - " + CurrentPage.PageNumber + ";" + CurrentPage.DifferentiationLevel + ";" + CurrentPage.VersionIndex + ";" +
+                                                 DateTime.Now.ToString("yyyy-M-d,hh.mm.ss") + ".png");
 
             if (!Directory.Exists(thumbnailsFolderPath))
             {
@@ -655,8 +668,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 case AnswerDefinitions.Multiplication:
                     answerDefinition = new MultiplicationRelationDefinitionTag(CurrentPage, Origin.Author);
 
-                    var multiplicationViewModel =
-                        new MultiplicationRelationDefinitionTagViewModel(answerDefinition as MultiplicationRelationDefinitionTag);
+                    var multiplicationViewModel = new MultiplicationRelationDefinitionTagViewModel(answerDefinition as MultiplicationRelationDefinitionTag);
                     var multiplicationView = new MultiplicationRelationDefinitionTagView(multiplicationViewModel)
                                              {
                                                  Owner = Application.Current.MainWindow
@@ -859,15 +871,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var correctnessTags =
                 page.Tags.OfType<DivisionTemplateRepresentationCorrectnessTag>()
-                    .Select(
-                            divisionTemplateCorrectnessTag =>
-                            new CorrectnessTag(page, Origin.StudentPageGenerated, divisionTemplateCorrectnessTag.Correctness, true))
+                    .Select(divisionTemplateCorrectnessTag => new CorrectnessTag(page, Origin.StudentPageGenerated, divisionTemplateCorrectnessTag.Correctness, true))
                     .ToList();
             correctnessTags.AddRange(
                                      page.Tags.OfType<ArrayCorrectnessTag>()
-                                         .Select(
-                                                 arrayCorrectnessTag =>
-                                                 new CorrectnessTag(page, Origin.StudentPageGenerated, arrayCorrectnessTag.Correctness, true)));
+                                         .Select(arrayCorrectnessTag => new CorrectnessTag(page, Origin.StudentPageGenerated, arrayCorrectnessTag.Correctness, true)));
 
             if (!correctnessTags.Any())
             {
