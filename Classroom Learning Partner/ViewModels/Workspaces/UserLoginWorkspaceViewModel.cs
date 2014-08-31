@@ -129,12 +129,12 @@ namespace Classroom_Learning_Partner.ViewModels
                         page.InkStrokes = StrokeDTO.LoadInkStrokes(page.SerializedStrokes);
                         page.History.TrashedInkStrokes = StrokeDTO.LoadInkStrokes(page.History.SerializedTrashedInkStrokes);
                     }
-                    App.ResetCache();
+                    MainWindowViewModel.ResetCache();
 
                     var imageHashIDs = notebook.ImagePoolHashIDs;
-                    if(Directory.Exists(App.ImageCacheDirectory))
+                    if(Directory.Exists(MainWindowViewModel.ImageCacheDirectory))
                     {
-                        var localImageFilePaths = Directory.EnumerateFiles(App.ImageCacheDirectory);
+                        var localImageFilePaths = Directory.EnumerateFiles(MainWindowViewModel.ImageCacheDirectory);
                         foreach(var localImageFilePath in localImageFilePaths)
                         {
                             var imageHashID = Path.GetFileNameWithoutExtension(localImageFilePath);
@@ -147,7 +147,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     var imageList = App.Network.InstructorProxy.SendImages(imageHashIDs);
                     foreach(var byteSource in imageList)
                     {
-                        var imagePath = Path.Combine(App.ImageCacheDirectory, byteSource.Key);
+                        var imagePath = Path.Combine(MainWindowViewModel.ImageCacheDirectory, byteSource.Key);
                         File.WriteAllBytes(imagePath, byteSource.Value);
                     }
 

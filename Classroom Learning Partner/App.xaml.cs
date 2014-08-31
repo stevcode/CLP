@@ -29,7 +29,6 @@ namespace Classroom_Learning_Partner
             CLPServiceAgent.Instance.Initialize();
 
             InitializeCatelSettings();
-            InitializeLocalCache(currentProgramMode);
 
             MainWindowViewModel = new MainWindowViewModel(currentProgramMode);
             var window = new MainWindowView {DataContext = MainWindowViewModel};
@@ -58,73 +57,6 @@ namespace Classroom_Learning_Partner
             var typesToWarmup = new[] {  typeof(Notebook) };
             var xmlSerializer = SerializationFactory.GetXmlSerializer();
             xmlSerializer.Warmup(typesToWarmup);
-        }
-
-        private static void InitializeLocalCache(ProgramModes currentProgramMode)
-        {
-            string variant;
-            switch (currentProgramMode)
-            {
-                case ProgramModes.Author:
-                    variant = "A";
-                    break;
-                case ProgramModes.Teacher:
-                    variant = "T";
-                    break;
-                case ProgramModes.Student:
-                    variant = "S";
-                    break;
-                case ProgramModes.Projector:
-                    variant = "P";
-                    break;
-                case ProgramModes.Database:
-                    variant = "D";
-                    break;
-                default:
-                    variant = string.Empty;
-                    break;
-            }
-
-            LocalCacheDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Cache" + variant);
-            if(!Directory.Exists(LocalCacheDirectory))
-            {
-                Directory.CreateDirectory(LocalCacheDirectory);
-            }
-
-            NotebookCacheDirectory = Path.Combine(LocalCacheDirectory, "Notebooks");
-            if(!Directory.Exists(NotebookCacheDirectory))
-            {
-                Directory.CreateDirectory(NotebookCacheDirectory);
-            }
-
-            ClassCacheDirectory = Path.Combine(LocalCacheDirectory, "Classes");
-            if(!Directory.Exists(ClassCacheDirectory))
-            {
-                Directory.CreateDirectory(ClassCacheDirectory);
-            }
-
-            ImageCacheDirectory = Path.Combine(LocalCacheDirectory, "Images");
-            if(!Directory.Exists(ImageCacheDirectory))
-            {
-                Directory.CreateDirectory(ImageCacheDirectory);
-            }
-        }
-
-        public static void ResetCache()
-        {
-            if(Directory.Exists(NotebookCacheDirectory))
-            {
-                var archiveDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "CacheArchive");
-                var now = DateTime.Now.ToString("yyyy.MM.dd.HH.mm.ss");
-                var newCacheDirectory = Path.Combine(archiveDirectory, "Cache-" + now);
-                if(!Directory.Exists(archiveDirectory))
-                {
-                    Directory.CreateDirectory(archiveDirectory);
-                }
-                Directory.Move(NotebookCacheDirectory, newCacheDirectory);
-            }
-
-            InitializeCatelSettings();
         }
 
         #region Methods
@@ -184,12 +116,6 @@ namespace Classroom_Learning_Partner
         }
 
         public static MainWindowViewModel MainWindowViewModel { get; private set; }
-
-        public static string LocalCacheDirectory { get; private set; }
-        public static string NotebookCacheDirectory { get; private set; }
-        public static string CurrentNotebookCacheDirectory { get; set; }
-        public static string ClassCacheDirectory { get; private set; }
-        public static string ImageCacheDirectory { get; private set; }
 
         #endregion //Properties
     }
