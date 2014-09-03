@@ -207,8 +207,6 @@ namespace CLP.Entities
         /// <remarks>
         /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
         /// </remarks>
-        [XmlIgnore]
-        [ExcludeFromSerialization]
         public virtual CLPPage ParentPage
         {
             get { return GetValue<CLPPage>(ParentPageProperty); }

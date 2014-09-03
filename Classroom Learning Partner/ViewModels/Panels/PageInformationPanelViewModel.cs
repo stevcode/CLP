@@ -736,93 +736,25 @@ namespace Classroom_Learning_Partner.ViewModels
                 case ManualTags.TroubleWithRemainders:
                     break;
                 case ManualTags.FailedSnap:
-                    var newTag = new DivisionTemplateFailedSnapTag(CurrentPage,
-                                                                   Origin.StudentPageObjectGenerated,
-                                                                   DivisionTemplateFailedSnapTag.AcceptedValues.SnappedArrayTooLarge,
-                                                                   0);
-                    var failedSnapTagVM = new DivisionTemplateFailedSnapTagViewModel(newTag);
-                    var failedSnapView = new DivisionTemplateFailedSnapTagView(failedSnapTagVM)
-                                         {
-                                             Owner = Application.Current.MainWindow
-                                         };
-                    failedSnapView.ShowDialog();
+                    //var newTag = new DivisionTemplateFailedSnapTag(CurrentPage,
+                    //                                               Origin.StudentPageObjectGenerated,
+                    //                                               DivisionTemplateFailedSnapTag.AcceptedValues.SnappedArrayTooLarge,
+                    //                                               0);
+                    //var failedSnapTagVM = new DivisionTemplateFailedSnapTagViewModel(newTag);
+                    //var failedSnapView = new DivisionTemplateFailedSnapTagView(failedSnapTagVM)
+                    //                     {
+                    //                         Owner = Application.Current.MainWindow
+                    //                     };
+                    //failedSnapView.ShowDialog();
 
-                    var existingTag = CurrentPage.Tags.OfType<DivisionTemplateFailedSnapTag>().FirstOrDefault(x => x.Value == newTag.Value);
-                    if (existingTag != null)
-                    {
-                        CurrentPage.RemoveTag(existingTag);
-                    }
-
-                    CurrentPage.AddTag(newTag);
-
-                    //var failReasons = new List<string>
-                    //                  {
-                    //                      "Snapped Array Too Large",
-                    //                      "Snapped Incorrect Dimension",
-                    //                      "Snapped Wrong Orientation"
-                    //                  };
-                    //var buttonBox = new ButtonBoxView("Reason for Failed Snap:", failReasons);
-                    //buttonBox.ShowDialog();
-                    //if (buttonBox.DialogResult == false ||
-                    //    buttonBox.DialogResult == null)
+                    //var existingTag = CurrentPage.Tags.OfType<DivisionTemplateFailedSnapTag>().FirstOrDefault(x => x.Value == newTag.Value);
+                    //if (existingTag != null)
                     //{
-                    //    return;
+                    //    CurrentPage.RemoveTag(existingTag);
                     //}
 
-                    //switch (buttonBox.ButtonBoxReturnValue)
-                    //{
-                    //    case "Snapped Array Too Large":
-                    //        var existingTag =
-                    //            CurrentPage.Tags.OfType<DivisionTemplateFailedSnapTag>()
-                    //                       .FirstOrDefault(x => x.Value == DivisionTemplateFailedSnapTag.AcceptedValues.SnappedArrayTooLarge);
+                    //CurrentPage.AddTag(newTag);
 
-                    //        var previousNumberOfAttempts = 0;
-                    //        if (existingTag != null)
-                    //        {
-                    //            previousNumberOfAttempts = existingTag.NumberOfAttempts;
-                    //            CurrentPage.RemoveTag(existingTag);
-                    //        }
-
-                    //        tag = new DivisionTemplateFailedSnapTag(CurrentPage,
-                    //                                                Origin.StudentPageGenerated,
-                    //                                                DivisionTemplateFailedSnapTag.AcceptedValues.SnappedArrayTooLarge,
-                    //                                                previousNumberOfAttempts + 1);
-                    //        break;
-                    //    case "Snapped Incorrect Dimension":
-                    //        var existingTag1 =
-                    //            CurrentPage.Tags.OfType<DivisionTemplateFailedSnapTag>()
-                    //                       .FirstOrDefault(x => x.Value == DivisionTemplateFailedSnapTag.AcceptedValues.SnappedIncorrectDimension);
-
-                    //        var previousNumberOfAttempts1 = 0;
-                    //        if (existingTag1 != null)
-                    //        {
-                    //            previousNumberOfAttempts1 = existingTag1.NumberOfAttempts;
-                    //            CurrentPage.RemoveTag(existingTag1);
-                    //        }
-
-                    //        tag = new DivisionTemplateFailedSnapTag(CurrentPage,
-                    //                                                Origin.StudentPageGenerated,
-                    //                                                DivisionTemplateFailedSnapTag.AcceptedValues.SnappedIncorrectDimension,
-                    //                                                previousNumberOfAttempts1 + 1);
-                    //        break;
-                    //    case "Snapped Wrong Orientation":
-                    //        var existingTag2 =
-                    //            CurrentPage.Tags.OfType<DivisionTemplateFailedSnapTag>()
-                    //                       .FirstOrDefault(x => x.Value == DivisionTemplateFailedSnapTag.AcceptedValues.SnappedWrongOrientation);
-
-                    //        var previousNumberOfAttempts2 = 0;
-                    //        if (existingTag2 != null)
-                    //        {
-                    //            previousNumberOfAttempts2 = existingTag2.NumberOfAttempts;
-                    //            CurrentPage.RemoveTag(existingTag2);
-                    //        }
-
-                    //        tag = new DivisionTemplateFailedSnapTag(CurrentPage,
-                    //                                                Origin.StudentPageGenerated,
-                    //                                                DivisionTemplateFailedSnapTag.AcceptedValues.SnappedWrongOrientation,
-                    //                                                previousNumberOfAttempts2 + 1);
-                    //        break;
-                    //}
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

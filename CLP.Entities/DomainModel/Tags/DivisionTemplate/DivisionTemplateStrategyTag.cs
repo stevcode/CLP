@@ -6,29 +6,34 @@ using Catel.Data;
 
 namespace CLP.Entities
 {
-    [Serializable]
-    public class DivisionTemplateStrategyTag : ATagBase
+    public enum DivisionTemplateStrategies
     {
-        public enum AcceptedValues
-        {
-            OneArray, // Only one array snapped in
-            Repeated, // e.g. 28 / 4 -> 4 x 3 | 4 x 3 | 4 x 1
-            EvenSplit, // e.g. 28 / 2 -> 2 x 14 | 2 x 14
-            Other
-        }
+        OneArray, // Only one array snapped in
+        Repeated, // e.g. 28 / 4 -> 4 x 3 | 4 x 3 | 4 x 1
+        EvenSplit, // e.g. 28 / 2 -> 2 x 14 | 2 x 14
+        Other
+    }
 
+    [Serializable]
+    public class DivisionTemplateStrategyTag : ADivisionTemplateBaseTag
+    {
         #region Constructors
 
         /// <summary>Initializes <see cref="DivisionTemplateStrategyTag" /> from scratch.</summary>
         public DivisionTemplateStrategyTag() { }
 
-        /// <summary>Initializes <see cref="DivisionTemplateStrategyTag" /> from <see cref="AcceptedValues" />.</summary>
+        /// <summary>Initializes <see cref="DivisionTemplateStrategyTag" />.</summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="DivisionTemplateStrategyTag" /> belongs to.</param>
-        /// <param name="value">The value of the <see cref="DivisionTemplateStrategyTag" />, parsed from <see cref="AcceptedValues" />.</param>
-        public DivisionTemplateStrategyTag(CLPPage parentPage, Origin origin, AcceptedValues value, List<int> dividerValues)
-            : base(parentPage, origin)
+        public DivisionTemplateStrategyTag(CLPPage parentPage,
+                                           Origin origin,
+                                           string divisionTemplateID,
+                                           double dividend,
+                                           double divisor,
+                                           DivisionTemplateStrategies strategy,
+                                           List<int> dividerValues)
+            : base(parentPage, origin, divisionTemplateID, dividend, divisor)
         {
-            Value = value;
+            Strategy = strategy;
             DividerValues = dividerValues;
         }
 
@@ -43,13 +48,13 @@ namespace CLP.Entities
         #region Properties
 
         /// <summary>Value of the Starred Tag.</summary>
-        public AcceptedValues Value
+        public DivisionTemplateStrategies Strategy
         {
-            get { return GetValue<AcceptedValues>(ValueProperty); }
-            set { SetValue(ValueProperty, value); }
+            get { return GetValue<DivisionTemplateStrategies>(StrategyProperty); }
+            set { SetValue(StrategyProperty, value); }
         }
 
-        public static readonly PropertyData ValueProperty = RegisterProperty("Value", typeof (AcceptedValues));
+        public static readonly PropertyData StrategyProperty = RegisterProperty("Strategy", typeof(DivisionTemplateStrategies));
 
         /// <summary>List of all divider values used to fill up the Division Template.</summary>
         public List<int> DividerValues
@@ -62,14 +67,22 @@ namespace CLP.Entities
 
         #region ATagBase Overrides
 
-        public override Category Category
+        public override string FormattedName
         {
-            get { return Category.DivisionTemplate; }
+            get { return "Division Template Strategy"; }
         }
 
         public override string FormattedValue
         {
-            get { return string.Format("{0}: {1}", Value, string.Join(",", DividerValues.Select(x => x == 0 ? "?" : x.ToString()).Take(DividerValues.Count - 1))); }
+            get
+            {
+                return string.Format("Strategy for {0} / {1}\n" + "DivisionTemplate {2} on page.\n" + "{3}: {4}",
+                                     Dividend,
+                                     Divisor,
+                                     IsDivisionTemplateStillOnPage ? "still" : "no longer",
+                                     Strategy,
+                                     string.Join(",", DividerValues.Select(x => x == 0 ? "?" : x.ToString()).Take(DividerValues.Count - 1)));
+            }
         }
 
         #endregion //ATagBase Overrides

@@ -79,7 +79,7 @@ namespace CLP.Entities
             {
                 return
                     string.Format(
-                                  "Trouble with {0} / {1}.\n" + "DivisionTemplate {2} on page." + "Created {3} Arrays too large.\n" +
+                                  "Trouble with {0} / {1}.\n" + "DivisionTemplate {2} on page.\n" + "Created {3} Arrays too large.\n" +
                                   "Failed to snap {4} Arrays.\n" + "Changed Array orientation {5} time(s).",
                                   Dividend,
                                   Divisor,

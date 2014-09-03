@@ -15,7 +15,7 @@ namespace CLP.Entities
     }
 
     [Serializable]
-    public class DivisionTemplateRepresentationCorrectnessTag : ATagBase
+    public class DivisionTemplateRepresentationCorrectnessTag : ADivisionTemplateBaseTag
     {
         #region Constructors
 
@@ -26,9 +26,12 @@ namespace CLP.Entities
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="DivisionTemplateRepresentationCorrectnessTag" /> belongs to.</param>
         public DivisionTemplateRepresentationCorrectnessTag(CLPPage parentPage,
                                                             Origin origin,
+                                                            string divisionTemplateID,
+                                                            double dividend,
+                                                            double divisor,
                                                             Correctness correctness,
                                                             List<DivisionTemplateIncorrectReason> incorrectReasons)
-            : base(parentPage, origin)
+            : base(parentPage, origin, divisionTemplateID, dividend, divisor)
         {
             Correctness = correctness;
             DivisionTemplateIncorrectReasons = incorrectReasons;
@@ -65,16 +68,19 @@ namespace CLP.Entities
 
         #region ATagBase Overrides
 
-        public override Category Category
+        public override string FormattedName
         {
-            get { return Category.DivisionTemplate; }
+            get { return "Division Template Representation Correctness"; }
         }
 
         public override string FormattedValue
         {
             get
             {
-                return string.Format("{0}{1}",
+                return string.Format("Correctness for {0} / {1}\n" + "DivisionTemplate {2} on page.\n" + "{3}{4}",
+                                     Dividend,
+                                     Divisor,
+                                     IsDivisionTemplateStillOnPage,
                                      Correctness,
                                      Correctness == Correctness.Correct || Correctness == Correctness.Unknown
                                          ? string.Empty

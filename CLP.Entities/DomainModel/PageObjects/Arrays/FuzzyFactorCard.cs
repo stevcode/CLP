@@ -242,92 +242,76 @@ namespace CLP.Entities
 
         public void AnalyzeArrays()
         {
+            
             var arrayArea = 0;
             foreach (var pageObject in ParentPage.PageObjects)
             {
                 if (pageObject is CLPArray &&
                     !(pageObject is FuzzyFactorCard))
                 {
+                    
+
                     arrayArea += (pageObject as CLPArray).Rows * (pageObject as CLPArray).Columns;
                     if ((pageObject as CLPArray).Columns == Dividend ||
                         ((pageObject as CLPArray).Rows == Dividend))
                     {
-                        var existingTag =
-                            ParentPage.Tags.OfType<DivisionTemplateIncorrectArrayCreationTag>()
-                                      .FirstOrDefault(x => x.Value == DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.DividendAsDivisor);
-
-                        var previousNumberOfAttempts = 0;
-                        if (existingTag != null)
+                        var existingIncorrectArrayCreationTag = ParentPage.Tags.OfType<DivisionTemplateIncorrectArrayCreationTag>().FirstOrDefault(x => x.DivisionTemplateID == ID);
+                        if (existingIncorrectArrayCreationTag == null)
                         {
-                            previousNumberOfAttempts = existingTag.NumberOfAttempts;
-                            ParentPage.RemoveTag(existingTag);
+                            var newTag = new DivisionTemplateIncorrectArrayCreationTag(ParentPage, Origin.StudentPageObjectGenerated, ID, Dividend, Rows);
+                            newTag.DividendAsDimensionAttempts++;
+                            ParentPage.AddTag(newTag);
                         }
-                        var newTag = new DivisionTemplateIncorrectArrayCreationTag(ParentPage,
-                                                                                   Origin.StudentPageObjectGenerated,
-                                                                                   DivisionTemplateIncorrectArrayCreationTag.AcceptedValues
-                                                                                                                            .DividendAsDivisor,
-                                                                                   previousNumberOfAttempts + 1);
-                        ParentPage.AddTag(newTag);
+                        else
+                        {
+                            existingIncorrectArrayCreationTag.DividendAsDimensionAttempts++;
+                        }
                     }
                     if ((pageObject as CLPArray).Rows != Rows &&
                         (pageObject as CLPArray).Columns == Rows)
                     {
-                        var existingTag =
-                            ParentPage.Tags.OfType<DivisionTemplateIncorrectArrayCreationTag>()
-                                      .FirstOrDefault(x => x.Value == DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.WrongOrientation);
-
-                        var previousNumberOfAttempts = 0;
-                        if (existingTag != null)
+                        var existingIncorrectArrayCreationTag = ParentPage.Tags.OfType<DivisionTemplateIncorrectArrayCreationTag>().FirstOrDefault(x => x.DivisionTemplateID == ID);
+                        if (existingIncorrectArrayCreationTag == null)
                         {
-                            previousNumberOfAttempts = existingTag.NumberOfAttempts;
-                            ParentPage.RemoveTag(existingTag);
+                            var newTag = new DivisionTemplateIncorrectArrayCreationTag(ParentPage, Origin.StudentPageObjectGenerated, ID, Dividend, Rows);
+                            newTag.WrongOrientationAttempts++;
+                            ParentPage.AddTag(newTag);
                         }
-                        var newTag = new DivisionTemplateIncorrectArrayCreationTag(ParentPage,
-                                                                                   Origin.StudentPageObjectGenerated,
-                                                                                   DivisionTemplateIncorrectArrayCreationTag.AcceptedValues
-                                                                                                                            .WrongOrientation,
-                                                                                   previousNumberOfAttempts + 1);
-                        ParentPage.AddTag(newTag);
+                        else
+                        {
+                            existingIncorrectArrayCreationTag.WrongOrientationAttempts++;
+                        }
                     }
                     else if ((pageObject as CLPArray).Rows != Rows)
                     {
-                        var existingTag =
-                            ParentPage.Tags.OfType<DivisionTemplateIncorrectArrayCreationTag>()
-                                      .FirstOrDefault(x => x.Value == DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.IncorrectDimension);
-
-                        var previousNumberOfAttempts = 0;
-                        if (existingTag != null)
+                        var existingIncorrectArrayCreationTag = ParentPage.Tags.OfType<DivisionTemplateIncorrectArrayCreationTag>().FirstOrDefault(x => x.DivisionTemplateID == ID);
+                        if (existingIncorrectArrayCreationTag == null)
                         {
-                            previousNumberOfAttempts = existingTag.NumberOfAttempts;
-                            ParentPage.RemoveTag(existingTag);
+                            var newTag = new DivisionTemplateIncorrectArrayCreationTag(ParentPage, Origin.StudentPageObjectGenerated, ID, Dividend, Rows);
+                            newTag.IncorrectDimensionAttempts++;
+                            ParentPage.AddTag(newTag);
                         }
-                        var newTag = new DivisionTemplateIncorrectArrayCreationTag(ParentPage,
-                                                                                   Origin.StudentPageObjectGenerated,
-                                                                                   DivisionTemplateIncorrectArrayCreationTag.AcceptedValues
-                                                                                                                            .IncorrectDimension,
-                                                                                   previousNumberOfAttempts + 1);
-                        ParentPage.AddTag(newTag);
+                        else
+                        {
+                            existingIncorrectArrayCreationTag.IncorrectDimensionAttempts++;
+                        }
                     }
                 }
             }
 
             if (arrayArea > CurrentRemainder)
             {
-                var existingTag =
-                    ParentPage.Tags.OfType<DivisionTemplateIncorrectArrayCreationTag>()
-                              .FirstOrDefault(x => x.Value == DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.ArrayTooLarge);
-
-                var previousNumberOfAttempts = 0;
-                if (existingTag != null)
+                var existingIncorrectArrayCreationTag = ParentPage.Tags.OfType<DivisionTemplateIncorrectArrayCreationTag>().FirstOrDefault(x => x.DivisionTemplateID == ID);
+                if (existingIncorrectArrayCreationTag == null)
                 {
-                    previousNumberOfAttempts = existingTag.NumberOfAttempts;
-                    ParentPage.RemoveTag(existingTag);
+                    var newTag = new DivisionTemplateIncorrectArrayCreationTag(ParentPage, Origin.StudentPageObjectGenerated, ID, Dividend, Rows);
+                    newTag.ArrayTooLargeAttempts++;
+                    ParentPage.AddTag(newTag);
                 }
-                var newTag = new DivisionTemplateIncorrectArrayCreationTag(ParentPage,
-                                                                           Origin.StudentPageObjectGenerated,
-                                                                           DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.ArrayTooLarge,
-                                                                           previousNumberOfAttempts + 1);
-                ParentPage.AddTag(newTag);
+                else
+                {
+                    existingIncorrectArrayCreationTag.ArrayTooLargeAttempts++;
+                }
 
                 // Only increase ArrayTooLarge attempt if Division Template already full.
                 if (CurrentRemainder != Dividend % Rows)

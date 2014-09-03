@@ -28,25 +28,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData FailedSnapTagProperty = RegisterProperty("FailedSnapTag", typeof (DivisionTemplateFailedSnapTag));
 
-        /// <summary>Value of the Tag.</summary>
-        [ViewModelToModel("FailedSnapTag")]
-        public DivisionTemplateFailedSnapTag.AcceptedValues Value
-        {
-            get { return GetValue<DivisionTemplateFailedSnapTag.AcceptedValues>(ValueProperty); }
-            set { SetValue(ValueProperty, value); }
-        }
 
-        public static readonly PropertyData ValueProperty = RegisterProperty("Value", typeof (DivisionTemplateFailedSnapTag.AcceptedValues));
 
-        /// <summary>Number of times a type of failed snap was attempted.</summary>
-        [ViewModelToModel("FailedSnapTag")]
-        public int NumberOfAttempts
-        {
-            get { return GetValue<int>(NumberOfAttemptsProperty); }
-            set { SetValue(NumberOfAttemptsProperty, value); }
-        }
-
-        public static readonly PropertyData NumberOfAttemptsProperty = RegisterProperty("NumberOfAttempts", typeof (int), 0);
 
         #endregion //Model
     }
