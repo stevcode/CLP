@@ -33,9 +33,9 @@ namespace Classroom_Learning_Partner.ViewModels
         public MainWindowViewModel(ProgramModes currentProgramMode)
         {
             CurrentProgramMode = currentProgramMode;
-            InitializeLocalCache(currentProgramMode);
 
             InitializeCommands();
+            InitializeLocalCache(currentProgramMode);
             TitleBarText = CLP_TEXT;
             CurrentUser = Person.Guest;
             IsProjectorFrozen = CurrentProgramMode != ProgramModes.Projector;
@@ -258,7 +258,6 @@ namespace Classroom_Learning_Partner.ViewModels
             set { _localCacheDirectory = value; }
         }
 
-
         public static string ClassCacheDirectory
         {
             get
@@ -272,6 +271,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return path;
             }
         }
+
         public static string NotebookCacheDirectory
         {
             get
@@ -317,7 +317,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 return new List<string>();
             }
         }
-        
 
         #endregion //Static Properties
 
@@ -499,6 +498,23 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             LocalCacheDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Cache" + variant);
+
+            //if other folders on desktop start with Cache, prompt to use one of those instead.
+            var desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            var directoryInfo = new DirectoryInfo(desktopPath);
+            var availableCaches = directoryInfo.GetDirectories().Where(directory => directory.Name.StartsWith("Cache")).Select(directory => directory.Name).OrderBy(x => x).ToList();
+
+            var buttonBox = new ButtonBoxView("Select Cache To Use:", availableCaches);
+            buttonBox.ShowDialog();
+            if (buttonBox.DialogResult == false ||
+                buttonBox.DialogResult == null)
+            {
+                LocalCacheDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Cache" + variant);
+            }
+            else
+            {
+                LocalCacheDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), buttonBox.ButtonBoxReturnValue);
+            }
         }
 
         public static void ResetCache()
@@ -1059,7 +1075,5 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //Temp Methods
-
-        
     }
 }
