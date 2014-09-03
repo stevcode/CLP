@@ -367,11 +367,6 @@ namespace CLP.Entities
                 //                }
                 //                if (divisionTemplate.CurrentRemainder < divisionTemplate.Rows * snappingArray.Columns)
                 //                {
-                //                    //TODO Liz - get old position - maybe from move batch? (Steve will email about this)
-                //                    //var oldX = 10.0;
-                //                    //var oldY = 10.0;
-                //                    //APageObjectBaseViewModel.ChangePageObjectPosition(snappingArray, oldX, oldY, false);
-
                 //                    var existingTag =
                 //                            pageObject.ParentPage.Tags.OfType<DivisionTemplateFailedSnapTag>()
                 //                                      .FirstOrDefault(x => x.Value == DivisionTemplateFailedSnapTag.AcceptedValues.SnappedArrayTooLarge);

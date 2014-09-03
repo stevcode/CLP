@@ -158,8 +158,15 @@
     <Compile Include="DomainModel\Tags\Array\ArrayXAxisStrategyTag.cs" />
     <Compile Include="DomainModel\Tags\Array\ArrayYAxisStrategyTag.cs" />
     <Compile Include="DomainModel\Tags\ATagBase.cs" />
+    <Compile Include="DomainModel\Tags\DivisionTemplate\ADivisionTemplateBaseTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateCorrectnessTag.cs" />
+    <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateNoTroubleWithDimensionsTag.cs" />
+    <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateNoTroubleWithDivisionTag.cs" />
+    <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateNoTroubleWithRemaindersTag.cs" />
+    <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateTroubleWithDimensionsTag.cs" />
+    <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateTroubleWithDivisionTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateTroubleWithRemaindersTag.cs" />
+    <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTroublesErasedTag.cs" />
     <Compile Include="DomainModel\Tags\OtherPageInformation\CorrectnessTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateCompletenessTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateDeletedTag.cs" />

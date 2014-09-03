@@ -5,22 +5,22 @@ using Catel.Data;
 namespace CLP.Entities
 {
     [Serializable]
-    public class DivisionTemplateTroubleWithRemaindersTag : ADivisionTemplateBaseTag
+    public class DivisionTemplateTroubleWithDimensionsTag : ADivisionTemplateBaseTag
     {
         #region Constructors
 
-        /// <summary>Initializes <see cref="DivisionTemplateTroubleWithRemaindersTag" /> from scratch.</summary>
-        public DivisionTemplateTroubleWithRemaindersTag() { }
+        /// <summary>Initializes <see cref="DivisionTemplateTroubleWithDimensionsTag" /> from scratch.</summary>
+        public DivisionTemplateTroubleWithDimensionsTag() { }
 
-        /// <summary>Initializes <see cref="DivisionTemplateTroubleWithRemaindersTag" />.</summary>
-        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="DivisionTemplateTroubleWithRemaindersTag" /> belongs to.</param>
-        public DivisionTemplateTroubleWithRemaindersTag(CLPPage parentPage, Origin origin, string divisionTemplateID, double dividend, double divisor)
+        /// <summary>Initializes <see cref="DivisionTemplateTroubleWithDimensionsTag" />.</summary>
+        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="DivisionTemplateTroubleWithDimensionsTag" /> belongs to.</param>
+        public DivisionTemplateTroubleWithDimensionsTag(CLPPage parentPage, Origin origin, string divisionTemplateID, double dividend, double divisor)
             : base(parentPage, origin, divisionTemplateID, dividend, divisor) { }
 
-        /// <summary>Initializes <see cref="DivisionTemplateTroubleWithRemaindersTag" /> based on <see cref="SerializationInfo" />.</summary>
+        /// <summary>Initializes <see cref="DivisionTemplateTroubleWithDimensionsTag" /> based on <see cref="SerializationInfo" />.</summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext" />.</param>
-        public DivisionTemplateTroubleWithRemaindersTag(SerializationInfo info, StreamingContext context)
+        public DivisionTemplateTroubleWithDimensionsTag(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
         #endregion //Constructors
@@ -70,7 +70,7 @@ namespace CLP.Entities
 
         public override string FormattedName
         {
-            get { return "Trouble With Remainders"; }
+            get { return "Trouble With Dimensions"; }
         }
 
         public override string FormattedValue
