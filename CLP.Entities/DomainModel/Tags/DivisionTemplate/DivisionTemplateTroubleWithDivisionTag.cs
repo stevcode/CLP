@@ -40,7 +40,11 @@ namespace CLP.Entities
         public List<TroubleWithDivisionReasons> Reasons
         {
             get { return GetValue<List<TroubleWithDivisionReasons>>(ReasonsProperty); }
-            set { SetValue(ReasonsProperty, value); }
+            set
+            {
+                SetValue(ReasonsProperty, value);
+                RaisePropertyChanged("FormattedValue");
+            }
         }
 
         public static readonly PropertyData ReasonsProperty = RegisterProperty("Reasons", typeof(List<TroubleWithDivisionReasons>), () => new List<TroubleWithDivisionReasons>());

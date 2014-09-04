@@ -17,7 +17,9 @@ namespace CLP.Entities
                     .Where(
                            tag =>
                            tag is DivisionTemplateRepresentationCorrectnessTag || tag is DivisionTemplateCompletenessTag ||
-                           tag is DivisionTemplateCorrectnessTag))
+                           tag is DivisionTemplateCorrectnessTag || tag is DivisionTemplateTroubleWithDivisionTag ||
+                           tag is DivisionTemplateNoTroubleWithRemaindersTag || tag is DivisionTemplateNoTroubleWithDimensionsTag ||
+                           tag is DivisionTemplateNoTroubleWithDivisionTag))
             {
                 page.RemoveTag(tag);
             }
@@ -27,7 +29,6 @@ namespace CLP.Entities
             if (!divisionDefinitionTags.Any() ||
                 !divisionTemplates.Any())
             {
-                InterpretDivisionTemplateTroubleWithRemainders(page, true);
                 return;
             }
 
@@ -40,6 +41,8 @@ namespace CLP.Entities
             }
 
             InterpretDivisionTemplateTroubleWithRemainders(page);
+            InterpretDivisionTemplateTroubleWithDimensions(page);
+            AnalyzeDivisionTemplateTroubleWithDivision(page);
             AnalyzeDivisionTemplateCorrectness(page);
         }
 
@@ -615,11 +618,82 @@ namespace CLP.Entities
             page.AddTag(new DivisionTemplateCorrectnessTag(page, Origin.StudentPageGenerated, correctnessSum));
         }
 
+        public static void AnalyzeDivisionTemplateTroubleWithDivision(CLPPage page)
+        {
+            var troubleWithRemaindersTags = page.Tags.OfType<DivisionTemplateTroubleWithRemaindersTag>().Where(x => !x.IsHiddenTag).ToList();
+            var troubleWithDimensionsTags = page.Tags.OfType<DivisionTemplateTroubleWithDimensionsTag>().Where(x => !x.IsHiddenTag).ToList();
+
+            foreach (var troubleWithRemaindersTag in troubleWithRemaindersTags)
+            {
+                var existingTroubleWithDivisionTag =
+                    page.Tags.OfType<DivisionTemplateTroubleWithDivisionTag>()
+                        .FirstOrDefault(x => x.DivisionTemplateID == troubleWithRemaindersTag.DivisionTemplateID);
+
+                if (existingTroubleWithDivisionTag != null)
+                {
+                    existingTroubleWithDivisionTag.Reasons.Add(TroubleWithDivisionReasons.TroubleWithRemainders);
+                    existingTroubleWithDivisionTag.Reasons = existingTroubleWithDivisionTag.Reasons.Distinct().ToList();
+                    continue;
+                }
+
+                var troubleWithDivisionTag = new DivisionTemplateTroubleWithDivisionTag(page,
+                                                                                        Origin.StudentPageGenerated,
+                                                                                        troubleWithRemaindersTag.DivisionTemplateID,
+                                                                                        troubleWithRemaindersTag.Dividend,
+                                                                                        troubleWithRemaindersTag.Divisor);
+                troubleWithDivisionTag.Reasons.Add(TroubleWithDivisionReasons.TroubleWithRemainders);
+                troubleWithDivisionTag.Reasons = troubleWithDivisionTag.Reasons.Distinct().ToList();
+                page.AddTag(troubleWithDivisionTag);
+            }
+
+            foreach (var troubleWithDimensionsTag in troubleWithDimensionsTags)
+            {
+                var existingTroubleWithDivisionTag =
+                    page.Tags.OfType<DivisionTemplateTroubleWithDivisionTag>()
+                        .FirstOrDefault(x => x.DivisionTemplateID == troubleWithDimensionsTag.DivisionTemplateID);
+
+                if (existingTroubleWithDivisionTag != null)
+                {
+                    existingTroubleWithDivisionTag.Reasons.Add(TroubleWithDivisionReasons.TroubleWithDimensions);
+                    existingTroubleWithDivisionTag.Reasons = existingTroubleWithDivisionTag.Reasons.Distinct().ToList();
+                    continue;
+                }
+
+                var troubleWithDivisionTag = new DivisionTemplateTroubleWithDivisionTag(page,
+                                                                                        Origin.StudentPageGenerated,
+                                                                                        troubleWithDimensionsTag.DivisionTemplateID,
+                                                                                        troubleWithDimensionsTag.Dividend,
+                                                                                        troubleWithDimensionsTag.Divisor);
+                troubleWithDivisionTag.Reasons.Add(TroubleWithDivisionReasons.TroubleWithDimensions);
+                troubleWithDivisionTag.Reasons = troubleWithDivisionTag.Reasons.Distinct().ToList();
+                page.AddTag(troubleWithDivisionTag);
+            }
+
+            var troubleWithDivisionTags = page.Tags.OfType<DivisionTemplateTroubleWithDivisionTag>().Where(x => !x.IsHiddenTag).ToList();
+            var allDivisionTemplates =
+                page.PageObjects.OfType<FuzzyFactorCard>().Concat(page.History.TrashedPageObjects.OfType<FuzzyFactorCard>()).ToList();
+
+            var divisionTemplateIDsWithVisibleTroubleWithDivisionTag =
+                troubleWithDivisionTags.Where(x => !x.IsHiddenTag).Select(x => x.DivisionTemplateID).ToList();
+            foreach (
+                var divisionTemplate in
+                    allDivisionTemplates.Where(divisionTemplate => !divisionTemplateIDsWithVisibleTroubleWithDivisionTag.Contains(divisionTemplate.ID))
+                )
+            {
+                var noTroubleWithDivisionTag = new DivisionTemplateNoTroubleWithRemaindersTag(page,
+                                                                                              Origin.StudentPageGenerated,
+                                                                                              divisionTemplate.ID,
+                                                                                              divisionTemplate.Dividend,
+                                                                                              divisionTemplate.Rows);
+                page.AddTag(noTroubleWithDivisionTag);
+            }
+        }
+
         #endregion //Analysis
 
         #region Interpretation
 
-        public static void InterpretDivisionTemplateTroubleWithRemainders(CLPPage page, bool purgeAllTempTags = false)
+        public static void InterpretDivisionTemplateTroubleWithRemainders(CLPPage page)
         {
             var troubleWithRemaindersTags = page.Tags.OfType<DivisionTemplateTroubleWithRemaindersTag>().ToList();
             const int ATTEMPT_TOLERANCE = 4;
@@ -629,10 +703,59 @@ namespace CLP.Entities
                 var trackedVariablesSum = troubleWithRemaindersTag.ArrayTooLargeAttempts + troubleWithRemaindersTag.FailedSnapAttempts +
                                           troubleWithRemaindersTag.OrientationChangedAttempts;
 
-                if (trackedVariablesSum < ATTEMPT_TOLERANCE || purgeAllTempTags)
-                {
-                    page.RemoveTag(troubleWithRemaindersTag);
-                }
+                troubleWithRemaindersTag.IsHiddenTag = trackedVariablesSum < ATTEMPT_TOLERANCE;
+            }
+
+            var allDivisionTemplates =
+                page.PageObjects.OfType<FuzzyFactorCard>().Concat(page.History.TrashedPageObjects.OfType<FuzzyFactorCard>()).ToList();
+
+            var divisionTemplateIDsWithVisibleTroubleWithRemaindersTag =
+                troubleWithRemaindersTags.Where(x => !x.IsHiddenTag).Select(x => x.DivisionTemplateID).ToList();
+            foreach (
+                var divisionTemplate in
+                    allDivisionTemplates.Where(
+                                               divisionTemplate =>
+                                               !divisionTemplateIDsWithVisibleTroubleWithRemaindersTag.Contains(divisionTemplate.ID)))
+            {
+                var noTroubleWithRemaindersTag = new DivisionTemplateNoTroubleWithRemaindersTag(page,
+                                                                                                Origin.StudentPageGenerated,
+                                                                                                divisionTemplate.ID,
+                                                                                                divisionTemplate.Dividend,
+                                                                                                divisionTemplate.Rows);
+                page.AddTag(noTroubleWithRemaindersTag);
+            }
+        }
+
+        public static void InterpretDivisionTemplateTroubleWithDimensions(CLPPage page)
+        {
+            var troubleWithDimensionsTags = page.Tags.OfType<DivisionTemplateTroubleWithDimensionsTag>().ToList();
+            const int ATTEMPT_TOLERANCE = 4;
+
+            foreach (var troubleWithDimensionsTag in troubleWithDimensionsTags)
+            {
+                var trackedVariablesSum = troubleWithDimensionsTag.ArrayTooLargeAttempts + troubleWithDimensionsTag.FailedSnapAttempts +
+                                          troubleWithDimensionsTag.OrientationChangedAttempts;
+
+                troubleWithDimensionsTag.IsHiddenTag = trackedVariablesSum < ATTEMPT_TOLERANCE;
+            }
+
+            var allDivisionTemplates =
+                page.PageObjects.OfType<FuzzyFactorCard>().Concat(page.History.TrashedPageObjects.OfType<FuzzyFactorCard>()).ToList();
+
+            var divisionTemplateIDsWithVisibleTroubleWithDimensionsTag =
+                troubleWithDimensionsTags.Where(x => !x.IsHiddenTag).Select(x => x.DivisionTemplateID).ToList();
+            foreach (
+                var divisionTemplate in
+                    allDivisionTemplates.Where(
+                                               divisionTemplate =>
+                                               !divisionTemplateIDsWithVisibleTroubleWithDimensionsTag.Contains(divisionTemplate.ID)))
+            {
+                var noTroubleWithDimensionsTag = new DivisionTemplateNoTroubleWithDimensionsTag(page,
+                                                                                                Origin.StudentPageGenerated,
+                                                                                                divisionTemplate.ID,
+                                                                                                divisionTemplate.Dividend,
+                                                                                                divisionTemplate.Rows);
+                page.AddTag(noTroubleWithDimensionsTag);
             }
         }
 
