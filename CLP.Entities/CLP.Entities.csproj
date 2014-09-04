@@ -160,9 +160,6 @@
     <Compile Include="DomainModel\Tags\ATagBase.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\ADivisionTemplateBaseTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateCorrectnessTag.cs" />
-    <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateNoTroubleWithDimensionsTag.cs" />
-    <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateNoTroubleWithDivisionTag.cs" />
-    <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateNoTroubleWithRemaindersTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateTroubleWithDimensionsTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateTroubleWithDivisionTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateTroubleWithRemaindersTag.cs" />

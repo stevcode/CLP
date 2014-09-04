@@ -48,12 +48,9 @@ namespace CLP.Entities
 
         public override string FormattedValue
         {
-            get { return string.Format("Trouble With Division Removed: {0}\n" + "Trouble With Division on Page: {1}\n" + "No Trouble With Division Removed: {2}\n" +
-                                       "No Trouble With Division on Page: {3}", 
+            get { return string.Format("Trouble With Division Removed: {0}\n" + "Trouble With Division on Page: {1}", 
                                        ParentPage.Tags.Count(tag => tag is DivisionTemplateTroubleWithDivisionTag && !(tag as DivisionTemplateTroubleWithDivisionTag).IsDivisionTemplateStillOnPage),
-                                       ParentPage.Tags.Count(tag => tag is DivisionTemplateTroubleWithDivisionTag && (tag as DivisionTemplateTroubleWithDivisionTag).IsDivisionTemplateStillOnPage),
-                                       ParentPage.Tags.Count(tag => tag is DivisionTemplateNoTroubleWithDivisionTag && !(tag as DivisionTemplateNoTroubleWithDivisionTag).IsDivisionTemplateStillOnPage),
-                                       ParentPage.Tags.Count(tag => tag is DivisionTemplateNoTroubleWithDivisionTag && (tag as DivisionTemplateNoTroubleWithDivisionTag).IsDivisionTemplateStillOnPage));
+                                       ParentPage.Tags.Count(tag => tag is DivisionTemplateTroubleWithDivisionTag && (tag as DivisionTemplateTroubleWithDivisionTag).IsDivisionTemplateStillOnPage));
             }
         }
 
