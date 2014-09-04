@@ -617,31 +617,17 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnEditTagCommandExecute(ITag tag)
         {
-            var troubleWithRemaindersTag = tag as DivisionTemplateTroubleWithRemaindersTag;
-            if (troubleWithRemaindersTag != null)
-            {
-                var troubleWithRemaindersVM = new DivisionTemplateTroubleWithRemaindersTagViewModel(troubleWithRemaindersTag);
-                var troubleWithRemaindersView = new DivisionTemplateTroubleWithRemaindersTagView(troubleWithRemaindersVM)
-                                                {
-                                                    Owner = Application.Current.MainWindow
-                                                };
-                troubleWithRemaindersView.ShowDialog();
-                return;
-            }
-
-            var failedSnapTag = tag as DivisionTemplateFailedSnapTag;
-            if (failedSnapTag != null)
-            {
-                var failedSnapTagVM = new DivisionTemplateFailedSnapTagViewModel(failedSnapTag);
-                var failedSnapView = new DivisionTemplateFailedSnapTagView(failedSnapTagVM)
-                                     {
-                                         Owner = Application.Current.MainWindow
-                                     };
-                failedSnapView.ShowDialog();
-                CurrentPage.RemoveTag(failedSnapTag);
-                CurrentPage.AddTag(failedSnapTag);
-                return;
-            }
+            //var troubleWithRemaindersTag = tag as DivisionTemplateRemainderErrorsTag;
+            //if (troubleWithRemaindersTag != null)
+            //{
+            //    var troubleWithRemaindersVM = new DivisionTemplateTroubleWithRemaindersTagViewModel(troubleWithRemaindersTag);
+            //    var troubleWithRemaindersView = new DivisionTemplateTroubleWithRemaindersTagView(troubleWithRemaindersVM)
+            //                                    {
+            //                                        Owner = Application.Current.MainWindow
+            //                                    };
+            //    troubleWithRemaindersView.ShowDialog();
+            //    return;
+            //}
         }
 
         /// <summary>Deletes an <see cref="ITag" /> from the <see cref="CLPPage" />.</summary>

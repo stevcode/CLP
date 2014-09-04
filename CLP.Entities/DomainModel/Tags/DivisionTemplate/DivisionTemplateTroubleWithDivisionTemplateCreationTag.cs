@@ -1,0 +1,78 @@
+﻿using System;
+using System.Runtime.Serialization;
+using Catel.Data;
+
+namespace CLP.Entities
+{
+    public enum DivisionTemplateIncorrectCreationReasons
+    {
+        WrongDividendAndDivisor,
+        WrongDividend,
+        WrongDivisor,
+        SwappedDividendAndDivisor
+    }
+
+    [Serializable]
+    public class DivisionTemplateTroubleWithDivisionTemplateCreationTag : ADivisionTemplateBaseTag
+    {
+        #region Constructors
+
+        /// <summary>
+        /// Initializes <see cref="DivisionTemplateTroubleWithDivisionTemplateCreationTag" /> from scratch.
+        /// </summary>
+        public DivisionTemplateTroubleWithDivisionTemplateCreationTag() { }
+
+        /// <summary>
+        /// Initializes <see cref="DivisionTemplateTroubleWithDivisionTemplateCreationTag" />.
+        /// </summary>
+        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="DivisionTemplateTroubleWithDivisionTemplateCreationTag" /> belongs to.</param>
+        public DivisionTemplateTroubleWithDivisionTemplateCreationTag(CLPPage parentPage, Origin origin, string divisionTemplateID, double dividend, double divisor, DivisionTemplateIncorrectCreationReasons reason)
+            : base(parentPage, origin, divisionTemplateID, dividend, divisor) { Reason = reason; }
+
+        /// <summary>
+        /// Initializes <see cref="DivisionTemplateTroubleWithDivisionTemplateCreationTag" /> based on <see cref="SerializationInfo" />.
+        /// </summary>
+        /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
+        /// <param name="context"><see cref="StreamingContext" />.</param>
+        public DivisionTemplateTroubleWithDivisionTemplateCreationTag(SerializationInfo info, StreamingContext context)
+            : base(info, context) { }
+
+        #endregion //Constructors
+
+        #region Properties
+
+        /// <summary>
+        /// Reason the Division Template creation is wrong.
+        /// </summary>
+        public DivisionTemplateIncorrectCreationReasons Reason
+        {
+            get { return GetValue<DivisionTemplateIncorrectCreationReasons>(ReasonProperty); }
+            set { SetValue(ReasonProperty, value); }
+        }
+
+        public static readonly PropertyData ReasonProperty = RegisterProperty("Reason", typeof (DivisionTemplateIncorrectCreationReasons));
+
+        #region ATagBase Overrides
+
+        public override string FormattedName
+        {
+            get { return "Trouble With Division Template Creation"; }
+        }
+
+        public override string FormattedValue
+        {
+            get
+            {
+                return string.Format("{0} / {1} Created.\n" + "DivisionTemplate {2} on page.\n" + "Reason: {3}",
+                                   Dividend,
+                                   Divisor,
+                                   IsDivisionTemplateStillOnPage ? "still" : "no longer",
+                                   Reason);
+            }
+        }
+
+        #endregion //ATagBase Overrides
+
+        #endregion //Properties
+    }
+}
