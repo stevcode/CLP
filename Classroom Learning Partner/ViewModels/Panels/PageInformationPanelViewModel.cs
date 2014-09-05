@@ -77,7 +77,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>Initial Length of the Panel, before any resizing.</summary>
         public override double InitialLength
         {
-            get { return 315.0; }
+            get { return 350.0; }
         }
 
         #endregion //Constructor

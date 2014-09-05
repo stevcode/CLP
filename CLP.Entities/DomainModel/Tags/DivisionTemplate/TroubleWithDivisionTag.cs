@@ -43,16 +43,27 @@ namespace CLP.Entities
         {
             get
             {
-                return
-                    string.Format(
-                                  "Trouble with Array Dimensions {0} time(s).\n" + "{1} were deleted.\n" + "Trouble with Remainders {2} time(s).\n" +
-                                  "{3} were deleted.\n" + "Trouble with Division Template Creation {4} time(s).\n" + "{5} were deleted.",
-                                  GetTroubleWithArrayDimensionsCount(ParentPage),
-                                  GetTroubleWithArrayDimensionsCount(ParentPage, true),
-                                  GetTroubleWithRemaindersCount(ParentPage),
-                                  GetTroubleWithRemaindersCount(ParentPage, true),
-                                  GetTroubleWithDivisionTemplateCreationCount(ParentPage),
-                                  GetTroubleWithDivisionTemplateCreationCount(ParentPage, true));
+                return string.Format("{0}{1}{2}{3}{4}{5}",
+                                     GetTroubleWithArrayDimensionsCount(ParentPage) == 0
+                                         ? string.Empty
+                                         : string.Format("Trouble with Array Dimensions {0} time(s).\n",
+                                                         GetTroubleWithArrayDimensionsCount(ParentPage)),
+                                     GetTroubleWithArrayDimensionsCount(ParentPage, true) == 0
+                                         ? string.Empty
+                                         : string.Format("{0} were deleted.\n", GetTroubleWithArrayDimensionsCount(ParentPage, true)),
+                                     GetTroubleWithRemaindersCount(ParentPage) == 0
+                                         ? string.Empty
+                                         : string.Format("Trouble with Remainders {0} time(s).\n", GetTroubleWithRemaindersCount(ParentPage)),
+                                     GetTroubleWithRemaindersCount(ParentPage, true) == 0
+                                         ? string.Empty
+                                         : string.Format("{0} were deleted.\n", GetTroubleWithRemaindersCount(ParentPage, true)),
+                                     GetTroubleWithDivisionTemplateCreationCount(ParentPage) == 0
+                                         ? string.Empty
+                                         : string.Format("Trouble with Division Template Creation {0} time(s).\n",
+                                                         GetTroubleWithDivisionTemplateCreationCount(ParentPage)),
+                                     GetTroubleWithDivisionTemplateCreationCount(ParentPage, true) == 0
+                                         ? string.Empty
+                                         : string.Format("{0} were deleted.\n", GetTroubleWithDivisionTemplateCreationCount(ParentPage, true)));
             }
         }
 

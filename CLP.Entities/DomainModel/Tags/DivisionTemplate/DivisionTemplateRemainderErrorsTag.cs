@@ -153,10 +153,7 @@ namespace CLP.Entities
 
         public bool HadTrouble
         {
-            get
-            {
-                return ErrorAtemptsSum > TROUBLE_TOLERANCE;
-            }
+            get { return ErrorAtemptsSum > TROUBLE_TOLERANCE; }
         }
 
         public int ErrorAtemptsSum
@@ -182,24 +179,34 @@ namespace CLP.Entities
         {
             get
             {
-                return
-                    string.Format(
-                                  "Errors on {0} / {1}.\n" + "DivisionTemplate {2} on page.\n" + "Created {3} Arrays too large.\n" +
-                                  "Created {4} Arrays with incorrect dimensions.\n" + "Created {5} Arrays with the wrong orientation.\n" +
-                                  "Created {6} Arrays with Dividend as a dimension.\n" + "Snapped {7} too large.\n" +
-                                  "Snapped {8} with incorrect dimensions.\n" + "Snapped {9} with the wrong orientation." +
-                                  "Changed Array orientation {10} time(s).",
-                                  Dividend,
-                                  Divisor,
-                                  IsDivisionTemplateStillOnPage ? "still" : "no longer",
-                                  CreateArrayTooLargeAttempts,
-                                  CreateIncorrectDimensionAttempts,
-                                  CreateWrongOrientationAttempts,
-                                  CreateDividendAsDimensionAttempts,
-                                  SnapArrayTooLargeAttempts,
-                                  SnapIncorrectDimensionAttempts,
-                                  SnapWrongOrientationAttempts,
-                                  OrientationChangedAttempts);
+                return string.Format("Errors on {0} / {1}." + "\nDivisionTemplate {2} on page.{3}{4}{5}{6}{7}{8}{9}{10}",
+                                     Dividend,
+                                     Divisor,
+                                     IsDivisionTemplateStillOnPage ? "still" : "no longer",
+                                     CreateArrayTooLargeAttempts == 0
+                                         ? string.Empty
+                                         : string.Format("\nCreated {0} Arrays too large.", CreateArrayTooLargeAttempts),
+                                     CreateIncorrectDimensionAttempts == 0
+                                         ? string.Empty
+                                         : string.Format("\nCreated {0} Arrays with incorrect dimensions.", CreateIncorrectDimensionAttempts),
+                                     CreateWrongOrientationAttempts == 0
+                                         ? string.Empty
+                                         : string.Format("\nCreated {0} Arrays with the wrong orientation.", CreateWrongOrientationAttempts),
+                                     CreateDividendAsDimensionAttempts == 0
+                                         ? string.Empty
+                                         : string.Format("\nCreated {0} Arrays with Dividend as a dimension.", CreateDividendAsDimensionAttempts),
+                                     SnapArrayTooLargeAttempts == 0
+                                         ? string.Empty
+                                         : string.Format("\nSnapped {0} too large.", SnapArrayTooLargeAttempts),
+                                     SnapIncorrectDimensionAttempts == 0
+                                         ? string.Empty
+                                         : string.Format("\nSnapped {0} with incorrect dimensions.", SnapIncorrectDimensionAttempts),
+                                     SnapWrongOrientationAttempts == 0
+                                         ? string.Empty
+                                         : string.Format("\nSnapped {0} with the wrong orientation.", SnapWrongOrientationAttempts),
+                                     OrientationChangedAttempts == 0
+                                         ? string.Empty
+                                         : string.Format("\nChanged Array orientation {0} time(s).", OrientationChangedAttempts));
             }
         }
 
