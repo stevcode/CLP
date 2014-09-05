@@ -172,7 +172,7 @@ namespace CLP.Entities
 
         public override string FormattedName
         {
-            get { return string.Format("Array Dimension Errors{0}", HadTrouble ? " **Trouble**" : string.Empty); }
+            get { return string.Format("Factor Pair Errors{0}", HadTrouble ? " **Trouble**" : string.Empty); }
         }
 
         public override string FormattedValue

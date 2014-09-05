@@ -666,7 +666,7 @@ namespace CLP.Entities
 
         public static void AnalyzeDivisionTemplateTroubleWithDivision(CLPPage page)
         {
-            var errorSum = TroubleWithDivisionTag.GetTroubleWithArrayDimensionsCount(page) +
+            var errorSum = TroubleWithDivisionTag.GetTroubleWithFactorPairsCount(page) +
                            TroubleWithDivisionTag.GetTroubleWithRemaindersCount(page) +
                            TroubleWithDivisionTag.GetTroubleWithDivisionTemplateCreationCount(page);
 

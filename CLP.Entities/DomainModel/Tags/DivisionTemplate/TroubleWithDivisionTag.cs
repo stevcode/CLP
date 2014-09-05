@@ -44,13 +44,13 @@ namespace CLP.Entities
             get
             {
                 return string.Format("{0}{1}{2}{3}{4}{5}",
-                                     GetTroubleWithArrayDimensionsCount(ParentPage) == 0
+                                     GetTroubleWithFactorPairsCount(ParentPage) == 0
                                          ? string.Empty
-                                         : string.Format("Trouble with Array Dimensions {0} time(s).\n",
-                                                         GetTroubleWithArrayDimensionsCount(ParentPage)),
-                                     GetTroubleWithArrayDimensionsCount(ParentPage, true) == 0
+                                         : string.Format("Trouble with Factor Pairs {0} time(s).\n",
+                                                         GetTroubleWithFactorPairsCount(ParentPage)),
+                                     GetTroubleWithFactorPairsCount(ParentPage, true) == 0
                                          ? string.Empty
-                                         : string.Format("{0} deleted.\n", GetTroubleWithArrayDimensionsCount(ParentPage, true)),
+                                         : string.Format("{0} deleted.\n", GetTroubleWithFactorPairsCount(ParentPage, true)),
                                      GetTroubleWithRemaindersCount(ParentPage) == 0
                                          ? string.Empty
                                          : string.Format("Trouble with Remainders {0} time(s).\n", GetTroubleWithRemaindersCount(ParentPage)),
@@ -73,7 +73,7 @@ namespace CLP.Entities
 
         #region Static Methods
 
-        public static int GetTroubleWithArrayDimensionsCount(CLPPage page, bool returnOnlyDeleted = false)
+        public static int GetTroubleWithFactorPairsCount(CLPPage page, bool returnOnlyDeleted = false)
         {
             var totalCount =
                 page.Tags.Count(tag => tag is DivisionTemplateArrayDimensionErrorsTag && (tag as DivisionTemplateArrayDimensionErrorsTag).HadTrouble);
