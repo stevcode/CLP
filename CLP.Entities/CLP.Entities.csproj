@@ -162,9 +162,8 @@
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateCorrectnessTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateArrayDimensionErrorsTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateTroubleWithDivisionTag.cs" />
-    <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateTroubleWithDivisionTemplateCreationTag.cs" />
+    <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateCreationErrorTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateRemainderErrorsTag.cs" />
-    <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTroublesErasedTag.cs" />
     <Compile Include="DomainModel\Tags\OtherPageInformation\CorrectnessTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateCompletenessTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateDeletedTag.cs" />

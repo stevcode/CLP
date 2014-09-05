@@ -71,6 +71,11 @@ namespace CLP.Entities
             get { return Category.OtherPageInformation; }
         }
 
+        public override string FormattedName
+        {
+            get { return "Correctness"; }
+        }
+
         public override string FormattedValue
         {
             get { return string.Format("{0}, {1}", Correctness, IsCorrectnessManuallySet ? "Set by Instructor" : IsCorrectnessAutomaticallySet ? "Set Automatically" : "Default"); }

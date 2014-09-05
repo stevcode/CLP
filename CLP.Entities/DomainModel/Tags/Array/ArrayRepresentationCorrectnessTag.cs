@@ -75,6 +75,11 @@ namespace CLP.Entities
             get { return Category.Array; }
         }
 
+        public override string FormattedName
+        {
+            get { return "Array Representation Correctness"; }
+        }
+
         public override string FormattedValue
         {
             get

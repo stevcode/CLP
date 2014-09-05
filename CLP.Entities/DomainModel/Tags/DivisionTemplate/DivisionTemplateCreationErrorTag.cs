@@ -13,28 +13,28 @@ namespace CLP.Entities
     }
 
     [Serializable]
-    public class DivisionTemplateTroubleWithDivisionTemplateCreationTag : ADivisionTemplateBaseTag
+    public class DivisionTemplateCreationErrorTag : ADivisionTemplateBaseTag
     {
         #region Constructors
 
         /// <summary>
-        /// Initializes <see cref="DivisionTemplateTroubleWithDivisionTemplateCreationTag" /> from scratch.
+        /// Initializes <see cref="DivisionTemplateCreationErrorTag" /> from scratch.
         /// </summary>
-        public DivisionTemplateTroubleWithDivisionTemplateCreationTag() { }
+        public DivisionTemplateCreationErrorTag() { }
 
         /// <summary>
-        /// Initializes <see cref="DivisionTemplateTroubleWithDivisionTemplateCreationTag" />.
+        /// Initializes <see cref="DivisionTemplateCreationErrorTag" />.
         /// </summary>
-        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="DivisionTemplateTroubleWithDivisionTemplateCreationTag" /> belongs to.</param>
-        public DivisionTemplateTroubleWithDivisionTemplateCreationTag(CLPPage parentPage, Origin origin, string divisionTemplateID, double dividend, double divisor, DivisionTemplateIncorrectCreationReasons reason)
+        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="DivisionTemplateCreationErrorTag" /> belongs to.</param>
+        public DivisionTemplateCreationErrorTag(CLPPage parentPage, Origin origin, string divisionTemplateID, double dividend, double divisor, DivisionTemplateIncorrectCreationReasons reason)
             : base(parentPage, origin, divisionTemplateID, dividend, divisor) { Reason = reason; }
 
         /// <summary>
-        /// Initializes <see cref="DivisionTemplateTroubleWithDivisionTemplateCreationTag" /> based on <see cref="SerializationInfo" />.
+        /// Initializes <see cref="DivisionTemplateCreationErrorTag" /> based on <see cref="SerializationInfo" />.
         /// </summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext" />.</param>
-        public DivisionTemplateTroubleWithDivisionTemplateCreationTag(SerializationInfo info, StreamingContext context)
+        public DivisionTemplateCreationErrorTag(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
         #endregion //Constructors
@@ -56,7 +56,7 @@ namespace CLP.Entities
 
         public override string FormattedName
         {
-            get { return "Trouble With Division Template Creation"; }
+            get { return "Division Template Creation Error"; }
         }
 
         public override string FormattedValue

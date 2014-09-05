@@ -72,6 +72,11 @@ namespace CLP.Entities
             get { return Category.Array; }
         }
 
+        public override string FormattedName
+        {
+            get { return "Array Region Strategy"; }
+        }
+
         public override string FormattedValue
         {
             get { return string.Format("{0}: {1}", Value, string.Join(",", RegionDimensions)); }

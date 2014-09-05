@@ -111,6 +111,11 @@ namespace CLP.Entities
             get { return Category.Array; }
         }
 
+        public override string FormattedName
+        {
+            get { return "Array Tried Wrong Divider Values"; }
+        }
+
         public override string FormattedValue
         {
             get

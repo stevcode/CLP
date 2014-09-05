@@ -131,7 +131,7 @@ namespace CLP.Entities
                             var divisionTemplate = pageObject as FuzzyFactorCard;
                             divisionTemplatesOnPage.Add(new DivisionTemplateAndRemainder(divisionTemplate, divisionTemplate.Dividend));
 
-                            //DivisionTemplateTroubleWithDivisionTemplateCreationTag
+                            //DivisionTemplateCreationErrorTag
                             var divisionDefinitions = page.Tags.OfType<DivisionRelationDefinitionTag>();
 
                             foreach (var divisionRelationDefinitionTag in divisionDefinitions)
@@ -146,7 +146,7 @@ namespace CLP.Entities
                                 if (divisionTemplate.Dividend == divisionRelationDefinitionTag.Divisor &&
                                     divisionTemplate.Rows == divisionRelationDefinitionTag.Dividend)
                                 {
-                                    divisionCreationErrorTag = new DivisionTemplateTroubleWithDivisionTemplateCreationTag(page,
+                                    divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(page,
                                                                                                                           Origin.StudentPageGenerated,
                                                                                                                           divisionTemplate.ID,
                                                                                                                           divisionTemplate.Dividend,
@@ -158,7 +158,7 @@ namespace CLP.Entities
                                 if (divisionTemplate.Dividend == divisionRelationDefinitionTag.Dividend &&
                                     divisionTemplate.Rows != divisionRelationDefinitionTag.Divisor)
                                 {
-                                    divisionCreationErrorTag = new DivisionTemplateTroubleWithDivisionTemplateCreationTag(page,
+                                    divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(page,
                                                                                                                           Origin.StudentPageGenerated,
                                                                                                                           divisionTemplate.ID,
                                                                                                                           divisionTemplate.Dividend,
@@ -170,7 +170,7 @@ namespace CLP.Entities
                                 if (divisionTemplate.Dividend != divisionRelationDefinitionTag.Dividend &&
                                     divisionTemplate.Rows == divisionRelationDefinitionTag.Divisor)
                                 {
-                                    divisionCreationErrorTag = new DivisionTemplateTroubleWithDivisionTemplateCreationTag(page,
+                                    divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(page,
                                                                                                                           Origin.StudentPageGenerated,
                                                                                                                           divisionTemplate.ID,
                                                                                                                           divisionTemplate.Dividend,
@@ -182,7 +182,7 @@ namespace CLP.Entities
                                 if (divisionTemplate.Dividend != divisionRelationDefinitionTag.Dividend &&
                                     divisionTemplate.Rows != divisionRelationDefinitionTag.Divisor)
                                 {
-                                    divisionCreationErrorTag = new DivisionTemplateTroubleWithDivisionTemplateCreationTag(page,
+                                    divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(page,
                                                                                                                           Origin.StudentPageGenerated,
                                                                                                                           divisionTemplate.ID,
                                                                                                                           divisionTemplate.Dividend,

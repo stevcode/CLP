@@ -220,7 +220,7 @@ namespace CLP.Entities
                 if (Dividend == divisionRelationDefinitionTag.Divisor &&
                     Rows == divisionRelationDefinitionTag.Dividend)
                 {
-                    divisionCreationErrorTag = new DivisionTemplateTroubleWithDivisionTemplateCreationTag(ParentPage,
+                    divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(ParentPage,
                                                                                                           Origin.StudentPageGenerated,
                                                                                                           ID,
                                                                                                           Dividend,
@@ -232,7 +232,7 @@ namespace CLP.Entities
                 if (Dividend == divisionRelationDefinitionTag.Dividend &&
                     Rows != divisionRelationDefinitionTag.Divisor)
                 {
-                    divisionCreationErrorTag = new DivisionTemplateTroubleWithDivisionTemplateCreationTag(ParentPage,
+                    divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(ParentPage,
                                                                                                           Origin.StudentPageGenerated,
                                                                                                           ID,
                                                                                                           Dividend,
@@ -244,7 +244,7 @@ namespace CLP.Entities
                 if (Dividend != divisionRelationDefinitionTag.Dividend &&
                     Rows == divisionRelationDefinitionTag.Divisor)
                 {
-                    divisionCreationErrorTag = new DivisionTemplateTroubleWithDivisionTemplateCreationTag(ParentPage,
+                    divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(ParentPage,
                                                                                                           Origin.StudentPageGenerated,
                                                                                                           ID,
                                                                                                           Dividend,
@@ -256,7 +256,7 @@ namespace CLP.Entities
                 if (Dividend != divisionRelationDefinitionTag.Dividend &&
                     Rows != divisionRelationDefinitionTag.Divisor)
                 {
-                    divisionCreationErrorTag = new DivisionTemplateTroubleWithDivisionTemplateCreationTag(ParentPage,
+                    divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(ParentPage,
                                                                                                           Origin.StudentPageGenerated,
                                                                                                           ID,
                                                                                                           Dividend,

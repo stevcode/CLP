@@ -62,6 +62,11 @@ namespace CLP.Entities
             get { return Category.OtherPageInformation; }
         }
 
+        public override string FormattedName
+        {
+            get { return "Dotted"; }
+        }
+
         public override string FormattedValue
         {
             get { return Value.ToString(); }

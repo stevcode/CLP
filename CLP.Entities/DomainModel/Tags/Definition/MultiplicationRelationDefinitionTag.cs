@@ -72,6 +72,11 @@ namespace CLP.Entities
             get { return Category.Definition; }
         }
 
+        public override string FormattedName
+        {
+            get { return "Multiplication Relation Definition"; }
+        }
+
         public override string FormattedValue
         {
             get { return string.Format("Relation Type: {0}\n" + "{1} = {2}", RelationType, string.Join("x", Factors), Product); }
