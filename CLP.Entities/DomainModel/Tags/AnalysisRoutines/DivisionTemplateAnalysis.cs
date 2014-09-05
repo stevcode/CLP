@@ -17,7 +17,7 @@ namespace CLP.Entities
                     .Where(
                            tag =>
                            tag is DivisionTemplateRepresentationCorrectnessTag || tag is DivisionTemplateCompletenessTag ||
-                           tag is DivisionTemplateCorrectnessTag || tag is DivisionTemplateTroubleWithDivisionTag))
+                           tag is DivisionTemplateCorrectnessTag || tag is TroubleWithDivisionTag))
             {
                 page.RemoveTag(tag);
             }
@@ -147,48 +147,48 @@ namespace CLP.Entities
                                     divisionTemplate.Rows == divisionRelationDefinitionTag.Dividend)
                                 {
                                     divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(page,
-                                                                                                                          Origin.StudentPageGenerated,
-                                                                                                                          divisionTemplate.ID,
-                                                                                                                          divisionTemplate.Dividend,
-                                                                                                                          divisionTemplate.Rows,
-                                                                                                                          DivisionTemplateIncorrectCreationReasons
-                                                                                                                              .SwappedDividendAndDivisor);
+                                                                                                    Origin.StudentPageGenerated,
+                                                                                                    divisionTemplate.ID,
+                                                                                                    divisionTemplate.Dividend,
+                                                                                                    divisionTemplate.Rows,
+                                                                                                    DivisionTemplateIncorrectCreationReasons
+                                                                                                        .SwappedDividendAndDivisor);
                                 }
 
                                 if (divisionTemplate.Dividend == divisionRelationDefinitionTag.Dividend &&
                                     divisionTemplate.Rows != divisionRelationDefinitionTag.Divisor)
                                 {
                                     divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(page,
-                                                                                                                          Origin.StudentPageGenerated,
-                                                                                                                          divisionTemplate.ID,
-                                                                                                                          divisionTemplate.Dividend,
-                                                                                                                          divisionTemplate.Rows,
-                                                                                                                          DivisionTemplateIncorrectCreationReasons
-                                                                                                                              .WrongDivisor);
+                                                                                                    Origin.StudentPageGenerated,
+                                                                                                    divisionTemplate.ID,
+                                                                                                    divisionTemplate.Dividend,
+                                                                                                    divisionTemplate.Rows,
+                                                                                                    DivisionTemplateIncorrectCreationReasons
+                                                                                                        .WrongDivisor);
                                 }
 
                                 if (divisionTemplate.Dividend != divisionRelationDefinitionTag.Dividend &&
                                     divisionTemplate.Rows == divisionRelationDefinitionTag.Divisor)
                                 {
                                     divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(page,
-                                                                                                                          Origin.StudentPageGenerated,
-                                                                                                                          divisionTemplate.ID,
-                                                                                                                          divisionTemplate.Dividend,
-                                                                                                                          divisionTemplate.Rows,
-                                                                                                                          DivisionTemplateIncorrectCreationReasons
-                                                                                                                              .WrongDividend);
+                                                                                                    Origin.StudentPageGenerated,
+                                                                                                    divisionTemplate.ID,
+                                                                                                    divisionTemplate.Dividend,
+                                                                                                    divisionTemplate.Rows,
+                                                                                                    DivisionTemplateIncorrectCreationReasons
+                                                                                                        .WrongDividend);
                                 }
 
                                 if (divisionTemplate.Dividend != divisionRelationDefinitionTag.Dividend &&
                                     divisionTemplate.Rows != divisionRelationDefinitionTag.Divisor)
                                 {
                                     divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(page,
-                                                                                                                          Origin.StudentPageGenerated,
-                                                                                                                          divisionTemplate.ID,
-                                                                                                                          divisionTemplate.Dividend,
-                                                                                                                          divisionTemplate.Rows,
-                                                                                                                          DivisionTemplateIncorrectCreationReasons
-                                                                                                                              .WrongDividendAndDivisor);
+                                                                                                    Origin.StudentPageGenerated,
+                                                                                                    divisionTemplate.ID,
+                                                                                                    divisionTemplate.Dividend,
+                                                                                                    divisionTemplate.Rows,
+                                                                                                    DivisionTemplateIncorrectCreationReasons
+                                                                                                        .WrongDividendAndDivisor);
                                 }
 
                                 if (divisionCreationErrorTag != null)
@@ -666,54 +666,17 @@ namespace CLP.Entities
 
         public static void AnalyzeDivisionTemplateTroubleWithDivision(CLPPage page)
         {
-            var troubleWithRemaindersTags = page.Tags.OfType<DivisionTemplateRemainderErrorsTag>().Where(x => !x.IsHiddenTag).ToList();
-            var troubleWithDimensionsTags = page.Tags.OfType<DivisionTemplateArrayDimensionErrorsTag>().Where(x => !x.IsHiddenTag).ToList();
+            var errorSum = TroubleWithDivisionTag.GetTroubleWithArrayDimensionsCount(page) +
+                           TroubleWithDivisionTag.GetTroubleWithRemaindersCount(page) +
+                           TroubleWithDivisionTag.GetTroubleWithDivisionTemplateCreationCount(page);
 
-            foreach (var troubleWithRemaindersTag in troubleWithRemaindersTags)
+            if (errorSum == 0)
             {
-                var existingTroubleWithDivisionTag =
-                    page.Tags.OfType<DivisionTemplateTroubleWithDivisionTag>()
-                        .FirstOrDefault(x => x.DivisionTemplateID == troubleWithRemaindersTag.DivisionTemplateID);
-
-                if (existingTroubleWithDivisionTag != null)
-                {
-                    existingTroubleWithDivisionTag.Reasons.Add(TroubleWithDivisionReasons.TroubleWithRemainders);
-                    existingTroubleWithDivisionTag.Reasons = existingTroubleWithDivisionTag.Reasons.Distinct().ToList();
-                    continue;
-                }
-
-                var troubleWithDivisionTag = new DivisionTemplateTroubleWithDivisionTag(page,
-                                                                                        Origin.StudentPageGenerated,
-                                                                                        troubleWithRemaindersTag.DivisionTemplateID,
-                                                                                        troubleWithRemaindersTag.Dividend,
-                                                                                        troubleWithRemaindersTag.Divisor);
-                troubleWithDivisionTag.Reasons.Add(TroubleWithDivisionReasons.TroubleWithRemainders);
-                troubleWithDivisionTag.Reasons = troubleWithDivisionTag.Reasons.Distinct().ToList();
-                page.AddTag(troubleWithDivisionTag);
+                return;
             }
 
-            foreach (var troubleWithDimensionsTag in troubleWithDimensionsTags)
-            {
-                var existingTroubleWithDivisionTag =
-                    page.Tags.OfType<DivisionTemplateTroubleWithDivisionTag>()
-                        .FirstOrDefault(x => x.DivisionTemplateID == troubleWithDimensionsTag.DivisionTemplateID);
-
-                if (existingTroubleWithDivisionTag != null)
-                {
-                    existingTroubleWithDivisionTag.Reasons.Add(TroubleWithDivisionReasons.TroubleWithDimensions);
-                    existingTroubleWithDivisionTag.Reasons = existingTroubleWithDivisionTag.Reasons.Distinct().ToList();
-                    continue;
-                }
-
-                var troubleWithDivisionTag = new DivisionTemplateTroubleWithDivisionTag(page,
-                                                                                        Origin.StudentPageGenerated,
-                                                                                        troubleWithDimensionsTag.DivisionTemplateID,
-                                                                                        troubleWithDimensionsTag.Dividend,
-                                                                                        troubleWithDimensionsTag.Divisor);
-                troubleWithDivisionTag.Reasons.Add(TroubleWithDivisionReasons.TroubleWithDimensions);
-                troubleWithDivisionTag.Reasons = troubleWithDivisionTag.Reasons.Distinct().ToList();
-                page.AddTag(troubleWithDivisionTag);
-            }
+            var troubleWithDivisionTag = new TroubleWithDivisionTag(page, Origin.StudentPageGenerated);
+            page.AddTag(troubleWithDivisionTag);
         }
 
         #endregion //Analysis
