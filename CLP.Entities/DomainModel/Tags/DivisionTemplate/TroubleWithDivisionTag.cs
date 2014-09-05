@@ -50,20 +50,20 @@ namespace CLP.Entities
                                                          GetTroubleWithArrayDimensionsCount(ParentPage)),
                                      GetTroubleWithArrayDimensionsCount(ParentPage, true) == 0
                                          ? string.Empty
-                                         : string.Format("{0} were deleted.\n", GetTroubleWithArrayDimensionsCount(ParentPage, true)),
+                                         : string.Format("{0} deleted.\n", GetTroubleWithArrayDimensionsCount(ParentPage, true)),
                                      GetTroubleWithRemaindersCount(ParentPage) == 0
                                          ? string.Empty
                                          : string.Format("Trouble with Remainders {0} time(s).\n", GetTroubleWithRemaindersCount(ParentPage)),
                                      GetTroubleWithRemaindersCount(ParentPage, true) == 0
                                          ? string.Empty
-                                         : string.Format("{0} were deleted.\n", GetTroubleWithRemaindersCount(ParentPage, true)),
+                                         : string.Format("{0} deleted.\n", GetTroubleWithRemaindersCount(ParentPage, true)),
                                      GetTroubleWithDivisionTemplateCreationCount(ParentPage) == 0
                                          ? string.Empty
                                          : string.Format("Trouble with Division Template Creation {0} time(s).\n",
                                                          GetTroubleWithDivisionTemplateCreationCount(ParentPage)),
                                      GetTroubleWithDivisionTemplateCreationCount(ParentPage, true) == 0
                                          ? string.Empty
-                                         : string.Format("{0} were deleted.\n", GetTroubleWithDivisionTemplateCreationCount(ParentPage, true)));
+                                         : string.Format("{0} deleted.\n", GetTroubleWithDivisionTemplateCreationCount(ParentPage, true))).TrimEnd('\n');
             }
         }
 
