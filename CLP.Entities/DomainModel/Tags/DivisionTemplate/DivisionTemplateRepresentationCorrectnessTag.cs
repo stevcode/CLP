@@ -80,7 +80,7 @@ namespace CLP.Entities
                 return string.Format("Correctness for {0} / {1}\n" + "DivisionTemplate {2} on page.\n" + "{3}{4}",
                                      Dividend,
                                      Divisor,
-                                     IsDivisionTemplateStillOnPage,
+                                     IsDivisionTemplateStillOnPage ? "still" : "no longer",
                                      Correctness,
                                      Correctness == Correctness.Correct || Correctness == Correctness.Unknown
                                          ? string.Empty

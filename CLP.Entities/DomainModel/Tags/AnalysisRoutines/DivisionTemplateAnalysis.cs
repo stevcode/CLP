@@ -244,7 +244,7 @@ namespace CLP.Entities
                                     }
 
                                     var totalAreaOfArraysOnPage = arraysOnPage.Sum(x => x.Rows * x.Columns);
-                                    if (totalAreaOfArraysOnPage > divisionTemplate.CurrentRemainder)
+                                    if (totalAreaOfArraysOnPage > divisionTemplateAndRemainder.Remainder)
                                     {
                                         existingArrayDimensionErrorsTag.CreateArrayTooLargeAttempts++;
                                     }
@@ -291,7 +291,7 @@ namespace CLP.Entities
                                     }
 
                                     var totalAreaOfArraysOnPage = arraysOnPage.Sum(x => x.Rows * x.Columns);
-                                    if (totalAreaOfArraysOnPage > divisionTemplate.CurrentRemainder)
+                                    if (totalAreaOfArraysOnPage > divisionTemplateAndRemainder.Remainder)
                                     {
                                         existingRemainderErrorsTag.CreateArrayTooLargeAttempts++;
                                     }

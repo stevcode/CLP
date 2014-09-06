@@ -112,6 +112,13 @@ namespace CLP.Entities
 
             foreach(var divisionTemplate in ParentPage.PageObjects.OfType<FuzzyFactorCard>().ToList())
             {
+                divisionTemplate.UpdateRemainderRegion();
+
+                if (ParentPage.IsTagAddPrevented)
+                {
+                    continue;
+                }
+
                 if (divisionTemplate.CurrentRemainder != divisionTemplate.Dividend % divisionTemplate.Rows)
                 {
                     var existingArrayDimensionErrorsTag = ParentPage.Tags.OfType<DivisionTemplateArrayDimensionErrorsTag>().FirstOrDefault(x => x.DivisionTemplateID == divisionTemplate.ID);
@@ -202,8 +209,6 @@ namespace CLP.Entities
                         ParentPage.AddTag(existingRemainderErrorsTag);
                     }
                 }
-
-                divisionTemplate.UpdateRemainderRegion();
             }
         }
 
