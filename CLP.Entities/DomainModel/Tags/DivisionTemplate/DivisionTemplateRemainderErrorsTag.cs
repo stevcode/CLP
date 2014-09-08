@@ -196,7 +196,7 @@ namespace CLP.Entities
         {
             get
             {
-                return string.Format("Errors on {0} / {1}." + "\nDivisionTemplate {2} on page.{3}{4}{5}{6}{7}{8}{9}{10}",
+                return string.Format("Errors on {0} / {1} after Division Template Full." + "\nDivisionTemplate {2} on page.{3}{4}{5}{6}{7}{8}{9}{10}",
                                      Dividend,
                                      Divisor,
                                      IsDivisionTemplateStillOnPage ? "still" : "no longer",
