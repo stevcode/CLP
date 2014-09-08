@@ -14,13 +14,16 @@ namespace Classroom_Learning_Partner.ViewModels
 {
     public enum SortAndGroupTypes
     {
-        SortAndGroupByName,
-        SortAndGroupByPageNumber,
-        SortAndGroupByStarred,
-        SortAndGroupByCorrectness,
-        SortAndGroupByIncorrectArrayCreation,
-        SortAndGroupByDivisionTemplateStrategy,
-        SortByTime
+        StudentName,
+        PageNumber,
+        SubmissionTime,
+        Correctness,
+        Starred,
+        TroubleWithDivision,
+        TroubleWithFactorPairs,
+        TroubleWithRemainders,
+        DivisionTemplateStrategy
+        
     }
 
     public class StagingPanelViewModel : APanelBaseViewModel
@@ -63,7 +66,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
          //   AppendCollectionOfPagesToStage(SingleAddedPages);
          //   FilterCollectionOfPagesFromStage(SingleRemovedPages);
-            CurrentSortAndGroupType = SortAndGroupTypes.SortAndGroupByPageNumber;
+            CurrentSortAndGroupType = SortAndGroupTypes.PageNumber;
         }
 
         void StagingPanelViewModel_Initialized(object sender, EventArgs e) { Length = InitialLength; }
@@ -380,25 +383,22 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             switch(CurrentSortAndGroupType)
             {
-                case SortAndGroupTypes.SortAndGroupByName:
+                case SortAndGroupTypes.StudentName:
                     ApplySortAndGroupByName();
                     break;
-                case SortAndGroupTypes.SortAndGroupByPageNumber:
+                case SortAndGroupTypes.PageNumber:
                     ApplySortAndGroupByPageNumber();
                     break;
-                case SortAndGroupTypes.SortByTime:
+                case SortAndGroupTypes.SubmissionTime:
                     ApplySortByTime();
                     break;
-                case SortAndGroupTypes.SortAndGroupByStarred:
+                case SortAndGroupTypes.Starred:
                     ApplySortAndGroupByStarred();
                     break;
-                case SortAndGroupTypes.SortAndGroupByCorrectness:
+                case SortAndGroupTypes.Correctness:
                     ApplySortAndGroupByCorrectness();
                     break;
-                case SortAndGroupTypes.SortAndGroupByIncorrectArrayCreation:
-                    ApplySortAndGroupByIncorrectArrayCreation();
-                    break;
-                case SortAndGroupTypes.SortAndGroupByDivisionTemplateStrategy:
+                case SortAndGroupTypes.DivisionTemplateStrategy:
                     ApplySortAndGroupByDivisionTemplateStrategy();
                     break;
                 default:
@@ -461,21 +461,6 @@ namespace Classroom_Learning_Partner.ViewModels
             SortedAndGroupedPages.SortDescriptions.Add(SubmissionTimeAscendingSort);
         }
 
-        public void ApplySortAndGroupByIncorrectArrayCreation()
-        {
-            SortedAndGroupedPages.GroupDescriptions.Clear();
-            SortedAndGroupedPages.SortDescriptions.Clear();
-
-            SortedAndGroupedPages.GroupDescriptions.Add(IncorrectArrayCreationGroup);
-            SortedAndGroupedPages.SortDescriptions.Add(IncorrectArrayCreationAscendingSort);
-
-            SortedAndGroupedPages.GroupDescriptions.Add(PageNumberGroup);
-            SortedAndGroupedPages.SortDescriptions.Add(PageNumberAscendingSort);
-
-            SortedAndGroupedPages.SortDescriptions.Add(OwnerFullNameAscendingSort);
-            SortedAndGroupedPages.SortDescriptions.Add(SubmissionTimeAscendingSort);
-        }
-
         public void ApplySortAndGroupByDivisionTemplateStrategy()
         {
             SortedAndGroupedPages.GroupDescriptions.Clear();
@@ -507,9 +492,9 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             AppendCollectionOfPagesToStage(page.Submissions);
 
-            if(CurrentSortAndGroupType != SortAndGroupTypes.SortAndGroupByName)
+            if(CurrentSortAndGroupType != SortAndGroupTypes.StudentName)
             {
-                CurrentSortAndGroupType = SortAndGroupTypes.SortAndGroupByName;
+                CurrentSortAndGroupType = SortAndGroupTypes.StudentName;
             }
         }
 
@@ -528,9 +513,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 AppendCollectionOfPagesToStage(page.Submissions, x => x.OwnerID == student.ID);
             }
 
-            if(CurrentSortAndGroupType != SortAndGroupTypes.SortAndGroupByPageNumber)
+            if(CurrentSortAndGroupType != SortAndGroupTypes.PageNumber)
             {
-                CurrentSortAndGroupType = SortAndGroupTypes.SortAndGroupByPageNumber;
+                CurrentSortAndGroupType = SortAndGroupTypes.PageNumber;
             }
         }
 
@@ -544,9 +529,9 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             AppendCollectionOfPagesToStage(page.Submissions, x => x.Tags.FirstOrDefault(t => t is StarredTag && (t as StarredTag).Value == StarredTag.AcceptedValues.Starred) != null);
 
-            if(CurrentSortAndGroupType != SortAndGroupTypes.SortAndGroupByStarred)
+            if(CurrentSortAndGroupType != SortAndGroupTypes.Starred)
             {
-                CurrentSortAndGroupType = SortAndGroupTypes.SortAndGroupByStarred;
+                CurrentSortAndGroupType = SortAndGroupTypes.Starred;
             }
         }
 
