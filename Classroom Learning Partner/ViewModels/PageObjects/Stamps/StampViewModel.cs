@@ -36,7 +36,7 @@ namespace Classroom_Learning_Partner.ViewModels
             else
             {
                 var filePath = string.Empty;
-                var imageFilePaths = Directory.EnumerateFiles(App.ImageCacheDirectory);
+                var imageFilePaths = Directory.EnumerateFiles(MainWindowViewModel.ImageCacheDirectory);
                 foreach(var imageFilePath in from imageFilePath in imageFilePaths
                                              let imageHashID = Path.GetFileNameWithoutExtension(imageFilePath)
                                              where imageHashID == stamp.ImageHashID

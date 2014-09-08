@@ -35,6 +35,7 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentProgramMode = currentProgramMode;
 
             InitializeCommands();
+            
             TitleBarText = CLP_TEXT;
             CurrentUser = Person.Guest;
             IsProjectorFrozen = CurrentProgramMode != ProgramModes.Projector;
@@ -238,6 +239,87 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Bindings
 
+        #region Static Properties
+
+        private static string _localCacheDirectory;
+
+        public static string LocalCacheDirectory
+        {
+            get
+            {
+                if (!Directory.Exists(_localCacheDirectory))
+                {
+                    Directory.CreateDirectory(_localCacheDirectory);
+                }
+
+                return _localCacheDirectory;
+            }
+
+            set { _localCacheDirectory = value; }
+        }
+
+        public static string ClassCacheDirectory
+        {
+            get
+            {
+                var path = Path.Combine(LocalCacheDirectory, "Classes");
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+
+                return path;
+            }
+        }
+
+        public static string NotebookCacheDirectory
+        {
+            get
+            {
+                var path = Path.Combine(LocalCacheDirectory, "Notebooks");
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+
+                return path;
+            }
+        }
+
+        public static string ImageCacheDirectory
+        {
+            get
+            {
+                var path = Path.Combine(LocalCacheDirectory, "Images");
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+
+                return path;
+            }
+        }
+
+        public static List<string> AvailableLocalNotebookNames
+        {
+            get
+            {
+                var directoryInfo = new DirectoryInfo(NotebookCacheDirectory);
+                return directoryInfo.GetDirectories().Select(directory => directory.Name).OrderBy(x => x).ToList();
+            }
+        }
+
+        public static List<string> AvailableDatabaseNotebookNames
+        {
+            get
+            {
+                // TODO: DATABASE - Attempt to grab names from database
+                return new List<string>();
+            }
+        }
+
+        #endregion //Static Properties
+
         #region Properties
 
         /// <summary>Current program mode for CLP.</summary>
@@ -390,22 +472,66 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Static Methods
 
-        public static List<string> AvailableLocalNotebookNames
+        public static void InitializeLocalCache(ProgramModes currentProgramMode)
         {
-            get
+            string variant;
+            switch (currentProgramMode)
             {
-                var directoryInfo = new DirectoryInfo(App.NotebookCacheDirectory);
-                return directoryInfo.GetDirectories().Select(directory => directory.Name).OrderBy(x => x).ToList();
+                case ProgramModes.Author:
+                    variant = "A";
+                    break;
+                case ProgramModes.Teacher:
+                    variant = "T";
+                    break;
+                case ProgramModes.Student:
+                    variant = "S";
+                    break;
+                case ProgramModes.Projector:
+                    variant = "P";
+                    break;
+                case ProgramModes.Database:
+                    variant = "D";
+                    break;
+                default:
+                    variant = string.Empty;
+                    break;
+            }
+
+            LocalCacheDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Cache" + variant);
+
+            //if other folders on desktop start with Cache, prompt to use one of those instead.
+            var desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            var directoryInfo = new DirectoryInfo(desktopPath);
+            var availableCaches = directoryInfo.GetDirectories().Where(directory => directory.Name.StartsWith("Cache")).Select(directory => directory.Name).OrderBy(x => x).ToList();
+
+            var buttonBox = new ButtonBoxView("Select Cache To Use:", availableCaches);
+            buttonBox.ShowDialog();
+            if (buttonBox.DialogResult == false ||
+                buttonBox.DialogResult == null)
+            {
+                LocalCacheDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Cache" + variant);
+            }
+            else
+            {
+                LocalCacheDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), buttonBox.ButtonBoxReturnValue);
             }
         }
 
-        public static List<string> AvailableDatabaseNotebookNames
+        public static void ResetCache()
         {
-            get
+            if (!Directory.Exists(NotebookCacheDirectory))
             {
-                // TODO: DATABASE - Attempt to grab names from database
-                return new List<string>();
+                return;
             }
+
+            var archiveDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "CacheArchive");
+            var now = DateTime.Now.ToString("yyyy.MM.dd.HH.mm.ss");
+            var newCacheDirectory = Path.Combine(archiveDirectory, "Cache-" + now);
+            if (!Directory.Exists(archiveDirectory))
+            {
+                Directory.CreateDirectory(archiveDirectory);
+            }
+            Directory.Move(NotebookCacheDirectory, newCacheDirectory);
         }
 
         public static void CreateNewNotebook()
@@ -430,7 +556,7 @@ namespace Classroom_Learning_Partner.ViewModels
             newNotebook.AddCLPPageToNotebook(newPage);
 
             var folderName = newNotebook.Name + ";" + newNotebook.ID + ";" + newNotebook.Owner.FullName + ";" + newNotebook.OwnerID;
-            var folderPath = Path.Combine(App.NotebookCacheDirectory, folderName);
+            var folderPath = Path.Combine(NotebookCacheDirectory, folderName);
             if (Directory.Exists(folderPath))
             {
                 return;
@@ -459,7 +585,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            var folderPath = Path.Combine(App.NotebookCacheDirectory, notebookFolderName);
+            var folderPath = Path.Combine(NotebookCacheDirectory, notebookFolderName);
             if (!Directory.Exists(folderPath))
             {
                 MessageBox.Show("Notebook doesn't exist");
@@ -489,7 +615,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static void SaveNotebook(Notebook notebook, bool isFullSaveForced = false)
         {
-            var folderPath = Path.Combine(App.NotebookCacheDirectory,
+            var folderPath = Path.Combine(NotebookCacheDirectory,
                                           notebook.Name + ";" + notebook.ID + ";" + notebook.Owner.FullName + ";" + notebook.OwnerID);
 
             if (App.MainWindowViewModel.CurrentUser.ID == Person.Author.ID)
@@ -523,10 +649,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 case ProgramModes.Database:
                     break;
                 case ProgramModes.Teacher:
-                    notebook.SaveOthersSubmissions(App.NotebookCacheDirectory);
+                    notebook.SaveOthersSubmissions(NotebookCacheDirectory);
                     break;
                 case ProgramModes.Projector:
-                    notebook.SaveOthersSubmissions(App.NotebookCacheDirectory);
+                    notebook.SaveOthersSubmissions(NotebookCacheDirectory);
                     break;
                 case ProgramModes.Student:
                     var submissionsPath = Path.Combine(folderPath, "Pages");
@@ -549,13 +675,13 @@ namespace Classroom_Learning_Partner.ViewModels
                 App.MainWindowViewModel.CurrentClassPeriod != null &&
                 App.MainWindowViewModel.CurrentClassPeriod.ClassSubject != null)
             {
-                App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.SaveClassSubject(App.ClassCacheDirectory);
+                App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.SaveClassSubject(ClassCacheDirectory);
             }
         }
 
         public static void OpenClassPeriod()
         {
-            var classPeriodFilePaths = Directory.GetFiles(App.ClassCacheDirectory);
+            var classPeriodFilePaths = Directory.GetFiles(ClassCacheDirectory);
             string closestClassPeriodFilePath = null;
             var closestTimeSpan = TimeSpan.MaxValue;
             var now = DateTime.Now;
@@ -636,7 +762,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var storedNotebookFolderName = copiedNotebook.Name + ";" + copiedNotebook.ID + ";" + copiedNotebook.Owner.FullName + ";" +
                                            copiedNotebook.OwnerID;
-            var storedNotebookFolderPath = Path.Combine(App.NotebookCacheDirectory, storedNotebookFolderName);
+            var storedNotebookFolderPath = Path.Combine(NotebookCacheDirectory, storedNotebookFolderName);
             if (Directory.Exists(storedNotebookFolderPath))
             {
                 var pageIDs = App.MainWindowViewModel.CurrentClassPeriod.PageIDs;
@@ -666,7 +792,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         continue;
                     }
 
-                    var folderPath = Path.Combine(App.NotebookCacheDirectory, notebookName);
+                    var folderPath = Path.Combine(NotebookCacheDirectory, notebookName);
                     if (!Directory.Exists(folderPath))
                     {
                         continue;
@@ -728,7 +854,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public static void ViewAllWork()
         {
             //TODO: This is very hacky.
-            var classPeriodFilePaths = Directory.GetFiles(App.ClassCacheDirectory);
+            var classPeriodFilePaths = Directory.GetFiles(ClassCacheDirectory);
             string closestClassPeriodFilePath = null;
             var closestTimeSpan = TimeSpan.MaxValue;
             var now = DateTime.Now;
@@ -830,7 +956,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var storedNotebookFolderName = copiedNotebook.Name + ";" + copiedNotebook.ID + ";" + copiedNotebook.Owner.FullName + ";" +
                                            copiedNotebook.OwnerID;
-            var storedNotebookFolderPath = Path.Combine(App.NotebookCacheDirectory, storedNotebookFolderName);
+            var storedNotebookFolderPath = Path.Combine(NotebookCacheDirectory, storedNotebookFolderName);
             if (Directory.Exists(storedNotebookFolderPath))
             {
                 var pageIDs = App.MainWindowViewModel.CurrentClassPeriod.PageIDs;
@@ -860,7 +986,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         continue;
                     }
 
-                    var folderPath = Path.Combine(App.NotebookCacheDirectory, notebookName);
+                    var folderPath = Path.Combine(NotebookCacheDirectory, notebookName);
                     if (!Directory.Exists(folderPath))
                     {
                         continue;
@@ -897,7 +1023,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static string GetNotebookFolderPathByCompositeID(string id, string ownerID)
         {
-            var notebookFolderPaths = Directory.GetDirectories(App.NotebookCacheDirectory);
+            var notebookFolderPaths = Directory.GetDirectories(NotebookCacheDirectory);
             return (from notebookFolderPath in notebookFolderPaths
                     let notebookInfo = notebookFolderPath.Split(';')
                     where notebookInfo.Length == 4

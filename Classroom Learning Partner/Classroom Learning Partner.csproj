@@ -303,6 +303,8 @@
     <Compile Include="ViewModels\Panels\StudentProgressInfo.cs" />
     <Compile Include="ViewModels\Panels\SubmissionHistoryPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\WebcamPanelViewModel.cs" />
+    <Compile Include="ViewModels\Workspaces\LocationBrowserWorkspaceViewModel.cs" />
+    <Compile Include="ViewModels\Workspaces\LocationSelectors\CacheSelectorViewModel.cs" />
     <Compile Include="Views\Modal Windows\AdvancedStagingView.xaml.cs">
       <DependentUpon>AdvancedStagingView.xaml</DependentUpon>
     </Compile>
@@ -529,6 +531,12 @@
     </Compile>
     <Compile Include="Views\Workspaces\BlankWorkspaceView.xaml.cs">
       <DependentUpon>BlankWorkspaceView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Workspaces\LocationSelectors\CacheSelectorView.xaml.cs">
+      <DependentUpon>CacheSelectorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Workspaces\LocationBrowserWorkspaceView.xaml.cs">
+      <DependentUpon>LocationBrowserWorkspaceView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Workspaces\NotebookChooserWorkspaceView.xaml.cs">
       <DependentUpon>NotebookChooserWorkspaceView.xaml</DependentUpon>
@@ -820,6 +828,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Workspaces\BlankWorkspaceView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Workspaces\LocationSelectors\CacheSelectorView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Workspaces\LocationBrowserWorkspaceView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
