@@ -9,8 +9,6 @@ namespace Classroom_Learning_Partner.Views
     {
         public LocationBrowserWorkspaceView() { InitializeComponent(); }
 
-        protected override Type GetViewModelType() { return typeof(LocationBrowserWorkspaceViewModel); }
-
-        private void UIElement_OnManipulationBoundaryFeedback(object sender, ManipulationBoundaryFeedbackEventArgs e) { e.Handled = true; }
+        protected override Type GetViewModelType() { return typeof (LocationBrowserWorkspaceViewModel); }
     }
 }

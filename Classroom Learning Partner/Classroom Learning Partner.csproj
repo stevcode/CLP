@@ -305,6 +305,7 @@
     <Compile Include="ViewModels\Panels\SubmissionHistoryPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\WebcamPanelViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\LocationBrowserWorkspaceViewModel.cs" />
+    <Compile Include="ViewModels\Workspaces\LocationSelectors\CacheSelectorViewModel.cs" />
     <Compile Include="Views\Modal Windows\AdvancedStagingView.xaml.cs">
       <DependentUpon>AdvancedStagingView.xaml</DependentUpon>
     </Compile>
@@ -535,7 +536,7 @@
     <Compile Include="Views\Workspaces\BlankWorkspaceView.xaml.cs">
       <DependentUpon>BlankWorkspaceView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Workspaces\CacheSelectorView.xaml.cs">
+    <Compile Include="Views\Workspaces\LocationSelectors\CacheSelectorView.xaml.cs">
       <DependentUpon>CacheSelectorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Workspaces\LocationBrowserWorkspaceView.xaml.cs">
@@ -838,7 +839,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Workspaces\CacheSelectorView.xaml">
+    <Page Include="Views\Workspaces\LocationSelectors\CacheSelectorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

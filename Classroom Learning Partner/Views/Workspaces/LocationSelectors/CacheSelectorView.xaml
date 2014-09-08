@@ -1,0 +1,14 @@
+﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.CacheSelectorView"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:catel="http://catel.codeplex.com">
+    <ItemsControl ItemsSource="{Binding Caches}"
+                  ManipulationBoundaryFeedback="UIElement_OnManipulationBoundaryFeedback">
+        <ItemsControl.ItemTemplate>
+            <DataTemplate>
+                <Button Content="{Binding CacheName}" />
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
+        
+    </ItemsControl>
+</catel:UserControl>

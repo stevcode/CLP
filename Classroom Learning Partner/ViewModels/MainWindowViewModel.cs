@@ -35,7 +35,7 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentProgramMode = currentProgramMode;
 
             InitializeCommands();
-            InitializeLocalCache(currentProgramMode);
+            
             TitleBarText = CLP_TEXT;
             CurrentUser = Person.Guest;
             IsProjectorFrozen = CurrentProgramMode != ProgramModes.Projector;
@@ -472,7 +472,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Static Methods
 
-        private static void InitializeLocalCache(ProgramModes currentProgramMode)
+        public static void InitializeLocalCache(ProgramModes currentProgramMode)
         {
             string variant;
             switch (currentProgramMode)

@@ -33,6 +33,7 @@ namespace Classroom_Learning_Partner
             MainWindowViewModel.Workspace = new BlankWorkspaceViewModel();
             window.Show();
 
+            MainWindowViewModel.InitializeLocalCache(currentProgramMode);
             CLPServiceAgent.Instance.NetworkSetup();
             MainWindowViewModel.SetWorkspace();
         }
