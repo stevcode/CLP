@@ -189,7 +189,7 @@ namespace CLP.Entities
 
         public override string FormattedName
         {
-            get { return string.Format("Remainder Errors{0}", HadTrouble ? " **Trouble**" : string.Empty); }
+            get { return string.Format("Division Template 1 Remainder Errors{0}", HadTrouble ? " **Trouble**" : string.Empty); }
         }
 
         public override string FormattedValue

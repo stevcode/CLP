@@ -49,7 +49,7 @@ namespace CLP.Entities
 
         public override string FormattedName
         {
-            get { return "Division Template Deleted"; }
+            get { return "Division Template 1 Deleted"; }
         }
 
         public override string FormattedValue

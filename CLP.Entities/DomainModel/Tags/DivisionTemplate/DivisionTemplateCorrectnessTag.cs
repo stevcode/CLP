@@ -56,7 +56,7 @@ namespace CLP.Entities
 
         public override string FormattedName
         {
-            get { return "Division Template Correctness"; }
+            get { return "Division Template 1 Correctness"; }
         }
 
         public override string FormattedValue

@@ -70,7 +70,7 @@ namespace CLP.Entities
 
         public override string FormattedName
         {
-            get { return "Division Template Representation Correctness"; }
+            get { return "Division Template 1 Representation Correctness"; }
         }
 
         public override string FormattedValue

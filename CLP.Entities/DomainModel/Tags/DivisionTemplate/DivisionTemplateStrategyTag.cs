@@ -69,7 +69,7 @@ namespace CLP.Entities
 
         public override string FormattedName
         {
-            get { return "Division Template Strategy"; }
+            get { return "Division Template 1 Strategy"; }
         }
 
         public override string FormattedValue

@@ -56,7 +56,7 @@ namespace CLP.Entities
 
         public override string FormattedName
         {
-            get { return "Division Template Creation Error"; }
+            get { return "Division Template 1 Creation Error"; }
         }
 
         public override string FormattedValue

@@ -189,7 +189,7 @@ namespace CLP.Entities
 
         public override string FormattedName
         {
-            get { return string.Format("Factor Pair Errors{0}", HadTrouble ? " **Trouble**" : string.Empty); }
+            get { return string.Format("Division Template 1 Factor Pair Errors{0}", HadTrouble ? " **Trouble**" : string.Empty); }
         }
 
         public override string FormattedValue
