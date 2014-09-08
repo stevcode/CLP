@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Threading;
+using Classroom_Learning_Partner.ViewModels;
 using CLP.Entities;
 using Microsoft.Ink;
 
@@ -48,9 +49,9 @@ namespace Classroom_Learning_Partner
         public Dictionary<string,byte[]> SendImages(List<string> imageHashIDs)
         {
             var imageList = new Dictionary<string,byte[]>();
-            if(Directory.Exists(App.ImageCacheDirectory))
+            if(Directory.Exists(MainWindowViewModel.ImageCacheDirectory))
             {
-                var localImageFilePaths = Directory.EnumerateFiles(App.ImageCacheDirectory);
+                var localImageFilePaths = Directory.EnumerateFiles(MainWindowViewModel.ImageCacheDirectory);
                 foreach(var localImageFilePath in localImageFilePaths)
                 {
                     var imageHashID = Path.GetFileNameWithoutExtension(localImageFilePath);
@@ -168,7 +169,7 @@ namespace Classroom_Learning_Partner
                                       }
 
                                       var notebookFolderName = notebook.Name + ";" + notebook.ID + ";" + notebook.Owner.FullName + ";" + notebook.OwnerID;
-                                      var notebookFolderPath = Path.Combine(App.NotebookCacheDirectory, notebookFolderName);
+                                      var notebookFolderPath = Path.Combine(MainWindowViewModel.NotebookCacheDirectory, notebookFolderName);
                                       notebook.SavePartialNotebook(notebookFolderPath, false);
                                   });
         }
@@ -224,7 +225,7 @@ namespace Classroom_Learning_Partner
                     var newNotebook = App.MainWindowViewModel.OpenNotebooks.First().CopyForNewOwner(student);
 
                     var studentNotebookFolderName = newNotebook.Name + ";" + newNotebook.ID + ";" + newNotebook.Owner.FullName + ";" + newNotebook.OwnerID;
-                    var studentNotebookFolderPath = Path.Combine(App.NotebookCacheDirectory, studentNotebookFolderName);
+                    var studentNotebookFolderPath = Path.Combine(MainWindowViewModel.NotebookCacheDirectory, studentNotebookFolderName);
                     if(Directory.Exists(studentNotebookFolderPath))
                     {
                         var pageIDs = App.MainWindowViewModel.CurrentClassPeriod.PageIDs;

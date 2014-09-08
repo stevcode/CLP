@@ -1815,7 +1815,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
                 try
                 {
-                    App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.SaveClassSubject(App.ClassCacheDirectory);
+                    App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.SaveClassSubject(MainWindowViewModel.ClassCacheDirectory);
                 }
                 catch
                 {
@@ -1943,7 +1943,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             try
             {
-                App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.SaveClassSubject(App.ClassCacheDirectory);
+                App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.SaveClassSubject(MainWindowViewModel.ClassCacheDirectory);
             }
             catch
             {
@@ -2258,7 +2258,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 var hash = md5.ComputeHash(bytes);
                 var imageHashID = Convert.ToBase64String(hash).Replace("/", "_").Replace("+", "-").Replace("=","");
                 var newFileName = imageHashID + Path.GetExtension(filename);
-                var newFilePath = Path.Combine(App.ImageCacheDirectory, newFileName);
+                var newFilePath = Path.Combine(MainWindowViewModel.ImageCacheDirectory, newFileName);
 
                 try
                 {
@@ -2380,7 +2380,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 var hash = md5.ComputeHash(bytes);
                 var imageHashID = Convert.ToBase64String(hash).Replace("/", "_").Replace("+", "-").Replace("=","");
                 var newFileName = imageHashID + Path.GetExtension(filename);
-                var newFilePath = Path.Combine(App.ImageCacheDirectory, newFileName);
+                var newFilePath = Path.Combine(MainWindowViewModel.ImageCacheDirectory, newFileName);
 
                 try
                 {
@@ -3089,7 +3089,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             classSubject.Projector = classSubject.Teacher;
-            classSubject.SaveClassSubject(App.ClassCacheDirectory);
+            classSubject.SaveClassSubject(MainWindowViewModel.ClassCacheDirectory);
         }
 
         /// <summary>

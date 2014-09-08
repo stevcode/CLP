@@ -469,7 +469,7 @@ namespace Classroom_Learning_Partner
                         continue;
                     }
 
-                    var folderPath = Path.Combine(App.NotebookCacheDirectory, notebookName);
+                    var folderPath = Path.Combine(MainWindowViewModel.NotebookCacheDirectory, notebookName);
                     if(!Directory.Exists(folderPath))
                     {
                         continue;

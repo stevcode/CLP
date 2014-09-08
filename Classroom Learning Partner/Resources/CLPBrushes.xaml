@@ -5,11 +5,37 @@
     <!--<SolidColorBrush x:Key="MainColor" Color="#502C5F" />
     <SolidColorBrush x:Key="HighlightColor" Color="#744887" />
     <SolidColorBrush x:Key="BoldColor" Color="#3F1B4E" />-->
-    <SolidColorBrush x:Key="MainColor" Color="#2F64B9" />
-    <SolidColorBrush x:Key="HighlightColor" Color="#744887" />
-    <SolidColorBrush x:Key="BoldColor" Color="#3F1B4E" />
-    <SolidColorBrush x:Key="GrayBackgroundColor" Color="#F3F3F3" />
-    <SolidColorBrush x:Key="GrayEdgeColor" Color="#D4D4D4" />
-    <SolidColorBrush x:Key="GrayBorderColor" Color="#9FA6AD" />
+    <SolidColorBrush x:Key="MainColor"
+                     Color="#2F64B9" />
+    <SolidColorBrush x:Key="MainColorDark"
+                     Color="#0E4CAD" />
+    <SolidColorBrush x:Key="MainColorDarkDark"
+                     Color="#0B3880" />
+    <SolidColorBrush x:Key="MainColorLight"
+                     Color="#4E7DC7" />
+    <SolidColorBrush x:Key="MainColorLightLight"
+                     Color="#769CD9" />
+
+    <SolidColorBrush x:Key="AccentColor"
+                     Color="#FFB32E" />
+    <SolidColorBrush x:Key="AccentColorDark"
+                     Color="#FFA200" />
+    <SolidColorBrush x:Key="AccentColorDarkDark"
+                     Color="#C27C00" />
+    <SolidColorBrush x:Key="AccentColorLight"
+                     Color="#FFC154" />
+    <SolidColorBrush x:Key="AccentColorLightLight"
+                     Color="#FFD17F" />
+
+    <SolidColorBrush x:Key="HighlightColor"
+                     Color="#744887" />
+    <SolidColorBrush x:Key="BoldColor"
+                     Color="#3F1B4E" />
+    <SolidColorBrush x:Key="GrayBackgroundColor"
+                     Color="#F3F3F3" />
+    <SolidColorBrush x:Key="GrayEdgeColor"
+                     Color="#D4D4D4" />
+    <SolidColorBrush x:Key="GrayBorderColor"
+                     Color="#9FA6AD" />
 
 </ResourceDictionary>
