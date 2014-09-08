@@ -286,7 +286,6 @@
     <Compile Include="ViewModels\Pages\CLPAnimationPageViewModel.cs" />
     <Compile Include="ViewModels\Pages\CLPPageViewModel.cs" />
     <Compile Include="ViewModels\Displays\SingleDisplayViewModel.cs" />
-    <Compile Include="ViewModels\Tags\DivisionTemplateFailedSnapTagViewModel.cs" />
     <Compile Include="ViewModels\Tags\DivisionTemplateTroubleWithRemaindersTagViewModel.cs" />
     <Compile Include="ViewModels\Tags\MultiplicationRelationDefinitionTagViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPAggregationDataTableViewModel.cs" />
@@ -317,9 +316,6 @@
     </Compile>
     <Compile Include="Views\Modal Windows\MVVM\ClassSubjectCreationView.xaml.cs">
       <DependentUpon>ClassSubjectCreationView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Modal Windows\MVVM\DivisionTemplateFailedSnapTagView.xaml.cs">
-      <DependentUpon>DivisionTemplateFailedSnapTagView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Modal Windows\MVVM\DivisionTemplateTroubleWithRemaindersTagView.xaml.cs">
       <DependentUpon>DivisionTemplateTroubleWithRemaindersTagView.xaml</DependentUpon>
@@ -572,10 +568,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Modal Windows\MVVM\ClassSubjectCreationView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Modal Windows\MVVM\DivisionTemplateFailedSnapTagView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

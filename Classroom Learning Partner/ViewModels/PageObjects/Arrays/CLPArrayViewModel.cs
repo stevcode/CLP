@@ -422,117 +422,97 @@ namespace Classroom_Learning_Partner.ViewModels
                         if (diff < 50)
                         {
                             var snapFailed = false;
-                            if (snappingArray.Rows != divisionTemplate.Rows)
+
+                            if (divisionTemplate.CurrentRemainder != divisionTemplate.Dividend % divisionTemplate.Rows)
                             {
-                                if (snappingArray.Columns == divisionTemplate.Rows)
-                                {
-                                    var existingTag =
-                                        pageObject.ParentPage.Tags.OfType<DivisionTemplateFailedSnapTag>()
-                                                  .FirstOrDefault(x => x.Value == DivisionTemplateFailedSnapTag.AcceptedValues.SnappedWrongOrientation);
+                                var existingFactorPairErrorsTag = divisionTemplate.ParentPage.Tags.OfType<DivisionTemplateFactorPairErrorsTag>().FirstOrDefault(x => x.DivisionTemplateID == divisionTemplate.ID);
+                                var isArrayDimensionErrorsTagOnPage = true;
 
-                                    var previousNumberOfAttempts = 0;
-                                    if (existingTag != null)
+                                if (existingFactorPairErrorsTag == null)
+                                {
+                                    existingFactorPairErrorsTag = new DivisionTemplateFactorPairErrorsTag(divisionTemplate.ParentPage,
+                                                                                                        Origin.StudentPageGenerated,
+                                                                                                        divisionTemplate.ID,
+                                                                                                        divisionTemplate.Dividend,
+                                                                                                        divisionTemplate.Rows);
+                                    isArrayDimensionErrorsTagOnPage = false;
+                                }
+
+                                if (snappingArray.Rows != divisionTemplate.Rows)
+                                {
+                                    if (snappingArray.Columns == divisionTemplate.Rows)
                                     {
-                                        previousNumberOfAttempts = existingTag.NumberOfAttempts;
-                                        pageObject.ParentPage.RemoveTag(existingTag);
+                                        existingFactorPairErrorsTag.SnapWrongOrientationDimensions.Add(string.Format("{0}x{1}", snappingArray.Rows, snappingArray.Columns));
                                     }
-                                    var newTag = new DivisionTemplateFailedSnapTag(pageObject.ParentPage,
-                                                                                   App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Student
-                                                                                       ? Origin.StudentPageObjectGenerated
-                                                                                       : Origin.TeacherPageObjectGenerated,
-                                                                                   DivisionTemplateFailedSnapTag.AcceptedValues
-                                                                                                                .SnappedWrongOrientation,
-                                                                                   previousNumberOfAttempts + 1);
-                                    pageObject.ParentPage.AddTag(newTag);
-                                }
-                                else
-                                {
-                                    var existingTag =
-                                        pageObject.ParentPage.Tags.OfType<DivisionTemplateFailedSnapTag>()
-                                                  .FirstOrDefault(
-                                                                  x =>
-                                                                  x.Value == DivisionTemplateFailedSnapTag.AcceptedValues.SnappedIncorrectDimension);
-
-                                    var previousNumberOfAttempts = 0;
-                                    if (existingTag != null)
+                                    else
                                     {
-                                        previousNumberOfAttempts = existingTag.NumberOfAttempts;
-                                        pageObject.ParentPage.RemoveTag(existingTag);
+                                        existingFactorPairErrorsTag.SnapIncorrectDimensionDimensions.Add(string.Format("{0}x{1}", snappingArray.Rows, snappingArray.Columns));
                                     }
-                                    var newTag = new DivisionTemplateFailedSnapTag(pageObject.ParentPage,
-                                                                                   App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Student
-                                                                                       ? Origin.StudentPageObjectGenerated
-                                                                                       : Origin.TeacherPageObjectGenerated,
-                                                                                   DivisionTemplateFailedSnapTag.AcceptedValues
-                                                                                                                .SnappedIncorrectDimension,
-                                                                                   previousNumberOfAttempts + 1);
-                                    pageObject.ParentPage.AddTag(newTag);
+
+                                    snapFailed = true;
+                                }
+                                else if (divisionTemplate.CurrentRemainder < snappingArray.Rows * snappingArray.Columns)
+                                {
+                                    existingFactorPairErrorsTag.SnapArrayTooLargeDimensions.Add(string.Format("{0}x{1}", snappingArray.Rows, snappingArray.Columns));
+
+                                    snapFailed = true;
                                 }
 
-                                var factorCardViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(divisionTemplate);
-                                foreach (var viewModel in factorCardViewModels)
+                                if (!isArrayDimensionErrorsTagOnPage &&
+                                    existingFactorPairErrorsTag.ErrorAtemptsSum > 0)
                                 {
-                                    (viewModel as FuzzyFactorCardViewModel).RejectSnappedArray();
+                                    divisionTemplate.ParentPage.AddTag(existingFactorPairErrorsTag);
                                 }
-                                snapFailed = true;
                             }
-                            else if (divisionTemplate.CurrentRemainder < divisionTemplate.Rows * snappingArray.Columns)
+                            else
                             {
-                                //TODO Liz - get old position - maybe from move batch? (Steve will email about this)
-                                //var oldX = 10.0;
-                                //var oldY = 10.0;
-                                //APageObjectBaseViewModel.ChangePageObjectPosition(snappingArray, oldX, oldY, false);
+                                var existingRemainderErrorsTag = divisionTemplate.ParentPage.Tags.OfType<DivisionTemplateRemainderErrorsTag>().FirstOrDefault(x => x.DivisionTemplateID == divisionTemplate.ID);
+                                var isRemainderErrorsTagOnPage = true;
 
-                                var existingTag =
-                                    pageObject.ParentPage.Tags.OfType<DivisionTemplateFailedSnapTag>()
-                                              .FirstOrDefault(x => x.Value == DivisionTemplateFailedSnapTag.AcceptedValues.SnappedArrayTooLarge);
-
-                                var previousNumberOfAttempts = 0;
-                                if (existingTag != null)
+                                if (existingRemainderErrorsTag == null)
                                 {
-                                    previousNumberOfAttempts = existingTag.NumberOfAttempts;
-                                    pageObject.ParentPage.RemoveTag(existingTag);
+                                    existingRemainderErrorsTag = new DivisionTemplateRemainderErrorsTag(divisionTemplate.ParentPage,
+                                                                                                        Origin.StudentPageGenerated,
+                                                                                                        divisionTemplate.ID,
+                                                                                                        divisionTemplate.Dividend,
+                                                                                                        divisionTemplate.Rows);
+                                    isRemainderErrorsTagOnPage = false;
                                 }
-                                var newTag = new DivisionTemplateFailedSnapTag(pageObject.ParentPage,
-                                                                               App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Student
-                                                                                   ? Origin.StudentPageObjectGenerated
-                                                                                   : Origin.TeacherPageObjectGenerated,
-                                                                               DivisionTemplateFailedSnapTag.AcceptedValues.SnappedArrayTooLarge,
-                                                                               previousNumberOfAttempts + 1);
-                                pageObject.ParentPage.AddTag(newTag);
 
-                                var factorCardViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(divisionTemplate);
-                                foreach (var viewModel in factorCardViewModels)
+                                if (snappingArray.Rows != divisionTemplate.Rows)
                                 {
-                                    (viewModel as FuzzyFactorCardViewModel).RejectSnappedArray();
+                                    if (snappingArray.Columns == divisionTemplate.Rows)
+                                    {
+                                        existingRemainderErrorsTag.SnapWrongOrientationDimensions.Add(string.Format("{0}x{1}", snappingArray.Rows, snappingArray.Columns));
+                                    }
+                                    else
+                                    {
+                                        existingRemainderErrorsTag.SnapIncorrectDimensionDimensions.Add(string.Format("{0}x{1}", snappingArray.Rows, snappingArray.Columns));
+                                    }
+
+                                    snapFailed = true;
                                 }
-                                snapFailed = true;
+                                else if (divisionTemplate.CurrentRemainder < snappingArray.Rows * snappingArray.Columns)
+                                {
+                                    existingRemainderErrorsTag.SnapArrayTooLargeDimensions.Add(string.Format("{0}x{1}", snappingArray.Rows, snappingArray.Columns));
+
+                                    snapFailed = true;
+                                }
+
+                                if (!isRemainderErrorsTagOnPage &&
+                                    existingRemainderErrorsTag.ErrorAtemptsSum > 0)
+                                {
+                                    divisionTemplate.ParentPage.AddTag(existingRemainderErrorsTag);
+                                }
                             }
 
                             if (snapFailed)
                             {
-                                // Only increase FailedSnap attempt if Division Template already full.
-                                if (divisionTemplate.CurrentRemainder != divisionTemplate.Dividend % divisionTemplate.Rows)
+                                var factorCardViewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(divisionTemplate);
+                                foreach (var viewModel in factorCardViewModels)
                                 {
-                                    continue;
+                                    (viewModel as FuzzyFactorCardViewModel).RejectSnappedArray();
                                 }
-
-                                var existingTroubleWithRemaindersTag =
-                                    PageObject.ParentPage.Tags.OfType<DivisionTemplateTroubleWithRemaindersTag>()
-                                              .FirstOrDefault(x => x.DivisionTemplateID == divisionTemplate.ID);
-
-                                if (existingTroubleWithRemaindersTag == null)
-                                {
-                                    existingTroubleWithRemaindersTag = new DivisionTemplateTroubleWithRemaindersTag(PageObject.ParentPage,
-                                                                                                                    Origin.StudentPageGenerated,
-                                                                                                                    divisionTemplate.ID,
-                                                                                                                    divisionTemplate.Dividend,
-                                                                                                                    divisionTemplate.Rows);
-                                    PageObject.ParentPage.AddTag(existingTroubleWithRemaindersTag);
-                                }
-
-                                existingTroubleWithRemaindersTag.FailedSnapAttempts++;
-
                                 continue;
                             }
 
@@ -895,24 +875,38 @@ namespace Classroom_Learning_Partner.ViewModels
                 // Only increase OrientationChanged attempt if Division Template already full.
                 if (divisionTemplate.CurrentRemainder != divisionTemplate.Dividend % divisionTemplate.Rows)
                 {
-                    return;
-                }
-
-                var existingTroubleWithRemaindersTag =
-                    PageObject.ParentPage.Tags.OfType<DivisionTemplateTroubleWithRemaindersTag>()
+                    var existingFactorPairErrorsTag =
+                    PageObject.ParentPage.Tags.OfType<DivisionTemplateRemainderErrorsTag>()
                               .FirstOrDefault(x => x.DivisionTemplateID == divisionTemplate.ID);
 
-                if (existingTroubleWithRemaindersTag == null)
-                {
-                    existingTroubleWithRemaindersTag = new DivisionTemplateTroubleWithRemaindersTag(PageObject.ParentPage,
-                                                                                                    Origin.StudentPageGenerated,
-                                                                                                    divisionTemplate.ID,
-                                                                                                    divisionTemplate.Dividend,
-                                                                                                    divisionTemplate.Rows);
-                    PageObject.ParentPage.AddTag(existingTroubleWithRemaindersTag);
+                    if (existingFactorPairErrorsTag == null)
+                    {
+                        existingFactorPairErrorsTag = new DivisionTemplateRemainderErrorsTag(PageObject.ParentPage,
+                                                                                                        Origin.StudentPageGenerated,
+                                                                                                        divisionTemplate.ID,
+                                                                                                        divisionTemplate.Dividend,
+                                                                                                        divisionTemplate.Rows);
+                        PageObject.ParentPage.AddTag(existingFactorPairErrorsTag);
+                    }
+                    existingFactorPairErrorsTag.OrientationChangedDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
                 }
+                else
+                {
+                    var existingRemainderErrorsTag =
+                        PageObject.ParentPage.Tags.OfType<DivisionTemplateRemainderErrorsTag>()
+                                  .FirstOrDefault(x => x.DivisionTemplateID == divisionTemplate.ID);
 
-                existingTroubleWithRemaindersTag.OrientationChangedAttempts++;
+                    if (existingRemainderErrorsTag == null)
+                    {
+                        existingRemainderErrorsTag = new DivisionTemplateRemainderErrorsTag(PageObject.ParentPage,
+                                                                                            Origin.StudentPageGenerated,
+                                                                                            divisionTemplate.ID,
+                                                                                            divisionTemplate.Dividend,
+                                                                                            divisionTemplate.Rows);
+                        PageObject.ParentPage.AddTag(existingRemainderErrorsTag);
+                    }
+                    existingRemainderErrorsTag.OrientationChangedDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
+                }
             }
         }
 

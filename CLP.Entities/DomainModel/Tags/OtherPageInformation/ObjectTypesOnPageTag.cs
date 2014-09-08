@@ -51,6 +51,11 @@ namespace CLP.Entities
             get { return Category.OtherPageInformation; }
         }
 
+        public override string FormattedName
+        {
+            get { return "Objects On Page"; }
+        }
+
         public override string FormattedValue
         {
             get { return string.Join(",", ObjectTypes); }

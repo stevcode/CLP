@@ -7,9 +7,9 @@ namespace Classroom_Learning_Partner.ViewModels
     public class DivisionTemplateTroubleWithRemaindersTagViewModel : ViewModelBase
     {
         /// <summary>Initializes a new instance of the <see cref="MultiplicationRelationDefinitionTagViewModel" /> class.</summary>
-        public DivisionTemplateTroubleWithRemaindersTagViewModel(DivisionTemplateTroubleWithRemaindersTag troubleWithRemaindersTag)
+        public DivisionTemplateTroubleWithRemaindersTagViewModel(DivisionTemplateRemainderErrorsTag remainderErrorsTag)
         {
-            TroubleWithRemaindersTag = troubleWithRemaindersTag;
+            RemainderErrorsTag = remainderErrorsTag;
         }
 
         /// <summary>Gets the title of the view model.</summary>
@@ -23,17 +23,17 @@ namespace Classroom_Learning_Partner.ViewModels
 
         /// <summary>Trouble With Remainders Tag Model.</summary>
         [Model(SupportIEditableObject = true)]
-        public DivisionTemplateTroubleWithRemaindersTag TroubleWithRemaindersTag
+        public DivisionTemplateRemainderErrorsTag RemainderErrorsTag
         {
-            get { return GetValue<DivisionTemplateTroubleWithRemaindersTag>(TroubleWithRemaindersTagProperty); }
+            get { return GetValue<DivisionTemplateRemainderErrorsTag>(TroubleWithRemaindersTagProperty); }
             set { SetValue(TroubleWithRemaindersTagProperty, value); }
         }
 
-        public static readonly PropertyData TroubleWithRemaindersTagProperty = RegisterProperty("TroubleWithRemaindersTag",
-                                                                                                typeof (DivisionTemplateTroubleWithRemaindersTag));
+        public static readonly PropertyData TroubleWithRemaindersTagProperty = RegisterProperty("remainderErrorsTag",
+                                                                                                typeof (DivisionTemplateRemainderErrorsTag));
 
         /// <summary>Dividend of the DivisionTemplate being compared against.</summary>
-        [ViewModelToModel("TroubleWithRemaindersTag")]
+        [ViewModelToModel("remainderErrorsTag")]
         public double Dividend
         {
             get { return GetValue<double>(DividendProperty); }
@@ -43,7 +43,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData DividendProperty = RegisterProperty("Dividend", typeof (double));
 
         /// <summary>Divisor of the DivisionTemplate being compared against.</summary>
-        [ViewModelToModel("TroubleWithRemaindersTag")]
+        [ViewModelToModel("remainderErrorsTag")]
         public double Divisor
         {
             get { return GetValue<double>(DivisorProperty); }
@@ -53,7 +53,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData DivisorProperty = RegisterProperty("Divisor", typeof (double));
 
         /// <summary>Number of times an array that was too large to fit the Division Template was created.</summary>
-        [ViewModelToModel("TroubleWithRemaindersTag")]
+        [ViewModelToModel("remainderErrorsTag")]
         public int ArrayTooLargeAttempts
         {
             get { return GetValue<int>(ArrayTooLargeAttemptsProperty); }
@@ -63,7 +63,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData ArrayTooLargeAttemptsProperty = RegisterProperty("ArrayTooLargeAttempts", typeof (int), 0);
 
         /// <summary>Number of times an array failed to snap into the Division Template.</summary>
-        [ViewModelToModel("TroubleWithRemaindersTag")]
+        [ViewModelToModel("remainderErrorsTag")]
         public int FailedSnapAttempts
         {
             get { return GetValue<int>(FailedSnapAttemptsProperty); }
@@ -73,7 +73,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData FailedSnapAttemptsProperty = RegisterProperty("FailedSnapAttempts", typeof (int), 0);
 
         /// <summary>Number of times an array's orientation was changed while attempting to solve the remainder of a Division Template.</summary>
-        [ViewModelToModel("TroubleWithRemaindersTag")]
+        [ViewModelToModel("remainderErrorsTag")]
         public int OrientationChangedAttempts
         {
             get { return GetValue<int>(OrientationChangedAttemptsProperty); }

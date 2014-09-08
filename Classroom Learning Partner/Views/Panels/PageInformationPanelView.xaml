@@ -326,7 +326,8 @@
 
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <Grid Margin="5 2">
+                        <Grid Margin="5 2"
+                              Visibility="{Binding IsHiddenTag, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />

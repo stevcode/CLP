@@ -59,6 +59,11 @@ namespace CLP.Entities
             get { return Category.Array; }
         }
 
+        public override string FormattedName
+        {
+            get { return "Array Orientation"; }
+        }
+
         public override string FormattedValue
         {
             get { return Value.ToString(); }

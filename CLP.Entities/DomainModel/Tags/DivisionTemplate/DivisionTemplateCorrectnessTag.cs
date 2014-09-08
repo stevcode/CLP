@@ -54,6 +54,11 @@ namespace CLP.Entities
             get { return Category.DivisionTemplate; }
         }
 
+        public override string FormattedName
+        {
+            get { return "Division Template 1 Correctness"; }
+        }
+
         public override string FormattedValue
         {
             get { return string.Format("{0}", Correctness); }

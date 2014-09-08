@@ -109,11 +109,106 @@ namespace CLP.Entities
         public override void OnAdded()
         {
             base.OnAdded();
-            // If FFC with remainder on page, update
-            foreach(var ffc in ParentPage.PageObjects.OfType<FuzzyFactorCard>().ToList())
+
+            foreach(var divisionTemplate in ParentPage.PageObjects.OfType<FuzzyFactorCard>().ToList())
             {
-                ffc.AnalyzeArrays();
-                ffc.UpdateRemainderRegion();
+                divisionTemplate.UpdateRemainderRegion();
+
+                if (ParentPage.IsTagAddPrevented)
+                {
+                    continue;
+                }
+
+                if (divisionTemplate.CurrentRemainder != divisionTemplate.Dividend % divisionTemplate.Rows)
+                {
+                    var existingFactorPairErrorsTag = ParentPage.Tags.OfType<DivisionTemplateFactorPairErrorsTag>().FirstOrDefault(x => x.DivisionTemplateID == divisionTemplate.ID);
+                    var isArrayDimensionErrorsTagOnPage = true;
+
+                    if (existingFactorPairErrorsTag == null)
+                    {
+                        existingFactorPairErrorsTag = new DivisionTemplateFactorPairErrorsTag(ParentPage,
+                                                                                            Origin.StudentPageGenerated,
+                                                                                            divisionTemplate.ID,
+                                                                                            divisionTemplate.Dividend,
+                                                                                            divisionTemplate.Rows);
+                        isArrayDimensionErrorsTagOnPage = false;
+                    }
+
+                    if (Columns == divisionTemplate.Dividend ||
+                        Rows == divisionTemplate.Dividend)
+                    {
+                        existingFactorPairErrorsTag.CreateDividendAsDimensionDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
+                    }
+
+                    if (Rows != divisionTemplate.Rows)
+                    {
+                        if (Columns == divisionTemplate.Rows)
+                        {
+                            existingFactorPairErrorsTag.CreateWrongOrientationDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
+                        }
+                        else
+                        {
+                            existingFactorPairErrorsTag.CreateIncorrectDimensionDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
+                        }
+                    }
+
+                    var totalAreaOfArraysOnPage = ParentPage.PageObjects.OfType<CLPArray>().Sum(x => x.Rows * x.Columns);
+                    if (totalAreaOfArraysOnPage > divisionTemplate.CurrentRemainder)
+                    {
+                        existingFactorPairErrorsTag.CreateArrayTooLargeDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
+                    }
+
+                    if (!isArrayDimensionErrorsTagOnPage &&
+                        existingFactorPairErrorsTag.ErrorAtemptsSum > 0)
+                    {
+                        ParentPage.AddTag(existingFactorPairErrorsTag);
+                    }
+                }
+                else
+                {
+                    var existingRemainderErrorsTag = ParentPage.Tags.OfType<DivisionTemplateRemainderErrorsTag>().FirstOrDefault(x => x.DivisionTemplateID == divisionTemplate.ID);
+                    var isRemainderErrorsTagOnPage = true;
+
+                    if (existingRemainderErrorsTag == null)
+                    {
+                        existingRemainderErrorsTag = new DivisionTemplateRemainderErrorsTag(ParentPage,
+                                                                                            Origin.StudentPageGenerated,
+                                                                                            divisionTemplate.ID,
+                                                                                            divisionTemplate.Dividend,
+                                                                                            divisionTemplate.Rows);
+                        isRemainderErrorsTagOnPage = false;
+                    }
+
+                    if (Columns == divisionTemplate.Dividend ||
+                        Rows == divisionTemplate.Dividend)
+                    {
+                        existingRemainderErrorsTag.CreateDividendAsDimensionDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
+                    }
+
+                    if (Rows != divisionTemplate.Rows)
+                    {
+                        if (Columns == divisionTemplate.Rows)
+                        {
+                            existingRemainderErrorsTag.CreateWrongOrientationDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
+                        }
+                        else
+                        {
+                            existingRemainderErrorsTag.CreateIncorrectDimensionDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
+                        }
+                    }
+
+                    var totalAreaOfArraysOnPage = ParentPage.PageObjects.OfType<CLPArray>().Sum(x => x.Rows * x.Columns);
+                    if (totalAreaOfArraysOnPage > divisionTemplate.CurrentRemainder)
+                    {
+                        existingRemainderErrorsTag.CreateArrayTooLargeDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
+                    }
+
+                    if (!isRemainderErrorsTagOnPage &&
+                        existingRemainderErrorsTag.ErrorAtemptsSum > 0)
+                    {
+                        ParentPage.AddTag(existingRemainderErrorsTag);
+                    }
+                }
             }
         }
 
@@ -121,10 +216,9 @@ namespace CLP.Entities
         {
             base.OnDeleted();
             // If FFC with remainder on page, update
-            foreach(var ffc in ParentPage.PageObjects.OfType<FuzzyFactorCard>())
+            foreach(var divisionTemplate in ParentPage.PageObjects.OfType<FuzzyFactorCard>())
             {
-                ffc.AnalyzeArrays();
-                ffc.UpdateRemainderRegion();
+                divisionTemplate.UpdateRemainderRegion();
             }
         }
 

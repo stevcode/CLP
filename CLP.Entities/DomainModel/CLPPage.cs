@@ -434,24 +434,6 @@ namespace CLP.Entities
             }
         }
 
-        public virtual string DivisionTemplateIncorrectArrayCreation
-        {
-            get
-            {
-                var incorrectReasonTag = Tags.FirstOrDefault(x => x is DivisionTemplateIncorrectArrayCreationTag) as DivisionTemplateIncorrectArrayCreationTag;
-                return incorrectReasonTag != null ? incorrectReasonTag.Value.ToString() : "Not Set";
-            }
-        }
-
-        public virtual string DivisionTemplateStrategy
-        {
-            get
-            {
-                var strategyTag = Tags.FirstOrDefault(x => x is DivisionTemplateStrategyTag) as DivisionTemplateStrategyTag;
-                return strategyTag != null ? strategyTag.Value.ToString() : "Not Set";
-            }
-        }
-
         /// <summary>
         /// Unserialized <see cref="Stroke" />s of the <see cref="CLPPage" />.
         /// </summary>
