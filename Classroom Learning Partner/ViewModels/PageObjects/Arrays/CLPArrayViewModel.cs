@@ -425,12 +425,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
                             if (divisionTemplate.CurrentRemainder != divisionTemplate.Dividend % divisionTemplate.Rows)
                             {
-                                var existingArrayDimensionErrorsTag = divisionTemplate.ParentPage.Tags.OfType<DivisionTemplateArrayDimensionErrorsTag>().FirstOrDefault(x => x.DivisionTemplateID == divisionTemplate.ID);
+                                var existingFactorPairErrorsTag = divisionTemplate.ParentPage.Tags.OfType<DivisionTemplateFactorPairErrorsTag>().FirstOrDefault(x => x.DivisionTemplateID == divisionTemplate.ID);
                                 var isArrayDimensionErrorsTagOnPage = true;
 
-                                if (existingArrayDimensionErrorsTag == null)
+                                if (existingFactorPairErrorsTag == null)
                                 {
-                                    existingArrayDimensionErrorsTag = new DivisionTemplateArrayDimensionErrorsTag(divisionTemplate.ParentPage,
+                                    existingFactorPairErrorsTag = new DivisionTemplateFactorPairErrorsTag(divisionTemplate.ParentPage,
                                                                                                         Origin.StudentPageGenerated,
                                                                                                         divisionTemplate.ID,
                                                                                                         divisionTemplate.Dividend,
@@ -442,26 +442,26 @@ namespace Classroom_Learning_Partner.ViewModels
                                 {
                                     if (snappingArray.Columns == divisionTemplate.Rows)
                                     {
-                                        existingArrayDimensionErrorsTag.SnapWrongOrientationAttempts++;
+                                        existingFactorPairErrorsTag.SnapWrongOrientationDimensions.Add(string.Format("{0}x{1}", snappingArray.Rows, snappingArray.Columns));
                                     }
                                     else
                                     {
-                                        existingArrayDimensionErrorsTag.SnapIncorrectDimensionAttempts++;
+                                        existingFactorPairErrorsTag.SnapIncorrectDimensionDimensions.Add(string.Format("{0}x{1}", snappingArray.Rows, snappingArray.Columns));
                                     }
 
                                     snapFailed = true;
                                 }
                                 else if (divisionTemplate.CurrentRemainder < snappingArray.Rows * snappingArray.Columns)
                                 {
-                                    existingArrayDimensionErrorsTag.SnapArrayTooLargeAttempts++;
+                                    existingFactorPairErrorsTag.SnapArrayTooLargeDimensions.Add(string.Format("{0}x{1}", snappingArray.Rows, snappingArray.Columns));
 
                                     snapFailed = true;
                                 }
 
                                 if (!isArrayDimensionErrorsTagOnPage &&
-                                    existingArrayDimensionErrorsTag.ErrorAtemptsSum > 0)
+                                    existingFactorPairErrorsTag.ErrorAtemptsSum > 0)
                                 {
-                                    divisionTemplate.ParentPage.AddTag(existingArrayDimensionErrorsTag);
+                                    divisionTemplate.ParentPage.AddTag(existingFactorPairErrorsTag);
                                 }
                             }
                             else
@@ -483,18 +483,18 @@ namespace Classroom_Learning_Partner.ViewModels
                                 {
                                     if (snappingArray.Columns == divisionTemplate.Rows)
                                     {
-                                        existingRemainderErrorsTag.SnapWrongOrientationAttempts++;
+                                        existingRemainderErrorsTag.SnapWrongOrientationDimensions.Add(string.Format("{0}x{1}", snappingArray.Rows, snappingArray.Columns));
                                     }
                                     else
                                     {
-                                        existingRemainderErrorsTag.SnapIncorrectDimensionAttempts++;
+                                        existingRemainderErrorsTag.SnapIncorrectDimensionDimensions.Add(string.Format("{0}x{1}", snappingArray.Rows, snappingArray.Columns));
                                     }
 
                                     snapFailed = true;
                                 }
                                 else if (divisionTemplate.CurrentRemainder < snappingArray.Rows * snappingArray.Columns)
                                 {
-                                    existingRemainderErrorsTag.SnapArrayTooLargeAttempts++;
+                                    existingRemainderErrorsTag.SnapArrayTooLargeDimensions.Add(string.Format("{0}x{1}", snappingArray.Rows, snappingArray.Columns));
 
                                     snapFailed = true;
                                 }
@@ -875,24 +875,38 @@ namespace Classroom_Learning_Partner.ViewModels
                 // Only increase OrientationChanged attempt if Division Template already full.
                 if (divisionTemplate.CurrentRemainder != divisionTemplate.Dividend % divisionTemplate.Rows)
                 {
-                    return;
-                }
-
-                var existingTroubleWithRemaindersTag =
+                    var existingFactorPairErrorsTag =
                     PageObject.ParentPage.Tags.OfType<DivisionTemplateRemainderErrorsTag>()
                               .FirstOrDefault(x => x.DivisionTemplateID == divisionTemplate.ID);
 
-                if (existingTroubleWithRemaindersTag == null)
-                {
-                    existingTroubleWithRemaindersTag = new DivisionTemplateRemainderErrorsTag(PageObject.ParentPage,
-                                                                                                    Origin.StudentPageGenerated,
-                                                                                                    divisionTemplate.ID,
-                                                                                                    divisionTemplate.Dividend,
-                                                                                                    divisionTemplate.Rows);
-                    PageObject.ParentPage.AddTag(existingTroubleWithRemaindersTag);
+                    if (existingFactorPairErrorsTag == null)
+                    {
+                        existingFactorPairErrorsTag = new DivisionTemplateRemainderErrorsTag(PageObject.ParentPage,
+                                                                                                        Origin.StudentPageGenerated,
+                                                                                                        divisionTemplate.ID,
+                                                                                                        divisionTemplate.Dividend,
+                                                                                                        divisionTemplate.Rows);
+                        PageObject.ParentPage.AddTag(existingFactorPairErrorsTag);
+                    }
+                    existingFactorPairErrorsTag.OrientationChangedDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
                 }
+                else
+                {
+                    var existingRemainderErrorsTag =
+                        PageObject.ParentPage.Tags.OfType<DivisionTemplateRemainderErrorsTag>()
+                                  .FirstOrDefault(x => x.DivisionTemplateID == divisionTemplate.ID);
 
-                existingTroubleWithRemaindersTag.OrientationChangedAttempts++;
+                    if (existingRemainderErrorsTag == null)
+                    {
+                        existingRemainderErrorsTag = new DivisionTemplateRemainderErrorsTag(PageObject.ParentPage,
+                                                                                            Origin.StudentPageGenerated,
+                                                                                            divisionTemplate.ID,
+                                                                                            divisionTemplate.Dividend,
+                                                                                            divisionTemplate.Rows);
+                        PageObject.ParentPage.AddTag(existingRemainderErrorsTag);
+                    }
+                    existingRemainderErrorsTag.OrientationChangedDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
+                }
             }
         }
 

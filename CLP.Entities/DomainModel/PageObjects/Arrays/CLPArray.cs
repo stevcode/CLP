@@ -121,12 +121,12 @@ namespace CLP.Entities
 
                 if (divisionTemplate.CurrentRemainder != divisionTemplate.Dividend % divisionTemplate.Rows)
                 {
-                    var existingArrayDimensionErrorsTag = ParentPage.Tags.OfType<DivisionTemplateArrayDimensionErrorsTag>().FirstOrDefault(x => x.DivisionTemplateID == divisionTemplate.ID);
+                    var existingFactorPairErrorsTag = ParentPage.Tags.OfType<DivisionTemplateFactorPairErrorsTag>().FirstOrDefault(x => x.DivisionTemplateID == divisionTemplate.ID);
                     var isArrayDimensionErrorsTagOnPage = true;
 
-                    if (existingArrayDimensionErrorsTag == null)
+                    if (existingFactorPairErrorsTag == null)
                     {
-                        existingArrayDimensionErrorsTag = new DivisionTemplateArrayDimensionErrorsTag(ParentPage,
+                        existingFactorPairErrorsTag = new DivisionTemplateFactorPairErrorsTag(ParentPage,
                                                                                             Origin.StudentPageGenerated,
                                                                                             divisionTemplate.ID,
                                                                                             divisionTemplate.Dividend,
@@ -137,31 +137,31 @@ namespace CLP.Entities
                     if (Columns == divisionTemplate.Dividend ||
                         Rows == divisionTemplate.Dividend)
                     {
-                        existingArrayDimensionErrorsTag.CreateDividendAsDimensionAttempts++;
+                        existingFactorPairErrorsTag.CreateDividendAsDimensionDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
                     }
 
                     if (Rows != divisionTemplate.Rows)
                     {
                         if (Columns == divisionTemplate.Rows)
                         {
-                            existingArrayDimensionErrorsTag.CreateWrongOrientationAttempts++;
+                            existingFactorPairErrorsTag.CreateWrongOrientationDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
                         }
                         else
                         {
-                            existingArrayDimensionErrorsTag.CreateIncorrectDimensionAttempts++;
+                            existingFactorPairErrorsTag.CreateIncorrectDimensionDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
                         }
                     }
 
                     var totalAreaOfArraysOnPage = ParentPage.PageObjects.OfType<CLPArray>().Sum(x => x.Rows * x.Columns);
                     if (totalAreaOfArraysOnPage > divisionTemplate.CurrentRemainder)
                     {
-                        existingArrayDimensionErrorsTag.CreateArrayTooLargeAttempts++;
+                        existingFactorPairErrorsTag.CreateArrayTooLargeDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
                     }
 
                     if (!isArrayDimensionErrorsTagOnPage &&
-                        existingArrayDimensionErrorsTag.ErrorAtemptsSum > 0)
+                        existingFactorPairErrorsTag.ErrorAtemptsSum > 0)
                     {
-                        ParentPage.AddTag(existingArrayDimensionErrorsTag);
+                        ParentPage.AddTag(existingFactorPairErrorsTag);
                     }
                 }
                 else
@@ -182,25 +182,25 @@ namespace CLP.Entities
                     if (Columns == divisionTemplate.Dividend ||
                         Rows == divisionTemplate.Dividend)
                     {
-                        existingRemainderErrorsTag.CreateDividendAsDimensionAttempts++;
+                        existingRemainderErrorsTag.CreateDividendAsDimensionDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
                     }
 
                     if (Rows != divisionTemplate.Rows)
                     {
                         if (Columns == divisionTemplate.Rows)
                         {
-                            existingRemainderErrorsTag.CreateWrongOrientationAttempts++;
+                            existingRemainderErrorsTag.CreateWrongOrientationDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
                         }
                         else
                         {
-                            existingRemainderErrorsTag.CreateIncorrectDimensionAttempts++;
+                            existingRemainderErrorsTag.CreateIncorrectDimensionDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
                         }
                     }
 
                     var totalAreaOfArraysOnPage = ParentPage.PageObjects.OfType<CLPArray>().Sum(x => x.Rows * x.Columns);
                     if (totalAreaOfArraysOnPage > divisionTemplate.CurrentRemainder)
                     {
-                        existingRemainderErrorsTag.CreateArrayTooLargeAttempts++;
+                        existingRemainderErrorsTag.CreateArrayTooLargeDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
                     }
 
                     if (!isRemainderErrorsTagOnPage &&

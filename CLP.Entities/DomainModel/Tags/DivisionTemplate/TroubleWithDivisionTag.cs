@@ -76,13 +76,13 @@ namespace CLP.Entities
         public static int GetTroubleWithFactorPairsCount(CLPPage page, bool returnOnlyDeleted = false)
         {
             var totalCount =
-                page.Tags.Count(tag => tag is DivisionTemplateArrayDimensionErrorsTag && (tag as DivisionTemplateArrayDimensionErrorsTag).HadTrouble);
+                page.Tags.Count(tag => tag is DivisionTemplateFactorPairErrorsTag && (tag as DivisionTemplateFactorPairErrorsTag).HadTrouble);
 
             var deletedCount =
                 page.Tags.Count(
                                 tag =>
-                                tag is DivisionTemplateArrayDimensionErrorsTag && (tag as DivisionTemplateArrayDimensionErrorsTag).HadTrouble &&
-                                !(tag as DivisionTemplateArrayDimensionErrorsTag).IsDivisionTemplateStillOnPage);
+                                tag is DivisionTemplateFactorPairErrorsTag && (tag as DivisionTemplateFactorPairErrorsTag).HadTrouble &&
+                                !(tag as DivisionTemplateFactorPairErrorsTag).IsDivisionTemplateStillOnPage);
 
             return returnOnlyDeleted ? deletedCount : totalCount;
         }
