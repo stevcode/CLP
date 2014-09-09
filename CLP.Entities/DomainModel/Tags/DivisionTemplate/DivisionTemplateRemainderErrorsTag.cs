@@ -170,7 +170,7 @@ namespace CLP.Entities
 
         public bool HadTrouble
         {
-            get { return ErrorAtemptsSum > TROUBLE_TOLERANCE; }
+            get { return ErrorAtemptsSum >= TROUBLE_TOLERANCE; }
         }
 
         public int ErrorAtemptsSum
