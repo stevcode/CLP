@@ -23,6 +23,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Factors.Add(new ValueContainer(0));
             Product = 0;
 
+            AddFactorCommand = new Command(OnAddFactorCommandExecute);
             CalculateProductCommand = new Command(OnCalculateProductCommandExecute);
         }
 
@@ -72,6 +73,16 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData RelationTypeProperty = RegisterProperty("RelationType",
                                                                                     typeof (MultiplicationRelationDefinitionTag.RelationTypes));
+
+        /// <summary>
+        /// Adds a zero value factor to the relation definition.
+        /// </summary>
+        public Command AddFactorCommand { get; private set; }
+
+        private void OnAddFactorCommandExecute()
+        {
+            Factors.Add(new ValueContainer(0));
+        }
 
         /// <summary>Calculates the value of the product</summary>
         public Command CalculateProductCommand { get; private set; }
