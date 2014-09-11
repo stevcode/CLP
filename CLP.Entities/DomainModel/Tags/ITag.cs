@@ -1,6 +1,4 @@
 using System;
-using System.Xml.Serialization;
-using Catel.Runtime.Serialization;
 
 namespace CLP.Entities
 {
@@ -55,6 +53,14 @@ namespace CLP.Entities
         bool IsSingleValueTag { get; set; }
 
         /// <summary>
+        /// Designates the <see cref="ITag" /> as invisible in the PageInfoPanel.
+        /// </summary>
+        bool IsHiddenTag { get; set; }
+
+        /// <summary>Produces a human-readable string that describes the name of the tag.</summary>
+        string FormattedName { get; }
+
+        /// <summary>
         /// Produces a human-readable string that describes the value of the tag.
         /// </summary>
         string FormattedValue { get; }
@@ -86,8 +92,6 @@ namespace CLP.Entities
         /// <remarks>
         /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
         /// </remarks>
-        [XmlIgnore]
-        [ExcludeFromSerialization]
         CLPPage ParentPage { get; set; }
     }
 }

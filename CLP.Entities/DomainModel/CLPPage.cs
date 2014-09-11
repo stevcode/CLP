@@ -434,24 +434,6 @@ namespace CLP.Entities
             }
         }
 
-        public virtual string DivisionTemplateIncorrectArrayCreation
-        {
-            get
-            {
-                var incorrectReasonTag = Tags.FirstOrDefault(x => x is DivisionTemplateIncorrectArrayCreationTag) as DivisionTemplateIncorrectArrayCreationTag;
-                return incorrectReasonTag != null ? incorrectReasonTag.Value.ToString() : "Not Set";
-            }
-        }
-
-        public virtual string DivisionTemplateStrategy
-        {
-            get
-            {
-                var strategyTag = Tags.FirstOrDefault(x => x is DivisionTemplateStrategyTag) as DivisionTemplateStrategyTag;
-                return strategyTag != null ? strategyTag.Value.ToString() : "Not Set";
-            }
-        }
-
         /// <summary>
         /// Unserialized <see cref="Stroke" />s of the <see cref="CLPPage" />.
         /// </summary>
@@ -496,27 +478,27 @@ namespace CLP.Entities
 
         public int MaxSubmissionHistoryLength
         {
-            get { return !Submissions.Any() ? -1 : Submissions.Select(submission => submission.History.HistoryLength).Concat(new[] {0}).Max(); }
+            get { return !Submissions.Any() ? -1 : Submissions.Select(submission => submission.History.HistoryLength).Concat(new[] { 0 }).Max(); }
         }
 
         public double AverageSubmissionHistoryLength
         {
-            get { return !Submissions.Any() ? -1 : Math.Round(Submissions.Select(submission => submission.History.HistoryLength).Average()); }
+            get { return !Submissions.Any() ? Double.NaN : Math.Round(Submissions.Select(submission => submission.History.HistoryLength).Average()); }
         }
 
         public double MinSubmissionAnimationLength
         {
-            get { return !Submissions.Any() ? -1 : Submissions.Select(submission => submission.History.TotalHistoryTicks).Concat(new[] {Double.MaxValue}).Min(); }
+            get { return !Submissions.Any() ? Double.NaN : Submissions.Select(submission => submission.History.TotalHistoryTicks).Concat(new[] { Double.MaxValue }).Min(); }
         }
 
         public double MaxSubmissionAnimationLength
         {
-            get { return !Submissions.Any() ? -1 : Submissions.Select(submission => submission.History.TotalHistoryTicks).Concat(new[] {0.0}).Max(); }
+            get { return !Submissions.Any() ? Double.NaN : Submissions.Select(submission => submission.History.TotalHistoryTicks).Concat(new[] { 0.0 }).Max(); }
         }
 
         public double AverageSubmissionAnimationLength
         {
-            get { return !Submissions.Any() ? -1 : Math.Round(Submissions.Select(submission => submission.History.TotalHistoryTicks).Average()); }
+            get { return !Submissions.Any() ? Double.NaN : Math.Round(Submissions.Select(submission => submission.History.TotalHistoryTicks).Average()); }
         }
 
         #endregion //Properties

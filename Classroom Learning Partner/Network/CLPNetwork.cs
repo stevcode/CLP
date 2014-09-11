@@ -49,19 +49,20 @@ namespace Classroom_Learning_Partner
             App.MainWindowViewModel.OnlineStatus = "CONNECTING...";    
 
             ServiceHost host = null;
-            switch(App.CurrentUserMode)
+            switch (App.MainWindowViewModel.CurrentProgramMode)
             {
-                case App.UserMode.Server:
+                case ProgramModes.Author:
+                case ProgramModes.Database:
                     break;
-                case App.UserMode.Instructor:
+                case ProgramModes.Teacher:
                     host = DiscoveryFactory.CreateDiscoverableHost<InstructorService>();
                     App.MainWindowViewModel.OnlineStatus = "LISTENING...";
                     break;
-                case App.UserMode.Projector:
+                case ProgramModes.Projector:
                     host = DiscoveryFactory.CreateDiscoverableHost<ProjectorService>();
                     App.MainWindowViewModel.OnlineStatus = "LISTENING...";
                     break;
-                case App.UserMode.Student:
+                case ProgramModes.Student:
                     host = DiscoveryFactory.CreateDiscoverableHost<StudentService>();
                     foreach(var endpoint in host.Description.Endpoints.Where(endpoint => endpoint.Name == "NetTcpBinding_IStudentContract")) 
                     {
@@ -82,11 +83,12 @@ namespace Classroom_Learning_Partner
 
         public void DiscoverServices()
         {
-            switch(App.CurrentUserMode)
+            switch (App.MainWindowViewModel.CurrentProgramMode)
             {
-                case App.UserMode.Server:
+                case ProgramModes.Author:
+                case ProgramModes.Database:
                     break;
-                case App.UserMode.Instructor:
+                case ProgramModes.Teacher:
                     DiscoveredProjectors.Open();
                     new Thread(() =>
                     {
@@ -101,7 +103,7 @@ namespace Classroom_Learning_Partner
                             ProjectorProxy = ChannelFactory<IProjectorContract>.CreateChannel(DefaultBinding, DiscoveredProjectors.Addresses[0]);
                             
                             App.MainWindowViewModel.OnlineStatus = "CONNECTED";
-                            App.MainWindowViewModel.Ribbon.IsProjectorFrozen = false;
+                            App.MainWindowViewModel.IsProjectorFrozen = false;
 
                             if(App.MainWindowViewModel.CurrentClassPeriod != null)
                             {
@@ -125,9 +127,9 @@ namespace Classroom_Learning_Partner
                         }
                     }).Start();
                     break;
-                case App.UserMode.Projector:
+                case ProgramModes.Projector:
                     break;
-                case App.UserMode.Student:
+                case ProgramModes.Student:
                     DiscoveredInstructors.Open();
 
                     new Thread(() =>

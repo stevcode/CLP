@@ -4,34 +4,35 @@ using Catel.Data;
 
 namespace CLP.Entities
 {
-    [Serializable]
-    public class DivisionTemplateCompletenessTag : ATagBase
+    public enum DivisionTemplateCompletenessValues
     {
-        public enum AcceptedValues
-        {
-            NoArrays,
-            NotEnoughArrays,
-            Complete
-        }
+        NoArrays,
+        NotEnoughArrays,
+        Complete
+    }
 
+    [Serializable]
+    public class DivisionTemplateCompletenessTag : ADivisionTemplateBaseTag
+    {
         #region Constructors
 
-        /// <summary>
-        /// Initializes <see cref="DivisionTemplateCompletenessTag" /> from scratch.
-        /// </summary>
+        /// <summary>Initializes <see cref="DivisionTemplateCompletenessTag" /> from scratch.</summary>
         public DivisionTemplateCompletenessTag() { }
 
-        /// <summary>
-        /// Initializes <see cref="DivisionTemplateCompletenessTag" /> from <see cref="AcceptedValues" />.
-        /// </summary>
+        /// <summary>Initializes <see cref="DivisionTemplateCompletenessTag" />.</summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="DivisionTemplateCompletenessTag" /> belongs to.</param>
-        /// <param name="value">The value of the <see cref="DivisionTemplateCompletenessTag" />, parsed from <see cref="AcceptedValues" />.</param>
-        public DivisionTemplateCompletenessTag(CLPPage parentPage, Origin origin, AcceptedValues value)
-            : base(parentPage, origin) { Value = value; }
+        public DivisionTemplateCompletenessTag(CLPPage parentPage,
+                                               Origin origin,
+                                               string divisionTemplateID,
+                                               double dividend,
+                                               double divisor,
+                                               DivisionTemplateCompletenessValues completenessValue)
+            : base(parentPage, origin, divisionTemplateID, dividend, divisor)
+        {
+            CompletenessValue = completenessValue;
+        }
 
-        /// <summary>
-        /// Initializes <see cref="DivisionTemplateCompletenessTag" /> based on <see cref="SerializationInfo" />.
-        /// </summary>
+        /// <summary>Initializes <see cref="DivisionTemplateCompletenessTag" /> based on <see cref="SerializationInfo" />.</summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext" />.</param>
         public DivisionTemplateCompletenessTag(SerializationInfo info, StreamingContext context)
@@ -41,27 +42,33 @@ namespace CLP.Entities
 
         #region Properties
 
-        /// <summary>
-        /// Value of the Starred Tag.
-        /// </summary>
-        public AcceptedValues Value
+        /// <summary>Value of the Starred Tag.</summary>
+        public DivisionTemplateCompletenessValues CompletenessValue
         {
-            get { return GetValue<AcceptedValues>(ValueProperty); }
-            set { SetValue(ValueProperty, value); }
+            get { return GetValue<DivisionTemplateCompletenessValues>(CompletenessValueProperty); }
+            set { SetValue(CompletenessValueProperty, value); }
         }
 
-        public static readonly PropertyData ValueProperty = RegisterProperty("Value", typeof(AcceptedValues));
+        public static readonly PropertyData CompletenessValueProperty = RegisterProperty("CompletenessValue",
+                                                                                         typeof (DivisionTemplateCompletenessValues));
 
         #region ATagBase Overrides
 
-        public override Category Category
+        public override string FormattedName
         {
-            get { return Category.DivisionTemplate; }
+            get { return "Division Template 1 Completeness"; }
         }
 
         public override string FormattedValue
         {
-            get { return Value.ToString(); }
+            get
+            {
+                return string.Format("Completeness for {0} / {1}\n" + "DivisionTemplate {2} on page.\n" + "Value: {3}",
+                                     Dividend,
+                                     Divisor,
+                                     IsDivisionTemplateStillOnPage ? "still" : "no longer",
+                                     CompletenessValue);
+            }
         }
 
         #endregion //ATagBase Overrides

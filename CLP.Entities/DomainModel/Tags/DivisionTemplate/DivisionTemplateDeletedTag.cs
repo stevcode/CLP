@@ -1,33 +1,32 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
 {
     [Serializable]
-    public class DivisionTemplateDeletedTag : ATagBase
+    public class DivisionTemplateDeletedTag : ADivisionTemplateBaseTag
     {
         #region Constructors
 
-        /// <summary>
-        /// Initializes <see cref="DivisionTemplateDeletedTag" /> from scratch.
-        /// </summary>
+        /// <summary>Initializes <see cref="DivisionTemplateDeletedTag" /> from scratch.</summary>
         public DivisionTemplateDeletedTag() { }
 
-        /// <summary>
-        /// Initializes <see cref="DivisionTemplateDeletedTag" />.
-        /// </summary>
+        /// <summary>Initializes <see cref="DivisionTemplateDeletedTag" />.</summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="DivisionTemplateDeletedTag" /> belongs to.</param>
-        public DivisionTemplateDeletedTag(CLPPage parentPage, Origin origin, int dividend, int givenFactor)
-            : base(parentPage, origin)
+        public DivisionTemplateDeletedTag(CLPPage parentPage,
+                                          Origin origin,
+                                          string divisionTemplateID,
+                                          int dividend,
+                                          int divisor,
+                                          List<string> arrayDimensions)
+            : base(parentPage, origin, divisionTemplateID, dividend, divisor)
         {
-            Dividend = dividend;
-            GivenFactor = givenFactor;
+            ArrayDimensions = arrayDimensions;
         }
 
-        /// <summary>
-        /// Initializes <see cref="DivisionTemplateDeletedTag" /> based on <see cref="SerializationInfo" />.
-        /// </summary>
+        /// <summary>Initializes <see cref="DivisionTemplateDeletedTag" /> based on <see cref="SerializationInfo" />.</summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext" />.</param>
         public DivisionTemplateDeletedTag(SerializationInfo info, StreamingContext context)
@@ -37,40 +36,32 @@ namespace CLP.Entities
 
         #region Properties
 
-        /// <summary>
-        /// Dividend of the deleted Division Template.
-        /// </summary>
-        public int Dividend
+        /// <summary>Dimensions of all the snapped-in arrays.</summary>
+        public List<string> ArrayDimensions
         {
-            get { return GetValue<int>(DividendProperty); }
-            set { SetValue(DividendProperty, value); }
+            get { return GetValue<List<string>>(ArrayDimensionsProperty); }
+            set { SetValue(ArrayDimensionsProperty, value); }
         }
 
-        public static readonly PropertyData DividendProperty = RegisterProperty("Dividend", typeof(int));
-
-        /// <summary>
-        /// Given Factor of the deleted Division Template.
-        /// </summary>
-        public int GivenFactor
-        {
-            get { return GetValue<int>(GivenFactorProperty); }
-            set { SetValue(GivenFactorProperty, value); }
-        }
-
-        public static readonly PropertyData GivenFactorProperty = RegisterProperty("GivenFactor", typeof(int));
+        public static readonly PropertyData ArrayDimensionsProperty = RegisterProperty("ArrayDimensions", typeof (List<string>));
 
         #region ATagBase Overrides
 
-        public override Category Category
+        public override string FormattedName
         {
-            get { return Category.DivisionTemplate; }
+            get { return "Division Template 1 Deleted"; }
         }
 
         public override string FormattedValue
         {
-            get { return string.Format("Dividend: {0}\n" + "Given Factor: {1}", 
-                                       Dividend,
-                                       GivenFactor); }
+            get
+            {
+                return string.Format("{0} / {1} Deleted.\n" + "DivisionTemplate {2} on page.\n" + "Snapped-In Arrays: {3}",
+                                     Dividend,
+                                     Divisor,
+                                     IsDivisionTemplateStillOnPage ? "still" : "no longer",
+                                     string.Join(",", ArrayDimensions));
+            }
         }
 
         #endregion //ATagBase Overrides

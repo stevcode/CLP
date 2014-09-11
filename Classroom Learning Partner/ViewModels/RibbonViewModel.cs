@@ -67,24 +67,6 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             InitializeCommands();
 
-            switch(App.CurrentUserMode)
-            {
-                case App.UserMode.Server:
-                    ServerVisibility = Visibility.Visible;
-                    break;
-                case App.UserMode.Instructor:
-                    InstructorVisibility = Visibility.Visible;
-                    break;
-                case App.UserMode.Projector:
-                    IsMinimized = true;
-                    NotInstructorVisibility = Visibility.Visible;
-                    break;
-                case App.UserMode.Student:
-                    StudentVisibility = Visibility.Visible;
-                    NotInstructorVisibility = Visibility.Visible;
-                    break;
-            }
-
             PenSize = 2;
             DrawingAttributes = new DrawingAttributes
                                 {
@@ -106,7 +88,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
             PageInteractionMode = PageInteractionMode.Pen;
             CurrentLeftPanel = Panels.NotebookPages;
-            IsProjectorFrozen = App.CurrentUserMode != App.UserMode.Projector;
         }
 
         private void InitializeCommands()
@@ -361,17 +342,6 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData CurrentRightPanelProperty = RegisterProperty("CurrentRightPanel", typeof(Panels?));
 
         /// <summary>
-        /// Whether or not to mirror the displays to the projector.
-        /// </summary>
-        public bool IsProjectorFrozen
-        {
-            get { return GetValue<bool>(IsProjectorFrozenProperty); }
-            set { SetValue(IsProjectorFrozenProperty, value); }
-        }
-
-        public static readonly PropertyData IsProjectorFrozenProperty = RegisterProperty("IsProjectorFrozen", typeof(bool), true);
-
-        /// <summary>
         /// Disables the use of history to broadcast changes to a page to the projector.
         /// </summary>
         public bool IsBroadcastHistoryDisabled
@@ -480,50 +450,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData ExtrasTabVisibilityProperty = RegisterProperty("ExtrasTabVisibility", typeof(Visibility), Visibility.Collapsed);
-
-        /// <summary>
-        /// Instructor Only Items Visibility.
-        /// </summary>
-        public Visibility InstructorVisibility
-        {
-            get { return GetValue<Visibility>(InstructorVisibilityProperty); }
-            set { SetValue(InstructorVisibilityProperty, value); }
-        }
-
-        public static readonly PropertyData InstructorVisibilityProperty = RegisterProperty("InstructorVisibility", typeof(Visibility), Visibility.Collapsed);
-
-        /// <summary>
-        /// Server Only Items Visibility.
-        /// </summary>
-        public Visibility ServerVisibility
-        {
-            get { return GetValue<Visibility>(ServerVisibilityProperty); }
-            set { SetValue(ServerVisibilityProperty, value); }
-        }
-
-        public static readonly PropertyData ServerVisibilityProperty = RegisterProperty("ServerVisibility", typeof(Visibility), Visibility.Collapsed);
-
-        /// <summary>
-        /// Student Only Items Visibility.
-        /// </summary>
-        public Visibility StudentVisibility
-        {
-            get { return GetValue<Visibility>(StudentVisibilityProperty); }
-            set { SetValue(StudentVisibilityProperty, value); }
-        }
-
-        public static readonly PropertyData StudentVisibilityProperty = RegisterProperty("StudentVisibility", typeof(Visibility), Visibility.Collapsed);
-
-        /// <summary>
-        /// SUMMARY
-        /// </summary>
-        public Visibility NotInstructorVisibility
-        {
-            get { return GetValue<Visibility>(NotInstructorVisibilityProperty); }
-            set { SetValue(NotInstructorVisibilityProperty, value); }
-        }
-
-        public static readonly PropertyData NotInstructorVisibilityProperty = RegisterProperty("NotInstructorVisibility", typeof(Visibility), Visibility.Collapsed);
 
         /// <summary>
         /// Gets or sets the property value.
@@ -1889,7 +1815,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
                 try
                 {
-                    App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.SaveClassSubject(App.ClassCacheDirectory);
+                    App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.SaveClassSubject(MainWindowViewModel.ClassCacheDirectory);
                 }
                 catch
                 {
@@ -2017,7 +1943,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             try
             {
-                App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.SaveClassSubject(App.ClassCacheDirectory);
+                App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.SaveClassSubject(MainWindowViewModel.ClassCacheDirectory);
             }
             catch
             {
@@ -2105,7 +2031,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 page.Height += PAGE_INCREASE_AMOUNT;
             }
 
-            if(App.CurrentUserMode != App.UserMode.Instructor || 
+            if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher || 
                App.Network.ProjectorProxy == null)
             {
                 return;
@@ -2332,7 +2258,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 var hash = md5.ComputeHash(bytes);
                 var imageHashID = Convert.ToBase64String(hash).Replace("/", "_").Replace("+", "-").Replace("=","");
                 var newFileName = imageHashID + Path.GetExtension(filename);
-                var newFilePath = Path.Combine(App.ImageCacheDirectory, newFileName);
+                var newFilePath = Path.Combine(MainWindowViewModel.ImageCacheDirectory, newFileName);
 
                 try
                 {
@@ -2454,7 +2380,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 var hash = md5.ComputeHash(bytes);
                 var imageHashID = Convert.ToBase64String(hash).Replace("/", "_").Replace("+", "-").Replace("=","");
                 var newFileName = imageHashID + Path.GetExtension(filename);
-                var newFilePath = Path.Combine(App.ImageCacheDirectory, newFileName);
+                var newFilePath = Path.Combine(MainWindowViewModel.ImageCacheDirectory, newFileName);
 
                 try
                 {
@@ -3163,7 +3089,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             classSubject.Projector = classSubject.Teacher;
-            classSubject.SaveClassSubject(App.ClassCacheDirectory);
+            classSubject.SaveClassSubject(MainWindowViewModel.ClassCacheDirectory);
         }
 
         /// <summary>

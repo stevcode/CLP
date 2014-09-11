@@ -5,28 +5,29 @@ using Catel.Data;
 
 namespace CLP.Entities
 {
-    public enum ArrayIncorrectReason
+    public enum ArrayRepresentationIncorrectReason
     {
         SwappedFactors,
         WrongFactors,
-        MisusedGivens,
+        ProductAsFactor,
+        OneDimensionCorrect,
         Other
     }
 
     [Serializable]
-    public class ArrayInterpretedCorrectnessTag : ATagBase
+    public class ArrayRepresentationCorrectnessTag : ATagBase
     {
         #region Constructors
 
         /// <summary>
-        /// Initializes <see cref="ArrayInterpretedCorrectnessTag" /> from scratch.
+        /// Initializes <see cref="ArrayRepresentationCorrectnessTag" /> from scratch.
         /// </summary>
-        public ArrayInterpretedCorrectnessTag() { }
+        public ArrayRepresentationCorrectnessTag() { }
 
         /// <summary>
-        /// Initializes <see cref="ArrayInterpretedCorrectnessTag" />.
+        /// Initializes <see cref="ArrayRepresentationCorrectnessTag" />.
         /// </summary>
-        public ArrayInterpretedCorrectnessTag(CLPPage parentPage, Origin origin, Correctness correctness, List<ArrayIncorrectReason> incorrectReasons)
+        public ArrayRepresentationCorrectnessTag(CLPPage parentPage, Origin origin, Correctness correctness, List<ArrayRepresentationIncorrectReason> incorrectReasons)
             : base(parentPage, origin)
         {
             Correctness = correctness;
@@ -34,11 +35,11 @@ namespace CLP.Entities
         }
 
         /// <summary>
-        /// Initializes <see cref="ArrayInterpretedCorrectnessTag" /> based on <see cref="SerializationInfo" />.
+        /// Initializes <see cref="ArrayRepresentationCorrectnessTag" /> based on <see cref="SerializationInfo" />.
         /// </summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext" />.</param>
-        public ArrayInterpretedCorrectnessTag(SerializationInfo info, StreamingContext context)
+        public ArrayRepresentationCorrectnessTag(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
         #endregion //Constructors
@@ -59,13 +60,13 @@ namespace CLP.Entities
         /// <summary>
         /// Reason the Interpreted Correctness was set to Incorrect.
         /// </summary>
-        public List<ArrayIncorrectReason> ArrayIncorrectReasons
+        public List<ArrayRepresentationIncorrectReason> ArrayIncorrectReasons
         {
-            get { return GetValue<List<ArrayIncorrectReason>>(ArrayIncorrectReasonsProperty); }
+            get { return GetValue<List<ArrayRepresentationIncorrectReason>>(ArrayIncorrectReasonsProperty); }
             set { SetValue(ArrayIncorrectReasonsProperty, value); }
         }
 
-        public static readonly PropertyData ArrayIncorrectReasonsProperty = RegisterProperty("ArrayIncorrectReasons", typeof(List<ArrayIncorrectReason>));
+        public static readonly PropertyData ArrayIncorrectReasonsProperty = RegisterProperty("ArrayIncorrectReasons", typeof(List<ArrayRepresentationIncorrectReason>));
 
         #region ATagBase Overrides
 
@@ -74,13 +75,20 @@ namespace CLP.Entities
             get { return Category.Array; }
         }
 
+        public override string FormattedName
+        {
+            get { return "Array Representation Correctness"; }
+        }
+
         public override string FormattedValue
         {
             get
             {
                 return string.Format("{0}{1}",
                                      Correctness,
-                                     Correctness == Correctness.Correct || Correctness == Correctness.Unknown ? string.Empty : ", due to: " + string.Join(", ", ArrayIncorrectReasons));
+                                     Correctness == Correctness.Correct || Correctness == Correctness.Unknown
+                                         ? string.Empty
+                                         : " due to: " + string.Join(", ", ArrayIncorrectReasons));
             }
         }
 

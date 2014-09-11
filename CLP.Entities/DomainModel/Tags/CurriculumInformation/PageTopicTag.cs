@@ -51,6 +51,11 @@ namespace CLP.Entities
             get { return Category.CurriculumInformation; }
         }
 
+        public override string FormattedName
+        {
+            get { return "Page Topic"; }
+        }
+
         public override string FormattedValue
         {
             get { return Value; }

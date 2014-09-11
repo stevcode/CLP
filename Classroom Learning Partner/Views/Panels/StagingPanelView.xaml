@@ -82,7 +82,7 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <Label Grid.Column="0">Sort By: </Label>
+                        <Label Grid.Column="0">View By: </Label>
     
                         <ComboBox Grid.Column="1"
                                   ItemsSource="{Binding Source={StaticResource dataFromEnum}}"

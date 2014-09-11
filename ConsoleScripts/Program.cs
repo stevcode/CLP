@@ -84,7 +84,7 @@ namespace ConsoleScripts
                         {
                             page.AddTag(new DottedTag(page, Origin.TeacherPageGenerated, DottedTag.AcceptedValues.Undotted));
                             page.AddTag(new StarredTag(page, Origin.TeacherPageGenerated, StarredTag.AcceptedValues.Unstarred));
-                            page.AddTag(new CorrectnessTag(page, Origin.TeacherPageGenerated, Correctness.Unknown));
+                            page.AddTag(new CorrectnessTag(page, Origin.TeacherPageGenerated, Correctness.Unknown, false));
                         }
                     }
 

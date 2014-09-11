@@ -11,14 +11,10 @@ namespace CLP.Entities
     {
         #region Constructors
 
-        /// <summary>
-        /// Initializes <see cref="FuzzyFactorCard" /> from scratch.
-        /// </summary>
+        /// <summary>Initializes <see cref="FuzzyFactorCard" /> from scratch.</summary>
         public FuzzyFactorCard() { }
 
-        /// <summary>
-        /// Initializes <see cref="FuzzyFactorCard" /> from
-        /// </summary>
+        /// <summary>Initializes <see cref="FuzzyFactorCard" /> from</summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="FuzzyFactorCard" /> belongs to.</param>
         /// <param name="columns">The number of columns in the <see cref="FuzzyFactorCard" />.</param>
         /// <param name="rows">The number of rows in the <see cref="FuzzyFactorCard" />.</param>
@@ -29,7 +25,7 @@ namespace CLP.Entities
         {
             Dividend = dividend;
             IsSnappable = true;
-            if(!isRemainderRegionDisplayed)
+            if (!isRemainderRegionDisplayed)
             {
                 return;
             }
@@ -38,9 +34,7 @@ namespace CLP.Entities
             UpdateRemainderRegion();
         }
 
-        /// <summary>
-        /// Initializes <see cref="FuzzyFactorCard" /> based on <see cref="SerializationInfo" />.
-        /// </summary>
+        /// <summary>Initializes <see cref="FuzzyFactorCard" /> based on <see cref="SerializationInfo" />.</summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext" />.</param>
         public FuzzyFactorCard(SerializationInfo info, StreamingContext context)
@@ -112,9 +106,7 @@ namespace CLP.Entities
             get { return VerticalDivisions.Any() ? VerticalDivisions.Last().Position : 0.0; }
         }
 
-        /// <summary>
-        /// The total number the <see cref="FuzzyFactorCard" /> represents.
-        /// </summary>
+        /// <summary>The total number the <see cref="FuzzyFactorCard" /> represents.</summary>
         public int Dividend
         {
             get { return GetValue<int>(DividendProperty); }
@@ -125,59 +117,49 @@ namespace CLP.Entities
             }
         }
 
-        public static readonly PropertyData DividendProperty = RegisterProperty("Dividend", typeof(int), 1);
+        public static readonly PropertyData DividendProperty = RegisterProperty("Dividend", typeof (int), 1);
 
         #region Navigation Properties
 
-        /// <summary>
-        /// Unique Identifier for the <see cref="FuzzyFactorCard" />'s <see cref="RemainderTiles" />.
-        /// </summary>
-        /// <remarks>
-        /// Composite Foreing Key.
-        /// </remarks>
+        /// <summary>Unique Identifier for the <see cref="FuzzyFactorCard" />'s <see cref="RemainderTiles" />.</summary>
+        /// <remarks>Composite Foreing Key.</remarks>
         public string RemainderTilesID
         {
             get { return GetValue<string>(RemainderTilesIDProperty); }
             set { SetValue(RemainderTilesIDProperty, value); }
         }
 
-        public static readonly PropertyData RemainderTilesIDProperty = RegisterProperty("RemainderTilesID", typeof(string), string.Empty);
+        public static readonly PropertyData RemainderTilesIDProperty = RegisterProperty("RemainderTilesID", typeof (string), string.Empty);
 
-        /// <summary>
-        /// Unique Identifier of the <see cref="Person" /> who owns the <see cref="RemainderTiles" />.
-        /// </summary>
+        /// <summary>Unique Identifier of the <see cref="Person" /> who owns the <see cref="RemainderTiles" />.</summary>
         public string RemainderTilesOwnerID
         {
             get { return GetValue<string>(RemainderTilesOwnerIDProperty); }
             set { SetValue(RemainderTilesOwnerIDProperty, value); }
         }
 
-        public static readonly PropertyData RemainderTilesOwnerIDProperty = RegisterProperty("RemainderTilesOwnerID", typeof(string), string.Empty);
+        public static readonly PropertyData RemainderTilesOwnerIDProperty = RegisterProperty("RemainderTilesOwnerID", typeof (string), string.Empty);
 
-        /// <summary>
-        /// Version Index for the <see cref="RemainderTiles" />.
-        /// </summary>
+        /// <summary>Version Index for the <see cref="RemainderTiles" />.</summary>
         public uint RemainderTilesVersionIndex
         {
             get { return GetValue<uint>(RemainderTilesVersionIndexProperty); }
             set { SetValue(RemainderTilesVersionIndexProperty, value); }
         }
 
-        public static readonly PropertyData RemainderTilesVersionIndexProperty = RegisterProperty("RemainderTilesVersionIndex", typeof(uint), 0);
+        public static readonly PropertyData RemainderTilesVersionIndexProperty = RegisterProperty("RemainderTilesVersionIndex", typeof (uint), 0);
 
         /// <summary>
-        /// <see cref="RemainderTiles" /> for the <see cref="FuzzyFactorCard" />.
+        ///     <see cref="RemainderTiles" /> for the <see cref="FuzzyFactorCard" />.
         /// </summary>
-        /// <remarks>
-        /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
-        /// </remarks>
+        /// <remarks>Virtual to facilitate lazy loading of navigation property by Entity Framework.</remarks>
         public virtual RemainderTiles RemainderTiles
         {
             get { return GetValue<RemainderTiles>(RemainderTilesProperty); }
             set
             {
                 SetValue(RemainderTilesProperty, value);
-                if(value == null)
+                if (value == null)
                 {
                     RemainderTilesID = string.Empty;
                     RemainderTilesOwnerID = string.Empty;
@@ -190,7 +172,7 @@ namespace CLP.Entities
             }
         }
 
-        public static readonly PropertyData RemainderTilesProperty = RegisterProperty("RemainderTiles", typeof(RemainderTiles));
+        public static readonly PropertyData RemainderTilesProperty = RegisterProperty("RemainderTiles", typeof (RemainderTiles));
 
         #endregion //Navigation Properties
 
@@ -201,7 +183,7 @@ namespace CLP.Entities
         public override IPageObject Duplicate()
         {
             var newFuzzyFactorCard = Clone() as FuzzyFactorCard;
-            if(newFuzzyFactorCard == null)
+            if (newFuzzyFactorCard == null)
             {
                 return null;
             }
@@ -220,11 +202,83 @@ namespace CLP.Entities
             RaisePropertyChanged("LastDivisionPosition");
         }
 
+        public override void OnAdded()
+        {
+            base.OnAdded();
+
+            var divisionDefinitions = ParentPage.Tags.OfType<DivisionRelationDefinitionTag>();
+
+            foreach (var divisionRelationDefinitionTag in divisionDefinitions)
+            {
+                if (Dividend == divisionRelationDefinitionTag.Dividend &&
+                    Rows == divisionRelationDefinitionTag.Divisor)
+                {
+                    continue;
+                }
+
+                ITag divisionCreationErrorTag = null;
+                if (Dividend == divisionRelationDefinitionTag.Divisor &&
+                    Rows == divisionRelationDefinitionTag.Dividend)
+                {
+                    divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(ParentPage,
+                                                                                                          Origin.StudentPageGenerated,
+                                                                                                          ID,
+                                                                                                          Dividend,
+                                                                                                          Rows,
+                                                                                                          DivisionTemplateIncorrectCreationReasons
+                                                                                                              .SwappedDividendAndDivisor);
+                }
+
+                if (Dividend == divisionRelationDefinitionTag.Dividend &&
+                    Rows != divisionRelationDefinitionTag.Divisor)
+                {
+                    divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(ParentPage,
+                                                                                                          Origin.StudentPageGenerated,
+                                                                                                          ID,
+                                                                                                          Dividend,
+                                                                                                          Rows,
+                                                                                                          DivisionTemplateIncorrectCreationReasons
+                                                                                                              .WrongDivisor);
+                }
+
+                if (Dividend != divisionRelationDefinitionTag.Dividend &&
+                    Rows == divisionRelationDefinitionTag.Divisor)
+                {
+                    divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(ParentPage,
+                                                                                                          Origin.StudentPageGenerated,
+                                                                                                          ID,
+                                                                                                          Dividend,
+                                                                                                          Rows,
+                                                                                                          DivisionTemplateIncorrectCreationReasons
+                                                                                                              .WrongDividend);
+                }
+
+                if (Dividend != divisionRelationDefinitionTag.Dividend &&
+                    Rows != divisionRelationDefinitionTag.Divisor)
+                {
+                    divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(ParentPage,
+                                                                                                          Origin.StudentPageGenerated,
+                                                                                                          ID,
+                                                                                                          Dividend,
+                                                                                                          Rows,
+                                                                                                          DivisionTemplateIncorrectCreationReasons
+                                                                                                              .WrongDividendAndDivisor);
+                }
+
+                if (divisionCreationErrorTag != null)
+                {
+                    ParentPage.AddTag(divisionCreationErrorTag);
+                }
+            }
+        }
+
         public override void OnDeleted()
         {
             base.OnDeleted();
 
-            var tag = new DivisionTemplateDeletedTag(ParentPage, Origin.StudentPageObjectGenerated, Dividend, Rows);
+            var arrayDimensions = VerticalDivisions.Where(division => division.Value != 0).Select(division => Rows + "x" + division.Value).ToList();
+
+            var tag = new DivisionTemplateDeletedTag(ParentPage, Origin.StudentPageObjectGenerated, ID, Dividend, Rows, arrayDimensions);
             ParentPage.AddTag(tag);
         }
 
@@ -233,10 +287,10 @@ namespace CLP.Entities
             var initialWidth = Width;
             var initialHeight = Height;
             var initialSquareSize = 45.0;
-            if(toSquareSize <= 0)
+            if (toSquareSize <= 0)
             {
-                while(XPosition + LabelLength + LargeLabelLength + initialSquareSize * Columns >= ParentPage.Width ||
-                      YPosition + 2 * LabelLength + initialSquareSize * Rows >= ParentPage.Height)
+                while (XPosition + LabelLength + LargeLabelLength + initialSquareSize * Columns >= ParentPage.Width ||
+                       YPosition + 2 * LabelLength + initialSquareSize * Rows >= ParentPage.Height)
                 {
                     initialSquareSize = Math.Abs(initialSquareSize - 45.0) < .0001 ? 22.5 : initialSquareSize / 4 * 3;
                 }
@@ -249,129 +303,41 @@ namespace CLP.Entities
             Height = (initialSquareSize * Rows) + 2 * LabelLength;
             Width = (initialSquareSize * Columns) + LabelLength + LargeLabelLength;
 
-            if(recalculateDivisions)
+            if (recalculateDivisions)
             {
                 ResizeDivisions();
             }
             OnResized(initialWidth, initialHeight);
         }
 
-        public void AnalyzeArrays()
-        {
-            var arrayArea = 0;
-            foreach(var pageObject in ParentPage.PageObjects)
-            {
-                if(pageObject is CLPArray &&
-                   !(pageObject is FuzzyFactorCard))
-                {
-                    arrayArea += (pageObject as CLPArray).Rows * (pageObject as CLPArray).Columns;
-                    if((pageObject as CLPArray).Columns == Dividend ||
-                       ((pageObject as CLPArray).Rows == Dividend))
-                    {
-                        var existingTag =
-                            ParentPage.Tags.OfType<DivisionTemplateIncorrectArrayCreationTag>()
-                                      .FirstOrDefault(x => x.Value == DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.ProductAsDimension);
-
-                        var previousNumberOfAttempts = 0;
-                        if(existingTag != null)
-                        {
-                            previousNumberOfAttempts = existingTag.NumberOfAttempts;
-                            ParentPage.RemoveTag(existingTag);
-                        }
-                        var newTag = new DivisionTemplateIncorrectArrayCreationTag(ParentPage,
-                                                                                   Origin.StudentPageObjectGenerated,
-                                                                                   DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.ProductAsDimension,
-                                                                                   previousNumberOfAttempts + 1);
-                        ParentPage.AddTag(newTag);
-                    }
-                    if((pageObject as CLPArray).Rows != Rows &&
-                       (pageObject as CLPArray).Columns == Rows)
-                    {
-                        var existingTag =
-                            ParentPage.Tags.OfType<DivisionTemplateIncorrectArrayCreationTag>()
-                                      .FirstOrDefault(x => x.Value == DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.WrongOrientation);
-
-                        var previousNumberOfAttempts = 0;
-                        if(existingTag != null)
-                        {
-                            previousNumberOfAttempts = existingTag.NumberOfAttempts;
-                            ParentPage.RemoveTag(existingTag);
-                        }
-                        var newTag = new DivisionTemplateIncorrectArrayCreationTag(ParentPage,
-                                                                                   Origin.StudentPageObjectGenerated,
-                                                                                   DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.WrongOrientation,
-                                                                                   previousNumberOfAttempts + 1);
-                        ParentPage.AddTag(newTag);
-                    }
-                    else if((pageObject as CLPArray).Rows != Rows)
-                    {
-                        var existingTag =
-                            ParentPage.Tags.OfType<DivisionTemplateIncorrectArrayCreationTag>()
-                                      .FirstOrDefault(x => x.Value == DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.IncorrectDimension);
-
-                        var previousNumberOfAttempts = 0;
-                        if(existingTag != null)
-                        {
-                            previousNumberOfAttempts = existingTag.NumberOfAttempts;
-                            ParentPage.RemoveTag(existingTag);
-                        }
-                        var newTag = new DivisionTemplateIncorrectArrayCreationTag(ParentPage,
-                                                                                   Origin.StudentPageObjectGenerated,
-                                                                                   DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.IncorrectDimension,
-                                                                                   previousNumberOfAttempts + 1);
-                        ParentPage.AddTag(newTag);
-                    }
-                }
-            }
-            if(arrayArea > CurrentRemainder)
-            {
-                var existingTag =
-                    ParentPage.Tags.OfType<DivisionTemplateIncorrectArrayCreationTag>().FirstOrDefault(x => x.Value == DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.ArrayTooLarge);
-
-                var previousNumberOfAttempts = 0;
-                if(existingTag != null)
-                {
-                    previousNumberOfAttempts = existingTag.NumberOfAttempts;
-                    ParentPage.RemoveTag(existingTag);
-                }
-                var newTag = new DivisionTemplateIncorrectArrayCreationTag(ParentPage,
-                                                                           Origin.StudentPageObjectGenerated,
-                                                                           DivisionTemplateIncorrectArrayCreationTag.AcceptedValues.ArrayTooLarge,
-                                                                           previousNumberOfAttempts + 1);
-                ParentPage.AddTag(newTag);
-            }
-        }
-
         public void UpdateRemainderRegion()
         {
-            if(RemainderTiles == null)
+            if (RemainderTiles == null)
             {
                 return;
             }
 
-            if(CurrentRemainder <= 0)
+            if (CurrentRemainder <= 0)
             {
                 ParentPage.PageObjects.Remove(RemainderTiles);
                 return;
             }
 
-            if(!ParentPage.PageObjects.Contains(RemainderTiles))
+            if (!ParentPage.PageObjects.Contains(RemainderTiles))
             {
                 ParentPage.PageObjects.Add(RemainderTiles);
             }
 
-            var numberOfBlackTiles = ParentPage.PageObjects.Where(pageObject => pageObject is CLPArray && (pageObject as CLPArray).ArrayType == ArrayTypes.Array).Sum(pageObject =>
-                                                                                                                                                                      {
-                                                                                                                                                                          var clpArray =
-                                                                                                                                                                              pageObject as CLPArray;
-                                                                                                                                                                          return clpArray != null
-                                                                                                                                                                                     ? clpArray.Rows *
-                                                                                                                                                                                       clpArray.Columns
-                                                                                                                                                                                     : 0;
-                                                                                                                                                                      });
+            var numberOfBlackTiles =
+                ParentPage.PageObjects.Where(pageObject => pageObject is CLPArray && (pageObject as CLPArray).ArrayType == ArrayTypes.Array)
+                          .Sum(pageObject =>
+                               {
+                                   var clpArray = pageObject as CLPArray;
+                                   return clpArray != null ? clpArray.Rows * clpArray.Columns : 0;
+                               });
             numberOfBlackTiles = Math.Min(numberOfBlackTiles, CurrentRemainder);
 
-            if(RemainderTiles.TileColors == null)
+            if (RemainderTiles.TileColors == null)
             {
                 RemainderTiles.TileColors = new ObservableCollection<string>();
             }
@@ -379,11 +345,11 @@ namespace CLP.Entities
             {
                 RemainderTiles.TileColors.Clear();
             }
-            for(var i = 0; i < CurrentRemainder - numberOfBlackTiles; i++)
+            for (var i = 0; i < CurrentRemainder - numberOfBlackTiles; i++)
             {
                 RemainderTiles.TileColors.Add("DodgerBlue");
             }
-            for(var i = 0; i < numberOfBlackTiles; i++)
+            for (var i = 0; i < numberOfBlackTiles; i++)
             {
                 RemainderTiles.TileColors.Add("Black");
             }
@@ -399,7 +365,7 @@ namespace CLP.Entities
             var divBelow = FindDivisionBelow(position, VerticalDivisions);
 
             CLPArrayDivision topDiv;
-            if(divAbove == null)
+            if (divAbove == null)
             {
                 topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, 0, position, value);
             }
@@ -423,7 +389,7 @@ namespace CLP.Entities
 
         public void RemoveLastDivision()
         {
-            if(VerticalDivisions.Count <= 1)
+            if (VerticalDivisions.Count <= 1)
             {
                 return;
             }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 using Catel.Data;
 
@@ -13,7 +14,6 @@ namespace CLP.Entities
             PlaceValue, // e.g. 43 -> 40 | 3
             Repeated, // e.g. 28 / 4 -> 4 x 3 | 4 x 3 | 4 x 1
             EvenSplit, // e.g. 28 / 2 -> 2 x 14 | 2 x 14
-            NoDividers,
             Other
         }
 
@@ -77,9 +77,14 @@ namespace CLP.Entities
             get { return Category.Array; }
         }
 
+        public override string FormattedName
+        {
+            get { return "Array Y-Axis Strategy"; }
+        }
+
         public override string FormattedValue
         {
-            get { return string.Format("{0}:{1}", Value, string.Join(",", DividerValues)); }
+            get { return string.Format("{0}: {1}", Value, string.Join(",", DividerValues.Select(x => x == 0 ? "?" : x.ToString()))); }
         }
 
         #endregion //ATagBase Overrides

@@ -34,7 +34,7 @@
                                            KeyTip="N"
                                            ImageSource="pack://application:,,,/Resources/Images/NewNotebook32.png"
                                            Command="{Binding NewNotebookCommand}"
-                                           Visibility="{Binding InstructorVisibility}" />
+                                           Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
 
                 <RibbonApplicationMenuItem Header="Open Notebook"
                                            KeyTip="O"
@@ -66,7 +66,7 @@
                 <RibbonApplicationMenuItem Header="Convert Submissions for this page to PDF"
                                            ImageSource="pack://application:,,,/Resources/Images/ConvertToPDF32.png"
                                            Command="{Binding ConvertPageSubmissionToXPSCommand}"
-                                           Visibility="{Binding InstructorVisibility}" />
+                                           Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
 
                 <RibbonApplicationMenuItem Header="Convert All Submissions To PDF"
                                            ImageSource="pack://application:,,,/Resources/Images/ConvertToPDF32.png"
@@ -81,17 +81,17 @@
                 <RibbonApplicationMenuItem Header="Open Class Period"
                                            ImageSource="pack://application:,,,/Resources/Images/GroupSubmit32.png"
                                            Command="{Binding OpenClassPeriodCommand}"
-                                           Visibility="{Binding InstructorVisibility}" />
+                                           Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
                 
                 <RibbonApplicationMenuItem Header="Start Current Class Period"
                                            ImageSource="pack://application:,,,/Resources/Images/GroupSubmit32.png"
                                            Command="{Binding StartClassPeriodCommand}"
-                                           Visibility="{Binding InstructorVisibility}" />
+                                           Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
                 
                 <RibbonApplicationMenuItem Header="View All Work"
                                            ImageSource="pack://application:,,,/Resources/Images/GroupSubmit32.png"
                                            Command="{Binding ViewAllWorkCommand}"
-                                           Visibility="{Binding InstructorVisibility}" />
+                                           Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
 
                 <RibbonSeparator />
 
@@ -165,7 +165,7 @@
                 <RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/Clipboard32.png"
                                     IsChecked="{Binding CurrentLeftPanel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.Progress}}"
                                     IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
-                                    Visibility="{Binding InstructorVisibility}">
+                                    Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}">
                     <RibbonToggleButton.Style>
                         <Style TargetType="{x:Type RibbonToggleButton}">
                             <Setter Property="Label"
@@ -185,7 +185,7 @@
                                     SmallImageSource="pack://application:,,,/Resources/Images/StagingPanel16.png"
                                     IsChecked="{Binding MainWindow.Workspace.StagingPanel.IsVisible}"
                                     IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
-                                    Visibility="{Binding InstructorVisibility}">
+                                    Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}">
                     <RibbonToggleButton.Style>
                         <Style TargetType="{x:Type RibbonToggleButton}">
                             <Setter Property="Label"
@@ -205,13 +205,13 @@
                               LargeImageSource="pack://application:,,,/Resources/Images/PreviousPage32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/PreviousPage16.png"
                               Command="{Binding PreviousPageCommand}"
-                              Visibility="{Binding NotInstructorVisibility}" />
+                              Visibility="{Binding MainWindowViewModel.NotTeacherVisibility, Source={x:Static Application.Current}}" />
 
                 <RibbonButton Label="Next Page"
                               LargeImageSource="pack://application:,,,/Resources/Images/NextPage32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/NextPage16.png"
                               Command="{Binding NextPageCommand}"
-                              Visibility="{Binding NotInstructorVisibility}" />
+                              Visibility="{Binding MainWindowViewModel.NotTeacherVisibility, Source={x:Static Application.Current}}" />
 
             </RibbonGroup>
 
@@ -246,6 +246,13 @@
                                 <Rectangle VerticalAlignment="Center"
                                            StrokeThickness="0"
                                            Fill="Black"
+                                           Height="1"
+                                           Width="150" />
+                            </RibbonGalleryItem>
+                            <RibbonGalleryItem Height="30">
+                                <Rectangle VerticalAlignment="Center"
+                                           StrokeThickness="0"
+                                           Fill="Black"
                                            Height="2"
                                            Width="150" />
                             </RibbonGalleryItem>
@@ -257,7 +264,7 @@
                                            Width="150" />
                             </RibbonGalleryItem>
                             <RibbonGalleryItem Height="30"
-                                               Visibility="{Binding InstructorVisibility}">
+                                               Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}">
                                 <Rectangle VerticalAlignment="Center"
                                            StrokeThickness="0"
                                            Fill="Black"
@@ -265,7 +272,7 @@
                                            Width="150" />
                             </RibbonGalleryItem>
                             <RibbonGalleryItem Height="30"
-                                               Visibility="{Binding InstructorVisibility}">
+                                               Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}">
                                 <Rectangle VerticalAlignment="Center"
                                            StrokeThickness="0"
                                            Fill="Black"
@@ -277,7 +284,7 @@
                 </RibbonMenuButton>
 
                 <RibbonMenuButton Label="Eraser Type"
-                                  Visibility="{Binding InstructorVisibility}">
+                                  Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}">
                     <RibbonMenuButton.Style>
                         <Style TargetType="{x:Type RibbonMenuButton}">
                             <Setter Property="LargeImageSource"
@@ -402,7 +409,7 @@
                 </RibbonGroup.Resources>
                 <RibbonButton Background="Black" />
                 <RibbonButton Background="White"
-                              Visibility="{Binding InstructorVisibility}" />
+                              Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
                 <RibbonButton Background="Red" />
                 <RibbonButton Background="DarkOrange" />
                 <RibbonButton Background="Tan" />
@@ -417,7 +424,7 @@
                 <RibbonButton Background="SlateGray" />
                 <RibbonButton Background="SkyBlue"  />
                 <RibbonButton Background="DeepSkyBlue"
-                              Visibility="{Binding InstructorVisibility}" />
+                              Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
                 <Border BorderBrush="Black"
                         BorderThickness="2"
                         Background="White"
@@ -442,7 +449,7 @@
             </RibbonGroup>
 
             <RibbonGroup Header="Share"
-                         Visibility="{Binding StudentVisibility}">
+                         Visibility="{Binding MainWindowViewModel.StudentOnlyVisibility, Source={x:Static Application.Current}}">
 
                 <RibbonButton Label="Send To Teacher"
                               LargeImageSource="pack://application:,,,/Resources/Images/SingleSubmit32.png"
@@ -473,7 +480,7 @@
             </RibbonGroup>
 
             <RibbonGroup Header="Displays"
-                         Visibility="{Binding InstructorVisibility}">
+                         Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}">
 
                 <RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/Displays32.png"
                                     IsChecked="{Binding CurrentRightPanel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.Displays}}"
@@ -495,7 +502,7 @@
 
                 <RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/Projector32.png"
                                     SmallImageSource="pack://application:,,,/Resources/Images/Projector16.png"
-                                    IsChecked="{Binding IsProjectorFrozen}"
+                                    IsChecked="{Binding MainWindowViewModel.IsProjectorFrozen, Source={x:Static Application.Current}}"
                                     IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}">
                     <RibbonToggleButton.Style>
                         <Style TargetType="{x:Type RibbonToggleButton}">
@@ -515,7 +522,7 @@
             </RibbonGroup>
             
             <RibbonGroup Header="Extras"
-                         Visibility="{Binding InstructorVisibility}">
+                         Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}">
 
                 <!--<RibbonButton Label="Make Exit Tickets"
                               LargeImageSource="..\Resources\Images\IndexCards32.png"
@@ -544,28 +551,10 @@
         </RibbonTab>
         
         <RibbonTab Header="Extras"
-                   Visibility="{Binding InstructorVisibility}">
+                   Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}">
             
             <RibbonGroup Header="Page">
-                
-                <RibbonToggleButton LargeImageSource="pack://application:,,,/Resources/Images/PageInformation32.png"
-                                    IsChecked="{Binding CurrentRightPanel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.PageInformation}}"
-                                    IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}">
-                    <RibbonToggleButton.Style>
-                        <Style TargetType="{x:Type RibbonToggleButton}">
-                            <Setter Property="Label"
-                                    Value="Show Page Info" />
-                            <Style.Triggers>
-                                <Trigger Property="IsChecked"
-                                         Value="True">
-                                    <Setter Property="Label"
-                                            Value="Hide PageInfo" />
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </RibbonToggleButton.Style>
-                </RibbonToggleButton>
-                 
+
                 <RibbonButton Label="Create Sub-Page"
                               LargeImageSource="pack://application:,,,/Resources/Images/BlankPage64.png"
                               Command="{Binding CreateSubPageCommand}" /> 
@@ -605,20 +594,12 @@
                               Command="{Binding MakeExitTicketsFromCurrentPageCommand}" />
 
             </RibbonGroup>
-            
-            <RibbonGroup Header="History">
-
-                <RibbonButton Label="Replay"
-                              LargeImageSource="..\Images\video.png"
-                              Command="{Binding ReplayCommand}" />
-
-            </RibbonGroup>
 
         </RibbonTab>
 
         <!--Insert Tab-->
         <RibbonTab Header="Insert"
-                   Visibility="{Binding InstructorVisibility}">
+                   Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}">
 
             <RibbonGroup Header="Tools">
 
@@ -802,7 +783,7 @@
 
         <!--Histories Tab-->
         <RibbonTab Header="Histories"
-                   Visibility="{Binding InstructorVisibility}">
+                   Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}">
 
             <RibbonGroup Header="Misc.">
 
@@ -852,7 +833,7 @@
 
         <!--Test Tab-->
         <RibbonTab Header="Test Features"
-                   Visibility="{Binding InstructorVisibility}">
+                   Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}">
 
             <RibbonGroup Header="ClassList Commands">
 

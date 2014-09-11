@@ -95,7 +95,7 @@ namespace Classroom_Learning_Partner
                                                                                             App.MainWindowViewModel.FrozenDisplayImageSource = bitmapImage;
 
                                                                                         }
-                                                                                        App.MainWindowViewModel.Ribbon.IsProjectorFrozen = isFreezing;
+                                                                                        App.MainWindowViewModel.IsProjectorFrozen = isFreezing;
 
                                                                                         return null;
                                                                                     },
@@ -106,7 +106,7 @@ namespace Classroom_Learning_Partner
         {
             var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel == null ||
-               App.CurrentUserMode != App.UserMode.Projector)
+               App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Projector)
             {
                 return;
             }
@@ -155,7 +155,7 @@ namespace Classroom_Learning_Partner
         {
             var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel == null ||
-               App.CurrentUserMode != App.UserMode.Projector)
+               App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Projector)
             {
                 return;
             }
@@ -199,7 +199,7 @@ namespace Classroom_Learning_Partner
         {
             var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel == null ||
-               App.CurrentUserMode != App.UserMode.Projector)
+               App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Projector)
             {
                 return;
             }
@@ -246,7 +246,7 @@ namespace Classroom_Learning_Partner
         {
             var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel == null ||
-               App.CurrentUserMode != App.UserMode.Projector)
+               App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Projector)
             {
                 return;
             }
@@ -469,7 +469,7 @@ namespace Classroom_Learning_Partner
                         continue;
                     }
 
-                    var folderPath = Path.Combine(App.NotebookCacheDirectory, notebookName);
+                    var folderPath = Path.Combine(MainWindowViewModel.NotebookCacheDirectory, notebookName);
                     if(!Directory.Exists(folderPath))
                     {
                         continue;

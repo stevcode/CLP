@@ -275,6 +275,7 @@
     <Compile Include="Resources\InkInterpretation.cs" />
     <Compile Include="Utilities\Extensions\ObservableCollectionExtensions.cs" />
     <Compile Include="Utilities\ObservableCollectionOperation.cs" />
+    <Compile Include="ViewModels\Tags\DivisionRelationDefinitionTagViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\ClassSubjectCreationViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\ExitTicketCreationViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\StudentSelectorViewModel.cs" />
@@ -285,7 +286,8 @@
     <Compile Include="ViewModels\Pages\CLPAnimationPageViewModel.cs" />
     <Compile Include="ViewModels\Pages\CLPPageViewModel.cs" />
     <Compile Include="ViewModels\Displays\SingleDisplayViewModel.cs" />
-    <Compile Include="ViewModels\Math\ProductDefinitionTagViewModel.cs" />
+    <Compile Include="ViewModels\Tags\DivisionTemplateTroubleWithRemaindersTagViewModel.cs" />
+    <Compile Include="ViewModels\Tags\MultiplicationRelationDefinitionTagViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\CLPAggregationDataTableViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Arrays\CLPArrayViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Arrays\CLPFactorCardViewModel.cs" />
@@ -301,11 +303,22 @@
     <Compile Include="ViewModels\Panels\StudentProgressInfo.cs" />
     <Compile Include="ViewModels\Panels\SubmissionHistoryPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\WebcamPanelViewModel.cs" />
+    <Compile Include="ViewModels\Workspaces\LocationBrowserWorkspaceViewModel.cs" />
+    <Compile Include="ViewModels\Workspaces\LocationSelectors\CacheSelectorViewModel.cs" />
     <Compile Include="Views\Modal Windows\AdvancedStagingView.xaml.cs">
       <DependentUpon>AdvancedStagingView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Modal Windows\MVVM\DivisionRelationDefinitionTagView.xaml.cs">
+      <DependentUpon>DivisionRelationDefinitionTagView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Modal Windows\MVVM\ButtonBoxView.xaml.cs">
+      <DependentUpon>ButtonBoxView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Modal Windows\MVVM\ClassSubjectCreationView.xaml.cs">
       <DependentUpon>ClassSubjectCreationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Modal Windows\MVVM\DivisionTemplateTroubleWithRemaindersTagView.xaml.cs">
+      <DependentUpon>DivisionTemplateTroubleWithRemaindersTagView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Modal Windows\MVVM\ExitTicketCreationView.xaml.cs">
       <DependentUpon>ExitTicketCreationView.xaml</DependentUpon>
@@ -405,8 +418,8 @@
     <Compile Include="Views\Modal Windows\LassoedPageObjectParameterizationView.xaml.cs">
       <DependentUpon>LassoedPageObjectParameterizationView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Modal Windows\ProductDefinitionTagView.xaml.cs">
-      <DependentUpon>ProductDefinitionTagView.xaml</DependentUpon>
+    <Compile Include="Views\Modal Windows\MVVM\MultiplicationRelationDefinitionTagView.xaml.cs">
+      <DependentUpon>MultiplicationRelationDefinitionTagView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Modal Windows\PageTopicWindowView.xaml.cs">
       <DependentUpon>PageTopicWindowView.xaml</DependentUpon>
@@ -519,6 +532,12 @@
     <Compile Include="Views\Workspaces\BlankWorkspaceView.xaml.cs">
       <DependentUpon>BlankWorkspaceView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Workspaces\LocationSelectors\CacheSelectorView.xaml.cs">
+      <DependentUpon>CacheSelectorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Workspaces\LocationBrowserWorkspaceView.xaml.cs">
+      <DependentUpon>LocationBrowserWorkspaceView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Workspaces\NotebookChooserWorkspaceView.xaml.cs">
       <DependentUpon>NotebookChooserWorkspaceView.xaml</DependentUpon>
     </Compile>
@@ -540,7 +559,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Modal Windows\MVVM\DivisionRelationDefinitionTagView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Modal Windows\MVVM\ButtonBoxView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Modal Windows\MVVM\ClassSubjectCreationView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Modal Windows\MVVM\DivisionTemplateTroubleWithRemaindersTagView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -648,7 +679,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Modal Windows\ProductDefinitionTagView.xaml">
+    <Page Include="Views\Modal Windows\MVVM\MultiplicationRelationDefinitionTagView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -800,6 +831,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Workspaces\LocationSelectors\CacheSelectorView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Workspaces\LocationBrowserWorkspaceView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Workspaces\NotebookChooserWorkspaceView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -925,6 +964,10 @@
     <Content Include="External Libraries\System.Reactive.Providers.dll" />
     <Content Include="External Libraries\System.Reactive.Windows.Threading.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
+    <Resource Include="Resources\Images\Info128.png" />
+    <Resource Include="Resources\Images\Info16.png" />
+    <Resource Include="Resources\Images\Info32.png" />
+    <Resource Include="Resources\Images\Info64.png" />
     <Resource Include="Resources\Images\ConvertToPDF32.png" />
     <Resource Include="Resources\Images\DisplayAllSubmissionsButton29x25.png" />
     <Resource Include="Resources\Images\PresetArray16.png" />

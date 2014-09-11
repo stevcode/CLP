@@ -107,7 +107,7 @@
 
                 <ControlTemplate x:Key="SubmissionHistoryPanelTemplate">
                     <views:SubmissionHistoryPanelView DataContext="{Binding BottomPanel}"
-                                                      Visibility="{Binding MainWindowViewModel.Ribbon.StudentVisibility, Source={x:Static Application.Current}}" />
+                                                      Visibility="{Binding MainWindowViewModel.StudentOnlyVisibility, Source={x:Static Application.Current}}" />
                 </ControlTemplate>
 
             </Control.Resources>
