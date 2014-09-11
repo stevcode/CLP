@@ -181,6 +181,7 @@
     <Compile Include="Utility\Extentions\GuidExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="DomainModel\Tags\Stamps\" />
     <Folder Include="Repositories\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

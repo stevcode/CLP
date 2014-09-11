@@ -38,7 +38,7 @@
                Grid.ColumnSpan="2"
                Content="Multiplication Relation Type:"
                HorizontalAlignment="Center" />
-        
+
         <ComboBox Grid.Row="0"
                   Grid.Column="2"
                   Grid.ColumnSpan="2"
@@ -54,17 +54,42 @@
                VerticalAlignment="Center" />
 
         <ItemsControl Grid.Row="1"
-                      Grid.Column="1" 
-                      ItemsSource="{Binding Factors}">
+                      Grid.Column="1"
+                      ItemsSource="{Binding Factors}"
+                      AlternationCount="3">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Vertical" />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
-            
+
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <TextBox Text="{Binding ContainedValue}"  />
+                    <StackPanel Orientation="Vertical">
+                        <TextBox Text="{Binding ContainedValue}" />
+                        <TextBlock Text="Group(s) Of">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Visibility"
+                                            Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition
+                                                    Binding="{Binding DataContext.RelationType, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                                    Value="{x:Static entities:MultiplicationRelationDefinitionTag+RelationTypes.EqualGroups}" />
+                                                <Condition
+                                                    Binding="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource TemplatedParent}}"
+                                                    Value="0" />
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="Visibility"
+                                                    Value="Visible" />
+                                        </MultiDataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </StackPanel>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
@@ -81,7 +106,7 @@
                  VerticalAlignment="Top"
                  Text="{Binding Product}"
                  TabIndex="2" />
-        
+
         <Button Grid.Row="2"
                 Grid.Column="2"
                 Grid.ColumnSpan="2"
