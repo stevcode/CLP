@@ -16,7 +16,7 @@
         <conv:ItemSelectedToColorConverter x:Key="PageOrDisplaySelectionColorConverter" />
         <conv:ShouldUseThumbnailConverter x:Key="ShouldUseThumbnailConverter" />
         <conv:EnumToBoolConverter x:Key="EnumToBoolConverter" />
-        
+
         <!-- Style to override ListBoxItem selection visuals for Pages -->
         <Style x:Key="ListBoxItemBlankStyle"
                TargetType="{x:Type ListBoxItem}">
@@ -28,15 +28,15 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        
-        <ObjectDataProvider x:Key="dataFromEnum" 
+
+        <ObjectDataProvider x:Key="dataFromEnum"
                             MethodName="GetValues"
                             ObjectType="{x:Type system:Enum}">
             <ObjectDataProvider.MethodParameters>
                 <x:Type TypeName="viewModels:SortAndGroupTypes" />
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
-        
+
     </UserControl.Resources>
 
     <Border Background="{StaticResource GrayBackgroundColor}"
@@ -48,11 +48,14 @@
 
             <DockPanel LastChildFill="True">
 
-                <Border DockPanel.Dock="Top"  
-                        BorderBrush="{StaticResource GrayEdgeColor}" BorderThickness="0 0 0 5">
+                <Border DockPanel.Dock="Top"
+                        BorderBrush="{StaticResource GrayEdgeColor}"
+                        BorderThickness="0 0 0 5">
                     <DockPanel LastChildFill="True">
-                        <ToggleButton DockPanel.Dock="Top" Height="30"
-                                      HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                        <ToggleButton DockPanel.Dock="Top"
+                                      Height="30"
+                                      HorizontalAlignment="Stretch"
+                                      HorizontalContentAlignment="Center"
                                       Content="Students With No Submissions"
                                       IsChecked="{Binding IsStudentsWithNoSubmissionsVisible}">
                             <i:Interaction.Triggers>
@@ -69,21 +72,22 @@
                                  Visibility="{Binding IsStudentsWithNoSubmissionsVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />
                     </DockPanel>
                 </Border>
-                
+
                 <Grid DockPanel.Dock="Top">
                     <Grid.RowDefinitions>
                         <RowDefinition />
                         <RowDefinition />
                     </Grid.RowDefinitions>
 
-                    <Grid Grid.Row="0" Margin="5,15">
+                    <Grid Grid.Row="0"
+                          Margin="5,15">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <Label Grid.Column="0">View By: </Label>
-    
+                        <Label Grid.Column="0">View By:</Label>
+
                         <ComboBox Grid.Column="1"
                                   ItemsSource="{Binding Source={StaticResource dataFromEnum}}"
                                   SelectedItem="{Binding CurrentSortAndGroupType, Mode=TwoWay}"
@@ -93,13 +97,13 @@
 
                     <!--Build Filters here. Starts with Add Filter button, choose from available filters, adds to listbox of all filters
                         have X next to each filter to remove said filter.-->
-                    
+
                 </Grid>
 
-                <Slider DockPanel.Dock="Top"
+                <!--<Slider DockPanel.Dock="Top"
                         Margin="10"
                         Minimum="1"
-                        Maximum="4" />
+                        Maximum="4" />-->
 
                 <Button DockPanel.Dock="Bottom"
                         Height="30"
@@ -120,7 +124,7 @@
                          VirtualizingStackPanel.CacheLengthUnit="Page"
                          VirtualizingStackPanel.ScrollUnit="Pixel"
                          ManipulationBoundaryFeedback="PagesListBox_OnManipulationBoundaryFeedback">
-                    
+
                     <ListBox.GroupStyle>
                         <GroupStyle>
                             <GroupStyle.ContainerStyle>
@@ -134,24 +138,25 @@
                                                         <RowDefinition Height="Auto" />
                                                         <RowDefinition Height="*" />
                                                     </Grid.RowDefinitions>
-                                                    
-                                                    <Border Grid.Row="0" 
+
+                                                    <Border Grid.Row="0"
                                                             VerticalAlignment="Bottom"
                                                             Background="Transparent"
                                                             BorderBrush="Black"
                                                             BorderThickness="2 2 2 0"
                                                             Margin="0 0 2 0"
                                                             Height="10"
-                                                            Visibility="{Binding IsChecked, ElementName=GroupVisibilityToggle, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}"/>
+                                                            Visibility="{Binding IsChecked, ElementName=GroupVisibilityToggle, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />
 
-                                                    <ToggleButton Grid.Row="0" 
-                                                                  x:Name="GroupVisibilityToggle" 
+                                                    <ToggleButton Grid.Row="0"
+                                                                  x:Name="GroupVisibilityToggle"
                                                                   Margin="10 0 50 0"
                                                                   Height="20"
                                                                   MinWidth="100">
                                                         <ToggleButton.Style>
                                                             <Style TargetType="ToggleButton">
-                                                                <Setter Property="IsChecked" Value="True" />
+                                                                <Setter Property="IsChecked"
+                                                                        Value="True" />
                                                             </Style>
                                                         </ToggleButton.Style>
                                                         <TextBlock Margin="5 0"
@@ -163,15 +168,16 @@
                                                         </TextBlock>
                                                     </ToggleButton>
 
-                                                    <Border Grid.Row="1" 
+                                                    <Border Grid.Row="1"
                                                             Background="Transparent"
                                                             BorderBrush="Black"
                                                             BorderThickness="2 0 2 2"
                                                             Margin="0 0 2 2"
                                                             Visibility="{Binding IsChecked, ElementName=GroupVisibilityToggle, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
-                                                    
-                                                        <ItemsPresenter Visibility="{Binding IsChecked, ElementName=GroupVisibilityToggle, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />
-                                                    
+
+                                                        <ItemsPresenter
+                                                            Visibility="{Binding IsChecked, ElementName=GroupVisibilityToggle, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />
+
                                                     </Border>
                                                 </Grid>
                                             </ControlTemplate>
@@ -190,7 +196,7 @@
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                
+
                                 <TextBlock Grid.Column="0"
                                            Margin="5 5 -3 3"
                                            Foreground="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
@@ -208,7 +214,7 @@
                                         </TransformGroup>
                                     </TextBlock.LayoutTransform>
                                 </TextBlock>
-                                
+
                                 <TextBlock Grid.Column="2"
                                            Margin="-3 0 5 0"
                                            Foreground="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
@@ -230,7 +236,7 @@
                                                           Margin="5 5 5 0"
                                                           DataContext="{Binding}"
                                                           ClipToBounds="True" />
-                                
+
                                 <!--<Control Grid.Column="1"
                                          Margin="5 5 5 0">
                                     <Control.Resources>
@@ -247,7 +253,9 @@
                                     <Control.Style>
                                         <Style TargetType="{x:Type Control}">
                                             <Style.Triggers>
-                                                --><!--Thumbnail trigger--><!--
+                                                -->
+                                <!--Thumbnail trigger-->
+                                <!--
                                                 <MultiDataTrigger>
                                                     <MultiDataTrigger.Conditions>
                                                         <Condition Value="True">
@@ -262,7 +270,9 @@
                                                     <Setter Property="Template" Value="{StaticResource ThumbnailTemplate}" />
                                                 </MultiDataTrigger>
 
-                                                --><!--PagePreview trigger--><!--
+                                                -->
+                                <!--PagePreview trigger-->
+                                <!--
                                                 <MultiDataTrigger>
                                                     <MultiDataTrigger.Conditions>
                                                         <Condition Value="False">
@@ -295,7 +305,7 @@
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
                                 </Rectangle>
-                                
+
                                 <Button Grid.Column="1"
                                         Width="25"
                                         Height="25"
@@ -322,14 +332,14 @@
                                         </ControlTemplate>
                                     </Button.Template>
                                 </Button>
-                                
+
                                 <StackPanel Grid.Column="1"
                                             Height="16"
                                             IsHitTestVisible="False"
                                             HorizontalAlignment="Left"
                                             VerticalAlignment="Bottom"
                                             Orientation="Horizontal">
-                                    
+
                                     <Image Height="16"
                                            Width="16"
                                            IsHitTestVisible="False"
@@ -339,8 +349,9 @@
                                                 <Setter Property="Visibility"
                                                         Value="Collapsed" />
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding PageType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static entities:PageTypes.Animation}}"
-                                                                 Value="True">
+                                                    <DataTrigger
+                                                        Binding="{Binding PageType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static entities:PageTypes.Animation}}"
+                                                        Value="True">
                                                         <Setter Property="Visibility"
                                                                 Value="Visible" />
                                                     </DataTrigger>
@@ -348,9 +359,9 @@
                                             </Style>
                                         </Image.Style>
                                     </Image>
-                                    
+
                                 </StackPanel>
-                                
+
                                 <StackPanel Grid.Column="1"
                                             Width="20"
                                             Margin="0 0 2 0"
@@ -358,22 +369,26 @@
                                             VerticalAlignment="Bottom"
                                             Orientation="Vertical">
 
-                                    <ToggleButton Width="20" IsChecked="{Binding ViewModel.IsStarred, ElementName=PagePreviewView}">
+                                    <ToggleButton Width="20"
+                                                  IsChecked="{Binding ViewModel.IsStarred, ElementName=PagePreviewView}">
                                         <ToggleButton.Style>
                                             <Style TargetType="ToggleButton">
                                                 <Setter Property="Template">
                                                     <Setter.Value>
                                                         <ControlTemplate TargetType="{x:Type ToggleButton}">
-                                                            <Image x:Name="ButtonImage" Source="pack://application:,,,/Resources/Images/UnStarred16.png" />
+                                                            <Image x:Name="ButtonImage"
+                                                                   Source="pack://application:,,,/Resources/Images/UnStarred16.png" />
                                                         </ControlTemplate>
                                                     </Setter.Value>
                                                 </Setter>
                                                 <Style.Triggers>
-                                                    <Trigger Property="IsChecked" Value="True">
+                                                    <Trigger Property="IsChecked"
+                                                             Value="True">
                                                         <Setter Property="Template">
                                                             <Setter.Value>
                                                                 <ControlTemplate TargetType="{x:Type ToggleButton}">
-                                                                    <Image x:Name="ButtonImage" Source="pack://application:,,,/Resources/Images/Starred16.png" />
+                                                                    <Image x:Name="ButtonImage"
+                                                                           Source="pack://application:,,,/Resources/Images/Starred16.png" />
                                                                 </ControlTemplate>
                                                             </Setter.Value>
                                                         </Setter>
@@ -383,22 +398,26 @@
                                         </ToggleButton.Style>
                                     </ToggleButton>
 
-                                    <ToggleButton Width="20" IsChecked="{Binding ViewModel.IsDotted, ElementName=PagePreviewView}">
+                                    <ToggleButton Width="20"
+                                                  IsChecked="{Binding ViewModel.IsDotted, ElementName=PagePreviewView}">
                                         <ToggleButton.Style>
                                             <Style TargetType="ToggleButton">
                                                 <Setter Property="Template">
                                                     <Setter.Value>
                                                         <ControlTemplate TargetType="{x:Type ToggleButton}">
-                                                            <Image x:Name="ButtonImage" Source="pack://application:,,,/Resources/Images/NotDotted16.png" />
+                                                            <Image x:Name="ButtonImage"
+                                                                   Source="pack://application:,,,/Resources/Images/NotDotted16.png" />
                                                         </ControlTemplate>
                                                     </Setter.Value>
                                                 </Setter>
                                                 <Style.Triggers>
-                                                    <Trigger Property="IsChecked" Value="True">
+                                                    <Trigger Property="IsChecked"
+                                                             Value="True">
                                                         <Setter Property="Template">
                                                             <Setter.Value>
                                                                 <ControlTemplate TargetType="{x:Type ToggleButton}">
-                                                                    <Image x:Name="ButtonImage" Source="pack://application:,,,/Resources/Images/Dotted16.png" />
+                                                                    <Image x:Name="ButtonImage"
+                                                                           Source="pack://application:,,,/Resources/Images/Dotted16.png" />
                                                                 </ControlTemplate>
                                                             </Setter.Value>
                                                         </Setter>
@@ -408,7 +427,7 @@
                                         </ToggleButton.Style>
                                     </ToggleButton>
 
-                                    <ToggleButton Width="20" 
+                                    <ToggleButton Width="20"
                                                   Click="CorrectnessTagButtons_OnClick"
                                                   IsChecked="{Binding ViewModel.Correctness, 
                                                     ElementName=PagePreviewView, 
@@ -419,25 +438,30 @@
                                                 <Setter Property="Template">
                                                     <Setter.Value>
                                                         <ControlTemplate TargetType="{x:Type ToggleButton}">
-                                                            <Image x:Name="ButtonImage" Source="pack://application:,,,/Resources/Images/NotCorrect16.png" />
+                                                            <Image x:Name="ButtonImage"
+                                                                   Source="pack://application:,,,/Resources/Images/NotCorrect16.png" />
                                                         </ControlTemplate>
                                                     </Setter.Value>
                                                 </Setter>
                                                 <Style.Triggers>
-                                                    <Trigger Property="IsChecked" Value="True">
+                                                    <Trigger Property="IsChecked"
+                                                             Value="True">
                                                         <Setter Property="Template">
                                                             <Setter.Value>
                                                                 <ControlTemplate TargetType="{x:Type ToggleButton}">
-                                                                    <Image x:Name="ButtonImage" Source="pack://application:,,,/Resources/Images/Correct16.png" />
+                                                                    <Image x:Name="ButtonImage"
+                                                                           Source="pack://application:,,,/Resources/Images/Correct16.png" />
                                                                 </ControlTemplate>
                                                             </Setter.Value>
                                                         </Setter>
                                                     </Trigger>
-                                                    <Trigger Property="IsChecked" Value="False">
+                                                    <Trigger Property="IsChecked"
+                                                             Value="False">
                                                         <Setter Property="Template">
                                                             <Setter.Value>
                                                                 <ControlTemplate TargetType="{x:Type ToggleButton}">
-                                                                    <Image x:Name="ButtonImage" Source="pack://application:,,,/Resources/Images/NotCorrect16.png" />
+                                                                    <Image x:Name="ButtonImage"
+                                                                           Source="pack://application:,,,/Resources/Images/NotCorrect16.png" />
                                                                 </ControlTemplate>
                                                             </Setter.Value>
                                                         </Setter>
@@ -447,7 +471,7 @@
                                         </ToggleButton.Style>
                                     </ToggleButton>
 
-                                    <ToggleButton Width="20" 
+                                    <ToggleButton Width="20"
                                                   Click="CorrectnessTagButtons_OnClick"
                                                   IsChecked="{Binding ViewModel.Correctness, 
                                         ElementName=PagePreviewView, 
@@ -458,25 +482,30 @@
                                                 <Setter Property="Template">
                                                     <Setter.Value>
                                                         <ControlTemplate TargetType="{x:Type ToggleButton}">
-                                                            <Image x:Name="ButtonImage" Source="pack://application:,,,/Resources/Images/NotIncorrect16.png" />
+                                                            <Image x:Name="ButtonImage"
+                                                                   Source="pack://application:,,,/Resources/Images/NotIncorrect16.png" />
                                                         </ControlTemplate>
                                                     </Setter.Value>
                                                 </Setter>
                                                 <Style.Triggers>
-                                                    <Trigger Property="IsChecked" Value="True">
+                                                    <Trigger Property="IsChecked"
+                                                             Value="True">
                                                         <Setter Property="Template">
                                                             <Setter.Value>
                                                                 <ControlTemplate TargetType="{x:Type ToggleButton}">
-                                                                    <Image x:Name="ButtonImage" Source="pack://application:,,,/Resources/Images/Incorrect16.png" />
+                                                                    <Image x:Name="ButtonImage"
+                                                                           Source="pack://application:,,,/Resources/Images/Incorrect16.png" />
                                                                 </ControlTemplate>
                                                             </Setter.Value>
                                                         </Setter>
                                                     </Trigger>
-                                                    <Trigger Property="IsChecked" Value="False">
+                                                    <Trigger Property="IsChecked"
+                                                             Value="False">
                                                         <Setter Property="Template">
                                                             <Setter.Value>
                                                                 <ControlTemplate TargetType="{x:Type ToggleButton}">
-                                                                    <Image x:Name="ButtonImage" Source="pack://application:,,,/Resources/Images/NotIncorrect16.png" />
+                                                                    <Image x:Name="ButtonImage"
+                                                                           Source="pack://application:,,,/Resources/Images/NotIncorrect16.png" />
                                                                 </ControlTemplate>
                                                             </Setter.Value>
                                                         </Setter>
@@ -486,45 +515,6 @@
                                         </ToggleButton.Style>
                                     </ToggleButton>
 
-                                    <ToggleButton Width="20" 
-                                                  Click="CorrectnessTagButtons_OnClick"
-                                                  IsChecked="{Binding ViewModel.Correctness, 
-                                        ElementName=PagePreviewView, 
-                                        Converter={StaticResource EnumToBoolConverter}, 
-                                        ConverterParameter={x:Static entities:Correctness.Unknown}}">
-                                        <ToggleButton.Style>
-                                            <Style TargetType="ToggleButton">
-                                                <Setter Property="Template">
-                                                    <Setter.Value>
-                                                        <ControlTemplate TargetType="{x:Type ToggleButton}">
-                                                            <Image x:Name="ButtonImage" Source="pack://application:,,,/Resources/Images/NotUnknown16.png" />
-                                                        </ControlTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                                <Style.Triggers>
-                                                    <Trigger Property="IsChecked" Value="True">
-                                                        <Setter Property="Template">
-                                                            <Setter.Value>
-                                                                <ControlTemplate TargetType="{x:Type ToggleButton}">
-                                                                    <Image x:Name="ButtonImage" Source="pack://application:,,,/Resources/Images/Unknown16.png" />
-                                                                </ControlTemplate>
-                                                            </Setter.Value>
-                                                        </Setter>
-                                                    </Trigger>
-                                                    <Trigger Property="IsChecked" Value="False">
-                                                        <Setter Property="Template">
-                                                            <Setter.Value>
-                                                                <ControlTemplate TargetType="{x:Type ToggleButton}">
-                                                                    <Image x:Name="ButtonImage" Source="pack://application:,,,/Resources/Images/NotUnknown16.png" />
-                                                                </ControlTemplate>
-                                                            </Setter.Value>
-                                                        </Setter>
-                                                    </Trigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </ToggleButton.Style>
-                                    </ToggleButton>
-                                    
                                 </StackPanel>
 
                             </Grid>
