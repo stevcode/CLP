@@ -17,7 +17,7 @@ namespace CLP.Entities
                     .Where(
                            tag =>
                            tag is DivisionTemplateRepresentationCorrectnessTag || tag is DivisionTemplateCompletenessTag ||
-                           tag is DivisionTemplateCorrectnessTag || tag is TroubleWithDivisionTag))
+                           tag is DivisionTemplateCorrectnessSummaryTag || tag is TroubleWithDivisionTag))
             {
                 page.RemoveTag(tag);
             }
@@ -661,7 +661,7 @@ namespace CLP.Entities
                 correctnessSum = Correctness.Incorrect;
             }
 
-            page.AddTag(new DivisionTemplateCorrectnessTag(page, Origin.StudentPageGenerated, correctnessSum));
+            page.AddTag(new DivisionTemplateCorrectnessSummaryTag(page, Origin.StudentPageGenerated, correctnessSum));
         }
 
         public static void AnalyzeDivisionTemplateTroubleWithDivision(CLPPage page)

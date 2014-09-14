@@ -13,16 +13,16 @@ namespace CLP.Entities
     }
 
     [Serializable]
-    public class ArrayCorrectnessTag : ATagBase
+    public class ArrayCorrectnessSummaryTag : ATagBase
     {
         #region Constructors
 
-        /// <summary>Initializes <see cref="ArrayCorrectnessTag" /> from scratch.</summary>
-        public ArrayCorrectnessTag() { }
+        /// <summary>Initializes <see cref="ArrayCorrectnessSummaryTag" /> from scratch.</summary>
+        public ArrayCorrectnessSummaryTag() { }
 
-        /// <summary>Initializes <see cref="ArrayCorrectnessTag" />.</summary>
-        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="ArrayCorrectnessTag" /> belongs to.</param>
-        public ArrayCorrectnessTag(CLPPage parentPage, Origin origin, Correctness correctness, List<ArrayIncorrectReasons> incorrectReasons)
+        /// <summary>Initializes <see cref="ArrayCorrectnessSummaryTag" />.</summary>
+        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="ArrayCorrectnessSummaryTag" /> belongs to.</param>
+        public ArrayCorrectnessSummaryTag(CLPPage parentPage, Origin origin, Correctness correctness, List<ArrayIncorrectReasons> incorrectReasons)
             : base(parentPage, origin)
         {
             IsSingleValueTag = true;
@@ -31,10 +31,10 @@ namespace CLP.Entities
             ArrayIncorrectReasons = incorrectReasons;
         }
 
-        /// <summary>Initializes <see cref="ArrayCorrectnessTag" /> based on <see cref="SerializationInfo" />.</summary>
+        /// <summary>Initializes <see cref="ArrayCorrectnessSummaryTag" /> based on <see cref="SerializationInfo" />.</summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext" />.</param>
-        public ArrayCorrectnessTag(SerializationInfo info, StreamingContext context)
+        public ArrayCorrectnessSummaryTag(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
         #endregion //Constructors
@@ -69,7 +69,7 @@ namespace CLP.Entities
 
         public override string FormattedName
         {
-            get { return "Array Correctness"; }
+            get { return "Array Correctness Summary"; }
         }
 
         public override string FormattedValue
