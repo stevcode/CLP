@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -59,6 +60,7 @@ namespace Classroom_Learning_Partner.ViewModels
             MouseDownCommand = new Command<MouseEventArgs>(OnMouseDownCommandExecute);
             MouseUpCommand = new Command<MouseEventArgs>(OnMouseUpCommandExecute);
             ClearPageCommand = new Command(OnClearPageCommandExecute);
+            SetCorrectnessCommand = new Command<string>(OnSetCorrectnessCommandExecute);
         }
 
         #region Overrides of ViewModelBase
@@ -569,6 +571,26 @@ namespace Classroom_Learning_Partner.ViewModels
             Page.InkStrokes.Clear();
             Page.SerializedStrokes.Clear();
             Page.History.ClearHistory();
+        }
+
+        /// <summary>
+        /// Manually sets the Correctness of the page.
+        /// </summary>
+        public Command<string> SetCorrectnessCommand { get; private set; }
+
+        private void OnSetCorrectnessCommandExecute(string buttonType)
+        {
+            if (buttonType == "Correct")
+            {
+                Correctness = Correctness == Correctness.Correct ? Correctness.PartiallyCorrect : Correctness.Correct;
+                return;
+            }
+
+            if (buttonType == "Incorrect")
+            {
+                Correctness = Correctness.Incorrect;
+                return;
+            }
         }
 
         #endregion //Commands
