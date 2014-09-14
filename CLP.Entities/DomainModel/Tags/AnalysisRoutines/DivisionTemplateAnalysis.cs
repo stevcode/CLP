@@ -623,6 +623,7 @@ namespace CLP.Entities
             var isCorrectOnce = false;
             var isPartiallyCorrectOnce = false;
             var isIncorrectOnce = false;
+            
             foreach (var arrayRepresentationCorrectnessTag in representationCorrectnessTags)
             {
                 switch (arrayRepresentationCorrectnessTag.Correctness)
@@ -661,7 +662,11 @@ namespace CLP.Entities
                 correctnessSum = Correctness.Incorrect;
             }
 
-            page.AddTag(new DivisionTemplateCorrectnessSummaryTag(page, Origin.StudentPageGenerated, correctnessSum));
+            var correctnessSummaryTag = new DivisionTemplateCorrectnessSummaryTag(page, Origin.StudentPageGenerated, correctnessSum);
+            correctnessSummaryTag.CorrectCount = representationCorrectnessTags.Count(x => x.Correctness == Correctness.Correct);
+            correctnessSummaryTag.IncorrectCount = representationCorrectnessTags.Count(x => x.Correctness == Correctness.Incorrect);
+            correctnessSummaryTag.PartiallyCorrectCount = representationCorrectnessTags.Count(x => x.Correctness == Correctness.PartiallyCorrect);
+            page.AddTag(correctnessSummaryTag);
         }
 
         public static void AnalyzeDivisionTemplateTroubleWithDivision(CLPPage page)
