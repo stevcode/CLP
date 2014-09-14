@@ -12,7 +12,7 @@ namespace CLP.Entities
         {
             // First, clear out any old StampTags generated via Analysis.
             foreach (var tag in
-                page.Tags.ToList().Where(tag => tag is StampGroupingsTag))
+                page.Tags.ToList().Where(tag => tag is StampGroupTag))
             {
                 page.RemoveTag(tag);
             }
@@ -25,7 +25,7 @@ namespace CLP.Entities
                 return;
             }
 
-            foreach (var multiplicationDefinitionTag in multiplicationDefinitionTags)
+            foreach (var multiplicationDefinitionTag in multiplicationDefinitionTags.Where(x => x.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups))
             {
                 AnalyzeParentStampGroupings(page, multiplicationDefinitionTag, stampedObjects);
             }
@@ -35,10 +35,18 @@ namespace CLP.Entities
                                                        MultiplicationRelationDefinitionTag multiplicationRelationDefinitionTag,
                                                        List<StampedObject> stampedObjects)
         {
-            var parentStampIDs = stampedObjects.Select(x => x.ParentStampID).Distinct();
+            var parentStampIDs = stampedObjects.Select(x => x.ParentStampID).Distinct().ToList();
             foreach (var parentStampID in parentStampIDs)
             {
-                
+                var id = parentStampID;
+                var distinctPartsValues = stampedObjects.Where(x => x.ParentStampID == id).Select(x => x.Parts).Distinct().ToList();
+                foreach (var distinctPartsValue in distinctPartsValues)
+                {
+                    var parts = distinctPartsValue;
+                    var stampedObjectIDs = stampedObjects.Where(x => x.ParentStampID == id && x.Parts == parts).Select(x => x.ID).ToList();
+                    var stampGroupTag = new StampGroupTag(page, Origin.StudentPageGenerated, parentStampID, parts, stampedObjectIDs);
+                    page.AddTag(stampGroupTag);
+                }
             }
         }
     }

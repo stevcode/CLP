@@ -762,6 +762,7 @@ namespace Classroom_Learning_Partner.ViewModels
             PageAnalysis.Analyze(CurrentPage);
             ArrayAnalysis.Analyze(CurrentPage);
             DivisionTemplateAnalysis.Analyze(CurrentPage);
+            StampAnalysis.Analyze(CurrentPage);
             ApplyInterpretedCorrectness(CurrentPage);
 
             if (CurrentPage.SubmissionType != SubmissionTypes.Unsubmitted)
@@ -774,6 +775,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 PageAnalysis.Analyze(submission);
                 ArrayAnalysis.Analyze(submission);
                 DivisionTemplateAnalysis.Analyze(submission);
+                StampAnalysis.Analyze(submission);
                 ApplyInterpretedCorrectness(submission);
             }
         }
