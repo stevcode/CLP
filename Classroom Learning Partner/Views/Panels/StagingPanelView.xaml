@@ -100,6 +100,30 @@
 
                 </Grid>
 
+                <Grid DockPanel.Dock="Top">
+                    <ToggleButton x:Name="IconVisibilityToggle"
+                                  Width="65"
+                                  Height="30"
+                                  Margin="15 0"
+                                  HorizontalAlignment="Right">
+                        <ToggleButton.Style>
+                            <Style TargetType="ToggleButton">
+                                <Setter Property="IsChecked"
+                                        Value="False" />
+                                <Setter Property="Content"
+                                        Value="Show Tags" />
+                                <Style.Triggers>
+                                    <Trigger Property="IsChecked"
+                                             Value="True">
+                                        <Setter Property="Content"
+                                                Value="Hide Tags" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ToggleButton.Style>
+                    </ToggleButton>
+                </Grid>
+
                 <!--<Slider DockPanel.Dock="Top"
                         Margin="10"
                         Minimum="1"
@@ -367,7 +391,8 @@
                                             Margin="0 0 2 0"
                                             HorizontalAlignment="Right"
                                             VerticalAlignment="Bottom"
-                                            Orientation="Vertical">
+                                            Orientation="Vertical"
+                                            Visibility="{Binding IsChecked, ElementName=IconVisibilityToggle, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
 
                                     <ToggleButton Width="20"
                                                   IsChecked="{Binding ViewModel.IsStarred, ElementName=PagePreviewView}">
