@@ -64,12 +64,12 @@ namespace CLP.Entities
 
         public override string FormattedName
         {
-            get { return "Dotted"; }
+            get { return "Had Help"; }
         }
 
         public override string FormattedValue
         {
-            get { return Value.ToString(); }
+            get { return Value == AcceptedValues.Dotted ? "True" : "False"; }
         }
 
         #endregion //ATagBase Overrides
