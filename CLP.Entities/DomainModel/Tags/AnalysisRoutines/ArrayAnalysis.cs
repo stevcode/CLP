@@ -516,7 +516,7 @@ namespace CLP.Entities
                 correctnessSum = Correctness.Incorrect;
             }
 
-            page.AddTag(new ArrayCorrectnessTag(page, Origin.StudentPageGenerated, correctnessSum, incorrectReasons));
+            page.AddTag(new ArrayCorrectnessSummaryTag(page, Origin.StudentPageGenerated, correctnessSum, incorrectReasons));
         }
     }
 }

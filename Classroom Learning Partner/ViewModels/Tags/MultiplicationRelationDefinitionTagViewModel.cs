@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
 using Catel.Data;
 using Catel.MVVM;
@@ -23,6 +23,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Factors.Add(new ValueContainer(0));
             Product = 0;
 
+            AddFactorCommand = new Command(OnAddFactorCommandExecute);
             CalculateProductCommand = new Command(OnCalculateProductCommandExecute);
         }
 
@@ -44,13 +45,13 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData ModelProperty = RegisterProperty("Model", typeof (MultiplicationRelationDefinitionTag));
 
         /// <summary>List of all the factors in the multiplication relation.</summary>
-        public List<ValueContainer> Factors
+        public ObservableCollection<ValueContainer> Factors
         {
-            get { return GetValue<List<ValueContainer>>(FactorsProperty); }
+            get { return GetValue<ObservableCollection<ValueContainer>>(FactorsProperty); }
             set { SetValue(FactorsProperty, value); }
         }
 
-        public static readonly PropertyData FactorsProperty = RegisterProperty("Factors", typeof (List<double>), () => new List<ValueContainer>());
+        public static readonly PropertyData FactorsProperty = RegisterProperty("Factors", typeof(ObservableCollection<double>), () => new ObservableCollection<ValueContainer>());
 
         /// <summary>Value of the Product.</summary>
         [ViewModelToModel("Model")]
@@ -72,6 +73,16 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData RelationTypeProperty = RegisterProperty("RelationType",
                                                                                     typeof (MultiplicationRelationDefinitionTag.RelationTypes));
+
+        /// <summary>
+        /// Adds a zero value factor to the relation definition.
+        /// </summary>
+        public Command AddFactorCommand { get; private set; }
+
+        private void OnAddFactorCommandExecute()
+        {
+            Factors.Add(new ValueContainer(0));
+        }
 
         /// <summary>Calculates the value of the product</summary>
         public Command CalculateProductCommand { get; private set; }

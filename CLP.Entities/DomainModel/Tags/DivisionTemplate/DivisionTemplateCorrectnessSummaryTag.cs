@@ -5,20 +5,20 @@ using Catel.Data;
 namespace CLP.Entities
 {
     [Serializable]
-    public class DivisionTemplateCorrectnessTag : ATagBase
+    public class DivisionTemplateCorrectnessSummaryTag : ATagBase
     {
         #region Constructors
 
         /// <summary>
-        /// Initializes <see cref="DivisionTemplateCorrectnessTag" /> from scratch.
+        /// Initializes <see cref="DivisionTemplateCorrectnessSummaryTag" /> from scratch.
         /// </summary>
-        public DivisionTemplateCorrectnessTag() { }
+        public DivisionTemplateCorrectnessSummaryTag() { }
 
         /// <summary>
-        /// Initializes <see cref="DivisionTemplateCorrectnessTag" />.
+        /// Initializes <see cref="DivisionTemplateCorrectnessSummaryTag" />.
         /// </summary>
-        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="DivisionTemplateCorrectnessTag" /> belongs to.</param>
-        public DivisionTemplateCorrectnessTag(CLPPage parentPage, Origin origin, Correctness correctness)
+        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="DivisionTemplateCorrectnessSummaryTag" /> belongs to.</param>
+        public DivisionTemplateCorrectnessSummaryTag(CLPPage parentPage, Origin origin, Correctness correctness)
             : base(parentPage, origin)
         {
             IsSingleValueTag = true;
@@ -27,11 +27,11 @@ namespace CLP.Entities
         }
 
         /// <summary>
-        /// Initializes <see cref="DivisionTemplateCorrectnessTag" /> based on <see cref="SerializationInfo" />.
+        /// Initializes <see cref="DivisionTemplateCorrectnessSummaryTag" /> based on <see cref="SerializationInfo" />.
         /// </summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext" />.</param>
-        public DivisionTemplateCorrectnessTag(SerializationInfo info, StreamingContext context)
+        public DivisionTemplateCorrectnessSummaryTag(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
         #endregion //Constructors
@@ -56,7 +56,7 @@ namespace CLP.Entities
 
         public override string FormattedName
         {
-            get { return "Division Template Correctness"; }
+            get { return "Division Template Correctness Summary"; }
         }
 
         public override string FormattedValue

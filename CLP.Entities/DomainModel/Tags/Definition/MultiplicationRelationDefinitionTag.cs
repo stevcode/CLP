@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 using Catel.Data;
 
@@ -79,7 +80,22 @@ namespace CLP.Entities
 
         public override string FormattedValue
         {
-            get { return string.Format("Relation Type: {0}\n" + "{1} = {2}", RelationType, string.Join("x", Factors), Product); }
+            get
+            {
+                return RelationType == RelationTypes.EqualGroups
+                           ? string.Format("Relation Type: {0}\n" + "{1} = {2}",
+                                           RelationType,
+                                           string.Join(", ",
+                                                       Factors.Select((e, i) => new
+                                                                                {
+                                                                                    Index = i / 2,
+                                                                                    Item = e
+                                                                                })
+                                                              .GroupBy(x => x.Index, x => x.Item)
+                                                              .Select(x => string.Join(" groups of ", x))),
+                                           Product)
+                           : string.Format("Relation Type: {0}\n" + "{1} = {2}", RelationType, string.Join("x", Factors), Product);
+            }
         }
 
         #endregion //ATagBase Overrides
