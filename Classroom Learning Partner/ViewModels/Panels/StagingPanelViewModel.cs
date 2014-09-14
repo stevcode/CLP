@@ -169,6 +169,17 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Bindings
 
         /// <summary>
+        /// Signifies the visibilty of manual tag icons.
+        /// </summary>
+        public bool IsToggleIconButtonChecked
+        {
+            get { return GetValue<bool>(IsToggleIconButtonCheckedProperty); }
+            set { SetValue(IsToggleIconButtonCheckedProperty, value); }
+        }
+
+        public static readonly PropertyData IsToggleIconButtonCheckedProperty = RegisterProperty("IsToggleIconButtonChecked", typeof (bool), false);
+
+        /// <summary>
         /// Gets or sets the property value.
         /// </summary>
         public CollectionViewSource SortedAndGroupedPages

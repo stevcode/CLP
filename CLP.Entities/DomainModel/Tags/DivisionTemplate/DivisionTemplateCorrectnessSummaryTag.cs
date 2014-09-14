@@ -88,13 +88,13 @@ namespace CLP.Entities
                                      Correctness,
                                      CorrectCount == 0
                                          ? string.Empty
-                                         : string.Format("{0} RepresentationCorrectnessTag(s) set to Correct.", CorrectCount),
+                                         : string.Format("\n{0} RepresentationCorrectnessTag(s) set to Correct.", CorrectCount),
                                      PartiallyCorrectCount == 0
                                          ? string.Empty
-                                         : string.Format("{0} RepresentationCorrectnessTag(s) set to Partially Correct.", PartiallyCorrectCount),
+                                         : string.Format("\n{0} RepresentationCorrectnessTag(s) set to Partially Correct.", PartiallyCorrectCount),
                                      IncorrectCount == 0
                                          ? string.Empty
-                                         : string.Format("{0} RepresentationCorrectnessTag(s) set to Incorrect.", IncorrectCount));
+                                         : string.Format("\n{0} RepresentationCorrectnessTag(s) set to Incorrect.", IncorrectCount));
             }
         }
 

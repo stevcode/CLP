@@ -102,6 +102,7 @@
 
                 <Grid DockPanel.Dock="Top">
                     <ToggleButton x:Name="IconVisibilityToggle"
+                                  IsChecked="{Binding IsToggleIconButtonChecked}"
                                   Width="65"
                                   Height="30"
                                   Margin="15 0"
