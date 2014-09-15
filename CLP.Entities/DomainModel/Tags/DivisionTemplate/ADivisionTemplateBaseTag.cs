@@ -70,11 +70,8 @@ namespace CLP.Entities
         /// </summary>
         public int DivisionTemplateNumber
         {
-            get { return GetValue<int>(DivisionTemplateNumberProperty); }
-            set { SetValue(DivisionTemplateNumberProperty, value); }
+            get { return 1; }
         }
-
-        public static readonly PropertyData DivisionTemplateNumberProperty = RegisterProperty("DivisionTemplateNumber", typeof (int), 0);
 
         /// <summary>Determines if the DivisionTemplate this tag applies to is still on the Parent Page or if it has been deleted from the page.</summary>
         public bool IsDivisionTemplateStillOnPage
