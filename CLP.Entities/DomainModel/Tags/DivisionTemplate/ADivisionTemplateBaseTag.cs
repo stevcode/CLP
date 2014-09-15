@@ -65,6 +65,17 @@ namespace CLP.Entities
 
         public static readonly PropertyData DivisorProperty = RegisterProperty("Divisor", typeof(double));
 
+        /// <summary>
+        /// Order in which the associated Division Template occured in the history.
+        /// </summary>
+        public int DivisionTemplateNumber
+        {
+            get { return GetValue<int>(DivisionTemplateNumberProperty); }
+            set { SetValue(DivisionTemplateNumberProperty, value); }
+        }
+
+        public static readonly PropertyData DivisionTemplateNumberProperty = RegisterProperty("DivisionTemplateNumber", typeof (int), 0);
+
         /// <summary>Determines if the DivisionTemplate this tag applies to is still on the Parent Page or if it has been deleted from the page.</summary>
         public bool IsDivisionTemplateStillOnPage
         {
