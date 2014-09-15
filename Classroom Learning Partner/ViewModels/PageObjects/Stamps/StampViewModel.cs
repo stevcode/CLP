@@ -491,7 +491,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            var keyPad = new KeypadWindowView("How many things are you counting on the stamp?", 100)
+            var keyPad = new KeypadWindowView("How many things are you\ncounting on the stamp?", 100)
                          {
                              Owner = Application.Current.MainWindow,
                              WindowStartupLocation = WindowStartupLocation.Manual,

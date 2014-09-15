@@ -179,6 +179,8 @@
     <Compile Include="DomainModel\Tags\OtherPageInformation\StarredTag.cs" />
     <Compile Include="DomainModel\Tags\AnalysisRoutines\TagAnalysis.cs" />
     <Compile Include="DomainModel\Tags\Stamps\StampGroupTag.cs" />
+    <Compile Include="DomainModel\Tags\Stamps\TroubleWithGroupingTag.cs" />
+    <Compile Include="DomainModel\Tags\Stamps\TroubleWithMultiplicationTag.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility\Extentions\GuidExtensions.cs" />
   </ItemGroup>
