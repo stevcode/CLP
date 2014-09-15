@@ -189,14 +189,18 @@ namespace CLP.Entities
 
         public override string FormattedName
         {
-            get { return string.Format("Division Template 1 Factor Pair Errors{0}", HadTrouble ? " **Trouble**" : string.Empty); }
+            get
+            {
+                return string.Format("Division Template {0} Factor Pair Errors{1}", DivisionTemplateNumber, HadTrouble ? " **Trouble**" : string.Empty);
+            }
         }
 
         public override string FormattedValue
         {
             get
             {
-                return string.Format("Errors on {0} / {1} before Division Template full." + "\nDivisionTemplate {2} on page.{3}{4}{5}{6}{7}{8}{9}{10}",
+                return string.Format(
+                                     "Errors on {0} / {1} before Division Template full." + "\nDivisionTemplate {2} on page.{3}{4}{5}{6}{7}{8}{9}{10}",
                                      Dividend,
                                      Divisor,
                                      IsDivisionTemplateStillOnPage ? "still" : "no longer",
