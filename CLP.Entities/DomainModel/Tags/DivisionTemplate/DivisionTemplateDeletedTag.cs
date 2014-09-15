@@ -20,8 +20,10 @@ namespace CLP.Entities
                                           string divisionTemplateID,
                                           int dividend,
                                           int divisor,
-                                          List<string> arrayDimensions)
-            : base(parentPage, origin, divisionTemplateID, dividend, divisor)
+                                          int divisionTemplateNumber,
+                                          List<string> arrayDimensions
+                                          )
+            : base(parentPage, origin, divisionTemplateID, dividend, divisor, divisionTemplateNumber)
         {
             ArrayDimensions = arrayDimensions;
         }

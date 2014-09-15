@@ -30,8 +30,9 @@ namespace CLP.Entities
                                            double dividend,
                                            double divisor,
                                            DivisionTemplateStrategies strategy,
-                                           List<int> dividerValues)
-            : base(parentPage, origin, divisionTemplateID, dividend, divisor)
+                                           List<int> dividerValues,
+                                           int divisionTemplateNumber)
+            : base(parentPage, origin, divisionTemplateID, dividend, divisor, divisionTemplateNumber)
         {
             Strategy = strategy;
             DividerValues = dividerValues;

@@ -20,14 +20,10 @@ namespace CLP.Entities
     {
         #region Constructors
 
-        /// <summary>
-        /// Initializes <see cref="CLPArray" /> from scratch.
-        /// </summary>
+        /// <summary>Initializes <see cref="CLPArray" /> from scratch.</summary>
         public CLPArray() { }
 
-        /// <summary>
-        /// Initializes <see cref="CLPArray" /> from
-        /// </summary>
+        /// <summary>Initializes <see cref="CLPArray" /> from</summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="CLPArray" /> belongs to.</param>
         /// <param name="columns">The number of columns in the <see cref="ACLPArrayBase" />.</param>
         /// <param name="rows">The number of rows in the <see cref="ACLPArrayBase" />.</param>
@@ -39,9 +35,7 @@ namespace CLP.Entities
             ArrayType = arrayType;
         }
 
-        /// <summary>
-        /// Initializes <see cref="CLPArray" /> based on <see cref="SerializationInfo" />.
-        /// </summary>
+        /// <summary>Initializes <see cref="CLPArray" /> based on <see cref="SerializationInfo" />.</summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext" />.</param>
         public CLPArray(SerializationInfo info, StreamingContext context)
@@ -73,16 +67,14 @@ namespace CLP.Entities
             get { return Columns < Rows ? MIN_ARRAY_LENGTH / Columns : MIN_ARRAY_LENGTH / Rows; }
         }
 
-        /// <summary>
-        /// The type of <see cref="CLPArray" />.
-        /// </summary>
+        /// <summary>The type of <see cref="CLPArray" />.</summary>
         public ArrayTypes ArrayType
         {
             get { return GetValue<ArrayTypes>(ArrayTypeProperty); }
             set { SetValue(ArrayTypeProperty, value); }
         }
 
-        public static readonly PropertyData ArrayTypeProperty = RegisterProperty("ArrayType", typeof(ArrayTypes), ArrayTypes.Array);
+        public static readonly PropertyData ArrayTypeProperty = RegisterProperty("ArrayType", typeof (ArrayTypes), ArrayTypes.Array);
 
         #endregion //Properties
 
@@ -91,7 +83,7 @@ namespace CLP.Entities
         public override IPageObject Duplicate()
         {
             var newCLPArray = Clone() as CLPArray;
-            if(newCLPArray == null)
+            if (newCLPArray == null)
             {
                 return null;
             }
@@ -110,7 +102,7 @@ namespace CLP.Entities
         {
             base.OnAdded();
 
-            foreach(var divisionTemplate in ParentPage.PageObjects.OfType<FuzzyFactorCard>().ToList())
+            foreach (var divisionTemplate in ParentPage.PageObjects.OfType<FuzzyFactorCard>().ToList())
             {
                 divisionTemplate.UpdateRemainderRegion();
 
@@ -118,6 +110,8 @@ namespace CLP.Entities
                 {
                     continue;
                 }
+
+                var divisionTemplateIDsInHistory = DivisionTemplateAnalysis.GetListOfDivisionTemplateIDsInHistory(ParentPage);
 
                 if (divisionTemplate.CurrentRemainder != divisionTemplate.Dividend % divisionTemplate.Rows)
                 {
@@ -127,10 +121,11 @@ namespace CLP.Entities
                     if (existingFactorPairErrorsTag == null)
                     {
                         existingFactorPairErrorsTag = new DivisionTemplateFactorPairErrorsTag(ParentPage,
-                                                                                            Origin.StudentPageGenerated,
-                                                                                            divisionTemplate.ID,
-                                                                                            divisionTemplate.Dividend,
-                                                                                            divisionTemplate.Rows);
+                                                                                              Origin.StudentPageGenerated,
+                                                                                              divisionTemplate.ID,
+                                                                                              divisionTemplate.Dividend,
+                                                                                              divisionTemplate.Rows,
+                                                                                              divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID));
                         isArrayDimensionErrorsTagOnPage = false;
                     }
 
@@ -175,7 +170,8 @@ namespace CLP.Entities
                                                                                             Origin.StudentPageGenerated,
                                                                                             divisionTemplate.ID,
                                                                                             divisionTemplate.Dividend,
-                                                                                            divisionTemplate.Rows);
+                                                                                            divisionTemplate.Rows,
+                                                                                            divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID));
                         isRemainderErrorsTagOnPage = false;
                     }
 
@@ -216,7 +212,7 @@ namespace CLP.Entities
         {
             base.OnDeleted();
             // If FFC with remainder on page, update
-            foreach(var divisionTemplate in ParentPage.PageObjects.OfType<FuzzyFactorCard>())
+            foreach (var divisionTemplate in ParentPage.PageObjects.OfType<FuzzyFactorCard>())
             {
                 divisionTemplate.UpdateRemainderRegion();
             }
@@ -229,10 +225,10 @@ namespace CLP.Entities
         public override void SizeArrayToGridLevel(double toSquareSize = -1, bool recalculateDivisions = true)
         {
             var initialSquareSize = 45.0;
-            if(toSquareSize <= 0)
+            if (toSquareSize <= 0)
             {
-                while(XPosition + 2 * LabelLength + initialSquareSize * Columns >= ParentPage.Width ||
-                      YPosition + 2 * LabelLength + initialSquareSize * Rows >= ParentPage.Height)
+                while (XPosition + 2 * LabelLength + initialSquareSize * Columns >= ParentPage.Width ||
+                       YPosition + 2 * LabelLength + initialSquareSize * Rows >= ParentPage.Height)
                 {
                     initialSquareSize = Math.Abs(initialSquareSize - 45.0) < .0001 ? 22.5 : initialSquareSize / 4 * 3;
                 }
@@ -245,7 +241,7 @@ namespace CLP.Entities
             Height = (initialSquareSize * Rows) + (2 * LabelLength);
             Width = (initialSquareSize * Columns) + (2 * LabelLength);
 
-            if(recalculateDivisions)
+            if (recalculateDivisions)
             {
                 ResizeDivisions();
             }
@@ -257,9 +253,9 @@ namespace CLP.Entities
             var vertDivs = Math.Max(VerticalDivisions.Count, 1);
             var partialProducts = new int[horizDivs, vertDivs];
 
-            for(var i = 0; i < horizDivs; i++)
+            for (var i = 0; i < horizDivs; i++)
             {
-                for(var j = 0; j < vertDivs; j++)
+                for (var j = 0; j < vertDivs; j++)
                 {
                     var yAxisValue = (horizDivs > 1 ? HorizontalDivisions[i].Value : Rows);
                     var xAxisValue = (vertDivs > 1 ? VerticalDivisions[j].Value : Columns);
@@ -275,36 +271,30 @@ namespace CLP.Entities
 
         #region Implementation of ICountable
 
-        /// <summary>
-        /// Number of Parts the <see cref="ICountable" /> represents.
-        /// </summary>
+        /// <summary>Number of Parts the <see cref="ICountable" /> represents.</summary>
         public int Parts
         {
             get { return Rows * Columns; }
             set { }
         }
 
-        /// <summary>
-        /// Signifies the <see cref="ICountable" /> has been accepted by another <see cref="ICountable" />.
-        /// </summary>
+        /// <summary>Signifies the <see cref="ICountable" /> has been accepted by another <see cref="ICountable" />.</summary>
         public bool IsInnerPart
         {
             get { return GetValue<bool>(IsInnerPartProperty); }
             set { SetValue(IsInnerPartProperty, value); }
         }
 
-        public static readonly PropertyData IsInnerPartProperty = RegisterProperty("IsInnerPart", typeof(bool), false);
+        public static readonly PropertyData IsInnerPartProperty = RegisterProperty("IsInnerPart", typeof (bool), false);
 
-        /// <summary>
-        /// Parts is Auto-Generated and non-modifiable (except under special circumstances).
-        /// </summary>
+        /// <summary>Parts is Auto-Generated and non-modifiable (except under special circumstances).</summary>
         public bool IsPartsAutoGenerated
         {
             get { return GetValue<bool>(IsPartsAutoGeneratedProperty); }
             set { SetValue(IsPartsAutoGeneratedProperty, value); }
         }
 
-        public static readonly PropertyData IsPartsAutoGeneratedProperty = RegisterProperty("IsPartsAutoGenerated", typeof(bool), true);
+        public static readonly PropertyData IsPartsAutoGeneratedProperty = RegisterProperty("IsPartsAutoGenerated", typeof (bool), true);
 
         #endregion
 
@@ -324,25 +314,25 @@ namespace CLP.Entities
 
             var halvedPageObjects = new List<IPageObject>();
 
-            if(ArrayType != ArrayTypes.Array)
+            if (ArrayType != ArrayTypes.Array)
             {
                 return halvedPageObjects;
             }
 
             const double MIN_THRESHHOLD = 5.0;
 
-            if(Math.Abs(strokeLeft - strokeRight) < Math.Abs(strokeTop - strokeBottom) &&
-               strokeRight <= cuttableRight &&
-               strokeLeft >= cuttableLeft &&
-               strokeTop - cuttableTop <= MIN_THRESHHOLD &&
-               cuttableBottom - strokeBottom <= MIN_THRESHHOLD &&
-               Columns > 1) //Vertical Cut Stroke. Stroke must be within the bounds of the pageObject
+            if (Math.Abs(strokeLeft - strokeRight) < Math.Abs(strokeTop - strokeBottom) &&
+                strokeRight <= cuttableRight &&
+                strokeLeft >= cuttableLeft &&
+                strokeTop - cuttableTop <= MIN_THRESHHOLD &&
+                cuttableBottom - strokeBottom <= MIN_THRESHHOLD &&
+                Columns > 1) //Vertical Cut Stroke. Stroke must be within the bounds of the pageObject
             {
                 var average = (strokeRight + strokeLeft) / 2;
                 var relativeAverage = average - LabelLength - XPosition;
                 var closestColumn = Convert.ToInt32(Math.Round(relativeAverage / GridSquareSize));
-                
-                if(closestColumn == Columns)
+
+                if (closestColumn == Columns)
                 {
                     return halvedPageObjects;
                 }
@@ -373,18 +363,18 @@ namespace CLP.Entities
                 rightArray.SizeArrayToGridLevel(GridSquareSize);
                 halvedPageObjects.Add(rightArray);
             }
-            else if(Math.Abs(strokeLeft - strokeRight) > Math.Abs(strokeTop - strokeBottom) &&
-                    strokeBottom <= cuttableBottom &&
-                    strokeTop >= cuttableTop &&
-                    cuttableRight - strokeRight <= MIN_THRESHHOLD &&
-                    strokeLeft - cuttableLeft <= MIN_THRESHHOLD &&
-                    Rows > 1) //Horizontal Cut Stroke. Stroke must be within the bounds of the pageObject
+            else if (Math.Abs(strokeLeft - strokeRight) > Math.Abs(strokeTop - strokeBottom) &&
+                     strokeBottom <= cuttableBottom &&
+                     strokeTop >= cuttableTop &&
+                     cuttableRight - strokeRight <= MIN_THRESHHOLD &&
+                     strokeLeft - cuttableLeft <= MIN_THRESHHOLD &&
+                     Rows > 1) //Horizontal Cut Stroke. Stroke must be within the bounds of the pageObject
             {
                 var average = (strokeTop + strokeBottom) / 2;
                 var relativeAverage = average - LabelLength - YPosition;
                 var closestRow = Convert.ToInt32(Math.Round(relativeAverage / GridSquareSize));
 
-                if(closestRow == Rows)
+                if (closestRow == Rows)
                 {
                     return halvedPageObjects;
                 }

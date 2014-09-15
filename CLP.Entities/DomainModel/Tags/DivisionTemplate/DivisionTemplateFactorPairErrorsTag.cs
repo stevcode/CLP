@@ -15,8 +15,8 @@ namespace CLP.Entities
 
         /// <summary>Initializes <see cref="DivisionTemplateFactorPairErrorsTag" />.</summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="DivisionTemplateFactorPairErrorsTag" /> belongs to.</param>
-        public DivisionTemplateFactorPairErrorsTag(CLPPage parentPage, Origin origin, string divisionTemplateID, double dividend, double divisor)
-            : base(parentPage, origin, divisionTemplateID, dividend, divisor) { }
+        public DivisionTemplateFactorPairErrorsTag(CLPPage parentPage, Origin origin, string divisionTemplateID, double dividend, double divisor, int divisionTemplateNumber)
+            : base(parentPage, origin, divisionTemplateID, dividend, divisor, divisionTemplateNumber) { }
 
         /// <summary>Initializes <see cref="DivisionTemplateFactorPairErrorsTag" /> based on <see cref="SerializationInfo" />.</summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>

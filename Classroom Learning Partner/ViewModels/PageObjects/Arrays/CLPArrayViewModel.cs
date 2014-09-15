@@ -414,6 +414,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 if (pageObject is FuzzyFactorCard)
                 {
                     var divisionTemplate = pageObject as FuzzyFactorCard;
+                    var divisionTemplateIDsInHistory = DivisionTemplateAnalysis.GetListOfDivisionTemplateIDsInHistory(PageObject.ParentPage);
                     if (isVerticalIntersection)
                     {
                         var diff =
@@ -434,7 +435,8 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                                         Origin.StudentPageGenerated,
                                                                                                         divisionTemplate.ID,
                                                                                                         divisionTemplate.Dividend,
-                                                                                                        divisionTemplate.Rows);
+                                                                                                        divisionTemplate.Rows,
+                                                              divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID));
                                     isArrayDimensionErrorsTagOnPage = false;
                                 }
 
@@ -475,7 +477,8 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                                         Origin.StudentPageGenerated,
                                                                                                         divisionTemplate.ID,
                                                                                                         divisionTemplate.Dividend,
-                                                                                                        divisionTemplate.Rows);
+                                                                                                        divisionTemplate.Rows,
+                                                              divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID));
                                     isRemainderErrorsTagOnPage = false;
                                 }
 
@@ -870,6 +873,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                      initXPos,
                                                                                      initYPos));
 
+            var divisionTemplateIDsInHistory = DivisionTemplateAnalysis.GetListOfDivisionTemplateIDsInHistory(PageObject.ParentPage);
             foreach (var divisionTemplate in PageObject.ParentPage.PageObjects.OfType<FuzzyFactorCard>())
             {
                 // Only increase OrientationChanged attempt if Division Template already full.
@@ -885,7 +889,8 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                                         Origin.StudentPageGenerated,
                                                                                                         divisionTemplate.ID,
                                                                                                         divisionTemplate.Dividend,
-                                                                                                        divisionTemplate.Rows);
+                                                                                                        divisionTemplate.Rows,
+                                                              divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID));
                         PageObject.ParentPage.AddTag(existingFactorPairErrorsTag);
                     }
                     existingFactorPairErrorsTag.OrientationChangedDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
@@ -902,7 +907,8 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                             Origin.StudentPageGenerated,
                                                                                             divisionTemplate.ID,
                                                                                             divisionTemplate.Dividend,
-                                                                                            divisionTemplate.Rows);
+                                                                                            divisionTemplate.Rows,
+                                                              divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID));
                         PageObject.ParentPage.AddTag(existingRemainderErrorsTag);
                     }
                     existingRemainderErrorsTag.OrientationChangedDimensions.Add(string.Format("{0}x{1}", Rows, Columns));

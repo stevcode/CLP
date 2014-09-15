@@ -29,9 +29,10 @@ namespace CLP.Entities
                                                             string divisionTemplateID,
                                                             double dividend,
                                                             double divisor,
+                                                            int divisionTemplateNumber,
                                                             Correctness correctness,
                                                             List<DivisionTemplateIncorrectReason> incorrectReasons)
-            : base(parentPage, origin, divisionTemplateID, dividend, divisor)
+            : base(parentPage, origin, divisionTemplateID, dividend, divisor, divisionTemplateNumber)
         {
             Correctness = correctness;
             DivisionTemplateIncorrectReasons = incorrectReasons;

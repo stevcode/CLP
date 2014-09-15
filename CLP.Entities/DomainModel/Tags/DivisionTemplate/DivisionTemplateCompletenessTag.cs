@@ -26,8 +26,9 @@ namespace CLP.Entities
                                                string divisionTemplateID,
                                                double dividend,
                                                double divisor,
+                                               int divisionTemplateNumber,
                                                DivisionTemplateCompletenessValues completenessValue)
-            : base(parentPage, origin, divisionTemplateID, dividend, divisor)
+            : base(parentPage, origin, divisionTemplateID, dividend, divisor, divisionTemplateNumber)
         {
             CompletenessValue = completenessValue;
         }

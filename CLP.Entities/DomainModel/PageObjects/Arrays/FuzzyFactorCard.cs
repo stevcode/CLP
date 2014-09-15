@@ -216,53 +216,55 @@ namespace CLP.Entities
                     continue;
                 }
 
+                var divisionTemplateIDsInHistory = DivisionTemplateAnalysis.GetListOfDivisionTemplateIDsInHistory(ParentPage);
+
                 ITag divisionCreationErrorTag = null;
                 if (Dividend == divisionRelationDefinitionTag.Divisor &&
                     Rows == divisionRelationDefinitionTag.Dividend)
                 {
                     divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(ParentPage,
-                                                                                                          Origin.StudentPageGenerated,
-                                                                                                          ID,
-                                                                                                          Dividend,
-                                                                                                          Rows,
-                                                                                                          DivisionTemplateIncorrectCreationReasons
-                                                                                                              .SwappedDividendAndDivisor);
+                                                                                    Origin.StudentPageGenerated,
+                                                                                    ID,
+                                                                                    Dividend,
+                                                                                    Rows,
+                                                                                    divisionTemplateIDsInHistory.IndexOf(ID),
+                                                                                    DivisionTemplateIncorrectCreationReasons.SwappedDividendAndDivisor);
                 }
 
                 if (Dividend == divisionRelationDefinitionTag.Dividend &&
                     Rows != divisionRelationDefinitionTag.Divisor)
                 {
                     divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(ParentPage,
-                                                                                                          Origin.StudentPageGenerated,
-                                                                                                          ID,
-                                                                                                          Dividend,
-                                                                                                          Rows,
-                                                                                                          DivisionTemplateIncorrectCreationReasons
-                                                                                                              .WrongDivisor);
+                                                                                    Origin.StudentPageGenerated,
+                                                                                    ID,
+                                                                                    Dividend,
+                                                                                    Rows,
+                                                                                    divisionTemplateIDsInHistory.IndexOf(ID),
+                                                                                    DivisionTemplateIncorrectCreationReasons.WrongDivisor);
                 }
 
                 if (Dividend != divisionRelationDefinitionTag.Dividend &&
                     Rows == divisionRelationDefinitionTag.Divisor)
                 {
                     divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(ParentPage,
-                                                                                                          Origin.StudentPageGenerated,
-                                                                                                          ID,
-                                                                                                          Dividend,
-                                                                                                          Rows,
-                                                                                                          DivisionTemplateIncorrectCreationReasons
-                                                                                                              .WrongDividend);
+                                                                                    Origin.StudentPageGenerated,
+                                                                                    ID,
+                                                                                    Dividend,
+                                                                                    Rows,
+                                                                                    divisionTemplateIDsInHistory.IndexOf(ID),
+                                                                                    DivisionTemplateIncorrectCreationReasons.WrongDividend);
                 }
 
                 if (Dividend != divisionRelationDefinitionTag.Dividend &&
                     Rows != divisionRelationDefinitionTag.Divisor)
                 {
                     divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(ParentPage,
-                                                                                                          Origin.StudentPageGenerated,
-                                                                                                          ID,
-                                                                                                          Dividend,
-                                                                                                          Rows,
-                                                                                                          DivisionTemplateIncorrectCreationReasons
-                                                                                                              .WrongDividendAndDivisor);
+                                                                                    Origin.StudentPageGenerated,
+                                                                                    ID,
+                                                                                    Dividend,
+                                                                                    Rows,
+                                                                                    divisionTemplateIDsInHistory.IndexOf(ID),
+                                                                                    DivisionTemplateIncorrectCreationReasons.WrongDividendAndDivisor);
                 }
 
                 if (divisionCreationErrorTag != null)
@@ -276,9 +278,11 @@ namespace CLP.Entities
         {
             base.OnDeleted();
 
+            var divisionTemplateIDsInHistory = DivisionTemplateAnalysis.GetListOfDivisionTemplateIDsInHistory(ParentPage);
+
             var arrayDimensions = VerticalDivisions.Where(division => division.Value != 0).Select(division => Rows + "x" + division.Value).ToList();
 
-            var tag = new DivisionTemplateDeletedTag(ParentPage, Origin.StudentPageObjectGenerated, ID, Dividend, Rows, arrayDimensions);
+            var tag = new DivisionTemplateDeletedTag(ParentPage, Origin.StudentPageObjectGenerated, ID, Dividend, Rows, divisionTemplateIDsInHistory.IndexOf(ID), arrayDimensions);
             ParentPage.AddTag(tag);
         }
 
@@ -328,13 +332,23 @@ namespace CLP.Entities
                 ParentPage.PageObjects.Add(RemainderTiles);
             }
 
-            var numberOfBlackTiles =
-                ParentPage.PageObjects.Where(pageObject => pageObject is CLPArray && (pageObject as CLPArray).ArrayType == ArrayTypes.Array)
-                          .Sum(pageObject =>
-                               {
-                                   var clpArray = pageObject as CLPArray;
-                                   return clpArray != null ? clpArray.Rows * clpArray.Columns : 0;
-                               });
+            var numberOfBlackTiles = ParentPage.PageObjects.Where(pageObject => pageObject is CLPArray && (pageObject as CLPArray).ArrayType == ArrayTypes.Array).Sum(pageObject =>
+                                                                                                                                                                      {
+                                                                                                                                                                          var
+                                                                                                                                                                              clpArray
+                                                                                                                                                                                  =
+                                                                                                                                                                                  pageObject
+                                                                                                                                                                                  as
+                                                                                                                                                                                  CLPArray;
+                                                                                                                                                                          return
+                                                                                                                                                                              clpArray !=
+                                                                                                                                                                              null
+                                                                                                                                                                                  ? clpArray
+                                                                                                                                                                                        .Rows *
+                                                                                                                                                                                    clpArray
+                                                                                                                                                                                        .Columns
+                                                                                                                                                                                  : 0;
+                                                                                                                                                                      });
             numberOfBlackTiles = Math.Min(numberOfBlackTiles, CurrentRemainder);
 
             if (RemainderTiles.TileColors == null)
