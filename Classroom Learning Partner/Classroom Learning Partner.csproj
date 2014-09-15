@@ -347,6 +347,9 @@
     <Compile Include="Views\Modal Windows\NotebookMetadataWindowView.xaml.cs">
       <DependentUpon>NotebookMetadataWindowView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\PageObjects\Arrays\NumberLineView.xaml.cs">
+      <DependentUpon>NumberLineView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PageObjects\LassoRegionView.xaml.cs">
       <DependentUpon>LassoRegionView.xaml</DependentUpon>
     </Compile>
@@ -608,6 +611,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Modal Windows\NotebookMetadataWindowView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PageObjects\Arrays\NumberLineView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
