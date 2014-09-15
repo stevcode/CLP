@@ -24,7 +24,6 @@ namespace Classroom_Learning_Partner.ViewModels
         TroubleWithFactorPairs,
         TroubleWithRemainders,
         DivisionTemplateStrategy
-        
     }
 
     public class StagingPanelViewModel : APanelBaseViewModel
@@ -32,18 +31,21 @@ namespace Classroom_Learning_Partner.ViewModels
         private static readonly PropertyGroupDescription OwnerFullNameGroup = new PropertyGroupDescription("Owner.FullName");
         private static readonly PropertyGroupDescription PageNumberGroup = new PropertyGroupDescription("PageNumber");
         private static readonly PropertyGroupDescription StarredGroup = new PropertyGroupDescription("IsStarred");
+        private static readonly PropertyGroupDescription HadHelpGroup = new PropertyGroupDescription("HadHelp");
         private static readonly PropertyGroupDescription CorrectnessGroup = new PropertyGroupDescription("Correctness");
         private static readonly PropertyGroupDescription IncorrectArrayCreationGroup = new PropertyGroupDescription("DivisionTemplateIncorrectArrayCreation");
         private static readonly PropertyGroupDescription DivisionTemplateStrategyGroup = new PropertyGroupDescription("DivisionTemplateStrategy");
 
         private static readonly SortDescription OwnerFullNameAscendingSort = new SortDescription("Owner.FullName", ListSortDirection.Ascending);
         private static readonly SortDescription OwnerFullNameDescendingSort = new SortDescription("Owner.FullName", ListSortDirection.Descending);
-        private static readonly SortDescription SubmissionTimeAscendingSort = new SortDescription("SubmissionTime", ListSortDirection.Ascending);
-        private static readonly SortDescription SubmissionTimeDescendingSort = new SortDescription("SubmissionTime", ListSortDirection.Descending);
         private static readonly SortDescription PageNumberAscendingSort = new SortDescription("PageNumber", ListSortDirection.Ascending);
         private static readonly SortDescription PageNumberDescendingSort = new SortDescription("PageNumber", ListSortDirection.Descending);
+        private static readonly SortDescription SubmissionTimeAscendingSort = new SortDescription("SubmissionTime", ListSortDirection.Ascending);
+        private static readonly SortDescription SubmissionTimeDescendingSort = new SortDescription("SubmissionTime", ListSortDirection.Descending);
         private static readonly SortDescription StarredAscendingSort = new SortDescription("IsStarred", ListSortDirection.Ascending);
         private static readonly SortDescription StarredDescendingSort = new SortDescription("IsStarred", ListSortDirection.Descending);
+        private static readonly SortDescription HadHelpAscendingSort = new SortDescription("HadHelp", ListSortDirection.Ascending);
+        private static readonly SortDescription HadHelpDescendingSort = new SortDescription("HadHelp", ListSortDirection.Descending);
         private static readonly SortDescription CorrectnessAscendingSort = new SortDescription("Correctness", ListSortDirection.Ascending);
         private static readonly SortDescription CorrectnessDescendingSort = new SortDescription("Correctness", ListSortDirection.Descending);
         private static readonly SortDescription IncorrectArrayCreationAscendingSort = new SortDescription("DivisionTemplateIncorrectArrayCreation", ListSortDirection.Ascending);
@@ -407,6 +409,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 case SortAndGroupTypes.Starred:
                     ApplySortAndGroupByStarred();
                     break;
+                case SortAndGroupTypes.HadHelp:
+                    ApplySortAndGroupByHadHelp();
+                    break;
                 case SortAndGroupTypes.Correctness:
                     ApplySortAndGroupByCorrectness();
                     break;
@@ -443,6 +448,14 @@ namespace Classroom_Learning_Partner.ViewModels
             SortedAndGroupedPages.SortDescriptions.Add(SubmissionTimeAscendingSort);
         }
 
+        public void ApplySortByTime()
+        {
+            SortedAndGroupedPages.GroupDescriptions.Clear();
+            SortedAndGroupedPages.SortDescriptions.Clear();
+
+            SortedAndGroupedPages.SortDescriptions.Add(SubmissionTimeAscendingSort);
+        }
+
         public void ApplySortAndGroupByStarred()
         {
             SortedAndGroupedPages.GroupDescriptions.Clear();
@@ -450,6 +463,21 @@ namespace Classroom_Learning_Partner.ViewModels
 
             SortedAndGroupedPages.GroupDescriptions.Add(StarredGroup);
             SortedAndGroupedPages.SortDescriptions.Add(StarredAscendingSort);
+
+            SortedAndGroupedPages.GroupDescriptions.Add(PageNumberGroup);
+            SortedAndGroupedPages.SortDescriptions.Add(PageNumberAscendingSort);
+
+            SortedAndGroupedPages.SortDescriptions.Add(OwnerFullNameAscendingSort);
+            SortedAndGroupedPages.SortDescriptions.Add(SubmissionTimeAscendingSort);
+        }
+
+        public void ApplySortAndGroupByHadHelp()
+        {
+            SortedAndGroupedPages.GroupDescriptions.Clear();
+            SortedAndGroupedPages.SortDescriptions.Clear();
+
+            SortedAndGroupedPages.GroupDescriptions.Add(HadHelpGroup);
+            SortedAndGroupedPages.SortDescriptions.Add(HadHelpAscendingSort);
 
             SortedAndGroupedPages.GroupDescriptions.Add(PageNumberGroup);
             SortedAndGroupedPages.SortDescriptions.Add(PageNumberAscendingSort);
@@ -485,14 +513,6 @@ namespace Classroom_Learning_Partner.ViewModels
             SortedAndGroupedPages.SortDescriptions.Add(PageNumberAscendingSort);
 
             SortedAndGroupedPages.SortDescriptions.Add(OwnerFullNameAscendingSort);
-            SortedAndGroupedPages.SortDescriptions.Add(SubmissionTimeAscendingSort);
-        }
-
-        public void ApplySortByTime()
-        {
-            SortedAndGroupedPages.GroupDescriptions.Clear();
-            SortedAndGroupedPages.SortDescriptions.Clear();
-
             SortedAndGroupedPages.SortDescriptions.Add(SubmissionTimeAscendingSort);
         }
 
