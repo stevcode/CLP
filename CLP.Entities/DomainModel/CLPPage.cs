@@ -508,6 +508,37 @@ namespace CLP.Entities
             }
         }
 
+        public virtual string TroubleWithFactorPairs
+        {
+            get
+            {
+                var tags = Tags.OfType<DivisionTemplateFactorPairErrorsTag>().Where(x => x.HadTrouble);
+                return tags.Any() ? "Trouble With Factor Pairs" : "No Trouble With Factor Pairs";
+            }
+        }
+
+        public virtual string TroubleWithRemainders
+        {
+            get
+            {
+                var tags = Tags.OfType<DivisionTemplateRemainderErrorsTag>().Where(x => x.HadTrouble);
+                return tags.Any() ? "Trouble With Remainders" : "No Trouble With Remainders";
+            }
+        }
+
+        public virtual string TroubleWithDivision
+        {
+            get
+            {
+                var tag = Tags.FirstOrDefault(x => x is TroubleWithDivisionTag) as TroubleWithDivisionTag;
+                if (tag != null)
+                {
+                    return "Trouble With Division";
+                }
+                return "No Trouble With Division";
+            }
+        }
+
         public virtual Correctness Correctness
         {
             get

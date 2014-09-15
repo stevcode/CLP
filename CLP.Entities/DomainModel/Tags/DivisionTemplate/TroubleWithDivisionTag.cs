@@ -15,7 +15,7 @@ namespace CLP.Entities
         /// <summary>Initializes <see cref="TroubleWithDivisionTag" />.</summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="TroubleWithDivisionTag" /> belongs to.</param>
         public TroubleWithDivisionTag(CLPPage parentPage, Origin origin)
-            : base(parentPage, origin) { }
+            : base(parentPage, origin) { IsSingleValueTag = true; }
 
         /// <summary>Initializes <see cref="TroubleWithDivisionTag" /> based on <see cref="SerializationInfo" />.</summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
