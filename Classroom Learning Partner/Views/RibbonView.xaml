@@ -95,6 +95,10 @@
 
                 <RibbonSeparator />
 
+                <RibbonApplicationMenuItem Header="Log In As Notebook Owner"
+                                           ImageSource="pack://application:,,,/Resources/Images/GroupSubmit32.png"
+                                           Command="{Binding LogInAsNotebookOwnerCommand}"  />
+
                 <!--TODO: Steve - Bind header for toggle text: disconnect/reconnect to network-->
                 <RibbonApplicationMenuItem Header="Reconnect to Network"
                                            ImageSource="pack://application:,,,/Resources/Images/ReconnectToNetwork32.png"

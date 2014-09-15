@@ -29,9 +29,10 @@ namespace CLP.Entities
                                                             string divisionTemplateID,
                                                             double dividend,
                                                             double divisor,
+                                                            int divisionTemplateNumber,
                                                             Correctness correctness,
                                                             List<DivisionTemplateIncorrectReason> incorrectReasons)
-            : base(parentPage, origin, divisionTemplateID, dividend, divisor)
+            : base(parentPage, origin, divisionTemplateID, dividend, divisor, divisionTemplateNumber)
         {
             Correctness = correctness;
             DivisionTemplateIncorrectReasons = incorrectReasons;
@@ -70,7 +71,7 @@ namespace CLP.Entities
 
         public override string FormattedName
         {
-            get { return "Division Template 1 Representation Correctness"; }
+            get { return string.Format("Division Template {0} Representation Correctness", DivisionTemplateNumber); }
         }
 
         public override string FormattedValue

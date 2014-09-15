@@ -106,6 +106,7 @@ namespace Classroom_Learning_Partner.ViewModels
             OpenClassPeriodCommand = new Command(OnOpenClassPeriodCommandExecute);
             StartClassPeriodCommand = new Command(OnStartClassPeriodCommandExecute);
             ViewAllWorkCommand = new Command(OnViewAllWorkCommandExecute);
+            LogInAsNotebookOwnerCommand = new Command(OnLogInAsNotebookOwnerCommandExecute);
             RefreshNetworkCommand = new Command(OnRefreshNetworkCommandExecute);
             ToggleThumbnailsCommand = new Command(OnToggleThumbnailsCommandExecute);
             ExitCommand = new Command(OnExitCommandExecute);
@@ -1149,6 +1150,22 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnViewAllWorkCommandExecute()
         {
             MainWindowViewModel.ViewAllWork();
+        }
+
+        /// <summary>
+        /// Sets CurrentUser to the owner of the opened notebook.
+        /// </summary>
+        public Command LogInAsNotebookOwnerCommand { get; private set; }
+
+        private void OnLogInAsNotebookOwnerCommandExecute()
+        {
+            var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
+            if (notebookWorkspaceViewModel == null)
+            {
+                return;
+            }
+
+            MainWindow.CurrentUser = notebookWorkspaceViewModel.Notebook.Owner;
         }
 
         /// <summary>

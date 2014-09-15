@@ -12,7 +12,7 @@ namespace CLP.Entities
         {
             // First, clear out any old StampTags generated via Analysis.
             foreach (var tag in
-                page.Tags.ToList().Where(tag => tag is StampGroupTag))
+                page.Tags.ToList().Where(tag => tag is StampGroupTag || tag is StampTroubleWithGroupingTag || tag is TroubleWithMultiplicationTag))
             {
                 page.RemoveTag(tag);
             }
@@ -29,11 +29,11 @@ namespace CLP.Entities
             {
                 AnalyzeParentStampGroupings(page, multiplicationDefinitionTag, stampedObjects);
             }
+            
+            AnalyzeStampTroubleWithMultiplication(page);
         }
 
-        public static void AnalyzeParentStampGroupings(CLPPage page,
-                                                       MultiplicationRelationDefinitionTag multiplicationRelationDefinitionTag,
-                                                       List<StampedObject> stampedObjects)
+        public static void AnalyzeParentStampGroupings(CLPPage page, MultiplicationRelationDefinitionTag multiplicationRelationDefinitionTag, List<StampedObject> stampedObjects)
         {
             var parentStampIDs = stampedObjects.Select(x => x.ParentStampID).Distinct().ToList();
             foreach (var parentStampID in parentStampIDs)
@@ -46,8 +46,60 @@ namespace CLP.Entities
                     var stampedObjectIDs = stampedObjects.Where(x => x.ParentStampID == id && x.Parts == parts).Select(x => x.ID).ToList();
                     var stampGroupTag = new StampGroupTag(page, Origin.StudentPageGenerated, parentStampID, parts, stampedObjectIDs);
                     page.AddTag(stampGroupTag);
+                    AnalyzeStampTroubleWithGrouping(page, multiplicationRelationDefinitionTag, stampGroupTag);
                 }
             }
+        }
+
+        public static void AnalyzeStampTroubleWithGrouping(CLPPage page, MultiplicationRelationDefinitionTag multiplicationRelationDefinitionTag, StampGroupTag groupTag)
+        {
+            var groups = groupTag.StampedObjectIDs.Count;
+            var groupSize = groupTag.Parts;
+
+            if (groups == multiplicationRelationDefinitionTag.Factors[0] && groupSize == multiplicationRelationDefinitionTag.Factors[1])
+            {
+                return;
+            }
+
+            var existingTroubleWithGroupingTag = page.Tags.OfType<StampTroubleWithGroupingTag>().FirstOrDefault();
+            if (existingTroubleWithGroupingTag == null)
+            {
+                existingTroubleWithGroupingTag = new StampTroubleWithGroupingTag(page, Origin.StudentPageGenerated);
+                page.AddTag(existingTroubleWithGroupingTag);
+            }
+
+            if (groups == multiplicationRelationDefinitionTag.Factors[1] && groupSize == multiplicationRelationDefinitionTag.Factors[0])
+            {
+                existingTroubleWithGroupingTag.NumberOfGroupsAndGroupSizeSwappedCount++;
+                return;
+            }
+
+            if (groups == multiplicationRelationDefinitionTag.Factors[0] && groupSize != multiplicationRelationDefinitionTag.Factors[1])
+            {
+                existingTroubleWithGroupingTag.GroupSizeWrongCount++;
+                return;
+            }
+
+            if (groups != multiplicationRelationDefinitionTag.Factors[0] && groupSize == multiplicationRelationDefinitionTag.Factors[1])
+            {
+                existingTroubleWithGroupingTag.NumberOfGroupsWrongCount++;
+                return;
+            }
+
+            existingTroubleWithGroupingTag.NumberOfGroupsWrongAndGroupSizeWrongCount++;
+        }
+
+        public static void AnalyzeStampTroubleWithMultiplication(CLPPage page)
+        {
+            var errorSum = TroubleWithMultiplicationTag.GetTroubleWithStampGroupingCount(page);
+
+            if (errorSum == 0)
+            {
+                return;
+            }
+
+            var troubleWithMultiplicationTag = new TroubleWithMultiplicationTag(page, Origin.StudentPageGenerated);
+            page.AddTag(troubleWithMultiplicationTag);
         }
     }
 }

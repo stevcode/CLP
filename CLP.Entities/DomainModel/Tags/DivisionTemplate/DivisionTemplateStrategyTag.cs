@@ -30,8 +30,9 @@ namespace CLP.Entities
                                            double dividend,
                                            double divisor,
                                            DivisionTemplateStrategies strategy,
-                                           List<int> dividerValues)
-            : base(parentPage, origin, divisionTemplateID, dividend, divisor)
+                                           List<int> dividerValues,
+                                           int divisionTemplateNumber)
+            : base(parentPage, origin, divisionTemplateID, dividend, divisor, divisionTemplateNumber)
         {
             Strategy = strategy;
             DividerValues = dividerValues;
@@ -54,7 +55,7 @@ namespace CLP.Entities
             set { SetValue(StrategyProperty, value); }
         }
 
-        public static readonly PropertyData StrategyProperty = RegisterProperty("Strategy", typeof(DivisionTemplateStrategies));
+        public static readonly PropertyData StrategyProperty = RegisterProperty("Strategy", typeof (DivisionTemplateStrategies));
 
         /// <summary>List of all divider values used to fill up the Division Template.</summary>
         public List<int> DividerValues
@@ -69,7 +70,7 @@ namespace CLP.Entities
 
         public override string FormattedName
         {
-            get { return "Division Template 1 Strategy"; }
+            get { return string.Format("Division Template {0} Strategy", DivisionTemplateNumber); }
         }
 
         public override string FormattedValue

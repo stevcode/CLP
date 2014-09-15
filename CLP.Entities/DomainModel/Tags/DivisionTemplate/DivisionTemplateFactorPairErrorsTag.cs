@@ -15,8 +15,8 @@ namespace CLP.Entities
 
         /// <summary>Initializes <see cref="DivisionTemplateFactorPairErrorsTag" />.</summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="DivisionTemplateFactorPairErrorsTag" /> belongs to.</param>
-        public DivisionTemplateFactorPairErrorsTag(CLPPage parentPage, Origin origin, string divisionTemplateID, double dividend, double divisor)
-            : base(parentPage, origin, divisionTemplateID, dividend, divisor) { }
+        public DivisionTemplateFactorPairErrorsTag(CLPPage parentPage, Origin origin, string divisionTemplateID, double dividend, double divisor, int divisionTemplateNumber)
+            : base(parentPage, origin, divisionTemplateID, dividend, divisor, divisionTemplateNumber) { }
 
         /// <summary>Initializes <see cref="DivisionTemplateFactorPairErrorsTag" /> based on <see cref="SerializationInfo" />.</summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
@@ -189,14 +189,18 @@ namespace CLP.Entities
 
         public override string FormattedName
         {
-            get { return string.Format("Division Template 1 Factor Pair Errors{0}", HadTrouble ? " **Trouble**" : string.Empty); }
+            get
+            {
+                return string.Format("Division Template {0} Factor Pair Errors{1}", DivisionTemplateNumber, HadTrouble ? " **Trouble**" : string.Empty);
+            }
         }
 
         public override string FormattedValue
         {
             get
             {
-                return string.Format("Errors on {0} / {1} before Division Template full." + "\nDivisionTemplate {2} on page.{3}{4}{5}{6}{7}{8}{9}{10}",
+                return string.Format(
+                                     "Errors on {0} / {1} before Division Template full." + "\nDivisionTemplate {2} on page.{3}{4}{5}{6}{7}{8}{9}{10}",
                                      Dividend,
                                      Divisor,
                                      IsDivisionTemplateStillOnPage ? "still" : "no longer",

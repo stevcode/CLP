@@ -26,8 +26,9 @@ namespace CLP.Entities
                                                string divisionTemplateID,
                                                double dividend,
                                                double divisor,
+                                               int divisionTemplateNumber,
                                                DivisionTemplateCompletenessValues completenessValue)
-            : base(parentPage, origin, divisionTemplateID, dividend, divisor)
+            : base(parentPage, origin, divisionTemplateID, dividend, divisor, divisionTemplateNumber)
         {
             CompletenessValue = completenessValue;
         }
@@ -56,7 +57,7 @@ namespace CLP.Entities
 
         public override string FormattedName
         {
-            get { return "Division Template 1 Completeness"; }
+            get { return string.Format("Division Template {0} Completeness", DivisionTemplateNumber); }
         }
 
         public override string FormattedValue

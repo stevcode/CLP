@@ -15,8 +15,8 @@ namespace CLP.Entities
 
         /// <summary>Initializes <see cref="DivisionTemplateRemainderErrorsTag" />.</summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="DivisionTemplateRemainderErrorsTag" /> belongs to.</param>
-        public DivisionTemplateRemainderErrorsTag(CLPPage parentPage, Origin origin, string divisionTemplateID, double dividend, double divisor)
-            : base(parentPage, origin, divisionTemplateID, dividend, divisor) { }
+        public DivisionTemplateRemainderErrorsTag(CLPPage parentPage, Origin origin, string divisionTemplateID, double dividend, double divisor, int divisionTemplateNumber)
+            : base(parentPage, origin, divisionTemplateID, dividend, divisor, divisionTemplateNumber) { }
 
         /// <summary>Initializes <see cref="DivisionTemplateRemainderErrorsTag" /> based on <see cref="SerializationInfo" />.</summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
@@ -36,7 +36,7 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData CreateArrayTooLargeDimensionsProperty = RegisterProperty("CreateArrayTooLargeDimensions",
-                                                                                                     typeof(List<string>),
+                                                                                                     typeof (List<string>),
                                                                                                      () => new List<string>());
 
         /// <summary>Number of times an array that was too large to fit the Division Template was created.</summary>
@@ -53,7 +53,7 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData CreateIncorrectDimensionDimensionsProperty = RegisterProperty("CreateIncorrectDimensionDimensions",
-                                                                                                          typeof(List<string>),
+                                                                                                          typeof (List<string>),
                                                                                                           () => new List<string>());
 
         /// <summary>Number of times an array that had incorrect dimensions for the Division Template was created.</summary>
@@ -70,7 +70,7 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData CreateWrongOrientationDimensionsProperty = RegisterProperty("CreateWrongOrientationDimensions",
-                                                                                                        typeof(List<string>),
+                                                                                                        typeof (List<string>),
                                                                                                         () => new List<string>());
 
         /// <summary>Number of times an array that was oriented the wrong way to fit the Division Template was created.</summary>
@@ -87,7 +87,7 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData CreateDividendAsDimensionDimensionsProperty = RegisterProperty("CreateDividendAsDimensionDimensions",
-                                                                                                           typeof(List<string>),
+                                                                                                           typeof (List<string>),
                                                                                                            () => new List<string>());
 
         /// <summary>Number of times an array that had one dimension as the Dividend of the Division Template was created.</summary>
@@ -104,7 +104,7 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData SnapArrayTooLargeDimensionsProperty = RegisterProperty("SnapArrayTooLargeDimensions",
-                                                                                                   typeof(List<string>),
+                                                                                                   typeof (List<string>),
                                                                                                    () => new List<string>());
 
         /// <summary>Number of times an array that was too large to fit the Division Template was created.</summary>
@@ -121,7 +121,7 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData SnapIncorrectDimensionDimensionsProperty = RegisterProperty("SnapIncorrectDimensionDimensions",
-                                                                                                        typeof(List<string>),
+                                                                                                        typeof (List<string>),
                                                                                                         () => new List<string>());
 
         /// <summary>Number of times an array that had incorrect dimensions for the Division Template was created.</summary>
@@ -138,7 +138,7 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData SnapWrongOrientationDimensionsProperty = RegisterProperty("SnapWrongOrientationDimensions",
-                                                                                                      typeof(List<string>),
+                                                                                                      typeof (List<string>),
                                                                                                       () => new List<string>());
 
         /// <summary>Number of times an array that was oriented the wrong way to fit the Division Template was created.</summary>
@@ -155,7 +155,7 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData OrientationChangedDimensionsProperty = RegisterProperty("OrientationChangedDimensions",
-                                                                                                    typeof(List<string>),
+                                                                                                    typeof (List<string>),
                                                                                                     () => new List<string>());
 
         /// <summary>Number of times an array's orientation was changed while attempting to solve the remainder of a Division Template.</summary>
@@ -189,14 +189,18 @@ namespace CLP.Entities
 
         public override string FormattedName
         {
-            get { return string.Format("Division Template 1 Remainder Errors{0}", HadTrouble ? " **Trouble**" : string.Empty); }
+            get
+            {
+                return string.Format("Division Template {0} Remainder Errors{1}", DivisionTemplateNumber, HadTrouble ? " **Trouble**" : string.Empty);
+            }
         }
 
         public override string FormattedValue
         {
             get
             {
-                return string.Format("Errors on {0} / {1} after Division Template Full." + "\nDivisionTemplate {2} on page.{3}{4}{5}{6}{7}{8}{9}{10}",
+                return string.Format(
+                                     "Errors on {0} / {1} after Division Template Full." + "\nDivisionTemplate {2} on page.{3}{4}{5}{6}{7}{8}{9}{10}",
                                      Dividend,
                                      Divisor,
                                      IsDivisionTemplateStillOnPage ? "still" : "no longer",

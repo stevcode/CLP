@@ -411,29 +411,6 @@ namespace CLP.Entities
 
         public static readonly PropertyData TagsProperty = RegisterProperty("Tags", typeof(ObservableCollection<ITag>), () => new ObservableCollection<ITag>());
 
-        public virtual string IsStarred
-        {
-            get
-            {
-                var starredTag = Tags.FirstOrDefault(x => x is StarredTag) as StarredTag;
-                if(starredTag != null &&
-                   starredTag.Value == StarredTag.AcceptedValues.Starred)
-                {
-                    return "Starred";
-                }
-                return "Unstarred";
-            }
-        }
-
-        public virtual Correctness Correctness
-        {
-            get
-            {
-                var correctnessTag = Tags.FirstOrDefault(x => x is CorrectnessTag) as CorrectnessTag;
-                return correctnessTag != null ? correctnessTag.Correctness : Correctness.Unknown;
-            }
-        }
-
         /// <summary>
         /// Unserialized <see cref="Stroke" />s of the <see cref="CLPPage" />.
         /// </summary>
@@ -500,6 +477,78 @@ namespace CLP.Entities
         {
             get { return !Submissions.Any() ? Double.NaN : Math.Round(Submissions.Select(submission => submission.History.TotalHistoryTicks).Average()); }
         }
+
+        #region Calculated Sort Properties
+
+        public virtual string IsStarred
+        {
+            get
+            {
+                var starredTag = Tags.FirstOrDefault(x => x is StarredTag) as StarredTag;
+                if (starredTag != null &&
+                   starredTag.Value == StarredTag.AcceptedValues.Starred)
+                {
+                    return "Starred";
+                }
+                return "Unstarred";
+            }
+        }
+
+        public virtual string HadHelp
+        {
+            get
+            {
+                var hadHelpTag = Tags.FirstOrDefault(x => x is DottedTag) as DottedTag;
+                if (hadHelpTag != null &&
+                   hadHelpTag.Value == DottedTag.AcceptedValues.Dotted)
+                {
+                    return "Had Help";
+                }
+                return "No Help";
+            }
+        }
+
+        public virtual string TroubleWithFactorPairs
+        {
+            get
+            {
+                var tags = Tags.OfType<DivisionTemplateFactorPairErrorsTag>().Where(x => x.HadTrouble);
+                return tags.Any() ? "Trouble With Factor Pairs" : "No Trouble With Factor Pairs";
+            }
+        }
+
+        public virtual string TroubleWithRemainders
+        {
+            get
+            {
+                var tags = Tags.OfType<DivisionTemplateRemainderErrorsTag>().Where(x => x.HadTrouble);
+                return tags.Any() ? "Trouble With Remainders" : "No Trouble With Remainders";
+            }
+        }
+
+        public virtual string TroubleWithDivision
+        {
+            get
+            {
+                var tag = Tags.FirstOrDefault(x => x is TroubleWithDivisionTag) as TroubleWithDivisionTag;
+                if (tag != null)
+                {
+                    return "Trouble With Division";
+                }
+                return "No Trouble With Division";
+            }
+        }
+
+        public virtual Correctness Correctness
+        {
+            get
+            {
+                var correctnessTag = Tags.FirstOrDefault(x => x is CorrectnessTag) as CorrectnessTag;
+                return correctnessTag != null ? correctnessTag.Correctness : Correctness.Unknown;
+            }
+        }
+
+        #endregion //Calculated Sort Properties
 
         #endregion //Properties
 

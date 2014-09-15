@@ -102,6 +102,7 @@
 
                 <Grid DockPanel.Dock="Top">
                     <ToggleButton x:Name="IconVisibilityToggle"
+                                  IsChecked="{Binding IsToggleIconButtonChecked}"
                                   Width="65"
                                   Height="30"
                                   Margin="15 0"
@@ -176,7 +177,7 @@
                                                                   x:Name="GroupVisibilityToggle"
                                                                   Margin="10 0 50 0"
                                                                   Height="20"
-                                                                  MinWidth="100">
+                                                                  MinWidth="175">
                                                         <ToggleButton.Style>
                                                             <Style TargetType="ToggleButton">
                                                                 <Setter Property="IsChecked"
@@ -187,7 +188,7 @@
                                                                    FontWeight="Bold"
                                                                    HorizontalAlignment="Left">
                                                             <Run Text="{Binding Name, Mode=OneWay}" />
-                                                            <Run Text="     " />
+                                                            <Run Text="  " />
                                                             <Run Text="{Binding ItemCount, Mode=OneWay}" />
                                                         </TextBlock>
                                                     </ToggleButton>
