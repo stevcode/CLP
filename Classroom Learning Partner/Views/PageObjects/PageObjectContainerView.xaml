@@ -69,7 +69,7 @@
             </ControlTemplate>
 
             <ControlTemplate x:Key="CLPArrayTemplate">
-                <views:CLPArrayView DataContext="{Binding}" />
+                <views:NumberLineView DataContext="{Binding}" />
             </ControlTemplate>
 
             <ControlTemplate x:Key="LassoRegionTemplate">

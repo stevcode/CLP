@@ -2,7 +2,25 @@
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com">
-    <Grid>
-            
+    <Grid Width="{Binding Width}"
+          Height="{Binding Height}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="{Binding PageObject.LabelLength}" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="{Binding PageObject.LabelLength}" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        
+        
+        <Rectangle x:Name="ArrayBackground"
+                   Grid.Row="1"
+                   Grid.Column="1"
+                   Width="{Binding ArrayWidth}"
+                   Height="{Binding ArrayHeight}"
+                   Fill="Black"
+                   Stroke="Black"
+                   StrokeThickness="3" />
     </Grid>
 </catel:UserControl>
