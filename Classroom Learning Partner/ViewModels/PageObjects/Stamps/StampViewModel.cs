@@ -54,6 +54,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
 
+            stamp.RefreshAcceptedStrokes();
+
             ParameterizeStampCommand = new Command(OnParameterizeStampCommandExecute);
             StartDragStampCommand = new Command(OnStartDragStampCommandExecute);
             PlaceStampCommand = new Command(OnPlaceStampCommandExecute);
@@ -248,8 +250,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 serializedStrokes.Add(newStroke.ToStrokeDTO());
             }
 
-            var xPositionOffset = 0.0;
-            var yPositionOffset = 0.0;
             var stampedObjectWidth = Width;
             var stampedObjectHeight = Height - stamp.HandleHeight - stamp.PartsHeight;
             if (!IsCollectionStamp &&
@@ -267,8 +267,6 @@ namespace Classroom_Learning_Partner.ViewModels
                     y2 = Math.Max(y2, bounds.Bottom);
                 }
 
-                xPositionOffset = x1;
-                yPositionOffset = y1;
                 stampedObjectWidth = Math.Max(x2 - x1, 20); //TODO: center if too small?
                 stampedObjectHeight = Math.Max(y2 - y1, 20);
 
@@ -304,7 +302,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     Height = stampedObjectHeight,
                     XPosition = initialXPosition,
                     YPosition = initialYPosition,
-                    SerializedStrokes = serializedStrokes,
+                    SerializedStrokes = serializedStrokes.Select(stroke => stroke.ToStroke().ToStrokeDTO()).ToList(),
                     Parts = stamp.Parts
                 };
 
@@ -476,8 +474,8 @@ namespace Classroom_Learning_Partner.ViewModels
             if(!IsCollectionStamp && 
                stampedObject.ImageHashID == string.Empty) //Shrinks StampCopy to bounds of all strokePaths
             {
-                var x1 = Double.MaxValue;
-                var y1 = Double.MaxValue;
+                var x1 = PageObject.ParentPage.Width;
+                var y1 = PageObject.ParentPage.Height;
                 var x2 = 0.0;
                 var y2 = 0.0;
                 foreach(var bounds in stampedObject.SerializedStrokes.Select(serializedStroke => serializedStroke.ToStroke().GetBounds()))
