@@ -1270,7 +1270,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 Logger.Instance.WriteToLog("ParentPage for pageObject not set in AddPageObjectToPage().");
                 return;
             }
-            if(String.IsNullOrEmpty(pageObject.CreatorID))
+            if(string.IsNullOrEmpty(pageObject.CreatorID))
             {
                 pageObject.CreatorID = App.MainWindowViewModel.CurrentUser.ID;
             }
@@ -1306,7 +1306,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var pageObjectIDs = new List<string>();
             foreach(var pageObject in pageObjects)
             {
-                if(String.IsNullOrEmpty(pageObject.CreatorID))
+                if(string.IsNullOrEmpty(pageObject.CreatorID))
                 {
                     pageObject.CreatorID = App.MainWindowViewModel.CurrentUser.ID;
                 }

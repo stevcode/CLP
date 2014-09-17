@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
@@ -197,6 +198,39 @@ namespace CLP.Entities
                     pageObject.XPosition += deltaX;
                     pageObject.YPosition += deltaY;
                 }
+            }
+        }
+
+        public override void OnMoved(double oldX, double oldY)
+        {
+            if (ParentPage.History.IsAnimating)
+            {
+                return;
+            }
+
+            try
+            {
+                foreach (var acceptorPageObject in ParentPage.PageObjects.OfType<IPageObjectAccepter>().Where(pageObject => pageObject.CanAcceptPageObjects && pageObject.ID != ID))
+                {
+                    var removedPageObjects = new List<IPageObject>();
+                    var addedPageObjects = new ObservableCollection<IPageObject>();
+
+                    if (acceptorPageObject.AcceptedPageObjectIDs.Contains(ID) && !acceptorPageObject.PageObjectIsOver(this, .50))
+                    {
+                        removedPageObjects.Add(this);
+                    }
+
+                    if (!acceptorPageObject.AcceptedPageObjectIDs.Contains(ID) && acceptorPageObject.PageObjectIsOver(this, .50))
+                    {
+                        addedPageObjects.Add(this);
+                    }
+
+                    acceptorPageObject.AcceptPageObjects(addedPageObjects, removedPageObjects);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("StampedObject.OnMoved() Exception: " + ex.Message);
             }
         }
 
