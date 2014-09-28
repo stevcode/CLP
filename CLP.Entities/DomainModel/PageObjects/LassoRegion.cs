@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System.Windows.Ink;
+using System.Windows.Media;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -18,11 +20,11 @@ namespace CLP.Entities
         /// Initializes <see cref="LassoRegion" /> from 
         /// </summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="LassoRegion" /> belongs to.</param>
-        public LassoRegion(CLPPage parentPage, List<string> pageObjectIDs, List<string> inkStrokeIDs, double xPosition, double yPosition, double height, double width)
+        public LassoRegion(CLPPage parentPage, List<IPageObject> pageObjects, StrokeCollection inkStrokes, double xPosition, double yPosition, double height, double width)
             : base(parentPage)
         {
-            ContainedPageObjectIDs = pageObjectIDs;
-            ContainedInkStrokeIDs = inkStrokeIDs;
+            LassoedPageObjects = pageObjects;
+            LassoedStrokes = inkStrokes;
             XPosition = xPosition;
             YPosition = yPosition;
             Height = height;
@@ -41,32 +43,32 @@ namespace CLP.Entities
 
         #region Properties
 
+        /// <summary>
+        /// List of all the lassoed <see cref="IPageObject" />s.
+        /// </summary>
+        public List<IPageObject> LassoedPageObjects
+        {
+            get { return GetValue<List<IPageObject>>(LassoedPageObjectsProperty); }
+            set { SetValue(LassoedPageObjectsProperty, value); }
+        }
+
+        public static readonly PropertyData LassoedPageObjectsProperty = RegisterProperty("LassoedPageObjects", typeof (List<IPageObject>), () => new List<IPageObject>());
+
+        /// <summary>
+        /// StrokeCollection of all the lassoed <see cref="Stroke" />s.
+        /// </summary>
+        public StrokeCollection LassoedStrokes
+        {
+            get { return GetValue<StrokeCollection>(LassoedStrokesProperty); }
+            set { SetValue(LassoedStrokesProperty, value); }
+        }
+
+        public static readonly PropertyData LassoedStrokesProperty = RegisterProperty("LassoedStrokes", typeof (StrokeCollection), () => new StrokeCollection());
+
         public override bool IsBackgroundInteractable
         {
             get { return false; }
         }
-
-        /// <summary>
-        /// List of all the IDs of the <see cref="IPageObject" />s inside the <see cref="LassoRegion" />.
-        /// </summary>
-        public List<string> ContainedPageObjectIDs
-        {
-            get { return GetValue<List<string>>(ContainedPageObjectIDsProperty); }
-            set { SetValue(ContainedPageObjectIDsProperty, value); }
-        }
-
-        public static readonly PropertyData ContainedPageObjectIDsProperty = RegisterProperty("ContainedPageObjectIDs", typeof(List<string>), () => new List<string>());
-
-        /// <summary>
-        /// List of all the IDs of the <see cref="StrokeDTO" />s inside the <see cref="LassoRegion" />.
-        /// </summary>
-        public List<string> ContainedInkStrokeIDs
-        {
-            get { return GetValue<List<string>>(ContainedInkStrokeIDsProperty); }
-            set { SetValue(ContainedInkStrokeIDsProperty, value); }
-        }
-
-        public static readonly PropertyData ContainedInkStrokeIDsProperty = RegisterProperty("ContainedInkStrokeIDs", typeof(List<string>), () => new List<string>());
 
         #endregion //Properties
 
@@ -86,6 +88,31 @@ namespace CLP.Entities
             newLassoRegion.ParentPage = ParentPage;
 
             return newLassoRegion;
+        }
+
+        public override void OnResizing(double oldWidth, double oldHeight)
+        {
+        }
+
+        public override void OnResized(double oldWidth, double oldHeight) { OnResizing(oldWidth, oldHeight); }
+
+        public override void OnMoving(double oldX, double oldY)
+        {
+            var deltaX = XPosition - oldX;
+            var deltaY = YPosition - oldY;
+
+            foreach (var stroke in LassoedStrokes)
+            {
+                var transform = new Matrix();
+                transform.Translate(deltaX, deltaY);
+                stroke.Transform(transform, true);
+            }
+
+            foreach (var pageObject in LassoedPageObjects)
+            {
+                pageObject.XPosition += deltaX;
+                pageObject.YPosition += deltaY;
+            }
         }
 
         #endregion //Methods
