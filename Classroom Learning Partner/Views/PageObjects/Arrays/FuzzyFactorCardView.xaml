@@ -288,6 +288,24 @@
                   Visibility="{Binding PageObject.CurrentRemainder, Converter={StaticResource IntToVisibilityConverter}}"
                   Data="M -1,0 L 1,0 C 1,0 2,1 1,2 C 1,2 0,3 1,4 C 1,4 2,5 1,6 C 1,6 0,7 1,8 C 1,8 2,9 1,10 C 1,10 0,11 1,12 C 1,12 2,13 1,14 C 1,14 0,15 1,16 C 1,16 2,17 1,18 C 1,18 0,19 1,20 C 1,20 2,21 1,22 C 1,22 0,23 1,24 C 1,24 2,25 1,26 M 1,26 L -1,26" />
 
+            <!--Fuzzy Edge hit box-->
+            <Rectangle Grid.Row="1"
+                       Grid.Column="2"
+                       Tag="FuzzyEdgeHitBox"
+                       Width="{Binding PageObject.LargeLabelLength}"
+                       Height="{Binding ArrayHeight}"
+                       Fill="Transparent"
+                       Stroke="Transparent"
+                       StrokeThickness="3"
+                       Visibility="{Binding PageObject.CurrentRemainder, Converter={StaticResource IntToVisibilityConverter}}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="PreviewMouseUp">
+                        <catel:EventToCommand Command="{Binding ToggleMainArrayAdornersCommand}"
+                                              PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Rectangle>
+
             <!--Grid seperated at at last divider-->
             <Grid Grid.Column="1"
                   Grid.Row="1"
