@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls.Primitives;
+using System.Windows.Ink;
 using Catel.MVVM;
 using CLP.Entities;
 
@@ -41,9 +42,18 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            var pageObjectsToRemove = region.LassoedPageObjects.ToList();
+            if (region.LassoedStrokes.Any())
+            {
+                ACLPPageBaseViewModel.RemoveStrokes(region.ParentPage, region.LassoedStrokes);
+            }
 
-            ACLPPageBaseViewModel.RemovePageObjectsFromPage(region.ParentPage, pageObjectsToRemove);
+            if (region.LassoedPageObjects.Any())
+            {
+                var pageObjectsToRemove = region.LassoedPageObjects.ToList();
+
+                ACLPPageBaseViewModel.RemovePageObjectsFromPage(region.ParentPage, pageObjectsToRemove);
+            }
+            
             ACLPPageBaseViewModel.RemovePageObjectFromPage(PageObject, false);
         }
 
