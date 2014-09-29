@@ -51,7 +51,7 @@ namespace CLP.Entities
 
         public double LargeLabelLength
         {
-            get { return LabelLength * 2 + 12.0; }
+            get { return LabelLength * 1.5; }
         }
 
         public override double ArrayWidth

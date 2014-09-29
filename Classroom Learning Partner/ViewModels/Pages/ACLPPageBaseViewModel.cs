@@ -1098,7 +1098,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        private void RemoveStroke(IEnumerable<Stroke> removedStrokes, IEnumerable<Stroke> addedStrokes)
+        public void RemoveStroke(IEnumerable<Stroke> removedStrokes, IEnumerable<Stroke> addedStrokes)
         {
             try
             {
@@ -1148,6 +1148,18 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Page Interaction methods
 
         #region Static Methods
+
+        public static void RemoveStrokes(CLPPage page, IEnumerable<Stroke> strokesToRemove)
+        {
+            var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(page).First(x => (x is ACLPPageBaseViewModel) && !(x as ACLPPageBaseViewModel).IsPagePreview) as ACLPPageBaseViewModel;
+            if (pageViewModel == null)
+            {
+                return;
+            }
+            var removedStrokes = strokesToRemove as IList<Stroke> ?? strokesToRemove.ToList();
+            page.InkStrokes.Remove(new StrokeCollection(removedStrokes));
+            pageViewModel.RemoveStroke(removedStrokes, new List<Stroke>());
+        }
 
         public static void TakePageThumbnail(CLPPage page)
         {
