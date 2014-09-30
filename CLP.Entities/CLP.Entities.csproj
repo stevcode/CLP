@@ -108,6 +108,7 @@
     <Compile Include="DomainModel\History\ArrayHistoryItems\CLPArrayGridToggleHistoryItem.cs" />
     <Compile Include="DomainModel\History\ArrayHistoryItems\CLPArrayRotateHistoryItem.cs" />
     <Compile Include="DomainModel\History\ArrayHistoryItems\CLPArraySnapHistoryItem.cs" />
+    <Compile Include="DomainModel\PageObjects\Arrays\NumberLine.cs" />
     <Compile Include="DomainModel\Tags\AnalysisRoutines\ArrayAnalysis.cs" />
     <Compile Include="DomainModel\Tags\AnalysisRoutines\DivisionTemplateAnalysis.cs" />
     <Compile Include="DomainModel\Tags\AnalysisRoutines\PageAnalysis.cs" />
@@ -186,6 +187,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Repositories\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

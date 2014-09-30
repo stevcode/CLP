@@ -1,6 +1,8 @@
 ﻿using System;
 using Classroom_Learning_Partner.ViewModels;
+using Classroom_Learning_Partner.ViewModels.PageObjects.Arrays;
 using CLP.Entities;
+using CLP.Entities.DomainModel.PageObjects.Arrays;
 
 namespace Classroom_Learning_Partner.Views
 {
@@ -53,6 +55,10 @@ namespace Classroom_Learning_Partner.Views
             if(dataContext is CLPArray)
             {
                 return typeof(CLPArrayViewModel);
+            }
+            if (dataContext is NumberLine)
+            {
+                return typeof (NumberLineViewModel);
             }
             if(dataContext is LassoRegion)
             {

@@ -275,6 +275,7 @@
     <Compile Include="Resources\InkInterpretation.cs" />
     <Compile Include="Utilities\Extensions\ObservableCollectionExtensions.cs" />
     <Compile Include="Utilities\ObservableCollectionOperation.cs" />
+    <Compile Include="ViewModels\PageObjects\Arrays\NumberLineViewModel.cs" />
     <Compile Include="ViewModels\Tags\DivisionRelationDefinitionTagViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\ClassSubjectCreationViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\ExitTicketCreationViewModel.cs" />
@@ -400,7 +401,7 @@
     <Compile Include="ViewModels\PageObjects\IPageObjectAdorners.cs" />
     <Compile Include="ViewModels\PageObjects\StrokePathViewModel.cs" />
     <Compile Include="ViewModels\Panels\IPanel.cs" />
-    <Compile Include="ViewModels\RibbonViewModel.cs" />
+    <Compile Include="Views\RibbonViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\BlankWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\NotebookChooserWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\NotebookWorkspaceViewModel.cs" />

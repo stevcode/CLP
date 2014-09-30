@@ -69,6 +69,10 @@
             </ControlTemplate>
 
             <ControlTemplate x:Key="CLPArrayTemplate">
+                <views:CLPArrayView DataContext="{Binding}" />
+            </ControlTemplate>
+
+            <ControlTemplate x:Key="CLPNumberLineTemplate">
                 <views:NumberLineView DataContext="{Binding}" />
             </ControlTemplate>
 

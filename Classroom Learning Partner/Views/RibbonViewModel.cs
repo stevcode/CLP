@@ -30,6 +30,7 @@ using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Entities;
 using System.Windows.Threading;
 using System.ServiceModel;
+using CLP.Entities.DomainModel.PageObjects.Arrays;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 
@@ -143,6 +144,7 @@ namespace Classroom_Learning_Partner.ViewModels
             InsertBlankContainerStampCommand = new Command(OnInsertBlankContainerStampCommandExecute, OnInsertPageObjectCanExecute);
             InsertImageContainerStampCommand = new Command(OnInsertImageContainerStampCommandExecute, OnInsertPageObjectCanExecute);
             InsertArrayCommand = new Command<string>(OnInsertArrayCommandExecute, OnInsertPageObjectCanExecute);
+            InsertNumberLineCommand = new Command(OnInsertNumberLineCommandExecute, OnInsertPageObjectCanExecute);
             InsertProtractorCommand = new Command(OnInsertProtractorCommandExecute, OnInsertPageObjectCanExecute);
             InsertSquareShapeCommand = new Command(OnInsertSquareShapeCommandExecute, OnInsertPageObjectCanExecute);
             InsertCircleShapeCommand = new Command(OnInsertCircleShapeCommandExecute, OnInsertPageObjectCanExecute);
@@ -2458,6 +2460,14 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             var stamp = new Stamp(CurrentPage, true);
             ACLPPageBaseViewModel.AddPageObjectToPage(stamp);
+        }
+
+        public Command InsertNumberLineCommand { get; private set; }
+
+        private void OnInsertNumberLineCommandExecute()
+        {
+            var numberLine = new NumberLine();
+            ACLPPageBaseViewModel.AddPageObjectToPage(numberLine);
         }
 
         /// <summary>
