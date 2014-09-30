@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Windows.Ink;
 using Catel.Data;
 
-namespace CLP.Entities.DomainModel.PageObjects.Arrays
+namespace CLP.Entities
 {
     [Serializable]
     public class NumberLine : APageObjectBase
@@ -15,7 +12,12 @@ namespace CLP.Entities.DomainModel.PageObjects.Arrays
         public NumberLine() { }
 
         public NumberLine(CLPPage parentPage, int numberLength)
-            : base(parentPage) { NumberLineLength = numberLength; }
+            : base(parentPage)
+        {
+            NumberLineLength = numberLength;
+            Height = 60;
+            Width = 300;
+        }
 
         public NumberLine(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
@@ -31,13 +33,14 @@ namespace CLP.Entities.DomainModel.PageObjects.Arrays
             get { return true; }
         }
 
+        /// <summary>Length of number line</summary>
         public int NumberLineLength
         {
-            get { return GetValue<int>(PartsProperty); }
-            set { SetValue(PartsProperty, value);}
+            get { return GetValue<int>(NumberLineLengthProperty); }
+            set { SetValue(NumberLineLengthProperty, value); }
         }
 
-        public static readonly PropertyData PartsProperty = RegisterProperty("NumberLineLength", typeof (int), 0);
+        public static readonly PropertyData NumberLineLengthProperty = RegisterProperty("NumberLineLength", typeof (int), 0);
 
         #endregion //Properties
 

@@ -1,8 +1,6 @@
 ﻿using System;
 using Classroom_Learning_Partner.ViewModels;
-using Classroom_Learning_Partner.ViewModels.PageObjects.Arrays;
 using CLP.Entities;
-using CLP.Entities.DomainModel.PageObjects.Arrays;
 
 namespace Classroom_Learning_Partner.Views
 {

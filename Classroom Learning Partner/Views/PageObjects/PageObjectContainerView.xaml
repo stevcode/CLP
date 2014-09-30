@@ -72,7 +72,7 @@
                 <views:CLPArrayView DataContext="{Binding}" />
             </ControlTemplate>
 
-            <ControlTemplate x:Key="CLPNumberLineTemplate">
+            <ControlTemplate x:Key="NumberLineTemplate">
                 <views:NumberLineView DataContext="{Binding}" />
             </ControlTemplate>
 
@@ -159,6 +159,13 @@
                     <!-- CLPArray trigger -->
                     <DataTrigger Binding="{Binding PageObject, Converter={StaticResource TypeToStringConverter}}" Value="CLPArray">
                         <Setter Property="Template" Value="{StaticResource CLPArrayTemplate}" />
+                    </DataTrigger>
+
+                    <!-- NumberLine trigger -->
+                    <DataTrigger Binding="{Binding PageObject, Converter={StaticResource TypeToStringConverter}}"
+                                 Value="NumberLine">
+                        <Setter Property="Template"
+                                Value="{StaticResource NumberLineTemplate}" />
                     </DataTrigger>
 
                     <!-- LassoRegion trigger -->

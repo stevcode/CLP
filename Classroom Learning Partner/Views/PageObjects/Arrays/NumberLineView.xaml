@@ -40,37 +40,75 @@
     <Grid Width="{Binding Width}"
           Height="{Binding Height}">
         <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="{Binding PageObject.LabelLength}" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
+        
+        <Grid Grid.Column="0"
+              Grid.Row="0"
+              Height="20"
+              Width="20"
+              VerticalAlignment="Center"
+              HorizontalAlignment="Stretch">
+            
+        <Path Stroke="Black"
+              StrokeThickness="1"
+              Data="M 2,0 L 0,1 L 2,2" />
+        </Grid>
 
-        <TextBlock Grid.Column="1"
-                   Grid.Row="2"
-                   IsHitTestVisible="False"
-                   Text="{Binding Columns}"
-                   Padding ="15,0,0,0"
+        <Grid Grid.Column="2"
+              Grid.Row="0"
+              Height="20"
+              Width="20"
+              VerticalAlignment="Center"
+              HorizontalAlignment="Stretch">
+            
+        <Path Stroke="Black"
+              StrokeThickness="1"
+              Data="M 0,0 L 2,1 L 0,2" />
+        </Grid>
+
+        <TextBlock Grid.Column="0"
+                   Grid.Row="1"
+                   Text="0"
+                   Margin="0,0,-10,0"
+                   TextAlignment="Right"
+                   FontWeight="Bold"
+                   FontSize="24"
+                   Foreground="Black" />
+        
+        <TextBlock Grid.Column="2"
+                   Grid.Row="1"
+                   Text="{Binding NumberLineLength}"
+                   Margin="-10,0,0,0"
                    TextAlignment="Left"
                    FontWeight="Bold"
-                   FontSize="{Binding PageObject.LabelLength}"
-                   Foreground="{StaticResource TopLabelColor}"
-                   Height="{Binding PageObject.LabelLength}"
-                   Width="{Binding ArrayWidth}"
-                   Visibility="{Binding IsTopLabelVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                   FontSize="24"
+                   Foreground="Black" />
+        
+        
 
+        <Rectangle Grid.Row="0"
+              Grid.Column="1"
+              Height="2"
+              Stroke="Black"
+              StrokeThickness="2"
+              HorizontalAlignment="Stretch"
+              VerticalAlignment="Center"/>
+        
         <!--This is the actual array-->
-        <Rectangle x:Name="Array"
-                   Grid.Row="1"
+        <Rectangle Grid.Row="0"
                    Grid.Column="1"
-                   Tag="ArrayBodyHitBox"
-                   Width="{Binding ArrayWidth}"
-                   Height="{Binding ArrayHeight}"
-                   Stroke="{Binding Transparency}"
-                   StrokeThickness="3">
+                   Stroke="Transparent"
+                   Fill="Transparent"
+                   StrokeThickness="3"
+                   VerticalAlignment="Stretch"
+                   HorizontalAlignment="Stretch">
             <Rectangle.Style>
                 <Style TargetType="{x:Type Rectangle}">
                     <Setter Property="Fill"
@@ -115,6 +153,7 @@
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
-            </Rectangle.Style></Rectangle>
+            </Rectangle.Style>
+        </Rectangle>
     </Grid>
 </catel:UserControl>

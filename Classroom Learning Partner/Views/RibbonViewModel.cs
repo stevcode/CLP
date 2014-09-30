@@ -30,7 +30,6 @@ using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Entities;
 using System.Windows.Threading;
 using System.ServiceModel;
-using CLP.Entities.DomainModel.PageObjects.Arrays;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 
@@ -2466,7 +2465,23 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnInsertNumberLineCommandExecute()
         {
-            var numberLine = new NumberLine(CurrentPage, 0);
+            var keyPad = new KeypadWindowView("How long would you want the number line?", 100)
+                         {
+                             Owner = Application.Current.MainWindow,
+                             WindowStartupLocation = WindowStartupLocation.Manual,
+                             Top = 100,
+                             Left = 100
+                         };
+            keyPad.ShowDialog();
+            if (keyPad.DialogResult != true ||
+                keyPad.NumbersEntered.Text.Length <= 0)
+            {
+                return;
+            }
+
+            var numberLineLength = Int32.Parse(keyPad.NumbersEntered.Text);
+
+            var numberLine = new NumberLine(CurrentPage, numberLineLength);
             ACLPPageBaseViewModel.AddPageObjectToPage(numberLine);
         }
 
