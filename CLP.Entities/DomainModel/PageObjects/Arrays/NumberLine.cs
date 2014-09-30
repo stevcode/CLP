@@ -14,8 +14,8 @@ namespace CLP.Entities.DomainModel.PageObjects.Arrays
 
         public NumberLine() { }
 
-        public NumberLine(CLPPage parentPage , int numberLength)
-            : base(parentPage) { }
+        public NumberLine(CLPPage parentPage, int numberLength)
+            : base(parentPage) { NumberLineLength = numberLength; }
 
         public NumberLine(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
@@ -31,10 +31,13 @@ namespace CLP.Entities.DomainModel.PageObjects.Arrays
             get { return true; }
         }
 
- //       public override double MinimumWidth
- //       {
- //           get { return MIN_NUMBERLINE_LENGTH + (2 * LabelLength); }
- //       }
+        public int NumberLineLength
+        {
+            get { return GetValue<int>(PartsProperty); }
+            set { SetValue(PartsProperty, value);}
+        }
+
+        public static readonly PropertyData PartsProperty = RegisterProperty("NumberLineLength", typeof (int), 0);
 
         #endregion //Properties
 

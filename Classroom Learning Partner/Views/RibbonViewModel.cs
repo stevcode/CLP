@@ -2466,7 +2466,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnInsertNumberLineCommandExecute()
         {
-            var numberLine = new NumberLine();
+            var numberLine = new NumberLine(CurrentPage, 0);
             ACLPPageBaseViewModel.AddPageObjectToPage(numberLine);
         }
 
