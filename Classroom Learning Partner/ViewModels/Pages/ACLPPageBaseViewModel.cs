@@ -783,6 +783,10 @@ namespace Classroom_Learning_Partner.ViewModels
                viewModel is RibbonViewModel)
             {
                 PageInteractionMode = (viewModel as RibbonViewModel).PageInteractionMode;
+                if (PageInteractionMode == PageInteractionMode.Lasso)
+                {
+                    DefaultDA.Color = Colors.DarkGoldenrod;
+                }
             }
 
             base.OnViewModelPropertyChanged(viewModel, propertyName);
