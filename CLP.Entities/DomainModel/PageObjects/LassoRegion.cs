@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Runtime.Serialization;
+using System.Windows;
 using System.Windows.Ink;
 using System.Windows.Media;
+using System.Windows.Threading;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -112,6 +116,60 @@ namespace CLP.Entities
             {
                 pageObject.XPosition += deltaX;
                 pageObject.YPosition += deltaY;
+            }
+        }
+
+        public override void OnMoved(double oldX, double oldY)
+        {
+            if (ParentPage.History.IsAnimating)
+            {
+                return;
+            }
+
+            try
+            {
+                foreach (var acceptorPageObject in ParentPage.PageObjects.OfType<IPageObjectAccepter>().Where(pageObject => pageObject.CanAcceptPageObjects && pageObject.ID != ID && !LassoedPageObjects.Contains(pageObject)))
+                {
+                    var removedPageObjects = new List<IPageObject>();
+                    var addedPageObjects = new ObservableCollection<IPageObject>();
+
+                    foreach (var lassoedPageObject in LassoedPageObjects)
+                    {
+                        if (acceptorPageObject.AcceptedPageObjectIDs.Contains(lassoedPageObject.ID) && !acceptorPageObject.PageObjectIsOver(lassoedPageObject, .50))
+                        {
+                            removedPageObjects.Add(lassoedPageObject);
+                        }
+
+                        if (!acceptorPageObject.AcceptedPageObjectIDs.Contains(lassoedPageObject.ID) && acceptorPageObject.PageObjectIsOver(lassoedPageObject, .50))
+                        {
+                            addedPageObjects.Add(lassoedPageObject);
+                        }
+                    }
+
+                    acceptorPageObject.AcceptPageObjects(addedPageObjects, removedPageObjects);
+                }
+
+                foreach (var acceptorPageObject in ParentPage.PageObjects.OfType<IStrokeAccepter>().Where(pageObject => pageObject.CanAcceptStrokes && pageObject.ID != ID && !LassoedPageObjects.Contains(pageObject)))
+                {
+                    var pageObjectBounds = new Rect(acceptorPageObject.XPosition, acceptorPageObject.YPosition, acceptorPageObject.Width, acceptorPageObject.Height);
+
+                    var addedStrokesOverObject = from stroke in LassoedStrokes
+                                                 where stroke.HitTest(pageObjectBounds, 3)
+                                                 select stroke;
+
+                    var pageObject = acceptorPageObject;
+                    var removedStrokesOverObject = from stroke in LassoedStrokes
+                                                   where pageObject.AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID()) && !stroke.HitTest(pageObjectBounds, 3) 
+                                                   select stroke;
+
+                    var addStrokes = new StrokeCollection(addedStrokesOverObject);
+                    var removeStrokes = new StrokeCollection(removedStrokesOverObject);
+                    acceptorPageObject.AcceptStrokes(addStrokes, removeStrokes);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("LassoRegion.OnMoved() Exception: " + ex.Message);
             }
         }
 
