@@ -1,4 +1,4 @@
-﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.CLPArrayView"
+﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.NumberLineView"
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com"
@@ -251,13 +251,22 @@
                        StrokeThickness="2"
                        HorizontalAlignment="Stretch"
                        VerticalAlignment="Center" />
-
+<!--
             <Rectangle Grid.Row="0"
                        Grid.Column="1"
                        Stroke="BlueViolet"
-                       HorizontalAlignment="Center"
+                       HorizontalAlignment="Stretch"
                        VerticalAlignment="Stretch">
-            </Rectangle>
+                <Rectangle.Style>
+                    <Style TargetType="{x: Type Rectangle}">
+                        <Setter Property="Fill"
+                                Value="Transparent" />
+                        <Style.Triggers>
+                            
+                        </Style.Triggers>
+                    </Style>
+                </Rectangle.Style>
+            </Rectangle> -->
 
             <!--This is the actual array-->
             <Rectangle Grid.Row="0"
