@@ -11,7 +11,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public NumberLineViewModel(NumberLine numberLine)
         {
             PageObject = numberLine;
-            GridSquareSize = numberLine.NumberLineLength / Width;
+            GridSquareSize = Width / numberLine.NumberLineLength;
         }
 
         #endregion //Constructor
