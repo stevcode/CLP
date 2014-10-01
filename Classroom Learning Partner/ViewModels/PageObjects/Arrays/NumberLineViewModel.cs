@@ -8,7 +8,11 @@ namespace Classroom_Learning_Partner.ViewModels
     {
         #region
 
-        public NumberLineViewModel(NumberLine numberLine) { PageObject = numberLine; }
+        public NumberLineViewModel(NumberLine numberLine)
+        {
+            PageObject = numberLine;
+            GridSquareSize = numberLine.NumberLineLength / Width;
+        }
 
         #endregion //Constructor
 
@@ -24,6 +28,8 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData NumberLineLengthProperty = RegisterProperty("NumberLineLength", typeof (int));
 
         #endregion //Model
+
+        public double GridSquareSize { get; set; }
 
         #region Commands
 
