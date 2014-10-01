@@ -10,7 +10,7 @@
     <UserControl.Resources>
         <catel:BooleanToOppositeBooleanConverter x:Key="BooleanToOppositeBooleanConverter" />
         <catel:BooleanToHidingVisibilityConverter x:Key="BooleanToHidingVisibilityConverter" />
-        <LengthConverter x:Key="LengthConverter" />
+        <oldconv:LengthConverter x:Key="LengthConverter" />
         <oldconv:NegativeLengthSubtractConverter x:Key="NegativeLengthSubtractConverter" />
         <conv:ZeroToQuestionMarkConverter x:Key="ZeroToQuestionMarkConverter" />
         <conv:DoubleToVisibilityConverter x:Key="DoubleToVisibilityConverter" />
@@ -262,7 +262,10 @@
                         <Setter Property="Fill"
                                 Value="Transparent" />
                         <Style.Triggers>
-                            
+                            <DataTrigger Binding="{Binding XYZ}"
+                                Value="Transparent" />
+                                <Setter Property="Fill">
+                                <Setter.Value>
                         </Style.Triggers>
                     </Style>
                 </Rectangle.Style>
@@ -315,6 +318,24 @@
                     </Style>
                 </Rectangle.Style>
             </Rectangle>
+
+            <Rectangle Grid.Row="0"
+                       Grid.RowSpan="2"
+                       Grid.Column="0"
+                       Grid.ColumnSpan="3"
+                       Tag="PageObjectHitBox"
+                       Fill="Transparent"
+                       Stretch="Fill"
+                       Width="{Binding Width, Mode=TwoWay}"
+                       Height="{Binding Height, Mode=TwoWay}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseUp">
+                        <catel:EventToCommand Command="{Binding ToggleMainAdornersCommand}"
+                                              PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Rectangle>
+
         </Grid>
 
     </ac:AdornedControl>
