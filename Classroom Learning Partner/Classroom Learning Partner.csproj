@@ -529,6 +529,9 @@
     <Compile Include="Views\RibbonView.xaml.cs">
       <DependentUpon>RibbonView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Ribbon\MajorRibbonView.xaml.cs">
+      <DependentUpon>MajorRibbonView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Workspaces\BlankWorkspaceView.xaml.cs">
       <DependentUpon>BlankWorkspaceView.xaml</DependentUpon>
     </Compile>
@@ -827,6 +830,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Ribbon\MajorRibbonView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Workspaces\BlankWorkspaceView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -924,6 +931,10 @@
     <Resource Include="Images\Trash.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CLP.CustomControls\CLP.CustomControls.csproj">
+      <Project>{9a23526f-813c-428b-9480-e83b90efc3c8}</Project>
+      <Name>CLP.CustomControls</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CLP.Entities\CLP.Entities.csproj">
       <Project>{c6b95a31-7045-4c7e-a72d-c03468e20b20}</Project>
       <Name>CLP.Entities</Name>
