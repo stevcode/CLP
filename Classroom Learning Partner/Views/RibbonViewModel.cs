@@ -2479,9 +2479,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            var numberLineLength = Int32.Parse(keyPad.NumbersEntered.Text);
+            var numberLineSize = Int32.Parse(keyPad.NumbersEntered.Text);
 
-            var numberLine = new NumberLine(CurrentPage, numberLineLength);
+            var numberLine = new NumberLine(CurrentPage, numberLineSize);
             ACLPPageBaseViewModel.AddPageObjectToPage(numberLine);
         }
 

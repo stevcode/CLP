@@ -8,6 +8,7 @@
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters">
 
     <UserControl.Resources>
+        <catel:BooleanToHidingVisibilityConverter x:Key="BooleanToHidingVisibilityConverter" />
         <oldconv:LengthConverter x:Key="LengthConverter" />
         <conv:RatioToRectMultiConverter x:Key="RatioToRectMultiConverter" />
 
@@ -164,138 +165,80 @@
 
         <Grid Width="{Binding Width}"
               Height="{Binding Height}">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="{Binding PageObject.ArrowLength}" />
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="{Binding PageObject.ArrowLength}" />
             </Grid.ColumnDefinitions>
 
             <Grid Grid.Column="0"
-                  Grid.Row="0"
-                  Height="20"
-                  Width="20"
+                  Height="10"
                   VerticalAlignment="Center"
                   HorizontalAlignment="Stretch">
 
                 <Path Stroke="Black"
-                      StrokeThickness="1"
+                      StrokeThickness="2"
                       Stretch="Fill"
-                      Data="M 2,0 L 0,1 L 2,2" />
+                      Data="M 1,0 L 0,1 L 1,2 M 0,1 L 2,1" />
             </Grid>
 
-            <Grid Grid.Column="4"
-                  Grid.Row="0"
-                  Height="20"
-                  Width="20"
+            <Grid Grid.Column="2"
+                  Height="10"
                   VerticalAlignment="Center"
                   HorizontalAlignment="Stretch">
 
                 <Path Stroke="Black"
-                      StrokeThickness="1"
+                      StrokeThickness="2"
                       Stretch="Fill"
-                      Data="M 0,0 L 2,1 L 0,2" />
+                      Data="M 1,0 L 2,1 L 1,2 M 0,1 L 2,1" />
             </Grid>
 
-            <TextBlock Grid.Column="0"
-                       Grid.Row="1"
-                       Text="0"
-                       Margin="0,0,-30,0"
-                       TextAlignment="Right"
-                       FontWeight="Bold"
-                       FontSize="24"
-                       Foreground="Black" />
+            <Line Grid.Column="1"
+                  X1="0"
+                  X2="1"
+                  Stretch="Fill"
+                  Stroke="Black"
+                  StrokeThickness="2"
+                  VerticalAlignment="Center" />
 
-            <TextBlock Grid.Column="4"
-                       Grid.Row="1"
-                       Text="{Binding NumberLineLength}"
-                       Margin="-30,0,0,0"
-                       TextAlignment="Left"
-                       FontWeight="Bold"
-                       FontSize="24"
-                       Foreground="Black" />
+            <Canvas Grid.Column="1">
+                <ItemsControl ItemsSource="{Binding Ticks}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Width="{Binding DataContext.PageObject.TickLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
+                                  Margin="0,25,0,0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="{Binding TickHeight}" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
 
-            <Rectangle Grid.Row="0"
-                       Grid.Column="1"
-                       Height="2"
-                       Width="20"
-                       Stroke="Black"
-                       StrokeThickness="2"
-                       HorizontalAlignment="Stretch"
-                       VerticalAlignment="Center" />
+                                <Line Grid.Row="0"
+                                      Y1="0"
+                                      Y2="1"
+                                      Stretch="Fill"
+                                      Stroke="Blue"
+                                      StrokeThickness="2"
+                                      HorizontalAlignment="Left" />
 
-            <Rectangle Grid.Row="0"
-                       Grid.Column="3"
-                       Height="2"
-                       Width="20"
-                       Stroke="Black"
-                       StrokeThickness="2"
-                       HorizontalAlignment="Stretch"
-                       VerticalAlignment="Center" />
-            
-            <Rectangle Grid.Row="0"
-                       Grid.Column="2"
-                       Height="2"
-                       Stroke="Black"
-                       StrokeThickness="2"
-                       HorizontalAlignment="Stretch"
-                       VerticalAlignment="Center" />
+                                <TextBlock Grid.Row="1"
+                                           HorizontalAlignment="Left"
+                                           Visibility="{Binding IsNumberVisible, Converter={StaticResource BooleanToHidingVisibilityConverter}}"
+                                           Text="{Binding TickValue}"
+                                           FontSize="20"
+                                           FontWeight="Bold"
+                                           Margin="-4,0,0,0" />
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
 
-            <!--This is the actual array-->
-            <Rectangle Grid.Row="0"
-                       Grid.Column="2"
-                       Stroke="Transparent"
-                       StrokeThickness="3"
-                       VerticalAlignment="Stretch"
-                       HorizontalAlignment="Stretch">
-                <Rectangle.Style>
-                    <Style TargetType="{x:Type Rectangle}">
-                        <Setter Property="Fill">
-                            <Setter.Value>
-
-                                <DrawingBrush TileMode="Tile"
-                                              ViewportUnits="RelativeToBoundingBox">
-                                    <DrawingBrush.Viewport>
-                                        <MultiBinding Converter="{StaticResource RatioToRectMultiConverter}">
-                                            <Binding Path="Width" />
-                                            <Binding Path="Height" />
-                                            <Binding Path="GridSquareSize" />
-                                        </MultiBinding>
-                                    </DrawingBrush.Viewport>
-                                    <DrawingBrush.Drawing>
-                                        <DrawingGroup>
-                                            <!--Horizontal Grid Line-->
-                                            <GeometryDrawing Geometry="M0,20 L20,20">
-                                                <GeometryDrawing.Pen>
-                                                    <Pen Thickness="1"
-                                                         Brush="Transparent" />
-                                                </GeometryDrawing.Pen>
-                                            </GeometryDrawing>
-                                            <!--Vertical Grid Line-->
-                                            <GeometryDrawing Geometry="M20,0 L20, 20">
-                                                <GeometryDrawing.Pen>
-                                                    <Pen Thickness="1"
-                                                         Brush="Blue" />
-                                                </GeometryDrawing.Pen>
-                                            </GeometryDrawing>
-                                        </DrawingGroup>
-                                    </DrawingBrush.Drawing>
-                                </DrawingBrush>
-
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </Rectangle.Style>
-            </Rectangle>
-
-            <Rectangle Grid.Row="0"
-                       Grid.RowSpan="2"
-                       Grid.Column="0"
+                </ItemsControl>
+            </Canvas>
+            <Rectangle Grid.Column="0"
                        Grid.ColumnSpan="3"
                        Tag="PageObjectHitBox"
                        Fill="Transparent"

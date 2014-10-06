@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using Catel.Data;
@@ -30,6 +31,15 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData NumberLineSizeProperty = RegisterProperty("NumberLineSize", typeof (int));
 
+        [ViewModelToModel("PageObject")]
+        public ObservableCollection<NumberLineTick> Ticks
+        {
+            get { return GetValue<ObservableCollection<NumberLineTick>>(TicksProperty); }
+            set { SetValue(TicksProperty, value); }
+        }
+
+        public static readonly PropertyData TicksProperty = RegisterProperty("Ticks", typeof (ObservableCollection<NumberLineTick>));
+
         #endregion //Model
 
 
@@ -45,7 +55,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var initialWidth = Width;
             var initialHeight = Height;
             var parentPage = PageObject.ParentPage;
-            const int MIN_WIDTH = 20;
+            const int MIN_WIDTH = 250;
 
             var newWidth = Math.Max(MIN_WIDTH, Width + e.HorizontalChange);
             newWidth = Math.Min(newWidth, parentPage.Width - XPosition);

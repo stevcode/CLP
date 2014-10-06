@@ -14,7 +14,11 @@ namespace CLP.Entities
 
         public NumberLineTick() { }
 
-        public NumberLineTick(bool isNumberVisible) { IsNumberVisible = isNumberVisible; }
+        public NumberLineTick(int value, bool isNumberVisible)
+        {
+            TickValue = value; 
+            IsNumberVisible = isNumberVisible; 
+        }
 
         public NumberLineTick(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
@@ -23,6 +27,22 @@ namespace CLP.Entities
         #endregion //Constructors
 
         #region Properties
+
+        public double TickHeight
+        {
+            get { return 25.0; }
+        }
+
+        /// <summary>
+        /// Number of the Tick
+        /// </summary>
+        public int TickValue
+        {
+            get { return GetValue<int>(TickValueProperty); }
+            set { SetValue(TickValueProperty, value); }
+        }
+
+        public static readonly PropertyData TickValueProperty = RegisterProperty("TickValue", typeof (int), 0);
 
         /// <summary>
         /// Is the tick marks number visible
@@ -71,7 +91,7 @@ namespace CLP.Entities
             : base(parentPage)
         {
             NumberLineSize = numberLength;
-            Height = 60;
+            Height = 75;
             Width = 800;
         }
 
@@ -151,7 +171,7 @@ namespace CLP.Entities
                 {
                     labelVisible = true;
                 }
-                Ticks.Add(new NumberLineTick(labelVisible));
+                Ticks.Add(new NumberLineTick(i,labelVisible));
             }
 
         }
