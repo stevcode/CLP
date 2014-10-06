@@ -10,11 +10,19 @@
                             <Image Source="{Binding LargeImageSource, RelativeSource={RelativeSource TemplatedParent}}"
                                    Height="24"
                                    HorizontalAlignment="Center" 
-                                   Margin="0 4 0 0" />
+                                   Margin="0 5 0 3" />
                             <TextBlock Text="{TemplateBinding Text}"
                                        HorizontalAlignment="Center"
                                        VerticalAlignment="Center"
+                                       FontFamily="Segoe UI"
+                                       FontSize="9pt"
+                                       TextOptions.TextRenderingMode="Auto"
+                                       TextOptions.TextFormattingMode="Ideal"
+                                       Margin="0"
                                        />
+                            <Grid Name="ButtonIndicatorGrid"
+                                  HorizontalAlignment="Center"
+                                  Height="6"></Grid>
                         </StackPanel>
                     </Grid>
                 </ControlTemplate>

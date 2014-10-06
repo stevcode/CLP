@@ -2,7 +2,45 @@
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com">
-    <DockPanel>
+    <DockPanel Height="65"
+               Background="{StaticResource GrayBackgroundColor}">
 
+        <Line DockPanel.Dock="Bottom"
+              Stretch="Fill"
+              X1="0"
+              X2="1"
+              Margin="-1 0 -1 0"
+              Stroke="{StaticResource GrayEdgeColor}"
+              StrokeThickness="1" />
+
+        <!-- BackStage "Toggle" Button -->
+        <Button DockPanel.Dock="Left"
+                Height="64"
+                Width="64"
+                Command="{Binding ShowBackStageCommand}">
+            <Button.Style>
+                <Style TargetType="Button">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate>
+                                <Grid Background="{StaticResource MainColor}"
+                                      HorizontalAlignment="Stretch"
+                                      VerticalAlignment="Stretch">
+                                    <Image Source="pack://application:,,,/Resources/Images/CLPMenuIconWhite64.png" />
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Button.Style>
+        </Button>
+
+        <Line DockPanel.Dock="Left"
+              Stretch="Fill"
+              Y1="0"
+              Y2="1"
+              Margin="0 2 0 2"
+              Stroke="{StaticResource GrayEdgeColor}"
+              StrokeThickness="1" />
     </DockPanel>
 </catel:UserControl>
