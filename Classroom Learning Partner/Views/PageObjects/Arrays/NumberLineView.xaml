@@ -8,35 +8,9 @@
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters">
 
     <UserControl.Resources>
-        <catel:BooleanToOppositeBooleanConverter x:Key="BooleanToOppositeBooleanConverter" />
-        <catel:BooleanToHidingVisibilityConverter x:Key="BooleanToHidingVisibilityConverter" />
         <oldconv:LengthConverter x:Key="LengthConverter" />
-        <oldconv:NegativeLengthSubtractConverter x:Key="NegativeLengthSubtractConverter" />
-        <conv:ZeroToQuestionMarkConverter x:Key="ZeroToQuestionMarkConverter" />
-        <conv:DoubleToVisibilityConverter x:Key="DoubleToVisibilityConverter" />
-        <conv:AllBoolToVisibilityMultiConverter x:Key="AllBoolToVisibilityMultiConverter" />
-        <conv:MultiplyAllIntToTextMultiConverter x:Key="MultiplyAllIntToTextMultiConverter" />
         <conv:RatioToRectMultiConverter x:Key="RatioToRectMultiConverter" />
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 
-        <Style x:Key="HorizontalDivisionStyle">
-            <Setter Property="Canvas.Left"
-                    Value="0" />
-            <Setter Property="Canvas.Top"
-                    Value="{Binding Position}" />
-        </Style>
-
-        <Style x:Key="VerticalDivisionStyle">
-            <Setter Property="Canvas.Left"
-                    Value="{Binding Position}" />
-            <Setter Property="Canvas.Top"
-                    Value="0" />
-        </Style>
-
-        <SolidColorBrush x:Key="TopLabelColor"
-                         Color="DarkOrange" />
-        <SolidColorBrush x:Key="LeftLabelColor"
-                         Color="Blue" />
     </UserControl.Resources>
 
     <ac:AdornedControl HorizontalAlignment="Center"
@@ -154,7 +128,7 @@
                        Canvas.Bottom="-40">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="DragDelta">
-                            <catel:EventToCommand Command="{Binding ResizeFuzzyFactorCardCommand}"
+                            <catel:EventToCommand Command="{Binding ResizeNumberLineCommand}"
                                                   PassEventArgsToCommand="True" />
                         </i:EventTrigger>
                         <i:EventTrigger EventName="DragStarted">

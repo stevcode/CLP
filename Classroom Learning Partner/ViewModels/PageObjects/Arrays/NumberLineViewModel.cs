@@ -1,4 +1,7 @@
-﻿using Catel.Data;
+﻿using System;
+using System.Windows;
+using System.Windows.Controls.Primitives;
+using Catel.Data;
 using Catel.MVVM;
 using CLP.Entities;
 
@@ -11,7 +14,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public NumberLineViewModel(NumberLine numberLine)
         {
             PageObject = numberLine;
-            GridSquareSize = Width / numberLine.NumberLineLength;
+            ResizeNumberLineCommand = new Command<DragDeltaEventArgs>(OnResizeNumberLineCommandExecute);
         }
 
         #endregion //Constructor
@@ -19,19 +22,38 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Model
 
         [ViewModelToModel("PageObject")]
-        public int NumberLineLength
+        public int NumberLineSize
         {
-            get { return GetValue<int>(NumberLineLengthProperty); }
-            set { SetValue(NumberLineLengthProperty, value); }
+            get { return GetValue<int>(NumberLineSizeProperty); }
+            set { SetValue(NumberLineSizeProperty, value); }
         }
 
-        public static readonly PropertyData NumberLineLengthProperty = RegisterProperty("NumberLineLength", typeof (int));
+        public static readonly PropertyData NumberLineSizeProperty = RegisterProperty("NumberLineSize", typeof (int));
 
         #endregion //Model
 
-        public double GridSquareSize { get; set; }
 
         #region Commands
+
+        /// <summary>
+        /// Change the length of the number line
+        /// </summary>
+        public Command<DragDeltaEventArgs> ResizeNumberLineCommand { get; private set; }
+
+        private void OnResizeNumberLineCommandExecute(DragDeltaEventArgs e)
+        {
+            var initialWidth = Width;
+            var initialHeight = Height;
+            var parentPage = PageObject.ParentPage;
+            const int MIN_WIDTH = 20;
+
+            var newWidth = Math.Max(MIN_WIDTH, Width + e.HorizontalChange);
+            newWidth = Math.Min(newWidth, parentPage.Width - XPosition);
+
+            ChangePageObjectDimensions(PageObject, initialHeight, newWidth);
+            PageObject.OnResizing(initialWidth, initialHeight);
+        }
+
 
         #endregion //Commands
     }
