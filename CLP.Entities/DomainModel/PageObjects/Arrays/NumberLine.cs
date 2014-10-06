@@ -16,7 +16,7 @@ namespace CLP.Entities
         {
             NumberLineLength = numberLength;
             Height = 60;
-            Width = 300;
+            Width = 800;
         }
 
         public NumberLine(SerializationInfo info, StreamingContext context)

@@ -196,7 +196,9 @@
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
@@ -213,7 +215,7 @@
                       Data="M 2,0 L 0,1 L 2,2" />
             </Grid>
 
-            <Grid Grid.Column="2"
+            <Grid Grid.Column="4"
                   Grid.Row="0"
                   Height="20"
                   Width="20"
@@ -229,16 +231,16 @@
             <TextBlock Grid.Column="0"
                        Grid.Row="1"
                        Text="0"
-                       Margin="0,0,-10,0"
+                       Margin="0,0,-30,0"
                        TextAlignment="Right"
                        FontWeight="Bold"
                        FontSize="24"
                        Foreground="Black" />
 
-            <TextBlock Grid.Column="2"
+            <TextBlock Grid.Column="4"
                        Grid.Row="1"
                        Text="{Binding NumberLineLength}"
-                       Margin="-10,0,0,0"
+                       Margin="-30,0,0,0"
                        TextAlignment="Left"
                        FontWeight="Bold"
                        FontSize="24"
@@ -247,33 +249,32 @@
             <Rectangle Grid.Row="0"
                        Grid.Column="1"
                        Height="2"
+                       Width="20"
                        Stroke="Black"
                        StrokeThickness="2"
                        HorizontalAlignment="Stretch"
                        VerticalAlignment="Center" />
-<!--
+
             <Rectangle Grid.Row="0"
-                       Grid.Column="1"
-                       Stroke="BlueViolet"
+                       Grid.Column="3"
+                       Height="2"
+                       Width="20"
+                       Stroke="Black"
+                       StrokeThickness="2"
                        HorizontalAlignment="Stretch"
-                       VerticalAlignment="Stretch">
-                <Rectangle.Style>
-                    <Style TargetType="{x: Type Rectangle}">
-                        <Setter Property="Fill"
-                                Value="Transparent" />
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding XYZ}"
-                                Value="Transparent" />
-                                <Setter Property="Fill">
-                                <Setter.Value>
-                        </Style.Triggers>
-                    </Style>
-                </Rectangle.Style>
-            </Rectangle> -->
+                       VerticalAlignment="Center" />
+            
+            <Rectangle Grid.Row="0"
+                       Grid.Column="2"
+                       Height="2"
+                       Stroke="Black"
+                       StrokeThickness="2"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Center" />
 
             <!--This is the actual array-->
             <Rectangle Grid.Row="0"
-                       Grid.Column="1"
+                       Grid.Column="2"
                        Stroke="Transparent"
                        StrokeThickness="3"
                        VerticalAlignment="Stretch"
