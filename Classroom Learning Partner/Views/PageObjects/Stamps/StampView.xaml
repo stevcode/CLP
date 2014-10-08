@@ -289,10 +289,22 @@
             <Border Grid.Row="1"
                     x:Name="StampBody"
                     BorderBrush="Black"
-                    BorderThickness="2"
                     CornerRadius="{Binding IsGroupStamp, Converter={StaticResource BoolToDoubleConverter}, ConverterParameter=5}"
                     VerticalAlignment="Stretch"
                     Margin="0">
+                <Border.Style>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="BorderThickness"
+                                Value="2" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsDraggableStamp}"
+                                         Value="False">
+                                <Setter Property="BorderThickness"
+                                        Value="5" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
                 <Grid>
                     <Image Source="{Binding SourceImage, Mode=OneWay}"
                            Height="{Binding ActualHeight, ElementName=StampBody}"
@@ -340,6 +352,7 @@
 
                 <TextBlock FontFamily="pack://application:,,,/Resources/Fonts/#SketchFlow Print"
                            FontSize="16"
+                           FontWeight="Bold"
                            TextAlignment="Center"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Top">
