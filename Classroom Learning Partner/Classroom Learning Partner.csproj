@@ -972,6 +972,10 @@
     <Content Include="External Libraries\System.Reactive.Providers.dll" />
     <Content Include="External Libraries\System.Reactive.Windows.Threading.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
+    <Resource Include="Resources\Images\NumberLine128.png" />
+    <Resource Include="Resources\Images\NumberLine16.png" />
+    <Resource Include="Resources\Images\NumberLine32.png" />
+    <Resource Include="Resources\Images\NumberLine64.png" />
     <Resource Include="Resources\Images\PartiallyCorrect16.png" />
     <Resource Include="Resources\Images\PartiallyCorrect32.png" />
     <Resource Include="Resources\Images\PartiallyCorrect64.png" />
