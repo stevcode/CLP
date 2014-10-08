@@ -171,6 +171,7 @@ namespace CLP.Entities
             {
                 Console.WriteLine("LassoRegion.OnMoved() Exception: " + ex.Message);
             }
+            base.OnMoved(oldX, oldY);
         }
 
         #endregion //Methods

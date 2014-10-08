@@ -240,6 +240,7 @@ namespace CLP.Entities
             {
                 Console.WriteLine("StampedObject.OnMoved() Exception: " + ex.Message);
             }
+            base.OnMoved(oldX, oldY);
         }
 
         public override IPageObject Duplicate()

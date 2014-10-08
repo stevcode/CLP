@@ -55,6 +55,12 @@ namespace Classroom_Learning_Partner.ViewModels
                 StrokePaths.Add(strokePath);
             }
 
+            stampedObject.AcceptedPageObjects.Clear();
+            foreach (var acceptedPageObjectID in stampedObject.AcceptedPageObjectIDs)
+            {
+                stampedObject.AcceptedPageObjects.Add(stampedObject.ParentPage.GetPageObjectByID(acceptedPageObjectID));
+            }
+
             ParameterizeStampedObjectCommand = new Command(OnParameterizeStampedObjectCommandExecute);
         }
 

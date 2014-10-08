@@ -284,7 +284,7 @@ namespace CLP.Entities
 
         public virtual void OnMoving(double oldX, double oldY) { }
 
-        public virtual void OnMoved(double oldX, double oldY) { }
+        public virtual void OnMoved(double oldX, double oldY) { ParentPage.UpdateAllReporters(); }
 
         public virtual void OnResizing(double oldWidth, double oldHeight) { }
 
