@@ -42,15 +42,15 @@ namespace CLP.Entities
                     break;
                 case StampTypes.ObservingStamp:
                     Width = 90;
-                    Height = 135;
+                    Height = 140;
                     break;
                 case StampTypes.GroupStamp:
                     Width = 125;
                     Height = 230;
                     break;
                 case StampTypes.EmptyGroupStamp:
-                    Width = 125;
-                    Height = 155;
+                    Width = 200;
+                    Height = 230;
                     break;
                 default:
                     Width = 75;
@@ -100,7 +100,7 @@ namespace CLP.Entities
                     case StampTypes.GeneralStamp:
                         return 70;
                     case StampTypes.ObservingStamp:
-                        return 60;
+                        return 65;
                     case StampTypes.GroupStamp:
                         return 70;
                     case StampTypes.EmptyGroupStamp:
