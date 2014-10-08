@@ -124,7 +124,7 @@
                 </Thumb>
 
                 <!--Multiple Stamp Copies Button Option 2-->
-                <Button Command="{Binding ParameterizeStampedObjectCommand}"
+                <!--<Button Command="{Binding ParameterizeStampedObjectCommand}"
                         Cursor="Hand"
                         Width="40"
                         Height="40"
@@ -149,14 +149,14 @@
                             </Grid>
                         </ControlTemplate>
                     </Button.Template>
-                </Button>
+                </Button>-->
 
                 <!--Multiple Stamp Copies Button Option 1-->
                 <Button Command="{Binding ParameterizeStampedObjectCommand}"
                         Cursor="Hand"
                         Width="40"
                         Height="40"
-                        Canvas.Right="-40"
+                        Canvas.Left="-40"
                         Canvas.Bottom="-40"
                         Visibility="{Binding IsGroupStampedObject, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, Mode=OneWay, FallbackValue=Collapsed}">
                     <Button.CommandParameter>

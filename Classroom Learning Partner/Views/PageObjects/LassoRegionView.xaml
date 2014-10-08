@@ -120,7 +120,7 @@
                 </Thumb>
 
                 <!--Duplicate Button-->
-                <!--<Button Command="{Binding DuplicateCommand}"
+                <Button Command="{Binding DuplicateCommand}"
                         Cursor="Hand"
                         Width="40" Height="40"
                         Canvas.Left="-40"
@@ -136,7 +136,7 @@
                             </Grid>
                         </ControlTemplate>
                     </Button.Template>
-                </Button>-->
+                </Button>
             </Canvas>
         </ac:AdornedControl.AdornerContent>
 
