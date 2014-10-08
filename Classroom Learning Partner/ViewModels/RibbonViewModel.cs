@@ -2360,7 +2360,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnInsertImageStampCommandExecute()
         {
-            CreateImageStamp(false);
+            CreateImageStamp(StampTypes.GeneralStamp);
         }
 
         /// <summary>
@@ -2370,10 +2370,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnInsertImageContainerStampCommandExecute()
         {
-            CreateImageStamp(true);
+            CreateImageStamp(StampTypes.GroupStamp);
         }
 
-        private void CreateImageStamp(bool isCollectionStamp)
+        private void CreateImageStamp(StampTypes stampType)
         {
             // Configure open file dialog box
             var dlg = new Microsoft.Win32.OpenFileDialog
@@ -2428,7 +2428,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 var page = CurrentPage;
 
-                var stamp = new Stamp(page, imageHashID, isCollectionStamp);
+                var stamp = new Stamp(page, imageHashID, stampType);
 
                 ACLPPageBaseViewModel.AddPageObjectToPage(stamp);
             }
@@ -2445,7 +2445,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnInsertBlankStampCommandExecute()
         {
-            var stamp = new Stamp(CurrentPage, false);
+            var stamp = new Stamp(CurrentPage, StampTypes.GeneralStamp);
             ACLPPageBaseViewModel.AddPageObjectToPage(stamp);
         }
 
@@ -2456,7 +2456,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnInsertBlankContainerStampCommandExecute()
         {
-            var stamp = new Stamp(CurrentPage, true);
+            var stamp = new Stamp(CurrentPage, StampTypes.GroupStamp);
             ACLPPageBaseViewModel.AddPageObjectToPage(stamp);
         }
 

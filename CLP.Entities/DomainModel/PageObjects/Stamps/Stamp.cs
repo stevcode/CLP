@@ -10,8 +10,16 @@ using Catel.Data;
 
 namespace CLP.Entities
 {
+    public enum StampTypes
+    {
+        GeneralStamp,
+        ObservingStamp,
+        GroupStamp,
+        EmptyGroupStamp
+    }
+
     [Serializable]
-    public class Stamp : APageObjectBase, ICountable, IStrokeAccepter, IPageObjectAccepter
+    public class Stamp : APageObjectBase, ICountable, IStrokeAccepter, IPageObjectAccepter, IReporter
     {
         #region Constructors
 
@@ -24,22 +32,26 @@ namespace CLP.Entities
         /// Initializes <see cref="Stamp" /> from
         /// </summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="Stamp" /> belongs to.</param>
-        public Stamp(CLPPage parentPage, string imageHashID, bool isCollectionStamp)
+        public Stamp(CLPPage parentPage, string imageHashID, StampTypes stampType)
             : base(parentPage)
         {
-            IsCollectionStamp = isCollectionStamp;
-            CanAcceptPageObjects = isCollectionStamp;
-            Width = isCollectionStamp ? 125 : 75;
-            Height = isCollectionStamp ? 230 : 180;
+            CanAcceptPageObjects = stampType == StampTypes.GroupStamp;
+            StampType = stampType;
+            Width = stampType == StampTypes.GroupStamp || stampType == StampTypes.EmptyGroupStamp ? 125 : 75;
+            Height = stampType == StampTypes.GroupStamp || stampType == StampTypes.EmptyGroupStamp ? 230 : 180;
             ImageHashID = imageHashID;
+            if (stampType == StampTypes.ObservingStamp)
+            {
+                Parts = 1;
+            }
         }
 
         /// <summary>
         /// Initializes <see cref="Stamp" /> from
         /// </summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="Stamp" /> belongs to.</param>
-        public Stamp(CLPPage parentPage, bool isCollectionStamp)
-            : this(parentPage, string.Empty, isCollectionStamp) { }
+        public Stamp(CLPPage parentPage, StampTypes stampType)
+            : this(parentPage, string.Empty, stampType) { }
 
         /// <summary>
         /// Initializes <see cref="Stamp" /> based on <see cref="SerializationInfo" />.
@@ -63,7 +75,7 @@ namespace CLP.Entities
 
         public virtual double HandleHeight
         {
-            get { return 35; }
+            get { return StampType == StampTypes.GeneralStamp || StampType == StampTypes.GroupStamp ? 35 : 0; }
         }
 
         public virtual double PartsHeight
@@ -83,15 +95,15 @@ namespace CLP.Entities
         public static readonly PropertyData ImageHashIDProperty = RegisterProperty("ImageHashID", typeof(string), string.Empty);
 
         /// <summary>
-        /// Designates the <see cref="Stamp" /> as a CollectionStamp that can accept <see cref="IPageObject" />s.
+        /// The type of <see cref="Stamp" />.
         /// </summary>
-        public bool IsCollectionStamp
+        public StampTypes StampType
         {
-            get { return GetValue<bool>(IsCollectionStampProperty); }
-            set { SetValue(IsCollectionStampProperty, value); }
+            get { return GetValue<StampTypes>(StampTypeProperty); }
+            set { SetValue(StampTypeProperty, value); }
         }
 
-        public static readonly PropertyData IsCollectionStampProperty = RegisterProperty("IsCollectionStamp", typeof(bool), false);
+        public static readonly PropertyData StampTypeProperty = RegisterProperty("StampType", typeof (StampTypes), StampTypes.GeneralStamp);
 
         #region ICountable Members
 
@@ -205,6 +217,44 @@ namespace CLP.Entities
         public static readonly PropertyData AcceptedPageObjectIDsProperty = RegisterProperty("AcceptedPageObjectIDs", typeof(List<string>), () => new List<string>());
 
         #endregion //IPageObjectAccepter Members
+
+        #region IReporter Members
+
+        private int NumberInGroups
+        {
+            get
+            {
+                if (ParentPage == null)
+                {
+                    return 0;
+                }
+
+                return 7;
+            }
+        }
+
+        private int NumberNotInGroups
+        {
+            get
+            {
+                if (ParentPage == null)
+                {
+                    return 0;
+                }
+
+                return 2;
+            }
+        }
+
+        /// <summary>
+        /// Formatted value of the <see cref="IReporter" />.
+        /// </summary>
+        public string FormattedReport
+        {
+            get { return StampType != StampTypes.ObservingStamp ? string.Empty : string.Format("{0} in groups.\n" + "{1} not in groups.", NumberInGroups, NumberNotInGroups); }
+        }
+
+        #endregion //IReporter Members
 
         #endregion //Properties
 
@@ -367,7 +417,7 @@ namespace CLP.Entities
             {
                 if(AcceptedPageObjectIDs.Contains(pageObject.ID) ||
                    pageObject is Stamp ||
-                   (pageObject is StampedObject && (pageObject as StampedObject).IsStampedCollection))
+                   (pageObject is StampedObject && ((pageObject as StampedObject).StampedObjectType == StampedObjectTypes.EmptyGroupStampedObject || (pageObject as StampedObject).StampedObjectType == StampedObjectTypes.GroupStampedObject)))
                 {
                     continue;
                 }
@@ -395,6 +445,12 @@ namespace CLP.Entities
         }
 
         #endregion //IPageObjectAccepter Methods
+
+        #region IReporter Methods
+
+        public void UpdateReport() { RaisePropertyChanged("FormattedReport"); }
+
+        #endregion //IReporter Methods
 
         #endregion //Methods
     }

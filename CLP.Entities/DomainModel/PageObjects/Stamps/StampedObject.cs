@@ -8,6 +8,14 @@ using Catel.Data;
 
 namespace CLP.Entities
 {
+    public enum StampedObjectTypes
+    {
+        GeneralStampedObject,
+        VisibleParts,
+        GroupStampedObject,
+        EmptyGroupStampedObject
+    }
+
     [Serializable]
     public class StampedObject : APageObjectBase, ICountable, IPageObjectAccepter
     {
@@ -22,21 +30,21 @@ namespace CLP.Entities
         /// Initializes <see cref="StampedObject" /> from
         /// </summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="StampedObject" /> belongs to.</param>
-        public StampedObject(CLPPage parentPage, string parentStampID, string imageHashID, bool isStampedCollection)
+        public StampedObject(CLPPage parentPage, string parentStampID, string imageHashID, StampedObjectTypes stampedObjectType)
             : base(parentPage)
         {
             ParentStampID = parentStampID;
             ImageHashID = imageHashID;
-            IsStampedCollection = isStampedCollection;
-            CanAcceptPageObjects = isStampedCollection;
+            StampedObjectType = stampedObjectType;
+            CanAcceptPageObjects = stampedObjectType == StampedObjectTypes.GroupStampedObject || stampedObjectType == StampedObjectTypes.EmptyGroupStampedObject;
         }
 
         /// <summary>
         /// Initializes <see cref="StampedObject" /> from
         /// </summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="StampedObject" /> belongs to.</param>
-        public StampedObject(CLPPage parentPage, string parentStampID, bool isStampedCollection)
-            : this(parentPage, parentStampID, string.Empty, isStampedCollection) { }
+        public StampedObject(CLPPage parentPage, string parentStampID, StampedObjectTypes stampedObjectType)
+            : this(parentPage, parentStampID, string.Empty, stampedObjectType) { }
 
         /// <summary>
         /// Initializes <see cref="StampedObject" /> based on <see cref="SerializationInfo" />.
@@ -86,15 +94,15 @@ namespace CLP.Entities
         public static readonly PropertyData ImageHashIDProperty = RegisterProperty("ImageHashID", typeof(string), string.Empty);
 
         /// <summary>
-        /// Whether or not the <see cref="StampedObject" /> is a stamp from a collection stamp.
+        /// Type of <see cref="StampedObject" />.
         /// </summary>
-        public bool IsStampedCollection
+        public StampedObjectTypes StampedObjectType
         {
-            get { return GetValue<bool>(IsStampedCollectionProperty); }
-            set { SetValue(IsStampedCollectionProperty, value); }
+            get { return GetValue<StampedObjectTypes>(StampedObjectTypeProperty); }
+            set { SetValue(StampedObjectTypeProperty, value); }
         }
 
-        public static readonly PropertyData IsStampedCollectionProperty = RegisterProperty("IsStampedCollection", typeof(bool), false);
+        public static readonly PropertyData StampedObjectTypeProperty = RegisterProperty("StampedObjectType", typeof (StampedObjectTypes), StampedObjectTypes.GeneralStampedObject);
 
         /// <summary>
         /// List of <see cref="StrokeDTO" />s that make up the <see cref="StampedObject" />.
@@ -278,7 +286,7 @@ namespace CLP.Entities
             {
                 if(AcceptedPageObjectIDs.Contains(pageObject.ID) ||
                    pageObject is Stamp ||
-                   (pageObject is StampedObject && (pageObject as StampedObject).IsStampedCollection))
+                   (pageObject is StampedObject && ((pageObject as StampedObject).StampedObjectType == StampedObjectTypes.EmptyGroupStampedObject || (pageObject as StampedObject).StampedObjectType == StampedObjectTypes.GroupStampedObject)))
                 {
                     continue;
                 }

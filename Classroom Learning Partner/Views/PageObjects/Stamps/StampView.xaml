@@ -5,13 +5,15 @@
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
-                   xmlns:resources="clr-namespace:Classroom_Learning_Partner.Resources">
+                   xmlns:resources="clr-namespace:Classroom_Learning_Partner.Resources"
+                   xmlns:entities="clr-namespace:CLP.Entities;assembly=CLP.Entities">
 
     <UserControl.Resources>
         <catel:BooleanToHidingVisibilityConverter x:Key="BooleanToHidingVisibilityConverter" />
         <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
         <catel:BooleanToOppositeBooleanConverter x:Key="BooleanToOppositeBooleanConverter" />
         <resources:LengthConverter x:Key="LengthConverter" />
+        <conv:EnumToBoolConverter x:Key="EnumToBoolConverter" />
         <conv:BoolToDoubleConverter x:Key="BoolToDoubleConverter" />
         <conv:BoolZeroToQuestionMarkMultiConverter x:Key="BoolZeroToQuestionMarkMultiConverter" />
     </UserControl.Resources>
@@ -191,7 +193,7 @@
                         </ControlTemplate>
                     </Button.Template>
                 </Button>
-                
+
                 <!--Ghost Image of Stamp for making StampedObjects-->
                 <Grid Canvas.Left="{Binding GhostOffsetX}"
                       Canvas.Top="{Binding GhostOffsetY}"
@@ -202,18 +204,18 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
-                    <Polygon Grid.Row="0" 
+                    <Polygon Grid.Row="0"
                              Height="{Binding PageObject.HandleHeight}"
                              MinWidth="50"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Bottom"
-                            Margin="0"
-                            Stretch="Fill"
-                            Stroke="Black"
-                            StrokeThickness="0"
-                            Fill="Green"
-                            Points="0,0 3,0 2,1 1,1" />
-                    
+                             HorizontalAlignment="Center"
+                             VerticalAlignment="Bottom"
+                             Margin="0"
+                             Stretch="Fill"
+                             Stroke="Black"
+                             StrokeThickness="0"
+                             Fill="Green"
+                             Points="0,0 3,0 2,1 1,1" />
+
                     <!--<Image Grid.Row="1" 
                             Source="{Binding GhostBodyImage}"
                             Height="{Binding ActualHeight, Source={x:Reference StampBody}}"
@@ -226,7 +228,7 @@
                             Height="{Binding ActualHeight, Source={x:Reference StampBody}}"
                             BorderBrush="Black"
                             BorderThickness="2"
-                            CornerRadius="{Binding IsCollectionStamp, Converter={StaticResource BoolToDoubleConverter}, ConverterParameter=5}"
+                            CornerRadius="{Binding IsGroupStamp, Converter={StaticResource BoolToDoubleConverter}, ConverterParameter=5}"
                             VerticalAlignment="Stretch"
                             Margin="0">
                         <Image Source="{Binding GhostBodyImage}"
@@ -249,7 +251,8 @@
 
             <Thumb Grid.Row="0"
                    MouseEnter="StampHandleHitBox_MouseEnter"
-                   MouseLeave="StampHandleHitBox_MouseLeave">
+                   MouseLeave="StampHandleHitBox_MouseLeave"
+                   Visibility="{Binding IsDraggableStamp, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
                 <Thumb.Template>
                     <ControlTemplate>
                         <Polygon Tag="StampHandleHitBox"
@@ -287,14 +290,14 @@
                     x:Name="StampBody"
                     BorderBrush="Black"
                     BorderThickness="2"
-                    CornerRadius="{Binding IsCollectionStamp, Converter={StaticResource BoolToDoubleConverter}, ConverterParameter=5}"
+                    CornerRadius="{Binding IsGroupStamp, Converter={StaticResource BoolToDoubleConverter}, ConverterParameter=5}"
                     VerticalAlignment="Stretch"
                     Margin="0">
                 <Grid>
                     <Image Source="{Binding SourceImage, Mode=OneWay}"
                            Height="{Binding ActualHeight, ElementName=StampBody}"
                            Width="{Binding ActualWidth, ElementName=StampBody}" />
-                    
+
                     <Rectangle Tag="StampBodyHitBox"
                                Fill="Transparent"
                                Height="{Binding ActualHeight, ElementName=StampBody}"
@@ -310,6 +313,7 @@
             </Border>
 
             <Grid Grid.Row="2"
+                  Height="{Binding PageObject.PartsHeight}"
                   Visibility="{Binding PartsRegionVisibility}">
 
                 <Border IsHitTestVisible="False"
@@ -317,33 +321,125 @@
                         BorderThickness="0,0,0,2"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
-                        Margin="0"
-                        Visibility="{Binding IsCollectionStamp, Converter={StaticResource BooleanToHidingVisibilityConverter}, ConverterParameter=False}" />
+                        Margin="0">
+                    <Border.Style>
+                        <Style TargetType="{x:Type Border}">
+                            <Setter Property="Visibility"
+                                    Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger
+                                        Binding="{Binding StampType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static entities:StampTypes.GeneralStamp}}"
+                                             Value="True">
+                                    <Setter Property="Visibility"
+                                            Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                </Border>
 
-                <TextBlock Text="collection"
-                           FontFamily="pack://application:,,,/Resources/Fonts/#SketchFlow Print"
+                <TextBlock FontFamily="pack://application:,,,/Resources/Fonts/#SketchFlow Print"
                            FontSize="16"
                            TextAlignment="Center"
-                           VerticalAlignment="Top"
-                           Visibility="{Binding IsCollectionStamp, Converter={StaticResource BooleanToHidingVisibilityConverter}}" />
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Top">
+                    <TextBlock.Style>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="Text"
+                                    Value="Group Of" />
+                            <Setter Property="Visibility"
+                                    Value="Visible" />
+                            <Style.Triggers>
+                                <DataTrigger
+                                    Binding="{Binding StampType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static entities:StampTypes.EmptyGroupStamp}}"
+                                    Value="True">
+                                    <Setter Property="Text"
+                                            Value="Group" />
+                                </DataTrigger>
+                                <DataTrigger
+                                        Binding="{Binding StampType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static entities:StampTypes.ObservingStamp}}"
+                                             Value="True">
+                                    <Setter Property="Text"
+                                            Value="Object" />
+                                </DataTrigger>
+                                <DataTrigger
+                                        Binding="{Binding StampType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static entities:StampTypes.GeneralStamp}}"
+                                             Value="True">
+                                    <Setter Property="Visibility"
+                                            Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+
+                <TextBlock FontFamily="pack://application:,,,/Resources/Fonts/#SketchFlow Print"
+                           FontSize="16"
+                           Text="{Binding PageObject.FormattedReport}"
+                           TextAlignment="Left"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Top">
+                    <TextBlock.Style>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="Visibility"
+                                    Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger
+                                        Binding="{Binding StampType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static entities:StampTypes.ObservingStamp}}"
+                                             Value="True">
+                                    <Setter Property="Visibility"
+                                            Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+
+                <Button Command="{Binding ParameterizeStampCommand}"
+                        Cursor="Hand"
+                        Width="25"
+                        Height="25"
+                        Margin="2"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Visibility="{Binding IsDraggableStamp, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}">
+                    <Button.Template>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Grid>
+                                <Ellipse Stroke="Black"
+                                         StrokeThickness="3"
+                                         Fill="White"
+                                         VerticalAlignment="Stretch"
+                                         HorizontalAlignment="Stretch" />
+                                <Path Data="M0.5,0 L0.5,1 M0,0.5 L1,0.5"
+                                      Stretch="Fill"
+                                      Margin="5"
+                                      Stroke="Green"
+                                      StrokeThickness="3" />
+                            </Grid>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
 
                 <TextBlock FontFamily="pack://application:,,,/Resources/Fonts/#SketchFlow Print"
                            FontSize="60"
                            TextAlignment="Center"
-                           VerticalAlignment="Bottom">
+                           VerticalAlignment="Bottom"
+                           Visibility="{Binding IsDraggableStamp, Converter={StaticResource BooleanToHidingVisibilityConverter}}">
                     <TextBlock.Text>
                         <MultiBinding Converter="{StaticResource BoolZeroToQuestionMarkMultiConverter}">
                             <Binding Path="Parts" />
-                            <Binding Path="IsCollectionStamp" />
+                            <Binding Path="IsGroupStamp" />
                         </MultiBinding>
                     </TextBlock.Text>
                 </TextBlock>
 
                 <Rectangle Tag="PartsHitBox"
-                           IsHitTestVisible="{Binding IsCollectionStamp, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
+                           IsHitTestVisible="{Binding IsGroupStamp, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
                            StrokeThickness="0"
                            Fill="Transparent"
-                           Height="{Binding PageObject.PartsHeight}">
+                           Height="{Binding PageObject.PartsHeight}"
+                           Visibility="{Binding IsDraggableStamp, Converter={StaticResource BooleanToHidingVisibilityConverter}}">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="MouseUp">
                             <catel:EventToCommand Command="{Binding ShowKeyPadCommand}" />
