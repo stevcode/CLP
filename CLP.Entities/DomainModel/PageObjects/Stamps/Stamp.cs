@@ -252,10 +252,10 @@ namespace CLP.Entities
                                       x.StampedObjectType == StampedObjectTypes.EmptyGroupStampedObject) && x.Parts > 0)
                               .ToList();
 
-                var groupedStampObjects =
+                var groupedStampedObjects =
                     childStampedObjects.Where(c => groupStampedObjects.Count(x => x.AcceptedPageObjectIDs.Contains(c.ID)) > 0).ToList();
 
-                return groupedStampObjects.Count;
+                return groupedStampedObjects.Count;
             }
         }
 
@@ -277,10 +277,10 @@ namespace CLP.Entities
                                       x.StampedObjectType == StampedObjectTypes.EmptyGroupStampedObject) && x.Parts > 0)
                               .ToList();
 
-                var groupedStampObjects =
+                var groupedStampedObjects =
                     childStampedObjects.Where(c => groupStampedObjects.Count(x => x.AcceptedPageObjectIDs.Contains(c.ID)) > 0).ToList();
 
-                return childStampedObjects.Count - groupedStampObjects.Count;
+                return childStampedObjects.Count - groupedStampedObjects.Count;
             }
         }
 

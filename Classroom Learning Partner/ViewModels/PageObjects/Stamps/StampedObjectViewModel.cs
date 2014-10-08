@@ -61,7 +61,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 stampedObject.AcceptedPageObjects.Add(stampedObject.ParentPage.GetPageObjectByID(acceptedPageObjectID));
             }
 
-            ParameterizeStampedObjectCommand = new Command(OnParameterizeStampedObjectCommandExecute);
+            ParameterizeStampedObjectCommand = new Command<bool>(OnParameterizeStampedObjectCommandExecute);
         }
 
         /// <summary>Gets the title of the view model.</summary>
@@ -138,9 +138,9 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Commands
 
         /// <summary>Parameterizes the StampedObject.</summary>
-        public Command ParameterizeStampedObjectCommand { get; private set; }
+        public Command<bool> ParameterizeStampedObjectCommand { get; private set; }
 
-        private void OnParameterizeStampedObjectCommandExecute()
+        private void OnParameterizeStampedObjectCommandExecute(bool isDuplicateAndTake)
         {
             var stampedObject = PageObject as StampedObject;
             if (stampedObject == null)
@@ -164,10 +164,38 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var numberOfCopies = Int32.Parse(keyPad.NumbersEntered.Text);
 
+            var ungroupedStampedObjects = new List<StampedObject>();
+            var numberOfAcceptedStampedObjects = stampedObject.AcceptedPageObjects.Count;
+            if (isDuplicateAndTake)
+            {
+                var stampedObjects = stampedObject.ParentPage.PageObjects.OfType<StampedObject>()
+                             .Where(x => x.StampedObjectType == StampedObjectTypes.GeneralStampedObject && x.Parts == 1);
+
+                var groupStampedObjects =
+                    stampedObject.ParentPage.PageObjects.OfType<StampedObject>()
+                              .Where(
+                                     x =>
+                                     (x.StampedObjectType == StampedObjectTypes.GroupStampedObject ||
+                                      x.StampedObjectType == StampedObjectTypes.EmptyGroupStampedObject) && x.Parts > 0)
+                              .ToList();
+
+                ungroupedStampedObjects =
+                    stampedObjects.Where(c => groupStampedObjects.Count(x => x.AcceptedPageObjectIDs.Contains(c.ID)) == 0).ToList();
+
+                
+
+                if (ungroupedStampedObjects.Count < numberOfAcceptedStampedObjects * numberOfCopies)
+                {
+                    MessageBox.Show("Not enough objects on page.");
+                    return;
+                }
+            }
+
             var initialXPosition = XPosition + Width + 10.0;
             var initialYPosition = YPosition;
 
             var stampCopiesToAdd = new List<IPageObject>();
+            var ungroupedStampedObjectsIndex = 0;
             for (var i = 0; i < numberOfCopies; i++)
             {
                 var newStampedObject = stampedObject.Duplicate() as StampedObject;
@@ -179,8 +207,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 newStampedObject.XPosition = initialXPosition;
                 newStampedObject.YPosition = initialYPosition;
+                newStampedObject.AcceptedPageObjectIDs.Clear();
+                newStampedObject.AcceptedPageObjects.Clear();
 
-                stampCopiesToAdd.Add(stampedObject);
+                stampCopiesToAdd.Add(newStampedObject);
                 if (initialXPosition + 2 * stampedObject.Width + 5 < PageObject.ParentPage.Width)
                 {
                     initialXPosition += stampedObject.Width + 5;
@@ -191,12 +221,29 @@ namespace Classroom_Learning_Partner.ViewModels
                     initialYPosition += stampedObject.Height + 5;
                 }
 
-                foreach (var pageObject in stampedObject.AcceptedPageObjects)
+                if (isDuplicateAndTake)
                 {
-                    var newPageObject = pageObject.Duplicate();
-                    newPageObject.XPosition = stampedObject.XPosition + (pageObject.XPosition - stampedObject.XPosition);
-                    newPageObject.YPosition = stampedObject.YPosition + (pageObject.YPosition - stampedObject.YPosition);
-                    stampCopiesToAdd.Add(newPageObject);
+                    for (var n = 0; n < numberOfAcceptedStampedObjects; n++)
+                    {
+                        var referenceAcceptedPageObject = stampedObject.AcceptedPageObjects[n];
+                        var ungroupedStampObject = ungroupedStampedObjects[ungroupedStampedObjectsIndex];
+                        ungroupedStampObject.XPosition = newStampedObject.XPosition + (referenceAcceptedPageObject.XPosition - stampedObject.XPosition);
+                        ungroupedStampObject.YPosition = newStampedObject.YPosition + (referenceAcceptedPageObject.YPosition - stampedObject.YPosition);
+                        newStampedObject.AcceptedPageObjectIDs.Add(ungroupedStampObject.ID);
+                        newStampedObject.AcceptedPageObjects.Add(ungroupedStampObject);
+
+                        ungroupedStampedObjectsIndex++;
+                    }
+                }
+                else
+                {
+                    foreach (var pageObject in stampedObject.AcceptedPageObjects)
+                    {
+                        var newPageObject = pageObject.Duplicate();
+                        newPageObject.XPosition = newStampedObject.XPosition + (pageObject.XPosition - stampedObject.XPosition);
+                        newPageObject.YPosition = newStampedObject.YPosition + (pageObject.YPosition - stampedObject.YPosition);
+                        stampCopiesToAdd.Add(newPageObject);
+                    } 
                 }
             }
 
