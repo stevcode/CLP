@@ -37,8 +37,31 @@ namespace CLP.Entities
         {
             CanAcceptPageObjects = stampType == StampTypes.GroupStamp;
             StampType = stampType;
-            Width = stampType == StampTypes.GroupStamp || stampType == StampTypes.EmptyGroupStamp ? 125 : 75;
-            Height = stampType == StampTypes.GroupStamp || stampType == StampTypes.EmptyGroupStamp ? 230 : 180;
+
+            switch (stampType)
+            {
+                case StampTypes.GeneralStamp:
+                    Width = 75;
+                    Height = 180;
+                    break;
+                case StampTypes.ObservingStamp:
+                    Width = 90;
+                    Height = 135;
+                    break;
+                case StampTypes.GroupStamp:
+                    Width = 125;
+                    Height = 230;
+                    break;
+                case StampTypes.EmptyGroupStamp:
+                    Width = 125;
+                    Height = 155;
+                    break;
+                default:
+                    Width = 75;
+                    Height = 180;
+                    break;
+            }
+
             ImageHashID = imageHashID;
             if (stampType == StampTypes.ObservingStamp)
             {
@@ -80,7 +103,22 @@ namespace CLP.Entities
 
         public virtual double PartsHeight
         {
-            get { return 70; }
+            get
+            {
+                switch (StampType)
+                {
+                    case StampTypes.GeneralStamp:
+                        return 70;
+                    case StampTypes.ObservingStamp:
+                        return 60;
+                    case StampTypes.GroupStamp:
+                        return 70;
+                    case StampTypes.EmptyGroupStamp:
+                        return 30;
+                    default:
+                        return 70;
+                }
+            }
         }
 
         /// <summary>

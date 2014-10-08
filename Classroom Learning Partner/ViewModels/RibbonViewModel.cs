@@ -142,6 +142,7 @@ namespace Classroom_Learning_Partner.ViewModels
             InsertImageStampCommand = new Command(OnInsertImageStampCommandExecute, OnInsertPageObjectCanExecute);
             InsertBlankContainerStampCommand = new Command(OnInsertBlankContainerStampCommandExecute, OnInsertPageObjectCanExecute);
             InsertImageContainerStampCommand = new Command(OnInsertImageContainerStampCommandExecute, OnInsertPageObjectCanExecute);
+            InsertDivisionPileCommand = new Command(OnInsertDivisionPileCommandExecute, OnInsertPageObjectCanExecute);
             InsertArrayCommand = new Command<string>(OnInsertArrayCommandExecute, OnInsertPageObjectCanExecute);
             InsertProtractorCommand = new Command(OnInsertProtractorCommandExecute, OnInsertPageObjectCanExecute);
             InsertSquareShapeCommand = new Command(OnInsertSquareShapeCommandExecute, OnInsertPageObjectCanExecute);
@@ -2458,6 +2459,25 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             var stamp = new Stamp(CurrentPage, StampTypes.GroupStamp);
             ACLPPageBaseViewModel.AddPageObjectToPage(stamp);
+        }
+
+        /// <summary>
+        /// Inserts a Division Pile.
+        /// </summary>
+        public Command InsertDivisionPileCommand { get; private set; }
+
+        private void OnInsertDivisionPileCommandExecute()
+        {
+            var pageObjectsToAdd = new List<IPageObject>();
+            var observerStamp = new Stamp(CurrentPage, StampTypes.ObservingStamp);
+            pageObjectsToAdd.Add(observerStamp);
+            var emptyGroupStamp = new Stamp(CurrentPage, StampTypes.EmptyGroupStamp)
+            {
+                XPosition = observerStamp.XPosition + observerStamp.Width + 50,
+                YPosition = observerStamp.YPosition
+            };
+            pageObjectsToAdd.Add(emptyGroupStamp);
+            ACLPPageBaseViewModel.AddPageObjectsToPage(CurrentPage, pageObjectsToAdd);
         }
 
         /// <summary>

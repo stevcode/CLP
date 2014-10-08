@@ -373,12 +373,12 @@
                     </TextBlock.Style>
                 </TextBlock>
 
-                <TextBlock FontFamily="pack://application:,,,/Resources/Fonts/#SketchFlow Print"
-                           FontSize="16"
+                <TextBlock FontSize="12"
                            Text="{Binding PageObject.FormattedReport}"
                            TextAlignment="Left"
                            HorizontalAlignment="Center"
-                           VerticalAlignment="Top">
+                           VerticalAlignment="Top"
+                           Margin="0 30 0 0">
                     <TextBlock.Style>
                         <Style TargetType="{x:Type TextBlock}">
                             <Setter Property="Visibility"
@@ -399,7 +399,7 @@
                         Cursor="Hand"
                         Width="25"
                         Height="25"
-                        Margin="2"
+                        Margin="-5 2 0 0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
                         Visibility="{Binding IsDraggableStamp, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}">
