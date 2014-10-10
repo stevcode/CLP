@@ -1,7 +1,14 @@
 ﻿using System;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.Serialization;
+using System.Windows;
+using System.Windows.Ink;
+using System.Windows.Input;
+using System.Xml.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -81,7 +88,7 @@ namespace CLP.Entities
     }
 
     [Serializable]
-    public class NumberLine : APageObjectBase
+    public class NumberLine : APageObjectBase, IStrokeAccepter
     {
         #region Constructors
 
@@ -152,6 +159,44 @@ namespace CLP.Entities
 
         public static readonly PropertyData TicksProperty = RegisterProperty("Ticks", typeof (ObservableCollection<NumberLineTick>), () => new ObservableCollection<NumberLineTick>());
 
+        #region IStrokeAccepter Members
+
+        /// <summary>
+        /// Determines whether the <see cref="Stamp" /> can currently accept <see cref="Stroke" />s.
+        /// </summary>
+        public bool CanAcceptStrokes
+        {
+            get { return GetValue<bool>(CanAcceptStrokesProperty); }
+            set { SetValue(CanAcceptStrokesProperty, value); }
+        }
+
+        public static readonly PropertyData CanAcceptStrokesProperty = RegisterProperty("CanAcceptStrokes", typeof(bool), true);
+
+        /// <summary>
+        /// The currently accepted <see cref="Stroke" />s.
+        /// </summary>
+        [XmlIgnore]
+        public List<Stroke> AcceptedStrokes
+        {
+            get { return GetValue<List<Stroke>>(AcceptedStrokesProperty); }
+            set { SetValue(AcceptedStrokesProperty, value); }
+        }
+
+        public static readonly PropertyData AcceptedStrokesProperty = RegisterProperty("AcceptedStrokes", typeof(List<Stroke>), () => new List<Stroke>());
+
+        /// <summary>
+        /// The IDs of the <see cref="Stroke" />s that have been accepted.
+        /// </summary>
+        public List<string> AcceptedStrokeParentIDs
+        {
+            get { return GetValue<List<string>>(AcceptedStrokeParentIDsProperty); }
+            set { SetValue(AcceptedStrokeParentIDsProperty, value); }
+        }
+
+        public static readonly PropertyData AcceptedStrokeParentIDsProperty = RegisterProperty("AcceptedStrokeParentIDs", typeof(List<string>), () => new List<string>());
+
+        #endregion //IStrokeAccepter Members
+
         #endregion //Properties
 
         #region Methods
@@ -201,6 +246,90 @@ namespace CLP.Entities
             newNumberLine.ParentPage = ParentPage;
 
             return newNumberLine;
+        }
+
+        public void AcceptStrokes(IEnumerable<Stroke> addedStrokes, IEnumerable<Stroke> removedStrokes)
+        {
+            if (!CanAcceptStrokes)
+            {
+                return;
+            }
+
+            foreach (var stroke in removedStrokes.Where(stroke => AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
+            {
+                AcceptedStrokes.Remove(stroke);
+                AcceptedStrokeParentIDs.Remove(stroke.GetStrokeID());
+            }
+
+            var actuallyAcceptedStrokes = new StrokeCollection();
+            var numberLineBodyBoundingBox = new Rect(XPosition, YPosition, Width, Height);
+            foreach (var stroke in addedStrokes.Where(stroke => stroke.HitTest(numberLineBodyBoundingBox, 30) &&
+                                                               !AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
+            {
+                AcceptedStrokes.Add(stroke);
+                AcceptedStrokeParentIDs.Add(stroke.GetStrokeID());
+                actuallyAcceptedStrokes.Add(stroke);
+            }
+            
+            //Grab the lowest right point
+            var tick = FindClosestTick(actuallyAcceptedStrokes);
+            tick.IsMarked = true;
+            tick.IsNumberVisible = true;
+        }
+
+        public void RefreshAcceptedStrokes()
+        {
+            AcceptedStrokes.Clear();
+            AcceptedStrokeParentIDs.Clear();
+            if (!CanAcceptStrokes)
+            {
+                return;
+            }
+
+            var numberLineBodyBoundingBox = new Rect(XPosition, YPosition, Width, Height);
+            var strokesOverObject = from stroke in ParentPage.InkStrokes
+                                    where stroke.HitTest(numberLineBodyBoundingBox, 30) //Stroke must be at least 30% contained by Stamp body.
+                                    select stroke;
+
+            AcceptStrokes(new StrokeCollection(strokesOverObject), new StrokeCollection());
+        }
+
+        public NumberLineTick FindClosestTick(StrokeCollection strokes)
+        {
+            // Get lowest Point
+            var x1 = ParentPage.Width;
+            var x2 = 0.0;
+            var y1 = ParentPage.Height;
+            var y2 = 0.0;
+
+            foreach (var stroke in strokes)
+            {
+                x1 = Math.Min(x1, stroke.GetBounds().Left);
+                x2 = Math.Max(x2, stroke.GetBounds().Right);
+                y1 = Math.Min(y1, stroke.GetBounds().Top);
+                y2 = Math.Max(y2, stroke.GetBounds().Bottom);
+            }
+
+            var midX = (x2 - x1) / 2.0 + x1;
+
+            var lowestPoint = new StylusPoint(0.0, 0.0);
+            foreach (var stroke in strokes)
+            {
+                foreach (var point in stroke.StylusPoints)
+                {
+                    if (point.Y > lowestPoint.Y && point.X > midX)
+                    {
+                        lowestPoint = point;
+                    }
+                }
+            }
+
+            //Find closest Tick
+
+            var normalXLowest = (lowestPoint.X - XPosition - ArrowLength) / TickLength;
+            var tickIndex = (int) Math.Round(normalXLowest);
+
+            return Ticks[tickIndex];
         }
 
         #endregion //Methods
