@@ -317,7 +317,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             var initialXPosition = 25.0;
-            var initialYPosition = YPosition + Height + 20;
+            var initialYPosition = YPosition + Height + 125;
             if (initialYPosition + stampedObjectHeight > PageObject.ParentPage.Height)
             {
                 initialYPosition = PageObject.ParentPage.Height - stampedObjectHeight;

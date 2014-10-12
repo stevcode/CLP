@@ -403,7 +403,7 @@
                             </Style.Triggers>
                         </Style>
                     </Canvas.Style>
-                    <TextBlock FontSize="14"
+                    <TextBlock FontSize="16"
                                Text="{Binding PageObject.FormattedReport}" />
                 </Canvas>
                 

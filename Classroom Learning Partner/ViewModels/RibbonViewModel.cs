@@ -2470,6 +2470,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             var pageObjectsToAdd = new List<IPageObject>();
             var observerStamp = new Stamp(CurrentPage, StampTypes.ObservingStamp);
+            observerStamp.YPosition = 150;
             pageObjectsToAdd.Add(observerStamp);
             var emptyGroupStamp = new Stamp(CurrentPage, StampTypes.EmptyGroupStamp)
             {
