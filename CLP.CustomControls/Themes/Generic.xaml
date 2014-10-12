@@ -5,7 +5,60 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type local:RibbonButton}">
-                    <Grid Name="LayoutGrid">
+                    
+                    <ControlTemplate.Resources>
+                        
+                        <local:HLSColorValueConverter x:Key="ColorConverter" />
+                        
+                        <!-- Animation  Storyboards -->
+                        <Storyboard x:Key="PressedOn">
+                            <ObjectAnimationUsingKeyFrames BeginTime="00:00:00"
+                                                           Duration="00:00:00.0010000"
+                                                           Storyboard.TargetName="IsPressedGrid"
+                                                           Storyboard.TargetProperty="(UIElement.Visibility)">
+                                <DiscreteObjectKeyFrame KeyTime="00:00:00"
+                                                        Value="{x:Static Visibility.Visible}" />
+                            </ObjectAnimationUsingKeyFrames>
+                        </Storyboard>
+                        <Storyboard x:Key="PressedOff">
+                            <ObjectAnimationUsingKeyFrames BeginTime="00:00:00"
+                                                           Duration="00:00:00.0010000"
+                                                           Storyboard.TargetName="IsPressedGrid"
+                                                           Storyboard.TargetProperty="(UIElement.Visibility)">
+                                <DiscreteObjectKeyFrame KeyTime="00:00:00"
+                                                        Value="{x:Static Visibility.Hidden}" />
+                            </ObjectAnimationUsingKeyFrames>
+                        </Storyboard>
+
+                    </ControlTemplate.Resources>
+                    
+                    <!-- Control Layout -->
+                    <Grid Name="LayoutGrid"
+                          Background="Transparent">
+
+                        <!-- Button FX Displayed Behind Content -->
+                        <Grid x:Name="IsPressedGrid"
+                              Margin="0"
+                              Background="{TemplateBinding Background, Converter={StaticResource ColorConverter}, ConverterParameter='0.85'}"
+                              Visibility="Hidden">
+                            <Rectangle x:Name="InnerShadow"
+                                       Margin="3,3,0,0"
+                                       Stroke="{TemplateBinding Background, Converter={StaticResource ColorConverter}, ConverterParameter='0.8'}"
+                                       Opacity="0.5" />
+                            <Rectangle x:Name="MiddleShadow"
+                                       Margin="2,2,0,0"
+                                       Stroke="{TemplateBinding Background, Converter={StaticResource ColorConverter}, ConverterParameter='0.75'}"
+                                       Opacity="0.5" />
+                            <Rectangle x:Name="OuterShadow"
+                                       Margin="1,1,0,0"
+                                       Stroke="{TemplateBinding Background, Converter={StaticResource ColorConverter}, ConverterParameter='0.7'}"
+                                       Opacity="0.5" />
+                            <Rectangle x:Name="BorderRect"
+                                       Margin="0"
+                                       Stroke="{TemplateBinding Background, Converter={StaticResource ColorConverter}, ConverterParameter='0.5'}" />
+                        </Grid>
+
+                        <!-- Button Content -->
                         <StackPanel>
                             <Image Source="{Binding LargeImageSource, RelativeSource={RelativeSource TemplatedParent}}"
                                    Height="24"
@@ -25,6 +78,22 @@
                                   Height="6"></Grid>
                         </StackPanel>
                     </Grid>
+
+                    <!-- FX Triggers -->
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsPressed"
+                                 Value="True">
+                            <Trigger.ExitActions>
+                                <BeginStoryboard x:Name="PressedOff_BeginStoryboard"
+                                                 Storyboard="{StaticResource PressedOff}" />
+                            </Trigger.ExitActions>
+                            <Trigger.EnterActions>
+                                <BeginStoryboard x:Name="PressedOn_BeginStoryboard"
+                                                 Storyboard="{StaticResource PressedOn}" />
+                            </Trigger.EnterActions>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

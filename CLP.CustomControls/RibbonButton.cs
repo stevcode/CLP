@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
@@ -16,7 +15,7 @@ namespace CLP.CustomControls
 
         #region Dependency Properties
 
-        /// <summary>SUMMARY</summary>
+        /// <summary>24x24 pixel image for the button.</summary>
         public ImageSource LargeImageSource
         {
             get { return (ImageSource)GetValue(LargeImageSourceProperty); }
@@ -28,7 +27,7 @@ namespace CLP.CustomControls
                                                                                                          typeof (RibbonButton),
                                                                                                          new UIPropertyMetadata(null));
 
-        /// <summary>SUMMARY</summary>
+        /// <summary>Text for the button.</summary>
         public string Text
         {
             get { return (string)GetValue(TextProperty); }

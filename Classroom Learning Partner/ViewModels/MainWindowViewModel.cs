@@ -86,6 +86,17 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData RibbonProperty = RegisterProperty("Ribbon", typeof (RibbonViewModel), new RibbonViewModel());
 
+        /// <summary>
+        /// The MajorRibbon at the top of the Window.
+        /// </summary>
+        public MajorRibbonViewModel MajorRibbon
+        {
+            get { return GetValue<MajorRibbonViewModel>(MajorRibbonProperty); }
+            set { SetValue(MajorRibbonProperty, value); }
+        }
+
+        public static readonly PropertyData MajorRibbonProperty = RegisterProperty("MajorRibbon", typeof (MajorRibbonViewModel), new MajorRibbonViewModel());
+
         /// <summary>The Workspace of the <see cref="MainWindowViewModel" />.</summary>
         public ViewModelBase Workspace
         {

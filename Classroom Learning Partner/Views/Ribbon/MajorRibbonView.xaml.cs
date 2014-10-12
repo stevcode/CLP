@@ -8,6 +8,6 @@ namespace Classroom_Learning_Partner.Views
     {
         public MajorRibbonView() { InitializeComponent(); }
 
-        protected override Type GetViewModelType() { return typeof(RibbonViewModel); }
+        protected override Type GetViewModelType() { return typeof(MajorRibbonViewModel); }
     }
 }
