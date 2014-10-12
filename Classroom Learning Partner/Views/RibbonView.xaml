@@ -344,6 +344,11 @@
                               SmallImageSource="pack://application:,,,/Resources/Images/CollectionStamp16.png"
                               Command="{Binding InsertBlankContainerStampCommand}" />
 
+                <RibbonButton Label="Pile"
+                              LargeImageSource="pack://application:,,,/Resources/Images/Pile32.png"
+                              SmallImageSource="pack://application:,,,/Resources/Images/Pile16.png"
+                              Command="{Binding InsertDivisionPileCommand}" />
+
                 <!--Array + Divider-->
                 <RibbonButton Label="Array"
                               LargeImageSource="pack://application:,,,/Resources/Images/Array32.png"

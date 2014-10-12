@@ -975,6 +975,11 @@
     <Content Include="External Libraries\System.Reactive.Providers.dll" />
     <Content Include="External Libraries\System.Reactive.Windows.Threading.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
+    <Resource Include="Resources\Images\Pile128.png" />
+    <Resource Include="Resources\Images\Pile16.png" />
+    <Resource Include="Resources\Images\Pile256.png" />
+    <Resource Include="Resources\Images\Pile32.png" />
+    <Resource Include="Resources\Images\Pile64.png" />
     <Resource Include="Resources\Images\CLPMenuBackIconBlack128.png" />
     <Resource Include="Resources\Images\CLPMenuBackIconBlack64.png" />
     <Resource Include="Resources\Images\CLPMenuBackIconWhite128.png" />

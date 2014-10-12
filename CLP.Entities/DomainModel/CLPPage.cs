@@ -751,6 +751,14 @@ namespace CLP.Entities
 
         public IPageObject GetPageObjectByID(string id) { return !PageObjects.Any() ? null : PageObjects.FirstOrDefault(pageObject => pageObject.ID == id); }
 
+        public void UpdateAllReporters()
+        {
+            foreach (var reporter in PageObjects.OfType<IReporter>())
+            {
+                reporter.UpdateReport();
+            }
+        }
+
         #endregion //Methods
 
         #region Cache

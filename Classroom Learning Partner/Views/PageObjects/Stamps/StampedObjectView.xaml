@@ -5,7 +5,8 @@
                    xmlns:ac="clr-namespace:AdornedControl"
                    xmlns:oldconv="clr-namespace:Classroom_Learning_Partner.Resources"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
-                   xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity">
+                   xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+                   xmlns:system="clr-namespace:System;assembly=mscorlib">
 
     <UserControl.Resources>
         <ResourceDictionary>
@@ -122,6 +123,64 @@
                     </Thumb.Template>
                 </Thumb>
 
+                <!--Multiple Stamp Copies Button Option 2-->
+                <!--<Button Command="{Binding ParameterizeStampedObjectCommand}"
+                        Cursor="Hand"
+                        Width="40"
+                        Height="40"
+                        Canvas.Left="-40"
+                        Canvas.Bottom="-40">
+                    <Button.CommandParameter>
+                        <system:Boolean>False</system:Boolean>
+                    </Button.CommandParameter>
+                    <Button.Template>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Grid>
+                                <Ellipse Stroke="Black"
+                                         StrokeThickness="3"
+                                         Fill="White"
+                                         VerticalAlignment="Stretch"
+                                         HorizontalAlignment="Stretch" />
+                                <Path Data="M0.5,0 L0.5,1 M0,0.5 L1,0.5"
+                                      Stretch="Fill"
+                                      Margin="5"
+                                      Stroke="Green"
+                                      StrokeThickness="3" />
+                            </Grid>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>-->
+
+                <!--Multiple Stamp Copies Button Option 1-->
+                <Button Command="{Binding ParameterizeStampedObjectCommand}"
+                        Cursor="Hand"
+                        Width="40"
+                        Height="40"
+                        Canvas.Left="-40"
+                        Canvas.Bottom="-40"
+                        Visibility="{Binding IsGroupStampedObject, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, Mode=OneWay, FallbackValue=Collapsed}">
+                    <Button.CommandParameter>
+                        <system:Boolean>True</system:Boolean>
+                    </Button.CommandParameter>
+                    <Button.Template>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Grid>
+                                <Border BorderBrush="Black"
+                                        BorderThickness="3 0 3 3"
+                                        CornerRadius="2"
+                                        Background="White"
+                                        VerticalAlignment="Stretch"
+                                        HorizontalAlignment="Stretch" />
+                                <Path Data="M0.5,0 L0.5,1 M0,0.5 L1,0.5"
+                                      Stretch="Fill"
+                                      Margin="5"
+                                      Stroke="Blue"
+                                      StrokeThickness="3" />
+                            </Grid>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
             </Canvas>
         </ac:AdornedControl.AdornerContent>
 
@@ -129,7 +188,7 @@
             <Image Source="{Binding SourceImage, Mode=OneWay}"
                    Height="{Binding Height}"
                    Width="{Binding Width}" />
-            
+
             <Border Height="{Binding Height}"
                     Width="{Binding Width}"
                     BorderBrush="LightGray"
@@ -137,7 +196,7 @@
                     CornerRadius="0 0 5 5"
                     VerticalAlignment="Stretch"
                     Margin="0"
-                    Visibility="{Binding IsStampedCollection, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, Mode=OneWay, FallbackValue=Collapsed}" />
+                    Visibility="{Binding IsGroupStampedObject, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, Mode=OneWay, FallbackValue=Collapsed}" />
 
             <ItemsControl ClipToBounds="True"
                           IsHitTestVisible="False"
@@ -170,8 +229,8 @@
                        VerticalAlignment="Bottom"
                        FontFamily="pack://application:,,,/Resources/Fonts/#SketchFlow Print"
                        FontSize="18"
-                       Visibility="{Binding IsStampedCollection, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, Mode=OneWay, FallbackValue=Collapsed}">
-                <Run Text="collection " />
+                       Visibility="{Binding IsGroupStampedObject, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, Mode=OneWay, FallbackValue=Collapsed}">
+                <Run Text="group of" />
                 <Run Text="{Binding Parts}" />
             </TextBlock>
 

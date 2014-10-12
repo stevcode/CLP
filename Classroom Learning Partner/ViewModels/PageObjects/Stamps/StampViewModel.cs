@@ -29,6 +29,8 @@ namespace Classroom_Learning_Partner.ViewModels
         public StampViewModel(Stamp stamp)
         {
             PageObject = stamp;
+            RaisePropertyChanged("IsGroupStamp");
+            RaisePropertyChanged("IsDraggableStamp");
             if(App.MainWindowViewModel.ImagePool.ContainsKey(stamp.ImageHashID))
             {
                 SourceImage = App.MainWindowViewModel.ImagePool[stamp.ImageHashID];
@@ -54,6 +56,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
 
+            //BUG: new Stamps accept ink if below creation point
             stamp.RefreshAcceptedStrokes();
 
             ParameterizeStampCommand = new Command(OnParameterizeStampCommandExecute);
@@ -74,16 +77,16 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Model
 
         /// <summary>
-        /// Sets Stamp to CollectionStamp.
+        /// The type of <see cref="Stamp" />.
         /// </summary>
         [ViewModelToModel("PageObject")]
-        public bool IsCollectionStamp
+        public StampTypes StampType
         {
-            get { return GetValue<bool>(IsCollectionStampProperty); }
-            set { SetValue(IsCollectionStampProperty, value); }
+            get { return GetValue<StampTypes>(StampTypeProperty); }
+            set { SetValue(StampTypeProperty, value); }
         }
 
-        public static readonly PropertyData IsCollectionStampProperty = RegisterProperty("IsCollectionStamp", typeof(bool));
+        public static readonly PropertyData StampTypeProperty = RegisterProperty("StampType", typeof(StampTypes));
 
         /// <summary>
         /// The number of parts the stamp represents.
@@ -100,6 +103,37 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Model
 
         #region Bindings
+
+        /// <summary>
+        /// Is Stamp a CollectionStamp.
+        /// </summary>
+        public bool IsGroupStamp
+        {
+            get
+            {
+                var stamp = PageObject as Stamp;
+                if (stamp == null)
+                {
+                    return false;
+                }
+
+                return StampType == StampTypes.GroupStamp || StampType == StampTypes.EmptyGroupStamp;
+            }
+        }
+
+        public bool IsDraggableStamp
+        {
+            get
+            {
+                var stamp = PageObject as Stamp;
+                if (stamp == null)
+                {
+                    return false;
+                }
+
+                return StampType == StampTypes.GroupStamp || StampType == StampTypes.GeneralStamp;
+            }
+        }
 
         /// <summary>
         /// X offset for the ghost image of the <see cref="Stamp" /> as it's being dragged on the <see cref="CLPPage" />.
@@ -214,7 +248,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             if (!HasParts() &&
-                !IsCollectionStamp)
+                !IsGroupStamp)
             {
                 MessageBox.Show(
                                 "What are you counting on the stamp?  Please click the questionmark on the line below the stamp before making copies.",
@@ -252,7 +286,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var stampedObjectWidth = Width;
             var stampedObjectHeight = Height - stamp.HandleHeight - stamp.PartsHeight;
-            if (!IsCollectionStamp &&
+            if (!IsGroupStamp &&
                stamp.ImageHashID == string.Empty) //Shrinks StampCopy to bounds of all strokePaths
             {
                 var x1 = PageObject.ParentPage.Width;
@@ -283,7 +317,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             var initialXPosition = 25.0;
-            var initialYPosition = YPosition + Height + 20;
+            var initialYPosition = YPosition + Height + 125;
             if (initialYPosition + stampedObjectHeight > PageObject.ParentPage.Height)
             {
                 initialYPosition = PageObject.ParentPage.Height - stampedObjectHeight;
@@ -293,10 +327,17 @@ namespace Classroom_Learning_Partner.ViewModels
                     initialXPosition = 25.0;
                 }
             }
+
+            var stampObjectType = stamp.StampType == StampTypes.GeneralStamp || stamp.StampType == StampTypes.ObservingStamp
+                                      ? StampedObjectTypes.GeneralStampedObject
+                                      : stamp.StampType == StampTypes.GroupStamp
+                                            ? StampedObjectTypes.GroupStampedObject
+                                            : StampedObjectTypes.EmptyGroupStampedObject;
+
             var stampCopiesToAdd = new List<IPageObject>();
             for (var i = 0; i < numberOfCopies; i++)
             {
-                var stampedObject = new StampedObject(stamp.ParentPage, stamp.ID, stamp.ImageHashID, IsCollectionStamp)
+                var stampedObject = new StampedObject(stamp.ParentPage, stamp.ID, stamp.ImageHashID, stampObjectType)
                 {
                     Width = stampedObjectWidth,
                     Height = stampedObjectHeight,
@@ -337,9 +378,14 @@ namespace Classroom_Learning_Partner.ViewModels
         bool _copyFailed;
         private void OnStartDragStampCommandExecute()
         {
+            if (!IsDraggableStamp)
+            {
+                return;
+            }
+
             StampHandleColor = new SolidColorBrush(Colors.Black);
             _copyFailed = false;
-            if (HasParts() || IsCollectionStamp)
+            if (HasParts() || IsGroupStamp)
             {
                 GhostOffsetX = 0.0;
                 GhostOffsetY = 0.0;
@@ -409,6 +455,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnDragStampCommandExecute(DragDeltaEventArgs e)
         {
+            if (!IsDraggableStamp)
+            {
+                IsGhostVisible = false;
+                return;
+            }
+
             if(_copyFailed)
             {
                 IsGhostVisible = false;
@@ -417,6 +469,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var parentPage = PageObject.ParentPage;
             var stamp = PageObject as Stamp;
+            if (stamp == null)
+            {
+                return;
+            }
             var newOffsetX = Math.Max(-XPosition, e.HorizontalChange);
             newOffsetX = Math.Min(newOffsetX, parentPage.Width - Width - XPosition);
             var newOffsetY = Math.Max(-YPosition - stamp.HandleHeight, e.VerticalChange);
@@ -433,6 +489,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnPlaceStampCommandExecute()
         {
+            if (!IsDraggableStamp)
+            {
+                IsGhostVisible = false;
+                return;
+            }
+
             IsGhostVisible = false;
             var stamp = PageObject as Stamp;
             if(_copyFailed ||
@@ -449,8 +511,14 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 return;
             }
-            
-            var stampedObject = new StampedObject(stamp.ParentPage, stamp.ID, stamp.ImageHashID, IsCollectionStamp)
+
+            var stampObjectType = stamp.StampType == StampTypes.GeneralStamp || stamp.StampType == StampTypes.ObservingStamp
+                                      ? StampedObjectTypes.GeneralStampedObject
+                                      : stamp.StampType == StampTypes.GroupStamp
+                                            ? StampedObjectTypes.GroupStampedObject
+                                            : StampedObjectTypes.EmptyGroupStampedObject;
+
+            var stampedObject = new StampedObject(stamp.ParentPage, stamp.ID, stamp.ImageHashID, stampObjectType)
                                 {
                                     Width = Width,
                                     Height = Height - stamp.HandleHeight - stamp.PartsHeight,
@@ -471,7 +539,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var xPosition = stampedObject.XPosition;
             var yPosition = stampedObject.YPosition;
-            if(!IsCollectionStamp && 
+            if(!IsGroupStamp && 
                stampedObject.ImageHashID == string.Empty) //Shrinks StampCopy to bounds of all strokePaths
             {
                 var x1 = PageObject.ParentPage.Width;
@@ -552,6 +620,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var oldParts = stamp.Parts;
             var parts = Int32.Parse(keyPad.NumbersEntered.Text);
             stamp.Parts = parts;
+            //TODO Write Stamp history Items.
         //    ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryPartsChanged(PageObject.ParentPage, PageObject.UniqueID, oldParts));
             if(App.MainWindowViewModel.IsAuthoring)
             {
