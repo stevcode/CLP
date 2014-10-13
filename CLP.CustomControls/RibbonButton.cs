@@ -1,5 +1,7 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace CLP.CustomControls
@@ -11,6 +13,19 @@ namespace CLP.CustomControls
         {
             // Initialize as a lookless control.
             DefaultStyleKeyProperty.OverrideMetadata(typeof (RibbonButton), new FrameworkPropertyMetadata(typeof (RibbonButton)));
+        }
+
+        public RibbonButton(string text, string packUri, ICommand command)
+        {
+            Text = text;
+            LargeImageSource = new ImageSourceConverter().ConvertFromString(packUri) as ImageSource;
+            Command = command;
+
+            var dict = new ResourceDictionary();
+            var uri = new Uri(@"pack://application:,,,/Resources/CLPBrushes.xaml");
+            dict.Source = uri;
+            var color = dict["MainColor"] as Brush;
+            Background = color;
         }
 
         #region Dependency Properties
