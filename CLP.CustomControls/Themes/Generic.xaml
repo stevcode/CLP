@@ -5,11 +5,11 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type local:RibbonButton}">
-                    
+
                     <ControlTemplate.Resources>
-                        
+
                         <local:HLSColorValueConverter x:Key="ColorConverter" />
-                        
+
                         <!-- Animation  Storyboards -->
                         <Storyboard x:Key="PressedOn">
                             <ObjectAnimationUsingKeyFrames BeginTime="00:00:00"
@@ -31,7 +31,7 @@
                         </Storyboard>
 
                     </ControlTemplate.Resources>
-                    
+
                     <!-- Control Layout -->
                     <Grid Name="LayoutGrid"
                           Background="Transparent">
@@ -59,23 +59,28 @@
                         </Grid>
 
                         <!-- Button Content -->
-                        <StackPanel>
+                        <StackPanel Margin="2 0 2 0">
                             <Image Source="{Binding LargeImageSource, RelativeSource={RelativeSource TemplatedParent}}"
                                    Height="24"
-                                   HorizontalAlignment="Center" 
+                                   HorizontalAlignment="Center"
                                    Margin="0 5 0 3" />
-                            <TextBlock Text="{TemplateBinding Text}"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Center"
-                                       FontFamily="Segoe UI"
-                                       FontSize="9pt"
-                                       TextOptions.TextRenderingMode="Auto"
-                                       TextOptions.TextFormattingMode="Ideal"
-                                       Margin="0"
-                                       />
+                            <Grid HorizontalAlignment="Center"
+                                  VerticalAlignment="Center">
+                                <RibbonTwoLineText Text="{TemplateBinding Text}"
+                                                   TextAlignment="Center"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Top"
+                                                   FontFamily="Segoe UI"
+                                                   FontSize="9pt"
+                                                   LineStackingStrategy="BlockLineHeight"
+                                                   LineHeight="13"
+                                                   HasTwoLines="True"
+                                                   TextOptions.TextRenderingMode="Auto"
+                                                   TextOptions.TextFormattingMode="Ideal" />
+                            </Grid>
                             <Grid Name="ButtonIndicatorGrid"
                                   HorizontalAlignment="Center"
-                                  Height="6"></Grid>
+                                  Height="6" />
                         </StackPanel>
                     </Grid>
 

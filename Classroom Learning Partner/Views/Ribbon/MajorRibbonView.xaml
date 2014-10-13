@@ -141,6 +141,11 @@
         <Grid>
             <ItemsControl ItemsSource="{Binding Buttons}"
                           HorizontalAlignment="Center">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
             </ItemsControl>
         </Grid>
         
