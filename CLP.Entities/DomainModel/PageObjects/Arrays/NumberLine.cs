@@ -8,6 +8,7 @@ using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Ink;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Xml.Serialization;
 using Catel.Data;
 
@@ -229,6 +230,23 @@ namespace CLP.Entities
                 RaisePropertyChanged("NumberLineLength");
             }
             base.OnPropertyChanged(e);
+        }
+
+
+        public override void OnMoving(double oldX, double oldY)
+        {
+            var deltaX = XPosition - oldX;
+            var deltaY = YPosition - oldY;
+
+            if (CanAcceptStrokes)
+            {
+                foreach (var stroke in AcceptedStrokes)
+                {
+                    var transform = new Matrix();
+                    transform.Translate(deltaX, deltaY);
+                    stroke.Transform(transform, true);
+                }
+            }
         }
 
 
