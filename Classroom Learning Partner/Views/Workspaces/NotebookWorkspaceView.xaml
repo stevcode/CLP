@@ -127,6 +127,8 @@
                 </Style>
             </Control.Style>
         </Control>
+        
+        <views:ContextRibbonView DockPanel.Dock="Top" />
 
         <!-- Control that dynamically determines what Display to show -->
         <Control HorizontalAlignment="Stretch"

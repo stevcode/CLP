@@ -62,6 +62,9 @@ namespace Classroom_Learning_Partner.ViewModels
             _setCutModeButton = new GroupedRibbonButton("Cut", "PageInteractionMode", "pack://application:,,,/Resources/Images/Scissors32.png", null);
             _setDividerCreationModeButton = new GroupedRibbonButton("Divider", "PageInteractionMode", "pack://application:,,,/Resources/Images/Hand32.png", null);
 
+            //Text
+            _insertTextBoxButton = new RibbonButton("Insert Text", "pack://application:,,,/Images/AddSquare.png", InsertCircleCommand);
+
             //Shapes
             //TODO: Better Icons
             _insertSquareButton = new RibbonButton("Insert Square", "pack://application:,,,/Images/AddSquare.png", InsertCircleCommand);
@@ -181,6 +184,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Buttons.Add(_insertHorizontalLineButton);
             Buttons.Add(_insertVerticalLineButton);
             Buttons.Add(_insertProtractorButton);
+
         }
 
         #endregion //Methods
