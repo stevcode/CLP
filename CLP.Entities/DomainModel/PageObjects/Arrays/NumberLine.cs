@@ -1,9 +1,7 @@
 ﻿using System;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Ink;
@@ -17,20 +15,18 @@ namespace CLP.Entities
     [Serializable]
     public class NumberLineTick : AEntityBase
     {
-
         #region Constructors
 
         public NumberLineTick() { }
 
         public NumberLineTick(int value, bool isNumberVisible)
         {
-            TickValue = value; 
-            IsNumberVisible = isNumberVisible; 
+            TickValue = value;
+            IsNumberVisible = isNumberVisible;
         }
 
         public NumberLineTick(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
-
 
         #endregion //Constructors
 
@@ -41,9 +37,7 @@ namespace CLP.Entities
             get { return 25.0; }
         }
 
-        /// <summary>
-        /// Number of the Tick
-        /// </summary>
+        /// <summary>Number of the Tick</summary>
         public int TickValue
         {
             get { return GetValue<int>(TickValueProperty); }
@@ -52,9 +46,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData TickValueProperty = RegisterProperty("TickValue", typeof (int), 0);
 
-        /// <summary>
-        /// Is the tick marks number visible
-        /// </summary>
+        /// <summary>Is the tick marks number visible</summary>
         public bool IsNumberVisible
         {
             get { return GetValue<bool>(IsNumberVisibleProperty); }
@@ -63,9 +55,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData IsNumberVisibleProperty = RegisterProperty("IsNumberVisible", typeof (bool), false);
 
-        /// <summary>
-        /// Is the tick visible on the number line
-        /// </summary>
+        /// <summary>Is the tick visible on the number line</summary>
         public bool IsTickVisible
         {
             get { return GetValue<bool>(IsTickVisibleProperty); }
@@ -74,9 +64,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData IsTickVisibleProperty = RegisterProperty("IsTickVisible", typeof (bool), true);
 
-        /// <summary>
-        /// Has the user marked the tick mark
-        /// </summary>
+        /// <summary>Has the user marked the tick mark</summary>
         public bool IsMarked
         {
             get { return GetValue<bool>(IsMarkedProperty); }
@@ -84,6 +72,15 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData IsMarkedProperty = RegisterProperty("IsMarked", typeof (bool), false);
+
+        /// <summary>Color of the Tick Value</summary>
+        public string TickColor
+        {
+            get { return GetValue<string>(TickColorProperty); }
+            set { SetValue(TickColorProperty, value); }
+        }
+
+        public static readonly PropertyData TickColorProperty = RegisterProperty("TickColor", typeof (string), "Black");
 
         #endregion //Properties
     }
@@ -149,33 +146,38 @@ namespace CLP.Entities
             numberLine.CreateTicks();
         }
 
-        /// <summary>
-        /// A collection of the ticks of the number line
-        /// </summary>
+        /// <summary>List of the values of the jumps</summary>
+        public ObservableCollection<int> JumpSizes
+        {
+            get { return GetValue<ObservableCollection<int>>(JumpSizesProperty); }
+            set { SetValue(JumpSizesProperty, value); }
+        }
+
+        public static readonly PropertyData JumpSizesProperty = RegisterProperty("JumpSizes", typeof (ObservableCollection<int>), () => new ObservableCollection<int>());
+
+        /// <summary>A collection of the ticks of the number line</summary>
         public ObservableCollection<NumberLineTick> Ticks
         {
             get { return GetValue<ObservableCollection<NumberLineTick>>(TicksProperty); }
             set { SetValue(TicksProperty, value); }
         }
 
-        public static readonly PropertyData TicksProperty = RegisterProperty("Ticks", typeof (ObservableCollection<NumberLineTick>), () => new ObservableCollection<NumberLineTick>());
+        public static readonly PropertyData TicksProperty = RegisterProperty("Ticks",
+                                                                             typeof (ObservableCollection<NumberLineTick>),
+                                                                             () => new ObservableCollection<NumberLineTick>());
 
         #region IStrokeAccepter Members
 
-        /// <summary>
-        /// Determines whether the <see cref="Stamp" /> can currently accept <see cref="Stroke" />s.
-        /// </summary>
+        /// <summary>Determines whether the <see cref="Stamp" /> can currently accept <see cref="Stroke" />s.</summary>
         public bool CanAcceptStrokes
         {
             get { return GetValue<bool>(CanAcceptStrokesProperty); }
             set { SetValue(CanAcceptStrokesProperty, value); }
         }
 
-        public static readonly PropertyData CanAcceptStrokesProperty = RegisterProperty("CanAcceptStrokes", typeof(bool), true);
+        public static readonly PropertyData CanAcceptStrokesProperty = RegisterProperty("CanAcceptStrokes", typeof (bool), true);
 
-        /// <summary>
-        /// The currently accepted <see cref="Stroke" />s.
-        /// </summary>
+        /// <summary>The currently accepted <see cref="Stroke" />s.</summary>
         [XmlIgnore]
         public List<Stroke> AcceptedStrokes
         {
@@ -183,18 +185,16 @@ namespace CLP.Entities
             set { SetValue(AcceptedStrokesProperty, value); }
         }
 
-        public static readonly PropertyData AcceptedStrokesProperty = RegisterProperty("AcceptedStrokes", typeof(List<Stroke>), () => new List<Stroke>());
+        public static readonly PropertyData AcceptedStrokesProperty = RegisterProperty("AcceptedStrokes", typeof (List<Stroke>), () => new List<Stroke>());
 
-        /// <summary>
-        /// The IDs of the <see cref="Stroke" />s that have been accepted.
-        /// </summary>
+        /// <summary>The IDs of the <see cref="Stroke" />s that have been accepted.</summary>
         public List<string> AcceptedStrokeParentIDs
         {
             get { return GetValue<List<string>>(AcceptedStrokeParentIDsProperty); }
             set { SetValue(AcceptedStrokeParentIDsProperty, value); }
         }
 
-        public static readonly PropertyData AcceptedStrokeParentIDsProperty = RegisterProperty("AcceptedStrokeParentIDs", typeof(List<string>), () => new List<string>());
+        public static readonly PropertyData AcceptedStrokeParentIDsProperty = RegisterProperty("AcceptedStrokeParentIDs", typeof (List<string>), () => new List<string>());
 
         #endregion //IStrokeAccepter Members
 
@@ -205,11 +205,12 @@ namespace CLP.Entities
         public void CreateTicks()
         {
             Ticks.Clear();
-            int defaultInteger = NumberLineSize <= 10 ? 1 : 5;
-            for (int i = 0; i <= NumberLineSize; i++)
+            var defaultInteger = NumberLineSize <= 10 ? 1 : 5;
+            for (var i = 0; i <= NumberLineSize; i++)
             {
-                bool labelVisible = false;
-                if (i==0 || i==NumberLineSize)
+                var labelVisible = false;
+                if (i == 0 ||
+                    i == NumberLineSize)
                 {
                     labelVisible = true;
                 }
@@ -217,9 +218,8 @@ namespace CLP.Entities
                 {
                     labelVisible = true;
                 }
-                Ticks.Add(new NumberLineTick(i,labelVisible));
+                Ticks.Add(new NumberLineTick(i, labelVisible));
             }
-
         }
 
         protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
@@ -230,21 +230,20 @@ namespace CLP.Entities
                 RaisePropertyChanged("NumberLineLength");
             }
             base.OnPropertyChanged(e);
-        
         }
 
         public override void OnResizing(double oldWidth, double oldHeight)
         {
-            var scaleX = Width/ oldWidth;
-         //   var deltaX = ;
+            var scaleX = Width / oldWidth;
+            //   var deltaX = ;
 
             if (CanAcceptStrokes)
             {
                 foreach (var stroke in AcceptedStrokes)
                 {
                     var transform = new Matrix();
-                    transform.Scale(scaleX,1.0);
-           //         transform.Translate(deltaX,0.0);
+                    transform.Scale(scaleX, 1.0);
+                    //         transform.Translate(deltaX,0.0);
                     stroke.Transform(transform, true);
                 }
             }
@@ -265,7 +264,6 @@ namespace CLP.Entities
                 }
             }
         }
-
 
         public override IPageObject Duplicate()
         {
@@ -298,18 +296,36 @@ namespace CLP.Entities
 
             var actuallyAcceptedStrokes = new StrokeCollection();
             var numberLineBodyBoundingBox = new Rect(XPosition, YPosition, Width, Height);
-            foreach (var stroke in addedStrokes.Where(stroke => stroke.HitTest(numberLineBodyBoundingBox, 30) &&
-                                                               !AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
+            foreach (var stroke in addedStrokes.Where(stroke => stroke.HitTest(numberLineBodyBoundingBox, 30) && !AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
             {
                 AcceptedStrokes.Add(stroke);
                 AcceptedStrokeParentIDs.Add(stroke.GetStrokeID());
                 actuallyAcceptedStrokes.Add(stroke);
             }
-            
+
             //Grab the lowest right point
             var tick = FindClosestTick(actuallyAcceptedStrokes);
+            if (tick == null)
+            {
+                return;
+            }
             tick.IsMarked = true;
             tick.IsNumberVisible = true;
+            var lastStroke = actuallyAcceptedStrokes.Last();
+            tick.TickColor = lastStroke.DrawingAttributes.Color.ToString();
+            if (tick.TickValue == 0)
+            {
+                tick.TickColor = "Black";
+            }
+
+            var prevTick = Ticks.Reverse().FirstOrDefault(t => t.IsMarked && t.TickValue < tick.TickValue);
+            if (prevTick == null)
+            {
+                JumpSizes.Add(tick.TickValue);
+                return;
+            }
+            var jumpSize = tick.TickValue - prevTick.TickValue;
+            JumpSizes.Add(jumpSize);
         }
 
         public void RefreshAcceptedStrokes()
@@ -352,7 +368,8 @@ namespace CLP.Entities
             {
                 foreach (var point in stroke.StylusPoints)
                 {
-                    if (point.Y > lowestPoint.Y && point.X > midX)
+                    if (point.Y > lowestPoint.Y &&
+                        point.X > midX)
                     {
                         lowestPoint = point;
                     }
@@ -362,7 +379,13 @@ namespace CLP.Entities
             //Find closest Tick
 
             var normalXLowest = (lowestPoint.X - XPosition - ArrowLength) / TickLength;
-            var tickIndex = (int) Math.Round(normalXLowest);
+            var tickIndex = (int)Math.Round(normalXLowest);
+
+            if (tickIndex < 0 ||
+                tickIndex >= Ticks.Count)
+            {
+                return null;
+            }
 
             return Ticks[tickIndex];
         }

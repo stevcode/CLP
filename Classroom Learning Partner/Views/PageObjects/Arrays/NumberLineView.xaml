@@ -11,6 +11,7 @@
         <catel:BooleanToHidingVisibilityConverter x:Key="BooleanToHidingVisibilityConverter" />
         <oldconv:LengthConverter x:Key="LengthConverter" />
         <conv:RatioToRectMultiConverter x:Key="RatioToRectMultiConverter" />
+        <conv:MultiplyAllMultiConverter x:Key="MultiplyAllMultiConverter" />
 
     </UserControl.Resources>
 
@@ -201,6 +202,34 @@
                   StrokeThickness="2"
                   VerticalAlignment="Center" />
 
+            <Grid Grid.Column="1"
+                  VerticalAlignment="Top"
+                  HorizontalAlignment="Stretch">
+                <ItemsControl ItemsSource="{Binding JumpSizes}"
+                              HorizontalAlignment="Left">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}"
+                                       Foreground="BlueViolet"
+                                       TextAlignment="Center">
+                                <TextBlock.Width>
+                                    <MultiBinding Converter="{StaticResource MultiplyAllMultiConverter}">
+                                        <Binding Path="DataContext.PageObject.TickLength"
+                                                 RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}" />
+                                        <Binding Path="." />
+                                    </MultiBinding>
+                                </TextBlock.Width>
+                            </TextBlock>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
+
             <Canvas Grid.Column="1">
                 <ItemsControl ItemsSource="{Binding Ticks}">
                     <ItemsControl.ItemsPanel>
@@ -230,6 +259,7 @@
                                            Visibility="{Binding IsNumberVisible, Converter={StaticResource BooleanToHidingVisibilityConverter}}"
                                            Text="{Binding TickValue}"
                                            FontSize="20"
+                                           Foreground="{Binding TickColor}"
                                            FontWeight="Bold"
                                            Margin="-4,0,0,0" />
                             </Grid>
