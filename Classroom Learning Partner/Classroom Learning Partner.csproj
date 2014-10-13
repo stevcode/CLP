@@ -275,6 +275,7 @@
     <Compile Include="Resources\InkInterpretation.cs" />
     <Compile Include="Utilities\Extensions\ObservableCollectionExtensions.cs" />
     <Compile Include="Utilities\ObservableCollectionOperation.cs" />
+    <Compile Include="ViewModels\Ribbon\ContextRibbonViewModel.cs" />
     <Compile Include="ViewModels\Ribbon\MajorRibbonViewModel.cs" />
     <Compile Include="ViewModels\Tags\DivisionRelationDefinitionTagViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\ClassSubjectCreationViewModel.cs" />
@@ -529,6 +530,9 @@
     </Compile>
     <Compile Include="Views\RibbonView.xaml.cs">
       <DependentUpon>RibbonView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Ribbon\ContextRibbonView.xaml.cs">
+      <DependentUpon>ContextRibbonView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Ribbon\MajorRibbonView.xaml.cs">
       <DependentUpon>MajorRibbonView.xaml</DependentUpon>
@@ -828,6 +832,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\RibbonView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Ribbon\ContextRibbonView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

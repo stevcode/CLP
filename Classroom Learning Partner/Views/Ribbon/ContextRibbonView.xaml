@@ -1,0 +1,28 @@
+﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.ContextRibbonView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:catel="http://catel.codeplex.com">
+    <DockPanel Height="35"
+               Background="{StaticResource GrayBackgroundColor}">
+
+        <Line DockPanel.Dock="Bottom"
+              Stretch="Fill"
+              X1="0"
+              X2="1"
+              Margin="-1 0 -1 0"
+              Stroke="{StaticResource GrayEdgeColor}"
+              StrokeThickness="1" />
+
+        <Grid>
+            <ItemsControl ItemsSource="{Binding Buttons}"
+                          HorizontalAlignment="Left">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </Grid>
+
+    </DockPanel>
+</catel:UserControl>

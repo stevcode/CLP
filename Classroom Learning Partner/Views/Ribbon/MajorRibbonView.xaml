@@ -5,10 +5,7 @@
                    xmlns:customControls="clr-namespace:CLP.CustomControls;assembly=CLP.CustomControls">
     
     <catel:UserControl.Resources>
-        <Style TargetType="{x:Type RibbonButton}">
-            <Setter Property="Background"
-                    Value="{StaticResource MainColor}" />
-        </Style>
+
     </catel:UserControl.Resources>
     
     

@@ -12,7 +12,7 @@ namespace CLP.CustomControls
         static GroupedRibbonButton()
         {
             // Initialize as a lookless control.
-            DefaultStyleKeyProperty.OverrideMetadata(typeof (RibbonButton), new FrameworkPropertyMetadata(typeof (GroupedRibbonButton)));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof (GroupedRibbonButton), new FrameworkPropertyMetadata(typeof (GroupedRibbonButton)));
         }
 
         public GroupedRibbonButton(string text, string groupName, string packUri, ICommand command)

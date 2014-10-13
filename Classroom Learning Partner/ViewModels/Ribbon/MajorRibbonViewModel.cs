@@ -43,6 +43,7 @@ namespace Classroom_Learning_Partner.ViewModels
             dict.Source = uri;
             var grayEdgeColor = dict["GrayEdgeColor"] as Brush;
 
+            //Separater
             _separater = new Line
                          {
                              Y1 = 0,
@@ -52,6 +53,14 @@ namespace Classroom_Learning_Partner.ViewModels
                              Stroke = grayEdgeColor,
                              StrokeThickness = 1
                          };
+
+            //PageInteractionMode Toggles
+            _setSelectModeButton = new GroupedRibbonButton("Select", "PageInteractionMode", "pack://application:,,,/Resources/Images/Hand32.png", null);
+            _setPenModeButton = new GroupedRibbonButton("Pen", "PageInteractionMode", "pack://application:,,,/Resources/Images/Pen32.png", null);
+            _setEraserModeButton = new GroupedRibbonButton("Eraser", "PageInteractionMode", "pack://application:,,,/Resources/Images/Hand32.png", null);
+            _setLassoModeButton = new GroupedRibbonButton("Lasso", "PageInteractionMode", "pack://application:,,,/Resources/Images/Lasso32.png", null);
+            _setCutModeButton = new GroupedRibbonButton("Cut", "PageInteractionMode", "pack://application:,,,/Resources/Images/Scissors32.png", null);
+            _setDividerCreationModeButton = new GroupedRibbonButton("Divider", "PageInteractionMode", "pack://application:,,,/Resources/Images/Hand32.png", null);
 
             //Shapes
             //TODO: Better Icons
@@ -69,6 +78,17 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Buttons
 
         private Line _separater;
+
+        #region PageInteractionMode Toggle Buttons
+
+        private GroupedRibbonButton _setSelectModeButton;
+        private GroupedRibbonButton _setPenModeButton;
+        private GroupedRibbonButton _setEraserModeButton;
+        private GroupedRibbonButton _setLassoModeButton;
+        private GroupedRibbonButton _setCutModeButton;
+        private GroupedRibbonButton _setDividerCreationModeButton;
+
+        #endregion //PageInteractionMode Toggles
 
         #region Insert PageObject Buttons
 
@@ -147,6 +167,13 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public void SetRibbonButtons()
         {
+            Buttons.Add(_setSelectModeButton);
+            Buttons.Add(_setPenModeButton);
+            Buttons.Add(_setEraserModeButton);
+            Buttons.Add(_setLassoModeButton);
+            Buttons.Add(_setCutModeButton);
+            Buttons.Add(_setDividerCreationModeButton);
+
             Buttons.Add(_separater);
 
             Buttons.Add(_insertSquareButton);
