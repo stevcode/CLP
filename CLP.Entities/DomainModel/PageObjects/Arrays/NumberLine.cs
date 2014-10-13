@@ -230,8 +230,25 @@ namespace CLP.Entities
                 RaisePropertyChanged("NumberLineLength");
             }
             base.OnPropertyChanged(e);
+        
         }
 
+        public override void OnResizing(double oldWidth, double oldHeight)
+        {
+            var scaleX = Width/ oldWidth;
+         //   var deltaX = ;
+
+            if (CanAcceptStrokes)
+            {
+                foreach (var stroke in AcceptedStrokes)
+                {
+                    var transform = new Matrix();
+                    transform.Scale(scaleX,1.0);
+           //         transform.Translate(deltaX,0.0);
+                    stroke.Transform(transform, true);
+                }
+            }
+        }
 
         public override void OnMoving(double oldX, double oldY)
         {
