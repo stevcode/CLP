@@ -49,7 +49,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             Page = page;
 
-            PageInteractionMode = App.MainWindowViewModel.Ribbon.PageInteractionMode;
+            PageInteractionMode = App.MainWindowViewModel.MajorRibbon.PageInteractionMode;
             EraserMode = App.MainWindowViewModel.Ribbon.EraserMode;
             DefaultDA = App.MainWindowViewModel.Ribbon.DrawingAttributes;
 
@@ -209,7 +209,10 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public PageInteractionModes PageInteractionMode
         {
-            get { return GetValue<PageInteractionModes>(PageInteractionModeProperty); }
+            get
+            {
+                return GetValue<PageInteractionModes>(PageInteractionModeProperty);
+            }
             set { SetValue(PageInteractionModeProperty, value); }
         }
 

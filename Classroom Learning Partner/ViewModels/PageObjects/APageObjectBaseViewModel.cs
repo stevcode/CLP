@@ -165,7 +165,16 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command RemovePageObjectCommand { get; set; }
 
-        private void OnRemovePageObjectCommandExecute() { ACLPPageBaseViewModel.RemovePageObjectFromPage(PageObject); }
+        private void OnRemovePageObjectCommandExecute()
+        {
+            var contextRibbon = NotebookWorkspaceViewModel.GetContextRibbon();
+            if (contextRibbon != null)
+            {
+                contextRibbon.Buttons.Clear();
+            }
+
+            ACLPPageBaseViewModel.RemovePageObjectFromPage(PageObject);
+        }
 
         /// <summary>
         /// Removes pageObject from page if back of pen (or middle mouse button)

@@ -49,6 +49,7 @@
                        CloseAdornerTimeOut="{Binding CloseAdornerTimeOut}">
         <!--This is the adorner-->
         <ac:AdornedControl.AdornerContent>
+            <Grid>
             <Canvas HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Width="{Binding Width}"
@@ -66,7 +67,7 @@
                            Visibility="{Binding IsDefaultAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                 <!--Close Button - on left-->
-                <Button Command="{Binding RemovePageObjectCommand}"
+                <!--<Button Command="{Binding RemovePageObjectCommand}"
                         Cursor="Hand"
                         Width="40"
                         Height="40"
@@ -75,7 +76,6 @@
                     <Button.Visibility>
                         <MultiBinding Converter="{StaticResource AllBoolToVisibilityMultiConverter}">
                             <Binding Path="IsDefaultAdornerVisible" />
-                            <!--<Binding Path="MainWindowViewModel.IsRightHanded" Source="x:Static Application.Current" />-->
                         </MultiBinding>
                     </Button.Visibility>
                     <Button.Template>
@@ -94,38 +94,56 @@
                             </Grid>
                         </ControlTemplate>
                     </Button.Template>
-                </Button>
-
-                <!--Close Button - on right-->
-                <!--<Button Command="{Binding RemovePageObjectCommand}"
-                        Cursor="Hand"
-                        Width="40" Height="40"
-                        Canvas.Right="-40" Canvas.Top="-40">
-                    <Button.Visibility>
-                        <MultiBinding Converter="{StaticResource AllBoolToVisibilityMultiConverter}">
-                            <Binding Path="IsDefaultAdornerVisible" />
-                            <Binding Path="IsSnapAdornerOnLeft" />
-                        </MultiBinding>
-                    </Button.Visibility>
-                    <Button.Template>
-                        <ControlTemplate TargetType="{x:Type Button}">
-                            <Grid>
-                                <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
-                                         VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
-                                <Path Data="M0,0 L1,1 M0,1 L1,0"
-                                      Stretch="Fill" Margin="5"
-                                      Stroke="Red" StrokeThickness="3" />
-                            </Grid>
-                        </ControlTemplate>
-                    </Button.Template>
                 </Button>-->
 
-                <!--Drag Thumb - on right-->
-                <Thumb Cursor="ScrollAll"
+                
+           
+                <!--Resize Thumb-->
+                <Thumb Cursor="SizeNWSE"
                        Width="40"
                        Height="40"
                        Canvas.Right="-40"
-                       Canvas.Top="-40">
+                       Canvas.Bottom="-40"
+                       Visibility="{Binding IsDefaultAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="DragDelta">
+                            <catel:EventToCommand Command="{Binding ResizeArrayCommand}"
+                                                  PassEventArgsToCommand="True" />
+                        </i:EventTrigger>
+                        <i:EventTrigger EventName="DragStarted">
+                            <catel:EventToCommand Command="{Binding ResizeStartPageObjectCommand}"
+                                                  PassEventArgsToCommand="True" />
+                        </i:EventTrigger>
+                        <i:EventTrigger EventName="DragCompleted">
+                            <catel:EventToCommand Command="{Binding ResizeStopPageObjectCommand}"
+                                                  PassEventArgsToCommand="True" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    <Thumb.Template>
+                        <ControlTemplate>
+                            <Grid>
+                                <Ellipse Stroke="Black"
+                                         StrokeThickness="3"
+                                         Fill="White"
+                                         VerticalAlignment="Stretch"
+                                         HorizontalAlignment="Stretch" />
+                                <Path Stroke="Black"
+                                      StrokeThickness="1"
+                                      Data="M 8,23 L 23,23 L 23,8" />
+                                <Path Stroke="Black"
+                                      StrokeThickness="1"
+                                      Data="M 12,27 L 27,27 L 27,12" />
+                            </Grid>
+                        </ControlTemplate>
+                    </Thumb.Template>
+                </Thumb>
+
+            </Canvas>
+
+                <!--Drag Thumb-->
+                <Thumb Cursor="ScrollAll"
+                       Width="60"
+                       Height="60">
                     <Thumb.Visibility>
                         <MultiBinding Converter="{StaticResource AllBoolToVisibilityMultiConverter}">
                             <Binding Path="IsDefaultAdornerVisible" />
@@ -182,375 +200,7 @@
                         </ControlTemplate>
                     </Thumb.Template>
                 </Thumb>
-
-                <!--Drag Thumb - on left-->
-                <!--<Thumb Cursor="ScrollAll"
-                       Width="40" Height="40"
-                       Canvas.Left="-40" Canvas.Top="-40">
-                    <Thumb.Visibility>
-                        <MultiBinding Converter="{StaticResource AllBoolToVisibilityMultiConverter}">
-                            <Binding Path="IsDefaultAdornerVisible" />
-                            <Binding Path="IsSnapAdornerOnLeft" />
-                        </MultiBinding>
-                    </Thumb.Visibility>
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="DragDelta">
-                            <catel:EventToCommand Command="{Binding DragPageObjectCommand}" PassEventArgsToCommand="True" />
-                        </i:EventTrigger>
-                        <i:EventTrigger EventName="DragStarted">
-                            <catel:EventToCommand Command="{Binding DragStartPageObjectCommand}" PassEventArgsToCommand="True" />
-                        </i:EventTrigger>
-                        <i:EventTrigger EventName="DragCompleted">
-                            <catel:EventToCommand Command="{Binding DragStopPageObjectCommand}" PassEventArgsToCommand="True" />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                    <Thumb.Template>
-                        <ControlTemplate>
-                            <Grid>
-                                <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
-                                         VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
-                                <Path Stroke="Black" StrokeThickness="1" Fill="Black"
-                                      Data="M 5,20 L 10,15 L 10,25 L 5,20" />
-                                <Path Stroke="Black" StrokeThickness="1" Fill="Black"
-                                      Data="M 35,20 L 30,15 L 30,25 L 35,20" />
-                                <Path Stroke="Black" StrokeThickness="1" Fill="Black"
-                                      Data="M 20,5 L 20,35" />
-                                <Path Stroke="Black" StrokeThickness="1" Fill="Black"
-                                      Data="M 20,35 L 15,30 L 25,30 L 20,35" />
-                                <Path Stroke="Black" StrokeThickness="1" Fill="Black"
-                                      Data="M 20,5 L 15,10 L 25,10 L 20,5" />
-                                <Path Stroke="Black" StrokeThickness="1" Fill="Black"
-                                      Data="M 5,20 L 35,20" />
-                            </Grid>
-                        </ControlTemplate>
-                    </Thumb.Template>
-                </Thumb>-->
-
-                <!--Drag and Snap Thumb - on left-->
-                <!--<Thumb Cursor="ScrollAll"
-                       Width="40" Height="40"
-                       Canvas.Left="-50" Canvas.Top="20">
-                    <Thumb.Visibility>
-                        <MultiBinding Converter="{StaticResource AllBoolToVisibilityMultiConverter}">
-                            <Binding Path="IsDefaultAdornerVisible" />
-                            <Binding Path="IsSnappable" />
-                            <Binding Path="IsSnapAdornerOnLeft" />
-                        </MultiBinding>
-                    </Thumb.Visibility>
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="DragDelta">
-                            <catel:EventToCommand Command="{Binding DragPageObjectCommand}" PassEventArgsToCommand="True" />
-                        </i:EventTrigger>
-                        <i:EventTrigger EventName="DragStarted">
-                            <catel:EventToCommand Command="{Binding DragStartPageObjectCommand}" PassEventArgsToCommand="True" />
-                        </i:EventTrigger>
-                        <i:EventTrigger EventName="DragCompleted">
-                            <catel:EventToCommand Command="{Binding DragStopAndSnapCommand}" PassEventArgsToCommand="True" />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                    <Thumb.Template>
-                        <ControlTemplate>
-                            <Image Source="pack://application:,,,/Resources/Images/AdornerImages/ArraySnap64.png" Height="40" Width="40" />
-                        </ControlTemplate>
-                    </Thumb.Template>
-                </Thumb>-->
-
-                <!--Drag and Snap Thumb - on right-->
-                <Thumb Cursor="ScrollAll"
-                       Width="40"
-                       Height="40"
-                       Canvas.Right="-50"
-                       Canvas.Top="20">
-                    <Thumb.Visibility>
-                        <MultiBinding Converter="{StaticResource AllBoolToVisibilityMultiConverter}">
-                            <Binding Path="IsDefaultAdornerVisible" />
-                            <Binding Path="IsSnappable" />
-                            <!--<Binding Path="PageObject.IsSnapAdornerOnRight" />-->
-                        </MultiBinding>
-                    </Thumb.Visibility>
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="DragDelta">
-                            <catel:EventToCommand Command="{Binding DragPageObjectCommand}"
-                                                  PassEventArgsToCommand="True" />
-                        </i:EventTrigger>
-                        <i:EventTrigger EventName="DragStarted">
-                            <catel:EventToCommand Command="{Binding DragStartPageObjectCommand}"
-                                                  PassEventArgsToCommand="True" />
-                        </i:EventTrigger>
-                        <i:EventTrigger EventName="DragCompleted">
-                            <catel:EventToCommand Command="{Binding DragStopAndSnapCommand}"
-                                                  PassEventArgsToCommand="True" />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                    <Thumb.Template>
-                        <ControlTemplate>
-                            <Image Source="pack://application:,,,/Resources/Images/AdornerImages/ArraySnap64.png"
-                                   Height="40"
-                                   Width="40" />
-                        </ControlTemplate>
-                    </Thumb.Template>
-                </Thumb>
-
-                <!--Resize Thumb-->
-                <Thumb Cursor="SizeNWSE"
-                       Width="40"
-                       Height="40"
-                       Canvas.Right="-40"
-                       Canvas.Bottom="-40"
-                       Visibility="{Binding IsDefaultAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="DragDelta">
-                            <catel:EventToCommand Command="{Binding ResizeArrayCommand}"
-                                                  PassEventArgsToCommand="True" />
-                        </i:EventTrigger>
-                        <i:EventTrigger EventName="DragStarted">
-                            <catel:EventToCommand Command="{Binding ResizeStartPageObjectCommand}"
-                                                  PassEventArgsToCommand="True" />
-                        </i:EventTrigger>
-                        <i:EventTrigger EventName="DragCompleted">
-                            <catel:EventToCommand Command="{Binding ResizeStopPageObjectCommand}"
-                                                  PassEventArgsToCommand="True" />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                    <Thumb.Template>
-                        <ControlTemplate>
-                            <Grid>
-                                <Ellipse Stroke="Black"
-                                         StrokeThickness="3"
-                                         Fill="White"
-                                         VerticalAlignment="Stretch"
-                                         HorizontalAlignment="Stretch" />
-                                <Path Stroke="Black"
-                                      StrokeThickness="1"
-                                      Data="M 8,23 L 23,23 L 23,8" />
-                                <Path Stroke="Black"
-                                      StrokeThickness="1"
-                                      Data="M 12,27 L 27,27 L 27,12" />
-                            </Grid>
-                        </ControlTemplate>
-                    </Thumb.Template>
-                </Thumb>
-
-                <!--Toggle Grid Button-->
-                <Button Command="{Binding ToggleGridCommand}"
-                        Width="40"
-                        Height="40"
-                        Canvas.Left="20"
-                        Canvas.Bottom="-50"
-                        Visibility="{Binding IsToggleGridAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <Button.Template>
-                        <ControlTemplate TargetType="{x:Type Button}">
-                            <Grid>
-                                <Ellipse Stroke="Black"
-                                         StrokeThickness="3"
-                                         Fill="White"
-                                         VerticalAlignment="Stretch"
-                                         HorizontalAlignment="Stretch" />
-                                <Path Data="M.35,.25 L.35,.75 M.65,.25 L.65,.75 M.25,.35 L.75,.35 M.25,.65 L.75,.65"
-                                      Stretch="Fill"
-                                      Margin="5"
-                                      Stroke="PowderBlue"
-                                      StrokeThickness="3" />
-                            </Grid>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
-
-                <!--Toggle Division Adorners Button-->
-                <Button Command="{Binding ToggleDivisionAdornersCommand}"
-                        Width="40"
-                        Height="40"
-                        Canvas.Left="-50"
-                        Canvas.Bottom="20"
-                        Visibility="{Binding IsToggleDivisionAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <Button.Template>
-                        <ControlTemplate TargetType="{x:Type Button}">
-                            <Grid>
-                                <Ellipse Stroke="Black"
-                                         StrokeThickness="3"
-                                         Fill="White"
-                                         VerticalAlignment="Stretch"
-                                         HorizontalAlignment="Stretch" />
-                                <Path Data="M0,1 L1,.5 L0,0 M-1,.5 L1,.5"
-                                      Stretch="Fill"
-                                      Margin="5"
-                                      Stroke="{StaticResource LeftLabelColor}"
-                                      StrokeThickness="3" />
-                                <Path Data="M.25,.25 L.75,.75"
-                                      Stretch="Fill"
-                                      Margin="5"
-                                      Stroke="Red"
-                                      StrokeThickness="3"
-                                      Visibility="{Binding IsDivisionBehaviorOn, Converter={StaticResource BooleanToHidingVisibilityConverter}, ConverterParameter=False}" />
-                            </Grid>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
-
-                <!--Rotate Array Button - on right-->
-                <Button Command="{Binding RotateArrayCommand}"
-                        Width="40"
-                        Height="40"
-                        Canvas.Right="20"
-                        Canvas.Top="-50">
-                    <Button.Visibility>
-                        <MultiBinding Converter="{StaticResource AllBoolToVisibilityMultiConverter}">
-                            <Binding Path="IsRotateAdornerVisible" />
-                            <!--<Binding Path="PageObject.IsSnapAdornerOnRight" />-->
-                        </MultiBinding>
-                    </Button.Visibility>
-                    <Button.Template>
-                        <ControlTemplate TargetType="{x:Type Button}">
-                            <Grid>
-                                <Ellipse Stroke="Black"
-                                         StrokeThickness="3"
-                                         Fill="White"
-                                         VerticalAlignment="Stretch"
-                                         HorizontalAlignment="Stretch" />
-                                <Image Source="pack://application:,,,/Resources/Images/AdornerImages/ArrayRotate64.png"
-                                       Height="25"
-                                       Width="25"
-                                       Margin="6"
-                                       HorizontalAlignment="Left"
-                                       VerticalAlignment="Top" />
-                            </Grid>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
-
-                <!--Rotate Array Button - on left-->
-                <!--<Button Command="{Binding RotateArrayCommand}"
-                        Width="40" Height="40"
-                        Canvas.Left="20"
-                        Canvas.Top="-50">
-                    <Button.Visibility>
-                        <MultiBinding Converter="{StaticResource AllBoolToVisibilityMultiConverter}">
-                            <Binding Path="IsRotateAdornerVisible" />
-                            <Binding Path="IsSnapAdornerOnLeft" />
-                        </MultiBinding>
-                    </Button.Visibility>
-                    <Button.Template>
-                        <ControlTemplate TargetType="{x:Type Button}">
-                            <Grid>
-                                <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
-                                         VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
-                                <Image Source="pack://application:,,,/Resources/Images/AdornerImages/ArrayRotate64.png"
-                                       Height="25" Width="25" Margin="6"
-                                       HorizontalAlignment="Left" VerticalAlignment="Top" />
-                            </Grid>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>-->
-
-                <!--Duplicate Array Button-->
-                <Button Command="{Binding DuplicateArrayCommand}"
-                        Cursor="Hand"
-                        Width="40"
-                        Height="40"
-                        Canvas.Left="-40"
-                        Canvas.Bottom="-40"
-                        Visibility="{Binding IsDuplicateAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <Button.Template>
-                        <ControlTemplate TargetType="{x:Type Button}">
-                            <Grid>
-                                <Ellipse Stroke="Black"
-                                         StrokeThickness="3"
-                                         Fill="White"
-                                         VerticalAlignment="Stretch"
-                                         HorizontalAlignment="Stretch" />
-                                <Path Data="M0.5,0 L0.5,1 M0,0.5 L1,0.5"
-                                      Stretch="Fill"
-                                      Margin="5"
-                                      Stroke="Green"
-                                      StrokeThickness="3" />
-                            </Grid>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
-
-                <!--Left Divisor Line-->
-                <!--<Rectangle IsHitTestVisible="False"
-                           StrokeDashArray="1.0 3.0"
-                           StrokeThickness="3"
-                           Stroke="{StaticResource LeftLabelColor}"
-                           Fill="Transparent"
-                           Height="3"
-                           Width="{Binding ArrayWidth}"
-                           Canvas.Left="22"
-                           Canvas.Top="{Binding LeftArrowPosition, Converter={StaticResource LengthConverter}, ConverterParameter=19}"
-                           Visibility="{Binding IsLeftAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />-->
-
-                <!--Left Divisor Button-->
-                <!--<Button Command="{Binding CreateHorizontalDivisionCommand}"
-                        MouseLeave="DivisorButton_Leave"
-                        MouseEnter="DivisorButton_Enter"
-                        MouseMove="LeftDivisorButton_Mouse"
-                        Cursor="SizeWE"
-                        Width="30"
-                        Height="30"
-                        Canvas.Left="17"
-                        Canvas.Top="{Binding LeftArrowPosition, Converter={StaticResource LengthConverter}, ConverterParameter=7}"
-                        Visibility="{Binding IsLeftAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <Button.Template>
-                        <ControlTemplate TargetType="{x:Type Button}">
-                            <Grid>
-                                <Ellipse Stroke="Black"
-                                         StrokeThickness="3"
-                                         Fill="White"
-                                         VerticalAlignment="Stretch"
-                                         HorizontalAlignment="Stretch" />
-                                <Path Data="M0,1 L1,.5 L0,0 M-1,.5 L1,.5"
-                                      Stretch="Fill"
-                                      Margin="5"
-                                      Stroke="{StaticResource LeftLabelColor}"
-                                      StrokeThickness="3" />
-                            </Grid>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>-->
-
-                <!--Top Divisor Line-->
-                <!--<Rectangle IsHitTestVisible="False"
-                           StrokeDashArray="1.0 3.0"
-                           StrokeThickness="3"
-                           Stroke="{StaticResource TopLabelColor}"
-                           Fill="Transparent"
-                           Height="{Binding ArrayHeight}"
-                           Width="3"
-                           Canvas.Top="22"
-                           Canvas.Left="{Binding TopArrowPosition, Converter={StaticResource LengthConverter}, ConverterParameter=19}"
-                           Visibility="{Binding IsTopAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />-->
-
-                <!--Top Divisor Button-->
-                <!--<Button Command="{Binding CreateVerticalDivisionCommand}"
-                        MouseLeave="DivisorButton_Leave"
-                        MouseEnter="DivisorButton_Enter"
-                        MouseMove="TopDivisorButton_Mouse"
-                        Cursor="SizeNS"
-                        Width="30"
-                        Height="30"
-                        Canvas.Top="17"
-                        Canvas.Left="{Binding TopArrowPosition, Converter={StaticResource LengthConverter}, ConverterParameter=7}"
-                        Visibility="{Binding IsTopAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <Button.Template>
-                        <ControlTemplate TargetType="{x:Type Button}">
-                            <Grid>
-                                <Ellipse Stroke="Black"
-                                         StrokeThickness="3"
-                                         Fill="White"
-                                         VerticalAlignment="Stretch"
-                                         HorizontalAlignment="Stretch" />
-                                <Path Data="M-.5,.5 L0,1 L.5,.5 M0,0 L0,1"
-                                      Stretch="Fill"
-                                      Margin="5"
-                                      Stroke="{StaticResource TopLabelColor}"
-                                      StrokeThickness="3" />
-                            </Grid>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>-->
-
-            </Canvas>
+            </Grid>
         </ac:AdornedControl.AdornerContent>
 
         <Grid Width="{Binding Width}"

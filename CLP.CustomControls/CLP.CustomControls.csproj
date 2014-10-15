@@ -35,6 +35,9 @@
     <Reference Include="Catel.Core">
       <HintPath>..\Classroom Learning Partner\External Libraries\Catel.Core.dll</HintPath>
     </Reference>
+    <Reference Include="Catel.MVVM">
+      <HintPath>..\Classroom Learning Partner\External Libraries\Catel.MVVM.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Windows.Controls.Ribbon" />

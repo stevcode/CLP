@@ -1,6 +1,10 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:local="clr-namespace:CLP.CustomControls">
+                    xmlns:local="clr-namespace:CLP.CustomControls"
+                    xmlns:catel="http://catel.codeplex.com">
+
+    <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
+
     <Style TargetType="{x:Type local:RibbonButton}">
         <Setter Property="Template">
             <Setter.Value>
@@ -34,7 +38,8 @@
 
                     <!-- Control Layout -->
                     <Grid Name="LayoutGrid"
-                          Background="Transparent">
+                          Background="Transparent"
+                          MinWidth="45">
 
                         <!-- Button FX Displayed Behind Content -->
                         <Grid x:Name="IsPressedGrid"
@@ -58,8 +63,9 @@
                                        Stroke="{TemplateBinding Background, Converter={StaticResource ColorConverter}, ConverterParameter='0.5'}" />
                         </Grid>
 
-                        <!-- Button Content -->
-                        <StackPanel Margin="2 0 2 0">
+                        <!-- Vertical Button Content -->
+                        <StackPanel Margin="2 0 2 0"
+                                    Visibility="{TemplateBinding IsContextButton, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}">
                             <Image Source="{Binding LargeImageSource, RelativeSource={RelativeSource TemplatedParent}}"
                                    Height="24"
                                    HorizontalAlignment="Center"
@@ -81,6 +87,24 @@
                             <Grid Name="ButtonIndicatorGrid"
                                   HorizontalAlignment="Center"
                                   Height="6" />
+                        </StackPanel>
+
+                        <!-- Horizontal Button Content -->
+                        <StackPanel Margin="4 5 4 5"
+                                    Orientation="Horizontal"
+                                    Visibility="{TemplateBinding IsContextButton, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
+                            <Image Source="{Binding LargeImageSource, RelativeSource={RelativeSource TemplatedParent}}"
+                                   VerticalAlignment="Center"
+                                   Height="24"
+                                   Margin="0 0 2 0" />
+                            <TextBlock Text="{TemplateBinding Text}"
+                                       TextAlignment="Left"
+                                       VerticalAlignment="Center"
+                                       FontFamily="Segoe UI"
+                                       FontSize="10pt"
+                                       FontWeight="Bold"
+                                       TextOptions.TextRenderingMode="Auto"
+                                       TextOptions.TextFormattingMode="Ideal" />
                         </StackPanel>
                     </Grid>
 
@@ -155,7 +179,8 @@
 
                     <!-- Control Layout -->
                     <Grid Name="LayoutGrid"
-                          Background="Transparent">
+                          Background="Transparent"
+                          MinWidth="45">
 
                         <!-- Button FX Displayed Behind Content -->
                         <Grid x:Name="IsCheckedGrid"

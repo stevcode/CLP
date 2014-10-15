@@ -15,11 +15,13 @@ namespace CLP.CustomControls
             DefaultStyleKeyProperty.OverrideMetadata(typeof (RibbonButton), new FrameworkPropertyMetadata(typeof (RibbonButton)));
         }
 
-        public RibbonButton(string text, string packUri, ICommand command)
+        public RibbonButton(string text, string packUri, ICommand command, object commandParameter, bool isContextButton = false)
         {
             Text = text;
             LargeImageSource = new ImageSourceConverter().ConvertFromString(packUri) as ImageSource;
             Command = command;
+            CommandParameter = commandParameter;
+            IsContextButton = isContextButton;
 
             var dict = new ResourceDictionary();
             var uri = new Uri(@"pack://application:,,,/Resources/CLPBrushes.xaml");
@@ -52,6 +54,18 @@ namespace CLP.CustomControls
         public static readonly DependencyProperty TextProperty = DependencyProperty.Register("Text",
                                                                                              typeof (string),
                                                                                              typeof (RibbonButton),
+                                                                                             new UIPropertyMetadata(null));
+
+        /// <summary>Text for the button.</summary>
+        public bool IsContextButton
+        {
+            get { return (bool)GetValue(IsContextButtonProperty); }
+            set { SetValue(IsContextButtonProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsContextButtonProperty = DependencyProperty.Register("IsContextButton",
+                                                                                             typeof(bool),
+                                                                                             typeof(RibbonButton),
                                                                                              new UIPropertyMetadata(null));
 
         #endregion //Dependency Properties

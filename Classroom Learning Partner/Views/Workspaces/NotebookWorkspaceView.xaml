@@ -128,7 +128,8 @@
             </Control.Style>
         </Control>
         
-        <views:ContextRibbonView DockPanel.Dock="Top" />
+        <views:ContextRibbonView DockPanel.Dock="Top"
+                                 DataContext="{Binding ContextRibbon}"/>
 
         <!-- Control that dynamically determines what Display to show -->
         <Control HorizontalAlignment="Stretch"

@@ -7,7 +7,6 @@ using Catel.Data;
 using Catel.MVVM;
 using CLP.CustomControls;
 using CLP.Entities;
-using Shape = CLP.Entities.Shape;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -33,7 +32,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void InitializeCommands()
         {
             ShowBackStageCommand = new Command(OnShowBackStageCommandExecute);
-            InsertCircleCommand = new Command(OnInsertCircleCommandExecute);
+            AddPageObjectToPageCommand = new Command<string>(OnAddPageObjectToPageCommandExecute, OnAddPageObjectToPageCanExecute);
         }
 
         private void InitializeButtons()
@@ -71,24 +70,78 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                     PageInteractionModes.DividerCreation.ToString());
             _setDividerCreationModeButton.Checked += _button_Checked;
 
+            //Images
+            //TODO: Better Icons
+            _insertImageButton = new RibbonButton("Text", "pack://application:,,,/Images/AddImage.png", AddPageObjectToPageCommand, "IMAGE");
+
+            //Stamps
+            _insertStampButton = new RibbonButton("Stamp", "pack://application:,,,/Resources/Images/Stamp32.png", AddPageObjectToPageCommand, "STAMP");
+            _insertImageStampButton = new RibbonButton("Image Stamp",
+                                                       "pack://application:,,,/Images/PictureStamp.png",
+                                                       AddPageObjectToPageCommand,
+                                                       "IMAGESTAMP"); //TODO: Better Icon
+            _insertGroupStampButton = new RibbonButton("Group Stamp",
+                                                       "pack://application:,,,/Resources/Images/CollectionStamp32.png",
+                                                       AddPageObjectToPageCommand,
+                                                       "GROUPSTAMP");
+            _insertImageGroupStampButton = new RibbonButton("Image Group Stamp",
+                                                            "pack://application:,,,/Images/PictureStamp.png",
+                                                            AddPageObjectToPageCommand,
+                                                            "IMAGEGROUPSTAMP"); //TODO: Better Icon
+            _insertPileButton = new RibbonButton("Pile", "pack://application:,,,/Resources/Images/Pile32.png", AddPageObjectToPageCommand, "PILE");
+
+            //Arrays
+            _insertArrayButton = new RibbonButton("Array", "pack://application:,,,/Resources/Images/Array32.png", AddPageObjectToPageCommand, "ARRAY");
+            _insert10x10ArrayButton = new RibbonButton("10x10 Array",
+                                                       "pack://application:,,,/Resources/Images/PresetArray32.png",
+                                                       AddPageObjectToPageCommand,
+                                                       "10X10");
+            _insertArrayCardButton = new RibbonButton("Array Card",
+                                                      "pack://application:,,,/Resources/Images/ArrayCard32.png",
+                                                      AddPageObjectToPageCommand,
+                                                      "ARRAYCARD");
+            _insertFactorCardButton = new RibbonButton("Factor Card",
+                                                       "pack://application:,,,/Resources/Images/FactorCard32.png",
+                                                       AddPageObjectToPageCommand,
+                                                       "FACTORCARD");
+
+            //Division Templates
+            _insertDivisionTemplateButton = new RibbonButton("Division Tool",
+                                                             "pack://application:,,,/Resources/Images/FuzzyFactorCard32.png",
+                                                             AddPageObjectToPageCommand,
+                                                             "DIVISIONTEMPLATE");
+            _insertDivisionTemplateWithTilesButton = new RibbonButton("Division Tool with Tiles",
+                                                                      "pack://application:,,,/Resources/Images/FuzzyFactorCard32.png",
+                                                                      AddPageObjectToPageCommand,
+                                                                      "DIVISIONTEMPLATEWITHTILES");
+
             //Text
-            _insertTextBoxButton = new RibbonButton("Insert Text", "pack://application:,,,/Images/AddSquare.png", InsertCircleCommand);
+            //TODO: Better Icons
+            _insertTextBoxButton = new RibbonButton("Text", "pack://application:,,,/Images/AddText.png", AddPageObjectToPageCommand, "TEXTBOX");
 
             //Shapes
             //TODO: Better Icons
-            _insertSquareButton = new RibbonButton("Insert Square", "pack://application:,,,/Images/AddSquare.png", InsertCircleCommand);
-            _insertCircleButton = new RibbonButton("Insert Circle", "pack://application:,,,/Images/AddCircle.png", InsertCircleCommand);
-            _insertHorizontalLineButton = new RibbonButton("Insert Horizontal Line",
+            _insertSquareButton = new RibbonButton("Square", "pack://application:,,,/Images/AddSquare.png", AddPageObjectToPageCommand, "SQUARE");
+            _insertCircleButton = new RibbonButton("Circle", "pack://application:,,,/Images/AddCircle.png", AddPageObjectToPageCommand, "CIRCLE");
+            _insertHorizontalLineButton = new RibbonButton("Horizontal Line",
                                                            "pack://application:,,,/Images/HorizontalLineIcon.png",
-                                                           InsertCircleCommand);
-            _insertVerticalLineButton = new RibbonButton("Insert Vertical Line",
+                                                           AddPageObjectToPageCommand,
+                                                           "HORIZONTALLINE");
+            _insertVerticalLineButton = new RibbonButton("Vertical Line",
                                                          "pack://application:,,,/Images/VerticalLineIcon.png",
-                                                         InsertCircleCommand);
-            _insertProtractorButton = new RibbonButton("Insert Protractor", "pack://application:,,,/Images/Protractor64.png", InsertCircleCommand);
+                                                         AddPageObjectToPageCommand,
+                                                         "VERTICALLINE");
+            _insertProtractorButton = new RibbonButton("Protractor",
+                                                       "pack://application:,,,/Images/Protractor64.png",
+                                                       AddPageObjectToPageCommand,
+                                                       "PROTRACTOR");
         }
+
+        private bool _isCheckedEventRunning = false;
 
         private void _button_Checked(object sender, RoutedEventArgs e)
         {
+            _isCheckedEventRunning = true;
             var checkedButton = sender as GroupedRibbonButton;
             if (checkedButton == null)
             {
@@ -98,14 +151,15 @@ namespace Classroom_Learning_Partner.ViewModels
             switch (checkedButton.GroupName)
             {
                 case "PageInteractionMode":
-                    PageInteractionMode = (PageInteractionModes)Enum.Parse(typeof(PageInteractionModes), checkedButton.AssociatedEnumValue);
+                    PageInteractionMode = (PageInteractionModes)Enum.Parse(typeof (PageInteractionModes), checkedButton.AssociatedEnumValue);
                     break;
             }
+            _isCheckedEventRunning = false;
         }
 
         #region Buttons
 
-        private Line Separater
+        public static Line Separater
         {
             get
             {
@@ -189,16 +243,53 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Bindings
 
-        /// <summary>
-        /// Interaction Mode for the current page.
-        /// </summary>
+        /// <summary>Interaction Mode for the current page.</summary>
         public PageInteractionModes PageInteractionMode
         {
             get { return GetValue<PageInteractionModes>(PageInteractionModeProperty); }
-            set { SetValue(PageInteractionModeProperty, value); }
+            set
+            {
+                SetValue(PageInteractionModeProperty, value);
+                if (_isCheckedEventRunning)
+                {
+                    return;
+                }
+
+                switch (value)
+                {
+                    case PageInteractionModes.None:
+                        break;
+                    case PageInteractionModes.Select:
+                        _setSelectModeButton.IsChecked = true;
+                        break;
+                    case PageInteractionModes.Pen:
+                        _setPenModeButton.IsChecked = true;
+                        break;
+                    case PageInteractionModes.Highlighter:
+                        break;
+                    case PageInteractionModes.PenAndSelect:
+                        break;
+                    case PageInteractionModes.Eraser:
+                        _setEraserModeButton.IsChecked = true;
+                        break;
+                    case PageInteractionModes.Lasso:
+                        _setLassoModeButton.IsChecked = true;
+                        break;
+                    case PageInteractionModes.Cut:
+                        _setCutModeButton.IsChecked = true;
+                        break;
+                    case PageInteractionModes.EditObjectProperties:
+                        break;
+                    case PageInteractionModes.DividerCreation:
+                        _setDividerCreationModeButton.IsChecked = true;
+                        break;
+                }
+            }
         }
 
-        public static readonly PropertyData PageInteractionModeProperty = RegisterProperty("PageInteractionMode", typeof (PageInteractionModes), PageInteractionModes.Pen);
+        public static readonly PropertyData PageInteractionModeProperty = RegisterProperty("PageInteractionMode",
+                                                                                           typeof (PageInteractionModes),
+                                                                                           PageInteractionModes.Pen);
 
         #region Commands
 
@@ -209,14 +300,22 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Insert PageObject Commands
 
-        /// <summary>Inserts a circle.</summary>
-        public Command InsertCircleCommand { get; private set; }
+        /// <summary>Adds pageObject to the Current Page.</summary>
+        public Command<string> AddPageObjectToPageCommand { get; private set; }
 
-        private void OnInsertCircleCommandExecute()
+        private void OnAddPageObjectToPageCommandExecute(string pageObjectType)
         {
-            var circle = new Shape(CurrentPage, ShapeType.Ellipse);
-            ACLPPageBaseViewModel.AddPageObjectToPage(circle);
+            switch (pageObjectType)
+            {
+                case "ARRAY":
+                    CLPArrayViewModel.AddNewPageObjectToPage(CurrentPage);
+                    break;
+                default:
+                    break;
+            }
         }
+
+        private bool OnAddPageObjectToPageCanExecute(string pageObjectType) { return true; }
 
         #endregion //Insert PageObject Commands
 
@@ -228,19 +327,19 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             Buttons.Add(_setSelectModeButton);
             Buttons.Add(_setPenModeButton);
-            Buttons.Add(_setEraserModeButton);
+            //Buttons.Add(_setEraserModeButton);
             Buttons.Add(_setLassoModeButton);
             Buttons.Add(_setCutModeButton);
-            Buttons.Add(_setDividerCreationModeButton);
+            //Buttons.Add(_setDividerCreationModeButton);
 
             Buttons.Add(Separater);
 
-            Buttons.Add(_insertSquareButton);
-            Buttons.Add(_insertCircleButton);
-            Buttons.Add(_insertHorizontalLineButton);
-            Buttons.Add(_insertVerticalLineButton);
-            Buttons.Add(_insertProtractorButton);
-
+            Buttons.Add(_insertStampButton);
+            Buttons.Add(_insertGroupStampButton);
+            Buttons.Add(_insertPileButton);
+            Buttons.Add(_insertArrayButton);
+            Buttons.Add(_insertDivisionTemplateButton);
+            Buttons.Add(_insertDivisionTemplateWithTilesButton);
         }
 
         #endregion //Methods
