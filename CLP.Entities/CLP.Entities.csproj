@@ -108,6 +108,7 @@
     <Compile Include="DomainModel\History\ArrayHistoryItems\CLPArrayGridToggleHistoryItem.cs" />
     <Compile Include="DomainModel\History\ArrayHistoryItems\CLPArrayRotateHistoryItem.cs" />
     <Compile Include="DomainModel\History\ArrayHistoryItems\CLPArraySnapHistoryItem.cs" />
+    <Compile Include="DomainModel\PageObjects\Arrays\NumberLine.cs" />
     <Compile Include="DomainModel\PageObjects\PageObject Interfaces\IReporter.cs" />
     <Compile Include="DomainModel\Tags\AnalysisRoutines\ArrayAnalysis.cs" />
     <Compile Include="DomainModel\Tags\AnalysisRoutines\DivisionTemplateAnalysis.cs" />
@@ -183,7 +184,7 @@
     <Compile Include="DomainModel\Tags\Stamps\StampTroubleWithGroupingTag.cs" />
     <Compile Include="DomainModel\Tags\Stamps\TroubleWithMultiplicationTag.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utility\Extentions\GuidExtensions.cs" />
+    <Compile Include="DomainModel\Utility\Extentions\GuidExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Repositories\" />

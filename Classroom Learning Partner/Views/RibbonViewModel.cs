@@ -144,6 +144,7 @@ namespace Classroom_Learning_Partner.ViewModels
             InsertImageContainerStampCommand = new Command(OnInsertImageContainerStampCommandExecute, OnInsertPageObjectCanExecute);
             InsertDivisionPileCommand = new Command(OnInsertDivisionPileCommandExecute, OnInsertPageObjectCanExecute);
             InsertArrayCommand = new Command<string>(OnInsertArrayCommandExecute, OnInsertPageObjectCanExecute);
+            InsertNumberLineCommand = new Command(OnInsertNumberLineCommandExecute, OnInsertPageObjectCanExecute);
             InsertProtractorCommand = new Command(OnInsertProtractorCommandExecute, OnInsertPageObjectCanExecute);
             InsertSquareShapeCommand = new Command(OnInsertSquareShapeCommandExecute, OnInsertPageObjectCanExecute);
             InsertCircleShapeCommand = new Command(OnInsertCircleShapeCommandExecute, OnInsertPageObjectCanExecute);
@@ -2459,6 +2460,30 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             var stamp = new Stamp(CurrentPage, StampTypes.GroupStamp);
             ACLPPageBaseViewModel.AddPageObjectToPage(stamp);
+        }
+
+        public Command InsertNumberLineCommand { get; private set; }
+
+        private void OnInsertNumberLineCommandExecute()
+        {
+            var keyPad = new KeypadWindowView("How long is your number line?", 41)
+                         {
+                             Owner = Application.Current.MainWindow,
+                             WindowStartupLocation = WindowStartupLocation.Manual,
+                             Top = 100,
+                             Left = 100
+                         };
+            keyPad.ShowDialog();
+            if (keyPad.DialogResult != true ||
+                keyPad.NumbersEntered.Text.Length <= 0)
+            {
+                return;
+            }
+
+            var numberLineSize = Int32.Parse(keyPad.NumbersEntered.Text);
+
+            var numberLine = new NumberLine(CurrentPage, numberLineSize);
+            ACLPPageBaseViewModel.AddPageObjectToPage(numberLine);
         }
 
         /// <summary>
