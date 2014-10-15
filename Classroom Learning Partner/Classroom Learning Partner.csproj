@@ -534,6 +534,9 @@
     <Compile Include="Views\RibbonView.xaml.cs">
       <DependentUpon>RibbonView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Ribbon\MajorRibbonView.xaml.cs">
+      <DependentUpon>MajorRibbonView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Workspaces\BlankWorkspaceView.xaml.cs">
       <DependentUpon>BlankWorkspaceView.xaml</DependentUpon>
     </Compile>
@@ -836,6 +839,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Ribbon\MajorRibbonView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Workspaces\BlankWorkspaceView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -933,6 +940,10 @@
     <Resource Include="Images\Trash.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CLP.CustomControls\CLP.CustomControls.csproj">
+      <Project>{9a23526f-813c-428b-9480-e83b90efc3c8}</Project>
+      <Name>CLP.CustomControls</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CLP.Entities\CLP.Entities.csproj">
       <Project>{c6b95a31-7045-4c7e-a72d-c03468e20b20}</Project>
       <Name>CLP.Entities</Name>
@@ -977,6 +988,21 @@
     <Resource Include="Resources\Images\NumberLine16.png" />
     <Resource Include="Resources\Images\NumberLine32.png" />
     <Resource Include="Resources\Images\NumberLine64.png" />
+    <Resource Include="Resources\Images\Pile128.png" />
+    <Resource Include="Resources\Images\Pile16.png" />
+    <Resource Include="Resources\Images\Pile256.png" />
+    <Resource Include="Resources\Images\Pile32.png" />
+    <Resource Include="Resources\Images\Pile64.png" />
+    <Resource Include="Resources\Images\CLPMenuBackIconBlack128.png" />
+    <Resource Include="Resources\Images\CLPMenuBackIconBlack64.png" />
+    <Resource Include="Resources\Images\CLPMenuBackIconWhite128.png" />
+    <Resource Include="Resources\Images\CLPMenuBackIconWhite64.png" />
+    <Resource Include="Resources\Images\CLPMenuIcon128.png" />
+    <Resource Include="Resources\Images\CLPMenuIcon256.png" />
+    <Resource Include="Resources\Images\CLPMenuIcon64.png" />
+    <Resource Include="Resources\Images\CLPMenuIconWhite128.png" />
+    <Resource Include="Resources\Images\CLPMenuIconWhite256.png" />
+    <Resource Include="Resources\Images\CLPMenuIconWhite64.png" />
     <Resource Include="Resources\Images\PartiallyCorrect16.png" />
     <Resource Include="Resources\Images\PartiallyCorrect32.png" />
     <Resource Include="Resources\Images\PartiallyCorrect64.png" />

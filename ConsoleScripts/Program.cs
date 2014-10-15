@@ -75,6 +75,11 @@ namespace ConsoleScripts
                     page.Tags = null;
                     page.Tags = new ObservableCollection<ITag>(savedTags);
 
+                    if (page.Owner == null)
+                    {
+                        page.Owner = notebook.Owner;
+                    }
+
                     if(page.Owner.ID != Person.Author.ID)
                     {
                        // ArrayAnalysis.AnalyzeHistory(page);
@@ -82,9 +87,20 @@ namespace ConsoleScripts
 
                         if(page.VersionIndex != 0)
                         {
-                            page.AddTag(new DottedTag(page, Origin.TeacherPageGenerated, DottedTag.AcceptedValues.Undotted));
-                            page.AddTag(new StarredTag(page, Origin.TeacherPageGenerated, StarredTag.AcceptedValues.Unstarred));
-                            page.AddTag(new CorrectnessTag(page, Origin.TeacherPageGenerated, Correctness.Unknown, false));
+                            if (!page.Tags.Any(tag => tag is StarredTag))
+                            {
+                                page.AddTag(new StarredTag(page, Origin.TeacherPageGenerated, StarredTag.AcceptedValues.Unstarred));
+                            }
+
+                            if (!page.Tags.Any(tag => tag is DottedTag))
+                            {
+                                page.AddTag(new DottedTag(page, Origin.TeacherPageGenerated, DottedTag.AcceptedValues.Undotted));
+                            }
+
+                            if (!page.Tags.Any(tag => tag is CorrectnessTag))
+                            {
+                                page.AddTag(new CorrectnessTag(page, Origin.TeacherPageGenerated, Correctness.Unknown, false));
+                            }
                         }
                     }
 

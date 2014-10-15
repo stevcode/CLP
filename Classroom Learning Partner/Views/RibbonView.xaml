@@ -324,11 +324,11 @@
                                     IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
                                     IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionMode.Scissors}}" />
 
-                <!--<RibbonToggleButton Label="Lasso"
+                <RibbonToggleButton Label="Lasso"
                                     LargeImageSource="pack://application:,,,/Resources/Images/Lasso32.png"
                                     SmallImageSource="pack://application:,,,/Resources/Images/Lasso16.png"
                                     IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
-                                    IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionMode.Lasso}}" />-->
+                                    IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionMode.Lasso}}" />
 
             </RibbonGroup>
 
@@ -348,6 +348,11 @@
                               LargeImageSource="pack://application:,,,/Resources/Images/NumberLine32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/NumberLine16.png"
                               Command="{Binding InsertNumberLineCommand}" />
+
+                <RibbonButton Label="Pile"
+                              LargeImageSource="pack://application:,,,/Resources/Images/Pile32.png"
+                              SmallImageSource="pack://application:,,,/Resources/Images/Pile16.png"
+                              Command="{Binding InsertDivisionPileCommand}" />
 
                 <!--Array + Divider-->
                 <RibbonButton Label="Array"
@@ -385,8 +390,6 @@
                               SmallImageSource="pack://application:,,,/Resources/Images/FuzzyFactorCard16.png"
                               Command="{Binding InsertArrayCommand}"
                               CommandParameter="FFCREMAINDER" />
-
-                
 
             </RibbonGroup>
 

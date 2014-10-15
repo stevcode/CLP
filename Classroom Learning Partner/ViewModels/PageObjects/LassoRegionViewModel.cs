@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls.Primitives;
-using Catel.Data;
+using System.Windows.Ink;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Entities;
@@ -15,39 +15,15 @@ namespace Classroom_Learning_Partner.ViewModels
         public LassoRegionViewModel(LassoRegion lassoRegion)
         {
             PageObject = lassoRegion;
-            
+
             RemovePageObjectsCommand = new Command(OnRemovePageObjectsCommandExecute);
             DuplicateCommand = new Command(OnDuplicateCommandExecute);
             UnselectRegionCommand = new Command(OnUnselectRegionCommandExecute);
 
-            DragLassoCommand = new Command<DragDeltaEventArgs>(OnDragLassoCommandExecute);
             DragStartLassoCommand = new Command<DragStartedEventArgs>(OnDragStartLassoCommandExecute);
+            DragLassoCommand = new Command<DragDeltaEventArgs>(OnDragLassoCommandExecute);
             DragStopLassoCommand = new Command<DragCompletedEventArgs>(OnDragStopLassoCommandExecute);
         }
-
-        /// <summary>
-        /// List of all the IDs of the <see cref="IPageObject" />s inside the <see cref="LassoRegion" />.
-        /// </summary>
-        [ViewModelToModel("PageObject")]
-        public List<string> ContainedPageObjectIDs
-        {
-            get { return GetValue<List<string>>(ContainedPageObjectIDsProperty); }
-            set { SetValue(ContainedPageObjectIDsProperty, value); }
-        }
-
-        public static readonly PropertyData ContainedPageObjectIDsProperty = RegisterProperty("ContainedPageObjectIDs", typeof(List<string>), () => new List<string>());
-
-        /// <summary>
-        /// List of all the IDs of the <see cref="StrokeDTO" />s inside the <see cref="LassoRegion" />.
-        /// </summary>
-        [ViewModelToModel("PageObject")]
-        public List<string> ContainedInkStrokeIDs
-        {
-            get { return GetValue<List<string>>(ContainedInkStrokeIDsProperty); }
-            set { SetValue(ContainedInkStrokeIDsProperty, value); }
-        }
-
-        public static readonly PropertyData ContainedInkStrokeIDsProperty = RegisterProperty("ContainedInkStrokeIDs", typeof(List<string>), () => new List<string>());
 
         public override void ClearAdorners()
         {
@@ -57,140 +33,168 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Commands
 
-        /// <summary>
-        /// Removes pageObjects from page when Delete button is pressed.
-        /// </summary>
+        /// <summary>Removes pageObjects from page when Delete button is pressed.</summary>
         public Command RemovePageObjectsCommand { get; set; }
 
         private void OnRemovePageObjectsCommandExecute()
         {
             var region = PageObject as LassoRegion;
-            var pageObjectsToRemove = region.ContainedPageObjectIDs.Select(id => region.ParentPage.GetPageObjectByID(id)).Where(pageObject => pageObject != null).ToList();
+            if (region == null)
+            {
+                return;
+            }
 
-            ACLPPageBaseViewModel.RemovePageObjectsFromPage(region.ParentPage, pageObjectsToRemove);
+            if (region.LassoedStrokes.Any())
+            {
+                ACLPPageBaseViewModel.RemoveStrokes(region.ParentPage, region.LassoedStrokes);
+            }
+
+            if (region.LassoedPageObjects.Any())
+            {
+                var pageObjectsToRemove = region.LassoedPageObjects.ToList();
+
+                ACLPPageBaseViewModel.RemovePageObjectsFromPage(region.ParentPage, pageObjectsToRemove);
+            }
+            
             ACLPPageBaseViewModel.RemovePageObjectFromPage(PageObject, false);
         }
 
-        /// <summary>
-        /// Brings up a menu to make multiple copies of page objects in the region
-        /// </summary>
+        /// <summary>Brings up a menu to make multiple copies of page objects in the region</summary>
         public Command DuplicateCommand { get; private set; }
 
         private void OnDuplicateCommandExecute()
         {
-            //var keyPad = new KeypadWindowView("How many copies?", 21)
-            //             {
-            //                 Owner = Application.Current.MainWindow,
-            //                 WindowStartupLocation = WindowStartupLocation.Manual,
-            //                 Top = 100,
-            //                 Left = 100
-            //             };
-            //keyPad.ShowDialog();
-            //if(keyPad.DialogResult != true ||
-            //   keyPad.NumbersEntered.Text.Length <= 0) { return; }
-            //var numberOfCopies = Int32.Parse(keyPad.NumbersEntered.Text);
+            var lassoRegion = PageObject as LassoRegion;
+            if (lassoRegion == null)
+            {
+                return;
+            }
 
-            //double xPosition = 50.0;
-            //double yPosition = YPosition;
-            //const double GAP = 35.0;
-            //if(XPosition + Width * (numberOfCopies + 1) + GAP * numberOfCopies <= PageObject.ParentPage.Width) { xPosition = XPosition + Width + GAP; }
-            //else if(YPosition + 2 * Height < PageObject.ParentPage.Height) { yPosition = YPosition + Height; }
-            //foreach(var lassoedPageObject in PageObject.GetPageObjectsOverPageObject())
-            //{
-            //    for(int i = 0; i < numberOfCopies; i++)
-            //    {
-            //        var duplicatePageObject = lassoedPageObject.Duplicate();
-            //        double xOffset = lassoedPageObject.XPosition - XPosition;
-            //        double yOffset = lassoedPageObject.YPosition - YPosition;
+            var keyPad = new KeypadWindowView("How many copies?", 21)
+                         {
+                             Owner = Application.Current.MainWindow,
+                             WindowStartupLocation = WindowStartupLocation.Manual,
+                             Top = 100,
+                             Left = 100
+                         };
+            keyPad.ShowDialog();
+            if (keyPad.DialogResult != true ||
+               keyPad.NumbersEntered.Text.Length <= 0) { return; }
+            var numberOfCopies = Int32.Parse(keyPad.NumbersEntered.Text);
 
-            //        if(xPosition + Width * (i + 1) + GAP * i <= PageObject.ParentPage.Width)
-            //        {
-            //            duplicatePageObject.XPosition = xPosition + xOffset + i * (Width + GAP);
-            //            duplicatePageObject.YPosition = yPosition + yOffset;
-            //        }
-            //        else
-            //        { ACLPPageObjectBase.ApplyDistinctPosition(duplicatePageObject); }
-            //        ACLPPageBaseViewModel.AddPageObjectToPage(PageObject.ParentPage, duplicatePageObject, true);
-            //        //TODO: Steve - add MassPageObjectAdd history item and MassPageObjectRemove history item.
-            //    }
-            //}
+            var initialXPosition = XPosition + Width + 10.0;
+            var initialYPosition = YPosition;
+
+            var pageObjectCopiesToAdd = new List<IPageObject>();
+            for (var i = 0; i < numberOfCopies; i++)
+            {
+                foreach (var pageObject in lassoRegion.LassoedPageObjects.Where(x => !APageObjectBase.IsPageObjectAnAcceptedPageObject(x)))
+                {
+                    var newPageObject = pageObject.Duplicate();
+                    newPageObject.XPosition = initialXPosition;
+                    newPageObject.YPosition = initialYPosition;
+                    if (initialXPosition + 2 * newPageObject.Width + 5 < PageObject.ParentPage.Width)
+                    {
+                        initialXPosition += newPageObject.Width + 5;
+                    }
+                    else if (initialYPosition + 2 * newPageObject.Height + 5 < PageObject.ParentPage.Height)
+                    {
+                        initialXPosition = 25;
+                        initialYPosition += newPageObject.Height + 5;
+                    }
+                    pageObjectCopiesToAdd.Add(newPageObject);
+
+                    var acceptor = pageObject as IPageObjectAccepter;
+                    var newAcceptor = newPageObject as IPageObjectAccepter;
+                    if (acceptor != null &&
+                        newAcceptor != null)
+                    {
+                        newAcceptor.AcceptedPageObjectIDs.Clear();
+                        newAcceptor.AcceptedPageObjects.Clear();
+                        foreach (var innerPageObject in acceptor.AcceptedPageObjects)
+                        {
+                            var newInnerPageObject = innerPageObject.Duplicate() as IPageObjectAccepter;
+                            if (newInnerPageObject == null)
+                            {
+                                continue;
+                            }
+                            newInnerPageObject.XPosition = newPageObject.XPosition + (innerPageObject.XPosition - pageObject.XPosition);
+                            newInnerPageObject.YPosition = newPageObject.YPosition + (innerPageObject.YPosition - pageObject.YPosition);
+                            newAcceptor.AcceptedPageObjectIDs.Add(newInnerPageObject.ID);
+                            newAcceptor.AcceptedPageObjects.Add(newInnerPageObject);
+                            pageObjectCopiesToAdd.Add(newInnerPageObject);
+                        }
+                    }
+                }
+            }
+
+            ACLPPageBaseViewModel.AddPageObjectsToPage(lassoRegion.ParentPage, pageObjectCopiesToAdd);
         }
 
-        /// <summary>
-        /// Unselects the region
-        /// </summary>
+        /// <summary>Unselects the region</summary>
         public Command UnselectRegionCommand { get; private set; }
 
-        private void OnUnselectRegionCommandExecute()
+        private void OnUnselectRegionCommandExecute() { ACLPPageBaseViewModel.RemovePageObjectFromPage(PageObject, false); }
+
+        /// <summary>Gets the DragStartPageObjectCommand command.</summary>
+        public Command<DragStartedEventArgs> DragStartLassoCommand { get; set; }
+
+        /// <summary>Method to invoke when the DragStartPageObjectCommand command is executed.</summary>
+        private void OnDragStartLassoCommandExecute(DragStartedEventArgs e)
         {
-            ACLPPageBaseViewModel.RemovePageObjectFromPage(PageObject, false);
+            var region = PageObject as LassoRegion;
+            if (region == null)
+            {
+                return;
+            }
+
+            PageObject.ParentPage.History.BeginBatch(new PageObjectsMoveBatchHistoryItem(PageObject.ParentPage,
+                                                                                         App.MainWindowViewModel.CurrentUser,
+                                                                                         region.LassoedPageObjects.Select(x => x.ID).ToList(),
+                                                                                         new Point(PageObject.XPosition, PageObject.YPosition)));
         }
 
-        /// <summary>
-        /// Gets the DragPageObjectCommand command.
-        /// </summary>
+        /// <summary>Gets the DragPageObjectCommand command.</summary>
         public Command<DragDeltaEventArgs> DragLassoCommand { get; set; }
 
         private void OnDragLassoCommandExecute(DragDeltaEventArgs e)
         {
+            var oldXPos = PageObject.XPosition;
+            var oldYPos = PageObject.YPosition;
             var parentPage = PageObject.ParentPage;
 
             var newX = Math.Max(0, PageObject.XPosition + e.HorizontalChange);
-            newX = Math.Min(newX, parentPage.Width - PageObject.Width);
+            newX = Math.Min(newX, parentPage.Width - Width);
             var newY = Math.Max(0, PageObject.YPosition + e.VerticalChange);
-            newY = Math.Min(newY, parentPage.Height - PageObject.Height);
+            newY = Math.Min(newY, parentPage.Height - Height);
 
-            var oldXPos = PageObject.XPosition;
-            var oldYPos = PageObject.YPosition;
             var xDelta = newX - oldXPos;
             var yDelta = newY - oldYPos;
 
             var xDiff = Math.Abs(xDelta);
             var yDiff = Math.Abs(yDelta);
             var diff = xDiff + yDiff;
-            //if(diff > PageHistory.SAMPLE_RATE)
-            //{
-            //    var batch = pageObject.ParentPage.History.CurrentHistoryBatch;
-            //    if(batch is PageObjectMoveBatchHistoryItem)
-            //    {
-            //        (batch as PageObjectMoveBatchHistoryItem).AddPositionPointToBatch(pageObject.ID, new Point(newX, newY));
-            //    }
-            //    else
-            //    {
-            //        Logger.Instance.WriteToLog("Error: Current Batch not ChangePositionBatch.");
-            //        var batchHistoryItem = pageObject.ParentPage.History.EndBatch();
-            //        ACLPPageBaseViewModel.AddHistoryItemToPage(pageObject.ParentPage, batchHistoryItem, true);
-            //    }
-            //}
+            if (diff > PageHistory.SAMPLE_RATE)
+            {
+                var batch = PageObject.ParentPage.History.CurrentHistoryBatch;
+                if (batch is PageObjectsMoveBatchHistoryItem)
+                {
+                    (batch as PageObjectsMoveBatchHistoryItem).AddPositionPointToBatch(new Point(newX, newY));
+                }
+                else
+                {
+                    Logger.Instance.WriteToLog("Error: Current Batch not ChangePositionBatch.");
+                    var batchHistoryItem = PageObject.ParentPage.History.EndBatch();
+                    ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, batchHistoryItem, true);
+                }
+            }
 
             PageObject.XPosition = newX;
             PageObject.YPosition = newY;
-
-            //foreach(var pageObject in ContainedPageObjectIDs.Select(parentPage.GetPageObjectByID))
-            //{
-            //    ChangePageObjectPosition(PageObject, newX, newY, false);
-            //}
+            PageObject.OnMoving(oldXPos, oldYPos);
         }
 
-        /// <summary>
-        /// Gets the DragStartPageObjectCommand command.
-        /// </summary>
-        public Command<DragStartedEventArgs> DragStartLassoCommand { get; set; }
-
-        /// <summary>
-        /// Method to invoke when the DragStartPageObjectCommand command is executed.
-        /// </summary>
-        private void OnDragStartLassoCommandExecute(DragStartedEventArgs e)
-        {
-            PageObject.ParentPage.History.BeginBatch(new PageObjectsMoveBatchHistoryItem(PageObject.ParentPage,
-                                                                                         App.MainWindowViewModel.CurrentUser,
-                                                                                         ContainedPageObjectIDs,
-                                                                                         new Point(PageObject.XPosition, PageObject.YPosition)));
-        }
-
-        /// <summary>
-        /// Gets the DragStopPageObjectCommand command.
-        /// </summary>
+        /// <summary>Gets the DragStopPageObjectCommand command.</summary>
         public Command<DragCompletedEventArgs> DragStopLassoCommand { get; set; }
 
         private void OnDragStopLassoCommandExecute(DragCompletedEventArgs e)
@@ -199,10 +203,9 @@ namespace Classroom_Learning_Partner.ViewModels
             var initialY = YPosition;
 
             var batch = PageObject.ParentPage.History.CurrentHistoryBatch;
-            if(batch is PageObjectsMoveBatchHistoryItem)
+            if (batch is PageObjectsMoveBatchHistoryItem)
             {
-                (batch as PageObjectsMoveBatchHistoryItem).AddPositionPointToBatch(new Point(PageObject.XPosition,
-                                                                                           PageObject.YPosition));
+                (batch as PageObjectsMoveBatchHistoryItem).AddPositionPointToBatch(new Point(PageObject.XPosition, PageObject.YPosition));
             }
             var batchHistoryItem = PageObject.ParentPage.History.EndBatch();
             ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, batchHistoryItem, true);

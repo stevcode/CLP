@@ -630,6 +630,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         protected void PageObjects_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
+            Page.UpdateAllReporters();
             if(IsPagePreview || PageInteractionMode == PageInteractionMode.None || History.IsAnimating)
             {
                 return;
@@ -783,6 +784,10 @@ namespace Classroom_Learning_Partner.ViewModels
                viewModel is RibbonViewModel)
             {
                 PageInteractionMode = (viewModel as RibbonViewModel).PageInteractionMode;
+                if (PageInteractionMode == PageInteractionMode.Lasso)
+                {
+                    DefaultDA.Color = Colors.DarkGoldenrod;
+                }
             }
 
             base.OnViewModelPropertyChanged(viewModel, propertyName);
@@ -940,7 +945,6 @@ namespace Classroom_Learning_Partner.ViewModels
             PageObjects.CollectionChanged -= PageObjects_CollectionChanged;
 
             var lassoedPageObjects = new List<IPageObject>();
-            var lassoedStrokes = new List<Stroke>();
 
             var strokeGeometry = new PathGeometry();
             var pathFigure = new PathFigure
@@ -988,38 +992,65 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
 
-            if(lassoedPageObjects.Count > 0)
+            var lassoedStrokes = InkStrokes.Where(inkStroke => inkStroke.HitTest(stroke.StylusPoints.Select(x => x.ToPoint()).ToList(), 90)).ToList();
+
+            var pageObjectBoundsX1Position = Page.Width;
+            var pageObjectBoundsY1Position = Page.Height;
+            var pageObjectBoundsX2Position = 0.0;
+            var pageObjectBoundsY2Position = 0.0;
+
+            if(lassoedPageObjects.Any())
             {
-                var xPosition = lassoedPageObjects.First().XPosition;
-                var yPosition = lassoedPageObjects.First().YPosition;
-                var endXPosition = lassoedPageObjects.First().XPosition + lassoedPageObjects.First().Width;
-                var endYPosition = lassoedPageObjects.First().YPosition + lassoedPageObjects.First().Height;
+                pageObjectBoundsX1Position = lassoedPageObjects.First().XPosition;
+                pageObjectBoundsY1Position = lassoedPageObjects.First().YPosition;
+                pageObjectBoundsX2Position = lassoedPageObjects.First().XPosition + lassoedPageObjects.First().Width;
+                pageObjectBoundsY2Position = lassoedPageObjects.First().YPosition + lassoedPageObjects.First().Height;
                 foreach(var pageObject in lassoedPageObjects)
                 {
-                    if(pageObject.XPosition < xPosition)
+                    if (pageObject.XPosition < pageObjectBoundsX1Position)
                     {
-                        xPosition = pageObject.XPosition;
+                        pageObjectBoundsX1Position = pageObject.XPosition;
                     }
-                    if(pageObject.YPosition < yPosition)
+                    if (pageObject.YPosition < pageObjectBoundsY1Position)
                     {
-                        yPosition = pageObject.YPosition;
+                        pageObjectBoundsY1Position = pageObject.YPosition;
                     }
-                    if(pageObject.XPosition + pageObject.Width > endXPosition)
+                    if (pageObject.XPosition + pageObject.Width > pageObjectBoundsX2Position)
                     {
-                        endXPosition = pageObject.XPosition + pageObject.Width;
+                        pageObjectBoundsX2Position = pageObject.XPosition + pageObject.Width;
                     }
-                    if(pageObject.YPosition + pageObject.Height > endYPosition)
+                    if (pageObject.YPosition + pageObject.Height > pageObjectBoundsY2Position)
                     {
-                        endYPosition = pageObject.YPosition + pageObject.Height;
+                        pageObjectBoundsY2Position = pageObject.YPosition + pageObject.Height;
                     }
                 }
+            }
 
-                var pageObjectIDs = lassoedPageObjects.Select(pageObject => pageObject.ID).ToList();
-                var strokeIDs = lassoedStrokes.Select(s => s.GetStrokeID()).ToList();
-                var width = endXPosition - xPosition;
-                var height = endYPosition - yPosition;
+            var strokeBoundsX1Position = Page.Width;
+            var strokeBoundsY1Position = Page.Height;
+            var strokeBoundsX2Position = 0.0;
+            var strokeBoundsY2Position = 0.0;
 
-                var region = new LassoRegion(Page, pageObjectIDs, strokeIDs, xPosition, yPosition, height, width);
+            if (lassoedStrokes.Any())
+            {
+                foreach (var bounds in lassoedStrokes.Select(s => s.GetBounds()))
+                {
+                    strokeBoundsX1Position = Math.Min(strokeBoundsX1Position, bounds.Left);
+                    strokeBoundsY1Position = Math.Min(strokeBoundsY1Position, bounds.Top);
+                    strokeBoundsX2Position = Math.Max(strokeBoundsX2Position, bounds.Right);
+                    strokeBoundsY2Position = Math.Max(strokeBoundsY2Position, bounds.Bottom);
+                }
+            }
+
+            if (lassoedPageObjects.Any() ||
+                lassoedStrokes.Any())
+            {
+                var xPosition = Math.Min(pageObjectBoundsX1Position, strokeBoundsX1Position);
+                var yPosition = Math.Min(pageObjectBoundsY1Position, strokeBoundsY1Position);
+                var width = Math.Max(pageObjectBoundsX2Position, strokeBoundsX2Position) - xPosition;
+                var height = Math.Max(pageObjectBoundsY2Position, strokeBoundsY2Position) - yPosition;
+
+                var region = new LassoRegion(Page, lassoedPageObjects, new StrokeCollection(lassoedStrokes), xPosition, yPosition, height, width);
                 AddPageObjectToPage(region, false);
             }
 
@@ -1072,7 +1103,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        private void RemoveStroke(IEnumerable<Stroke> removedStrokes, IEnumerable<Stroke> addedStrokes)
+        public void RemoveStroke(IEnumerable<Stroke> removedStrokes, IEnumerable<Stroke> addedStrokes)
         {
             try
             {
@@ -1122,6 +1153,18 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Page Interaction methods
 
         #region Static Methods
+
+        public static void RemoveStrokes(CLPPage page, IEnumerable<Stroke> strokesToRemove)
+        {
+            var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(page).First(x => (x is ACLPPageBaseViewModel) && !(x as ACLPPageBaseViewModel).IsPagePreview) as ACLPPageBaseViewModel;
+            if (pageViewModel == null)
+            {
+                return;
+            }
+            var removedStrokes = strokesToRemove as IList<Stroke> ?? strokesToRemove.ToList();
+            page.InkStrokes.Remove(new StrokeCollection(removedStrokes));
+            pageViewModel.RemoveStroke(removedStrokes, new List<Stroke>());
+        }
 
         public static void TakePageThumbnail(CLPPage page)
         {
@@ -1270,7 +1313,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 Logger.Instance.WriteToLog("ParentPage for pageObject not set in AddPageObjectToPage().");
                 return;
             }
-            if(String.IsNullOrEmpty(pageObject.CreatorID))
+            if(string.IsNullOrEmpty(pageObject.CreatorID))
             {
                 pageObject.CreatorID = App.MainWindowViewModel.CurrentUser.ID;
             }
@@ -1306,7 +1349,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var pageObjectIDs = new List<string>();
             foreach(var pageObject in pageObjects)
             {
-                if(String.IsNullOrEmpty(pageObject.CreatorID))
+                if(string.IsNullOrEmpty(pageObject.CreatorID))
                 {
                     pageObject.CreatorID = App.MainWindowViewModel.CurrentUser.ID;
                 }

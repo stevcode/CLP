@@ -142,6 +142,7 @@ namespace Classroom_Learning_Partner.ViewModels
             InsertImageStampCommand = new Command(OnInsertImageStampCommandExecute, OnInsertPageObjectCanExecute);
             InsertBlankContainerStampCommand = new Command(OnInsertBlankContainerStampCommandExecute, OnInsertPageObjectCanExecute);
             InsertImageContainerStampCommand = new Command(OnInsertImageContainerStampCommandExecute, OnInsertPageObjectCanExecute);
+            InsertDivisionPileCommand = new Command(OnInsertDivisionPileCommandExecute, OnInsertPageObjectCanExecute);
             InsertArrayCommand = new Command<string>(OnInsertArrayCommandExecute, OnInsertPageObjectCanExecute);
             InsertNumberLineCommand = new Command(OnInsertNumberLineCommandExecute, OnInsertPageObjectCanExecute);
             InsertProtractorCommand = new Command(OnInsertProtractorCommandExecute, OnInsertPageObjectCanExecute);
@@ -2361,7 +2362,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnInsertImageStampCommandExecute()
         {
-            CreateImageStamp(false);
+            CreateImageStamp(StampTypes.GeneralStamp);
         }
 
         /// <summary>
@@ -2371,10 +2372,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnInsertImageContainerStampCommandExecute()
         {
-            CreateImageStamp(true);
+            CreateImageStamp(StampTypes.GroupStamp);
         }
 
-        private void CreateImageStamp(bool isCollectionStamp)
+        private void CreateImageStamp(StampTypes stampType)
         {
             // Configure open file dialog box
             var dlg = new Microsoft.Win32.OpenFileDialog
@@ -2429,7 +2430,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 var page = CurrentPage;
 
-                var stamp = new Stamp(page, imageHashID, isCollectionStamp);
+                var stamp = new Stamp(page, imageHashID, stampType);
 
                 ACLPPageBaseViewModel.AddPageObjectToPage(stamp);
             }
@@ -2446,7 +2447,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnInsertBlankStampCommandExecute()
         {
-            var stamp = new Stamp(CurrentPage, false);
+            var stamp = new Stamp(CurrentPage, StampTypes.GeneralStamp);
             ACLPPageBaseViewModel.AddPageObjectToPage(stamp);
         }
 
@@ -2457,7 +2458,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnInsertBlankContainerStampCommandExecute()
         {
-            var stamp = new Stamp(CurrentPage, true);
+            var stamp = new Stamp(CurrentPage, StampTypes.GroupStamp);
             ACLPPageBaseViewModel.AddPageObjectToPage(stamp);
         }
 
@@ -2483,6 +2484,26 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var numberLine = new NumberLine(CurrentPage, numberLineSize);
             ACLPPageBaseViewModel.AddPageObjectToPage(numberLine);
+        }
+
+        /// <summary>
+        /// Inserts a Division Pile.
+        /// </summary>
+        public Command InsertDivisionPileCommand { get; private set; }
+
+        private void OnInsertDivisionPileCommandExecute()
+        {
+            var pageObjectsToAdd = new List<IPageObject>();
+            var observerStamp = new Stamp(CurrentPage, StampTypes.ObservingStamp);
+            observerStamp.YPosition = 150;
+            pageObjectsToAdd.Add(observerStamp);
+            var emptyGroupStamp = new Stamp(CurrentPage, StampTypes.EmptyGroupStamp)
+            {
+                XPosition = observerStamp.XPosition + observerStamp.Width + 50,
+                YPosition = observerStamp.YPosition
+            };
+            pageObjectsToAdd.Add(emptyGroupStamp);
+            ACLPPageBaseViewModel.AddPageObjectsToPage(CurrentPage, pageObjectsToAdd);
         }
 
         /// <summary>
