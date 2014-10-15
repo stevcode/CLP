@@ -15,12 +15,12 @@ namespace CLP.CustomControls
             DefaultStyleKeyProperty.OverrideMetadata(typeof (GroupedRibbonButton), new FrameworkPropertyMetadata(typeof (GroupedRibbonButton)));
         }
 
-        public GroupedRibbonButton(string text, string groupName, string packUri, ICommand command)
+        public GroupedRibbonButton(string text, string groupName, string packUri, string enumValue)
         {
             Text = text;
             GroupName = groupName;
             LargeImageSource = new ImageSourceConverter().ConvertFromString(packUri) as ImageSource;
-            Command = command;
+            AssociatedEnumValue = enumValue;
 
             var dict = new ResourceDictionary();
             var uri = new Uri(@"pack://application:,,,/Resources/CLPBrushes.xaml");
@@ -54,6 +54,18 @@ namespace CLP.CustomControls
                                                                                              typeof (string),
                                                                                              typeof (GroupedRibbonButton),
                                                                                              new UIPropertyMetadata(null));
+
+        /// <summary>EnumValue compared against when IsChecked == true.</summary>
+        public string AssociatedEnumValue
+        {
+            get { return (string)GetValue(AssociatedEnumValueProperty); }
+            set { SetValue(AssociatedEnumValueProperty, value); }
+        }
+
+        public static readonly DependencyProperty AssociatedEnumValueProperty = DependencyProperty.Register("AssociatedEnumValue",
+                                                                                                            typeof (string),
+                                                                                                            typeof (GroupedRibbonButton),
+                                                                                                            new UIPropertyMetadata(null));
 
         #endregion //Dependency Properties
     }

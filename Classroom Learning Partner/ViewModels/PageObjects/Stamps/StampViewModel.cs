@@ -253,8 +253,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 MessageBox.Show(
                                 "What are you counting on the stamp?  Please click the questionmark on the line below the stamp before making copies.",
                                 "What are you counting?");
-                App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.Pen;
-                App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.Select;
+                App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionModes.Pen;
+                App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionModes.Select;
                 return;
             }
 
@@ -442,8 +442,8 @@ namespace Classroom_Learning_Partner.ViewModels
             else 
             {
                 MessageBox.Show("What are you counting on the stamp?  Please click the questionmark on the line below the stamp before making copies.", "What are you counting?");
-                App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.Pen;
-                App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.Select;
+                App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionModes.Pen;
+                App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionModes.Select;
                 _copyFailed = true;
             }  
         }

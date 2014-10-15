@@ -38,29 +38,38 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void InitializeButtons()
         {
-            var dict = new ResourceDictionary();
-            var uri = new Uri(@"pack://application:,,,/Resources/CLPBrushes.xaml");
-            dict.Source = uri;
-            var grayEdgeColor = dict["GrayEdgeColor"] as Brush;
-
-            //Separater
-            _separater = new Line
-                         {
-                             Y1 = 0,
-                             Y2 = 1,
-                             Stretch = Stretch.Fill,
-                             Margin = new Thickness(2),
-                             Stroke = grayEdgeColor,
-                             StrokeThickness = 1
-                         };
-
             //PageInteractionMode Toggles
-            _setSelectModeButton = new GroupedRibbonButton("Select", "PageInteractionMode", "pack://application:,,,/Resources/Images/Hand32.png", null);
-            _setPenModeButton = new GroupedRibbonButton("Pen", "PageInteractionMode", "pack://application:,,,/Resources/Images/Pen32.png", null);
-            _setEraserModeButton = new GroupedRibbonButton("Eraser", "PageInteractionMode", "pack://application:,,,/Resources/Images/Hand32.png", null);
-            _setLassoModeButton = new GroupedRibbonButton("Lasso", "PageInteractionMode", "pack://application:,,,/Resources/Images/Lasso32.png", null);
-            _setCutModeButton = new GroupedRibbonButton("Cut", "PageInteractionMode", "pack://application:,,,/Resources/Images/Scissors32.png", null);
-            _setDividerCreationModeButton = new GroupedRibbonButton("Divider", "PageInteractionMode", "pack://application:,,,/Resources/Images/Hand32.png", null);
+            _setSelectModeButton = new GroupedRibbonButton("Select",
+                                                           "PageInteractionMode",
+                                                           "pack://application:,,,/Resources/Images/Hand32.png",
+                                                           PageInteractionModes.Select.ToString());
+            _setSelectModeButton.Checked += _button_Checked;
+            _setPenModeButton = new GroupedRibbonButton("Pen",
+                                                        "PageInteractionMode",
+                                                        "pack://application:,,,/Resources/Images/Pen32.png",
+                                                        PageInteractionModes.Pen.ToString());
+            _setPenModeButton.Checked += _button_Checked;
+            _setPenModeButton.IsChecked = true;
+            _setEraserModeButton = new GroupedRibbonButton("Eraser",
+                                                           "PageInteractionMode",
+                                                           "pack://application:,,,/Resources/Images/Hand32.png",
+                                                           PageInteractionModes.Eraser.ToString());
+            _setEraserModeButton.Checked += _button_Checked;
+            _setLassoModeButton = new GroupedRibbonButton("Lasso",
+                                                          "PageInteractionMode",
+                                                          "pack://application:,,,/Resources/Images/Lasso32.png",
+                                                          PageInteractionModes.Lasso.ToString());
+            _setLassoModeButton.Checked += _button_Checked;
+            _setCutModeButton = new GroupedRibbonButton("Cut",
+                                                        "PageInteractionMode",
+                                                        "pack://application:,,,/Resources/Images/Scissors32.png",
+                                                        PageInteractionModes.Cut.ToString());
+            _setCutModeButton.Checked += _button_Checked;
+            _setDividerCreationModeButton = new GroupedRibbonButton("Divider",
+                                                                    "PageInteractionMode",
+                                                                    "pack://application:,,,/Resources/Images/Hand32.png",
+                                                                    PageInteractionModes.DividerCreation.ToString());
+            _setDividerCreationModeButton.Checked += _button_Checked;
 
             //Text
             _insertTextBoxButton = new RibbonButton("Insert Text", "pack://application:,,,/Images/AddSquare.png", InsertCircleCommand);
@@ -78,9 +87,45 @@ namespace Classroom_Learning_Partner.ViewModels
             _insertProtractorButton = new RibbonButton("Insert Protractor", "pack://application:,,,/Images/Protractor64.png", InsertCircleCommand);
         }
 
+        private void _button_Checked(object sender, RoutedEventArgs e)
+        {
+            var checkedButton = sender as GroupedRibbonButton;
+            if (checkedButton == null)
+            {
+                return;
+            }
+
+            switch (checkedButton.GroupName)
+            {
+                case "PageInteractionMode":
+                    PageInteractionMode = (PageInteractionModes)Enum.Parse(typeof(PageInteractionModes), checkedButton.AssociatedEnumValue);
+                    break;
+            }
+        }
+
         #region Buttons
 
-        private Line _separater;
+        private Line Separater
+        {
+            get
+            {
+                var dict = new ResourceDictionary();
+                var uri = new Uri(@"pack://application:,,,/Resources/CLPBrushes.xaml");
+                dict.Source = uri;
+                var grayEdgeColor = dict["GrayEdgeColor"] as Brush;
+
+                //Separater
+                return new Line
+                       {
+                           Y1 = 0,
+                           Y2 = 1,
+                           Stretch = Stretch.Fill,
+                           Margin = new Thickness(2),
+                           Stroke = grayEdgeColor,
+                           StrokeThickness = 1
+                       };
+            }
+        }
 
         #region PageInteractionMode Toggle Buttons
 
@@ -144,6 +189,17 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Bindings
 
+        /// <summary>
+        /// Interaction Mode for the current page.
+        /// </summary>
+        public PageInteractionModes PageInteractionMode
+        {
+            get { return GetValue<PageInteractionModes>(PageInteractionModeProperty); }
+            set { SetValue(PageInteractionModeProperty, value); }
+        }
+
+        public static readonly PropertyData PageInteractionModeProperty = RegisterProperty("PageInteractionMode", typeof (PageInteractionModes), PageInteractionModes.Pen);
+
         #region Commands
 
         /// <summary>Brings up the BackStage.</summary>
@@ -177,7 +233,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Buttons.Add(_setCutModeButton);
             Buttons.Add(_setDividerCreationModeButton);
 
-            Buttons.Add(_separater);
+            Buttons.Add(Separater);
 
             Buttons.Add(_insertSquareButton);
             Buttons.Add(_insertCircleButton);

@@ -225,19 +225,19 @@
                                     LargeImageSource="pack://application:,,,/Resources/Images/Hand32.png"
                                     SmallImageSource="pack://application:,,,/Resources/Images/Hand16.png"
                                     IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
-                                    IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionMode.Select}}" />
+                                    IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionModes.Select}}" />
 
                 <RibbonToggleButton Label="Pen"
                                     LargeImageSource="pack://application:,,,/Resources/Images/Pen32.png"
                                     SmallImageSource="pack://application:,,,/Resources/Images/Pen16.png"
                                     IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
-                                    IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionMode.Pen}}" />
+                                    IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionModes.Pen}}" />
 
                 <RibbonToggleButton Label="Highlighter"
                                     LargeImageSource="pack://application:,,,/Resources/Images/Highlighter32.png"
                                     SmallImageSource="pack://application:,,,/Resources/Images/Highlighter16.png"
                                     IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
-                                    IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionMode.Highlighter}}" />
+                                    IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionModes.Highlighter}}" />
 
                 <RibbonMenuButton Label="Pen Size"
                                   LargeImageSource="pack://application:,,,/Resources/Images/PenSize32.png"
@@ -322,13 +322,13 @@
                                     LargeImageSource="pack://application:,,,/Resources/Images/Scissors32.png"
                                     SmallImageSource="pack://application:,,,/Resources/Images/Scissors16.png"
                                     IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
-                                    IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionMode.Scissors}}" />
+                                    IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionModes.Cut}}" />
 
                 <RibbonToggleButton Label="Lasso"
                                     LargeImageSource="pack://application:,,,/Resources/Images/Lasso32.png"
                                     SmallImageSource="pack://application:,,,/Resources/Images/Lasso16.png"
                                     IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
-                                    IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionMode.Lasso}}" />
+                                    IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionModes.Lasso}}" />
 
             </RibbonGroup>
 
@@ -613,17 +613,17 @@
                 <RibbonToggleButton Label="Select"
                                     LargeImageSource="pack://application:,,,/Images/HandIcon.png"
                                     IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
-                                    IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionMode.Select}}" />
+                                    IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionModes.Select}}" />
 
                 <RibbonToggleButton Label="Pen"
                                     LargeImageSource="pack://application:,,,/Images/Pen.png"
                                     IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
-                                    IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionMode.Pen}}" />
+                                    IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionModes.Pen}}" />
 
                 <RibbonToggleButton Label="Eraser"
                                     LargeImageSource="pack://application:,,,/Images/Eraser.png"
                                     IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
-                                    IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionMode.Eraser}}" />
+                                    IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionModes.Eraser}}" />
 
             </RibbonGroup>
 

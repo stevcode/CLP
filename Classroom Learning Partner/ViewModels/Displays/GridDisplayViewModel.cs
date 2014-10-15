@@ -171,8 +171,8 @@ namespace Classroom_Learning_Partner.ViewModels
             if(currentPage == null) { return; }
 
             currentPage.IsTagAddPrevented = true;
-            var oldPageInteractionMode = (App.MainWindowViewModel.Ribbon.PageInteractionMode == PageInteractionMode.None) ? PageInteractionMode.Pen : App.MainWindowViewModel.Ribbon.PageInteractionMode;
-            App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.None;
+            var oldPageInteractionMode = (App.MainWindowViewModel.Ribbon.PageInteractionMode == PageInteractionModes.None) ? PageInteractionModes.Pen : App.MainWindowViewModel.Ribbon.PageInteractionMode;
+            App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionModes.None;
 
             while(currentPage.History.UndoItems.Any()) { currentPage.History.Undo(); }
 

@@ -86,7 +86,7 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentFontColor = _fontColors[0];
             CurrentFontFamily = Fonts[0];
 
-            PageInteractionMode = PageInteractionMode.Pen;
+            PageInteractionMode = PageInteractionModes.Pen;
             CurrentLeftPanel = Panels.NotebookPages;
         }
 
@@ -244,10 +244,10 @@ namespace Classroom_Learning_Partner.ViewModels
                     EraserMode = InkCanvasEditingMode.EraseByStroke;
                     break;
             }
-            if(PageInteractionMode != PageInteractionMode.Pen &&
-               PageInteractionMode != PageInteractionMode.Highlighter)
+            if(PageInteractionMode != PageInteractionModes.Pen &&
+               PageInteractionMode != PageInteractionModes.Highlighter)
             {
-                PageInteractionMode = PageInteractionMode.Pen;
+                PageInteractionMode = PageInteractionModes.Pen;
             }
         }
 
@@ -313,13 +313,13 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
-        public PageInteractionMode PageInteractionMode
+        public PageInteractionModes PageInteractionMode
         {
-            get { return GetValue<PageInteractionMode>(PageInteractionModeProperty); }
+            get { return GetValue<PageInteractionModes>(PageInteractionModeProperty); }
             set { SetValue(PageInteractionModeProperty, value); }
         }
 
-        public static readonly PropertyData PageInteractionModeProperty = RegisterProperty("PageInteractionMode", typeof(PageInteractionMode));
+        public static readonly PropertyData PageInteractionModeProperty = RegisterProperty("PageInteractionMode", typeof(PageInteractionModes));
 
         /// <summary>
         /// Gets or sets the property value.
@@ -1297,9 +1297,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 DrawingAttributes.Color = solidColorBrush.Color;
             }
 
-            if(!(PageInteractionMode == PageInteractionMode.Pen || PageInteractionMode == PageInteractionMode.Highlighter))
+            if(!(PageInteractionMode == PageInteractionModes.Pen || PageInteractionMode == PageInteractionModes.Highlighter))
             {
-                PageInteractionMode = PageInteractionMode.Pen;
+                PageInteractionMode = PageInteractionModes.Pen;
             }
         }
 
@@ -1488,8 +1488,8 @@ namespace Classroom_Learning_Partner.ViewModels
             if(currentPage == null) { return; }
 
             currentPage.IsTagAddPrevented = true;
-            var oldPageInteractionMode = (PageInteractionMode == PageInteractionMode.None) ? PageInteractionMode.Pen : PageInteractionMode;
-            PageInteractionMode = PageInteractionMode.None;
+            var oldPageInteractionMode = (PageInteractionMode == PageInteractionModes.None) ? PageInteractionModes.Pen : PageInteractionMode;
+            PageInteractionMode = PageInteractionModes.None;
 
             while(currentPage.History.UndoItems.Any()) { currentPage.History.Undo(); }
 
@@ -1905,7 +1905,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var exitTicketCreationView = new ExitTicketCreationView(exitTicketCreationViewModel);
             exitTicketCreationView.Owner = Application.Current.MainWindow;
 
-            App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.Pen;
+            App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionModes.Pen;
             exitTicketCreationView.ShowDialog();
             if(exitTicketCreationView.DialogResult == true)
             {
@@ -1929,7 +1929,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var exitTicketCreationView = new ExitTicketCreationView(exitTicketCreationViewModel);
             exitTicketCreationView.Owner = Application.Current.MainWindow;
 
-            App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.Pen;
+            App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionModes.Pen;
             exitTicketCreationView.ShowDialog();
             if(exitTicketCreationView.DialogResult == true)
             {
@@ -2841,7 +2841,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 ACLPPageBaseViewModel.AddPageObjectsToPage(page, arraysToAdd);
             }
            
-            App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.Select;
+            App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionModes.Select;
         }
 
         /// <summary>

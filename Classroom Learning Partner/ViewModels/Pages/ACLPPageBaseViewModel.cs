@@ -23,7 +23,7 @@ using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    public enum PageInteractionMode
+    public enum PageInteractionModes
     {
         None,
         Select,
@@ -32,11 +32,12 @@ namespace Classroom_Learning_Partner.ViewModels
         PenAndSelect,
         Eraser,
         Lasso,
-        Scissors,
-        EditObjectProperties
+        Cut,
+        EditObjectProperties,
+        DividerCreation
     }
 
-    [InterestedIn(typeof(RibbonViewModel))]
+    [InterestedIn(typeof(MajorRibbonViewModel))]
     public abstract class ACLPPageBaseViewModel : ViewModelBase
     {
         #region Constructor
@@ -206,13 +207,13 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Sets the PageInteractionMode.
         /// </summary>
-        public PageInteractionMode PageInteractionMode
+        public PageInteractionModes PageInteractionMode
         {
-            get { return GetValue<PageInteractionMode>(PageInteractionModeProperty); }
+            get { return GetValue<PageInteractionModes>(PageInteractionModeProperty); }
             set { SetValue(PageInteractionModeProperty, value); }
         }
 
-        public static readonly PropertyData PageInteractionModeProperty = RegisterProperty("PageInteractionMode", typeof(PageInteractionMode), PageInteractionMode.Pen, PageInteractionModeChanged);
+        public static readonly PropertyData PageInteractionModeProperty = RegisterProperty("PageInteractionMode", typeof(PageInteractionModes), PageInteractionModes.Pen, PageInteractionModeChanged);
 
         private static void PageInteractionModeChanged(object sender, AdvancedPropertyChangedEventArgs args)
         {
@@ -224,19 +225,19 @@ namespace Classroom_Learning_Partner.ViewModels
 
             switch(pageViewModel.PageInteractionMode)
             {
-                case PageInteractionMode.None:
+                case PageInteractionModes.None:
                     pageViewModel.IsInkCanvasHitTestVisible = true;
                     pageViewModel.EditingMode = InkCanvasEditingMode.None;
                     pageViewModel.IsUsingCustomCursors = true;
                     pageViewModel.PageCursor = Cursors.No;
                     pageViewModel.ClearAdorners();
                     break;
-                case PageInteractionMode.Select:
+                case PageInteractionModes.Select:
                     pageViewModel.IsInkCanvasHitTestVisible = false;
                     pageViewModel.IsUsingCustomCursors = true;
                     pageViewModel.PageCursor = Cursors.Hand;
                     break;
-                case PageInteractionMode.Pen:
+                case PageInteractionModes.Pen:
                     pageViewModel.IsInkCanvasHitTestVisible = true;
                     pageViewModel.EditingMode = InkCanvasEditingMode.Ink;
                     pageViewModel.IsUsingCustomCursors = false;
@@ -247,7 +248,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     pageViewModel.DefaultDA.StylusTip = StylusTip.Ellipse;
                     pageViewModel.ClearAdorners();
                     break;
-                case PageInteractionMode.Highlighter:
+                case PageInteractionModes.Highlighter:
                     pageViewModel.IsInkCanvasHitTestVisible = true;
                     pageViewModel.EditingMode = InkCanvasEditingMode.Ink;
                     pageViewModel.IsUsingCustomCursors = false;
@@ -258,7 +259,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     pageViewModel.DefaultDA.StylusTip = StylusTip.Rectangle;
                     pageViewModel.ClearAdorners();
                     break;
-                case PageInteractionMode.PenAndSelect:
+                case PageInteractionModes.PenAndSelect:
                     pageViewModel.IsInkCanvasHitTestVisible = true;
                     pageViewModel.EditingMode = InkCanvasEditingMode.Ink;
                     pageViewModel.IsUsingCustomCursors = true;
@@ -269,7 +270,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                     pageViewModel.ClearAdorners();
                     break;
-                case PageInteractionMode.Eraser:
+                case PageInteractionModes.Eraser:
                     pageViewModel.IsInkCanvasHitTestVisible = true;
                     pageViewModel.EditingMode = pageViewModel.EraserMode;
                     pageViewModel.IsUsingCustomCursors = false;
@@ -280,7 +281,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     pageViewModel.DefaultDA.StylusTip = StylusTip.Rectangle;
                     pageViewModel.ClearAdorners();
                     break;
-                case PageInteractionMode.Lasso:
+                case PageInteractionModes.Lasso:
                     pageViewModel.IsInkCanvasHitTestVisible = true;
                     pageViewModel.EditingMode = InkCanvasEditingMode.Ink;
                     pageViewModel.IsUsingCustomCursors = true;
@@ -296,7 +297,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     pageViewModel.DefaultDA.StylusTip = StylusTip.Ellipse;
                     pageViewModel.ClearAdorners();
                     break;
-                case PageInteractionMode.Scissors:
+                case PageInteractionModes.Cut:
                     pageViewModel.IsInkCanvasHitTestVisible = true;
                     pageViewModel.EditingMode = InkCanvasEditingMode.Ink;
                     pageViewModel.IsUsingCustomCursors = true;
@@ -319,7 +320,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         }
                     }
                     break;
-                case PageInteractionMode.EditObjectProperties:
+                case PageInteractionModes.EditObjectProperties:
                     pageViewModel.IsInkCanvasHitTestVisible = false;
                     break;
                 default:
@@ -496,7 +497,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             if(TopCanvas == null ||
                IsPagePreview ||
-               PageInteractionMode == PageInteractionMode.Pen)
+               PageInteractionMode == PageInteractionModes.Pen)
             {
                 return;
             }
@@ -509,7 +510,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnMouseDownCommandExecute(MouseEventArgs e)
         {
-            if(PageInteractionMode != PageInteractionMode.Select ||
+            if(PageInteractionMode != PageInteractionModes.Select ||
                TopCanvas == null ||
                IsPagePreview)
             {
@@ -631,7 +632,7 @@ namespace Classroom_Learning_Partner.ViewModels
         protected void PageObjects_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             Page.UpdateAllReporters();
-            if(IsPagePreview || PageInteractionMode == PageInteractionMode.None || History.IsAnimating)
+            if(IsPagePreview || PageInteractionMode == PageInteractionModes.None || History.IsAnimating)
             {
                 return;
             }
@@ -688,7 +689,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             switch(App.MainWindowViewModel.Ribbon.PageInteractionMode)
             {
-                case PageInteractionMode.Scissors:
+                case PageInteractionModes.Cut:
                     {
                         var stroke = e.Added.FirstOrDefault();
                         if(stroke == null)
@@ -698,7 +699,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         CutStroke(stroke);
                     }
                     break;
-                case PageInteractionMode.Lasso:
+                case PageInteractionModes.Lasso:
                     {
                         var stroke = e.Added.FirstOrDefault();
                         if(stroke == null)
@@ -708,10 +709,10 @@ namespace Classroom_Learning_Partner.ViewModels
                         LassoStroke(stroke);
                     }
                     break;
-                case PageInteractionMode.Select:
+                case PageInteractionModes.Select:
                     return;
-                case PageInteractionMode.Highlighter:
-                case PageInteractionMode.Pen:
+                case PageInteractionModes.Highlighter:
+                case PageInteractionModes.Pen:
                     if(e.Removed.Any())
                     {
                         RemoveStroke(e.Removed, e.Added);
@@ -726,7 +727,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         AddStroke(stroke);
                     }
                     break;
-                case PageInteractionMode.Eraser:
+                case PageInteractionModes.Eraser:
                     RemoveStroke(e.Removed, e.Added);
                     break;
             }
@@ -755,7 +756,7 @@ namespace Classroom_Learning_Partner.ViewModels
                viewModel is RibbonViewModel)
             {
                 EraserMode = (viewModel as RibbonViewModel).EraserMode;
-                if(PageInteractionMode == PageInteractionMode.Eraser)
+                if(PageInteractionMode == PageInteractionModes.Eraser)
                 {
                     EditingMode = EraserMode;
                 }
@@ -770,21 +771,21 @@ namespace Classroom_Learning_Partner.ViewModels
                 DefaultDA.Width = x;
                 PenSize = x;
 
-                if(PageInteractionMode == PageInteractionMode.Eraser ||
-                   PageInteractionMode == PageInteractionMode.Pen ||
-                   PageInteractionMode == PageInteractionMode.Highlighter)
+                if(PageInteractionMode == PageInteractionModes.Eraser ||
+                   PageInteractionMode == PageInteractionModes.Pen ||
+                   PageInteractionMode == PageInteractionModes.Highlighter)
                 {
                     return;
                 }
 
-                (viewModel as RibbonViewModel).PageInteractionMode = PageInteractionMode.Pen;
+                (viewModel as RibbonViewModel).PageInteractionMode = PageInteractionModes.Pen;
             }
 
             if(propertyName == "PageInteractionMode" &&
-               viewModel is RibbonViewModel)
+               viewModel is MajorRibbonViewModel)
             {
-                PageInteractionMode = (viewModel as RibbonViewModel).PageInteractionMode;
-                if (PageInteractionMode == PageInteractionMode.Lasso)
+                PageInteractionMode = (viewModel as MajorRibbonViewModel).PageInteractionMode;
+                if (PageInteractionMode == PageInteractionModes.Lasso)
                 {
                     DefaultDA.Color = Colors.DarkGoldenrod;
                 }
@@ -861,7 +862,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 foreach(var array in PageObjects.OfType<CLPArray>())
                 {
                     if(array.IsDivisionBehaviorOn && 
-                       App.MainWindowViewModel.Ribbon.PageInteractionMode == PageInteractionMode.Pen &&
+                       App.MainWindowViewModel.Ribbon.PageInteractionMode == PageInteractionModes.Pen &&
                        App.MainWindowViewModel.CurrentUser.ID == array.CreatorID)
                     {
                         wasArrayDivided = CLPArrayViewModel.CreateDivision(array, stroke) || wasArrayDivided;
@@ -871,7 +872,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
                     Page.InkStrokes.Remove(stroke);
-                    App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.Select;
+                    App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionModes.Select;
                     InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
                     return true;
                 }
@@ -1340,7 +1341,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if(forceSelectMode)
             {
-                App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.Select;
+                App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionModes.Select;
             }
         }
 
@@ -1365,7 +1366,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if(forceSelectMode)
             {
-                App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionMode.Select;
+                App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionModes.Select;
             }
         }
 

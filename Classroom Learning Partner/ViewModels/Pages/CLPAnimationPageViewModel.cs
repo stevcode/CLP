@@ -78,7 +78,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
        #region Commands
 
-       private PageInteractionMode _oldPageInteractionMode = PageInteractionMode.Pen;
+       private PageInteractionModes _oldPageInteractionMode = PageInteractionModes.Pen;
 
        /// <summary>
        /// Begins recording page interations for use in an animation.
@@ -141,8 +141,8 @@ namespace Classroom_Learning_Partner.ViewModels
                return;
            }
 
-           pageViewModel._oldPageInteractionMode = pageViewModel.PageInteractionMode == PageInteractionMode.None ? PageInteractionMode.Pen : pageViewModel.PageInteractionMode;
-           pageViewModel.PageInteractionMode = PageInteractionMode.None;
+           pageViewModel._oldPageInteractionMode = pageViewModel.PageInteractionMode == PageInteractionModes.None ? PageInteractionModes.Pen : pageViewModel.PageInteractionMode;
+           pageViewModel.PageInteractionMode = PageInteractionModes.None;
            pageViewModel.History.IsAnimating = true;
 
            pageViewModel.IsPlaying = true;
@@ -185,8 +185,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
            pageViewModel.History.IsAnimating = true;
            pageViewModel.IsPlaying = true;
-           pageViewModel._oldPageInteractionMode = pageViewModel.PageInteractionMode == PageInteractionMode.None ? PageInteractionMode.Pen : pageViewModel.PageInteractionMode;
-           pageViewModel.PageInteractionMode = PageInteractionMode.None;
+           pageViewModel._oldPageInteractionMode = pageViewModel.PageInteractionMode == PageInteractionModes.None ? PageInteractionModes.Pen : pageViewModel.PageInteractionMode;
+           pageViewModel.PageInteractionMode = PageInteractionModes.None;
 
            var t = new Thread(() =>
                               {
