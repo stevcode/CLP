@@ -215,8 +215,9 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding}"
-                                       Foreground="BlueViolet"
-                                       TextAlignment="Center">
+                                       Foreground="Green"
+                                       TextAlignment="Center"
+                                       FontSize="18">
                                 <TextBlock.Width>
                                     <MultiBinding Converter="{StaticResource MultiplyAllMultiConverter}">
                                         <Binding Path="DataContext.PageObject.TickLength"

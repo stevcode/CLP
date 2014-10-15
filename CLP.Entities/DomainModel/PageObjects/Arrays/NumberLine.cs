@@ -292,6 +292,13 @@ namespace CLP.Entities
             {
                 AcceptedStrokes.Remove(stroke);
                 AcceptedStrokeParentIDs.Remove(stroke.GetStrokeID());
+                var theRemovedStrokes = new StrokeCollection(removedStrokes);
+                var tickR = FindClosestTick(theRemovedStrokes);
+                var tickL = FindClosestTickLeft(theRemovedStrokes);
+                tickL.IsMarked = false;
+                tickL.IsNumberVisible = false;
+                tickR.IsMarked = false;
+                tickR.IsNumberVisible = false;
             }
 
             var actuallyAcceptedStrokes = new StrokeCollection();
@@ -305,7 +312,8 @@ namespace CLP.Entities
 
             //Grab the lowest right point
             var tick = FindClosestTick(actuallyAcceptedStrokes);
-            if (tick == null)
+            var tick2 = FindClosestTickLeft(actuallyAcceptedStrokes);
+            if (tick == null || tick2 == null)
             {
                 return;
             }
@@ -318,13 +326,20 @@ namespace CLP.Entities
                 tick.TickColor = "Black";
             }
 
-            var prevTick = Ticks.Reverse().FirstOrDefault(t => t.IsMarked && t.TickValue < tick.TickValue);
-            if (prevTick == null)
+            tick2.IsMarked = true;
+            tick2.IsNumberVisible = true;
+            tick2.TickColor = lastStroke.DrawingAttributes.Color.ToString();
+            if (tick2.TickValue == 0)
+            {
+                tick2.TickColor = "Black";
+            }
+
+            if (tick2 == null)
             {
                 JumpSizes.Add(tick.TickValue);
                 return;
             }
-            var jumpSize = tick.TickValue - prevTick.TickValue;
+            var jumpSize = tick.TickValue - tick2.TickValue;
             JumpSizes.Add(jumpSize);
         }
 
@@ -375,6 +390,53 @@ namespace CLP.Entities
                     }
                 }
             }
+
+
+            //Find closest Tick
+
+            var normalXLowest = (lowestPoint.X - XPosition - ArrowLength) / TickLength;
+            var tickIndex = (int)Math.Round(normalXLowest);
+
+            if (tickIndex < 0 ||
+                tickIndex >= Ticks.Count)
+            {
+                return null;
+            }
+
+            return Ticks[tickIndex];
+        }
+
+        public NumberLineTick FindClosestTickLeft(StrokeCollection strokes)
+        {
+            // Get lowest Point
+            var x1 = ParentPage.Width;
+            var x2 = 0.0;
+            var y1 = ParentPage.Height;
+            var y2 = 0.0;
+
+            foreach (var stroke in strokes)
+            {
+                x1 = Math.Min(x1, stroke.GetBounds().Left);
+                x2 = Math.Max(x2, stroke.GetBounds().Right);
+                y1 = Math.Min(y1, stroke.GetBounds().Top);
+                y2 = Math.Max(y2, stroke.GetBounds().Bottom);
+            }
+
+            var midX = (x2 - x1) / 2.0 + x1;
+
+            var lowestPoint = new StylusPoint(0.0, 0.0);
+            foreach (var stroke in strokes)
+            {
+                foreach (var point in stroke.StylusPoints)
+                {
+                    if (point.Y > lowestPoint.Y &&
+                        point.X < midX)
+                    {
+                        lowestPoint = point;
+                    }
+                }
+            }
+
 
             //Find closest Tick
 
