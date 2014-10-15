@@ -27,6 +27,7 @@ namespace Classroom_Learning_Partner.ViewModels
             InitializeCommands();
             InitializeButtons();
             SetRibbonButtons();
+            PageInteractionMode = PageInteractionModes.Pen;
         }
 
         private void InitializeCommands()
@@ -48,7 +49,6 @@ namespace Classroom_Learning_Partner.ViewModels
                                                         "pack://application:,,,/Resources/Images/Pen32.png",
                                                         PageInteractionModes.Pen.ToString());
             _setPenModeButton.Checked += _button_Checked;
-            _setPenModeButton.IsChecked = true;
             _setEraserModeButton = new GroupedRibbonButton("Eraser",
                                                            "PageInteractionMode",
                                                            "pack://application:,,,/Resources/Images/Hand32.png",
@@ -141,6 +141,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void _button_Checked(object sender, RoutedEventArgs e)
         {
+            
             _isCheckedEventRunning = true;
             var checkedButton = sender as GroupedRibbonButton;
             if (checkedButton == null)
@@ -152,6 +153,43 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 case "PageInteractionMode":
                     PageInteractionMode = (PageInteractionModes)Enum.Parse(typeof (PageInteractionModes), checkedButton.AssociatedEnumValue);
+
+                    if (App.MainWindowViewModel == null)
+                    {
+                        break;
+                    }
+                    var contextRibbon = NotebookWorkspaceViewModel.GetContextRibbon();
+                    if (contextRibbon == null)
+                    {
+                        break;
+                    }
+
+                    switch (PageInteractionMode)
+                    {
+                        case PageInteractionModes.None:
+                            break;
+                        case PageInteractionModes.Select:
+                            contextRibbon.Buttons.Clear();
+                            break;
+                        case PageInteractionModes.Pen:
+                            contextRibbon.SetPenContextButtons();
+                            break;
+                        case PageInteractionModes.Highlighter:
+                            break;
+                        case PageInteractionModes.PenAndSelect:
+                            break;
+                        case PageInteractionModes.Eraser:
+                            break;
+                        case PageInteractionModes.Lasso:
+                            break;
+                        case PageInteractionModes.Cut:
+                            break;
+                        case PageInteractionModes.EditObjectProperties:
+                            break;
+                        case PageInteractionModes.DividerCreation:
+                            break;
+                    }
+
                     break;
             }
             _isCheckedEventRunning = false;

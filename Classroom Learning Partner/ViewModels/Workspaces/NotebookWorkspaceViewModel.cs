@@ -336,6 +336,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static ContextRibbonViewModel GetContextRibbon()
         {
+            if (App.MainWindowViewModel == null)
+            {
+                return null;
+            }
+
             var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
             return notebookWorkspaceViewModel == null ? null : notebookWorkspaceViewModel.ContextRibbon;
         }

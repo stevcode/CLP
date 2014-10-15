@@ -264,4 +264,123 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style TargetType="{x:Type local:ColorButton}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type local:ColorButton}">
+
+                    <ControlTemplate.Resources>
+
+                        <local:HLSColorValueConverter x:Key="ColorConverter" />
+
+                        <!-- Animation  Storyboards -->
+                        <Storyboard x:Key="CheckedOn">
+                            <ObjectAnimationUsingKeyFrames BeginTime="00:00:00"
+                                                           Duration="00:00:00.0010000"
+                                                           Storyboard.TargetName="IsCheckedGrid"
+                                                           Storyboard.TargetProperty="(UIElement.Visibility)">
+                                <DiscreteObjectKeyFrame KeyTime="00:00:00"
+                                                        Value="{x:Static Visibility.Visible}" />
+                            </ObjectAnimationUsingKeyFrames>
+                        </Storyboard>
+                        <Storyboard x:Key="CheckedOff">
+                            <ObjectAnimationUsingKeyFrames BeginTime="00:00:00"
+                                                           Duration="00:00:00.0010000"
+                                                           Storyboard.TargetName="IsCheckedGrid"
+                                                           Storyboard.TargetProperty="(UIElement.Visibility)">
+                                <DiscreteObjectKeyFrame KeyTime="00:00:00"
+                                                        Value="{x:Static Visibility.Hidden}" />
+                            </ObjectAnimationUsingKeyFrames>
+                        </Storyboard>
+                        <Storyboard x:Key="PressedOn">
+                            <ObjectAnimationUsingKeyFrames BeginTime="00:00:00"
+                                                           Duration="00:00:00.0010000"
+                                                           Storyboard.TargetName="IsPressedGrid"
+                                                           Storyboard.TargetProperty="(UIElement.Visibility)">
+                                <DiscreteObjectKeyFrame KeyTime="00:00:00"
+                                                        Value="{x:Static Visibility.Visible}" />
+                            </ObjectAnimationUsingKeyFrames>
+                        </Storyboard>
+                        <Storyboard x:Key="PressedOff">
+                            <ObjectAnimationUsingKeyFrames BeginTime="00:00:00"
+                                                           Duration="00:00:00.0010000"
+                                                           Storyboard.TargetName="IsPressedGrid"
+                                                           Storyboard.TargetProperty="(UIElement.Visibility)">
+                                <DiscreteObjectKeyFrame KeyTime="00:00:00"
+                                                        Value="{x:Static Visibility.Hidden}" />
+                            </ObjectAnimationUsingKeyFrames>
+                        </Storyboard>
+
+                    </ControlTemplate.Resources>
+
+                    <!-- Control Layout -->
+                    <Grid Name="LayoutGrid"
+                          Background="Transparent">
+
+                        <!-- Button FX Displayed Behind Content -->
+                        <Grid x:Name="IsCheckedGrid"
+                              Margin="0"
+                              Visibility="Hidden">
+                            <Line X1="0"
+                                  X2="1"
+                                  Stretch="Fill"
+                                  Stroke="{Binding Color, RelativeSource={RelativeSource TemplatedParent}}"
+                                  StrokeThickness="2"
+                                  VerticalAlignment="Bottom" />
+                        </Grid>
+
+                        <!-- Button Content -->
+                        <Ellipse Margin="2"
+                                 Height="28"
+                                 Width="28"
+                                 VerticalAlignment="Center"
+                                 Fill="{Binding Color, RelativeSource={RelativeSource TemplatedParent}}" />
+
+                        <Grid x:Name="IsPressedGrid"
+                              Margin="0"
+                              Visibility="Hidden">
+                            <Ellipse Height="20"
+                                     Width="20"
+                                     VerticalAlignment="Center"
+                                     HorizontalAlignment="Center"
+                                     Fill="Black" />
+                            <Ellipse Height="10"
+                                     Width="10"
+                                     VerticalAlignment="Center"
+                                     HorizontalAlignment="Center"
+                                     Fill="White" />
+                        </Grid>
+                    </Grid>
+
+                    <!-- FX Triggers -->
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsPressed"
+                                 Value="True">
+                            <Trigger.ExitActions>
+                                <BeginStoryboard x:Name="PressedOff_BeginStoryboard"
+                                                 Storyboard="{StaticResource PressedOff}" />
+                            </Trigger.ExitActions>
+                            <Trigger.EnterActions>
+                                <BeginStoryboard x:Name="PressedOn_BeginStoryboard"
+                                                 Storyboard="{StaticResource PressedOn}" />
+                            </Trigger.EnterActions>
+                        </Trigger>
+                        <Trigger Property="IsChecked"
+                                 Value="True">
+                            <Trigger.ExitActions>
+                                <BeginStoryboard x:Name="CheckedOff_BeginStoryboard"
+                                                 Storyboard="{StaticResource CheckedOff}" />
+                            </Trigger.ExitActions>
+                            <Trigger.EnterActions>
+                                <BeginStoryboard x:Name="CheckedOn_BeginStoryboard"
+                                                 Storyboard="{StaticResource CheckedOn}" />
+                            </Trigger.EnterActions>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>
