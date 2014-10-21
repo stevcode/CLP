@@ -209,22 +209,37 @@
                               HorizontalAlignment="Left">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal" />
+                            <Canvas/>
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemContainerStyle>
+                        <Style TargetType="ContentPresenter">
+                            <Setter Property="Canvas.Left">
+                                <Setter.Value>
+                                    <MultiBinding Converter="{StaticResource MultiplyAllMultiConverter}">
+                                        <Binding Path="DataContext.PageObject.TickLength"
+                                                 RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}" />
+                                        <Binding Path="StartingTickIndex" />
+                                    </MultiBinding>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding}"
+                            <TextBlock Text="{Binding JumpSize}"
                                        Foreground="Green"
                                        TextAlignment="Center"
                                        FontSize="18">
+                                
                                 <TextBlock.Width>
                                     <MultiBinding Converter="{StaticResource MultiplyAllMultiConverter}">
                                         <Binding Path="DataContext.PageObject.TickLength"
                                                  RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}" />
-                                        <Binding Path="." />
+                                        <Binding Path="JumpSize" />
                                     </MultiBinding>
                                 </TextBlock.Width>
+
                             </TextBlock>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

@@ -86,6 +86,51 @@ namespace CLP.Entities
     }
 
     [Serializable]
+    public class NumberLineJumpSize : AEntityBase
+    {
+        #region Constructors
+
+        public NumberLineJumpSize() { }
+
+        public NumberLineJumpSize(int jumpSizeValue, int startTickIndex)
+        {
+            JumpSize = jumpSizeValue;
+            StartingTickIndex = startTickIndex;
+        }
+
+        public NumberLineJumpSize(SerializationInfo info, StreamingContext context)
+            : base(info, context) { }
+
+        #endregion //Constructors
+
+        #region Properties
+
+        /// <summary>
+        /// Jump size of arrow
+        /// </summary>
+        public int JumpSize
+        {
+            get { return GetValue<int>(JumpSizeProperty); }
+            set { SetValue(JumpSizeProperty, value); }
+        }
+
+        public static readonly PropertyData JumpSizeProperty = RegisterProperty("JumpSize", typeof (int), 0);
+
+        /// <summary>
+        /// Tick where jump begins
+        /// </summary>
+        public int StartingTickIndex
+        {
+            get { return GetValue<int>(StartingTickIndexProperty); }
+            set { SetValue(StartingTickIndexProperty, value); }
+        }
+
+        public static readonly PropertyData StartingTickIndexProperty = RegisterProperty("StartingTickIndex", typeof (int), 0);
+
+        #endregion //Properties
+    }
+
+    [Serializable]
     public class NumberLine : APageObjectBase, IStrokeAccepter
     {
         #region Constructors
@@ -147,13 +192,13 @@ namespace CLP.Entities
         }
 
         /// <summary>List of the values of the jumps</summary>
-        public ObservableCollection<int> JumpSizes
+        public ObservableCollection<NumberLineJumpSize> JumpSizes
         {
-            get { return GetValue<ObservableCollection<int>>(JumpSizesProperty); }
+            get { return GetValue<ObservableCollection<NumberLineJumpSize>>(JumpSizesProperty); }
             set { SetValue(JumpSizesProperty, value); }
         }
 
-        public static readonly PropertyData JumpSizesProperty = RegisterProperty("JumpSizes", typeof (ObservableCollection<int>), () => new ObservableCollection<int>());
+        public static readonly PropertyData JumpSizesProperty = RegisterProperty("JumpSizes", typeof (ObservableCollection<NumberLineJumpSize>), () => new ObservableCollection<NumberLineJumpSize>());
 
         /// <summary>A collection of the ticks of the number line</summary>
         public ObservableCollection<NumberLineTick> Ticks
@@ -313,34 +358,19 @@ namespace CLP.Entities
             //Grab the lowest right point
             var tick = FindClosestTick(actuallyAcceptedStrokes);
             var tick2 = FindClosestTickLeft(actuallyAcceptedStrokes);
-            if (tick == null || tick2 == null)
-            {
-                return;
-            }
+
             tick.IsMarked = true;
             tick.IsNumberVisible = true;
             var lastStroke = actuallyAcceptedStrokes.Last();
             tick.TickColor = lastStroke.DrawingAttributes.Color.ToString();
-            if (tick.TickValue == 0)
-            {
-                tick.TickColor = "Black";
-            }
+ 
 
             tick2.IsMarked = true;
             tick2.IsNumberVisible = true;
             tick2.TickColor = lastStroke.DrawingAttributes.Color.ToString();
-            if (tick2.TickValue == 0)
-            {
-                tick2.TickColor = "Black";
-            }
 
-            if (tick2 == null)
-            {
-                JumpSizes.Add(tick.TickValue);
-                return;
-            }
             var jumpSize = tick.TickValue - tick2.TickValue;
-            JumpSizes.Add(jumpSize);
+            JumpSizes.Add(new NumberLineJumpSize(jumpSize,tick2.TickValue));
         }
 
         public void RefreshAcceptedStrokes()

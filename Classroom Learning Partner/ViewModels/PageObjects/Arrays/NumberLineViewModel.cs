@@ -32,13 +32,13 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData NumberLineSizeProperty = RegisterProperty("NumberLineSize", typeof (int));
 
         [ViewModelToModel("PageObject")]
-        public ObservableCollection<int> JumpSizes
+        public ObservableCollection<NumberLineJumpSize> JumpSizes
         {
-            get { return GetValue<ObservableCollection<int>>(JumpSizesProperty); }
+            get { return GetValue<ObservableCollection<NumberLineJumpSize>>(JumpSizesProperty); }
             set { SetValue(JumpSizesProperty, value); }
         }
 
-        public static readonly PropertyData JumpSizesProperty = RegisterProperty("JumpSizes", typeof(ObservableCollection<int>));
+        public static readonly PropertyData JumpSizesProperty = RegisterProperty("JumpSizes", typeof(ObservableCollection<NumberLineJumpSize>));
 
 
         [ViewModelToModel("PageObject")]

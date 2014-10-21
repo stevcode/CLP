@@ -2466,7 +2466,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnInsertNumberLineCommandExecute()
         {
-            var keyPad = new KeypadWindowView("How long is your number line?", 41)
+            var keyPad = new KeypadWindowView("How long is your number line?", 85)
                          {
                              Owner = Application.Current.MainWindow,
                              WindowStartupLocation = WindowStartupLocation.Manual,
