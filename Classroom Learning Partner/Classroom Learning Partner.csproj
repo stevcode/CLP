@@ -402,7 +402,7 @@
     <Compile Include="ViewModels\PageObjects\IPageObjectAdorners.cs" />
     <Compile Include="ViewModels\PageObjects\StrokePathViewModel.cs" />
     <Compile Include="ViewModels\Panels\IPanel.cs" />
-    <Compile Include="Views\RibbonViewModel.cs" />
+    <Compile Include="ViewModels\RibbonViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\BlankWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\NotebookChooserWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\NotebookWorkspaceViewModel.cs" />

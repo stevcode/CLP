@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
@@ -332,6 +333,16 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Commands
 
         #region Static Methods
+
+        public static void ApplyDistinctPosition(IPageObject pageObject)
+        {
+
+        }
+
+        public static void ApplyDistinctPosition(IEnumerable<IPageObject> pageObjects)
+        {
+
+        }
 
         public static void ChangePageObjectPosition(IPageObject pageObject, double newX, double newY, bool useHistory = true)
         {
