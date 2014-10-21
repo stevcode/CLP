@@ -299,6 +299,36 @@
                 </i:Interaction.Triggers>
             </Rectangle>
 
+            <Thumb Cursor="SizeWE"
+                   Grid.Column="2"
+                   Width="{Binding PageObject.ArrowLength}"
+                   Height="{Binding Height}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="DragDelta">
+                        <catel:EventToCommand Command="{Binding ResizeNumberLineLengthCommand}"
+                                              PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="DragStarted">
+                        <catel:EventToCommand Command="{Binding ResizeStartNumberLineLengthCommand}"
+                                              PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="DragCompleted">
+                        <catel:EventToCommand Command="{Binding ResizeStopNumberLineLengthCommand}"
+                                              PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                <Thumb.Template>
+                    <ControlTemplate>
+
+                        <Rectangle Tag="RightArrowHitBox"
+                                   Fill="Transparent"
+                                   Stretch="Fill"
+                                   HorizontalAlignment="Stretch"
+                                   VerticalAlignment="Stretch"/>
+                    </ControlTemplate>
+                </Thumb.Template>
+            </Thumb>
+
         </Grid>
 
     </ac:AdornedControl>

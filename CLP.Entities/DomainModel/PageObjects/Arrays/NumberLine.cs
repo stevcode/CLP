@@ -249,21 +249,27 @@ namespace CLP.Entities
 
         public void CreateTicks()
         {
-            Ticks.Clear();
             var defaultInteger = NumberLineSize <= 10 ? 1 : 5;
-            for (var i = 0; i <= NumberLineSize; i++)
+            if (!Ticks.Any())
             {
-                var labelVisible = false;
-                if (i == 0 ||
-                    i == NumberLineSize)
+                for (var i = 0; i <= NumberLineSize; i++)
                 {
-                    labelVisible = true;
+                    var labelVisible = false;
+                    if (i == 0 ||
+                        i == NumberLineSize)
+                    {
+                        labelVisible = true;
+                    }
+                    else if (i % defaultInteger == 0)
+                    {
+                        labelVisible = true;
+                    }
+                    Ticks.Add(new NumberLineTick(i, labelVisible));
                 }
-                else if (i % defaultInteger == 0)
-                {
-                    labelVisible = true;
-                }
-                Ticks.Add(new NumberLineTick(i, labelVisible));
+            }
+            else
+            {
+                Ticks.Add(new NumberLineTick(Ticks.Count, true));
             }
         }
 
