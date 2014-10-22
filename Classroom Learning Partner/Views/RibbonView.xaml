@@ -343,6 +343,11 @@
                               LargeImageSource="pack://application:,,,/Resources/Images/CollectionStamp32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/CollectionStamp16.png"
                               Command="{Binding InsertBlankContainerStampCommand}" />
+                
+                <RibbonButton Label="NumberLine"
+                              LargeImageSource="pack://application:,,,/Resources/Images/NumberLine32.png"
+                              SmallImageSource="pack://application:,,,/Resources/Images/NumberLine16.png"
+                              Command="{Binding InsertNumberLineCommand}" />
 
                 <RibbonButton Label="Pile"
                               LargeImageSource="pack://application:,,,/Resources/Images/Pile32.png"

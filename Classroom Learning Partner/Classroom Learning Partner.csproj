@@ -225,6 +225,7 @@
     </ApplicationDefinition>
     <Compile Include="Converters\AddLengthConverter.cs" />
     <Compile Include="Converters\DifferentiationGroupDisplayConverter.cs" />
+    <Compile Include="Converters\MultiplyAllMultiConverter.cs" />
     <Compile Include="Converters\StringsEqualMultiConverter.cs" />
     <Compile Include="Converters\PassMultipleValuesConverter.cs" />
     <Compile Include="Converters\AllBoolToColorMultiConverter.cs" />
@@ -276,6 +277,7 @@
     <Compile Include="Utilities\Extensions\ObservableCollectionExtensions.cs" />
     <Compile Include="Utilities\ObservableCollectionOperation.cs" />
     <Compile Include="ViewModels\BackStage\BackStageViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\Arrays\NumberLineViewModel.cs" />
     <Compile Include="ViewModels\Ribbon\ContextRibbonViewModel.cs" />
     <Compile Include="ViewModels\Ribbon\MajorRibbonViewModel.cs" />
     <Compile Include="ViewModels\Tags\DivisionRelationDefinitionTagViewModel.cs" />
@@ -352,6 +354,9 @@
     </Compile>
     <Compile Include="Views\Modal Windows\NotebookMetadataWindowView.xaml.cs">
       <DependentUpon>NotebookMetadataWindowView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PageObjects\Arrays\NumberLineView.xaml.cs">
+      <DependentUpon>NumberLineView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\LassoRegionView.xaml.cs">
       <DependentUpon>LassoRegionView.xaml</DependentUpon>
@@ -624,6 +629,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Modal Windows\NotebookMetadataWindowView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PageObjects\Arrays\NumberLineView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -996,6 +1005,10 @@
     <Resource Include="Resources\Images\CLPMenuBackIconBlackBorderless64.png" />
     <Resource Include="Resources\Images\CLPMenuBackIconWhiteBorderless128.png" />
     <Resource Include="Resources\Images\CLPMenuBackIconWhiteBorderless64.png" />
+    <Resource Include="Resources\Images\NumberLine128.png" />
+    <Resource Include="Resources\Images\NumberLine16.png" />
+    <Resource Include="Resources\Images\NumberLine32.png" />
+    <Resource Include="Resources\Images\NumberLine64.png" />
     <Resource Include="Resources\Images\CLPMenuIconBorderless128.png" />
     <Resource Include="Resources\Images\CLPMenuIconBorderless256.png" />
     <Resource Include="Resources\Images\CLPMenuIconBorderless64.png" />
