@@ -347,6 +347,18 @@ namespace CLP.Entities
                 var tickR = FindClosestTick(theRemovedStrokes);
                 var tickL = FindClosestTickLeft(theRemovedStrokes);
 
+                var deletedStartTickValue = tickL.TickValue;
+                var deletedJumpSize = tickR.TickValue - tickL.TickValue;
+
+                foreach (var jump in JumpSizes)
+                {
+                    if (jump.JumpSize == deletedJumpSize &&
+                        jump.StartingTickIndex == deletedStartTickValue)
+                    {
+                        jump.JumpSize = 0;
+                    }
+                }
+
                 if (NumberLineSize < 11)
                 {
                     tickL.TickColor = "Black";
