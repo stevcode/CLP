@@ -203,6 +203,9 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                         App.MainWindowViewModel.CurrentUser,
                                                                                         PageObject.ID,
                                                                                         new Point(PageObject.XPosition, PageObject.YPosition)));
+
+            ACLPPageBaseViewModel.ClearAdorners(PageObject.ParentPage);
+            IsAdornerVisible = true;
         }
 
         /// <summary>
