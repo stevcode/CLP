@@ -346,10 +346,42 @@ namespace CLP.Entities
                 var theRemovedStrokes = new StrokeCollection(removedStrokes);
                 var tickR = FindClosestTick(theRemovedStrokes);
                 var tickL = FindClosestTickLeft(theRemovedStrokes);
-                tickL.IsMarked = false;
-                tickL.IsNumberVisible = false;
-                tickR.IsMarked = false;
-                tickR.IsNumberVisible = false;
+
+                if (NumberLineSize < 11)
+                {
+                    tickL.TickColor = "Black";
+                    tickR.TickColor = "Black";
+                }
+                else
+                {
+                    if (tickL.TickValue % 5 == 0 &&
+                        tickR.TickValue % 5 == 0)
+                    {
+                        tickL.TickColor = "Black";
+                        tickR.TickColor = "Black";
+                    }
+                    else if (tickL.TickValue % 5 == 0)
+                    {
+                        tickL.TickColor = "Black";
+                        tickR.IsMarked = false;
+                        tickR.IsNumberVisible = false;
+                    }
+                    else if (tickR.TickValue % 5 == 0)
+                    {
+                        tickR.TickColor = "Black";
+                        tickL.IsMarked = false;
+                        tickL.IsNumberVisible = false;
+                    }
+                    else
+                    {
+                        tickL.IsMarked = false;
+                        tickL.IsNumberVisible = false;
+                        tickR.IsMarked = false;
+                        tickR.IsNumberVisible = false;
+                    }
+                
+                }
+
             }
 
             var actuallyAcceptedStrokes = new StrokeCollection();
@@ -364,6 +396,12 @@ namespace CLP.Entities
             //Grab the lowest right point
             var tick = FindClosestTick(actuallyAcceptedStrokes);
             var tick2 = FindClosestTickLeft(actuallyAcceptedStrokes);
+
+            if (tick == null &&
+                tick2 == null)
+            {
+                return;
+            }
 
             tick.IsMarked = true;
             tick.IsNumberVisible = true;
