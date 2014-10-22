@@ -275,6 +275,7 @@
     <Compile Include="Resources\InkInterpretation.cs" />
     <Compile Include="Utilities\Extensions\ObservableCollectionExtensions.cs" />
     <Compile Include="Utilities\ObservableCollectionOperation.cs" />
+    <Compile Include="ViewModels\BackStage\BackStageViewModel.cs" />
     <Compile Include="ViewModels\Ribbon\ContextRibbonViewModel.cs" />
     <Compile Include="ViewModels\Ribbon\MajorRibbonViewModel.cs" />
     <Compile Include="ViewModels\Tags\DivisionRelationDefinitionTagViewModel.cs" />
@@ -307,6 +308,9 @@
     <Compile Include="ViewModels\Panels\WebcamPanelViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\LocationBrowserWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\LocationSelectors\CacheSelectorViewModel.cs" />
+    <Compile Include="Views\BackStage\BackStageView.xaml.cs">
+      <DependentUpon>BackStageView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Modal Windows\AdvancedStagingView.xaml.cs">
       <DependentUpon>AdvancedStagingView.xaml</DependentUpon>
     </Compile>
@@ -560,6 +564,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Resources\CLPFlatTheme.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\BackStage\BackStageView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -984,6 +992,16 @@
     <Content Include="External Libraries\System.Reactive.Providers.dll" />
     <Content Include="External Libraries\System.Reactive.Windows.Threading.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
+    <Resource Include="Resources\Images\CLPMenuBackIconBlackBorderless128.png" />
+    <Resource Include="Resources\Images\CLPMenuBackIconBlackBorderless64.png" />
+    <Resource Include="Resources\Images\CLPMenuBackIconWhiteBorderless128.png" />
+    <Resource Include="Resources\Images\CLPMenuBackIconWhiteBorderless64.png" />
+    <Resource Include="Resources\Images\CLPMenuIconBorderless128.png" />
+    <Resource Include="Resources\Images\CLPMenuIconBorderless256.png" />
+    <Resource Include="Resources\Images\CLPMenuIconBorderless64.png" />
+    <Resource Include="Resources\Images\CLPMenuIconWhiteBorderless128.png" />
+    <Resource Include="Resources\Images\CLPMenuIconWhiteBorderless256.png" />
+    <Resource Include="Resources\Images\CLPMenuIconWhiteBorderless64.png" />
     <Resource Include="Resources\Images\Pile128.png" />
     <Resource Include="Resources\Images\Pile16.png" />
     <Resource Include="Resources\Images\Pile256.png" />

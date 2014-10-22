@@ -334,7 +334,11 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>Brings up the BackStage.</summary>
         public Command ShowBackStageCommand { get; private set; }
 
-        private void OnShowBackStageCommandExecute() { }
+        private void OnShowBackStageCommandExecute()
+        {
+            MainWindow.BackStage.CurrentNavigationPane = NavigationPanes.Info;
+            MainWindow.IsBackStageVisible = true;
+        }
 
         #region Insert PageObject Commands
 

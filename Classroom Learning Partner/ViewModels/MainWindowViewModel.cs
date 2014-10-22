@@ -97,6 +97,28 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData MajorRibbonProperty = RegisterProperty("MajorRibbon", typeof (MajorRibbonViewModel), new MajorRibbonViewModel());
 
+        /// <summary>
+        /// The program's BackStage.
+        /// </summary>
+        public BackStageViewModel BackStage
+        {
+            get { return GetValue<BackStageViewModel>(BackStageProperty); }
+            set { SetValue(BackStageProperty, value); }
+        }
+
+        public static readonly PropertyData BackStageProperty = RegisterProperty("BackStage", typeof (BackStageViewModel), new BackStageViewModel());
+
+        /// <summary>
+        /// Toggles BackStage Visibility.
+        /// </summary>
+        public bool IsBackStageVisible
+        {
+            get { return GetValue<bool>(IsBackStageVisibleProperty); }
+            set { SetValue(IsBackStageVisibleProperty, value); }
+        }
+
+        public static readonly PropertyData IsBackStageVisibleProperty = RegisterProperty("IsBackStageVisible", typeof (bool), false);
+
         /// <summary>The Workspace of the <see cref="MainWindowViewModel" />.</summary>
         public ViewModelBase Workspace
         {

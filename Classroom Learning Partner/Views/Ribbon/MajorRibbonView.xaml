@@ -61,32 +61,41 @@
                                 <Grid Name="LayoutGrid"
                                       HorizontalAlignment="Stretch"
                                       VerticalAlignment="Stretch"
-                                      Background="{StaticResource MainColor}">
+                                      Background="Transparent">
 
                                     <!-- Button FX Displayed Behind Content -->
                                     <Grid x:Name="IsPressedGrid"
                                           Margin="0"
-                                          Background="{Binding Background, ElementName=LayoutGrid, Converter={StaticResource ColorConverter}, ConverterParameter='0.85'}"
+                                          Background="{Binding Fill, ElementName=ButtonMask, Converter={StaticResource ColorConverter}, ConverterParameter='0.85'}"
                                           Visibility="Hidden">
                                         <Rectangle x:Name="InnerShadow"
                                                    Margin="3,3,0,0"
-                                                   Stroke="{Binding Background, ElementName=LayoutGrid, Converter={StaticResource ColorConverter}, ConverterParameter='0.8'}"
+                                                   Stroke="{Binding Fill, ElementName=ButtonMask, Converter={StaticResource ColorConverter}, ConverterParameter='0.8'}"
                                                    Opacity="0.5" />
                                         <Rectangle x:Name="MiddleShadow"
                                                    Margin="2,2,0,0"
-                                                   Stroke="{Binding Background, ElementName=LayoutGrid, Converter={StaticResource ColorConverter}, ConverterParameter='0.75'}"
+                                                   Stroke="{Binding Fill, ElementName=ButtonMask, Converter={StaticResource ColorConverter}, ConverterParameter='0.75'}"
                                                    Opacity="0.5" />
                                         <Rectangle x:Name="OuterShadow"
                                                    Margin="1,1,0,0"
-                                                   Stroke="{Binding Background, ElementName=LayoutGrid, Converter={StaticResource ColorConverter}, ConverterParameter='0.7'}"
+                                                   Stroke="{Binding Fill, ElementName=ButtonMask, Converter={StaticResource ColorConverter}, ConverterParameter='0.7'}"
                                                    Opacity="0.5" />
                                         <Rectangle x:Name="BorderRect"
                                                    Margin="0"
-                                                   Stroke="{Binding Background, ElementName=LayoutGrid, Converter={StaticResource ColorConverter}, ConverterParameter='0.5'}" />
+                                                   Stroke="{Binding Fill, ElementName=ButtonMask, Converter={StaticResource ColorConverter}, ConverterParameter='0.5'}" />
                                     </Grid>
 
+                                    <Ellipse x:Name="ButtonMask"
+                                             Fill="{StaticResource MainColor}"
+                                             Stroke="{StaticResource GrayEdgeColor}"
+                                             StrokeThickness="3"
+                                             Height="60"
+                                             Width="60"
+                                             HorizontalAlignment="Center"
+                                             VerticalAlignment="Center" />
+
                                     <!-- Button Content -->
-                                    <Image Source="pack://application:,,,/Resources/Images/CLPMenuIconWhite64.png" />
+                                    <Image Source="pack://application:,,,/Resources/Images/CLPMenuIconWhiteBorderless64.png" />
                                 </Grid>
 
                                 <!-- FX Triggers -->

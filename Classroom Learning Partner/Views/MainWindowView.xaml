@@ -147,6 +147,11 @@
                        HorizontalAlignment="Center"
                        FontSize="28" />
         </Grid>
+        
+        <views:BackStageView Grid.Row="0"
+                             Grid.RowSpan="2"
+                             DataContext="{Binding BackStage}"
+                             Visibility="{Binding MainWindowViewModel.IsBackStageVisible, Source={x:Static Application.Current}, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />     
 
         <Grid Grid.Row="0"
               Grid.RowSpan="2"
