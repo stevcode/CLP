@@ -335,14 +335,17 @@ namespace Classroom_Learning_Partner.ViewModels
                                             : StampedObjectTypes.EmptyGroupStampedObject;
 
             var stampCopiesToAdd = new List<IPageObject>();
+            var random = new Random();
+            //var groupingColumns = stampedObjectWidth / stampedObjectHeight
+            //var groupingWidth = PageObject.ParentPage.Width / 3 / 
             for (var i = 0; i < numberOfCopies; i++)
             {
                 var stampedObject = new StampedObject(stamp.ParentPage, stamp.ID, stamp.ImageHashID, stampObjectType)
                 {
                     Width = stampedObjectWidth,
                     Height = stampedObjectHeight,
-                    XPosition = initialXPosition,
-                    YPosition = initialYPosition,
+                    XPosition = initialXPosition - 25 + random.NextDouble() * 50,
+                    YPosition = initialYPosition - 25 + random.NextDouble() * 50,
                     SerializedStrokes = serializedStrokes.Select(stroke => stroke.ToStroke().ToStrokeDTO()).ToList(),
                     Parts = stamp.Parts
                 };
