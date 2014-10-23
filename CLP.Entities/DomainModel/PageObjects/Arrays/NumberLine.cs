@@ -143,6 +143,7 @@ namespace CLP.Entities
             NumberLineSize = numberLength;
             Height = 75;
             Width = 800;
+            XPosition = (parentPage.Width / 2.0) - (Width / 2.0);
         }
 
         public NumberLine(SerializationInfo info, StreamingContext context)
