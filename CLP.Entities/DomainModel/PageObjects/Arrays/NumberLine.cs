@@ -247,6 +247,18 @@ namespace CLP.Entities
 
         #region Methods
 
+        public override void OnDeleted()
+        {
+            if (!CanAcceptStrokes ||
+                !AcceptedStrokes.Any())
+            {
+                return;
+            }
+
+            ParentPage.InkStrokes.Remove(new StrokeCollection(AcceptedStrokes));
+            ParentPage.History.TrashedInkStrokes.Add(new StrokeCollection(AcceptedStrokes));
+        }
+        
         public void CreateTicks()
         {
             var defaultInteger = NumberLineSize <= 10 ? 1 : 5;
