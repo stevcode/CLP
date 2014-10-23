@@ -297,20 +297,19 @@ namespace CLP.Entities
 
         public override void OnResizing(double oldWidth, double oldHeight)
         {
-            var scaleX = Width / oldWidth;
-            //   var deltaX = ;
+            var scaleX = NumberLineLength / (oldWidth - 2 * ArrowLength);
 
             if (CanAcceptStrokes)
             {
                 foreach (var stroke in AcceptedStrokes)
                 {
                     var transform = new Matrix();
-                    transform.Scale(scaleX, 1.0);
-                    //         transform.Translate(deltaX,0.0);
-                    stroke.Transform(transform, true);
+                    transform.ScaleAt(scaleX, 1.0, XPosition + ArrowLength, YPosition);
+                    stroke.Transform(transform, false);
                 }
             }
         }
+
 
         public override void OnMoving(double oldX, double oldY)
         {
@@ -430,12 +429,19 @@ namespace CLP.Entities
             tick.IsMarked = true;
             tick.IsNumberVisible = true;
             var lastStroke = actuallyAcceptedStrokes.Last();
-            tick.TickColor = lastStroke.DrawingAttributes.Color.ToString();
- 
+            if (lastStroke.DrawingAttributes.Color.ToString().Equals("Black"))
+            {
+                tick.TickColor = "Blue";
+                tick2.TickColor = "Blue";
+            }
+            else
+            {
+                tick.TickColor = lastStroke.DrawingAttributes.Color.ToString();
+                tick2.TickColor = lastStroke.DrawingAttributes.Color.ToString();
+            }
 
             tick2.IsMarked = true;
             tick2.IsNumberVisible = true;
-            tick2.TickColor = lastStroke.DrawingAttributes.Color.ToString();
 
             var jumpSize = tick.TickValue - tick2.TickValue;
             JumpSizes.Add(new NumberLineJumpSize(jumpSize,tick2.TickValue));
