@@ -429,7 +429,7 @@ namespace CLP.Entities
             tick.IsMarked = true;
             tick.IsNumberVisible = true;
             var lastStroke = actuallyAcceptedStrokes.Last();
-            if (lastStroke.DrawingAttributes.Color.ToString().Equals("Black"))
+            if (lastStroke.DrawingAttributes.Color == Colors.Black)
             {
                 tick.TickColor = "Blue";
                 tick2.TickColor = "Blue";
