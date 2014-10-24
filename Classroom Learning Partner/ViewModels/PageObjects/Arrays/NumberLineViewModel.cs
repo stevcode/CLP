@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls.Primitives;
 using Catel.Data;
 using Catel.MVVM;
+using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -84,6 +85,9 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command<DragStartedEventArgs> ResizeStartNumberLineLengthCommand { get; set; }
 
+
+        private bool _isClicked = false;
+
         private void OnResizeStartNumberLineLengthCommandExecute(DragStartedEventArgs e)
         {
             PageObject.ParentPage.History.BeginBatch(new PageObjectResizeBatchHistoryItem(PageObject.ParentPage,
@@ -91,6 +95,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                           PageObject.ID,
                                                                                           new Point(PageObject.Width, PageObject.Height)));
             _initialWidth = Width;
+            _isClicked = true;
         }
 
         /// <summary>
@@ -109,7 +114,29 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             var batchHistoryItem = PageObject.ParentPage.History.EndBatch();
             ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, batchHistoryItem, true);
+
+            if (_isClicked)
+            {
+                var keyPad = new KeypadWindowView("Change End Number", 85)
+                {
+                    Owner = Application.Current.MainWindow,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Top = 100,
+                    Left = 100
+                };
+                keyPad.ShowDialog();
+                if (keyPad.DialogResult != true ||
+                    keyPad.NumbersEntered.Text.Length <= 0)
+                {
+                    return;
+                }
+
+                var newNumberLineSize = Int32.Parse(keyPad.NumbersEntered.Text);
+                return;
+            }
+
             PageObject.OnResized(initialWidth, initialHeight);
+
             _initialWidth = 0;
         }
 
@@ -138,6 +165,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if (_initialWidth + numberLine.TickLength < newWidth)
             {
+                _isClicked = false;
                 numberLine.NumberLineSize++;
                 _initialWidth += numberLine.TickLength;
                 ChangePageObjectDimensions(PageObject, initialHeight, newWidth);    
