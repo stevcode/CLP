@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Security.Cryptography.X509Certificates;
 using System.Windows;
 using System.Windows.Ink;
 using System.Windows.Input;
@@ -141,7 +142,7 @@ namespace CLP.Entities
             : base(parentPage)
         {
             NumberLineSize = numberLength;
-            Height = 75;
+            Height = NumberLineHeight;
             Width = 800;
             XPosition = (parentPage.Width / 2.0) - (Width / 2.0);
         }
@@ -153,6 +154,11 @@ namespace CLP.Entities
 
         #region Properties
 
+        public double NumberLineHeight
+        {
+            get { return 75.0; }
+        }
+        
         public double ArrowLength
         {
             get { return 40.0; }
@@ -453,6 +459,20 @@ namespace CLP.Entities
             tick2.IsMarked = true;
             tick2.IsNumberVisible = true;
 
+            if (!JumpSizes.Any())
+            {
+                var tallestPoint = FindTallestPoint(actuallyAcceptedStrokes);
+                tallestPoint = tallestPoint - 20;
+
+                if (tallestPoint < 0)
+                {
+                    tallestPoint = 0;
+                }
+
+                Height = Height + (YPosition - tallestPoint);
+                YPosition = tallestPoint;
+            }
+
             var jumpSize = tick.TickValue - tick2.TickValue;
             JumpSizes.Add(new NumberLineJumpSize(jumpSize,tick2.TickValue));
         }
@@ -564,6 +584,18 @@ namespace CLP.Entities
             }
 
             return Ticks[tickIndex];
+        }
+
+        public double FindTallestPoint(StrokeCollection theCollection)
+        {
+            var tallestPoint = ParentPage.Height;
+            //find highest point on ink
+            foreach (var stroke in theCollection)
+            {
+                tallestPoint = Math.Min(tallestPoint, stroke.GetBounds().Top);
+            }
+
+            return tallestPoint;
         }
 
         #endregion //Methods
