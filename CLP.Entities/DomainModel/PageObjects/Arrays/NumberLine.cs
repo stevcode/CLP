@@ -263,6 +263,14 @@ namespace CLP.Entities
         public void CreateTicks()
         {
             var defaultInteger = NumberLineSize <= 10 ? 1 : 5;
+            if (Ticks.LastOrDefault() != null)
+            {
+                if (Ticks.LastOrDefault().TickValue % 5 != 0)
+                {
+                    Ticks.LastOrDefault().IsNumberVisible = false;
+                }
+            }
+            
             if (!Ticks.Any())
             {
                 for (var i = 0; i <= NumberLineSize; i++)
@@ -277,6 +285,7 @@ namespace CLP.Entities
                     {
                         labelVisible = true;
                     }
+
                     Ticks.Add(new NumberLineTick(i, labelVisible));
                 }
             }

@@ -140,7 +140,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 numberLine.NumberLineSize++;
                 _initialWidth += numberLine.TickLength;
-                ChangePageObjectDimensions(PageObject, initialHeight, newWidth);
+                ChangePageObjectDimensions(PageObject, initialHeight, newWidth);    
             }
         }
 
