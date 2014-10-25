@@ -135,6 +135,18 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 var newNumberLineSize = Int32.Parse(keyPad.NumbersEntered.Text);
 
+                if (newNumberLineSize >= 85)
+                {
+                    MessageBox.Show("You have entered too large of a number for the endpoint of the number line.");
+                    return;
+                }
+
+                if (newNumberLineSize <= 0)
+                {
+                    MessageBox.Show("Number Line must end at at least 1.");
+                    return;
+                }
+
                 //Number is more than current Number Line Size
                 if (newNumberLineSize > NumberLineSize)
                 {
