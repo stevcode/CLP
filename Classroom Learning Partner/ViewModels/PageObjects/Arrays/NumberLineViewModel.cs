@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using Catel.Data;
 using Catel.MVVM;
+using Catel.Windows.Controls;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Entities;
 
@@ -118,12 +120,12 @@ namespace Classroom_Learning_Partner.ViewModels
             if (_isClicked)
             {
                 var keyPad = new KeypadWindowView("Change End Number", 85)
-                {
-                    Owner = Application.Current.MainWindow,
-                    WindowStartupLocation = WindowStartupLocation.Manual,
-                    Top = 100,
-                    Left = 100
-                };
+                             {
+                                 Owner = Application.Current.MainWindow,
+                                 WindowStartupLocation = WindowStartupLocation.Manual,
+                                 Top = 100,
+                                 Left = 100
+                             };
                 keyPad.ShowDialog();
                 if (keyPad.DialogResult != true ||
                     keyPad.NumbersEntered.Text.Length <= 0)
@@ -132,11 +134,75 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
 
                 var newNumberLineSize = Int32.Parse(keyPad.NumbersEntered.Text);
-                return;
+
+                //Number is more than current Number Line Size
+                if (newNumberLineSize > NumberLineSize)
+                {
+                    var difference = newNumberLineSize - NumberLineSize;
+
+                    var numberLine = PageObject as NumberLine;
+
+                    if (numberLine == null)
+                    {
+                        return;
+                    }
+                    var tickLength = numberLine.TickLength;
+
+                    foreach (var tickNumber in Enumerable.Range(0, difference))
+                    {
+                        NumberLineSize++;
+                    }
+                    var oldWidth = Width;
+                    var oldHeight = Height;
+
+
+
+                    Width += (tickLength * difference);
+
+
+                    if (Width + XPosition > PageObject.ParentPage.Width)
+                    {
+                        var oldWidth2 = Width;
+                        Width = PageObject.ParentPage.Width - XPosition;
+                        PageObject.OnResized(oldWidth2, oldHeight);
+                    }
+
+                }
+                else if (newNumberLineSize < NumberLineSize)
+                {
+                    var lastMarkedTick = Ticks.Reverse().FirstOrDefault(x => x.IsMarked);
+                    if (lastMarkedTick == null || lastMarkedTick.TickValue <= newNumberLineSize)
+                    {
+                        var difference = NumberLineSize - newNumberLineSize;
+
+                        var numberLine = PageObject as NumberLine;
+                        if (numberLine == null)
+                        {
+                            return;
+                        }
+
+
+                        var tickLength = numberLine.TickLength;
+                        foreach (var tickNumber in Enumerable.Range(0, difference))
+                        {
+                            NumberLineSize--;
+                        }
+
+                        Width -= (tickLength * difference);
+                    }
+                    else
+                    {
+                        MessageBox.Show("You have already drawn pass this number on the number line.");
+                    }
+
+                }
+
             }
-
-            PageObject.OnResized(initialWidth, initialHeight);
-
+            else
+            {
+                PageObject.OnResizing(initialWidth, initialHeight);    
+            }
+            
             _initialWidth = 0;
         }
 

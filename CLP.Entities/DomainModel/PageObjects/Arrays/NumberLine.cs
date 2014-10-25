@@ -191,11 +191,23 @@ namespace CLP.Entities
         private static void OnNumberLineSizeChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
         {
             var numberLine = sender as NumberLine;
-            if (numberLine == null)
+            if (numberLine == null || !advancedPropertyChangedEventArgs.IsNewValueMeaningful)
             {
                 return;
             }
-            numberLine.CreateTicks();
+
+            var oldValue = (int)advancedPropertyChangedEventArgs.OldValue;
+            var newValue = (int)advancedPropertyChangedEventArgs.NewValue;
+
+            if (oldValue < newValue)
+            {
+                numberLine.CreateTicks();
+            }
+            else
+            {
+                numberLine.DeleteTicks();
+            }
+
         }
 
         /// <summary>List of the values of the jumps</summary>
@@ -301,6 +313,15 @@ namespace CLP.Entities
             }
         }
 
+
+        public void DeleteTicks()
+        {
+            if(Ticks.Any())
+            {
+                Ticks.Remove(Ticks.LastOrDefault());
+            }
+        }
+
         protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
         {
             if (e.PropertyName == "Width")
@@ -324,6 +345,11 @@ namespace CLP.Entities
                     stroke.Transform(transform, false);
                 }
             }
+        }
+
+        public override void OnResized(double oldWidth, double oldHeight)
+        {
+            OnResizing(oldWidth, oldHeight);
         }
 
 
@@ -467,6 +493,11 @@ namespace CLP.Entities
                 if (tallestPoint < 0)
                 {
                     tallestPoint = 0;
+                }
+
+                if (tallestPoint > YPosition)
+                {
+                    tallestPoint = YPosition;
                 }
 
                 Height = Height + (YPosition - tallestPoint);
