@@ -1,4 +1,5 @@
-﻿using Catel.Data;
+﻿using System;
+using Catel.Data;
 using Catel.MVVM;
 using CLP.Entities;
 
@@ -33,12 +34,27 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Bindings
 
         /// <summary>
+        /// Title Text for the currnet navigation pane.
+        /// </summary>
+        public string DetailTitleText
+        {
+            get { return GetValue<string>(DetailTitleTextProperty); }
+            set { SetValue(DetailTitleTextProperty, value); }
+        }
+
+        public static readonly PropertyData DetailTitleTextProperty = RegisterProperty("DetailTitleText", typeof (string), string.Empty);
+
+        /// <summary>
         /// Currently Displayed Navigation Pane.
         /// </summary>
         public NavigationPanes CurrentNavigationPane
         {
             get { return GetValue<NavigationPanes>(CurrentNavigationPaneProperty); }
-            set { SetValue(CurrentNavigationPaneProperty, value); }
+            set
+            {
+                SetValue(CurrentNavigationPaneProperty, value);
+                SetBackStagePane();
+            }
         }
 
         public static readonly PropertyData CurrentNavigationPaneProperty = RegisterProperty("CurrentNavigationPane", typeof (NavigationPanes), NavigationPanes.Info); 
@@ -53,5 +69,36 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnHideBackStageCommandExecute() { MainWindow.IsBackStageVisible = false; }
 
         #endregion //Commands
+
+        #region Methods
+
+        public void SetBackStagePane()
+        {
+            switch (CurrentNavigationPane)
+            {
+                case NavigationPanes.Info:
+                    DetailTitleText = "Notebook Information";
+                    break;
+                case NavigationPanes.New:
+                    DetailTitleText = "New Notebook";
+                    break;
+                case NavigationPanes.Open:
+                    DetailTitleText = "Open Notebook";
+                    break;
+                case NavigationPanes.Save:
+                    DetailTitleText = "Save Notebook";
+                    break;
+                case NavigationPanes.Export:
+                    DetailTitleText = "Export";
+                    break;
+                case NavigationPanes.Options:
+                    DetailTitleText = "Options";
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        #endregion //Methods
     }
 }

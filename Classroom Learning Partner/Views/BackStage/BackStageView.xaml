@@ -268,6 +268,19 @@
 
         </DockPanel>
 
+        <!-- Detail Title Text -->
+        <TextBlock DockPanel.Dock="Top"
+                   Text="{Binding DetailTitleText}"
+                   TextAlignment="Left"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Center"
+                   FontFamily="Segoe UI"
+                   FontSize="28pt"
+                   Foreground="Black"
+                   Margin="42 60 0 0"
+                   TextOptions.TextRenderingMode="Auto"
+                   TextOptions.TextFormattingMode="Ideal" />
+
         <!-- Detail View -->
         <TextBlock Text="Stuff and Things" />
     </DockPanel>
