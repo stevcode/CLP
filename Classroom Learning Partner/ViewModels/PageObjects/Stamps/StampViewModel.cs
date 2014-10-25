@@ -316,17 +316,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 serializedStrokes = transformedSerializedStrokes;
             }
 
-            var initialXPosition = 25.0;
-            var initialYPosition = YPosition + Height + 125;
-            if (initialYPosition + stampedObjectHeight > PageObject.ParentPage.Height)
-            {
-                initialYPosition = PageObject.ParentPage.Height - stampedObjectHeight;
-                initialXPosition = PageObject.XPosition + PageObject.Width + 10.0;
-                if (initialXPosition + numberOfCopies * (stampedObjectWidth + 5) > PageObject.ParentPage.Width)
-                {
-                    initialXPosition = 25.0;
-                }
-            }
+            
 
             var stampObjectType = stamp.StampType == StampTypes.GeneralStamp || stamp.StampType == StampTypes.ObservingStamp
                                       ? StampedObjectTypes.GeneralStampedObject
@@ -335,27 +325,44 @@ namespace Classroom_Learning_Partner.ViewModels
                                             : StampedObjectTypes.EmptyGroupStampedObject;
 
             var stampCopiesToAdd = new List<IPageObject>();
+
+
+
+            var random = new Random();
+            var miniGroupingXPosition = 5.0;
+            var miniGroupingYPosition = YPosition + Height + 100;
+            var miniGroupingColumns = stampedObjectWidth / stampedObjectHeight <= 1.0 ? 3 : 2;
+            var miniGroupingRows = miniGroupingColumns == 3 ? 2 : 3;
+            var miniGroupingWidth = stampedObjectWidth * miniGroupingColumns + 10;
+            var miniGroupingHeight = stampedObjectHeight * miniGroupingRows + 10;
             for (var i = 0; i < numberOfCopies; i++)
             {
+                var miniGroupIndex = i % 6;
+                var xOffset = (miniGroupIndex % miniGroupingColumns) * stampedObjectWidth + (miniGroupIndex % miniGroupingColumns == 0 ? 0 : 5) - 8 + random.NextDouble() * 16;
+                var yOffset = (miniGroupIndex % miniGroupingRows) * stampedObjectHeight + (miniGroupIndex % miniGroupingRows == 0 ? 0 : 5) - 8 + random.NextDouble() * 16;
+
                 var stampedObject = new StampedObject(stamp.ParentPage, stamp.ID, stamp.ImageHashID, stampObjectType)
                 {
                     Width = stampedObjectWidth,
                     Height = stampedObjectHeight,
-                    XPosition = initialXPosition,
-                    YPosition = initialYPosition,
+                    XPosition = miniGroupingXPosition + xOffset,
+                    YPosition = miniGroupingYPosition + yOffset,
                     SerializedStrokes = serializedStrokes.Select(stroke => stroke.ToStroke().ToStrokeDTO()).ToList(),
                     Parts = stamp.Parts
                 };
 
                 stampCopiesToAdd.Add(stampedObject);
-                if (initialXPosition + 2 * stampedObject.Width + 5 < PageObject.ParentPage.Width)
+                if (miniGroupIndex == 5)
                 {
-                    initialXPosition += stampedObject.Width + 5;
-                }
-                else if (initialYPosition + 2 * stampedObject.Height + 5 < PageObject.ParentPage.Height)
-                {
-                    initialXPosition = 25;
-                    initialYPosition += stampedObject.Height + 5;
+                    if (miniGroupingXPosition + 2 * miniGroupingWidth < PageObject.ParentPage.Width)
+                    {
+                        miniGroupingXPosition += miniGroupingWidth;
+                    }
+                    else if (miniGroupingYPosition + 2 * miniGroupingHeight < PageObject.ParentPage.Height)
+                    {
+                        miniGroupingXPosition = 5.0;
+                        miniGroupingYPosition += miniGroupingHeight;
+                    }
                 }
 
                 foreach (var pageObject in stamp.AcceptedPageObjects)

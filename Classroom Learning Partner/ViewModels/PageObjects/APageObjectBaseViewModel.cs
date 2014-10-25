@@ -212,6 +212,8 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                         App.MainWindowViewModel.CurrentUser,
                                                                                         PageObject.ID,
                                                                                         new Point(PageObject.XPosition, PageObject.YPosition)));
+
+            ACLPPageBaseViewModel.ClearAdorners(PageObject.ParentPage);
         }
 
         /// <summary>
@@ -253,6 +255,8 @@ namespace Classroom_Learning_Partner.ViewModels
             var batchHistoryItem = PageObject.ParentPage.History.EndBatch();
             ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, batchHistoryItem, true);
             PageObject.OnMoved(initialX, initialY);
+
+            IsAdornerVisible = true;
         }
 
         /// <summary>

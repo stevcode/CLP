@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Security.Cryptography.X509Certificates;
 using System.Windows;
 using System.Windows.Ink;
 using System.Windows.Input;
@@ -86,6 +87,51 @@ namespace CLP.Entities
     }
 
     [Serializable]
+    public class NumberLineJumpSize : AEntityBase
+    {
+        #region Constructors
+
+        public NumberLineJumpSize() { }
+
+        public NumberLineJumpSize(int jumpSizeValue, int startTickIndex)
+        {
+            JumpSize = jumpSizeValue;
+            StartingTickIndex = startTickIndex;
+        }
+
+        public NumberLineJumpSize(SerializationInfo info, StreamingContext context)
+            : base(info, context) { }
+
+        #endregion //Constructors
+
+        #region Properties
+
+        /// <summary>
+        /// Jump size of arrow
+        /// </summary>
+        public int JumpSize
+        {
+            get { return GetValue<int>(JumpSizeProperty); }
+            set { SetValue(JumpSizeProperty, value); }
+        }
+
+        public static readonly PropertyData JumpSizeProperty = RegisterProperty("JumpSize", typeof (int), 0);
+
+        /// <summary>
+        /// Tick where jump begins
+        /// </summary>
+        public int StartingTickIndex
+        {
+            get { return GetValue<int>(StartingTickIndexProperty); }
+            set { SetValue(StartingTickIndexProperty, value); }
+        }
+
+        public static readonly PropertyData StartingTickIndexProperty = RegisterProperty("StartingTickIndex", typeof (int), 0);
+
+        #endregion //Properties
+    }
+
+    [Serializable]
     public class NumberLine : APageObjectBase, IStrokeAccepter
     {
         #region Constructors
@@ -96,8 +142,9 @@ namespace CLP.Entities
             : base(parentPage)
         {
             NumberLineSize = numberLength;
-            Height = 75;
+            Height = NumberLineHeight;
             Width = 800;
+            XPosition = (parentPage.Width / 2.0) - (Width / 2.0);
         }
 
         public NumberLine(SerializationInfo info, StreamingContext context)
@@ -107,6 +154,11 @@ namespace CLP.Entities
 
         #region Properties
 
+        public double NumberLineHeight
+        {
+            get { return 75.0; }
+        }
+        
         public double ArrowLength
         {
             get { return 40.0; }
@@ -139,21 +191,33 @@ namespace CLP.Entities
         private static void OnNumberLineSizeChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
         {
             var numberLine = sender as NumberLine;
-            if (numberLine == null)
+            if (numberLine == null || !advancedPropertyChangedEventArgs.IsNewValueMeaningful)
             {
                 return;
             }
-            numberLine.CreateTicks();
+
+            var oldValue = (int)advancedPropertyChangedEventArgs.OldValue;
+            var newValue = (int)advancedPropertyChangedEventArgs.NewValue;
+
+            if (oldValue < newValue)
+            {
+                numberLine.CreateTicks();
+            }
+            else
+            {
+                numberLine.DeleteTicks();
+            }
+
         }
 
         /// <summary>List of the values of the jumps</summary>
-        public ObservableCollection<int> JumpSizes
+        public ObservableCollection<NumberLineJumpSize> JumpSizes
         {
-            get { return GetValue<ObservableCollection<int>>(JumpSizesProperty); }
+            get { return GetValue<ObservableCollection<NumberLineJumpSize>>(JumpSizesProperty); }
             set { SetValue(JumpSizesProperty, value); }
         }
 
-        public static readonly PropertyData JumpSizesProperty = RegisterProperty("JumpSizes", typeof (ObservableCollection<int>), () => new ObservableCollection<int>());
+        public static readonly PropertyData JumpSizesProperty = RegisterProperty("JumpSizes", typeof (ObservableCollection<NumberLineJumpSize>), () => new ObservableCollection<NumberLineJumpSize>());
 
         /// <summary>A collection of the ticks of the number line</summary>
         public ObservableCollection<NumberLineTick> Ticks
@@ -202,23 +266,59 @@ namespace CLP.Entities
 
         #region Methods
 
+        public override void OnDeleted()
+        {
+            if (!CanAcceptStrokes ||
+                !AcceptedStrokes.Any())
+            {
+                return;
+            }
+
+            ParentPage.InkStrokes.Remove(new StrokeCollection(AcceptedStrokes));
+            ParentPage.History.TrashedInkStrokes.Add(new StrokeCollection(AcceptedStrokes));
+        }
+        
         public void CreateTicks()
         {
-            Ticks.Clear();
             var defaultInteger = NumberLineSize <= 10 ? 1 : 5;
-            for (var i = 0; i <= NumberLineSize; i++)
+            if (Ticks.LastOrDefault() != null)
             {
-                var labelVisible = false;
-                if (i == 0 ||
-                    i == NumberLineSize)
+                if (Ticks.LastOrDefault().TickValue % 5 != 0)
                 {
-                    labelVisible = true;
+                    Ticks.LastOrDefault().IsNumberVisible = false;
                 }
-                else if (i % defaultInteger == 0)
+            }
+            
+            if (!Ticks.Any())
+            {
+                for (var i = 0; i <= NumberLineSize; i++)
                 {
-                    labelVisible = true;
+                    var labelVisible = false;
+                    if (i == 0 ||
+                        i == NumberLineSize)
+                    {
+                        labelVisible = true;
+                    }
+                    else if (i % defaultInteger == 0)
+                    {
+                        labelVisible = true;
+                    }
+
+                    Ticks.Add(new NumberLineTick(i, labelVisible));
                 }
-                Ticks.Add(new NumberLineTick(i, labelVisible));
+            }
+            else
+            {
+                Ticks.Add(new NumberLineTick(Ticks.Count, true));
+            }
+        }
+
+
+        public void DeleteTicks()
+        {
+            if(Ticks.Any())
+            {
+                Ticks.Remove(Ticks.LastOrDefault());
             }
         }
 
@@ -234,20 +334,24 @@ namespace CLP.Entities
 
         public override void OnResizing(double oldWidth, double oldHeight)
         {
-            var scaleX = Width / oldWidth;
-            //   var deltaX = ;
+            var scaleX = NumberLineLength / (oldWidth - 2 * ArrowLength);
 
             if (CanAcceptStrokes)
             {
                 foreach (var stroke in AcceptedStrokes)
                 {
                     var transform = new Matrix();
-                    transform.Scale(scaleX, 1.0);
-                    //         transform.Translate(deltaX,0.0);
-                    stroke.Transform(transform, true);
+                    transform.ScaleAt(scaleX, 1.0, XPosition + ArrowLength, YPosition);
+                    stroke.Transform(transform, false);
                 }
             }
         }
+
+        public override void OnResized(double oldWidth, double oldHeight)
+        {
+            OnResizing(oldWidth, oldHeight);
+        }
+
 
         public override void OnMoving(double oldX, double oldY)
         {
@@ -295,15 +399,59 @@ namespace CLP.Entities
                 var theRemovedStrokes = new StrokeCollection(removedStrokes);
                 var tickR = FindClosestTick(theRemovedStrokes);
                 var tickL = FindClosestTickLeft(theRemovedStrokes);
-                tickL.IsMarked = false;
-                tickL.IsNumberVisible = false;
-                tickR.IsMarked = false;
-                tickR.IsNumberVisible = false;
+
+                var deletedStartTickValue = tickL.TickValue;
+                var deletedJumpSize = tickR.TickValue - tickL.TickValue;
+
+                foreach (var jump in JumpSizes)
+                {
+                    if (jump.JumpSize == deletedJumpSize &&
+                        jump.StartingTickIndex == deletedStartTickValue)
+                    {
+                        jump.JumpSize = 0;
+                    }
+                }
+
+                if (NumberLineSize < 11)
+                {
+                    tickL.TickColor = "Black";
+                    tickR.TickColor = "Black";
+                }
+                else
+                {
+                    if (tickL.TickValue % 5 == 0 &&
+                        tickR.TickValue % 5 == 0)
+                    {
+                        tickL.TickColor = "Black";
+                        tickR.TickColor = "Black";
+                    }
+                    else if (tickL.TickValue % 5 == 0)
+                    {
+                        tickL.TickColor = "Black";
+                        tickR.IsMarked = false;
+                        tickR.IsNumberVisible = false;
+                    }
+                    else if (tickR.TickValue % 5 == 0)
+                    {
+                        tickR.TickColor = "Black";
+                        tickL.IsMarked = false;
+                        tickL.IsNumberVisible = false;
+                    }
+                    else
+                    {
+                        tickL.IsMarked = false;
+                        tickL.IsNumberVisible = false;
+                        tickR.IsMarked = false;
+                        tickR.IsNumberVisible = false;
+                    }
+                
+                }
+
             }
 
             var actuallyAcceptedStrokes = new StrokeCollection();
             var numberLineBodyBoundingBox = new Rect(XPosition, YPosition, Width, Height);
-            foreach (var stroke in addedStrokes.Where(stroke => stroke.HitTest(numberLineBodyBoundingBox, 30) && !AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
+            foreach (var stroke in addedStrokes.Where(stroke => stroke.HitTest(numberLineBodyBoundingBox, 5) && !AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
             {
                 AcceptedStrokes.Add(stroke);
                 AcceptedStrokeParentIDs.Add(stroke.GetStrokeID());
@@ -313,34 +461,69 @@ namespace CLP.Entities
             //Grab the lowest right point
             var tick = FindClosestTick(actuallyAcceptedStrokes);
             var tick2 = FindClosestTickLeft(actuallyAcceptedStrokes);
-            if (tick == null || tick2 == null)
+
+            if (tick == null &&
+                tick2 == null)
             {
                 return;
             }
+
             tick.IsMarked = true;
             tick.IsNumberVisible = true;
             var lastStroke = actuallyAcceptedStrokes.Last();
-            tick.TickColor = lastStroke.DrawingAttributes.Color.ToString();
-            if (tick.TickValue == 0)
+            if (lastStroke.DrawingAttributes.Color == Colors.Black)
             {
-                tick.TickColor = "Black";
+                tick.TickColor = "Blue";
+                tick2.TickColor = "Blue";
+            }
+            else
+            {
+                tick.TickColor = lastStroke.DrawingAttributes.Color.ToString();
+                tick2.TickColor = lastStroke.DrawingAttributes.Color.ToString();
             }
 
             tick2.IsMarked = true;
             tick2.IsNumberVisible = true;
-            tick2.TickColor = lastStroke.DrawingAttributes.Color.ToString();
-            if (tick2.TickValue == 0)
-            {
-                tick2.TickColor = "Black";
-            }
 
-            if (tick2 == null)
+            if (!JumpSizes.Any())
             {
-                JumpSizes.Add(tick.TickValue);
-                return;
+                var tallestPoint = FindTallestPoint(actuallyAcceptedStrokes);
+                tallestPoint = tallestPoint - 20;
+
+                if (tallestPoint < 0)
+                {
+                    tallestPoint = 0;
+                }
+
+                if (tallestPoint > YPosition)
+                {
+                    tallestPoint = YPosition;
+                }
+
+                Height = Height + (YPosition - tallestPoint);
+                YPosition = tallestPoint;
             }
+            
             var jumpSize = tick.TickValue - tick2.TickValue;
-            JumpSizes.Add(jumpSize);
+            if (tick == tick2)
+            {
+                var lastMarkedTick = Ticks.Reverse().FirstOrDefault(x => x.IsMarked && x.TickValue < tick.TickValue);
+                if (lastMarkedTick == null)
+                {
+                    jumpSize = tick.TickValue;
+                    JumpSizes.Add(new NumberLineJumpSize(jumpSize, 0));
+                }
+                else
+                {
+                    jumpSize = tick.TickValue - lastMarkedTick.TickValue;
+                    JumpSizes.Add(new NumberLineJumpSize(jumpSize, lastMarkedTick.TickValue));
+                }
+                
+            }
+            else
+            {
+                JumpSizes.Add(new NumberLineJumpSize(jumpSize, tick2.TickValue));
+            }
         }
 
         public void RefreshAcceptedStrokes()
@@ -354,7 +537,7 @@ namespace CLP.Entities
 
             var numberLineBodyBoundingBox = new Rect(XPosition, YPosition, Width, Height);
             var strokesOverObject = from stroke in ParentPage.InkStrokes
-                                    where stroke.HitTest(numberLineBodyBoundingBox, 30) //Stroke must be at least 30% contained by Stamp body.
+                                    where stroke.HitTest(numberLineBodyBoundingBox, 5) //Stroke must be at least 5% contained by Stamp body.
                                     select stroke;
 
             AcceptStrokes(new StrokeCollection(strokesOverObject), new StrokeCollection());
@@ -450,6 +633,18 @@ namespace CLP.Entities
             }
 
             return Ticks[tickIndex];
+        }
+
+        public double FindTallestPoint(StrokeCollection theCollection)
+        {
+            var tallestPoint = ParentPage.Height;
+            //find highest point on ink
+            foreach (var stroke in theCollection)
+            {
+                tallestPoint = Math.Min(tallestPoint, stroke.GetBounds().Top);
+            }
+
+            return tallestPoint;
         }
 
         #endregion //Methods

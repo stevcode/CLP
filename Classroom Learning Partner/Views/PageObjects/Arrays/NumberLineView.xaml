@@ -171,8 +171,60 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="{Binding PageObject.ArrowLength}" />
             </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="{Binding PageObject.NumberLineHeight}"/>
+            </Grid.RowDefinitions>
 
+            <!-- Jump Size Labels -->
+            <Grid Grid.Column="1"
+                  Grid.Row="0"
+                  VerticalAlignment="Top"
+                  HorizontalAlignment="Stretch">
+                <ItemsControl ItemsSource="{Binding JumpSizes}"
+                              HorizontalAlignment="Left">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemContainerStyle>
+                        <Style TargetType="ContentPresenter">
+                            <Setter Property="Canvas.Left">
+                                <Setter.Value>
+                                    <MultiBinding Converter="{StaticResource MultiplyAllMultiConverter}">
+                                        <Binding Path="DataContext.PageObject.TickLength"
+                                                 RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}" />
+                                        <Binding Path="StartingTickIndex" />
+                                    </MultiBinding>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding JumpSize}"
+                                       Foreground="Green"
+                                       TextAlignment="Center"
+                                       FontSize="18">
+                                
+                                <TextBlock.Width>
+                                    <MultiBinding Converter="{StaticResource MultiplyAllMultiConverter}">
+                                        <Binding Path="DataContext.PageObject.TickLength"
+                                                 RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}" />
+                                        <Binding Path="JumpSize" />
+                                    </MultiBinding>
+                                </TextBlock.Width>
+
+                            </TextBlock>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
+
+            <!-- Left Arrow -->
             <Grid Grid.Column="0"
+                  Grid.Row="1"
                   Height="10"
                   VerticalAlignment="Center"
                   HorizontalAlignment="Stretch">
@@ -183,7 +235,19 @@
                       Data="M 1,0 L 0,1 L 1,2 M 0,1 L 2,1" />
             </Grid>
 
+            <!-- Middle Line -->
+            <Line Grid.Column="1"
+                  Grid.Row="1"
+                  X1="0"
+                  X2="1"
+                  Stretch="Fill"
+                  Stroke="Black"
+                  StrokeThickness="2"
+                  VerticalAlignment="Center" />
+
+            <!-- Right Arrow -->
             <Grid Grid.Column="2"
+                  Grid.Row="1"
                   Height="10"
                   VerticalAlignment="Center"
                   HorizontalAlignment="Stretch">
@@ -194,44 +258,9 @@
                       Data="M 1,0 L 2,1 L 1,2 M 0,1 L 2,1" />
             </Grid>
 
-            <Line Grid.Column="1"
-                  X1="0"
-                  X2="1"
-                  Stretch="Fill"
-                  Stroke="Black"
-                  StrokeThickness="2"
-                  VerticalAlignment="Center" />
-
-            <Grid Grid.Column="1"
-                  VerticalAlignment="Top"
-                  HorizontalAlignment="Stretch">
-                <ItemsControl ItemsSource="{Binding JumpSizes}"
-                              HorizontalAlignment="Left">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal" />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding}"
-                                       Foreground="Green"
-                                       TextAlignment="Center"
-                                       FontSize="18">
-                                <TextBlock.Width>
-                                    <MultiBinding Converter="{StaticResource MultiplyAllMultiConverter}">
-                                        <Binding Path="DataContext.PageObject.TickLength"
-                                                 RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}" />
-                                        <Binding Path="." />
-                                    </MultiBinding>
-                                </TextBlock.Width>
-                            </TextBlock>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </Grid>
-
-            <Canvas Grid.Column="1">
+            <!-- Tick Marks -->
+            <Canvas Grid.Column="1"
+                    Grid.Row="1">
                 <ItemsControl ItemsSource="{Binding Ticks}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -254,15 +283,19 @@
                                       Stroke="Blue"
                                       StrokeThickness="2"
                                       HorizontalAlignment="Left" />
+                                
+                                <Canvas Grid.Row="1"
+                                        ClipToBounds="False"
+                                        HorizontalAlignment="Left"
+                                        Margin="-6 0 0 0"
+                                        Visibility="{Binding IsNumberVisible, Converter={StaticResource BooleanToHidingVisibilityConverter}}">
+                                    <TextBlock Text="{Binding TickValue}"
+                                               FontSize="20"
+                                               Foreground="{Binding TickColor}"
+                                               FontWeight="Bold" />
+                                </Canvas>
 
-                                <TextBlock Grid.Row="1"
-                                           HorizontalAlignment="Left"
-                                           Visibility="{Binding IsNumberVisible, Converter={StaticResource BooleanToHidingVisibilityConverter}}"
-                                           Text="{Binding TickValue}"
-                                           FontSize="20"
-                                           Foreground="{Binding TickColor}"
-                                           FontWeight="Bold"
-                                           Margin="-4,0,0,0" />
+                                
                             </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
@@ -270,6 +303,8 @@
                 </ItemsControl>
             </Canvas>
             <Rectangle Grid.Column="0"
+                       Grid.Row="0"
+                       Grid.RowSpan="2"
                        Grid.ColumnSpan="3"
                        Tag="PageObjectHitBox"
                        Fill="Transparent"
@@ -283,6 +318,37 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </Rectangle>
+
+            <Thumb Cursor="SizeWE"
+                   Grid.Column="2"
+                   Grid.Row="1"
+                   Width="{Binding PageObject.ArrowLength}"
+                   Height="{Binding Height}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="DragDelta">
+                        <catel:EventToCommand Command="{Binding ResizeNumberLineLengthCommand}"
+                                              PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="DragStarted">
+                        <catel:EventToCommand Command="{Binding ResizeStartNumberLineLengthCommand}"
+                                              PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="DragCompleted">
+                        <catel:EventToCommand Command="{Binding ResizeStopNumberLineLengthCommand}"
+                                              PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                <Thumb.Template>
+                    <ControlTemplate>
+
+                        <Rectangle Tag="RightArrowHitBox"
+                                   Fill="Transparent"
+                                   Stretch="Fill"
+                                   HorizontalAlignment="Stretch"
+                                   VerticalAlignment="Stretch"/>
+                    </ControlTemplate>
+                </Thumb.Template>
+            </Thumb>
 
         </Grid>
 
