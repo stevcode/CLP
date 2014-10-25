@@ -503,9 +503,27 @@ namespace CLP.Entities
                 Height = Height + (YPosition - tallestPoint);
                 YPosition = tallestPoint;
             }
-
+            
             var jumpSize = tick.TickValue - tick2.TickValue;
-            JumpSizes.Add(new NumberLineJumpSize(jumpSize,tick2.TickValue));
+            if (tick == tick2)
+            {
+                var lastMarkedTick = Ticks.Reverse().FirstOrDefault(x => x.IsMarked && x.TickValue < tick.TickValue);
+                if (lastMarkedTick == null)
+                {
+                    jumpSize = tick.TickValue;
+                    JumpSizes.Add(new NumberLineJumpSize(jumpSize, 0));
+                }
+                else
+                {
+                    jumpSize = tick.TickValue - lastMarkedTick.TickValue;
+                    JumpSizes.Add(new NumberLineJumpSize(jumpSize, lastMarkedTick.TickValue));
+                }
+                
+            }
+            else
+            {
+                JumpSizes.Add(new NumberLineJumpSize(jumpSize, tick2.TickValue));
+            }
         }
 
         public void RefreshAcceptedStrokes()
