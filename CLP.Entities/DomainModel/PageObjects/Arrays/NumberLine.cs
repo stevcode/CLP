@@ -425,7 +425,7 @@ namespace CLP.Entities
 
             var actuallyAcceptedStrokes = new StrokeCollection();
             var numberLineBodyBoundingBox = new Rect(XPosition, YPosition, Width, Height);
-            foreach (var stroke in addedStrokes.Where(stroke => stroke.HitTest(numberLineBodyBoundingBox, 30) && !AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
+            foreach (var stroke in addedStrokes.Where(stroke => stroke.HitTest(numberLineBodyBoundingBox, 5) && !AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
             {
                 AcceptedStrokes.Add(stroke);
                 AcceptedStrokeParentIDs.Add(stroke.GetStrokeID());
@@ -488,7 +488,7 @@ namespace CLP.Entities
 
             var numberLineBodyBoundingBox = new Rect(XPosition, YPosition, Width, Height);
             var strokesOverObject = from stroke in ParentPage.InkStrokes
-                                    where stroke.HitTest(numberLineBodyBoundingBox, 30) //Stroke must be at least 30% contained by Stamp body.
+                                    where stroke.HitTest(numberLineBodyBoundingBox, 5) //Stroke must be at least 5% contained by Stamp body.
                                     select stroke;
 
             AcceptStrokes(new StrokeCollection(strokesOverObject), new StrokeCollection());
