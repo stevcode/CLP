@@ -11,7 +11,7 @@
         <converters:EnumToBoolConverter x:Key="EnumToBoolConverter" />
     </catel:UserControl.Resources>
 
-    <DockPanel Background="{StaticResource GrayBackgroundColor}"
+    <DockPanel Background="White"
                LastChildFill="True">
 
         <!-- Navigation Panel -->
@@ -266,6 +266,15 @@
                    LastChildFill="True"
                    Height="24">
 
+            <TextBlock Text="Classroom Learning Partner"
+                       TextAlignment="Center"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       FontFamily="Segoe UI"
+                       FontSize="14"
+                       Foreground="Black"
+                       TextOptions.TextRenderingMode="Auto"
+                       TextOptions.TextFormattingMode="Ideal" />
         </DockPanel>
 
         <!-- Detail Title Text -->
@@ -274,10 +283,10 @@
                    TextAlignment="Left"
                    HorizontalAlignment="Left"
                    VerticalAlignment="Center"
-                   FontFamily="Segoe UI"
-                   FontSize="28pt"
-                   Foreground="Black"
-                   Margin="42 60 0 0"
+                   FontFamily="Segoe UI Light"
+                   FontSize="40"
+                   Foreground="#444444"
+                   Margin="42 61 0 0"
                    TextOptions.TextRenderingMode="Auto"
                    TextOptions.TextFormattingMode="Ideal" />
 
