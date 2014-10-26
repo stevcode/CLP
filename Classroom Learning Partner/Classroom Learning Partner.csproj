@@ -313,6 +313,30 @@
     <Compile Include="Views\BackStage\BackStageView.xaml.cs">
       <DependentUpon>BackStageView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\BackStage\ExportPaneView.xaml.cs">
+      <DependentUpon>ExportPaneView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\BackStage\ExportPaneViewModel.cs" />
+    <Compile Include="Views\BackStage\NewNotebookPaneView.xaml.cs">
+      <DependentUpon>NewNotebookPaneView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\BackStage\NewNotebookPaneViewModel.cs" />
+    <Compile Include="Views\BackStage\NotebookInfoPaneView.xaml.cs">
+      <DependentUpon>NotebookInfoPaneView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\BackStage\NotebookInfoPaneViewModel.cs" />
+    <Compile Include="Views\BackStage\OpenNotebookPaneView.xaml.cs">
+      <DependentUpon>OpenNotebookPaneView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\BackStage\OpenNotebookPaneViewModel.cs" />
+    <Compile Include="Views\BackStage\OptionsPaneView.xaml.cs">
+      <DependentUpon>OptionsPaneView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\BackStage\OptionsPaneViewModel.cs" />
+    <Compile Include="Views\BackStage\SaveNotebookPaneView.xaml.cs">
+      <DependentUpon>SaveNotebookPaneView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\BackStage\SaveNotebookPaneViewModel.cs" />
     <Compile Include="Views\Modal Windows\AdvancedStagingView.xaml.cs">
       <DependentUpon>AdvancedStagingView.xaml</DependentUpon>
     </Compile>
@@ -578,6 +602,30 @@
     <Page Include="Views\BackStage\BackStageView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\BackStage\ExportPaneView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\BackStage\NewNotebookPaneView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\BackStage\NotebookInfoPaneView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\BackStage\OpenNotebookPaneView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\BackStage\OptionsPaneView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\BackStage\SaveNotebookPaneView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Modal Windows\AdvancedStagingView.xaml">
       <Generator>MSBuild:Compile</Generator>
