@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -22,12 +21,7 @@ namespace CLP.CustomControls
             Command = command;
             CommandParameter = commandParameter;
             IsContextButton = isContextButton;
-
-            var dict = new ResourceDictionary();
-            var uri = new Uri(@"pack://application:,,,/Resources/CLPBrushes.xaml");
-            dict.Source = uri;
-            var color = dict["MainColor"] as Brush;
-            Background = color;
+            SetResourceReference(BackgroundProperty, "DynamicMainColor");
         }
 
         #region Dependency Properties
@@ -64,9 +58,9 @@ namespace CLP.CustomControls
         }
 
         public static readonly DependencyProperty IsContextButtonProperty = DependencyProperty.Register("IsContextButton",
-                                                                                             typeof(bool),
-                                                                                             typeof(RibbonButton),
-                                                                                             new UIPropertyMetadata(null));
+                                                                                                        typeof (bool),
+                                                                                                        typeof (RibbonButton),
+                                                                                                        new UIPropertyMetadata(null));
 
         #endregion //Dependency Properties
     }

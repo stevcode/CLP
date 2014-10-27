@@ -1,10 +1,6 @@
-﻿using System;
-using Catel.Data;
-using Catel.MVVM;
-
-namespace Classroom_Learning_Partner.ViewModels
+﻿namespace Classroom_Learning_Partner.ViewModels
 {
-    public class SaveNotebookPaneViewModel : ViewModelBase
+    public class SaveNotebookPaneViewModel : APaneBaseViewModel
     {
         #region Constructor
 
@@ -16,13 +12,15 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Bindings
 
-
+        /// <summary>Title Text for the Pane.</summary>
+        public override string PaneTitleText
+        {
+            get { return "Save Notebook"; }
+        }
 
         #endregion //Bindings
 
         #region Commands
-
-
 
         #endregion //Commands
     }

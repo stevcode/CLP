@@ -28,7 +28,7 @@
         <!--Application Menu Button-->
         <Ribbon.ApplicationMenu>
             <RibbonApplicationMenu SmallImageSource="pack://application:,,,/Resources/Images/File.png"
-                                   Background="{StaticResource MainColor}">
+                                   Background="{DynamicResource DynamicMainColor}">
 
                 <RibbonApplicationMenuItem Header="New Notebook"
                                            KeyTip="N"
@@ -986,7 +986,7 @@
             <ToggleButton Content="^"
                           VerticalContentAlignment="Center"
                           Height="22" Width="40"
-                          Background="{StaticResource MainColor}"
+                          Background="{DynamicResource DynamicMainColor}"
                           IsChecked="{Binding ElementName=Ribbon, Path=IsMinimized}" />
         </Ribbon.HelpPaneContent>-->
 

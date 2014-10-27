@@ -1,7 +1,6 @@
 ﻿using System;
 using Catel.Data;
 using Catel.MVVM;
-using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -22,31 +21,22 @@ namespace Classroom_Learning_Partner.ViewModels
             get { return App.MainWindowViewModel; }
         }
 
-        public static CLPPage CurrentPage
-        {
-            get { return NotebookPagesPanelViewModel.GetCurrentPage(); }
-        }
-
         public BackStageViewModel() { InitializeCommands(); }
 
         private void InitializeCommands() { HideBackStageCommand = new Command(OnHideBackStageCommandExecute); }
 
         #region Bindings
 
-        /// <summary>
-        /// Title Text for the currnet navigation pane.
-        /// </summary>
-        public string DetailTitleText
+        /// <summary>Title Text for the currnet navigation pane.</summary>
+        public string PaneTitleText
         {
-            get { return GetValue<string>(DetailTitleTextProperty); }
-            set { SetValue(DetailTitleTextProperty, value); }
+            get { return GetValue<string>(PaneTitleTextProperty); }
+            set { SetValue(PaneTitleTextProperty, value); }
         }
 
-        public static readonly PropertyData DetailTitleTextProperty = RegisterProperty("DetailTitleText", typeof (string), string.Empty);
+        public static readonly PropertyData PaneTitleTextProperty = RegisterProperty("PaneTitleText", typeof (string), string.Empty);
 
-        /// <summary>
-        /// Currently Displayed Navigation Pane.
-        /// </summary>
+        /// <summary>Currently Displayed Navigation Pane.</summary>
         public NavigationPanes CurrentNavigationPane
         {
             get { return GetValue<NavigationPanes>(CurrentNavigationPaneProperty); }
@@ -57,7 +47,18 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        public static readonly PropertyData CurrentNavigationPaneProperty = RegisterProperty("CurrentNavigationPane", typeof (NavigationPanes), NavigationPanes.Info); 
+        public static readonly PropertyData CurrentNavigationPaneProperty = RegisterProperty("CurrentNavigationPane",
+                                                                                             typeof (NavigationPanes),
+                                                                                             NavigationPanes.Info);
+
+        /// <summary>Pane currently displayed.</summary>
+        public APaneBaseViewModel DisplayedPane
+        {
+            get { return GetValue<APaneBaseViewModel>(DisplayedPaneProperty); }
+            set { SetValue(DisplayedPaneProperty, value); }
+        }
+
+        public static readonly PropertyData DisplayedPaneProperty = RegisterProperty("DisplayedPane", typeof (APaneBaseViewModel));
 
         #endregion //Bindings
 
@@ -72,31 +73,32 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Methods
 
-        public void SetBackStagePane()
+        private void SetBackStagePane()
         {
             switch (CurrentNavigationPane)
             {
                 case NavigationPanes.Info:
-                    DetailTitleText = "Notebook Information";
+                    DisplayedPane = new NotebookInfoPaneViewModel();
                     break;
                 case NavigationPanes.New:
-                    DetailTitleText = "New Notebook";
+                    DisplayedPane = new NewNotebookPaneViewModel();
                     break;
                 case NavigationPanes.Open:
-                    DetailTitleText = "Open Notebook";
+                    DisplayedPane = new OpenNotebookPaneViewModel();
                     break;
                 case NavigationPanes.Save:
-                    DetailTitleText = "Save Notebook";
+                    DisplayedPane = new SaveNotebookPaneViewModel();
                     break;
                 case NavigationPanes.Export:
-                    DetailTitleText = "Export";
+                    DisplayedPane = new ExportPaneViewModel();
                     break;
                 case NavigationPanes.Options:
-                    DetailTitleText = "Options";
+                    DisplayedPane = new OptionsPaneViewModel();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+            PaneTitleText = DisplayedPane.PaneTitleText;
         }
 
         #endregion //Methods

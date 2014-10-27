@@ -1,5 +1,7 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Windows;
+using System.Windows.Media;
 using Catel.Windows;
 
 namespace Classroom_Learning_Partner.Views
@@ -21,6 +23,11 @@ namespace Classroom_Learning_Partner.Views
             {
                 CLPServiceAgent.Instance.Exit();
             }
+        }
+
+        private void MainWindowView_OnLoaded(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Resources["DynamicMainColor"] = new BrushConverter().ConvertFrom("#2F64B9");
         }
     }
 }

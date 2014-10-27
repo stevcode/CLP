@@ -48,7 +48,7 @@
 
                         <TextBlock Grid.Column="0"
                                Grid.Row="1"
-                               Foreground="{StaticResource MainColor}"
+                               Foreground="{DynamicResource DynamicMainColor}"
                                FontWeight="Bold"
                                VerticalAlignment="Center">
                         <Run Text="Group" />

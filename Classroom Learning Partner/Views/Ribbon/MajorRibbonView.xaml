@@ -86,7 +86,7 @@
                                     </Grid>
 
                                     <Ellipse x:Name="ButtonMask"
-                                             Fill="{StaticResource MainColor}"
+                                             Fill="{DynamicResource DynamicMainColor}"
                                              Stroke="{StaticResource GrayEdgeColor}"
                                              StrokeThickness="3"
                                              Height="60"
@@ -152,6 +152,7 @@
                         <StackPanel Orientation="Horizontal" />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
+
             </ItemsControl>
         </Grid>
         

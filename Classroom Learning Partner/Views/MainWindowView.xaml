@@ -5,6 +5,7 @@
                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
                   xmlns:viewModels="clr-namespace:Classroom_Learning_Partner.ViewModels"
+                  Loaded="MainWindowView_OnLoaded"
                   Icon="..\Images\InkWell.ico"
                   Height="800"
                   Width="1280"

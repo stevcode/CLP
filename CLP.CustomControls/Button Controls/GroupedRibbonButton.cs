@@ -1,7 +1,5 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media;
 
 namespace CLP.CustomControls
@@ -21,12 +19,7 @@ namespace CLP.CustomControls
             GroupName = groupName;
             LargeImageSource = new ImageSourceConverter().ConvertFromString(packUri) as ImageSource;
             AssociatedEnumValue = enumValue;
-
-            var dict = new ResourceDictionary();
-            var uri = new Uri(@"pack://application:,,,/Resources/CLPBrushes.xaml");
-            dict.Source = uri;
-            var color = dict["MainColor"] as Brush;
-            Background = color;
+            SetResourceReference(BackgroundProperty, "DynamicMainColor");
         }
 
         #region Dependency Properties

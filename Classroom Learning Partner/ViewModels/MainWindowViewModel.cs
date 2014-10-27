@@ -35,7 +35,7 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentProgramMode = currentProgramMode;
 
             InitializeCommands();
-            
+
             TitleBarText = CLP_TEXT;
             CurrentUser = Person.Guest;
             IsProjectorFrozen = CurrentProgramMode != ProgramModes.Projector;
@@ -86,20 +86,18 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData RibbonProperty = RegisterProperty("Ribbon", typeof (RibbonViewModel), new RibbonViewModel());
 
-        /// <summary>
-        /// The MajorRibbon at the top of the Window.
-        /// </summary>
+        /// <summary>The MajorRibbon at the top of the Window.</summary>
         public MajorRibbonViewModel MajorRibbon
         {
             get { return GetValue<MajorRibbonViewModel>(MajorRibbonProperty); }
             set { SetValue(MajorRibbonProperty, value); }
         }
 
-        public static readonly PropertyData MajorRibbonProperty = RegisterProperty("MajorRibbon", typeof (MajorRibbonViewModel), new MajorRibbonViewModel());
+        public static readonly PropertyData MajorRibbonProperty = RegisterProperty("MajorRibbon",
+                                                                                   typeof (MajorRibbonViewModel),
+                                                                                   new MajorRibbonViewModel());
 
-        /// <summary>
-        /// The program's BackStage.
-        /// </summary>
+        /// <summary>The program's BackStage.</summary>
         public BackStageViewModel BackStage
         {
             get { return GetValue<BackStageViewModel>(BackStageProperty); }
@@ -108,9 +106,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData BackStageProperty = RegisterProperty("BackStage", typeof (BackStageViewModel), new BackStageViewModel());
 
-        /// <summary>
-        /// Toggles BackStage Visibility.
-        /// </summary>
+        /// <summary>Toggles BackStage Visibility.</summary>
         public bool IsBackStageVisible
         {
             get { return GetValue<bool>(IsBackStageVisibleProperty); }
@@ -505,6 +501,13 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Static Methods
 
+        public static void ChangeApplicationMainColor(string hexString)
+        {
+            Application.Current.Resources["DynamicMainColor"] = new BrushConverter().ConvertFrom(hexString);
+        }
+
+        public static void ChangeApplicationMainColor(Color color) { Application.Current.Resources["DynamicMainColor"] = new SolidColorBrush(color); }
+
         public static void InitializeLocalCache(ProgramModes currentProgramMode)
         {
             string variant;
@@ -535,7 +538,12 @@ namespace Classroom_Learning_Partner.ViewModels
             //if other folders on desktop start with Cache, prompt to use one of those instead.
             var desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             var directoryInfo = new DirectoryInfo(desktopPath);
-            var availableCaches = directoryInfo.GetDirectories().Where(directory => directory.Name.StartsWith("Cache")).Select(directory => directory.Name).OrderBy(x => x).ToList();
+            var availableCaches =
+                directoryInfo.GetDirectories()
+                             .Where(directory => directory.Name.StartsWith("Cache"))
+                             .Select(directory => directory.Name)
+                             .OrderBy(x => x)
+                             .ToList();
 
             var buttonBox = new ButtonBoxView("Select Cache To Use:", availableCaches);
             buttonBox.ShowDialog();
