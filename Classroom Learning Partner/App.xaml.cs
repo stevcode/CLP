@@ -1,12 +1,12 @@
 using System;
 using System.Windows;
 using System.Windows.Threading;
+using Catel.IoC;
 using Catel.Reflection;
-using Catel.Runtime.Serialization;
 using Catel.Windows.Controls;
+using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.ViewModels;
 using Classroom_Learning_Partner.Views;
-using CLP.Entities;
 
 namespace Classroom_Learning_Partner
 {
@@ -33,6 +33,8 @@ namespace Classroom_Learning_Partner
             MainWindowViewModel.Workspace = new BlankWorkspaceViewModel();
             window.Show();
 
+            InitializeServices();
+
             MainWindowViewModel.InitializeLocalCache(currentProgramMode);
             CLPServiceAgent.Instance.NetworkSetup();
             MainWindowViewModel.SetWorkspace();
@@ -51,11 +53,12 @@ namespace Classroom_Learning_Partner
             //Stops Catel UserControls from searching for InfoBar (not being used for this project, massive time consumer)
             UserControl.DefaultSkipSearchingForInfoBarMessageControlValue = true;
             UserControl.DefaultCreateWarningAndErrorValidatorForViewModelValue = false;
+        }
 
-            //Warm up Serializer to make loading of notebook faster.
-            var typesToWarmup = new[] { typeof (Notebook) };
-            var xmlSerializer = SerializationFactory.GetXmlSerializer();
-            xmlSerializer.Warmup(typesToWarmup);
+        private static void InitializeServices()
+        {
+            var notebookService = new NotebookService();
+            ServiceLocator.Default.RegisterInstance<INotebookService>(notebookService);
         }
 
         #region Methods

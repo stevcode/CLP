@@ -128,6 +128,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData WorkspaceProperty = RegisterProperty("Workspace", typeof (ViewModelBase), new BlankWorkspaceViewModel());
 
+        private Person _tempCurrentUser;
+
         /// <summary>Gets or sets the Authoring flag.</summary>
         public bool IsAuthoring
         {
@@ -149,8 +151,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 SetValue(IsAuthoringProperty, value);
             }
         }
-
-        private Person _tempCurrentUser;
 
         public static readonly PropertyData IsAuthoringProperty = RegisterProperty("IsAuthoring", typeof (bool), false);
 
@@ -1093,20 +1093,5 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //Static Methods
-
-        #region Temp Methods
-
-        public static void ConvertStudentIDsToCompactIDs()
-        {
-            var classPeriod = ClassSubject.OpenClassSubject(@"C:\Users\Steve\Desktop\CacheT\Classes\ClassSubject;AAAAABERAAAAAAAAAAAAAQ.xml");
-            foreach (var student in classPeriod.StudentList)
-            {
-                student.ID = new Guid(student.ID).ToCompactID();
-            }
-            File.Delete(@"C:\Users\Steve\Desktop\CacheT\Classes\ClassSubject;AAAAABERAAAAAAAAAAAAAQ.xml");
-            classPeriod.SaveClassSubject(@"C:\Users\Steve\Desktop\CacheT\Classes\ClassSubject;AAAAABERAAAAAAAAAAAAAQ.xml");
-        }
-
-        #endregion //Temp Methods
     }
 }
