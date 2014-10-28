@@ -6,6 +6,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Ink;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Views.Modal_Windows;
+using CLP.CustomControls;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -23,12 +24,23 @@ namespace Classroom_Learning_Partner.ViewModels
             DragStartLassoCommand = new Command<DragStartedEventArgs>(OnDragStartLassoCommandExecute);
             DragLassoCommand = new Command<DragDeltaEventArgs>(OnDragLassoCommandExecute);
             DragStopLassoCommand = new Command<DragCompletedEventArgs>(OnDragStopLassoCommandExecute);
+
+            InitializeButtons();
         }
 
         public override void ClearAdorners()
         {
             IsAdornerVisible = false;
             ACLPPageBaseViewModel.RemovePageObjectFromPage(PageObject, false);
+        }
+
+        private void InitializeButtons()
+        {
+            _contextButtons.Clear();
+
+            _contextButtons.Add(new RibbonButton("Delete Lassoed Objects", "pack://application:,,,/Images/Delete.png", RemovePageObjectsCommand, null, true));
+            _contextButtons.Add(MajorRibbonViewModel.Separater);
+            _contextButtons.Add(new RibbonButton("Make Copies", "pack://application:,,,/Images/AddToDisplay.png", DuplicateCommand, null, true));
         }
 
         #region Commands

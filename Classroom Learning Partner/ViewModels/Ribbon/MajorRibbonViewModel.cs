@@ -224,7 +224,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 var dict = new ResourceDictionary();
                 var uri = new Uri(@"pack://application:,,,/Resources/CLPBrushes.xaml");
                 dict.Source = uri;
-                var grayEdgeColor = dict["GrayEdgeColor"] as Brush;
+                var grayEdgeColor = dict["GrayBorderColor"] as Brush;
 
                 //Separater
                 return new Line
@@ -234,6 +234,8 @@ namespace Classroom_Learning_Partner.ViewModels
                            Stretch = Stretch.Fill,
                            Margin = new Thickness(2),
                            Stroke = grayEdgeColor,
+                           UseLayoutRounding = false,
+                           SnapsToDevicePixels = false,
                            StrokeThickness = 1
                        };
             }

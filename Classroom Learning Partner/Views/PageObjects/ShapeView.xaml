@@ -28,6 +28,8 @@
                            Fill="{DynamicResource DynamicMainColor}"
                            Opacity=".05"
                            IsHitTestVisible="False"
+                           RadiusX="10"
+                           RadiusY="10"
                            Canvas.Top="-5"
                            Canvas.Left="-5"
                            Width="{Binding Width, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
@@ -35,6 +37,8 @@
 
                 <Rectangle Stroke="{DynamicResource DynamicMainColor}"
                            StrokeThickness="1"
+                           RadiusX="10"
+                           RadiusY="10"
                            Canvas.Top="-5"
                            Canvas.Left="-5"
                            Width="{Binding Width, Converter={StaticResource LengthConverter}, ConverterParameter=10}"

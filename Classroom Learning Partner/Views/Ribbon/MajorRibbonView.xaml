@@ -17,7 +17,7 @@
               X1="0"
               X2="1"
               Margin="-1 0 -1 0"
-              Stroke="{StaticResource GrayEdgeColor}"
+              Stroke="{DynamicResource DynamicMainColor}"
               StrokeThickness="1" />
 
         <!-- BackStage "Toggle" Button -->
@@ -125,7 +125,7 @@
               Y1="0"
               Y2="1"
               Margin="0 2 0 2"
-              Stroke="{StaticResource GrayEdgeColor}"
+              Stroke="{DynamicResource DynamicMainColor}"
               StrokeThickness="1" />
         
         <TextBlock DockPanel.Dock="Right" 
@@ -141,7 +141,7 @@
               Y1="0"
               Y2="1"
               Margin="0 2 0 2"
-              Stroke="{StaticResource GrayEdgeColor}"
+              Stroke="{DynamicResource DynamicMainColor}"
               StrokeThickness="1" />
         
         <Grid>

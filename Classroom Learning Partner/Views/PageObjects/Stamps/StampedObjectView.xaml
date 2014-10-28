@@ -36,6 +36,8 @@
                            Fill="{DynamicResource DynamicMainColor}"
                            Opacity=".05"
                            IsHitTestVisible="False"
+                           RadiusX="10"
+                           RadiusY="10"
                            Canvas.Top="-5"
                            Canvas.Left="-5"
                            Width="{Binding Width, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
@@ -43,6 +45,8 @@
 
                 <Rectangle Stroke="{DynamicResource DynamicMainColor}"
                            StrokeThickness="1"
+                           RadiusX="10"
+                           RadiusY="10"
                            Canvas.Top="-5"
                            Canvas.Left="-5"
                            Width="{Binding Width, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
@@ -61,7 +65,6 @@
                     Width="{Binding Width}"
                     BorderBrush="LightGray"
                     BorderThickness="2 0 2 2"
-                    CornerRadius="0 0 5 5"
                     VerticalAlignment="Stretch"
                     Margin="0"
                     Visibility="{Binding IsGroupStampedObject, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, Mode=OneWay, FallbackValue=Collapsed}" />

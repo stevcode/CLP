@@ -38,6 +38,8 @@
                            Fill="{DynamicResource DynamicMainColor}"
                            Opacity=".05"
                            IsHitTestVisible="False"
+                           RadiusX="10"
+                           RadiusY="10"
                            Canvas.Top="-5"
                            Canvas.Left="-5"
                            Width="{Binding Width, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
@@ -46,6 +48,8 @@
 
                 <Rectangle Stroke="{DynamicResource DynamicMainColor}"
                            StrokeThickness="1"
+                           RadiusX="10"
+                           RadiusY="10"
                            Canvas.Top="-5"
                            Canvas.Left="-5"
                            Width="{Binding Width, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
@@ -187,7 +191,6 @@
             <Border Grid.Row="1"
                     x:Name="StampBody"
                     BorderBrush="Black"
-                    CornerRadius="{Binding IsGroupStamp, Converter={StaticResource BoolToDoubleConverter}, ConverterParameter=5}"
                     VerticalAlignment="Stretch"
                     Margin="0">
                 <Border.Style>
@@ -198,7 +201,7 @@
                             <DataTrigger Binding="{Binding IsDraggableStamp}"
                                          Value="False">
                                 <Setter Property="BorderThickness"
-                                        Value="4" />
+                                        Value="3" />
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
