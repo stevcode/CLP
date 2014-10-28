@@ -6,6 +6,7 @@ using System.Windows.Controls.Primitives;
 using Catel.Data;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Views.Modal_Windows;
+using CLP.CustomControls;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -26,7 +27,46 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void InitializeButtons()
         {
+            _contextButtons.Add(MajorRibbonViewModel.Separater);
+            var jumpSizeVisibility = new ToggleRibbonButton("Hide Jump Sizes", "Show Jump Sizes", "pack://application:,,,/Images/Delete.png", true)
+                                     {
+                                         IsChecked = !IsJumpSizeLabelsVisible
+                                     };
+         //   var jumpWrapper = new ChangeNotificationWrapper(jumpSizeVisibility);
+            jumpSizeVisibility.Checked += jumpSizeVisibility_Checked;
+            jumpSizeVisibility.Unchecked += jumpSizeVisibility_Checked;
+            _contextButtons.Add(jumpSizeVisibility);
+            var allowDragging = new ToggleRibbonButton("Can Drag Arrow", "Can't Drag Arrow", "pack://application:,,,/Images/Delete.png", true)
+                                {
+                                    IsChecked = !IsArrowDraggingAllowed
+                                };
+            allowDragging.Checked += allowDragging_Checked;
+            allowDragging.Unchecked += allowDragging_Checked;
+            _contextButtons.Add(allowDragging);
+        }
 
+        private void jumpSizeVisibility_Checked(object sender, RoutedEventArgs e)
+        {
+            var toggleButton = sender as ToggleRibbonButton;
+            if (toggleButton == null ||
+                toggleButton.IsChecked == null)
+            {
+                return;
+            }
+
+             IsJumpSizeLabelsVisible = !(bool)toggleButton.IsChecked;
+        }
+
+        private void allowDragging_Checked(object sender, RoutedEventArgs e)
+        {
+            var toggleButton = sender as ToggleRibbonButton;
+            if (toggleButton == null ||
+                toggleButton.IsChecked == null)
+            {
+                return;
+            }
+
+            IsArrowDraggingAllowed = !(bool)toggleButton.IsChecked;
         }
 
         #endregion //Constructor
@@ -40,7 +80,16 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(NumberLineSizeProperty, value); }
         }
 
-        public static readonly PropertyData NumberLineSizeProperty = RegisterProperty("NumberLineSize", typeof(int));
+        public static readonly PropertyData NumberLineSizeProperty = RegisterProperty("NumberLineSize", typeof (int));
+
+        [ViewModelToModel("PageObject")]
+        public bool IsJumpSizeLabelsVisible
+        {
+            get { return GetValue<bool>(IsJumpSizeLabelsVisibleProperty); }
+            set { SetValue(IsJumpSizeLabelsVisibleProperty, value); }
+        }
+
+        public static readonly PropertyData IsJumpSizeLabelsVisibleProperty = RegisterProperty("IsJumpSizeLabelsVisible", typeof (bool));
 
         [ViewModelToModel("PageObject")]
         public ObservableCollection<NumberLineJumpSize> JumpSizes
@@ -49,8 +98,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(JumpSizesProperty, value); }
         }
 
-        public static readonly PropertyData JumpSizesProperty = RegisterProperty("JumpSizes", typeof(ObservableCollection<NumberLineJumpSize>));
-
+        public static readonly PropertyData JumpSizesProperty = RegisterProperty("JumpSizes", typeof (ObservableCollection<NumberLineJumpSize>));
 
         [ViewModelToModel("PageObject")]
         public ObservableCollection<NumberLineTick> Ticks
@@ -59,17 +107,28 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(TicksProperty, value); }
         }
 
-        public static readonly PropertyData TicksProperty = RegisterProperty("Ticks", typeof(ObservableCollection<NumberLineTick>));
+        public static readonly PropertyData TicksProperty = RegisterProperty("Ticks", typeof (ObservableCollection<NumberLineTick>));
 
         #endregion //Model
+
+        #region Properties
+
+        /// <summary>Whether or not the right-most arrow can be used to change the numberline size while dragging.</summary>
+        public bool IsArrowDraggingAllowed
+        {
+            get { return GetValue<bool>(IsArrowDraggingAllowedProperty); }
+            set { SetValue(IsArrowDraggingAllowedProperty, value); }
+        }
+
+        public static readonly PropertyData IsArrowDraggingAllowedProperty = RegisterProperty("IsArrowDraggingAllowed", typeof (bool), true);
+
+        #endregion //Properties
 
         #region Commands
 
         private double _initialWidth;
 
-        /// <summary>
-        /// Change the length of the number line
-        /// </summary>
+        /// <summary>Change the length of the number line</summary>
         public Command<DragDeltaEventArgs> ResizeNumberLineCommand { get; private set; }
 
         private void OnResizeNumberLineCommandExecute(DragDeltaEventArgs e)
@@ -86,11 +145,8 @@ namespace Classroom_Learning_Partner.ViewModels
             PageObject.OnResizing(initialWidth, initialHeight);
         }
 
-        /// <summary>
-        /// Gets the ResizeStartPageObjectCommand command.
-        /// </summary>
+        /// <summary>Gets the ResizeStartPageObjectCommand command.</summary>
         public Command<DragStartedEventArgs> ResizeStartNumberLineLengthCommand { get; set; }
-
 
         private bool _isClicked;
 
@@ -104,9 +160,7 @@ namespace Classroom_Learning_Partner.ViewModels
             _isClicked = true;
         }
 
-        /// <summary>
-        /// Gets the ResizeStopPageObjectCommand command.
-        /// </summary>
+        /// <summary>Gets the ResizeStopPageObjectCommand command.</summary>
         public Command<DragCompletedEventArgs> ResizeStopNumberLineLengthCommand { get; set; }
 
         private void OnResizeStopNumberLineLengthCommandExecute(DragCompletedEventArgs e)
@@ -171,10 +225,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     var oldWidth = Width;
                     var oldHeight = Height;
 
-
-
                     Width += (tickLength * difference);
-
 
                     if (Width + XPosition > PageObject.ParentPage.Width)
                     {
@@ -182,12 +233,12 @@ namespace Classroom_Learning_Partner.ViewModels
                         Width = PageObject.ParentPage.Width - XPosition;
                         PageObject.OnResized(oldWidth2, oldHeight);
                     }
-
                 }
                 else if (newNumberLineSize < NumberLineSize)
                 {
                     var lastMarkedTick = Ticks.Reverse().FirstOrDefault(x => x.IsMarked);
-                    if (lastMarkedTick == null || lastMarkedTick.TickValue <= newNumberLineSize)
+                    if (lastMarkedTick == null ||
+                        lastMarkedTick.TickValue <= newNumberLineSize)
                     {
                         var difference = NumberLineSize - newNumberLineSize;
 
@@ -196,7 +247,6 @@ namespace Classroom_Learning_Partner.ViewModels
                         {
                             return;
                         }
-
 
                         var tickLength = numberLine.TickLength;
                         foreach (var tickNumber in Enumerable.Range(0, difference))
@@ -210,9 +260,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         MessageBox.Show("You have already drawn pass this number on the number line.");
                     }
-
                 }
-
             }
             else
             {
@@ -222,9 +270,7 @@ namespace Classroom_Learning_Partner.ViewModels
             _initialWidth = 0;
         }
 
-        /// <summary>
-        /// Change the length of the number line
-        /// </summary>
+        /// <summary>Change the length of the number line</summary>
         public Command<DragDeltaEventArgs> ResizeNumberLineLengthCommand { get; private set; }
 
         private void OnResizeNumberLineLengthCommandExecute(DragDeltaEventArgs e)
@@ -242,7 +288,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            if (_initialWidth + numberLine.TickLength < newWidth)
+            if (_initialWidth + numberLine.TickLength < newWidth && IsArrowDraggingAllowed)
             {
                 _isClicked = false;
                 numberLine.NumberLineSize++;
@@ -258,12 +304,12 @@ namespace Classroom_Learning_Partner.ViewModels
         public static void AddNumberLineToPage(CLPPage page)
         {
             var keyPad = new NumberLineCreationView()
-            {
-                Owner = Application.Current.MainWindow,
-                WindowStartupLocation = WindowStartupLocation.Manual,
-                Top = 100,
-                Left = 100
-            };
+                         {
+                             Owner = Application.Current.MainWindow,
+                             WindowStartupLocation = WindowStartupLocation.Manual,
+                             Top = 100,
+                             Left = 100
+                         };
             keyPad.ShowDialog();
             if (keyPad.DialogResult != true ||
                 keyPad.NumbersEntered.Text.Length <= 0)

@@ -78,6 +78,7 @@
     </Page>
     <Compile Include="Button Controls\ColorButton.cs" />
     <Compile Include="Button Controls\GroupedRibbonButton.cs" />
+    <Compile Include="Button Controls\ToggleRibbonButton.cs" />
     <Compile Include="Button Models\ASavableButtonBase.cs" />
     <Compile Include="Button Models\SaveableGroupedRibbonButton.cs" />
     <Compile Include="Button Models\SaveableRibbonButton.cs" />

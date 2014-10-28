@@ -104,7 +104,8 @@
             <Grid Grid.Column="1"
                   Grid.Row="0"
                   VerticalAlignment="Top"
-                  HorizontalAlignment="Stretch">
+                  HorizontalAlignment="Stretch"
+                  Visibility="{Binding IsJumpSizeLabelsVisible, Converter={StaticResource BooleanToHidingVisibilityConverter}}">
                 <ItemsControl ItemsSource="{Binding JumpSizes}"
                               HorizontalAlignment="Left">
                     <ItemsControl.ItemsPanel>

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Security.Cryptography.X509Certificates;
 using System.Windows;
 using System.Windows.Ink;
 using System.Windows.Input;
@@ -209,6 +208,15 @@ namespace CLP.Entities
             }
 
         }
+
+        /// <summary>Whether or not to show the Jump Size Labels.</summary>
+        public bool IsJumpSizeLabelsVisible
+        {
+            get { return GetValue<bool>(IsJumpSizeLabelsVisibleProperty); }
+            set { SetValue(IsJumpSizeLabelsVisibleProperty, value); }
+        }
+
+        public static readonly PropertyData IsJumpSizeLabelsVisibleProperty = RegisterProperty("IsJumpSizeLabelsVisible", typeof (bool), true);
 
         /// <summary>List of the values of the jumps</summary>
         public ObservableCollection<NumberLineJumpSize> JumpSizes
