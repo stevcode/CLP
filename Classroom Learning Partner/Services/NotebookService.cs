@@ -8,6 +8,17 @@ using Path = Catel.IO.Path;
 
 namespace Classroom_Learning_Partner.Services
 {
+    public class NotebookNameComposite
+    {
+        public string FullNotebookDirectoryPath { get; set; }
+        public string Name { get; set; }
+        public string ID { get; set; }
+        public string OwnerName { get; set; }
+        public string OwnerID { get; set; }
+        public string OwnerTypeTag { get; set; }
+        public bool IsLocal { get; set; }
+    }
+
     public class NotebookService : INotebookService
     {
         public NotebookService()
@@ -76,17 +87,13 @@ namespace Classroom_Learning_Partner.Services
             }
         }
 
-        public List<string> AvailableLocalNotebookNames
+        public List<NotebookNameComposite> AvailableLocalNotebookNameComposites
         {
             get
             {
-                if (CurrentLocalCacheDirectory == null)
-                {
-                    return new List<string>();
-                }
-
-                var directoryInfo = new DirectoryInfo(CurrentNotebookCacheDirectory);
-                return directoryInfo.GetDirectories().Select(directory => directory.Name).OrderBy(x => x).ToList();
+                return CurrentLocalCacheDirectory == null
+                           ? new List<NotebookNameComposite>()
+                           : GetAvailableNotebookNameCompositesInCache(CurrentLocalCacheDirectory);
             }
         }
 
@@ -100,6 +107,8 @@ namespace Classroom_Learning_Partner.Services
         public Notebook CurrentNotebook { get; set; }
 
         public ClassPeriod CurrentClassPeriod { get; set; }
+
+        #region Cache Methods
 
         public bool InitializeNewLocalCache(string cacheName)
         {
@@ -141,5 +150,55 @@ namespace Classroom_Learning_Partner.Services
             }
             Directory.Move(notebookCacheDirectory, newCacheDirectory);
         }
+
+        #endregion //Cache Methods
+
+        #region Notebook Methods
+
+        #endregion //Notebook Methods
+
+        #region Static Notebook Methods
+
+        public static NotebookNameComposite NotebookDirectoryToNotebookNameComposite(string path)
+        {
+            var directoryInfo = new DirectoryInfo(path);
+            var notebookDirectoryName = directoryInfo.Name;
+            var notebookDirectoryParts = notebookDirectoryName.Split(';');
+            if (notebookDirectoryParts.Length != 5)
+            {
+                return null;
+            }
+
+            var nameComposite = new NotebookNameComposite
+                                {
+                                    FullNotebookDirectoryPath = path,
+                                    Name = notebookDirectoryParts[0],
+                                    ID = notebookDirectoryParts[1],
+                                    OwnerName = notebookDirectoryParts[2],
+                                    OwnerID = notebookDirectoryParts[3],
+                                    OwnerTypeTag = notebookDirectoryParts[4],
+                                    IsLocal = true
+                                };
+
+            return nameComposite;
+        }
+
+        public static List<NotebookNameComposite> GetAvailableNotebookNameCompositesInCache(string cachePath)
+        {
+            var notebookCacheDirectory = Path.Combine(cachePath, "Notebooks");
+            if (!Directory.Exists(notebookCacheDirectory))
+            {
+                Directory.CreateDirectory(notebookCacheDirectory);
+            }
+            var directoryInfo = new DirectoryInfo(notebookCacheDirectory);
+            return
+                directoryInfo.GetDirectories()
+                             .Select(directory => NotebookDirectoryToNotebookNameComposite(directory.FullName))
+                             .OrderByDescending(x => x.OwnerTypeTag)
+                             .ThenBy(x => x.OwnerName)
+                             .ToList();
+        }
+
+        #endregion //Static Notebook Methods
     }
 }

@@ -277,6 +277,7 @@
                        Foreground="Black"
                        TextOptions.TextRenderingMode="Auto"
                        TextOptions.TextFormattingMode="Ideal" />
+            
         </DockPanel>
 
         <!-- Pane Title Text -->

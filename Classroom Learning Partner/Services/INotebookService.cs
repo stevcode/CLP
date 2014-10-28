@@ -10,7 +10,7 @@ namespace Classroom_Learning_Partner.Services
         string CurrentClassCacheDirectory { get; }
         string CurrentImageCacheDirectory { get; }
         string CurrentNotebookCacheDirectory { get; }
-        List<string> AvailableLocalNotebookNames { get; }
+        List<NotebookNameComposite> AvailableLocalNotebookNameComposites { get; }
         List<Notebook> OpeNotebooks { get; }
         Notebook CurrentNotebook { get; set; }
         ClassPeriod CurrentClassPeriod { get; set; }
