@@ -109,7 +109,11 @@ namespace Classroom_Learning_Partner.ViewModels
         public bool IsBackStageVisible
         {
             get { return GetValue<bool>(IsBackStageVisibleProperty); }
-            set { SetValue(IsBackStageVisibleProperty, value); }
+            set
+            {
+                SetValue(IsBackStageVisibleProperty, value);
+                ACLPPageBaseViewModel.ClearAdorners(NotebookPagesPanelViewModel.GetCurrentPage());
+            }
         }
 
         public static readonly PropertyData IsBackStageVisibleProperty = RegisterProperty("IsBackStageVisible", typeof (bool), false);

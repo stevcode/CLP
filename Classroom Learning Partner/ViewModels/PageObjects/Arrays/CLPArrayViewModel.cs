@@ -1282,7 +1282,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        private ObservableCollection<UIElement> _contextButtons = new ObservableCollection<UIElement>();
+        
         public void PopulateContextRibbon(ContextRibbonViewModel contextRibbon)
         {
             if (!_contextButtons.Any())

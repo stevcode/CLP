@@ -21,6 +21,12 @@ namespace Classroom_Learning_Partner.ViewModels
             ResizeNumberLineLengthCommand = new Command<DragDeltaEventArgs>(OnResizeNumberLineLengthCommandExecute);
             ResizeStartNumberLineLengthCommand = new Command<DragStartedEventArgs>(OnResizeStartNumberLineLengthCommandExecute);
             ResizeStopNumberLineLengthCommand = new Command<DragCompletedEventArgs>(OnResizeStopNumberLineLengthCommandExecute);
+            InitializeButtons();
+        }
+
+        private void InitializeButtons()
+        {
+
         }
 
         #endregion //Constructor
@@ -34,7 +40,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(NumberLineSizeProperty, value); }
         }
 
-        public static readonly PropertyData NumberLineSizeProperty = RegisterProperty("NumberLineSize", typeof (int));
+        public static readonly PropertyData NumberLineSizeProperty = RegisterProperty("NumberLineSize", typeof(int));
 
         [ViewModelToModel("PageObject")]
         public ObservableCollection<NumberLineJumpSize> JumpSizes
@@ -53,7 +59,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(TicksProperty, value); }
         }
 
-        public static readonly PropertyData TicksProperty = RegisterProperty("Ticks", typeof (ObservableCollection<NumberLineTick>));
+        public static readonly PropertyData TicksProperty = RegisterProperty("Ticks", typeof(ObservableCollection<NumberLineTick>));
 
         #endregion //Model
 
@@ -86,7 +92,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public Command<DragStartedEventArgs> ResizeStartNumberLineLengthCommand { get; set; }
 
 
-        private bool _isClicked = false;
+        private bool _isClicked;
 
         private void OnResizeStartNumberLineLengthCommandExecute(DragStartedEventArgs e)
         {
@@ -210,9 +216,9 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             else
             {
-                PageObject.OnResizing(initialWidth, initialHeight);    
+                PageObject.OnResizing(initialWidth, initialHeight);
             }
-            
+
             _initialWidth = 0;
         }
 
@@ -223,14 +229,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnResizeNumberLineLengthCommandExecute(DragDeltaEventArgs e)
         {
-            var initialWidth = Width;
-            var initialHeight = Height;
             var parentPage = PageObject.ParentPage;
             const int MIN_WIDTH = 250;
 
             var newWidth = Math.Max(MIN_WIDTH, Width + e.HorizontalChange);
             newWidth = Math.Min(newWidth, parentPage.Width - XPosition);
-
 
             var numberLine = PageObject as NumberLine;
 
@@ -244,7 +247,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 _isClicked = false;
                 numberLine.NumberLineSize++;
                 _initialWidth += numberLine.TickLength;
-                ChangePageObjectDimensions(PageObject, initialHeight, newWidth);    
+                ChangePageObjectDimensions(PageObject, Height, newWidth);
             }
         }
 

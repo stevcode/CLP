@@ -203,15 +203,30 @@
                                 <Line Grid.Row="0"
                                       Y1="0"
                                       Y2="1"
+                                      Margin="0 3 0 3"
                                       Stretch="Fill"
                                       Stroke="Blue"
-                                      StrokeThickness="2"
-                                      HorizontalAlignment="Left" />
-                                
+                                      StrokeThickness="1"
+                                      HorizontalAlignment="Left"
+                                      SnapsToDevicePixels="False"
+                                      UseLayoutRounding="False"
+                                      Visibility="{Binding IsNumberVisible, Converter={StaticResource BooleanToHidingVisibilityConverter}, ConverterParameter=False}" />
+
+                                <Line Grid.Row="0"
+                                      Y1="0"
+                                      Y2="1"
+                                      Stretch="Fill"
+                                      Stroke="Blue"
+                                      StrokeThickness="1"
+                                      HorizontalAlignment="Left"
+                                      SnapsToDevicePixels="False"
+                                      UseLayoutRounding="False"
+                                      Visibility="{Binding IsNumberVisible, Converter={StaticResource BooleanToHidingVisibilityConverter}}" />
+
                                 <Canvas Grid.Row="1"
                                         ClipToBounds="False"
                                         HorizontalAlignment="Left"
-                                        Margin="-6 0 0 0"
+                                        Margin="-4 0 0 0"
                                         Visibility="{Binding IsNumberVisible, Converter={StaticResource BooleanToHidingVisibilityConverter}}">
                                     <TextBlock Text="{Binding TickValue}"
                                                FontSize="14"
@@ -252,10 +267,6 @@
                     </i:EventTrigger>
                     <i:EventTrigger EventName="DragCompleted">
                         <catel:EventToCommand Command="{Binding DragStopPageObjectCommand}"
-                                              PassEventArgsToCommand="True" />
-                    </i:EventTrigger>
-                    <i:EventTrigger EventName="MouseUp">
-                        <catel:EventToCommand Command="{Binding ToggleMainAdornersCommand}"
                                               PassEventArgsToCommand="True" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
