@@ -22,10 +22,7 @@ namespace Classroom_Learning_Partner.ViewModels
             SelectedCacheName = AvailableCacheNames.FirstOrDefault();
         }
 
-        private void InitializeCommands()
-        {
-            CreateNotebookCommand = new Command(OnCreateNotebookCommandExecute, OnCreateNotebookCanExecute);
-        }
+        private void InitializeCommands() { CreateNotebookCommand = new Command(OnCreateNotebookCommandExecute, OnCreateNotebookCanExecute); }
 
         #endregion //Constructor
 
@@ -37,20 +34,18 @@ namespace Classroom_Learning_Partner.ViewModels
             get { return "New Notebook"; }
         }
 
-        /// <summary>
-        /// List of available Cache names.
-        /// </summary>
+        /// <summary>List of available Cache names.</summary>
         public ObservableCollection<string> AvailableCacheNames
         {
             get { return GetValue<ObservableCollection<string>>(AvailableCacheNamesProperty); }
             set { SetValue(AvailableCacheNamesProperty, value); }
         }
 
-        public static readonly PropertyData AvailableCacheNamesProperty = RegisterProperty("AvailableCacheNames", typeof (ObservableCollection<string>), () => new ObservableCollection<string>());
+        public static readonly PropertyData AvailableCacheNamesProperty = RegisterProperty("AvailableCacheNames",
+                                                                                           typeof (ObservableCollection<string>),
+                                                                                           () => new ObservableCollection<string>());
 
-        /// <summary>
-        /// Selected Cache Name.
-        /// </summary>
+        /// <summary>Selected Cache Name.</summary>
         public string SelectedCacheName
         {
             get { return GetValue<string>(SelectedCacheNameProperty); }
@@ -66,20 +61,23 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData SelectedCacheNameProperty = RegisterProperty("SelectedCacheName", typeof (string), string.Empty);
 
-        /// <summary>
-        /// Path of the Selected Cache's Directory.
-        /// </summary>
+        /// <summary>Path of the Selected Cache's Directory.</summary>
         public string SelectedCacheDirectory
         {
             get { return GetValue<string>(SelectedCacheDirectoryProperty); }
             set { SetValue(SelectedCacheDirectoryProperty, value); }
         }
 
-        public static readonly PropertyData SelectedCacheDirectoryProperty = RegisterProperty("SelectedCacheDirectory", typeof (string), string.Empty);
+        public static readonly PropertyData SelectedCacheDirectoryProperty = RegisterProperty("SelectedCacheDirectory",
+                                                                                              typeof (string),
+                                                                                              Path.Combine(
+                                                                                                           Environment.GetFolderPath(
+                                                                                                                                     Environment
+                                                                                                                                         .SpecialFolder
+                                                                                                                                         .Desktop),
+                                                                                                           "Cache"));
 
-        /// <summary>
-        /// Notebook Name to use on creation.
-        /// </summary>
+        /// <summary>Notebook Name to use on creation.</summary>
         public string NotebookName
         {
             get { return GetValue<string>(NotebookNameProperty); }
@@ -88,9 +86,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData NotebookNameProperty = RegisterProperty("NotebookName", typeof (string), string.Empty);
 
-        /// <summary>
-        /// Curriculum for the new notebook.
-        /// </summary>
+        /// <summary>Curriculum for the new notebook.</summary>
         public string NotebookCurriculum
         {
             get { return GetValue<string>(NotebookCurriculumProperty); }
@@ -103,9 +99,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Commands
 
-        /// <summary>
-        /// Creates a new notebook.
-        /// </summary>
+        /// <summary>Creates a new notebook.</summary>
         public Command CreateNotebookCommand { get; private set; }
 
         private void OnCreateNotebookCommandExecute()
@@ -140,10 +134,7 @@ namespace Classroom_Learning_Partner.ViewModels
             App.MainWindowViewModel.IsBackStageVisible = false;
         }
 
-        private bool OnCreateNotebookCanExecute()
-        {
-            return NotebookName != string.Empty;
-        }
+        private bool OnCreateNotebookCanExecute() { return NotebookName != string.Empty; }
 
         #endregion //Commands
     }

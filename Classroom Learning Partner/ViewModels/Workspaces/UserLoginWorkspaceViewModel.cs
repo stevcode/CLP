@@ -95,7 +95,6 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                    (DispatcherOperationCallback)delegate
                                                                                                 {
                                                                                                     App.MainWindowViewModel.CurrentUser.IsConnected = true;
-                                                                                                    App.MainWindowViewModel.Workspace = new NotebookChooserWorkspaceViewModel();
                                                                                                     App.MainWindowViewModel.OnlineStatus = "CONNECTED - As " +
                                                                                                                                            App.MainWindowViewModel.CurrentUser.FullName;
 
@@ -113,7 +112,6 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                    (DispatcherOperationCallback)delegate
                                                                                                 {
                                                                                                     App.MainWindowViewModel.CurrentUser.IsConnected = true;
-                                                                                                    App.MainWindowViewModel.Workspace = new NotebookChooserWorkspaceViewModel();
                                                                                                     App.MainWindowViewModel.OnlineStatus = "CONNECTED - As " +
                                                                                                                                            App.MainWindowViewModel.CurrentUser.FullName;
 

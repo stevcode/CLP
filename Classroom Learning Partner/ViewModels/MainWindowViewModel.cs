@@ -9,7 +9,6 @@ using System.Windows.Media.Imaging;
 using Catel.Data;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Views;
-using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -151,15 +150,6 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData IsAuthoringProperty = RegisterProperty("IsAuthoring", typeof (bool), false);
 
         #region Status Bar Bindings
-
-        /// <summary>Shows the last time the notebook was saved during the current session.</summary>
-        public string LastSavedTime
-        {
-            get { return GetValue<string>(LastSavedTimeProperty); }
-            set { SetValue(LastSavedTimeProperty, value); }
-        }
-
-        public static readonly PropertyData LastSavedTimeProperty = RegisterProperty("LastSavedTime", typeof (string), String.Empty);
 
         /// <summary>Gets or sets the property value.</summary>
         public string OnlineStatus
@@ -329,15 +319,6 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        public static List<string> AvailableDatabaseNotebookNames
-        {
-            get
-            {
-                // TODO: DATABASE - Attempt to grab names from database
-                return new List<string>();
-            }
-        }
-
         #endregion //Static Properties
 
         #region Properties
@@ -426,12 +407,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 case ProgramModes.Teacher:
                     //TODO: Remove after database established
                     CurrentUser = Person.Author;
-                    Workspace = new NotebookChooserWorkspaceViewModel();
                     break;
                 case ProgramModes.Projector:
                     //TODO: Remove after database established
                     CurrentUser = Person.Author;
-                    Workspace = new NotebookChooserWorkspaceViewModel();
                     break;
                 case ProgramModes.Student:
                     Workspace = new UserLoginWorkspaceViewModel();
@@ -499,56 +478,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static void ChangeApplicationMainColor(Color color) { Application.Current.Resources["DynamicMainColor"] = new SolidColorBrush(color); }
 
-        public static void InitializeLocalCache(ProgramModes currentProgramMode)
-        {
-            string variant;
-            switch (currentProgramMode)
-            {
-                case ProgramModes.Author:
-                    variant = "A";
-                    break;
-                case ProgramModes.Teacher:
-                    variant = "T";
-                    break;
-                case ProgramModes.Student:
-                    variant = "S";
-                    break;
-                case ProgramModes.Projector:
-                    variant = "P";
-                    break;
-                case ProgramModes.Database:
-                    variant = "D";
-                    break;
-                default:
-                    variant = string.Empty;
-                    break;
-            }
-
-            LocalCacheDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Cache" + variant);
-
-            //if other folders on desktop start with Cache, prompt to use one of those instead.
-            var desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            var directoryInfo = new DirectoryInfo(desktopPath);
-            var availableCaches =
-                directoryInfo.GetDirectories()
-                             .Where(directory => directory.Name.StartsWith("Cache"))
-                             .Select(directory => directory.Name)
-                             .OrderBy(x => x)
-                             .ToList();
-
-            var buttonBox = new ButtonBoxView("Select Cache To Use:", availableCaches);
-            buttonBox.ShowDialog();
-            if (buttonBox.DialogResult == false ||
-                buttonBox.DialogResult == null)
-            {
-                LocalCacheDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Cache" + variant);
-            }
-            else
-            {
-                LocalCacheDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), buttonBox.ButtonBoxReturnValue);
-            }
-        }
-
         public static void ResetCache()
         {
             if (!Directory.Exists(NotebookCacheDirectory))
@@ -564,112 +493,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 Directory.CreateDirectory(archiveDirectory);
             }
             Directory.Move(NotebookCacheDirectory, newCacheDirectory);
-        }
-
-        public static void OpenNotebook(string notebookFolderName, bool forceCache = false, bool forceDatabase = false)
-        {
-            //TODO: find way to bypass this if partial notebook is currently open and you try to open full notebook (or vis versa).
-            foreach (var otherNotebook in
-                App.MainWindowViewModel.OpenNotebooks.Where(
-                                                            otherNotebook =>
-                                                            otherNotebook.ID == notebookFolderName.Split(';')[1] &&
-                                                            otherNotebook.OwnerID == notebookFolderName.Split(';')[2]))
-            {
-                App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(otherNotebook);
-                return;
-            }
-
-            var folderPath = Path.Combine(NotebookCacheDirectory, notebookFolderName);
-            if (!Directory.Exists(folderPath))
-            {
-                MessageBox.Show("Notebook doesn't exist");
-                return;
-            }
-
-            var notebook = Notebook.OpenNotebook(folderPath);
-            if (notebook == null)
-            {
-                MessageBox.Show("Notebook could not be opened. Check error log.");
-                return;
-            }
-
-            if (notebook.LastSavedDate != null)
-            {
-                App.MainWindowViewModel.LastSavedTime = notebook.LastSavedDate.Value.ToString("yyyy/MM/dd - HH:mm:ss");
-            }
-
-            App.MainWindowViewModel.OpenNotebooks.Add(notebook);
-            App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(notebook);
-            if (notebook.OwnerID == Person.Author.ID)
-            {
-                App.MainWindowViewModel.IsAuthoring = true;
-            }
-        }
-
-        public static void SaveNotebook(Notebook notebook, bool isFullSaveForced = false)
-        {
-            var folderPath = Path.Combine(NotebookCacheDirectory,
-                                          notebook.Name + ";" + notebook.ID + ";" + notebook.Owner.FullName + ";" + notebook.OwnerID);
-
-            if (App.MainWindowViewModel.CurrentUser.ID == Person.Author.ID)
-            {
-                var pagesFolderPath = Path.Combine(folderPath, "Pages");
-                if (Directory.Exists(pagesFolderPath))
-                {
-                    var pageFilePaths = Directory.EnumerateFiles(pagesFolderPath, "*.xml").ToList();
-                    foreach (var pageFilePath in pageFilePaths)
-                    {
-                        File.Delete(pageFilePath);
-                    }
-                }
-            }
-
-            //if(isFullSaveForced)
-            //{
-            //    folderPath += " - FORCED";
-            //}
-
-            if (!Directory.Exists(folderPath))
-            {
-                Directory.CreateDirectory(folderPath);
-            }
-
-            notebook.SaveNotebook(folderPath, isFullSaveForced);
-
-            switch (App.MainWindowViewModel.CurrentProgramMode)
-            {
-                case ProgramModes.Author:
-                case ProgramModes.Database:
-                    break;
-                case ProgramModes.Teacher:
-                    notebook.SaveOthersSubmissions(NotebookCacheDirectory);
-                    break;
-                case ProgramModes.Projector:
-                    notebook.SaveOthersSubmissions(NotebookCacheDirectory);
-                    break;
-                case ProgramModes.Student:
-                    var submissionsPath = Path.Combine(folderPath, "Pages");
-                    notebook.SaveSubmissions(submissionsPath);
-                    if (App.Network.InstructorProxy != null)
-                    {
-                        var sNotebook = ObjectSerializer.ToString(notebook);
-                        var zippedNotebook = CLPServiceAgent.Instance.Zip(sNotebook);
-                        App.Network.InstructorProxy.CollectStudentNotebook(zippedNotebook, App.MainWindowViewModel.CurrentUser.FullName);
-                    }
-                    break;
-            }
-
-            if (notebook.LastSavedDate != null)
-            {
-                App.MainWindowViewModel.LastSavedTime = notebook.LastSavedDate.Value.ToString("yyyy/MM/dd - HH:mm:ss");
-            }
-
-            if (App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Teacher &&
-                App.MainWindowViewModel.CurrentClassPeriod != null &&
-                App.MainWindowViewModel.CurrentClassPeriod.ClassSubject != null)
-            {
-                App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.SaveClassSubject(ClassCacheDirectory);
-            }
         }
 
         public static void OpenClassPeriod()
@@ -742,10 +565,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
             App.MainWindowViewModel.CurrentUser = App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.Teacher;
 
-            if (notebook.LastSavedDate != null)
-            {
-                App.MainWindowViewModel.LastSavedTime = notebook.LastSavedDate.Value.ToString("yyyy/MM/dd - HH:mm:ss");
-            }
             notebook.CurrentPage = notebook.Pages.FirstOrDefault();
             App.MainWindowViewModel.OpenNotebooks.Add(notebook);
 
@@ -841,8 +660,6 @@ namespace Classroom_Learning_Partner.ViewModels
             App.MainWindowViewModel.AvailableUsers = App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.StudentList;
         }
 
-        public static void SaveClassPeriod(ClassPeriod classPeriod) { }
-
         public static void ViewAllWork()
         {
             //TODO: This is very hacky.
@@ -935,10 +752,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
             App.MainWindowViewModel.CurrentUser = App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.Teacher;
 
-            if (notebook.LastSavedDate != null)
-            {
-                App.MainWindowViewModel.LastSavedTime = notebook.LastSavedDate.Value.ToString("yyyy/MM/dd - HH:mm:ss");
-            }
             notebook.CurrentPage = notebook.Pages.First();
             App.MainWindowViewModel.OpenNotebooks.Add(notebook);
 

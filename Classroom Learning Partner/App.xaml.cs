@@ -25,7 +25,7 @@ namespace Classroom_Learning_Partner
 
             InitializeCatelSettings();
             InitializeServices();
-
+            
             MainWindowViewModel = new MainWindowViewModel(currentProgramMode);
             var window = new MainWindowView
                          {
@@ -34,7 +34,6 @@ namespace Classroom_Learning_Partner
             MainWindowViewModel.Workspace = new BlankWorkspaceViewModel();
             window.Show();
 
-            MainWindowViewModel.InitializeLocalCache(currentProgramMode);
             CLPServiceAgent.Instance.NetworkSetup();
             MainWindowViewModel.SetWorkspace();
         }

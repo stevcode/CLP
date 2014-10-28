@@ -1,6 +1,8 @@
 ﻿using System;
 using Catel.Data;
+using Catel.IoC;
 using Catel.MVVM;
+using Classroom_Learning_Partner.Services;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -87,7 +89,8 @@ namespace Classroom_Learning_Partner.ViewModels
                     DisplayedPane = new OpenNotebookPaneViewModel();
                     break;
                 case NavigationPanes.Save:
-                    DisplayedPane = new SaveNotebookPaneViewModel();
+                    //DisplayedPane = new SaveNotebookPaneViewModel();
+                    SaveCurrentNotebook();
                     break;
                 case NavigationPanes.Export:
                     DisplayedPane = new ExportPaneViewModel();
@@ -99,6 +102,17 @@ namespace Classroom_Learning_Partner.ViewModels
                     throw new ArgumentOutOfRangeException();
             }
             PaneTitleText = DisplayedPane.PaneTitleText;
+        }
+
+        private void SaveCurrentNotebook()
+        {
+            var notebookService = DependencyResolver.Resolve<INotebookService>();
+            if (notebookService.CurrentNotebook == null)
+            {
+                return;
+            }
+
+            Catel.Windows.PleaseWaitHelper.Show(notebookService.SaveCurrentNotebook, null, "Saving Notebook");
         }
 
         #endregion //Methods

@@ -93,11 +93,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void InitializeCommands()
         {
             //File Menu
-            OpenNotebookCommand = new Command(OnOpenNotebookCommandExecute);
             CopyNotebookForNewOwnerCommand = new Command(OnCopyNotebookForNewOwnerCommandExecute);
-            SaveNotebookCommand = new Command(OnSaveNotebookCommandExecute);
-            ForceSaveNotebookCommand = new Command(OnForceSaveNotebookCommandExecute);
-            SaveAllNotebooksCommand = new Command(OnSaveAllNotebooksCommandExecute);
             ConvertDisplaysToXPSCommand = new Command(OnConvertDisplaysToXPSCommandExecute);
             ConvertToXPSCommand = new Command(OnConvertToXPSCommandExecute);
             ConvertPageSubmissionToXPSCommand = new Command(OnConvertPageSubmissionToXPSCommandExecute);
@@ -793,16 +789,6 @@ namespace Classroom_Learning_Partner.ViewModels
         #region File Menu
 
         /// <summary>
-        /// Opens a notebook from the Notebooks folder.
-        /// </summary>
-        public Command OpenNotebookCommand { get; private set; }
-
-        private void OnOpenNotebookCommandExecute()
-        {
-            MainWindow.Workspace = new NotebookChooserWorkspaceViewModel();
-        }
-
-        /// <summary>
         /// Copies the current authored notebook for a new owner.
         /// </summary>
         public Command CopyNotebookForNewOwnerCommand { get; private set; }
@@ -810,49 +796,6 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnCopyNotebookForNewOwnerCommandExecute()
         {
             MainWindowViewModel.CopyNotebookForNewOwner();
-        }
-
-        /// <summary>
-        /// Saves the current notebook to disk.
-        /// </summary>
-        public Command SaveNotebookCommand { get; private set; }
-
-        private void OnSaveNotebookCommandExecute()
-        {
-            if(!(App.MainWindowViewModel.Workspace is NotebookWorkspaceViewModel))
-            {
-                return;
-            }
-
-            PleaseWaitHelper.Show(() => MainWindowViewModel.SaveNotebook((App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).Notebook), null, "Saving Notebook");
-        }
-
-        /// <summary>
-        /// Bypasses IsCached during save to fully save everything.
-        /// </summary>
-        public Command ForceSaveNotebookCommand { get; private set; }
-
-        private void OnForceSaveNotebookCommandExecute()
-        {
-            if(App.MainWindowViewModel.Workspace is NotebookWorkspaceViewModel)
-            {
-                Catel.Windows.PleaseWaitHelper.Show(() =>
-                    MainWindowViewModel.SaveNotebook((App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel).Notebook, true), null, "Saving Notebook");
-            }
-        }
-
-        /// <summary>
-        /// Saves all open notebooks to disk.
-        /// </summary>
-        public Command SaveAllNotebooksCommand { get; private set; }
-
-        private void OnSaveAllNotebooksCommandExecute()
-        {
-            // TODO: Entities
-            //foreach(var notebook in App.MainWindowViewModel.OpenNotebooks)
-            //{
-            //    CLPServiceAgent.Instance.SaveNotebook(notebook);
-            //}
         }
 
         /// <summary>

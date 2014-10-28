@@ -311,8 +311,6 @@
     <Compile Include="ViewModels\Panels\StudentProgressInfo.cs" />
     <Compile Include="ViewModels\Panels\SubmissionHistoryPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\WebcamPanelViewModel.cs" />
-    <Compile Include="ViewModels\Workspaces\LocationBrowserWorkspaceViewModel.cs" />
-    <Compile Include="ViewModels\Workspaces\LocationSelectors\CacheSelectorViewModel.cs" />
     <Compile Include="Views\BackStage\BackStageView.xaml.cs">
       <DependentUpon>BackStageView.xaml</DependentUpon>
     </Compile>
@@ -440,7 +438,6 @@
     <Compile Include="ViewModels\Panels\IPanel.cs" />
     <Compile Include="ViewModels\RibbonViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\BlankWorkspaceViewModel.cs" />
-    <Compile Include="ViewModels\Workspaces\NotebookChooserWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\NotebookWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\UserLoginWorkspaceViewModel.cs" />
     <Compile Include="Views\Controls\BindableRichTextBox.cs" />
@@ -575,15 +572,6 @@
     </Compile>
     <Compile Include="Views\Workspaces\BlankWorkspaceView.xaml.cs">
       <DependentUpon>BlankWorkspaceView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Workspaces\LocationSelectors\CacheSelectorView.xaml.cs">
-      <DependentUpon>CacheSelectorView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Workspaces\LocationBrowserWorkspaceView.xaml.cs">
-      <DependentUpon>LocationBrowserWorkspaceView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Workspaces\NotebookChooserWorkspaceView.xaml.cs">
-      <DependentUpon>NotebookChooserWorkspaceView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Workspaces\NotebookWorkspaceView.xaml.cs">
       <DependentUpon>NotebookWorkspaceView.xaml</DependentUpon>
@@ -912,18 +900,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Workspaces\BlankWorkspaceView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Workspaces\LocationSelectors\CacheSelectorView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Workspaces\LocationBrowserWorkspaceView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Workspaces\NotebookChooserWorkspaceView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

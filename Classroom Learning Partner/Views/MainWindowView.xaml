@@ -66,10 +66,6 @@
                     <views:BlankWorkspaceView DataContext="{Binding Workspace}" />
                 </ControlTemplate>
 
-                <ControlTemplate x:Key="NotebookChooserWorkspaceTemplate">
-                    <views:NotebookChooserWorkspaceView DataContext="{Binding Workspace}" />
-                </ControlTemplate>
-
                 <ControlTemplate x:Key="NotebookWorkspaceTemplate">
                     <views:NotebookWorkspaceView DataContext="{Binding Workspace}" />
                 </ControlTemplate>
@@ -89,13 +85,6 @@
                                      Value="BlankWorkspaceViewModel">
                             <Setter Property="Template"
                                     Value="{StaticResource BlankWorkspaceTemplate}" />
-                        </DataTrigger>
-
-                        <!-- NotebookChooserWorkspace trigger -->
-                        <DataTrigger Binding="{Binding Workspace, Converter={StaticResource TypeToStringConverter}}"
-                                     Value="NotebookChooserWorkspaceViewModel">
-                            <Setter Property="Template"
-                                    Value="{StaticResource NotebookChooserWorkspaceTemplate}" />
                         </DataTrigger>
 
                         <!-- NotebookWorkspace trigger -->

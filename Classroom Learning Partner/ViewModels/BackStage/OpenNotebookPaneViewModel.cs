@@ -5,6 +5,7 @@ using Catel.Collections;
 using Catel.Data;
 using Catel.IO;
 using Catel.MVVM;
+using Catel.Windows;
 using Classroom_Learning_Partner.Services;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -98,7 +99,10 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>Opens selected notebook.</summary>
         public Command OpenNotebookCommand { get; private set; }
 
-        private void OnOpenNotebookCommandExecute() { }
+        private void OnOpenNotebookCommandExecute()
+        {
+            PleaseWaitHelper.Show(() => LoadedNotebookService.OpenNotebook(SelectedNotebook), null, "Loading Notebook");
+        }
 
         private bool OnOpenNotebookCanExecute() { return SelectedNotebook != null; }
 

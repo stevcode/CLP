@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Windows;
 using Catel.Runtime.Serialization;
+using Classroom_Learning_Partner.ViewModels;
 using CLP.Entities;
 using Path = Catel.IO.Path;
 
@@ -28,6 +30,8 @@ namespace Classroom_Learning_Partner.Services
             var xmlSerializer = SerializationFactory.GetXmlSerializer();
             xmlSerializer.Warmup(typesToWarmup);
         }
+
+        #region Properties
 
         public List<string> AvailableLocalCacheNames
         {
@@ -108,6 +112,8 @@ namespace Classroom_Learning_Partner.Services
 
         public ClassPeriod CurrentClassPeriod { get; set; }
 
+        #endregion //Properties
+
         #region Cache Methods
 
         public bool InitializeNewLocalCache(string cacheName)
@@ -154,6 +160,100 @@ namespace Classroom_Learning_Partner.Services
         #endregion //Cache Methods
 
         #region Notebook Methods
+
+        public void OpenNotebook(NotebookNameComposite notebookNameComposite)
+        {
+            //TODO: find way to bypass this if partial notebook is currently open and you try to open full notebook (or vis versa).
+            foreach (var otherNotebook in
+                App.MainWindowViewModel.OpenNotebooks.Where(
+                                                            otherNotebook =>
+                                                            otherNotebook.ID == notebookNameComposite.ID &&
+                                                            otherNotebook.OwnerID == notebookNameComposite.OwnerID))
+            {
+                App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(otherNotebook);
+                return;
+            }
+
+            var folderPath = notebookNameComposite.FullNotebookDirectoryPath;
+            if (!Directory.Exists(folderPath))
+            {
+                MessageBox.Show("Notebook doesn't exist");
+                return;
+            }
+
+            var notebook = Notebook.OpenNotebook(folderPath);
+            if (notebook == null)
+            {
+                MessageBox.Show("Notebook could not be opened. Check error log.");
+                return;
+            }
+
+            OpeNotebooks.Add(notebook);
+            CurrentNotebook = notebook;
+            App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(notebook);
+            if (notebook.OwnerID == Person.Author.ID)
+            {
+                App.MainWindowViewModel.IsAuthoring = true;
+            }
+            App.MainWindowViewModel.IsBackStageVisible = false;
+        }
+
+        public void SaveCurrentNotebook() { SaveNotebook(CurrentNotebook); }
+
+        public void SaveNotebook(Notebook notebook)
+        {
+            var folderPath = Path.Combine(CurrentNotebookCacheDirectory, NotebookToNotebookFolderName(notebook));
+
+            if (App.MainWindowViewModel.CurrentUser.ID == Person.Author.ID)
+            {
+                var pagesFolderPath = Path.Combine(folderPath, "Pages");
+                if (Directory.Exists(pagesFolderPath))
+                {
+                    var pageFilePaths = Directory.EnumerateFiles(pagesFolderPath, "*.xml").ToList();
+                    foreach (var pageFilePath in pageFilePaths)
+                    {
+                        File.Delete(pageFilePath);
+                    }
+                }
+            }
+
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+
+            notebook.SaveNotebook(folderPath, true);
+
+            switch (App.MainWindowViewModel.CurrentProgramMode)
+            {
+                case ProgramModes.Author:
+                case ProgramModes.Database:
+                    break;
+                case ProgramModes.Teacher:
+                    notebook.SaveOthersSubmissions(CurrentNotebookCacheDirectory);
+                    break;
+                case ProgramModes.Projector:
+                    notebook.SaveOthersSubmissions(CurrentNotebookCacheDirectory);
+                    break;
+                case ProgramModes.Student:
+                    var submissionsPath = Path.Combine(folderPath, "Pages");
+                    notebook.SaveSubmissions(submissionsPath);
+                    if (App.Network.InstructorProxy != null)
+                    {
+                        var sNotebook = ObjectSerializer.ToString(notebook);
+                        var zippedNotebook = CLPServiceAgent.Instance.Zip(sNotebook);
+                        App.Network.InstructorProxy.CollectStudentNotebook(zippedNotebook, App.MainWindowViewModel.CurrentUser.FullName);
+                    }
+                    break;
+            }
+
+            if (App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Teacher &&
+                App.MainWindowViewModel.CurrentClassPeriod != null &&
+                App.MainWindowViewModel.CurrentClassPeriod.ClassSubject != null)
+            {
+                App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.SaveClassSubject(CurrentClassCacheDirectory);
+            }
+        }
 
         #endregion //Notebook Methods
 
