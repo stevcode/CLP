@@ -214,7 +214,7 @@
                                         Margin="-6 0 0 0"
                                         Visibility="{Binding IsNumberVisible, Converter={StaticResource BooleanToHidingVisibilityConverter}}">
                                     <TextBlock Text="{Binding TickValue}"
-                                               FontSize="20"
+                                               FontSize="14"
                                                Foreground="{Binding TickColor}"
                                                FontWeight="Bold" />
                                 </Canvas>
@@ -256,10 +256,6 @@
                     </i:EventTrigger>
                     <i:EventTrigger EventName="MouseUp">
                         <catel:EventToCommand Command="{Binding ToggleMainAdornersCommand}"
-                                              PassEventArgsToCommand="True" />
-                    </i:EventTrigger>
-                    <i:EventTrigger EventName="MouseEnter">
-                        <catel:EventToCommand Command="{Binding ErasePageObjectCommand}"
                                               PassEventArgsToCommand="True" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>

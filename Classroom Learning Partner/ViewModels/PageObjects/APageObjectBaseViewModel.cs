@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
@@ -102,6 +103,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Model
 
+        public bool IsBackgroundPageObject
+        {
+            get { return App.MainWindowViewModel.CurrentUser.ID != PageObject.CreatorID && !PageObject.IsManipulatableByNonCreator; }
+        }
+
         #region IPageObjectAdorners
 
         /// <summary>
@@ -198,6 +204,8 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+        private bool _initialIsAdornerVisible = false;
+
         /// <summary>
         /// Gets the DragStartPageObjectCommand command.
         /// </summary>
@@ -208,11 +216,16 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         private void OnDragStartPageObjectCommandExecute(DragStartedEventArgs e)
         {
+            if (IsBackgroundPageObject)
+            {
+                return;
+            }
+
             PageObject.ParentPage.History.BeginBatch(new PageObjectMoveBatchHistoryItem(PageObject.ParentPage,
                                                                                         App.MainWindowViewModel.CurrentUser,
                                                                                         PageObject.ID,
                                                                                         new Point(PageObject.XPosition, PageObject.YPosition)));
-
+            _initialIsAdornerVisible = IsAdornerVisible;
             ACLPPageBaseViewModel.ClearAdorners(PageObject.ParentPage);
         }
 
@@ -223,6 +236,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnDragPageObjectCommandExecute(DragDeltaEventArgs e)
         {
+            if (IsBackgroundPageObject)
+            {
+                return;
+            }
+
             var initialX = XPosition;
             var initialY = YPosition;
 
@@ -244,6 +262,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnDragStopPageObjectCommandExecute(DragCompletedEventArgs e)
         {
+            if (IsBackgroundPageObject)
+            {
+                return;
+            }
+
             var initialX = XPosition;
             var initialY = YPosition;
 
@@ -252,7 +275,18 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 (batch as PageObjectMoveBatchHistoryItem).AddPositionPointToBatch(PageObject.ID, new Point(PageObject.XPosition, PageObject.YPosition));
             }
-            var batchHistoryItem = PageObject.ParentPage.History.EndBatch();
+            var batchHistoryItem = PageObject.ParentPage.History.EndBatch() as PageObjectMoveBatchHistoryItem;
+
+            var startingPoint = batchHistoryItem.TravelledPositions.FirstOrDefault();
+
+            var deltaX = startingPoint.X - XPosition;
+            var deltaY = startingPoint.Y - YPosition;
+            if (Math.Max(deltaX, deltaY) < 1.0)
+            {
+                IsAdornerVisible = !_initialIsAdornerVisible;
+                return;
+            }
+
             ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, batchHistoryItem, true);
             PageObject.OnMoved(initialX, initialY);
 
@@ -324,8 +358,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnToggleMainAdornersCommandExecute(MouseButtonEventArgs e)
         {
-            if(App.MainWindowViewModel.CurrentUser.ID != PageObject.CreatorID &&
-               !PageObject.IsManipulatableByNonCreator)
+            if (IsBackgroundPageObject)
             {
                 return;
             }
