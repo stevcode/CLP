@@ -125,7 +125,7 @@
                                  Value="False">
                             <Setter TargetName="LayoutGrid"
                                     Property="Opacity"
-                                    Value=".15" />
+                                    Value=".30" />
                         </Trigger>
                     </ControlTemplate.Triggers>
 
@@ -268,7 +268,7 @@
                                  Value="False">
                             <Setter TargetName="LayoutGrid"
                                     Property="Opacity"
-                                    Value=".15" />
+                                    Value=".30" />
                         </Trigger>
                     </ControlTemplate.Triggers>
 
@@ -513,7 +513,7 @@
                                  Value="False">
                             <Setter TargetName="LayoutGrid"
                                     Property="Opacity"
-                                    Value=".15" />
+                                    Value=".30" />
                         </Trigger>
                     </ControlTemplate.Triggers>
 
@@ -573,22 +573,25 @@
 
                     <!-- Control Layout -->
                     <Grid Name="LayoutGrid"
-                          Background="Transparent">
+                          Background="Transparent"
+                          Margin="-3 0 -3 0">
 
                         <!-- Button FX Displayed Behind Content -->
                         <Grid x:Name="IsCheckedGrid"
                               Margin="0"
                               Visibility="Hidden">
-                            <Rectangle VerticalAlignment="Bottom"
+                            <Rectangle VerticalAlignment="Center"
                                        HorizontalAlignment="Center"
-                                       Width="24"
-                                       Height="15"
-                                       Fill="{Binding Color, RelativeSource={RelativeSource TemplatedParent}}" />
+                                       Height="26"
+                                       Width="26"
+                                       Stroke="Black"
+                                       StrokeThickness="1"
+                                       Fill="Transparent" />
                         </Grid>
 
                         <!-- Button Content -->
-                        <Ellipse Height="24"
-                                 Width="24"
+                        <Ellipse Height="20"
+                                 Width="20"
                                  VerticalAlignment="Center"
                                  HorizontalAlignment="Center"
                                  Fill="{Binding Color, RelativeSource={RelativeSource TemplatedParent}}" />
@@ -596,8 +599,10 @@
                         <Grid x:Name="IsPressedGrid"
                               Margin="0"
                               Visibility="Hidden">
-                            <Rectangle VerticalAlignment="Stretch"
-                                       HorizontalAlignment="Stretch"
+                            <Rectangle VerticalAlignment="Center"
+                                       HorizontalAlignment="Center"
+                                       Height="21"
+                                       Width="21"
                                        Fill="{Binding Color, RelativeSource={RelativeSource TemplatedParent}}" />
                         </Grid>
                     </Grid>

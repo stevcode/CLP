@@ -49,15 +49,21 @@ namespace Classroom_Learning_Partner.ViewModels
             if (!_currentPenColors.Any())
             {
                 _currentPenColors.Add(new ColorButton(Colors.Black));
+                _currentPenColors.Add(new ColorButton(Colors.White));
                 _currentPenColors.Add(new ColorButton(Colors.Red));
                 _currentPenColors.Add(new ColorButton(Colors.DarkOrange));
                 _currentPenColors.Add(new ColorButton(Colors.Tan));
                 _currentPenColors.Add(new ColorButton(Colors.Gold));
+                _currentPenColors.Add(new ColorButton(Colors.SaddleBrown));
                 _currentPenColors.Add(new ColorButton(Colors.DarkGreen));
+                _currentPenColors.Add(new ColorButton(Colors.MediumSeaGreen));
                 _currentPenColors.Add(new ColorButton(Colors.Blue));
                 _currentPenColors.Add(new ColorButton(Colors.HotPink));
                 _currentPenColors.Add(new ColorButton(Colors.BlueViolet));
-                _currentPenColors.Add(new ColorButton(Colors.LightSlateGray));
+                _currentPenColors.Add(new ColorButton(Colors.Aquamarine));
+                _currentPenColors.Add(new ColorButton(Colors.SlateGray));
+                _currentPenColors.Add(new ColorButton(Colors.SkyBlue));
+                _currentPenColors.Add(new ColorButton(Color.FromRgb(0, 152, 247)));
 
                 foreach (var colorButton in _currentPenColors)
                 {

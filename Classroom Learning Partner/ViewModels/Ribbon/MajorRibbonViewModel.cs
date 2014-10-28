@@ -456,6 +456,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Buttons.Add(_setSelectModeButton);
             Buttons.Add(_setPenModeButton);
             //Buttons.Add(_setEraserModeButton);
+            Buttons.Add(Separater);
             Buttons.Add(_setLassoModeButton);
             Buttons.Add(_setCutModeButton);
             //Buttons.Add(_setDividerCreationModeButton);

@@ -12,7 +12,28 @@
 
         <StackPanel DockPanel.Dock="Left">
 
-            <TextBlock Text="Cache"
+            <TextBlock Text="In New Location"
+                       TextAlignment="Left"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Center"
+                       FontFamily="Segoe UI Light"
+                       FontSize="30"
+                       FontWeight="Bold"
+                       Foreground="{DynamicResource DynamicMainColor}"
+                       Margin="0 5"
+                       TextOptions.TextRenderingMode="Auto"
+                       TextOptions.TextFormattingMode="Ideal" />
+
+            <TextBox HorizontalAlignment="Left"
+                     VerticalAlignment="Center"
+                     TextAlignment="Left"
+                     FontFamily="Segoe UI"
+                     FontSize="12pt"
+                     Width="225"
+                     TextOptions.TextRenderingMode="Auto"
+                     TextOptions.TextFormattingMode="Ideal" />
+
+            <TextBlock Text="In Existing Location"
                        TextAlignment="Left"
                        HorizontalAlignment="Stretch"
                        VerticalAlignment="Center"

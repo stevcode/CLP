@@ -12,7 +12,7 @@
 
         <StackPanel DockPanel.Dock="Left">
 
-            <TextBlock Text="Cache"
+            <TextBlock Text="Location"
                        TextAlignment="Left"
                        HorizontalAlignment="Stretch"
                        VerticalAlignment="Center"
