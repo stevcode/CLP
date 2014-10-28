@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Ink;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using Catel.Data;
@@ -27,6 +29,16 @@ namespace Classroom_Learning_Partner.ViewModels
             InitializeCommands();
             InitializeButtons();
             SetRibbonButtons();
+
+            PenSize = 2;
+            DrawingAttributes = new DrawingAttributes
+            {
+                Height = PenSize,
+                Width = PenSize,
+                Color = Colors.Black,
+                FitToCurve = true
+            };
+
             PageInteractionMode = PageInteractionModes.Pen;
         }
 
@@ -292,6 +304,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Bindings
 
+        #region Properties
+
         /// <summary>Interaction Mode for the current page.</summary>
         public PageInteractionModes PageInteractionMode
         {
@@ -339,6 +353,37 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData PageInteractionModeProperty = RegisterProperty("PageInteractionMode",
                                                                                            typeof (PageInteractionModes),
                                                                                            PageInteractionModes.Pen);
+
+        /// <summary>Gets or sets the property value.</summary>
+        public InkCanvasEditingMode EraserMode
+        {
+            get { return GetValue<InkCanvasEditingMode>(EraserModeProperty); }
+            set { SetValue(EraserModeProperty, value); }
+        }
+
+        public static readonly PropertyData EraserModeProperty = RegisterProperty("EraserMode",
+                                                                                  typeof (InkCanvasEditingMode),
+                                                                                  InkCanvasEditingMode.EraseByStroke);
+
+        /// <summary>Size of the Pen.</summary>
+        public double PenSize
+        {
+            get { return GetValue<double>(PenSizeProperty); }
+            set { SetValue(PenSizeProperty, value); }
+        }
+
+        public static readonly PropertyData PenSizeProperty = RegisterProperty("PenSize", typeof (double), 3);
+
+        /// <summary>Gets the DrawingAttributes of the Ribbon.</summary>
+        public DrawingAttributes DrawingAttributes
+        {
+            get { return GetValue<DrawingAttributes>(DrawingAttributesProperty); }
+            set { SetValue(DrawingAttributesProperty, value); }
+        }
+
+        public static readonly PropertyData DrawingAttributesProperty = RegisterProperty("DrawingAttributes", typeof (DrawingAttributes));
+
+        #endregion //Properties
 
         #region Commands
 

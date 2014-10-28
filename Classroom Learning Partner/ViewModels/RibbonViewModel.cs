@@ -4,27 +4,18 @@ using System.Collections.ObjectModel;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Ribbon;
-using System.Windows.Documents;
 using System.Windows.Ink;
-using System.Windows.Interop;
-using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Catel.Collections;
 using Catel.Data;
 using Catel.IoC;
 using Catel.MVVM;
-using Catel.MVVM.Services;
 using Catel.MVVM.Views;
-using Catel.Windows;
-using Catel.Windows.Controls;
 using Classroom_Learning_Partner.Views;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Entities;
@@ -67,14 +58,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             InitializeCommands();
 
-            PenSize = 2;
-            DrawingAttributes = new DrawingAttributes
-                                {
-                                    Height = PenSize,
-                                    Width = PenSize,
-                                    Color = Colors.Black,
-                                    FitToCurve = true
-                                };
+            
             CurrentColorButton = new RibbonButton {Background = new SolidColorBrush(Colors.Black)};
 
             foreach(var color in _colors)
@@ -86,7 +70,6 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentFontColor = _fontColors[0];
             CurrentFontFamily = Fonts[0];
 
-            PageInteractionMode = PageInteractionModes.Pen;
             CurrentLeftPanel = Panels.NotebookPages;
         }
 
@@ -110,16 +93,12 @@ namespace Classroom_Learning_Partner.ViewModels
             PreviousPageCommand = new Command(OnPreviousPageCommandExecute, OnPreviousPageCanExecute);
             NextPageCommand = new Command(OnNextPageCommandExecute, OnNextPageCanExecute);
 
-            //Tools
-            SetPenColorCommand = new Command<RibbonButton>(OnSetPenColorCommandExecute);
-
             //Submission
             SubmitPageCommand = new Command(OnSubmitPageCommandExecute, OnInsertPageObjectCanExecute);
             GroupSubmitPageCommand = new Command(OnGroupSubmitPageCommandExecute, OnInsertPageObjectCanExecute);
 
             //History
             DisableHistoryCommand = new Command(OnDisableHistoryCommandExecute, OnClearHistoryCommandCanExecute);
-            ReplayCommand = new Command(OnReplayCommandExecute);
             UndoCommand = new Command(OnUndoCommandExecute, OnUndoCanExecute);
             RedoCommand = new Command(OnRedoCommandExecute, OnRedoCanExecute);
             ClearPageHistoryCommand = new Command(OnClearPageHistoryCommandExecute, OnClearHistoryCommandCanExecute);
@@ -156,7 +135,6 @@ namespace Classroom_Learning_Partner.ViewModels
             MakeExitTicketsFromCurrentPageCommand = new Command(OnMakeExitTicketsFromCurrentPageCommandExecute);
 
             //Page
-            SwitchPageTypeCommand = new Command(OnSwitchPageTypeCommandExecute);
             MakePageLongerCommand = new Command(OnMakePageLongerCommandExecute, OnInsertPageObjectCanExecute);
             ClearPageCommand = new Command(OnClearPageCommandExecute, OnInsertPageObjectCanExecute);
 
@@ -181,16 +159,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Properties
 
-        /// <summary>
-        /// Minimizes Ribbon.
-        /// </summary>
-        public bool IsMinimized
-        {
-            get { return GetValue<bool>(IsMinimizedProperty); }
-            set { SetValue(IsMinimizedProperty, value); }
-        }
-
-        public static readonly PropertyData IsMinimizedProperty = RegisterProperty("IsMinimized", typeof(bool), false);
 
         //Steve - Dont' want Views in ViewModels, can this be fixed?
         public CLPTextBoxView LastFocusedTextBox = null;
@@ -270,17 +238,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData DrawingAttributesProperty = RegisterProperty("DrawingAttributes", typeof(DrawingAttributes));
-
-        /// <summary>
-        /// Gets or sets the EditingMode for the InkCanvas.
-        /// </summary>
-        public InkCanvasEditingMode EditingMode
-        {
-            get { return GetValue<InkCanvasEditingMode>(EditingModeProperty); }
-            set { SetValue(EditingModeProperty, value); }
-        }
-
-        public static readonly PropertyData EditingModeProperty = RegisterProperty("EditingMode", typeof(InkCanvasEditingMode));
 
         /// <summary>
         /// Enables pictures taken with Webcam to be shared with Group Members.
@@ -1205,30 +1162,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Notebook Commands
 
-        #region Tool Commands
-
-        /// <summary>
-        /// Sets the Pen Color.
-        /// </summary>
-        public Command<RibbonButton> SetPenColorCommand { get; private set; }
-
-        private void OnSetPenColorCommandExecute(RibbonButton button)
-        {
-            CurrentColorButton = button;
-            var solidColorBrush = CurrentColorButton.Background as SolidColorBrush;
-            if(solidColorBrush != null)
-            {
-                DrawingAttributes.Color = solidColorBrush.Color;
-            }
-
-            if(!(PageInteractionMode == PageInteractionModes.Pen || PageInteractionMode == PageInteractionModes.Highlighter))
-            {
-                PageInteractionMode = PageInteractionModes.Pen;
-            }
-        }
-
-        #endregion //Tool Commands
-
         #region Submission Commands
 
         /// <summary>
@@ -1401,42 +1334,6 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        /// <summary>
-        /// Replays the entire history of the current page.
-        /// </summary>
-        public Command ReplayCommand { get; private set; }
-
-        private void OnReplayCommandExecute()
-        {
-            var currentPage = CurrentPage;
-            if(currentPage == null) { return; }
-
-            currentPage.IsTagAddPrevented = true;
-            var oldPageInteractionMode = (PageInteractionMode == PageInteractionModes.None) ? PageInteractionModes.Pen : PageInteractionMode;
-            PageInteractionMode = PageInteractionModes.None;
-
-            while(currentPage.History.UndoItems.Any()) { currentPage.History.Undo(); }
-
-            var t = new Thread(() =>
-                               {
-                                   while(currentPage.History.RedoItems.Any())
-                                   {
-                                       var historyItemAnimationDelay = Convert.ToInt32(Math.Round(currentPage.History.CurrentAnimationDelay / 1.0));
-                                       Application.Current.Dispatcher.Invoke(DispatcherPriority.DataBind,
-                                                                             (DispatcherOperationCallback)delegate
-                                                                                                          {
-                                                                                                              currentPage.History.Redo(true);
-                                                                                                              return null;
-                                                                                                          },
-                                                                             null);
-                                       Thread.Sleep(historyItemAnimationDelay);
-                                   }
-                                   currentPage.IsTagAddPrevented = false;
-                                   PageInteractionMode = oldPageInteractionMode;
-                               });
-
-            t.Start();
-        }
 
         /// <summary>
         /// Undoes the last action.
@@ -1829,7 +1726,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var exitTicketCreationView = new ExitTicketCreationView(exitTicketCreationViewModel);
             exitTicketCreationView.Owner = Application.Current.MainWindow;
 
-            App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionModes.Pen;
+            App.MainWindowViewModel.MajorRibbon.PageInteractionMode = PageInteractionModes.Pen;
             exitTicketCreationView.ShowDialog();
             if(exitTicketCreationView.DialogResult == true)
             {
@@ -1853,7 +1750,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var exitTicketCreationView = new ExitTicketCreationView(exitTicketCreationViewModel);
             exitTicketCreationView.Owner = Application.Current.MainWindow;
 
-            App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionModes.Pen;
+            App.MainWindowViewModel.MajorRibbon.PageInteractionMode = PageInteractionModes.Pen;
             exitTicketCreationView.ShowDialog();
             if(exitTicketCreationView.DialogResult == true)
             {
@@ -1948,14 +1845,6 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Testing
 
         #region Page Commands
-
-        public Command SwitchPageTypeCommand { get; private set; }
-
-        public void OnSwitchPageTypeCommandExecute()
-        {
-            var page = CurrentPage;
-            page.PageType = page.PageType == PageTypes.Animation ? PageTypes.Default : PageTypes.Animation;
-        }
 
         /// <summary>
         /// Add 200 pixels to the height of the current page.

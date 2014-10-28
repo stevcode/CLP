@@ -92,32 +92,6 @@
                     </Thumb.Template>
                 </Thumb>
 
-                <!--Multiple Stamp Copies Button-->
-                <Button Command="{Binding ParameterizeStampCommand}"
-                        Cursor="Hand"
-                        Width="40"
-                        Height="40"
-                        Canvas.Left="-40"
-                        Canvas.Bottom="-40"
-                        Visibility="{Binding IsDefaultAdornersVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
-                    <Button.Template>
-                        <ControlTemplate TargetType="{x:Type Button}">
-                            <Grid>
-                                <Ellipse Stroke="Black"
-                                         StrokeThickness="3"
-                                         Fill="White"
-                                         VerticalAlignment="Stretch"
-                                         HorizontalAlignment="Stretch" />
-                                <Path Data="M0.5,0 L0.5,1 M0,0.5 L1,0.5"
-                                      Stretch="Fill"
-                                      Margin="5"
-                                      Stroke="Green"
-                                      StrokeThickness="3" />
-                            </Grid>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
-
                 <!--Ghost Image of Stamp for making StampedObjects-->
                 <Grid Canvas.Left="{Binding GhostOffsetX}"
                       Canvas.Top="{Binding GhostOffsetY}"
@@ -234,17 +208,32 @@
                            Height="{Binding ActualHeight, ElementName=StampBody}"
                            Width="{Binding ActualWidth, ElementName=StampBody}" />
 
-                    <Rectangle Tag="StampBodyHitBox"
-                               Fill="Transparent"
-                               Height="{Binding ActualHeight, ElementName=StampBody}"
-                               Width="{Binding ActualWidth, ElementName=StampBody}">
+                    <Thumb Tag="PageObjectHitBox"
+                           Height="{Binding ActualHeight, ElementName=StampBody}"
+                           Width="{Binding ActualWidth, ElementName=StampBody}">
+                        <Thumb.Template>
+                            <ControlTemplate>
+                                <Rectangle Fill="Transparent"
+                                           Stroke="Transparent"
+                                           Stretch="Fill" />
+                            </ControlTemplate>
+                        </Thumb.Template>
                         <i:Interaction.Triggers>
-                            <i:EventTrigger EventName="MouseUp">
-                                <catel:EventToCommand Command="{Binding ToggleMainAdornersCommand}"
+                            <i:EventTrigger EventName="DragStarted">
+                                <catel:EventToCommand Command="{Binding DragStartPageObjectCommand}"
+                                                      PassEventArgsToCommand="True" />
+                            </i:EventTrigger>
+                            <i:EventTrigger EventName="DragDelta">
+                                <catel:EventToCommand Command="{Binding DragPageObjectCommand}"
+                                                      PassEventArgsToCommand="True" />
+                            </i:EventTrigger>
+                            <i:EventTrigger EventName="DragCompleted">
+                                <catel:EventToCommand Command="{Binding DragStopPageObjectCommand}"
                                                       PassEventArgsToCommand="True" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
-                    </Rectangle>
+                    </Thumb>
+
                 </Grid>
             </Border>
 

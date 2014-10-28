@@ -282,33 +282,6 @@
             </RibbonGroup>
 
             <RibbonGroup Header="Insert">
-                
-                <RibbonButton Label="Stamp"
-                              LargeImageSource="pack://application:,,,/Resources/Images/Stamp32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/Stamp16.png"
-                              Command="{Binding InsertBlankStampCommand}" />
-
-                <RibbonButton Label="Collection Stamp"
-                              LargeImageSource="pack://application:,,,/Resources/Images/CollectionStamp32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/CollectionStamp16.png"
-                              Command="{Binding InsertBlankContainerStampCommand}" />
-                
-                <RibbonButton Label="NumberLine"
-                              LargeImageSource="pack://application:,,,/Resources/Images/NumberLine32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/NumberLine16.png"
-                              Command="{Binding InsertNumberLineCommand}" />
-
-                <RibbonButton Label="Pile"
-                              LargeImageSource="pack://application:,,,/Resources/Images/Pile32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/Pile16.png"
-                              Command="{Binding InsertDivisionPileCommand}" />
-
-                <!--Array + Divider-->
-                <RibbonButton Label="Array"
-                              LargeImageSource="pack://application:,,,/Resources/Images/Array32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/Array16.png"
-                              Command="{Binding InsertArrayCommand}"
-                              CommandParameter="ARRAY" />
 
                 <!--<RibbonButton Label="10x10"
                               LargeImageSource="pack://application:,,,/Resources/Images/PresetArray32.png"
@@ -562,59 +535,9 @@
         <RibbonTab Header="Insert"
                    Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}">
 
-            <RibbonGroup Header="Tools">
 
-                <RibbonToggleButton Label="Select"
-                                    LargeImageSource="pack://application:,,,/Images/HandIcon.png"
-                                    IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
-                                    IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionModes.Select}}" />
 
-                <RibbonToggleButton Label="Pen"
-                                    LargeImageSource="pack://application:,,,/Images/Pen.png"
-                                    IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
-                                    IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionModes.Pen}}" />
 
-                <RibbonToggleButton Label="Eraser"
-                                    LargeImageSource="pack://application:,,,/Images/Eraser.png"
-                                    IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
-                                    IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionModes.Eraser}}" />
-
-            </RibbonGroup>
-
-            <RibbonGroup Header="Images">
-
-                <!--<RibbonToggleButton Label="Webcam"
-                                    LargeImageSource="..\Images\camera.png"
-                                    Command="{Binding ToggleWebcamPanelCommand}"
-                                    CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked}" />-->
-
-                <RibbonButton Label="Insert Image"
-                              LargeImageSource="..\Images\AddImage.png"
-                              Command="{Binding InsertImageCommand}" />
-
-            </RibbonGroup>
-
-            <RibbonGroup Header="Stamps">
-
-                <RibbonButton Label="Stamp"
-                              LargeImageSource="pack://application:,,,/Resources/Images/Stamp32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/Stamp16.png"
-                              Command="{Binding InsertBlankStampCommand}" />
-
-                <RibbonButton Label="Collection Stamp"
-                              LargeImageSource="pack://application:,,,/Resources/Images/CollectionStamp32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/CollectionStamp16.png"
-                              Command="{Binding InsertBlankContainerStampCommand}" />
-
-                <RibbonButton Label="Image Stamp"
-                              LargeImageSource="..\Images\PictureStamp.png"
-                              Command="{Binding InsertImageStampCommand}" />
-
-                <RibbonButton Label="Image Collection Stamp"
-                              LargeImageSource="..\Images\PictureStamp.png"
-                              Command="{Binding InsertImageContainerStampCommand}" />
-
-            </RibbonGroup>
 
             <RibbonGroup Header="Arrays">
 
@@ -919,7 +842,6 @@
                               LargeImageSource="..\Images\LargeIcon.png"
                               Command="{Binding ZoomToWholePageCommand}" />-->
 
-
                 <RibbonButton Label="Clear History From Page"
                               LargeImageSource="..\Images\LargeIcon.png"
                               Command="{Binding ClearPageHistoryCommand}" />
@@ -930,14 +852,6 @@
             </RibbonGroup>
 
         </RibbonTab>
-
-        <!--<Ribbon.HelpPaneContent>
-            <ToggleButton Content="^"
-                          VerticalContentAlignment="Center"
-                          Height="22" Width="40"
-                          Background="{DynamicResource DynamicMainColor}"
-                          IsChecked="{Binding ElementName=Ribbon, Path=IsMinimized}" />
-        </Ribbon.HelpPaneContent>-->
 
     </Ribbon>
 

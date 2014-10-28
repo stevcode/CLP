@@ -14,6 +14,7 @@ using Catel.MVVM.Views;
 using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.Views;
 using Classroom_Learning_Partner.Views.Modal_Windows;
+using CLP.CustomControls;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -66,6 +67,15 @@ namespace Classroom_Learning_Partner.ViewModels
             PlaceStampCommand = new Command(OnPlaceStampCommandExecute);
             DragStampCommand = new Command<DragDeltaEventArgs>(OnDragStampCommandExecute);
             ShowKeyPadCommand = new Command(OnShowKeyPadCommandExecute);
+            InitializeButtons();
+        }
+
+        private void InitializeButtons()
+        {
+            _contextButtons.Add(MajorRibbonViewModel.Separater);
+
+            _contextButtons.Add(new RibbonButton("Create Copies", "pack://application:,,,/Images/AddToDisplay.png", ParameterizeStampCommand, null, true));
+            _contextButtons.Add(new RibbonButton("Delete All Copies", "pack://application:,,,/Images/Delete.png", null, null, true));
         }
 
         /// <summary>
@@ -255,8 +265,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 MessageBox.Show(
                                 "What are you counting on the stamp?  Please click the questionmark on the line below the stamp before making copies.",
                                 "What are you counting?");
-                App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionModes.Pen;
-                App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionModes.Select;
+                App.MainWindowViewModel.MajorRibbon.PageInteractionMode = PageInteractionModes.Pen;
+                App.MainWindowViewModel.MajorRibbon.PageInteractionMode = PageInteractionModes.Select;
                 return;
             }
 
@@ -318,8 +328,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 serializedStrokes = transformedSerializedStrokes;
             }
 
-            
-
             var stampObjectType = stamp.StampType == StampTypes.GeneralStamp || stamp.StampType == StampTypes.ObservingStamp
                                       ? StampedObjectTypes.GeneralStampedObject
                                       : stamp.StampType == StampTypes.GroupStamp
@@ -328,51 +336,100 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var stampCopiesToAdd = new List<IPageObject>();
 
-
-
-            var random = new Random();
-            var miniGroupingXPosition = 5.0;
-            var miniGroupingYPosition = YPosition + Height + 100;
-            var miniGroupingColumns = stampedObjectWidth / stampedObjectHeight <= 1.0 ? 3 : 2;
-            var miniGroupingRows = miniGroupingColumns == 3 ? 2 : 3;
-            var miniGroupingWidth = stampedObjectWidth * miniGroupingColumns + 10;
-            var miniGroupingHeight = stampedObjectHeight * miniGroupingRows + 10;
-            for (var i = 0; i < numberOfCopies; i++)
+            if (stamp.StampType == StampTypes.ObservingStamp)
             {
-                var miniGroupIndex = i % 6;
-                var xOffset = (miniGroupIndex % miniGroupingColumns) * stampedObjectWidth + (miniGroupIndex % miniGroupingColumns == 0 ? 0 : 5) - 8 + random.NextDouble() * 16;
-                var yOffset = (miniGroupIndex % miniGroupingRows) * stampedObjectHeight + (miniGroupIndex % miniGroupingRows == 0 ? 0 : 5) - 8 + random.NextDouble() * 16;
-
-                var stampedObject = new StampedObject(stamp.ParentPage, stamp.ID, stamp.ImageHashID, stampObjectType)
+                var random = new Random();
+                var miniGroupingXPosition = 5.0;
+                var miniGroupingYPosition = YPosition + Height + 100;
+                var miniGroupingColumns = stampedObjectWidth / stampedObjectHeight <= 1.0 ? 3 : 2;
+                var miniGroupingRows = miniGroupingColumns == 3 ? 2 : 3;
+                var miniGroupingWidth = stampedObjectWidth * miniGroupingColumns + 10;
+                var miniGroupingHeight = stampedObjectHeight * miniGroupingRows + 10;
+                for (var i = 0; i < numberOfCopies; i++)
                 {
-                    Width = stampedObjectWidth,
-                    Height = stampedObjectHeight,
-                    XPosition = miniGroupingXPosition + xOffset,
-                    YPosition = miniGroupingYPosition + yOffset,
-                    SerializedStrokes = serializedStrokes.Select(stroke => stroke.ToStroke().ToStrokeDTO()).ToList(),
-                    Parts = stamp.Parts
-                };
+                    var miniGroupIndex = i % 6;
+                    var xOffset = (miniGroupIndex % miniGroupingColumns) * stampedObjectWidth + (miniGroupIndex % miniGroupingColumns == 0 ? 0 : 5) -
+                                  8 + random.NextDouble() * 16;
+                    var yOffset = (miniGroupIndex % miniGroupingRows) * stampedObjectHeight + (miniGroupIndex % miniGroupingRows == 0 ? 0 : 5) - 8 +
+                                  random.NextDouble() * 16;
 
-                stampCopiesToAdd.Add(stampedObject);
-                if (miniGroupIndex == 5)
-                {
-                    if (miniGroupingXPosition + 2 * miniGroupingWidth < PageObject.ParentPage.Width)
+                    var stampedObject = new StampedObject(stamp.ParentPage, stamp.ID, stamp.ImageHashID, stampObjectType)
+                                        {
+                                            Width = stampedObjectWidth,
+                                            Height = stampedObjectHeight,
+                                            XPosition = miniGroupingXPosition + xOffset,
+                                            YPosition = miniGroupingYPosition + yOffset,
+                                            SerializedStrokes = serializedStrokes.Select(stroke => stroke.ToStroke().ToStrokeDTO()).ToList(),
+                                            Parts = stamp.Parts
+                                        };
+
+                    stampCopiesToAdd.Add(stampedObject);
+                    if (miniGroupIndex == 5)
                     {
-                        miniGroupingXPosition += miniGroupingWidth;
+                        if (miniGroupingXPosition + 2 * miniGroupingWidth < PageObject.ParentPage.Width)
+                        {
+                            miniGroupingXPosition += miniGroupingWidth;
+                        }
+                        else if (miniGroupingYPosition + 2 * miniGroupingHeight < PageObject.ParentPage.Height)
+                        {
+                            miniGroupingXPosition = 5.0;
+                            miniGroupingYPosition += miniGroupingHeight;
+                        }
                     }
-                    else if (miniGroupingYPosition + 2 * miniGroupingHeight < PageObject.ParentPage.Height)
+
+                    foreach (var pageObject in stamp.AcceptedPageObjects)
                     {
-                        miniGroupingXPosition = 5.0;
-                        miniGroupingYPosition += miniGroupingHeight;
+                        var newPageObject = pageObject.Duplicate();
+                        newPageObject.XPosition = stampedObject.XPosition + (pageObject.XPosition - stamp.XPosition);
+                        newPageObject.YPosition = stampedObject.YPosition + (pageObject.YPosition - stamp.YPosition - stamp.HandleHeight);
+                        stampCopiesToAdd.Add(newPageObject);
+                    }
+                }
+            }
+            else
+            {
+                var initialXPosition = 25.0;
+                var initialYPosition = YPosition + Height + 125;
+                if (initialYPosition + stampedObjectHeight > PageObject.ParentPage.Height)
+                {
+                    initialYPosition = PageObject.ParentPage.Height - stampedObjectHeight;
+                    initialXPosition = PageObject.XPosition + PageObject.Width + 10.0;
+                    if (initialXPosition + numberOfCopies * (stampedObjectWidth + 5) > PageObject.ParentPage.Width)
+                    {
+                        initialXPosition = 25.0;
                     }
                 }
 
-                foreach (var pageObject in stamp.AcceptedPageObjects)
+                for (var i = 0; i < numberOfCopies; i++)
                 {
-                    var newPageObject = pageObject.Duplicate();
-                    newPageObject.XPosition = stampedObject.XPosition + (pageObject.XPosition - stamp.XPosition);
-                    newPageObject.YPosition = stampedObject.YPosition + (pageObject.YPosition - stamp.YPosition - stamp.HandleHeight);
-                    stampCopiesToAdd.Add(newPageObject);
+                    var stampedObject = new StampedObject(stamp.ParentPage, stamp.ID, stamp.ImageHashID, stampObjectType)
+                    {
+                        Width = stampedObjectWidth,
+                        Height = stampedObjectHeight,
+                        XPosition = initialXPosition,
+                        YPosition = initialYPosition,
+                        SerializedStrokes = serializedStrokes.Select(stroke => stroke.ToStroke().ToStrokeDTO()).ToList(),
+                        Parts = stamp.Parts
+                    };
+
+                    stampCopiesToAdd.Add(stampedObject);
+                    if (initialXPosition + 2 * stampedObject.Width + 5 < PageObject.ParentPage.Width)
+                    {
+                        initialXPosition += stampedObject.Width + 5;
+                    }
+                    else if (initialYPosition + 2 * stampedObject.Height + 5 < PageObject.ParentPage.Height)
+                    {
+                        initialXPosition = 25;
+                        initialYPosition += stampedObject.Height + 5;
+                    }
+
+                    foreach (var pageObject in stamp.AcceptedPageObjects)
+                    {
+                        var newPageObject = pageObject.Duplicate();
+                        newPageObject.XPosition = stampedObject.XPosition + (pageObject.XPosition - stamp.XPosition);
+                        newPageObject.YPosition = stampedObject.YPosition + (pageObject.YPosition - stamp.YPosition - stamp.HandleHeight);
+                        stampCopiesToAdd.Add(newPageObject);
+                    }
                 }
             }
 
@@ -451,8 +508,8 @@ namespace Classroom_Learning_Partner.ViewModels
             else 
             {
                 MessageBox.Show("What are you counting on the stamp?  Please click the questionmark on the line below the stamp before making copies.", "What are you counting?");
-                App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionModes.Pen;
-                App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionModes.Select;
+                App.MainWindowViewModel.MajorRibbon.PageInteractionMode = PageInteractionModes.Pen;
+                App.MainWindowViewModel.MajorRibbon.PageInteractionMode = PageInteractionModes.Select;
                 _copyFailed = true;
             }  
         }

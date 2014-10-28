@@ -579,34 +579,26 @@
                         <Grid x:Name="IsCheckedGrid"
                               Margin="0"
                               Visibility="Hidden">
-                            <Line X1="0"
-                                  X2="1"
-                                  Stretch="Fill"
-                                  Stroke="{Binding Color, RelativeSource={RelativeSource TemplatedParent}}"
-                                  StrokeThickness="2"
-                                  VerticalAlignment="Bottom" />
+                            <Rectangle VerticalAlignment="Bottom"
+                                       HorizontalAlignment="Center"
+                                       Width="24"
+                                       Height="15"
+                                       Fill="{Binding Color, RelativeSource={RelativeSource TemplatedParent}}" />
                         </Grid>
 
                         <!-- Button Content -->
-                        <Ellipse Margin="2"
-                                 Height="28"
-                                 Width="28"
+                        <Ellipse Height="24"
+                                 Width="24"
                                  VerticalAlignment="Center"
+                                 HorizontalAlignment="Center"
                                  Fill="{Binding Color, RelativeSource={RelativeSource TemplatedParent}}" />
 
                         <Grid x:Name="IsPressedGrid"
                               Margin="0"
                               Visibility="Hidden">
-                            <Ellipse Height="20"
-                                     Width="20"
-                                     VerticalAlignment="Center"
-                                     HorizontalAlignment="Center"
-                                     Fill="Black" />
-                            <Ellipse Height="10"
-                                     Width="10"
-                                     VerticalAlignment="Center"
-                                     HorizontalAlignment="Center"
-                                     Fill="White" />
+                            <Rectangle VerticalAlignment="Stretch"
+                                       HorizontalAlignment="Stretch"
+                                       Fill="{Binding Color, RelativeSource={RelativeSource TemplatedParent}}" />
                         </Grid>
                     </Grid>
 

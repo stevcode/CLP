@@ -28,14 +28,15 @@ namespace Classroom_Learning_Partner.ViewModels
         private void InitializeButtons()
         {
             _contextButtons.Add(MajorRibbonViewModel.Separater);
+
             var jumpSizeVisibility = new ToggleRibbonButton("Hide Jump Sizes", "Show Jump Sizes", "pack://application:,,,/Images/Delete.png", true)
                                      {
                                          IsChecked = !IsJumpSizeLabelsVisible
                                      };
-         //   var jumpWrapper = new ChangeNotificationWrapper(jumpSizeVisibility);
             jumpSizeVisibility.Checked += jumpSizeVisibility_Checked;
             jumpSizeVisibility.Unchecked += jumpSizeVisibility_Checked;
             _contextButtons.Add(jumpSizeVisibility);
+
             var allowDragging = new ToggleRibbonButton("Can Drag Arrow", "Can't Drag Arrow", "pack://application:,,,/Images/Delete.png", true)
                                 {
                                     IsChecked = !IsArrowDraggingAllowed

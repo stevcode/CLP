@@ -15,12 +15,19 @@
 
         <Grid>
             <ItemsControl ItemsSource="{Binding Buttons}"
+                          
                           HorizontalAlignment="Left">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel Orientation="Horizontal" />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="FrameworkElement">
+                        <Setter Property="Margin"
+                                Value="3 0 3 0" />
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
             </ItemsControl>
         </Grid>
 

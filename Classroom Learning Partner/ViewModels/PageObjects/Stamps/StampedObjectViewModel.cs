@@ -9,6 +9,7 @@ using Catel.Data;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.Views.Modal_Windows;
+using CLP.CustomControls;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -63,6 +64,13 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             ParameterizeStampedObjectCommand = new Command<bool>(OnParameterizeStampedObjectCommandExecute);
+
+            if (IsGroupStampedObject)
+            {
+                _contextButtons.Add(MajorRibbonViewModel.Separater);
+
+                _contextButtons.Add(new RibbonButton("Create Copies", "pack://application:,,,/Images/AddToDisplay.png", ParameterizeStampedObjectCommand, null, true));
+            }
         }
 
         /// <summary>Gets the title of the view model.</summary>

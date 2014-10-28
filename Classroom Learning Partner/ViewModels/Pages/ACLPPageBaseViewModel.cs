@@ -8,7 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -50,8 +49,8 @@ namespace Classroom_Learning_Partner.ViewModels
             Page = page;
 
             PageInteractionMode = App.MainWindowViewModel.MajorRibbon.PageInteractionMode;
-            EraserMode = App.MainWindowViewModel.Ribbon.EraserMode;
-            DefaultDA = App.MainWindowViewModel.Ribbon.DrawingAttributes;
+            EraserMode = App.MainWindowViewModel.MajorRibbon.EraserMode;
+            DefaultDA = App.MainWindowViewModel.MajorRibbon.DrawingAttributes;
 
             InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
             PageObjects.CollectionChanged += PageObjects_CollectionChanged;
@@ -690,7 +689,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
 
-            switch(App.MainWindowViewModel.Ribbon.PageInteractionMode)
+            switch(App.MainWindowViewModel.MajorRibbon.PageInteractionMode)
             {
                 case PageInteractionModes.Cut:
                     {
@@ -864,8 +863,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 var wasArrayDivided = false;
                 foreach(var array in PageObjects.OfType<CLPArray>())
                 {
-                    if(array.IsDivisionBehaviorOn && 
-                       App.MainWindowViewModel.Ribbon.PageInteractionMode == PageInteractionModes.Pen &&
+                    if(array.IsDivisionBehaviorOn &&
+                       App.MainWindowViewModel.MajorRibbon.PageInteractionMode == PageInteractionModes.Pen &&
                        App.MainWindowViewModel.CurrentUser.ID == array.CreatorID)
                     {
                         wasArrayDivided = CLPArrayViewModel.CreateDivision(array, stroke) || wasArrayDivided;
@@ -875,7 +874,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
                     Page.InkStrokes.Remove(stroke);
-                    App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionModes.Select;
+                    App.MainWindowViewModel.MajorRibbon.PageInteractionMode = PageInteractionModes.Select;
                     InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
                     return true;
                 }
@@ -1344,7 +1343,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if(forceSelectMode)
             {
-                App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionModes.Select;
+                App.MainWindowViewModel.MajorRibbon.PageInteractionMode = PageInteractionModes.Select;
             }
         }
 
@@ -1369,7 +1368,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if(forceSelectMode)
             {
-                App.MainWindowViewModel.Ribbon.PageInteractionMode = PageInteractionModes.Select;
+                App.MainWindowViewModel.MajorRibbon.PageInteractionMode = PageInteractionModes.Select;
             }
         }
 
