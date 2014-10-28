@@ -63,6 +63,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 _currentPenColors.Add(new ColorButton(Colors.Aquamarine));
                 _currentPenColors.Add(new ColorButton(Colors.SlateGray));
                 _currentPenColors.Add(new ColorButton(Colors.SkyBlue));
+                _currentPenColors.Add(new ColorButton(Colors.DeepSkyBlue));
                 _currentPenColors.Add(new ColorButton(Color.FromRgb(0, 152, 247)));
 
                 foreach (var colorButton in _currentPenColors)
