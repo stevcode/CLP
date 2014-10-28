@@ -194,6 +194,7 @@ namespace Classroom_Learning_Partner.Services
             return
                 directoryInfo.GetDirectories()
                              .Select(directory => NotebookDirectoryToNotebookNameComposite(directory.FullName))
+                             .Where(x => x != null)
                              .OrderByDescending(x => x.OwnerTypeTag)
                              .ThenBy(x => x.OwnerName)
                              .ToList();
