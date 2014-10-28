@@ -5,7 +5,6 @@ using System.Windows;
 using System.Windows.Controls.Primitives;
 using Catel.Data;
 using Catel.MVVM;
-using Catel.Windows.Controls;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Entities;
 
@@ -57,7 +56,6 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData TicksProperty = RegisterProperty("Ticks", typeof (ObservableCollection<NumberLineTick>));
 
         #endregion //Model
-
 
         #region Commands
 
@@ -251,5 +249,31 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //Commands
+
+        #region Static Methods
+
+        public static void AddNumberLineToPage(CLPPage page)
+        {
+            var keyPad = new NumberLineCreationView()
+            {
+                Owner = Application.Current.MainWindow,
+                WindowStartupLocation = WindowStartupLocation.Manual,
+                Top = 100,
+                Left = 100
+            };
+            keyPad.ShowDialog();
+            if (keyPad.DialogResult != true ||
+                keyPad.NumbersEntered.Text.Length <= 0)
+            {
+                return;
+            }
+
+            var numberLineSize = Int32.Parse(keyPad.NumbersEntered.Text);
+
+            var numberLine = new NumberLine(page, numberLineSize);
+            ACLPPageBaseViewModel.AddPageObjectToPage(numberLine);
+        }
+
+        #endregion //Static Methods
     }
 }

@@ -214,6 +214,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static CLPPage GetCurrentPage()
         {
+            if (App.MainWindowViewModel == null)
+            {
+                return null;
+            }
+
             var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
             if(notebookWorkspaceViewModel == null)
             {

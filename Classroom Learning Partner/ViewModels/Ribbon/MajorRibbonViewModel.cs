@@ -75,19 +75,22 @@ namespace Classroom_Learning_Partner.ViewModels
             _insertImageButton = new RibbonButton("Text", "pack://application:,,,/Images/AddImage.png", AddPageObjectToPageCommand, "IMAGE");
 
             //Stamps
-            _insertStampButton = new RibbonButton("Stamp", "pack://application:,,,/Resources/Images/Stamp32.png", AddPageObjectToPageCommand, "STAMP");
-            _insertImageStampButton = new RibbonButton("Image Stamp",
-                                                       "pack://application:,,,/Images/PictureStamp.png",
-                                                       AddPageObjectToPageCommand,
-                                                       "IMAGESTAMP"); //TODO: Better Icon
+            _insertGeneralStampButton = new RibbonButton("Stamp",
+                                                         "pack://application:,,,/Resources/Images/Stamp32.png",
+                                                         AddPageObjectToPageCommand,
+                                                         "BLANK_GENERAL_STAMP");
             _insertGroupStampButton = new RibbonButton("Group Stamp",
                                                        "pack://application:,,,/Resources/Images/CollectionStamp32.png",
                                                        AddPageObjectToPageCommand,
-                                                       "GROUPSTAMP");
+                                                       "BLANK_GROUP_STAMP");
+            _insertImageGeneralStampButton = new RibbonButton("Image Stamp",
+                                                              "pack://application:,,,/Images/PictureStamp.png",
+                                                              AddPageObjectToPageCommand,
+                                                              "IMAGE_GENERAL_STAMP"); //TODO: Better Icon
             _insertImageGroupStampButton = new RibbonButton("Image Group Stamp",
                                                             "pack://application:,,,/Images/PictureStamp.png",
                                                             AddPageObjectToPageCommand,
-                                                            "IMAGEGROUPSTAMP"); //TODO: Better Icon
+                                                            "IMAGE_GROUP_STAMP"); //TODO: Better Icon
             _insertPileButton = new RibbonButton("Pile", "pack://application:,,,/Resources/Images/Pile32.png", AddPageObjectToPageCommand, "PILE");
 
             //Arrays
@@ -115,6 +118,12 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                       AddPageObjectToPageCommand,
                                                                       "DIVISIONTEMPLATEWITHTILES");
 
+            //NumberLine
+            _insertNumberLineButton = new RibbonButton("NumberLine",
+                                                       "pack://application:,,,/Resources/Images/NumberLine32.png",
+                                                       AddPageObjectToPageCommand,
+                                                       "NUMBERLINE");
+
             //Text
             //TODO: Better Icons
             _insertTextBoxButton = new RibbonButton("Text", "pack://application:,,,/Images/AddText.png", AddPageObjectToPageCommand, "TEXTBOX");
@@ -141,7 +150,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void _button_Checked(object sender, RoutedEventArgs e)
         {
-            
             _isCheckedEventRunning = true;
             var checkedButton = sender as GroupedRibbonButton;
             if (checkedButton == null)
@@ -236,9 +244,9 @@ namespace Classroom_Learning_Partner.ViewModels
         private RibbonButton _insertImageButton;
 
         //Stamps
-        private RibbonButton _insertStampButton;
-        private RibbonButton _insertImageStampButton;
+        private RibbonButton _insertGeneralStampButton;
         private RibbonButton _insertGroupStampButton;
+        private RibbonButton _insertImageGeneralStampButton;
         private RibbonButton _insertImageGroupStampButton;
         private RibbonButton _insertPileButton;
 
@@ -251,6 +259,9 @@ namespace Classroom_Learning_Partner.ViewModels
         //Division Templates
         private RibbonButton _insertDivisionTemplateButton;
         private RibbonButton _insertDivisionTemplateWithTilesButton;
+
+        //NumberLine
+        private RibbonButton _insertNumberLineButton;
 
         //Text
         private RibbonButton _insertTextBoxButton;
@@ -349,15 +360,45 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             switch (pageObjectType)
             {
+                    //Image
+                case "IMAGE":
+                    CLPImageViewModel.AddImageToPage(CurrentPage);
+                    break;
+
+                    //Stamps
+                case "BLANK_GENERAL_STAMP":
+                    StampViewModel.AddBlankGeneralStampToPage(CurrentPage);
+                    break;
+                case "BLANK_GROUP_STAMP":
+                    StampViewModel.AddBlankGroupStampToPage(CurrentPage);
+                    break;
+                case "IMAGE_GENERAL_STAMP":
+                    StampViewModel.AddImageGeneralStampToPage(CurrentPage);
+                    break;
+                case "IMAGE_GROUP_STAMP":
+                    StampViewModel.AddImageGroupStampToPage(CurrentPage);
+                    break;
+                case "PILE":
+                    StampViewModel.AddPileToPage(CurrentPage);
+                    break;
+
+                    //Arrays
                 case "ARRAY":
-                    CLPArrayViewModel.AddNewPageObjectToPage(CurrentPage);
+                    CLPArrayViewModel.AddArrayToPage(CurrentPage);
+                    break;
+
+                    //NumberLine
+                case "NUMBERLINE":
+                    NumberLineViewModel.AddNumberLineToPage(CurrentPage);
                     break;
                 default:
                     break;
             }
+
+            PageInteractionMode = PageInteractionModes.Select;
         }
 
-        private bool OnAddPageObjectToPageCanExecute(string pageObjectType) { return true; }
+        private bool OnAddPageObjectToPageCanExecute(string pageObjectType) { return CurrentPage != null; }
 
         #endregion //Insert PageObject Commands
 
@@ -376,9 +417,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
             Buttons.Add(Separater);
 
-            Buttons.Add(_insertStampButton);
+            Buttons.Add(_insertGeneralStampButton);
             Buttons.Add(_insertGroupStampButton);
             Buttons.Add(_insertPileButton);
+            Buttons.Add(_insertNumberLineButton);
             Buttons.Add(_insertArrayButton);
             Buttons.Add(_insertDivisionTemplateButton);
             Buttons.Add(_insertDivisionTemplateWithTilesButton);

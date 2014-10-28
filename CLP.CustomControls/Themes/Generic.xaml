@@ -121,6 +121,12 @@
                                                  Storyboard="{StaticResource PressedOn}" />
                             </Trigger.EnterActions>
                         </Trigger>
+                        <Trigger Property="IsEnabled"
+                                 Value="False">
+                            <Setter TargetName="LayoutGrid"
+                                    Property="Opacity"
+                                    Value=".15" />
+                        </Trigger>
                     </ControlTemplate.Triggers>
 
                 </ControlTemplate>
@@ -257,6 +263,12 @@
                                 <BeginStoryboard x:Name="CheckedOn_BeginStoryboard"
                                                  Storyboard="{StaticResource CheckedOn}" />
                             </Trigger.EnterActions>
+                        </Trigger>
+                        <Trigger Property="IsEnabled"
+                                 Value="False">
+                            <Setter TargetName="LayoutGrid"
+                                    Property="Opacity"
+                                    Value=".15" />
                         </Trigger>
                     </ControlTemplate.Triggers>
 

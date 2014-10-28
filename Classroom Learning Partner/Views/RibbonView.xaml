@@ -200,24 +200,6 @@
 
             <RibbonGroup Header="Tools">
 
-                <RibbonToggleButton Label="Select"
-                                    LargeImageSource="pack://application:,,,/Resources/Images/Hand32.png"
-                                    SmallImageSource="pack://application:,,,/Resources/Images/Hand16.png"
-                                    IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
-                                    IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionModes.Select}}" />
-
-                <RibbonToggleButton Label="Pen"
-                                    LargeImageSource="pack://application:,,,/Resources/Images/Pen32.png"
-                                    SmallImageSource="pack://application:,,,/Resources/Images/Pen16.png"
-                                    IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
-                                    IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionModes.Pen}}" />
-
-                <RibbonToggleButton Label="Highlighter"
-                                    LargeImageSource="pack://application:,,,/Resources/Images/Highlighter32.png"
-                                    SmallImageSource="pack://application:,,,/Resources/Images/Highlighter16.png"
-                                    IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
-                                    IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionModes.Highlighter}}" />
-
                 <RibbonMenuButton Label="Pen Size"
                                   LargeImageSource="pack://application:,,,/Resources/Images/PenSize32.png"
                                   SmallImageSource="pack://application:,,,/Resources/Images/PenSize16.png">
@@ -296,18 +278,6 @@
                         </RibbonGalleryCategory>
                     </RibbonGallery>
                 </RibbonMenuButton>
-
-                <RibbonToggleButton Label="Cut"
-                                    LargeImageSource="pack://application:,,,/Resources/Images/Scissors32.png"
-                                    SmallImageSource="pack://application:,,,/Resources/Images/Scissors16.png"
-                                    IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
-                                    IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionModes.Cut}}" />
-
-                <RibbonToggleButton Label="Lasso"
-                                    LargeImageSource="pack://application:,,,/Resources/Images/Lasso32.png"
-                                    SmallImageSource="pack://application:,,,/Resources/Images/Lasso16.png"
-                                    IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
-                                    IsChecked="{Binding PageInteractionMode, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:PageInteractionModes.Lasso}}" />
 
             </RibbonGroup>
 

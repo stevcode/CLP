@@ -257,11 +257,6 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             get
             {
-                if (!Directory.Exists(_localCacheDirectory))
-                {
-                    Directory.CreateDirectory(_localCacheDirectory);
-                }
-
                 return _localCacheDirectory;
             }
 
@@ -287,20 +282,6 @@ namespace Classroom_Learning_Partner.ViewModels
             get
             {
                 var path = Path.Combine(LocalCacheDirectory, "Notebooks");
-                if (!Directory.Exists(path))
-                {
-                    Directory.CreateDirectory(path);
-                }
-
-                return path;
-            }
-        }
-
-        public static string ImageCacheDirectory
-        {
-            get
-            {
-                var path = Path.Combine(LocalCacheDirectory, "Images");
                 if (!Directory.Exists(path))
                 {
                     Directory.CreateDirectory(path);

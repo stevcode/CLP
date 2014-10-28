@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
@@ -10,6 +11,7 @@ using Catel.Data;
 using Catel.IoC;
 using Catel.MVVM;
 using Catel.MVVM.Views;
+using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.Views;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Entities;
@@ -26,7 +28,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="StampViewModel"/> class.
         /// </summary>
-        public StampViewModel(Stamp stamp)
+        public StampViewModel(Stamp stamp, INotebookService notebookService)
         {
             PageObject = stamp;
             RaisePropertyChanged("IsGroupStamp");
@@ -38,7 +40,7 @@ namespace Classroom_Learning_Partner.ViewModels
             else
             {
                 var filePath = string.Empty;
-                var imageFilePaths = Directory.EnumerateFiles(MainWindowViewModel.ImageCacheDirectory);
+                var imageFilePaths = Directory.EnumerateFiles(notebookService.CurrentImageCacheDirectory);
                 foreach(var imageFilePath in from imageFilePath in imageFilePaths
                                              let imageHashID = Path.GetFileNameWithoutExtension(imageFilePath)
                                              where imageHashID == stamp.ImageHashID
@@ -656,5 +658,111 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //Methods
+
+        #region Static Methods
+
+        public static void AddBlankGeneralStampToPage(CLPPage page)
+        {
+            var stamp = new Stamp(page, StampTypes.GeneralStamp);
+            ACLPPageBaseViewModel.AddPageObjectToPage(stamp);
+        }
+
+        public static void AddBlankGroupStampToPage(CLPPage page)
+        {
+            var stamp = new Stamp(page, StampTypes.GroupStamp);
+            ACLPPageBaseViewModel.AddPageObjectToPage(stamp);
+        }
+
+        public static void AddImageGeneralStampToPage(CLPPage page)
+        {
+            CreateImageStamp(StampTypes.GeneralStamp, page);
+        }
+
+        public static void AddImageGroupStampToPage(CLPPage page)
+        {
+            CreateImageStamp(StampTypes.GroupStamp, page);
+        }
+
+        private static void CreateImageStamp(StampTypes stampType, CLPPage page)
+        {
+            // Configure open file dialog box
+            var dlg = new Microsoft.Win32.OpenFileDialog
+            {
+                Filter = "Images|*.png;*.jpg;*.jpeg;*.gif"
+            };
+
+            var result = dlg.ShowDialog();
+            if (result != true)
+            {
+                return;
+            }
+
+            // Open document
+            var filename = dlg.FileName;
+            if (File.Exists(filename))
+            {
+                var bytes = File.ReadAllBytes(filename);
+
+                var md5 = new MD5CryptoServiceProvider();
+                var hash = md5.ComputeHash(bytes);
+                var imageHashID = Convert.ToBase64String(hash).Replace("/", "_").Replace("+", "-").Replace("=", "");
+                var newFileName = imageHashID + Path.GetExtension(filename);
+                var newFilePath = Path.Combine(Catel.IoC.ServiceLocator.Default.ResolveType<INotebookService>().CurrentImageCacheDirectory, newFileName);
+
+                try
+                {
+                    File.Copy(filename, newFilePath);
+                }
+                catch (IOException)
+                {
+                    MessageBox.Show("Image already in ImagePool, using ImagePool instead.");
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show("Something went wrong copying the image to the ImagePool. See Error Log.");
+                    Logger.Instance.WriteToLog("[IMAGEPOOL ERROR]: " + e.Message);
+                    return;
+                }
+
+                var bitmapImage = CLPImage.GetImageFromPath(newFilePath);
+                if (bitmapImage == null)
+                {
+                    MessageBox.Show("Failed to load image from ImageCache by fileName.");
+                    return;
+                }
+
+                if (!App.MainWindowViewModel.ImagePool.ContainsKey(imageHashID))
+                {
+                    App.MainWindowViewModel.ImagePool.Add(imageHashID, bitmapImage);
+                }
+
+                var stamp = new Stamp(page, imageHashID, stampType);
+
+                ACLPPageBaseViewModel.AddPageObjectToPage(stamp);
+            }
+            else
+            {
+                MessageBox.Show("Error opening image file. Please try again.");
+            }
+        }
+
+        public static void AddPileToPage(CLPPage page)
+        {
+            var pageObjectsToAdd = new List<IPageObject>();
+            var observerStamp = new Stamp(page, StampTypes.ObservingStamp)
+                                {
+                                    YPosition = 150
+                                };
+            pageObjectsToAdd.Add(observerStamp);
+            var emptyGroupStamp = new Stamp(page, StampTypes.EmptyGroupStamp)
+            {
+                XPosition = observerStamp.XPosition + observerStamp.Width + 50,
+                YPosition = observerStamp.YPosition
+            };
+            pageObjectsToAdd.Add(emptyGroupStamp);
+            ACLPPageBaseViewModel.AddPageObjectsToPage(page, pageObjectsToAdd);
+        }
+
+        #endregion //Static Methods
     }
 }

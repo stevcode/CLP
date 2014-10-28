@@ -1524,7 +1524,7 @@ namespace Classroom_Learning_Partner.ViewModels
             return false;
         }
 
-        public static void AddNewPageObjectToPage(CLPPage page)
+        public static void AddArrayToPage(CLPPage page)
         {
             if (page == null)
             {

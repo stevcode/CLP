@@ -280,7 +280,7 @@
     <Compile Include="Utilities\ObservableCollectionOperation.cs" />
     <Compile Include="ViewModels\BackStage\BackStageViewModel.cs" />
     <Compile Include="ViewModels\BackStage\APaneBaseViewModel.cs" />
-    <Compile Include="ViewModels\PageObjects\Arrays\NumberLineViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\NumberLineViewModel.cs" />
     <Compile Include="ViewModels\Ribbon\ContextRibbonViewModel.cs" />
     <Compile Include="ViewModels\Ribbon\MajorRibbonViewModel.cs" />
     <Compile Include="ViewModels\Tags\DivisionRelationDefinitionTagViewModel.cs" />
@@ -383,7 +383,7 @@
     <Compile Include="Views\Modal Windows\NotebookMetadataWindowView.xaml.cs">
       <DependentUpon>NotebookMetadataWindowView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PageObjects\Arrays\NumberLineView.xaml.cs">
+    <Compile Include="Views\PageObjects\NumberLineView.xaml.cs">
       <DependentUpon>NumberLineView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\LassoRegionView.xaml.cs">
@@ -675,7 +675,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PageObjects\Arrays\NumberLineView.xaml">
+    <Page Include="Views\PageObjects\NumberLineView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Threading;
+using Catel.IoC;
+using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.ViewModels;
 using CLP.Entities;
 using Microsoft.Ink;
@@ -48,10 +50,11 @@ namespace Classroom_Learning_Partner
 
         public Dictionary<string,byte[]> SendImages(List<string> imageHashIDs)
         {
+            var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
             var imageList = new Dictionary<string,byte[]>();
-            if(Directory.Exists(MainWindowViewModel.ImageCacheDirectory))
+            if (Directory.Exists(notebookService.CurrentImageCacheDirectory))
             {
-                var localImageFilePaths = Directory.EnumerateFiles(MainWindowViewModel.ImageCacheDirectory);
+                var localImageFilePaths = Directory.EnumerateFiles(notebookService.CurrentImageCacheDirectory);
                 foreach(var localImageFilePath in localImageFilePaths)
                 {
                     var imageHashID = Path.GetFileNameWithoutExtension(localImageFilePath);

@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Media;
 using Catel.Data;
 using Catel.MVVM;
+using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Entities;
 
@@ -18,7 +19,7 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Constructor
 
         /// <summary>Initializes a new instance of the <see cref="StampedObjectViewModel" /> class.</summary>
-        public StampedObjectViewModel(StampedObject stampedObject)
+        public StampedObjectViewModel(StampedObject stampedObject, INotebookService notebookService)
         {
             PageObject = stampedObject;
             RaisePropertyChanged("IsGroupStampedObject");
@@ -29,7 +30,7 @@ namespace Classroom_Learning_Partner.ViewModels
             else
             {
                 var filePath = string.Empty;
-                var imageFilePaths = Directory.EnumerateFiles(MainWindowViewModel.ImageCacheDirectory);
+                var imageFilePaths = Directory.EnumerateFiles(notebookService.CurrentImageCacheDirectory);
                 foreach (var imageFilePath in from imageFilePath in imageFilePaths
                                               let imageHashID = Path.GetFileNameWithoutExtension(imageFilePath)
                                               where imageHashID == stampedObject.ImageHashID

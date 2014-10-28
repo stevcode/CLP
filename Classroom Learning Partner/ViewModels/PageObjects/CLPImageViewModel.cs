@@ -1,10 +1,15 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Catel.Data;
+using Catel.IoC;
 using Catel.MVVM;
+using Classroom_Learning_Partner.Services;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -14,7 +19,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Initializes a new instance of the CLPImageViewModel class.
         /// </summary>
-        public CLPImageViewModel(CLPImage image)
+        public CLPImageViewModel(CLPImage image, INotebookService notebookService)
         {
             PageObject = image;
             if(App.MainWindowViewModel.ImagePool.ContainsKey(image.ImageHashID))
@@ -24,7 +29,7 @@ namespace Classroom_Learning_Partner.ViewModels
             else
             {
                 var filePath = string.Empty;
-                var imageFilePaths = Directory.EnumerateFiles(MainWindowViewModel.ImageCacheDirectory);
+                var imageFilePaths = Directory.EnumerateFiles(notebookService.CurrentImageCacheDirectory);
                 foreach(var imageFilePath in from imageFilePath in imageFilePaths
                                              let imageHashID = Path.GetFileNameWithoutExtension(imageFilePath)
                                              where imageHashID == image.ImageHashID
@@ -62,22 +67,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Binding
 
-        public static BitmapImage LoadImageFromByteSource(byte[] byteSource)
-        {
-            var memoryStream = new MemoryStream(byteSource, 0, byteSource.Length, false, false);
-            var genBmpImage = new BitmapImage();
-
-            genBmpImage.BeginInit();
-            genBmpImage.CacheOption = BitmapCacheOption.OnDemand;
-            //genBmpImage.DecodePixelHeight = Convert.ToInt32(this.Height);
-            genBmpImage.StreamSource = memoryStream;
-            genBmpImage.EndInit();
-            genBmpImage.Freeze();
-
-            memoryStream.Dispose();
-
-            return genBmpImage;
-        }
+        
 
         /// <summary>
         /// Gets the CLPImageResize command.
@@ -116,5 +106,90 @@ namespace Classroom_Learning_Partner.ViewModels
 
             ChangePageObjectDimensions(PageObject, PageObject.Height, PageObject.Width);
         }
+
+        #region Static Methods
+
+        public static BitmapImage LoadImageFromByteSource(byte[] byteSource)
+        {
+            var memoryStream = new MemoryStream(byteSource, 0, byteSource.Length, false, false);
+            var genBmpImage = new BitmapImage();
+
+            genBmpImage.BeginInit();
+            genBmpImage.CacheOption = BitmapCacheOption.OnDemand;
+            //genBmpImage.DecodePixelHeight = Convert.ToInt32(this.Height);
+            genBmpImage.StreamSource = memoryStream;
+            genBmpImage.EndInit();
+            genBmpImage.Freeze();
+
+            memoryStream.Dispose();
+
+            return genBmpImage;
+        }
+
+        public static void AddImageToPage(CLPPage page)
+        {
+            // Configure open file dialog box
+            var dlg = new Microsoft.Win32.OpenFileDialog
+            {
+                Filter = "Images|*.png;*.jpg;*.jpeg;*.gif"    // Filter files by extension
+            };
+
+            var result = dlg.ShowDialog();
+            if (result != true)
+            {
+                return;
+            }
+
+            // Open document
+            var filename = dlg.FileName;
+            if (File.Exists(filename))
+            {
+                var bytes = File.ReadAllBytes(filename);
+
+                var md5 = new MD5CryptoServiceProvider();
+                var hash = md5.ComputeHash(bytes);
+                var imageHashID = Convert.ToBase64String(hash).Replace("/", "_").Replace("+", "-").Replace("=", "");
+                var newFileName = imageHashID + Path.GetExtension(filename);
+                var newFilePath = Path.Combine(Catel.IoC.ServiceLocator.Default.ResolveType<INotebookService>().CurrentImageCacheDirectory, newFileName);
+
+                try
+                {
+                    File.Copy(filename, newFilePath);
+                }
+                catch (IOException)
+                {
+                    MessageBox.Show("Image already in ImagePool, using ImagePool instead.");
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show("Something went wrong copying the image to the ImagePool. See Error Log.");
+                    Logger.Instance.WriteToLog("[IMAGEPOOL ERROR]: " + e.Message);
+                    return;
+                }
+
+                var bitmapImage = CLPImage.GetImageFromPath(newFilePath);
+                if (bitmapImage == null)
+                {
+                    MessageBox.Show("Failed to load image from ImageCache by fileName.");
+                    return;
+                }
+
+                if (!App.MainWindowViewModel.ImagePool.ContainsKey(imageHashID))
+                {
+                    App.MainWindowViewModel.ImagePool.Add(imageHashID, bitmapImage);
+                }
+
+                var visualImage = System.Drawing.Image.FromFile(newFilePath);
+                var image = new CLPImage(page, imageHashID, visualImage.Height, visualImage.Width);
+
+                ACLPPageBaseViewModel.AddPageObjectToPage(image);
+            }
+            else
+            {
+                MessageBox.Show("Error opening image file. Please try again.");
+            }
+        }
+
+        #endregion //Static Methods
     }
 }
