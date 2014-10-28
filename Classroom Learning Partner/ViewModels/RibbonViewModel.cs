@@ -93,7 +93,6 @@ namespace Classroom_Learning_Partner.ViewModels
         private void InitializeCommands()
         {
             //File Menu
-            NewNotebookCommand = new Command(OnNewNotebookCommandExecute);
             OpenNotebookCommand = new Command(OnOpenNotebookCommandExecute);
             CopyNotebookForNewOwnerCommand = new Command(OnCopyNotebookForNewOwnerCommandExecute);
             SaveNotebookCommand = new Command(OnSaveNotebookCommandExecute);
@@ -792,16 +791,6 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Commands
 
         #region File Menu
-
-        /// <summary>
-        /// Creates a new notebook.
-        /// </summary>
-        public Command NewNotebookCommand { get; private set; }
-
-        private void OnNewNotebookCommandExecute()
-        {
-            MainWindowViewModel.CreateNewNotebook();
-        }
 
         /// <summary>
         /// Opens a notebook from the Notebooks folder.

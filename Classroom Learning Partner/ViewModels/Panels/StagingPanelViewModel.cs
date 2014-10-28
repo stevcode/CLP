@@ -7,7 +7,9 @@ using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using Catel.Data;
+using Catel.IoC;
 using Catel.MVVM;
+using Classroom_Learning_Partner.Services;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -603,7 +605,10 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             //TODO: There are 2 open notebooks in the normal case, AUTHOR and the teacher's; we 
             // want the teacher's.  Probably there's a better way to select that one than "Last".
-            foreach(var page in App.MainWindowViewModel.OpenNotebooks.Last(x => x.Name == App.MainWindowViewModel.CurrentNotebookName).Pages)
+
+            var notebookName = DependencyResolver.Resolve<INotebookService>().CurrentNotebook.Name;
+
+            foreach (var page in App.MainWindowViewModel.OpenNotebooks.Last(x => x.Name == notebookName).Pages)
             {
                 AppendCollectionOfPagesToStage(page.Submissions, x => x.OwnerID == student.ID);
             }

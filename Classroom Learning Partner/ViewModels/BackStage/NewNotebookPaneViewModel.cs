@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using Catel.Collections;
 using Catel.Data;
-using Catel.IO;
 using Catel.MVVM;
+using Classroom_Learning_Partner.Services;
+using CLP.Entities;
+using Path = Catel.IO.Path;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -107,7 +110,34 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnCreateNotebookCommandExecute()
         {
-            
+            var previousLocalCacheDirectory = LoadedNotebookService.CurrentLocalCacheDirectory;
+            LoadedNotebookService.CurrentLocalCacheDirectory = SelectedCacheDirectory;
+            var notebookName = NotebookName;
+            var newNotebook = new Notebook(notebookName, Person.Author)
+                              {
+                                  Curriculum = NotebookCurriculum
+                              };
+
+            var newPage = new CLPPage(Person.Author);
+            newNotebook.AddCLPPageToNotebook(newPage);
+
+            var folderName = NotebookService.NotebookToNotebookFolderName(newNotebook);
+            var folderPath = Path.Combine(LoadedNotebookService.CurrentNotebookCacheDirectory, folderName);
+            if (Directory.Exists(folderPath))
+            {
+                LoadedNotebookService.CurrentLocalCacheDirectory = previousLocalCacheDirectory;
+                return;
+            }
+
+            // TODO: Reimplement when autosave returns
+            //SaveNotebook(newNotebook);
+
+            LoadedNotebookService.OpeNotebooks.Add(newNotebook);
+            LoadedNotebookService.CurrentNotebook = newNotebook;
+
+            App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(newNotebook);
+            App.MainWindowViewModel.IsAuthoring = true;
+            App.MainWindowViewModel.IsBackStageVisible = false;
         }
 
         private bool OnCreateNotebookCanExecute()

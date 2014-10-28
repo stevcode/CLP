@@ -159,6 +159,12 @@ namespace Classroom_Learning_Partner.Services
 
         #region Static Notebook Methods
 
+        public static string NotebookToNotebookFolderName(Notebook notebook)
+        {
+            var ownerTypeTag = notebook.Owner == Person.Author ? "A" : notebook.Owner.IsStudent ? "S" : "T";
+            return notebook.Name + ";" + notebook.ID + ";" + notebook.Owner.FullName + ";" + notebook.OwnerID + ";" + ownerTypeTag;
+        }
+
         public static NotebookNameComposite NotebookDirectoryToNotebookNameComposite(string path)
         {
             var directoryInfo = new DirectoryInfo(path);

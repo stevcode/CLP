@@ -152,15 +152,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Status Bar Bindings
 
-        /// <summary>The name of the current open Notebook.</summary>
-        public string CurrentNotebookName
-        {
-            get { return GetValue<string>(CurrentNotebookNameProperty); }
-            set { SetValue(CurrentNotebookNameProperty, value); }
-        }
-
-        public static readonly PropertyData CurrentNotebookNameProperty = RegisterProperty("CurrentNotebookName", typeof (string), String.Empty);
-
         /// <summary>Shows the last time the notebook was saved during the current session.</summary>
         public string LastSavedTime
         {
@@ -575,44 +566,6 @@ namespace Classroom_Learning_Partner.ViewModels
             Directory.Move(NotebookCacheDirectory, newCacheDirectory);
         }
 
-        public static void CreateNewNotebook()
-        {
-            App.MainWindowViewModel.IsAuthoring = false;
-
-            var nameChooser = new NotebookNamerWindowView
-                              {
-                                  Owner = Application.Current.MainWindow
-                              };
-            nameChooser.ShowDialog();
-            if (nameChooser.DialogResult != true)
-            {
-                return;
-            }
-
-            // TODO: Steve - sanitize notebook name
-            var notebookName = nameChooser.NotebookName.Text;
-            var newNotebook = new Notebook(notebookName, Person.Author);
-
-            var newPage = new CLPPage(Person.Author);
-            newNotebook.AddCLPPageToNotebook(newPage);
-
-            var folderName = newNotebook.Name + ";" + newNotebook.ID + ";" + newNotebook.Owner.FullName + ";" + newNotebook.OwnerID;
-            var folderPath = Path.Combine(NotebookCacheDirectory, folderName);
-            if (Directory.Exists(folderPath))
-            {
-                return;
-            }
-
-            // TODO: Reimplement when autosave returns
-            //SaveNotebook(newNotebook);
-
-            App.MainWindowViewModel.OpenNotebooks.Add(newNotebook);
-            App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(newNotebook);
-            App.MainWindowViewModel.IsAuthoring = true;
-            App.MainWindowViewModel.Ribbon.AuthoringTabVisibility = Visibility.Visible;
-            App.MainWindowViewModel.CurrentNotebookName = notebookName;
-        }
-
         public static void OpenNotebook(string notebookFolderName, bool forceCache = false, bool forceDatabase = false)
         {
             //TODO: find way to bypass this if partial notebook is currently open and you try to open full notebook (or vis versa).
@@ -640,7 +593,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            App.MainWindowViewModel.CurrentNotebookName = notebook.Name;
             if (notebook.LastSavedDate != null)
             {
                 App.MainWindowViewModel.LastSavedTime = notebook.LastSavedDate.Value.ToString("yyyy/MM/dd - HH:mm:ss");
@@ -790,7 +742,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
             App.MainWindowViewModel.CurrentUser = App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.Teacher;
 
-            App.MainWindowViewModel.CurrentNotebookName = notebook.Name;
             if (notebook.LastSavedDate != null)
             {
                 App.MainWindowViewModel.LastSavedTime = notebook.LastSavedDate.Value.ToString("yyyy/MM/dd - HH:mm:ss");
@@ -984,7 +935,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
             App.MainWindowViewModel.CurrentUser = App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.Teacher;
 
-            App.MainWindowViewModel.CurrentNotebookName = notebook.Name;
             if (notebook.LastSavedDate != null)
             {
                 App.MainWindowViewModel.LastSavedTime = notebook.LastSavedDate.Value.ToString("yyyy/MM/dd - HH:mm:ss");
