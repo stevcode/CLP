@@ -23,66 +23,22 @@
             <Canvas HorizontalAlignment="Center" VerticalAlignment="Center"
                     Width="{Binding Width}" Height="{Binding Height}">
 
-                <Rectangle Stroke="Black" StrokeDashArray="0.5 1.0 0.3" StrokeThickness="2" 
-                           RadiusX="10" RadiusY="10"
-                           Canvas.Top="-5" Canvas.Left="-5"
+                <Rectangle Stroke="Transparent"
+                           StrokeThickness="1"
+                           Fill="{DynamicResource DynamicMainColor}"
+                           Opacity=".05"
+                           IsHitTestVisible="False"
+                           Canvas.Top="-5"
+                           Canvas.Left="-5"
                            Width="{Binding Width, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
                            Height="{Binding Height, Converter={StaticResource LengthConverter}, ConverterParameter=10}" />
 
-                <!--Close Button-->
-                <Button Command="{Binding RemovePageObjectCommand}"
-                        Cursor="Hand"
-                        Width="40" Height="40"
-                        Canvas.Left="-40" Canvas.Top="-40">
-                    <Button.Template>
-                        <ControlTemplate TargetType="{x:Type Button}">
-                            <Grid>
-                                <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
-                                         VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
-                                <Path Data="M0,0 L1,1 M0,1 L1,0" 
-                                      Stretch="Fill" Margin="5"
-                                      Stroke="Red" StrokeThickness="3" />
-                            </Grid>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
-
-                <!--Drag Thumb-->
-                <Thumb Cursor="ScrollAll"
-                       Width="40" Height="40"
-                       Canvas.Right="-40" Canvas.Top="-40">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="DragDelta">
-                            <catel:EventToCommand Command="{Binding DragPageObjectCommand}" PassEventArgsToCommand="True" />
-                        </i:EventTrigger>
-                        <i:EventTrigger EventName="DragStarted">
-                            <catel:EventToCommand Command="{Binding DragStartPageObjectCommand}" PassEventArgsToCommand="True" />
-                        </i:EventTrigger>
-                        <i:EventTrigger EventName="DragCompleted">
-                            <catel:EventToCommand Command="{Binding DragStopPageObjectCommand}" PassEventArgsToCommand="True" />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                    <Thumb.Template>
-                        <ControlTemplate>
-                            <Grid>
-                                <Ellipse Stroke="Black" StrokeThickness="3" Fill="White"
-                                         VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
-                                <Path Stroke="Black" StrokeThickness="1" Fill="Black"
-                                      Data="M 5,20 L 10,15 L 10,25 L 5,20" />
-                                <Path Stroke="Black" StrokeThickness="1" Fill="Black"
-                                      Data="M 35,20 L 30,15 L 30,25 L 35,20" />
-                                <Path Stroke="Black" StrokeThickness="1" Fill="Black"
-                                      Data="M 20,5 L 20,35" />
-                                <Path Stroke="Black" StrokeThickness="1" Fill="Black"
-                                      Data="M 20,35 L 15,30 L 25,30 L 20,35" />
-                                <Path Stroke="Black" StrokeThickness="1" Fill="Black"
-                                      Data="M 20,5 L 15,10 L 25,10 L 20,5" />
-                                <Path Stroke="Black" StrokeThickness="1" Fill="Black"
-                                      Data="M 5,20 L 35,20" />
-                            </Grid>
-                        </ControlTemplate>
-                    </Thumb.Template>
-                </Thumb>
+                <Rectangle Stroke="{DynamicResource DynamicMainColor}"
+                           StrokeThickness="1"
+                           Canvas.Top="-5"
+                           Canvas.Left="-5"
+                           Width="{Binding Width, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
+                           Height="{Binding Height, Converter={StaticResource LengthConverter}, ConverterParameter=10}" />
 
                 <!--Resize Thumb-->
                 <Thumb Cursor="SizeNWSE"
@@ -113,31 +69,6 @@
                     </Thumb.Template>
                 </Thumb>
                 
-                <!--Duplicate Shape Button-->
-                <Button Command="{Binding DuplicateShapeCommand}"
-                        Cursor="Hand"
-                        Width="40"
-                        Height="40"
-                        Canvas.Left="-40"
-                        Canvas.Bottom="-40">
-                    <Button.Template>
-                        <ControlTemplate TargetType="{x:Type Button}">
-                            <Grid>
-                                <Ellipse Stroke="Black"
-                                         StrokeThickness="3"
-                                         Fill="White"
-                                         VerticalAlignment="Stretch"
-                                         HorizontalAlignment="Stretch" />
-                                <Path Data="M0.5,0 L0.5,1 M0,0.5 L1,0.5"
-                                      Stretch="Fill"
-                                      Margin="5"
-                                      Stroke="Green"
-                                      StrokeThickness="3" />
-                            </Grid>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
-
             </Canvas>
         </ac:AdornedControl.AdornerContent>
 
