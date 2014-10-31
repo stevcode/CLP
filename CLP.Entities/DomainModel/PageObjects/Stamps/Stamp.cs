@@ -291,7 +291,7 @@ namespace CLP.Entities
             {
                 return StampType != StampTypes.ObservingStamp
                            ? string.Empty
-                           : string.Format("{0} in groups\n" + "{1} not", NumberInGroups, NumberNotInGroups);
+                           : string.Format("{0} in groups\n" + "{1} not in groups", NumberInGroups, NumberNotInGroups);
             }
         }
 

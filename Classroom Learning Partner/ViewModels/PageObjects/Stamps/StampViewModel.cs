@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Windows;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -261,15 +262,19 @@ namespace Classroom_Learning_Partner.ViewModels
             if (!HasParts() &&
                 !IsGroupStamp)
             {
-                MessageBox.Show(
-                                "What are you counting on the stamp?  Please click the questionmark on the line below the stamp before making copies.",
-                                "What are you counting?");
+                MessageBox.Show("How many are in the group?", "What are you counting?");
                 App.MainWindowViewModel.MajorRibbon.PageInteractionMode = PageInteractionModes.Pen;
                 App.MainWindowViewModel.MajorRibbon.PageInteractionMode = PageInteractionModes.Select;
                 return;
             }
 
-            var keyPad = new KeypadWindowView("How many stamp copies?", 101)
+            var keypadPrompt = IsDraggableStamp
+                ? StampType == StampTypes.GeneralStamp ? "How many are in the group?" : "How many groups?"
+                : StampType == StampTypes.ObservingStamp ? "How many objects?" : "How many groups?";
+
+            var keypadLimit = StampType == StampTypes.EmptyGroupStamp || StampType == StampTypes.GroupStamp ? 21 : 101;
+
+            var keyPad = new KeypadWindowView(keypadPrompt, keypadLimit)
                 {
                     Owner = Application.Current.MainWindow,
                     WindowStartupLocation = WindowStartupLocation.Manual,
@@ -448,69 +453,67 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
+            if (!HasParts() && !IsGroupStamp)
+            {
+                _copyFailed = true;
+                IsGhostVisible = false;
+                StampHandleColor = new SolidColorBrush(Colors.Red);
+                return;
+            }
+
             StampHandleColor = new SolidColorBrush(Colors.Black);
             _copyFailed = false;
-            if (HasParts() || IsGroupStamp)
+            GhostOffsetX = 0.0;
+            GhostOffsetY = 0.0;
+
+            //Take image of StampBody and add to Ghost border.
+            var stamp = PageObject as Stamp;
+            var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(PageObject.ParentPage).First(x => (x is CLPPageViewModel) && !(x as CLPPageViewModel).IsPagePreview);
+            var viewManager = Catel.IoC.ServiceLocator.Default.ResolveType<IViewManager>();
+            var views = viewManager.GetViewsOfViewModel(pageViewModel);
+            var pageView = views.FirstOrDefault(view => view is CLPPageView) as CLPPageView;
+            if (pageView == null ||
+               stamp == null)
             {
-                GhostOffsetX = 0.0;
-                GhostOffsetY = 0.0;
-                
-                //Take image of StampBody and add to Ghost border.
-                var stamp = PageObject as Stamp;
-                var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(PageObject.ParentPage).First(x => (x is CLPPageViewModel) && !(x as CLPPageViewModel).IsPagePreview);
-                var viewManager = Catel.IoC.ServiceLocator.Default.ResolveType<IViewManager>();
-                var views = viewManager.GetViewsOfViewModel(pageViewModel);
-                var pageView = views.FirstOrDefault(view => view is CLPPageView) as CLPPageView;
-                if(pageView == null ||
-                   stamp == null)
-                {
-                    _copyFailed = true;
-                    return;
-                }
-
-                const double SCREEN_DPI = 96.0;
-
-                var renderTarget = new RenderTargetBitmap((int)PageObject.ParentPage.Width, (int)PageObject.ParentPage.Height, SCREEN_DPI, SCREEN_DPI, PixelFormats.Pbgra32);
-                var sourceBrush = new VisualBrush(pageView);
-
-                var drawingVisual = new DrawingVisual();
-                var drawingContext = drawingVisual.RenderOpen();
-
-                using(drawingContext)
-                {
-                    drawingContext.PushTransform(new ScaleTransform(1.0, 1.0));
-                    drawingContext.DrawRectangle(sourceBrush, null, new Rect(new Point(0, 0), new Point(PageObject.ParentPage.Width, PageObject.ParentPage.Height)));
-                }
-                renderTarget.Render(drawingVisual);
-
-                var crop = new CroppedBitmap(renderTarget, new Int32Rect((int)(XPosition + 2), (int)(YPosition + stamp.HandleHeight + 2), (int)(Width - 4), (int)(Height - stamp.HandleHeight - stamp.PartsHeight - 4)));
-                
-                byte[] imageArray;
-                var encoder = new PngBitmapEncoder();
-                encoder.Frames.Add(BitmapFrame.Create(crop));
-                using(var outputStream = new MemoryStream())
-                {
-                    encoder.Save(outputStream);
-                    imageArray = outputStream.ToArray();
-                }
-
-                var bitmapImage = new BitmapImage();
-                bitmapImage.BeginInit();
-                bitmapImage.CacheOption = BitmapCacheOption.OnDemand;
-                bitmapImage.StreamSource = new MemoryStream(imageArray);
-                bitmapImage.EndInit();
-                bitmapImage.Freeze();
-
-                GhostBodyImage = bitmapImage;
-                IsGhostVisible = true;
-            } 
-            else 
-            {
-                MessageBox.Show("What are you counting on the stamp?  Please click the questionmark on the line below the stamp before making copies.", "What are you counting?");
-                App.MainWindowViewModel.MajorRibbon.PageInteractionMode = PageInteractionModes.Pen;
-                App.MainWindowViewModel.MajorRibbon.PageInteractionMode = PageInteractionModes.Select;
                 _copyFailed = true;
-            }  
+                return;
+            }
+
+            const double SCREEN_DPI = 96.0;
+
+            var renderTarget = new RenderTargetBitmap((int)PageObject.ParentPage.Width, (int)PageObject.ParentPage.Height, SCREEN_DPI, SCREEN_DPI, PixelFormats.Pbgra32);
+            var sourceBrush = new VisualBrush(pageView);
+
+            var drawingVisual = new DrawingVisual();
+            var drawingContext = drawingVisual.RenderOpen();
+
+            using (drawingContext)
+            {
+                drawingContext.PushTransform(new ScaleTransform(1.0, 1.0));
+                drawingContext.DrawRectangle(sourceBrush, null, new Rect(new Point(0, 0), new Point(PageObject.ParentPage.Width, PageObject.ParentPage.Height)));
+            }
+            renderTarget.Render(drawingVisual);
+
+            var crop = new CroppedBitmap(renderTarget, new Int32Rect((int)(XPosition + 2), (int)(YPosition + stamp.HandleHeight + 2), (int)(Width - 4), (int)(Height - stamp.HandleHeight - stamp.PartsHeight - 4)));
+
+            byte[] imageArray;
+            var encoder = new PngBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(crop));
+            using (var outputStream = new MemoryStream())
+            {
+                encoder.Save(outputStream);
+                imageArray = outputStream.ToArray();
+            }
+
+            var bitmapImage = new BitmapImage();
+            bitmapImage.BeginInit();
+            bitmapImage.CacheOption = BitmapCacheOption.OnDemand;
+            bitmapImage.StreamSource = new MemoryStream(imageArray);
+            bitmapImage.EndInit();
+            bitmapImage.Freeze();
+
+            GhostBodyImage = bitmapImage;
+            IsGhostVisible = true;
         }
 
         /// <summary>
@@ -523,6 +526,14 @@ namespace Classroom_Learning_Partner.ViewModels
             if (!IsDraggableStamp)
             {
                 IsGhostVisible = false;
+                return;
+            }
+
+            if (!HasParts() && !IsGroupStamp)
+            {
+                _copyFailed = true;
+                IsGhostVisible = false;
+                StampHandleColor = new SolidColorBrush(Colors.Red);
                 return;
             }
 
@@ -557,6 +568,17 @@ namespace Classroom_Learning_Partner.ViewModels
             if (!IsDraggableStamp)
             {
                 IsGhostVisible = false;
+                return;
+            }
+
+            if (!HasParts() && !IsGroupStamp)
+            {
+                _copyFailed = true;
+                IsGhostVisible = false;
+                StampHandleColor = new SolidColorBrush(Colors.Black);
+                MessageBox.Show("How many are in the group?", "What are you counting?");
+                App.MainWindowViewModel.MajorRibbon.PageInteractionMode = PageInteractionModes.Pen;
+                App.MainWindowViewModel.MajorRibbon.PageInteractionMode = PageInteractionModes.Select;
                 return;
             }
 
@@ -668,7 +690,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            var keyPad = new KeypadWindowView("How many things are you\ncounting on the stamp?", 100)
+            var keyPad = new KeypadWindowView("How many are in the group?", 101)
                          {
                              Owner = Application.Current.MainWindow,
                              WindowStartupLocation = WindowStartupLocation.Manual,
