@@ -18,7 +18,7 @@ namespace Classroom_Learning_Partner.Services
         bool InitializeNewLocalCache(string cacheName);
         bool InitializeNewLocalCache(string cacheName, string cacheDirectoryPath);
         void ArchiveNotebookCache(string notebookCacheDirectory);
-        void OpenNotebook(NotebookNameComposite notebookNameComposite);
+        void OpenNotebook(NotebookNameComposite notebookNameComposite, string localCacheFolderPath);
         void SaveCurrentNotebook();
         void SaveNotebook(Notebook notebook);
     }

@@ -101,7 +101,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnOpenNotebookCommandExecute()
         {
-            PleaseWaitHelper.Show(() => LoadedNotebookService.OpenNotebook(SelectedNotebook), null, "Loading Notebook");
+            PleaseWaitHelper.Show(() => LoadedNotebookService.OpenNotebook(SelectedNotebook, SelectedCacheDirectory), null, "Loading Notebook");
         }
 
         private bool OnOpenNotebookCanExecute() { return SelectedNotebook != null; }

@@ -5,6 +5,28 @@
 
     <catel:UserControl.Resources></catel:UserControl.Resources>
 
-    <Grid></Grid>
+    <DockPanel LastChildFill="True">
+
+        <StackPanel DockPanel.Dock="Top"
+                    Orientation="Horizontal"
+                    Margin="0 30 0 0">
+
+            <!-- Pane Title Text -->
+            <TextBlock Text="{Binding PaneTitleText}"
+                       TextAlignment="Left"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Center"
+                       FontFamily="Segoe UI Light"
+                       FontSize="40"
+                       Foreground="#444444"
+                       Margin="0 30 0 0"
+                       TextOptions.TextRenderingMode="Auto"
+                       TextOptions.TextFormattingMode="Ideal" />
+
+        </StackPanel>
+
+        <Grid></Grid>
+
+    </DockPanel>
 
 </catel:UserControl>

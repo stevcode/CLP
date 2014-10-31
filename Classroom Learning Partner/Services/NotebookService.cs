@@ -103,7 +103,7 @@ namespace Classroom_Learning_Partner.Services
 
         private readonly List<Notebook> _openNotebooks = new List<Notebook>();
 
-        public List<Notebook> OpeNotebooks
+        public List<Notebook> OpeNotebooks //BUG: spelled wrong
         {
             get { return _openNotebooks; }
         }
@@ -161,7 +161,7 @@ namespace Classroom_Learning_Partner.Services
 
         #region Notebook Methods
 
-        public void OpenNotebook(NotebookNameComposite notebookNameComposite)
+        public void OpenNotebook(NotebookNameComposite notebookNameComposite, string localCacheFolderPath)
         {
             //TODO: find way to bypass this if partial notebook is currently open and you try to open full notebook (or vis versa).
             foreach (var otherNotebook in
@@ -188,6 +188,7 @@ namespace Classroom_Learning_Partner.Services
                 return;
             }
 
+            CurrentLocalCacheDirectory = localCacheFolderPath;
             OpeNotebooks.Add(notebook);
             CurrentNotebook = notebook;
             App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(notebook);
@@ -261,7 +262,7 @@ namespace Classroom_Learning_Partner.Services
 
         public static string NotebookToNotebookFolderName(Notebook notebook)
         {
-            var ownerTypeTag = notebook.Owner == Person.Author ? "A" : notebook.Owner.IsStudent ? "S" : "T";
+            var ownerTypeTag = notebook.OwnerID == Person.Author.ID ? "A" : notebook.Owner.IsStudent ? "S" : "T";
             return notebook.Name + ";" + notebook.ID + ";" + notebook.Owner.FullName + ";" + notebook.OwnerID + ";" + ownerTypeTag;
         }
 

@@ -334,10 +334,6 @@
       <DependentUpon>OptionsPaneView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\BackStage\OptionsPaneViewModel.cs" />
-    <Compile Include="Views\BackStage\SaveNotebookPaneView.xaml.cs">
-      <DependentUpon>SaveNotebookPaneView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ViewModels\BackStage\SaveNotebookPaneViewModel.cs" />
     <Compile Include="Views\Modal Windows\AdvancedStagingView.xaml.cs">
       <DependentUpon>AdvancedStagingView.xaml</DependentUpon>
     </Compile>
@@ -608,10 +604,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\BackStage\OptionsPaneView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\BackStage\SaveNotebookPaneView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

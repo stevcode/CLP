@@ -3,15 +3,36 @@
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com">
 
-    <Grid>
-        <Button Content="Change Main Color"
-                Command="{Binding GenerateRandomMainColorCommand}"
-                Height="100"
-                Width="300"
-                FontSize="32"
-                FontWeight="Bold"
-                VerticalAlignment="Top"
-                HorizontalAlignment="Left" />
-    </Grid>
+    <DockPanel LastChildFill="True">
+
+        <StackPanel DockPanel.Dock="Top"
+                    Orientation="Horizontal"
+                    Margin="0 30 0 0">
+
+            <!-- Pane Title Text -->
+            <TextBlock Text="{Binding PaneTitleText}"
+                       TextAlignment="Left"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Center"
+                       FontFamily="Segoe UI Light"
+                       FontSize="40"
+                       Foreground="#444444"
+                       Margin="0 30 0 0"
+                       TextOptions.TextRenderingMode="Auto"
+                       TextOptions.TextFormattingMode="Ideal" />
+
+        </StackPanel>
+
+        <Grid>
+            <Button Content="Change Main Color"
+                    Command="{Binding GenerateRandomMainColorCommand}"
+                    Height="100"
+                    Width="300"
+                    FontSize="32"
+                    FontWeight="Bold"
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="Left" />
+        </Grid>
+    </DockPanel>
 
 </catel:UserControl>

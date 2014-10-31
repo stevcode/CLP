@@ -247,11 +247,6 @@
                               IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
                               IsChecked="{Binding CurrentNavigationPane, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:NavigationPanes.Open}}" />
 
-                <ToggleButton Content="Save"
-                              Background="{DynamicResource DynamicMainColor}"
-                              IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
-                              IsChecked="{Binding CurrentNavigationPane, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:NavigationPanes.Save}}" />
-
                 <ToggleButton Content="Export"
                               Background="{DynamicResource DynamicMainColor}"
                               IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
@@ -280,21 +275,8 @@
             
         </DockPanel>
 
-        <!-- Pane Title Text -->
-        <TextBlock DockPanel.Dock="Top"
-                   Text="{Binding PaneTitleText}"
-                   TextAlignment="Left"
-                   HorizontalAlignment="Left"
-                   VerticalAlignment="Center"
-                   FontFamily="Segoe UI Light"
-                   FontSize="40"
-                   Foreground="#444444"
-                   Margin="42 61 0 0"
-                   TextOptions.TextRenderingMode="Auto"
-                   TextOptions.TextFormattingMode="Ideal" />
-
         <!-- Pane View -->
-        <ContentControl Margin="42 30 0 0">
+        <ContentControl Margin="42 61 0 0">
             <ContentControl.Resources>
 
                 <ControlTemplate x:Key="NotebookInfoPaneTemplate">
@@ -307,10 +289,6 @@
 
                 <ControlTemplate x:Key="OpenNotebookPaneTemplate">
                     <views:OpenNotebookPaneView DataContext="{Binding DisplayedPane}" />
-                </ControlTemplate>
-
-                <ControlTemplate x:Key="SaveNotebookPaneTemplate">
-                    <views:SaveNotebookPaneView DataContext="{Binding DisplayedPane}" />
                 </ControlTemplate>
 
                 <ControlTemplate x:Key="ExportPaneTemplate">
@@ -346,13 +324,6 @@
                                      Value="OpenNotebookPaneViewModel">
                             <Setter Property="Template"
                                     Value="{StaticResource OpenNotebookPaneTemplate}" />
-                        </DataTrigger>
-
-                        <!-- SaveNotebookPane trigger -->
-                        <DataTrigger Binding="{Binding DisplayedPane, Converter={StaticResource TypeToStringConverter}}"
-                                     Value="SaveNotebookPaneViewModel">
-                            <Setter Property="Template"
-                                    Value="{StaticResource SaveNotebookPaneTemplate}" />
                         </DataTrigger>
 
                         <!-- ExportPane trigger -->

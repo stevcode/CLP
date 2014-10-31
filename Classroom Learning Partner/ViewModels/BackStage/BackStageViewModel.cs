@@ -11,7 +11,6 @@ namespace Classroom_Learning_Partner.ViewModels
         Info,
         New,
         Open,
-        Save,
         Export,
         Options
     }
@@ -88,10 +87,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 case NavigationPanes.Open:
                     DisplayedPane = new OpenNotebookPaneViewModel();
                     break;
-                case NavigationPanes.Save:
-                    //DisplayedPane = new SaveNotebookPaneViewModel();
-                    SaveCurrentNotebook();
-                    break;
                 case NavigationPanes.Export:
                     DisplayedPane = new ExportPaneViewModel();
                     break;
@@ -102,17 +97,6 @@ namespace Classroom_Learning_Partner.ViewModels
                     throw new ArgumentOutOfRangeException();
             }
             PaneTitleText = DisplayedPane.PaneTitleText;
-        }
-
-        private void SaveCurrentNotebook()
-        {
-            var notebookService = DependencyResolver.Resolve<INotebookService>();
-            if (notebookService.CurrentNotebook == null)
-            {
-                return;
-            }
-
-            Catel.Windows.PleaseWaitHelper.Show(notebookService.SaveCurrentNotebook, null, "Saving Notebook");
         }
 
         #endregion //Methods
