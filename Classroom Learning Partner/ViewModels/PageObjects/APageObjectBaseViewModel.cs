@@ -121,8 +121,9 @@ namespace Classroom_Learning_Partner.ViewModels
             get { return GetValue<bool>(IsAdornerVisibleProperty); }
             set
             {
+                var previousValue = IsAdornerVisible;
                 SetValue(IsAdornerVisibleProperty, value);
-                PopulateContextRibbon();
+                PopulateContextRibbon(previousValue != value);
             }
         }
 
@@ -336,11 +337,15 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public virtual void ClearAdorners() { IsAdornerVisible = false; }
 
-        protected virtual void PopulateContextRibbon()
+        protected virtual void PopulateContextRibbon(bool isChangedValueMeaningful)
         {
-            if (!IsAdornerVisible)
+            if (isChangedValueMeaningful)
             {
                 ContextRibbon.Buttons.Clear();
+            }
+
+            if (!IsAdornerVisible)
+            {
                 return;
             }
 

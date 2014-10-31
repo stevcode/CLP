@@ -297,6 +297,16 @@ namespace Classroom_Learning_Partner.ViewModels
                         }
                     }
                     break;
+                case PageInteractionModes.DividerCreation:
+                    pageViewModel.IsInkCanvasHitTestVisible = true;
+                    pageViewModel.EditingMode = InkCanvasEditingMode.Ink;
+                    pageViewModel.PageCursor = Cursors.UpArrow;
+                    pageViewModel.DefaultDA.IsHighlighter = false;
+                    pageViewModel.DefaultDA.Height = 2.0;
+                    pageViewModel.DefaultDA.Width = 2.0;
+                    pageViewModel.DefaultDA.StylusTip = StylusTip.Ellipse;
+                    pageViewModel.ClearAdorners();
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -703,6 +713,16 @@ namespace Classroom_Learning_Partner.ViewModels
                 case PageInteractionModes.Eraser:
                     RemoveStroke(e.Removed, e.Added);
                     break;
+                case PageInteractionModes.DividerCreation:
+                    {
+                        var stroke = e.Added.FirstOrDefault();
+                        if (stroke == null)
+                        {
+                            return;
+                        }
+                        DividerStroke(stroke);
+                    }
+                    break;
             }
         }
 
@@ -826,29 +846,6 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             var addedStrokesEnumerable = addedStrokes as IList<Stroke> ?? addedStrokes.ToList();
             var removedStrokesEnumerable = removedStrokes as IList<Stroke> ?? removedStrokes.ToList();
-            if(addedStrokesEnumerable.Count() == 1 &&
-               !removedStrokesEnumerable.Any())
-            {
-                var stroke = addedStrokesEnumerable.First();
-                var wasArrayDivided = false;
-                foreach(var array in PageObjects.OfType<CLPArray>())
-                {
-                    if(array.IsDivisionBehaviorOn &&
-                       App.MainWindowViewModel.MajorRibbon.PageInteractionMode == PageInteractionModes.Pen &&
-                       App.MainWindowViewModel.CurrentUser.ID == array.CreatorID)
-                    {
-                        wasArrayDivided = CLPArrayViewModel.CreateDivision(array, stroke) || wasArrayDivided;
-                    }
-                }
-                if(wasArrayDivided)
-                {
-                    InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
-                    Page.InkStrokes.Remove(stroke);
-                    App.MainWindowViewModel.MajorRibbon.PageInteractionMode = PageInteractionModes.Select;
-                    InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
-                    return true;
-                }
-            }
 
             foreach(var pageObject in PageObjects.OfType<IStrokeAccepter>().Where(x => x.CreatorID == App.MainWindowViewModel.CurrentUser.ID || x.IsBackgroundInteractable))
             {
@@ -1028,6 +1025,26 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             Page.InkStrokes.Remove(stroke);
+
+            InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
+            PageObjects.CollectionChanged += PageObjects_CollectionChanged;
+        }
+
+        private void DividerStroke(Stroke stroke)
+        {
+            InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
+            PageObjects.CollectionChanged -= PageObjects_CollectionChanged;
+            var newUniqueId = Guid.NewGuid().ToCompactID();
+            stroke.SetStrokeID(newUniqueId);
+            stroke.SetStrokeOwnerID(App.MainWindowViewModel.CurrentUser.ID);
+            stroke.SetStrokeVersionIndex(0);
+            Page.InkStrokes.Remove(stroke);
+
+            var wasArrayDivided = PageObjects.OfType<CLPArray>().Where(array => App.MainWindowViewModel.CurrentUser.ID == array.CreatorID).Aggregate(false, (current, array) => CLPArrayViewModel.CreateDivision(array, stroke) || current);
+            if (wasArrayDivided)
+            {
+                App.MainWindowViewModel.MajorRibbon.PageInteractionMode = PageInteractionModes.Select;
+            }
 
             InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
             PageObjects.CollectionChanged += PageObjects_CollectionChanged;
