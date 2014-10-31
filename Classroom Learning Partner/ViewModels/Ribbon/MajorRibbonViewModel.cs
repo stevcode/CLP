@@ -427,11 +427,14 @@ namespace Classroom_Learning_Partner.ViewModels
                     CLPArrayViewModel.AddArrayToPage(CurrentPage);
                     break;
 
-                    //NumberLine
+                    //Number Line
                 case "NUMBERLINE":
                     NumberLineViewModel.AddNumberLineToPage(CurrentPage);
                     break;
-                default:
+
+                    //Division Template
+                case "DIVISIONTEMPLATE":
+                    FuzzyFactorCardViewModel.AddDivisionTemplateToPage(CurrentPage);
                     break;
             }
 
@@ -464,7 +467,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Buttons.Add(_insertNumberLineButton);
             Buttons.Add(_insertArrayButton);
             Buttons.Add(_insertDivisionTemplateButton);
-            Buttons.Add(_insertDivisionTemplateWithTilesButton);
+         //   Buttons.Add(_insertDivisionTemplateWithTilesButton);
         }
 
         #endregion //Methods
