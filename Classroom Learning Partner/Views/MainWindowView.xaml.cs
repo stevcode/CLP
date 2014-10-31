@@ -13,7 +13,12 @@ namespace Classroom_Learning_Partner.Views
         public MainWindowView()
             : base(DataWindowMode.Custom) { InitializeComponent(); }
 
-        private void RibbonWindow_Closing(object sender, CancelEventArgs e)
+        private void MainWindowView_OnLoaded(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Resources["DynamicMainColor"] = new BrushConverter().ConvertFrom("#2F64B9");
+        }
+
+        private void MainWindowView_OnClosing(object sender, CancelEventArgs e)
         {
             if (MessageBox.Show("Are you sure you want to exit now?", "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.No)
             {
@@ -23,11 +28,6 @@ namespace Classroom_Learning_Partner.Views
             {
                 CLPServiceAgent.Instance.Exit();
             }
-        }
-
-        private void MainWindowView_OnLoaded(object sender, RoutedEventArgs e)
-        {
-            Application.Current.Resources["DynamicMainColor"] = new BrushConverter().ConvertFrom("#2F64B9");
         }
     }
 }
