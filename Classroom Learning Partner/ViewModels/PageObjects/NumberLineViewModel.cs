@@ -29,7 +29,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             _contextButtons.Add(MajorRibbonViewModel.Separater);
 
-            var jumpSizeVisibility = new ToggleRibbonButton("Hide Jump Sizes", "Show Jump Sizes", "pack://application:,,,/Images/Delete.png", true)
+            var jumpSizeVisibility = new ToggleRibbonButton("Hide Jump Sizes", "Show Jump Sizes", "pack://application:,,,/Images/Underline16.png", true)
                                      {
                                          IsChecked = !IsJumpSizeLabelsVisible
                                      };
@@ -37,7 +37,7 @@ namespace Classroom_Learning_Partner.ViewModels
             jumpSizeVisibility.Unchecked += jumpSizeVisibility_Checked;
             _contextButtons.Add(jumpSizeVisibility);
 
-            var allowDragging = new ToggleRibbonButton("Disable Drag Arrow", "Enable Drag Arrow", "pack://application:,,,/Images/Delete.png", true)
+            var allowDragging = new ToggleRibbonButton("Disable Drag Arrow", "Enable Drag Arrow", "pack://application:,,,/Images/play.png", true)
                                 {
                                     IsChecked = !IsArrowDraggingAllowed
                                 };
