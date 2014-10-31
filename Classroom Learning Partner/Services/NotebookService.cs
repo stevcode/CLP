@@ -196,6 +196,7 @@ namespace Classroom_Learning_Partner.Services
             {
                 App.MainWindowViewModel.IsAuthoring = true;
             }
+            App.MainWindowViewModel.CurrentUser = notebook.Owner;
             App.MainWindowViewModel.IsBackStageVisible = false;
         }
 
