@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Runtime.Remoting.Contexts;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Ink;
@@ -29,16 +28,54 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Commands
             ResizeArrayCommand = new Command<DragDeltaEventArgs>(OnResizeArrayCommandExecute);
-            DragStopAndSnapCommand = new Command<DragCompletedEventArgs>(OnDragStopAndSnapCommandExecute);
-            ToggleGridCommand = new Command(OnToggleGridCommandExecute);
-            ToggleDivisionAdornersCommand = new Command(OnToggleDivisionAdornersCommandExecute);
+            SnapArrayCommand = new Command(OnSnapArrayCommandExecute);
             RotateArrayCommand = new Command(OnRotateArrayCommandExecute);
-            CreateVerticalDivisionCommand = new Command(OnCreateVerticalDivisionCommandExecute);
-            CreateHorizontalDivisionCommand = new Command(OnCreateHorizontalDivisionCommandExecute);
             EditLabelCommand = new Command<CLPArrayDivision>(OnEditLabelCommandExecute);
             EraseDivisionCommand = new Command<MouseEventArgs>(OnEraseDivisionCommandExecute);
-            ToggleMainArrayAdornersCommand = new Command<MouseButtonEventArgs>(OnToggleMainArrayAdornersCommandExecute);
             DuplicateArrayCommand = new Command(OnDuplicateArrayCommandExecute);
+            InitializeButtons();
+        }
+
+        private void InitializeButtons()
+        {
+            _contextButtons.Add(MajorRibbonViewModel.Separater);
+
+            _contextButtons.Add(new RibbonButton("Make Copies", "pack://application:,,,/Images/AddToDisplay.png", DuplicateArrayCommand, null, true));
+
+            _contextButtons.Add(MajorRibbonViewModel.Separater);
+
+            _contextButtons.Add(new RibbonButton("Rotate", "pack://application:,,,/Resources/Images/AdornerImages/ArrayRotate64.png", RotateArrayCommand, null, true));
+
+            var toggleGridLinesButton = new ToggleRibbonButton("Show Grid Lines", "Hide Grid Lines", "pack://application:,,,/Resources/Images/ArrayCard32.png", true)
+            {
+                IsChecked = IsGridOn
+            };
+            toggleGridLinesButton.Checked += toggleGridLinesButton_Checked;
+            toggleGridLinesButton.Unchecked += toggleGridLinesButton_Checked;
+            _contextButtons.Add(toggleGridLinesButton);
+
+            _contextButtons.Add(new RibbonButton("Snap", "pack://application:,,,/Resources/Images/AdornerImages/ArraySnap64.png", SnapArrayCommand, null, true));
+            //    _contextButtons.Add(new RibbonButton("Size to Other Arrays", "pack://application:,,,/Resources/Images/AdornerImages/ArraySnap64.png", null, null, true));
+        }
+
+        void toggleGridLinesButton_Checked(object sender, RoutedEventArgs e)
+        {
+            var toggleButton = sender as ToggleRibbonButton;
+            if (toggleButton == null ||
+                toggleButton.IsChecked == null)
+            {
+                return;
+            }
+
+            var clpArray = PageObject as CLPArray;
+            if (clpArray != null)
+            {
+                clpArray.IsGridOn = (bool)toggleButton.IsChecked;
+                ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
+                                                           new CLPArrayGridToggleHistoryItem(PageObject.ParentPage,
+                                                                                             App.MainWindowViewModel.CurrentUser,
+                                                                                             PageObject.ID));
+            }
         }
 
         #endregion //Constructor
@@ -175,24 +212,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Bindings
 
-        /// <summary>Gets or sets the BottomArrowPosition value.</summary>
-        public double TopArrowPosition
-        {
-            get { return GetValue<double>(TopArrowPositionProperty); }
-            set { SetValue(TopArrowPositionProperty, value); }
-        }
-
-        public static readonly PropertyData TopArrowPositionProperty = RegisterProperty("TopArrowPosition", typeof (double), 0.0);
-
-        /// <summary>Gets or sets the RightArrowPosition value.</summary>
-        public double LeftArrowPosition
-        {
-            get { return GetValue<double>(LeftArrowPositionProperty); }
-            set { SetValue(LeftArrowPositionProperty, value); }
-        }
-
-        public static readonly PropertyData LeftArrowPositionProperty = RegisterProperty("LeftArrowPosition", typeof (double), 0.0);
-
         public string Transparency
         {
             get
@@ -206,61 +225,6 @@ namespace Classroom_Learning_Partner.ViewModels
                     return "Transparent";
                 }
             }
-        }
-
-        /// <summary>Whether or not default adorners are on.</summary>
-        public bool IsDefaultAdornerVisible
-        {
-            get { return GetValue<bool>(IsDefaultAdornerVisibleProperty); }
-            set
-            {
-                SetValue(IsDefaultAdornerVisibleProperty, value);
-                RaisePropertyChanged("IsToggleGridAdornerVisible");
-                RaisePropertyChanged("IsToggleDivisionAdornerVisible");
-                RaisePropertyChanged("IsRotateAdornerVisible");
-                RaisePropertyChanged("IsDuplicateAdornerVisible");
-            }
-        }
-
-        public static readonly PropertyData IsDefaultAdornerVisibleProperty = RegisterProperty("IsDefaultAdornerVisible", typeof (bool), false);
-
-        /// <summary>Whether or not adorner to create a division on right side of array is on.</summary>
-        public bool IsLeftAdornerVisible
-        {
-            get { return GetValue<bool>(IsLeftAdornerVisibleProperty); }
-            set { SetValue(IsLeftAdornerVisibleProperty, value); }
-        }
-
-        public static readonly PropertyData IsLeftAdornerVisibleProperty = RegisterProperty("IsLeftAdornerVisible", typeof (bool), false);
-
-        /// <summary>Whether or not adorner to create a division on bottom side of array is on.</summary>
-        public bool IsTopAdornerVisible
-        {
-            get { return GetValue<bool>(IsTopAdornerVisibleProperty); }
-            set { SetValue(IsTopAdornerVisibleProperty, value); }
-        }
-
-        public static readonly PropertyData IsTopAdornerVisibleProperty = RegisterProperty("IsTopAdornerVisible", typeof (bool), false);
-
-        /// <summary>Whether or not to show the adorner that allows students to toggle the grid lines on and off.</summary>
-        public bool IsToggleGridAdornerVisible
-        {
-            get { return IsDefaultAdornerVisible && Rows < 71 && Columns < 71 && (PageObject as CLPArray).ArrayType != ArrayTypes.TenByTen; }
-        }
-
-        public bool IsToggleDivisionAdornerVisible
-        {
-            get { return IsDefaultAdornerVisible && (PageObject as CLPArray).ArrayType == ArrayTypes.Array; }
-        }
-
-        public bool IsRotateAdornerVisible
-        {
-            get { return IsDefaultAdornerVisible && (PageObject as CLPArray).ArrayType != ArrayTypes.TenByTen; }
-        }
-
-        public bool IsDuplicateAdornerVisible
-        {
-            get { return IsDefaultAdornerVisible; } // && (PageObject as CLPArray).ArrayType == ArrayTypes.TenByTen; }
         }
 
         #endregion //Bindings
@@ -345,7 +309,10 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        public Command<DragCompletedEventArgs> DragStopAndSnapCommand { get; private set; }
+        /// <summary>
+        /// Snaps the array to an adjacent array.
+        /// </summary>
+        public Command SnapArrayCommand { get; private set; }
 
         private enum SnapType
         {
@@ -355,20 +322,8 @@ namespace Classroom_Learning_Partner.ViewModels
             Right
         }
 
-        private void OnDragStopAndSnapCommandExecute(DragCompletedEventArgs e)
+        private void OnSnapArrayCommandExecute()
         {
-            var initialX = XPosition;
-            var initialY = YPosition;
-
-            var movementBatch = PageObject.ParentPage.History.CurrentHistoryBatch as PageObjectMoveBatchHistoryItem;
-            if (movementBatch != null)
-            {
-                movementBatch.AddPositionPointToBatch(PageObject.ID, new Point(PageObject.XPosition, PageObject.YPosition));
-            }
-            var batchHistoryItem = PageObject.ParentPage.History.EndBatch();
-            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, batchHistoryItem, true);
-            PageObject.OnMoved(initialX, initialY);
-
             var snappingArray = PageObject as CLPArray;
             if (snappingArray == null)
             {
@@ -834,27 +789,6 @@ namespace Classroom_Learning_Partner.ViewModels
             //closestPersistingArray.AcceptObjects(addObjects, removeObjects);
         }
 
-        /// <summary>Toggle the visibility of GridLines on the array.</summary>
-        public Command ToggleGridCommand { get; private set; }
-
-        private void OnToggleGridCommandExecute()
-        {
-            var clpArray = PageObject as CLPArray;
-            if (clpArray != null)
-            {
-                clpArray.IsGridOn = !clpArray.IsGridOn;
-                ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
-                                                           new CLPArrayGridToggleHistoryItem(PageObject.ParentPage,
-                                                                                             App.MainWindowViewModel.CurrentUser,
-                                                                                             PageObject.ID));
-            }
-        }
-
-        /// <summary>Toggles the Division Behavior on and off.</summary>
-        public Command ToggleDivisionAdornersCommand { get; private set; }
-
-        private void OnToggleDivisionAdornersCommandExecute() { IsDivisionBehaviorOn = !IsDivisionBehaviorOn; }
-
         /// <summary>Rotates the array 90 degrees</summary>
         public Command RotateArrayCommand { get; private set; }
 
@@ -917,118 +851,6 @@ namespace Classroom_Learning_Partner.ViewModels
                     existingRemainderErrorsTag.OrientationChangedDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
                 }
             }
-        }
-
-        /// <summary>Gets the CreateHorizontalDivisionCommand command.</summary>
-        public Command CreateHorizontalDivisionCommand { get; private set; }
-
-        private void OnCreateHorizontalDivisionCommandExecute()
-        {
-            var position = LeftArrowPosition - 5;
-            if (IsGridOn)
-            {
-                position = (PageObject as CLPArray).GetClosestGridLine(position);
-            }
-
-            if (HorizontalDivisions.Any(horizontalDivision => Math.Abs(horizontalDivision.Position - position) < 30.0))
-            {
-                return;
-            }
-            if (HorizontalDivisions.Count >= (PageObject as CLPArray).Rows)
-            {
-                MessageBox.Show("The number of divisions cannot be larger than the number of Rows.");
-                return;
-            }
-
-            var divAbove = (PageObject as CLPArray).FindDivisionAbove(position, HorizontalDivisions);
-            var divBelow = (PageObject as CLPArray).FindDivisionBelow(position, HorizontalDivisions);
-
-            var addedDivisions = new List<CLPArrayDivision>();
-            var removedDivisions = new List<CLPArrayDivision>();
-
-            CLPArrayDivision topDiv;
-            if (divAbove == null)
-            {
-                topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, 0, position, 0);
-            }
-            else
-            {
-                topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, divAbove.Position, position - divAbove.Position, 0);
-                HorizontalDivisions.Remove(divAbove);
-                removedDivisions.Add(divAbove);
-            }
-            HorizontalDivisions.Add(topDiv);
-            addedDivisions.Add(topDiv);
-
-            var bottomDiv = divBelow == null
-                                ? new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, position, ArrayHeight - position, 0)
-                                : new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, position, divBelow.Position - position, 0);
-
-            HorizontalDivisions.Add(bottomDiv);
-            addedDivisions.Add(bottomDiv);
-
-            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
-                                                       new CLPArrayDivisionsChangedHistoryItem(PageObject.ParentPage,
-                                                                                               App.MainWindowViewModel.CurrentUser,
-                                                                                               PageObject.ID,
-                                                                                               addedDivisions,
-                                                                                               removedDivisions));
-        }
-
-        /// <summary>Gets the CreateVerticalDivisionCommand command.</summary>
-        public Command CreateVerticalDivisionCommand { get; private set; }
-
-        private void OnCreateVerticalDivisionCommandExecute()
-        {
-            var position = TopArrowPosition - 5;
-            if (IsGridOn)
-            {
-                position = (PageObject as CLPArray).GetClosestGridLine(position);
-            }
-
-            if (VerticalDivisions.Any(verticalDivision => Math.Abs(verticalDivision.Position - position) < 30.0))
-            {
-                return;
-            }
-            if (VerticalDivisions.Count >= (PageObject as CLPArray).Columns)
-            {
-                MessageBox.Show("The number of divisions cannot be larger than the number of Columns.");
-                return;
-            }
-
-            var divAbove = (PageObject as CLPArray).FindDivisionAbove(position, VerticalDivisions);
-            var divBelow = (PageObject as CLPArray).FindDivisionBelow(position, VerticalDivisions);
-
-            var addedDivisions = new List<CLPArrayDivision>();
-            var removedDivisions = new List<CLPArrayDivision>();
-
-            CLPArrayDivision topDiv;
-            if (divAbove == null)
-            {
-                topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, 0, position, 0);
-            }
-            else
-            {
-                topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, divAbove.Position, position - divAbove.Position, 0);
-                VerticalDivisions.Remove(divAbove);
-                removedDivisions.Add(divAbove);
-            }
-            VerticalDivisions.Add(topDiv);
-            addedDivisions.Add(topDiv);
-
-            var bottomDiv = divBelow == null
-                                ? new CLPArrayDivision(ArrayDivisionOrientation.Vertical, position, ArrayWidth - position, 0)
-                                : new CLPArrayDivision(ArrayDivisionOrientation.Vertical, position, divBelow.Position - position, 0);
-
-            VerticalDivisions.Add(bottomDiv);
-            addedDivisions.Add(bottomDiv);
-
-            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
-                                                       new CLPArrayDivisionsChangedHistoryItem(PageObject.ParentPage,
-                                                                                               App.MainWindowViewModel.CurrentUser,
-                                                                                               PageObject.ID,
-                                                                                               addedDivisions,
-                                                                                               removedDivisions));
         }
 
         /// <summary>Gets the EditLabelCommand command.</summary>
@@ -1243,64 +1065,6 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                                removedDivisions));
         }
 
-        /// <summary>Toggles the main adorners for the array.</summary>
-        public Command<MouseButtonEventArgs> ToggleMainArrayAdornersCommand { get; private set; }
-
-        private void OnToggleMainArrayAdornersCommandExecute(MouseButtonEventArgs e)
-        {
-            if (App.MainWindowViewModel.CurrentUser.ID != PageObject.CreatorID &&
-                !PageObject.IsManipulatableByNonCreator)
-            {
-                return;
-            }
-
-            if (e.ChangedButton != MouseButton.Left ||
-                e.StylusDevice != null && e.StylusDevice.Inverted)
-            {
-                return;
-            }
-            var tempAdornerState = IsDefaultAdornerVisible;
-            ACLPPageBaseViewModel.ClearAdorners(PageObject.ParentPage);
-            IsAdornerVisible = !tempAdornerState;
-            IsDefaultAdornerVisible = !tempAdornerState;
-            IsTopAdornerVisible = tempAdornerState;
-            IsLeftAdornerVisible = tempAdornerState;
-
-            var contextRibbon = NotebookWorkspaceViewModel.GetContextRibbon();
-            if (contextRibbon == null)
-            {
-                return;
-            }
-
-            if (IsAdornerVisible)
-            {
-                PopulateContextRibbon(contextRibbon);
-            }
-            else
-            {
-                contextRibbon.Buttons.Clear();
-            }
-        }
-
-        
-        public void PopulateContextRibbon(ContextRibbonViewModel contextRibbon)
-        {
-            if (!_contextButtons.Any())
-            {
-                _contextButtons.Add(new RibbonButton("Delete", "pack://application:,,,/Images/Delete.png", RemovePageObjectCommand, null, true));
-                _contextButtons.Add(new RibbonButton("Duplicate", "pack://application:,,,/Images/AddToDisplay.png", DuplicateArrayCommand, null, true));
-
-                _contextButtons.Add(MajorRibbonViewModel.Separater);
-
-                _contextButtons.Add(new RibbonButton("Rotate", "pack://application:,,,/Images/Protractor64.png", RotateArrayCommand, null, true));
-                _contextButtons.Add(new RibbonButton("Toggle Grid Lines", "pack://application:,,,/Resources/Images/Array32.png", ToggleGridCommand, null, true));
-                _contextButtons.Add(new RibbonButton("Snap", "pack://application:,,,/Resources/Images/AdornerImages/ArraySnap64.png", null, null, true));
-                _contextButtons.Add(new RibbonButton("Size to Other Arrays", "pack://application:,,,/Resources/Images/AdornerImages/ArraySnap64.png", null, null, true));
-            }
-
-            contextRibbon.Buttons = _contextButtons;
-        }
-
         /// <summary>Brings up a menu to make multiple copies of an array</summary>
         public Command DuplicateArrayCommand { get; private set; }
 
@@ -1366,18 +1130,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //Commands
-
-        #region Methods
-
-        public override void ClearAdorners()
-        {
-            IsAdornerVisible = false;
-            IsDefaultAdornerVisible = false;
-            IsTopAdornerVisible = false;
-            IsLeftAdornerVisible = false;
-        }
-
-        #endregion //Methods
 
         #region Static Methods
 

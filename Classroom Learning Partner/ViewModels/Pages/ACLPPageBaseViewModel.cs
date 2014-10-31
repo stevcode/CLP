@@ -905,6 +905,11 @@ namespace Classroom_Learning_Partner.ViewModels
             RefreshInkStrokes();
             RefreshPageObjects(allHalvedPageObjects);
 
+            if (allHalvedPageObjects.Any())
+            {
+                App.MainWindowViewModel.MajorRibbon.PageInteractionMode = PageInteractionModes.Select;
+            }
+
             InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
             PageObjects.CollectionChanged += PageObjects_CollectionChanged;
         }

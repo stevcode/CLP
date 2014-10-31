@@ -61,8 +61,7 @@
                            Canvas.Top="-5"
                            Canvas.Left="-5"
                            Width="{Binding Width, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
-                           Height="{Binding Height, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
-                           Visibility="{Binding IsDefaultAdornersVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />
+                           Height="{Binding Height, Converter={StaticResource LengthConverter}, ConverterParameter=10}" />
 
                 <Rectangle Stroke="{DynamicResource DynamicMainColor}"
                            StrokeThickness="1"
@@ -71,16 +70,14 @@
                            Canvas.Top="-5"
                            Canvas.Left="-5"
                            Width="{Binding Width, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
-                           Height="{Binding Height, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
-                           Visibility="{Binding IsDefaultAdornersVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />
+                           Height="{Binding Height, Converter={StaticResource LengthConverter}, ConverterParameter=10}" />
 
                 <!--Resize Thumb-->
                 <Thumb Cursor="SizeNWSE"
                        Width="40"
                        Height="40"
                        Canvas.Right="-40"
-                       Canvas.Bottom="-40"
-                       Visibility="{Binding IsDefaultAdornerVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                       Canvas.Bottom="-40">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="DragDelta">
                             <catel:EventToCommand Command="{Binding ResizeArrayCommand}"
@@ -173,67 +170,81 @@
                        StrokeThickness="3" />
 
             <!--This is the actual array-->
-            <Rectangle x:Name="Array"
-                       Grid.Row="1"
-                       Grid.Column="1"
-                       Tag="ArrayBodyHitBox"
-                       Width="{Binding ArrayWidth}"
-                       Height="{Binding ArrayHeight}"
-                       Stroke="Black"
-                       StrokeThickness="3">
-                <Rectangle.Style>
-                    <Style TargetType="{x:Type Rectangle}">
-                        <Setter Property="Fill"
-                                Value="Transparent" />
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsGridOn}"
-                                         Value="True">
-                                <Setter Property="Fill">
-                                    <Setter.Value>
+            <Thumb Grid.Row="1"
+                   Grid.Column="1"
+                   Tag="ArrayBodyHitBox"
+                   Width="{Binding ArrayWidth}"
+                   Height="{Binding ArrayHeight}">
+                <Thumb.Template>
+                    <ControlTemplate>
+                        <Rectangle x:Name="Array"
+                                   Width="{Binding ArrayWidth}"
+                                   Height="{Binding ArrayHeight}"
+                                   Stroke="Black"
+                                   StrokeThickness="3">
+                            <Rectangle.Style>
+                                <Style TargetType="{x:Type Rectangle}">
+                                    <Setter Property="Fill"
+                                            Value="Transparent" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsGridOn}"
+                                                     Value="True">
+                                            <Setter Property="Fill">
+                                                <Setter.Value>
 
-                                        <DrawingBrush TileMode="Tile"
-                                                      ViewportUnits="RelativeToBoundingBox">
-                                            <DrawingBrush.Viewport>
-                                                <MultiBinding Converter="{StaticResource RatioToRectMultiConverter}">
-                                                    <Binding Path="ArrayWidth" />
-                                                    <Binding Path="ArrayHeight" />
-                                                    <Binding Path="GridSquareSize" />
-                                                </MultiBinding>
-                                            </DrawingBrush.Viewport>
-                                            <DrawingBrush.Drawing>
-                                                <DrawingGroup>
-                                                    <!--Horizontal Grid Line-->
-                                                    <GeometryDrawing Geometry="M0,20 L20,20">
-                                                        <GeometryDrawing.Pen>
-                                                            <Pen Thickness="1"
-                                                                 Brush="PowderBlue" />
-                                                        </GeometryDrawing.Pen>
-                                                    </GeometryDrawing>
-                                                    <!--Vertical Grid Line-->
-                                                    <GeometryDrawing Geometry="M20,0 L20,20">
-                                                        <GeometryDrawing.Pen>
-                                                            <Pen Thickness="1"
-                                                                 Brush="PowderBlue" />
-                                                        </GeometryDrawing.Pen>
-                                                    </GeometryDrawing>
-                                                </DrawingGroup>
-                                            </DrawingBrush.Drawing>
-                                        </DrawingBrush>
+                                                    <DrawingBrush TileMode="Tile"
+                                                                  ViewportUnits="RelativeToBoundingBox">
+                                                        <DrawingBrush.Viewport>
+                                                            <MultiBinding Converter="{StaticResource RatioToRectMultiConverter}">
+                                                                <Binding Path="ArrayWidth" />
+                                                                <Binding Path="ArrayHeight" />
+                                                                <Binding Path="GridSquareSize" />
+                                                            </MultiBinding>
+                                                        </DrawingBrush.Viewport>
+                                                        <DrawingBrush.Drawing>
+                                                            <DrawingGroup>
+                                                                <!--Horizontal Grid Line-->
+                                                                <GeometryDrawing Geometry="M0,20 L20,20">
+                                                                    <GeometryDrawing.Pen>
+                                                                        <Pen Thickness="1"
+                                                                             Brush="PowderBlue" />
+                                                                    </GeometryDrawing.Pen>
+                                                                </GeometryDrawing>
+                                                                <!--Vertical Grid Line-->
+                                                                <GeometryDrawing Geometry="M20,0 L20,20">
+                                                                    <GeometryDrawing.Pen>
+                                                                        <Pen Thickness="1"
+                                                                             Brush="PowderBlue" />
+                                                                    </GeometryDrawing.Pen>
+                                                                </GeometryDrawing>
+                                                            </DrawingGroup>
+                                                        </DrawingBrush.Drawing>
+                                                    </DrawingBrush>
 
-                                    </Setter.Value>
-                                </Setter>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Rectangle.Style>
-
+                                                </Setter.Value>
+                                            </Setter>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Rectangle.Style>
+                        </Rectangle>
+                    </ControlTemplate>
+                </Thumb.Template>
                 <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="PreviewMouseUp">
-                        <catel:EventToCommand Command="{Binding ToggleMainArrayAdornersCommand}"
+                    <i:EventTrigger EventName="DragStarted">
+                        <catel:EventToCommand Command="{Binding DragStartPageObjectCommand}"
+                                              PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="DragDelta">
+                        <catel:EventToCommand Command="{Binding DragPageObjectCommand}"
+                                              PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="DragCompleted">
+                        <catel:EventToCommand Command="{Binding DragStopPageObjectCommand}"
                                               PassEventArgsToCommand="True" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
-            </Rectangle>
+            </Thumb>
 
             <!--Horizontal Divisions-->
             <ItemsControl Grid.Row="1"
