@@ -125,6 +125,33 @@ namespace Classroom_Learning_Partner.ViewModels
             App.MainWindowViewModel.MajorRibbon.DrawingAttributes.StylusTip = (bool)toggleButton.IsChecked ? StylusTip.Rectangle : StylusTip.Ellipse;
         }
 
+        public void SetEraserContextButtons()
+        {
+            Buttons.Clear();
+
+            var setEraseInkButton = new GroupedRibbonButton("Erase Ink",
+                                                           "EraserModes",
+                                                           "pack://application:,,,/Resources/Images/StrokeEraser32.png",
+                                                           PageInteractionModes.Select.ToString());
+            setEraseInkButton.Checked += _setEraseModeButton_Checked;
+
+            var setErasePageObjectsButton = new GroupedRibbonButton("Erase PageObjects",
+                                                           "EraserModes",
+                                                           "pack://application:,,,/Resources/Images/ArrayCard32.png",
+                                                           PageInteractionModes.Select.ToString());
+            setErasePageObjectsButton.Checked += _setEraseModeButton_Checked;
+
+            Buttons.Add(setEraseInkButton);
+            Buttons.Add(setErasePageObjectsButton);
+
+            setEraseInkButton.IsChecked = true;
+        }
+
+        void _setEraseModeButton_Checked(object sender, RoutedEventArgs e)
+        {
+            
+        }
+
         #endregion //Methods
 
         #region Commands

@@ -63,7 +63,7 @@ namespace Classroom_Learning_Partner.ViewModels
             _setPenModeButton.Checked += _button_Checked;
             _setEraserModeButton = new GroupedRibbonButton("Eraser",
                                                            "PageInteractionMode",
-                                                           "pack://application:,,,/Resources/Images/StrokeEraser32.png",
+                                                           "pack://application:,,,/Resources/Images/PointEraser32.png",
                                                            PageInteractionModes.Eraser.ToString());
             _setEraserModeButton.Checked += _button_Checked;
             _setLassoModeButton = new GroupedRibbonButton("Lasso",
@@ -187,6 +187,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     switch (PageInteractionMode)
                     {
                         case PageInteractionModes.None:
+                            contextRibbon.Buttons.Clear();
                             break;
                         case PageInteractionModes.Select:
                             contextRibbon.Buttons.Clear();
@@ -195,12 +196,16 @@ namespace Classroom_Learning_Partner.ViewModels
                             contextRibbon.SetPenContextButtons();
                             break;
                         case PageInteractionModes.Eraser:
+                            contextRibbon.SetEraserContextButtons();
                             break;
                         case PageInteractionModes.Lasso:
+                            contextRibbon.Buttons.Clear();
                             break;
                         case PageInteractionModes.Cut:
+                            contextRibbon.Buttons.Clear();
                             break;
                         case PageInteractionModes.DividerCreation:
+                            contextRibbon.Buttons.Clear();
                             break;
                     }
 
