@@ -199,8 +199,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     EraserMode = InkCanvasEditingMode.EraseByStroke;
                     break;
             }
-            if(PageInteractionMode != PageInteractionModes.Pen &&
-               PageInteractionMode != PageInteractionModes.Highlighter)
+            if(PageInteractionMode != PageInteractionModes.Pen)
             {
                 PageInteractionMode = PageInteractionModes.Pen;
             }

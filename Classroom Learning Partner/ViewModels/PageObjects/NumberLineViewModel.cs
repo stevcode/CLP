@@ -37,7 +37,7 @@ namespace Classroom_Learning_Partner.ViewModels
             jumpSizeVisibility.Unchecked += jumpSizeVisibility_Checked;
             _contextButtons.Add(jumpSizeVisibility);
 
-            var allowDragging = new ToggleRibbonButton("Can Drag Arrow", "Can't Drag Arrow", "pack://application:,,,/Images/Delete.png", true)
+            var allowDragging = new ToggleRibbonButton("Disable Drag Arrow", "Enable Drag Arrow", "pack://application:,,,/Images/Delete.png", true)
                                 {
                                     IsChecked = !IsArrowDraggingAllowed
                                 };
@@ -259,7 +259,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                     else
                     {
-                        MessageBox.Show("You have already drawn pass this number on the number line.");
+                        MessageBox.Show("You have already drawn past this number on the number line.");
                     }
                 }
             }

@@ -63,7 +63,7 @@ namespace Classroom_Learning_Partner.ViewModels
             _setPenModeButton.Checked += _button_Checked;
             _setEraserModeButton = new GroupedRibbonButton("Eraser",
                                                            "PageInteractionMode",
-                                                           "pack://application:,,,/Resources/Images/Hand32.png",
+                                                           "pack://application:,,,/Resources/Images/StrokeEraser32.png",
                                                            PageInteractionModes.Eraser.ToString());
             _setEraserModeButton.Checked += _button_Checked;
             _setLassoModeButton = new GroupedRibbonButton("Lasso",
@@ -76,9 +76,9 @@ namespace Classroom_Learning_Partner.ViewModels
                                                         "pack://application:,,,/Resources/Images/Scissors32.png",
                                                         PageInteractionModes.Cut.ToString());
             _setCutModeButton.Checked += _button_Checked;
-            _setDividerCreationModeButton = new GroupedRibbonButton("Divider",
+            _setDividerCreationModeButton = new GroupedRibbonButton("Create Divider",
                                                                     "PageInteractionMode",
-                                                                    "pack://application:,,,/Resources/Images/Hand32.png",
+                                                                    "pack://application:,,,/Resources/Images/InkArray32.png",
                                                                     PageInteractionModes.DividerCreation.ToString());
             _setDividerCreationModeButton.Checked += _button_Checked;
 
@@ -131,7 +131,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                       "DIVISIONTEMPLATEWITHTILES");
 
             //NumberLine
-            _insertNumberLineButton = new RibbonButton("NumberLine",
+            _insertNumberLineButton = new RibbonButton("Number Line",
                                                        "pack://application:,,,/Resources/Images/NumberLine32.png",
                                                        AddPageObjectToPageCommand,
                                                        "NUMBERLINE");
@@ -194,17 +194,11 @@ namespace Classroom_Learning_Partner.ViewModels
                         case PageInteractionModes.Pen:
                             contextRibbon.SetPenContextButtons();
                             break;
-                        case PageInteractionModes.Highlighter:
-                            break;
-                        case PageInteractionModes.PenAndSelect:
-                            break;
                         case PageInteractionModes.Eraser:
                             break;
                         case PageInteractionModes.Lasso:
                             break;
                         case PageInteractionModes.Cut:
-                            break;
-                        case PageInteractionModes.EditObjectProperties:
                             break;
                         case PageInteractionModes.DividerCreation:
                             break;
@@ -330,10 +324,6 @@ namespace Classroom_Learning_Partner.ViewModels
                     case PageInteractionModes.Pen:
                         _setPenModeButton.IsChecked = true;
                         break;
-                    case PageInteractionModes.Highlighter:
-                        break;
-                    case PageInteractionModes.PenAndSelect:
-                        break;
                     case PageInteractionModes.Eraser:
                         _setEraserModeButton.IsChecked = true;
                         break;
@@ -342,8 +332,6 @@ namespace Classroom_Learning_Partner.ViewModels
                         break;
                     case PageInteractionModes.Cut:
                         _setCutModeButton.IsChecked = true;
-                        break;
-                    case PageInteractionModes.EditObjectProperties:
                         break;
                     case PageInteractionModes.DividerCreation:
                         _setDividerCreationModeButton.IsChecked = true;
@@ -457,11 +445,11 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             Buttons.Add(_setSelectModeButton);
             Buttons.Add(_setPenModeButton);
-            //Buttons.Add(_setEraserModeButton);
+            Buttons.Add(_setEraserModeButton);
             Buttons.Add(Separater);
             Buttons.Add(_setLassoModeButton);
             Buttons.Add(_setCutModeButton);
-            //Buttons.Add(_setDividerCreationModeButton);
+            Buttons.Add(_setDividerCreationModeButton);
 
             Buttons.Add(Separater);
 

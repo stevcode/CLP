@@ -75,7 +75,6 @@ namespace Classroom_Learning_Partner.ViewModels
             _contextButtons.Add(MajorRibbonViewModel.Separater);
 
             _contextButtons.Add(new RibbonButton("Create Copies", "pack://application:,,,/Images/AddToDisplay.png", ParameterizeStampCommand, null, true));
-            _contextButtons.Add(new RibbonButton("Delete All Copies", "pack://application:,,,/Images/Delete.png", null, null, true));
         }
 
         /// <summary>

@@ -8,6 +8,7 @@
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters">
 
     <UserControl.Resources>
+        <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
         <oldconv:LengthConverter x:Key="LengthConverter" />
         <oldconv:NegativeLengthSubtractConverter x:Key="NegativeLengthSubtractConverter" />
         <conv:ZeroToQuestionMarkConverter x:Key="ZeroToQuestionMarkConverter" />

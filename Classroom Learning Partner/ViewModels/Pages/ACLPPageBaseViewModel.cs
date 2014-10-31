@@ -27,12 +27,9 @@ namespace Classroom_Learning_Partner.ViewModels
         None,
         Select,
         Pen,
-        Highlighter,
-        PenAndSelect,
         Eraser,
         Lasso,
         Cut,
-        EditObjectProperties,
         DividerCreation
     }
 
@@ -250,28 +247,6 @@ namespace Classroom_Learning_Partner.ViewModels
                     pageViewModel.DefaultDA.StylusTip = StylusTip.Ellipse;
                     pageViewModel.ClearAdorners();
                     break;
-                case PageInteractionModes.Highlighter:
-                    pageViewModel.IsInkCanvasHitTestVisible = true;
-                    pageViewModel.EditingMode = InkCanvasEditingMode.Ink;
-                    pageViewModel.IsUsingCustomCursors = false;
-
-                    pageViewModel.DefaultDA.IsHighlighter = true;
-                    pageViewModel.DefaultDA.Height = 12;
-                    pageViewModel.DefaultDA.Width = 12;
-                    pageViewModel.DefaultDA.StylusTip = StylusTip.Rectangle;
-                    pageViewModel.ClearAdorners();
-                    break;
-                case PageInteractionModes.PenAndSelect:
-                    pageViewModel.IsInkCanvasHitTestVisible = true;
-                    pageViewModel.EditingMode = InkCanvasEditingMode.Ink;
-                    pageViewModel.IsUsingCustomCursors = true;
-                    var penAndSelectStream = Application.GetResourceStream(new Uri("/Classroom Learning Partner;component/Resources/Cursors/PenCursor.cur", UriKind.Relative));
-                    if(penAndSelectStream != null)
-                    {
-                        pageViewModel.PageCursor = new Cursor(penAndSelectStream.Stream);
-                    }
-                    pageViewModel.ClearAdorners();
-                    break;
                 case PageInteractionModes.Eraser:
                     pageViewModel.IsInkCanvasHitTestVisible = true;
                     pageViewModel.EditingMode = pageViewModel.EraserMode;
@@ -321,9 +296,6 @@ namespace Classroom_Learning_Partner.ViewModels
                             array.IsGridOn = true;
                         }
                     }
-                    break;
-                case PageInteractionModes.EditObjectProperties:
-                    pageViewModel.IsInkCanvasHitTestVisible = false;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -713,7 +685,6 @@ namespace Classroom_Learning_Partner.ViewModels
                     break;
                 case PageInteractionModes.Select:
                     return;
-                case PageInteractionModes.Highlighter:
                 case PageInteractionModes.Pen:
                     if(e.Removed.Any())
                     {
@@ -774,8 +745,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 PenSize = x;
 
                 if(PageInteractionMode == PageInteractionModes.Eraser ||
-                   PageInteractionMode == PageInteractionModes.Pen ||
-                   PageInteractionMode == PageInteractionModes.Highlighter)
+                   PageInteractionMode == PageInteractionModes.Pen)
                 {
                     return;
                 }

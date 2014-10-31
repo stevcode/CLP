@@ -131,7 +131,7 @@
         <TextBlock DockPanel.Dock="Right" 
                    Text="CURRENT USER"
                    FontWeight="Bold"
-                   FontSize="20"
+                   FontSize="12"
                    TextAlignment="Center"
                    VerticalAlignment="Center"
                    HorizontalAlignment="Center" />
