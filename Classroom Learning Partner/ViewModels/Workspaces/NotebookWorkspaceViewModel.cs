@@ -68,6 +68,11 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 NotebookPagesPanel.IsVisible = false;
             }
+
+            if (App.MainWindowViewModel.MajorRibbon.PageInteractionMode == PageInteractionModes.Pen)
+            {
+                ContextRibbon.SetPenContextButtons();
+            }
         }
 
         public override string Title { get { return "NotebookWorkspaceVM"; } }

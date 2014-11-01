@@ -14,16 +14,7 @@ namespace Classroom_Learning_Partner.ViewModels
     {
         public ContextRibbonViewModel()
         {
-            
-        }
 
-        protected override void OnInitialized()
-        {
-            base.OnInitialized();
-            if (App.MainWindowViewModel.MajorRibbon.PageInteractionMode == PageInteractionModes.Pen)
-            {
-                SetPenContextButtons();
-            }
         }
 
         #region Bindings
@@ -39,34 +30,44 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                typeof(ObservableCollection<UIElement>),
                                                                                () => new ObservableCollection<UIElement>());
 
+        /// <summary>
+        /// Current Pen colors.
+        /// </summary>
+        public ObservableCollection<ColorButton> CurrentPenColors
+        {
+            get { return GetValue<ObservableCollection<ColorButton>>(CurrentPenColorsProperty); }
+            set { SetValue(CurrentPenColorsProperty, value); }
+        }
+
+        public static readonly PropertyData CurrentPenColorsProperty = RegisterProperty("CurrentPenColors", typeof (ObservableCollection<ColorButton>), () => new ObservableCollection<ColorButton>());
+
         #endregion //Bindings
 
         #region Methods
 
-        private readonly ObservableCollection<ColorButton> _currentPenColors = new ObservableCollection<ColorButton>(); 
         public void SetPenContextButtons()
         {
-            if (!_currentPenColors.Any())
+            if (!CurrentPenColors.Any())
             {
-                _currentPenColors.Add(new ColorButton(Colors.Black));
-                _currentPenColors.Add(new ColorButton(Colors.White));
-                _currentPenColors.Add(new ColorButton(Colors.Red));
-                _currentPenColors.Add(new ColorButton(Colors.DarkOrange));
-                _currentPenColors.Add(new ColorButton(Colors.Tan));
-                _currentPenColors.Add(new ColorButton(Colors.Gold));
-                _currentPenColors.Add(new ColorButton(Colors.SaddleBrown));
-                _currentPenColors.Add(new ColorButton(Colors.DarkGreen));
-                _currentPenColors.Add(new ColorButton(Colors.MediumSeaGreen));
-                _currentPenColors.Add(new ColorButton(Colors.Blue));
-                _currentPenColors.Add(new ColorButton(Colors.HotPink));
-                _currentPenColors.Add(new ColorButton(Colors.BlueViolet));
-                _currentPenColors.Add(new ColorButton(Colors.Aquamarine));
-                _currentPenColors.Add(new ColorButton(Colors.SlateGray));
-                _currentPenColors.Add(new ColorButton(Colors.SkyBlue));
-                _currentPenColors.Add(new ColorButton(Colors.DeepSkyBlue));
-                _currentPenColors.Add(new ColorButton(Color.FromRgb(0, 152, 247)));
+                CurrentPenColors.Add(new ColorButton(Colors.Black));
+                CurrentPenColors.Add(new ColorButton(Colors.White));
+                CurrentPenColors.Add(new ColorButton(Colors.Red));
+                CurrentPenColors.Add(new ColorButton(Colors.DarkOrange));
+                CurrentPenColors.Add(new ColorButton(Colors.Tan));
+                CurrentPenColors.Add(new ColorButton(Colors.Gold));
+                CurrentPenColors.Add(new ColorButton(Colors.SaddleBrown));
+                CurrentPenColors.Add(new ColorButton(Colors.DarkGreen));
+                CurrentPenColors.Add(new ColorButton(Colors.MediumSeaGreen));
+                CurrentPenColors.Add(new ColorButton(Colors.Blue));
+                CurrentPenColors.Add(new ColorButton(Colors.HotPink));
+                CurrentPenColors.Add(new ColorButton(Colors.BlueViolet));
+                CurrentPenColors.Add(new ColorButton(Colors.Aquamarine));
+                CurrentPenColors.Add(new ColorButton(Colors.SlateGray));
+                CurrentPenColors.Add(new ColorButton(Colors.SkyBlue));
+                CurrentPenColors.Add(new ColorButton(Colors.DeepSkyBlue));
+                CurrentPenColors.Add(new ColorButton(Color.FromRgb(0, 152, 247)));
 
-                foreach (var colorButton in _currentPenColors)
+                foreach (var colorButton in CurrentPenColors)
                 {
                     colorButton.Checked += colorButton_Checked;
                 }
@@ -85,12 +86,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
             Buttons.Add(MajorRibbonViewModel.Separater);
 
-            Buttons.AddRange(_currentPenColors);
+            Buttons.AddRange(CurrentPenColors);
 
-            var currentColorButton = _currentPenColors.FirstOrDefault(x => App.MainWindowViewModel.MajorRibbon.DrawingAttributes.Color == x.Color.Color);
+            var currentColorButton = CurrentPenColors.FirstOrDefault(x => App.MainWindowViewModel.MajorRibbon.DrawingAttributes.Color == x.Color.Color);
             if (currentColorButton == null)
             {
-                _currentPenColors.First().IsChecked = true;
+                CurrentPenColors.First().IsChecked = true;
                 App.MainWindowViewModel.MajorRibbon.DrawingAttributes.Color = Colors.Black;
             }
             else

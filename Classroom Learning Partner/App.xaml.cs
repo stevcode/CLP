@@ -1,7 +1,9 @@
 using System;
 using System.Windows;
 using System.Windows.Threading;
+using Catel.IO;
 using Catel.IoC;
+using Catel.Logging;
 using Catel.Reflection;
 using Catel.Windows.Controls;
 using Classroom_Learning_Partner.Services;
@@ -15,7 +17,7 @@ namespace Classroom_Learning_Partner
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
+        //    Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
             base.OnStartup(e);
 
             var currentProgramMode = ProgramModes.Teacher;
@@ -44,9 +46,14 @@ namespace Classroom_Learning_Partner
             var directory = typeof (MainWindowView).Assembly.GetDirectory();
             AppDomain.CurrentDomain.PreloadAssemblies(directory);
 
+            //var fileLogListener = new FileLogListener();
+            //fileLogListener.FilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "catellog.log");
+            //LogManager.AddListener(fileLogListener);
+            //LogManager.IsDebugEnabled = true;
+
             //Uncomment this to enable Catel Logging
             //Comment out to speed up program, all the consoles write are very taxing.
-            //LogManager.RegisterDebugListener();
+            //LogManager.AddDebugListener();
 
             //Stops Catel UserControls from searching for InfoBar (not being used for this project, massive time consumer)
             UserControl.DefaultSkipSearchingForInfoBarMessageControlValue = true;
