@@ -272,7 +272,8 @@ namespace Classroom_Learning_Partner.Services
             var directoryInfo = new DirectoryInfo(path);
             var notebookDirectoryName = directoryInfo.Name;
             var notebookDirectoryParts = notebookDirectoryName.Split(';');
-            if (notebookDirectoryParts.Length != 5)
+            if (notebookDirectoryParts.Length != 5 &&
+                notebookDirectoryParts.Length != 4)
             {
                 return null;
             }
@@ -284,8 +285,8 @@ namespace Classroom_Learning_Partner.Services
                                     ID = notebookDirectoryParts[1],
                                     OwnerName = notebookDirectoryParts[2],
                                     OwnerID = notebookDirectoryParts[3],
-                                    OwnerTypeTag = notebookDirectoryParts[4],
-                                    IsLocal = true
+                                    IsLocal = true,
+                                    OwnerTypeTag = notebookDirectoryParts.Length == 5 ? notebookDirectoryParts[4] : "U"
                                 };
 
             return nameComposite;
