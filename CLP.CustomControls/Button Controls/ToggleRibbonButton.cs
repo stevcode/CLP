@@ -60,7 +60,7 @@ namespace CLP.CustomControls
                                                                                                     typeof (ToggleRibbonButton),
                                                                                                     new UIPropertyMetadata(null));
 
-        /// <summary>Text for the button.</summary>
+        /// <summary>Allows for special behavior if button is in the Context Ribbon.</summary>
         public bool IsContextButton
         {
             get { return (bool)GetValue(IsContextButtonProperty); }

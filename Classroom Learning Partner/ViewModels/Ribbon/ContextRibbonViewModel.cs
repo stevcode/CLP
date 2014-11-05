@@ -12,10 +12,7 @@ namespace Classroom_Learning_Partner.ViewModels
 {
     public class ContextRibbonViewModel : ViewModelBase
     {
-        public ContextRibbonViewModel()
-        {
-
-        }
+        public ContextRibbonViewModel() { }
 
         #region Bindings
 
@@ -26,20 +23,18 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(ButtonsProperty, value); }
         }
 
-        public static readonly PropertyData ButtonsProperty = RegisterProperty("Buttons",
-                                                                               typeof(ObservableCollection<UIElement>),
-                                                                               () => new ObservableCollection<UIElement>());
+        public static readonly PropertyData ButtonsProperty = RegisterProperty("Buttons", typeof (ObservableCollection<UIElement>), () => new ObservableCollection<UIElement>());
 
-        /// <summary>
-        /// Current Pen colors.
-        /// </summary>
+        /// <summary>Current Pen colors.</summary>
         public ObservableCollection<ColorButton> CurrentPenColors
         {
             get { return GetValue<ObservableCollection<ColorButton>>(CurrentPenColorsProperty); }
             set { SetValue(CurrentPenColorsProperty, value); }
         }
 
-        public static readonly PropertyData CurrentPenColorsProperty = RegisterProperty("CurrentPenColors", typeof (ObservableCollection<ColorButton>), () => new ObservableCollection<ColorButton>());
+        public static readonly PropertyData CurrentPenColorsProperty = RegisterProperty("CurrentPenColors",
+                                                                                        typeof (ObservableCollection<ColorButton>),
+                                                                                        () => new ObservableCollection<ColorButton>());
 
         #endregion //Bindings
 
@@ -77,9 +72,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
             Buttons.Add(new RibbonButton("Pen Size", "pack://application:,,,/Resources/Images/PenSize32.png", null, null, true));
             var highlighterButton = new ToggleRibbonButton("Highlighter", "Highlighter", "pack://application:,,,/Resources/Images/Highlighter32.png", true)
-            {
-                IsChecked = App.MainWindowViewModel.MajorRibbon.DrawingAttributes.IsHighlighter
-            };
+                                    {
+                                        IsChecked = App.MainWindowViewModel.MajorRibbon.DrawingAttributes.IsHighlighter
+                                    };
             highlighterButton.Checked += highlighterButton_Checked;
             highlighterButton.Unchecked += highlighterButton_Checked;
             Buttons.Add(highlighterButton);
@@ -100,7 +95,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        void colorButton_Checked(object sender, RoutedEventArgs e)
+        private void colorButton_Checked(object sender, RoutedEventArgs e)
         {
             var colorButton = sender as ColorButton;
             if (colorButton == null)
@@ -131,15 +126,17 @@ namespace Classroom_Learning_Partner.ViewModels
             Buttons.Clear();
 
             var setEraseInkButton = new GroupedRibbonButton("Erase Ink",
-                                                           "EraserModes",
-                                                           "pack://application:,,,/Resources/Images/StrokeEraser32.png",
-                                                           PageInteractionModes.Select.ToString());
+                                                            "EraserModes",
+                                                            "pack://application:,,,/Resources/Images/StrokeEraser32.png",
+                                                            PageInteractionModes.Select.ToString(),
+                                                            true);
             setEraseInkButton.Checked += _setEraseModeButton_Checked;
 
             var setErasePageObjectsButton = new GroupedRibbonButton("Erase PageObjects",
-                                                           "EraserModes",
-                                                           "pack://application:,,,/Resources/Images/ArrayCard32.png",
-                                                           PageInteractionModes.Select.ToString());
+                                                                    "EraserModes",
+                                                                    "pack://application:,,,/Resources/Images/ArrayCard32.png",
+                                                                    PageInteractionModes.Select.ToString(),
+                                                                    true);
             setErasePageObjectsButton.Checked += _setEraseModeButton_Checked;
 
             Buttons.Add(setEraseInkButton);
@@ -148,10 +145,7 @@ namespace Classroom_Learning_Partner.ViewModels
             setEraseInkButton.IsChecked = true;
         }
 
-        void _setEraseModeButton_Checked(object sender, RoutedEventArgs e)
-        {
-            
-        }
+        private void _setEraseModeButton_Checked(object sender, RoutedEventArgs e) { }
 
         #endregion //Methods
 
