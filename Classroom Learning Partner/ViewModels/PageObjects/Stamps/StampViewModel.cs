@@ -268,7 +268,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             var keypadPrompt = IsDraggableStamp
-                ? StampType == StampTypes.GeneralStamp ? "How many are in the group?" : "How many groups?"
+                ? StampType == StampTypes.GeneralStamp ? "How many copies?" : "How many groups?"
                 : StampType == StampTypes.ObservingStamp ? "How many objects?" : "How many groups?";
 
             var keypadLimit = StampType == StampTypes.EmptyGroupStamp || StampType == StampTypes.GroupStamp ? 21 : 101;
