@@ -76,7 +76,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                                         "pack://application:,,,/Resources/Images/Scissors32.png",
                                                         PageInteractionModes.Cut.ToString());
             _setCutModeButton.Checked += _button_Checked;
-            _setDividerCreationModeButton = new GroupedRibbonButton("Create Divider",
+            _setDividerCreationModeButton = new GroupedRibbonButton("Add Divider",
                                                                     "PageInteractionMode",
                                                                     "pack://application:,,,/Resources/Images/InkArray32.png",
                                                                     PageInteractionModes.DividerCreation.ToString());
@@ -136,10 +136,6 @@ namespace Classroom_Learning_Partner.ViewModels
                                                        AddPageObjectToPageCommand,
                                                        "NUMBERLINE");
 
-            //Text
-            //TODO: Better Icons
-            _insertTextBoxButton = new RibbonButton("Text", "pack://application:,,,/Images/AddText.png", AddPageObjectToPageCommand, "TEXTBOX");
-
             //Shapes
             //TODO: Better Icons
             _insertSquareButton = new RibbonButton("Square", "pack://application:,,,/Images/AddSquare.png", AddPageObjectToPageCommand, "SQUARE");
@@ -156,6 +152,10 @@ namespace Classroom_Learning_Partner.ViewModels
                                                        "pack://application:,,,/Images/Protractor64.png",
                                                        AddPageObjectToPageCommand,
                                                        "PROTRACTOR");
+
+            //Text
+            //TODO: Better Icons
+            _insertTextBoxButton = new RibbonButton("Text", "pack://application:,,,/Images/AddText.png", AddPageObjectToPageCommand, "TEXTBOX");
         }
 
         private bool _isCheckedEventRunning = false;
@@ -405,7 +405,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     CLPImageViewModel.AddImageToPage(CurrentPage);
                     break;
 
-                    //Stamps
+                //Stamps
                 case "BLANK_GENERAL_STAMP":
                     StampViewModel.AddBlankGeneralStampToPage(CurrentPage);
                     break;
@@ -436,6 +436,28 @@ namespace Classroom_Learning_Partner.ViewModels
                 case "DIVISIONTEMPLATE":
                     FuzzyFactorCardViewModel.AddDivisionTemplateToPage(CurrentPage);
                     break;
+
+                    //Shapes
+                case "SQUARE":
+                    ShapeViewModel.AddShapeToPage(CurrentPage, ShapeType.Rectangle);
+                    break;
+                case "CIRCLE":
+                    ShapeViewModel.AddShapeToPage(CurrentPage, ShapeType.Ellipse);
+                    break;
+                case "HORIZONTALLINE":
+                    ShapeViewModel.AddShapeToPage(CurrentPage, ShapeType.HorizontalLine);
+                    break;
+                case "VERTICALLINE":
+                    ShapeViewModel.AddShapeToPage(CurrentPage, ShapeType.VerticalLine);
+                    break;
+                case "PROTRACTOR":
+                    ShapeViewModel.AddShapeToPage(CurrentPage, ShapeType.Protractor);
+                    break;
+
+                    //Text
+                case "TEXTBOX":
+                    CLPTextBoxViewModel.AddTextBoxToPage(CurrentPage);
+                    break;
             }
 
             PageInteractionMode = PageInteractionModes.Select;
@@ -451,6 +473,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public void SetRibbonButtons()
         {
+            // Page Interaction Modes
             Buttons.Add(_setSelectModeButton);
             Buttons.Add(_setPenModeButton);
             Buttons.Add(_setEraserModeButton);
@@ -459,15 +482,28 @@ namespace Classroom_Learning_Partner.ViewModels
             Buttons.Add(_setCutModeButton);
             Buttons.Add(_setDividerCreationModeButton);
 
+            // Insert Math Tools
             Buttons.Add(Separater);
-
             Buttons.Add(_insertGeneralStampButton);
             Buttons.Add(_insertGroupStampButton);
             Buttons.Add(_insertPileButton);
             Buttons.Add(_insertNumberLineButton);
             Buttons.Add(_insertArrayButton);
             Buttons.Add(_insertDivisionTemplateButton);
-         //   Buttons.Add(_insertDivisionTemplateWithTilesButton);
+          //Buttons.Add(_insertDivisionTemplateWithTilesButton);
+
+            // Insert Shapes
+            //Buttons.Add(Separater);
+            //Buttons.Add(_insertSquareButton);
+            //Buttons.Add(_insertCircleButton);
+            //Buttons.Add(_insertHorizontalLineButton);
+            //Buttons.Add(_insertVerticalLineButton);
+            //Buttons.Add(_insertProtractorButton);
+
+            // Insert Text Box
+            //Buttons.Add(Separater);
+            //Buttons.Add(_insertTextBoxButton);
+
         }
 
         #endregion //Methods

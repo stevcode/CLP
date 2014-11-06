@@ -7,6 +7,7 @@ using Catel.IO;
 using Catel.MVVM;
 using Catel.Windows;
 using Classroom_Learning_Partner.Services;
+using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -21,7 +22,11 @@ namespace Classroom_Learning_Partner.ViewModels
             SelectedCacheName = AvailableCacheNames.FirstOrDefault();
         }
 
-        private void InitializeCommands() { OpenNotebookCommand = new Command(OnOpenNotebookCommandExecute, OnOpenNotebookCanExecute); }
+        private void InitializeCommands()
+        {
+            OpenNotebookCommand = new Command(OnOpenNotebookCommandExecute, OnOpenNotebookCanExecute);
+            StartClassPeriodCommand = new Command(OnStartClassPeriodCommandExecute);
+        }
 
         #endregion //Constructor
 
@@ -106,6 +111,17 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         private bool OnOpenNotebookCanExecute() { return SelectedNotebook != null; }
+
+        /// <summary>
+        /// Starts the closest <see cref="ClassPeriod" />.
+        /// </summary>
+        public Command StartClassPeriodCommand { get; private set; }
+
+        private void OnStartClassPeriodCommandExecute()
+        {
+            MainWindowViewModel.LocalCacheDirectory = SelectedCacheDirectory;
+            MainWindowViewModel.OpenClassPeriod();
+        }
 
         #endregion //Commands
     }

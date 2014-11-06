@@ -81,8 +81,6 @@ namespace Classroom_Learning_Partner.ViewModels
             ConvertToXPSCommand = new Command(OnConvertToXPSCommandExecute);
             ConvertPageSubmissionToXPSCommand = new Command(OnConvertPageSubmissionToXPSCommandExecute);
             ConvertAllSubmissionsToXPSCommand = new Command(OnConvertAllSubmissionsToXPSCommandExecute);
-            OpenClassPeriodCommand = new Command(OnOpenClassPeriodCommandExecute);
-            StartClassPeriodCommand = new Command(OnStartClassPeriodCommandExecute);
             ViewAllWorkCommand = new Command(OnViewAllWorkCommandExecute);
             LogInAsNotebookOwnerCommand = new Command(OnLogInAsNotebookOwnerCommandExecute);
             RefreshNetworkCommand = new Command(OnRefreshNetworkCommandExecute);
@@ -111,12 +109,6 @@ namespace Classroom_Learning_Partner.ViewModels
             //Insert
             ToggleWebcamPanelCommand = new Command<bool>(OnToggleWebcamPanelCommandExecute);
             InsertStaticImageCommand = new Command<string>(OnInsertStaticImageCommandExecute, OnInsertPageObjectCanExecute);
-            InsertProtractorCommand = new Command(OnInsertProtractorCommandExecute, OnInsertPageObjectCanExecute);
-            InsertSquareShapeCommand = new Command(OnInsertSquareShapeCommandExecute, OnInsertPageObjectCanExecute);
-            InsertCircleShapeCommand = new Command(OnInsertCircleShapeCommandExecute, OnInsertPageObjectCanExecute);
-            InsertHorizontalLineShapeCommand = new Command(OnInsertHorizontalLineShapeCommandExecute, OnInsertPageObjectCanExecute);
-            InsertVerticalLineShapeCommand = new Command(OnInsertVerticalLineShapeCommandExecute, OnInsertPageObjectCanExecute);
-            InsertTextBoxCommand = new Command(OnInsertTextBoxCommandExecute, OnInsertPageObjectCanExecute);
             InsertAggregationDataTableCommand = new Command(OnInsertAggregationDataTableCommandExecute, OnInsertPageObjectCanExecute);
             InsertHandwritingRegionCommand = new Command(OnInsertHandwritingRegionCommandExecute, OnInsertPageObjectCanExecute);
             InsertInkShapeRegionCommand = new Command(OnInsertInkShapeRegionCommandExecute, OnInsertPageObjectCanExecute);
@@ -1002,26 +994,7 @@ namespace Classroom_Learning_Partner.ViewModels
             
             ConvertPagesToXPS(allSortedPages, notebook, "All Submissions");
         }
-
-        /// <summary>
-        /// SUMMARY
-        /// </summary>
-        public Command OpenClassPeriodCommand { get; private set; }
-
-        private void OnOpenClassPeriodCommandExecute()
-        {
-            
-        }
-
-        /// <summary>
-        /// Starts the closest <see cref="ClassPeriod" />.
-        /// </summary>
-        public Command StartClassPeriodCommand { get; private set; }
-
-        private void OnStartClassPeriodCommandExecute()
-        {
-            MainWindowViewModel.OpenClassPeriod();
-        }
+     
 
         /// <summary>
         /// Creates and starts a ClassPeriod with all Student Work.
@@ -1979,17 +1952,6 @@ namespace Classroom_Learning_Partner.ViewModels
         private bool OnInsertPageObjectCanExecute(string s) { return CurrentPage != null; }
 
         /// <summary>
-        /// Gets the InsertTextBoxCommand command.
-        /// </summary>
-        public Command InsertTextBoxCommand { get; private set; }
-
-        private void OnInsertTextBoxCommandExecute()
-        {
-            var textBox = new CLPTextBox(CurrentPage, string.Empty);
-            ACLPPageBaseViewModel.AddPageObjectToPage(textBox);
-        }
-
-        /// <summary>
         /// Gets the InsertAggregationDataTableCommand command.
         /// </summary>
         public Command InsertAggregationDataTableCommand { get; private set; }
@@ -2121,72 +2083,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        /// <summary>
-        /// Gets the InsertProtractorCommand command.
-        /// </summary>
-        public Command InsertProtractorCommand { get; private set; }
-
-        private void OnInsertProtractorCommandExecute()
-        {
-            var square = new Shape(CurrentPage, ShapeType.Protractor);
-            square.Height = 200;
-            square.Width = 2.0*square.Height;
-            
-            ACLPPageBaseViewModel.AddPageObjectToPage(square);
-        }
-
-        /// <summary>
-        /// Gets the InsertSquareShapeCommand command.
-        /// </summary>
-        public Command InsertSquareShapeCommand { get; private set; }
-
-        private void OnInsertSquareShapeCommandExecute()
-        {
-            var square = new Shape(CurrentPage, ShapeType.Rectangle);
-            ACLPPageBaseViewModel.AddPageObjectToPage(square);
-        }
-
-        /// <summary>
-        /// Gets the InsertCircleShapeCommand command.
-        /// </summary>
-        public Command InsertCircleShapeCommand { get; private set; }
-
-        /// <summary>
-        /// Method to invoke when the InsertCircleShapeCommand command is executed.
-        /// </summary>
-        private void OnInsertCircleShapeCommandExecute()
-        {
-            var circle = new Shape(CurrentPage, ShapeType.Ellipse);
-            ACLPPageBaseViewModel.AddPageObjectToPage(circle);
-        }
-
-        /// <summary>
-        /// Gets the InsertHorizontalLineShapCommand command.
-        /// </summary>
-        public Command InsertHorizontalLineShapeCommand { get; private set; }
-
-        private void OnInsertHorizontalLineShapeCommandExecute()
-        {
-            var line = new Shape(CurrentPage, ShapeType.HorizontalLine)
-                       {
-                           Height = 20.0
-                       };
-            ACLPPageBaseViewModel.AddPageObjectToPage(line);
-        }
-
-        /// <summary>
-        /// Gets the InsertHorizontalLineShapCommand command.
-        /// </summary>
-        public Command InsertVerticalLineShapeCommand { get; private set; }
-
-        private void OnInsertVerticalLineShapeCommandExecute()
-        {
-            var line = new Shape(CurrentPage, ShapeType.VerticalLine)
-                       {
-                           Width = 20.0
-                       };
-            ACLPPageBaseViewModel.AddPageObjectToPage(line);
-        }
+   
 
         /// <summary>
         /// Gets the InsertHandwritingRegionCommand command.

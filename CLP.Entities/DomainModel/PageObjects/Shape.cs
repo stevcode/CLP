@@ -32,7 +32,33 @@ namespace CLP.Entities
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="Shape" /> belongs to.</param>
         /// <param name="shapeType">The <see cref="ShapeType" /> of the <see cref="Shape" />.</param>
         public Shape(CLPPage parentPage, ShapeType shapeType)
-            : base(parentPage) { ShapeType = shapeType; }
+            : base(parentPage)
+        {
+            ShapeType = shapeType;
+            switch (shapeType)
+            {
+                case ShapeType.Rectangle:
+                case ShapeType.Ellipse:
+                case ShapeType.Triangle:
+                    Height = 80;
+                    Width = 80;
+                    break;
+                case ShapeType.HorizontalLine:
+                    Width = 100;
+                    Height = 20;
+                    break;
+                case ShapeType.VerticalLine:
+                    Height = 100;
+                    Width = 20;
+                    break;
+                case ShapeType.Protractor:
+                    Height = 200;
+                    Width = 2 * Height;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("shapeType");
+            }
+        }
 
         /// <summary>
         /// Initializes <see cref="Shape" /> based on <see cref="SerializationInfo" />.

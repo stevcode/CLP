@@ -24,5 +24,15 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData TextProperty = RegisterProperty("Text", typeof(string));
+
+        #region Static Methods
+
+        public static void AddTextBoxToPage(CLPPage page)
+        {
+            var textBox = new CLPTextBox(page, string.Empty);
+            ACLPPageBaseViewModel.AddPageObjectToPage(textBox);
+        }
+
+        #endregion //Static Methods
     }
 }

@@ -62,11 +62,6 @@
                                            Command="{Binding OpenClassPeriodCommand}"
                                            Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
                 
-                <RibbonApplicationMenuItem Header="Start Current Class Period"
-                                           ImageSource="pack://application:,,,/Resources/Images/GroupSubmit32.png"
-                                           Command="{Binding StartClassPeriodCommand}"
-                                           Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
-                
                 <RibbonApplicationMenuItem Header="View All Work"
                                            ImageSource="pack://application:,,,/Resources/Images/GroupSubmit32.png"
                                            Command="{Binding ViewAllWorkCommand}"

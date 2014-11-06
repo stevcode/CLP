@@ -557,7 +557,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var notebookToUse = copiedNotebook;
 
             var storedNotebookFolderName = copiedNotebook.Name + ";" + copiedNotebook.ID + ";" + copiedNotebook.Owner.FullName + ";" +
-                                           copiedNotebook.OwnerID;
+                                           copiedNotebook.OwnerID + ";T";
             var storedNotebookFolderPath = Path.Combine(NotebookCacheDirectory, storedNotebookFolderName);
             if (Directory.Exists(storedNotebookFolderPath))
             {
@@ -581,7 +581,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 foreach (var notebookName in AvailableLocalNotebookNames)
                 {
                     var notebookInfo = notebookName.Split(';');
-                    if (notebookInfo.Length != 4 ||
+                    if ((notebookInfo.Length != 4 && notebookInfo.Length != 5) ||
                         notebookInfo[3] == Person.Author.ID ||
                         notebookInfo[3] == App.MainWindowViewModel.CurrentUser.ID)
                     {
@@ -643,6 +643,7 @@ namespace Classroom_Learning_Partner.ViewModels
             App.MainWindowViewModel.OpenNotebooks.Add(notebookToUse);
             App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(notebookToUse);
             App.MainWindowViewModel.AvailableUsers = App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.StudentList;
+            App.MainWindowViewModel.IsBackStageVisible = false;
         }
 
         public static void ViewAllWork()
@@ -815,7 +816,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var notebookFolderPaths = Directory.GetDirectories(NotebookCacheDirectory);
             return (from notebookFolderPath in notebookFolderPaths
                     let notebookInfo = notebookFolderPath.Split(';')
-                    where notebookInfo.Length == 4
+                    where notebookInfo.Length == 4 || notebookInfo.Length == 5
                     let notebookID = notebookInfo[1]
                     let notebookOwnerID = notebookInfo[3]
                     where notebookID == id && notebookOwnerID == ownerID
