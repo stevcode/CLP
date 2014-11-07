@@ -276,6 +276,7 @@
     <Compile Include="Resources\InkInterpretation.cs" />
     <Compile Include="Services\INotebookService.cs" />
     <Compile Include="Services\NotebookService.cs" />
+    <Compile Include="Services\TextBoxService.cs" />
     <Compile Include="Utilities\Extensions\ObservableCollectionExtensions.cs" />
     <Compile Include="Utilities\ObservableCollectionOperation.cs" />
     <Compile Include="ViewModels\BackStage\BackStageViewModel.cs" />
@@ -406,7 +407,6 @@
     <Compile Include="Views\Controls\AdornedControl\AdornedControl.cs" />
     <Compile Include="Views\Controls\AdornedControl\FrameworkElementAdorner.cs" />
     <Compile Include="Views\Extenders\ListBoxExtenders.cs" />
-    <Compile Include="Views\Controls\VisualGrid.cs" />
     <Compile Include="Views\Controls\WebcamPlayer\CapDevice.cs" />
     <Compile Include="Views\Controls\WebcamPlayer\CapGrabber.cs" />
     <Compile Include="Views\Controls\WebcamPlayer\CapHelper.cs" />

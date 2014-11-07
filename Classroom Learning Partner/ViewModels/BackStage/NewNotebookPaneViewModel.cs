@@ -126,7 +126,7 @@ namespace Classroom_Learning_Partner.ViewModels
             // TODO: Reimplement when autosave returns
             //SaveNotebook(newNotebook);
 
-            LoadedNotebookService.OpeNotebooks.Add(newNotebook);
+            LoadedNotebookService.OpenNotebooks.Add(newNotebook);
             LoadedNotebookService.CurrentNotebook = newNotebook;
 
             App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(newNotebook);

@@ -103,7 +103,7 @@ namespace Classroom_Learning_Partner.Services
 
         private readonly List<Notebook> _openNotebooks = new List<Notebook>();
 
-        public List<Notebook> OpeNotebooks //BUG: spelled wrong
+        public List<Notebook> OpenNotebooks
         {
             get { return _openNotebooks; }
         }
@@ -189,7 +189,7 @@ namespace Classroom_Learning_Partner.Services
             }
 
             CurrentLocalCacheDirectory = localCacheFolderPath;
-            OpeNotebooks.Add(notebook);
+            OpenNotebooks.Add(notebook);
             CurrentNotebook = notebook;
             App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(notebook);
             if (notebook.OwnerID == Person.Author.ID)

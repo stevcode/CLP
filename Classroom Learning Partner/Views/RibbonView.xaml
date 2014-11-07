@@ -296,76 +296,6 @@
                               Command="{Binding InsertArrayCommand}"
                               CommandParameter="FACTORCARD" />-->
 
-                <RibbonButton Label="Division Tool"
-                              LargeImageSource="pack://application:,,,/Resources/Images/FuzzyFactorCard32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/FuzzyFactorCard16.png"
-                              Command="{Binding InsertArrayCommand}"
-                              CommandParameter="FUZZYFACTORCARD" />
-
-                <RibbonButton Label="Division Tool With Tiles"
-                              LargeImageSource="pack://application:,,,/Resources/Images/FuzzyFactorCard32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/FuzzyFactorCard16.png"
-                              Command="{Binding InsertArrayCommand}"
-                              CommandParameter="FFCREMAINDER" />
-
-            </RibbonGroup>
-
-            <RibbonGroup Header="Pen Color">
-                <RibbonGroup.Resources>
-                    <Style x:Name="ColorButtonStyle"
-                           TargetType="{x:Type RibbonButton}">
-                        <Setter Property="Width"
-                                Value="25" />
-                        <Setter Property="Height"
-                                Value="25" />
-                        <Setter Property="Command">
-                            <Setter.Value>
-                                <Binding Path="SetPenColorCommand" />
-                            </Setter.Value>
-                        </Setter>
-                        <Setter Property="CommandParameter">
-                            <Setter.Value>
-                                <Binding RelativeSource="{RelativeSource Self}" />
-                            </Setter.Value>
-                        </Setter>
-                        <Setter Property="Margin"
-                                Value="1" />
-                        <Setter Property="BorderBrush"
-                                Value="White" />
-                        <Setter Property="BorderThickness"
-                                Value="0" />
-                    </Style>
-                </RibbonGroup.Resources>
-                <RibbonButton Background="Black" />
-                <RibbonButton Background="White"
-                              Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
-                <RibbonButton Background="Red" />
-                <RibbonButton Background="DarkOrange" />
-                <RibbonButton Background="Tan" />
-                <RibbonButton Background="Gold" />
-                <RibbonButton Background="SaddleBrown" />
-                <RibbonButton Background="DarkGreen" />
-                <RibbonButton Background="MediumSeaGreen" />
-                <RibbonButton Background="Blue" />
-                <RibbonButton Background="HotPink" />
-                <RibbonButton Background="BlueViolet" />
-                <RibbonButton Background="Aquamarine" />
-                <RibbonButton Background="SlateGray" />
-                <RibbonButton Background="SkyBlue"  />
-                <RibbonButton Background="DeepSkyBlue"
-                              Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
-                <Border BorderBrush="Black"
-                        BorderThickness="2"
-                        Background="White"
-                        Height="40"
-                        Width="40"
-                        Margin="7"
-                        Padding="1">
-                    <RibbonButton Background="{Binding CurrentColorButton.Background}"
-                                  IsEnabled="False"
-                                  Width="Auto"
-                                  Height="Auto" />
-                </Border>
             </RibbonGroup>
 
             <RibbonGroup Header="Page">
@@ -493,20 +423,6 @@
                               Command="{Binding SendPageToStudentCommand}" />
 
             </RibbonGroup>
-            
-            <RibbonGroup Header="Notebook">
-            
-                <RibbonButton Label="Previous Page"
-                              LargeImageSource="pack://application:,,,/Resources/Images/PreviousPage32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/PreviousPage16.png"
-                              Command="{Binding PreviousPageCommand}" />
-
-                <RibbonButton Label="Next Page"
-                              LargeImageSource="pack://application:,,,/Resources/Images/NextPage32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/NextPage16.png"
-                              Command="{Binding NextPageCommand}" />
-
-            </RibbonGroup>
 
             <RibbonGroup Header="Differentiation">
                 
@@ -529,10 +445,6 @@
         <!--Insert Tab-->
         <RibbonTab Header="Insert"
                    Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}">
-
-
-
-
 
             <RibbonGroup Header="Arrays">
 
@@ -569,35 +481,7 @@
 
             </RibbonGroup>
 
-            <RibbonGroup Header="Shapes">
-
-                <RibbonButton Label="Protractor"
-                              LargeImageSource="..\Images\Protractor64.png"
-                              Command="{Binding InsertProtractorCommand}" />
-
-                <RibbonButton Label="Square"
-                              LargeImageSource="..\Images\AddSquare.png"
-                              Command="{Binding InsertSquareShapeCommand}" />
-
-                <RibbonButton Label="Circle"
-                              LargeImageSource="..\Images\AddCircle.png"
-                              Command="{Binding InsertCircleShapeCommand}" />
-
-                <RibbonButton Label="Horizontal Line"
-                              LargeImageSource="..\Images\HorizontalLineIcon.png"
-                              Command="{Binding InsertHorizontalLineShapeCommand}" />
-
-                <RibbonButton Label="Vertical Line"
-                              LargeImageSource="..\Images\VerticalLineIcon.png"
-                              Command="{Binding InsertVerticalLineShapeCommand}" />
-
-            </RibbonGroup>
-
             <RibbonGroup Header="Text">
-
-                <RibbonButton Label="Insert Text Box"
-                              LargeImageSource="..\Images\AddText.png"
-                              Command="{Binding InsertTextBoxCommand}" />
 
                 <RibbonControlGroup>
 
