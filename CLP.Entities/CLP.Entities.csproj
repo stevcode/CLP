@@ -112,6 +112,7 @@
     <Compile Include="DomainModel\PageObjects\PageObject Interfaces\IReporter.cs" />
     <Compile Include="DomainModel\Tags\AnalysisRoutines\ArrayAnalysis.cs" />
     <Compile Include="DomainModel\Tags\AnalysisRoutines\DivisionTemplateAnalysis.cs" />
+    <Compile Include="DomainModel\Tags\AnalysisRoutines\NumberLineAnalysis.cs" />
     <Compile Include="DomainModel\Tags\AnalysisRoutines\PageAnalysis.cs" />
     <Compile Include="DomainModel\Tags\AnalysisRoutines\StampAnalysis.cs" />
     <Compile Include="DomainModel\Tags\Array\ArrayCorrectnessSummaryTag.cs" />
@@ -187,6 +188,7 @@
     <Compile Include="DomainModel\Utility\Extentions\GuidExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="DomainModel\Tags\NumberLine\" />
     <Folder Include="Repositories\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
