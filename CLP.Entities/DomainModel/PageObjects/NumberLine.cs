@@ -284,6 +284,9 @@ namespace CLP.Entities
 
             ParentPage.InkStrokes.Remove(new StrokeCollection(AcceptedStrokes));
             ParentPage.History.TrashedInkStrokes.Add(new StrokeCollection(AcceptedStrokes));
+
+            var tag = new NumberLineDeletedTag(ParentPage, Origin.StudentPageObjectGenerated, ID, 0, NumberLineSize, numberLineIDsInHistory.IndexOf(ID), JumpSizes, Ticks.LastOrDefault());
+            ParentPage.AddTag(tag);
         }
         
         public void CreateTicks()
