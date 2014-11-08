@@ -83,6 +83,5 @@ namespace CLP.Entities
 
         #endregion //ATagBase Overrides
 
-        #endregion //Properties
     }
 }

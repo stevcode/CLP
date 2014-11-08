@@ -168,6 +168,8 @@
     <Compile Include="DomainModel\Tags\DivisionTemplate\TroubleWithDivisionTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateCreationErrorTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateRemainderErrorsTag.cs" />
+    <Compile Include="DomainModel\Tags\NumberLine\ANumberLineBaseTag.cs" />
+    <Compile Include="DomainModel\Tags\NumberLine\NumberLineDeletedTag.cs" />
     <Compile Include="DomainModel\Tags\OtherPageInformation\CorrectnessTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateCompletenessTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateDeletedTag.cs" />
@@ -188,7 +190,6 @@
     <Compile Include="DomainModel\Utility\Extentions\GuidExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="DomainModel\Tags\NumberLine\" />
     <Folder Include="Repositories\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

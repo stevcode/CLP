@@ -66,7 +66,7 @@ namespace CLP.Entities
                                      LastNumber,
                                      IsNumberLineStillOnPage ? "still" : "no longer",
                                      string.Join(",", JumpSizes),
-                                     LastMarkedNumber;
+                                     LastMarkedNumber);
             }
         }
 
