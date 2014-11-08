@@ -144,6 +144,8 @@ namespace CLP.Entities
 
         #region Properties
 
+        public override int ZIndex { get { return 50; } }
+
         public virtual double LabelLength
         {
             get { return 22; }

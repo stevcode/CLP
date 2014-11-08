@@ -50,6 +50,8 @@ namespace CLP.Entities
 
         #region Properties
 
+        public override int ZIndex { get { return 10; } }
+
         public override bool IsBackgroundInteractable
         {
             get { return false; }

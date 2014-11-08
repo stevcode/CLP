@@ -6,7 +6,6 @@ using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Ink;
 using System.Windows.Media;
-using System.Windows.Threading;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -46,6 +45,8 @@ namespace CLP.Entities
         #endregion //Constructors
 
         #region Properties
+
+        public override int ZIndex { get { return 1000; } }
 
         /// <summary>
         /// List of all the lassoed <see cref="IPageObject" />s.

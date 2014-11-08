@@ -12,6 +12,7 @@ namespace CLP.Entities
         DateTime CreationDate { get; set; }
         double XPosition { get; set; }
         double YPosition { get; set; }
+        int ZIndex { get; }
         double Height { get; set; }
         double Width { get; set; }
         double MinimumHeight { get; }

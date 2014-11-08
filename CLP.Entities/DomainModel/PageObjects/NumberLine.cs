@@ -153,6 +153,8 @@ namespace CLP.Entities
 
         #region Properties
 
+        public override int ZIndex { get { return 60; } }
+
         public double NumberLineHeight
         {
             get { return 75.0; }

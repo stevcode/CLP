@@ -110,6 +110,8 @@ namespace CLP.Entities
 
         public static readonly PropertyData YPositionProperty = RegisterProperty("YPosition", typeof (double), 250.0);
 
+        public abstract int ZIndex { get; }
+
         /// <summary>Height of the <see cref="IPageObject" />.</summary>
         public double Height
         {

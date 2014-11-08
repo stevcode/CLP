@@ -84,6 +84,8 @@ namespace CLP.Entities
 
         #region Properties
 
+        public override int ZIndex { get { return 60; } }
+
         /// <summary>Determines whether the <see cref="IPageObject" /> has properties can be changed by a <see cref="Person" /> anyone at any time.</summary>
         public override bool IsBackgroundInteractable
         {

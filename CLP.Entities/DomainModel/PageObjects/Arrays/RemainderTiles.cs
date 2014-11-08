@@ -39,6 +39,8 @@ namespace CLP.Entities
 
         #region Properties
 
+        public override int ZIndex { get { return 40; } }
+
         /// <summary>
         /// Unique Identifier of the <see cref="FuzzyFactorCard" /> this <see cref="RemainderTiles" /> is attached to.
         /// </summary>

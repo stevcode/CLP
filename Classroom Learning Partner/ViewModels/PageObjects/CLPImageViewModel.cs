@@ -67,8 +67,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Binding
 
-        
-
         /// <summary>
         /// Gets the CLPImageResize command.
         /// </summary>
