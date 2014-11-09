@@ -5,12 +5,14 @@
                    xmlns:customControls="clr-namespace:CLP.CustomControls;assembly=CLP.CustomControls"
                    xmlns:viewModels="clr-namespace:Classroom_Learning_Partner.ViewModels"
                    xmlns:converters="clr-namespace:Classroom_Learning_Partner.Converters"
-                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views">
+                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
+                   xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
 
     <catel:UserControl.Resources>
         <catel:BooleanToOppositeBooleanConverter x:Key="BooleanToOppositeBooleanConverter" />
         <converters:EnumToBoolConverter x:Key="EnumToBoolConverter" />
         <converters:TypeToStringConverter x:Key="TypeToStringConverter" />
+        <customControls:HLSColorValueConverter x:Key="ColorConverter" />
     </catel:UserControl.Resources>
 
     <DockPanel Background="White"
@@ -258,21 +260,181 @@
 
         </DockPanel>
 
-        <!-- "TitleBar" -->
+        <!-- TitleBar -->
         <DockPanel DockPanel.Dock="Top"
                    LastChildFill="True"
                    Height="24">
 
-            <TextBlock Text="Classroom Learning Partner"
-                       TextAlignment="Center"
+            <!-- Program Close Button -->
+            <Button DockPanel.Dock="Right"
+                    Command="{Binding ExitProgramCommand}"
+                    Width="48"
+                    Height="24">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="SnapsToDevicePixels"
+                                Value="true" />
+                        <Setter Property="OverridesDefaultStyle"
+                                Value="true" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+
+                                    <Border x:Name="ButtonBorder"
+                                            BorderThickness="0">
+                                        <ContentPresenter Margin="5"
+                                                          HorizontalAlignment="Center"
+                                                          VerticalAlignment="Center" />
+                                    </Border>
+
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsPressed"
+                                                 Value="True">
+                                            <Setter TargetName="ButtonBorder"
+                                                    Property="Background"
+                                                    Value="Green" />
+                                        </Trigger>
+                                        <Trigger Property="IsEnabled"
+                                                 Value="False">
+                                            <Setter TargetName="ButtonBorder"
+                                                    Property="Opacity"
+                                                    Value=".15" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+
+                    </Style>
+                </Button.Style>
+
+                <Image Source="pack://application:,,,/Images/Delete.png"
                        HorizontalAlignment="Center"
-                       VerticalAlignment="Center"
-                       FontFamily="Segoe UI"
-                       FontSize="14"
-                       Foreground="Black"
-                       TextOptions.TextRenderingMode="Auto"
-                       TextOptions.TextFormattingMode="Ideal" />
+                       VerticalAlignment="Center" />
+
+            </Button>
+
+            <!-- Program Maximize Button -->
+            <Button DockPanel.Dock="Right"
+                    Command="{Binding ToggleMaximizeStateCommand}"
+                    Width="48"
+                    Height="24">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="SnapsToDevicePixels"
+                                Value="true" />
+                        <Setter Property="OverridesDefaultStyle"
+                                Value="true" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+
+                                    <Border x:Name="ButtonBorder"
+                                            BorderThickness="0"
+                                            Background="White">
+                                        <ContentPresenter Margin="5"
+                                                          HorizontalAlignment="Center"
+                                                          VerticalAlignment="Center" />
+                                    </Border>
+
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsPressed"
+                                                 Value="True">
+                                            <Setter TargetName="ButtonBorder"
+                                                    Property="Background"
+                                                    Value="{Binding Source={StaticResource DynamicMainColor}, Converter={StaticResource ColorConverter}, ConverterParameter='1.25'}" />
+                                        </Trigger>
+                                        <Trigger Property="IsEnabled"
+                                                 Value="False">
+                                            <Setter TargetName="ButtonBorder"
+                                                    Property="Opacity"
+                                                    Value=".15" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+
+                    </Style>
+                </Button.Style>
+
+                <Image Source="pack://application:,,,/Resources/Images/Displays32.png"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center" />
+
+            </Button>
+
+            <!-- Program Minimize Button -->
+            <Button DockPanel.Dock="Right"
+                    Command="{Binding ToggleMinimizeStateCommand}"
+                    Width="48"
+                    Height="24">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="SnapsToDevicePixels"
+                                Value="true" />
+                        <Setter Property="OverridesDefaultStyle"
+                                Value="true" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+
+                                    <Border x:Name="ButtonBorder"
+                                            BorderThickness="0"
+                                            Background="White">
+                                        <ContentPresenter Margin="5"
+                                                          HorizontalAlignment="Center"
+                                                          VerticalAlignment="Center" />
+                                    </Border>
+
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsPressed"
+                                                 Value="True">
+                                            <Setter TargetName="ButtonBorder"
+                                                    Property="Background"
+                                                    Value="{Binding Source={StaticResource DynamicMainColor}, Converter={StaticResource ColorConverter}, ConverterParameter='1.25'}" />
+                                        </Trigger>
+                                        <Trigger Property="IsEnabled"
+                                                 Value="False">
+                                            <Setter TargetName="ButtonBorder"
+                                                    Property="Opacity"
+                                                    Value=".15" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+
+                    </Style>
+                </Button.Style>
+
+                <Image Source="pack://application:,,,/Resources/Images/GrayPlus32.png"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center" />
+
+            </Button>
             
+            <Grid Background="Transparent">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="PreviewMouseMove">
+                        <catel:EventToCommand Command="{Binding MoveWindowCommand}"
+                                              PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                <TextBlock Text="Classroom Learning Partner"
+                           TextAlignment="Center"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontFamily="Segoe UI"
+                           FontSize="14"
+                           Foreground="Black"
+                           TextOptions.TextRenderingMode="Auto"
+                           TextOptions.TextFormattingMode="Ideal" />
+            </Grid>
+
         </DockPanel>
 
         <!-- Pane View -->

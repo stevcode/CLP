@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Windows;
+using System.Windows.Input;
 using Catel.Data;
 using Catel.IoC;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Services;
+using Classroom_Learning_Partner.Views;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -24,7 +27,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public BackStageViewModel() { InitializeCommands(); }
 
-        private void InitializeCommands() { HideBackStageCommand = new Command(OnHideBackStageCommandExecute); }
+        private void InitializeCommands()
+        {
+            HideBackStageCommand = new Command(OnHideBackStageCommandExecute);
+            MoveWindowCommand = new Command<MouseButtonEventArgs>(OnMoveWindowCommandExecute);
+            ToggleMinimizeStateCommand = new Command(OnToggleMinimizeStateCommandExecute);
+            ToggleMaximizeStateCommand = new Command(OnToggleMaximizeStateCommandExecute);
+            ExitProgramCommand = new Command(OnExitProgramCommandExecute);
+        }
 
         #region Bindings
 
@@ -69,6 +79,70 @@ namespace Classroom_Learning_Partner.ViewModels
         public Command HideBackStageCommand { get; private set; }
 
         private void OnHideBackStageCommandExecute() { MainWindow.IsBackStageVisible = false; }
+
+        /// <summary>
+        /// Moves the CLP Window.
+        /// </summary>
+        public Command<MouseButtonEventArgs> MoveWindowCommand { get; private set; }
+
+        private void OnMoveWindowCommandExecute(MouseButtonEventArgs args)
+        {
+            var mainWindow = CLPServiceAgent.Instance.GetViewFromViewModel(App.MainWindowViewModel) as MainWindowView;
+            if (mainWindow == null ||
+                Mouse.LeftButton != MouseButtonState.Pressed)
+            {
+                return;
+            }
+
+            mainWindow.DragMove();
+        }
+
+        /// <summary>
+        /// Toggles CLP between minimized and not.
+        /// </summary>
+        public Command ToggleMinimizeStateCommand { get; private set; }
+
+        private void OnToggleMinimizeStateCommandExecute()
+        {
+            var mainWindow = CLPServiceAgent.Instance.GetViewFromViewModel(App.MainWindowViewModel) as MainWindowView;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            mainWindow.WindowState = WindowState.Minimized;
+        }
+
+        /// <summary>
+        /// Toggles CLP Window State between Maximized and Normal.
+        /// </summary>
+        public Command ToggleMaximizeStateCommand { get; private set; }
+
+        private void OnToggleMaximizeStateCommandExecute()
+        {
+            var mainWindow = CLPServiceAgent.Instance.GetViewFromViewModel(App.MainWindowViewModel) as MainWindowView;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            mainWindow.WindowState = mainWindow.WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+        }
+
+        /// <summary>
+        /// Closes CLP
+        /// </summary>
+        public Command ExitProgramCommand { get; private set; }
+
+        private void OnExitProgramCommandExecute()
+        {
+            var mainWindow = CLPServiceAgent.Instance.GetViewFromViewModel(App.MainWindowViewModel) as MainWindowView;
+            if (mainWindow == null)
+            {
+                return;
+            }
+            mainWindow.Close();
+        }
 
         #endregion //Commands
 
