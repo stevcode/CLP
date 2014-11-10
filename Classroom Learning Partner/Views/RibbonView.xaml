@@ -78,21 +78,6 @@
                                            ImageSource="pack://application:,,,/Resources/Images/ReconnectToNetwork32.png"
                                            Command="{Binding RefreshNetworkCommand}" />
 
-                <RibbonApplicationMenu.FooterPaneContent>
-                    <DockPanel LastChildFill="False">
-                        <RibbonButton Command="{Binding ExitCommand}"
-                                      Label="Exit"
-                                      ToolTipTitle="Exit"
-                                      KeyTip="X"
-                                      DockPanel.Dock="Right"
-                                      Margin="2"
-                                      BorderBrush="#B8114EAF"
-                                      LargeImageSource="pack://application:,,,/Resources/Images/Exit64.png"
-                                      Height="64"
-                                      Width="64" />
-                    </DockPanel>
-                </RibbonApplicationMenu.FooterPaneContent>
-
             </RibbonApplicationMenu>
         </Ribbon.ApplicationMenu>
 

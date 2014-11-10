@@ -17,7 +17,9 @@
                   ResizeMode="CanResize"
                   SizeToContent="Manual"
                   WindowStartupLocation="CenterScreen"
-                  WindowState="Maximized">
+                  WindowState="Maximized"
+                  MinWidth="300"
+                  MinHeight="300">
 
     <catel:DataWindow.Resources>
         <ResourceDictionary>

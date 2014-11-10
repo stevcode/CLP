@@ -143,8 +143,10 @@
               Margin="0 2 0 2"
               Stroke="{DynamicResource DynamicMainColor}"
               StrokeThickness="1" />
-        
-        <Grid>
+
+        <ScrollViewer x:Name="ScrollViewer"
+                      VerticalScrollBarVisibility="Disabled"
+                      HorizontalScrollBarVisibility="Hidden">
             <ItemsControl ItemsSource="{Binding Buttons}"
                           HorizontalAlignment="Center">
                 <ItemsControl.ItemsPanel>
@@ -154,7 +156,7 @@
                 </ItemsControl.ItemsPanel>
 
             </ItemsControl>
-        </Grid>
+        </ScrollViewer>
         
     </DockPanel>
 </catel:UserControl>

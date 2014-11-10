@@ -13,7 +13,9 @@
               Stroke="{StaticResource GrayEdgeColor}"
               StrokeThickness="1" />
 
-        <Grid>
+        <ScrollViewer x:Name="ScrollViewer"
+                      VerticalScrollBarVisibility="Disabled"
+                      HorizontalScrollBarVisibility="Hidden">
             <ItemsControl ItemsSource="{Binding Buttons}"
                           
                           HorizontalAlignment="Left">
@@ -29,7 +31,7 @@
                     </Style>
                 </ItemsControl.ItemContainerStyle>
             </ItemsControl>
-        </Grid>
+        </ScrollViewer>
 
     </DockPanel>
 </catel:UserControl>

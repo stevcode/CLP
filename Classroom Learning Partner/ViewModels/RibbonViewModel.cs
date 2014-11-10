@@ -85,7 +85,6 @@ namespace Classroom_Learning_Partner.ViewModels
             LogInAsNotebookOwnerCommand = new Command(OnLogInAsNotebookOwnerCommandExecute);
             RefreshNetworkCommand = new Command(OnRefreshNetworkCommandExecute);
             ToggleThumbnailsCommand = new Command(OnToggleThumbnailsCommandExecute);
-            ExitCommand = new Command(OnExitCommandExecute);
 
             //Notebook
             PreviousPageCommand = new Command(OnPreviousPageCommandExecute, OnPreviousPageCanExecute);
@@ -1041,20 +1040,6 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnToggleThumbnailsCommandExecute()
         {
             ThumbnailsTop = (ThumbnailsTop == false);
-        }
-
-        /// <summary>
-        /// Exits the program.
-        /// </summary>
-        public Command ExitCommand { get; private set; }
-
-        private void OnExitCommandExecute()
-        {
-            if(MessageBox.Show("Are you sure you want to exit?",
-                                        "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-            {
-                CLPServiceAgent.Instance.Exit();
-            }
         }
 
         #endregion //File Menu
