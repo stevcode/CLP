@@ -274,6 +274,15 @@ namespace CLP.Entities
 
         #region Methods
 
+        public override void OnAdded()
+        {
+            base.OnAdded();
+
+            var numberLineIDsInHistory = NumberLineAnalysis.GetListOfNumberLineIDsInHistory(ParentPage);
+            var tag = new NumberLineCreationTag(ParentPage, Origin.StudentPageObjectGenerated, ID, 0, NumberLineSize, numberLineIDsInHistory.IndexOf(ID), NumberLineSize);
+            ParentPage.AddTag(tag);
+        }
+
         public override void OnDeleted()
         {
             if (!CanAcceptStrokes ||
@@ -285,7 +294,15 @@ namespace CLP.Entities
             ParentPage.InkStrokes.Remove(new StrokeCollection(AcceptedStrokes));
             ParentPage.History.TrashedInkStrokes.Add(new StrokeCollection(AcceptedStrokes));
 
-            var tag = new NumberLineDeletedTag(ParentPage, Origin.StudentPageObjectGenerated, ID, 0, NumberLineSize, numberLineIDsInHistory.IndexOf(ID), JumpSizes, Ticks.LastOrDefault());
+            var listofJumpSizesSizes = new ObservableCollection<int>();
+            
+            foreach (var jumpsize in JumpSizes)
+            {
+                listofJumpSizesSizes.Add(jumpsize.JumpSize);
+            }
+
+            var numberLineIDsInHistory = NumberLineAnalysis.GetListOfNumberLineIDsInHistory(ParentPage);
+            var tag = new NumberLineDeletedTag(ParentPage, Origin.StudentPageObjectGenerated, ID, 0, NumberLineSize, numberLineIDsInHistory.IndexOf(ID), listofJumpSizesSizes, Ticks.LastOrDefault().TickValue);
             ParentPage.AddTag(tag);
         }
         

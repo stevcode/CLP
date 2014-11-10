@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
 {
     [Serializable]
-    public class NumberLineDeletedTag : ADivisionTemplateBaseTag
+    public class NumberLineDeletedTag : ANumberLineBaseTag
     {
         #region Constructors
 
@@ -18,7 +19,7 @@ namespace CLP.Entities
                                           int firstNumber,
                                           int lastNumber,
                                           int numberLineNumber,
-                                          List<string> jumpSizes,
+                                          ObservableCollection<int> jumpSizes,
                                           int lastMarkedNumber
                                           )
             : base(parentPage, origin, numberLineID, firstNumber, lastNumber, numberLineNumber)
@@ -34,17 +35,17 @@ namespace CLP.Entities
 
         #region Properties
 
-        public List<string> JumpSizes
+        public ObservableCollection<int> JumpSizes
         {
-            get { return GetValue<List<string>>(JumpSizesProperty); }
+            get { return GetValue<ObservableCollection<int>>(JumpSizesProperty); }
             set { SetValue(JumpSizesProperty, value); }
         }
 
-        public static readonly PropertyData JumpSizesProperty = RegisterProperty("JumpSizes", typeof(List<string>));
+        public static readonly PropertyData JumpSizesProperty = RegisterProperty("JumpSizes", typeof(ObservableCollection<int>));
 
         public int LastMarkedNumber
         {
-            get { return GetValue<List<string>>(LastMarkedNumberProperty); }
+            get { return GetValue<int>(LastMarkedNumberProperty); }
             set { SetValue(LastMarkedNumberProperty, value); }
         }
 
@@ -65,7 +66,7 @@ namespace CLP.Entities
                                      FirstNumber,
                                      LastNumber,
                                      IsNumberLineStillOnPage ? "still" : "no longer",
-                                     string.Join(",", JumpSizes),
+                                     string.Join(",", JumpSizes.ToString()),
                                      LastMarkedNumber);
             }
         }
