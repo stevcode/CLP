@@ -279,12 +279,57 @@ namespace CLP.Entities
             base.OnAdded();
 
             var numberLineIDsInHistory = NumberLineAnalysis.GetListOfNumberLineIDsInHistory(ParentPage);
-            var tag = new NumberLineCreationTag(ParentPage, Origin.StudentPageObjectGenerated, ID, 0, NumberLineSize, numberLineIDsInHistory.IndexOf(ID), NumberLineSize);
+            var page = NumberLine.ParentPage();
+
+            var numberLines = page.PageObjects.OfType<FuzzyFactorCard>().ToList();
+            if (!MultiplicationDefinitionTags.Any() ||
+                !divisionTemplates.Any())
+            {
+                return;
+            }
+
+            foreach (var divisionDefinitionTag in divisionDefinitionTags)
+            {
+                foreach (var divisionTemplate in divisionTemplates)
+                {
+                    AnalyzeRepresentationCorrectness(page, divisionDefinitionTag, divisionTemplate);
+                }
+            }
+
+
+            var product = NumberLineAnalysis.GetProduct(ParentPage, , NumberLine);
+            var isSmaller = false;
+            var farFromAnswer = 0;
+
+            if (product > NumberLineSize)
+            {
+                isSmaller = true;
+
+                farFromAnswer = product - NumberLineSize;
+
+            }
+            else if(NumberLineSize > product)
+            {
+                farFromAnswer = NumberLineSize - product;
+            }
+
+            var tag = new NumberLineCreationTag(ParentPage, Origin.StudentPageObjectGenerated, ID, 0, NumberLineSize, numberLineIDsInHistory.IndexOf(ID), isSmaller, farFromAnswer);
             ParentPage.AddTag(tag);
         }
 
         public override void OnDeleted()
         {
+            var listofJumpSizesSizes = new ObservableCollection<int>();
+
+            foreach (var jumpsize in JumpSizes)
+            {
+                listofJumpSizesSizes.Add(jumpsize.JumpSize);
+            }
+
+            var numberLineIDsInHistory = NumberLineAnalysis.GetListOfNumberLineIDsInHistory(ParentPage);
+            var tag = new NumberLineDeletedTag(ParentPage, Origin.StudentPageObjectGenerated, ID, 0, NumberLineSize, numberLineIDsInHistory.IndexOf(ID), listofJumpSizesSizes, Ticks.LastOrDefault().TickValue);
+            ParentPage.AddTag(tag);
+
             if (!CanAcceptStrokes ||
                 !AcceptedStrokes.Any())
             {
@@ -294,16 +339,6 @@ namespace CLP.Entities
             ParentPage.InkStrokes.Remove(new StrokeCollection(AcceptedStrokes));
             ParentPage.History.TrashedInkStrokes.Add(new StrokeCollection(AcceptedStrokes));
 
-            var listofJumpSizesSizes = new ObservableCollection<int>();
-            
-            foreach (var jumpsize in JumpSizes)
-            {
-                listofJumpSizesSizes.Add(jumpsize.JumpSize);
-            }
-
-            var numberLineIDsInHistory = NumberLineAnalysis.GetListOfNumberLineIDsInHistory(ParentPage);
-            var tag = new NumberLineDeletedTag(ParentPage, Origin.StudentPageObjectGenerated, ID, 0, NumberLineSize, numberLineIDsInHistory.IndexOf(ID), listofJumpSizesSizes, Ticks.LastOrDefault().TickValue);
-            ParentPage.AddTag(tag);
         }
         
         public void CreateTicks()

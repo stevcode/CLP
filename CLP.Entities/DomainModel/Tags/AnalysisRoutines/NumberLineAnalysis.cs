@@ -8,7 +8,15 @@ namespace CLP.Entities
     {
         public static void Analyze(CLPPage page) { AnalyzeRegion(page, new Rect(0, 0, page.Height, page.Width)); }
 
-        public static void AnalyzeRegion(CLPPage page, Rect region) { }
+        public static void AnalyzeRegion(CLPPage page, Rect region) {        }
+
+        public static double GetProduct(CLPPage page, MultiplicationRelationDefinitionTag multiplicationRelationDefinition, NumberLine numberLine)
+        {
+            var multiplicationDefinitionTags = page.Tags.OfType<MultiplicationRelationDefinitionTag>().ToList();
+
+            return multiplicationRelationDefinition.Product;
+
+        }
 
         public static List<string> GetListOfNumberLineIDsInHistory(CLPPage page)
         {

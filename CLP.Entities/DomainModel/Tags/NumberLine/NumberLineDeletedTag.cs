@@ -19,12 +19,12 @@ namespace CLP.Entities
                                           int firstNumber,
                                           int lastNumber,
                                           int numberLineNumber,
-                                          ObservableCollection<int> jumpSizes,
+                                          ObservableCollection<int> listOfJumpSizesSizes,
                                           int lastMarkedNumber
                                           )
             : base(parentPage, origin, numberLineID, firstNumber, lastNumber, numberLineNumber)
         {
-            JumpSizes = jumpSizes;
+            ListOfJumpSizesSizes = listOfJumpSizesSizes;
             LastMarkedNumber = lastMarkedNumber;
         }
 
@@ -35,13 +35,13 @@ namespace CLP.Entities
 
         #region Properties
 
-        public ObservableCollection<int> JumpSizes
+        public ObservableCollection<int> ListOfJumpSizesSizes
         {
-            get { return GetValue<ObservableCollection<int>>(JumpSizesProperty); }
-            set { SetValue(JumpSizesProperty, value); }
+            get { return GetValue<ObservableCollection<int>>(ListOfJumpSizesSizesProperty); }
+            set { SetValue(ListOfJumpSizesSizesProperty, value); }
         }
 
-        public static readonly PropertyData JumpSizesProperty = RegisterProperty("JumpSizes", typeof(ObservableCollection<int>));
+        public static readonly PropertyData ListOfJumpSizesSizesProperty = RegisterProperty("ListOfJumpSizesSizes", typeof(ObservableCollection<int>));
 
         public int LastMarkedNumber
         {
@@ -66,7 +66,7 @@ namespace CLP.Entities
                                      FirstNumber,
                                      LastNumber,
                                      IsNumberLineStillOnPage ? "still" : "no longer",
-                                     string.Join(",", JumpSizes.ToString()),
+                                     string.Join(",", ListOfJumpSizesSizes),
                                      LastMarkedNumber);
             }
         }
