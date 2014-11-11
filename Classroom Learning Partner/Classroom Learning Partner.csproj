@@ -275,6 +275,7 @@
     <Compile Include="Resources\Converters.cs" />
     <Compile Include="Resources\InkInterpretation.cs" />
     <Compile Include="Services\INotebookService.cs" />
+    <Compile Include="Services\IPageInteractionService.cs" />
     <Compile Include="Services\NotebookService.cs" />
     <Compile Include="Services\PageInteractionService.cs" />
     <Compile Include="Services\TextBoxService.cs" />

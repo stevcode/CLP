@@ -3,7 +3,9 @@ using System.Windows;
 using System.Windows.Media;
 using Catel.Data;
 using Catel.IO;
+using Catel.IoC;
 using Catel.MVVM;
+using Classroom_Learning_Partner.Services;
 using CLP.Entities;
 using Brush = System.Windows.Media.Brush;
 
@@ -69,9 +71,16 @@ namespace Classroom_Learning_Partner.ViewModels
                 NotebookPagesPanel.IsVisible = false;
             }
 
-            if (App.MainWindowViewModel.MajorRibbon.PageInteractionMode == PageInteractionModes.Pen)
+            var pageInteractionService = DependencyResolver.Resolve<IPageInteractionService>();
+
+            switch (pageInteractionService.CurrentPageInteractionMode)
             {
-                ContextRibbon.SetPenContextButtons();
+                case PageInteractionModes.Pen:
+                    ContextRibbon.SetPenContextButtons();
+                    break;
+                case PageInteractionModes.Eraser:
+                    ContextRibbon.SetEraserContextButtons();
+                    break;
             }
         }
 

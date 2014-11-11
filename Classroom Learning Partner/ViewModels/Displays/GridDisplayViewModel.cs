@@ -167,34 +167,34 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnReplayHistoryCommandExecute(CLPPage page)
         {
-            var currentPage = page;
-            if(currentPage == null) { return; }
+            //var currentPage = page;
+            //if(currentPage == null) { return; }
 
-            currentPage.IsTagAddPrevented = true;
-            var oldPageInteractionMode = (App.MainWindowViewModel.MajorRibbon.PageInteractionMode == PageInteractionModes.None) ? PageInteractionModes.Pen : App.MainWindowViewModel.MajorRibbon.PageInteractionMode;
-            App.MainWindowViewModel.MajorRibbon.PageInteractionMode = PageInteractionModes.None;
+            //currentPage.IsTagAddPrevented = true;
+            //var oldPageInteractionMode = (App.MainWindowViewModel.MajorRibbon.PageInteractionMode == PageInteractionModes.None) ? PageInteractionModes.Pen : App.MainWindowViewModel.MajorRibbon.PageInteractionMode;
+            //App.MainWindowViewModel.MajorRibbon.PageInteractionMode = PageInteractionModes.None;
 
-            while(currentPage.History.UndoItems.Any()) { currentPage.History.Undo(); }
+            //while(currentPage.History.UndoItems.Any()) { currentPage.History.Undo(); }
 
-            var t = new Thread(() =>
-                               {
-                                   while(currentPage.History.RedoItems.Any())
-                                   {
-                                       var historyItemAnimationDelay = Convert.ToInt32(Math.Round(currentPage.History.CurrentAnimationDelay / 1.0));
-                                       Application.Current.Dispatcher.Invoke(DispatcherPriority.DataBind,
-                                                                             (DispatcherOperationCallback)delegate
-                                                                                                          {
-                                                                                                              currentPage.History.Redo(true);
-                                                                                                              return null;
-                                                                                                          },
-                                                                             null);
-                                       Thread.Sleep(historyItemAnimationDelay);
-                                   }
-                                   currentPage.IsTagAddPrevented = false;
-                                   App.MainWindowViewModel.MajorRibbon.PageInteractionMode = oldPageInteractionMode;
-                               });
+            //var t = new Thread(() =>
+            //                   {
+            //                       while(currentPage.History.RedoItems.Any())
+            //                       {
+            //                           var historyItemAnimationDelay = Convert.ToInt32(Math.Round(currentPage.History.CurrentAnimationDelay / 1.0));
+            //                           Application.Current.Dispatcher.Invoke(DispatcherPriority.DataBind,
+            //                                                                 (DispatcherOperationCallback)delegate
+            //                                                                                              {
+            //                                                                                                  currentPage.History.Redo(true);
+            //                                                                                                  return null;
+            //                                                                                              },
+            //                                                                 null);
+            //                           Thread.Sleep(historyItemAnimationDelay);
+            //                       }
+            //                       currentPage.IsTagAddPrevented = false;
+            //                       App.MainWindowViewModel.MajorRibbon.PageInteractionMode = oldPageInteractionMode;
+            //                   });
 
-            t.Start();
+            //t.Start();
         }
 
         #endregion //Commands

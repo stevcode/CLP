@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls.Primitives;
 using Catel.Data;
 using Catel.MVVM;
+using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.Views;
 using CLP.CustomControls;
 using CLP.Entities;

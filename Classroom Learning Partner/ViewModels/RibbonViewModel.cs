@@ -155,59 +155,6 @@ namespace Classroom_Learning_Partner.ViewModels
         public CLPTextBoxView LastFocusedTextBox = null;
 
         /// <summary>
-        /// Size of the Pen.
-        /// </summary>
-        public double PenSize
-        {
-            get { return GetValue<double>(PenSizeProperty); }
-            set { SetValue(PenSizeProperty, value); }
-        }
-
-        public static readonly PropertyData PenSizeProperty = RegisterProperty("PenSize", typeof(double), 3);
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public string EraserType
-        {
-            get { return GetValue<string>(EraserTypeProperty); }
-            set { SetValue(EraserTypeProperty, value); }
-        }
-
-        public static readonly PropertyData EraserTypeProperty = RegisterProperty("EraserType", typeof(string), "Stroke Eraser", (sender, e) => ((RibbonViewModel)sender).OnEraserTypeChanged());
-
-        /// <summary>
-        /// Called when the EraserType property has changed.
-        /// </summary>
-        private void OnEraserTypeChanged()
-        {
-            switch(EraserType)
-            {
-                case "Point Eraser":
-                    EraserMode = InkCanvasEditingMode.EraseByPoint;
-                    break;
-                case "Stroke Eraser":
-                    EraserMode = InkCanvasEditingMode.EraseByStroke;
-                    break;
-            }
-            if(PageInteractionMode != PageInteractionModes.Pen)
-            {
-                PageInteractionMode = PageInteractionModes.Pen;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public InkCanvasEditingMode EraserMode
-        {
-            get { return GetValue<InkCanvasEditingMode>(EraserModeProperty); }
-            set { SetValue(EraserModeProperty, value); }
-        }
-
-        public static readonly PropertyData EraserModeProperty = RegisterProperty("EraserMode", typeof(InkCanvasEditingMode), InkCanvasEditingMode.EraseByStroke);
-
-        /// <summary>
         /// Gets or sets the property value.
         /// </summary>
         public bool ThumbnailsTop
@@ -217,17 +164,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData ThumbnailsTopProperty = RegisterProperty("ThumbnailsTop", typeof(bool), false);
-
-        /// <summary>
-        /// Gets the DrawingAttributes of the Ribbon.
-        /// </summary>
-        public DrawingAttributes DrawingAttributes
-        {
-            get { return GetValue<DrawingAttributes>(DrawingAttributesProperty); }
-            private set { SetValue(DrawingAttributesProperty, value); }
-        }
-
-        public static readonly PropertyData DrawingAttributesProperty = RegisterProperty("DrawingAttributes", typeof(DrawingAttributes));
 
         /// <summary>
         /// Enables pictures taken with Webcam to be shared with Group Members.
@@ -243,17 +179,6 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Properties
 
         #region Bindings
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public PageInteractionModes PageInteractionMode
-        {
-            get { return GetValue<PageInteractionModes>(PageInteractionModeProperty); }
-            set { SetValue(PageInteractionModeProperty, value); }
-        }
-
-        public static readonly PropertyData PageInteractionModeProperty = RegisterProperty("PageInteractionMode", typeof(PageInteractionModes));
 
         /// <summary>
         /// Gets or sets the property value.
@@ -1683,7 +1608,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var exitTicketCreationView = new ExitTicketCreationView(exitTicketCreationViewModel);
             exitTicketCreationView.Owner = Application.Current.MainWindow;
 
-            App.MainWindowViewModel.MajorRibbon.PageInteractionMode = PageInteractionModes.Pen;
+            //App.MainWindowViewModel.MajorRibbon.PageInteractionMode = PageInteractionModes.Pen;
             exitTicketCreationView.ShowDialog();
             if(exitTicketCreationView.DialogResult == true)
             {
@@ -1707,7 +1632,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var exitTicketCreationView = new ExitTicketCreationView(exitTicketCreationViewModel);
             exitTicketCreationView.Owner = Application.Current.MainWindow;
 
-            App.MainWindowViewModel.MajorRibbon.PageInteractionMode = PageInteractionModes.Pen;
+            //App.MainWindowViewModel.MajorRibbon.PageInteractionMode = PageInteractionModes.Pen;
             exitTicketCreationView.ShowDialog();
             if(exitTicketCreationView.DialogResult == true)
             {

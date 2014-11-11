@@ -1,4 +1,6 @@
 ﻿using System;
+using Catel.IoC;
+using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.ViewModels;
 using CLP.Entities;
 
@@ -38,6 +40,9 @@ namespace Classroom_Learning_Partner.Views
             {
                 (ViewModel as ACLPPageBaseViewModel).TopCanvas = TopCanvas;
                 (ViewModel as ACLPPageBaseViewModel).IsPagePreview = false;
+                var pageInteractionService = ServiceLocator.Default.ResolveType<IPageInteractionService>();
+                pageInteractionService.ActivePageViewModels.Clear();
+                pageInteractionService.ActivePageViewModels.Add(ViewModel as ACLPPageBaseViewModel);
             }
 
             base.OnViewModelChanged();

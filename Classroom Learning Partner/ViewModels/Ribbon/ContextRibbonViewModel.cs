@@ -5,14 +5,18 @@ using System.Windows.Ink;
 using System.Windows.Media;
 using Catel.Collections;
 using Catel.Data;
+using Catel.IoC;
 using Catel.MVVM;
+using Classroom_Learning_Partner.Services;
 using CLP.CustomControls;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
     public class ContextRibbonViewModel : ViewModelBase
     {
-        public ContextRibbonViewModel() { }
+        private readonly IPageInteractionService _pageInteractionService;
+
+        public ContextRibbonViewModel() { _pageInteractionService = DependencyResolver.Resolve<IPageInteractionService>(); }
 
         #region Bindings
 
@@ -73,7 +77,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Buttons.Add(new RibbonButton("Pen Size", "pack://application:,,,/Resources/Images/PenSize32.png", null, null, true));
             var highlighterButton = new ToggleRibbonButton("Highlighter", "Highlighter", "pack://application:,,,/Resources/Images/Highlighter32.png", true)
                                     {
-                                        IsChecked = App.MainWindowViewModel.MajorRibbon.DrawingAttributes.IsHighlighter
+                                        IsChecked = _pageInteractionService.IsHighlighting
                                     };
             highlighterButton.Checked += highlighterButton_Checked;
             highlighterButton.Unchecked += highlighterButton_Checked;
@@ -83,11 +87,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
             Buttons.AddRange(CurrentPenColors);
 
-            var currentColorButton = CurrentPenColors.FirstOrDefault(x => App.MainWindowViewModel.MajorRibbon.DrawingAttributes.Color == x.Color.Color);
+            var currentColorButton = CurrentPenColors.FirstOrDefault(x => _pageInteractionService.PenColor == x.Color.Color);
             if (currentColorButton == null)
             {
                 CurrentPenColors.First().IsChecked = true;
-                App.MainWindowViewModel.MajorRibbon.DrawingAttributes.Color = Colors.Black;
+                _pageInteractionService.SetPenColor(Colors.Black);
             }
             else
             {
@@ -103,7 +107,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            App.MainWindowViewModel.MajorRibbon.DrawingAttributes.Color = colorButton.Color.Color;
+            _pageInteractionService.SetPenColor(colorButton.Color.Color);
         }
 
         private void highlighterButton_Checked(object sender, RoutedEventArgs e)
@@ -115,10 +119,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            App.MainWindowViewModel.MajorRibbon.DrawingAttributes.IsHighlighter = (bool)toggleButton.IsChecked;
-            App.MainWindowViewModel.MajorRibbon.DrawingAttributes.Height = (bool)toggleButton.IsChecked ? 12 : App.MainWindowViewModel.MajorRibbon.PenSize;
-            App.MainWindowViewModel.MajorRibbon.DrawingAttributes.Width = (bool)toggleButton.IsChecked ? 12 : App.MainWindowViewModel.MajorRibbon.PenSize;
-            App.MainWindowViewModel.MajorRibbon.DrawingAttributes.StylusTip = (bool)toggleButton.IsChecked ? StylusTip.Rectangle : StylusTip.Ellipse;
+            _pageInteractionService.ToggleHighlighter();
         }
 
         public void SetEraserContextButtons()
