@@ -7,13 +7,13 @@ using Catel.Data;
 namespace CLP.Entities
 {
     [Serializable]
-    public class NumberLineDeletedTag : ANumberLineBaseTag
+    public class NumberLineDimensionsChangedTag : ANumberLineBaseTag
     {
         #region Constructors
 
-        public NumberLineDeletedTag() { }
+        public NumberLineDimensionsChangedTag() { }
 
-        public NumberLineDeletedTag(CLPPage parentPage,
+        public NumberLineDimensionsChangedTag(CLPPage parentPage,
                                           Origin origin,
                                           string numberLineID,
                                           int firstNumber,
@@ -28,28 +28,14 @@ namespace CLP.Entities
             LastMarkedNumber = lastMarkedNumber;
         }
 
-        public NumberLineDeletedTag(SerializationInfo info, StreamingContext context)
+        public NumberLineDimensionsChangedTag(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
         #endregion //Constructors
 
         #region Properties
 
-        public List<int> JumpSizes
-        {
-            get { return GetValue<List<int>>(JumpSizesProperty); }
-            set { SetValue(JumpSizesProperty, value); }
-        }
-
-        public static readonly PropertyData JumpSizesProperty = RegisterProperty("JumpSizes", typeof(List<int>));
-
-        public int? LastMarkedNumber
-        {
-            get { return GetValue<int?>(LastMarkedNumberProperty); }
-            set { SetValue(LastMarkedNumberProperty, value); }
-        }
-
-        public static readonly PropertyData LastMarkedNumberProperty = RegisterProperty("LastMarkedNumber", typeof (int?));
+        
 
         #region ATagBase Overrides
 
@@ -62,12 +48,16 @@ namespace CLP.Entities
         {
             get
             {
-                return string.Format("Number Line from {0}  to {1} deleted.\n" + "Number Line {2} on page.\n" + "Jump Sizes: {3}.\n" + "{4}",
-                                     FirstNumber,
-                                     LastNumber,
+                return string.Format("Number Line from {0}  to {1} is now from {2} to {3}.\n" + "Number Line {4} on page.\n" + "Number Line {5} by {6}.\n" + "Arrow was {7} to set new size.\n" + "Was {8} from answer and now is {9} from answer.",
+                                     OldFirstNumber,
+                                     OldLastNumber,
+                                     NewFirstNumber,
+                                     NewLastNumber,
                                      IsNumberLineStillOnPage ? "still" : "no longer",
-                                     string.Join(",", JumpSizes),
-                                     LastMarkedNumber == null ? string.Empty: "Last marked number: " + LastMarkedNumber + ".");
+                                     ChangeSize < 0 ? "shrunk" : "grew",
+                                     ChangeSize,
+                                     ArrowClicked ? 
+                                     );
             }
         }
 

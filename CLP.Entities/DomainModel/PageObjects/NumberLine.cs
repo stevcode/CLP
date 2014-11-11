@@ -276,58 +276,27 @@ namespace CLP.Entities
 
         public override void OnAdded()
         {
-            base.OnAdded();
-
+            var multiplicationDefinitions = ParentPage.Tags.OfType<MultiplicationRelationDefinitionTag>().ToList();
             var numberLineIDsInHistory = NumberLineAnalysis.GetListOfNumberLineIDsInHistory(ParentPage);
-            var page = NumberLine.ParentPage();
 
-            var numberLines = page.PageObjects.OfType<FuzzyFactorCard>().ToList();
-            if (!MultiplicationDefinitionTags.Any() ||
-                !divisionTemplates.Any())
+            foreach (var multiplicationRelationDefinitionTag in multiplicationDefinitions)
             {
-                return;
+                var distanceFromAnswer = NumberLineSize - multiplicationRelationDefinitionTag.Product;
+               
+                var tag = new NumberLineCreationTag(ParentPage, Origin.StudentPageObjectGenerated, ID, 0, NumberLineSize, numberLineIDsInHistory.IndexOf(ID), distanceFromAnswer);
+                ParentPage.AddTag(tag);
             }
-
-            foreach (var divisionDefinitionTag in divisionDefinitionTags)
-            {
-                foreach (var divisionTemplate in divisionTemplates)
-                {
-                    AnalyzeRepresentationCorrectness(page, divisionDefinitionTag, divisionTemplate);
-                }
-            }
-
-
-            var product = NumberLineAnalysis.GetProduct(ParentPage, , NumberLine);
-            var isSmaller = false;
-            var farFromAnswer = 0;
-
-            if (product > NumberLineSize)
-            {
-                isSmaller = true;
-
-                farFromAnswer = product - NumberLineSize;
-
-            }
-            else if(NumberLineSize > product)
-            {
-                farFromAnswer = NumberLineSize - product;
-            }
-
-            var tag = new NumberLineCreationTag(ParentPage, Origin.StudentPageObjectGenerated, ID, 0, NumberLineSize, numberLineIDsInHistory.IndexOf(ID), isSmaller, farFromAnswer);
-            ParentPage.AddTag(tag);
         }
 
         public override void OnDeleted()
         {
-            var listofJumpSizesSizes = new ObservableCollection<int>();
+            var jumpSizes = JumpSizes.Select(x=> x.JumpSize).ToList();
 
-            foreach (var jumpsize in JumpSizes)
-            {
-                listofJumpSizesSizes.Add(jumpsize.JumpSize);
-            }
+            var lastMarkedTick = Ticks.LastOrDefault(x => x.IsMarked);
+            var lastMarkedTickNumber = lastMarkedTick != null ? (int?) lastMarkedTick.TickValue : null;
 
             var numberLineIDsInHistory = NumberLineAnalysis.GetListOfNumberLineIDsInHistory(ParentPage);
-            var tag = new NumberLineDeletedTag(ParentPage, Origin.StudentPageObjectGenerated, ID, 0, NumberLineSize, numberLineIDsInHistory.IndexOf(ID), listofJumpSizesSizes, Ticks.LastOrDefault().TickValue);
+            var tag = new NumberLineDeletedTag(ParentPage, Origin.StudentPageObjectGenerated, ID, 0, NumberLineSize, numberLineIDsInHistory.IndexOf(ID), jumpSizes, lastMarkedTickNumber);
             ParentPage.AddTag(tag);
 
             if (!CanAcceptStrokes ||

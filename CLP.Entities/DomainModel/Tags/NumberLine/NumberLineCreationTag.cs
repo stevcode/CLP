@@ -13,11 +13,10 @@ namespace CLP.Entities
 
         public NumberLineCreationTag() { }
 
-        public NumberLineCreationTag(CLPPage parentPage, Origin origin, string numberLineID, int firstNumber, int lastNumber, int numberLineNumber, bool isSmaller, int farFromAnswer)
+        public NumberLineCreationTag(CLPPage parentPage, Origin origin, string numberLineID, int firstNumber, int lastNumber, int numberLineNumber, double distanceFromAnswer)
             : base(parentPage, origin, numberLineID, firstNumber, lastNumber, numberLineNumber)
         {
-            FarFromAnswer = farFromAnswer;
-            IsSmaller = isSmaller;
+            DistanceFromAnswer = distanceFromAnswer;
         }
 
         public NumberLineCreationTag(SerializationInfo info, StreamingContext context)
@@ -27,13 +26,13 @@ namespace CLP.Entities
 
         #region Properties
 
-        public int FarFromAnswer
+        public double DistanceFromAnswer
         {
-            get { return GetValue<int>(FarFromAnswerProperty); }
-            set { SetValue(FarFromAnswerProperty, value); }
+            get { return GetValue<double>(DistanceFromAnswerProperty); }
+            set { SetValue(DistanceFromAnswerProperty, value); }
         }
 
-        public static readonly PropertyData FarFromAnswerProperty = RegisterProperty("FarFromAnswer", typeof(int));
+        public static readonly PropertyData DistanceFromAnswerProperty = RegisterProperty("DistanceFromAnswer", typeof(double));
 
 
         #region ATagBase Overrides
@@ -51,8 +50,8 @@ namespace CLP.Entities
                                      FirstNumber,
                                      LastNumber,
                                      IsNumberLineStillOnPage ? "still" : "no longer",
-                                     IsSmaller ? "smaller, larger"
-                                     0);
+                                     DistanceFromAnswer < 0 ? "too short" : "too long",
+                                     Math.Abs(DistanceFromAnswer));
             }
         }
 
