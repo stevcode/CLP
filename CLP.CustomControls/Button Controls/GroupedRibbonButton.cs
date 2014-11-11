@@ -13,6 +13,11 @@ namespace CLP.CustomControls
             DefaultStyleKeyProperty.OverrideMetadata(typeof (GroupedRibbonButton), new FrameworkPropertyMetadata(typeof (GroupedRibbonButton)));
         }
 
+        public GroupedRibbonButton()
+        {
+            SetResourceReference(BackgroundProperty, "DynamicMainColor");
+        }
+
         public GroupedRibbonButton(string text, string groupName, string packUri, string enumValue, bool isContextButton = false)
         {
             Text = text;
@@ -47,7 +52,7 @@ namespace CLP.CustomControls
         public static readonly DependencyProperty TextProperty = DependencyProperty.Register("Text",
                                                                                              typeof (string),
                                                                                              typeof (GroupedRibbonButton),
-                                                                                             new UIPropertyMetadata(null));
+                                                                                             new UIPropertyMetadata(string.Empty));
 
         /// <summary>EnumValue compared against when IsChecked == true.</summary>
         public string AssociatedEnumValue
@@ -59,7 +64,7 @@ namespace CLP.CustomControls
         public static readonly DependencyProperty AssociatedEnumValueProperty = DependencyProperty.Register("AssociatedEnumValue",
                                                                                                             typeof (string),
                                                                                                             typeof (GroupedRibbonButton),
-                                                                                                            new UIPropertyMetadata(null));
+                                                                                                            new UIPropertyMetadata(string.Empty));
 
         /// <summary>Allows for special behavior if button is in the Context Ribbon.</summary>
         public bool IsContextButton
@@ -71,7 +76,7 @@ namespace CLP.CustomControls
         public static readonly DependencyProperty IsContextButtonProperty = DependencyProperty.Register("IsContextButton",
                                                                                                         typeof(bool),
                                                                                                         typeof(GroupedRibbonButton),
-                                                                                                        new UIPropertyMetadata(null));
+                                                                                                        new UIPropertyMetadata(false));
 
         #endregion //Dependency Properties
     }

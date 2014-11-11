@@ -131,13 +131,13 @@
         <StackPanel DockPanel.Dock="Left"
                     Orientation="Horizontal">
 
-            <customControls:ToggleRibbonButton UnCheckedText="Show Pages"
-                                               CheckedText="Hide Pages"
-                                               LargeImageSource="pack://application:,,,/Resources/Images/OpenNotebook32.png" />
+            <customControls:GroupedRibbonButton Text="Show Pages"
+                                                GroupName="LeftPanel"
+                                                LargeImageSource="pack://application:,,,/Resources/Images/OpenNotebook32.png" />
 
-            <customControls:ToggleRibbonButton UnCheckedText="Show Progress"
-                                               CheckedText="Hide Progress"
-                                               LargeImageSource="pack://application:,,,/Resources/Images/Clipboard32.png" />
+            <customControls:GroupedRibbonButton Text="Show Progress"
+                                                GroupName="LeftPanel"
+                                                LargeImageSource="pack://application:,,,/Resources/Images/Clipboard32.png" />
 
             <customControls:ToggleRibbonButton UnCheckedText="Show Stage"
                                                CheckedText="Hide Stage"

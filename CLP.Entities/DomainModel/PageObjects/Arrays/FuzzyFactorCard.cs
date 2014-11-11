@@ -208,7 +208,7 @@ namespace CLP.Entities
         {
             base.OnAdded();
 
-            var divisionDefinitions = ParentPage.Tags.OfType<DivisionRelationDefinitionTag>();
+            var divisionDefinitions = ParentPage.Tags.OfType<DivisionRelationDefinitionTag>().ToList();
 
             foreach (var divisionRelationDefinitionTag in divisionDefinitions)
             {

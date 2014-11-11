@@ -1022,6 +1022,10 @@
     <Content Include="External Libraries\System.Reactive.Providers.dll" />
     <Content Include="External Libraries\System.Reactive.Windows.Threading.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
+    <Resource Include="Resources\Images\WindowControls\CloseButton.png" />
+    <Resource Include="Resources\Images\WindowControls\MaximizeButton.png" />
+    <Resource Include="Resources\Images\WindowControls\MinimizeButton.png" />
+    <Resource Include="Resources\Images\WindowControls\RestoreButton.png" />
     <Resource Include="Resources\Images\CLPMenuBackIconBlackBorderless128.png" />
     <Resource Include="Resources\Images\CLPMenuBackIconBlackBorderless64.png" />
     <Resource Include="Resources\Images\CLPMenuBackIconWhiteBorderless128.png" />

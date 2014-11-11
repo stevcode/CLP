@@ -1101,7 +1101,6 @@ namespace Classroom_Learning_Partner.ViewModels
             if (index == -1)
             {
                 page.PageObjects.Add(pageObject);
-                pageObject.OnAdded();
             }
             else
             {
@@ -1117,6 +1116,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 AddHistoryItemToPage(page, new PageObjectsAddedHistoryItem(page, App.MainWindowViewModel.CurrentUser, pageObjectIDs));
             }
+
+            pageObject.OnAdded();
 
             if (forceSelectMode)
             {
@@ -1135,12 +1136,16 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
                 pageObjectIDs.Add(pageObject.ID);
                 page.PageObjects.Add(pageObject);
-                pageObject.OnAdded();
             }
 
             if (addToHistory)
             {
                 AddHistoryItemToPage(page, new PageObjectsAddedHistoryItem(page, App.MainWindowViewModel.CurrentUser, pageObjectIDs));
+            }
+
+            foreach (var pageObject in pageObjects)
+            {
+                pageObject.OnAdded();
             }
 
             if (forceSelectMode)
