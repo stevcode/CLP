@@ -38,6 +38,12 @@ namespace CLP.Entities
                     continue;
                 }
 
+                if (pageObject is NumberLine)
+                {
+                    objectTypes.Add("Number Line");
+                    continue;
+                }
+
                 if (pageObject is Stamp)
                 {
                     objectTypes.Add("Stamps");
@@ -109,6 +115,12 @@ namespace CLP.Entities
                         continue;
                     }
 
+                    if (pageObject is NumberLine)
+                    {
+                        objectTypes.Add("Number Line");
+                        continue;
+                    }
+
                     if (pageObject is Stamp)
                     {
                         continue;
@@ -170,6 +182,12 @@ namespace CLP.Entities
                 if (pageObject is Stamp)
                 {
                     objectTypes.Add("Stamps");
+                    continue;
+                }
+
+                if (pageObject is NumberLine)
+                {
+                    objectTypes.Add("Number Line");
                     continue;
                 }
 

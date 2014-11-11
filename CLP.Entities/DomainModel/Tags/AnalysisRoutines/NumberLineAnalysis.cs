@@ -8,14 +8,33 @@ namespace CLP.Entities
     {
         public static void Analyze(CLPPage page) { AnalyzeRegion(page, new Rect(0, 0, page.Height, page.Width)); }
 
-        public static void AnalyzeRegion(CLPPage page, Rect region) {        }
-
-        public static double GetProduct(CLPPage page, MultiplicationRelationDefinitionTag multiplicationRelationDefinition, NumberLine numberLine)
+        public static void AnalyzeRegion(CLPPage page, Rect region)
         {
-            var multiplicationDefinitionTags = page.Tags.OfType<MultiplicationRelationDefinitionTag>().ToList();
+            // First, clear out any old DivisionTemplateTags generated via Analysis.
+            foreach (var tag in
+                page.Tags.ToList()
+                    .Where(
+                           tag =>
+                           tag is NumberLineCompletenessTag || tag is NumberLineRepresentationCorrectnessTag))
+            {
+                page.RemoveTag(tag);
+            }
 
-            return multiplicationRelationDefinition.Product;
+            var numberLineDefinitionsTags = page.Tags.OfType<MultiplicationRelationDefinitionTag>().ToList();
+            var numberLines = page.PageObjects.OfType<NumberLine>().ToList();
+            if (!numberLineDefinitionsTags.Any() ||
+                !numberLines.Any())
+            {
+                return;
+            }
 
+            foreach (var numberLineDefinitionTag in numberLineDefinitionsTags)
+            {
+                foreach (var numberLine in numberLines)
+                {
+                    AnalyzeRepresentationCorrectness(page, numberLineDefinitionTag, numberLine);
+                }
+            }
         }
 
         public static List<string> GetListOfNumberLineIDsInHistory(CLPPage page)
@@ -35,5 +54,143 @@ namespace CLP.Entities
             return numberLineIDsInHistory;
         }
 
+        public static void AnalyzeRepresentationCorrectness(CLPPage page, MultiplicationRelationDefinitionTag multiplicationRelationDefinition, NumberLine numberLine)
+        {
+            var numberLineIDsInHistory = GetListOfNumberLineIDsInHistory(page);
+            var incomplete = false;
+
+            //Completeness
+            if (!numberLine.JumpSizes.Any())
+            {
+                var tag = new NumberLineCompletenessTag(page,
+                                                        Origin.StudentPageObjectGenerated,
+                                                        numberLine.ID,
+                                                        0,
+                                                        numberLine.NumberLineSize,
+                                                        numberLineIDsInHistory.IndexOf(numberLine.ID),
+                                                        false,
+                                                        true,
+                                                        0);
+                page.AddTag(tag);
+                incomplete = true;
+            }
+            //// Find GAPS Later
+            else if (false)
+            {
+            //    var tag = new NumberLineCompletenessTag(page,
+            //                                            Origin.StudentPageObjectGenerated,
+            //                                            numberLine.ID,
+            //                                            0,
+            //                                            numberLine.NumberLineSize,
+            //                                            numberLineIDsInHistory.IndexOf(numberLine.ID),
+            //                                            false,
+            //                                            false,
+            //                                            gaps);
+            //    page.AddTag(tag);
+            //    incomplete = true;
+            }
+            else
+            {
+                var tag = new NumberLineCompletenessTag(page,
+                                        Origin.StudentPageObjectGenerated,
+                                        numberLine.ID,
+                                        0,
+                                        numberLine.NumberLineSize,
+                                        numberLineIDsInHistory.IndexOf(numberLine.ID),
+                                        true,
+                                        false,
+                                        0);
+                page.AddTag(tag);
+            }
+
+            //Correctness
+            var incorrectReasons = new List<NumberLineRepresentationIncorrectReasons>();
+
+            if (incomplete)
+            {
+                incorrectReasons.Add(NumberLineRepresentationIncorrectReasons.Incomplete);
+            }
+
+            if ((multiplicationRelationDefinition.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups) 
+                && (numberLine.JumpSizes.Count != multiplicationRelationDefinition.Factors[0] || numberLine.JumpSizes.Count != multiplicationRelationDefinition.Factors[1]))
+            {
+                incorrectReasons.Add(NumberLineRepresentationIncorrectReasons.WrongNumberofJumps);
+            }
+            else if ((multiplicationRelationDefinition.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.OrderedEqualGroups)
+                && (numberLine.JumpSizes.Count == multiplicationRelationDefinition.Factors[1]))
+            {
+                incorrectReasons.Add(NumberLineRepresentationIncorrectReasons.ReversedGrouping);
+            }
+            else if ((multiplicationRelationDefinition.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.OrderedEqualGroups)
+                && (numberLine.JumpSizes.Count != multiplicationRelationDefinition.Factors[0]))
+            {
+                incorrectReasons.Add(NumberLineRepresentationIncorrectReasons.WrongNumberofJumps);
+            }
+
+            var isWrongJumpSize = false;
+            if ((multiplicationRelationDefinition.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups))
+            {
+                foreach (var jump in numberLine.JumpSizes)
+                {
+                    if (numberLine.JumpSizes.All(x=> x.JumpSize == multiplicationRelationDefinition.Factors[0]) || 
+                        numberLine.JumpSizes.All(x=> x.JumpSize == multiplicationRelationDefinition.Factors[1]))
+                    {
+                        isWrongJumpSize = false;
+                    }
+                    else
+                    {
+                        isWrongJumpSize = true;
+                    }
+                }
+            }
+
+            if ((multiplicationRelationDefinition.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.OrderedEqualGroups))
+            {
+                foreach (var jump in numberLine.JumpSizes)
+                {
+                    if (jump.JumpSize != multiplicationRelationDefinition.Factors[1])
+                    {
+                        isWrongJumpSize = true;
+                    }
+                }
+            }
+
+            if (isWrongJumpSize)
+            {
+                incorrectReasons.Add(NumberLineRepresentationIncorrectReasons.WrongJumpSizes);
+            }
+
+            var lastMarkedTick = numberLine.Ticks.LastOrDefault(x => x.IsMarked);
+            if (lastMarkedTick != null &&
+                lastMarkedTick.TickValue != multiplicationRelationDefinition.Product)
+            {
+                incorrectReasons.Add(NumberLineRepresentationIncorrectReasons.WrongLastMarkedTick);
+            }
+
+            if (incorrectReasons.Any())
+            {
+                var incorrectTag = new NumberLineRepresentationCorrectnessTag(page,
+                                            Origin.StudentPageObjectGenerated,
+                                            numberLine.ID,
+                                            0,
+                                            numberLine.NumberLineSize,
+                                            numberLineIDsInHistory.IndexOf(numberLine.ID),
+                                            Correctness.Incorrect,
+                                            incorrectReasons);
+                page.AddTag(incorrectTag);
+            }
+            else
+            {
+                var incorrectTag = new NumberLineRepresentationCorrectnessTag(page,
+                            Origin.StudentPageObjectGenerated,
+                            numberLine.ID,
+                            0,
+                            numberLine.NumberLineSize,
+                            numberLineIDsInHistory.IndexOf(numberLine.ID),
+                            Correctness.Correct,
+                            incorrectReasons);
+                page.AddTag(incorrectTag);
+            }
+        }
     }
 }

@@ -169,9 +169,11 @@
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateCreationErrorTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateRemainderErrorsTag.cs" />
     <Compile Include="DomainModel\Tags\NumberLine\ANumberLineBaseTag.cs" />
+    <Compile Include="DomainModel\Tags\NumberLine\NumberLineCompletenessTag.cs" />
     <Compile Include="DomainModel\Tags\NumberLine\NumberLineCreationTag.cs" />
     <Compile Include="DomainModel\Tags\NumberLine\NumberLineDeletedTag.cs" />
     <Compile Include="DomainModel\Tags\NumberLine\NumberLineDimensionsChangedTag.cs" />
+    <Compile Include="DomainModel\Tags\NumberLine\NumberLineRepresentationCorrectnessTag.cs" />
     <Compile Include="DomainModel\Tags\OtherPageInformation\CorrectnessTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateCompletenessTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateDeletedTag.cs" />
