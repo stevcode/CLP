@@ -127,7 +127,24 @@
               Margin="0 2 0 2"
               Stroke="{DynamicResource DynamicMainColor}"
               StrokeThickness="1" />
-        
+
+        <StackPanel DockPanel.Dock="Left"
+                    Orientation="Horizontal">
+
+            <customControls:ToggleRibbonButton UnCheckedText="Show Stage"
+                                               CheckedText="Hide Stage"
+                                               LargeImageSource="pack://application:,,,/Resources/Images/StagingPanel32.png" />
+
+        </StackPanel>
+
+        <Line DockPanel.Dock="Left"
+              Stretch="Fill"
+              Y1="0"
+              Y2="1"
+              Margin="0 2 0 2"
+              Stroke="{DynamicResource DynamicMainColor}"
+              StrokeThickness="1" />
+
         <TextBlock DockPanel.Dock="Right" 
                    Text="CURRENT USER"
                    FontWeight="Bold"
@@ -135,6 +152,27 @@
                    TextAlignment="Center"
                    VerticalAlignment="Center"
                    HorizontalAlignment="Center" />
+
+        <Line DockPanel.Dock="Right"
+              Stretch="Fill"
+              Y1="0"
+              Y2="1"
+              Margin="0 2 0 2"
+              Stroke="{DynamicResource DynamicMainColor}"
+              StrokeThickness="1" />
+
+        <StackPanel DockPanel.Dock="Right"
+                    Orientation="Horizontal">
+
+            <customControls:ToggleRibbonButton UnCheckedText="Show Displays"
+                                               CheckedText="Hide Displays"
+                                               LargeImageSource="pack://application:,,,/Resources/Images/Displays32.png" />
+
+            <customControls:ToggleRibbonButton UnCheckedText="Freeze"
+                                               CheckedText="Unfreeze"
+                                               LargeImageSource="pack://application:,,,/Resources/Images/Projector32.png" />
+
+        </StackPanel>
 
         <Line DockPanel.Dock="Right"
               Stretch="Fill"

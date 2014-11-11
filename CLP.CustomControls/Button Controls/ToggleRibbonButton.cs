@@ -13,6 +13,11 @@ namespace CLP.CustomControls
             DefaultStyleKeyProperty.OverrideMetadata(typeof (ToggleRibbonButton), new FrameworkPropertyMetadata(typeof (ToggleRibbonButton)));
         }
 
+        public ToggleRibbonButton()
+        {
+            SetResourceReference(BackgroundProperty, "DynamicMainColor");
+        }
+
         public ToggleRibbonButton(string unCheckedText, string checkedText, string packUri, bool isContextButton = false)
         {
             UnCheckedText = unCheckedText;
@@ -46,7 +51,7 @@ namespace CLP.CustomControls
         public static readonly DependencyProperty UnCheckedTextProperty = DependencyProperty.Register("UnCheckedText",
                                                                                                       typeof (string),
                                                                                                       typeof (ToggleRibbonButton),
-                                                                                                      new UIPropertyMetadata(null));
+                                                                                                      new UIPropertyMetadata(string.Empty));
 
         /// <summary>CheckedText for the button.</summary>
         public string CheckedText
@@ -58,7 +63,7 @@ namespace CLP.CustomControls
         public static readonly DependencyProperty CheckedTextProperty = DependencyProperty.Register("CheckedText",
                                                                                                     typeof (string),
                                                                                                     typeof (ToggleRibbonButton),
-                                                                                                    new UIPropertyMetadata(null));
+                                                                                                    new UIPropertyMetadata(string.Empty));
 
         /// <summary>Allows for special behavior if button is in the Context Ribbon.</summary>
         public bool IsContextButton
@@ -70,7 +75,7 @@ namespace CLP.CustomControls
         public static readonly DependencyProperty IsContextButtonProperty = DependencyProperty.Register("IsContextButton",
                                                                                                         typeof (bool),
                                                                                                         typeof (ToggleRibbonButton),
-                                                                                                        new UIPropertyMetadata(null));
+                                                                                                        new UIPropertyMetadata(false));
 
         #endregion //Dependency Properties
     }

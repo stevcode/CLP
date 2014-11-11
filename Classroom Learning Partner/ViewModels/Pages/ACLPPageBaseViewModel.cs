@@ -333,7 +333,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public InkCanvasEditingMode EditingMode
         {
             get { return GetValue<InkCanvasEditingMode>(EditingModeProperty); }
-            protected set { SetValue(EditingModeProperty, value); }
+            set { SetValue(EditingModeProperty, value); }
         }
 
         public static readonly PropertyData EditingModeProperty = RegisterProperty("EditingMode", typeof(InkCanvasEditingMode), InkCanvasEditingMode.Ink);
