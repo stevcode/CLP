@@ -14,6 +14,8 @@ namespace CLP.CustomControls
             DefaultStyleKeyProperty.OverrideMetadata(typeof (RibbonButton), new FrameworkPropertyMetadata(typeof (RibbonButton)));
         }
 
+        public RibbonButton() { SetResourceReference(BackgroundProperty, "DynamicMainColor"); }
+
         public RibbonButton(string text, string packUri, ICommand command, object commandParameter, bool isContextButton = false)
         {
             Text = text;
@@ -45,10 +47,7 @@ namespace CLP.CustomControls
             set { SetValue(TextProperty, value); }
         }
 
-        public static readonly DependencyProperty TextProperty = DependencyProperty.Register("Text",
-                                                                                             typeof (string),
-                                                                                             typeof (RibbonButton),
-                                                                                             new UIPropertyMetadata(null));
+        public static readonly DependencyProperty TextProperty = DependencyProperty.Register("Text", typeof (string), typeof (RibbonButton), new UIPropertyMetadata(string.Empty));
 
         /// <summary>Text for the button.</summary>
         public bool IsContextButton
@@ -60,7 +59,7 @@ namespace CLP.CustomControls
         public static readonly DependencyProperty IsContextButtonProperty = DependencyProperty.Register("IsContextButton",
                                                                                                         typeof (bool),
                                                                                                         typeof (RibbonButton),
-                                                                                                        new UIPropertyMetadata(null));
+                                                                                                        new UIPropertyMetadata(false));
 
         #endregion //Dependency Properties
     }

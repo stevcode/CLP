@@ -3,7 +3,8 @@
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
-                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views">
+                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
+                   xmlns:customControls="clr-namespace:CLP.CustomControls;assembly=CLP.CustomControls">
 
     <UserControl.Resources>
         <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
@@ -13,6 +14,51 @@
 
     <DockPanel Background="{Binding WorkspaceBackgroundColor}"
                LastChildFill="True">
+        
+        <DockPanel DockPanel.Dock="Top"
+                   Height="35"
+                   LastChildFill="True"
+                   HorizontalAlignment="Stretch"
+                   Background="{StaticResource GrayBackgroundColor}">
+
+            <Line DockPanel.Dock="Bottom"
+                  Stretch="Fill"
+                  X1="0"
+                  X2="1"
+                  Margin="-1 0 -1 0"
+                  Stroke="{DynamicResource DynamicMainColor}"
+                  StrokeThickness="1" />
+
+            <Grid DockPanel.Dock="Left"
+                        Width="250">
+                
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Center">
+
+                    <customControls:RibbonButton Text="Previous Page"
+                                                 LargeImageSource="pack://application:,,,/Resources/Images/PreviousPage32.png"
+                                                 IsContextButton="True" />
+
+                    <customControls:RibbonButton Text="Next Page"
+                                                 LargeImageSource="pack://application:,,,/Resources/Images/NextPage32.png"
+                                                 IsContextButton="True" />
+
+                </StackPanel>
+                
+            </Grid>
+
+            <Line DockPanel.Dock="Left"
+                  Stretch="Fill"
+                  Y1="0"
+                  Y2="1"
+                  Margin="0 2 0 2"
+                  Stroke="{DynamicResource DynamicMainColor}"
+                  StrokeThickness="1" />
+
+            <views:ContextRibbonView DataContext="{Binding ContextRibbon}" />
+            
+        </DockPanel>
+        
 
         <!--Left Panel-->
         <Control DockPanel.Dock="Left">
@@ -64,10 +110,10 @@
                     <views:DisplaysPanelView DataContext="{Binding DisplaysPanel}" />
                 </ControlTemplate>
 
-                
                 <ControlTemplate x:Key="PageInformationPanelTemplate">
                     <views:PageInformationPanelView DataContext="{Binding PageInformationPanel}" />
                 </ControlTemplate>
+                
             </Control.Resources>
 
             <Control.Style>
@@ -99,37 +145,8 @@
                 </Style>
             </Control.Style>
         </Control>
-
-        <!--Bottom Panel-->
-        <Control DockPanel.Dock="Bottom"
-                 Visibility="{Binding BottomPanel.IsVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
-            <Control.Resources>
-
-                <ControlTemplate x:Key="SubmissionHistoryPanelTemplate">
-                    <views:SubmissionHistoryPanelView DataContext="{Binding BottomPanel}"
-                                                      Visibility="{Binding MainWindowViewModel.StudentOnlyVisibility, Source={x:Static Application.Current}}" />
-                </ControlTemplate>
-
-            </Control.Resources>
-
-            <Control.Style>
-                <Style TargetType="{x:Type Control}">
-                    <Style.Triggers>
-
-                        <!--SubmissionHistoryPanel trigger-->
-                        <DataTrigger Binding="{Binding BottomPanel, Converter={StaticResource TypeToStringConverter}}"
-                                     Value="SubmissionHistoryPanelViewModel">
-                            <Setter Property="Template"
-                                    Value="{StaticResource SubmissionHistoryPanelTemplate}" />
-                        </DataTrigger>
-
-                    </Style.Triggers>
-                </Style>
-            </Control.Style>
-        </Control>
+       
         
-        <views:ContextRibbonView DockPanel.Dock="Top"
-                                 DataContext="{Binding ContextRibbon}"/>
 
         <!-- Control that dynamically determines what Display to show -->
         <Control HorizontalAlignment="Stretch"
