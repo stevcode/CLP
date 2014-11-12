@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -41,6 +42,9 @@ namespace Classroom_Learning_Partner.ViewModels
         private void InitializeCommands()
         {
             ShowBackStageCommand = new Command(OnShowBackStageCommandExecute);
+            UndoCommand = new Command(OnUndoCommandExecute, OnUndoCanExecute);
+            RedoCommand = new Command(OnRedoCommandExecute, OnRedoCanExecute);
+            LongerPageCommand = new Command(OnLongerPageCommandExecute, OnLongerPageCanExecute);
             AddPageObjectToPageCommand = new Command<string>(OnAddPageObjectToPageCommandExecute, OnAddPageObjectToPageCanExecute);
         }
 
@@ -135,7 +139,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 case "PageInteractionMode":
                     PageInteractionMode = (PageInteractionModes)Enum.Parse(typeof (PageInteractionModes), checkedButton.AssociatedEnumValue);
-                    _pageInteractionService.SetCutMode();
+                    _pageInteractionService.SetPenMode();
 
                     if (App.MainWindowViewModel == null)
                     {
@@ -354,6 +358,99 @@ namespace Classroom_Learning_Partner.ViewModels
             MainWindow.IsBackStageVisible = true;
         }
 
+        #region History Commands
+
+        /// <summary>
+        /// Undoes the last action.
+        /// </summary>
+        public Command UndoCommand { get; private set; }
+
+        private void OnUndoCommandExecute()
+        {
+            CurrentPage.History.Undo();
+        }
+
+        private bool OnUndoCanExecute()
+        {
+            var page = CurrentPage;
+            if (page == null)
+            {
+                return false;
+            }
+
+            var recordIndicator = page.History.RedoItems.FirstOrDefault() as AnimationIndicator;
+            if (recordIndicator != null && recordIndicator.AnimationIndicatorType == AnimationIndicatorType.Record)
+            {
+                return false;
+            }
+
+            return page.History.CanUndo;
+        }
+
+        /// <summary>
+        /// Redoes the last undone action.
+        /// </summary>
+        public Command RedoCommand { get; private set; }
+
+        private void OnRedoCommandExecute()
+        {
+            CurrentPage.History.Redo();
+        }
+
+        private bool OnRedoCanExecute()
+        {
+            var page = CurrentPage;
+            if (page == null)
+            {
+                return false;
+            }
+
+            return page.History.CanRedo;
+        } 
+
+        #endregion //History Commands
+
+        #region Page Commands
+
+        /// <summary>
+        /// Doubles height of the current page.
+        /// </summary>
+        public Command LongerPageCommand { get; private set; }
+
+        private void OnLongerPageCommandExecute()
+        {
+            var initialHeight = CurrentPage.Width / CurrentPage.InitialAspectRatio;
+            CurrentPage.Height = initialHeight * 2;
+
+            if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher ||
+               App.Network.ProjectorProxy == null)
+            {
+                return;
+            }
+
+            try
+            {
+                App.Network.ProjectorProxy.MakeCurrentPageLonger();
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+
+        private bool OnLongerPageCanExecute()
+        {
+            if (CurrentPage == null)
+            {
+                return false;
+            }
+
+            var initialHeight = CurrentPage.Width / CurrentPage.InitialAspectRatio;
+            return CurrentPage.Height < initialHeight * 2;
+        }
+
+        #endregion //Page Commands
+
         #region Insert PageObject Commands
 
         /// <summary>Adds pageObject to the Current Page.</summary>
@@ -449,19 +546,19 @@ namespace Classroom_Learning_Partner.ViewModels
             Buttons.Add(Separater);
             Buttons.Add(_insertGeneralStampButton);
             //Buttons.Add(_insertGroupStampButton);
-            Buttons.Add(_insertPileButton);
             Buttons.Add(_insertNumberLineButton);
             Buttons.Add(_insertArrayButton);
+            Buttons.Add(_insertPileButton);
             Buttons.Add(_insertDivisionTemplateButton);
             //Buttons.Add(_insertDivisionTemplateWithTilesButton);
 
             // Insert Shapes
-            Buttons.Add(Separater);
-            Buttons.Add(_insertSquareButton);
-            Buttons.Add(_insertCircleButton);
-            Buttons.Add(_insertHorizontalLineButton);
-            Buttons.Add(_insertVerticalLineButton);
-            Buttons.Add(_insertProtractorButton);
+            //Buttons.Add(Separater);
+            //Buttons.Add(_insertSquareButton);
+            //Buttons.Add(_insertCircleButton);
+            //Buttons.Add(_insertHorizontalLineButton);
+            //Buttons.Add(_insertVerticalLineButton);
+            //Buttons.Add(_insertProtractorButton);
 
             // Insert Text Box
             //Buttons.Add(Separater);

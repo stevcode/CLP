@@ -2,18 +2,10 @@
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com"
-                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
-                   xmlns:viewModels="clr-namespace:Classroom_Learning_Partner.ViewModels"
-                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters">
-
-    <UserControl.Resources>
-        <catel:BooleanToOppositeBooleanConverter x:Key="BooleanToOppositeBooleanConverter" />
-        <conv:EnumToBoolConverter x:Key="EnumToBoolConverter" />
-        <conv:CurrentWorkspaceToButtonEnabledConverter x:Key="CurrentWorkspaceToButtonEnabledConverter" />
-    </UserControl.Resources>
+                   xmlns:views="clr-namespace:Classroom_Learning_Partner.Views">
 
     <!--Ribbon-->
-    <Ribbon IsMinimized="{Binding IsMinimized}">
+    <Ribbon>
 
         <!--Contextual Tab Definitions-->
         <Ribbon.ContextualTabGroups>
@@ -162,15 +154,6 @@
 
             </RibbonGroup>
 
-            <RibbonGroup Header="Page">
-
-                <RibbonButton Label="Longer Page"
-                              LargeImageSource="pack://application:,,,/Resources/Images/MakePageLonger32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/MakePageLonger16.png"
-                              Command="{Binding MakePageLongerCommand}" />
-
-            </RibbonGroup>
-
             <RibbonGroup Header="Share"
                          Visibility="{Binding MainWindowViewModel.StudentOnlyVisibility, Source={x:Static Application.Current}}">
 
@@ -185,20 +168,6 @@
                               LargeImageSource="pack://application:,,,/Resources/Images/Happy32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/Happy16.png"
                               Visibility="{Binding IsSentInfoVisibility}" />
-
-            </RibbonGroup>
-
-            <RibbonGroup Header="History">
-
-                <RibbonButton Label="Undo"
-                              LargeImageSource="pack://application:,,,/Resources/Images/Undo32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/Undo16.png"
-                              Command="{Binding UndoCommand}" />
-
-                <RibbonButton Label="Redo"
-                              LargeImageSource="pack://application:,,,/Resources/Images/Redo32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/Redo16.png"
-                              Command="{Binding RedoCommand}" />
 
             </RibbonGroup>
            
@@ -270,13 +239,6 @@
 
             <RibbonGroup Header="Arrays">
 
-                <!--Array + Divider-->
-                <RibbonButton Label="Array"
-                              LargeImageSource="pack://application:,,,/Resources/Images/Array32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/Array16.png"
-                              Command="{Binding InsertArrayCommand}"
-                              CommandParameter="ARRAY" />
-
                 <!--<RibbonButton Label="Array Card"
                               LargeImageSource="pack://application:,,,/Resources/Images/ArrayCard32.png"
                               SmallImageSource="pack://application:,,,/Resources/Images/ArrayCard16.png"
@@ -288,18 +250,6 @@
                               SmallImageSource="pack://application:,,,/Resources/Images/FactorCard16.png"
                               Command="{Binding InsertArrayCommand}"
                               CommandParameter="FACTORCARD" />-->
-
-                <RibbonButton Label="Division Tool"
-                              LargeImageSource="pack://application:,,,/Resources/Images/FuzzyFactorCard32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/FuzzyFactorCard16.png"
-                              Command="{Binding InsertArrayCommand}"
-                              CommandParameter="FUZZYFACTORCARD" />
-
-                <RibbonButton Label="Division Tool With Tiles"
-                              LargeImageSource="pack://application:,,,/Resources/Images/FuzzyFactorCard32.png"
-                              SmallImageSource="pack://application:,,,/Resources/Images/FuzzyFactorCard16.png"
-                              Command="{Binding InsertArrayCommand}"
-                              CommandParameter="FFCREMAINDER" />
 
             </RibbonGroup>
 
@@ -481,14 +431,6 @@
 
             <RibbonGroup Header="Metadata">
 
-                <RibbonButton Label="Add Page Topic to this Page"
-                              LargeImageSource="..\Images\LargeIcon.png"
-                              Command="{Binding AddPageTopicCommand}" />
-
-                <RibbonButton Label="Edit Current Page Metadata"
-                              LargeImageSource="..\Images\LargeIcon.png"
-                              Command="{Binding EditPageMetadataCommand}" />
-
                 <RibbonButton Label="Set Notebook Curriculum"
                               LargeImageSource="..\Images\LargeIcon.png"
                               Command="{Binding SetNotebookCurriculumCommand}" />
@@ -505,19 +447,7 @@
         <RibbonTab Header="General Debug"
                    ContextualTabGroupHeader="Debugging">
 
-            <RibbonGroup Header="Interpret">
-
-                <RibbonButton Label="Interpret Page"
-                              LargeImageSource="..\Images\LargeIcon.png"
-                              Command="{Binding InterpretPageCommand}" />
-
-            </RibbonGroup>
-
             <RibbonGroup Header="Notebook">
-
-                <RibbonButton Label="Convert to XPS"
-                              LargeImageSource="..\Images\ConvertToXPS.png"
-                              Command="{Binding ConvertToXPSCommand}" />
 
                 <RibbonButton Label="Clear History"
                               LargeImageSource="..\Images\LargeIcon.png"
@@ -534,14 +464,6 @@
             </RibbonGroup>
 
             <RibbonGroup Header="Page">
-
-                <!--<RibbonButton Label="Page Width"
-                              LargeImageSource="..\Images\LargeIcon.png"
-                              Command="{Binding ZoomToPageWidthCommand}" />
-
-                <RibbonButton Label="Whole Page"
-                              LargeImageSource="..\Images\LargeIcon.png"
-                              Command="{Binding ZoomToWholePageCommand}" />-->
 
                 <RibbonButton Label="Clear History From Page"
                               LargeImageSource="..\Images\LargeIcon.png"

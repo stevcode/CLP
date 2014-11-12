@@ -227,7 +227,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData IsProjectorFrozenProperty = RegisterProperty("IsProjectorFrozen", typeof (bool), true);
 
-        #region Visibilities
+        #region Global Bindings
 
         public Visibility TeacherOnlyVisibility
         {
@@ -249,7 +249,7 @@ namespace Classroom_Learning_Partner.ViewModels
             get { return CurrentProgramMode == ProgramModes.Teacher ? Visibility.Collapsed : Visibility.Visible; }
         }
 
-        #endregion //Visibilities
+        #endregion //Global Bindings
 
         #endregion //Bindings
 

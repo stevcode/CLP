@@ -132,6 +132,7 @@
               Stroke="{DynamicResource DynamicMainColor}"
               StrokeThickness="1" />
 
+        <!-- Left Panel Control -->
         <StackPanel DockPanel.Dock="Left"
                     Orientation="Horizontal">
 
@@ -145,13 +146,15 @@
                                                CheckedText="Hide Progress"
                                                LargeImageSource="pack://application:,,,/Resources/Images/Clipboard32.png"
                                                IsChecked="{Binding CurrentLeftPanel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.Progress}}"
-                                               IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}" />
+                                               IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
+                                               Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
 
             <customControls:ToggleRibbonButton UnCheckedText="Show Stage"
                                                CheckedText="Hide Stage"
                                                LargeImageSource="pack://application:,,,/Resources/Images/StagingPanel32.png"
                                                IsChecked="{Binding MainWindow.Workspace.StagingPanel.IsVisible}"
-                                               IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}" />
+                                               IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
+                                               Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
 
         </StackPanel>
 
@@ -163,13 +166,28 @@
               Stroke="{DynamicResource DynamicMainColor}"
               StrokeThickness="1" />
 
-        <TextBlock DockPanel.Dock="Right"
-                   Text="CURRENT USER"
-                   FontWeight="Bold"
-                   FontSize="12"
-                   TextAlignment="Center"
-                   VerticalAlignment="Center"
-                   HorizontalAlignment="Center" />
+        <!-- User and Network Controls -->
+        <StackPanel DockPanel.Dock="Right">
+
+            <TextBlock DockPanel.Dock="Right"
+                       Text="CURRENT USER"
+                       FontWeight="Bold"
+                       FontSize="12"
+                       Margin="5"
+                       TextAlignment="Center"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center" />
+
+            <TextBlock DockPanel.Dock="Right"
+                       Text="Notebook Name"
+                       FontWeight="Bold"
+                       FontSize="10"
+                       Margin="5"
+                       TextAlignment="Center"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center" />
+
+        </StackPanel>
 
         <Line DockPanel.Dock="Right"
               Stretch="Fill"
@@ -179,6 +197,7 @@
               Stroke="{DynamicResource DynamicMainColor}"
               StrokeThickness="1" />
 
+        <!-- Right Panel Control -->
         <StackPanel DockPanel.Dock="Right"
                     Orientation="Horizontal">
 
@@ -186,13 +205,15 @@
                                                CheckedText="Hide Displays"
                                                LargeImageSource="pack://application:,,,/Resources/Images/Displays32.png"
                                                IsChecked="{Binding CurrentRightPanel, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.Displays}}"
-                                               IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}" />
+                                               IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
+                                               Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
 
             <customControls:ToggleRibbonButton UnCheckedText="Freeze"
                                                CheckedText="Unfreeze"
                                                LargeImageSource="pack://application:,,,/Resources/Images/Projector32.png"
                                                IsChecked="{Binding MainWindowViewModel.IsProjectorFrozen, Source={x:Static Application.Current}}"
-                                               IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}" />
+                                               IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
+                                               Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
 
         </StackPanel>
 
@@ -202,12 +223,26 @@
               Y2="1"
               Margin="0 2 0 2"
               Stroke="{DynamicResource DynamicMainColor}"
-              StrokeThickness="1" />
-
+              StrokeThickness="1"
+              Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
+        
+        <!-- Page -->
         <StackPanel DockPanel.Dock="Right"
                     Orientation="Horizontal">
 
+            <customControls:RibbonButton Text="Longer Page"
+                                         Command="{Binding LongerPageCommand}"
+                                         LargeImageSource="pack://application:,,,/Resources/Images/MakePageLonger32.png" />
 
+            <customControls:RibbonButton Text="Undo"
+                                         Command="{Binding UndoCommand}"
+                                         IsEnabled="False"
+                                         LargeImageSource="pack://application:,,,/Resources/Images/Undo32.png" />
+
+            <customControls:RibbonButton Text="Redo"
+                                         Command="{Binding RedoCommand}"
+                                         IsEnabled="False"
+                                         LargeImageSource="pack://application:,,,/Resources/Images/Redo32.png" />
 
         </StackPanel>
 
@@ -219,6 +254,7 @@
               Stroke="{DynamicResource DynamicMainColor}"
               StrokeThickness="1" />
 
+        <!-- Dynamic Tool Buttons -->
         <ScrollViewer x:Name="ScrollViewer"
                       VerticalScrollBarVisibility="Disabled"
                       HorizontalScrollBarVisibility="Hidden">

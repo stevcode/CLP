@@ -85,8 +85,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //History
             DisableHistoryCommand = new Command(OnDisableHistoryCommandExecute, OnClearHistoryCommandCanExecute);
-            UndoCommand = new Command(OnUndoCommandExecute, OnUndoCanExecute);
-            RedoCommand = new Command(OnRedoCommandExecute, OnRedoCanExecute);
+            
             ClearPageHistoryCommand = new Command(OnClearPageHistoryCommandExecute, OnClearHistoryCommandCanExecute);
             ClearPageNonAnimationHistoryCommand = new Command(OnClearPageNonAnimationHistoryCommandExecute, OnClearHistoryCommandCanExecute);
             ClearPagesHistoryCommand = new Command(OnClearPagesHistoryCommandExecute, OnClearHistoryCommandCanExecute);
@@ -115,7 +114,6 @@ namespace Classroom_Learning_Partner.ViewModels
             MakeExitTicketsFromCurrentPageCommand = new Command(OnMakeExitTicketsFromCurrentPageCommandExecute);
 
             //Page
-            MakePageLongerCommand = new Command(OnMakePageLongerCommandExecute, OnInsertPageObjectCanExecute);
             ClearPageCommand = new Command(OnClearPageCommandExecute, OnInsertPageObjectCanExecute);
 
             //Metadata
@@ -841,55 +839,6 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-
-        /// <summary>
-        /// Undoes the last action.
-        /// </summary>
-        public Command UndoCommand { get; private set; }
-
-        private void OnUndoCommandExecute()
-        {
-            CurrentPage.History.Undo();
-        }
-
-        private bool OnUndoCanExecute()
-        {
-            var page = CurrentPage;
-            if(page == null)
-            {
-                return false;
-            }
-            
-            var recordIndicator = page.History.RedoItems.FirstOrDefault() as AnimationIndicator;
-            if(recordIndicator != null && recordIndicator.AnimationIndicatorType == AnimationIndicatorType.Record)
-            {
-                return false;
-            }
-
-            return page.History.CanUndo;
-        }
-
-        /// <summary>
-        /// Redoes the last undone action.
-        /// </summary>
-        public Command RedoCommand { get; private set; }
-
-        private void OnRedoCommandExecute()
-        {
-            CurrentPage.History.Redo();
-        }
-
-        private bool OnRedoCanExecute()
-        {
-            var page = CurrentPage;
-            if(page == null)
-            {
-                return false;
-            }
-
-            return page.History.CanRedo;
-        }
-
         /// <summary>
         /// Completely clears the history for the current page.
         /// </summary>
@@ -1352,38 +1301,6 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Testing
 
         #region Page Commands
-
-        /// <summary>
-        /// Add 200 pixels to the height of the current page.
-        /// </summary>
-        public Command MakePageLongerCommand { get; private set; }
-        
-        private void OnMakePageLongerCommandExecute()
-        {
-            var page = CurrentPage;
-            var initialHeight = page.Width / page.InitialAspectRatio;
-            const int MAX_INCREASE_TIMES = 2;
-            const double PAGE_INCREASE_AMOUNT = 200.0;
-            if(page.Height < initialHeight + PAGE_INCREASE_AMOUNT * MAX_INCREASE_TIMES)
-            {
-                page.Height += PAGE_INCREASE_AMOUNT;
-            }
-
-            if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher || 
-               App.Network.ProjectorProxy == null)
-            {
-                return;
-            }
-
-            try
-            {
-                App.Network.ProjectorProxy.MakeCurrentPageLonger();
-            }
-            catch(Exception)
-            {
-
-            }
-        }
 
         /// <summary>
         /// Completely clears a page of ink strokes and pageObjects.
