@@ -30,6 +30,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //App.CurrentNotebookCacheDirectory = Path.Combine(App.NotebookCacheDirectory, Notebook.Name + ";" + Notebook.ID + ";" + Notebook.Owner.FullName + ";" + Notebook.OwnerID);
 
+            PreviousPageCommand = new Command(OnPreviousPageCommandExecute, OnPreviousPageCanExecute);
+            NextPageCommand = new Command(OnNextPageCommandExecute, OnNextPageCanExecute);
+
             InitializePanels(notebook);
 
             // TODO: Convert this to string, see DisplaysPanelViewModel to pull from CLPBrushes.xaml
@@ -271,6 +274,81 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Panels
 
         #endregion //Bindings
+
+        #region Commands
+
+        /// <summary>
+        /// Navigates to previous page in the notebook.
+        /// </summary>
+        public Command PreviousPageCommand { get; private set; }
+
+        private void OnPreviousPageCommandExecute()
+        {
+            var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
+            var panel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
+            if (panel == null || currentPage == null)
+            {
+                return;
+            }
+
+            var index = Notebook.Pages.IndexOf(currentPage);
+
+            if (index > 0)
+            {
+                var page = panel.Notebook.Pages[index - 1];
+                panel.CurrentPage = page;
+            }
+        }
+
+        private bool OnPreviousPageCanExecute()
+        {
+            var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
+            var panel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
+            if (panel == null || currentPage == null)
+            {
+                return false;
+            }
+
+            var index = panel.Notebook.Pages.IndexOf(currentPage);
+            return index > 0;
+        }
+
+        /// <summary>
+        /// Navigates to the next page in the notebook.
+        /// </summary>
+        public Command NextPageCommand { get; private set; }
+
+        private void OnNextPageCommandExecute()
+        {
+            var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
+            var panel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
+            if (panel == null || currentPage == null)
+            {
+                return;
+            }
+
+            var index = panel.Notebook.Pages.IndexOf(currentPage);
+            if (index < panel.Notebook.Pages.Count - 1)
+            {
+                var page = panel.Notebook.Pages[index + 1];
+                panel.CurrentPage = page;
+            }
+        }
+
+        private bool OnNextPageCanExecute()
+        {
+            var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
+            var panel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
+            if (panel == null || currentPage == null)
+            {
+                return false;
+            }
+
+            var index = panel.Notebook.Pages.IndexOf(currentPage);
+            return index < panel.Notebook.Pages.Count - 1;
+        } 
+
+        #endregion //Commands
 
         #region Methods
 

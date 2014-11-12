@@ -81,10 +81,6 @@ namespace Classroom_Learning_Partner.ViewModels
             RefreshNetworkCommand = new Command(OnRefreshNetworkCommandExecute);
             ToggleThumbnailsCommand = new Command(OnToggleThumbnailsCommandExecute);
 
-            //Notebook
-            PreviousPageCommand = new Command(OnPreviousPageCommandExecute, OnPreviousPageCanExecute);
-            NextPageCommand = new Command(OnNextPageCommandExecute, OnNextPageCanExecute);
-
             //Submission
             SubmitPageCommand = new Command(OnSubmitPageCommandExecute, OnInsertPageObjectCanExecute);
             GroupSubmitPageCommand = new Command(OnGroupSubmitPageCommandExecute, OnInsertPageObjectCanExecute);
@@ -694,81 +690,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //File Menu
-
-        #region Notebook Commands
-
-        /// <summary>
-        /// Navigates to previous page in the notebook.
-        /// </summary>
-        public Command PreviousPageCommand { get; private set; }
-
-        private void OnPreviousPageCommandExecute()
-        {
-            var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
-            var panel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
-            if(panel == null || currentPage == null)
-            {
-                return;
-            }
-
-            var index = panel.Notebook.Pages.IndexOf(currentPage);
-
-            if(index > 0)
-            {
-                var page = panel.Notebook.Pages[index - 1];
-                panel.CurrentPage = page;
-            }
-        }
-
-        private bool OnPreviousPageCanExecute()
-        {
-            var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
-            var panel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
-            if(panel == null || currentPage == null)
-            {
-                return false;
-            }
-
-            var index = panel.Notebook.Pages.IndexOf(currentPage);
-            return index > 0;
-        }
-
-        /// <summary>
-        /// Navigates to the next page in the notebook.
-        /// </summary>
-        public Command NextPageCommand { get; private set; }
-
-        private void OnNextPageCommandExecute()
-        {
-            var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
-            var panel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
-            if(panel == null || currentPage == null)
-            {
-                return;
-            }
-
-            var index = panel.Notebook.Pages.IndexOf(currentPage);
-            if(index < panel.Notebook.Pages.Count - 1)
-            {
-                var page = panel.Notebook.Pages[index + 1];
-                panel.CurrentPage = page;
-            }
-        }
-
-        private bool OnNextPageCanExecute()
-        {
-            var currentPage = NotebookPagesPanelViewModel.GetCurrentPage();
-            var panel = NotebookPagesPanelViewModel.GetNotebookPagesPanelViewModel();
-            if(panel == null || currentPage == null)
-            {
-                return false;
-            }
-
-            var index = panel.Notebook.Pages.IndexOf(currentPage);
-            return index < panel.Notebook.Pages.Count - 1;
-        }
-
-        #endregion //Notebook Commands
 
         #region Submission Commands
 

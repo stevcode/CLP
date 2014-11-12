@@ -36,10 +36,12 @@
                             HorizontalAlignment="Center">
 
                     <customControls:RibbonButton Text="Previous Page"
+                                                 Command="{Binding PreviousPageCommand}"
                                                  LargeImageSource="pack://application:,,,/Resources/Images/PreviousPage32.png"
                                                  IsContextButton="True" />
 
                     <customControls:RibbonButton Text="Next Page"
+                                                 Command="{Binding NextPageCommand}"
                                                  LargeImageSource="pack://application:,,,/Resources/Images/NextPage32.png"
                                                  IsContextButton="True" />
 
