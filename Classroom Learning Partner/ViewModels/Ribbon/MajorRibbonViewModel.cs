@@ -35,6 +35,7 @@ namespace Classroom_Learning_Partner.ViewModels
             SetRibbonButtons();
 
             PageInteractionMode = _pageInteractionService.CurrentPageInteractionMode;
+            CurrentLeftPanel = Panels.NotebookPages;
         }
 
         private void InitializeCommands()
@@ -270,6 +271,32 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData ButtonsProperty = RegisterProperty("Buttons", typeof (ObservableCollection<UIElement>), () => new ObservableCollection<UIElement>());
 
+        #region Find Better Way
+
+        /// <summary>
+        /// Gets or sets the property value.
+        /// </summary>
+        public Panels? CurrentLeftPanel
+        {
+            get { return GetValue<Panels?>(CurrentLeftPanelProperty); }
+            set { SetValue(CurrentLeftPanelProperty, value); }
+        }
+
+        public static readonly PropertyData CurrentLeftPanelProperty = RegisterProperty("CurrentLeftPanel", typeof(Panels?));
+
+        /// <summary>
+        /// Right Panel.
+        /// </summary>
+        public Panels? CurrentRightPanel
+        {
+            get { return GetValue<Panels?>(CurrentRightPanelProperty); }
+            set { SetValue(CurrentRightPanelProperty, value); }
+        }
+
+        public static readonly PropertyData CurrentRightPanelProperty = RegisterProperty("CurrentRightPanel", typeof(Panels?)); 
+
+        #endregion //Find Better Way
+
         #endregion //Bindings
 
         #region Properties
@@ -429,16 +456,16 @@ namespace Classroom_Learning_Partner.ViewModels
             //Buttons.Add(_insertDivisionTemplateWithTilesButton);
 
             // Insert Shapes
-            //Buttons.Add(Separater);
-            //Buttons.Add(_insertSquareButton);
-            //Buttons.Add(_insertCircleButton);
-            //Buttons.Add(_insertHorizontalLineButton);
-            //Buttons.Add(_insertVerticalLineButton);
-            //Buttons.Add(_insertProtractorButton);
+            Buttons.Add(Separater);
+            Buttons.Add(_insertSquareButton);
+            Buttons.Add(_insertCircleButton);
+            Buttons.Add(_insertHorizontalLineButton);
+            Buttons.Add(_insertVerticalLineButton);
+            Buttons.Add(_insertProtractorButton);
 
             // Insert Text Box
-            Buttons.Add(Separater);
-            Buttons.Add(_insertTextBoxButton);
+            //Buttons.Add(Separater);
+            //Buttons.Add(_insertTextBoxButton);
         }
 
         #endregion //Methods

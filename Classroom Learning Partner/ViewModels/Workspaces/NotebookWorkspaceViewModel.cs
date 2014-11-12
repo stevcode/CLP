@@ -15,6 +15,7 @@ namespace Classroom_Learning_Partner.ViewModels
     /// UserControl view model.
     /// </summary>
     [InterestedIn(typeof(RibbonViewModel))]
+    [InterestedIn(typeof(MajorRibbonViewModel))]
     [InterestedIn(typeof(MainWindowViewModel))]
     public class NotebookWorkspaceViewModel : ViewModelBase
     {
@@ -49,7 +50,7 @@ namespace Classroom_Learning_Partner.ViewModels
                            };
             NotebookPagesPanel = new NotebookPagesPanelViewModel(notebook, StagingPanel);
             ProgressPanel = new ProgressPanelViewModel(notebook, StagingPanel);
-            if(App.MainWindowViewModel.Ribbon.CurrentLeftPanel == Panels.Progress)
+            if(App.MainWindowViewModel.MajorRibbon.CurrentLeftPanel == Panels.Progress)
             {
                 LeftPanel = ProgressPanel;
             }
@@ -359,9 +360,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            if(viewModel is RibbonViewModel)
+            if(viewModel is MajorRibbonViewModel)
             {
-                var ribbon = viewModel as RibbonViewModel;
+                var ribbon = viewModel as MajorRibbonViewModel;
 
                 if(propertyName == "CurrentLeftPanel")
                 {

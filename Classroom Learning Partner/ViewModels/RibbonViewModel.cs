@@ -69,8 +69,6 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentFontSize = 34;
             CurrentFontColor = _fontColors[0];
             CurrentFontFamily = Fonts[0];
-
-            CurrentLeftPanel = Panels.NotebookPages;
         }
 
         private void InitializeCommands()
@@ -171,27 +169,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Bindings
 
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public Panels? CurrentLeftPanel
-        {
-            get { return GetValue<Panels?>(CurrentLeftPanelProperty); }
-            set { SetValue(CurrentLeftPanelProperty, value); }
-        }
-
-        public static readonly PropertyData CurrentLeftPanelProperty = RegisterProperty("CurrentLeftPanel", typeof(Panels?));
-
-        /// <summary>
-        /// Right Panel.
-        /// </summary>
-        public Panels? CurrentRightPanel
-        {
-            get { return GetValue<Panels?>(CurrentRightPanelProperty); }
-            set { SetValue(CurrentRightPanelProperty, value); }
-        }
-
-        public static readonly PropertyData CurrentRightPanelProperty = RegisterProperty("CurrentRightPanel", typeof(Panels?));
+        
 
         /// <summary>
         /// Disables the use of history to broadcast changes to a page to the projector.
