@@ -29,34 +29,7 @@
         <Ribbon.ApplicationMenu>
             <RibbonApplicationMenu SmallImageSource="pack://application:,,,/Resources/Images/File.png"
                                    Background="{DynamicResource DynamicMainColor}">
-               
-                <RibbonApplicationMenuItem Header="Copy Notebook For New Owner"
-                                           KeyTip="S"
-                                           ImageSource="pack://application:,,,/Resources/Images/SaveNotebook32.png"
-                                           Command="{Binding CopyNotebookForNewOwnerCommand}"
-                                           Visibility="{Binding AuthoringTabVisibility}" />
-               
-                <RibbonSeparator />
-
-                <RibbonApplicationMenuItem Header="Convert Notebook Pages To PDF"
-                                           ImageSource="pack://application:,,,/Resources/Images/ConvertToPDF32.png"
-                                           Command="{Binding ConvertToXPSCommand}" />
-
-                <RibbonApplicationMenuItem Header="Convert Submissions for this page to PDF"
-                                           ImageSource="pack://application:,,,/Resources/Images/ConvertToPDF32.png"
-                                           Command="{Binding ConvertPageSubmissionToXPSCommand}"
-                                           Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
-
-                <RibbonApplicationMenuItem Header="Convert All Submissions To PDF"
-                                           ImageSource="pack://application:,,,/Resources/Images/ConvertToPDF32.png"
-                                           Command="{Binding ConvertAllSubmissionsToXPSCommand}" />
-
-                <!--<RibbonApplicationMenuItem Header="Convert Displays To XPS"
-                                           ImageSource="pack://application:,,,/Resources/Images/ConvertToPDF32.png"
-                                           Command="{Binding ConvertDisplaysToXPSCommand}" />-->
-                
-                <RibbonSeparator />
-                
+                              
                 <RibbonApplicationMenuItem Header="Open Class Period"
                                            ImageSource="pack://application:,,,/Resources/Images/GroupSubmit32.png"
                                            Command="{Binding OpenClassPeriodCommand}"

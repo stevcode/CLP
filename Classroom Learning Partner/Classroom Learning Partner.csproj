@@ -1022,6 +1022,8 @@
     <Content Include="External Libraries\System.Reactive.Providers.dll" />
     <Content Include="External Libraries\System.Reactive.Windows.Threading.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
+    <Resource Include="Resources\Images\PageObjects32.png" />
+    <Resource Include="Resources\Images\PageObjects512.png" />
     <Resource Include="Resources\Images\WindowControls\CloseButton.png" />
     <Resource Include="Resources\Images\WindowControls\MaximizeButton.png" />
     <Resource Include="Resources\Images\WindowControls\MinimizeButton.png" />
