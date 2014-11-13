@@ -200,10 +200,10 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        private bool _initialIsAdornerVisible;
-
         /// <summary>Gets the DragStartPageObjectCommand command.</summary>
         public Command<DragStartedEventArgs> DragStartPageObjectCommand { get; set; }
+
+        
 
         /// <summary>Method to invoke when the DragStartPageObjectCommand command is executed.</summary>
         private void OnDragStartPageObjectCommandExecute(DragStartedEventArgs e)
@@ -213,12 +213,15 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
+            if (!IsAdornerVisible)
+            {
+                ACLPPageBaseViewModel.ClearAdorners(PageObject.ParentPage);
+            }
+
             PageObject.ParentPage.History.BeginBatch(new PageObjectMoveBatchHistoryItem(PageObject.ParentPage,
                                                                                         App.MainWindowViewModel.CurrentUser,
                                                                                         PageObject.ID,
                                                                                         new Point(PageObject.XPosition, PageObject.YPosition)));
-            _initialIsAdornerVisible = IsAdornerVisible;
-            ACLPPageBaseViewModel.ClearAdorners(PageObject.ParentPage);
         }
 
         /// <summary>Gets the DragPageObjectCommand command.</summary>
@@ -255,9 +258,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            var initialX = XPosition;
-            var initialY = YPosition;
-
             var batch = PageObject.ParentPage.History.CurrentHistoryBatch;
             if (batch is PageObjectMoveBatchHistoryItem)
             {
@@ -267,18 +267,19 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var startingPoint = batchHistoryItem.TravelledPositions.FirstOrDefault();
 
-            var deltaX = startingPoint.X - XPosition;
-            var deltaY = startingPoint.Y - YPosition;
-            if (Math.Max(deltaX, deltaY) < 1.0)
+            var deltaX = Math.Abs(startingPoint.X - XPosition);
+            var deltaY = Math.Abs(startingPoint.Y - YPosition);
+            var wasDragged = Math.Max(deltaX, deltaY) > 1.0;
+
+            if (wasDragged)
             {
-                IsAdornerVisible = !_initialIsAdornerVisible;
-                return;
+                ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, batchHistoryItem, true);
+                PageObject.OnMoved(XPosition, YPosition);
             }
-
-            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, batchHistoryItem, true);
-            PageObject.OnMoved(initialX, initialY);
-
-            IsAdornerVisible = true;
+            else
+            {
+                IsAdornerVisible = true;
+            }
         }
 
         /// <summary>Gets the ResizeStartPageObjectCommand command.</summary>
