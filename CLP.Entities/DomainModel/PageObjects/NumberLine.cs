@@ -284,8 +284,15 @@ namespace CLP.Entities
                 return;
             }
 
-            ParentPage.InkStrokes.Remove(new StrokeCollection(AcceptedStrokes));
-            ParentPage.History.TrashedInkStrokes.Add(new StrokeCollection(AcceptedStrokes));
+            var strokesToTrash = new StrokeCollection();
+
+            foreach (var stroke in AcceptedStrokes.Where(stroke => ParentPage.InkStrokes.Contains(stroke)))
+            {
+                strokesToTrash.Add(stroke);
+            }
+
+            ParentPage.InkStrokes.Remove(strokesToTrash);
+            ParentPage.History.TrashedInkStrokes.Add(strokesToTrash);
         }
         
         public void CreateTicks()

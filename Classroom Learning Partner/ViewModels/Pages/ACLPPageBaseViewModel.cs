@@ -698,6 +698,8 @@ namespace Classroom_Learning_Partner.ViewModels
             InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
             PageObjects.CollectionChanged -= PageObjects_CollectionChanged;
 
+            Page.InkStrokes.Remove(stroke);
+
             var lassoedPageObjects = new List<IPageObject>();
 
             var strokeGeometry = new PathGeometry();
@@ -806,8 +808,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 var region = new LassoRegion(Page, lassoedPageObjects, new StrokeCollection(lassoedStrokes), xPosition, yPosition, height, width);
                 AddPageObjectToPage(region, false);
             }
-
-            Page.InkStrokes.Remove(stroke);
 
             InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
             PageObjects.CollectionChanged += PageObjects_CollectionChanged;

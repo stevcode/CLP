@@ -249,6 +249,11 @@ namespace Classroom_Learning_Partner.ViewModels
             get { return CurrentProgramMode == ProgramModes.Teacher ? Visibility.Collapsed : Visibility.Visible; }
         }
 
+        public Visibility NotStudentVisibility
+        {
+            get { return CurrentProgramMode == ProgramModes.Student ? Visibility.Collapsed : Visibility.Visible; }
+        }
+
         #endregion //Global Bindings
 
         #endregion //Bindings
@@ -319,6 +324,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 RaisePropertyChanged("ProjectorOnlyVisibility");
                 RaisePropertyChanged("StudentOnlyVisibility");
                 RaisePropertyChanged("NotTeacherVisibility");
+                RaisePropertyChanged("NotStudentVisibility");
             }
         }
 
