@@ -14,9 +14,22 @@ namespace Classroom_Learning_Partner.ViewModels
 {
     public class ContextRibbonViewModel : ViewModelBase
     {
-        private readonly IPageInteractionService _pageInteractionService;
+        private IPageInteractionService _pageInteractionService;
 
-        public ContextRibbonViewModel() { _pageInteractionService = DependencyResolver.Resolve<IPageInteractionService>(); }
+        public ContextRibbonViewModel()
+        {
+            _pageInteractionService = DependencyResolver.Resolve<IPageInteractionService>();
+
+            //switch (_pageInteractionService.CurrentPageInteractionMode)
+            //{
+            //    case PageInteractionModes.Pen:
+            //        SetPenContextButtons();
+            //        break;
+            //    case PageInteractionModes.Eraser:
+            //        SetEraserContextButtons();
+            //        break;
+            //}
+        }
 
         #region Bindings
 
@@ -46,6 +59,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public void SetPenContextButtons()
         {
+            _pageInteractionService = DependencyResolver.Resolve<IPageInteractionService>();
+            if (_pageInteractionService == null)
+            {
+                return;
+            }
+
             if (!CurrentPenColors.Any())
             {
                 CurrentPenColors.Add(new ColorButton(Colors.Black));
@@ -73,6 +92,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             Buttons.Clear();
+            
 
             Buttons.Add(new RibbonButton("Pen Size", "pack://application:,,,/Resources/Images/PenSize32.png", null, null, true));
             var highlighterButton = new ToggleRibbonButton("Highlighter", "Highlighter", "pack://application:,,,/Resources/Images/Highlighter32.png", true)
@@ -101,8 +121,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void colorButton_Checked(object sender, RoutedEventArgs e)
         {
+            _pageInteractionService = DependencyResolver.Resolve<IPageInteractionService>();
             var colorButton = sender as ColorButton;
-            if (colorButton == null)
+            if (colorButton == null ||
+                _pageInteractionService == null)
             {
                 return;
             }
@@ -112,9 +134,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void highlighterButton_Checked(object sender, RoutedEventArgs e)
         {
+            _pageInteractionService = DependencyResolver.Resolve<IPageInteractionService>();
             var toggleButton = sender as ToggleRibbonButton;
             if (toggleButton == null ||
-                toggleButton.IsChecked == null)
+                toggleButton.IsChecked == null ||
+                _pageInteractionService == null)
             {
                 return;
             }

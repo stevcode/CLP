@@ -74,18 +74,6 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 NotebookPagesPanel.IsVisible = false;
             }
-
-            var pageInteractionService = DependencyResolver.Resolve<IPageInteractionService>();
-
-            switch (pageInteractionService.CurrentPageInteractionMode)
-            {
-                case PageInteractionModes.Pen:
-                    ContextRibbon.SetPenContextButtons();
-                    break;
-                case PageInteractionModes.Eraser:
-                    ContextRibbon.SetEraserContextButtons();
-                    break;
-            }
         }
 
         public override string Title { get { return "NotebookWorkspaceVM"; } }

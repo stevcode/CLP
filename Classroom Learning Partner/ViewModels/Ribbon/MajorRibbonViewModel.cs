@@ -25,7 +25,7 @@ namespace Classroom_Learning_Partner.ViewModels
             get { return NotebookPagesPanelViewModel.GetCurrentPage(); }
         }
 
-        private readonly IPageInteractionService _pageInteractionService;
+        private IPageInteractionService _pageInteractionService;
 
         public MajorRibbonViewModel()
         {
@@ -35,7 +35,7 @@ namespace Classroom_Learning_Partner.ViewModels
             InitializeButtons();
             SetRibbonButtons();
 
-            PageInteractionMode = _pageInteractionService.CurrentPageInteractionMode;
+            //PageInteractionMode = _pageInteractionService.CurrentPageInteractionMode;
             CurrentLeftPanel = Panels.NotebookPages;
         }
 
@@ -139,7 +139,6 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 case "PageInteractionMode":
                     PageInteractionMode = (PageInteractionModes)Enum.Parse(typeof (PageInteractionModes), checkedButton.AssociatedEnumValue);
-                    _pageInteractionService.SetPenMode();
 
                     if (App.MainWindowViewModel == null)
                     {
@@ -150,6 +149,8 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         break;
                     }
+
+                    _pageInteractionService = DependencyResolver.Resolve<IPageInteractionService>();
 
                     switch (PageInteractionMode)
                     {
