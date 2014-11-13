@@ -197,6 +197,31 @@
               Stroke="{DynamicResource DynamicMainColor}"
               StrokeThickness="1" />
 
+        <!-- Extras -->
+        <StackPanel DockPanel.Dock="Right"
+                    Orientation="Horizontal">
+
+            <customControls:ToggleRibbonButton UnCheckedText="Pens Down"
+                                               CheckedText="Pens Up"
+                                               LargeImageSource="pack://application:,,,/Resources/Images/PenDisabled32.png"
+                                               Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
+
+            <customControls:ToggleRibbonButton UnCheckedText="Extras"
+                                               CheckedText="Extras"
+                                               LargeImageSource="pack://application:,,,/Resources/Images/TempIcon32.png"
+                                               Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
+
+        </StackPanel>
+
+        <Line DockPanel.Dock="Right"
+              Stretch="Fill"
+              Y1="0"
+              Y2="1"
+              Margin="0 2 0 2"
+              Stroke="{DynamicResource DynamicMainColor}"
+              StrokeThickness="1"
+              Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
+
         <!-- Right Panel Control -->
         <StackPanel DockPanel.Dock="Right"
                     Orientation="Horizontal">

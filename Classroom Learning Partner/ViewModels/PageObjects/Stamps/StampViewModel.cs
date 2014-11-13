@@ -826,16 +826,9 @@ namespace Classroom_Learning_Partner.ViewModels
         public static void AddPileToPage(CLPPage page)
         {
             var pageObjectsToAdd = new List<IPageObject>();
-            var observerStamp = new Stamp(page, StampTypes.ObservingStamp)
-                                {
-                                    YPosition = 150
-                                };
+            var observerStamp = new Stamp(page, StampTypes.ObservingStamp);
             pageObjectsToAdd.Add(observerStamp);
-            var emptyGroupStamp = new Stamp(page, StampTypes.EmptyGroupStamp)
-            {
-                XPosition = observerStamp.XPosition + observerStamp.Width + 50,
-                YPosition = observerStamp.YPosition
-            };
+            var emptyGroupStamp = new Stamp(page, StampTypes.EmptyGroupStamp);
             pageObjectsToAdd.Add(emptyGroupStamp);
             ACLPPageBaseViewModel.AddPageObjectsToPage(page, pageObjectsToAdd);
         }
