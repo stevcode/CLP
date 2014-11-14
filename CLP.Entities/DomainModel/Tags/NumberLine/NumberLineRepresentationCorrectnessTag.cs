@@ -76,7 +76,7 @@ namespace CLP.Entities
         {
             get
             {
-                return string.Format("Correctness for {0} to {1}.\n" + "Number Line {2} on page.\n" + "{3}.\n" + "{4}",
+                return string.Format("Correctness for {0} to {1}.\n" + "Number Line {2} on page.\n" + "{3}{4}",
                                      FirstNumber,
                                      LastNumber,
                                      IsNumberLineStillOnPage ? "still" : "no longer",

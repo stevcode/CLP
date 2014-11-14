@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Windows;
+using System.Windows.Ink;
 
 namespace CLP.Entities
 {
@@ -59,7 +61,43 @@ namespace CLP.Entities
             var numberLineIDsInHistory = GetListOfNumberLineIDsInHistory(page);
             var incomplete = false;
 
+
             //Completeness
+            var arcs = new List<dynamic>();
+            foreach (var stroke in numberLine.AcceptedStrokes)
+            {
+                var tickRight = numberLine.FindClosestTick(new StrokeCollection
+                                                           {
+                                                               stroke
+                                                           });
+                var tickLeft = numberLine.FindClosestTickLeft(new StrokeCollection
+                                                              {
+                                                                  stroke
+                                                              });
+                arcs.Add(new
+                         {
+                             Start = tickLeft.TickValue,
+                             End = tickRight.TickValue
+                         });
+            }
+            var sortedArcs = arcs.Distinct().OrderBy(x => x.Start).ToList();
+            var gaps = 0;
+            var overlaps = 0;
+
+            for (var i = 0; i < sortedArcs.Count - 1; i++)
+            {
+                if (sortedArcs[i].End < sortedArcs[i + 1].Start)
+                {
+                    gaps++;
+                }
+                else if(sortedArcs[i].End > sortedArcs[i+1].Start)
+                {
+                    overlaps++;
+                }
+            }
+
+
+
             if (!numberLine.JumpSizes.Any())
             {
                 var tag = new NumberLineCompletenessTag(page,
@@ -70,24 +108,25 @@ namespace CLP.Entities
                                                         numberLineIDsInHistory.IndexOf(numberLine.ID),
                                                         false,
                                                         true,
+                                                        0,
                                                         0);
                 page.AddTag(tag);
                 incomplete = true;
             }
-            //// Find GAPS Later
-            else if (false)
+            else if(gaps != 0 || overlaps != 0)
             {
-            //    var tag = new NumberLineCompletenessTag(page,
-            //                                            Origin.StudentPageObjectGenerated,
-            //                                            numberLine.ID,
-            //                                            0,
-            //                                            numberLine.NumberLineSize,
-            //                                            numberLineIDsInHistory.IndexOf(numberLine.ID),
-            //                                            false,
-            //                                            false,
-            //                                            gaps);
-            //    page.AddTag(tag);
-            //    incomplete = true;
+                var tag = new NumberLineCompletenessTag(page,
+                                                        Origin.StudentPageObjectGenerated,
+                                                        numberLine.ID,
+                                                        0,
+                                                        numberLine.NumberLineSize,
+                                                        numberLineIDsInHistory.IndexOf(numberLine.ID),
+                                                        false,
+                                                        false,
+                                                        gaps,
+                                                        overlaps);
+                page.AddTag(tag);
+                incomplete = true;
             }
             else
             {
@@ -99,6 +138,7 @@ namespace CLP.Entities
                                         numberLineIDsInHistory.IndexOf(numberLine.ID),
                                         true,
                                         false,
+                                        0,
                                         0);
                 page.AddTag(tag);
             }

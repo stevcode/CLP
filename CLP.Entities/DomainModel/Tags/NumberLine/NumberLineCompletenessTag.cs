@@ -23,12 +23,14 @@ namespace CLP.Entities
                                          int numberLineNumber,
                                          bool numberLineComplete,
                                          bool noJumps,
-                                         int gaps)
+                                         int gaps,
+                                         int overlaps)
             : base(parentPage, origin, numberLineID, firstNumber, lastNumber, numberLineNumber)
         {
             NumberLineComplete = numberLineComplete;
             NoJumps = noJumps;
             Gaps = gaps;
+            Overlaps = overlaps;
         }
 
         public NumberLineCompletenessTag(SerializationInfo info, StreamingContext context)
@@ -71,6 +73,17 @@ namespace CLP.Entities
 
         public static readonly PropertyData GapsProperty = RegisterProperty("Gaps", typeof (int));
 
+        /// <summary>
+        /// If overlaps exist, how many overlaps are there
+        /// </summary>
+        public int Overlaps
+        {
+            get { return GetValue<int>(OverlapsProperty); }
+            set { SetValue(OverlapsProperty, value); }
+        }
+
+        public static readonly PropertyData OverlapsProperty = RegisterProperty("Overlaps", typeof (int));
+
         #region ATagBase Overrides
 
         public override string FormattedName
@@ -82,13 +95,14 @@ namespace CLP.Entities
         {
             get
             {
-                return string.Format("Completeness for {0}  to {1}.\n" + "Number Line {2} on page.\n" + "Number Line is {3}.\n" + "{4}" + "{5}",
+                return string.Format("Completeness for {0}  to {1}.\n" + "Number Line {2} on page.\n" + "Number Line is {3}." + "{4}" + "{5}" + "{6}",
                                      FirstNumber,
                                      LastNumber,
                                      IsNumberLineStillOnPage ? "still" : "no longer",
                                      NumberLineComplete ? "Complete" : "Incomplete",
-                                     NumberLineComplete ? string.Empty : (NoJumps ? "No Jumps.\n" : string.Empty),
-                                     NumberLineComplete ? string.Empty : (Gaps == 0 ? string.Empty : Gaps + " gaps between jumps."));
+                                     NumberLineComplete ? string.Empty : (NoJumps ? "\nNo Jumps." : string.Empty),
+                                     NumberLineComplete ? string.Empty : (Gaps == 0 ? string.Empty : "\n" + Gaps + " gaps between jump(s)."),
+                                     NumberLineComplete ? string.Empty : (Overlaps == 0 ? string.Empty : "\n" + Overlaps + " overlapping jump(s)."));
             }
         }
 
