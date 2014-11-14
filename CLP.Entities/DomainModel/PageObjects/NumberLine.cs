@@ -276,8 +276,31 @@ namespace CLP.Entities
 
         #region Methods
 
+        public override void OnAdded()
+        {
+            var multiplicationDefinitions = ParentPage.Tags.OfType<MultiplicationRelationDefinitionTag>().ToList();
+            var numberLineIDsInHistory = NumberLineAnalysis.GetListOfNumberLineIDsInHistory(ParentPage);
+
+            foreach (var multiplicationRelationDefinitionTag in multiplicationDefinitions)
+            {
+                var distanceFromAnswer = NumberLineSize - multiplicationRelationDefinitionTag.Product;
+               
+                var tag = new NumberLineCreationTag(ParentPage, Origin.StudentPageObjectGenerated, ID, 0, NumberLineSize, numberLineIDsInHistory.IndexOf(ID), distanceFromAnswer);
+                ParentPage.AddTag(tag);
+            }
+        }
+
         public override void OnDeleted()
         {
+            var jumpSizes = JumpSizes.Select(x=> x.JumpSize).ToList();
+
+            var lastMarkedTick = Ticks.LastOrDefault(x => x.IsMarked);
+            var lastMarkedTickNumber = lastMarkedTick != null ? (int?) lastMarkedTick.TickValue : null;
+
+            var numberLineIDsInHistory = NumberLineAnalysis.GetListOfNumberLineIDsInHistory(ParentPage);
+            var tag = new NumberLineDeletedTag(ParentPage, Origin.StudentPageObjectGenerated, ID, 0, NumberLineSize, numberLineIDsInHistory.IndexOf(ID), jumpSizes, lastMarkedTickNumber);
+            ParentPage.AddTag(tag);
+
             if (!CanAcceptStrokes ||
                 !AcceptedStrokes.Any())
             {

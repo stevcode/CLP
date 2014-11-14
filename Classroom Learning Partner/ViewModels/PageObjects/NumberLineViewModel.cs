@@ -146,10 +146,12 @@ namespace Classroom_Learning_Partner.ViewModels
             PageObject.OnResizing(initialWidth, initialHeight);
         }
 
+
         /// <summary>Gets the ResizeStartPageObjectCommand command.</summary>
         public Command<DragStartedEventArgs> ResizeStartNumberLineLengthCommand { get; set; }
 
         private bool _isClicked;
+        private int _oldEnd;
 
         private void OnResizeStartNumberLineLengthCommandExecute(DragStartedEventArgs e)
         {
@@ -159,6 +161,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                           new Point(PageObject.Width, PageObject.Height)));
             _initialWidth = Width;
             _isClicked = true;
+            _oldEnd = NumberLineSize;
         }
 
         /// <summary>Gets the ResizeStopPageObjectCommand command.</summary>
@@ -166,6 +169,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnResizeStopNumberLineLengthCommandExecute(DragCompletedEventArgs e)
         {
+            var tooLow = false;
+            var tooLowNumberTry = 0;
             var initialWidth = Width;
             var initialHeight = Height;
             var batch = PageObject.ParentPage.History.CurrentHistoryBatch;
@@ -260,6 +265,8 @@ namespace Classroom_Learning_Partner.ViewModels
                     else
                     {
                         MessageBox.Show("You have already drawn past this number on the number line.");
+                        tooLow = true;
+                        tooLowNumberTry = newNumberLineSize;
                     }
                 }
             }
@@ -269,6 +276,20 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             _initialWidth = 0;
+            var changeSize = NumberLineSize - _oldEnd;
+            var multiplicationDefinitions = PageObject.ParentPage.Tags.OfType<MultiplicationRelationDefinitionTag>().ToList();
+            var numberLineIDsInHistory = NumberLineAnalysis.GetListOfNumberLineIDsInHistory(PageObject.ParentPage);
+
+            var tooLowNumber = tooLow ? (int?) tooLowNumberTry : null;
+
+            foreach (var multiplicationRelationDefinitionTag in multiplicationDefinitions)
+            {
+                var oldDistanceFromAnswer = _oldEnd - multiplicationRelationDefinitionTag.Product;
+                var newDistanceFromAnswer = NumberLineSize - multiplicationRelationDefinitionTag.Product;
+
+                var tag = new NumberLineDimensionsChangedTag(PageObject.ParentPage, Origin.StudentPageObjectGenerated, PageObject.ID, 0, _oldEnd, numberLineIDsInHistory.IndexOf(PageObject.ID), 0, NumberLineSize, changeSize, _isClicked, oldDistanceFromAnswer, newDistanceFromAnswer, tooLowNumber);
+                PageObject.ParentPage.AddTag(tag);
+            }
         }
 
         /// <summary>Change the length of the number line</summary>
