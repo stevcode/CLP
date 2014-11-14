@@ -126,6 +126,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
+            App.MainWindowViewModel.IsDragBarVisible = mainWindow.WindowState == WindowState.Maximized;
             mainWindow.WindowState = mainWindow.WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
         }
 

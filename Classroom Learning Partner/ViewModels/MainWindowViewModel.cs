@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Catel.Data;
@@ -48,15 +49,27 @@ namespace Classroom_Learning_Partner.ViewModels
         private void InitializeCommands()
         {
             SetUserModeCommand = new Command<string>(OnSetUserModeCommandExecute);
-
-            ToggleDebugCommand = new Command(OnToggleDebugCommandExecute);
-            ToggleExtrasCommand = new Command(OnToggleExtrasCommandExecute);
             TogglePenDownCommand = new Command(OnTogglePenDownCommandExecute);
+            MoveWindowCommand = new Command<MouseButtonEventArgs>(OnMoveWindowCommandExecute);
+            ToggleMinimizeStateCommand = new Command(OnToggleMinimizeStateCommandExecute);
+            ToggleMaximizeStateCommand = new Command(OnToggleMaximizeStateCommandExecute);
+            ExitProgramCommand = new Command(OnExitProgramCommandExecute);
         }
 
         #endregion //Constructor
 
         #region Bindings
+
+        /// <summary>
+        /// Visibility of the top drag bar when program is not minimized.
+        /// </summary>
+        public bool IsDragBarVisible
+        {
+            get { return GetValue<bool>(IsDragBarVisibleProperty); }
+            set { SetValue(IsDragBarVisibleProperty, value); }
+        }
+
+        public static readonly PropertyData IsDragBarVisibleProperty = RegisterProperty("IsDragBarVisible", typeof (bool), false);
 
         /// <summary>Screenshot of the frozen display.</summary>
         public ImageSource FrozenDisplayImageSource
@@ -437,26 +450,75 @@ namespace Classroom_Learning_Partner.ViewModels
             SetWorkspace();
         }
 
-        /// <summary>Toggles Debug Tab.</summary>
-        public Command ToggleDebugCommand { get; private set; }
-
-        private void OnToggleDebugCommandExecute()
-        {
-            Ribbon.DebugTabVisibility = Ribbon.DebugTabVisibility == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
-        }
-
-        /// <summary>Toggles Extras Tab.</summary>
-        public Command ToggleExtrasCommand { get; private set; }
-
-        private void OnToggleExtrasCommandExecute()
-        {
-            Ribbon.ExtrasTabVisibility = Ribbon.ExtrasTabVisibility == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
-        }
-
         /// <summary>Toggles the Pen Down screen.</summary>
         public Command TogglePenDownCommand { get; private set; }
 
         private void OnTogglePenDownCommandExecute() { IsPenDownActivated = !IsPenDownActivated; }
+
+        /// <summary>
+        /// Moves the CLP Window.
+        /// </summary>
+        public Command<MouseButtonEventArgs> MoveWindowCommand { get; private set; }
+
+        private void OnMoveWindowCommandExecute(MouseButtonEventArgs args)
+        {
+            var mainWindow = CLPServiceAgent.Instance.GetViewFromViewModel(App.MainWindowViewModel) as MainWindowView;
+            if (mainWindow == null ||
+                Mouse.LeftButton != MouseButtonState.Pressed)
+            {
+                return;
+            }
+
+            mainWindow.DragMove();
+        }
+
+        /// <summary>
+        /// Toggles CLP between minimized and not.
+        /// </summary>
+        public Command ToggleMinimizeStateCommand { get; private set; }
+
+        private void OnToggleMinimizeStateCommandExecute()
+        {
+            var mainWindow = CLPServiceAgent.Instance.GetViewFromViewModel(App.MainWindowViewModel) as MainWindowView;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            mainWindow.WindowState = WindowState.Minimized;
+        }
+
+        /// <summary>
+        /// Toggles CLP Window State between Maximized and Normal.
+        /// </summary>
+        public Command ToggleMaximizeStateCommand { get; private set; }
+
+        private void OnToggleMaximizeStateCommandExecute()
+        {
+            var mainWindow = CLPServiceAgent.Instance.GetViewFromViewModel(App.MainWindowViewModel) as MainWindowView;
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            IsDragBarVisible = mainWindow.WindowState == WindowState.Maximized;
+            mainWindow.WindowState = mainWindow.WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+        }
+
+        /// <summary>
+        /// Closes CLP
+        /// </summary>
+        public Command ExitProgramCommand { get; private set; }
+
+        private void OnExitProgramCommandExecute()
+        {
+            var mainWindow = CLPServiceAgent.Instance.GetViewFromViewModel(App.MainWindowViewModel) as MainWindowView;
+            if (mainWindow == null)
+            {
+                return;
+            }
+            mainWindow.Close();
+        }
 
         #endregion //Commands
 
