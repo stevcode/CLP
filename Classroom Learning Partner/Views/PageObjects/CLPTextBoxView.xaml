@@ -117,14 +117,27 @@
 
         <Grid>
 
-            <Rectangle Tag="PageObjectHitBox"
-                       Fill="Transparent"
-                       Stretch="Fill"
-                       Width="{Binding Width, Mode=TwoWay}"
-                       Height="{Binding Height, Mode=TwoWay}">
+            <Thumb Tag="PageObjectHitBox"
+                   Width="{Binding Width}"
+                   Height="{Binding Height}">
+                <Thumb.Template>
+                    <ControlTemplate>
+                        <Rectangle Fill="Transparent"
+                                   Stroke="Transparent"
+                                   Stretch="Fill" />
+                    </ControlTemplate>
+                </Thumb.Template>
                 <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="MouseUp">
-                        <catel:EventToCommand Command="{Binding ToggleMainAdornersCommand}"
+                    <i:EventTrigger EventName="DragStarted">
+                        <catel:EventToCommand Command="{Binding DragStartPageObjectCommand}"
+                                              PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="DragDelta">
+                        <catel:EventToCommand Command="{Binding DragPageObjectCommand}"
+                                              PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="DragCompleted">
+                        <catel:EventToCommand Command="{Binding DragStopPageObjectCommand}"
                                               PassEventArgsToCommand="True" />
                     </i:EventTrigger>
                     <i:EventTrigger EventName="MouseEnter">
@@ -132,11 +145,10 @@
                                               PassEventArgsToCommand="True" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
-            </Rectangle>
+            </Thumb>
 
             <views:BindableRichTextBox x:Name="TextBox"
                                        IsHitTestVisible="{Binding IsAdornerVisible}"
-                                       IsHitTestVisibleChanged="TextBox_OnIsHitTestVisibleChanged"
                                        Background="Transparent"
                                        Width="{Binding Width}"
                                        Height="{Binding Height}"
@@ -145,18 +157,7 @@
                                        ScrollViewer.VerticalScrollBarVisibility="Disabled"
                                        TextBlock.LineHeight="1.0"
                                        TextBlock.LineStackingStrategy="MaxHeight"
-                                       RTFText="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="PreviewMouseUp">
-                        <catel:EventToCommand Command="{Binding ToggleMainAdornersCommand}"
-                                              PassEventArgsToCommand="True" />
-                    </i:EventTrigger>
-                    <i:EventTrigger EventName="PreviewMouseEnter">
-                        <catel:EventToCommand Command="{Binding ErasePageObjectCommand}"
-                                              PassEventArgsToCommand="True" />
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </views:BindableRichTextBox>
+                                       RTFText="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}" />
 
         </Grid>
 

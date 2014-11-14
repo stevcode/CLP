@@ -562,8 +562,8 @@ namespace Classroom_Learning_Partner.ViewModels
             //Buttons.Add(_insertProtractorButton);
 
             // Insert Text Box
-            //Buttons.Add(Separater);
-            //Buttons.Add(_insertTextBoxButton);
+            Buttons.Add(Separater);
+            Buttons.Add(_insertTextBoxButton);
         }
 
         #endregion //Methods

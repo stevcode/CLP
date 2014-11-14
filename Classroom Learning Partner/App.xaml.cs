@@ -20,7 +20,7 @@ namespace Classroom_Learning_Partner
             Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
             base.OnStartup(e);
 
-            var currentProgramMode = ProgramModes.Projector;
+            var currentProgramMode = ProgramModes.Teacher;
 
             Logger.Instance.InitializeLog(currentProgramMode);
             CLPServiceAgent.Instance.Initialize();
