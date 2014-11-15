@@ -4,7 +4,7 @@
                     xmlns:catel="http://catel.codeplex.com">
 
     <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
-
+    
     <Style TargetType="{x:Type local:RibbonButton}">
         <Setter Property="Template">
             <Setter.Value>
@@ -68,6 +68,8 @@
                                     Visibility="{TemplateBinding IsContextButton, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}">
                             <Image Source="{Binding LargeImageSource, RelativeSource={RelativeSource TemplatedParent}}"
                                    Height="24"
+                                   UseLayoutRounding="False"
+                                   RenderOptions.BitmapScalingMode="HighQuality"
                                    HorizontalAlignment="Center"
                                    Margin="0 5 0 3" />
                             <Grid HorizontalAlignment="Center"

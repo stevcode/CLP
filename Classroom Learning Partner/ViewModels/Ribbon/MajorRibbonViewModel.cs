@@ -121,7 +121,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Text
             //TODO: Better Icons
-            _insertTextBoxButton = new RibbonButton("Text", "pack://application:,,,/Images/AddText.png", AddPageObjectToPageCommand, "TEXTBOX");
+            _insertTextBoxButton = new RibbonButton("Text", "pack://application:,,,/Resources/Images/MajorRibbon/TextBox512.png", AddPageObjectToPageCommand, "TEXTBOX");
         }
 
         private bool _isCheckedEventRunning = false;
