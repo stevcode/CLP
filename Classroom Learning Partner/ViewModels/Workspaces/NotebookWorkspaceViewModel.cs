@@ -28,6 +28,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public NotebookWorkspaceViewModel(Notebook notebook)
         {
             Notebook = notebook;
+            ContextRibbon = new ContextRibbonViewModel();
 
             //App.CurrentNotebookCacheDirectory = Path.Combine(App.NotebookCacheDirectory, Notebook.Name + ";" + Notebook.ID + ";" + Notebook.Owner.FullName + ";" + Notebook.OwnerID);
 
@@ -130,7 +131,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(ContextRibbonProperty, value); }
         }
 
-        public static readonly PropertyData ContextRibbonProperty = RegisterProperty("ContextRibbon", typeof (ContextRibbonViewModel), new ContextRibbonViewModel());
+        public static readonly PropertyData ContextRibbonProperty = RegisterProperty("ContextRibbon", typeof (ContextRibbonViewModel));
 
         #region Displays
 

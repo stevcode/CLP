@@ -29,6 +29,8 @@ namespace Classroom_Learning_Partner.ViewModels
             //        SetEraserContextButtons();
             //        break;
             //}
+
+            TestCommand = new Command(OnTestCommandExecute);
         }
 
         #region Bindings
@@ -59,6 +61,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public void SetPenContextButtons()
         {
+            Buttons.Clear();
+
+
+            Buttons.Add(new RibbonButton("Pen Size", "pack://application:,,,/Resources/Images/PenSize32.png", TestCommand, null, true));
+
+
             _pageInteractionService = DependencyResolver.Resolve<IPageInteractionService>();
             if (_pageInteractionService == null)
             {
@@ -91,10 +99,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
 
-            Buttons.Clear();
-            
 
-            Buttons.Add(new RibbonButton("Pen Size", "pack://application:,,,/Resources/Images/PenSize32.png", null, null, true));
             var highlighterButton = new ToggleRibbonButton("Highlighter", "Highlighter", "pack://application:,,,/Resources/Images/Highlighter32.png", true)
                                     {
                                         IsChecked = _pageInteractionService.IsHighlighting
@@ -134,11 +139,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void highlighterButton_Checked(object sender, RoutedEventArgs e)
         {
-            _pageInteractionService = DependencyResolver.Resolve<IPageInteractionService>();
             var toggleButton = sender as ToggleRibbonButton;
             if (toggleButton == null ||
-                toggleButton.IsChecked == null ||
-                _pageInteractionService == null)
+                toggleButton.IsChecked == null)
             {
                 return;
             }
@@ -148,26 +151,26 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public void SetEraserContextButtons()
         {
-            Buttons.Clear();
+            //Buttons.Clear();
 
-            var setEraseInkButton = new GroupedRibbonButton("Erase Ink",
-                                                            "EraserModes",
-                                                            "pack://application:,,,/Resources/Images/StrokeEraser32.png",
-                                                            PageInteractionModes.Select.ToString(),
-                                                            true);
-            setEraseInkButton.Checked += _setEraseModeButton_Checked;
+            //var setEraseInkButton = new GroupedRibbonButton("Erase Ink",
+            //                                                "EraserModes",
+            //                                                "pack://application:,,,/Resources/Images/StrokeEraser32.png",
+            //                                                PageInteractionModes.Select.ToString(),
+            //                                                true);
+            //setEraseInkButton.Checked += _setEraseModeButton_Checked;
 
-            var setErasePageObjectsButton = new GroupedRibbonButton("Erase PageObjects",
-                                                                    "EraserModes",
-                                                                    "pack://application:,,,/Resources/Images/ArrayCard32.png",
-                                                                    PageInteractionModes.Select.ToString(),
-                                                                    true);
-            setErasePageObjectsButton.Checked += _setEraseModeButton_Checked;
+            //var setErasePageObjectsButton = new GroupedRibbonButton("Erase PageObjects",
+            //                                                        "EraserModes",
+            //                                                        "pack://application:,,,/Resources/Images/ArrayCard32.png",
+            //                                                        PageInteractionModes.Select.ToString(),
+            //                                                        true);
+            //setErasePageObjectsButton.Checked += _setEraseModeButton_Checked;
 
-            Buttons.Add(setEraseInkButton);
-            Buttons.Add(setErasePageObjectsButton);
+            //Buttons.Add(setEraseInkButton);
+            //Buttons.Add(setErasePageObjectsButton);
 
-            setEraseInkButton.IsChecked = true;
+            //setEraseInkButton.IsChecked = true;
         }
 
         private void _setEraseModeButton_Checked(object sender, RoutedEventArgs e) { }
@@ -175,6 +178,21 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Methods
 
         #region Commands
+
+        /// <summary>
+        /// SUMMARY
+        /// </summary>
+        public Command TestCommand { get; private set; }
+
+        private void OnTestCommandExecute()
+        {
+            var isServiceNull = _pageInteractionService == null;
+            MessageBox.Show("blarg blarg " + isServiceNull);
+        }
+
+        // TODO: Move line below to constructor.
+        
+        // TODO: Move line above to constructor.
 
         #endregion //Commands
     }

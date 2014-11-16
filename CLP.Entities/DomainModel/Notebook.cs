@@ -12,6 +12,17 @@ using Path = Catel.IO.Path;
 
 namespace CLP.Entities
 {
+    public class NotebookNameComposite
+    {
+        public string FullNotebookDirectoryPath { get; set; }
+        public string Name { get; set; }
+        public string ID { get; set; }
+        public string OwnerName { get; set; }
+        public string OwnerID { get; set; }
+        public string OwnerTypeTag { get; set; }
+        public bool IsLocal { get; set; }
+    }
+
     [Serializable]
     public class Notebook : AEntityBase
     {
@@ -77,7 +88,7 @@ namespace CLP.Entities
             set { SetValue(OwnerIDProperty, value); }
         }
 
-        public static readonly PropertyData OwnerIDProperty = RegisterProperty("OwnerID", typeof(string), string.Empty);
+        public static readonly PropertyData OwnerIDProperty = RegisterProperty("OwnerID", typeof(string), String.Empty);
 
         /// <summary>
         /// The <see cref="Person" /> who owns the <see cref="Notebook" />.
@@ -135,7 +146,7 @@ namespace CLP.Entities
             set { SetValue(NameProperty, value); }
         }
 
-        public static readonly PropertyData NameProperty = RegisterProperty("Name", typeof(string), string.Empty);
+        public static readonly PropertyData NameProperty = RegisterProperty("Name", typeof(string), String.Empty);
 
         /// <summary>
         /// Overall Curriculum the <see cref="Notebook" /> employs. Curriculum of individual pages may vary.
@@ -146,7 +157,7 @@ namespace CLP.Entities
             set { SetValue(CurriculumProperty, value); }
         }
 
-        public static readonly PropertyData CurriculumProperty = RegisterProperty("Curriculum", typeof(string), string.Empty);
+        public static readonly PropertyData CurriculumProperty = RegisterProperty("Curriculum", typeof(string), String.Empty);
 
         /// <summary>
         /// List of all the HashIDs for each <see cref="CLPImage" /> that is in the notebook.
@@ -367,7 +378,7 @@ namespace CLP.Entities
                     continue;
                 }
 
-                if(newPage.DifferentiationLevel == string.Empty ||
+                if(newPage.DifferentiationLevel == String.Empty ||
                    newPage.DifferentiationLevel == "0" ||
                    newPage.DifferentiationLevel == owner.CurrentDifferentiationGroup)
                 {
@@ -375,7 +386,7 @@ namespace CLP.Entities
                     continue;
                 }
 
-                if(owner.CurrentDifferentiationGroup == string.Empty &&
+                if(owner.CurrentDifferentiationGroup == String.Empty &&
                    newPage.DifferentiationLevel == "A")
                 {
                     newNotebook.Pages.Add(newPage);
@@ -401,6 +412,136 @@ namespace CLP.Entities
         #endregion //Methods
 
         #region Cache
+
+        public string NotebookToNotebookFolderName()
+        {
+            var ownerTypeTag = OwnerID == Person.Author.ID ? "A" : Owner.IsStudent ? "S" : "T";
+            return Name + ";" + ID + ";" + Owner.FullName + ";" + OwnerID + ";" + ownerTypeTag;
+        }
+
+        public static NotebookNameComposite NotebookDirectoryToNotebookNameComposite(string path)
+        {
+            var directoryInfo = new DirectoryInfo(path);
+            var notebookDirectoryName = directoryInfo.Name;
+            var notebookDirectoryParts = notebookDirectoryName.Split(';');
+            if (notebookDirectoryParts.Length != 5 &&
+                notebookDirectoryParts.Length != 4)
+            {
+                return null;
+            }
+
+            var nameComposite = new NotebookNameComposite
+            {
+                FullNotebookDirectoryPath = path,
+                Name = notebookDirectoryParts[0],
+                ID = notebookDirectoryParts[1],
+                OwnerName = notebookDirectoryParts[2],
+                OwnerID = notebookDirectoryParts[3],
+                IsLocal = true,
+                OwnerTypeTag = notebookDirectoryParts.Length == 5 ? notebookDirectoryParts[4] : "U"
+            };
+
+            return nameComposite;
+        }
+
+        #region Loading
+
+        public static Notebook OpenFullNotebook(string notebookFolderPath, bool includeSubmissions = true)
+        {
+            var pagesFolderPath = Path.Combine(notebookFolderPath, "Pages");
+            var pageNameComposites = Directory.EnumerateFiles(pagesFolderPath, "*.xml").Select(CLPPage.PageFilePathToPageNameComposite);
+            var allPageIDs = pageNameComposites.Select(x => x.ID).Distinct().ToList();
+
+            return OpenPartialNotebook(notebookFolderPath, allPageIDs, includeSubmissions);
+        }
+
+        public static Notebook OpenPartialNotebook(string notebookFolderPath, List<string> pageIDs, bool includeSubmissions = true)
+        {
+            var notebook = LoadNotebook(notebookFolderPath);
+            if (notebook == null)
+            {
+                return null;
+            }
+
+            var loadedPages = LoadNotebookPages(notebookFolderPath, pageIDs, includeSubmissions);
+            var notebookPages = loadedPages.Where(x => x.VersionIndex == 0).OrderBy(x => x.PageNumber).ToList();
+            if (includeSubmissions)
+            {
+                foreach (var notebookPage in notebookPages)
+                {
+                    var page = notebookPage;
+                    var submissions = loadedPages.Where(x => x.ID == page.ID && x.OwnerID == page.OwnerID && x.VersionIndex != 0).OrderBy(x => x.VersionIndex).ToList();
+                    notebookPage.Submissions = new ObservableCollection<CLPPage>(submissions);
+                }
+            }
+
+            notebook.Pages = new ObservableCollection<CLPPage>(notebookPages);
+
+            return notebook;
+        }
+
+        private static Notebook LoadNotebook(string notebookFolderPath)
+        {
+            try
+            {
+                var filePath = Path.Combine(notebookFolderPath, "notebook.xml");
+                var notebook = Load<Notebook>(filePath, SerializationMode.Xml);
+                return notebook;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        private static List<CLPPage> LoadNotebookPages(string notebookFolderPath, List<string> pageIDs, bool includeSubmissions = true)
+        {
+            var pagesFolderPath = Path.Combine(notebookFolderPath, "Pages");
+            var pageFilePaths = Directory.EnumerateFiles(pagesFolderPath, "*.xml");
+            var loadedPages = new List<CLPPage>();
+            foreach (var pageFilePath in pageFilePaths)
+            {
+                var pageNameComposite = CLPPage.PageFilePathToPageNameComposite(pageFilePath);
+                if (pageNameComposite == null)
+                {
+                    continue;
+                }
+
+                if (!includeSubmissions &&
+                    pageNameComposite.VersionIndex != "0")
+                {
+                    continue;
+                }
+
+                var isPageToBeLoaded = pageIDs.Any(pageID => pageID == pageNameComposite.ID);
+                if (!isPageToBeLoaded)
+                {
+                    continue;
+                }
+
+                try
+                {
+                    var page = Load<CLPPage>(pageFilePath, SerializationMode.Xml);
+                    page.PageNumber = Decimal.Parse(pageNameComposite.PageNumber); //TODO: Make PageNumber a string.
+                    //TODO: Deal with what happens if these values change.
+                    //page.ID = pageNameComposite.ID;
+                    //page.DifferentiationLevel = pageNameComposite.DifferentiationGroupName;
+                    //page.VersionIndex = UInt32.Parse(pageNameComposite.VersionIndex);
+                    loadedPages.Add(page);
+                }
+                catch (Exception) { }
+            }
+
+            return loadedPages;
+        }
+
+        #endregion //Loading
+
+        #region Saving
+
+         
+
+        #endregion //Saving
 
         public void ToXML(string fileName)
         {
@@ -849,5 +990,7 @@ namespace CLP.Entities
         }
 
         #endregion //Cache
+
+        
     }
 }

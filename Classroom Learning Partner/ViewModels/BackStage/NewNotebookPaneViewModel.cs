@@ -115,7 +115,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var newPage = new CLPPage(Person.Author);
             newNotebook.AddCLPPageToNotebook(newPage);
 
-            var folderName = NotebookService.NotebookToNotebookFolderName(newNotebook);
+            var folderName = newNotebook.NotebookToNotebookFolderName();
             var folderPath = Path.Combine(LoadedNotebookService.CurrentNotebookCacheDirectory, folderName);
             if (Directory.Exists(folderPath))
             {

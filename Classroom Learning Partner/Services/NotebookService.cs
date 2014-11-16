@@ -10,17 +10,6 @@ using Path = Catel.IO.Path;
 
 namespace Classroom_Learning_Partner.Services
 {
-    public class NotebookNameComposite
-    {
-        public string FullNotebookDirectoryPath { get; set; }
-        public string Name { get; set; }
-        public string ID { get; set; }
-        public string OwnerName { get; set; }
-        public string OwnerID { get; set; }
-        public string OwnerTypeTag { get; set; }
-        public bool IsLocal { get; set; }
-    }
-
     public class NotebookService : INotebookService
     {
         public NotebookService()
@@ -38,12 +27,7 @@ namespace Classroom_Learning_Partner.Services
             get
             {
                 var directoryInfo = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
-                return
-                    directoryInfo.GetDirectories()
-                                 .Where(directory => directory.Name.StartsWith("Cache"))
-                                 .Select(directory => directory.Name)
-                                 .OrderBy(x => x)
-                                 .ToList();
+                return directoryInfo.GetDirectories().Where(directory => directory.Name.StartsWith("Cache")).Select(directory => directory.Name).OrderBy(x => x).ToList();
             }
         }
 
@@ -93,12 +77,7 @@ namespace Classroom_Learning_Partner.Services
 
         public List<NotebookNameComposite> AvailableLocalNotebookNameComposites
         {
-            get
-            {
-                return CurrentLocalCacheDirectory == null
-                           ? new List<NotebookNameComposite>()
-                           : GetAvailableNotebookNameCompositesInCache(CurrentLocalCacheDirectory);
-            }
+            get { return CurrentLocalCacheDirectory == null ? new List<NotebookNameComposite>() : GetAvailableNotebookNameCompositesInCache(CurrentLocalCacheDirectory); }
         }
 
         private readonly List<Notebook> _openNotebooks = new List<Notebook>();
@@ -110,26 +89,24 @@ namespace Classroom_Learning_Partner.Services
 
         public Notebook CurrentNotebook { get; set; }
 
+        public Notebook CurrentNotebooksAuthoredSource
+        {
+            get { return OpenNotebooks.FirstOrDefault(x => x.ID == CurrentNotebook.ID && x.OwnerID == Person.Author.ID); }
+        }
+
         public ClassPeriod CurrentClassPeriod { get; set; }
 
         #endregion //Properties
 
         #region Cache Methods
 
-        public bool InitializeNewLocalCache(string cacheName)
-        {
-            return InitializeNewLocalCache(cacheName, Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
-        }
+        public bool InitializeNewLocalCache(string cacheName) { return InitializeNewLocalCache(cacheName, Environment.GetFolderPath(Environment.SpecialFolder.Desktop)); }
 
         public bool InitializeNewLocalCache(string cacheName, string cacheDirectoryPath)
         {
             var directoryInfo = new DirectoryInfo(cacheDirectoryPath);
             var availableCacheNames =
-                directoryInfo.GetDirectories()
-                             .Where(directory => directory.Name.StartsWith("Cache"))
-                             .Select(directory => directory.Name)
-                             .OrderBy(x => x)
-                             .ToList();
+                directoryInfo.GetDirectories().Where(directory => directory.Name.StartsWith("Cache")).Select(directory => directory.Name).OrderBy(x => x).ToList();
 
             if (availableCacheNames.Contains(cacheName))
             {
@@ -163,14 +140,16 @@ namespace Classroom_Learning_Partner.Services
 
         public void OpenNotebook(NotebookNameComposite notebookNameComposite, string localCacheFolderPath)
         {
-            //TODO: find way to bypass this if partial notebook is currently open and you try to open full notebook (or vis versa).
-            foreach (var otherNotebook in
-                App.MainWindowViewModel.OpenNotebooks.Where(
-                                                            otherNotebook =>
-                                                            otherNotebook.ID == notebookNameComposite.ID &&
-                                                            otherNotebook.OwnerID == notebookNameComposite.OwnerID))
+            var existingNotebook = OpenNotebooks.FirstOrDefault(x => x.ID == notebookNameComposite.ID && x.OwnerID == notebookNameComposite.OwnerID);
+            if (existingNotebook != null)
             {
-                App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(otherNotebook);
+                if (CurrentNotebook == existingNotebook)
+                {
+                    return;
+                }
+                CurrentNotebook = existingNotebook;
+                App.MainWindowViewModel.Workspace = new BlankWorkspaceViewModel();
+                App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(existingNotebook);
                 return;
             }
 
@@ -204,7 +183,7 @@ namespace Classroom_Learning_Partner.Services
 
         public void SaveNotebook(Notebook notebook)
         {
-            var folderPath = Path.Combine(CurrentNotebookCacheDirectory, NotebookToNotebookFolderName(notebook));
+            var folderPath = Path.Combine(CurrentNotebookCacheDirectory, notebook.NotebookToNotebookFolderName());
 
             if (App.MainWindowViewModel.CurrentUser.ID == Person.Author.ID)
             {
@@ -261,37 +240,6 @@ namespace Classroom_Learning_Partner.Services
 
         #region Static Notebook Methods
 
-        public static string NotebookToNotebookFolderName(Notebook notebook)
-        {
-            var ownerTypeTag = notebook.OwnerID == Person.Author.ID ? "A" : notebook.Owner.IsStudent ? "S" : "T";
-            return notebook.Name + ";" + notebook.ID + ";" + notebook.Owner.FullName + ";" + notebook.OwnerID + ";" + ownerTypeTag;
-        }
-
-        public static NotebookNameComposite NotebookDirectoryToNotebookNameComposite(string path)
-        {
-            var directoryInfo = new DirectoryInfo(path);
-            var notebookDirectoryName = directoryInfo.Name;
-            var notebookDirectoryParts = notebookDirectoryName.Split(';');
-            if (notebookDirectoryParts.Length != 5 &&
-                notebookDirectoryParts.Length != 4)
-            {
-                return null;
-            }
-
-            var nameComposite = new NotebookNameComposite
-                                {
-                                    FullNotebookDirectoryPath = path,
-                                    Name = notebookDirectoryParts[0],
-                                    ID = notebookDirectoryParts[1],
-                                    OwnerName = notebookDirectoryParts[2],
-                                    OwnerID = notebookDirectoryParts[3],
-                                    IsLocal = true,
-                                    OwnerTypeTag = notebookDirectoryParts.Length == 5 ? notebookDirectoryParts[4] : "U"
-                                };
-
-            return nameComposite;
-        }
-
         public static List<NotebookNameComposite> GetAvailableNotebookNameCompositesInCache(string cachePath)
         {
             var notebookCacheDirectory = Path.Combine(cachePath, "Notebooks");
@@ -302,7 +250,7 @@ namespace Classroom_Learning_Partner.Services
             var directoryInfo = new DirectoryInfo(notebookCacheDirectory);
             return
                 directoryInfo.GetDirectories()
-                             .Select(directory => NotebookDirectoryToNotebookNameComposite(directory.FullName))
+                             .Select(directory => Notebook.NotebookDirectoryToNotebookNameComposite(directory.FullName))
                              .Where(x => x != null)
                              .OrderByDescending(x => x.OwnerTypeTag)
                              .ThenBy(x => x.OwnerName)
