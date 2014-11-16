@@ -413,6 +413,27 @@ namespace CLP.Entities
 
         #region Cache
 
+        public void ToXML(string filePath)
+        {
+            LastSavedDate = DateTime.Now;
+            var fileInfo = new FileInfo(filePath);
+            if (!Directory.Exists(fileInfo.DirectoryName))
+            {
+                Directory.CreateDirectory(fileInfo.DirectoryName);
+            }
+
+            using (Stream stream = new FileStream(filePath, FileMode.Create))
+            {
+                var xmlSerializer = SerializationFactory.GetXmlSerializer();
+                xmlSerializer.Serialize(this, stream);
+                ClearIsDirtyOnAllChilds();
+            }
+        }
+
+
+
+
+
         public string NotebookToNotebookFolderName()
         {
             var ownerTypeTag = OwnerID == Person.Author.ID ? "A" : Owner.IsStudent ? "S" : "T";
@@ -552,22 +573,7 @@ namespace CLP.Entities
 
         #endregion //Saving
 
-        public void ToXML(string fileName)
-        {
-            LastSavedDate = DateTime.Now;
-            var fileInfo = new FileInfo(fileName);
-            if(!Directory.Exists(fileInfo.DirectoryName))
-            {
-                Directory.CreateDirectory(fileInfo.DirectoryName);
-            }
-
-            using(Stream stream = new FileStream(fileName, FileMode.Create))
-            {
-                var xmlSerializer = SerializationFactory.GetXmlSerializer();
-                xmlSerializer.Serialize(this, stream);
-                ClearIsDirtyOnAllChilds();
-            }
-        }
+        
 
         public void SaveNotebook(string folderPath, bool isFullSaveForced = false)
         {

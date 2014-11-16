@@ -223,15 +223,15 @@ namespace CLP.Entities
 
         #region Cache
 
-        public void ToXML(string fileName)
+        public void ToXML(string filePath)
         {
-            var fileInfo = new FileInfo(fileName);
+            var fileInfo = new FileInfo(filePath);
             if(!Directory.Exists(fileInfo.DirectoryName))
             {
                 Directory.CreateDirectory(fileInfo.DirectoryName);
             }
 
-            using(Stream stream = new FileStream(fileName, FileMode.Create))
+            using (Stream stream = new FileStream(filePath, FileMode.Create))
             {
                 var xmlSerializer = SerializationFactory.GetXmlSerializer();
                 xmlSerializer.Serialize(this, stream);

@@ -707,7 +707,7 @@ namespace CLP.Entities
 
         public bool IsCached { get; set; }
 
-        public void ToXML(string fileName, bool serializeStrokes = true)
+        public void ToXML(string filePath, bool serializeStrokes = true)
         {
             if (serializeStrokes)
             {
@@ -715,13 +715,13 @@ namespace CLP.Entities
                 History.SerializedTrashedInkStrokes = StrokeDTO.SaveInkStrokes(History.TrashedInkStrokes);
             }
 
-            var fileInfo = new FileInfo(fileName);
+            var fileInfo = new FileInfo(filePath);
             if (!Directory.Exists(fileInfo.DirectoryName))
             {
                 Directory.CreateDirectory(fileInfo.DirectoryName);
             }
 
-            using (Stream stream = new FileStream(fileName, FileMode.Create))
+            using (Stream stream = new FileStream(filePath, FileMode.Create))
             {
                 var xmlSerializer = SerializationFactory.GetXmlSerializer();
                 xmlSerializer.Serialize(this, stream);
