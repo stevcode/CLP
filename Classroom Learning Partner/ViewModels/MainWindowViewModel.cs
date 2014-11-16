@@ -587,7 +587,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            var classPeriod = ClassPeriod.OpenClassPeriod(closestClassPeriodFilePath);
+            var classPeriod = ClassPeriod.LoadLocalClassPeriod(closestClassPeriodFilePath);
             if (classPeriod == null)
             {
                 MessageBox.Show("ERROR: Could not open ClassPeriod.");
@@ -754,7 +754,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            var classPeriod = ClassPeriod.OpenClassPeriod(closestClassPeriodFilePath);
+            var classPeriod = ClassPeriod.LoadLocalClassPeriod(closestClassPeriodFilePath);
             if (classPeriod == null)
             {
                 MessageBox.Show("ERROR: Could not open ClassPeriod.");

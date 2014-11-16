@@ -42,6 +42,48 @@ namespace CLP.Entities
         public string DifferentiationGroupName { get; set; }
         public string VersionIndex { get; set; }
         public bool IsLocal { get; set; }
+
+        public string ToFileName()
+        {
+            return string.Format("p;{0};{1};{2};{3}",
+            PageNumber, ID, DifferentiationGroupName, VersionIndex);
+        }
+
+        public static PageNameComposite ParsePageToNameComposite(CLPPage page)
+        {
+            var nameComposite = new PageNameComposite
+            {
+                PageNumber = page.PageNumber.ToString(),
+                ID = page.ID,
+                DifferentiationGroupName = page.DifferentiationLevel,
+                VersionIndex = page.VersionIndex.ToString(),
+                IsLocal = true
+            };
+
+            return nameComposite;
+        }
+
+        public static PageNameComposite ParseFilePathToNameComposite(string filePath)
+        {
+            var pageFileName = Path.GetFileNameWithoutExtension(filePath);
+            var pageFileParts = pageFileName.Split(';');
+            if (pageFileParts.Length != 5)
+            {
+                return null;
+            }
+
+            var nameComposite = new PageNameComposite
+            {
+                FullPageFilePath = filePath,
+                PageNumber = pageFileParts[1],
+                ID = pageFileParts[2],
+                DifferentiationGroupName = pageFileParts[3],
+                VersionIndex = pageFileParts[4],
+                IsLocal = true
+            };
+
+            return nameComposite;
+        }
     }
 
     [Serializable]
@@ -730,28 +772,42 @@ namespace CLP.Entities
             IsCached = true;
         }
 
-        public static PageNameComposite PageFilePathToPageNameComposite(string pageFilePath)
+        public void SavePageLocally(string folderPath)
         {
-            var fileInfo = new FileInfo(pageFilePath);
-            var pageFileName = fileInfo.Name;
-            var pageFileParts = pageFileName.Split(';');
-            if (pageFileParts.Length != 5 ||
-                pageFileParts[0] != "p")
+            var nameComposite = PageNameComposite.ParsePageToNameComposite(this);
+            var filePath = Path.Combine(folderPath, nameComposite.ToFileName() + ".xml");
+            ToXML(filePath);
+        }
+
+        public static CLPPage LoadLocalPage(string filePath)
+        {
+            try
+            {
+                var page = Load<CLPPage>(filePath, SerializationMode.Xml);
+                var nameComposite = PageNameComposite.ParseFilePathToNameComposite(filePath);
+                if (nameComposite == null)
+                {
+                    return null;
+                }
+                page.PageNumber = Decimal.Parse(nameComposite.PageNumber);
+                page.ID = nameComposite.ID;
+                page.DifferentiationLevel = nameComposite.DifferentiationGroupName;
+                page.VersionIndex = UInt32.Parse(nameComposite.VersionIndex);
+                page.AfterDeserialization();
+
+                return page;
+            }
+            catch (Exception)
             {
                 return null;
             }
+        }
 
-            var nameComposite = new PageNameComposite
-                                {
-                                    FullPageFilePath = pageFilePath,
-                                    PageNumber = pageFileParts[1],
-                                    ID = pageFileParts[2],
-                                    DifferentiationGroupName = pageFileParts[3],
-                                    VersionIndex = pageFileParts[4],
-                                    IsLocal = true
-                                };
-
-            return nameComposite;
+        public void AfterDeserialization()
+        {
+            InkStrokes = StrokeDTO.LoadInkStrokes(SerializedStrokes);
+            History.TrashedInkStrokes = StrokeDTO.LoadInkStrokes(History.SerializedTrashedInkStrokes);
+            IsCached = true;
         }
 
         #region Overrides of ModelBase
@@ -759,10 +815,7 @@ namespace CLP.Entities
         protected override void OnDeserialized()
         {
             base.OnDeserialized();
-
-            InkStrokes = StrokeDTO.LoadInkStrokes(SerializedStrokes);
-            History.TrashedInkStrokes = StrokeDTO.LoadInkStrokes(History.SerializedTrashedInkStrokes);
-            IsCached = true;
+            AfterDeserialization();
         }
 
         #endregion

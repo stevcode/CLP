@@ -265,7 +265,7 @@ namespace Classroom_Learning_Partner.Services
             var directoryInfo = new DirectoryInfo(notebookCacheDirectory);
             return
                 directoryInfo.GetDirectories()
-                             .Select(directory => Notebook.NotebookDirectoryToNotebookNameComposite(directory.FullName))
+                             .Select(directory => NotebookNameComposite.NotebookDirectoryToNotebookNameComposite(directory.FullName))
                              .Where(x => x != null)
                              .OrderByDescending(x => x.OwnerTypeTag)
                              .ThenBy(x => x.OwnerName)

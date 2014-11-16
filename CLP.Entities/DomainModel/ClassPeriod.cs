@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
-using Path = Catel.IO.Path;
 
 namespace CLP.Entities
 {
@@ -42,10 +40,9 @@ namespace CLP.Entities
 
         public static ClassPeriodNameComposite ParseFilePathToNameComposite(string filePath)
         {
-            var directoryInfo = new DirectoryInfo(filePath);
-            var classPeriodDirectoryName = directoryInfo.Name;
-            var classPeriodDirectoryParts = classPeriodDirectoryName.Split(';');
-            if (classPeriodDirectoryParts.Length != 6)
+            var classPeriodFileName = Path.GetFileNameWithoutExtension(filePath);
+            var classPeriodFileNameParts = classPeriodFileName.Split(';');
+            if (classPeriodFileNameParts.Length != 6)
             {
                 return null;
             }
@@ -53,11 +50,11 @@ namespace CLP.Entities
             var nameComposite = new ClassPeriodNameComposite
             {
                 FullClassPeriodFilePath = filePath,
-                ID = classPeriodDirectoryParts[1],
-                StartTime = classPeriodDirectoryParts[2],
-                StartPageID = classPeriodDirectoryParts[3],
-                NumberOfPages = classPeriodDirectoryParts[4],
-                AllowedBlankPages = classPeriodDirectoryParts[5],
+                ID = classPeriodFileNameParts[1],
+                StartTime = classPeriodFileNameParts[2],
+                StartPageID = classPeriodFileNameParts[3],
+                NumberOfPages = classPeriodFileNameParts[4],
+                AllowedBlankPages = classPeriodFileNameParts[5],
                 IsLocal = true
             };
 
@@ -245,7 +242,7 @@ namespace CLP.Entities
             ToXML(filePath);
         }
 
-        public static ClassPeriod OpenClassPeriod(string filePath)
+        public static ClassPeriod LoadLocalClassPeriod(string filePath)
         {
             try
             {

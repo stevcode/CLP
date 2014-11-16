@@ -21,6 +21,52 @@ namespace CLP.Entities
         public string OwnerID { get; set; }
         public string OwnerTypeTag { get; set; }
         public bool IsLocal { get; set; }
+
+        public string ToFolderName()
+        {
+            return string.Format("{0};{1};{2};{3};{4}",
+            Name, ID, OwnerName, OwnerID, OwnerTypeTag);
+        }
+
+        public static NotebookNameComposite ParseNotebookToNameComposite(Notebook notebook)
+        {
+            var nameComposite = new NotebookNameComposite
+            {
+                Name = notebook.Name,
+                ID = notebook.ID,
+                OwnerName = notebook.Owner.FullName,
+                OwnerID = notebook.Owner.ID,
+                OwnerTypeTag = notebook.Owner.ID == Person.Author.ID ? "A" : notebook.Owner.IsStudent ? "S" : "T",
+                IsLocal = true
+            };
+
+            return nameComposite;
+        }
+
+        public static NotebookNameComposite ParseDirectoryToNameComposite(string folderPath)
+        {
+            var directoryInfo = new DirectoryInfo(folderPath);
+            var notebookDirectoryName = directoryInfo.Name;
+            var notebookDirectoryParts = notebookDirectoryName.Split(';');
+            if (notebookDirectoryParts.Length != 5 &&
+                notebookDirectoryParts.Length != 4)
+            {
+                return null;
+            }
+
+            var nameComposite = new NotebookNameComposite
+                                {
+                                    FullNotebookDirectoryPath = folderPath,
+                                    Name = notebookDirectoryParts[0],
+                                    ID = notebookDirectoryParts[1],
+                                    OwnerName = notebookDirectoryParts[2],
+                                    OwnerID = notebookDirectoryParts[3],
+                                    OwnerTypeTag = notebookDirectoryParts.Length == 5 ? notebookDirectoryParts[4] : "U",
+                                    IsLocal = true
+                                };
+
+            return nameComposite;
+        }
     }
 
     [Serializable]
@@ -430,40 +476,37 @@ namespace CLP.Entities
             }
         }
 
-
-
-
-
-        public string NotebookToNotebookFolderName()
+        public void SaveNotebookLocally(string folderPath)
         {
-            var ownerTypeTag = OwnerID == Person.Author.ID ? "A" : Owner.IsStudent ? "S" : "T";
-            return Name + ";" + ID + ";" + Owner.FullName + ";" + OwnerID + ";" + ownerTypeTag;
+            var filePath = Path.Combine(folderPath, "notebook.xml");
+            ToXML(filePath);
         }
 
-        public static NotebookNameComposite NotebookDirectoryToNotebookNameComposite(string path)
+        private static Notebook LoadLocalNotebook(string notebookFolderPath)
         {
-            var directoryInfo = new DirectoryInfo(path);
-            var notebookDirectoryName = directoryInfo.Name;
-            var notebookDirectoryParts = notebookDirectoryName.Split(';');
-            if (notebookDirectoryParts.Length != 5 &&
-                notebookDirectoryParts.Length != 4)
+            try
+            {
+                var filePath = Path.Combine(notebookFolderPath, "notebook.xml");
+                var notebook = Load<Notebook>(filePath, SerializationMode.Xml);
+
+                var nameComposite = NotebookNameComposite.ParseDirectoryToNameComposite(notebookFolderPath);
+                if (nameComposite == null)
+                {
+                    return null;
+                }
+                notebook.Name = notebook.Name;
+
+                return notebook;
+            }
+            catch (Exception)
             {
                 return null;
             }
-
-            var nameComposite = new NotebookNameComposite
-            {
-                FullNotebookDirectoryPath = path,
-                Name = notebookDirectoryParts[0],
-                ID = notebookDirectoryParts[1],
-                OwnerName = notebookDirectoryParts[2],
-                OwnerID = notebookDirectoryParts[3],
-                IsLocal = true,
-                OwnerTypeTag = notebookDirectoryParts.Length == 5 ? notebookDirectoryParts[4] : "U"
-            };
-
-            return nameComposite;
         }
+
+        #endregion //Cache
+
+        
 
         #region Loading
 
@@ -478,7 +521,7 @@ namespace CLP.Entities
 
         public static Notebook OpenPartialNotebook(string notebookFolderPath, List<string> pageIDs, bool includeSubmissions = true)
         {
-            var notebook = LoadNotebook(notebookFolderPath);
+            var notebook = LoadLocalNotebook(notebookFolderPath);
             if (notebook == null)
             {
                 return null;
@@ -502,20 +545,6 @@ namespace CLP.Entities
                 notebook.Pages.FirstOrDefault();
 
             return notebook;
-        }
-
-        private static Notebook LoadNotebook(string notebookFolderPath)
-        {
-            try
-            {
-                var filePath = Path.Combine(notebookFolderPath, "notebook.xml");
-                var notebook = Load<Notebook>(filePath, SerializationMode.Xml);
-                return notebook;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
         }
 
         private static List<CLPPage> LoadNotebookPages(string notebookFolderPath, List<string> pageIDs, bool includeSubmissions = true)
@@ -565,15 +594,7 @@ namespace CLP.Entities
             return loadedPages;
         }
 
-        #endregion //Loading
-
-        #region Saving
-
-         
-
-        #endregion //Saving
-
-        
+        #endregion //Loading       
 
         public void SaveNotebook(string folderPath, bool isFullSaveForced = false)
         {
@@ -893,8 +914,6 @@ namespace CLP.Entities
                 return null;
             }
         }
-
-        #endregion //Cache
 
         
     }
