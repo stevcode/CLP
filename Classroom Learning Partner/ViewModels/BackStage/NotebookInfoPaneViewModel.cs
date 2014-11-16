@@ -43,7 +43,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            Catel.Windows.PleaseWaitHelper.Show(notebookService.SaveCurrentNotebook, null, "Saving Notebook");
+            Catel.Windows.PleaseWaitHelper.Show(notebookService.SaveCurrentNotebookLocally, null, "Saving Notebook");
         }
 
         private bool OnSaveCurrentNotebookCanExecute()

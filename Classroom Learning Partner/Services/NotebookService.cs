@@ -22,6 +22,8 @@ namespace Classroom_Learning_Partner.Services
 
         #region Properties
 
+        #region Cache
+
         public List<string> AvailableLocalCacheNames
         {
             get
@@ -75,13 +77,16 @@ namespace Classroom_Learning_Partner.Services
             }
         }
 
+        #endregion //Cache
+
+        #region Notebook
+
         public List<NotebookNameComposite> AvailableLocalNotebookNameComposites
         {
             get { return CurrentLocalCacheDirectory == null ? new List<NotebookNameComposite>() : GetAvailableNotebookNameCompositesInCache(CurrentLocalCacheDirectory); }
         }
 
         private readonly List<Notebook> _openNotebooks = new List<Notebook>();
-
         public List<Notebook> OpenNotebooks
         {
             get { return _openNotebooks; }
@@ -94,7 +99,13 @@ namespace Classroom_Learning_Partner.Services
             get { return OpenNotebooks.FirstOrDefault(x => x.ID == CurrentNotebook.ID && x.OwnerID == Person.Author.ID); }
         }
 
+        #endregion //Notebook
+
+        #region ClassPeriod
+
         public ClassPeriod CurrentClassPeriod { get; set; }
+
+        #endregion //ClassPeriod
 
         #endregion //Properties
 
@@ -135,6 +146,8 @@ namespace Classroom_Learning_Partner.Services
         }
 
         #endregion //Cache Methods
+
+        #region Methods
 
         #region Notebook Methods
 
@@ -179,9 +192,9 @@ namespace Classroom_Learning_Partner.Services
             App.MainWindowViewModel.IsBackStageVisible = false;
         }
 
-        public void SaveCurrentNotebook() { SaveNotebook(CurrentNotebook); }
+        public void SaveCurrentNotebookLocally() { SaveNotebookLocally(CurrentNotebook); }
 
-        public void SaveNotebook(Notebook notebook)
+        public void SaveNotebookLocally(Notebook notebook)
         {
             var folderPath = Path.Combine(CurrentNotebookCacheDirectory, notebook.NotebookToNotebookFolderName());
 
@@ -237,6 +250,8 @@ namespace Classroom_Learning_Partner.Services
         }
 
         #endregion //Notebook Methods
+
+        #endregion //Methods
 
         #region Static Notebook Methods
 
