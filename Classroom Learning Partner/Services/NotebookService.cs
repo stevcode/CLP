@@ -160,7 +160,7 @@ namespace Classroom_Learning_Partner.Services
                 return;
             }
 
-            var notebook = Notebook.OpenNotebook(folderPath);
+            var notebook = Notebook.OpenFullNotebook(folderPath);
             if (notebook == null)
             {
                 MessageBox.Show("Notebook could not be opened. Check error log.");

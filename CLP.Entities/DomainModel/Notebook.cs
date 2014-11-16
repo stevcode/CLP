@@ -476,6 +476,9 @@ namespace CLP.Entities
             }
 
             notebook.Pages = new ObservableCollection<CLPPage>(notebookPages);
+            notebook.CurrentPage =
+                notebook.Pages.FirstOrDefault(x => x.ID == notebook.CurrentPageID && x.OwnerID == notebook.CurrentPageOwnerID && x.VersionIndex == notebook.CurrentPageVersionIndex) ??
+                notebook.Pages.FirstOrDefault();
 
             return notebook;
         }
@@ -497,6 +500,7 @@ namespace CLP.Entities
         private static List<CLPPage> LoadNotebookPages(string notebookFolderPath, List<string> pageIDs, bool includeSubmissions = true)
         {
             var pagesFolderPath = Path.Combine(notebookFolderPath, "Pages");
+            var thumbnailsFolderPath = Path.Combine(pagesFolderPath, "Thumbnails");
             var pageFilePaths = Directory.EnumerateFiles(pagesFolderPath, "*.xml");
             var loadedPages = new List<CLPPage>();
             foreach (var pageFilePath in pageFilePaths)
@@ -522,6 +526,11 @@ namespace CLP.Entities
                 try
                 {
                     var page = Load<CLPPage>(pageFilePath, SerializationMode.Xml);
+
+                    // BUG: loaded thumbnails don't let go of their disc reference.
+                    //var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, pageAndHistoryFileName + ".png");
+                    //page.PageThumbnail = CLPImage.GetImageFromPath(thumbnailFilePath);
+
                     page.PageNumber = Decimal.Parse(pageNameComposite.PageNumber); //TODO: Make PageNumber a string.
                     //TODO: Deal with what happens if these values change.
                     //page.ID = pageNameComposite.ID;
@@ -762,116 +771,6 @@ namespace CLP.Entities
                         }
                     }
                 }
-            }
-        }
-
-        public static Notebook OpenNotebook(string folderPath, bool includeSubmissions = true)
-        {
-            try
-            {
-                var filePath = Path.Combine(folderPath, "notebook.xml");
-                var notebook = Load<Notebook>(filePath, SerializationMode.Xml);
-                var pagesFolderPath = Path.Combine(folderPath, "Pages");
-                var thumbnailsFolderPath = Path.Combine(pagesFolderPath, "Thumbnails");
-                var pageAndHistoryFilePaths = Directory.EnumerateFiles(pagesFolderPath, "*.xml");
-                var pages = new List<CLPPage>();
-                foreach(var pageAndHistoryFilePath in pageAndHistoryFilePaths)
-                {
-                    var pageAndHistoryFileName = System.IO.Path.GetFileNameWithoutExtension(pageAndHistoryFilePath);
-                    if(pageAndHistoryFileName != null)
-                    {
-                        var pageAndHistoryInfo = pageAndHistoryFileName.Split(';');
-                        if(pageAndHistoryInfo.Length != 5 ||
-                           pageAndHistoryInfo[0] != "p")
-                        {
-                            continue;
-                        }
-                        if(!includeSubmissions &&
-                           pageAndHistoryInfo[4] != "0")
-                        {
-                            continue;
-                        }
-                    }
-
-                    var page = Load<CLPPage>(pageAndHistoryFilePath, SerializationMode.Xml);
-
-                    if(page.ID == notebook.CurrentPageID)
-                    {
-                        notebook.CurrentPage = page;
-                    }
-
-                    // BUG: loaded thumbnails don't let go of their disc reference.
-                    //var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, pageAndHistoryFileName + ".png");
-                    //page.PageThumbnail = CLPImage.GetImageFromPath(thumbnailFilePath);
-
-                    pages.Add(page);
-                }
-
-                var notebookPages = new List<CLPPage>();
-
-                foreach(var notebookPage in pages)
-                {
-                    if(notebookPage.VersionIndex != 0)
-                    {
-                        continue;
-                    }
-                    notebookPages.Add(notebookPage);
-                    if(!includeSubmissions)
-                    {
-                        continue;
-                    }
-                    foreach(var submission in pages)
-                    {
-                        if(submission.ID == notebookPage.ID &&
-                           submission.OwnerID == notebookPage.OwnerID &&
-                           submission.VersionIndex != 0)
-                        {
-                            notebookPage.Submissions.Add(submission);
-                        }
-                    }
-                }
-
-                notebook.Pages = new ObservableCollection<CLPPage>(notebookPages.OrderBy(x => x.PageNumber));
-
-                var displaysFolderPath = Path.Combine(folderPath, "Displays");
-                if(!Directory.Exists(displaysFolderPath))
-                {
-                    return notebook;
-                }
-                var displayFilePaths = Directory.EnumerateFiles(displaysFolderPath, "*.xml");
-                var displays = new List<IDisplay>();
-                foreach(var displayFilePath in displayFilePaths)
-                {
-                    var displayFileName = System.IO.Path.GetFileNameWithoutExtension(displayFilePath);
-                    if(displayFileName == null)
-                    {
-                        continue;
-                    }
-                    var displayInfo = displayFileName.Split(';');
-                    if(displayInfo.Length != 3)
-                    {
-                        continue;
-                    }
-
-                    var displayType = displayInfo[0];
-                    switch(displayType)
-                    {
-                        case "grid":
-                            var gridDisplay = GridDisplay.Load(displayFilePath, notebook);
-                            displays.Add(gridDisplay);
-                            break;
-                        default:
-                            continue;
-                    }
-                }
-
-                notebook.Displays = new ObservableCollection<IDisplay>(displays.OrderBy(x => x.DisplayNumber));
-
-                return notebook;
-            }
-            catch(Exception)
-            {
-                return null;
             }
         }
 

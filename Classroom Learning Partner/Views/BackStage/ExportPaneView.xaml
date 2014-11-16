@@ -212,7 +212,6 @@
             <WrapPanel Orientation="Horizontal">
 
                 <Button Command="{Binding CopyNotebookForNewOwnerCommand}"
-                        IsEnabled="False"
                         Width="160"
                         Height="90"
                         Margin="20 5 20 5">

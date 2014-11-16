@@ -188,7 +188,24 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnCopyNotebookForNewOwnerCommandExecute()
         {
-            MainWindowViewModel.CopyNotebookForNewOwner();
+            var person = new Person();
+            var personCreationView = new PersonCreationView(new PersonCreationViewModel(person));
+            personCreationView.ShowDialog();
+
+            if (personCreationView.DialogResult == null ||
+                personCreationView.DialogResult != true)
+            {
+                return;
+            }
+
+            var copiedNotebook = _notebookService.CurrentNotebook.CopyForNewOwner(person);
+            _notebookService.OpenNotebooks.Add(copiedNotebook);
+            _notebookService.CurrentNotebook = copiedNotebook;
+            App.MainWindowViewModel.CurrentUser = person;
+            App.MainWindowViewModel.IsAuthoring = false;
+            App.MainWindowViewModel.Workspace = new BlankWorkspaceViewModel();
+            App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(copiedNotebook);
+            App.MainWindowViewModel.IsBackStageVisible = false;
         }
 
         #endregion //Commands
