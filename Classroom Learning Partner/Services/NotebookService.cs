@@ -558,6 +558,19 @@ namespace Classroom_Learning_Partner.Services
             return pageIDs;
         }
 
+        public static Notebook GenerateSubmissionsFromNotebookPages(Notebook notebook, string notebookCachePath)
+        {
+            foreach (var page in notebook.Pages)
+            {
+                page.SerializedStrokes = StrokeDTO.SaveInkStrokes(page.InkStrokes);
+                page.History.SerializedTrashedInkStrokes = StrokeDTO.SaveInkStrokes(page.History.TrashedInkStrokes);
+                var generatedSubmission = page.NextVersionCopy();
+                page.Submissions.Add(generatedSubmission);
+            }
+
+            return notebook;
+        }
+
         #endregion //Static Notebook Methods
     }
 }
