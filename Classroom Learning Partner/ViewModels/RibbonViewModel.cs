@@ -122,8 +122,7 @@ namespace Classroom_Learning_Partner.ViewModels
             SetNotebookCurriculumCommand = new Command(OnSetNotebookCurriculumCommandExecute);
 
             //Debug
-            CreateClassSubjectCommand = new Command(OnCreateClassSubjectCommandExecute);
-            InterpretPageCommand = new Command(OnInterpretPageCommandExecute);
+            
 
             //Authoring
             SetEntireNotebookAsAuthoredCommand = new Command(OnSetEntireNotebookAsAuthoredCommandExecute);
@@ -1653,80 +1652,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //Insert Commands
-
-        #region Debug Commands
-
-        /// <summary>
-        /// SUMMARY
-        /// </summary>
-        public Command CreateClassSubjectCommand { get; private set; }
-
-        private void OnCreateClassSubjectCommandExecute()
-        {
-            var classSubject = new ClassSubject();
-            var classSubjectCreationViewModel = new ClassSubjectCreationViewModel(classSubject);
-            var classSubjectCreationView = new ClassSubjectCreationView(classSubjectCreationViewModel);
-            classSubjectCreationView.ShowDialog();
-
-            if(classSubjectCreationView.DialogResult == null ||
-               classSubjectCreationView.DialogResult != true)
-            {
-                return;
-            }
-
-            foreach(var group in classSubjectCreationViewModel.GroupCreationViewModel.Groups)
-            {
-                foreach(Person student in group.Members)
-                {
-                    if(classSubjectCreationViewModel.GroupCreationViewModel.GroupType == "Temp")
-                    {
-                        student.TempDifferentiationGroup = group.Label;
-                    }
-                    else
-                    {
-                        student.CurrentDifferentiationGroup = group.Label;
-                    }
-                }
-            }
-
-            foreach(var group in classSubjectCreationViewModel.TempGroupCreationViewModel.Groups)
-            {
-                foreach(Person student in group.Members)
-                {
-                    if(classSubjectCreationViewModel.TempGroupCreationViewModel.GroupType == "Temp")
-                    {
-                        student.TempDifferentiationGroup = group.Label;
-                    }
-                    else
-                    {
-                        student.CurrentDifferentiationGroup = group.Label;
-                    }
-                }
-            }
-
-            classSubject.Projector = classSubject.Teacher;
-            classSubject.SaveClassSubject(MainWindowViewModel.ClassCacheDirectory);
-        }
-
-        /// <summary>
-        /// Runs interpretation methods of all pageObjects on current page.
-        /// </summary>
-        public Command InterpretPageCommand { get; private set; }
-
-        private void OnInterpretPageCommandExecute()
-        {
-            // TODO: Entities
-            //var currentPage = CurrentPage;
-            //foreach (var pageObject in currentPage.PageObjects)
-            //{
-            //    if (pageObject.GetType().IsSubclassOf(typeof(ACLPInkRegion)))
-            //    {
-            //        CLPServiceAgent.Instance.InterpretRegion(pageObject as ACLPInkRegion);
-            //    }
-            //}
-        }
-
-        #endregion //Debug Commands
 
         #endregion //Commands
     }

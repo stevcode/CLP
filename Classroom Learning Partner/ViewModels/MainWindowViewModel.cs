@@ -25,18 +25,18 @@ namespace Classroom_Learning_Partner.ViewModels
 
     public class MainWindowViewModel : ViewModelBase
     {
-        private const string CLP_TEXT = "Classroom Learning Partner";
-
         #region Constructor
 
         /// <summary>Initializes a new instance of the MainWindowViewModel class.</summary>
         public MainWindowViewModel(ProgramModes currentProgramMode)
         {
             CurrentProgramMode = currentProgramMode;
+            MajorRibbon = new MajorRibbonViewModel();
+            BackStage = new BackStageViewModel();
+            Workspace = new BlankWorkspaceViewModel();
 
             InitializeCommands();
 
-            TitleBarText = CLP_TEXT;
             CurrentUser = Person.Guest;
             IsProjectorFrozen = CurrentProgramMode != ProgramModes.Projector;
         }
@@ -80,24 +80,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData FrozenDisplayImageSourceProperty = RegisterProperty("FrozenDisplayImageSource", typeof (ImageSource));
 
-        /// <summary>Gets or sets the Title Bar text of the window.</summary>
-        public string TitleBarText
-        {
-            get { return GetValue<string>(TitleBarTextProperty); }
-            set { SetValue(TitleBarTextProperty, value); }
-        }
-
-        public static readonly PropertyData TitleBarTextProperty = RegisterProperty("TitleBarText", typeof (string));
-
-        /// <summary>Gets or sets the property value.</summary>
-        public RibbonViewModel Ribbon
-        {
-            get { return GetValue<RibbonViewModel>(RibbonProperty); }
-            set { SetValue(RibbonProperty, value); }
-        }
-
-        public static readonly PropertyData RibbonProperty = RegisterProperty("Ribbon", typeof (RibbonViewModel), new RibbonViewModel());
-
         /// <summary>The MajorRibbon at the top of the Window.</summary>
         public MajorRibbonViewModel MajorRibbon
         {
@@ -105,9 +87,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(MajorRibbonProperty, value); }
         }
 
-        public static readonly PropertyData MajorRibbonProperty = RegisterProperty("MajorRibbon",
-                                                                                   typeof (MajorRibbonViewModel),
-                                                                                   new MajorRibbonViewModel());
+        public static readonly PropertyData MajorRibbonProperty = RegisterProperty("MajorRibbon", typeof (MajorRibbonViewModel));
 
         /// <summary>The program's BackStage.</summary>
         public BackStageViewModel BackStage
@@ -116,7 +96,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(BackStageProperty, value); }
         }
 
-        public static readonly PropertyData BackStageProperty = RegisterProperty("BackStage", typeof (BackStageViewModel), new BackStageViewModel());
+        public static readonly PropertyData BackStageProperty = RegisterProperty("BackStage", typeof (BackStageViewModel));
 
         /// <summary>Toggles BackStage Visibility.</summary>
         public bool IsBackStageVisible
@@ -138,7 +118,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(WorkspaceProperty, value); }
         }
 
-        public static readonly PropertyData WorkspaceProperty = RegisterProperty("Workspace", typeof (ViewModelBase), new BlankWorkspaceViewModel());
+        public static readonly PropertyData WorkspaceProperty = RegisterProperty("Workspace", typeof (ViewModelBase));
 
         private Person _tempCurrentUser;
 
@@ -165,19 +145,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData IsAuthoringProperty = RegisterProperty("IsAuthoring", typeof (bool), false);
-
-        #region Status Bar Bindings
-
-        /// <summary>Gets or sets the property value.</summary>
-        public string OnlineStatus
-        {
-            get { return GetValue<string>(OnlineStatusProperty); }
-            set { SetValue(OnlineStatusProperty, value); }
-        }
-
-        public static readonly PropertyData OnlineStatusProperty = RegisterProperty("OnlineStatus", typeof (string), "DISCONNECTED");
-
-        #endregion //Status Bar Bindings
 
         /// <summary>Whether or not the Pens Down Screen has been activated.</summary>
         public bool IsPenDownActivated
@@ -213,14 +180,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData CurrentConvertingPageProperty = RegisterProperty("CurrentConvertingPage", typeof (CLPPage));
 
-        /// <summary>SUMMARY</summary>
-        public Handedness Handedness
-        {
-            get { return GetValue<Handedness>(HandednessProperty); }
-            set { SetValue(HandednessProperty, value); }
-        }
-
-        public static readonly PropertyData HandednessProperty = RegisterProperty("Handedness", typeof (Handedness), Handedness.Right);
+        
 
         /// <summary>Signifies navigation through the notebook is disabled and can only  be ahieved through network commands.</summary>
         public bool IsLinked
@@ -267,62 +227,18 @@ namespace Classroom_Learning_Partner.ViewModels
             get { return CurrentProgramMode == ProgramModes.Student ? Visibility.Collapsed : Visibility.Visible; }
         }
 
+        /// <summary>Global UI binding for Handedness</summary>
+        public Handedness Handedness
+        {
+            get { return GetValue<Handedness>(HandednessProperty); }
+            set { SetValue(HandednessProperty, value); }
+        }
+
+        public static readonly PropertyData HandednessProperty = RegisterProperty("Handedness", typeof(Handedness), Handedness.Right);
+
         #endregion //Global Bindings
 
         #endregion //Bindings
-
-        #region Static Properties
-
-        private static string _localCacheDirectory;
-
-        public static string LocalCacheDirectory
-        {
-            get
-            {
-                return _localCacheDirectory;
-            }
-
-            set { _localCacheDirectory = value; }
-        }
-
-        public static string ClassCacheDirectory
-        {
-            get
-            {
-                var path = Path.Combine(LocalCacheDirectory, "Classes");
-                if (!Directory.Exists(path))
-                {
-                    Directory.CreateDirectory(path);
-                }
-
-                return path;
-            }
-        }
-
-        public static string NotebookCacheDirectory
-        {
-            get
-            {
-                var path = Path.Combine(LocalCacheDirectory, "Notebooks");
-                if (!Directory.Exists(path))
-                {
-                    Directory.CreateDirectory(path);
-                }
-
-                return path;
-            }
-        }
-
-        public static List<string> AvailableLocalNotebookNames
-        {
-            get
-            {
-                var directoryInfo = new DirectoryInfo(NotebookCacheDirectory);
-                return directoryInfo.GetDirectories().Select(directory => directory.Name).OrderBy(x => x).ToList();
-            }
-        }
-
-        #endregion //Static Properties
 
         #region Properties
 
@@ -375,26 +291,6 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData AvailableUsersProperty = RegisterProperty("AvailableUsers",
                                                                                       typeof (ObservableCollection<Person>),
                                                                                       () => new ObservableCollection<Person>());
-
-        /// <summary>Gets or sets the property value.</summary>
-        public ObservableCollection<Notebook> OpenNotebooks
-        {
-            get { return GetValue<ObservableCollection<Notebook>>(OpenNotebooksProperty); }
-            set { SetValue(OpenNotebooksProperty, value); }
-        }
-
-        public static readonly PropertyData OpenNotebooksProperty = RegisterProperty("OpenNotebooks",
-                                                                                     typeof (ObservableCollection<Notebook>),
-                                                                                     () => new ObservableCollection<Notebook>());
-
-        /// <summary>The current <see cref="ClassPeriod" /> the program will attemp to use to load the day's <see cref="CLPPage" />s.</summary>
-        public ClassPeriod CurrentClassPeriod
-        {
-            get { return GetValue<ClassPeriod>(CurrentClassPeriodProperty); }
-            set { SetValue(CurrentClassPeriodProperty, value); }
-        }
-
-        public static readonly PropertyData CurrentClassPeriodProperty = RegisterProperty("CurrentClassPeriod", typeof (ClassPeriod));
 
         #endregion //Properties
 
@@ -530,23 +426,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static void ChangeApplicationMainColor(Color color) { Application.Current.Resources["DynamicMainColor"] = new SolidColorBrush(color); }
-
-        public static void ResetCache()
-        {
-            if (!Directory.Exists(NotebookCacheDirectory))
-            {
-                return;
-            }
-
-            var archiveDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "CacheArchive");
-            var now = DateTime.Now.ToString("yyyy.MM.dd.HH.mm.ss");
-            var newCacheDirectory = Path.Combine(archiveDirectory, "Cache-" + now);
-            if (!Directory.Exists(archiveDirectory))
-            {
-                Directory.CreateDirectory(archiveDirectory);
-            }
-            Directory.Move(NotebookCacheDirectory, newCacheDirectory);
-        }
 
         public static void OpenClassPeriod()
         {
@@ -712,183 +591,6 @@ namespace Classroom_Learning_Partner.ViewModels
             App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(notebookToUse);
             App.MainWindowViewModel.AvailableUsers = App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.StudentList;
             App.MainWindowViewModel.IsBackStageVisible = false;
-        }
-
-        public static void ViewAllWork()
-        {
-            //TODO: This is very hacky.
-            var classPeriodFilePaths = Directory.GetFiles(ClassCacheDirectory);
-            string closestClassPeriodFilePath = null;
-            var closestTimeSpan = TimeSpan.MaxValue;
-            var now = DateTime.Now;
-            foreach (var classPeriodFilePath in classPeriodFilePaths)
-            {
-                var classFileName = Path.GetFileNameWithoutExtension(classPeriodFilePath);
-                var classInfo = classFileName.Split(';');
-                if (classInfo.Length != 3 ||
-                    classInfo[0] != "period")
-                {
-                    continue;
-                }
-                var time = classInfo[1];
-                var timeParts = time.Split('.');
-                var year = Int32.Parse(timeParts[0]);
-                var month = Int32.Parse(timeParts[1]);
-                var day = Int32.Parse(timeParts[2]);
-                var hour = Int32.Parse(timeParts[3]);
-                var minute = Int32.Parse(timeParts[4]);
-                var dateTime = new DateTime(year, month, day, hour, minute, 0);
-
-                var timeSpan = now - dateTime;
-                if (timeSpan.Duration() >= closestTimeSpan.Duration())
-                {
-                    continue;
-                }
-                closestTimeSpan = timeSpan;
-                closestClassPeriodFilePath = classPeriodFilePath;
-            }
-
-            if (String.IsNullOrEmpty(closestClassPeriodFilePath))
-            {
-                MessageBox.Show("ERROR: Could not find ClassPeriod.");
-                return;
-            }
-
-            var classPeriod = ClassPeriod.LoadLocalClassPeriod(closestClassPeriodFilePath);
-            if (classPeriod == null)
-            {
-                MessageBox.Show("ERROR: Could not open ClassPeriod.");
-                return;
-            }
-
-            App.MainWindowViewModel.CurrentClassPeriod = classPeriod;
-
-            var notebookFolderPath = GetNotebookFolderPathByCompositeID(App.MainWindowViewModel.CurrentClassPeriod.NotebookID, Person.Author.ID);
-            if (notebookFolderPath == null)
-            {
-                MessageBox.Show("ERROR: Could not find Notebook for latest ClassPeriod.");
-                return;
-            }
-
-            if (!Directory.Exists(notebookFolderPath))
-            {
-                MessageBox.Show("Notebook doesn't exist");
-                return;
-            }
-
-            App.MainWindowViewModel.CurrentClassPeriod.PageIDs.Clear();
-            var notebookPagesFolderPath = Path.Combine(notebookFolderPath, "Pages");
-            var pageAndHistoryFilePaths = Directory.EnumerateFiles(notebookPagesFolderPath, "*.xml");
-            foreach (var pageAndHistoryFilePath in pageAndHistoryFilePaths)
-            {
-                var pageAndHistoryFileName = Path.GetFileNameWithoutExtension(pageAndHistoryFilePath);
-                var pageAndHistoryInfo = pageAndHistoryFileName.Split(';');
-                if (pageAndHistoryInfo.Length != 5 ||
-                    pageAndHistoryInfo[0] != "p")
-                {
-                    continue;
-                }
-                if (pageAndHistoryInfo[4] != "0")
-                {
-                    continue;
-                }
-
-                App.MainWindowViewModel.CurrentClassPeriod.PageIDs.Add(pageAndHistoryInfo[2]);
-            }
-
-            var notebook = Notebook.OpenPartialNotebook(notebookFolderPath, App.MainWindowViewModel.CurrentClassPeriod.PageIDs, new List<string>());
-
-            if (notebook == null)
-            {
-                MessageBox.Show("Notebook could not be opened. Check error log.");
-                return;
-            }
-
-            App.MainWindowViewModel.CurrentUser = App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.Teacher;
-
-            notebook.CurrentPage = notebook.Pages.First();
-            App.MainWindowViewModel.OpenNotebooks.Add(notebook);
-
-            var copiedNotebook = notebook.CopyForNewOwner(App.MainWindowViewModel.CurrentUser);
-            var notebookToUse = copiedNotebook;
-
-            var storedNotebookFolderName = copiedNotebook.Name + ";" + copiedNotebook.ID + ";" + copiedNotebook.Owner.FullName + ";" +
-                                           copiedNotebook.OwnerID;
-            var storedNotebookFolderPath = Path.Combine(NotebookCacheDirectory, storedNotebookFolderName);
-            if (Directory.Exists(storedNotebookFolderPath))
-            {
-                var pageIDs = App.MainWindowViewModel.CurrentClassPeriod.PageIDs;
-                var storedNotebook = Notebook.OpenPartialNotebook(storedNotebookFolderPath, pageIDs, new List<string>());
-                if (storedNotebook != null)
-                {
-                    var loadedPageIDs = storedNotebook.Pages.Select(page => page.ID).ToList();
-                    foreach (var page in copiedNotebook.Pages.Where(page => !loadedPageIDs.Contains(page.ID)))
-                    {
-                        storedNotebook.Pages.Add(page);
-                    }
-                    var orderedPages = storedNotebook.Pages.OrderBy(x => x.PageNumber).ToList();
-                    storedNotebook.Pages = new ObservableCollection<CLPPage>(orderedPages);
-                    notebookToUse = storedNotebook;
-                }
-            }
-
-            foreach (var page in notebookToUse.Pages)
-            {
-                foreach (var notebookName in AvailableLocalNotebookNames)
-                {
-                    var notebookInfo = notebookName.Split(';');
-                    if (notebookInfo.Length != 4 ||
-                        notebookInfo[3] == Person.Author.ID ||
-                        notebookInfo[3] == App.MainWindowViewModel.CurrentUser.ID)
-                    {
-                        continue;
-                    }
-
-                    var folderPath = Path.Combine(NotebookCacheDirectory, notebookName);
-                    if (!Directory.Exists(folderPath))
-                    {
-                        continue;
-                    }
-
-                    var submissionsPath = Path.Combine(folderPath, "Pages");
-                    if (!Directory.Exists(submissionsPath))
-                    {
-                        continue;
-                    }
-
-                    var submissionPaths = Directory.EnumerateFiles(submissionsPath, "*.xml");
-
-                    foreach (var submissionPath in submissionPaths)
-                    {
-                        var submissionFileName = Path.GetFileNameWithoutExtension(submissionPath);
-                        var submissionInfo = submissionFileName.Split(';');
-                        if (submissionInfo.Length == 5 &&
-                            submissionInfo[2] == page.ID &&
-                            submissionInfo[3] == page.DifferentiationLevel &&
-                            submissionInfo[4] != "0")
-                        {
-                            var submission = Load<CLPPage>(submissionPath, SerializationMode.Xml);
-                            page.Submissions.Add(submission);
-                        }
-                    }
-                }
-            }
-            notebookToUse.CurrentPage = notebookToUse.Pages.FirstOrDefault();
-            App.MainWindowViewModel.OpenNotebooks.Add(notebookToUse);
-            App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(notebookToUse);
-            App.MainWindowViewModel.AvailableUsers = App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.StudentList;
-        }
-
-        public static string GetNotebookFolderPathByCompositeID(string id, string ownerID)
-        {
-            var notebookFolderPaths = Directory.GetDirectories(NotebookCacheDirectory);
-            return (from notebookFolderPath in notebookFolderPaths
-                    let notebookInfo = notebookFolderPath.Split(';')
-                    where notebookInfo.Length == 4 || notebookInfo.Length == 5
-                    let notebookID = notebookInfo[1]
-                    let notebookOwnerID = notebookInfo[3]
-                    where notebookID == id && notebookOwnerID == ownerID
-                    select notebookFolderPath).FirstOrDefault();
         }
 
         #endregion //Static Methods

@@ -5,7 +5,7 @@ using System.Linq;
 using Catel.Collections;
 using Catel.Data;
 using Catel.MVVM;
-using Classroom_Learning_Partner.Services;
+using Classroom_Learning_Partner.Views;
 using CLP.Entities;
 using Path = Catel.IO.Path;
 
@@ -22,7 +22,11 @@ namespace Classroom_Learning_Partner.ViewModels
             SelectedCacheName = AvailableCacheNames.FirstOrDefault();
         }
 
-        private void InitializeCommands() { CreateNotebookCommand = new Command(OnCreateNotebookCommandExecute, OnCreateNotebookCanExecute); }
+        private void InitializeCommands()
+        {
+            CreateNotebookCommand = new Command(OnCreateNotebookCommandExecute, OnCreateNotebookCanExecute);
+            CreateClassSubjectCommand = new Command(OnCreateClassSubjectCommandExecute);
+        }
 
         #endregion //Constructor
 
@@ -70,12 +74,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData SelectedCacheDirectoryProperty = RegisterProperty("SelectedCacheDirectory",
                                                                                               typeof (string),
-                                                                                              Path.Combine(
-                                                                                                           Environment.GetFolderPath(
-                                                                                                                                     Environment
-                                                                                                                                         .SpecialFolder
-                                                                                                                                         .Desktop),
-                                                                                                           "Cache"));
+                                                                                              Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Cache"));
 
         /// <summary>Notebook Name to use on creation.</summary>
         public string NotebookName
@@ -135,6 +134,61 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         private bool OnCreateNotebookCanExecute() { return NotebookName != string.Empty; }
+
+        /// <summary>SUMMARY</summary>
+        public Command CreateClassSubjectCommand { get; private set; }
+
+        private void OnCreateClassSubjectCommandExecute()
+        {
+            var classSubject = new ClassSubject();
+            var classSubjectCreationViewModel = new ClassSubjectCreationViewModel(classSubject);
+            var classSubjectCreationView = new ClassSubjectCreationView(classSubjectCreationViewModel);
+            classSubjectCreationView.ShowDialog();
+
+            if (classSubjectCreationView.DialogResult == null ||
+                classSubjectCreationView.DialogResult != true)
+            {
+                return;
+            }
+
+            foreach (var group in classSubjectCreationViewModel.GroupCreationViewModel.Groups)
+            {
+                foreach (var student in group.Members)
+                {
+                    if (classSubjectCreationViewModel.GroupCreationViewModel.GroupType == "Temp")
+                    {
+                        student.TempDifferentiationGroup = group.Label;
+                    }
+                    else
+                    {
+                        student.CurrentDifferentiationGroup = group.Label;
+                    }
+                }
+            }
+
+            foreach (var group in classSubjectCreationViewModel.TempGroupCreationViewModel.Groups)
+            {
+                foreach (var student in group.Members)
+                {
+                    if (classSubjectCreationViewModel.TempGroupCreationViewModel.GroupType == "Temp")
+                    {
+                        student.TempDifferentiationGroup = group.Label;
+                    }
+                    else
+                    {
+                        student.CurrentDifferentiationGroup = group.Label;
+                    }
+                }
+            }
+
+            classSubject.Projector = classSubject.Teacher;
+            var classesFolderPath = Path.Combine(SelectedCacheDirectory, "Classes");
+            if (!Directory.Exists(classesFolderPath))
+            {
+                Directory.CreateDirectory(classesFolderPath);
+            }
+            classSubject.SaveClassSubject(classesFolderPath);
+        }
 
         #endregion //Commands
     }

@@ -6,17 +6,6 @@
 
     <!--Ribbon-->
     <Ribbon>
-
-        <!--Contextual Tab Definitions-->
-        <Ribbon.ContextualTabGroups>
-            <RibbonContextualTabGroup Header="Authoring Tools"
-                                      Visibility="{Binding AuthoringTabVisibility}"
-                                      Background="Red" />
-            <RibbonContextualTabGroup Header="Debugging"
-                                      Visibility="{Binding DebugTabVisibility}"
-                                      Background="Violet" />
-        </Ribbon.ContextualTabGroups>
-
         <!--Application Menu Button-->
         <Ribbon.ApplicationMenu>
             <RibbonApplicationMenu SmallImageSource="pack://application:,,,/Resources/Images/File.png"
@@ -26,13 +15,6 @@
                                            ImageSource="pack://application:,,,/Resources/Images/GroupSubmit32.png"
                                            Command="{Binding OpenClassPeriodCommand}"
                                            Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
-                
-                <RibbonApplicationMenuItem Header="View All Work"
-                                           ImageSource="pack://application:,,,/Resources/Images/GroupSubmit32.png"
-                                           Command="{Binding ViewAllWorkCommand}"
-                                           Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
-
-                <RibbonSeparator />
 
                 <RibbonApplicationMenuItem Header="Log In As Notebook Owner"
                                            ImageSource="pack://application:,,,/Resources/Images/GroupSubmit32.png"
@@ -409,25 +391,11 @@
                               Command="{Binding CreatePageSubmissionCommand}" />
 
             </RibbonGroup>
-            
-            <RibbonGroup Header="Creation Stuff">
-                
-                <RibbonButton Label="Create Class Subject"
-                              LargeImageSource="pack://application:,,,/Resources/Images/GroupSubmit32.png"
-                              Command="{Binding CreateClassSubjectCommand}" />
-
-                <RibbonButton Label="Create Class Period Using Staging Panel"
-                              LargeImageSource="pack://application:,,,/Resources/Images/GroupSubmit32.png"
-                              Command="{Binding CreateClassPeriodCommand}"
-                              IsEnabled="False" />
-
-            </RibbonGroup>
 
         </RibbonTab>
 
         <!--Editing Tab-->
-        <RibbonTab Header="General Editing"
-                   ContextualTabGroupHeader="Authoring Tools">
+        <RibbonTab Header="General Editing">
 
             <RibbonGroup Header="Metadata">
 
@@ -444,8 +412,7 @@
         </RibbonTab>
 
         <!--Debug Tab-->
-        <RibbonTab Header="General Debug"
-                   ContextualTabGroupHeader="Debugging">
+        <RibbonTab Header="General Debug">
 
             <RibbonGroup Header="Notebook">
 
