@@ -64,7 +64,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Buttons.Clear();
 
 
-            Buttons.Add(new RibbonButton("Pen Size", "pack://application:,,,/Resources/Images/PenSize32.png", TestCommand, null, true));
+            Buttons.Add(new RibbonButton("Width", "pack://application:,,,/Resources/Images/PenSize32.png", TestCommand, null, true));
 
 
             _pageInteractionService = DependencyResolver.Resolve<IPageInteractionService>();
@@ -100,7 +100,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
 
-            var highlighterButton = new ToggleRibbonButton("Highlighter", "Highlighter", "pack://application:,,,/Resources/Images/Highlighter32.png", true)
+            var highlighterButton = new ToggleRibbonButton("Highlight", "Stop Highlighting", "pack://application:,,,/Resources/Images/Highlighter32.png", true)
                                     {
                                         IsChecked = _pageInteractionService.IsHighlighting
                                     };
