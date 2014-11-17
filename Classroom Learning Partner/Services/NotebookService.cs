@@ -185,13 +185,13 @@ namespace Classroom_Learning_Partner.Services
             var authoredPagesFolderPath = Path.Combine(authoredNotebookNameComposite.FullNotebookDirectoryPath, "Pages");
             var pageIDs = GetPageIDsFromStartIDAndForwardRange(authoredPagesFolderPath, classPeriod.StartPageID, classPeriod.NumberOfPages);
 
-            var authoredPages = LoadOrCopyPagesForNotebook(authoredNotebook, pageIDs, false);
+            var authoredPages = LoadOrCopyPagesForNotebook(authoredNotebook, null, pageIDs, false);
             authoredNotebook.Pages = new ObservableCollection<CLPPage>(authoredPages);
 
             var teacherNotebook = LoadClassPeriodNotebookForPerson(classPeriod, classPeriod.ClassSubject.TeacherID) ??
                                   CopyNotebookForNewOwner(authoredNotebook, classPeriod.ClassSubject.Teacher);
 
-            var teacherPages = LoadOrCopyPagesForNotebook(teacherNotebook, pageIDs, true);
+            var teacherPages = LoadOrCopyPagesForNotebook(teacherNotebook, authoredNotebook, pageIDs, true);
             teacherNotebook.Pages = new ObservableCollection<CLPPage>(teacherPages);
 
             OpenNotebooks.Clear();
@@ -233,18 +233,98 @@ namespace Classroom_Learning_Partner.Services
             return newNotebook;
         }
 
-        public List<CLPPage> LoadOrCopyPagesForNotebook(Notebook notebook, List<string> pageIDs, bool includeSubmissions)
+        public CLPPage CopyPageForNewOwner(CLPPage originalPage, Person newOwner)
         {
-            var pages = new List<CLPPage>();
-            var notebookNameComposite =
-                GetAvailableNotebookNameCompositesInCache(CurrentLocalCacheDirectory).FirstOrDefault(x => x.ID == notebook.ID && x.OwnerID == notebook.Owner.ID);
-            if (notebookNameComposite == null)
+            var newPage = originalPage.Clone() as CLPPage;
+            if (newPage == null)
             {
-                return pages;
+                return null;
+            }
+            newPage.Owner = newOwner;
+            newPage.CreationDate = DateTime.Now;
+
+            foreach (var pageObject in newPage.PageObjects)
+            {
+                pageObject.ParentPage = newPage;
+                if (pageObject.IsBackgroundInteractable)
+                {
+                    pageObject.OwnerID = newOwner.ID;
+                }
             }
 
-            var pagesFolderPath = Path.Combine(notebookNameComposite.FullNotebookDirectoryPath, "Pages");
-            var pageNameComposites = GetAvailablePagesNameCompositesInFolder(pagesFolderPath);
+            foreach (var tag in newPage.Tags)
+            {
+                tag.ParentPage = newPage;
+            }
+
+            newPage.AfterDeserialization();
+
+            return newPage;
+        }
+
+        public List<CLPPage> LoadOrCopyPagesForNotebook(Notebook notebook, Notebook authoredNotebook, List<string> pageIDs, bool includeSubmissions)
+        {
+            var pages = new List<CLPPage>();
+
+            var notebookNameComposite =
+                GetAvailableNotebookNameCompositesInCache(CurrentLocalCacheDirectory).FirstOrDefault(x => x.ID == notebook.ID && x.OwnerID == notebook.Owner.ID);
+
+            var pageNameComposites = new List<PageNameComposite>();
+            if (notebookNameComposite != null)
+            {
+                var pagesFolderPath = Path.Combine(notebookNameComposite.FullNotebookDirectoryPath, "Pages");
+                pageNameComposites = Directory.EnumerateFiles(pagesFolderPath, "*.xml").Select(PageNameComposite.ParseFilePathToNameComposite).Where(x => pageIDs.Contains(x.ID)).ToList();
+            }
+
+            foreach (var pageID in pageIDs)
+            {
+                var pageNameComposite = pageNameComposites.FirstOrDefault(x => x.ID == pageID && x.VersionIndex == "0");
+                if (pageNameComposite == null)
+                {
+                    if (authoredNotebook == null)
+                    {
+                        continue;
+                    }
+                    var authoredPage = authoredNotebook.Pages.FirstOrDefault(x => x.ID == pageID && x.VersionIndex == 0);
+                    if (authoredPage == null)
+                    {
+                        continue;
+                    }
+
+                    var newPage = CopyPageForNewOwner(authoredPage, notebook.Owner);
+                    if (newPage == null)
+                    {
+                        continue;
+                    }
+
+                    pages.Add(newPage);
+                    continue;
+                }
+
+                var page = CLPPage.LoadLocalPage(pageNameComposite.FullPageFilePath);
+                if (page == null)
+                {
+                    continue;
+                }
+
+                if (includeSubmissions)
+                {
+                    var id = pageID;
+                    foreach (var submissionComposite in pageNameComposites.Where(x => x.ID == id && x.VersionIndex != "0"))
+                    {
+                        var submission = CLPPage.LoadLocalPage(submissionComposite.FullPageFilePath);
+                        if (submission == null)
+                        {
+                            continue;
+                        }
+                        page.Submissions.Add(submission);
+                    }
+                }
+
+                pages.Add(page);
+            }
+
+            return pages;
         }
 
         #endregion //Class Period
@@ -298,57 +378,57 @@ namespace Classroom_Learning_Partner.Services
 
         public void SaveNotebookLocally(Notebook notebook)
         {
-            var folderPath = Path.Combine(CurrentNotebookCacheDirectory, notebook.NotebookToNotebookFolderName());
+            //var folderPath = Path.Combine(CurrentNotebookCacheDirectory, notebook.NotebookToNotebookFolderName());
 
-            if (App.MainWindowViewModel.CurrentUser.ID == Person.Author.ID)
-            {
-                var pagesFolderPath = Path.Combine(folderPath, "Pages");
-                if (Directory.Exists(pagesFolderPath))
-                {
-                    var pageFilePaths = Directory.EnumerateFiles(pagesFolderPath, "*.xml").ToList();
-                    foreach (var pageFilePath in pageFilePaths)
-                    {
-                        File.Delete(pageFilePath);
-                    }
-                }
-            }
+            //if (App.MainWindowViewModel.CurrentUser.ID == Person.Author.ID)
+            //{
+            //    var pagesFolderPath = Path.Combine(folderPath, "Pages");
+            //    if (Directory.Exists(pagesFolderPath))
+            //    {
+            //        var pageFilePaths = Directory.EnumerateFiles(pagesFolderPath, "*.xml").ToList();
+            //        foreach (var pageFilePath in pageFilePaths)
+            //        {
+            //            File.Delete(pageFilePath);
+            //        }
+            //    }
+            //}
 
-            if (!Directory.Exists(folderPath))
-            {
-                Directory.CreateDirectory(folderPath);
-            }
+            //if (!Directory.Exists(folderPath))
+            //{
+            //    Directory.CreateDirectory(folderPath);
+            //}
 
-            notebook.SaveNotebook(folderPath, true);
+            //notebook.SaveNotebook(folderPath, true);
 
-            switch (App.MainWindowViewModel.CurrentProgramMode)
-            {
-                case ProgramModes.Author:
-                case ProgramModes.Database:
-                    break;
-                case ProgramModes.Teacher:
-                    notebook.SaveOthersSubmissions(CurrentNotebookCacheDirectory);
-                    break;
-                case ProgramModes.Projector:
-                    notebook.SaveOthersSubmissions(CurrentNotebookCacheDirectory);
-                    break;
-                case ProgramModes.Student:
-                    var submissionsPath = Path.Combine(folderPath, "Pages");
-                    notebook.SaveSubmissions(submissionsPath);
-                    if (App.Network.InstructorProxy != null)
-                    {
-                        var sNotebook = ObjectSerializer.ToString(notebook);
-                        var zippedNotebook = CLPServiceAgent.Instance.Zip(sNotebook);
-                        App.Network.InstructorProxy.CollectStudentNotebook(zippedNotebook, App.MainWindowViewModel.CurrentUser.FullName);
-                    }
-                    break;
-            }
+            //switch (App.MainWindowViewModel.CurrentProgramMode)
+            //{
+            //    case ProgramModes.Author:
+            //    case ProgramModes.Database:
+            //        break;
+            //    case ProgramModes.Teacher:
+            //        notebook.SaveOthersSubmissions(CurrentNotebookCacheDirectory);
+            //        break;
+            //    case ProgramModes.Projector:
+            //        notebook.SaveOthersSubmissions(CurrentNotebookCacheDirectory);
+            //        break;
+            //    case ProgramModes.Student:
+            //        var submissionsPath = Path.Combine(folderPath, "Pages");
+            //        notebook.SaveSubmissions(submissionsPath);
+            //        if (App.Network.InstructorProxy != null)
+            //        {
+            //            var sNotebook = ObjectSerializer.ToString(notebook);
+            //            var zippedNotebook = CLPServiceAgent.Instance.Zip(sNotebook);
+            //            App.Network.InstructorProxy.CollectStudentNotebook(zippedNotebook, App.MainWindowViewModel.CurrentUser.FullName);
+            //        }
+            //        break;
+            //}
 
-            if (App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Teacher &&
-                App.MainWindowViewModel.CurrentClassPeriod != null &&
-                App.MainWindowViewModel.CurrentClassPeriod.ClassSubject != null)
-            {
-                App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.SaveClassSubject(CurrentClassCacheDirectory);
-            }
+            //if (App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Teacher &&
+            //    App.MainWindowViewModel.CurrentClassPeriod != null &&
+            //    App.MainWindowViewModel.CurrentClassPeriod.ClassSubject != null)
+            //{
+            //    App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.SaveClassSubject(CurrentClassCacheDirectory);
+            //}
         }
 
         #endregion //Notebook
