@@ -63,6 +63,10 @@ namespace Classroom_Learning_Partner
 
         public List<IViewModel> GetViewModelsFromModel(IModel model)
         {
+            if (model == null)
+            {
+                return null;
+            }
             var viewModelManger = ServiceLocator.Default.ResolveType<IViewModelManager>();
             var result = viewModelManger.GetViewModelsOfModel(model).ToList();
             return result;

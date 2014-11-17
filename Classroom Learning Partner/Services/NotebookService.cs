@@ -167,6 +167,10 @@ namespace Classroom_Learning_Partner.Services
             foreach (var classPeriodFilePath in classPeriodFilePaths)
             {
                 var classPeriodNameComposite = ClassPeriodNameComposite.ParseFilePathToNameComposite(classPeriodFilePath);
+                if (classPeriodNameComposite == null)
+                {
+                    continue;
+                }
                 var time = classPeriodNameComposite.StartTime;
                 var timeParts = time.Split('.');
                 var year = Int32.Parse(timeParts[0]);
@@ -223,17 +227,19 @@ namespace Classroom_Learning_Partner.Services
 
             var authoredPages = LoadOrCopyPagesForNotebook(authoredNotebook, null, pageIDs, false);
             authoredNotebook.Pages = new ObservableCollection<CLPPage>(authoredPages);
+            authoredNotebook.CurrentPage = authoredNotebook.Pages.FirstOrDefault(); //HACK
 
             var teacherNotebook = LoadClassPeriodNotebookForPerson(classPeriod, classPeriod.ClassSubject.TeacherID) ??
                                   CopyNotebookForNewOwner(authoredNotebook, classPeriod.ClassSubject.Teacher);
 
             var teacherPages = LoadOrCopyPagesForNotebook(teacherNotebook, authoredNotebook, pageIDs, true);
             teacherNotebook.Pages = new ObservableCollection<CLPPage>(teacherPages);
+            teacherNotebook.CurrentPage = teacherNotebook.Pages.FirstOrDefault(); //HACK
 
             OpenNotebooks.Clear();
             OpenNotebooks.Add(authoredNotebook);
             OpenNotebooks.Add(teacherNotebook);
-            CurrentNotebook = teacherNotebook;
+            SetNotebookAsCurrentNotebook(teacherNotebook);
         }
 
         public Notebook LoadClassPeriodNotebookForPerson(ClassPeriod classPeriod, string ownerID)
@@ -241,7 +247,7 @@ namespace Classroom_Learning_Partner.Services
             var notebookNameComposite = AvailableLocalNotebookNameComposites.FirstOrDefault(x => x.ID == classPeriod.NotebookID && x.OwnerID == ownerID);
             if (notebookNameComposite == null)
             {
-                MessageBox.Show("Notebook for Class Period not found for " + ownerID + ".");
+               // MessageBox.Show("Notebook for Class Period not found for " + ownerID + ".");
                 return null;
             }
 
@@ -249,7 +255,7 @@ namespace Classroom_Learning_Partner.Services
             if (notebook == null)
             {
                 MessageBox.Show("Notebook for Class Period could not be loaded " + ownerID + ".");
-                return null;
+              //  return null;
             }
 
             return notebook;

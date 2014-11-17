@@ -944,7 +944,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static void TakePageThumbnail(CLPPage page)
         {
-            var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(page).First(x => (x is ACLPPageBaseViewModel) && !(x as ACLPPageBaseViewModel).IsPagePreview);
+            var viewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(page);
+            if (viewModels == null || !viewModels.Any())
+            {
+                return;
+            }
+            var pageViewModel = viewModels.First(x => (x is ACLPPageBaseViewModel) && !(x as ACLPPageBaseViewModel).IsPagePreview);
 
             var viewManager = Catel.IoC.ServiceLocator.Default.ResolveType<IViewManager>();
             var views = viewManager.GetViewsOfViewModel(pageViewModel);

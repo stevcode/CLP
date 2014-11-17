@@ -24,8 +24,8 @@ namespace CLP.Entities
 
         public string ToFolderName()
         {
-            return string.Format("{0};{1};{2};{3};{4}",
-            Name, ID, OwnerName, OwnerID, OwnerTypeTag);
+            return string.Format("{0};{1};{2};{3}{4}",
+                Name, ID, OwnerName, OwnerID, OwnerTypeTag == "U" ? string.Empty : ";" + OwnerTypeTag);
         }
 
         public static NotebookNameComposite ParseNotebookToNameComposite(Notebook notebook)

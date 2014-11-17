@@ -254,7 +254,16 @@ namespace CLP.Entities
                     return null;
                 }
                 classPeriod.ID = nameComposite.ID;
-                classPeriod.StartTime = DateTime.Parse(nameComposite.StartTime);
+
+                var time = nameComposite.StartTime;
+                var timeParts = time.Split('.');
+                var year = Int32.Parse(timeParts[0]);
+                var month = Int32.Parse(timeParts[1]);
+                var day = Int32.Parse(timeParts[2]);
+                var hour = Int32.Parse(timeParts[3]);
+                var minute = Int32.Parse(timeParts[4]);
+                var dateTime = new DateTime(year, month, day, hour, minute, 0);
+                classPeriod.StartTime = dateTime;
                 classPeriod.StartPageID = nameComposite.StartPageID;
                 classPeriod.NumberOfPages = UInt32.Parse(nameComposite.NumberOfPages);
                 classPeriod.NumberOfAllowedBlankPages = UInt32.Parse(nameComposite.AllowedBlankPages);
