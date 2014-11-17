@@ -4,6 +4,8 @@ using System.Linq;
 using System.ServiceModel;
 using System.Windows;
 using System.Windows.Threading;
+using Catel.IoC;
+using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.ViewModels;
 using CLP.Entities;
 
@@ -77,7 +79,12 @@ namespace Classroom_Learning_Partner
                                                                                                         "Double Login",
                                                                                                         MessageBoxButton.OK);
 
-                                                                                        App.MainWindowViewModel.OpenNotebooks.Clear();
+                                                                                        var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
+                                                                                        if (notebookService != null)
+                                                                                        {
+                                                                                            notebookService.OpenNotebooks.Clear();
+                                                                                            notebookService.CurrentNotebook = null;
+                                                                                        }
                                                                                         App.MainWindowViewModel.SetWorkspace();
 
                                                                                         return null;
@@ -112,7 +119,12 @@ namespace Classroom_Learning_Partner
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                        (DispatcherOperationCallback)delegate
                                                                                     {
-                                                                                        App.MainWindowViewModel.CurrentClassPeriod = classPeriod;
+                                                                                        var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
+                                                                                        if (notebookService != null)
+                                                                                        {
+                                                                                            notebookService.CurrentClassPeriod = classPeriod;
+                                                                                        }
+
                                                                                         App.MainWindowViewModel.AvailableUsers = new ObservableCollection<Person>(classPeriod.ClassSubject.StudentList.OrderBy(x => x.FullName));
 
                                                                                         return null;
@@ -134,7 +146,15 @@ namespace Classroom_Learning_Partner
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                        (DispatcherOperationCallback)delegate
                                                                                     {
-                                                                                        App.MainWindowViewModel.OpenNotebooks.Add(notebook);
+                                                                                        var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
+                                                                                        if (notebookService == null)
+                                                                                        {
+                                                                                            return null;
+                                                                                        }
+
+                                                                                        notebookService.OpenNotebooks.Add(notebook);
+                                                                                        notebookService.CurrentNotebook = notebook;
+                                                                                        App.MainWindowViewModel.Workspace = new BlankWorkspaceViewModel();
                                                                                         App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(notebook);
 
                                                                                         return null;

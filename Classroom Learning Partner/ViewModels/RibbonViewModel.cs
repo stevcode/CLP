@@ -74,7 +74,6 @@ namespace Classroom_Learning_Partner.ViewModels
         private void InitializeCommands()
         {
             //File Menu
-            ViewAllWorkCommand = new Command(OnViewAllWorkCommandExecute);
             LogInAsNotebookOwnerCommand = new Command(OnLogInAsNotebookOwnerCommandExecute);
             RefreshNetworkCommand = new Command(OnRefreshNetworkCommandExecute);
             ToggleThumbnailsCommand = new Command(OnToggleThumbnailsCommandExecute);
@@ -618,16 +617,6 @@ namespace Classroom_Learning_Partner.ViewModels
         #region File Menu
 
         /// <summary>
-        /// Creates and starts a ClassPeriod with all Student Work.
-        /// </summary>
-        public Command ViewAllWorkCommand { get; private set; }
-
-        private void OnViewAllWorkCommandExecute()
-        {
-            MainWindowViewModel.ViewAllWork();
-        }
-
-        /// <summary>
         /// Sets CurrentUser to the owner of the opened notebook.
         /// </summary>
         public Command LogInAsNotebookOwnerCommand { get; private set; }
@@ -1085,37 +1074,38 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnMakeGroupsCommandExecute()
         {
-            var groupCreationViewModel = new GroupCreationViewModel();
-            var groupCreationView = new GroupCreationView(groupCreationViewModel);
-            groupCreationView.Owner = Application.Current.MainWindow;
-            groupCreationView.WindowStartupLocation = WindowStartupLocation.Manual;
-            groupCreationView.Top = 0;
-            groupCreationView.ShowDialog();
-            if(groupCreationView.DialogResult == true)
-            {
-                foreach(var group in groupCreationViewModel.Groups)
-                {
-                    foreach(Person student in group.Members)
-                    {
-                        if(groupCreationViewModel.GroupType == "Temp")
-                        {
-                            student.TempDifferentiationGroup = group.Label;
-                        }
-                        else
-                        {
-                            student.CurrentDifferentiationGroup = group.Label;
-                        }
-                    }
-                }
-                try
-                {
-                    App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.SaveClassSubject(MainWindowViewModel.ClassCacheDirectory);
-                }
-                catch
-                {
-                    Logger.Instance.WriteToLog("Failed to save class subject after making groups.");
-                }
-            }
+            //TODO CACHE
+            //var groupCreationViewModel = new GroupCreationViewModel();
+            //var groupCreationView = new GroupCreationView(groupCreationViewModel);
+            //groupCreationView.Owner = Application.Current.MainWindow;
+            //groupCreationView.WindowStartupLocation = WindowStartupLocation.Manual;
+            //groupCreationView.Top = 0;
+            //groupCreationView.ShowDialog();
+            //if(groupCreationView.DialogResult == true)
+            //{
+            //    foreach(var group in groupCreationViewModel.Groups)
+            //    {
+            //        foreach(Person student in group.Members)
+            //        {
+            //            if(groupCreationViewModel.GroupType == "Temp")
+            //            {
+            //                student.TempDifferentiationGroup = group.Label;
+            //            }
+            //            else
+            //            {
+            //                student.CurrentDifferentiationGroup = group.Label;
+            //            }
+            //        }
+            //    }
+            //    try
+            //    {
+            //        App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.SaveClassSubject(MainWindowViewModel.ClassCacheDirectory);
+            //    }
+            //    catch
+            //    {
+            //        Logger.Instance.WriteToLog("Failed to save class subject after making groups.");
+            //    }
+            //}
         }
 
         public Command SendPageToStudentCommand { get; private set; }
@@ -1215,86 +1205,87 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void SendExitTickets(ExitTicketCreationViewModel exitTicketCreationViewModel) 
         {
-            var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel == null)
-            {
-                return;
-            }
+            //TODO CACHE
+            //var notebookWorkspaceViewModel = MainWindow.Workspace as NotebookWorkspaceViewModel;
+            //if(notebookWorkspaceViewModel == null)
+            //{
+            //    return;
+            //}
 
-            var notebook = notebookWorkspaceViewModel.Notebook;
-            for(int i = 0; i < exitTicketCreationViewModel.ExitTickets.Count; i++)
-            {
-                var exitTicket = exitTicketCreationViewModel.ExitTickets[i];
-                notebook.Pages.Add(exitTicket);
-                exitTicket.History.ClearHistory();
-                exitTicket.SerializedStrokes = StrokeDTO.SaveInkStrokes(exitTicket.InkStrokes);
-                exitTicket.History.SerializedTrashedInkStrokes = StrokeDTO.SaveInkStrokes(exitTicket.History.TrashedInkStrokes);
+            //var notebook = notebookWorkspaceViewModel.Notebook;
+            //for(int i = 0; i < exitTicketCreationViewModel.ExitTickets.Count; i++)
+            //{
+            //    var exitTicket = exitTicketCreationViewModel.ExitTickets[i];
+            //    notebook.Pages.Add(exitTicket);
+            //    exitTicket.History.ClearHistory();
+            //    exitTicket.SerializedStrokes = StrokeDTO.SaveInkStrokes(exitTicket.InkStrokes);
+            //    exitTicket.History.SerializedTrashedInkStrokes = StrokeDTO.SaveInkStrokes(exitTicket.History.TrashedInkStrokes);
 
-                foreach(Person student in exitTicketCreationViewModel.GroupCreationViewModel.Groups[i].Members)
-                {
-                    student.TempDifferentiationGroup = exitTicket.DifferentiationLevel;
-                }
-            }
-            try
-            {
-                App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.SaveClassSubject(MainWindowViewModel.ClassCacheDirectory);
-            }
-            catch
-            {
-                Logger.Instance.WriteToLog("Failed to save class subject after making exit tickets.");
-            }
+            //    foreach(Person student in exitTicketCreationViewModel.GroupCreationViewModel.Groups[i].Members)
+            //    {
+            //        student.TempDifferentiationGroup = exitTicket.DifferentiationLevel;
+            //    }
+            //}
+            //try
+            //{
+            //    App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.SaveClassSubject(MainWindowViewModel.ClassCacheDirectory);
+            //}
+            //catch
+            //{
+            //    Logger.Instance.WriteToLog("Failed to save class subject after making exit tickets.");
+            //}
 
-            //send exit tickets to projector
-            if(App.Network.ProjectorProxy != null)
-            {
-                try
-                {
-                    foreach(CLPPage exitTicket in exitTicketCreationViewModel.ExitTickets)
-                    {
-                        App.Network.ProjectorProxy.AddNewPage(CLPServiceAgent.Instance.Zip(ObjectSerializer.ToString(exitTicket)), 999);
-                    }
-                }
-                catch(Exception)
-                {
-                }
-            }
+            ////send exit tickets to projector
+            //if(App.Network.ProjectorProxy != null)
+            //{
+            //    try
+            //    {
+            //        foreach(CLPPage exitTicket in exitTicketCreationViewModel.ExitTickets)
+            //        {
+            //            App.Network.ProjectorProxy.AddNewPage(CLPServiceAgent.Instance.Zip(ObjectSerializer.ToString(exitTicket)), 999);
+            //        }
+            //    }
+            //    catch(Exception)
+            //    {
+            //    }
+            //}
 
-            //send an exit ticket to each student
-            if(App.MainWindowViewModel.AvailableUsers.Any())
-            {
-                Parallel.ForEach(App.MainWindowViewModel.AvailableUsers,
-                                    student =>
-                                    {
-                                        try
-                                        {
-                                            var binding = new NetTcpBinding
-                                            {
-                                                Security =
-                                                {
-                                                    Mode = SecurityMode.None
-                                                }
-                                            };
-                                            var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(binding, new EndpointAddress(student.CurrentMachineAddress));
-                                            CLPPage correctExitTicket = exitTicketCreationViewModel.ExitTickets.FirstOrDefault(x => x.DifferentiationLevel == student.TempDifferentiationGroup);
-                                            if(correctExitTicket == null)
-                                            {
-                                                correctExitTicket = exitTicketCreationViewModel.ExitTickets.First();
-                                            }
-                                            //TODO: The number 999 is used in place of "infinity".
-                                            //Also I'm doing the serialization step per-student instead of per-exit-ticket which'll be somewhat slower.
-                                            studentProxy.AddNewPage(CLPServiceAgent.Instance.Zip(ObjectSerializer.ToString(correctExitTicket)), 999);
-                                            (studentProxy as ICommunicationObject).Close();
-                                        }
-                                        catch(Exception ex)
-                                        {
-                                            Console.WriteLine(ex.Message);
-                                        }
-                                    });
-            }
-            else
-            {
-                Logger.Instance.WriteToLog("No Students Found");
-            }
+            ////send an exit ticket to each student
+            //if(App.MainWindowViewModel.AvailableUsers.Any())
+            //{
+            //    Parallel.ForEach(App.MainWindowViewModel.AvailableUsers,
+            //                        student =>
+            //                        {
+            //                            try
+            //                            {
+            //                                var binding = new NetTcpBinding
+            //                                {
+            //                                    Security =
+            //                                    {
+            //                                        Mode = SecurityMode.None
+            //                                    }
+            //                                };
+            //                                var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(binding, new EndpointAddress(student.CurrentMachineAddress));
+            //                                CLPPage correctExitTicket = exitTicketCreationViewModel.ExitTickets.FirstOrDefault(x => x.DifferentiationLevel == student.TempDifferentiationGroup);
+            //                                if(correctExitTicket == null)
+            //                                {
+            //                                    correctExitTicket = exitTicketCreationViewModel.ExitTickets.First();
+            //                                }
+            //                                //TODO: The number 999 is used in place of "infinity".
+            //                                //Also I'm doing the serialization step per-student instead of per-exit-ticket which'll be somewhat slower.
+            //                                studentProxy.AddNewPage(CLPServiceAgent.Instance.Zip(ObjectSerializer.ToString(correctExitTicket)), 999);
+            //                                (studentProxy as ICommunicationObject).Close();
+            //                            }
+            //                            catch(Exception ex)
+            //                            {
+            //                                Console.WriteLine(ex.Message);
+            //                            }
+            //                        });
+            //}
+            //else
+            //{
+            //    Logger.Instance.WriteToLog("No Students Found");
+            //}
         }
 
         #endregion //Testing

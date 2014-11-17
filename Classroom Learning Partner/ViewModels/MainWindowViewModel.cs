@@ -58,6 +58,17 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Constructor
 
+        /// <summary>
+        /// ribbon, obsolete
+        /// </summary>
+        public RibbonViewModel Ribbon
+        {
+            get { return GetValue<RibbonViewModel>(RibbonProperty); }
+            set { SetValue(RibbonProperty, value); }
+        }
+
+        public static readonly PropertyData RibbonProperty = RegisterProperty("Ribbon", typeof (RibbonViewModel), () => new RibbonViewModel());
+
         #region Bindings
 
         /// <summary>

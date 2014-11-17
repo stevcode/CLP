@@ -4,6 +4,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.ServiceModel;
 using System.Threading;
+using Catel.IoC;
+using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.ViewModels;
 using CLP.Entities;
 using ServiceModelEx;
@@ -46,7 +48,7 @@ namespace Classroom_Learning_Partner
 
         public void StartNetworking()
         {
-            App.MainWindowViewModel.OnlineStatus = "CONNECTING...";    
+            App.MainWindowViewModel.MajorRibbon.ConnectionStatus = ConnectionStatuses.Connecting;    
 
             ServiceHost host = null;
             switch (App.MainWindowViewModel.CurrentProgramMode)
@@ -56,11 +58,11 @@ namespace Classroom_Learning_Partner
                     break;
                 case ProgramModes.Teacher:
                     host = DiscoveryFactory.CreateDiscoverableHost<InstructorService>();
-                    App.MainWindowViewModel.OnlineStatus = "LISTENING...";
+                    App.MainWindowViewModel.MajorRibbon.ConnectionStatus = ConnectionStatuses.Listening;    
                     break;
                 case ProgramModes.Projector:
                     host = DiscoveryFactory.CreateDiscoverableHost<ProjectorService>();
-                    App.MainWindowViewModel.OnlineStatus = "LISTENING...";
+                    App.MainWindowViewModel.MajorRibbon.ConnectionStatus = ConnectionStatuses.Listening;    
                     break;
                 case ProgramModes.Student:
                     host = DiscoveryFactory.CreateDiscoverableHost<StudentService>();
@@ -101,20 +103,26 @@ namespace Classroom_Learning_Partner
                         try
                         {
                             ProjectorProxy = ChannelFactory<IProjectorContract>.CreateChannel(DefaultBinding, DiscoveredProjectors.Addresses[0]);
-                            
-                            App.MainWindowViewModel.OnlineStatus = "CONNECTED";
+
+                            App.MainWindowViewModel.MajorRibbon.ConnectionStatus = ConnectionStatuses.Connected;    
                             App.MainWindowViewModel.IsProjectorFrozen = false;
 
-                            if(App.MainWindowViewModel.CurrentClassPeriod != null)
+                            var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
+                            if (notebookService == null)
                             {
-                                var classPeriodString = ObjectSerializer.ToString(App.MainWindowViewModel.CurrentClassPeriod);
+                                return;
+                            }
+
+                            if (notebookService.CurrentClassPeriod != null)
+                            {
+                                var classPeriodString = ObjectSerializer.ToString(notebookService.CurrentClassPeriod);
                                 var classPeriod = CLPServiceAgent.Instance.Zip(classPeriodString);
 
-                                var classSubjectString = ObjectSerializer.ToString(App.MainWindowViewModel.CurrentClassPeriod.ClassSubject);
+                                var classSubjectString = ObjectSerializer.ToString(notebookService.CurrentClassPeriod.ClassSubject);
                                 var classsubject = CLPServiceAgent.Instance.Zip(classSubjectString);
 
                                 //var newNotebook = App.MainWindowViewModel.OpenNotebooks.First().CopyForNewOwner(App.MainWindowViewModel.CurrentUser);
-                                var newNotebookString = ObjectSerializer.ToString(App.MainWindowViewModel.OpenNotebooks.First(x => x.ID == App.MainWindowViewModel.CurrentClassPeriod.NotebookID && x.OwnerID == App.MainWindowViewModel.CurrentUser.ID));
+                                var newNotebookString = ObjectSerializer.ToString(notebookService.OpenNotebooks.First(x => x.ID == notebookService.CurrentClassPeriod.NotebookID && x.OwnerID == App.MainWindowViewModel.CurrentUser.ID));
                                 var zippedNotebook = CLPServiceAgent.Instance.Zip(newNotebookString);
                                 ProjectorProxy.OpenClassPeriod(classPeriod, classsubject);
                                 ProjectorProxy.OpenPartialNotebook(zippedNotebook);
@@ -123,7 +131,7 @@ namespace Classroom_Learning_Partner
                         catch(Exception)
                         {
                             Logger.Instance.WriteToLog("Failed to create Projector Proxy");
-                            App.MainWindowViewModel.OnlineStatus = "FAILED TO CONNECT";
+                            App.MainWindowViewModel.MajorRibbon.ConnectionStatus = ConnectionStatuses.Disconnected;    
                         }
                     }).Start();
                     break;
@@ -148,7 +156,7 @@ namespace Classroom_Learning_Partner
                         catch(Exception)
                         {
                             Logger.Instance.WriteToLog("Failed to create Instructor Proxy");
-                            App.MainWindowViewModel.OnlineStatus = "FAILED TO CONNECT";
+                            App.MainWindowViewModel.MajorRibbon.ConnectionStatus = ConnectionStatuses.Disconnected;    
                         }
                     }).Start();
                     break;

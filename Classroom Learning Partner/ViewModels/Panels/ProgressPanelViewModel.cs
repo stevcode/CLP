@@ -5,7 +5,9 @@ using System.IO;
 using System.Windows;
 using System.Linq;
 using Catel.Data;
+using Catel.IoC;
 using Catel.MVVM;
+using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.Views;
 using CLP.Entities;
 
@@ -24,9 +26,10 @@ namespace Classroom_Learning_Partner.ViewModels
             Initialized += ProgressPanelViewModel_Initialized;
             StagingPanel = stagingPanel;
 
-            if(App.MainWindowViewModel.CurrentClassPeriod != null)
+            var notebookService = DependencyResolver.Resolve<INotebookService>();
+            if (notebookService != null && notebookService.CurrentClassPeriod != null)
             {
-                StudentList = App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.StudentList;
+                StudentList = notebookService.CurrentClassPeriod.ClassSubject.StudentList;
             }
             else
             {

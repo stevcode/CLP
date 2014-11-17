@@ -106,8 +106,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnOpenNotebookCommandExecute()
         {
-            LoadedNotebookService.OpenNotebook(SelectedNotebook, SelectedCacheDirectory);
-            //  PleaseWaitHelper.Show(() => LoadedNotebookService.OpenNotebook(SelectedNotebook, SelectedCacheDirectory), null, "Loading Notebook");
+            PleaseWaitHelper.Show(() => LoadedNotebookService.OpenLocalNotebook(SelectedNotebook, SelectedCacheDirectory), null, "Loading Notebook");
         }
 
         private bool OnOpenNotebookCanExecute() { return SelectedNotebook != null; }
@@ -119,8 +118,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnStartClassPeriodCommandExecute()
         {
-            MainWindowViewModel.LocalCacheDirectory = SelectedCacheDirectory;
-            MainWindowViewModel.OpenClassPeriod();
+        //    LoadedNotebookService.StartLocalClassPeriod(, SelectedCacheDirectory);
         }
 
         #endregion //Commands

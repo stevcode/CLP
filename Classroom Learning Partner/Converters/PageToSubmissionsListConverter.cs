@@ -4,6 +4,8 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Data;
+using Catel.IoC;
+using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.ViewModels;
 using CLP.Entities;
 
@@ -13,12 +15,20 @@ namespace Classroom_Learning_Partner.Converters
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
+            
+
             var pageSubmissions = values[0] as ObservableCollection<CLPPage>;
             var submissionsWithBlanks = new ObservableCollection<StudentProgressInfo>();
-            var studentList = new ObservableCollection<Person>();
-            if(App.MainWindowViewModel.CurrentClassPeriod != null)
+            var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
+            if (notebookService == null)
             {
-                studentList = App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.StudentList;
+                return submissionsWithBlanks;
+            }
+
+            var studentList = new ObservableCollection<Person>();
+            if (notebookService.CurrentClassPeriod != null)
+            {
+                studentList = notebookService.CurrentClassPeriod.ClassSubject.StudentList;
             }
 
             var allSubmissions = new List<CLPPage>();

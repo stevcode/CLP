@@ -64,11 +64,15 @@ namespace Classroom_Learning_Partner.ViewModels
         private static readonly SortDescription DivisionTemplateStrategyAscendingSort = new SortDescription("DivisionTemplateStrategy", ListSortDirection.Ascending);
         private static readonly SortDescription DivisionTemplateStrategyDescendingSort = new SortDescription("DivisionTemplateStrategy", ListSortDirection.Descending);
 
+        private readonly INotebookService _notebookService;
+
         #region Constructor
 
         public StagingPanelViewModel(Notebook notebook)
         {
             Notebook = notebook;
+            _notebookService = DependencyResolver.Resolve<INotebookService>();
+
             SortedAndGroupedPages.Source = FilteredPages;
 
             Initialized += StagingPanelViewModel_Initialized;
@@ -603,12 +607,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public void AppendStudentNotebook(Person student)
         {
-            //TODO: There are 2 open notebooks in the normal case, AUTHOR and the teacher's; we 
-            // want the teacher's.  Probably there's a better way to select that one than "Last".
-
-            var notebookName = DependencyResolver.Resolve<INotebookService>().CurrentNotebook.Name;
-
-            foreach (var page in App.MainWindowViewModel.OpenNotebooks.Last(x => x.Name == notebookName).Pages)
+            foreach (var page in _notebookService.CurrentNotebook.Pages)
             {
                 AppendCollectionOfPagesToStage(page.Submissions, x => x.OwnerID == student.ID);
             }

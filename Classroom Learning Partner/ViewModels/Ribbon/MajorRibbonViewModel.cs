@@ -13,6 +13,13 @@ using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
+    public enum ConnectionStatuses
+    {
+        Connecting,
+        Listening,
+        Connected,
+        Disconnected
+    }
     public class MajorRibbonViewModel : ViewModelBase
     {
         public MainWindowViewModel MainWindow
@@ -266,6 +273,17 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Buttons
 
         #region Bindings
+
+        /// <summary>
+        /// SUMMARY
+        /// </summary>
+        public ConnectionStatuses ConnectionStatus
+        {
+            get { return GetValue<ConnectionStatuses>(ConnectionStatusProperty); }
+            set { SetValue(ConnectionStatusProperty, value); }
+        }
+
+        public static readonly PropertyData ConnectionStatusProperty = RegisterProperty("ConnectionStatus", typeof(ConnectionStatuses), ConnectionStatuses.Listening);
 
         /// <summary>List of the buttons currently on the Ribbon.</summary>
         public ObservableCollection<UIElement> Buttons
