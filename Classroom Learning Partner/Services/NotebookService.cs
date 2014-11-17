@@ -15,7 +15,7 @@ namespace Classroom_Learning_Partner.Services
         public NotebookService()
         {
             //Warm up Serializer to make loading of notebook faster.
-            var typesToWarmup = new[] { typeof (Notebook) };
+            var typesToWarmup = new[] { typeof (Notebook), typeof (ClassPeriod) };
             var xmlSerializer = SerializationFactory.GetXmlSerializer();
             xmlSerializer.Warmup(typesToWarmup);
         }
@@ -103,6 +103,11 @@ namespace Classroom_Learning_Partner.Services
 
         #region ClassPeriod
 
+        public List<ClassPeriodNameComposite> AvailableLocalClassPeriodNameComposites
+        {
+            get { return CurrentLocalCacheDirectory == null ? new List<ClassPeriodNameComposite>() : GetAvailableClassPeriodNameCompositesInCache(CurrentLocalCacheDirectory); }
+        }
+
         public ClassPeriod CurrentClassPeriod { get; set; }
 
         #endregion //ClassPeriod
@@ -149,10 +154,11 @@ namespace Classroom_Learning_Partner.Services
 
         #region Methods
 
-        #region Notebook Methods
+        #region Notebook
 
-        public void OpenNotebook(NotebookNameComposite notebookNameComposite, string localCacheFolderPath)
+        public void OpenLocalNotebook(NotebookNameComposite notebookNameComposite, string localCacheFolderPath)
         {
+            //Notebook is already loaded in memory
             var existingNotebook = OpenNotebooks.FirstOrDefault(x => x.ID == notebookNameComposite.ID && x.OwnerID == notebookNameComposite.OwnerID);
             if (existingNotebook != null)
             {
@@ -166,6 +172,7 @@ namespace Classroom_Learning_Partner.Services
                 return;
             }
 
+            //Open New Notebook from disk.
             var folderPath = notebookNameComposite.FullNotebookDirectoryPath;
             if (!Directory.Exists(folderPath))
             {
@@ -173,7 +180,7 @@ namespace Classroom_Learning_Partner.Services
                 return;
             }
 
-            var notebook = Notebook.OpenFullNotebook(folderPath);
+            var notebook = Notebook.LoadLocalFullNotebook(folderPath);
             if (notebook == null)
             {
                 MessageBox.Show("Notebook could not be opened. Check error log.");
@@ -249,7 +256,13 @@ namespace Classroom_Learning_Partner.Services
             }
         }
 
-        #endregion //Notebook Methods
+        #endregion //Notebook
+
+        #region Class Period
+
+         
+
+        #endregion //Class Period
 
         #endregion //Methods
 
@@ -265,10 +278,28 @@ namespace Classroom_Learning_Partner.Services
             var directoryInfo = new DirectoryInfo(notebookCacheDirectory);
             return
                 directoryInfo.GetDirectories()
-                             .Select(directory => NotebookNameComposite.NotebookDirectoryToNotebookNameComposite(directory.FullName))
+                             .Select(directory => NotebookNameComposite.ParseDirectoryToNameComposite(directory.FullName))
                              .Where(x => x != null)
-                             .OrderByDescending(x => x.OwnerTypeTag)
+                             .OrderBy(x => x.OwnerTypeTag != "T")
+                             .ThenBy(x => x.OwnerTypeTag != "A")
+                             .ThenBy(x => x.OwnerTypeTag != "S")
                              .ThenBy(x => x.OwnerName)
+                             .ToList();
+        }
+
+        public static List<ClassPeriodNameComposite> GetAvailableClassPeriodNameCompositesInCache(string cachePath)
+        {
+            var classesCacheDirectory = Path.Combine(cachePath, "Classes");
+            if (!Directory.Exists(classesCacheDirectory))
+            {
+                Directory.CreateDirectory(classesCacheDirectory);
+            }
+            var directoryInfo = new DirectoryInfo(classesCacheDirectory);
+            return
+                directoryInfo.GetFiles()
+                             .Select(file => ClassPeriodNameComposite.ParseFilePathToNameComposite(file.FullName))
+                             .Where(x => x != null)
+                             .OrderByDescending(x => x.StartTime)
                              .ToList();
         }
 

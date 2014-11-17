@@ -248,7 +248,8 @@ namespace CLP.Entities
             {
                 var classPeriod = Load<ClassPeriod>(filePath, SerializationMode.Xml);
                 var nameComposite = ClassPeriodNameComposite.ParseFilePathToNameComposite(filePath);
-                if (nameComposite == null)
+                if (nameComposite == null ||
+                    classPeriod == null)
                 {
                     return null;
                 }

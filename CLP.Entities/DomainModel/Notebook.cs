@@ -490,7 +490,8 @@ namespace CLP.Entities
                 var notebook = Load<Notebook>(filePath, SerializationMode.Xml);
 
                 var nameComposite = NotebookNameComposite.ParseDirectoryToNameComposite(notebookFolderPath);
-                if (nameComposite == null)
+                if (nameComposite == null ||
+                    notebook == null)
                 {
                     return null;
                 }
@@ -506,20 +507,18 @@ namespace CLP.Entities
 
         #endregion //Cache
 
-        
-
         #region Loading
 
-        public static Notebook OpenFullNotebook(string notebookFolderPath, bool includeSubmissions = true)
+        public static Notebook LoadLocalFullNotebook(string notebookFolderPath, bool includeSubmissions = true)
         {
             var pagesFolderPath = Path.Combine(notebookFolderPath, "Pages");
-            var pageNameComposites = Directory.EnumerateFiles(pagesFolderPath, "*.xml").Select(CLPPage.PageFilePathToPageNameComposite);
+            var pageNameComposites = Directory.EnumerateFiles(pagesFolderPath, "*.xml").Select(PageNameComposite.ParseFilePathToNameComposite);
             var allPageIDs = pageNameComposites.Select(x => x.ID).Distinct().ToList();
 
-            return OpenPartialNotebook(notebookFolderPath, allPageIDs, includeSubmissions);
+            return LoadLocalPartialNotebook(notebookFolderPath, allPageIDs, includeSubmissions);
         }
 
-        public static Notebook OpenPartialNotebook(string notebookFolderPath, List<string> pageIDs, bool includeSubmissions = true)
+        public static Notebook LoadLocalPartialNotebook(string notebookFolderPath, List<string> pageIDs, bool includeSubmissions = true)
         {
             var notebook = LoadLocalNotebook(notebookFolderPath);
             if (notebook == null)
@@ -527,7 +526,7 @@ namespace CLP.Entities
                 return null;
             }
 
-            var loadedPages = LoadNotebookPages(notebookFolderPath, pageIDs, includeSubmissions);
+            var loadedPages = LoadLocalNotebookPages(notebookFolderPath, pageIDs, includeSubmissions);
             var notebookPages = loadedPages.Where(x => x.VersionIndex == 0).OrderBy(x => x.PageNumber).ToList();
             if (includeSubmissions)
             {
@@ -547,15 +546,15 @@ namespace CLP.Entities
             return notebook;
         }
 
-        private static List<CLPPage> LoadNotebookPages(string notebookFolderPath, List<string> pageIDs, bool includeSubmissions = true)
+        private static List<CLPPage> LoadLocalNotebookPages(string notebookFolderPath, List<string> pageIDs, bool includeSubmissions = true)
         {
             var pagesFolderPath = Path.Combine(notebookFolderPath, "Pages");
-            var thumbnailsFolderPath = Path.Combine(pagesFolderPath, "Thumbnails");
+            
             var pageFilePaths = Directory.EnumerateFiles(pagesFolderPath, "*.xml");
             var loadedPages = new List<CLPPage>();
             foreach (var pageFilePath in pageFilePaths)
             {
-                var pageNameComposite = CLPPage.PageFilePathToPageNameComposite(pageFilePath);
+                var pageNameComposite = PageNameComposite.ParseFilePathToNameComposite(pageFilePath);
                 if (pageNameComposite == null)
                 {
                     continue;
@@ -573,22 +572,12 @@ namespace CLP.Entities
                     continue;
                 }
 
-                try
+                var page = CLPPage.LoadLocalPage(pageFilePath);
+                if (page == null)
                 {
-                    var page = Load<CLPPage>(pageFilePath, SerializationMode.Xml);
-
-                    // BUG: loaded thumbnails don't let go of their disc reference.
-                    //var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, pageAndHistoryFileName + ".png");
-                    //page.PageThumbnail = CLPImage.GetImageFromPath(thumbnailFilePath);
-
-                    page.PageNumber = Decimal.Parse(pageNameComposite.PageNumber); //TODO: Make PageNumber a string.
-                    //TODO: Deal with what happens if these values change.
-                    //page.ID = pageNameComposite.ID;
-                    //page.DifferentiationLevel = pageNameComposite.DifferentiationGroupName;
-                    //page.VersionIndex = UInt32.Parse(pageNameComposite.VersionIndex);
-                    loadedPages.Add(page);
+                    continue;
                 }
-                catch (Exception) { }
+                loadedPages.Add(page);
             }
 
             return loadedPages;
@@ -801,120 +790,5 @@ namespace CLP.Entities
             }
         }
 
-        public static Notebook OpenPartialNotebook(string folderPath, IEnumerable<string> pageIDs, IEnumerable<string> displayIDs, bool includeSubmissions = true)
-        {
-            try
-            {
-                var filePath = Path.Combine(folderPath, "notebook.xml");
-                var notebook = Load<Notebook>(filePath, SerializationMode.Xml);
-                var pagesFolderPath = Path.Combine(folderPath, "Pages");
-                var pageAndHistoryFilePaths = Directory.EnumerateFiles(pagesFolderPath, "*.xml");
-                var pages = new List<CLPPage>();
-                var pageIds = pageIDs as IList<string> ?? pageIDs.ToList();
-                foreach(var pageAndHistoryFilePath in pageAndHistoryFilePaths)
-                {
-                    var pageAndHistoryFileName = System.IO.Path.GetFileNameWithoutExtension(pageAndHistoryFilePath);
-                    var pageAndHistoryInfo = pageAndHistoryFileName.Split(';');
-                    if(pageAndHistoryInfo.Length != 5 ||
-                       pageAndHistoryInfo[0] != "p")
-                    {
-                        continue;
-                    }
-                    if(!includeSubmissions &&
-                       pageAndHistoryInfo[4] != "0")
-                    {
-                        continue;
-                    }
-                    var isFilePartOfPartialPages = pageIds.Any(pageID => pageID == pageAndHistoryInfo[2]);
-
-                    if(!isFilePartOfPartialPages)
-                    {
-                        continue;
-                    }
-
-                    var page = Load<CLPPage>(pageAndHistoryFilePath, SerializationMode.Xml);
-
-                    if(page.ID == notebook.CurrentPageID)
-                    {
-                        notebook.CurrentPage = page;
-                    }
-                    pages.Add(page);
-                }
-
-                var notebookPages = new List<CLPPage>();
-
-                foreach(var notebookPage in pages)
-                {
-                    if(notebookPage.VersionIndex != 0)
-                    {
-                        continue;
-                    }
-                    notebookPages.Add(notebookPage);
-                    if(!includeSubmissions)
-                    {
-                        continue;
-                    }
-                    foreach(var submission in pages)
-                    {
-                        if(submission.ID == notebookPage.ID &&
-                           submission.OwnerID == notebookPage.OwnerID &&
-                           submission.DifferentiationLevel == notebookPage.DifferentiationLevel &&
-                           submission.VersionIndex != 0)
-                        {
-                            notebookPage.Submissions.Add(submission);
-                        }
-                    }
-                }
-
-                notebook.Pages = new ObservableCollection<CLPPage>(notebookPages.OrderBy(x => x.PageNumber));
-
-                var displaysFolderPath = Path.Combine(folderPath, "Displays");
-                if(!Directory.Exists(displaysFolderPath))
-                {
-                    return notebook;
-                }
-
-                var displayFilePaths = Directory.EnumerateFiles(displaysFolderPath, "*.xml");
-                var displays = new List<IDisplay>();
-                foreach(var displayFilePath in displayFilePaths)
-                {
-                    var displayFileName = System.IO.Path.GetFileNameWithoutExtension(displayFilePath);
-                    if(displayFileName == null)
-                    {
-                        continue;
-                    }
-                    var displayInfo = displayFileName.Split(';');
-                    if(displayInfo.Length != 3)
-                    {
-                        continue;
-                    }
-
-                    var displayType = displayInfo[0];
-                    switch(displayType)
-                    {
-                        case "grid":
-                            var gridDisplay = GridDisplay.Load(displayFilePath, notebook);
-                            if(gridDisplay == null)
-                            {
-                                continue;
-                            }
-                            displays.Add(gridDisplay);
-                            break;
-                        default:
-                            continue;
-                    }
-                }
-
-                notebook.Displays = new ObservableCollection<IDisplay>(displays.OrderBy(x => x.DisplayNumber));
-
-                return notebook;
-            }
-            catch(Exception)
-            {
-                return null;
-            }
-        }
-
-        
     }
 }

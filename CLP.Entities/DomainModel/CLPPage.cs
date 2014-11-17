@@ -785,7 +785,8 @@ namespace CLP.Entities
             {
                 var page = Load<CLPPage>(filePath, SerializationMode.Xml);
                 var nameComposite = PageNameComposite.ParseFilePathToNameComposite(filePath);
-                if (nameComposite == null)
+                if (nameComposite == null ||
+                    page == null)
                 {
                     return null;
                 }
@@ -794,6 +795,12 @@ namespace CLP.Entities
                 page.DifferentiationLevel = nameComposite.DifferentiationGroupName;
                 page.VersionIndex = UInt32.Parse(nameComposite.VersionIndex);
                 page.AfterDeserialization();
+
+                // BUG: loaded thumbnails don't let go of their disk reference.
+                //var fileInfo = new FileInfo(filePath);
+                //var thumbnailsFolderPath = Path.Combine(fileInfo.DirectoryName, "Thumbnails");
+                //var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, nameComposite.ToFileName() + ".png");
+                //page.PageThumbnail = CLPImage.GetImageFromPath(thumbnailFilePath);
 
                 return page;
             }
