@@ -29,8 +29,6 @@ namespace Classroom_Learning_Partner.ViewModels
                     SetEraserContextButtons();
                     break;
             }
-
-            TestCommand = new Command(OnTestCommandExecute);
         }
 
         #region Bindings
@@ -64,7 +62,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Buttons.Clear();
 
 
-            Buttons.Add(new RibbonButton("Width", "pack://application:,,,/Resources/Images/PenSize32.png", TestCommand, null, true));
+            Buttons.Add(new RibbonButton("Width", "pack://application:,,,/Resources/Images/PenSize32.png", null, null, true));
 
 
             _pageInteractionService = DependencyResolver.Resolve<IPageInteractionService>();
@@ -98,7 +96,6 @@ namespace Classroom_Learning_Partner.ViewModels
                     colorButton.Checked += colorButton_Checked;
                 }
             }
-
 
             var highlighterButton = new ToggleRibbonButton("Highlight", "Stop Highlighting", "pack://application:,,,/Resources/Images/Highlighter32.png", true)
                                     {
@@ -176,24 +173,5 @@ namespace Classroom_Learning_Partner.ViewModels
         private void _setEraseModeButton_Checked(object sender, RoutedEventArgs e) { }
 
         #endregion //Methods
-
-        #region Commands
-
-        /// <summary>
-        /// SUMMARY
-        /// </summary>
-        public Command TestCommand { get; private set; }
-
-        private void OnTestCommandExecute()
-        {
-            var isServiceNull = _pageInteractionService == null;
-            MessageBox.Show("blarg blarg " + isServiceNull);
-        }
-
-        // TODO: Move line below to constructor.
-        
-        // TODO: Move line above to constructor.
-
-        #endregion //Commands
     }
 }
