@@ -721,7 +721,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             foreach (var pageObject in PageObjects)
             {
-                if (App.MainWindowViewModel.CurrentUser.ID != pageObject.CreatorID)
+                if (App.MainWindowViewModel.CurrentUser.ID != pageObject.CreatorID && !pageObject.IsManipulatableByNonCreator)
                 {
                     continue;
                 }
