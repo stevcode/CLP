@@ -87,6 +87,7 @@ namespace Classroom_Learning_Partner.Services
         }
 
         private readonly List<Notebook> _openNotebooks = new List<Notebook>();
+
         public List<Notebook> OpenNotebooks
         {
             get { return _openNotebooks; }
@@ -260,7 +261,76 @@ namespace Classroom_Learning_Partner.Services
 
         #region Class Period
 
-         
+        public void StartLocalClassPeriod(ClassPeriodNameComposite classPeriodNameComposite, string localCacheFolderPath)
+        {
+            var filePath = classPeriodNameComposite.FullClassPeriodFilePath;
+            if (!File.Exists(filePath))
+            {
+                MessageBox.Show("Class Period doesn't exist!");
+                return;
+            }
+
+            var classPeriod = ClassPeriod.LoadLocalClassPeriod(filePath);
+            if (classPeriod == null)
+            {
+                MessageBox.Show("Class Period could not be opened. Check error log.");
+                return;
+            }
+
+            CurrentLocalCacheDirectory = localCacheFolderPath;
+            CurrentClassPeriod = classPeriod;
+            var authoredNotebook = LoadClassPeriodNotebookForPerson(classPeriod, Person.Author.ID);
+            if (authoredNotebook == null)
+            {
+                return;
+            }
+            authoredNotebook.Pages = LoadOrCopyPagesForNotebook(authoredNotebook, , false);
+
+            var teacherNotebook = LoadClassPeriodNotebookForPerson(classPeriod, classPeriod.ClassSubject.TeacherID) ??
+                                  CopyNotebookForNewOwner(authoredNotebook, classPeriod.ClassSubject.Teacher);
+
+            teacherNotebook.Pages = LoadOrCopyPagesForNotebook(teacherNotebook, , true);
+
+            OpenNotebooks.Clear();
+            OpenNotebooks.Add(authoredNotebook);
+            OpenNotebooks.Add(teacherNotebook);
+            CurrentNotebook = teacherNotebook;
+        }
+
+        public Notebook LoadClassPeriodNotebookForPerson(ClassPeriod classPeriod, string ownerID)
+        {
+            var notebookNameComposite = AvailableLocalNotebookNameComposites.FirstOrDefault(x => x.ID == classPeriod.NotebookID && x.OwnerID == ownerID);
+            if (notebookNameComposite == null)
+            {
+                MessageBox.Show("Notebook for Class Period not found for " + ownerID + ".");
+                return null;
+            }
+
+            var notebook = Notebook.LoadLocalNotebook(notebookNameComposite.FullNotebookDirectoryPath);
+            if (notebook == null)
+            {
+                MessageBox.Show("Notebook for Class Period could not be loaded " + ownerID + ".");
+                return null;
+            }
+
+            return notebook;
+        }
+
+        public Notebook CopyNotebookForNewOwner(Notebook originalNotebook, Person newOwner)
+        {
+            var newNotebook = originalNotebook.Clone() as Notebook;
+            if (newNotebook == null)
+            {
+                return null;
+            }
+            newNotebook.Owner = newOwner;
+            newNotebook.CreationDate = DateTime.Now;
+            newNotebook.LastSavedDate = null;
+
+            return newNotebook;
+        }
+
+        public List<CLPPage> LoadOrCopyPagesForNotebook(Notebook notebook, List<string> pageIDs, bool includeSubmissions) { var pages = new List<CLPPage>(); }
 
         #endregion //Class Period
 

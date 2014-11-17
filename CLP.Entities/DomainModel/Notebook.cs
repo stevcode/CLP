@@ -482,7 +482,7 @@ namespace CLP.Entities
             ToXML(filePath);
         }
 
-        private static Notebook LoadLocalNotebook(string notebookFolderPath)
+        public static Notebook LoadLocalNotebook(string notebookFolderPath)
         {
             try
             {
