@@ -7,7 +7,6 @@ using System.Windows;
 using Catel.Runtime.Serialization;
 using Classroom_Learning_Partner.ViewModels;
 using CLP.Entities;
-using Path = Catel.IO.Path;
 
 namespace Classroom_Learning_Partner.Services
 {
@@ -157,6 +156,43 @@ namespace Classroom_Learning_Partner.Services
         #region Methods
 
         #region Class Period
+
+        public void StartSoonestClassPeriod(string localCacheFolderPath)
+        {
+            var classesFolderPath = Path.Combine(localCacheFolderPath, "Classes");
+            var classPeriodFilePaths = Directory.GetFiles(classesFolderPath);
+            ClassPeriodNameComposite closestClassPeriodNameComposite = null;
+            var closestTimeSpan = TimeSpan.MaxValue;
+            var now = DateTime.Now;
+            foreach (var classPeriodFilePath in classPeriodFilePaths)
+            {
+                var classPeriodNameComposite = ClassPeriodNameComposite.ParseFilePathToNameComposite(classPeriodFilePath);
+                var time = classPeriodNameComposite.StartTime;
+                var timeParts = time.Split('.');
+                var year = Int32.Parse(timeParts[0]);
+                var month = Int32.Parse(timeParts[1]);
+                var day = Int32.Parse(timeParts[2]);
+                var hour = Int32.Parse(timeParts[3]);
+                var minute = Int32.Parse(timeParts[4]);
+                var dateTime = new DateTime(year, month, day, hour, minute, 0);
+
+                var timeSpan = now - dateTime;
+                if (timeSpan.Duration() >= closestTimeSpan.Duration())
+                {
+                    continue;
+                }
+                closestTimeSpan = timeSpan;
+                closestClassPeriodNameComposite = classPeriodNameComposite;
+            }
+
+            if (closestClassPeriodNameComposite == null)
+            {
+                MessageBox.Show("ERROR: Could not find ClassPeriod .xml file.");
+                return;
+            }
+
+            StartLocalClassPeriod(closestClassPeriodNameComposite, localCacheFolderPath);
+        }
 
         public void StartLocalClassPeriod(ClassPeriodNameComposite classPeriodNameComposite, string localCacheFolderPath)
         {

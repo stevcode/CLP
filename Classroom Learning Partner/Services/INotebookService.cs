@@ -18,6 +18,7 @@ namespace Classroom_Learning_Partner.Services
         bool InitializeNewLocalCache(string cacheName);
         bool InitializeNewLocalCache(string cacheName, string cacheDirectoryPath);
         void ArchiveNotebookCache(string notebookCacheDirectory);
+        void StartSoonestClassPeriod(string localCacheFolderPath);
         void StartLocalClassPeriod(ClassPeriodNameComposite classPeriodNameComposite, string localCacheFolderPath);
         Notebook LoadClassPeriodNotebookForPerson(ClassPeriod classPeriod, string ownerID);
         Notebook CopyNotebookForNewOwner(Notebook originalNotebook, Person newOwner);

@@ -118,7 +118,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnStartClassPeriodCommandExecute()
         {
-        //    LoadedNotebookService.StartLocalClassPeriod(, SelectedCacheDirectory);
+            LoadedNotebookService.StartSoonestClassPeriod(SelectedCacheDirectory);
+            //    LoadedNotebookService.StartLocalClassPeriod(, SelectedCacheDirectory);
         }
 
         #endregion //Commands
