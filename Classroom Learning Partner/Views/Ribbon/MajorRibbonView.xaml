@@ -250,7 +250,28 @@
               Stroke="{DynamicResource DynamicMainColor}"
               StrokeThickness="1"
               Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
-        
+
+        <!-- Sharing -->
+        <StackPanel DockPanel.Dock="Right"
+                    Orientation="Horizontal"
+                    Visibility="{Binding MainWindowViewModel.StudentOnlyVisibility, Source={x:Static Application.Current}}">
+
+            <customControls:RibbonButton Text="Send To Teacher"
+                                         LargeImageSource="pack://application:,,,/Resources/Images/SingleSubmit32.png" />
+
+
+
+        </StackPanel>
+
+        <Line DockPanel.Dock="Right"
+              Stretch="Fill"
+              Y1="0"
+              Y2="1"
+              Margin="0 2 0 2"
+              Stroke="{DynamicResource DynamicMainColor}"
+              StrokeThickness="1"
+              Visibility="{Binding MainWindowViewModel.StudentOnlyVisibility, Source={x:Static Application.Current}}" />
+
         <!-- Page -->
         <StackPanel DockPanel.Dock="Right"
                     Orientation="Horizontal">

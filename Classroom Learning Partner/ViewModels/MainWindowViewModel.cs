@@ -336,6 +336,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     break;
                 case ProgramModes.Student:
                     Workspace = new UserLoginWorkspaceViewModel();
+                    IsBackStageVisible = true;
                     break;
             }
         }

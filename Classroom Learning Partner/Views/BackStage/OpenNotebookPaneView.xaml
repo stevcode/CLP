@@ -104,7 +104,8 @@
                     Height="84"
                     Margin="20 0 20 0"
                     HorizontalAlignment="Left"
-                    VerticalAlignment="Center">
+                    VerticalAlignment="Center"
+                    Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}">
                 <Button.Style>
                     <Style TargetType="Button">
                         <Setter Property="SnapsToDevicePixels"

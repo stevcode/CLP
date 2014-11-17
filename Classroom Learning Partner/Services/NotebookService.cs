@@ -428,27 +428,27 @@ namespace Classroom_Learning_Partner.Services
 
         public void SaveNotebookLocally(Notebook notebook)
         {
-            //var folderPath = Path.Combine(CurrentNotebookCacheDirectory, notebook.NotebookToNotebookFolderName());
+            var folderPath = Path.Combine(CurrentNotebookCacheDirectory, NotebookNameComposite.ParseNotebookToNameComposite(notebook).ToFolderName());
 
-            //if (App.MainWindowViewModel.CurrentUser.ID == Person.Author.ID)
-            //{
-            //    var pagesFolderPath = Path.Combine(folderPath, "Pages");
-            //    if (Directory.Exists(pagesFolderPath))
-            //    {
-            //        var pageFilePaths = Directory.EnumerateFiles(pagesFolderPath, "*.xml").ToList();
-            //        foreach (var pageFilePath in pageFilePaths)
-            //        {
-            //            File.Delete(pageFilePath);
-            //        }
-            //    }
-            //}
+            if (App.MainWindowViewModel.CurrentUser.ID == Person.Author.ID)
+            {
+                var pagesFolderPath = Path.Combine(folderPath, "Pages");
+                if (Directory.Exists(pagesFolderPath))
+                {
+                    var pageFilePaths = Directory.EnumerateFiles(pagesFolderPath, "*.xml").ToList();
+                    foreach (var pageFilePath in pageFilePaths)
+                    {
+                        File.Delete(pageFilePath);
+                    }
+                }
+            }
 
-            //if (!Directory.Exists(folderPath))
-            //{
-            //    Directory.CreateDirectory(folderPath);
-            //}
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
 
-            //notebook.SaveNotebook(folderPath, true);
+            notebook.SaveNotebook(folderPath, true);
 
             //switch (App.MainWindowViewModel.CurrentProgramMode)
             //{
@@ -456,10 +456,10 @@ namespace Classroom_Learning_Partner.Services
             //    case ProgramModes.Database:
             //        break;
             //    case ProgramModes.Teacher:
-            //        notebook.SaveOthersSubmissions(CurrentNotebookCacheDirectory);
+            //     //   notebook.SaveOthersSubmissions(CurrentNotebookCacheDirectory);
             //        break;
             //    case ProgramModes.Projector:
-            //        notebook.SaveOthersSubmissions(CurrentNotebookCacheDirectory);
+            //      //  notebook.SaveOthersSubmissions(CurrentNotebookCacheDirectory);
             //        break;
             //    case ProgramModes.Student:
             //        var submissionsPath = Path.Combine(folderPath, "Pages");
@@ -471,13 +471,6 @@ namespace Classroom_Learning_Partner.Services
             //            App.Network.InstructorProxy.CollectStudentNotebook(zippedNotebook, App.MainWindowViewModel.CurrentUser.FullName);
             //        }
             //        break;
-            //}
-
-            //if (App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Teacher &&
-            //    App.MainWindowViewModel.CurrentClassPeriod != null &&
-            //    App.MainWindowViewModel.CurrentClassPeriod.ClassSubject != null)
-            //{
-            //    App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.SaveClassSubject(CurrentClassCacheDirectory);
             //}
         }
 
