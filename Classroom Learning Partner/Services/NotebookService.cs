@@ -341,9 +341,7 @@ namespace Classroom_Learning_Partner.Services
                 {
                     return;
                 }
-                CurrentNotebook = existingNotebook;
-                App.MainWindowViewModel.Workspace = new BlankWorkspaceViewModel();
-                App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(existingNotebook);
+                SetNotebookAsCurrentNotebook(existingNotebook);
                 return;
             }
 
@@ -364,13 +362,23 @@ namespace Classroom_Learning_Partner.Services
 
             CurrentLocalCacheDirectory = localCacheFolderPath;
             OpenNotebooks.Add(notebook);
+            SetNotebookAsCurrentNotebook(notebook);
+        }
+
+        public void SetNotebookAsCurrentNotebook(Notebook notebook, bool logInAsNotebookOwner = true)
+        {
             CurrentNotebook = notebook;
+            App.MainWindowViewModel.CurrentNotebookName = CurrentNotebook.Name;
+            App.MainWindowViewModel.Workspace = new BlankWorkspaceViewModel();
             App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(notebook);
+            if (logInAsNotebookOwner)
+            {
+                App.MainWindowViewModel.CurrentUser = notebook.Owner;
+            }
             if (notebook.OwnerID == Person.Author.ID)
             {
                 App.MainWindowViewModel.IsAuthoring = true;
             }
-            App.MainWindowViewModel.CurrentUser = notebook.Owner;
             App.MainWindowViewModel.IsBackStageVisible = false;
         }
 

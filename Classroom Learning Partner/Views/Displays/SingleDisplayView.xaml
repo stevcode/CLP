@@ -136,7 +136,7 @@
                           Margin="-20 0 0 0"
                           Cursor="Hand"
                           IsChecked="{Binding MainWindowViewModel.Ribbon.CurrentRightPanel, Source={x:Static Application.Current}, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.PageInformation}}"
-                          Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}"
+                          Visibility="Collapsed"
                           VerticalAlignment="Top">
 
                 <ToggleButton.Style>
@@ -171,7 +171,7 @@
                     Height="30"
                     Margin="-20 40 0 0"
                     Cursor="Hand"
-                    Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}"
+                    Visibility="Collapsed"
                     Command="{Binding ReplayHistoryCommand}"
                     VerticalAlignment="Top">
                 <Button.Template>

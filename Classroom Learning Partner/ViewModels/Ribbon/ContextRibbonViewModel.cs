@@ -20,15 +20,15 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             _pageInteractionService = DependencyResolver.Resolve<IPageInteractionService>();
 
-            //switch (_pageInteractionService.CurrentPageInteractionMode)
-            //{
-            //    case PageInteractionModes.Pen:
-            //        SetPenContextButtons();
-            //        break;
-            //    case PageInteractionModes.Eraser:
-            //        SetEraserContextButtons();
-            //        break;
-            //}
+            switch (_pageInteractionService.CurrentPageInteractionMode)
+            {
+                case PageInteractionModes.Pen:
+                    SetPenContextButtons();
+                    break;
+                case PageInteractionModes.Eraser:
+                    SetEraserContextButtons();
+                    break;
+            }
 
             TestCommand = new Command(OnTestCommandExecute);
         }
@@ -151,7 +151,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public void SetEraserContextButtons()
         {
-            //Buttons.Clear();
+            Buttons.Clear();
 
             //var setEraseInkButton = new GroupedRibbonButton("Erase Ink",
             //                                                "EraserModes",

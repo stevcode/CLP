@@ -242,7 +242,8 @@
                 <ToggleButton Content="New"
                               Background="{DynamicResource DynamicMainColor}"
                               IsHitTestVisible="{Binding IsChecked, RelativeSource={RelativeSource Self}, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
-                              IsChecked="{Binding CurrentNavigationPane, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:NavigationPanes.New}}" />
+                              IsChecked="{Binding CurrentNavigationPane, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:NavigationPanes.New}}"
+                              Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
 
                 <ToggleButton Content="Open"
                               Background="{DynamicResource DynamicMainColor}"

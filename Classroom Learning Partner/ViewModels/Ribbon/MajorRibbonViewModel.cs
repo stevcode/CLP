@@ -42,7 +42,7 @@ namespace Classroom_Learning_Partner.ViewModels
             InitializeButtons();
             SetRibbonButtons();
 
-            //PageInteractionMode = _pageInteractionService.CurrentPageInteractionMode;
+            PageInteractionMode = _pageInteractionService.CurrentPageInteractionMode;
             CurrentLeftPanel = Panels.NotebookPages;
         }
 
@@ -574,15 +574,15 @@ namespace Classroom_Learning_Partner.ViewModels
             //Buttons.Add(_insertDivisionTemplateWithTilesButton);
 
             // Insert Shapes
-            Buttons.Add(Separater);
+            //Buttons.Add(Separater);
             
             //Buttons.Add(_insertHorizontalLineButton);
             //Buttons.Add(_insertVerticalLineButton);
             //Buttons.Add(_insertProtractorButton);
 
             // Insert Text Box
-            Buttons.Add(Separater);
-            Buttons.Add(_insertTextBoxButton);
+            //Buttons.Add(Separater);
+            //Buttons.Add(_insertTextBoxButton);
         }
 
         #endregion //Methods

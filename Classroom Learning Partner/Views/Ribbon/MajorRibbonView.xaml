@@ -170,7 +170,7 @@
         <StackPanel DockPanel.Dock="Right">
 
             <TextBlock DockPanel.Dock="Right"
-                       Text="CURRENT USER"
+                       Text="{Binding MainWindowViewModel.CurrentUser.FullName, Source={x:Static Application.Current}}"
                        FontWeight="Bold"
                        FontSize="12"
                        Margin="5"
@@ -179,7 +179,7 @@
                        HorizontalAlignment="Center" />
 
             <TextBlock DockPanel.Dock="Right"
-                       Text="Notebook Name"
+                       Text="{Binding MainWindowViewModel.CurrentNotebookName, Source={x:Static Application.Current}}"
                        FontWeight="Bold"
                        FontSize="10"
                        Margin="5"
@@ -260,11 +260,13 @@
                                          LargeImageSource="pack://application:,,,/Resources/Images/MakePageLonger32.png" />
 
             <customControls:RibbonButton Text="Undo"
+                                         Visibility="Collapsed"
                                          Command="{Binding UndoCommand}"
                                          IsEnabled="False"
                                          LargeImageSource="pack://application:,,,/Resources/Images/Undo32.png" />
 
             <customControls:RibbonButton Text="Redo"
+                                         Visibility="Collapsed"
                                          Command="{Binding RedoCommand}"
                                          IsEnabled="False"
                                          LargeImageSource="pack://application:,,,/Resources/Images/Redo32.png" />

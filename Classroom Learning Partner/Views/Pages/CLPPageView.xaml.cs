@@ -43,6 +43,7 @@ namespace Classroom_Learning_Partner.Views
                 var pageInteractionService = ServiceLocator.Default.ResolveType<IPageInteractionService>();
                 pageInteractionService.ActivePageViewModels.Clear();
                 pageInteractionService.ActivePageViewModels.Add(ViewModel as ACLPPageBaseViewModel);
+                pageInteractionService.SetPageInteractionMode(pageInteractionService.CurrentPageInteractionMode);
             }
 
             base.OnViewModelChanged();

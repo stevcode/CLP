@@ -247,6 +247,17 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData HandednessProperty = RegisterProperty("Handedness", typeof(Handedness), Handedness.Right);
 
+        /// <summary>
+        /// Name of the currently loaded notebook.
+        /// </summary>
+        public string CurrentNotebookName
+        {
+            get { return GetValue<string>(CurrentNotebookNameProperty); }
+            set { SetValue(CurrentNotebookNameProperty, value); }
+        }
+
+        public static readonly PropertyData CurrentNotebookNameProperty = RegisterProperty("CurrentNotebookName", typeof(string), string.Empty);
+
         #endregion //Global Bindings
 
         #endregion //Bindings
