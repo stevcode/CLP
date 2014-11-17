@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -79,6 +80,17 @@ namespace Classroom_Learning_Partner.Services
 
         #endregion //Cache
 
+        #region ClassPeriod
+
+        public List<ClassPeriodNameComposite> AvailableLocalClassPeriodNameComposites
+        {
+            get { return CurrentLocalCacheDirectory == null ? new List<ClassPeriodNameComposite>() : GetAvailableClassPeriodNameCompositesInCache(CurrentLocalCacheDirectory); }
+        }
+
+        public ClassPeriod CurrentClassPeriod { get; set; }
+
+        #endregion //ClassPeriod
+
         #region Notebook
 
         public List<NotebookNameComposite> AvailableLocalNotebookNameComposites
@@ -101,17 +113,6 @@ namespace Classroom_Learning_Partner.Services
         }
 
         #endregion //Notebook
-
-        #region ClassPeriod
-
-        public List<ClassPeriodNameComposite> AvailableLocalClassPeriodNameComposites
-        {
-            get { return CurrentLocalCacheDirectory == null ? new List<ClassPeriodNameComposite>() : GetAvailableClassPeriodNameCompositesInCache(CurrentLocalCacheDirectory); }
-        }
-
-        public ClassPeriod CurrentClassPeriod { get; set; }
-
-        #endregion //ClassPeriod
 
         #endregion //Properties
 
@@ -154,6 +155,99 @@ namespace Classroom_Learning_Partner.Services
         #endregion //Cache Methods
 
         #region Methods
+
+        #region Class Period
+
+        public void StartLocalClassPeriod(ClassPeriodNameComposite classPeriodNameComposite, string localCacheFolderPath)
+        {
+            var filePath = classPeriodNameComposite.FullClassPeriodFilePath;
+            if (!File.Exists(filePath))
+            {
+                MessageBox.Show("Class Period doesn't exist!");
+                return;
+            }
+
+            var classPeriod = ClassPeriod.LoadLocalClassPeriod(filePath);
+            if (classPeriod == null)
+            {
+                MessageBox.Show("Class Period could not be opened. Check error log.");
+                return;
+            }
+
+            CurrentLocalCacheDirectory = localCacheFolderPath;
+            CurrentClassPeriod = classPeriod;
+            var authoredNotebook = LoadClassPeriodNotebookForPerson(classPeriod, Person.Author.ID);
+            if (authoredNotebook == null)
+            {
+                return;
+            }
+            var authoredNotebookNameComposite = AvailableLocalNotebookNameComposites.FirstOrDefault(x => x.ID == classPeriod.NotebookID && x.OwnerID == Person.Author.ID);
+            var authoredPagesFolderPath = Path.Combine(authoredNotebookNameComposite.FullNotebookDirectoryPath, "Pages");
+            var pageIDs = GetPageIDsFromStartIDAndForwardRange(authoredPagesFolderPath, classPeriod.StartPageID, classPeriod.NumberOfPages);
+
+            var authoredPages = LoadOrCopyPagesForNotebook(authoredNotebook, pageIDs, false);
+            authoredNotebook.Pages = new ObservableCollection<CLPPage>(authoredPages);
+
+            var teacherNotebook = LoadClassPeriodNotebookForPerson(classPeriod, classPeriod.ClassSubject.TeacherID) ??
+                                  CopyNotebookForNewOwner(authoredNotebook, classPeriod.ClassSubject.Teacher);
+
+            var teacherPages = LoadOrCopyPagesForNotebook(teacherNotebook, pageIDs, true);
+            teacherNotebook.Pages = new ObservableCollection<CLPPage>(teacherPages);
+
+            OpenNotebooks.Clear();
+            OpenNotebooks.Add(authoredNotebook);
+            OpenNotebooks.Add(teacherNotebook);
+            CurrentNotebook = teacherNotebook;
+        }
+
+        public Notebook LoadClassPeriodNotebookForPerson(ClassPeriod classPeriod, string ownerID)
+        {
+            var notebookNameComposite = AvailableLocalNotebookNameComposites.FirstOrDefault(x => x.ID == classPeriod.NotebookID && x.OwnerID == ownerID);
+            if (notebookNameComposite == null)
+            {
+                MessageBox.Show("Notebook for Class Period not found for " + ownerID + ".");
+                return null;
+            }
+
+            var notebook = Notebook.LoadLocalNotebook(notebookNameComposite.FullNotebookDirectoryPath);
+            if (notebook == null)
+            {
+                MessageBox.Show("Notebook for Class Period could not be loaded " + ownerID + ".");
+                return null;
+            }
+
+            return notebook;
+        }
+
+        public Notebook CopyNotebookForNewOwner(Notebook originalNotebook, Person newOwner)
+        {
+            var newNotebook = originalNotebook.Clone() as Notebook;
+            if (newNotebook == null)
+            {
+                return null;
+            }
+            newNotebook.Owner = newOwner;
+            newNotebook.CreationDate = DateTime.Now;
+            newNotebook.LastSavedDate = null;
+
+            return newNotebook;
+        }
+
+        public List<CLPPage> LoadOrCopyPagesForNotebook(Notebook notebook, List<string> pageIDs, bool includeSubmissions)
+        {
+            var pages = new List<CLPPage>();
+            var notebookNameComposite =
+                GetAvailableNotebookNameCompositesInCache(CurrentLocalCacheDirectory).FirstOrDefault(x => x.ID == notebook.ID && x.OwnerID == notebook.Owner.ID);
+            if (notebookNameComposite == null)
+            {
+                return pages;
+            }
+
+            var pagesFolderPath = Path.Combine(notebookNameComposite.FullNotebookDirectoryPath, "Pages");
+            var pageNameComposites = GetAvailablePagesNameCompositesInFolder(pagesFolderPath);
+        }
+
+        #endregion //Class Period
 
         #region Notebook
 
@@ -259,84 +353,25 @@ namespace Classroom_Learning_Partner.Services
 
         #endregion //Notebook
 
-        #region Class Period
-
-        public void StartLocalClassPeriod(ClassPeriodNameComposite classPeriodNameComposite, string localCacheFolderPath)
-        {
-            var filePath = classPeriodNameComposite.FullClassPeriodFilePath;
-            if (!File.Exists(filePath))
-            {
-                MessageBox.Show("Class Period doesn't exist!");
-                return;
-            }
-
-            var classPeriod = ClassPeriod.LoadLocalClassPeriod(filePath);
-            if (classPeriod == null)
-            {
-                MessageBox.Show("Class Period could not be opened. Check error log.");
-                return;
-            }
-
-            CurrentLocalCacheDirectory = localCacheFolderPath;
-            CurrentClassPeriod = classPeriod;
-            var authoredNotebook = LoadClassPeriodNotebookForPerson(classPeriod, Person.Author.ID);
-            if (authoredNotebook == null)
-            {
-                return;
-            }
-            authoredNotebook.Pages = LoadOrCopyPagesForNotebook(authoredNotebook, , false);
-
-            var teacherNotebook = LoadClassPeriodNotebookForPerson(classPeriod, classPeriod.ClassSubject.TeacherID) ??
-                                  CopyNotebookForNewOwner(authoredNotebook, classPeriod.ClassSubject.Teacher);
-
-            teacherNotebook.Pages = LoadOrCopyPagesForNotebook(teacherNotebook, , true);
-
-            OpenNotebooks.Clear();
-            OpenNotebooks.Add(authoredNotebook);
-            OpenNotebooks.Add(teacherNotebook);
-            CurrentNotebook = teacherNotebook;
-        }
-
-        public Notebook LoadClassPeriodNotebookForPerson(ClassPeriod classPeriod, string ownerID)
-        {
-            var notebookNameComposite = AvailableLocalNotebookNameComposites.FirstOrDefault(x => x.ID == classPeriod.NotebookID && x.OwnerID == ownerID);
-            if (notebookNameComposite == null)
-            {
-                MessageBox.Show("Notebook for Class Period not found for " + ownerID + ".");
-                return null;
-            }
-
-            var notebook = Notebook.LoadLocalNotebook(notebookNameComposite.FullNotebookDirectoryPath);
-            if (notebook == null)
-            {
-                MessageBox.Show("Notebook for Class Period could not be loaded " + ownerID + ".");
-                return null;
-            }
-
-            return notebook;
-        }
-
-        public Notebook CopyNotebookForNewOwner(Notebook originalNotebook, Person newOwner)
-        {
-            var newNotebook = originalNotebook.Clone() as Notebook;
-            if (newNotebook == null)
-            {
-                return null;
-            }
-            newNotebook.Owner = newOwner;
-            newNotebook.CreationDate = DateTime.Now;
-            newNotebook.LastSavedDate = null;
-
-            return newNotebook;
-        }
-
-        public List<CLPPage> LoadOrCopyPagesForNotebook(Notebook notebook, List<string> pageIDs, bool includeSubmissions) { var pages = new List<CLPPage>(); }
-
-        #endregion //Class Period
-
         #endregion //Methods
 
         #region Static Notebook Methods
+
+        public static List<ClassPeriodNameComposite> GetAvailableClassPeriodNameCompositesInCache(string cachePath)
+        {
+            var classesCacheDirectory = Path.Combine(cachePath, "Classes");
+            if (!Directory.Exists(classesCacheDirectory))
+            {
+                Directory.CreateDirectory(classesCacheDirectory);
+            }
+            var directoryInfo = new DirectoryInfo(classesCacheDirectory);
+            return
+                directoryInfo.GetFiles()
+                             .Select(file => ClassPeriodNameComposite.ParseFilePathToNameComposite(file.FullName))
+                             .Where(x => x != null)
+                             .OrderByDescending(x => x.StartTime)
+                             .ToList();
+        }
 
         public static List<NotebookNameComposite> GetAvailableNotebookNameCompositesInCache(string cachePath)
         {
@@ -357,20 +392,47 @@ namespace Classroom_Learning_Partner.Services
                              .ToList();
         }
 
-        public static List<ClassPeriodNameComposite> GetAvailableClassPeriodNameCompositesInCache(string cachePath)
+        public static List<PageNameComposite> GetAvailablePagesNameCompositesInFolder(string folderPath)
         {
-            var classesCacheDirectory = Path.Combine(cachePath, "Classes");
-            if (!Directory.Exists(classesCacheDirectory))
-            {
-                Directory.CreateDirectory(classesCacheDirectory);
-            }
-            var directoryInfo = new DirectoryInfo(classesCacheDirectory);
+            var directoryInfo = new DirectoryInfo(folderPath);
             return
                 directoryInfo.GetFiles()
-                             .Select(file => ClassPeriodNameComposite.ParseFilePathToNameComposite(file.FullName))
+                             .Select(file => PageNameComposite.ParseFilePathToNameComposite(file.FullName))
                              .Where(x => x != null)
-                             .OrderByDescending(x => x.StartTime)
+                             .OrderBy(x => UInt32.Parse(x.PageNumber))
                              .ToList();
+        }
+
+        public static List<string> GetPageIDsFromStartIDAndForwardRange(string pagesFolderPath, string startID, uint range)
+        {
+            var pageIDs = new List<string>();
+            var pageNameComposites = GetAvailablePagesNameCompositesInFolder(pagesFolderPath);
+            var startPageNameComposite = pageNameComposites.FirstOrDefault(x => x.ID == startID);
+            if (startPageNameComposite == null)
+            {
+                return pageIDs;
+            }
+            var startPageNumber = UInt32.Parse(startPageNameComposite.PageNumber);
+            var endPageNumber = startPageNumber + range - 1;
+            pageIDs = pageNameComposites.Where(x => UInt32.Parse(x.PageNumber) >= startPageNumber && UInt32.Parse(x.PageNumber) <= endPageNumber).Select(x => x.ID).ToList();
+
+            return pageIDs;
+        }
+
+        public static List<string> GetPageIDsFromARangeBeforeStartID(string pagesFolderPath, string startID, uint range)
+        {
+            var pageIDs = new List<string>();
+            var pageNameComposites = GetAvailablePagesNameCompositesInFolder(pagesFolderPath);
+            var startPageNameComposite = pageNameComposites.FirstOrDefault(x => x.ID == startID);
+            if (startPageNameComposite == null)
+            {
+                return pageIDs;
+            }
+            var startPageNumber = UInt32.Parse(startPageNameComposite.PageNumber);
+            var endPageNumber = startPageNumber - range;
+            pageIDs = pageNameComposites.Where(x => UInt32.Parse(x.PageNumber) < startPageNumber && UInt32.Parse(x.PageNumber) >= endPageNumber).Select(x => x.ID).ToList();
+
+            return pageIDs;
         }
 
         #endregion //Static Notebook Methods
