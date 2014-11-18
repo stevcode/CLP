@@ -236,6 +236,18 @@ namespace Classroom_Learning_Partner.Services
             teacherNotebook.Pages = new ObservableCollection<CLPPage>(teacherPages);
             teacherNotebook.CurrentPage = teacherNotebook.Pages.FirstOrDefault(); //HACK
 
+            //Generates pages in cache
+            foreach (var student in classPeriod.ClassSubject.StudentList)
+            {
+                var studentNotebook = LoadClassPeriodNotebookForPerson(classPeriod, student.ID) ??
+                                  CopyNotebookForNewOwner(authoredNotebook, student);
+
+                var studentPages = LoadOrCopyPagesForNotebook(studentNotebook, authoredNotebook, pageIDs, false);
+                studentNotebook.Pages = new ObservableCollection<CLPPage>(studentPages);
+                studentNotebook.CurrentPage = studentNotebook.Pages.FirstOrDefault(); //HACK
+                SaveNotebookLocally(studentNotebook);
+            }
+
             OpenNotebooks.Clear();
             OpenNotebooks.Add(authoredNotebook);
             OpenNotebooks.Add(teacherNotebook);
@@ -402,7 +414,9 @@ namespace Classroom_Learning_Partner.Services
                 return;
             }
 
-            if (App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Teacher)
+            if (App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Teacher &&
+                notebook.Owner.ID != Person.Author.ID &&
+                !notebook.Owner.IsStudent)
             {
                 foreach (var page in notebook.Pages)
                 {
