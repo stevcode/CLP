@@ -17,20 +17,25 @@ namespace Classroom_Learning_Partner.Views
         public CLPTextBoxView()
         {
             InitializeComponent();
-
-            App.MainWindowViewModel.Ribbon.LastFocusedTextBox = this;
-
-            TextBox.FontSize = App.MainWindowViewModel.Ribbon.CurrentFontSize;
-            TextBox.FontFamily = App.MainWindowViewModel.Ribbon.CurrentFontFamily;
         }
 
         protected override Type GetViewModelType() { return typeof(CLPTextBoxViewModel); }
+
+        protected override void OnViewModelChanged()
+        {
+            if (ViewModel is CLPTextBoxViewModel)
+            {
+                (ViewModel as CLPTextBoxViewModel).TextBox = this;
+            }
+
+            base.OnViewModelChanged();
+        }
 
         #region Font Style Methods
 
         private bool _isSettingFont;
 
-        public void SetFont(double fontSize, FontFamily font, Brush fontColor)
+        public void SetFont(double fontSize, FontFamily font, Brush fontColor, bool? isBold, bool? isItalic, bool? isUnderLined)
         {
             _isSettingFont = true;
             // Make sure we have a selection. Should have one even if there is no text selected.
@@ -56,6 +61,19 @@ namespace Classroom_Learning_Partner.Views
                         {
                             p.Foreground = fontColor;
                         }
+                        if (isBold != null)
+                        {
+                            p.FontWeight = (bool)isBold ? FontWeights.Bold : FontWeights.Normal;
+                        }
+                        if (isItalic != null)
+                        {
+                            p.FontStyle = (bool)isItalic ? FontStyles.Italic : FontStyles.Normal;
+                        }
+                        if (isUnderLined != null)
+                        {
+                            
+                            p.FontWeight = (bool)isUnderLined ? FontWeights.UltraBlack : FontWeights.Normal;
+                        }
                         TextBox.Document.Blocks.Add(p);
                     }
                     else
@@ -63,7 +81,7 @@ namespace Classroom_Learning_Partner.Views
                         // Get current position of cursor
                         var curCaret = TextBox.CaretPosition;
                         // Get the current block object that the cursor is in
-                        var curBlock = TextBox.Document.Blocks.Where(x => x.ContentStart.CompareTo(curCaret) == -1 && x.ContentEnd.CompareTo(curCaret) == 1).FirstOrDefault();
+                        var curBlock = TextBox.Document.Blocks.FirstOrDefault(x => x.ContentStart.CompareTo(curCaret) == -1 && x.ContentEnd.CompareTo(curCaret) == 1);
                         if(curBlock != null)
                         {
                             var curParagraph = curBlock as Paragraph;
@@ -80,6 +98,10 @@ namespace Classroom_Learning_Partner.Views
                             if(fontColor != null)
                             {
                                 newRun.Foreground = fontColor;
+                            }
+                            if (isBold != null)
+                            {
+                                newRun.FontWeight = (bool)isBold ? FontWeights.Bold : FontWeights.Normal;
                             }
                             curParagraph.Inlines.Add(newRun);
                             // Reset the cursor into the new block. 
@@ -103,22 +125,16 @@ namespace Classroom_Learning_Partner.Views
                     {
                         selectionTextRange.ApplyPropertyValue(TextElement.ForegroundProperty, fontColor);
                     }
+                    if (isBold != null)
+                    {
+                        var newFontWeight = (bool)isBold ? FontWeights.Bold : FontWeights.Normal;
+                        selectionTextRange.ApplyPropertyValue(TextElement.FontWeightProperty, newFontWeight);
+                    }
                 }
             }
-            // Reset the focus onto the richtextbox after selecting the font in a toolbar etc
-            if(App.MainWindowViewModel.Ribbon.LastFocusedTextBox == this)
-            {
-                TextBox.Focus();
-            }
-            _isSettingFont = false;
-        }
 
-        private void RichTextBox_SelectionChanged(object sender, RoutedEventArgs e)
-        {
-            if(!_isSettingFont)
-            {
-                UpdateVisualState();
-            }
+            TextBox.Focus();
+            _isSettingFont = false;
         }
 
         public bool isUpdatingVisualState = false;
@@ -179,12 +195,6 @@ namespace Classroom_Learning_Partner.Views
             }
         }
 
-        protected override void OnGotMouseCapture(MouseEventArgs e)
-        {
-            base.OnGotMouseCapture(e);
-            App.MainWindowViewModel.Ribbon.LastFocusedTextBox = this;
-        }
-
         #endregion //Font Style Methods
 
         private void TextBox_OnIsHitTestVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -192,6 +202,14 @@ namespace Classroom_Learning_Partner.Views
             if(IsHitTestVisible)
             {
                 TextBox.Focus();
+            }
+        }
+
+        private void TextBox_OnSelectionChanged(object sender, RoutedEventArgs e)
+        {
+            if (!_isSettingFont)
+            {
+                UpdateVisualState();
             }
         }
     }

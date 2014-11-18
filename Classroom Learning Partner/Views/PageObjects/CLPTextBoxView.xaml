@@ -157,6 +157,7 @@
                                        ScrollViewer.VerticalScrollBarVisibility="Disabled"
                                        TextBlock.LineHeight="1.0"
                                        TextBlock.LineStackingStrategy="MaxHeight"
+                                       SelectionChanged="TextBox_OnSelectionChanged"
                                        RTFText="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}" />
 
         </Grid>

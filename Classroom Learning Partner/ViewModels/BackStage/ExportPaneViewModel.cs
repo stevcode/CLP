@@ -4,6 +4,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media.Imaging;
 using Catel.IoC;
 using Catel.MVVM;
@@ -20,13 +21,10 @@ namespace Classroom_Learning_Partner.ViewModels
 {
     public class ExportPaneViewModel : APaneBaseViewModel
     {
-        private readonly INotebookService _notebookService;
-
         #region Constructor
 
         public ExportPaneViewModel()
         {
-            _notebookService = DependencyResolver.Resolve<INotebookService>();
             InitializeCommands();
         }
 
@@ -54,14 +52,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Commands
 
-        private bool OnNotebookExportCanExecute() { return _notebookService.CurrentNotebook != null; }
+        private bool OnNotebookExportCanExecute() { return LoadedNotebookService.CurrentNotebook != null; }
 
         /// <summary>Converts Notebook Pages to PDF.</summary>
         public Command ConvertNotebookToPDFCommand { get; private set; }
 
         private void OnConvertNotebookToPDFCommandExecute()
         {
-            var notebook = _notebookService.CurrentNotebook;
+            var notebook = LoadedNotebookService.CurrentNotebook;
 
             ConvertPagesToPDF(notebook.Pages, notebook);
         }
@@ -71,7 +69,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnConvertPageSubmissionsToPDFCommandExecute()
         {
-            var notebook = _notebookService.CurrentNotebook;
+            var notebook = LoadedNotebookService.CurrentNotebook;
             var sortedPages = notebook.CurrentPage.Submissions.ToList().OrderBy(page => page.Owner.FullName).ThenBy(page => page.VersionIndex);
             var pageNumber = "" + notebook.CurrentPage.PageNumber;
             if (notebook.CurrentPage.DifferentiationLevel != "0")
@@ -87,14 +85,30 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnConvertAllSubmissionsToPDFCommandExecute()
         {
-            var notebook = _notebookService.CurrentNotebook;
+            var notebook = LoadedNotebookService.CurrentNotebook;
             var allPages = new List<CLPPage>();
+            CLPPage lastSubmissionAdded = null;
             foreach (var page in notebook.Pages)
             {
-                allPages.AddRange(page.Submissions);
+                foreach (var submission in page.Submissions)
+                {
+                    if (submission.Owner != null)
+                    {
+                        lastSubmissionAdded = submission;
+                        allPages.Add(submission);
+                        continue;
+                    }
+
+                    Console.WriteLine("Skipping Submission from Page #: " + submission.PageNumber);
+                    if (lastSubmissionAdded != null)
+                    {
+                        Console.WriteLine("Last Submission Page #: " + lastSubmissionAdded.PageNumber);
+                        Console.WriteLine("Last Submission Page Owner: " + lastSubmissionAdded.Owner.FullName);
+                    }
+                }
             }
             var allSortedPages =
-                allPages.OrderBy(page => page.PageNumber).ThenBy(page => page.DifferentiationLevel).ThenBy(page => page.Owner.FullName).ThenBy(page => page.VersionIndex);
+                allPages.OrderBy(page => page.PageNumber).ThenBy(page => page.DifferentiationLevel).ThenBy(page => page.Owner.FullName).ThenBy(page => page.VersionIndex).ToList();
 
             ConvertPagesToPDF(allSortedPages, notebook, "All Submissions");
         }
@@ -198,9 +212,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            var copiedNotebook = _notebookService.CurrentNotebook.CopyForNewOwner(person);
-            _notebookService.OpenNotebooks.Add(copiedNotebook);
-            _notebookService.CurrentNotebook = copiedNotebook;
+            var copiedNotebook = LoadedNotebookService.CurrentNotebook.CopyForNewOwner(person);
+            LoadedNotebookService.OpenNotebooks.Add(copiedNotebook);
+            LoadedNotebookService.CurrentNotebook = copiedNotebook;
             App.MainWindowViewModel.CurrentUser = person;
             App.MainWindowViewModel.IsAuthoring = false;
             App.MainWindowViewModel.Workspace = new BlankWorkspaceViewModel();
@@ -214,6 +228,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private async void ConvertPagesToPDF(IEnumerable<CLPPage> pages, Notebook notebook, string fileNameSuffix = "", bool useLabels = true)
         {
+            if (!pages.Any())
+            {
+                MessageBox.Show("Something went wrong. No pages were passed to the converter!");
+                return;
+            }
+
             App.MainWindowViewModel.IsConvertingToPDF = true;
 
             var directoryPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Notebooks - PDF");

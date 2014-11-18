@@ -235,7 +235,7 @@
 
             </RibbonGroup>
 
-            <RibbonGroup Header="Text">
+            <!--<RibbonGroup Header="Text">
 
                 <RibbonControlGroup>
 
@@ -294,7 +294,7 @@
 
                 </RibbonControlGroup>
 
-            </RibbonGroup>
+            </RibbonGroup>-->
 
         </RibbonTab>
 

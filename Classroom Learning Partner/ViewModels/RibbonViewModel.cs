@@ -57,18 +57,6 @@ namespace Classroom_Learning_Partner.ViewModels
         public RibbonViewModel()
         {
             InitializeCommands();
-
-            
-            CurrentColorButton = new RibbonButton {Background = new SolidColorBrush(Colors.Black)};
-
-            foreach(var color in _colors)
-            {
-                _fontColors.Add(new SolidColorBrush(color));
-            }
-
-            CurrentFontSize = 34;
-            CurrentFontColor = _fontColors[0];
-            CurrentFontFamily = Fonts[0];
         }
 
         private void InitializeCommands()
@@ -135,10 +123,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Properties
 
-
-        //Steve - Dont' want Views in ViewModels, can this be fixed?
-        public CLPTextBoxView LastFocusedTextBox = null;
-
         /// <summary>
         /// Gets or sets the property value.
         /// </summary>
@@ -165,8 +149,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Bindings
 
-        
-
         /// <summary>
         /// Disables the use of history to broadcast changes to a page to the projector.
         /// </summary>
@@ -177,17 +159,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData IsBroadcastHistoryDisabledProperty = RegisterProperty("IsBroadcastHistoryDisabled", typeof(bool), false);
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public bool DisplayPanelVisibility
-        {
-            get { return GetValue<bool>(DisplayPanelVisibilityProperty); }
-            set { SetValue(DisplayPanelVisibilityProperty, value); }
-        }
-
-        public static readonly PropertyData DisplayPanelVisibilityProperty = RegisterProperty("DisplayPanelVisibility", typeof(bool), false);
 
         /// <summary>
         /// Gets or sets the property value.
@@ -255,139 +226,57 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData AuthoringTabVisibilityProperty = RegisterProperty("AuthoringTabVisibility", typeof(Visibility), Visibility.Collapsed);
 
-        /// <summary>
-        /// Visibility of Debug Tab.
-        /// </summary>
-        public Visibility DebugTabVisibility
-        {
-            get { return GetValue<Visibility>(DebugTabVisibilityProperty); }
-            set { SetValue(DebugTabVisibilityProperty, value); }
-        }
-
-        public static readonly PropertyData DebugTabVisibilityProperty = RegisterProperty("DebugTabVisibility", typeof(Visibility), Visibility.Collapsed);
-
-        /// <summary>
-        /// Visibility of Extras Tab
-        /// </summary>
-        public Visibility ExtrasTabVisibility
-        {
-            get { return GetValue<Visibility>(ExtrasTabVisibilityProperty); }
-            set { SetValue(ExtrasTabVisibilityProperty, value); }
-        }
-
-        public static readonly PropertyData ExtrasTabVisibilityProperty = RegisterProperty("ExtrasTabVisibility", typeof(Visibility), Visibility.Collapsed);
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public RibbonButton CurrentColorButton
-        {
-            get { return GetValue<RibbonButton>(CurrentColorButtonProperty); }
-            set { SetValue(CurrentColorButtonProperty, value); }
-        }
-
-        public static readonly PropertyData CurrentColorButtonProperty = RegisterProperty("CurrentColorButton", typeof(RibbonButton));
-
         #endregion //Convert to XAMLS?
 
         #region TextBox
 
-        private ObservableCollection<FontFamily> _fonts = new ObservableCollection<FontFamily>(System.Windows.Media.Fonts.SystemFontFamilies);
-        public ObservableCollection<FontFamily> Fonts
-        {
-            get
-            {
-                return _fonts;
-            }
-        }
+        //public FontFamily CurrentFontFamily
+        //{
+        //    get { return GetValue<FontFamily>(CurrentFontFamilyProperty); }
+        //    set
+        //    {
+        //        SetValue(CurrentFontFamilyProperty, value);
+        //        if(LastFocusedTextBox != null)
+        //        {
+        //            if(!LastFocusedTextBox.isUpdatingVisualState)
+        //            {
+        //                LastFocusedTextBox.SetFont(-1.0, value, null);
+        //            }
+        //        }
+        //    }
+        //}
 
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public FontFamily CurrentFontFamily
-        {
-            get { return GetValue<FontFamily>(CurrentFontFamilyProperty); }
-            set
-            {
-                SetValue(CurrentFontFamilyProperty, value);
-                if(LastFocusedTextBox != null)
-                {
-                    if(!LastFocusedTextBox.isUpdatingVisualState)
-                    {
-                        LastFocusedTextBox.SetFont(-1.0, value, null);
-                    }
-                }
-            }
-        }
+        //public double CurrentFontSize
+        //{
+        //    get { return GetValue<double>(CurrentFontSizeProperty); }
+        //    set
+        //    {
+        //        SetValue(CurrentFontSizeProperty, value);
+        //        if(LastFocusedTextBox != null)
+        //        {
+        //            if(!LastFocusedTextBox.isUpdatingVisualState)
+        //            {
+        //                LastFocusedTextBox.SetFont(CurrentFontSize, null, null);
+        //            }
+        //        }
+        //    }
+        //}
 
-        public static readonly PropertyData CurrentFontFamilyProperty = RegisterProperty("CurrentFontFamily", typeof(FontFamily));
-
-        private ObservableCollection<double> _fontSizes = new ObservableCollection<double> {3.0, 4.0, 5.0, 6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0, 9.5, 
-		                                                                                    10.0, 10.5, 11.0, 11.5, 12.0, 12.5, 13.0, 13.5, 14.0, 15.0,
-		                                                                                    16.0, 17.0, 18.0, 19.0, 20.0, 22.0, 24.0, 26.0, 28.0, 30.0,
-		                                                                                    32.0, 34.0, 36.0, 38.0, 40.0, 44.0, 48.0, 52.0, 56.0, 60.0, 64.0, 68.0, 72.0, 76.0,
-		                                                                                    80.0, 88.0, 96.0, 104.0, 112.0, 120.0, 128.0, 136.0, 144.0};
-
-        public ObservableCollection<double> FontSizes
-        {
-            get
-            {
-                return _fontSizes;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public double CurrentFontSize
-        {
-            get { return GetValue<double>(CurrentFontSizeProperty); }
-            set
-            {
-                SetValue(CurrentFontSizeProperty, value);
-                if(LastFocusedTextBox != null)
-                {
-                    if(!LastFocusedTextBox.isUpdatingVisualState)
-                    {
-                        LastFocusedTextBox.SetFont(CurrentFontSize, null, null);
-                    }
-                }
-            }
-        }
-
-        public static readonly PropertyData CurrentFontSizeProperty = RegisterProperty("CurrentFontSize", typeof(double));
-
-        private List<Color> _colors = new List<Color> { Colors.Black, Colors.Red, Colors.DarkOrange, Colors.Tan, Colors.Gold, Colors.SaddleBrown, Colors.DarkGreen, Colors.MediumSeaGreen, Colors.Blue, Colors.HotPink, Colors.BlueViolet, Colors.Aquamarine, Colors.SlateGray, Colors.SkyBlue, Colors.Turquoise };
-        private ObservableCollection<Brush> _fontColors = new ObservableCollection<Brush>();
-
-        public ObservableCollection<Brush> FontColors
-        {
-            get
-            {
-                return _fontColors;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public Brush CurrentFontColor
-        {
-            get { return GetValue<Brush>(CurrentFontColorProperty); }
-            set
-            {
-                SetValue(CurrentFontColorProperty, value);
-                if(LastFocusedTextBox != null)
-                {
-                    if(!LastFocusedTextBox.isUpdatingVisualState)
-                    {
-                        LastFocusedTextBox.SetFont(-1.0, null, CurrentFontColor);
-                    }
-                }
-            }
-        }
-
-        public static readonly PropertyData CurrentFontColorProperty = RegisterProperty("CurrentFontColor", typeof(Brush));
+        //public Brush CurrentFontColor
+        //{
+        //    get { return GetValue<Brush>(CurrentFontColorProperty); }
+        //    set
+        //    {
+        //        SetValue(CurrentFontColorProperty, value);
+        //        if(LastFocusedTextBox != null)
+        //        {
+        //            if(!LastFocusedTextBox.isUpdatingVisualState)
+        //            {
+        //                LastFocusedTextBox.SetFont(-1.0, null, CurrentFontColor);
+        //            }
+        //        }
+        //    }
+        //}
 
         #endregion //TextBox
 
