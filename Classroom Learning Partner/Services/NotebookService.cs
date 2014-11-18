@@ -181,7 +181,9 @@ namespace Classroom_Learning_Partner.Services
                 var dateTime = new DateTime(year, month, day, hour, minute, 0);
 
                 var timeSpan = now - dateTime;
-                if (timeSpan.Duration() >= closestTimeSpan.Duration())
+                var duration = timeSpan.Duration();
+                var closestTimeSpanDuration = closestTimeSpan.Duration();
+                if (duration >= closestTimeSpanDuration)
                 {
                     continue;
                 }
