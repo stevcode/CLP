@@ -1,5 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows;
+using System.Windows.Controls.Primitives;
+using System.Windows.Documents;
 using System.Windows.Media;
 using Catel.Data;
 using Catel.MVVM;
@@ -11,7 +15,7 @@ namespace Classroom_Learning_Partner.ViewModels
 {
     public class CLPTextBoxViewModel : APageObjectBaseViewModel
     {
-        public CLPTextBoxView TextBox = null;
+        public CLPTextBoxView TextBoxView = null;
 
         #region Constructor
 
@@ -25,44 +29,73 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             // Bold, Italics, Underline
             _contextButtons.Add(MajorRibbonViewModel.Separater);
-            var toggleBoldButton = new ToggleRibbonButton(string.Empty, string.Empty, "pack://application:,,,/Images/Bold16.png", true)
+            _toggleBoldButton = new ToggleRibbonButton(string.Empty, string.Empty, "pack://application:,,,/Images/Bold16.png", true)
             {
                 IsChecked = IsBold
             };
-            toggleBoldButton.Checked += toggleBoldButton_Checked;
-            toggleBoldButton.Unchecked += toggleBoldButton_Checked;
-            _contextButtons.Add(toggleBoldButton);
+            _toggleBoldButton.Checked += toggleBoldButton_Checked;
+            _toggleBoldButton.Unchecked += toggleBoldButton_Checked;
+            _contextButtons.Add(_toggleBoldButton);
 
-            var toggleItalicsButton = new ToggleRibbonButton(string.Empty, string.Empty, "pack://application:,,,/Images/Italic16.png", true)
+            _toggleItalicsButton = new ToggleRibbonButton(string.Empty, string.Empty, "pack://application:,,,/Images/Italic16.png", true)
             {
                 IsChecked = IsItalic
             };
-            //toggleItalicsButton.Checked += allowDragging_Checked;
-            //toggleItalicsButton.Unchecked += allowDragging_Checked;
-            _contextButtons.Add(toggleItalicsButton);
+            _toggleItalicsButton.Checked += toggleItalicsButton_Checked;
+            _toggleItalicsButton.Unchecked += toggleItalicsButton_Checked;
+            _contextButtons.Add(_toggleItalicsButton);
 
-            var toggleUnderlineButton = new ToggleRibbonButton(string.Empty, string.Empty, "pack://application:,,,/Images/Underline16.png", true)
+            _toggleUnderlineButton = new ToggleRibbonButton(string.Empty, string.Empty, "pack://application:,,,/Images/Underline16.png", true)
             {
                 IsChecked = IsUnderlined
             };
-            //toggleUnderlineButton.Checked += allowDragging_Checked;
-            //toggleUnderlineButton.Unchecked += allowDragging_Checked;
-            _contextButtons.Add(toggleUnderlineButton);
+            _toggleUnderlineButton.Checked += toggleUnderlineButton_Checked;
+            _toggleUnderlineButton.Unchecked += toggleUnderlineButton_Checked;
+            _contextButtons.Add(_toggleUnderlineButton);
 
             // Font Family, Size, Color
             _contextButtons.Add(MajorRibbonViewModel.Separater);
         }
 
-        void toggleBoldButton_Checked(object sender, System.Windows.RoutedEventArgs e)
+        private bool _isUpdatingSelection = false;
+
+        void toggleBoldButton_Checked(object sender, RoutedEventArgs e)
         {
             var button = sender as ToggleRibbonButton;
-            if (button == null)
+            if (button == null ||
+                _isUpdatingSelection)
             {
                 return;
             }
 
             IsBold = button.IsChecked != null && (bool)button.IsChecked;
-            TextBox.SetFont(0, null, null, IsBold, null, null);
+            TextBoxView.SetFont(0, null, null, IsBold, IsItalic, IsUnderlined);
+        }
+
+        void toggleItalicsButton_Checked(object sender, RoutedEventArgs e)
+        {
+            var button = sender as ToggleRibbonButton;
+            if (button == null ||
+                _isUpdatingSelection)
+            {
+                return;
+            }
+
+            IsItalic = button.IsChecked != null && (bool)button.IsChecked;
+            TextBoxView.SetFont(0, null, null, IsBold, IsItalic, IsUnderlined);
+        }
+
+        void toggleUnderlineButton_Checked(object sender, RoutedEventArgs e)
+        {
+            var button = sender as ToggleRibbonButton;
+            if (button == null ||
+                _isUpdatingSelection)
+            {
+                return;
+            }
+
+            IsUnderlined = button.IsChecked != null && (bool)button.IsChecked;
+            TextBoxView.SetFont(0, null, null, IsBold, IsItalic, IsUnderlined);
         }
 
         public override string Title
@@ -71,6 +104,14 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //Constructor
+
+        #region Buttons
+
+        private ToggleRibbonButton _toggleBoldButton;
+        private ToggleRibbonButton _toggleItalicsButton;
+        private ToggleRibbonButton _toggleUnderlineButton;
+
+        #endregion //Buttons
 
         #region Model
 
@@ -259,6 +300,79 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //Static Properties
+
+        #region Methods
+
+        public void UpdateContextRibbonButtons()
+        {
+            _isUpdatingSelection = true;
+            UpdateToggleButtonState();
+            UpdateSelectedFontFamily();
+            UpdateSelectedFontSize();
+            UpdateSelectedFontColor();
+            _isUpdatingSelection = false;
+        }
+
+        private void UpdateToggleButtonState()
+        {
+            UpdateItemCheckedState(_toggleBoldButton, TextElement.FontWeightProperty, FontWeights.Bold);
+            UpdateItemCheckedState(_toggleItalicsButton, TextElement.FontStyleProperty, FontStyles.Italic);
+            UpdateItemCheckedState(_toggleUnderlineButton, Inline.TextDecorationsProperty, TextDecorations.Underline);
+        }
+
+        private void UpdateItemCheckedState(ToggleButton button, DependencyProperty formattingProperty, object expectedValue)
+        {
+            var currentValue = TextBoxView.TextBox.Selection.GetPropertyValue(formattingProperty);
+            button.IsChecked = (currentValue != DependencyProperty.UnsetValue) && (currentValue != null && currentValue.Equals(expectedValue));
+        }
+
+        private void UpdateSelectedFontFamily()
+        {
+            var value = TextBoxView.TextBox.Selection.GetPropertyValue(TextElement.FontFamilyProperty);
+            var currentFontFamily = (FontFamily)((value == DependencyProperty.UnsetValue) ? null : value);
+            if (currentFontFamily != null)
+            {
+                //ribbonView.FontFamilyComboBox.SelectedItem = currentFontFamily;
+            }
+            else
+            {
+                //ribbonView.FontFamilyComboBox.SelectedIndex = -1;
+            }
+        }
+
+        private void UpdateSelectedFontSize()
+        {
+            var value = TextBoxView.TextBox.Selection.GetPropertyValue(TextElement.FontSizeProperty);
+            //ribbonView.FontSizeComboBox.SelectedValue = (value == DependencyProperty.UnsetValue) ? null : value;
+        }
+
+        private void UpdateSelectedFontColor()
+        {
+            var value = TextBoxView.TextBox.Selection.GetPropertyValue(TextElement.ForegroundProperty);
+            var currentFontColor = (Brush)((value == DependencyProperty.UnsetValue) ? null : value);
+            if (currentFontColor != null)
+            {
+                //ribbonView.FontColorComboBox.SelectedItem = currentFontColor;
+            }
+        }
+
+        protected override void PopulateContextRibbon(bool isChangedValueMeaningful)
+        {
+            if (isChangedValueMeaningful)
+            {
+                ContextRibbon.Buttons.Clear();
+            }
+
+            if (!IsAdornerVisible)
+            {
+                return;
+            }
+
+            TextBoxView.TextBox.Focus();
+            ContextRibbon.Buttons = new ObservableCollection<UIElement>(_contextButtons);
+        } 
+
+        #endregion //Methods
 
         #region Static Methods
 
