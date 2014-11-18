@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Catel.Collections;
 using Catel.Data;
+using Catel.IoC;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Views;
 using CLP.Entities;

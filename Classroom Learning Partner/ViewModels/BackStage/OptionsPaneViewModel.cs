@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Drawing;
+using Catel.IoC;
 using Catel.MVVM;
+using Classroom_Learning_Partner.Services;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -10,7 +12,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public OptionsPaneViewModel() { InitializeCommands(); }
 
-        private void InitializeCommands() { GenerateRandomMainColorCommand = new Command(OnGenerateRandomMainColorCommandExecute); }
+        private void InitializeCommands()
+        {
+            GenerateRandomMainColorCommand = new Command(OnGenerateRandomMainColorCommandExecute);
+        }
 
         #endregion //Constructor
 

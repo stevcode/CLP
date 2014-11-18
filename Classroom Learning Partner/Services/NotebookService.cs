@@ -254,8 +254,8 @@ namespace Classroom_Learning_Partner.Services
             var notebook = Notebook.LoadLocalNotebook(notebookNameComposite.FullNotebookDirectoryPath);
             if (notebook == null)
             {
-                MessageBox.Show("Notebook for Class Period could not be loaded " + ownerID + ".");
-              //  return null;
+                //MessageBox.Show("Notebook for Class Period could not be loaded " + ownerID + ".");
+                return null;
             }
 
             return notebook;
@@ -400,6 +400,27 @@ namespace Classroom_Learning_Partner.Services
             {
                 MessageBox.Show("Notebook could not be opened. Check error log.");
                 return;
+            }
+
+            if (App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Teacher)
+            {
+                foreach (var page in notebook.Pages)
+                {
+                    var notebookNameComposites = GetAvailableNotebookNameCompositesInCache(localCacheFolderPath);
+                    foreach (var nameComposite in notebookNameComposites.Where(x => x.ID == notebook.ID && x.OwnerTypeTag == "S"))
+                    {
+                        var pageFolderPath = Path.Combine(nameComposite.FullNotebookDirectoryPath, "Pages");
+                        var pageNameComposites = GetAvailablePagesNameCompositesInFolder(pageFolderPath).Where(x => x.ID == page.ID && x.VersionIndex != "0").ToList();
+                        foreach (var pageNameComposite in pageNameComposites)
+                        {
+                            var submission = CLPPage.LoadLocalPage(pageNameComposite.FullPageFilePath);
+                            if (submission != null)
+                            {
+                                page.Submissions.Add(submission);
+                            }
+                        }
+                    }
+                }
             }
 
             CurrentLocalCacheDirectory = localCacheFolderPath;
@@ -558,17 +579,20 @@ namespace Classroom_Learning_Partner.Services
             return pageIDs;
         }
 
-        public static Notebook GenerateSubmissionsFromNotebookPages(Notebook notebook, string notebookCachePath)
+        public static void GenerateSubmissionsFromNotebookPages(string cachePath)
         {
-            foreach (var page in notebook.Pages)
+            var notebookNameComposites = GetAvailableNotebookNameCompositesInCache(cachePath);
+            foreach (var notebookNameComposite in notebookNameComposites.Where(x => x.OwnerTypeTag == "S"))
             {
-                page.SerializedStrokes = StrokeDTO.SaveInkStrokes(page.InkStrokes);
-                page.History.SerializedTrashedInkStrokes = StrokeDTO.SaveInkStrokes(page.History.TrashedInkStrokes);
-                var generatedSubmission = page.NextVersionCopy();
-                page.Submissions.Add(generatedSubmission);
+                var pageFolderPath = Path.Combine(notebookNameComposite.FullNotebookDirectoryPath, "Pages");
+                var pageNameComposites = GetAvailablePagesNameCompositesInFolder(pageFolderPath);
+                foreach (var pageNameComposite in pageNameComposites)
+                {
+                    var page = CLPPage.LoadLocalPage(pageNameComposite.FullPageFilePath);
+                    var submission = page.NextVersionCopy();
+                    submission.SavePageLocally(pageFolderPath);
+                }
             }
-
-            return notebook;
         }
 
         #endregion //Static Notebook Methods
