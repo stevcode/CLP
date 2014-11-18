@@ -1,6 +1,8 @@
-﻿using Catel.IoC;
+﻿using System;
+using Catel.Data;
 using Catel.MVVM;
-using Classroom_Learning_Partner.Services;
+using Catel.Windows;
+using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -8,11 +10,55 @@ namespace Classroom_Learning_Partner.ViewModels
     {
         #region Constructor
 
-        public NotebookInfoPaneViewModel() { InitializeCommands(); }
+        public NotebookInfoPaneViewModel()
+        {
+            Notebook = LoadedNotebookService.CurrentNotebook;
+            InitializeCommands();
+        }
 
         private void InitializeCommands() { SaveCurrentNotebookCommand = new Command(OnSaveCurrentNotebookCommandExecute, OnSaveCurrentNotebookCanExecute); }
 
         #endregion //Constructor
+
+        #region Model
+
+        /// <summary>
+        /// Model
+        /// </summary>
+        [Model(SupportIEditableObject = false)]
+        public Notebook Notebook
+        {
+            get { return GetValue<Notebook>(NotebookProperty); }
+            private set { SetValue(NotebookProperty, value); }
+        }
+
+        public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof(Notebook));
+
+        /// <summary>
+        /// Date and Time the <see cref="CLP.Entities.Notebook" /> was last saved.
+        /// </summary>
+        [ViewModelToModel("Notebook")]
+        public DateTime? LastSavedDate
+        {
+            get { return GetValue<DateTime?>(LastSavedDateProperty); }
+            set { SetValue(LastSavedDateProperty, value); }
+        }
+
+        public static readonly PropertyData LastSavedDateProperty = RegisterProperty("LastSavedDate", typeof(DateTime?));
+
+        /// <summary>
+        /// Name of the <see cref="CLP.Entities.Notebook" />.
+        /// </summary>
+        [ViewModelToModel("Notebook")]
+        public string Name
+        {
+            get { return GetValue<string>(NameProperty); }
+            set { SetValue(NameProperty, value); }
+        }
+
+        public static readonly PropertyData NameProperty = RegisterProperty("Name", typeof(string));
+
+        #endregion //Model
 
         #region Bindings
 
@@ -26,9 +72,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Commands
 
-        /// <summary>
-        /// Saves the current notebook.
-        /// </summary>
+        /// <summary>Saves the current notebook.</summary>
         public Command SaveCurrentNotebookCommand { get; private set; }
 
         private void OnSaveCurrentNotebookCommandExecute() { SaveCurrentNotebook(); }
@@ -37,24 +81,18 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void SaveCurrentNotebook()
         {
-            var notebookService = DependencyResolver.Resolve<INotebookService>();
-            if (notebookService == null || notebookService.CurrentNotebook == null)
+            if (LoadedNotebookService == null ||
+                LoadedNotebookService.CurrentNotebook == null)
             {
                 return;
             }
 
-            Catel.Windows.PleaseWaitHelper.Show(notebookService.SaveCurrentNotebookLocally, null, "Saving Notebook");
+            PleaseWaitHelper.Show(LoadedNotebookService.SaveCurrentNotebookLocally, null, "Saving Notebook");
         }
 
         private bool OnSaveCurrentNotebookCanExecute()
         {
-            var notebookService = DependencyResolver.Resolve<INotebookService>();
-            if (notebookService == null)
-            {
-                return false;
-            }
-
-            return notebookService.CurrentNotebook != null;
+            return Notebook != null;
         }
     }
 }

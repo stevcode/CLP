@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using Catel.Data;
@@ -66,6 +67,19 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData AliasProperty = RegisterProperty("Alias", typeof(string), string.Empty);
+
+        public string DisplayName
+        {
+            get
+            {
+                var nameParts = FullName.Split(' ');
+                var first = nameParts.FirstOrDefault() ?? "First";
+                var last = nameParts.LastOrDefault();
+                var lastInitial = last == null ? string.Empty : " " + last[0];
+                var firstAndLastInitial = first + lastInitial + ".";
+                return ID == Person.Author.ID ? "AUTHOR" : !IsStudent ? "Mrs. McNamara" : !string.IsNullOrEmpty(Alias) ? Alias : firstAndLastInitial;
+            }
+        }
 
         /// <summary>
         /// Left or Right Handed.

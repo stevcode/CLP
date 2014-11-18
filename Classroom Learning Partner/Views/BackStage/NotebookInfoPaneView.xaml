@@ -99,6 +99,63 @@
             </Button>
         </StackPanel>
 
+        <StackPanel DockPanel.Dock="Left">
+            
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Notebook Name:"
+                           Width="225"
+                           TextAlignment="Left"
+                           HorizontalAlignment="Stretch"
+                           VerticalAlignment="Center"
+                           FontFamily="Segoe UI Light"
+                           FontSize="30"
+                           FontWeight="Bold"
+                           Foreground="{DynamicResource DynamicMainColor}"
+                           Margin="0 5"
+                           TextOptions.TextRenderingMode="Auto"
+                           TextOptions.TextFormattingMode="Ideal" />
+
+                <TextBlock Text="{Binding Name}"
+                           TextAlignment="Left"
+                           HorizontalAlignment="Stretch"
+                           VerticalAlignment="Center"
+                           FontFamily="Segoe UI Light"
+                           FontSize="20"
+                           FontWeight="Bold"
+                           Foreground="{DynamicResource DynamicMainColor}"
+                           Margin="26 10 0 10"
+                           TextOptions.TextRenderingMode="Auto"
+                           TextOptions.TextFormattingMode="Ideal" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Last Saved:"
+                           Width="225"
+                           TextAlignment="Left"
+                           HorizontalAlignment="Stretch"
+                           VerticalAlignment="Center"
+                           FontFamily="Segoe UI Light"
+                           FontSize="30"
+                           FontWeight="Bold"
+                           Foreground="{DynamicResource DynamicMainColor}"
+                           Margin="0 5"
+                           TextOptions.TextRenderingMode="Auto"
+                           TextOptions.TextFormattingMode="Ideal" />
+
+                <TextBlock Text="{Binding LastSavedDate}"
+                           TextAlignment="Left"
+                           HorizontalAlignment="Stretch"
+                           VerticalAlignment="Center"
+                           FontFamily="Segoe UI Light"
+                           FontSize="20"
+                           FontWeight="Bold"
+                           Foreground="{DynamicResource DynamicMainColor}"
+                           Margin="26 10 0 10"
+                           TextOptions.TextRenderingMode="Auto"
+                           TextOptions.TextFormattingMode="Ideal" />
+            </StackPanel>
+
+        </StackPanel>
         <Grid>
             
         </Grid>

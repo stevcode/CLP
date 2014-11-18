@@ -33,6 +33,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public StampViewModel(Stamp stamp, INotebookService notebookService)
         {
             PageObject = stamp;
+            stamp.AcceptedStrokes = stamp.AcceptedStrokeParentIDs.Select(id => PageObject.ParentPage.GetStrokeByID(id)).ToList();
             RaisePropertyChanged("IsGroupStamp");
             RaisePropertyChanged("IsDraggableStamp");
             if(App.MainWindowViewModel.ImagePool.ContainsKey(stamp.ImageHashID))
@@ -59,9 +60,6 @@ namespace Classroom_Learning_Partner.ViewModels
                     App.MainWindowViewModel.ImagePool.Add(stamp.ImageHashID, bitmapImage);
                 }
             }
-
-            //BUG: new Stamps accept ink if below creation point
-            stamp.RefreshAcceptedStrokes();
 
             ParameterizeStampCommand = new Command(OnParameterizeStampCommandExecute);
             StartDragStampCommand = new Command(OnStartDragStampCommandExecute);

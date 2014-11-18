@@ -170,7 +170,7 @@
         <StackPanel DockPanel.Dock="Right">
 
             <TextBlock DockPanel.Dock="Right"
-                       Text="{Binding MainWindowViewModel.CurrentUser.FullName, Source={x:Static Application.Current}}"
+                       Text="{Binding MainWindowViewModel.CurrentUser.DisplayName, Source={x:Static Application.Current}}"
                        FontWeight="Bold"
                        FontSize="12"
                        Margin="5"
