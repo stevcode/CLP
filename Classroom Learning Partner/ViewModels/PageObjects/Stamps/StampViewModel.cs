@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -513,6 +514,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             GhostBodyImage = bitmapImage;
             IsGhostVisible = true;
+            PopulateContextRibbon(true);
         }
 
         /// <summary>
@@ -732,6 +734,22 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             return stamp.Parts > 0;
+        }
+
+        protected override void PopulateContextRibbon(bool isChangedValueMeaningful)
+        {
+            if (isChangedValueMeaningful)
+            {
+                ContextRibbon.Buttons.Clear();
+            }
+
+            if (!IsDefaultAdornersVisible || 
+                !IsAdornerVisible)
+            {
+                return;
+            }
+
+            ContextRibbon.Buttons = new ObservableCollection<UIElement>(_contextButtons);
         }
 
         #endregion //Methods

@@ -62,7 +62,8 @@
                         Height="40"
                         Canvas.Left="-40"
                         Canvas.Top="-40"
-                        Cursor="Hand">
+                        Cursor="Hand"
+                        Visibility="{Binding IsDefaultAdornersVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Grid>
