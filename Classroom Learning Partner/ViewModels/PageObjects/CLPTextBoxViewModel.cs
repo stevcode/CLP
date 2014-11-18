@@ -289,7 +289,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(CurrentFontSizeProperty, value); }
         }
 
-        public static readonly PropertyData CurrentFontSizeProperty = RegisterProperty("CurrentFontSize", typeof (double), 34.0);
+        public static readonly PropertyData CurrentFontSizeProperty = RegisterProperty("CurrentFontSize", typeof (double), 24.0);
 
         /// <summary>Selected text's font color.</summary>
         public Brush CurrentFontColor
