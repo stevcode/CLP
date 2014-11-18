@@ -311,6 +311,11 @@ namespace CLP.Entities
 
         #region Methods
 
+        public override void OnAdded()
+        {
+            ApplyDistinctPosition(this);
+        }
+
         public override void OnRestoredFromHistory()
         {
             if (!CanAcceptStrokes ||
