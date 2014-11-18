@@ -10,6 +10,7 @@
 
     <UserControl.Resources>
         <conv:EnumToBoolConverter x:Key="EnumToBoolConverter" />
+        <conv:CurrentWorkspaceToButtonEnabledConverter x:Key="CurrentWorkspaceToButtonEnabledConverter" />
     </UserControl.Resources>
     
     <Grid x:Name="TopGrid">
@@ -135,9 +136,10 @@
                           Height="30"
                           Margin="-20 0 0 0"
                           Cursor="Hand"
-                          IsChecked="{Binding MainWindowViewModel.Ribbon.CurrentRightPanel, Source={x:Static Application.Current}, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.PageInformation}}"
-                          Visibility="Collapsed"
-                          VerticalAlignment="Top">
+                          VerticalAlignment="Top"
+                          IsChecked="{Binding MainWindowViewModel.MajorRibbon.CurrentRightPanel, Source={x:Static Application.Current}, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static viewModels:Panels.PageInformation}}"
+                          IsEnabled="{Binding MainWindowViewModel.Workspace, Source={x:Static Application.Current}, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
+                          Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}">
 
                 <ToggleButton.Style>
                     <Style TargetType="{x:Type ToggleButton}">

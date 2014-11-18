@@ -558,13 +558,13 @@ namespace Classroom_Learning_Partner.ViewModels
             Buttons.Add(_setEraserModeButton);
             Buttons.Add(Separater);
             Buttons.Add(_setLassoModeButton);
-            Buttons.Add(_setCutModeButton);
-            Buttons.Add(_setDividerCreationModeButton);
+            //Buttons.Add(_setCutModeButton);
+            //Buttons.Add(_setDividerCreationModeButton);
 
             // Insert Math Tools
             Buttons.Add(Separater);
-            Buttons.Add(_insertSquareButton);
-            Buttons.Add(_insertCircleButton);
+            //Buttons.Add(_insertSquareButton);
+            //Buttons.Add(_insertCircleButton);
             Buttons.Add(_insertGeneralStampButton);
             //Buttons.Add(_insertGroupStampButton);
             //Buttons.Add(_insertNumberLineButton);
