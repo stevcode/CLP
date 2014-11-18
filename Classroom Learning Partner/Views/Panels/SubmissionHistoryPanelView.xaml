@@ -166,7 +166,6 @@
         </Border>
 
         <ToggleButton Grid.Column="1"
-                      Content="Open History"
                       VerticalAlignment="Top"
                       Margin="0 20 0 0"
                       Padding="10 5"
@@ -179,6 +178,19 @@
                     <TranslateTransform />
                 </TransformGroup>
             </ToggleButton.LayoutTransform>
+            <ToggleButton.Style>
+                <Style TargetType="ToggleButton">
+                    <Setter Property="Content"
+                            Value="Open History" />
+                    <Style.Triggers>
+                        <Trigger Property="IsChecked"
+                                 Value="True">
+                            <Setter Property="Content"
+                                    Value="Close History" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </ToggleButton.Style>
         </ToggleButton>
 
     </Grid>
