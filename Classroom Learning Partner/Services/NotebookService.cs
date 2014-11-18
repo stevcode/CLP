@@ -466,10 +466,10 @@ namespace Classroom_Learning_Partner.Services
         public void SaveNotebookLocally(Notebook notebook)
         {
             var folderPath = Path.Combine(CurrentNotebookCacheDirectory, NotebookNameComposite.ParseNotebookToNameComposite(notebook).ToFolderName());
-
+            var pagesFolderPath = Path.Combine(folderPath, "Pages");
             if (App.MainWindowViewModel.CurrentUser.ID == Person.Author.ID)
             {
-                var pagesFolderPath = Path.Combine(folderPath, "Pages");
+                
                 if (Directory.Exists(pagesFolderPath))
                 {
                     var pageFilePaths = Directory.EnumerateFiles(pagesFolderPath, "*.xml").ToList();
@@ -486,6 +486,7 @@ namespace Classroom_Learning_Partner.Services
             }
 
             notebook.SaveNotebook(folderPath, true);
+            notebook.SaveSubmissions(pagesFolderPath);
 
             //switch (App.MainWindowViewModel.CurrentProgramMode)
             //{

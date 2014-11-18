@@ -257,6 +257,7 @@
                     Visibility="{Binding MainWindowViewModel.StudentOnlyVisibility, Source={x:Static Application.Current}}">
 
             <customControls:RibbonButton Text="Send To Teacher"
+                                         Command="{Binding SubmitPageCommand}"
                                          LargeImageSource="pack://application:,,,/Resources/Images/SingleSubmit32.png" />
 
 

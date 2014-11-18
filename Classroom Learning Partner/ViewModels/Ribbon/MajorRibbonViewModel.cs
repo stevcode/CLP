@@ -52,6 +52,7 @@ namespace Classroom_Learning_Partner.ViewModels
             UndoCommand = new Command(OnUndoCommandExecute, OnUndoCanExecute);
             RedoCommand = new Command(OnRedoCommandExecute, OnRedoCanExecute);
             LongerPageCommand = new Command(OnLongerPageCommandExecute, OnLongerPageCanExecute);
+            SubmitPageCommand = new Command(OnSubmitPageCommandExecute, OnSubmitPageCanExecute);
             AddPageObjectToPageCommand = new Command<string>(OnAddPageObjectToPageCommandExecute, OnAddPageObjectToPageCanExecute);
         }
 
@@ -428,6 +429,32 @@ namespace Classroom_Learning_Partner.ViewModels
         } 
 
         #endregion //History Commands
+
+        #region Sharing Commands
+
+        /// <summary>
+        /// Submits current page to the teacher.
+        /// </summary>
+        public Command SubmitPageCommand { get; private set; }
+
+        private void OnSubmitPageCommandExecute()
+        {
+            CurrentPage.TrimPage();
+            var submission = CurrentPage.NextVersionCopy();
+            CurrentPage.Submissions.Add(submission);
+            CurrentPage.IsCached = true;
+        }
+
+        private bool OnSubmitPageCanExecute()
+        {
+            if (CurrentPage == null)
+            {
+                return false;
+            }
+            return !CurrentPage.IsCached;
+        }
+
+        #endregion //Sharing Commands
 
         #region Page Commands
 
