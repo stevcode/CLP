@@ -272,9 +272,9 @@
                         <!-- Control Layout -->
                         <Grid Name="LayoutGrid"
                               Height="42">
-                            <i:Interaction.Behaviors>
+                            <!--<i:Interaction.Behaviors>
                                 <catel:DoubleClickToCommand Command="{Binding DataContext.OpenNotebookCommand, ElementName=NotebookNamesListBox}" />
-                            </i:Interaction.Behaviors>
+                            </i:Interaction.Behaviors>-->
 
                             <Grid.Style>
                                 <Style TargetType="Grid">
