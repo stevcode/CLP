@@ -107,13 +107,31 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnOpenNotebookCommandExecute()
         {
             PleaseWaitHelper.Show(() => LoadedNotebookService.OpenLocalNotebook(SelectedNotebook, SelectedCacheDirectory), null, "Loading Notebook");
+
+            if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Student)
+            {
+                return;
+            }
+
+            if (App.Network.InstructorProxy == null)
+            {
+                return;
+            }
+
+            var connectionString = App.Network.InstructorProxy.StudentLogin(App.MainWindowViewModel.CurrentUser.FullName,
+                                                     App.MainWindowViewModel.CurrentUser.ID,
+                                                     App.Network.CurrentMachineName,
+                                                     App.Network.CurrentMachineAddress);
+
+            if (connectionString == "connected")
+            {
+                App.MainWindowViewModel.MajorRibbon.ConnectionStatus = ConnectionStatuses.LoggedIn;
+            }
         }
 
         private bool OnOpenNotebookCanExecute() { return SelectedNotebook != null; }
 
-        /// <summary>
-        /// Starts the closest <see cref="ClassPeriod" />.
-        /// </summary>
+        /// <summary>Starts the closest <see cref="ClassPeriod" />.</summary>
         public Command StartClassPeriodCommand { get; private set; }
 
         private void OnStartClassPeriodCommandExecute()

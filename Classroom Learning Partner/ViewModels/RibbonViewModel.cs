@@ -171,47 +171,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData BroadcastInkToStudentsProperty = RegisterProperty("BroadcastInkToStudents", typeof(bool), false);
 
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
-        public bool BlockStudentPenInput
-        {
-            get { return GetValue<bool>(BlockStudentPenInputProperty); }
-            set 
-            { 
-                SetValue(BlockStudentPenInputProperty, value); 
-            
-                if(App.MainWindowViewModel.AvailableUsers.Any())
-                {
-                    Parallel.ForEach(App.MainWindowViewModel.AvailableUsers,
-                                     student =>
-                                     {
-                                         try
-                                            {
-                                                var binding = new NetTcpBinding
-                                                              {
-                                                                  Security = {
-                                                                                 Mode = SecurityMode.None
-                                                                             }
-                                                              };
-                                                var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(binding, new EndpointAddress(student.CurrentMachineAddress));
-                                                studentProxy.TogglePenDownMode(value);
-                                                (studentProxy as ICommunicationObject).Close();
-                                            }
-                                            catch(Exception ex)
-                                            {
-                                                Console.WriteLine(ex.Message);
-                                            }
-                                     });
-                }
-                else
-                {
-                    Logger.Instance.WriteToLog("No Students Found");
-                }
-            }
-        }
-
-        public static readonly PropertyData BlockStudentPenInputProperty = RegisterProperty("BlockStudentPenInput", typeof(bool), false);
+        
 
         #region Convert to XAMLS?
 

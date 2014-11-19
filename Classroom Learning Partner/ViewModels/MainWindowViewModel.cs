@@ -337,6 +337,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 case ProgramModes.Student:
                     Workspace = new UserLoginWorkspaceViewModel();
                     IsBackStageVisible = true;
+                    App.MainWindowViewModel.BackStage.CurrentNavigationPane = NavigationPanes.Open;
                     break;
             }
         }

@@ -34,7 +34,6 @@ namespace Classroom_Learning_Partner
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                        (DispatcherOperationCallback)delegate
                                                                                     {
-                                                                                        //TODO: Steve - AutoSave here
                                                                                         App.MainWindowViewModel.IsPenDownActivated = isPenDownModeEnabled;
                                                                                         return null;
                                                                                     },

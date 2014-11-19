@@ -208,6 +208,7 @@
 
             <customControls:ToggleRibbonButton UnCheckedText="Pens Down"
                                                CheckedText="Pens Up"
+                                               IsChecked="{Binding BlockStudentPenInput}"
                                                LargeImageSource="pack://application:,,,/Resources/Images/PenDisabled32.png"
                                                Visibility="{Binding MainWindowViewModel.NotStudentVisibility, Source={x:Static Application.Current}}" />
 

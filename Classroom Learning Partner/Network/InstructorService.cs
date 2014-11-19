@@ -208,6 +208,11 @@ namespace Classroom_Learning_Partner
                                                                                                                                                             IsStudent = true
                                                                                                                                                         };
 
+                                                         if (App.MainWindowViewModel.AvailableUsers.All(x => x.ID != studentID))
+                                                         {
+                                                             App.MainWindowViewModel.AvailableUsers.Add(student);
+                                                         }
+
                                                          if (student.IsConnected)
                                                          {
                                                              try
@@ -230,19 +235,20 @@ namespace Classroom_Learning_Partner
                                                          student.CurrentMachineAddress = machineAddress;
                                                          student.CurrentMachineName = machineName;
                                                          student.IsConnected = true;
+                                                         return "connected";
 
-                                                         var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
-                                                         if (notebookService == null)
-                                                         {
-                                                             return string.Empty;
-                                                         }
+                                                         //var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
+                                                         //if (notebookService == null)
+                                                         //{
+                                                         //    return string.Empty;
+                                                         //}
 
-                                                         if (!useClassPeriod ||
-                                                             notebookService.CurrentClassPeriod == null)
-                                                         {
-                                                             return string.Empty;
-                                                         }
-                                                         return string.Empty;
+                                                         //if (!useClassPeriod ||
+                                                         //    notebookService.CurrentClassPeriod == null)
+                                                         //{
+                                                         //    return string.Empty;
+                                                         //}
+                                                         //
                                                          //try
                                                          //{
                                                          //    Notebook notebookToZip;

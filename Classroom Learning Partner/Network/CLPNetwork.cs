@@ -107,26 +107,26 @@ namespace Classroom_Learning_Partner
                             App.MainWindowViewModel.MajorRibbon.ConnectionStatus = ConnectionStatuses.Connected;    
                             App.MainWindowViewModel.IsProjectorFrozen = false;
 
-                            var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
-                            if (notebookService == null)
-                            {
-                                return;
-                            }
+                            //var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
+                            //if (notebookService == null)
+                            //{
+                            //    return;
+                            //}
 
-                            if (notebookService.CurrentClassPeriod != null)
-                            {
-                                var classPeriodString = ObjectSerializer.ToString(notebookService.CurrentClassPeriod);
-                                var classPeriod = CLPServiceAgent.Instance.Zip(classPeriodString);
+                            //if (notebookService.CurrentClassPeriod != null)
+                            //{
+                            //    var classPeriodString = ObjectSerializer.ToString(notebookService.CurrentClassPeriod);
+                            //    var classPeriod = CLPServiceAgent.Instance.Zip(classPeriodString);
 
-                                var classSubjectString = ObjectSerializer.ToString(notebookService.CurrentClassPeriod.ClassSubject);
-                                var classsubject = CLPServiceAgent.Instance.Zip(classSubjectString);
+                            //    var classSubjectString = ObjectSerializer.ToString(notebookService.CurrentClassPeriod.ClassSubject);
+                            //    var classsubject = CLPServiceAgent.Instance.Zip(classSubjectString);
 
-                                //var newNotebook = App.MainWindowViewModel.OpenNotebooks.First().CopyForNewOwner(App.MainWindowViewModel.CurrentUser);
-                                var newNotebookString = ObjectSerializer.ToString(notebookService.OpenNotebooks.First(x => x.ID == notebookService.CurrentClassPeriod.NotebookID && x.OwnerID == App.MainWindowViewModel.CurrentUser.ID));
-                                var zippedNotebook = CLPServiceAgent.Instance.Zip(newNotebookString);
-                                ProjectorProxy.OpenClassPeriod(classPeriod, classsubject);
-                                ProjectorProxy.OpenPartialNotebook(zippedNotebook);
-                            }
+                            //    //var newNotebook = App.MainWindowViewModel.OpenNotebooks.First().CopyForNewOwner(App.MainWindowViewModel.CurrentUser);
+                            //    var newNotebookString = ObjectSerializer.ToString(notebookService.OpenNotebooks.First(x => x.ID == notebookService.CurrentClassPeriod.NotebookID && x.OwnerID == App.MainWindowViewModel.CurrentUser.ID));
+                            //    var zippedNotebook = CLPServiceAgent.Instance.Zip(newNotebookString);
+                            //    ProjectorProxy.OpenClassPeriod(classPeriod, classsubject);
+                            //    ProjectorProxy.OpenPartialNotebook(zippedNotebook);
+                            //}
                         }
                         catch(Exception)
                         {
@@ -151,7 +151,35 @@ namespace Classroom_Learning_Partner
                         try
                         {
                             InstructorProxy = ChannelFactory<IInstructorContract>.CreateChannel(DefaultBinding, DiscoveredInstructors.Addresses[0]);
-                            InstructorProxy.SendClassPeriod(CurrentMachineAddress);
+
+                            var isNotebookOpen = !(App.MainWindowViewModel.Workspace is UserLoginWorkspaceViewModel);
+                            App.MainWindowViewModel.IsBackStageVisible = !isNotebookOpen;
+
+                            if (isNotebookOpen)
+                            {
+                                if (App.Network.InstructorProxy == null)
+                                {
+                                    return;
+                                }
+
+                                var connectionString = App.Network.InstructorProxy.StudentLogin(App.MainWindowViewModel.CurrentUser.FullName,
+                                                                         App.MainWindowViewModel.CurrentUser.ID,
+                                                                         App.Network.CurrentMachineName,
+                                                                         App.Network.CurrentMachineAddress);
+
+                                if (connectionString == "connected")
+                                {
+                                    App.MainWindowViewModel.MajorRibbon.ConnectionStatus = ConnectionStatuses.LoggedIn;
+                                }
+                            }
+                            else
+                            {
+                                App.MainWindowViewModel.IsBackStageVisible = true;
+                                App.MainWindowViewModel.MajorRibbon.ConnectionStatus = ConnectionStatuses.Found;
+                                App.MainWindowViewModel.BackStage.CurrentNavigationPane = NavigationPanes.Open;
+                            }
+                            
+                            //               InstructorProxy.SendClassPeriod(CurrentMachineAddress);
                         }
                         catch(Exception)
                         {
