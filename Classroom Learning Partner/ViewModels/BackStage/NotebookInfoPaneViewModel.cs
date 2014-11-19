@@ -16,15 +16,17 @@ namespace Classroom_Learning_Partner.ViewModels
             InitializeCommands();
         }
 
-        private void InitializeCommands() { SaveCurrentNotebookCommand = new Command(OnSaveCurrentNotebookCommandExecute, OnSaveCurrentNotebookCanExecute); }
+        private void InitializeCommands()
+        {
+            SaveCurrentNotebookCommand = new Command(OnSaveCurrentNotebookCommandExecute, OnSaveCurrentNotebookCanExecute);
+            ClearPagesNonAnimationHistoryCommand = new Command(OnClearPagesNonAnimationHistoryCommandExecute, OnClearHistoryCommandCanExecute);
+        }
 
         #endregion //Constructor
 
         #region Model
 
-        /// <summary>
-        /// Model
-        /// </summary>
+        /// <summary>Model</summary>
         [Model(SupportIEditableObject = false)]
         public Notebook Notebook
         {
@@ -32,11 +34,9 @@ namespace Classroom_Learning_Partner.ViewModels
             private set { SetValue(NotebookProperty, value); }
         }
 
-        public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof(Notebook));
+        public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof (Notebook));
 
-        /// <summary>
-        /// Date and Time the <see cref="CLP.Entities.Notebook" /> was last saved.
-        /// </summary>
+        /// <summary>Date and Time the <see cref="CLP.Entities.Notebook" /> was last saved.</summary>
         [ViewModelToModel("Notebook")]
         public DateTime? LastSavedDate
         {
@@ -44,11 +44,9 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(LastSavedDateProperty, value); }
         }
 
-        public static readonly PropertyData LastSavedDateProperty = RegisterProperty("LastSavedDate", typeof(DateTime?));
+        public static readonly PropertyData LastSavedDateProperty = RegisterProperty("LastSavedDate", typeof (DateTime?));
 
-        /// <summary>
-        /// Name of the <see cref="CLP.Entities.Notebook" />.
-        /// </summary>
+        /// <summary>Name of the <see cref="CLP.Entities.Notebook" />.</summary>
         [ViewModelToModel("Notebook")]
         public string Name
         {
@@ -56,7 +54,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(NameProperty, value); }
         }
 
-        public static readonly PropertyData NameProperty = RegisterProperty("Name", typeof(string));
+        public static readonly PropertyData NameProperty = RegisterProperty("Name", typeof (string));
 
         #endregion //Model
 
@@ -90,9 +88,24 @@ namespace Classroom_Learning_Partner.ViewModels
             PleaseWaitHelper.Show(LoadedNotebookService.SaveCurrentNotebookLocally, null, "Saving Notebook");
         }
 
-        private bool OnSaveCurrentNotebookCanExecute()
+        private bool OnSaveCurrentNotebookCanExecute() { return Notebook != null; }
+
+        /// <summary>Completely clears all non-animation histories for regular pages in a notebook.</summary>
+        public Command ClearPagesNonAnimationHistoryCommand { get; private set; }
+
+        private void OnClearPagesNonAnimationHistoryCommandExecute()
         {
-            return Notebook != null;
+            PleaseWaitHelper.Show(() =>
+                                  {
+                                      foreach (var page in Notebook.Pages)
+                                      {
+                                          page.History.ClearNonAnimationHistory();
+                                      }
+                                  },
+                                  null,
+                                  "Clearing History");
         }
+
+        private bool OnClearHistoryCommandCanExecute() { return Notebook != null; }
     }
 }
