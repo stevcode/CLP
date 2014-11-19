@@ -463,13 +463,13 @@ namespace Classroom_Learning_Partner.Services
 
         public void SaveCurrentNotebookLocally() { SaveNotebookLocally(CurrentNotebook); }
 
-        public void SaveNotebookLocally(Notebook notebook)
+        public void SaveNotebookLocally(Notebook notebook, string alternativeLocation = null)
         {
-            var folderPath = Path.Combine(CurrentNotebookCacheDirectory, NotebookNameComposite.ParseNotebookToNameComposite(notebook).ToFolderName());
+            var savePath = alternativeLocation ?? CurrentNotebookCacheDirectory;
+            var folderPath = Path.Combine(savePath, NotebookNameComposite.ParseNotebookToNameComposite(notebook).ToFolderName());
             var pagesFolderPath = Path.Combine(folderPath, "Pages");
             if (App.MainWindowViewModel.CurrentUser.ID == Person.Author.ID)
             {
-                
                 if (Directory.Exists(pagesFolderPath))
                 {
                     var pageFilePaths = Directory.EnumerateFiles(pagesFolderPath, "*.xml").ToList();

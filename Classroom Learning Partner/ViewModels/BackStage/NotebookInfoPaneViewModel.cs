@@ -86,6 +86,29 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             PleaseWaitHelper.Show(LoadedNotebookService.SaveCurrentNotebookLocally, null, "Saving Notebook");
+
+            PleaseWaitHelper.Show(
+                                  () =>
+                                  LoadedNotebookService.SaveNotebookLocally(LoadedNotebookService.CurrentNotebook,
+                                                                            Environment.GetFolderPath(Environment.SpecialFolder.Desktop)),
+                                  null,
+                                  "Exporting Notebook");
+
+            //if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Student)
+            //{
+            //    return;
+            //}
+
+            //if (App.Network.InstructorProxy == null)
+            //{
+            //    return;
+            //}
+
+            //PleaseWaitHelper.Show(
+            //                      () =>
+            //                      App.Network.InstructorProxy.CollectStudentNotebookAndSubmissions(),
+            //                      null,
+            //                      "Collecting Notebook");
         }
 
         private bool OnSaveCurrentNotebookCanExecute() { return Notebook != null; }

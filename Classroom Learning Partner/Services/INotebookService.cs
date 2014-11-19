@@ -26,6 +26,6 @@ namespace Classroom_Learning_Partner.Services
         List<CLPPage> LoadOrCopyPagesForNotebook(Notebook notebook, Notebook authoredNotebook, List<string> pageIDs, bool includeSubmissions);
         void OpenLocalNotebook(NotebookNameComposite notebookNameComposite, string localCacheFolderPath);
         void SaveCurrentNotebookLocally();
-        void SaveNotebookLocally(Notebook notebook);
+        void SaveNotebookLocally(Notebook notebook, string alternativeLocation);
     }
 }
