@@ -278,6 +278,8 @@ namespace CLP.Entities
 
         public override void OnAdded()
         {
+            ApplyDistinctPosition(this);
+
             var multiplicationDefinitions = ParentPage.Tags.OfType<MultiplicationRelationDefinitionTag>().ToList();
             var numberLineIDsInHistory = NumberLineAnalysis.GetListOfNumberLineIDsInHistory(ParentPage);
 

@@ -269,6 +269,10 @@ namespace CLP.Entities
 
                 var xDelta = Math.Abs(pageObject.XPosition - placedPageObject.XPosition);
                 var yDelta = Math.Abs(pageObject.YPosition - placedPageObject.YPosition);
+                if (placedPageObject is NumberLine)
+                {
+                    yDelta = Math.Abs((pageObject.YPosition + pageObject.Height) - (placedPageObject.YPosition + placedPageObject.Height));
+                }
 
                 if (xDelta > 20 ||
                     yDelta > 20)
