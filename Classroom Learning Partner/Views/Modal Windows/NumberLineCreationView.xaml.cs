@@ -7,7 +7,12 @@ namespace Classroom_Learning_Partner.Views.Modal_Windows
     /// <summary>Interaction logic for NumberLineCreationView.xaml</summary>
     public partial class NumberLineCreationView
     {
-        public NumberLineCreationView() { InitializeComponent(); }
+        public NumberLineCreationView()
+        {
+            InitializeComponent();
+            Top = SystemParameters.FullPrimaryScreenHeight - 350;
+            Left = SystemParameters.FullPrimaryScreenWidth - 350;
+        }
 
         private const int LIMIT = 85;
 

@@ -275,9 +275,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var keyPad = new KeypadWindowView(keypadPrompt, keypadLimit)
                 {
                     Owner = Application.Current.MainWindow,
-                    WindowStartupLocation = WindowStartupLocation.Manual,
-                    Top = 100,
-                    Left = 100
+                    WindowStartupLocation = WindowStartupLocation.Manual
                 };
             keyPad.ShowDialog();
             if (keyPad.DialogResult != true ||
@@ -692,9 +690,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var keyPad = new KeypadWindowView("How many are in the group?", 101)
                          {
                              Owner = Application.Current.MainWindow,
-                             WindowStartupLocation = WindowStartupLocation.Manual,
-                             Top = 100,
-                             Left = 100
+                             WindowStartupLocation = WindowStartupLocation.Manual
                          };
             keyPad.ShowDialog();
             if(keyPad.DialogResult != true ||

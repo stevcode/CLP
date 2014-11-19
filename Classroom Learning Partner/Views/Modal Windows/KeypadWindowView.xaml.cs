@@ -17,6 +17,8 @@ namespace Classroom_Learning_Partner.Views.Modal_Windows
         public KeypadWindowView(string textQuestion, int numberLimit)
         {
             InitializeComponent();
+            Top = SystemParameters.FullPrimaryScreenHeight - 350;
+            Left = SystemParameters.FullPrimaryScreenWidth - 350;
             QuestionText.Text = textQuestion;
             _limit = numberLimit;
         }

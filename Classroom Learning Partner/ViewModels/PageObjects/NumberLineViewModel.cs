@@ -187,9 +187,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 var keyPad = new KeypadWindowView("Change End Number", 85)
                              {
                                  Owner = Application.Current.MainWindow,
-                                 WindowStartupLocation = WindowStartupLocation.Manual,
-                                 Top = 100,
-                                 Left = 100
+                                 WindowStartupLocation = WindowStartupLocation.Manual
                              };
                 keyPad.ShowDialog();
                 if (keyPad.DialogResult != true ||
@@ -329,9 +327,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var keyPad = new NumberLineCreationView()
                          {
                              Owner = Application.Current.MainWindow,
-                             WindowStartupLocation = WindowStartupLocation.Manual,
-                             Top = 100,
-                             Left = 100
+                             WindowStartupLocation = WindowStartupLocation.Manual
                          };
             keyPad.ShowDialog();
             if (keyPad.DialogResult != true ||
