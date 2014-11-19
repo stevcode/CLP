@@ -302,8 +302,8 @@ namespace Classroom_Learning_Partner.ViewModels
             var initialWidth = Width;
             var initialHeight = Height;
             var parentPage = PageObject.ParentPage;
-            const int MIN_WIDTH = 20;
-            const int MIN_HEIGHT = 20;
+            var MIN_WIDTH = 20.0;
+            var MIN_HEIGHT = PageObject is Stamp ? (PageObject as Stamp).PartsHeight + (PageObject as Stamp).HandleHeight + 20 : 20;
 
             var newWidth = Math.Max(MIN_WIDTH, Width + e.HorizontalChange);
             newWidth = Math.Min(newWidth, parentPage.Width - XPosition);
