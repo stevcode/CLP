@@ -180,7 +180,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 (batch as PageObjectResizeBatchHistoryItem).AddResizePointToBatch(PageObject.ID, new Point(Width, Height));
             }
             var batchHistoryItem = PageObject.ParentPage.History.EndBatch();
-            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, batchHistoryItem, true);
+            
 
             if (_isClicked)
             {
@@ -227,6 +227,11 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         NumberLineSize++;
                     }
+                    ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
+                                                       new NumberLineEndPointsChangedHistoryItem(PageObject.ParentPage,
+                                                                                                   App.MainWindowViewModel.CurrentUser,
+                                                                                                   PageObject.ID, 0, NumberLineSize - difference));
+
                     var oldWidth = Width;
                     var oldHeight = Height;
 
@@ -258,6 +263,10 @@ namespace Classroom_Learning_Partner.ViewModels
                         {
                             NumberLineSize--;
                         }
+                        ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
+                                                       new NumberLineEndPointsChangedHistoryItem(PageObject.ParentPage,
+                                                                                                   App.MainWindowViewModel.CurrentUser,
+                                                                                                   PageObject.ID, 0, NumberLineSize + difference));
 
                         Width -= (tickLength * difference);
                     }
@@ -272,6 +281,7 @@ namespace Classroom_Learning_Partner.ViewModels
             else
             {
                 PageObject.OnResizing(initialWidth, initialHeight);
+                ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, batchHistoryItem, true);
             }
 
             _initialWidth = 0;
@@ -313,6 +323,10 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 _isClicked = false;
                 numberLine.NumberLineSize++;
+                ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
+                                                       new NumberLineEndPointsChangedHistoryItem(PageObject.ParentPage,
+                                                                                                   App.MainWindowViewModel.CurrentUser,
+                                                                                                   PageObject.ID, 0, NumberLineSize - 1));
                 _initialWidth += numberLine.TickLength;
                 ChangePageObjectDimensions(PageObject, Height, newWidth);
             }

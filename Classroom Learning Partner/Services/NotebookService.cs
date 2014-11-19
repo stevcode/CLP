@@ -226,6 +226,10 @@ namespace Classroom_Learning_Partner.Services
             var authoredNotebookNameComposite = AvailableLocalNotebookNameComposites.FirstOrDefault(x => x.ID == classPeriod.NotebookID && x.OwnerID == Person.Author.ID);
             var authoredPagesFolderPath = Path.Combine(authoredNotebookNameComposite.FullNotebookDirectoryPath, "Pages");
             var pageIDs = GetPageIDsFromStartIDAndForwardRange(authoredPagesFolderPath, classPeriod.StartPageID, classPeriod.NumberOfPages);
+            if (!pageIDs.Contains(classPeriod.TitlePageID))
+            {
+                pageIDs.Insert(0, classPeriod.TitlePageID);
+            }
 
             var authoredPages = LoadOrCopyPagesForNotebook(authoredNotebook, null, pageIDs, false);
             authoredNotebook.Pages = new ObservableCollection<CLPPage>(authoredPages);
