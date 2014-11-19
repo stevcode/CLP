@@ -169,20 +169,25 @@
         <!-- User and Network Controls -->
         <StackPanel DockPanel.Dock="Right">
 
-            <TextBlock DockPanel.Dock="Right"
-                       Text="{Binding MainWindowViewModel.CurrentUser.DisplayName, Source={x:Static Application.Current}}"
+            <TextBlock Text="{Binding MainWindowViewModel.CurrentUser.DisplayName, Source={x:Static Application.Current}}"
                        FontWeight="Bold"
                        FontSize="12"
-                       Margin="5"
+                       Margin="5 2"
                        TextAlignment="Center"
                        VerticalAlignment="Center"
                        HorizontalAlignment="Center" />
 
-            <TextBlock DockPanel.Dock="Right"
-                       Text="{Binding MainWindowViewModel.CurrentNotebookName, Source={x:Static Application.Current}}"
+            <TextBlock Text="{Binding MainWindowViewModel.CurrentNotebookName, Source={x:Static Application.Current}}"
                        FontWeight="Bold"
-                       FontSize="10"
-                       Margin="5"
+                       FontSize="9"
+                       Margin="5 2"
+                       TextAlignment="Center"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center" />
+
+            <TextBlock Text="{Binding ConnectionStatus}"
+                       FontSize="9"
+                       Margin="5 2"
                        TextAlignment="Center"
                        VerticalAlignment="Center"
                        HorizontalAlignment="Center" />
