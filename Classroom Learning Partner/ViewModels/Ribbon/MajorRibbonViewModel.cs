@@ -590,8 +590,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             // Insert Math Tools
             Buttons.Add(Separater);
-            //Buttons.Add(_insertSquareButton);
-            //Buttons.Add(_insertCircleButton);
+            
             Buttons.Add(_insertGeneralStampButton);
             //Buttons.Add(_insertGroupStampButton);
             Buttons.Add(_insertNumberLineButton);
@@ -602,9 +601,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
             // Insert Shapes
             //Buttons.Add(Separater);
-            
-            //Buttons.Add(_insertHorizontalLineButton);
-            //Buttons.Add(_insertVerticalLineButton);
+            Buttons.Add(_insertSquareButton);
+            Buttons.Add(_insertCircleButton);
+            Buttons.Add(_insertHorizontalLineButton);
+            Buttons.Add(_insertVerticalLineButton);
             //Buttons.Add(_insertProtractorButton);
 
             // Insert Text Box

@@ -18,6 +18,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public NumberLineViewModel(NumberLine numberLine)
         {
             PageObject = numberLine;
+            numberLine.CanAcceptStrokes = !IsBackgroundPageObject;
             ResizeNumberLineCommand = new Command<DragDeltaEventArgs>(OnResizeNumberLineCommandExecute);
             ResizeNumberLineLengthCommand = new Command<DragDeltaEventArgs>(OnResizeNumberLineLengthCommandExecute);
             ResizeStartNumberLineLengthCommand = new Command<DragStartedEventArgs>(OnResizeStartNumberLineLengthCommandExecute);
