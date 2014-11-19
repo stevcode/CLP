@@ -504,8 +504,9 @@ namespace CLP.Entities
             var tick = FindClosestTick(actuallyAcceptedStrokes);
             var tick2 = FindClosestTickLeft(actuallyAcceptedStrokes);
 
-            if (tick == null &&
-                tick2 == null)
+            if (tick == null ||
+                tick2 == null ||
+                tick == tick2)
             {
                 return;
             }
@@ -601,7 +602,7 @@ namespace CLP.Entities
                 y2 = Math.Max(y2, stroke.GetBounds().Bottom);
             }
 
-            var midX = (x2 - x1) / 2.0 + x1;
+            var midX = (x2 - x1) / 2.0 + x1 + TickLength * 0.05;
 
             var lowestPoint = new StylusPoint(0.0, 0.0);
             foreach (var stroke in strokes)
@@ -616,9 +617,13 @@ namespace CLP.Entities
                 }
             }
 
+            if (lowestPoint.Y > YPosition + Height - 25 || 
+                lowestPoint.Y < YPosition + Height - NumberLineHeight + 25)
+            {
+                return null;
+            }
 
             //Find closest Tick
-
             var normalXLowest = (lowestPoint.X - XPosition - ArrowLength) / TickLength;
             var tickIndex = (int)Math.Round(normalXLowest);
 
@@ -647,7 +652,7 @@ namespace CLP.Entities
                 y2 = Math.Max(y2, stroke.GetBounds().Bottom);
             }
 
-            var midX = (x2 - x1) / 2.0 + x1;
+            var midX = (x2 - x1) / 2.0 + x1 - TickLength * 0.05;
 
             var lowestPoint = new StylusPoint(0.0, 0.0);
             foreach (var stroke in strokes)
@@ -662,9 +667,14 @@ namespace CLP.Entities
                 }
             }
 
+            if (lowestPoint.Y > YPosition + Height - 25 ||
+                lowestPoint.Y < YPosition + Height - NumberLineHeight + 25)
+            {
+                return null;
+            }
+
 
             //Find closest Tick
-
             var normalXLowest = (lowestPoint.X - XPosition - ArrowLength) / TickLength;
             var tickIndex = (int)Math.Round(normalXLowest);
 
