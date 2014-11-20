@@ -160,7 +160,8 @@
                             <TextBlock Text="{Binding JumpSize}"
                                        Foreground="Green"
                                        TextAlignment="Center"
-                                       FontSize="18">
+                                       FontWeight="Bold"
+                                       FontSize="20">
                                 
                                 <TextBlock.Width>
                                     <MultiBinding Converter="{StaticResource MultiplyAllMultiConverter}">

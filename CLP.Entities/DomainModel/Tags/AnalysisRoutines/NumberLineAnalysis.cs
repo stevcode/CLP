@@ -69,11 +69,11 @@ namespace CLP.Entities
                 var tickRight = numberLine.FindClosestTick(new StrokeCollection
                                                            {
                                                                stroke
-                                                           });
-                var tickLeft = numberLine.FindClosestTickLeft(new StrokeCollection
+                                                           }, true);
+                var tickLeft = numberLine.FindClosestTick(new StrokeCollection
                                                               {
                                                                   stroke
-                                                              });
+                                                              }, false);
                 arcs.Add(new
                          {
                              Start = tickLeft.TickValue,
