@@ -94,6 +94,17 @@
                     Margin="0"
                     Visibility="{Binding IsGroupStampedObject, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, Mode=OneWay, FallbackValue=Collapsed}" />
 
+            <Rectangle VerticalAlignment="Stretch"
+                       HorizontalAlignment="Stretch"
+                       Fill="Transparent"
+                       StrokeThickness="1"
+                       Stroke="LightGray"
+                       StrokeDashArray="4 4"
+                       Margin="-4"
+                       RadiusX="5"
+                       RadiusY="5"
+                       Visibility="{Binding IsGroupStampedObject, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, ConverterParameter=False, Mode=OneWay, FallbackValue=Collapsed}" />
+
             <ItemsControl ClipToBounds="True"
                           IsHitTestVisible="False"
                           ItemsSource="{Binding StrokePaths}"
@@ -117,6 +128,40 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
+            
+            <Canvas ClipToBounds="False"
+                    Height="10"
+                    Width="10"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Bottom"
+                    Margin="-10 0 0 -10"
+                    Visibility="{Binding IsGroupStampedObject, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, ConverterParameter=False, Mode=OneWay, FallbackValue=Collapsed}">
+
+                <!--<Ellipse HorizontalAlignment="Center"
+                         VerticalAlignment="Center"
+                         Height="10"
+                         Width="10"
+                         Fill="LightBlue" />-->
+
+                <TextBlock Text="{Binding Parts}"
+                           Height="15"
+                           Width="15"
+                           FontSize="11"
+                           FontFamily="Segoe Print"
+                           TextAlignment="Center"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center">
+                    <TextBlock.Background>
+                        <VisualBrush>
+                            <VisualBrush.Visual>
+                                <Ellipse Height="15"
+                                         Width="15"
+                                         Fill="LightBlue" />
+                            </VisualBrush.Visual>
+                        </VisualBrush>
+                    </TextBlock.Background>
+                </TextBlock>
+            </Canvas>
 
             <TextBlock TextAlignment="Center"
                        Margin="0 -18"

@@ -129,7 +129,7 @@ namespace CLP.Entities
     [Serializable]
     public class NumberLine : APageObjectBase, IStrokeAccepter
     {
-        private const int MAX_ALL_TICKS_VISIBLE_LENGTH = 50;
+        private const int MAX_ALL_TICKS_VISIBLE_LENGTH = 30;
         #region Constructors
 
         public NumberLine() { }
