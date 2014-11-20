@@ -68,13 +68,13 @@ namespace Classroom_Learning_Partner.ViewModels
                                                            "pack://application:,,,/Resources/Images/Hand32.png",
                                                            PageInteractionModes.Select.ToString());
             _setSelectModeButton.Checked += _button_Checked;
-            _setPenModeButton = new GroupedRibbonButton("Pen", "PageInteractionMode", "pack://application:,,,/Resources/Images/Pen32.png", PageInteractionModes.Pen.ToString());
-            _setPenModeButton.Checked += _button_Checked;
-            _setEraserModeButton = new GroupedRibbonButton("Eraser",
+            _setDrawModeButton = new GroupedRibbonButton("Draw", "PageInteractionMode", "pack://application:,,,/Resources/Images/Pen32.png", PageInteractionModes.Draw.ToString());
+            _setDrawModeButton.Checked += _button_Checked;
+            _setEraseModeButton = new GroupedRibbonButton("Erase",
                                                            "PageInteractionMode",
                                                            "pack://application:,,,/Resources/Images/PointEraser32.png",
-                                                           PageInteractionModes.Eraser.ToString());
-            _setEraserModeButton.Checked += _button_Checked;
+                                                           PageInteractionModes.Erase.ToString());
+            _setEraseModeButton.Checked += _button_Checked;
             _setLassoModeButton = new GroupedRibbonButton("Lasso",
                                                           "PageInteractionMode",
                                                           "pack://application:,,,/Resources/Images/Lasso32.png",
@@ -174,12 +174,12 @@ namespace Classroom_Learning_Partner.ViewModels
                             _pageInteractionService.SetSelectMode();
                             contextRibbon.Buttons.Clear();
                             break;
-                        case PageInteractionModes.Pen:
-                            _pageInteractionService.SetPenMode();
+                        case PageInteractionModes.Draw:
+                            _pageInteractionService.SetDrawMode();
                             contextRibbon.SetPenContextButtons();
                             break;
-                        case PageInteractionModes.Eraser:
-                            _pageInteractionService.SetEraserMode();
+                        case PageInteractionModes.Erase:
+                            _pageInteractionService.SetEraseMode();
                             contextRibbon.SetEraserContextButtons();
                             break;
                         case PageInteractionModes.Lasso:
@@ -230,8 +230,8 @@ namespace Classroom_Learning_Partner.ViewModels
         #region PageInteractionMode Toggle Buttons
 
         private GroupedRibbonButton _setSelectModeButton;
-        private GroupedRibbonButton _setPenModeButton;
-        private GroupedRibbonButton _setEraserModeButton;
+        private GroupedRibbonButton _setDrawModeButton;
+        private GroupedRibbonButton _setEraseModeButton;
         private GroupedRibbonButton _setLassoModeButton;
         private GroupedRibbonButton _setCutModeButton;
         private GroupedRibbonButton _setDividerCreationModeButton;
@@ -391,11 +391,11 @@ namespace Classroom_Learning_Partner.ViewModels
                     case PageInteractionModes.Select:
                         _setSelectModeButton.IsChecked = true;
                         break;
-                    case PageInteractionModes.Pen:
-                        _setPenModeButton.IsChecked = true;
+                    case PageInteractionModes.Draw:
+                        _setDrawModeButton.IsChecked = true;
                         break;
-                    case PageInteractionModes.Eraser:
-                        _setEraserModeButton.IsChecked = true;
+                    case PageInteractionModes.Erase:
+                        _setEraseModeButton.IsChecked = true;
                         break;
                     case PageInteractionModes.Lasso:
                         _setLassoModeButton.IsChecked = true;
@@ -410,7 +410,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        public static readonly PropertyData PageInteractionModeProperty = RegisterProperty("PageInteractionMode", typeof (PageInteractionModes), PageInteractionModes.Pen);
+        public static readonly PropertyData PageInteractionModeProperty = RegisterProperty("PageInteractionMode", typeof (PageInteractionModes), PageInteractionModes.Draw);
 
         #endregion //Properties
 
@@ -628,8 +628,8 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             // Page Interaction Modes
             Buttons.Add(_setSelectModeButton);
-            Buttons.Add(_setPenModeButton);
-            Buttons.Add(_setEraserModeButton);
+            Buttons.Add(_setDrawModeButton);
+            Buttons.Add(_setEraseModeButton);
             Buttons.Add(Separater);
             Buttons.Add(_setLassoModeButton);
             Buttons.Add(_setCutModeButton);

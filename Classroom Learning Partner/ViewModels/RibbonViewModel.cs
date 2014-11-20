@@ -1020,7 +1020,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var exitTicketCreationView = new ExitTicketCreationView(exitTicketCreationViewModel);
             exitTicketCreationView.Owner = Application.Current.MainWindow;
 
-            //App.MainWindowViewModel.MajorRibbon.PageInteractionMode = PageInteractionModes.Pen;
+            //App.MainWindowViewModel.MajorRibbon.PageInteractionMode = PageInteractionModes.Draw;
             exitTicketCreationView.ShowDialog();
             if(exitTicketCreationView.DialogResult == true)
             {
@@ -1044,7 +1044,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var exitTicketCreationView = new ExitTicketCreationView(exitTicketCreationViewModel);
             exitTicketCreationView.Owner = Application.Current.MainWindow;
 
-            //App.MainWindowViewModel.MajorRibbon.PageInteractionMode = PageInteractionModes.Pen;
+            //App.MainWindowViewModel.MajorRibbon.PageInteractionMode = PageInteractionModes.Draw;
             exitTicketCreationView.ShowDialog();
             if(exitTicketCreationView.DialogResult == true)
             {

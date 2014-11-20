@@ -76,7 +76,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Commands
 
-        private PageInteractionModes _oldPageInteractionMode = PageInteractionModes.Pen;
+        private PageInteractionModes _oldPageInteractionMode = PageInteractionModes.Draw;
 
         /// <summary>Begins recording page interations for use in an animation.</summary>
         public Command RecordAnimationCommand { get; private set; }
@@ -136,7 +136,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             pageViewModel._oldPageInteractionMode = pageViewModel.PageInteractionService.CurrentPageInteractionMode == PageInteractionModes.None
-                                                        ? PageInteractionModes.Pen
+                                                        ? PageInteractionModes.Draw
                                                         : pageViewModel.PageInteractionService.CurrentPageInteractionMode;
             pageViewModel.PageInteractionService.SetNoInteractionMode();
             pageViewModel.History.IsAnimating = true;
@@ -178,7 +178,7 @@ namespace Classroom_Learning_Partner.ViewModels
             pageViewModel.History.IsAnimating = true;
             pageViewModel.IsPlaying = true;
             pageViewModel._oldPageInteractionMode = pageViewModel.PageInteractionService.CurrentPageInteractionMode == PageInteractionModes.None
-                                                        ? PageInteractionModes.Pen
+                                                        ? PageInteractionModes.Draw
                                                         : pageViewModel.PageInteractionService.CurrentPageInteractionMode;
             pageViewModel.PageInteractionService.SetNoInteractionMode();
 

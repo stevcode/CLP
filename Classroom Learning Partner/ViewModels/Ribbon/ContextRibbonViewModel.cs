@@ -1,7 +1,8 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
-using System.Windows.Ink;
+using System.Windows.Controls;
 using System.Windows.Media;
 using Catel.Collections;
 using Catel.Data;
@@ -18,18 +19,28 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public ContextRibbonViewModel()
         {
+            catelHack = UniqueIdentifier.ToString();
             _pageInteractionService = DependencyResolver.Resolve<IPageInteractionService>();
+            InitializeButtons();
 
             switch (_pageInteractionService.CurrentPageInteractionMode)
             {
-                case PageInteractionModes.Pen:
+                case PageInteractionModes.Draw:
                     SetPenContextButtons();
                     break;
-                case PageInteractionModes.Eraser:
+                case PageInteractionModes.Erase:
                     SetEraserContextButtons();
                     break;
             }
         }
+
+        #region Buttons
+
+        private GroupedRibbonButton _penModeButton;
+        private GroupedRibbonButton _markerModeButton;
+        private GroupedRibbonButton _highlighterModeButton; 
+
+        #endregion //Buttons
 
         #region Bindings
 
@@ -40,7 +51,9 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(ButtonsProperty, value); }
         }
 
-        public static readonly PropertyData ButtonsProperty = RegisterProperty("Buttons", typeof (ObservableCollection<UIElement>), () => new ObservableCollection<UIElement>());
+        public static readonly PropertyData ButtonsProperty = RegisterProperty("Buttons",
+                                                                               typeof (ObservableCollection<UIElement>),
+                                                                               () => new ObservableCollection<UIElement>());
 
         /// <summary>Current Pen colors.</summary>
         public ObservableCollection<ColorButton> CurrentPenColors
@@ -57,19 +70,47 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Methods
 
+        public static string catelHack = "1";
+
+        private void InitializeButtons()
+        {
+            var groupName = "DrawModes" + catelHack;
+            _penModeButton = new GroupedRibbonButton("Pen",
+                                                        groupName,
+                                                        "pack://application:,,,/Resources/Images/Pen32.png",
+                                                        DrawModes.Pen.ToString(),
+                                                        true);
+            _penModeButton.Checked += _button_Checked;
+            
+            _markerModeButton = new GroupedRibbonButton("Marker",
+                                                           groupName,
+                                                           "pack://application:,,,/Resources/Images/Marker128.png",
+                                                           DrawModes.Marker.ToString(),
+                                                           true);
+            _markerModeButton.Checked += _button_Checked;
+            
+            _highlighterModeButton = new GroupedRibbonButton("Highlighter",
+                                                                groupName,
+                                                                "pack://application:,,,/Resources/Images/Highlighter32.png",
+                                                                DrawModes.Highlighter.ToString(),
+                                                                true);
+            _highlighterModeButton.Checked += _button_Checked;
+        }
+
         public void SetPenContextButtons()
         {
             Buttons.Clear();
-
-
-            Buttons.Add(new RibbonButton("Width", "pack://application:,,,/Resources/Images/PenSize32.png", null, null, true));
-
-
             _pageInteractionService = DependencyResolver.Resolve<IPageInteractionService>();
             if (_pageInteractionService == null)
             {
                 return;
             }
+
+            Buttons.Add(_penModeButton);
+            Buttons.Add(_markerModeButton);
+            Buttons.Add(_highlighterModeButton);
+
+            Buttons.Add(MajorRibbonViewModel.Separater);
 
             if (!CurrentPenColors.Any())
             {
@@ -97,16 +138,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
 
-            var highlighterButton = new ToggleRibbonButton("Highlight", "Stop Highlighting", "pack://application:,,,/Resources/Images/Highlighter32.png", true)
-                                    {
-                                        IsChecked = _pageInteractionService.IsHighlighting
-                                    };
-            highlighterButton.Checked += highlighterButton_Checked;
-            highlighterButton.Unchecked += highlighterButton_Checked;
-            Buttons.Add(highlighterButton);
-
-            Buttons.Add(MajorRibbonViewModel.Separater);
-
             Buttons.AddRange(CurrentPenColors);
 
             var currentColorButton = CurrentPenColors.FirstOrDefault(x => _pageInteractionService.PenColor == x.Color.Color);
@@ -119,6 +150,49 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 currentColorButton.IsChecked = true;
             }
+
+            switch (_pageInteractionService.CurrentDrawMode)
+            {
+                case DrawModes.Pen:
+                    _penModeButton.IsChecked = true;
+                    break;
+                case DrawModes.Marker:
+                    _markerModeButton.IsChecked = true;
+                    break;
+                case DrawModes.Highlighter:
+                    _highlighterModeButton.IsChecked = true;
+                    break;
+            }
+        }
+
+        private bool _isCheckedEventRunning = false;
+
+        private void _button_Checked(object sender, RoutedEventArgs e)
+        {
+            _isCheckedEventRunning = true;
+            _pageInteractionService = DependencyResolver.Resolve<IPageInteractionService>();
+            var checkedButton = sender as GroupedRibbonButton;
+            if (checkedButton == null ||
+                _pageInteractionService == null)
+            {
+                return;
+            }
+
+            var drawMode = (DrawModes)Enum.Parse(typeof(DrawModes), checkedButton.AssociatedEnumValue);
+            switch (drawMode)
+            {
+                case DrawModes.Pen:
+                    _pageInteractionService.SetPenMode();
+                    break;
+                case DrawModes.Marker:
+                    _pageInteractionService.SetMarkerMode();
+                    break;
+                case DrawModes.Highlighter:
+                    _pageInteractionService.SetHighlighterMode();
+                    break;
+            }
+
+            _isCheckedEventRunning = false;
         }
 
         private void colorButton_Checked(object sender, RoutedEventArgs e)
@@ -132,18 +206,6 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             _pageInteractionService.SetPenColor(colorButton.Color.Color);
-        }
-
-        private void highlighterButton_Checked(object sender, RoutedEventArgs e)
-        {
-            var toggleButton = sender as ToggleRibbonButton;
-            if (toggleButton == null ||
-                toggleButton.IsChecked == null)
-            {
-                return;
-            }
-
-            _pageInteractionService.ToggleHighlighter();
         }
 
         public void SetEraserContextButtons()

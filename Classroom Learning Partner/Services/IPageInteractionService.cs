@@ -8,24 +8,24 @@ namespace Classroom_Learning_Partner.Services
     public interface IPageInteractionService
     {
         PageInteractionModes CurrentPageInteractionMode { get; }
+        DrawModes CurrentDrawMode { get; }
         ErasingModes CurrentErasingMode { get; }
         InkCanvasEditingMode StrokeEraserMode { get; }
-        double PenSize { get; }
         Color PenColor { get; }
-        bool IsHighlighting { get; }
         List<ACLPPageBaseViewModel> ActivePageViewModels { get; }
 
         void SetPageInteractionMode(PageInteractionModes pageInteractionMode);
         void SetNoInteractionMode();
         void SetSelectMode();
-        void SetPenMode();
-        void SetEraserMode();
+        void SetDrawMode();
+        void SetEraseMode();
         void SetLassoMode();
         void SetCutMode();
         void SetDividerCreationMode();
-        void SetPenSize(double penSize);
         void SetPenColor(Color color);
-        void ToggleHighlighter();
+        void SetPenMode();
+        void SetMarkerMode();
+        void SetHighlighterMode();
         void SetErasingMode(ErasingModes erasingMode);
     }
 }

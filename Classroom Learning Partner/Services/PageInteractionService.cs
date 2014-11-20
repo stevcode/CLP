@@ -15,11 +15,18 @@ namespace Classroom_Learning_Partner.Services
     {
         None,
         Select,
-        Pen,
-        Eraser,
+        Draw,
+        Erase,
         Lasso,
         Cut,
         DividerCreation
+    }
+
+    public enum DrawModes
+    {
+        Pen,
+        Marker,
+        Highlighter
     }
 
     public enum ErasingModes
@@ -31,6 +38,8 @@ namespace Classroom_Learning_Partner.Services
 
     public class PageInteractionService : IPageInteractionService
     {
+        private const double PEN_SIZE = 2;
+        private const double MARKER_SIZE = 5;
         private const double HIGHLIGHTER_SIZE = 12;
 
         public PageInteractionService() { InitializeDefaultInteractionMode(); }
@@ -38,28 +47,20 @@ namespace Classroom_Learning_Partner.Services
         private void InitializeDefaultInteractionMode()
         {
             ActivePageViewModels = new List<ACLPPageBaseViewModel>();
-            CurrentPageInteractionMode = PageInteractionModes.Pen;
+            CurrentPageInteractionMode = PageInteractionModes.Draw;
+            CurrentDrawMode = DrawModes.Pen;
             CurrentErasingMode = ErasingModes.Ink;
             StrokeEraserMode = InkCanvasEditingMode.EraseByStroke;
-            PenSize = 2;
             PenColor = Colors.Black;
-            IsHighlighting = false;
         }
 
         #region Properties
 
         public PageInteractionModes CurrentPageInteractionMode { get; private set; }
-
+        public DrawModes CurrentDrawMode { get; private set; }
         public ErasingModes CurrentErasingMode { get; private set; }
-
         public InkCanvasEditingMode StrokeEraserMode { get; private set; }
-
-        public double PenSize { get; private set; }
-
         public Color PenColor { get; private set; }
-
-        public bool IsHighlighting { get; private set; }
-
         public List<ACLPPageBaseViewModel> ActivePageViewModels { get; private set; }
 
         #endregion //Properties
@@ -78,11 +79,11 @@ namespace Classroom_Learning_Partner.Services
                 case PageInteractionModes.Select:
                     SetSelectMode();
                     break;
-                case PageInteractionModes.Pen:
-                    SetPenMode();
+                case PageInteractionModes.Draw:
+                    SetDrawMode();
                     break;
-                case PageInteractionModes.Eraser:
-                    SetEraserMode();
+                case PageInteractionModes.Erase:
+                    SetEraseMode();
                     break;
                 case PageInteractionModes.Lasso:
                     SetLassoMode();
@@ -120,28 +121,26 @@ namespace Classroom_Learning_Partner.Services
             }
         }
 
-        public void SetPenMode()
+        public void SetDrawMode()
         {
-            CurrentPageInteractionMode = PageInteractionModes.Pen;
-            foreach (var pageViewModel in ActivePageViewModels)
+            CurrentPageInteractionMode = PageInteractionModes.Draw;
+            switch (CurrentDrawMode)
             {
-                pageViewModel.IsInkCanvasHitTestVisible = true;
-                pageViewModel.EditingMode = InkCanvasEditingMode.Ink;
-                pageViewModel.IsUsingCustomCursors = false;
-
-                pageViewModel.DefaultDA.IsHighlighter = IsHighlighting;
-                pageViewModel.DefaultDA.Height = IsHighlighting ? HIGHLIGHTER_SIZE : PenSize;
-                pageViewModel.DefaultDA.Width = IsHighlighting ? HIGHLIGHTER_SIZE : PenSize;
-                pageViewModel.DefaultDA.FitToCurve = true;
-                pageViewModel.DefaultDA.Color = PenColor;
-                pageViewModel.DefaultDA.StylusTip = IsHighlighting ? StylusTip.Rectangle : StylusTip.Ellipse;
-                pageViewModel.ClearAdorners();
+                case DrawModes.Pen:
+                    SetPenMode();
+                    break;
+                case DrawModes.Marker:
+                    SetMarkerMode();
+                    break;
+                case DrawModes.Highlighter:
+                    SetHighlighterMode();
+                    break;
             }
         }
 
-        public void SetEraserMode()
+        public void SetEraseMode()
         {
-            CurrentPageInteractionMode = PageInteractionModes.Eraser;
+            CurrentPageInteractionMode = PageInteractionModes.Erase;
             foreach (var pageViewModel in ActivePageViewModels)
             {
                 pageViewModel.IsInkCanvasHitTestVisible = true;
@@ -149,8 +148,8 @@ namespace Classroom_Learning_Partner.Services
                 pageViewModel.IsUsingCustomCursors = false;
 
                 pageViewModel.DefaultDA.IsHighlighter = false;
-                pageViewModel.DefaultDA.Height = PenSize;
-                pageViewModel.DefaultDA.Width = PenSize;
+                pageViewModel.DefaultDA.Height = PEN_SIZE;
+                pageViewModel.DefaultDA.Width = PEN_SIZE;
                 pageViewModel.DefaultDA.StylusTip = StylusTip.Rectangle;
                 pageViewModel.ClearAdorners();
             }
@@ -171,8 +170,8 @@ namespace Classroom_Learning_Partner.Services
                 }
 
                 pageViewModel.DefaultDA.IsHighlighter = false;
-                pageViewModel.DefaultDA.Height = 2.0;
-                pageViewModel.DefaultDA.Width = 2.0;
+                pageViewModel.DefaultDA.Height = PEN_SIZE;
+                pageViewModel.DefaultDA.Width = PEN_SIZE;
                 pageViewModel.DefaultDA.FitToCurve = false;
                 pageViewModel.DefaultDA.Color = Colors.DarkGoldenrod;
                 pageViewModel.DefaultDA.StylusTip = StylusTip.Ellipse;
@@ -195,8 +194,8 @@ namespace Classroom_Learning_Partner.Services
                 }
 
                 pageViewModel.DefaultDA.IsHighlighter = false;
-                pageViewModel.DefaultDA.Height = 2.0;
-                pageViewModel.DefaultDA.Width = 2.0;
+                pageViewModel.DefaultDA.Height = PEN_SIZE;
+                pageViewModel.DefaultDA.Width = PEN_SIZE;
                 pageViewModel.DefaultDA.FitToCurve = false;
                 pageViewModel.DefaultDA.Color = Colors.Black;
                 pageViewModel.DefaultDA.StylusTip = StylusTip.Rectangle;
@@ -221,8 +220,8 @@ namespace Classroom_Learning_Partner.Services
                 pageViewModel.PageCursor = Cursors.UpArrow;
 
                 pageViewModel.DefaultDA.IsHighlighter = false;
-                pageViewModel.DefaultDA.Height = 2.0;
-                pageViewModel.DefaultDA.Width = 2.0;
+                pageViewModel.DefaultDA.Height = PEN_SIZE;
+                pageViewModel.DefaultDA.Width = PEN_SIZE;
                 pageViewModel.DefaultDA.FitToCurve = false;
                 pageViewModel.DefaultDA.Color = Colors.Black;
                 pageViewModel.DefaultDA.StylusTip = StylusTip.Rectangle;
@@ -239,17 +238,7 @@ namespace Classroom_Learning_Partner.Services
 
         #endregion //Set PageInteractionModes
 
-        #region Set Pen Properties
-
-        public void SetPenSize(double penSize)
-        {
-            PenSize = penSize;
-            foreach (var pageViewModel in ActivePageViewModels)
-            {
-                pageViewModel.DefaultDA.Height = penSize;
-                pageViewModel.DefaultDA.Width = penSize;
-            }
-        }
+        #region Set Draw Properties
 
         public void SetPenColor(Color color)
         {
@@ -260,20 +249,64 @@ namespace Classroom_Learning_Partner.Services
             }
         }
 
-        public void ToggleHighlighter()
+        public void SetPenMode()
         {
-            IsHighlighting = !IsHighlighting;
+            CurrentDrawMode = DrawModes.Pen;
             foreach (var pageViewModel in ActivePageViewModels)
             {
-                pageViewModel.DefaultDA.IsHighlighter = IsHighlighting;
-                pageViewModel.DefaultDA.Height = IsHighlighting ? HIGHLIGHTER_SIZE : PenSize;
-                pageViewModel.DefaultDA.Width = IsHighlighting ? HIGHLIGHTER_SIZE : PenSize;
-                pageViewModel.DefaultDA.FitToCurve = !IsHighlighting;
-                pageViewModel.DefaultDA.StylusTip = IsHighlighting ? StylusTip.Rectangle : StylusTip.Ellipse;
+                pageViewModel.IsInkCanvasHitTestVisible = true;
+                pageViewModel.EditingMode = InkCanvasEditingMode.Ink;
+                pageViewModel.IsUsingCustomCursors = false;
+
+                pageViewModel.DefaultDA.IsHighlighter = false;
+                pageViewModel.DefaultDA.Height = PEN_SIZE;
+                pageViewModel.DefaultDA.Width = PEN_SIZE;
+                pageViewModel.DefaultDA.FitToCurve = true;
+                pageViewModel.DefaultDA.Color = PenColor;
+                pageViewModel.DefaultDA.StylusTip = StylusTip.Ellipse;
+                pageViewModel.ClearAdorners();
             }
         }
 
-        #endregion //Set Pen Properties
+        public void SetMarkerMode()
+        {
+            CurrentDrawMode = DrawModes.Marker;
+            foreach (var pageViewModel in ActivePageViewModels)
+            {
+                pageViewModel.IsInkCanvasHitTestVisible = true;
+                pageViewModel.EditingMode = InkCanvasEditingMode.Ink;
+                pageViewModel.IsUsingCustomCursors = false;
+
+                pageViewModel.DefaultDA.IsHighlighter = false;
+                pageViewModel.DefaultDA.Height = MARKER_SIZE;
+                pageViewModel.DefaultDA.Width = MARKER_SIZE;
+                pageViewModel.DefaultDA.FitToCurve = true;
+                pageViewModel.DefaultDA.Color = PenColor;
+                pageViewModel.DefaultDA.StylusTip = StylusTip.Ellipse;
+                pageViewModel.ClearAdorners();
+            }
+        }
+
+        public void SetHighlighterMode()
+        {
+            CurrentDrawMode = DrawModes.Highlighter;
+            foreach (var pageViewModel in ActivePageViewModels)
+            {
+                pageViewModel.IsInkCanvasHitTestVisible = true;
+                pageViewModel.EditingMode = InkCanvasEditingMode.Ink;
+                pageViewModel.IsUsingCustomCursors = false;
+
+                pageViewModel.DefaultDA.IsHighlighter = true;
+                pageViewModel.DefaultDA.Height = HIGHLIGHTER_SIZE;
+                pageViewModel.DefaultDA.Width = HIGHLIGHTER_SIZE;
+                pageViewModel.DefaultDA.FitToCurve = false;
+                pageViewModel.DefaultDA.Color = PenColor;
+                pageViewModel.DefaultDA.StylusTip = StylusTip.Rectangle;
+                pageViewModel.ClearAdorners();
+            }
+        }
+
+        #endregion //Set Draw Properties
 
         public void SetErasingMode(ErasingModes erasingMode) { CurrentErasingMode = erasingMode; }
 

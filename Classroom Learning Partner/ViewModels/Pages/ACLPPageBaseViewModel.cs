@@ -304,7 +304,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             if (TopCanvas == null ||
                 IsPagePreview ||
-                PageInteractionService.CurrentPageInteractionMode == PageInteractionModes.Pen)
+                PageInteractionService.CurrentPageInteractionMode == PageInteractionModes.Draw)
             {
                 return;
             }
@@ -512,7 +512,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     break;
                 case PageInteractionModes.Select:
                     return;
-                case PageInteractionModes.Pen:
+                case PageInteractionModes.Draw:
                     if (e.Removed.Any())
                     {
                         RemoveStroke(e.Removed, e.Added);
@@ -527,7 +527,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         AddStroke(stroke);
                     }
                     break;
-                case PageInteractionModes.Eraser:
+                case PageInteractionModes.Erase:
                     RemoveStroke(e.Removed, e.Added);
                     break;
                 case PageInteractionModes.DividerCreation:

@@ -261,7 +261,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 !IsGroupStamp)
             {
                 MessageBox.Show("How many are in the group?", "What are you counting?");
-                App.MainWindowViewModel.MajorRibbon.PageInteractionMode = PageInteractionModes.Pen;
+                App.MainWindowViewModel.MajorRibbon.PageInteractionMode = PageInteractionModes.Draw;
                 App.MainWindowViewModel.MajorRibbon.PageInteractionMode = PageInteractionModes.Select;
                 return;
             }
@@ -574,7 +574,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 IsGhostVisible = false;
                 StampHandleColor = new SolidColorBrush(Colors.Black);
                 MessageBox.Show("How many are in the group?", "What are you counting?");
-                App.MainWindowViewModel.MajorRibbon.PageInteractionMode = PageInteractionModes.Pen;
+                App.MainWindowViewModel.MajorRibbon.PageInteractionMode = PageInteractionModes.Draw;
                 App.MainWindowViewModel.MajorRibbon.PageInteractionMode = PageInteractionModes.Select;
                 return;
             }

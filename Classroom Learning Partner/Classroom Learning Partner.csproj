@@ -1021,6 +1021,7 @@
     <Content Include="External Libraries\System.Reactive.Providers.dll" />
     <Content Include="External Libraries\System.Reactive.Windows.Threading.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
+    <Resource Include="Resources\Images\Marker128.png" />
     <Resource Include="Resources\Images\MajorRibbon\TextBox512.png" />
     <Resource Include="Resources\Images\ExtrasFolder256.png" />
     <Resource Include="Resources\Images\ExtrasFolder32.png" />
