@@ -442,6 +442,13 @@ namespace CLP.Entities
                 var tickR = FindClosestTick(theRemovedStrokes);
                 var tickL = FindClosestTickLeft(theRemovedStrokes);
 
+                if (tickR == null ||
+                tickL == null ||
+                tickR == tickL)
+                {
+                    return;
+                }
+
                 var deletedStartTickValue = tickL.TickValue;
                 var deletedJumpSize = tickR.TickValue - tickL.TickValue;
 
