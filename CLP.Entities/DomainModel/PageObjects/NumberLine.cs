@@ -129,6 +129,7 @@ namespace CLP.Entities
     [Serializable]
     public class NumberLine : APageObjectBase, IStrokeAccepter
     {
+        private const int MAX_ALL_TICKS_VISIBLE_LENGTH = 50;
         #region Constructors
 
         public NumberLine() { }
@@ -330,10 +331,10 @@ namespace CLP.Entities
 
         public void CreateTicks()
         {
-            var defaultInteger = NumberLineSize <= 10 ? 1 : 5;
+            var defaultInteger = NumberLineSize <= MAX_ALL_TICKS_VISIBLE_LENGTH ? 1 : 5;
             if (Ticks.LastOrDefault() != null)
             {
-                if (Ticks.LastOrDefault().TickValue % 5 != 0)
+                if (Ticks.LastOrDefault().TickValue % defaultInteger != 0)
                 {
                     Ticks.LastOrDefault().IsNumberVisible = false;
                 }
@@ -465,14 +466,14 @@ namespace CLP.Entities
                 {
                     tickR.IsMarked = false;
                     tickR.TickColor = "Black";
-                    tickR.IsNumberVisible = NumberLineSize < 10 || tickR.TickValue % 5 == 0;
+                    tickR.IsNumberVisible = NumberLineSize < MAX_ALL_TICKS_VISIBLE_LENGTH || tickR.TickValue % 5 == 0;
                 }
 
                 if (JumpSizes.All(x => x.StartingTickIndex + x.JumpSize != tickL.TickValue))
                 {
                     tickL.IsMarked = false;
                     tickL.TickColor = "Black";
-                    tickL.IsNumberVisible = NumberLineSize < 10 || tickL.TickValue % 5 == 0;
+                    tickL.IsNumberVisible = NumberLineSize < MAX_ALL_TICKS_VISIBLE_LENGTH || tickL.TickValue % 5 == 0;
                 }
             }
             
