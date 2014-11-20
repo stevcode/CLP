@@ -303,7 +303,7 @@
                 </i:Interaction.Triggers>
             </Thumb>
 
-            <Thumb Cursor="SizeWE"
+            <Thumb Cursor="Hand"
                    Grid.Column="2"
                    Grid.Row="1"
                    Width="{Binding PageObject.ArrowLength}"
