@@ -255,6 +255,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             if (IsBackgroundPageObject)
             {
+                ACLPPageBaseViewModel.ClearAdorners(PageObject.ParentPage);
                 return;
             }
 
