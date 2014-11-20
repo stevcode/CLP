@@ -413,14 +413,14 @@ namespace Classroom_Learning_Partner.ViewModels
                     };
 
                     stampCopiesToAdd.Add(stampedObject);
-                    if (initialXPosition + 2 * stampedObject.Width + 5 < PageObject.ParentPage.Width)
+                    if (initialXPosition + 2 * stampedObject.Width + 15 < PageObject.ParentPage.Width)
                     {
-                        initialXPosition += stampedObject.Width + 5;
+                        initialXPosition += stampedObject.Width + 15;
                     }
-                    else if (initialYPosition + 2 * stampedObject.Height + 5 < PageObject.ParentPage.Height)
+                    else if (initialYPosition + 2 * stampedObject.Height + 15 < PageObject.ParentPage.Height)
                     {
                         initialXPosition = 25;
-                        initialYPosition += stampedObject.Height + 5;
+                        initialYPosition += stampedObject.Height + 15;
                     }
 
                     foreach (var pageObject in stamp.AcceptedPageObjects)
