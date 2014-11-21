@@ -102,6 +102,17 @@ namespace CLP.Entities
 
         public static readonly PropertyData SerializedStrokesProperty = RegisterProperty("SerializedStrokes", typeof (List<StrokeDTO>), () => new List<StrokeDTO>());
 
+        /// <summary>
+        /// Toggles the visibility of a boundary around the stampedObject.
+        /// </summary>
+        public bool IsBoundaryVisible
+        {
+            get { return GetValue<bool>(IsBoundaryVisibleProperty); }
+            set { SetValue(IsBoundaryVisibleProperty, value); }
+        }
+
+        public static readonly PropertyData IsBoundaryVisibleProperty = RegisterProperty("IsBoundaryVisible", typeof (bool), true);
+
         #region ICountable Members
 
         /// <summary>Number of parts the <see cref="Stamp" /> represents.</summary>

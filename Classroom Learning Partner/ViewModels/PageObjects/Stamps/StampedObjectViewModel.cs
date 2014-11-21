@@ -70,6 +70,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 _contextButtons.Add(MajorRibbonViewModel.Separater);
 
                 _contextButtons.Add(new RibbonButton("Create Copies", "pack://application:,,,/Images/AddToDisplay.png", ParameterizeStampedObjectCommand, null, true));
+
+                IsBoundaryVisible = false;
             }
         }
 
@@ -103,6 +105,18 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData PartsProperty = RegisterProperty("Parts", typeof (int));
+
+        /// <summary>
+        /// Toggles the visibility of a boundary around the stampedObject.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public bool IsBoundaryVisible
+        {
+            get { return GetValue<bool>(IsBoundaryVisibleProperty); }
+            set { SetValue(IsBoundaryVisibleProperty, value); }
+        }
+
+        public static readonly PropertyData IsBoundaryVisibleProperty = RegisterProperty("IsBoundaryVisible", typeof(bool));
 
         #endregion //Model
 
