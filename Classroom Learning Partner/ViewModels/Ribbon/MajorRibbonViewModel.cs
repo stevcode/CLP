@@ -17,11 +17,13 @@ namespace Classroom_Learning_Partner.ViewModels
 {
     public enum ConnectionStatuses
     {
+        Offline,
         Connecting,
         Listening,
         Found,
         Connected,
         LoggedIn,
+        LoggedOut,
         Disconnected
     }
     public class MajorRibbonViewModel : ViewModelBase
