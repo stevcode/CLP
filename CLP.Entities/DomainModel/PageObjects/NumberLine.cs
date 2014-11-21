@@ -139,7 +139,7 @@ namespace CLP.Entities
         {
             NumberLineSize = numberLength;
             Height = NumberLineHeight;
-            Width = 800;
+            Width = parentPage.Width - 100;
             XPosition = (parentPage.Width / 2.0) - (Width / 2.0);
         }
 
