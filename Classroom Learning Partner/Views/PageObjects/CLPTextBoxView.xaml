@@ -30,7 +30,7 @@
                 <Rectangle Stroke="Transparent"
                            StrokeThickness="1"
                            Fill="{DynamicResource DynamicMainColor}"
-                           Opacity=".05"
+                           Opacity=".03"
                            IsHitTestVisible="False"
                            RadiusX="10"
                            RadiusY="10"
