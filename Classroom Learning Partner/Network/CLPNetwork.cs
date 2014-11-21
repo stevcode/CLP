@@ -4,12 +4,14 @@ using System.Linq;
 using System.ServiceModel;
 using System.Threading;
 using Classroom_Learning_Partner.ViewModels;
+using CLP.Entities;
 using ServiceModelEx;
 
 namespace Classroom_Learning_Partner
 {
     public sealed class CLPNetwork : IDisposable
     {
+        public Person CurrentUser { get; set; }
         public string CurrentMachineAddress { get; set; }
 
         public string CurrentMachineName
@@ -29,6 +31,7 @@ namespace Classroom_Learning_Partner
 
         public CLPNetwork()
         {
+            CurrentUser = new Person();
             DiscoveredProjectors = new DiscoveredServices<IProjectorContract>();
             DiscoveredInstructors = new DiscoveredServices<IInstructorContract>();
             RunningServices = new ObservableCollection<ServiceHost>();
@@ -48,7 +51,6 @@ namespace Classroom_Learning_Partner
             ServiceHost host = null;
             switch (App.MainWindowViewModel.CurrentProgramMode)
             {
-                case ProgramModes.Author:
                 case ProgramModes.Database:
                     break;
                 case ProgramModes.Teacher:
@@ -70,14 +72,15 @@ namespace Classroom_Learning_Partner
                     break;
             }
 
-            if (host == null)
+            if (host != null)
+            {
+                host.Open();
+                RunningServices.Add(host);
+            }
+            else
             {
                 App.MainWindowViewModel.MajorRibbon.ConnectionStatus = ConnectionStatuses.Offline;
-                return;
             }
-
-            host.Open();
-            RunningServices.Add(host);
 
             DiscoverServices();
         }
@@ -86,7 +89,6 @@ namespace Classroom_Learning_Partner
         {
             switch (App.MainWindowViewModel.CurrentProgramMode)
             {
-                case ProgramModes.Author:
                 case ProgramModes.Database:
                     break;
                 case ProgramModes.Teacher:

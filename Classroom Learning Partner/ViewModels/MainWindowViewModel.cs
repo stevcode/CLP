@@ -16,7 +16,6 @@ namespace Classroom_Learning_Partner.ViewModels
 {
     public enum ProgramModes
     {
-        Author,
         Teacher,
         Student,
         Projector,
@@ -323,7 +322,6 @@ namespace Classroom_Learning_Partner.ViewModels
             IsAuthoring = false;
             switch (CurrentProgramMode)
             {
-                case ProgramModes.Author:
                 case ProgramModes.Database:
                     break;
                 case ProgramModes.Teacher:
