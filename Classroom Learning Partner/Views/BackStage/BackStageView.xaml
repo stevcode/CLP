@@ -262,6 +262,7 @@
         <!-- TitleBar -->
         <DockPanel DockPanel.Dock="Top"
                    LastChildFill="True"
+                   Background="{StaticResource GrayEdgeColor}"
                    Height="24">
 
             <!-- Program Close Button -->

@@ -60,7 +60,7 @@
         </Grid.RowDefinitions>
 
         <!-- TitleBar -->
-        <DockPanel Background="{StaticResource GrayBackgroundColor}"
+        <DockPanel Background="{StaticResource GrayEdgeColor}"
                    LastChildFill="True"
                    Height="24"
                    Visibility="{Binding IsDragBarVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">

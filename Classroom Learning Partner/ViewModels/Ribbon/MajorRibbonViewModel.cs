@@ -634,9 +634,6 @@ namespace Classroom_Learning_Partner.ViewModels
             Buttons.Add(_setEraseModeButton);
             Buttons.Add(Separater);
             Buttons.Add(_setLassoModeButton);
-
-
-            // Teacher Ribbon
             Buttons.Add(_setCutModeButton);
             Buttons.Add(_setDividerCreationModeButton);
 
@@ -660,15 +657,6 @@ namespace Classroom_Learning_Partner.ViewModels
             // Insert Text Box
             Buttons.Add(Separater);
             Buttons.Add(_insertTextBoxButton);
-
-            
-
-
-            //// Student Ribbon
-            //// Insert Math Tools
-            //Buttons.Add(Separater);
-            //Buttons.Add(_insertGeneralStampButton);
-            //Buttons.Add(_insertNumberLineButton);
         }
 
         #endregion //Methods
