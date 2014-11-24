@@ -63,7 +63,7 @@ namespace Classroom_Learning_Partner.ViewModels
             toggleGridLinesButton.Unchecked += toggleGridLinesButton_Checked;
             _contextButtons.Add(toggleGridLinesButton);
 
-            _contextButtons.Add(new RibbonButton("Snap", "pack://application:,,,/Resources/Images/AdornerImages/ArraySnap64.png", SnapArrayCommand, null, true));
+           // _contextButtons.Add(new RibbonButton("Snap", "pack://application:,,,/Resources/Images/AdornerImages/ArraySnap64.png", SnapArrayCommand, null, true));
             //    _contextButtons.Add(new RibbonButton("Size to Other Arrays", "pack://application:,,,/Resources/Images/AdornerImages/ArraySnap64.png", null, null, true));
         }
 
@@ -1154,8 +1154,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 ACLPPageBaseViewModel.AddPageObjectsToPage(PageObject.ParentPage, arraysToAdd);
             }
         }
-
-
 
         #endregion //Commands
 
