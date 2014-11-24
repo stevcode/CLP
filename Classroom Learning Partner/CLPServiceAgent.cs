@@ -271,7 +271,7 @@ namespace Classroom_Learning_Partner
 
             page.TrimPage();
             //Take thumbnail of page before submitting it.
-            ACLPPageBaseViewModel.TakePageThumbnail(page);
+            //ACLPPageBaseViewModel.TakePageThumbnail(page);
 
             var t = new Thread(() =>
                                {
@@ -280,8 +280,8 @@ namespace Classroom_Learning_Partner
                                        page.SerializedStrokes = StrokeDTO.SaveInkStrokes(page.InkStrokes);
                                        page.History.SerializedTrashedInkStrokes = StrokeDTO.SaveInkStrokes(page.History.TrashedInkStrokes);
                                        // Perform analysis (syntactic and semantic interpretation) of the page here, on the student machine
-                                       TagAnalysis.AnalyzeArray(page);
-                                       TagAnalysis.AnalyzeStamps(page);
+                                       //TagAnalysis.AnalyzeArray(page);
+                                       //TagAnalysis.AnalyzeStamps(page);
 
                                        var copy = page.NextVersionCopy();
 

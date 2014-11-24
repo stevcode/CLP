@@ -94,21 +94,16 @@ namespace Classroom_Learning_Partner.ViewModels
                                   null,
                                   "Exporting Notebook");
 
-            //if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Student)
+            //if (App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Student &&
+            //    App.Network.InstructorProxy == null)
             //{
-            //    return;
-            //}
-
-            //if (App.Network.InstructorProxy == null)
-            //{
-            //    return;
-            //}
-
-            //PleaseWaitHelper.Show(
+            //    PleaseWaitHelper.Show(
             //                      () =>
             //                      App.Network.InstructorProxy.CollectStudentNotebookAndSubmissions(),
             //                      null,
             //                      "Collecting Notebook");
+            //    return;
+            //}
         }
 
         private bool OnSaveCurrentNotebookCanExecute() { return Notebook != null; }

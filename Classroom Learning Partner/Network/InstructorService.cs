@@ -22,6 +22,9 @@ namespace Classroom_Learning_Partner
         void AddSerializedSubmission(string zippedPage, string notebookID);
 
         [OperationContract]
+        void CollectStudentNotebookAndSubmissions(string zippedNotebook, string zippedSubmissions, string studentName);
+
+        [OperationContract]
         void CollectStudentNotebook(string zippedNotebook, string studentName);
 
         [OperationContract]
@@ -191,10 +194,35 @@ namespace Classroom_Learning_Partner
                                           return;
                                       }
 
-                                      var notebookFolderName = notebook.Name + ";" + notebook.ID + ";" + notebook.Owner.FullName + ";" + notebook.OwnerID;
+                                      var notebookFolderName = NotebookNameComposite.ParseNotebookToNameComposite(notebook).ToFolderName();
                                       var notebookFolderPath = Path.Combine(notebookService.CurrentNotebookCacheDirectory, notebookFolderName);
                                       notebook.SavePartialNotebook(notebookFolderPath, false);
                                   });
+        }
+
+        public void CollectStudentNotebookAndSubmissions(string zippedNotebook, string zippedSubmissions, string studentName)
+        {
+            Task.Factory.StartNew(() =>
+            {
+                var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
+                if (notebookService == null)
+                {
+                    return;
+                }
+
+                var unZippedNotebook = CLPServiceAgent.Instance.UnZip(zippedNotebook);
+                var notebook = ObjectSerializer.ToObject(unZippedNotebook) as Notebook;
+
+                if (notebook == null)
+                {
+                    Logger.Instance.WriteToLog("Failed to collect notebook from " + studentName);
+                    return;
+                }
+
+                var notebookFolderName = NotebookNameComposite.ParseNotebookToNameComposite(notebook).ToFolderName();
+                var notebookFolderPath = Path.Combine(notebookService.CurrentNotebookCacheDirectory, notebookFolderName);
+                notebook.SavePartialNotebook(notebookFolderPath, false);
+            });
         }
 
         public string StudentLogin(string studentName, string studentID, string machineName, string machineAddress, bool useClassPeriod = true)
