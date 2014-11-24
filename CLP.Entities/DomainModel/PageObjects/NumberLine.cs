@@ -466,14 +466,14 @@ namespace CLP.Entities
                 {
                     tickR.IsMarked = false;
                     tickR.TickColor = "Black";
-                    tickR.IsNumberVisible = NumberLineSize < MAX_ALL_TICKS_VISIBLE_LENGTH || tickR.TickValue % 5 == 0;
+                    tickR.IsNumberVisible = NumberLineSize <= MAX_ALL_TICKS_VISIBLE_LENGTH || tickR.TickValue % 5 == 0;
                 }
 
                 if (JumpSizes.All(x => x.StartingTickIndex + x.JumpSize != tickL.TickValue))
                 {
                     tickL.IsMarked = false;
                     tickL.TickColor = "Black";
-                    tickL.IsNumberVisible = NumberLineSize < MAX_ALL_TICKS_VISIBLE_LENGTH || tickL.TickValue % 5 == 0;
+                    tickL.IsNumberVisible = NumberLineSize <= MAX_ALL_TICKS_VISIBLE_LENGTH || tickL.TickValue % 5 == 0;
                 }
             }
             
