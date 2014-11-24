@@ -47,6 +47,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
             _contextButtons.Add(new RibbonButton("Rotate", "pack://application:,,,/Resources/Images/AdornerImages/ArrayRotate64.png", RotateArrayCommand, null, true));
 
+            var toggleLabelsButton = new ToggleRibbonButton("Show Labels", "Hide Labels", "pack://application:,,,/Resources/Images/ArrayCard32.png", true)
+            {
+                IsChecked = IsTopLabelVisible && IsSideLabelVisible
+            };
+            toggleLabelsButton.Checked += toggleLabelsButton_Checked;
+            toggleLabelsButton.Unchecked += toggleLabelsButton_Checked;
+            _contextButtons.Add(toggleLabelsButton);
+
             var toggleGridLinesButton = new ToggleRibbonButton("Show Grid Lines", "Hide Grid Lines", "pack://application:,,,/Resources/Images/ArrayCard32.png", true)
             {
                 IsChecked = IsGridOn
@@ -57,6 +65,25 @@ namespace Classroom_Learning_Partner.ViewModels
 
             _contextButtons.Add(new RibbonButton("Snap", "pack://application:,,,/Resources/Images/AdornerImages/ArraySnap64.png", SnapArrayCommand, null, true));
             //    _contextButtons.Add(new RibbonButton("Size to Other Arrays", "pack://application:,,,/Resources/Images/AdornerImages/ArraySnap64.png", null, null, true));
+        }
+
+        void toggleLabelsButton_Checked(object sender, RoutedEventArgs e)
+        {
+            var toggleButton = sender as ToggleRibbonButton;
+            if (toggleButton == null ||
+                toggleButton.IsChecked == null)
+            {
+                return;
+            }
+
+            var clpArray = PageObject as CLPArray;
+            if (clpArray == null)
+            {
+                return;
+            }
+
+            clpArray.IsTopLabelVisible = (bool)toggleButton.IsChecked;
+            clpArray.IsSideLabelVisible = (bool)toggleButton.IsChecked;
         }
 
         void toggleGridLinesButton_Checked(object sender, RoutedEventArgs e)
@@ -1127,6 +1154,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 ACLPPageBaseViewModel.AddPageObjectsToPage(PageObject.ParentPage, arraysToAdd);
             }
         }
+
+
 
         #endregion //Commands
 
