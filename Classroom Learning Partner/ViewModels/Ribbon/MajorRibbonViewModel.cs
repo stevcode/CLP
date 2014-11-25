@@ -2,12 +2,10 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.ServiceModel;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using System.Windows.Threading;
 using Catel.Data;
 using Catel.IoC;
 using Catel.MVVM;
@@ -28,6 +26,7 @@ namespace Classroom_Learning_Partner.ViewModels
         LoggedOut,
         Disconnected
     }
+
     public class MajorRibbonViewModel : ViewModelBase
     {
         public MainWindowViewModel MainWindow
@@ -75,9 +74,9 @@ namespace Classroom_Learning_Partner.ViewModels
             _setDrawModeButton = new GroupedRibbonButton("Draw", "PageInteractionMode", "pack://application:,,,/Resources/Images/Pen32.png", PageInteractionModes.Draw.ToString());
             _setDrawModeButton.Checked += _button_Checked;
             _setEraseModeButton = new GroupedRibbonButton("Erase",
-                                                           "PageInteractionMode",
-                                                           "pack://application:,,,/Resources/Images/PointEraser32.png",
-                                                           PageInteractionModes.Erase.ToString());
+                                                          "PageInteractionMode",
+                                                          "pack://application:,,,/Resources/Images/PointEraser32.png",
+                                                          PageInteractionModes.Erase.ToString());
             _setEraseModeButton.Checked += _button_Checked;
             _setLassoModeButton = new GroupedRibbonButton("Lasso",
                                                           "PageInteractionMode",
@@ -103,9 +102,9 @@ namespace Classroom_Learning_Partner.ViewModels
                                                        AddPageObjectToPageCommand,
                                                        "BLANK_GROUP_STAMP");
             _insertImageGeneralStampButton = new RibbonButton("Image Stamp", "pack://application:,,,/Images/PictureStamp.png", AddPageObjectToPageCommand, "IMAGE_GENERAL_STAMP");
-                //TODO: Better Icon
+            //TODO: Better Icon
             _insertImageGroupStampButton = new RibbonButton("Image Group Stamp", "pack://application:,,,/Images/PictureStamp.png", AddPageObjectToPageCommand, "IMAGE_GROUP_STAMP");
-                //TODO: Better Icon
+            //TODO: Better Icon
             _insertPileButton = new RibbonButton("Pile", "pack://application:,,,/Resources/Images/Pile32.png", AddPageObjectToPageCommand, "PILE");
 
             //Arrays
@@ -283,16 +282,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Bindings
 
-        /// <summary>
-        /// SUMMARY
-        /// </summary>
+        /// <summary>SUMMARY</summary>
         public ConnectionStatuses ConnectionStatus
         {
             get { return GetValue<ConnectionStatuses>(ConnectionStatusProperty); }
             set { SetValue(ConnectionStatusProperty, value); }
         }
 
-        public static readonly PropertyData ConnectionStatusProperty = RegisterProperty("ConnectionStatus", typeof(ConnectionStatuses), ConnectionStatuses.Listening);
+        public static readonly PropertyData ConnectionStatusProperty = RegisterProperty("ConnectionStatus", typeof (ConnectionStatuses), ConnectionStatuses.Listening);
 
         /// <summary>List of the buttons currently on the Ribbon.</summary>
         public ObservableCollection<UIElement> Buttons
@@ -305,33 +302,27 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Find Better Way
 
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
+        /// <summary>Gets or sets the property value.</summary>
         public Panels? CurrentLeftPanel
         {
             get { return GetValue<Panels?>(CurrentLeftPanelProperty); }
             set { SetValue(CurrentLeftPanelProperty, value); }
         }
 
-        public static readonly PropertyData CurrentLeftPanelProperty = RegisterProperty("CurrentLeftPanel", typeof(Panels?));
+        public static readonly PropertyData CurrentLeftPanelProperty = RegisterProperty("CurrentLeftPanel", typeof (Panels?));
 
-        /// <summary>
-        /// Right Panel.
-        /// </summary>
+        /// <summary>Right Panel.</summary>
         public Panels? CurrentRightPanel
         {
             get { return GetValue<Panels?>(CurrentRightPanelProperty); }
             set { SetValue(CurrentRightPanelProperty, value); }
         }
 
-        public static readonly PropertyData CurrentRightPanelProperty = RegisterProperty("CurrentRightPanel", typeof(Panels?)); 
+        public static readonly PropertyData CurrentRightPanelProperty = RegisterProperty("CurrentRightPanel", typeof (Panels?));
 
         #endregion //Find Better Way
 
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
+        /// <summary>Gets or sets the property value.</summary>
         public bool BlockStudentPenInput
         {
             get { return GetValue<bool>(BlockStudentPenInputProperty); }
@@ -339,30 +330,55 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 SetValue(BlockStudentPenInputProperty, value);
 
-                if (App.MainWindowViewModel.AvailableUsers.Any())
+                var discoveredStudentAddresses = App.Network.DiscoveredStudents.Addresses.ToList();
+                if (discoveredStudentAddresses.Any())
                 {
-                    Parallel.ForEach(App.MainWindowViewModel.AvailableUsers,
-                                     student =>
+                    Parallel.ForEach(discoveredStudentAddresses,
+                                     address =>
                                      {
                                          try
                                          {
                                              var binding = new NetTcpBinding
-                                             {
-                                                 Security =
-                                                 {
-                                                     Mode = SecurityMode.None
-                                                 }
-                                             };
-                                             var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(binding, new EndpointAddress(student.CurrentMachineAddress));
+                                                           {
+                                                               Security =
+                                                               {
+                                                                   Mode = SecurityMode.None
+                                                               }
+                                                           };
+                                             var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(binding, address);
                                              studentProxy.TogglePenDownMode(value);
                                              (studentProxy as ICommunicationObject).Close();
                                          }
-                                         catch (Exception ex)
+                                         catch (Exception e)
                                          {
-                                             Console.WriteLine(ex.Message);
+                                             Console.WriteLine(e.Message);
                                          }
                                      });
                 }
+                    //if (App.MainWindowViewModel.AvailableUsers.Any())
+                    //{
+                    //    Parallel.ForEach(App.MainWindowViewModel.AvailableUsers,
+                    //                     student =>
+                    //                     {
+                    //                         try
+                    //                         {
+                    //                             var binding = new NetTcpBinding
+                    //                             {
+                    //                                 Security =
+                    //                                 {
+                    //                                     Mode = SecurityMode.None
+                    //                                 }
+                    //                             };
+                    //                             var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(binding, new EndpointAddress(student.CurrentMachineAddress));
+                    //                             studentProxy.TogglePenDownMode(value);
+                    //                             (studentProxy as ICommunicationObject).Close();
+                    //                         }
+                    //                         catch (Exception ex)
+                    //                         {
+                    //                             Console.WriteLine(ex.Message);
+                    //                         }
+                    //                     });
+                    //}
                 else
                 {
                     Logger.Instance.WriteToLog("No Students Found");
@@ -370,7 +386,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        public static readonly PropertyData BlockStudentPenInputProperty = RegisterProperty("BlockStudentPenInput", typeof(bool), false);
+        public static readonly PropertyData BlockStudentPenInputProperty = RegisterProperty("BlockStudentPenInput", typeof (bool), false);
 
         #endregion //Bindings
 
@@ -431,15 +447,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region History Commands
 
-        /// <summary>
-        /// Undoes the last action.
-        /// </summary>
+        /// <summary>Undoes the last action.</summary>
         public Command UndoCommand { get; private set; }
 
-        private void OnUndoCommandExecute()
-        {
-            CurrentPage.History.Undo();
-        }
+        private void OnUndoCommandExecute() { CurrentPage.History.Undo(); }
 
         private bool OnUndoCanExecute()
         {
@@ -450,7 +461,8 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             var recordIndicator = page.History.RedoItems.FirstOrDefault() as AnimationIndicator;
-            if (recordIndicator != null && recordIndicator.AnimationIndicatorType == AnimationIndicatorType.Record)
+            if (recordIndicator != null &&
+                recordIndicator.AnimationIndicatorType == AnimationIndicatorType.Record)
             {
                 return false;
             }
@@ -458,15 +470,10 @@ namespace Classroom_Learning_Partner.ViewModels
             return page.History.CanUndo;
         }
 
-        /// <summary>
-        /// Redoes the last undone action.
-        /// </summary>
+        /// <summary>Redoes the last undone action.</summary>
         public Command RedoCommand { get; private set; }
 
-        private void OnRedoCommandExecute()
-        {
-            CurrentPage.History.Redo();
-        }
+        private void OnRedoCommandExecute() { CurrentPage.History.Redo(); }
 
         private bool OnRedoCanExecute()
         {
@@ -477,15 +484,13 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             return page.History.CanRedo;
-        } 
+        }
 
         #endregion //History Commands
 
         #region Sharing Commands
 
-        /// <summary>
-        /// Submits current page to the teacher.
-        /// </summary>
+        /// <summary>Submits current page to the teacher.</summary>
         public Command SubmitPageCommand { get; private set; }
 
         private void OnSubmitPageCommandExecute()
@@ -536,9 +541,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Page Commands
 
-        /// <summary>
-        /// Doubles height of the current page.
-        /// </summary>
+        /// <summary>Doubles height of the current page.</summary>
         public Command LongerPageCommand { get; private set; }
 
         private void OnLongerPageCommandExecute()
@@ -547,7 +550,7 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentPage.Height = initialHeight * 2;
 
             if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher ||
-               App.Network.ProjectorProxy == null)
+                App.Network.ProjectorProxy == null)
             {
                 return;
             }
@@ -556,10 +559,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 App.Network.ProjectorProxy.MakeCurrentPageLonger();
             }
-            catch (Exception)
-            {
-
-            }
+            catch (Exception) { }
         }
 
         private bool OnLongerPageCanExecute()
@@ -669,7 +669,7 @@ namespace Classroom_Learning_Partner.ViewModels
             // Insert Math Tools
             Buttons.Add(Separater);
             Buttons.Add(_insertGeneralStampButton);
-        //    Buttons.Add(_insertGroupStampButton);
+            //    Buttons.Add(_insertGroupStampButton);
             Buttons.Add(_insertNumberLineButton);
             Buttons.Add(_insertArrayButton);
             //Buttons.Add(_insertPileButton);

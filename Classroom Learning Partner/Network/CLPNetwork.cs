@@ -23,6 +23,8 @@ namespace Classroom_Learning_Partner
         public DiscoveredServices<IInstructorContract> DiscoveredInstructors { get; set; }
         public DiscoveredServices<IProjectorContract> DiscoveredProjectors { get; set; }
 
+        public DiscoveredServices<IStudentContract> DiscoveredStudents { get; set; }
+
         public IInstructorContract InstructorProxy { get; set; }
         public IProjectorContract ProjectorProxy { get; set; }
 
@@ -34,6 +36,7 @@ namespace Classroom_Learning_Partner
             CurrentUser = new Person();
             DiscoveredProjectors = new DiscoveredServices<IProjectorContract>();
             DiscoveredInstructors = new DiscoveredServices<IInstructorContract>();
+            DiscoveredStudents = new DiscoveredServices<IStudentContract>();
             RunningServices = new ObservableCollection<ServiceHost>();
         }
 
@@ -93,6 +96,7 @@ namespace Classroom_Learning_Partner
                     break;
                 case ProgramModes.Teacher:
                     DiscoveredProjectors.Open();
+                    DiscoveredStudents.Open();
                     new Thread(() =>
                                {
                                    Thread.CurrentThread.IsBackground = true;
