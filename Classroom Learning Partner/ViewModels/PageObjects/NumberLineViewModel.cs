@@ -18,6 +18,8 @@ namespace Classroom_Learning_Partner.ViewModels
         public NumberLineViewModel(NumberLine numberLine)
         {
             PageObject = numberLine;
+            numberLine.AcceptedStrokes = numberLine.AcceptedStrokeParentIDs.Select(id => PageObject.ParentPage.GetStrokeByID(id)).ToList();
+
             numberLine.CanAcceptStrokes = !IsBackgroundPageObject;
             ResizeNumberLineCommand = new Command<DragDeltaEventArgs>(OnResizeNumberLineCommandExecute);
             ResizeNumberLineLengthCommand = new Command<DragDeltaEventArgs>(OnResizeNumberLineLengthCommandExecute);

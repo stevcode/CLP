@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Ink;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Shapes;
 using Catel.Data;
 using Catel.MVVM;
@@ -26,6 +27,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public CLPArrayViewModel(CLPArray array)
         {
             PageObject = array;
+            array.AcceptedStrokes = array.AcceptedStrokeParentIDs.Select(id => PageObject.ParentPage.GetStrokeByID(id)).ToList();
 
             //Commands
             ResizeArrayCommand = new Command<DragDeltaEventArgs>(OnResizeArrayCommandExecute);
@@ -795,6 +797,23 @@ namespace Classroom_Learning_Partner.ViewModels
             PageObject.ParentPage.PageObjects.Remove(PageObject);
             PageObject.OnDeleted();
             ContextRibbon.Buttons.Clear();
+            var snappedArray = PageObject as CLPArray;
+            var array = closestPersistingArray as CLPArray;
+            if (snappedArray != null &&
+                array != null)
+            {
+                var strokesToRestore = new StrokeCollection();
+
+                foreach (var stroke in snappedArray.AcceptedStrokes.Where(stroke => PageObject.ParentPage.History.TrashedInkStrokes.Contains(stroke)))
+                {
+                    strokesToRestore.Add(stroke);
+                }
+
+                PageObject.ParentPage.InkStrokes.Add(strokesToRestore);
+                PageObject.ParentPage.History.TrashedInkStrokes.Remove(strokesToRestore);
+                array.AcceptStrokes(strokesToRestore, new List<Stroke>());
+            }
+
             //closestPersistingArray.RefreshStrokeParentIDs();
             //closestPersistingArray.RefreshPageObjectIDs();
 
@@ -838,6 +857,17 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                      PageObject.ID,
                                                                                      initXPos,
                                                                                      initYPos));
+
+            if ((PageObject as CLPArray).CanAcceptStrokes)
+            {
+                foreach (var stroke in (PageObject as CLPArray).AcceptedStrokes)
+                {
+                    var transform = new Matrix();
+                    transform.RotateAt(90, XPosition, YPosition);
+                    transform.Translate(Width, 0);
+                    stroke.Transform(transform, false);
+                }
+            }
 
             var divisionTemplateIDsInHistory = DivisionTemplateAnalysis.GetListOfDivisionTemplateIDsInHistory(PageObject.ParentPage);
             foreach (var divisionTemplate in PageObject.ParentPage.PageObjects.OfType<FuzzyFactorCard>())

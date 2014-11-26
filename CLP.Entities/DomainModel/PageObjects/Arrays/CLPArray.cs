@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Windows;
 using System.Windows.Ink;
+using System.Windows.Media;
+using System.Xml.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -16,7 +19,7 @@ namespace CLP.Entities
     }
 
     [Serializable]
-    public class CLPArray : ACLPArrayBase, ICountable, ICuttable
+    public class CLPArray : ACLPArrayBase, ICountable, ICuttable, IStrokeAccepter
     {
         #region Constructors
 
@@ -75,6 +78,38 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData ArrayTypeProperty = RegisterProperty("ArrayType", typeof (ArrayTypes), ArrayTypes.Array);
+
+        #region IStrokeAccepter Members
+
+        /// <summary>Determines whether the <see cref="Stamp" /> can currently accept <see cref="Stroke" />s.</summary>
+        public bool CanAcceptStrokes
+        {
+            get { return GetValue<bool>(CanAcceptStrokesProperty); }
+            set { SetValue(CanAcceptStrokesProperty, value); }
+        }
+
+        public static readonly PropertyData CanAcceptStrokesProperty = RegisterProperty("CanAcceptStrokes", typeof(bool), true);
+
+        /// <summary>The currently accepted <see cref="Stroke" />s.</summary>
+        [XmlIgnore]
+        public List<Stroke> AcceptedStrokes
+        {
+            get { return GetValue<List<Stroke>>(AcceptedStrokesProperty); }
+            set { SetValue(AcceptedStrokesProperty, value); }
+        }
+
+        public static readonly PropertyData AcceptedStrokesProperty = RegisterProperty("AcceptedStrokes", typeof(List<Stroke>), () => new List<Stroke>());
+
+        /// <summary>The IDs of the <see cref="Stroke" />s that have been accepted.</summary>
+        public List<string> AcceptedStrokeParentIDs
+        {
+            get { return GetValue<List<string>>(AcceptedStrokeParentIDsProperty); }
+            set { SetValue(AcceptedStrokeParentIDsProperty, value); }
+        }
+
+        public static readonly PropertyData AcceptedStrokeParentIDsProperty = RegisterProperty("AcceptedStrokeParentIDs", typeof(List<string>), () => new List<string>());
+
+        #endregion //IStrokeAccepter Members
 
         #endregion //Properties
 
@@ -216,9 +251,61 @@ namespace CLP.Entities
             {
                 divisionTemplate.UpdateRemainderRegion();
             }
+
+            if (!CanAcceptStrokes ||
+                !AcceptedStrokes.Any())
+            {
+                return;
+            }
+
+            var strokesToTrash = new StrokeCollection();
+
+            foreach (var stroke in AcceptedStrokes.Where(stroke => ParentPage.InkStrokes.Contains(stroke)))
+            {
+                strokesToTrash.Add(stroke);
+            }
+
+            ParentPage.InkStrokes.Remove(strokesToTrash);
+            ParentPage.History.TrashedInkStrokes.Add(strokesToTrash);
         }
 
-        public override void OnResized(double oldWidth, double oldHeight) { SizeArrayToGridLevel(GridSquareSize); }
+        public override void OnResizing(double oldWidth, double oldHeight)
+        {
+            //var scaleX = NumberLineLength / (oldWidth - 2 * ArrowLength);
+
+            //if (CanAcceptStrokes)
+            //{
+            //    foreach (var stroke in AcceptedStrokes)
+            //    {
+            //        var transform = new Matrix();
+            //        transform.ScaleAt(scaleX, 1.0, XPosition + ArrowLength, YPosition);
+            //        stroke.Transform(transform, false);
+            //    }
+            //}
+        }
+
+        public override void OnResized(double oldWidth, double oldHeight)
+        {
+            SizeArrayToGridLevel(GridSquareSize);
+            OnResizing(oldWidth, oldHeight);
+            
+        }
+
+        public override void OnMoving(double oldX, double oldY)
+        {
+            var deltaX = XPosition - oldX;
+            var deltaY = YPosition - oldY;
+
+            if (CanAcceptStrokes)
+            {
+                foreach (var stroke in AcceptedStrokes)
+                {
+                    var transform = new Matrix();
+                    transform.Translate(deltaX, deltaY);
+                    stroke.Transform(transform, true);
+                }
+            }
+        }
 
         #endregion //Overrides of APageObjectBase
 
@@ -407,6 +494,47 @@ namespace CLP.Entities
             }
 
             return halvedPageObjects;
+        }
+
+        public void AcceptStrokes(IEnumerable<Stroke> addedStrokes, IEnumerable<Stroke> removedStrokes)
+        {
+            if (!CanAcceptStrokes)
+            {
+                return;
+            }
+
+            // Remove Strokes
+            var removedStrokesList = removedStrokes as IList<Stroke> ?? removedStrokes.ToList();
+            foreach (var stroke in removedStrokesList.Where(stroke => AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
+            {
+                AcceptedStrokes.Remove(stroke);
+                AcceptedStrokeParentIDs.Remove(stroke.GetStrokeID());
+            }
+           
+            // Add Strokes
+            var numberLineBodyBoundingBox = new Rect(XPosition, YPosition, Width, Height);
+            foreach (var stroke in addedStrokes.Where(stroke => stroke.HitTest(numberLineBodyBoundingBox, 90) && !AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
+            {
+                AcceptedStrokes.Add(stroke);
+                AcceptedStrokeParentIDs.Add(stroke.GetStrokeID());
+            }
+        }
+
+        public void RefreshAcceptedStrokes()
+        {
+            AcceptedStrokes.Clear();
+            AcceptedStrokeParentIDs.Clear();
+            if (!CanAcceptStrokes)
+            {
+                return;
+            }
+
+            var arrayBoundingBox = new Rect(XPosition, YPosition, Width, Height);
+            var strokesOverObject = from stroke in ParentPage.InkStrokes
+                                    where stroke.HitTest(arrayBoundingBox, 90) //Stroke must be at least 90% contained by array.
+                                    select stroke;
+
+            AcceptStrokes(new StrokeCollection(strokesOverObject), new StrokeCollection());
         }
 
         #endregion
