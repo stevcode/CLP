@@ -498,12 +498,23 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             CurrentPage.TrimPage();
             var submission = CurrentPage.NextVersionCopy();
+            string sPage = string.Empty;
+            try
+            {
+                sPage = ObjectSerializer.ToString(submission);
+            }
+            catch (Exception)
+            {
+
+            }
+            
             CurrentPage.Submissions.Add(submission);
             CurrentPage.IsCached = true;
 
             var notebookService = DependencyResolver.Resolve<INotebookService>();
             if (App.Network.InstructorProxy == null ||
-                notebookService == null)
+                notebookService == null ||
+                string.IsNullOrEmpty(sPage))
             {
                 Logger.Instance.WriteToLog("Instructor NOT Available for Student Submission");
                 return;
@@ -513,7 +524,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 try
                 {
-                    var sPage = ObjectSerializer.ToString(submission);
+                    //var sPage = ObjectSerializer.ToString(submission);
                     var zippedPage = CLPServiceAgent.Instance.Zip(sPage);
 
                     App.Network.InstructorProxy.AddSerializedSubmission(zippedPage, notebookService.CurrentNotebook.ID);
@@ -521,6 +532,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 catch (Exception ex)
                 {
                     Logger.Instance.WriteToLog("Error Sending Submission: " + ex.Message);
+                    return;
                 }
             })
             {

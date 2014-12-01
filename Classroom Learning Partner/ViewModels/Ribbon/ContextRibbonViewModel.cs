@@ -115,7 +115,7 @@ namespace Classroom_Learning_Partner.ViewModels
             if (!CurrentPenColors.Any())
             {
                 CurrentPenColors.Add(new ColorButton(Colors.Black));
-                CurrentPenColors.Add(new ColorButton(Colors.White));
+             //   CurrentPenColors.Add(new ColorButton(Colors.White));
                 CurrentPenColors.Add(new ColorButton(Colors.Red));
                 CurrentPenColors.Add(new ColorButton(Colors.DarkOrange));
                 CurrentPenColors.Add(new ColorButton(Colors.Tan));

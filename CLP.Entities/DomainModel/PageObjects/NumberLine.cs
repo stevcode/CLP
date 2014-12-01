@@ -9,6 +9,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml.Serialization;
 using Catel.Data;
+using Catel.Runtime.Serialization;
 
 namespace CLP.Entities
 {
@@ -255,6 +256,7 @@ namespace CLP.Entities
 
         /// <summary>The currently accepted <see cref="Stroke" />s.</summary>
         [XmlIgnore]
+        [ExcludeFromSerialization]
         public List<Stroke> AcceptedStrokes
         {
             get { return GetValue<List<Stroke>>(AcceptedStrokesProperty); }
