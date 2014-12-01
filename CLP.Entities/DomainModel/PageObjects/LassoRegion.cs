@@ -6,7 +6,9 @@ using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Ink;
 using System.Windows.Media;
+using System.Xml.Serialization;
 using Catel.Data;
+using Catel.Runtime.Serialization;
 
 namespace CLP.Entities
 {
@@ -62,6 +64,8 @@ namespace CLP.Entities
         /// <summary>
         /// StrokeCollection of all the lassoed <see cref="Stroke" />s.
         /// </summary>
+        [XmlIgnore]
+        [ExcludeFromSerialization]
         public StrokeCollection LassoedStrokes
         {
             get { return GetValue<StrokeCollection>(LassoedStrokesProperty); }
