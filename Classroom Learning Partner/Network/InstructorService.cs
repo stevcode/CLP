@@ -151,6 +151,31 @@ namespace Classroom_Learning_Partner
 
             var submissionNameComposite = PageNameComposite.ParsePageToNameComposite(submission);
             var notebookNameComposite = NotebookNameComposite.ParseNotebookToNameComposite(currentNotebook);
+            notebookNameComposite.OwnerID = submission.OwnerID;
+            if (submission.Owner == null)
+            {
+                return;
+            }
+            notebookNameComposite.OwnerName = submission.Owner.FullName;
+            notebookNameComposite.OwnerTypeTag = "S";
+
+            var collectionPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "PartialNotebooks");
+            if (!Directory.Exists(collectionPath))
+            {
+                Directory.CreateDirectory(collectionPath);
+            }
+            var notebookPath = Path.Combine(collectionPath, notebookNameComposite.ToFolderName());
+            if (!Directory.Exists(notebookPath))
+            {
+                Directory.CreateDirectory(notebookPath);
+            }
+            var pagesPath = Path.Combine(notebookPath, "Pages");
+            if (!Directory.Exists(pagesPath))
+            {
+                Directory.CreateDirectory(pagesPath);
+            }
+            var pageFilePath = Path.Combine(pagesPath, submissionNameComposite.ToFileName() + ".xml");
+            submission.ToXML(pageFilePath);
 
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                        (DispatcherOperationCallback)delegate
