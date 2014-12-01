@@ -921,9 +921,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var keyPad = new KeypadWindowView
                          {
                              Owner = Application.Current.MainWindow,
-                             WindowStartupLocation = WindowStartupLocation.Manual,
-                             Top = 100,
-                             Left = 100
+                             WindowStartupLocation = WindowStartupLocation.Manual
                          };
             keyPad.ShowDialog();
             if (keyPad.DialogResult != true ||
