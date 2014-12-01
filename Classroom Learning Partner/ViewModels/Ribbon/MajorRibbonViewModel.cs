@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.ServiceModel;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
@@ -500,32 +501,32 @@ namespace Classroom_Learning_Partner.ViewModels
             CurrentPage.Submissions.Add(submission);
             CurrentPage.IsCached = true;
 
-            //var notebookService = DependencyResolver.Resolve<INotebookService>();
-            //if (App.Network.InstructorProxy == null ||
-            //    notebookService == null)
-            //{
-            //    Logger.Instance.WriteToLog("Instructor NOT Available for Student Submission");
-            //    return;
-            //}
+            var notebookService = DependencyResolver.Resolve<INotebookService>();
+            if (App.Network.InstructorProxy == null ||
+                notebookService == null)
+            {
+                Logger.Instance.WriteToLog("Instructor NOT Available for Student Submission");
+                return;
+            }
 
-            //var t = new Thread(() =>
-            //{
-            //    try
-            //    {
-            //        var sPage = ObjectSerializer.ToString(submission);
-            //        var zippedPage = CLPServiceAgent.Instance.Zip(sPage);
+            var t = new Thread(() =>
+            {
+                try
+                {
+                    var sPage = ObjectSerializer.ToString(submission);
+                    var zippedPage = CLPServiceAgent.Instance.Zip(sPage);
 
-            //        App.Network.InstructorProxy.AddSerializedSubmission(zippedPage, notebookService.CurrentNotebook.ID);
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        Logger.Instance.WriteToLog("Error Sending Submission: " + ex.Message);
-            //    }
-            //})
-            //{
-            //    IsBackground = true
-            //};
-            //t.Start();
+                    App.Network.InstructorProxy.AddSerializedSubmission(zippedPage, notebookService.CurrentNotebook.ID);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Instance.WriteToLog("Error Sending Submission: " + ex.Message);
+                }
+            })
+            {
+                IsBackground = true
+            };
+            t.Start();
         }
 
         private bool OnSubmitPageCanExecute()

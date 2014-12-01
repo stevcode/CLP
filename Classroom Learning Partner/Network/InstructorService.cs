@@ -100,29 +100,29 @@ namespace Classroom_Learning_Partner
 
         public void AddSerializedSubmission(string zippedPage, string notebookID)
         {
-            if (App.Network.ProjectorProxy != null)
-            {
-                var t = new Thread(() =>
-                                   {
-                                       try
-                                       {
-                                           App.Network.ProjectorProxy.AddSerializedSubmission(zippedPage, notebookID);
-                                       }
-                                       catch (Exception ex)
-                                       {
-                                           Logger.Instance.WriteToLog("Submit to Projector Error: " + ex.Message);
-                                       }
-                                   })
-                        {
-                            IsBackground = true
-                        };
-                t.Start();
-            }
-            else
-            {
-                //TODO: Steve - add pages to a queue and send when a projector is found
-                Console.WriteLine("Projector NOT Available");
-            }
+            //if (App.Network.ProjectorProxy != null)
+            //{
+            //    var t = new Thread(() =>
+            //                       {
+            //                           try
+            //                           {
+            //                               App.Network.ProjectorProxy.AddSerializedSubmission(zippedPage, notebookID);
+            //                           }
+            //                           catch (Exception ex)
+            //                           {
+            //                               Logger.Instance.WriteToLog("Submit to Projector Error: " + ex.Message);
+            //                           }
+            //                       })
+            //            {
+            //                IsBackground = true
+            //            };
+            //    t.Start();
+            //}
+            //else
+            //{
+            //    //TODO: Steve - add pages to a queue and send when a projector is found
+            //    Console.WriteLine("Projector NOT Available");
+            //}
 
             var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
             if (notebookService == null)
@@ -140,29 +140,34 @@ namespace Classroom_Learning_Partner
             }
             submission.InkStrokes = StrokeDTO.LoadInkStrokes(submission.SerializedStrokes);
             submission.History.TrashedInkStrokes = StrokeDTO.LoadInkStrokes(submission.History.SerializedTrashedInkStrokes);
+
             var currentNotebook =
                 notebookService.OpenNotebooks.FirstOrDefault(notebook => notebookID == notebook.ID && notebook.OwnerID == App.MainWindowViewModel.CurrentUser.ID);
+
+            if (currentNotebook == null)
+            {
+                return;
+            }
+
+            var submissionNameComposite = PageNameComposite.ParsePageToNameComposite(submission);
+            var notebookNameComposite = NotebookNameComposite.ParseNotebookToNameComposite(currentNotebook);
 
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                        (DispatcherOperationCallback)delegate
                                                                                     {
                                                                                         try
                                                                                         {
-                                                                                            if (currentNotebook != null)
-                                                                                            {
-                                                                                                var page =
+                                                                                            var page =
                                                                                                     currentNotebook.Pages.FirstOrDefault(
                                                                                                                                          x =>
                                                                                                                                          x.ID == submission.ID &&
                                                                                                                                          x.DifferentiationLevel ==
                                                                                                                                          submission.DifferentiationLevel);
-                                                                                                if (page == null)
-                                                                                                {
-                                                                                                    return null;
-                                                                                                }
-                                                                                                page.Submissions.Add(submission);
+                                                                                            if (page == null)
+                                                                                            {
+                                                                                                return null;
                                                                                             }
-                                                                                            //TODO: QuickSave
+                                                                                            page.Submissions.Add(submission);
                                                                                         }
                                                                                         catch (Exception e)
                                                                                         {
