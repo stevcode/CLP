@@ -503,18 +503,32 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 sPage = ObjectSerializer.ToString(submission);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
+                Logger.Instance.WriteToLog("Failed To stringify submission");
+                Logger.Instance.WriteToLog("[UNHANDLED ERROR] - " + e.Message + " " +
+                                       (e.InnerException != null ? "\n" + e.InnerException.Message : null));
+                Logger.Instance.WriteToLog("[HResult]: " + e.HResult);
+                Logger.Instance.WriteToLog("[Source]: " + e.Source);
+                Logger.Instance.WriteToLog("[Method]: " + e.TargetSite);
+                Logger.Instance.WriteToLog("[StackTrace]: " + e.StackTrace);
             }
             
             CurrentPage.Submissions.Add(submission);
             CurrentPage.IsCached = true;
 
             var notebookService = DependencyResolver.Resolve<INotebookService>();
-            if (App.Network.InstructorProxy == null ||
-                notebookService == null ||
-                string.IsNullOrEmpty(sPage))
+            if (notebookService == null)
+            {
+                Logger.Instance.WriteToLog("notebook service null on submission");
+                return;
+            }
+            if (string.IsNullOrEmpty(sPage))
+            {
+                Logger.Instance.WriteToLog("sPage null or empty on submission");
+                return;
+            }
+            if (App.Network.InstructorProxy == null)
             {
                 Logger.Instance.WriteToLog("Instructor NOT Available for Student Submission");
                 return;

@@ -123,7 +123,7 @@ namespace Classroom_Learning_Partner
             //    //TODO: Steve - add pages to a queue and send when a projector is found
             //    Console.WriteLine("Projector NOT Available");
             //}
-
+            Logger.Instance.WriteToLog("received submission");
             var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
             if (notebookService == null)
             {
