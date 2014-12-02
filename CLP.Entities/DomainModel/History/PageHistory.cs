@@ -348,6 +348,7 @@ namespace CLP.Entities
                     RedoItems.Clear();
                 }
             }
+            OptimizeTrashedItems();
             UpdateTicks();
         }
 
