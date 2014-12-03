@@ -22,6 +22,9 @@ namespace Classroom_Learning_Partner
         void AddSerializedSubmission(string zippedPage, string notebookID);
 
         [OperationContract]
+        void AddSerializedPages(string zippedPages, string notebookID);
+
+        [OperationContract]
         void CollectStudentNotebookAndSubmissions(string zippedNotebook, string zippedSubmissions, string studentName);
 
         [OperationContract]
@@ -203,6 +206,67 @@ namespace Classroom_Learning_Partner
                                                                                         return null;
                                                                                     },
                                                        null);
+        }
+
+        public void AddSerializedPages(string zippedPages, string notebookID)
+        {
+            Logger.Instance.WriteToLog("received pages");
+            var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
+            if (notebookService == null)
+            {
+                return;
+            }
+
+            var currentNotebook =
+                notebookService.OpenNotebooks.FirstOrDefault(notebook => notebookID == notebook.ID && notebook.OwnerID == App.MainWindowViewModel.CurrentUser.ID);
+
+            if (currentNotebook == null)
+            {
+                return;
+            }
+
+            var unZippedPages = CLPServiceAgent.Instance.UnZip(zippedPages);
+            var pages = ObjectSerializer.ToObject(unZippedPages) as List<CLPPage>;
+
+            if (pages == null)
+            {
+                Logger.Instance.WriteToLog("Failed to receive student pages. Pages is null");
+                return;
+            }
+
+            foreach (var page in pages)
+            {
+                page.InkStrokes = StrokeDTO.LoadInkStrokes(page.SerializedStrokes);
+                page.History.TrashedInkStrokes = StrokeDTO.LoadInkStrokes(page.History.SerializedTrashedInkStrokes);
+
+                var pageNameComposite = PageNameComposite.ParsePageToNameComposite(page);
+                var notebookNameComposite = NotebookNameComposite.ParseNotebookToNameComposite(currentNotebook);
+                notebookNameComposite.OwnerID = page.OwnerID;
+                if (page.Owner == null)
+                {
+                    return;
+                }
+                notebookNameComposite.OwnerName = page.Owner.FullName;
+                notebookNameComposite.OwnerTypeTag = "S";
+
+                var collectionPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "PartialNotebooks");
+                if (!Directory.Exists(collectionPath))
+                {
+                    Directory.CreateDirectory(collectionPath);
+                }
+                var notebookPath = Path.Combine(collectionPath, notebookNameComposite.ToFolderName());
+                if (!Directory.Exists(notebookPath))
+                {
+                    Directory.CreateDirectory(notebookPath);
+                }
+                var pagesPath = Path.Combine(notebookPath, "Pages");
+                if (!Directory.Exists(pagesPath))
+                {
+                    Directory.CreateDirectory(pagesPath);
+                }
+                var pageFilePath = Path.Combine(pagesPath, pageNameComposite.ToFileName() + ".xml");
+                page.ToXML(pageFilePath);
+            }
         }
 
         public void CollectStudentNotebook(string zippedNotebook, string studentName)

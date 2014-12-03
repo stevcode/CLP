@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Catel.Data;
 using Catel.MVVM;
 using Catel.Windows;
@@ -94,16 +95,35 @@ namespace Classroom_Learning_Partner.ViewModels
                                   null,
                                   "Exporting Notebook");
 
-            //if (App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Student &&
-            //    App.Network.InstructorProxy == null)
-            //{
-            //    PleaseWaitHelper.Show(
-            //                      () =>
-            //                      App.Network.InstructorProxy.CollectStudentNotebookAndSubmissions(),
-            //                      null,
-            //                      "Collecting Notebook");
-            //    return;
-            //}
+            if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Student ||
+                App.Network.InstructorProxy != null)
+            {
+                return;
+            }
+
+            var zippedPages = string.Empty;
+            try
+            {
+                var sPages = ObjectSerializer.ToString(LoadedNotebookService.CurrentNotebook.Pages.ToList());
+                zippedPages = CLPServiceAgent.Instance.Zip(sPages);
+            }
+            catch (Exception)
+            {
+                Logger.Instance.WriteToLog("Failed to zip pages for collection.");
+                return;
+            }
+
+            if (string.IsNullOrEmpty(zippedPages))
+            {
+                Logger.Instance.WriteToLog("Failed to zip pages for collection.");
+                return;
+            }
+
+            PleaseWaitHelper.Show(
+                                  () =>
+                                  App.Network.InstructorProxy.AddSerializedPages(zippedPages, LoadedNotebookService.CurrentNotebook.ID),
+                                  null,
+                                  "Collecting Notebook");
         }
 
         private bool OnSaveCurrentNotebookCanExecute() { return Notebook != null; }

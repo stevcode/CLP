@@ -58,8 +58,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            var newName = "Elvis Garzona";
-            App.MainWindowViewModel.CurrentUser.FullName = newName;
+            const string NEW_NAME = "Elvis Garzona";
+            App.MainWindowViewModel.CurrentUser.FullName = NEW_NAME;
             var newPerson = App.MainWindowViewModel.CurrentUser;
             var notebook = notebookService.CurrentNotebook;
             notebook.Owner = newPerson;
