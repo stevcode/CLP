@@ -96,7 +96,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                   "Exporting Notebook");
 
             if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Student ||
-                App.Network.InstructorProxy != null)
+                App.Network.InstructorProxy == null)
             {
                 return;
             }
