@@ -7,6 +7,7 @@ using Catel.Data;
 
 namespace CLP.Entities
 {
+    [Serializable]
     public class PageObjectsMoveBatchHistoryItem : AHistoryItemBase, IHistoryBatch
     {
         #region Constructors
