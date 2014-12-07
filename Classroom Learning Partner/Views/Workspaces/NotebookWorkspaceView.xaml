@@ -15,6 +15,7 @@
     <DockPanel Background="{Binding WorkspaceBackgroundColor}"
                LastChildFill="True">
         
+        <!-- Context Ribbon -->
         <DockPanel DockPanel.Dock="Top"
                    Height="35"
                    LastChildFill="True"
@@ -60,7 +61,6 @@
             <views:ContextRibbonView DataContext="{Binding ContextRibbon}" />
             
         </DockPanel>
-        
 
         <!--Left Panel-->
         <Control DockPanel.Dock="Left">
@@ -147,8 +147,25 @@
                 </Style>
             </Control.Style>
         </Control>
-       
-        
+
+        <!-- Animation Control Ribbon -->
+        <DockPanel DockPanel.Dock="Top"
+                   Height="69"
+                   LastChildFill="True"
+                   HorizontalAlignment="Stretch"
+                   Background="{StaticResource GrayBackgroundColor}">
+
+            <Line DockPanel.Dock="Bottom"
+                  Stretch="Fill"
+                  X1="0"
+                  X2="1"
+                  Margin="-1 0 -1 0"
+                  Stroke="{DynamicResource DynamicMainColor}"
+                  StrokeThickness="1" />
+
+            <views:AnimationControlRibbonView />
+
+        </DockPanel>
 
         <!-- Control that dynamically determines what Display to show -->
         <Control HorizontalAlignment="Stretch"

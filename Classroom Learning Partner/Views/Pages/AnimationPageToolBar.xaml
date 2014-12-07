@@ -76,7 +76,7 @@
         <!--Playback Controls-->
         <DockPanel Name="PlaybackControls"
                    Grid.Row="0"
-                   Height="30"
+                   Height="34"
                    Background="LightSkyBlue"
                    LastChildFill="False">
             
@@ -214,13 +214,29 @@
                     Width="70"
                     FontSize="12" FontWeight="Bold" Background="White"
                     Command="{Binding ClearPageCommand}" />
-            
+
+            <Button Content="Slow Redo"
+                    DockPanel.Dock="Right"
+                    Width="70"
+                    FontSize="12"
+                    FontWeight="Bold"
+                    Background="White"
+                    Command="{Binding SlowRedoCommand}" />
+
+            <Button Content="Slow Undo"
+                    DockPanel.Dock="Right"
+                    Width="70"
+                    FontSize="12"
+                    FontWeight="Bold"
+                    Background="White"
+                    Command="{Binding SlowRedoCommand}" />
+
         </DockPanel>
 
         <!--Recording in Progress Indicator-->
         <Ellipse Grid.Row="1" Visibility="{Binding IsRecording, Converter={StaticResource BooleanToHidingVisibilityConverter}}"
                  HorizontalAlignment="Center" VerticalAlignment="Center"
-                 Height="30" Width="30"
+                 Height="34" Width="34"
                  StrokeThickness="0" Fill="Transparent">
             <Ellipse.Triggers>
                 <EventTrigger RoutedEvent="Loaded">
@@ -240,6 +256,7 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
+            
             <!--Rewind Button-->
             <Button Grid.Column="0"
                     Width="70" Background="MediumPurple"
@@ -278,7 +295,7 @@
                 </i:Interaction.Triggers>
             </Slider>
         </Grid>
-        
 
     </Grid>
+    
 </catel:UserControl>
