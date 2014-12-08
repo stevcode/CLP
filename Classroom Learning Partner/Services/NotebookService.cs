@@ -420,7 +420,8 @@ namespace Classroom_Learning_Partner.Services
                 return;
             }
 
-            if (App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Teacher &&
+            if ((App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Teacher ||
+                 App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Projector) &&
                 notebook.Owner.ID != Person.Author.ID &&
                 !notebook.Owner.IsStudent)
             {
