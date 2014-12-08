@@ -13,26 +13,7 @@ namespace Classroom_Learning_Partner.Views
     {
         public CLPPageView() { InitializeComponent(); }
 
-        protected override Type GetViewModelType() { return typeof(ACLPPageBaseViewModel); }
-
-        protected override Type GetViewModelType(object dataContext)
-        {
-            var page = dataContext as CLPPage;
-            if(page == null)
-            {
-                return null;
-            }
-
-            switch(page.PageType)
-            {
-                case PageTypes.Default:
-                    return typeof(CLPPageViewModel);
-                case PageTypes.Animation:
-                    return typeof(CLPAnimationPageViewModel);
-                default:
-                    return null;
-            }
-        }
+        protected override Type GetViewModelType() { return typeof(CLPPageViewModel); }
 
         protected override void OnViewModelChanged()
         {

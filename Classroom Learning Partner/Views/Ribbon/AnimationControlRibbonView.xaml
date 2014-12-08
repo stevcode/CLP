@@ -12,6 +12,7 @@
 
             <converters:AddLengthConverter x:Key="AddLengthConverter" />
             <catel:BooleanToHidingVisibilityConverter x:Key="BooleanToHidingVisibilityConverter" />
+            <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
             <catel:BooleanToOppositeBooleanConverter x:Key="BooleanToOppositeBooleanConverter" />
 
             <Style x:Key="AnimationThumbSliderStyle"
@@ -118,6 +119,7 @@
                     Width="70"
                     Background="Red"
                     Command="{Binding RecordAnimationCommand}"
+                    Visibility="{Binding IsNonAnimationPlayback, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}"
                     IsEnabled="{Binding IsPlaying, Converter={StaticResource BooleanToOppositeBooleanConverter}}">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -403,8 +405,8 @@
                     Height="25"
                     Width="{Binding ActualWidth, ElementName=PlaybackControls, Converter={StaticResource AddLengthConverter}, ConverterParameter=-75}"
                     Minimum="0"
-                    Maximum="{Binding History.TotalHistoryTicks}"
-                    Value="{Binding History.CurrentHistoryTick}"
+                    Maximum="{Binding CurrentPage.History.TotalHistoryTicks}"
+                    Value="{Binding CurrentPage.History.CurrentHistoryTick}"
                     IsSnapToTickEnabled="True"
                     TickFrequency="1.0"
                     IsMoveToPointEnabled="True">

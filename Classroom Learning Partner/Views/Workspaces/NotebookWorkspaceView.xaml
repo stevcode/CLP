@@ -153,7 +153,8 @@
                    Height="69"
                    LastChildFill="True"
                    HorizontalAlignment="Stretch"
-                   Background="{StaticResource GrayBackgroundColor}">
+                   Background="{StaticResource GrayBackgroundColor}"
+                   Visibility="{Binding AnimationControlRibbon.CanPlayback, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
 
             <Line DockPanel.Dock="Bottom"
                   Stretch="Fill"
@@ -163,7 +164,7 @@
                   Stroke="{DynamicResource DynamicMainColor}"
                   StrokeThickness="1" />
 
-            <views:AnimationControlRibbonView />
+            <views:AnimationControlRibbonView DataContext="{Binding AnimationControlRibbon}" />
 
         </DockPanel>
 

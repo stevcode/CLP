@@ -294,7 +294,6 @@
     <Compile Include="ViewModels\Modal Windows\PersonCreationViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Arrays\RemainderTilesViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\LassoRegionViewModel.cs" />
-    <Compile Include="ViewModels\Pages\CLPAnimationPageViewModel.cs" />
     <Compile Include="ViewModels\Pages\CLPPageViewModel.cs" />
     <Compile Include="ViewModels\Displays\SingleDisplayViewModel.cs" />
     <Compile Include="ViewModels\Tags\DivisionTemplateTroubleWithRemaindersTagViewModel.cs" />
@@ -390,9 +389,6 @@
     </Compile>
     <Compile Include="Views\PageObjects\Arrays\RemainderTilesView.xaml.cs">
       <DependentUpon>RemainderTilesView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Pages\AnimationPageToolBar.xaml.cs">
-      <DependentUpon>AnimationPageToolBar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Modal Windows\FuzzyFactorCardCreationView.xaml.cs">
       <DependentUpon>FuzzyFactorCardCreationView.xaml</DependentUpon>
@@ -681,10 +677,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PageObjects\Arrays\RemainderTilesView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Pages\AnimationPageToolBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

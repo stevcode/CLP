@@ -29,6 +29,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             Notebook = notebook;
             ContextRibbon = new ContextRibbonViewModel();
+            AnimationControlRibbon = new AnimationControlRibbonViewModel(notebook);
 
             //App.CurrentNotebookCacheDirectory = Path.Combine(App.NotebookCacheDirectory, Notebook.Name + ";" + Notebook.ID + ";" + Notebook.Owner.FullName + ";" + Notebook.OwnerID);
 
@@ -132,6 +133,17 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData ContextRibbonProperty = RegisterProperty("ContextRibbon", typeof (ContextRibbonViewModel));
+
+        /// <summary>
+        /// The Animation Control Ribbon.
+        /// </summary>
+        public AnimationControlRibbonViewModel AnimationControlRibbon
+        {
+            get { return GetValue<AnimationControlRibbonViewModel>(AnimationControlRibbonProperty); }
+            set { SetValue(AnimationControlRibbonProperty, value); }
+        }
+
+        public static readonly PropertyData AnimationControlRibbonProperty = RegisterProperty("AnimationControlRibbon", typeof (AnimationControlRibbonViewModel));
 
         #region Displays
 
@@ -425,6 +437,17 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
             return notebookWorkspaceViewModel == null ? null : notebookWorkspaceViewModel.ContextRibbon;
+        }
+
+        public static AnimationControlRibbonViewModel GetAnimationControlRibbon()
+        {
+            if (App.MainWindowViewModel == null)
+            {
+                return null;
+            }
+
+            var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
+            return notebookWorkspaceViewModel == null ? null : notebookWorkspaceViewModel.AnimationControlRibbon;
         }
 
         #endregion //Static Methods
