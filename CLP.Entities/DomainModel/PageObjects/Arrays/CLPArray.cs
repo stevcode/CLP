@@ -39,6 +39,15 @@ namespace CLP.Entities
             ArrayType = arrayType;
         }
 
+        public CLPArray(CLPPage parentPage, double gridSize, int columns, int rows, ArrayTypes arrayType)
+            : base(parentPage, columns, rows)
+        {
+            IsGridOn = rows < 26 && columns < 26;
+            ArrayType = arrayType;
+            Width = gridSize * columns + 2 * LabelLength;
+            Height = gridSize * rows + 2 * LabelLength;
+        }
+
         /// <summary>Initializes <see cref="CLPArray" /> based on <see cref="SerializationInfo" />.</summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext" />.</param>

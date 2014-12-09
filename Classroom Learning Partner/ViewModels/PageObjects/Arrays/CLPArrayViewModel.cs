@@ -1338,191 +1338,47 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            var arrayType = "ARRAY";
             int rows, columns, dividend = 1, numberOfArrays = 1;
-            switch (arrayType)
+            var arrayCreationView = new ArrayCreationView { Owner = Application.Current.MainWindow };
+            arrayCreationView.ShowDialog();
+
+            if (arrayCreationView.DialogResult != true)
             {
-                case "TENBYTEN":
-                    rows = 10;
-                    columns = 10;
-                    numberOfArrays = 1;
-                    break;
-                case "ARRAY":
-                    var arrayCreationView = new ArrayCreationView { Owner = Application.Current.MainWindow };
-                    arrayCreationView.ShowDialog();
-
-                    if (arrayCreationView.DialogResult != true)
-                    {
-                        return;
-                    }
-
-                    try
-                    {
-                        rows = Convert.ToInt32(arrayCreationView.Rows.Text);
-                    }
-                    catch (FormatException)
-                    {
-                        rows = 1;
-                    }
-
-                    try
-                    {
-                        columns = Convert.ToInt32(arrayCreationView.Columns.Text);
-                    }
-                    catch (FormatException)
-                    {
-                        columns = 1;
-                    }
-
-                    try
-                    {
-                        numberOfArrays = Convert.ToInt32(arrayCreationView.NumberOfArrays.Text);
-                    }
-                    catch (FormatException)
-                    {
-                        numberOfArrays = 1;
-                    }
-                    break;
-                case "FUZZYFACTORCARD":
-                    var factorCreationView = new FuzzyFactorCardCreationView { Owner = Application.Current.MainWindow };
-                    factorCreationView.ShowDialog();
-
-                    if (factorCreationView.DialogResult != true)
-                    {
-                        return;
-                    }
-
-                    try
-                    {
-                        dividend = Convert.ToInt32(factorCreationView.Product.Text);
-                    }
-                    catch (FormatException)
-                    {
-                        return;
-                    }
-
-                    try
-                    {
-                        rows = Convert.ToInt32(factorCreationView.Factor.Text);
-                    }
-                    catch (FormatException)
-                    {
-                        return;
-                    }
-
-                    columns = dividend / rows;
-                    numberOfArrays = 1;
-                    break;
-                case "FFCREMAINDER":
-                    var factorRemainderCreationView = new FuzzyFactorCardWithTilesCreationView
-                    {
-                        Owner = Application.Current.MainWindow
-                    };
-                    factorRemainderCreationView.ShowDialog();
-
-                    if (factorRemainderCreationView.DialogResult != true)
-                    {
-                        return;
-                    }
-
-                    try
-                    {
-                        dividend = Convert.ToInt32(factorRemainderCreationView.Product.Text);
-                    }
-                    catch (FormatException)
-                    {
-                        return;
-                    }
-
-                    try
-                    {
-                        rows = Convert.ToInt32(factorRemainderCreationView.Factor.Text);
-                    }
-                    catch (FormatException)
-                    {
-                        return;
-                    }
-
-                    columns = dividend / rows;
-                    numberOfArrays = 1;
-                    break;
-                case "ARRAYCARD":
-                case "FACTORCARD":
-                //    var factorCreationView = new FactorCardCreationView{ Owner = Application.Current.MainWindow};
-                //    factorCreationView.ShowDialog();
-                //    if(factorCreationView.DialogResult != true)
-                //    {
-                //        return;
-                //    }
-
-                //    try
-                //    {
-                //        dividend = Convert.ToInt32(factorCreationView.Product.Text);
-                //    }
-                //    catch(FormatException)
-                //    {
-                //        return;
-                //    }
-
-                //    try
-                //    {
-                //        rows = Convert.ToInt32(factorCreationView.Factor.Text);
-                //    }
-                //    catch(FormatException)
-                //    {
-                //        return;
-                //    }
-
-                //    columns = dividend / rows;
-                //    numberOfArrays = 1;
-                default:
-                    return;
+                return;
             }
 
-            var arraysToAdd = new List<ACLPArrayBase>();
-            foreach (var index in Enumerable.Range(1, numberOfArrays))
+            try
             {
-                ACLPArrayBase array;
-                switch (arrayType)
-                {
-                    case "TENBYTEN":
-                        array = new CLPArray(page, columns, rows, ArrayTypes.TenByTen);
-                        array.IsSnappable = false;
-                        array.IsTopLabelVisible = false;
-                        array.IsSideLabelVisible = false;
-                        break;
-                    case "ARRAY":
-                        array = new CLPArray(page, columns, rows, ArrayTypes.Array);
-                        break;
-                    case "FUZZYFACTORCARD":
-                        array = new FuzzyFactorCard(page, columns, rows, dividend);
-                        // HACK: Find better way to set this
-                        array.CreatorID = App.MainWindowViewModel.CurrentUser.ID;
-                        array.OwnerID = App.MainWindowViewModel.CurrentUser.ID;
-                        break;
-                    case "FFCREMAINDER":
-                        bool isRemainderRegionDisplayed = (dividend <= 50);
-                        array = new FuzzyFactorCard(page, columns, rows, dividend, isRemainderRegionDisplayed);
-                        // HACK: Find better way to set this
-                        array.CreatorID = App.MainWindowViewModel.CurrentUser.ID;
-                        if (isRemainderRegionDisplayed)
-                        {
-                            (array as FuzzyFactorCard).RemainderTiles.CreatorID = array.CreatorID;
-                            (array as FuzzyFactorCard).RemainderTiles.OwnerID = array.OwnerID;
-                        }
-                        break;
-                    case "ARRAYCARD":
-                        array = new CLPArray(page, columns, rows, ArrayTypes.ArrayCard);
-                        break;
-                    case "FACTORCARD":
-                        array = new CLPArray(page, columns, rows, ArrayTypes.FactorCard);
-                        break;
-                    default:
-                        return;
-                }
-
-                arraysToAdd.Add(array);
+                rows = Convert.ToInt32(arrayCreationView.Rows.Text);
             }
+            catch (FormatException)
+            {
+                rows = 1;
+            }
+
+            try
+            {
+                columns = Convert.ToInt32(arrayCreationView.Columns.Text);
+            }
+            catch (FormatException)
+            {
+                columns = 1;
+            }
+
+            try
+            {
+                numberOfArrays = Convert.ToInt32(arrayCreationView.NumberOfArrays.Text);
+            }
+            catch (FormatException)
+            {
+                numberOfArrays = 1;
+            }
+
+            var arrayType = "ARRAY";
+
+            var gridSize = 34.0;
+
+            var arraysToAdd = Enumerable.Range(1, numberOfArrays).Select(index => new CLPArray(page, gridSize, columns, rows, ArrayTypes.Array)).Cast<ACLPArrayBase>().ToList();
 
             int arrayStacks = MatchArrayGridSize(arraysToAdd, page);
 
@@ -1560,26 +1416,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
 
                 ACLPPageBaseViewModel.AddPageObjectToPage(firstArray);
-
-                if (arrayType == "FFCREMAINDER" && dividend <= 50)
-                {
-                    if (xPosition + firstArray.Width + 20.0 + (firstArray as FuzzyFactorCard).RemainderTiles.Width <= page.Width)
-                    {
-                        (firstArray as FuzzyFactorCard).RemainderTiles.XPosition = xPosition + firstArray.Width + 20.0;
-                    }
-                    else
-                    {
-                        (firstArray as FuzzyFactorCard).RemainderTiles.XPosition = page.Width - (firstArray as FuzzyFactorCard).RemainderTiles.Width;
-                    }
-                    if (yPosition + (firstArray as FuzzyFactorCard).LabelLength + (firstArray as FuzzyFactorCard).RemainderTiles.Height <= page.Height)
-                    {
-                        (firstArray as FuzzyFactorCard).RemainderTiles.YPosition = yPosition + (firstArray as FuzzyFactorCard).LabelLength;
-                    }
-                    else
-                    {
-                        (firstArray as FuzzyFactorCard).RemainderTiles.YPosition = page.Height - (firstArray as FuzzyFactorCard).RemainderTiles.Height;
-                    }
-                }
             }
             else
             {
@@ -1702,42 +1538,43 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var arrayStacks = 1;
             var isHorizontallyAligned = CurrentPage.Width / columns > CurrentPage.Height / 4 * 3 / rows;
-            firstArray.SizeArrayToGridLevel();
+            //firstArray.SizeArrayToGridLevel();
             var initialGridsquareSize = firstArray.GridSquareSize;
+            var initializedSquareSize = initialGridsquareSize;
             var xPosition = 0.0;
             var yPosition = 150.0;
 
             //attempt to size newArray to lastArray
             //if fail, resize all other arrays to newArray
             //squareSize will be the grid size of the most recently placed array, or 0 if there are no non-background arrays
-            double squareSize = 0.0;
-            if (!(firstArray is FuzzyFactorCard))
-            {
-                foreach (var pageObject in CurrentPage.PageObjects)
-                {
-                    if ((pageObject is CLPArray || pageObject is FuzzyFactorCard) && pageObject.CreatorID != Person.Author.ID)
-                    {
-                        squareSize = (pageObject as ACLPArrayBase).ArrayHeight / (pageObject as ACLPArrayBase).Rows;
-                    }
-                }
-            }
+            ////double squareSize = 0.0;
+            ////if (!(firstArray is FuzzyFactorCard))
+            ////{
+            ////    foreach (var pageObject in CurrentPage.PageObjects)
+            ////    {
+            ////        if ((pageObject is CLPArray || pageObject is FuzzyFactorCard) && pageObject.CreatorID != Person.Author.ID)
+            ////        {
+            ////            squareSize = (pageObject as ACLPArrayBase).ArrayHeight / (pageObject as ACLPArrayBase).Rows;
+            ////        }
+            ////    }
+            ////}
 
-            var minSide = (firstArray is FuzzyFactorCard)
-                ? MIN_FFC_SIDE :
-                MIN_SIDE;
-            var defaultSquareSize = (firstArray is FuzzyFactorCard) ?
-                Math.Max(45.0, (MIN_FFC_SIDE / (Math.Min(rows, columns)))) :
-                45.0;
-            var initializedSquareSize = (squareSize > 0) ? Math.Max(squareSize, (minSide / (Math.Min(rows, columns)))) : defaultSquareSize;
-            if ((firstArray is FuzzyFactorCard) && xPosition + initializedSquareSize * columns + LABEL_LENGTH * 3.0 + 12.0 > CurrentPage.Width)
-            {
-                initializedSquareSize = minSide / (Math.Min(rows, columns));
-            }
+            ////var minSide = (firstArray is FuzzyFactorCard)
+            ////    ? MIN_FFC_SIDE :
+            ////    MIN_SIDE;
+            ////var defaultSquareSize = (firstArray is FuzzyFactorCard) ?
+            ////    Math.Max(45.0, (MIN_FFC_SIDE / (Math.Min(rows, columns)))) :
+            ////    45.0;
+            ////var initializedSquareSize = (squareSize > 0) ? Math.Max(squareSize, (minSide / (Math.Min(rows, columns)))) : defaultSquareSize;
+            ////if ((firstArray is FuzzyFactorCard) && xPosition + initializedSquareSize * columns + LABEL_LENGTH * 3.0 + 12.0 > CurrentPage.Width)
+            ////{
+            ////    initializedSquareSize = minSide / (Math.Min(rows, columns));
+            ////}
 
-            while (xPosition + 2 * LABEL_LENGTH + initializedSquareSize * columns >= CurrentPage.Width || yPosition + 2 * LABEL_LENGTH + initializedSquareSize * rows >= CurrentPage.Height)
-            {
-                initializedSquareSize = Math.Abs(initializedSquareSize - 45.0) < .0001 ? 22.5 : initializedSquareSize / 4 * 3;
-            }
+            ////while (xPosition + 2 * LABEL_LENGTH + initializedSquareSize * columns >= CurrentPage.Width || yPosition + 2 * LABEL_LENGTH + initializedSquareSize * rows >= CurrentPage.Height)
+            ////{
+            ////    initializedSquareSize = Math.Abs(initializedSquareSize - 45.0) < .0001 ? 22.5 : initializedSquareSize / 4 * 3;
+            ////}
             if (numberOfArrays > 1)
             {
                 if (isHorizontallyAligned)
@@ -1796,38 +1633,38 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             // If it doesn't fit, resize all other non-background arrays on page to match new array grid size
-            if (squareSize > 0.0 && initializedSquareSize != squareSize)
-            {
-                Dictionary<string, Point> oldDimensions = new Dictionary<string, Point>();
-                foreach (var pageObject in CurrentPage.PageObjects)
-                {
-                    if (pageObject is CLPArray && pageObject.CreatorID != Person.Author.ID)
-                    {
-                        oldDimensions.Add(pageObject.ID, new Point(pageObject.Width, pageObject.Height));
-                        if ((pageObject as ACLPArrayBase).Rows * initializedSquareSize > MIN_SIDE && (pageObject as ACLPArrayBase).Columns * initializedSquareSize > MIN_SIDE)
-                        {
-                            if (pageObject.XPosition + (pageObject as ACLPArrayBase).Columns * initializedSquareSize + 2 * LABEL_LENGTH <= CurrentPage.Width && pageObject.YPosition + (pageObject as ACLPArrayBase).Rows * initializedSquareSize + 2 * LABEL_LENGTH <= CurrentPage.Height)
-                            {
-                                (pageObject as ACLPArrayBase).SizeArrayToGridLevel(initializedSquareSize);
-                            }
-                        }
-                        else
-                        {
-                            (pageObject as ACLPArrayBase).SizeArrayToGridLevel(MIN_SIDE / Math.Min((pageObject as ACLPArrayBase).Rows, (pageObject as ACLPArrayBase).Columns));
-                        }
-                    }
-                    initialGridsquareSize = initializedSquareSize;
-                }
-            }
+            ////if (squareSize > 0.0 && initializedSquareSize != squareSize)
+            ////{
+            ////    Dictionary<string, Point> oldDimensions = new Dictionary<string, Point>();
+            ////    foreach (var pageObject in CurrentPage.PageObjects)
+            ////    {
+            ////        if (pageObject is CLPArray && pageObject.CreatorID != Person.Author.ID)
+            ////        {
+            ////            oldDimensions.Add(pageObject.ID, new Point(pageObject.Width, pageObject.Height));
+            ////            if ((pageObject as ACLPArrayBase).Rows * initializedSquareSize > MIN_SIDE && (pageObject as ACLPArrayBase).Columns * initializedSquareSize > MIN_SIDE)
+            ////            {
+            ////                if (pageObject.XPosition + (pageObject as ACLPArrayBase).Columns * initializedSquareSize + 2 * LABEL_LENGTH <= CurrentPage.Width && pageObject.YPosition + (pageObject as ACLPArrayBase).Rows * initializedSquareSize + 2 * LABEL_LENGTH <= CurrentPage.Height)
+            ////                {
+            ////                    (pageObject as ACLPArrayBase).SizeArrayToGridLevel(initializedSquareSize);
+            ////                }
+            ////            }
+            ////            else
+            ////            {
+            ////                (pageObject as ACLPArrayBase).SizeArrayToGridLevel(MIN_SIDE / Math.Min((pageObject as ACLPArrayBase).Rows, (pageObject as ACLPArrayBase).Columns));
+            ////            }
+            ////        }
+            ////        initialGridsquareSize = initializedSquareSize;
+            ////    }
+            ////}
 
 
-            double MAX_HEIGHT = CurrentPage.Height - 400.0;
-            if (squareSize == 0.0)
-            {
-                initializedSquareSize = Math.Min(initialGridsquareSize, MAX_HEIGHT / rows);
-            }
+            ////double MAX_HEIGHT = CurrentPage.Height - 400.0;
+            ////if (squareSize == 0.0)
+            ////{
+            ////    initializedSquareSize = Math.Min(initialGridsquareSize, MAX_HEIGHT / rows);
+            ////}
 
-            firstArray.SizeArrayToGridLevel(initializedSquareSize);
+            ////firstArray.SizeArrayToGridLevel(initializedSquareSize);
 
             return arrayStacks;
         }
