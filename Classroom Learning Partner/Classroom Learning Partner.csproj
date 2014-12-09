@@ -283,6 +283,7 @@
     <Compile Include="ViewModels\BackStage\BackStageViewModel.cs" />
     <Compile Include="ViewModels\BackStage\APaneBaseViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\NumberLineViewModel.cs" />
+    <Compile Include="ViewModels\Ribbon\AnimationControlRibbonViewModel.cs" />
     <Compile Include="ViewModels\Ribbon\ContextRibbonViewModel.cs" />
     <Compile Include="ViewModels\Ribbon\MajorRibbonViewModel.cs" />
     <Compile Include="ViewModels\Tags\DivisionRelationDefinitionTagViewModel.cs" />
@@ -293,7 +294,6 @@
     <Compile Include="ViewModels\Modal Windows\PersonCreationViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Arrays\RemainderTilesViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\LassoRegionViewModel.cs" />
-    <Compile Include="ViewModels\Pages\CLPAnimationPageViewModel.cs" />
     <Compile Include="ViewModels\Pages\CLPPageViewModel.cs" />
     <Compile Include="ViewModels\Displays\SingleDisplayViewModel.cs" />
     <Compile Include="ViewModels\Tags\DivisionTemplateTroubleWithRemaindersTagViewModel.cs" />
@@ -389,9 +389,6 @@
     </Compile>
     <Compile Include="Views\PageObjects\Arrays\RemainderTilesView.xaml.cs">
       <DependentUpon>RemainderTilesView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Pages\AnimationPageToolBar.xaml.cs">
-      <DependentUpon>AnimationPageToolBar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Modal Windows\FuzzyFactorCardCreationView.xaml.cs">
       <DependentUpon>FuzzyFactorCardCreationView.xaml</DependentUpon>
@@ -561,6 +558,9 @@
     <Compile Include="Views\RibbonView.xaml.cs">
       <DependentUpon>RibbonView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Ribbon\AnimationControlRibbonView.xaml.cs">
+      <DependentUpon>AnimationControlRibbonView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Ribbon\ContextRibbonView.xaml.cs">
       <DependentUpon>ContextRibbonView.xaml</DependentUpon>
     </Compile>
@@ -677,10 +677,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PageObjects\Arrays\RemainderTilesView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Pages\AnimationPageToolBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -881,6 +877,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\RibbonView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Ribbon\AnimationControlRibbonView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

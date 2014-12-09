@@ -11,7 +11,6 @@ using CLP.Entities;
 namespace Classroom_Learning_Partner.ViewModels
 {
     [InterestedIn(typeof(CLPPageViewModel))]
-    [InterestedIn(typeof(CLPAnimationPageViewModel))]
     public class SingleDisplayViewModel : ViewModelBase
     {
         #region Constructor
@@ -217,34 +216,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnReplayHistoryCommandExecute()
         {
-            //var currentPage = CurrentPage;
-            //if (currentPage == null) { return; }
+            var animationControlRibbon = NotebookWorkspaceViewModel.GetAnimationControlRibbon();
+            if (CurrentPage == null ||
+                animationControlRibbon == null)
+            {
+                return;
+            }
 
-            //currentPage.IsTagAddPrevented = true;
-            //var oldPageInteractionMode = (App.MainWindowViewModel.MajorRibbon.PageInteractionMode == PageInteractionModes.None) ? PageInteractionModes.Draw : App.MainWindowViewModel.MajorRibbon.PageInteractionMode;
-            //App.MainWindowViewModel.MajorRibbon.PageInteractionMode = PageInteractionModes.None;
-
-            //while (currentPage.History.UndoItems.Any()) { currentPage.History.Undo(); }
-
-            //var t = new Thread(() =>
-            //{
-            //    while (currentPage.History.RedoItems.Any())
-            //    {
-            //        var historyItemAnimationDelay = Convert.ToInt32(Math.Round(currentPage.History.CurrentAnimationDelay / 1.0));
-            //        Application.Current.Dispatcher.Invoke(DispatcherPriority.DataBind,
-            //                                              (DispatcherOperationCallback)delegate
-            //                                              {
-            //                                                  currentPage.History.Redo(true);
-            //                                                  return null;
-            //                                              },
-            //                                              null);
-            //        Thread.Sleep(historyItemAnimationDelay);
-            //    }
-            //    currentPage.IsTagAddPrevented = false;
-            //    App.MainWindowViewModel.MajorRibbon.PageInteractionMode = oldPageInteractionMode;
-            //});
-
-            //t.Start();
+            animationControlRibbon.IsNonAnimationPlayback = !animationControlRibbon.IsNonAnimationPlayback;
         }
 
         #endregion //Commands

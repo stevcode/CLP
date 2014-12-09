@@ -1,0 +1,425 @@
+﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.AnimationControlRibbonView"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:catel="http://catel.codeplex.com"
+                   xmlns:converters="clr-namespace:Classroom_Learning_Partner.Converters"
+                   xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Resources/CLPPageResources.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <converters:AddLengthConverter x:Key="AddLengthConverter" />
+            <catel:BooleanToHidingVisibilityConverter x:Key="BooleanToHidingVisibilityConverter" />
+            <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
+            <catel:BooleanToOppositeBooleanConverter x:Key="BooleanToOppositeBooleanConverter" />
+
+            <Style x:Key="AnimationThumbSliderStyle"
+                   TargetType="{x:Type Thumb}">
+                <Setter Property="OverridesDefaultStyle"
+                        Value="True" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Thumb}">
+                            <Polygon Points="0,0 15,0 15,20 7.5,25 0,20"
+                                     Fill="LightGray"
+                                     StrokeThickness="1"
+                                     Stroke="Black" />
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="AnimationSliderStyle"
+                   TargetType="{x:Type Slider}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Slider}">
+                            <Border Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto"
+                                                       MinHeight="{TemplateBinding MinHeight}" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <TickBar x:Name="TopTick"
+                                             Visibility="Collapsed"
+                                             Fill="{TemplateBinding Foreground}"
+                                             Placement="Top"
+                                             Height="4"
+                                             Grid.Row="0" />
+                                    <TickBar x:Name="BottomTick"
+                                             Visibility="Collapsed"
+                                             Fill="{TemplateBinding Foreground}"
+                                             Placement="Bottom"
+                                             Height="4"
+                                             Grid.Row="2" />
+                                    <Border x:Name="TrackBackground"
+                                            BorderThickness="1"
+                                            CornerRadius="1"
+                                            Margin="5,0"
+                                            VerticalAlignment="Center"
+                                            Height="4.0"
+                                            Grid.Row="1">
+                                        <Canvas>
+                                            <Rectangle Visibility="Hidden"
+                                                       x:Name="PART_SelectionRange"
+                                                       Height="4.0"
+                                                       Fill="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"
+                                                       Stroke="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}"
+                                                       StrokeThickness="1.0" />
+                                        </Canvas>
+                                    </Border>
+                                    <Track x:Name="PART_Track"
+                                           Grid.Row="1">
+                                        <Track.DecreaseRepeatButton>
+                                            <RepeatButton Command="{x:Static Slider.DecreaseLarge}"
+                                                          Background="Yellow" />
+                                        </Track.DecreaseRepeatButton>
+                                        <Track.IncreaseRepeatButton>
+                                            <RepeatButton Command="{x:Static Slider.IncreaseLarge}"
+                                                          Background="Transparent"
+                                                          BorderThickness="0" />
+                                        </Track.IncreaseRepeatButton>
+                                        <Track.Thumb>
+                                            <Thumb x:Name="Thumb"
+                                                   Style="{StaticResource AnimationThumbSliderStyle}"
+                                                   Background="Black" />
+                                        </Track.Thumb>
+                                    </Track>
+                                </Grid>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid Background="LightGray">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!--Playback Controls-->
+        <DockPanel Name="PlaybackControls"
+                   Grid.Row="0"
+                   Height="34"
+                   Background="LightSkyBlue"
+                   LastChildFill="False">
+
+            <!--Record Button-->
+            <Button DockPanel.Dock="Left"
+                    Width="70"
+                    Background="Red"
+                    Command="{Binding RecordAnimationCommand}"
+                    Visibility="{Binding IsNonAnimationPlayback, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}"
+                    IsEnabled="{Binding IsPlaying, Converter={StaticResource BooleanToOppositeBooleanConverter}}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Ellipse Grid.Column="0"
+                             StrokeThickness="0"
+                             Fill="Black"
+                             Height="10"
+                             Width="10"
+                             Margin="3"
+                             HorizontalAlignment="Center">
+                        <Ellipse.Style>
+                            <Style TargetType="Ellipse">
+                                <Setter Property="Visibility"
+                                        Value="Visible" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsRecording}"
+                                                 Value="True">
+                                        <Setter Property="Visibility"
+                                                Value="Hidden" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Ellipse.Style>
+                    </Ellipse>
+                    <Rectangle Grid.Column="0"
+                               StrokeThickness="0"
+                               Fill="Black"
+                               Height="10"
+                               Width="10"
+                               Margin="3"
+                               HorizontalAlignment="Center">
+                        <Rectangle.Style>
+                            <Style TargetType="Rectangle">
+                                <Setter Property="Visibility"
+                                        Value="Hidden" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsRecording}"
+                                                 Value="True">
+                                        <Setter Property="Visibility"
+                                                Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Rectangle.Style>
+                    </Rectangle>
+                    <TextBlock Grid.Column="1"
+                               TextAlignment="Center"
+                               FontWeight="Bold">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Text"
+                                        Value="Record" />
+                                <Setter Property="FontSize"
+                                        Value="12" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsRecording}"
+                                                 Value="True">
+                                        <Setter Property="Text"
+                                                Value="Stop" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </Grid>
+            </Button>
+
+            <!--Play Button-->
+            <Button DockPanel.Dock="Left"
+                    Width="70"
+                    Background="Green"
+                    Command="{Binding PlayAnimationCommand}"
+                    IsEnabled="{Binding IsRecording, Converter={StaticResource BooleanToOppositeBooleanConverter}}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Polygon Grid.Column="0"
+                             StrokeThickness="0"
+                             Fill="Black"
+                             Points="0,0 10,5 0,10"
+                             Margin="3"
+                             HorizontalAlignment="Center">
+                        <Polygon.Style>
+                            <Style TargetType="Polygon">
+                                <Setter Property="Visibility"
+                                        Value="Visible" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsPlaying}"
+                                                 Value="True">
+                                        <Setter Property="Visibility"
+                                                Value="Hidden" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Polygon.Style>
+                    </Polygon>
+                    <Rectangle Grid.Column="0"
+                               StrokeThickness="0"
+                               Fill="Black"
+                               Height="10"
+                               Width="3.5"
+                               Margin="3"
+                               HorizontalAlignment="Left">
+                        <Rectangle.Style>
+                            <Style TargetType="Rectangle">
+                                <Setter Property="Visibility"
+                                        Value="Hidden" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsPlaying}"
+                                                 Value="True">
+                                        <Setter Property="Visibility"
+                                                Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Rectangle.Style>
+                    </Rectangle>
+                    <Rectangle Grid.Column="0"
+                               StrokeThickness="0"
+                               Fill="Black"
+                               Height="10"
+                               Width="3.5"
+                               Margin="3"
+                               HorizontalAlignment="Right">
+                        <Rectangle.Style>
+                            <Style TargetType="Rectangle">
+                                <Setter Property="Visibility"
+                                        Value="Hidden" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsPlaying}"
+                                                 Value="True">
+                                        <Setter Property="Visibility"
+                                                Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Rectangle.Style>
+                    </Rectangle>
+                    <TextBlock Grid.Column="1"
+                               TextAlignment="Center"
+                               FontWeight="Bold">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Text"
+                                        Value="Play" />
+                                <Setter Property="FontSize"
+                                        Value="12" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsPlaying}"
+                                                 Value="True">
+                                        <Setter Property="Text"
+                                                Value="Pause" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </Grid>
+            </Button>
+
+            <TextBlock DockPanel.Dock="Left"
+                       Text="Playback Speed:"
+                       TextAlignment="Right"
+                       VerticalAlignment="Center"
+                       Margin="10 0 5 0"
+                       FontWeight="Bold" />
+
+            <Slider DockPanel.Dock="Left"
+                    Minimum="0.25"
+                    Maximum="4"
+                    IsSnapToTickEnabled="True"
+                    TickFrequency="0.25"
+                    TickPlacement="BottomRight"
+                    Width="130"
+                    Margin="0 0 10 0"
+                    Value="{Binding CurrentPlaybackSpeed}" />
+
+            <Button Content="Clear Page"
+                    DockPanel.Dock="Right"
+                    Width="70"
+                    FontSize="12"
+                    FontWeight="Bold"
+                    Background="White"
+                    Command="{Binding ClearPageCommand}" />
+
+            <Button Content="Slow Redo"
+                    DockPanel.Dock="Right"
+                    Width="70"
+                    FontSize="12"
+                    FontWeight="Bold"
+                    Background="White"
+                    Command="{Binding SlowRedoCommand}" />
+
+            <Button Content="Slow Undo"
+                    DockPanel.Dock="Right"
+                    Width="70"
+                    FontSize="12"
+                    FontWeight="Bold"
+                    Background="White"
+                    Command="{Binding SlowRedoCommand}" />
+
+        </DockPanel>
+
+        <!--Recording in Progress Indicator-->
+        <Ellipse Grid.Row="1"
+                 Visibility="{Binding IsRecording, Converter={StaticResource BooleanToHidingVisibilityConverter}}"
+                 HorizontalAlignment="Center"
+                 VerticalAlignment="Center"
+                 Height="34"
+                 Width="34"
+                 StrokeThickness="0"
+                 Fill="Transparent">
+            <Ellipse.Triggers>
+                <EventTrigger RoutedEvent="Loaded">
+                    <BeginStoryboard>
+                        <Storyboard Storyboard.TargetProperty="(Ellipse.Fill).(SolidColorBrush.Color)">
+                            <ColorAnimation To="Red"
+                                            AutoReverse="True"
+                                            RepeatBehavior="Forever"
+                                            Duration="00:00:01" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Ellipse.Triggers>
+        </Ellipse>
+
+        <!--Animation Progress Bar-->
+        <Grid Grid.Row="1"
+              Visibility="{Binding History.IsAnimation, Converter={StaticResource BooleanToHidingVisibilityConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!--Rewind Button-->
+            <Button Grid.Column="0"
+                    Width="70"
+                    Background="MediumPurple"
+                    Margin="0 0 5 0"
+                    Command="{Binding RewindAnimationCommand}"
+                    IsEnabled="{Binding IsPlaying, Converter={StaticResource BooleanToOppositeBooleanConverter}}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Polygon Grid.Column="0"
+                             StrokeThickness="0"
+                             Fill="Black"
+                             Points="0,5 10,0 10,10"
+                             Margin="0 3 3 3"
+                             HorizontalAlignment="Center" />
+                    <Rectangle Grid.Column="0"
+                               StrokeThickness="0"
+                               Fill="Black"
+                               Height="10"
+                               Width="2"
+                               HorizontalAlignment="Left" />
+                    <TextBlock Grid.Column="1"
+                               TextAlignment="Center"
+                               FontWeight="Bold">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Text"
+                                        Value="Rewind" />
+                                <Setter Property="FontSize"
+                                        Value="12" />
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </Grid>
+            </Button>
+
+            <Slider Grid.Column="1"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Style="{StaticResource AnimationSliderStyle}"
+                    Height="25"
+                    Width="{Binding ActualWidth, ElementName=PlaybackControls, Converter={StaticResource AddLengthConverter}, ConverterParameter=-75}"
+                    Minimum="0"
+                    Maximum="{Binding CurrentPage.History.TotalHistoryTicks}"
+                    Value="{Binding CurrentPage.History.CurrentHistoryTick}"
+                    IsSnapToTickEnabled="True"
+                    TickFrequency="1.0"
+                    IsMoveToPointEnabled="True">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="ValueChanged">
+                        <catel:EventToCommand Command="{Binding SliderChangedCommand}"
+                                              PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Slider>
+            
+        </Grid>
+
+    </Grid>
+    
+</catel:UserControl>

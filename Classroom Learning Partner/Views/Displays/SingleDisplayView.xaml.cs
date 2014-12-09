@@ -45,14 +45,5 @@ namespace Classroom_Learning_Partner.Views
         }
 
         #endregion
-
-        private void CLPPageView_OnViewModelChanged(object sender, EventArgs e)
-        {
-            if(CLPPageView.ViewModel == null)
-            {
-                return;
-            }
-            AnimationPageToolBar.DataContext = CLPPageView.ViewModel;
-        }
     }
 }

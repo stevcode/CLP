@@ -405,27 +405,27 @@ namespace Classroom_Learning_Partner
 
         public void RewindCurrentPage()
         {
-            var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
-            if(notebookWorkspaceViewModel == null)
-            {
-                return;
-            }
+            //var notebookWorkspaceViewModel = App.MainWindowViewModel.Workspace as NotebookWorkspaceViewModel;
+            //if(notebookWorkspaceViewModel == null)
+            //{
+            //    return;
+            //}
 
-            var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(notebookWorkspaceViewModel.Notebook.CurrentPage).First(x => (x is CLPAnimationPageViewModel) && !(x as ACLPPageBaseViewModel).IsPagePreview) as CLPAnimationPageViewModel;
-            if(pageViewModel == null)
-            {
-                return;
-            }
+            //var pageViewModel = CLPServiceAgent.Instance.GetViewModelsFromModel(notebookWorkspaceViewModel.Notebook.CurrentPage).First(x => (x is CLPAnimationPageViewModel) && !(x as ACLPPageBaseViewModel).IsPagePreview) as CLPAnimationPageViewModel;
+            //if(pageViewModel == null)
+            //{
+            //    return;
+            //}
 
-            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                                                       (DispatcherOperationCallback)delegate
-                                                                                    {
+            //Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+            //                                           (DispatcherOperationCallback)delegate
+            //                                                                        {
 
-                                                                                        CLPAnimationPageViewModel.Rewind(pageViewModel);
+            //                                                                            CLPAnimationPageViewModel.Rewind(pageViewModel);
 
-                                                                                        return null;
-                                                                                    },
-                                                       null);
+            //                                                                            return null;
+            //                                                                        },
+            //                                           null);
         }
 
         #endregion //Animation Commands
