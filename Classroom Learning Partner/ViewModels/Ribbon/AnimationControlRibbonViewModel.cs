@@ -81,7 +81,8 @@ namespace Classroom_Learning_Partner.ViewModels
             var animationControlRibbonViewModel = sender as AnimationControlRibbonViewModel;
             var previousPage = advancedPropertyChangedEventArgs.OldValue as CLPPage;
             if (animationControlRibbonViewModel == null ||
-                previousPage == null)
+                previousPage == null ||
+                !animationControlRibbonViewModel.IsPlaying)
             {
                 return;
             }
@@ -337,7 +338,10 @@ namespace Classroom_Learning_Partner.ViewModels
             IsRecording = false;
             page.History.IsAnimating = false;
 
-            _pageInteractionService.SetPageInteractionMode(_oldPageInteractionMode);
+            if (_pageInteractionService.CurrentPageInteractionMode == PageInteractionModes.None)
+            {
+                _pageInteractionService.SetPageInteractionMode(_oldPageInteractionMode);
+            }
         }
 
         /// <summary>Plays the animation through to the specified point.</summary>
