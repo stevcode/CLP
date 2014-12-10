@@ -78,7 +78,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             _contextButtons.Add(new RibbonButton("Create Copies", "pack://application:,,,/Images/AddToDisplay.png", ParameterizeStampCommand, null, true));
 
-            var toggleChildPartsButton = new ToggleRibbonButton("Show Parts", "Hide Parts", "pack://application:,,,/Resources/Images/WindowControls/RestoreButton.png", true)
+            var toggleChildPartsButton = new ToggleRibbonButton("Show Group Sizes", "Hide Group Sizes", "pack://application:,,,/Resources/Images/WindowControls/RestoreButton.png", true)
             {
                 IsChecked = IsPartsLabelVisibleForChildren
             };
@@ -113,7 +113,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             foreach (var stampedObject in PageObject.ParentPage.PageObjects.OfType<StampedObject>().Where(x => x.ParentStampID == PageObject.ID))
             {
-                stampedObject.IsPartsLabelVisible = IsPartsLabelVisibleForChildren;
+                stampedObject.IsPartsLabelVisible = IsPartsLabelVisibleForChildren && !IsGroupStamp;
             }
         }
 
@@ -445,7 +445,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                             YPosition = miniGroupingYPosition + yOffset,
                                             SerializedStrokes = serializedStrokes.Select(stroke => stroke.ToStroke().ToStrokeDTO()).ToList(),
                                             Parts = stamp.Parts,
-                                            IsBoundaryVisible = !IsGroupStamp && IsBoundaryVisibleForChildren
+                                            IsBoundaryVisible = !IsGroupStamp && IsBoundaryVisibleForChildren,
                                         };
 
                     stampCopiesToAdd.Add(stampedObject);
@@ -494,7 +494,9 @@ namespace Classroom_Learning_Partner.ViewModels
                         XPosition = initialXPosition,
                         YPosition = initialYPosition,
                         SerializedStrokes = serializedStrokes.Select(stroke => stroke.ToStroke().ToStrokeDTO()).ToList(),
-                        Parts = stamp.Parts
+                        Parts = stamp.Parts,
+                        IsBoundaryVisible = !IsGroupStamp && IsBoundaryVisibleForChildren,
+                        IsPartsLabelVisible = IsPartsLabelVisibleForChildren && !IsGroupStamp
                     };
 
                     stampCopiesToAdd.Add(stampedObject);
@@ -694,7 +696,8 @@ namespace Classroom_Learning_Partner.ViewModels
                                     XPosition = stamp.XPosition + GhostOffsetX,
                                     YPosition = stamp.YPosition + GhostOffsetY + stamp.HandleHeight,
                                     Parts = stamp.Parts,
-                                    IsBoundaryVisible = !IsGroupStamp && IsBoundaryVisibleForChildren
+                                    IsBoundaryVisible = !IsGroupStamp && IsBoundaryVisibleForChildren,
+                                    IsPartsLabelVisible = IsPartsLabelVisibleForChildren && !IsGroupStamp
                                 };
 
             foreach (var stroke in stamp.AcceptedStrokes)

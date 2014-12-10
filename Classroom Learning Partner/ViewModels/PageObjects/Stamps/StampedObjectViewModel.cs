@@ -65,14 +65,36 @@ namespace Classroom_Learning_Partner.ViewModels
 
             ParameterizeStampedObjectCommand = new Command<bool>(OnParameterizeStampedObjectCommandExecute);
 
+            _contextButtons.Add(MajorRibbonViewModel.Separater);
             if (IsGroupStampedObject)
             {
-                _contextButtons.Add(MajorRibbonViewModel.Separater);
-
                 _contextButtons.Add(new RibbonButton("Create Copies", "pack://application:,,,/Images/AddToDisplay.png", ParameterizeStampedObjectCommand, null, true));
 
                 IsBoundaryVisible = false;
+                IsPartsLabelVisible = false;
             }
+            else
+            {
+                var toggleChildPartsButton = new ToggleRibbonButton("Show Group Size", "Hide Group Size", "pack://application:,,,/Resources/Images/WindowControls/RestoreButton.png", true)
+                {
+                    IsChecked = IsPartsLabelVisible
+                };
+                toggleChildPartsButton.Checked += toggleChildPartsButton_Checked;
+                toggleChildPartsButton.Unchecked += toggleChildPartsButton_Checked;
+                _contextButtons.Add(toggleChildPartsButton);
+            }
+        }
+
+        void toggleChildPartsButton_Checked(object sender, RoutedEventArgs e)
+        {
+            var button = sender as ToggleRibbonButton;
+            if (button == null ||
+                button.IsChecked == null)
+            {
+                return;
+            }
+
+            IsPartsLabelVisible = (bool)button.IsChecked;
         }
 
         /// <summary>Gets the title of the view model.</summary>
