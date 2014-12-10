@@ -142,24 +142,13 @@
             </TextBlock>
 
             <TextBlock Text="{Binding Parts}"
-                       Height="17"
-                       Width="17"
-                       Margin="-10 0 0 -10"
-                       HorizontalAlignment="Left"
+                       FontFamily="pack://application:,,,/Resources/Fonts/#SketchFlow Print"
+                       FontSize="18"
+                       Margin="0 0 0 -18"
+                       HorizontalAlignment="Center"
                        VerticalAlignment="Bottom"
                        TextAlignment="Center"
                        Visibility="{Binding IsPartsLabelVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, Mode=OneWay, FallbackValue=Collapsed}">
-                <TextBlock.Background>
-                    <VisualBrush>
-                        <VisualBrush.Visual>
-                            <Ellipse Height="17"
-                                     Width="17"
-                                     Fill="White"
-                                     Stroke="Black"
-                                     StrokeThickness="1" />
-                        </VisualBrush.Visual>
-                    </VisualBrush>
-                </TextBlock.Background>
             </TextBlock>
 
             <Thumb Tag="PageObjectHitBox"
