@@ -78,6 +78,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
             _contextButtons.Add(new RibbonButton("Create Copies", "pack://application:,,,/Images/AddToDisplay.png", ParameterizeStampCommand, null, true));
 
+            var toggleChildPartsButton = new ToggleRibbonButton("Show Parts", "Hide Parts", "pack://application:,,,/Resources/Images/WindowControls/RestoreButton.png", true)
+            {
+                IsChecked = IsPartsLabelVisibleForChildren
+            };
+            toggleChildPartsButton.Checked += toggleChildPartsButton_Checked;
+            toggleChildPartsButton.Unchecked += toggleChildPartsButton_Checked;
+            _contextButtons.Add(toggleChildPartsButton);
+
             if (IsGroupStamp)
             {
                 return;
@@ -90,6 +98,23 @@ namespace Classroom_Learning_Partner.ViewModels
             toggleChildBoundariesButton.Checked += toggleChildBoundariesButton_Checked;
             toggleChildBoundariesButton.Unchecked += toggleChildBoundariesButton_Checked;
             _contextButtons.Add(toggleChildBoundariesButton);
+        }
+
+        void toggleChildPartsButton_Checked(object sender, RoutedEventArgs e)
+        {
+            var button = sender as ToggleRibbonButton;
+            if (button == null ||
+                button.IsChecked == null)
+            {
+                return;
+            }
+
+            IsPartsLabelVisibleForChildren = (bool)button.IsChecked;
+
+            foreach (var stampedObject in PageObject.ParentPage.PageObjects.OfType<StampedObject>().Where(x => x.ParentStampID == PageObject.ID))
+            {
+                stampedObject.IsPartsLabelVisible = IsPartsLabelVisibleForChildren;
+            }
         }
 
         void toggleChildBoundariesButton_Checked(object sender, RoutedEventArgs e)
@@ -285,7 +310,18 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(IsBoundaryVisibleForChildrenProperty, value); }
         }
 
-        public static readonly PropertyData IsBoundaryVisibleForChildrenProperty = RegisterProperty("IsBoundaryVisibleForChildren", typeof(bool), true); 
+        public static readonly PropertyData IsBoundaryVisibleForChildrenProperty = RegisterProperty("IsBoundaryVisibleForChildren", typeof(bool), true);
+
+        /// <summary>
+        /// Toggles the visibility of Parts info for the Stamp's stampedObject children.
+        /// </summary>
+        public bool IsPartsLabelVisibleForChildren
+        {
+            get { return GetValue<bool>(IsPartsLabelVisibleForChildrenProperty); }
+            set { SetValue(IsPartsLabelVisibleForChildrenProperty, value); }
+        }
+
+        public static readonly PropertyData IsPartsLabelVisibleForChildrenProperty = RegisterProperty("IsPartsLabelVisibleForChildren", typeof (bool), false);
 
         #endregion //Properties
 

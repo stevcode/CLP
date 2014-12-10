@@ -113,6 +113,17 @@ namespace CLP.Entities
 
         public static readonly PropertyData IsBoundaryVisibleProperty = RegisterProperty("IsBoundaryVisible", typeof (bool), true);
 
+        /// <summary>
+        /// Toggles visibility of Parts.
+        /// </summary>
+        public bool IsPartsLabelVisible
+        {
+            get { return GetValue<bool>(IsPartsLabelVisibleProperty); }
+            set { SetValue(IsPartsLabelVisibleProperty, value); }
+        }
+
+        public static readonly PropertyData IsPartsLabelVisibleProperty = RegisterProperty("IsPartsLabelVisible", typeof (bool), false);
+
         #region ICountable Members
 
         /// <summary>Number of parts the <see cref="Stamp" /> represents.</summary>

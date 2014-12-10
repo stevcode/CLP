@@ -118,6 +118,18 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData IsBoundaryVisibleProperty = RegisterProperty("IsBoundaryVisible", typeof(bool));
 
+        /// <summary>
+        /// Toggles visibility of Parts.
+        /// </summary>
+        [ViewModelToModel("PageObject")]
+        public bool IsPartsLabelVisible
+        {
+            get { return GetValue<bool>(IsPartsLabelVisibleProperty); }
+            set { SetValue(IsPartsLabelVisibleProperty, value); }
+        }
+
+        public static readonly PropertyData IsPartsLabelVisibleProperty = RegisterProperty("IsPartsLabelVisible", typeof(bool));
+
         #endregion //Model
 
         #region Binding
