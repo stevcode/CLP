@@ -103,30 +103,6 @@ namespace Classroom_Learning_Partner
 
         public void AddSerializedSubmission(string zippedPage, string notebookID)
         {
-            //if (App.Network.ProjectorProxy != null)
-            //{
-            //    var t = new Thread(() =>
-            //                       {
-            //                           try
-            //                           {
-            //                               App.Network.ProjectorProxy.AddSerializedSubmission(zippedPage, notebookID);
-            //                           }
-            //                           catch (Exception ex)
-            //                           {
-            //                               Logger.Instance.WriteToLog("Submit to Projector Error: " + ex.Message);
-            //                           }
-            //                       })
-            //            {
-            //                IsBackground = true
-            //            };
-            //    t.Start();
-            //}
-            //else
-            //{
-            //    //TODO: Steve - add pages to a queue and send when a projector is found
-            //    Console.WriteLine("Projector NOT Available");
-            //}
-            Logger.Instance.WriteToLog("received submission");
             var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
             if (notebookService == null)
             {
@@ -206,6 +182,28 @@ namespace Classroom_Learning_Partner
                                                                                         return null;
                                                                                     },
                                                        null);
+
+            if (App.Network.ProjectorProxy == null)
+            {
+                Logger.Instance.WriteToLog("Projector NOT Available for Student Submission");
+                return;
+            }
+
+            var t = new Thread(() =>
+            {
+                try
+                {
+                    App.Network.ProjectorProxy.AddSerializedSubmission(zippedPage, notebookID);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Instance.WriteToLog("Error Sending Submission: " + ex.Message);
+                }
+            })
+            {
+                IsBackground = true
+            };
+            t.Start();
         }
 
         public void AddSerializedPages(string zippedPages, string notebookID)

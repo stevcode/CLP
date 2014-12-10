@@ -310,49 +310,59 @@ namespace Classroom_Learning_Partner
 
         public void AddSerializedSubmission(string zippedPage, string notebookID)
         {
+            var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
+            if (notebookService == null)
+            {
+                return;
+            }
+
             var unZippedPage = CLPServiceAgent.Instance.UnZip(zippedPage);
             var submission = ObjectSerializer.ToObject(unZippedPage) as CLPPage;
 
-            if(submission == null)
+            if (submission == null ||
+                submission.Owner == null)
             {
                 Logger.Instance.WriteToLog("Failed to receive student submission. Page or Submitter is null.");
                 return;
             }
             submission.InkStrokes = StrokeDTO.LoadInkStrokes(submission.SerializedStrokes);
             submission.History.TrashedInkStrokes = StrokeDTO.LoadInkStrokes(submission.History.SerializedTrashedInkStrokes);
-            var notebookService = ServiceLocator.Default.ResolveType<INotebookService>();
-            if (notebookService == null)
+
+            var currentNotebook =
+                notebookService.OpenNotebooks.FirstOrDefault(notebook => notebookID == notebook.ID && notebook.OwnerID == App.MainWindowViewModel.CurrentUser.ID);
+
+            if (currentNotebook == null)
             {
                 return;
             }
-            var currentNotebook = notebookService.OpenNotebooks.FirstOrDefault(notebook => notebookID == notebook.ID && notebook.OwnerID == App.MainWindowViewModel.CurrentUser.ID);
 
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                        (DispatcherOperationCallback)delegate
-                                                                                    {
-                                                                                        
+                                                       {
+                                                           try
+                                                           {
+                                                               var page =
+                                                                       currentNotebook.Pages.FirstOrDefault(
+                                                                                                            x =>
+                                                                                                            x.ID == submission.ID &&
+                                                                                                            x.DifferentiationLevel ==
+                                                                                                            submission.DifferentiationLevel);
+                                                               if (page == null)
+                                                               {
+                                                                   return null;
+                                                               }
+                                                               page.Submissions.Add(submission);
+                                                           }
+                                                           catch (Exception e)
+                                                           {
+                                                               Logger.Instance.WriteToLog("[ERROR] Recieved Submission from wrong notebook: " +
+                                                                                          e.Message);
+                                                           }
 
-                                                                                        try
-                                                                                        {
-                                                                                            if(currentNotebook != null)
-                                                                                            {
-                                                                                                var page = currentNotebook.Pages.FirstOrDefault(x => x.ID == submission.ID && x.DifferentiationLevel == submission.DifferentiationLevel);
-                                                                                                if(page == null)
-                                                                                                {
-                                                                                                    return null;
-                                                                                                }
-                                                                                                page.Submissions.Add(submission);
-                                                                                            }
-                                                                                            //TODO: QuickSave
-                                                                                        }
-                                                                                        catch(Exception e)
-                                                                                        {
-                                                                                            Logger.Instance.WriteToLog("[ERROR] Recieved Submission from wrong notebook: " + e.Message);
-                                                                                        }
-
-                                                                                        return null;
-                                                                                    },
+                                                           return null;
+                                                       },
                                                        null);
+
         }
 
         public void ScrollPage(double percentOffset)
