@@ -1,4 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using Catel.Data;
@@ -6,6 +8,7 @@ using Catel.IO;
 using Catel.IoC;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Services;
+using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Entities;
 using Brush = System.Windows.Media.Brush;
 
@@ -35,6 +38,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             PreviousPageCommand = new Command(OnPreviousPageCommandExecute, OnPreviousPageCanExecute);
             NextPageCommand = new Command(OnNextPageCommandExecute, OnNextPageCanExecute);
+            GoToPageCommand = new Command(OnGoToPageCommandExecute);
 
             InitializePanels(notebook);
 
@@ -349,6 +353,44 @@ namespace Classroom_Learning_Partner.ViewModels
             var index = panel.Notebook.Pages.IndexOf(currentPage);
             return index < panel.Notebook.Pages.Count - 1;
         } 
+
+        /// <summary>
+        /// Launched keypad to allow a jump to a specific page.
+        /// </summary>
+        public Command GoToPageCommand { get; private set; }
+
+        private void OnGoToPageCommandExecute()
+        {
+            if (Notebook == null)
+            {
+                MessageBox.Show("No notebook loaded.");
+                return;
+            }
+
+            var keyPad = new KeypadWindowView("Go To Page", 1001)
+            {
+                Owner = Application.Current.MainWindow,
+                WindowStartupLocation = WindowStartupLocation.Manual
+            };
+            keyPad.ShowDialog();
+            if (keyPad.DialogResult != true ||
+                keyPad.NumbersEntered.Text.Length <= 0)
+            {
+                return;
+            }
+
+            var newPageIndex = Int32.Parse(keyPad.NumbersEntered.Text);
+
+            var newPage = Notebook.Pages.FirstOrDefault(x => x.PageNumber == newPageIndex);
+
+            if (newPage == null)
+            {
+                MessageBox.Show("No page with that page number loaded.");
+                return;
+            }
+
+            Notebook.CurrentPage = newPage;
+        }
 
         #endregion //Commands
 

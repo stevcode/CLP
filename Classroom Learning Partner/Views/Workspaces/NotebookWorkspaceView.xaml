@@ -58,6 +58,12 @@
                   Stroke="{DynamicResource DynamicMainColor}"
                   StrokeThickness="1" />
 
+            <customControls:RibbonButton DockPanel.Dock="Left"
+                                         Text="Go To Page"
+                                         Command="{Binding GoToPageCommand}"
+                                         LargeImageSource="pack://application:,,,/Resources/Images/BlankPage64.png"
+                                         IsContextButton="True" />
+
             <views:ContextRibbonView DataContext="{Binding ContextRibbon}" />
             
         </DockPanel>
