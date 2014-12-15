@@ -13,8 +13,10 @@ namespace Classroom_Learning_Partner.Views
     {
         public ArrayCreationView()
         {
-            Left = 515;
-            Top = 315;
+            //Left = 515;
+            //Top = 315;
+            Top = SystemParameters.FullPrimaryScreenHeight / 2 - 150;
+            Left = SystemParameters.FullPrimaryScreenWidth / 2 - 300;
             InitializeComponent();
             _focusedTextBox = Rows;
             _focusedTextBox.Focus();

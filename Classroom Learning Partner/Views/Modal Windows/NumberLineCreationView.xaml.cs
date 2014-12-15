@@ -10,8 +10,8 @@ namespace Classroom_Learning_Partner.Views.Modal_Windows
         public NumberLineCreationView()
         {
             InitializeComponent();
-            Top = SystemParameters.FullPrimaryScreenHeight - 350;
-            Left = SystemParameters.FullPrimaryScreenWidth - 350;
+            Top = SystemParameters.FullPrimaryScreenHeight / 2 - 150;
+            Left = SystemParameters.FullPrimaryScreenWidth / 2 - 150;
         }
 
         private const int LIMIT = 85;

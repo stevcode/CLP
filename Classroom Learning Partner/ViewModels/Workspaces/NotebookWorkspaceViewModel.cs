@@ -367,7 +367,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            var keyPad = new KeypadWindowView("Go To Page", 1001)
+            var keyPad = new KeypadWindowView("Go To Page", 999)
             {
                 Owner = Application.Current.MainWindow,
                 WindowStartupLocation = WindowStartupLocation.Manual
