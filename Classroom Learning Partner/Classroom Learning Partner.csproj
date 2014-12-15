@@ -282,6 +282,7 @@
     <Compile Include="Utilities\ObservableCollectionOperation.cs" />
     <Compile Include="ViewModels\BackStage\BackStageViewModel.cs" />
     <Compile Include="ViewModels\BackStage\APaneBaseViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\MultipleChoiceBoxViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\NumberLineViewModel.cs" />
     <Compile Include="ViewModels\Ribbon\AnimationControlRibbonViewModel.cs" />
     <Compile Include="ViewModels\Ribbon\ContextRibbonViewModel.cs" />
