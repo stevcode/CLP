@@ -94,7 +94,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Images
             //TODO: Better Icons
-            _insertImageButton = new RibbonButton("Text", "pack://application:,,,/Images/AddImage.png", AddPageObjectToPageCommand, "IMAGE");
+            _insertImageButton = new RibbonButton("Image", "pack://application:,,,/Images/AddImage.png", AddPageObjectToPageCommand, "IMAGE");
 
             //Stamps
             _insertGeneralStampButton = new RibbonButton("Stamp", "pack://application:,,,/Resources/Images/Stamp32.png", AddPageObjectToPageCommand, "BLANK_GENERAL_STAMP");
@@ -712,6 +712,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             // Insert Text Box
             Buttons.Add(Separater);
+            Buttons.Add(_insertImageButton);
             Buttons.Add(_insertTextBoxButton);
         }
 
