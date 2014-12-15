@@ -382,6 +382,9 @@
     <Compile Include="Views\Modal Windows\NotebookMetadataWindowView.xaml.cs">
       <DependentUpon>NotebookMetadataWindowView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\PageObjects\MultipleChoiceBoxView.xaml.cs">
+      <DependentUpon>MultipleChoiceBoxView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PageObjects\NumberLineView.xaml.cs">
       <DependentUpon>NumberLineView.xaml</DependentUpon>
     </Compile>
@@ -666,6 +669,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Modal Windows\NotebookMetadataWindowView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PageObjects\MultipleChoiceBoxView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
