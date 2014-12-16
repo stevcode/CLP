@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Controls.Primitives;
 using Catel.Data;
 using Catel.MVVM;
+using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -34,16 +36,6 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData ChoiceBubblesProperty = RegisterProperty("ChoiceBubbles", typeof(List<MultipleChoiceBubble>)); 
 
         #endregion //Model
-
-        #region Static Methods
-
-        public static void AddMultipleChoiceBoxToPage(CLPPage page)
-        {
-            var multipleChoiceBox = new MultipleChoiceBox(page, 4, "C", MultipleChoiceOrientations.Horizontal, MultipleChoiceLabelTypes.Letters);
-            ACLPPageBaseViewModel.AddPageObjectToPage(multipleChoiceBox);
-        } 
-
-        #endregion //Static Methods
 
         #region Commands
 
@@ -81,5 +73,30 @@ namespace Classroom_Learning_Partner.ViewModels
         } 
 
         #endregion //Commands
+
+        #region Static Methods
+
+        public static void AddMultipleChoiceBoxToPage(CLPPage page)
+        {
+            var keyPad = new KeypadWindowView("Index of Correct Answer", 5)
+            {
+                Owner = Application.Current.MainWindow,
+                WindowStartupLocation = WindowStartupLocation.Manual
+            };
+            keyPad.ShowDialog();
+            if (keyPad.DialogResult != true ||
+                keyPad.NumbersEntered.Text.Length <= 0)
+            {
+                return;
+            }
+
+            var correctAnswerIndex = Int32.Parse(keyPad.NumbersEntered.Text);
+            var correctAnswerValue = MultipleChoiceBubble.IntToUpperLetter(correctAnswerIndex);
+
+            var multipleChoiceBox = new MultipleChoiceBox(page, 4, correctAnswerValue, MultipleChoiceOrientations.Horizontal, MultipleChoiceLabelTypes.Letters);
+            ACLPPageBaseViewModel.AddPageObjectToPage(multipleChoiceBox);
+        }
+
+        #endregion //Static Methods
     }
 }

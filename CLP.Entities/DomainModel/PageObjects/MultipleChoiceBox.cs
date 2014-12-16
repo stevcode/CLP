@@ -86,7 +86,7 @@ namespace CLP.Entities
 
         #region Methods
 
-        private string IntToUpperLetter(int index)
+        public static string IntToUpperLetter(int index)
         {
             if (index < 1 ||
                 index > 26)
