@@ -8,7 +8,6 @@
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
     
     <UserControl.Resources>
-        <catel:BooleanToHidingVisibilityConverter x:Key="BooleanToHidingVisibilityConverter" />
         <resources:LengthConverter x:Key="LengthConverter" />
         <converters:MultiplyAllMultiConverter x:Key="MultiplyAllMultiConverter" />
     </UserControl.Resources>
@@ -82,7 +81,7 @@
                        Canvas.Bottom="-40">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="DragDelta">
-                            <catel:EventToCommand Command="{Binding ResizePageObjectLineCommand}"
+                            <catel:EventToCommand Command="{Binding ResizeMultipleChoiceBoxCommand}"
                                                   PassEventArgsToCommand="True" />
                         </i:EventTrigger>
                         <i:EventTrigger EventName="DragStarted">
@@ -150,7 +149,34 @@
                                    VerticalAlignment="Center"
                                    HorizontalAlignment="Center"
                                    FontWeight="Bold"
-                                   FontSize="20">
+                                   FontSize="22">
+                            <TextBlock.Background>
+                                <VisualBrush>
+                                    <VisualBrush.Visual>
+                                        <Ellipse Height="{Binding DataContext.PageObject.ChoiceBubbleDiameter, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                                 Width="{Binding DataContext.PageObject.ChoiceBubbleDiameter, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                                 Stroke="Black">
+                                            <Ellipse.Style>
+                                                <Style TargetType="Ellipse">
+                                                    <Setter Property="Fill" Value="White" />
+                                                    <Style.Triggers>
+                                                        <MultiDataTrigger>
+                                                            <MultiDataTrigger.Conditions>
+                                                                <Condition Binding="{Binding IsACorrectValue}"
+                                                                           Value="True" />
+                                                                <Condition Binding="{Binding MainWindowViewModel.IsAuthoring, Source={x:Static Application.Current}}"
+                                                                           Value="True" />
+                                                            </MultiDataTrigger.Conditions>
+                                                            <Setter Property="Fill"
+                                                                    Value="PaleGreen" />
+                                                        </MultiDataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Ellipse.Style>
+                                        </Ellipse>
+                                    </VisualBrush.Visual>
+                                </VisualBrush>
+                            </TextBlock.Background>
                         </TextBlock>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>

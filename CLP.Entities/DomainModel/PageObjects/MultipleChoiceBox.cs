@@ -38,9 +38,7 @@ namespace CLP.Entities
 
         #region Properties
 
-        /// <summary>
-        /// Index location of the choice bubble.
-        /// </summary>
+        /// <summary>Index location of the choice bubble.</summary>
         public int ChoiceBubbleIndex
         {
             get { return GetValue<int>(ChoiceBubbleIndexProperty); }
@@ -49,9 +47,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData ChoiceBubbleIndexProperty = RegisterProperty("ChoiceBubbleIndex", typeof (int), 0);
 
-        /// <summary>
-        /// Label for the choice bubble.
-        /// </summary>
+        /// <summary>Label for the choice bubble.</summary>
         public string ChoiceBubbleLabel
         {
             get { return GetValue<string>(ChoiceBubbleLabelProperty); }
@@ -60,9 +56,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData ChoiceBubbleLabelProperty = RegisterProperty("ChoiceBubbleLabel", typeof (string), string.Empty);
 
-        /// <summary>
-        /// Signifies the Bubble represents a correct answer.
-        /// </summary>
+        /// <summary>Signifies the Bubble represents a correct answer.</summary>
         public bool IsACorrectValue
         {
             get { return GetValue<bool>(IsACorrectValueProperty); }
@@ -84,13 +78,13 @@ namespace CLP.Entities
             }
 
             return "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[index - 1].ToString();
-        } 
+        }
 
         #endregion //Methods
     }
 
     [Serializable]
-    public class MultipleChoiceBox : APageObjectBase//, IStrokeAccepter
+    public class MultipleChoiceBox : APageObjectBase //, IStrokeAccepter
     {
         #region Constructor
 
@@ -103,8 +97,9 @@ namespace CLP.Entities
             Height = orientation == MultipleChoiceOrientations.Horizontal ? ChoiceBubbleDiameter : ChoiceBubbleDiameter * numberOfChoices + 5 * (numberOfChoices - 1);
             Width = orientation == MultipleChoiceOrientations.Vertical ? ChoiceBubbleDiameter : ChoiceBubbleDiameter * numberOfChoices + 5 * (numberOfChoices - 1);
 
-            foreach (var choiceBubble in Enumerable.Range(0, numberOfChoices).Select(i => new MultipleChoiceBubble(i, labelType))) 
+            foreach (var choiceBubble in Enumerable.Range(0, numberOfChoices).Select(i => new MultipleChoiceBubble(i, labelType)))
             {
+                choiceBubble.IsACorrectValue = correctAnswerLabel == choiceBubble.ChoiceBubbleLabel;
                 ChoiceBubbles.Add(choiceBubble);
             }
         }
@@ -133,12 +128,10 @@ namespace CLP.Entities
 
         public double ChoiceBubbleGapLength
         {
-            get { return (Orientation == MultipleChoiceOrientations.Horizontal ? Width : Height) / (ChoiceBubbles.Count - 1); }
+            get { return ((Orientation == MultipleChoiceOrientations.Horizontal ? Width : Height) - ChoiceBubbleDiameter) / (ChoiceBubbles.Count - 1); }
         }
 
-        /// <summary>
-        /// Orientation of box.
-        /// </summary>
+        /// <summary>Orientation of box.</summary>
         public MultipleChoiceOrientations Orientation
         {
             get { return GetValue<MultipleChoiceOrientations>(OrientationProperty); }
@@ -147,9 +140,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData OrientationProperty = RegisterProperty("Orientation", typeof (MultipleChoiceOrientations), MultipleChoiceOrientations.Horizontal);
 
-        /// <summary>
-        /// List of the available choices for the Multiple Choice Box.
-        /// </summary>
+        /// <summary>List of the available choices for the Multiple Choice Box.</summary>
         public List<MultipleChoiceBubble> ChoiceBubbles
         {
             get { return GetValue<List<MultipleChoiceBubble>>(ChoiceBubblesProperty); }
@@ -176,6 +167,16 @@ namespace CLP.Entities
             newMultipleChoiceBox.ParentPage = ParentPage;
 
             return newMultipleChoiceBox;
+        }
+
+        protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Width" ||
+                e.PropertyName == "Height")
+            {
+                RaisePropertyChanged("ChoiceBubbleGapLength");
+            }
+            base.OnPropertyChanged(e);
         }
 
         #endregion //Methods

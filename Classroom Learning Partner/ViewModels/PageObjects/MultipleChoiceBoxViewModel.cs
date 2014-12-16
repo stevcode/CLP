@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Windows.Controls.Primitives;
 using Catel.Data;
 using Catel.MVVM;
 using CLP.Entities;
@@ -9,7 +11,11 @@ namespace Classroom_Learning_Partner.ViewModels
     {
         #region Constructor
 
-        public MultipleChoiceBoxViewModel(MultipleChoiceBox multipleChoiceBox) { PageObject = multipleChoiceBox; }
+        public MultipleChoiceBoxViewModel(MultipleChoiceBox multipleChoiceBox)
+        {
+            PageObject = multipleChoiceBox;
+            ResizeMultipleChoiceBoxCommand = new Command<DragDeltaEventArgs>(OnResizeMultipleChoiceBoxCommandExecute);
+        }
 
         #endregion //Constructor
 
@@ -38,5 +44,42 @@ namespace Classroom_Learning_Partner.ViewModels
         } 
 
         #endregion //Static Methods
+
+        #region Commands
+
+        /// <summary>Change the length of the number line</summary>
+        public Command<DragDeltaEventArgs> ResizeMultipleChoiceBoxCommand { get; private set; }
+
+        private void OnResizeMultipleChoiceBoxCommandExecute(DragDeltaEventArgs e)
+        {
+            var multipleChoiceBox = PageObject as MultipleChoiceBox;
+            if (multipleChoiceBox == null)
+            {
+                return;
+            }
+            var initialWidth = Width;
+            var initialHeight = Height;
+            var parentPage = PageObject.ParentPage;
+            var minSize = ChoiceBubbles.Count * multipleChoiceBox.ChoiceBubbleDiameter;
+
+            var newWidth = Math.Max(minSize, Width + e.HorizontalChange);
+            newWidth = Math.Min(newWidth, parentPage.Width - XPosition);
+
+            var newHeight = Math.Max(minSize, Height + e.VerticalChange);
+            newHeight = Math.Min(newHeight, parentPage.Height - YPosition);
+
+            if (multipleChoiceBox.Orientation == MultipleChoiceOrientations.Horizontal)
+            {
+                ChangePageObjectDimensions(PageObject, initialHeight, newWidth);
+            }
+            else
+            {
+                ChangePageObjectDimensions(PageObject, newHeight, initialWidth);
+            }
+            
+            PageObject.OnResizing(initialWidth, initialHeight);
+        } 
+
+        #endregion //Commands
     }
 }
