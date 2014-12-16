@@ -255,6 +255,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 PdfWriter.GetInstance(doc, new FileStream(filePath, FileMode.Create));
                 doc.Open();
+                
 
                 foreach (var page in pages)
                 {
@@ -287,18 +288,24 @@ namespace Classroom_Learning_Partner.ViewModels
 
                     var pngEncoder = new PngBitmapEncoder();
                     pngEncoder.Frames.Add(BitmapFrame.Create(bitmapImage));
+                    
+                    var isPortrait = page.Height >= page.Width;
+                    doc.SetPageSize(new Rectangle(0, 0, isPortrait ? 595.0f : 842.0f, isPortrait ? 842.0f : 595.0f));
+                    //if (!isPortrait)
+                    //{
+                    //   // doc.SetPageSize()
+                    //    //pdfImage.RotationDegrees = 270f;
+                    //}
+
                     using (var outputStream = new MemoryStream())
                     {
                         pngEncoder.Save(outputStream);
                         var image = Image.FromStream(outputStream);
                         var pdfImage = iTextSharp.text.Image.GetInstance(image, ImageFormat.Png);
-                        var isPortrait = page.Height >= page.Width;
-                        if (!isPortrait)
-                        {
-                            pdfImage.RotationDegrees = 270f;
-                        }
+                        
 
-                        pdfImage.ScaleToFit(doc.PageSize.Width - 74f, doc.PageSize.Height - 74f);
+                        pdfImage.ScaleToFit(doc.PageSize.Width - 100f, doc.PageSize.Height - 100f);
+                        pdfImage.Alignment = Element.ALIGN_CENTER;
 
                         pdfImage.Border = Rectangle.BOX;
                         pdfImage.BorderColor = BaseColor.BLACK;
@@ -325,8 +332,9 @@ namespace Classroom_Learning_Partner.ViewModels
                         labelText += ", Submission Time: " + page.SubmissionTime + ", Owner: " + page.Owner.FullName;
                         var label = new Paragraph(labelText)
                                     {
-                                        Alignment = Element.ALIGN_CENTER
+                                        Alignment = Element.ALIGN_CENTER,
                                     };
+              
 
                         doc.NewPage();
                         doc.Add(label);
