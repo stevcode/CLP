@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
+using Catel.Data;
+using Catel.MVVM;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -12,42 +13,30 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Constructor
 
-        #region Bindings
+        #region Model
 
-        public List<string> ChoiceLabels
+        /// <summary>
+        /// List of the available choices for the Multiple Choice Box.
+        /// </summary>
+        [ViewModelToModel("PageObject")] 
+        public List<MultipleChoiceBubble> ChoiceBubbles
         {
-            get
-            {
-                var choiceLabels = new List<string>();
-                var multipleChoiceBox = PageObject as MultipleChoiceBox;
-                if (multipleChoiceBox == null)
-                {
-                    return choiceLabels;
-                }
-
-                choiceLabels.AddRange(
-                                      Enumerable.Range(1, multipleChoiceBox.NumberOfChoices)
-                                                .Select(i => multipleChoiceBox.LabelType == MultipleChoiceLabelTypes.Numbers ? i.ToString() : ToUpperLetter(i)));
-
-                return choiceLabels;
-            }
+            get { return GetValue<List<MultipleChoiceBubble>>(ChoiceBubblesProperty); }
+            set { SetValue(ChoiceBubblesProperty, value); }
         }
 
-        #endregion //Bindings
+        public static readonly PropertyData ChoiceBubblesProperty = RegisterProperty("ChoiceBubbles", typeof(List<MultipleChoiceBubble>)); 
 
-        #region Methods
+        #endregion //Model
 
-        private string ToUpperLetter(int index)
+        #region Static Methods
+
+        public static void AddMultipleChoiceBoxToPage(CLPPage page)
         {
-            if (index < 1 ||
-                index > 26)
-            {
-                return "aa";
-            }
+            var multipleChoiceBox = new MultipleChoiceBox(page, 4, "C", MultipleChoiceOrientations.Horizontal, MultipleChoiceLabelTypes.Letters);
+            ACLPPageBaseViewModel.AddPageObjectToPage(multipleChoiceBox);
+        } 
 
-            return "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[index - 1].ToString();
-        }
-
-        #endregion //Methods
+        #endregion //Static Methods
     }
 }

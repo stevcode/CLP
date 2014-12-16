@@ -119,7 +119,7 @@
         <Grid Width="{Binding Width}"
               Height="{Binding Height}">
 
-            <ItemsControl ItemsSource="{Binding ChoiceLabels}"
+            <ItemsControl ItemsSource="{Binding ChoiceBubbles}"
                           HorizontalAlignment="Stretch"
                           VerticalAlignment="Stretch">
                 <ItemsControl.ItemsPanel>
@@ -132,9 +132,9 @@
                         <Setter Property="Canvas.Left">
                             <Setter.Value>
                                 <MultiBinding Converter="{StaticResource MultiplyAllMultiConverter}">
-                                    <Binding Path="DataContext.PageObject.TickLength"
+                                    <Binding Path="DataContext.PageObject.ChoiceBubbleGapLength"
                                              RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}" />
-                                    <Binding Path="StartingTickIndex" />
+                                    <Binding Path="ChoiceBubbleIndex" />
                                 </MultiBinding>
                             </Setter.Value>
                         </Setter>
@@ -142,20 +142,15 @@
                 </ItemsControl.ItemContainerStyle>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding}"
-                                   Foreground="Green"
+                        <TextBlock Text="{Binding ChoiceBubbleLabel}"
+                                   Height="{Binding DataContext.PageObject.ChoiceBubbleDiameter, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                   Width="{Binding DataContext.PageObject.ChoiceBubbleDiameter, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                   Foreground="Black"
                                    TextAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
                                    FontWeight="Bold"
                                    FontSize="20">
-
-                            <TextBlock.Width>
-                                <MultiBinding Converter="{StaticResource MultiplyAllMultiConverter}">
-                                    <Binding Path="DataContext.PageObject.TickLength"
-                                             RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}" />
-                                    <Binding Path="JumpSize" />
-                                </MultiBinding>
-                            </TextBlock.Width>
-
                         </TextBlock>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
