@@ -141,43 +141,75 @@
                 </ItemsControl.ItemContainerStyle>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding ChoiceBubbleLabel}"
-                                   Height="{Binding DataContext.PageObject.ChoiceBubbleDiameter, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
-                                   Width="{Binding DataContext.PageObject.ChoiceBubbleDiameter, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
-                                   Foreground="Black"
-                                   TextAlignment="Center"
-                                   VerticalAlignment="Center"
-                                   HorizontalAlignment="Center"
-                                   FontWeight="Bold"
-                                   FontSize="22">
-                            <TextBlock.Background>
-                                <VisualBrush>
-                                    <VisualBrush.Visual>
-                                        <Ellipse Height="{Binding DataContext.PageObject.ChoiceBubbleDiameter, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
-                                                 Width="{Binding DataContext.PageObject.ChoiceBubbleDiameter, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
-                                                 Stroke="Black">
-                                            <Ellipse.Style>
-                                                <Style TargetType="Ellipse">
-                                                    <Setter Property="Fill" Value="White" />
-                                                    <Style.Triggers>
-                                                        <MultiDataTrigger>
-                                                            <MultiDataTrigger.Conditions>
-                                                                <Condition Binding="{Binding IsACorrectValue}"
-                                                                           Value="True" />
-                                                                <Condition Binding="{Binding MainWindowViewModel.IsAuthoring, Source={x:Static Application.Current}}"
-                                                                           Value="True" />
-                                                            </MultiDataTrigger.Conditions>
-                                                            <Setter Property="Fill"
-                                                                    Value="PaleGreen" />
-                                                        </MultiDataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </Ellipse.Style>
-                                        </Ellipse>
-                                    </VisualBrush.Visual>
-                                </VisualBrush>
-                            </TextBlock.Background>
-                        </TextBlock>
+                        <Grid>
+                            <TextBlock Text="{Binding ChoiceBubbleLabel}"
+                                       Height="{Binding DataContext.PageObject.ChoiceBubbleDiameter, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                       Width="{Binding DataContext.PageObject.ChoiceBubbleDiameter, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                       Foreground="Black"
+                                       TextAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center"
+                                       FontWeight="Bold"
+                                       FontSize="22">
+                                <TextBlock.Background>
+                                    <VisualBrush>
+                                        <VisualBrush.Visual>
+                                            <Ellipse Height="{Binding DataContext.PageObject.ChoiceBubbleDiameter, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                                     Width="{Binding DataContext.PageObject.ChoiceBubbleDiameter, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                                     Stroke="Black">
+                                                <Ellipse.Style>
+                                                    <Style TargetType="Ellipse">
+                                                        <Setter Property="Fill"
+                                                                Value="White" />
+                                                        <Style.Triggers>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding IsACorrectValue}"
+                                                                               Value="True" />
+                                                                    <Condition Binding="{Binding MainWindowViewModel.IsAuthoring, Source={x:Static Application.Current}}"
+                                                                               Value="True" />
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter Property="Fill"
+                                                                        Value="PaleGreen" />
+                                                            </MultiDataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Ellipse.Style>
+                                            </Ellipse>
+                                        </VisualBrush.Visual>
+                                    </VisualBrush>
+                                </TextBlock.Background>
+                            </TextBlock>
+
+                            <Line Stretch="Fill"
+                                  VerticalAlignment="Bottom"
+                                  Width="{Binding DataContext.PageObject.ChoiceBubbleDiameter, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                  X1="0"
+                                  X2="1"
+                                  Margin="0 0 0 -5"
+                                  Stroke="Black">
+                                <Line.Style>
+                                    <Style TargetType="Line">
+                                        <Setter Property="StrokeThickness"
+                                                Value="0" />
+                                        <Style.Triggers>
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition Binding="{Binding IsMarked}"
+                                                               Value="True" />
+                                                    <Condition Binding="{Binding MainWindowViewModel.IsAuthoring, Source={x:Static Application.Current}}"
+                                                               Value="True" />
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter Property="StrokeThickness"
+                                                        Value="3" />
+                                            </MultiDataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Line.Style>
+                            </Line>
+                            
+                        </Grid>
+                        
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
