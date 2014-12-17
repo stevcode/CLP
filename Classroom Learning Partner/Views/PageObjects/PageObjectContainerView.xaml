@@ -80,6 +80,10 @@
                 <views:LassoRegionView DataContext="{Binding}" />
             </ControlTemplate>
 
+            <ControlTemplate x:Key="MultipleChoiceBoxTemplate">
+                <views:MultipleChoiceBoxView DataContext="{Binding}" />
+            </ControlTemplate>
+
         </Control.Resources>
 
         <Control.Style>
@@ -171,6 +175,13 @@
                     <!-- LassoRegion trigger -->
                     <DataTrigger Binding="{Binding PageObject, Converter={StaticResource TypeToStringConverter}}" Value="LassoRegion">
                         <Setter Property="Template" Value="{StaticResource LassoRegionTemplate}" />
+                    </DataTrigger>
+
+                    <!-- MultipleChoiceBox trigger -->
+                    <DataTrigger Binding="{Binding PageObject, Converter={StaticResource TypeToStringConverter}}"
+                                 Value="MultipleChoiceBox">
+                        <Setter Property="Template"
+                                Value="{StaticResource MultipleChoiceBoxTemplate}" />
                     </DataTrigger>
 
                 </Style.Triggers>

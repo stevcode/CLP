@@ -109,6 +109,7 @@
     <Compile Include="DomainModel\History\ArrayHistoryItems\CLPArrayRotateHistoryItem.cs" />
     <Compile Include="DomainModel\History\ArrayHistoryItems\CLPArraySnapHistoryItem.cs" />
     <Compile Include="DomainModel\History\NumberLineHistoryItems\NumberLineEndPointsChangedHistoryItem.cs" />
+    <Compile Include="DomainModel\PageObjects\MultipleChoiceBox.cs" />
     <Compile Include="DomainModel\PageObjects\NumberLine.cs" />
     <Compile Include="DomainModel\PageObjects\PageObject Interfaces\IReporter.cs" />
     <Compile Include="DomainModel\Tags\AnalysisRoutines\ArrayAnalysis.cs" />

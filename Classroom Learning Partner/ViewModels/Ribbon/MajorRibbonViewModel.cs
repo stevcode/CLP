@@ -13,6 +13,7 @@ using Catel.MVVM;
 using Classroom_Learning_Partner.Services;
 using CLP.CustomControls;
 using CLP.Entities;
+using RibbonButton = CLP.CustomControls.RibbonButton;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -138,6 +139,8 @@ namespace Classroom_Learning_Partner.ViewModels
             //Text
             //TODO: Better Icons
             _insertTextBoxButton = new RibbonButton("Text", "pack://application:,,,/Resources/Images/MajorRibbon/TextBox512.png", AddPageObjectToPageCommand, "TEXTBOX");
+
+            _insertMultipleChoiceTextBoxButton = new RibbonButton("Multiple Choice", "pack://application:,,,/Resources/Images/TempIcon32.png", AddPageObjectToPageCommand, "MULTIPLECHOICEBOX");
         }
 
         private bool _isCheckedEventRunning = false;
@@ -269,6 +272,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         //Text
         private RibbonButton _insertTextBoxButton;
+
+        private RibbonButton _insertMultipleChoiceTextBoxButton;
 
         //Shapes
         private RibbonButton _insertSquareButton;
@@ -669,6 +674,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 case "TEXTBOX":
                     CLPTextBoxViewModel.AddTextBoxToPage(CurrentPage);
                     break;
+
+                case "MULTIPLECHOICEBOX":
+                    MultipleChoiceBoxViewModel.AddMultipleChoiceBoxToPage(CurrentPage);
+                    break;
             }
 
             PageInteractionMode = PageInteractionModes.Select;
@@ -713,7 +722,8 @@ namespace Classroom_Learning_Partner.ViewModels
             //// Insert Text Box
             //Buttons.Add(Separater);
             //Buttons.Add(_insertImageButton);
-            //Buttons.Add(_insertTextBoxButton);
+
+            Buttons.Add(_insertMultipleChoiceTextBoxButton);
         }
 
         #endregion //Methods
