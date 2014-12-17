@@ -73,7 +73,7 @@
                             </TextBlock.LayoutTransform>
                         </TextBlock>
 
-                        <!--<TextBlock Grid.Column="0"
+                        <TextBlock Grid.Column="0"
                                    Grid.Row="1"
                                    Margin="0 0 0 5"
                                    Text="{Binding Owner.FullName}"
@@ -89,7 +89,7 @@
                                     <TranslateTransform />
                                 </TransformGroup>
                             </TextBlock.LayoutTransform>
-                        </TextBlock>-->
+                        </TextBlock>
 
                         <Border Grid.Column="1"
                                 Grid.Row="1"
