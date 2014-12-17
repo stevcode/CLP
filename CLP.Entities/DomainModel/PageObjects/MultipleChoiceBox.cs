@@ -130,7 +130,7 @@ namespace CLP.Entities
 
         public override int ZIndex
         {
-            get { return 25; }
+            get { return 15; }
         }
 
         public override bool IsBackgroundInteractable

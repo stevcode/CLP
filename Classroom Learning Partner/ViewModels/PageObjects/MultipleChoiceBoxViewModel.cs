@@ -5,6 +5,7 @@ using System.Windows.Controls.Primitives;
 using Catel.Data;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Views.Modal_Windows;
+using CLP.CustomControls;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -17,6 +18,10 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             PageObject = multipleChoiceBox;
             ResizeMultipleChoiceBoxCommand = new Command<DragDeltaEventArgs>(OnResizeMultipleChoiceBoxCommandExecute);
+            ChangeCorrectAnswerCommand = new Command(OnChangeCorrectAnswerCommandExecute);
+
+            _contextButtons.Add(MajorRibbonViewModel.Separater);
+            _contextButtons.Add(new RibbonButton("Change Correct Answer", "pack://application:,,,/Images/AddToDisplay.png", ChangeCorrectAnswerCommand, null, true));
         }
 
         #endregion //Constructor
@@ -71,6 +76,39 @@ namespace Classroom_Learning_Partner.ViewModels
             
             PageObject.OnResizing(initialWidth, initialHeight);
         } 
+
+        /// <summary>
+        /// Changes the Multiple Choice Box's correct answer.
+        /// </summary>
+        public Command ChangeCorrectAnswerCommand { get; private set; }
+
+        private void OnChangeCorrectAnswerCommandExecute()
+        {
+            var multipleChoiceBox = PageObject as MultipleChoiceBox;
+            if (multipleChoiceBox == null)
+            {
+                return;
+            }
+
+            var keyPad = new KeypadWindowView("Index of Correct Answer", 5)
+            {
+                Owner = Application.Current.MainWindow,
+                WindowStartupLocation = WindowStartupLocation.Manual
+            };
+            keyPad.ShowDialog();
+            if (keyPad.DialogResult != true ||
+                keyPad.NumbersEntered.Text.Length <= 0)
+            {
+                return;
+            }
+
+            var correctAnswerIndex = Int32.Parse(keyPad.NumbersEntered.Text);
+            var correctAnswerValue = MultipleChoiceBubble.IntToUpperLetter(correctAnswerIndex);
+            foreach (var multipleChoiceBubble in multipleChoiceBox.ChoiceBubbles)
+            {
+                multipleChoiceBubble.IsACorrectValue = multipleChoiceBubble.ChoiceBubbleLabel == correctAnswerValue;
+            }
+        }
 
         #endregion //Commands
 
