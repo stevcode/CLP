@@ -9,7 +9,6 @@ using System.Windows.Media.Imaging;
 using Catel.IoC;
 using Catel.MVVM;
 using Catel.MVVM.Views;
-using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.Views;
 using CLP.Entities;
 using iTextSharp.text;
@@ -23,10 +22,7 @@ namespace Classroom_Learning_Partner.ViewModels
     {
         #region Constructor
 
-        public ExportPaneViewModel()
-        {
-            InitializeCommands();
-        }
+        public ExportPaneViewModel() { InitializeCommands(); }
 
         private void InitializeCommands()
         {
@@ -77,7 +73,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 pageNumber += " " + notebook.CurrentPage.DifferentiationLevel;
             }
 
-            ConvertPagesToPDF(sortedPages, notebook, "Page " + pageNumber + " Submissions");
+            ConvertPagesToPDF(sortedPages, notebook, true);
         }
 
         /// <summary>Converts all Submissions in a notebook to PDF.</summary>
@@ -108,9 +104,13 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
             var allSortedPages =
-                allPages.OrderBy(page => page.PageNumber).ThenBy(page => page.DifferentiationLevel).ThenBy(page => page.Owner.FullName).ThenBy(page => page.VersionIndex).ToList();
+                allPages.OrderBy(page => page.PageNumber)
+                        .ThenBy(page => page.DifferentiationLevel)
+                        .ThenBy(page => page.Owner.FullName)
+                        .ThenBy(page => page.VersionIndex)
+                        .ToList();
 
-            ConvertPagesToPDF(allSortedPages, notebook, "All Submissions");
+            ConvertPagesToPDF(allSortedPages, notebook, true);
         }
 
         /// <summary>Converts Notebook Displays to PDF.</summary>
@@ -195,9 +195,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //}, null, "Converting Notebook Displays to XPS", 0.0 / 0.0);
         }
 
-        /// <summary>
-        /// Copies the current notebook for a new owner.
-        /// </summary>
+        /// <summary>Copies the current notebook for a new owner.</summary>
         public Command CopyNotebookForNewOwnerCommand { get; private set; }
 
         private void OnCopyNotebookForNewOwnerCommandExecute()
@@ -226,9 +224,47 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Methods
 
-        private async void ConvertPagesToPDF(IEnumerable<CLPPage> pages, Notebook notebook, string fileNameSuffix = "", bool useLabels = true)
+        /// <summary>e.g. 1,3,5,6,7,8,9,10,12 becomes (1,1),(3,3),(5,10),(12,12)</summary>
+        public static IEnumerable<Tuple<decimal, decimal>> NumListToPossiblyDegenerateRanges(IEnumerable<decimal> numList)
         {
-            if (!pages.Any())
+            Tuple<decimal, decimal> currentRange = null;
+            foreach (var num in numList)
+            {
+                if (currentRange == null)
+                {
+                    currentRange = Tuple.Create(num, num);
+                }
+                else if (currentRange.Item2 == num - 1)
+                {
+                    currentRange = Tuple.Create(currentRange.Item1, num);
+                }
+                else
+                {
+                    yield return currentRange;
+                    currentRange = Tuple.Create(num, num);
+                }
+            }
+            if (currentRange != null)
+            {
+                yield return currentRange;
+            }
+        }
+
+        /// <summary>e.g. (1,1) becomes "1" (1,3) becomes "1-3"</summary>
+        /// <param name="range"></param>
+        /// <returns></returns>
+        public static string PrettyRange(Tuple<decimal, decimal> range)
+        {
+            return range.Item1 == range.Item2 ? 
+                   range.Item1.ToString() : 
+                   string.Format("{0}-{1}", range.Item1, range.Item2);
+        }
+
+        private async void ConvertPagesToPDF(IEnumerable<CLPPage> pages, Notebook notebook, bool submissions = false, bool useLabels = true)
+        {
+            var clpPages = pages as IList<CLPPage> ?? pages.ToList();
+            if (pages == null ||
+                !clpPages.Any())
             {
                 MessageBox.Show("Something went wrong. No pages were passed to the converter!");
                 return;
@@ -242,7 +278,11 @@ namespace Classroom_Learning_Partner.ViewModels
                 Directory.CreateDirectory(directoryPath);
             }
 
-            var fileName = notebook.Name + " - " + notebook.Owner.FullName + " - " + fileNameSuffix + " [" + DateTime.Now.ToString("yyyy-M-d hh.mm.ss") + "].pdf";
+            var pageNumbers = clpPages.Select(p => p.PageNumber);
+            var pageNumberRanges = string.Join(",", NumListToPossiblyDegenerateRanges(pageNumbers).Select(PrettyRange));
+
+            var fileName = notebook.Name + ", " + notebook.Owner.FullName + " pp " + pageNumberRanges + (submissions ? " Submissions" : string.Empty) + " [" +
+                           DateTime.Now.ToString("yyyy-M-dd hh.mm.ss") + "].pdf";
             var filePath = Path.Combine(directoryPath, fileName);
             if (File.Exists(filePath))
             {
@@ -255,9 +295,8 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 PdfWriter.GetInstance(doc, new FileStream(filePath, FileMode.Create));
                 doc.Open();
-                
 
-                foreach (var page in pages)
+                foreach (var page in clpPages)
                 {
                     App.MainWindowViewModel.CurrentConvertingPage = null;
                     App.MainWindowViewModel.CurrentConvertingPage = page;
@@ -288,7 +327,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                     var pngEncoder = new PngBitmapEncoder();
                     pngEncoder.Frames.Add(BitmapFrame.Create(bitmapImage));
-                    
+
                     var isPortrait = page.Height >= page.Width;
                     doc.SetPageSize(new Rectangle(0, 0, isPortrait ? 595.0f : 842.0f, isPortrait ? 842.0f : 595.0f));
                     //if (!isPortrait)
@@ -302,7 +341,6 @@ namespace Classroom_Learning_Partner.ViewModels
                         pngEncoder.Save(outputStream);
                         var image = Image.FromStream(outputStream);
                         var pdfImage = iTextSharp.text.Image.GetInstance(image, ImageFormat.Png);
-                        
 
                         pdfImage.ScaleToFit(doc.PageSize.Width - 100f, doc.PageSize.Height - 100f);
                         pdfImage.Alignment = Element.ALIGN_CENTER;
@@ -334,7 +372,6 @@ namespace Classroom_Learning_Partner.ViewModels
                                     {
                                         Alignment = Element.ALIGN_CENTER,
                                     };
-              
 
                         doc.NewPage();
                         doc.Add(label);
