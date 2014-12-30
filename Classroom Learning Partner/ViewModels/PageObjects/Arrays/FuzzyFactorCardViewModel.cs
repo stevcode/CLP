@@ -322,163 +322,39 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 return;
             }
+            int rows, dividend = 1, numberOfArrays = 1;
+            var isShowingTiles = false;
+            var factorCreationView = new FuzzyFactorCardCreationView { Owner = Application.Current.MainWindow };
+            factorCreationView.ShowDialog();
 
-            var arrayType = "FUZZYFACTORCARD";
-            int rows, columns, dividend = 1, numberOfArrays = 1;
-            switch (arrayType)
+            if (factorCreationView.DialogResult != true)
             {
-                case "TENBYTEN":
-                    rows = 10;
-                    columns = 10;
-                    numberOfArrays = 1;
-                    break;
-                case "ARRAY":
-                    var arrayCreationView = new ArrayCreationView { Owner = Application.Current.MainWindow };
-                    arrayCreationView.ShowDialog();
-
-                    if (arrayCreationView.DialogResult != true)
-                    {
-                        return;
-                    }
-
-                    try
-                    {
-                        rows = Convert.ToInt32(arrayCreationView.Rows.Text);
-                    }
-                    catch (FormatException)
-                    {
-                        rows = 1;
-                    }
-
-                    try
-                    {
-                        columns = Convert.ToInt32(arrayCreationView.Columns.Text);
-                    }
-                    catch (FormatException)
-                    {
-                        columns = 1;
-                    }
-
-                    try
-                    {
-                        numberOfArrays = Convert.ToInt32(arrayCreationView.NumberOfArrays.Text);
-                    }
-                    catch (FormatException)
-                    {
-                        numberOfArrays = 1;
-                    }
-                    break;
-                case "FUZZYFACTORCARD":
-                    var factorCreationView = new FuzzyFactorCardCreationView { Owner = Application.Current.MainWindow };
-                    factorCreationView.ShowDialog();
-
-                    if (factorCreationView.DialogResult != true)
-                    {
-                        return;
-                    }
-
-                    try
-                    {
-                        dividend = Convert.ToInt32(factorCreationView.Product.Text);
-                    }
-                    catch (FormatException)
-                    {
-                        return;
-                    }
-
-                    try
-                    {
-                        rows = Convert.ToInt32(factorCreationView.Factor.Text);
-                    }
-                    catch (FormatException)
-                    {
-                        return;
-                    }
-
-                    columns = dividend / rows;
-                    numberOfArrays = 1;
-                    break;
-                case "FFCREMAINDER":
-                    var factorRemainderCreationView = new FuzzyFactorCardWithTilesCreationView
-                    {
-                        Owner = Application.Current.MainWindow
-                    };
-                    factorRemainderCreationView.ShowDialog();
-
-                    if (factorRemainderCreationView.DialogResult != true)
-                    {
-                        return;
-                    }
-
-                    try
-                    {
-                        dividend = Convert.ToInt32(factorRemainderCreationView.Product.Text);
-                    }
-                    catch (FormatException)
-                    {
-                        return;
-                    }
-
-                    try
-                    {
-                        rows = Convert.ToInt32(factorRemainderCreationView.Factor.Text);
-                    }
-                    catch (FormatException)
-                    {
-                        return;
-                    }
-
-                    columns = dividend / rows;
-                    numberOfArrays = 1;
-                    break;
-                case "ARRAYCARD":
-                case "FACTORCARD":
-                //    var factorCreationView = new FactorCardCreationView{ Owner = Application.Current.MainWindow};
-                //    factorCreationView.ShowDialog();
-                //    if(factorCreationView.DialogResult != true)
-                //    {
-                //        return;
-                //    }
-
-                //    try
-                //    {
-                //        dividend = Convert.ToInt32(factorCreationView.Product.Text);
-                //    }
-                //    catch(FormatException)
-                //    {
-                //        return;
-                //    }
-
-                //    try
-                //    {
-                //        rows = Convert.ToInt32(factorCreationView.Factor.Text);
-                //    }
-                //    catch(FormatException)
-                //    {
-                //        return;
-                //    }
-
-                //    columns = dividend / rows;
-                //    numberOfArrays = 1;
-                default:
-                    return;
+                return;
             }
 
+            try
+            {
+                dividend = Convert.ToInt32(factorCreationView.Product.Text);
+                rows = Convert.ToInt32(factorCreationView.Factor.Text);
+                if (factorCreationView.TileCheckBox.IsChecked != null)
+                {
+                    isShowingTiles = (bool)factorCreationView.TileCheckBox.IsChecked && dividend < 51;
+                }
+            }
+            catch (FormatException)
+            {
+                return;
+            }
+            
+            var columns = dividend / rows;
+            var arrayType = isShowingTiles ? "FFCREMAINDER" : "FUZZYFACTORCARD";
+            
             var arraysToAdd = new List<ACLPArrayBase>();
             foreach (var index in Enumerable.Range(1, numberOfArrays))
             {
                 ACLPArrayBase array;
                 switch (arrayType)
                 {
-                    case "TENBYTEN":
-                        array = new CLPArray(page, columns, rows, ArrayTypes.TenByTen);
-                        array.IsSnappable = false;
-                        array.IsTopLabelVisible = false;
-                        array.IsSideLabelVisible = false;
-                        break;
-                    case "ARRAY":
-                        array = new CLPArray(page, columns, rows, ArrayTypes.Array);
-                        break;
                     case "FUZZYFACTORCARD":
                         array = new FuzzyFactorCard(page, columns, rows, dividend);
                         // HACK: Find better way to set this
@@ -495,12 +371,6 @@ namespace Classroom_Learning_Partner.ViewModels
                             (array as FuzzyFactorCard).RemainderTiles.CreatorID = array.CreatorID;
                             (array as FuzzyFactorCard).RemainderTiles.OwnerID = array.OwnerID;
                         }
-                        break;
-                    case "ARRAYCARD":
-                        array = new CLPArray(page, columns, rows, ArrayTypes.ArrayCard);
-                        break;
-                    case "FACTORCARD":
-                        array = new CLPArray(page, columns, rows, ArrayTypes.FactorCard);
                         break;
                     default:
                         return;
