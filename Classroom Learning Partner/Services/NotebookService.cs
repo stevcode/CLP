@@ -391,7 +391,7 @@ namespace Classroom_Learning_Partner.Services
 
         #region Notebook
 
-        public void OpenLocalNotebook(NotebookNameComposite notebookNameComposite, string localCacheFolderPath)
+        public void OpenLocalNotebook(NotebookNameComposite notebookNameComposite, string localCacheFolderPath, List<int> pageNumbers = null)
         {
             //Notebook is already loaded in memory
             var existingNotebook = OpenNotebooks.FirstOrDefault(x => x.ID == notebookNameComposite.ID && x.OwnerID == notebookNameComposite.OwnerID);
@@ -413,7 +413,8 @@ namespace Classroom_Learning_Partner.Services
                 return;
             }
 
-            var notebook = Notebook.LoadLocalFullNotebook(folderPath);
+            var notebook = pageNumbers == null ? Notebook.LoadLocalFullNotebook(folderPath) : Notebook.LoadLocalPartialNotebook(folderPath, pageNumbers);
+            
             if (notebook == null)
             {
                 MessageBox.Show("Notebook could not be opened. Check error log.");

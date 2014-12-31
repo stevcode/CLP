@@ -154,12 +154,19 @@ namespace Classroom_Learning_Partner.ViewModels
             textInputView.ShowDialog();
 
             if (textInputView.DialogResult == null ||
-                textInputView.DialogResult != true)
+                textInputView.DialogResult != true ||
+                string.IsNullOrEmpty(textInputViewModel.InputText))
             {
                 return;
             }
 
+            var pagesToOpen = RangeHelper.ParseStringToIntNumbers(textInputViewModel.InputText);
+            if (!pagesToOpen.Any())
+            {
+                return;
+            }
 
+            PleaseWaitHelper.Show(() => LoadedNotebookService.OpenLocalNotebook(SelectedNotebook, SelectedCacheDirectory, pagesToOpen), null, "Loading Notebook");
         }
 
         #endregion //Commands

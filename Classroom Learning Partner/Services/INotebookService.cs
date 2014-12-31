@@ -24,7 +24,7 @@ namespace Classroom_Learning_Partner.Services
         Notebook CopyNotebookForNewOwner(Notebook originalNotebook, Person newOwner);
         CLPPage CopyPageForNewOwner(CLPPage originalPage, Person newOwner);
         List<CLPPage> LoadOrCopyPagesForNotebook(Notebook notebook, Notebook authoredNotebook, List<string> pageIDs, bool includeSubmissions);
-        void OpenLocalNotebook(NotebookNameComposite notebookNameComposite, string localCacheFolderPath);
+        void OpenLocalNotebook(NotebookNameComposite notebookNameComposite, string localCacheFolderPath, List<int> pageNumbers = null);
         void SaveCurrentNotebookLocally();
         void SaveNotebookLocally(Notebook notebook, string alternativeLocation);
     }

@@ -518,6 +518,43 @@ namespace CLP.Entities
             return LoadLocalPartialNotebook(notebookFolderPath, allPageIDs, includeSubmissions);
         }
 
+        public static Notebook LoadLocalPartialNotebook(string notebookFolderPath, List<int> pageNumbers, bool includeSubmissions = true)
+        {
+            var pagesFolderPath = Path.Combine(notebookFolderPath, "Pages");
+
+            var pageFilePaths = Directory.EnumerateFiles(pagesFolderPath, "*.xml");
+            var pageIDs = new List<string>();
+            foreach (var pageFilePath in pageFilePaths)
+            {
+                var pageNameComposite = PageNameComposite.ParseFilePathToNameComposite(pageFilePath);
+                if (pageNameComposite == null)
+                {
+                    continue;
+                }
+
+                if (pageNameComposite.VersionIndex != "0")
+                {
+                    continue;
+                }
+                int pageNumber;
+                var isPageNumber = Int32.TryParse(pageNameComposite.PageNumber, out pageNumber);
+                if (!isPageNumber)
+                {
+                    continue;
+                }
+
+                var isPageToBeLoaded = pageNumbers.Contains(pageNumber);
+                if (!isPageToBeLoaded)
+                {
+                    continue;
+                }
+
+                pageIDs.Add(pageNameComposite.ID);
+            }
+
+            return LoadLocalPartialNotebook(notebookFolderPath, pageIDs, includeSubmissions);
+        }
+
         public static Notebook LoadLocalPartialNotebook(string notebookFolderPath, List<string> pageIDs, bool includeSubmissions = true)
         {
             var notebook = LoadLocalNotebook(notebookFolderPath);
