@@ -165,9 +165,9 @@
                        Text="{Binding Rows}"
                        TextAlignment="Center"
                        FontWeight="Bold"
-                       FontSize="22"
+                       FontSize="20"
                        Foreground="{StaticResource LeftLabelColor}"
-                       Height="22"
+                       Height="23"
                        Width="{Binding ArrayHeight}">
                 <TextBlock.LayoutTransform>
                     <TransformGroup>
@@ -355,7 +355,7 @@
                                                FontSize="20"
                                                FontWeight="Bold"
                                                Foreground="{StaticResource LeftLabelColor}"
-                                               Height="20" />
+                                               Height="23" />
                                     <TextBlock Grid.Column="1"
                                                IsHitTestVisible="False"
                                                Margin="3"
@@ -365,7 +365,7 @@
                                                HorizontalAlignment="Center"
                                                FontSize="20"
                                                FontWeight="Bold"
-                                               Height="20" />
+                                               Height="23" />
                                     <TextBlock Grid.Column="2"
                                                IsHitTestVisible="False"
                                                Text="{Binding Value}"
@@ -375,7 +375,7 @@
                                                FontSize="20"
                                                FontWeight="Bold"
                                                Foreground="{StaticResource TopLabelColor}"
-                                               Height="20" />
+                                               Height="23" />
                                 </Grid>
                             </Canvas>
                         </DataTemplate>

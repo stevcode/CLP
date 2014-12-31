@@ -136,6 +136,22 @@
                     </Thumb.Template>
                 </Thumb>
 
+                <!--Snap Button-->
+                <Button Command="{Binding SnapArrayCommand}"
+                        Width="40"
+                        Height="40"
+                        Canvas.Right="-40"
+                        Canvas.Top="-40"
+                        Cursor="Hand">
+                    <Button.Template>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Image Height="40"
+                                   Width="40"
+                                   Source="pack://application:,,,/Resources/Images/AdornerImages/ArraySnap64.png" />
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                
             </Canvas>
 
         </ac:AdornedControl.AdornerContent>

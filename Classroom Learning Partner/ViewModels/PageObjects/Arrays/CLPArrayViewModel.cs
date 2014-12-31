@@ -515,6 +515,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                             //Add a new division and remove snapping array
                             PageObject.ParentPage.PageObjects.Remove(PageObject);
+                            ContextRibbon.Buttons.Clear();
                             divisionTemplate.SnapInArray(snappingArray.Columns);
 
                             ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
