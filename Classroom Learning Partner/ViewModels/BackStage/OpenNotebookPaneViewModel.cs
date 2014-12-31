@@ -7,6 +7,7 @@ using Catel.IO;
 using Catel.MVVM;
 using Catel.Windows;
 using Classroom_Learning_Partner.Services;
+using Classroom_Learning_Partner.Views;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -26,6 +27,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             OpenNotebookCommand = new Command(OnOpenNotebookCommandExecute, OnOpenNotebookCanExecute);
             StartClassPeriodCommand = new Command(OnStartClassPeriodCommandExecute);
+            OpenPageRangeCommand = new Command(OnOpenPageRangeCommandExecute, OnOpenNotebookCanExecute);
         }
 
         #endregion //Constructor
@@ -138,6 +140,26 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             LoadedNotebookService.StartSoonestClassPeriod(SelectedCacheDirectory);
             //    LoadedNotebookService.StartLocalClassPeriod(, SelectedCacheDirectory);
+        }
+
+        /// <summary>
+        /// Opens a range of pages in a notebook.
+        /// </summary>
+        public Command OpenPageRangeCommand { get; private set; }
+
+        private void OnOpenPageRangeCommandExecute()
+        {
+            var textInputViewModel = new TextInputViewModel();
+            var textInputView = new TextInputView(textInputViewModel);
+            textInputView.ShowDialog();
+
+            if (textInputView.DialogResult == null ||
+                textInputView.DialogResult != true)
+            {
+                return;
+            }
+
+
         }
 
         #endregion //Commands
