@@ -66,6 +66,17 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData SelectedCacheNameProperty = RegisterProperty("SelectedCacheName", typeof (string), string.Empty);
 
+        /// <summary>
+        /// Manually typed Cache Name for creating a new Cache.
+        /// </summary>
+        public string TypedCacheName
+        {
+            get { return GetValue<string>(TypedCacheNameProperty); }
+            set { SetValue(TypedCacheNameProperty, value); }
+        }
+
+        public static readonly PropertyData TypedCacheNameProperty = RegisterProperty("TypedCacheName", typeof(string), string.Empty);
+
         /// <summary>Path of the Selected Cache's Directory.</summary>
         public string SelectedCacheDirectory
         {
@@ -105,7 +116,21 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnCreateNotebookCommandExecute()
         {
             var previousLocalCacheDirectory = LoadedNotebookService.CurrentLocalCacheDirectory;
-            LoadedNotebookService.CurrentLocalCacheDirectory = SelectedCacheDirectory;
+            if (string.IsNullOrEmpty(TypedCacheName) ||
+                string.IsNullOrWhiteSpace(TypedCacheName))
+            {
+                LoadedNotebookService.CurrentLocalCacheDirectory = SelectedCacheDirectory;
+            }
+            else
+            {
+                var createdNewCache = LoadedNotebookService.InitializeNewLocalCache(TypedCacheName);
+                if (!createdNewCache)
+                {
+                    LoadedNotebookService.CurrentLocalCacheDirectory = previousLocalCacheDirectory;
+                    return;
+                }
+            }
+            
             var notebookName = NotebookName;
             var newNotebook = new Notebook(notebookName, Person.Author)
                               {

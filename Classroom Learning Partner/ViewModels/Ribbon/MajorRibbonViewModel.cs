@@ -722,7 +722,7 @@ namespace Classroom_Learning_Partner.ViewModels
             // Insert Text Box
             Buttons.Add(Separater);
             Buttons.Add(_insertImageButton);
-
+            Buttons.Add(_insertTextBoxButton);
             Buttons.Add(_insertMultipleChoiceTextBoxButton);
         }
 

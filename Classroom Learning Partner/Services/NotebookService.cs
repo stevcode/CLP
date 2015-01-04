@@ -121,6 +121,7 @@ namespace Classroom_Learning_Partner.Services
 
         public bool InitializeNewLocalCache(string cacheName, string cacheDirectoryPath)
         {
+            cacheName = "Cache" + cacheName;
             var directoryInfo = new DirectoryInfo(cacheDirectoryPath);
             var availableCacheNames =
                 directoryInfo.GetDirectories().Where(directory => directory.Name.StartsWith("Cache")).Select(directory => directory.Name).OrderBy(x => x).ToList();
@@ -131,6 +132,14 @@ namespace Classroom_Learning_Partner.Services
             }
 
             CurrentLocalCacheDirectory = Path.Combine(cacheDirectoryPath, cacheName);
+            if (!Directory.Exists(CurrentLocalCacheDirectory))
+            {
+                Directory.CreateDirectory(CurrentLocalCacheDirectory);
+            }
+            var initializeClassDirectory = CurrentClassCacheDirectory;
+            var initializeImageDirectory = CurrentImageCacheDirectory;
+            var initializeNotebookDirectory = CurrentNotebookCacheDirectory;
+
             return true;
         }
 

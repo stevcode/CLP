@@ -114,7 +114,8 @@
                        TextOptions.TextRenderingMode="Auto"
                        TextOptions.TextFormattingMode="Ideal" />
 
-            <TextBox HorizontalAlignment="Left"
+            <TextBox Text="{Binding TypedCacheName}" 
+                     HorizontalAlignment="Left"
                      VerticalAlignment="Center"
                      TextAlignment="Left"
                      FontFamily="Segoe UI"
