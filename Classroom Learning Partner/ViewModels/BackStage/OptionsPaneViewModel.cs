@@ -17,6 +17,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             GenerateRandomMainColorCommand = new Command(OnGenerateRandomMainColorCommandExecute);
             ApplyRenameToCacheCommand = new Command(OnApplyRenameToCacheCommandExecute);
+            ToggleBindingStyleCommand = new Command(OnToggleBindingStyleCommandExecute);
         }
 
         #endregion //Constructor
@@ -72,6 +73,13 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
         }
+
+        /// <summary>
+        /// Toggles the style used by pageObjects for their boundary.
+        /// </summary>
+        public Command ToggleBindingStyleCommand { get; private set; }
+
+        private void OnToggleBindingStyleCommandExecute() { App.MainWindowViewModel.IsUsingOldPageObjectBoundary = !App.MainWindowViewModel.IsUsingOldPageObjectBoundary; }
 
         #endregion //Commands
     }

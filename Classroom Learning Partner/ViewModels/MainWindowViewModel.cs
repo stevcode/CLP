@@ -257,6 +257,17 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData CurrentNotebookNameProperty = RegisterProperty("CurrentNotebookName", typeof(string), string.Empty);
 
+        /// <summary>
+        /// Toggles style of the boundary around selected PageObjects to the old version.
+        /// </summary>
+        public bool IsUsingOldPageObjectBoundary
+        {
+            get { return GetValue<bool>(IsUsingOldPageObjectBoundaryProperty); }
+            set { SetValue(IsUsingOldPageObjectBoundaryProperty, value); }
+        }
+
+        public static readonly PropertyData IsUsingOldPageObjectBoundaryProperty = RegisterProperty("IsUsingOldPageObjectBoundary", typeof (bool), false);
+
         #endregion //Global Bindings
 
         #endregion //Bindings

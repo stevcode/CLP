@@ -22,16 +22,21 @@
 
         </StackPanel>
 
-        <Grid>
+        <StackPanel>
             <Button Content="Change Main Color"
                     Command="{Binding GenerateRandomMainColorCommand}"
                     Height="100"
                     Width="300"
-                    FontSize="32"
-                    FontWeight="Bold"
-                    VerticalAlignment="Top"
-                    HorizontalAlignment="Left" />
-        </Grid>
+                    Margin="10"
+                    FontSize="22"
+                    FontWeight="Bold" />
+
+            <Button Content="Toggle Boundary Style"
+                    Command="{Binding ToggleBindingStyleCommand}"
+                    Width="300"
+                    Margin="10"
+                    FontWeight="Bold" />
+        </StackPanel>
     </DockPanel>
 
 </catel:UserControl>

@@ -8,16 +8,15 @@
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters">
 
     <UserControl.Resources>
+        <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
         <oldconv:LengthConverter x:Key="LengthConverter" />
         <conv:DoubleToVisibilityConverter x:Key="DoubleToVisibilityConverter" />
         <conv:MultiplyAllIntToTextMultiConverter x:Key="MultiplyAllIntToTextMultiConverter" />
-        <conv:BooleanToOppositeVisibilityConverter x:Key="BooleanToOppositeVisibilityConverter" />
         <conv:DivisionPositionToColorMultiConverter x:Key="DivisionPositionToColorMultiConverter" />
         <conv:IntToVisibilityConverter x:Key="IntToVisibilityConverter" />
         <conv:IntToOppositeVisibilityConverter x:Key="IntToOppositeVisibilityConverter" />
         <conv:FFCMarginConverter x:Key="FFCMarginConverter" />
         <conv:RatioToRectMultiConverter x:Key="RatioToRectMultiConverter" />
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 
         <Style x:Key="HorizontalDivisionStyle">
             <Setter Property="Canvas.Left"
@@ -76,7 +75,19 @@
                            Canvas.Top="-5"
                            Canvas.Left="-5"
                            Width="{Binding Width, Converter={StaticResource LengthConverter}, ConverterParameter=14}"
-                           Height="{Binding Height, Converter={StaticResource LengthConverter}, ConverterParameter=14}" />
+                           Height="{Binding Height, Converter={StaticResource LengthConverter}, ConverterParameter=14}"
+                           Visibility="{Binding MainWindowViewModel.IsUsingOldPageObjectBoundary, Source={x:Static Application.Current}, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}" />
+
+                <Rectangle Stroke="Black"
+                           StrokeDashArray="0.5 1.0 0.3"
+                           StrokeThickness="2"
+                           RadiusX="10"
+                           RadiusY="10"
+                           Canvas.Top="-5"
+                           Canvas.Left="-5"
+                           Width="{Binding Width, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
+                           Height="{Binding Height, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
+                           Visibility="{Binding MainWindowViewModel.IsUsingOldPageObjectBoundary, Source={x:Static Application.Current}, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />
 
                 <!--Close Button-->
                 <Button Command="{Binding RemoveFuzzyFactorCardCommand}"
