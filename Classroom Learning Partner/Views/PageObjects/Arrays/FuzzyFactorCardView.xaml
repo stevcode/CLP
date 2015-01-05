@@ -459,7 +459,7 @@
                            Foreground="Black"
                            VerticalAlignment="Top"
                            HorizontalAlignment="Left"
-                           Margin="-32 28 0 0"
+                           Margin="-32 23 0 0"
                            Text="{Binding Dividend}"
                            TextAlignment="Center"
                            Visibility="{Binding PageObject.GroupsSubtracted, Converter={StaticResource IntToVisibilityConverter}}" />
@@ -486,7 +486,7 @@
                        Foreground="Black"
                        VerticalAlignment="Top"
                        HorizontalAlignment="Center"
-                       Margin="0 28 0 0"
+                       Margin="0 23 0 0"
                        Visibility="{Binding PageObject.GroupsSubtracted, Converter={StaticResource IntToOppositeVisibilityConverter}}"
                        Text="{Binding Dividend}" />
 
@@ -530,24 +530,24 @@
 
                 <!--Bottom Label (Equation)-->
                 <TextBlock TextAlignment="Center"
-                           Margin="1 7 1 0"
+                           Margin="1 4 1 0"
                            FontWeight="Bold"
                            FontSize="18"
                            Foreground="{StaticResource LeftLabelColor}"
                            Text="{Binding Rows}" />
                 <TextBlock TextAlignment="Center"
-                           Margin="1 7 1 0"
+                           Margin="1 4 1 0"
                            FontWeight="Bold"
                            FontSize="18"
                            Text="x" />
                 <TextBlock TextAlignment="Center"
-                           Margin="1 7 1 0"
+                           Margin="1 4 1 0"
                            FontWeight="Bold"
                            FontSize="18"
                            Foreground="{StaticResource TopLabelColor}"
                            Text="{Binding PageObject.GroupsSubtracted}" />
                 <TextBlock TextAlignment="Center"
-                           Margin="1 7 1 0"
+                           Margin="1 4 1 0"
                            FontWeight="Bold"
                            FontSize="18"
                            VerticalAlignment="Top"
@@ -561,7 +561,7 @@
                              Stroke="Black"
                              Fill="Transparent" />
                     <TextBlock TextAlignment="Center"
-                               Margin="2 7 1 0"
+                               Margin="2 4 1 0"
                                FontWeight="Bold"
                                FontSize="18"
                                Foreground="Black"
