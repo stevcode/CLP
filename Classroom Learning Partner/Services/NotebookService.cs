@@ -400,7 +400,7 @@ namespace Classroom_Learning_Partner.Services
 
         #region Notebook
 
-        public void OpenLocalNotebook(NotebookNameComposite notebookNameComposite, string localCacheFolderPath, List<int> pageNumbers = null)
+        public void OpenLocalNotebook(NotebookNameComposite notebookNameComposite, string localCacheFolderPath, bool includeSubmissions, List<int> pageNumbers = null)
         {
             //Notebook is already loaded in memory
             var existingNotebook = OpenNotebooks.FirstOrDefault(x => x.ID == notebookNameComposite.ID && x.OwnerID == notebookNameComposite.OwnerID);
@@ -433,7 +433,8 @@ namespace Classroom_Learning_Partner.Services
             if ((App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Teacher ||
                  App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Projector) &&
                 notebook.Owner.ID != Person.Author.ID &&
-                !notebook.Owner.IsStudent)
+                !notebook.Owner.IsStudent &&
+                includeSubmissions)
             {
                 foreach (var page in notebook.Pages)
                 {

@@ -245,6 +245,12 @@
 
                 </StackPanel>
             </Button>
+
+            <CheckBox IsChecked="{Binding IsIncludeSubmissionsChecked}"
+                      VerticalAlignment="Center"
+                      Margin="20 0 0 0" />
+            <TextBlock Text="Include Submissions?" 
+                       VerticalAlignment="Center" />
         </StackPanel>
 
         <StackPanel DockPanel.Dock="Left">

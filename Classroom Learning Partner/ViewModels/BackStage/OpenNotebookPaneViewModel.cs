@@ -99,6 +99,17 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData SelectedNotebookProperty = RegisterProperty("SelectedNotebook", typeof (NotebookNameComposite));
 
+        /// <summary>
+        /// Toggles the loading of submissions when opening a notebook.
+        /// </summary>
+        public bool IsIncludeSubmissionsChecked
+        {
+            get { return GetValue<bool>(IsIncludeSubmissionsCheckedProperty); }
+            set { SetValue(IsIncludeSubmissionsCheckedProperty, value); }
+        }
+
+        public static readonly PropertyData IsIncludeSubmissionsCheckedProperty = RegisterProperty("IsIncludeSubmissionsChecked", typeof (bool), true);
+
         #endregion //Bindings
 
         #region Commands
@@ -108,7 +119,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnOpenNotebookCommandExecute()
         {
-            PleaseWaitHelper.Show(() => LoadedNotebookService.OpenLocalNotebook(SelectedNotebook, SelectedCacheDirectory), null, "Loading Notebook");
+            PleaseWaitHelper.Show(() => LoadedNotebookService.OpenLocalNotebook(SelectedNotebook, SelectedCacheDirectory, IsIncludeSubmissionsChecked), null, "Loading Notebook");
 
             //if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Student)
             //{
@@ -166,7 +177,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            PleaseWaitHelper.Show(() => LoadedNotebookService.OpenLocalNotebook(SelectedNotebook, SelectedCacheDirectory, pagesToOpen), null, "Loading Notebook");
+            PleaseWaitHelper.Show(() => LoadedNotebookService.OpenLocalNotebook(SelectedNotebook, SelectedCacheDirectory, IsIncludeSubmissionsChecked, pagesToOpen), null, "Loading Notebook");
         }
 
         #endregion //Commands
