@@ -77,7 +77,7 @@ namespace CLP.Entities
                 var last = nameParts.LastOrDefault();
                 var lastInitial = last == null ? string.Empty : " " + last[0];
                 var firstAndLastInitial = first + lastInitial + ".";
-                return ID == Person.Author.ID ? "AUTHOR" : !IsStudent ? "Mrs. McNamara" : !string.IsNullOrEmpty(Alias) ? Alias : firstAndLastInitial;
+                return ID == Author.ID ? "AUTHOR" : !string.IsNullOrEmpty(Alias) ? Alias : firstAndLastInitial;
             }
         }
 
