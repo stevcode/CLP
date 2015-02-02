@@ -2,6 +2,6 @@
 {
     public interface IRelationPart
     {
-        double FinalAnswer { get; } 
+        double RelationPartAnswerValue { get; } 
     }
 }

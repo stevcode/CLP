@@ -67,6 +67,15 @@ namespace CLP.Entities
                                                                                     typeof (RelationTypes),
                                                                                     RelationTypes.GeneralMultiplication);
 
+        #region IRelationPartImplementation
+
+        public double RelationPartAnswerValue
+        {
+            get { return Product; }
+        }
+
+        #endregion //IRelationPartImplementation
+
         #region ATagBase Overrides
 
         public override Category Category
