@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 using Catel.Data;
 
@@ -42,13 +43,13 @@ namespace CLP.Entities
         /// <summary>
         /// List of the Addends
         /// </summary>
-        public List<double> Addends
+        public List<IRelationPart> Addends
         {
-            get { return GetValue<List<double>>(AddendsProperty); }
+            get { return GetValue<List<IRelationPart>>(AddendsProperty); }
             set { SetValue(AddendsProperty, value); }
         }
 
-        public static readonly PropertyData AddendsProperty = RegisterProperty("Addends", typeof (List<double>), () => new List<double>());
+        public static readonly PropertyData AddendsProperty = RegisterProperty("Addends", typeof(List<IRelationPart>), () => new List<IRelationPart>());
 
         /// <summary>
         /// Final sum of the addition relation.
@@ -77,7 +78,17 @@ namespace CLP.Entities
         public double RelationPartAnswerValue
         {
             get { return Sum; }
-        } 
+        }
+
+        public string FormattedRelation
+        {
+            get { return string.Join("+", Addends.Select(x => x.RelationPartAnswerValue)); }
+        }
+
+        public string ExpandedFormattedRelation
+        {
+            get { return string.Join("+", Addends.Select(x => x is NumericValueDefinitionTag ? x.FormattedRelation : "(" + x.FormattedRelation + ")")); }
+        }
 
         #endregion //IRelationPartImplementation
 
@@ -95,7 +106,7 @@ namespace CLP.Entities
 
         public override string FormattedValue
         {
-            get { return string.Format("{0}", Category); }
+            get { return string.Format("Relation Type: {0}\n" + "{1} = {2}\n" + "Expanded Relation:\n" + "{3} = {2}", RelationType, FormattedRelation, Sum, ExpandedFormattedRelation); }
         }
 
         #endregion //ATagBase Overrides

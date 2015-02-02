@@ -167,6 +167,7 @@
     <Compile Include="DomainModel\Tags\Array\ArrayXAxisStrategyTag.cs" />
     <Compile Include="DomainModel\Tags\Array\ArrayYAxisStrategyTag.cs" />
     <Compile Include="DomainModel\Tags\ATagBase.cs" />
+    <Compile Include="DomainModel\Tags\Definition\NumericValueDefinitionTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\ADivisionTemplateBaseTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateCorrectnessSummaryTag.cs" />
     <Compile Include="DomainModel\Tags\DivisionTemplate\DivisionTemplateFactorPairErrorsTag.cs" />

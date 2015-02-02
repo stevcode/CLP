@@ -39,13 +39,13 @@ namespace CLP.Entities
         #region Properties
 
         /// <summary>List of all the factors in the multiplication relation.</summary>
-        public List<double> Factors
+        public List<IRelationPart> Factors
         {
-            get { return GetValue<List<double>>(FactorsProperty); }
+            get { return GetValue<List<IRelationPart>>(FactorsProperty); }
             set { SetValue(FactorsProperty, value); }
         }
 
-        public static readonly PropertyData FactorsProperty = RegisterProperty("Factors", typeof (List<double>), () => new List<double>());
+        public static readonly PropertyData FactorsProperty = RegisterProperty("Factors", typeof(List<IRelationPart>), () => new List<IRelationPart>());
 
         /// <summary>Value of the product of the multiplication relation.</summary>
         public double Product
@@ -54,7 +54,7 @@ namespace CLP.Entities
             set { SetValue(ProductProperty, value); }
         }
 
-        public static readonly PropertyData ProductProperty = RegisterProperty("Product", typeof (double), 0);
+        public static readonly PropertyData ProductProperty = RegisterProperty("Product", typeof(double), 0);
 
         /// <summary>Type of multiplication relationship the relation defines.</summary>
         public RelationTypes RelationType
@@ -64,7 +64,7 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData RelationTypeProperty = RegisterProperty("RelationType",
-                                                                                    typeof (RelationTypes),
+                                                                                    typeof(RelationTypes),
                                                                                     RelationTypes.GeneralMultiplication);
 
         #region IRelationPartImplementation
@@ -72,6 +72,42 @@ namespace CLP.Entities
         public double RelationPartAnswerValue
         {
             get { return Product; }
+        }
+
+        public string FormattedRelation
+        {
+            get
+            {
+                switch (RelationType)
+                {
+                    case RelationTypes.EqualGroups:
+                    case RelationTypes.OrderedEqualGroups:
+                        return string.Join(" groups of ", Factors.Select(x => x.RelationPartAnswerValue));
+                    //return string.Join(", ",
+                    //                                 Factors.Select((e, i) => new
+                    //                                                          {
+                    //                                                              Index = i / 2,
+                    //                                                              Item = e
+                    //                                                          }).GroupBy(x => x.Index, x => x.Item).Select(x => string.Join(" groups of ", x)));
+                    default:
+                        return string.Join("x", Factors.Select(x => x.RelationPartAnswerValue));
+                }
+            }
+        }
+
+        public string ExpandedFormattedRelation
+        {
+            get
+            {
+                switch (RelationType)
+                {
+                    case RelationTypes.EqualGroups:
+                    case RelationTypes.OrderedEqualGroups:
+                        return string.Join(" groups of ", Factors.Select(x => x is NumericValueDefinitionTag ? x.FormattedRelation : "(" + x.FormattedRelation + ")"));
+                    default:
+                        return string.Join("x", Factors.Select(x => x is NumericValueDefinitionTag ? x.FormattedRelation : "(" + x.FormattedRelation + ")"));
+                }
+            }
         }
 
         #endregion //IRelationPartImplementation
@@ -92,19 +128,7 @@ namespace CLP.Entities
         {
             get
             {
-                return RelationType == RelationTypes.EqualGroups
-                           ? string.Format("Relation Type: {0}\n" + "{1} = {2}",
-                                           RelationType,
-                                           string.Join(", ",
-                                                       Factors.Select((e, i) => new
-                                                                                {
-                                                                                    Index = i / 2,
-                                                                                    Item = e
-                                                                                })
-                                                              .GroupBy(x => x.Index, x => x.Item)
-                                                              .Select(x => string.Join(" groups of ", x))),
-                                           Product)
-                           : string.Format("Relation Type: {0}\n" + "{1} = {2}", RelationType, string.Join("x", Factors), Product);
+                return string.Format("Relation Type: {0}\n" + "{1} = {2}\n" + "Expanded Relation:\n" + "{3} = {2}", RelationType, FormattedRelation, Product, ExpandedFormattedRelation);
             }
         }
 
