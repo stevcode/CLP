@@ -151,18 +151,18 @@ namespace CLP.Entities
                 incorrectReasons.Add(NumberLineRepresentationIncorrectReasons.Incomplete);
             }
 
-            if ((multiplicationRelationDefinition.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups) 
-                && (numberLine.JumpSizes.Count != multiplicationRelationDefinition.Factors[0] || numberLine.JumpSizes.Count != multiplicationRelationDefinition.Factors[1]))
+            if ((multiplicationRelationDefinition.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.EqualGroups)
+                && (numberLine.JumpSizes.Count != multiplicationRelationDefinition.Factors[0].RelationPartAnswerValue || numberLine.JumpSizes.Count != multiplicationRelationDefinition.Factors[1].RelationPartAnswerValue))
             {
                 incorrectReasons.Add(NumberLineRepresentationIncorrectReasons.WrongNumberofJumps);
             }
             else if ((multiplicationRelationDefinition.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.OrderedEqualGroups)
-                && (numberLine.JumpSizes.Count == multiplicationRelationDefinition.Factors[1]))
+                && (numberLine.JumpSizes.Count == multiplicationRelationDefinition.Factors[1].RelationPartAnswerValue))
             {
                 incorrectReasons.Add(NumberLineRepresentationIncorrectReasons.ReversedGrouping);
             }
             else if ((multiplicationRelationDefinition.RelationType == MultiplicationRelationDefinitionTag.RelationTypes.OrderedEqualGroups)
-                && (numberLine.JumpSizes.Count != multiplicationRelationDefinition.Factors[0]))
+                && (numberLine.JumpSizes.Count != multiplicationRelationDefinition.Factors[0].RelationPartAnswerValue))
             {
                 incorrectReasons.Add(NumberLineRepresentationIncorrectReasons.WrongNumberofJumps);
             }
@@ -172,8 +172,8 @@ namespace CLP.Entities
             {
                 foreach (var jump in numberLine.JumpSizes)
                 {
-                    if (numberLine.JumpSizes.All(x=> x.JumpSize == multiplicationRelationDefinition.Factors[0]) || 
-                        numberLine.JumpSizes.All(x=> x.JumpSize == multiplicationRelationDefinition.Factors[1]))
+                    if (numberLine.JumpSizes.All(x => x.JumpSize == multiplicationRelationDefinition.Factors[0].RelationPartAnswerValue) ||
+                        numberLine.JumpSizes.All(x => x.JumpSize == multiplicationRelationDefinition.Factors[1].RelationPartAnswerValue))
                     {
                         isWrongJumpSize = false;
                     }
@@ -188,7 +188,7 @@ namespace CLP.Entities
             {
                 foreach (var jump in numberLine.JumpSizes)
                 {
-                    if (jump.JumpSize != multiplicationRelationDefinition.Factors[1])
+                    if (jump.JumpSize != multiplicationRelationDefinition.Factors[1].RelationPartAnswerValue)
                     {
                         isWrongJumpSize = true;
                     }

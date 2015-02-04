@@ -20,7 +20,9 @@ namespace Classroom_Learning_Partner.ViewModels
     public enum AnswerDefinitions
     {
         Multiplication,
-        Division
+        Division,
+        Addition,
+        AllFactorsOfAProduct
     }
 
     public enum ManualTags
@@ -666,11 +668,11 @@ namespace Classroom_Learning_Partner.ViewModels
                         return;
                     }
 
-                    (answerDefinition as MultiplicationRelationDefinitionTag).Factors.Clear();
+                    ((MultiplicationRelationDefinitionTag)answerDefinition).Factors.Clear();
 
-                    foreach (var containerValue in multiplicationViewModel.Factors)
+                    foreach (var relationPart in multiplicationViewModel.Factors)
                     {
-                        (answerDefinition as MultiplicationRelationDefinitionTag).Factors.Add(containerValue.ContainedValue);
+                        ((MultiplicationRelationDefinitionTag)answerDefinition).Factors.Add(relationPart);
                     }
 
                     break;
@@ -687,6 +689,29 @@ namespace Classroom_Learning_Partner.ViewModels
                     if (divisionView.DialogResult != true)
                     {
                         return;
+                    }
+
+                    break;
+                case AnswerDefinitions.Addition:
+                    answerDefinition = new AdditionRelationDefinitionTag(CurrentPage, Origin.Author);
+
+                    var additionViewModel = new AdditionRelationDefinitionTagViewModel(answerDefinition as AdditionRelationDefinitionTag);
+                    var additionView = new AdditionRelationDefinitionTagView(additionViewModel)
+                                             {
+                                                 Owner = Application.Current.MainWindow
+                                             };
+                    additionView.ShowDialog();
+
+                    if (additionView.DialogResult != true)
+                    {
+                        return;
+                    }
+
+                    ((AdditionRelationDefinitionTag)answerDefinition).Addends.Clear();
+
+                    foreach (var relationPart in additionViewModel.Addends)
+                    {
+                        ((AdditionRelationDefinitionTag)answerDefinition).Addends.Add(relationPart);
                     }
 
                     break;

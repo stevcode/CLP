@@ -289,6 +289,7 @@
     <Compile Include="ViewModels\Ribbon\AnimationControlRibbonViewModel.cs" />
     <Compile Include="ViewModels\Ribbon\ContextRibbonViewModel.cs" />
     <Compile Include="ViewModels\Ribbon\MajorRibbonViewModel.cs" />
+    <Compile Include="ViewModels\Tags\AdditionRelationDefinitionTagViewModel.cs" />
     <Compile Include="ViewModels\Tags\DivisionRelationDefinitionTagViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\ClassSubjectCreationViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\ExitTicketCreationViewModel.cs" />
@@ -341,6 +342,9 @@
     <Compile Include="ViewModels\BackStage\OptionsPaneViewModel.cs" />
     <Compile Include="Views\Modal Windows\AdvancedStagingView.xaml.cs">
       <DependentUpon>AdvancedStagingView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Modal Windows\MVVM\AdditionRelationDefinitionTagView.xaml.cs">
+      <DependentUpon>AdditionRelationDefinitionTagView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Modal Windows\MVVM\DivisionRelationDefinitionTagView.xaml.cs">
       <DependentUpon>DivisionRelationDefinitionTagView.xaml</DependentUpon>
@@ -620,6 +624,10 @@
     <Page Include="Views\Modal Windows\AdvancedStagingView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Modal Windows\MVVM\AdditionRelationDefinitionTagView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Modal Windows\MVVM\DivisionRelationDefinitionTagView.xaml">
       <SubType>Designer</SubType>

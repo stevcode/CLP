@@ -5,8 +5,6 @@
                   xmlns:entities="clr-namespace:CLP.Entities;assembly=CLP.Entities"
                   xmlns:sys="clr-namespace:System;assembly=mscorlib"
                   Title="Edit Multiplication Definition"
-                  Height="300"
-                  Width="600"
                   ResizeMode="NoResize"
                   ShowInTaskbar="False">
 
@@ -23,102 +21,210 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
+        <!-- Relation Type -->
         <Label Grid.Row="0"
                Grid.Column="0"
-               Grid.ColumnSpan="2"
+               Margin="5"
                Content="Multiplication Relation Type:"
                HorizontalAlignment="Center" />
 
         <ComboBox Grid.Row="0"
-                  Grid.Column="2"
-                  Grid.ColumnSpan="2"
+                  Grid.Column="1"
+                  Margin="5"
                   TabIndex="6"
                   HorizontalAlignment="Center"
                   ItemsSource="{Binding Source={StaticResource RelationTypes}}"
                   SelectedItem="{Binding RelationType}" />
 
+        <!-- Factors -->
         <Label Grid.Row="1"
                Grid.Column="0"
                Content="Factors"
-               HorizontalAlignment="Center"
-               VerticalAlignment="Center" />
-
-        <ItemsControl Grid.Row="1"
-                      Grid.Column="1"
-                      ItemsSource="{Binding Factors}"
-                      AlternationCount="2">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel Orientation="Vertical" />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Orientation="Vertical">
-                        <TextBox Text="{Binding ContainedValue}" />
-                        <TextBlock Text="Group(s) Of">
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="Visibility"
-                                            Value="Collapsed" />
-                                    <Style.Triggers>
-                                        <MultiDataTrigger>
-                                            <MultiDataTrigger.Conditions>
-                                                <Condition
-                                                    Binding="{Binding DataContext.RelationType, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}}"
-                                                    Value="{x:Static entities:MultiplicationRelationDefinitionTag+RelationTypes.EqualGroups}" />
-                                                <Condition
-                                                    Binding="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource TemplatedParent}}"
-                                                    Value="0" />
-                                            </MultiDataTrigger.Conditions>
-                                            <Setter Property="Visibility"
-                                                    Value="Visible" />
-                                        </MultiDataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
-                    </StackPanel>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-
-        <Label Grid.Row="1"
-               Grid.Column="2"
-               Content="Product:"
                HorizontalAlignment="Center" />
 
-        <TextBox Grid.Row="1"
-                 Grid.Column="3"
-                 Height="20"
-                 VerticalContentAlignment="Center"
-                 VerticalAlignment="Top"
-                 Text="{Binding Product}"
-                 TabIndex="2" />
-        
-        <Button Grid.Row="2"
+        <ItemsControl Grid.Row="2"
+                      Grid.Column="0"
+                      Padding="5 0"
+                      ItemsSource="{Binding Factors}"
+                      AlternationCount="2">
+            
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <VirtualizingStackPanel Orientation="Vertical" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            
+            <ItemsControl.Resources>
+                
+                <DataTemplate DataType="{x:Type entities:NumericValueDefinitionTag}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0" 
+                                    Orientation="Vertical"
+                                    Margin="5 1">
+                            <TextBox Text="{Binding NumericValue}" />
+
+                            <TextBlock Text="Group(s) Of">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Visibility"
+                                                Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition
+                                                            Binding="{Binding DataContext.RelationType, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                                               Value="{x:Static entities:MultiplicationRelationDefinitionTag+RelationTypes.EqualGroups}" />
+                                                    <Condition Binding="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource TemplatedParent}}"
+                                                               Value="0" />
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter Property="Visibility"
+                                                        Value="Visible" />
+                                            </MultiDataTrigger>
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition
+                                                            Binding="{Binding DataContext.RelationType, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                                               Value="{x:Static entities:MultiplicationRelationDefinitionTag+RelationTypes.OrderedEqualGroups}" />
+                                                    <Condition Binding="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource TemplatedParent}}"
+                                                               Value="0" />
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter Property="Visibility"
+                                                        Value="Visible" />
+                                            </MultiDataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </StackPanel>
+
+                        <Button Grid.Column="1"
+                                Command="{Binding DataContext.TagCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                CommandParameter="{Binding}"
+                                Content="Tag"
+                                HorizontalAlignment="Right"
+                                Margin="1" />
+                    </Grid>
+                </DataTemplate>
+
+                <DataTemplate DataType="{x:Type entities:AdditionRelationDefinitionTag}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0"
+                                    Orientation="Vertical"
+                                    Margin="5 1">
+                            <TextBlock Text="{Binding ExpandedFormattedRelation}" />
+
+                            <TextBlock Text="Group(s) Of">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Visibility"
+                                                Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition
+                                                            Binding="{Binding DataContext.RelationType, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                                               Value="{x:Static entities:MultiplicationRelationDefinitionTag+RelationTypes.EqualGroups}" />
+                                                    <Condition Binding="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource TemplatedParent}}"
+                                                               Value="0" />
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter Property="Visibility"
+                                                        Value="Visible" />
+                                            </MultiDataTrigger>
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition
+                                                            Binding="{Binding DataContext.RelationType, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                                               Value="{x:Static entities:MultiplicationRelationDefinitionTag+RelationTypes.OrderedEqualGroups}" />
+                                                    <Condition Binding="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource TemplatedParent}}"
+                                                               Value="0" />
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter Property="Visibility"
+                                                        Value="Visible" />
+                                            </MultiDataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </StackPanel>
+
+                        <Button Grid.Column="1"
+                                Command="{Binding DataContext.UntagCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                CommandParameter="{Binding}"
+                                Content="Untag"
+                                HorizontalAlignment="Right"
+                                Margin="1" />
+                    </Grid>
+                </DataTemplate>
+                
+            </ItemsControl.Resources>
+
+        </ItemsControl>
+
+        <Button Grid.Row="3"
                 Grid.Column="0"
-                Margin="15 0"
-                Content="+"
-                Command="{Binding AddFactorCommand}" />
+                Margin="15 5"
+                Content="Add Factor"
+                Command="{Binding AddFactorCommand}">
+            <Button.Style>
+                <Style TargetType="Button">
+                    <Setter Property="Visibility"
+                            Value="Visible" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding RelationType}"
+                                     Value="{x:Static entities:MultiplicationRelationDefinitionTag+RelationTypes.EqualGroups}">
+                            <Setter Property="Visibility"
+                                    Value="Collapsed" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding RelationType}"
+                                     Value="{x:Static entities:MultiplicationRelationDefinitionTag+RelationTypes.OrderedEqualGroups}">
+                            <Setter Property="Visibility"
+                                    Value="Collapsed" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+        </Button>
+
+        <!-- Product -->
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Grid.Row="1"
+                    Grid.Column="1">
+            <TextBlock Text="Product:"
+                       Margin="0 0 5 0"
+                       VerticalAlignment="Center" />
+            <TextBlock Text="{Binding Product}"
+                       VerticalAlignment="Center" />
+        </StackPanel>
 
         <Button Grid.Row="2"
-                Grid.Column="2"
-                Grid.ColumnSpan="2"
+                Grid.Column="1"
                 Margin="5 0"
+                Padding="5"
+                VerticalAlignment="Top"
                 Content="Calculate Product"
                 Command="{Binding CalculateProductCommand}" />
+
     </Grid>
 
 </catel:DataWindow>

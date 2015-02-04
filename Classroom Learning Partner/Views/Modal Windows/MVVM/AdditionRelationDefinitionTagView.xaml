@@ -1,0 +1,140 @@
+﻿<catel:DataWindow x:Class="Classroom_Learning_Partner.Views.AdditionRelationDefinitionTagView"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:catel="http://catel.codeplex.com"
+                  xmlns:entities="clr-namespace:CLP.Entities;assembly=CLP.Entities"
+                  xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                  Title="Edit Addition Definition"
+                  ResizeMode="NoResize"
+                  ShowInTaskbar="False">
+
+    <catel:DataWindow.Resources>
+        <ObjectDataProvider x:Key="RelationTypes"
+                            MethodName="GetValues"
+                            ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="entities:AdditionRelationDefinitionTag+RelationTypes" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </catel:DataWindow.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Relation Type -->
+        <Label Grid.Row="0"
+               Grid.Column="0"
+               Margin="5"
+               Content="Addition Relation Type:"
+               HorizontalAlignment="Center" />
+
+        <ComboBox Grid.Row="0"
+                  Grid.Column="1"
+                  Margin="5"
+                  TabIndex="6"
+                  HorizontalAlignment="Center"
+                  ItemsSource="{Binding Source={StaticResource RelationTypes}}"
+                  SelectedItem="{Binding RelationType}" />
+
+        <!-- Addends -->
+        <Label Grid.Row="1"
+               Grid.Column="0"
+               Content="Addends"
+               HorizontalAlignment="Center" />
+
+        <ItemsControl Grid.Row="2"
+                      Grid.Column="0"
+                      Padding="5 0"
+                      ItemsSource="{Binding Addends}">
+
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <VirtualizingStackPanel Orientation="Vertical" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+
+            <ItemsControl.Resources>
+
+                <DataTemplate DataType="{x:Type entities:NumericValueDefinitionTag}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBox Grid.Column="0"
+                                 Margin="5 1"
+                                 Text="{Binding NumericValue}" />
+
+                        <Button Grid.Column="1"
+                                Command="{Binding DataContext.TagCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                CommandParameter="{Binding}"
+                                Content="Tag"
+                                HorizontalAlignment="Right"
+                                Margin="1" />
+                    </Grid>
+                </DataTemplate>
+
+                <DataTemplate DataType="{x:Type entities:MultiplicationRelationDefinitionTag}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0"
+                                 Margin="5 1"
+                                 Text="{Binding ExpandedFormattedRelation}" />
+
+                        <Button Grid.Column="1"
+                                Command="{Binding DataContext.UntagCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}}"
+                                CommandParameter="{Binding}"
+                                Content="Untag"
+                                HorizontalAlignment="Right"
+                                Margin="1" />
+                    </Grid>
+                </DataTemplate>
+
+            </ItemsControl.Resources>
+
+        </ItemsControl>
+
+        <Button Grid.Row="3"
+                Grid.Column="0"
+                Margin="15 5"
+                Content="Add Addend"
+                Command="{Binding AddAddendCommand}" />
+
+        <!-- Sum -->
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Grid.Row="1"
+                    Grid.Column="1">
+            <TextBlock Text="Sum:"
+                       Margin="0 0 5 0"
+                       VerticalAlignment="Center" />
+            <TextBlock Text="{Binding Sum}"
+                       VerticalAlignment="Center" />
+        </StackPanel>
+
+        <Button Grid.Row="2"
+                Grid.Column="1"
+                Margin="5 0"
+                Padding="5"
+                VerticalAlignment="Top"
+                Content="Calculate Sum"
+                Command="{Binding CalculateSumCommand}" />
+
+    </Grid>
+
+</catel:DataWindow>

@@ -56,7 +56,7 @@ namespace CLP.Entities
             var groups = groupTag.StampedObjectIDs.Count;
             var groupSize = groupTag.Parts;
 
-            if (groups == multiplicationRelationDefinitionTag.Factors[0] && groupSize == multiplicationRelationDefinitionTag.Factors[1])
+            if (groups == multiplicationRelationDefinitionTag.Factors[0].RelationPartAnswerValue && groupSize == multiplicationRelationDefinitionTag.Factors[1].RelationPartAnswerValue)
             {
                 return;
             }
@@ -68,19 +68,19 @@ namespace CLP.Entities
                 page.AddTag(existingTroubleWithGroupingTag);
             }
 
-            if (groups == multiplicationRelationDefinitionTag.Factors[1] && groupSize == multiplicationRelationDefinitionTag.Factors[0])
+            if (groups == multiplicationRelationDefinitionTag.Factors[1].RelationPartAnswerValue && groupSize == multiplicationRelationDefinitionTag.Factors[0].RelationPartAnswerValue)
             {
                 existingTroubleWithGroupingTag.NumberOfGroupsAndGroupSizeSwappedCount++;
                 return;
             }
 
-            if (groups == multiplicationRelationDefinitionTag.Factors[0] && groupSize != multiplicationRelationDefinitionTag.Factors[1])
+            if (groups == multiplicationRelationDefinitionTag.Factors[0].RelationPartAnswerValue && groupSize != multiplicationRelationDefinitionTag.Factors[1].RelationPartAnswerValue)
             {
                 existingTroubleWithGroupingTag.GroupSizeWrongCount++;
                 return;
             }
 
-            if (groups != multiplicationRelationDefinitionTag.Factors[0] && groupSize == multiplicationRelationDefinitionTag.Factors[1])
+            if (groups != multiplicationRelationDefinitionTag.Factors[0].RelationPartAnswerValue && groupSize == multiplicationRelationDefinitionTag.Factors[1].RelationPartAnswerValue)
             {
                 existingTroubleWithGroupingTag.NumberOfGroupsWrongCount++;
                 return;

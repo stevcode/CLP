@@ -152,8 +152,8 @@ namespace CLP.Entities
                 return;
             }
 
-            var firstFactor = multiplicationRelationDefinition.Factors[0];
-            var secondFactor = multiplicationRelationDefinition.Factors[1];
+            var firstFactor = multiplicationRelationDefinition.Factors[0].RelationPartAnswerValue;
+            var secondFactor = multiplicationRelationDefinition.Factors[1].RelationPartAnswerValue;
 
             if (firstFactor == array.Columns &&
                 secondFactor == array.Rows)
@@ -376,8 +376,8 @@ namespace CLP.Entities
                 return;
             }
 
-            var firstFactor = multiplicationRelationDefinition.Factors[0];
-            var secondFactor = multiplicationRelationDefinition.Factors[1];
+            var firstFactor = multiplicationRelationDefinition.Factors[0].RelationPartAnswerValue;
+            var secondFactor = multiplicationRelationDefinition.Factors[1].RelationPartAnswerValue;
 
             if ((firstFactor == array.Rows && secondFactor == array.Columns) ||
                 (firstFactor == array.Columns && secondFactor == array.Rows))

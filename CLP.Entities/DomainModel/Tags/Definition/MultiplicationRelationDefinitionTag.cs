@@ -7,7 +7,7 @@ using Catel.Data;
 namespace CLP.Entities
 {
     [Serializable]
-    public class MultiplicationRelationDefinitionTag : ATagBase
+    public class MultiplicationRelationDefinitionTag : ATagBase, IRelationPart
     {
         public enum RelationTypes
         {
