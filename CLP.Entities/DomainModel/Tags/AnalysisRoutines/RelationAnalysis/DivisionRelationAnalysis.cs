@@ -2,7 +2,7 @@
 
 namespace CLP.Entities
 {
-    public static class MultiplicationRelationAnalysis
+    public static class DivisionRelationAnalysis
     {
         public static void Analyze(CLPPage page) { AnalyzeRegion(page, new Rect(0, 0, page.Height, page.Width)); }
 

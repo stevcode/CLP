@@ -25,7 +25,7 @@ namespace CLP.Entities
             var divisionDefinitionTags = page.Tags.OfType<DivisionRelationDefinitionTag>().ToList();
             var divisionTemplates = page.PageObjects.OfType<FuzzyFactorCard>().ToList();
             if (!divisionDefinitionTags.Any() ||
-                !divisionTemplates.Any())
+                !divisionTemplates.Any())  //BUG: Should probably mark as incorrect if no DTs on page.
             {
                 return;
             }

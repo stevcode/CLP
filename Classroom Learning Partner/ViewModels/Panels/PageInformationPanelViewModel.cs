@@ -785,6 +785,36 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnAnalyzePageCommandExecute()
         {
             PageAnalysis.Analyze(CurrentPage);
+
+            var definitionTags = CurrentPage.Tags.Where(t => t.Category == Category.Definition).ToList();
+
+            if (definitionTags.Any(t => t is AdditionRelationDefinitionTag))
+            {
+                AdditionRelationAnalysis.Analyze(CurrentPage);
+            }
+            if (definitionTags.Any(t => t is MultiplicationRelationDefinitionTag))
+            {
+                MultiplicationRelationAnalysis.Analyze(CurrentPage);
+            }
+            if (definitionTags.Any(t => t is DivisionRelationDefinitionTag))
+            {
+                DivisionRelationAnalysis.Analyze(CurrentPage);
+            }
+            if (definitionTags.Any(t => t is FactorsOfProductDefinitionTag))
+            {
+                FactorsOfProductAnalysis.Analyze(CurrentPage);
+            }
+
+
+
+
+
+
+
+
+
+
+
             ArrayAnalysis.Analyze(CurrentPage);
             DivisionTemplateAnalysis.Analyze(CurrentPage);
             StampAnalysis.Analyze(CurrentPage);
