@@ -40,7 +40,7 @@ namespace CLP.Entities
 
                 if (pageObject is NumberLine)
                 {
-                    objectTypes.Add("Number Line");
+                    objectTypes.Add("Number Lines");
                     continue;
                 }
 
@@ -117,7 +117,7 @@ namespace CLP.Entities
 
                     if (pageObject is NumberLine)
                     {
-                        objectTypes.Add("Number Line");
+                        objectTypes.Add("Number Lines");
                         continue;
                     }
 
@@ -187,7 +187,7 @@ namespace CLP.Entities
 
                 if (pageObject is NumberLine)
                 {
-                    objectTypes.Add("Number Line");
+                    objectTypes.Add("Number Lines");
                     continue;
                 }
 

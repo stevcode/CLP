@@ -112,8 +112,10 @@
     <Compile Include="DomainModel\PageObjects\MultipleChoiceBox.cs" />
     <Compile Include="DomainModel\PageObjects\NumberLine.cs" />
     <Compile Include="DomainModel\PageObjects\PageObject Interfaces\IReporter.cs" />
+    <Compile Include="DomainModel\Tags\AnalysisRoutines\AdditionRelationAnalysis.cs" />
     <Compile Include="DomainModel\Tags\AnalysisRoutines\ArrayAnalysis.cs" />
     <Compile Include="DomainModel\Tags\AnalysisRoutines\DivisionTemplateAnalysis.cs" />
+    <Compile Include="DomainModel\Tags\AnalysisRoutines\MultiplicationRelationAnalysis.cs" />
     <Compile Include="DomainModel\Tags\AnalysisRoutines\NumberLineAnalysis.cs" />
     <Compile Include="DomainModel\Tags\AnalysisRoutines\PageAnalysis.cs" />
     <Compile Include="DomainModel\Tags\AnalysisRoutines\StampAnalysis.cs" />
