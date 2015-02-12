@@ -16,6 +16,7 @@ namespace CLP.Entities
             }
 
             // First, clear out any old Tags generated via Analysis.
+
             //foreach (var tag in
             //    page.Tags.ToList()
             //        .Where(

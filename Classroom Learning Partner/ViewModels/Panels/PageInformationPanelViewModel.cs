@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
@@ -14,6 +15,7 @@ using Catel.MVVM.Views;
 using Classroom_Learning_Partner.Views;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Entities;
+using ServiceModelEx;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -68,6 +70,9 @@ namespace Classroom_Learning_Partner.ViewModels
             AddTagCommand = new Command(OnAddTagCommandExecute);
             AnalyzePageCommand = new Command(OnAnalyzePageCommandExecute);
             AnalyzePageHistoryCommand = new Command(OnAnalyzePageHistoryCommandExecute);
+
+            //TEMP
+            InterpretArrayDividersCommand = new Command(OnInterpretArrayDividersCommandExecute);
         }
 
         private void PageInformationPanelViewModel_Initialized(object sender, EventArgs e)
@@ -284,7 +289,10 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                      x =>
                                                                      x.ID == CurrentPage.ID && x.DifferentiationLevel == CurrentPage.DifferentiationLevel && x.VersionIndex == 0);
 
-                return string.Format("{0} / {1} / {2}", parentPage.MinSubmissionAnimationLength, parentPage.MaxSubmissionAnimationLength, parentPage.AverageSubmissionAnimationLength);
+                return string.Format("{0} / {1} / {2}",
+                                     parentPage.MinSubmissionAnimationLength,
+                                     parentPage.MaxSubmissionAnimationLength,
+                                     parentPage.AverageSubmissionAnimationLength);
             }
         }
 
@@ -697,9 +705,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
                     var additionViewModel = new AdditionRelationDefinitionTagViewModel(answerDefinition as AdditionRelationDefinitionTag);
                     var additionView = new AdditionRelationDefinitionTagView(additionViewModel)
-                                             {
-                                                 Owner = Application.Current.MainWindow
-                                             };
+                                       {
+                                           Owner = Application.Current.MainWindow
+                                       };
                     additionView.ShowDialog();
 
                     if (additionView.DialogResult != true)
@@ -804,16 +812,6 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 FactorsOfProductAnalysis.Analyze(CurrentPage);
             }
-
-
-
-
-
-
-
-
-
-
 
             ArrayAnalysis.Analyze(CurrentPage);
             DivisionTemplateAnalysis.Analyze(CurrentPage);
@@ -921,5 +919,101 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //Commands
+
+        /// <summary>TEMP</summary>
+        public Command InterpretArrayDividersCommand { get; private set; }
+
+        private void OnInterpretArrayDividersCommandExecute()
+        {
+            var arraysOnPage = CurrentPage.PageObjects.OfType<CLPArray>().ToList();
+
+            foreach (var array in arraysOnPage)
+            {
+                if (array.ArrayType != ArrayTypes.Array ||
+                        !array.IsGridOn)
+                {
+                    continue;
+                }
+
+                var verticalDividers = new List<int> { 0 };
+                var horizontalDividers = new List<int> { 0 };
+                var cuttableTop = array.YPosition + array.LabelLength;
+                var cuttableBottom = cuttableTop + array.ArrayHeight;
+                var cuttableLeft = array.XPosition + array.LabelLength;
+                var cuttableRight = cuttableLeft + array.ArrayWidth;
+                foreach (var stroke in CurrentPage.InkStrokes)
+                {
+                    var strokeTop = stroke.GetBounds().Top;
+                    var strokeBottom = stroke.GetBounds().Bottom;
+                    var strokeLeft = stroke.GetBounds().Left;
+                    var strokeRight = stroke.GetBounds().Right;
+
+                    const double SMALL_THRESHOLD = 5.0;
+                    const double LARGE_THRESHOLD = 15.0;
+
+                    if (Math.Abs(strokeLeft - strokeRight) < Math.Abs(strokeTop - strokeBottom) &&
+                        strokeRight <= cuttableRight &&
+                        strokeLeft >= cuttableLeft &&
+                        (strokeTop - cuttableTop <= SMALL_THRESHOLD ||
+                        cuttableBottom - strokeBottom <= SMALL_THRESHOLD) &&
+                        (strokeTop - cuttableTop <= LARGE_THRESHOLD &&
+                        cuttableBottom - strokeBottom <= LARGE_THRESHOLD) &&
+                        strokeBottom - strokeTop >= cuttableBottom - cuttableTop - LARGE_THRESHOLD &&
+                        array.Columns > 1) //Vertical Stroke. Stroke must be within the bounds of the pageObject
+                    {
+                        var average = (strokeRight + strokeLeft) / 2;
+                        var relativeAverage = average - array.LabelLength - array.XPosition;
+                        var dividerValue = (int)Math.Round(relativeAverage / array.GridSquareSize);
+                        if (dividerValue == 0 ||
+                            dividerValue == array.Columns)
+                        {
+                            continue;
+                        }
+                        verticalDividers.Add(dividerValue);
+                    }
+
+                    if (Math.Abs(strokeLeft - strokeRight) > Math.Abs(strokeTop - strokeBottom) &&
+                             strokeBottom <= cuttableBottom &&
+                             strokeTop >= cuttableTop &&
+                             (cuttableRight - strokeRight <= SMALL_THRESHOLD ||
+                             strokeLeft - cuttableLeft <= SMALL_THRESHOLD) &&
+                             (cuttableRight - strokeRight <= LARGE_THRESHOLD &&
+                             strokeLeft - cuttableLeft <= LARGE_THRESHOLD) &&
+                             strokeRight - strokeLeft >= cuttableRight - cuttableLeft - LARGE_THRESHOLD &&
+                             array.Rows > 1) //Horizontal Stroke. Stroke must be within the bounds of the pageObject
+                    {
+                        var average = (strokeTop + strokeBottom) / 2;
+                        var relativeAverage = average - array.LabelLength - array.YPosition;
+                        var dividerValue = (int)Math.Round(relativeAverage / array.GridSquareSize);
+                        if (dividerValue == 0 ||
+                            dividerValue == array.Rows)
+                        {
+                            continue;
+                        }
+                        horizontalDividers.Add(dividerValue);
+                    }
+                }
+
+                verticalDividers.Add(array.Columns);
+                verticalDividers = verticalDividers.Distinct().Sort().ToList();
+                var verticalDivisions = verticalDividers.Zip(verticalDividers.Skip(1), (x, y) => y - x).ToList();
+
+                horizontalDividers.Add(array.Rows);
+                horizontalDividers = horizontalDividers.Distinct().Sort().ToList();
+                var horizontalDivisions = horizontalDividers.Zip(horizontalDividers.Skip(1), (x, y) => y - x).ToList();
+
+                if (verticalDivisions.Count > 1 ||
+                    horizontalDivisions.Count > 1)
+                {
+                    var tag = new TempArrayDividersTag(CurrentPage, Origin.StudentPageGenerated);
+                    tag.ArrayName = array.Rows + "x" + array.Columns;
+                    if (horizontalDivisions.Count > 1)
+                        tag.VerticalDividers = horizontalDivisions;
+                    if (verticalDivisions.Count > 1) 
+                        tag.HorizontalDividers = verticalDivisions;
+                    CurrentPage.AddTag(tag);
+                }
+            }
+        }
     }
 }
