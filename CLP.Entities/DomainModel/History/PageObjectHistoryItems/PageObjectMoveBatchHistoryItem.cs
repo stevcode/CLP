@@ -8,7 +8,7 @@ using Catel.Data;
 namespace CLP.Entities
 {
     [Serializable]
-    [Obsolete("Use PageObjectsMoveBatchHistoryItem instead.")]
+    [Obsolete("Use ObjectsMovedBatchHistoryItem instead.")]
     public class PageObjectMoveBatchHistoryItem : AHistoryItemBase, IHistoryBatch
     {
         #region Constructors

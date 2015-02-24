@@ -3,41 +3,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows;
+using System.Windows.Ink;
 using Catel.Data;
 
 namespace CLP.Entities
 {
     [Serializable]
-    [Obsolete("Use ObjectsMovedBatchHistoryItem instead.")]
-    public class PageObjectsMoveBatchHistoryItem : AHistoryItemBase, IHistoryBatch
+    public class ObjectsMovedBatchHistoryItem : AHistoryItemBase, IHistoryBatch
     {
         #region Constructors
 
-        /// <summary>
-        /// Initializes <see cref="PageObjectsMoveBatchHistoryItem" /> from scratch.
-        /// </summary>
-        public PageObjectsMoveBatchHistoryItem() { }
+        /// <summary>Initializes <see cref="ObjectsMovedBatchHistoryItem" /> from scratch.</summary>
+        public ObjectsMovedBatchHistoryItem() { }
 
-        /// <summary>
-        /// Initializes <see cref="PageObjectsMoveBatchHistoryItem" /> with a parent <see cref="CLPPage" />.
-        /// </summary>
+        /// <summary>Initializes <see cref="ObjectsMovedBatchHistoryItem" /> with a parent <see cref="CLPPage" />.</summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryItem" /> is part of.</param>
-        public PageObjectsMoveBatchHistoryItem(CLPPage parentPage, Person owner, List<string> pageObjectIDs, Point currentPosition)
+        /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryItem" />.</param>
+        public ObjectsMovedBatchHistoryItem(CLPPage parentPage, Person owner)
             : base(parentPage, owner)
         {
-            PageObjectIDs = pageObjectIDs;
-            TravelledPositions = new List<Point>
-                                 {
-                                     currentPosition
-                                 };
+
         }
 
-        /// <summary>
-        /// Initializes a new object based on <see cref="SerializationInfo" />.
-        /// </summary>
+        /// <summary>Initializes a new object based on <see cref="SerializationInfo" />.</summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext" />.</param>
-        protected PageObjectsMoveBatchHistoryItem(SerializationInfo info, StreamingContext context)
+        protected ObjectsMovedBatchHistoryItem(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
         #endregion //Constructors
@@ -55,7 +46,18 @@ namespace CLP.Entities
 
         public static readonly PropertyData PageObjectIDsProperty = RegisterProperty("PageObjectIDs", typeof(List<string>), () => new List<string>());
 
-         /// <summary>
+        /// <summary>
+        /// List of the Stroke's IDs that were moved.
+        /// </summary>
+        public List<string> StrokeIDs
+        {
+            get { return GetValue<List<string>>(StrokeIDsProperty); }
+            set { SetValue(StrokeIDsProperty, value); }
+        }
+
+        public static readonly PropertyData StrokeIDsProperty = RegisterProperty("StrokeIDs", typeof (List<string>), () => new List<string>());
+
+        /// <summary>
         /// The various points the pageObject has moved through during a single dragging operation.
         /// </summary>
         public List<Point> TravelledPositions
@@ -96,18 +98,18 @@ namespace CLP.Entities
         /// </summary>
         protected override void UndoAction(bool isAnimationUndo)
         {
-            if(CurrentBatchTickIndex < 0)
+            if (CurrentBatchTickIndex < 0)
             {
                 return;
             }
-            if(CurrentBatchTickIndex > NumberOfBatchTicks)
+            if (CurrentBatchTickIndex > NumberOfBatchTicks)
             {
                 CurrentBatchTickIndex = NumberOfBatchTicks;
             }
 
-            foreach(var pageObject in PageObjectIDs.Select(id => ParentPage.GetPageObjectByID(ID)))
+            foreach (var pageObject in PageObjectIDs.Select(id => ParentPage.GetPageObjectByID(ID)))
             {
-                if(pageObject == null)
+                if (pageObject == null)
                 {
                     Console.WriteLine("ERROR: PageObject not  found on page for UNDO of PageObjectsMoveBatch.");
                     continue;
@@ -116,7 +118,7 @@ namespace CLP.Entities
                 var initialX = pageObject.XPosition;
                 var initialY = pageObject.YPosition;
 
-                if(isAnimationUndo && CurrentBatchTickIndex > 0)
+                if (isAnimationUndo && CurrentBatchTickIndex > 0)
                 {
                     var travelledPosition = TravelledPositions[CurrentBatchTickIndex - 1];
 
@@ -140,7 +142,7 @@ namespace CLP.Entities
                     pageObject.YPosition = travelledPosition.Y;
                     CurrentBatchTickIndex--;
                 }
-                else if(TravelledPositions.Any())
+                else if (TravelledPositions.Any())
                 {
                     var originalPosition = TravelledPositions.First();
 
@@ -171,18 +173,18 @@ namespace CLP.Entities
         /// </summary>
         protected override void RedoAction(bool isAnimationRedo)
         {
-            if(CurrentBatchTickIndex > NumberOfBatchTicks)
+            if (CurrentBatchTickIndex > NumberOfBatchTicks)
             {
                 return;
             }
-            if(CurrentBatchTickIndex < 0)
+            if (CurrentBatchTickIndex < 0)
             {
                 CurrentBatchTickIndex = 0;
             }
 
-            foreach(var pageObject in PageObjectIDs.Select(id => ParentPage.GetPageObjectByID(ID)))
+            foreach (var pageObject in PageObjectIDs.Select(id => ParentPage.GetPageObjectByID(ID)))
             {
-                if(pageObject == null)
+                if (pageObject == null)
                 {
                     Console.WriteLine("ERROR: PageObject not  found on page for REDO of PageObjectMoveBatch.");
                     continue;
@@ -191,7 +193,7 @@ namespace CLP.Entities
                 var initialX = pageObject.XPosition;
                 var initialY = pageObject.YPosition;
 
-                if(isAnimationRedo)
+                if (isAnimationRedo)
                 {
                     var travelledPosition = TravelledPositions[CurrentBatchTickIndex];
 
@@ -213,7 +215,7 @@ namespace CLP.Entities
                     pageObject.YPosition = travelledPosition.Y;
                     CurrentBatchTickIndex++;
                 }
-                else if(TravelledPositions.Any())
+                else if (TravelledPositions.Any())
                 {
                     var lastPosition = TravelledPositions.Last();
 
@@ -242,7 +244,7 @@ namespace CLP.Entities
         public void ClearBatchAfterCurrentIndex()
         {
             var newBatch = new List<Point>();
-            for(var i = 0; i < CurrentBatchTickIndex + 1; i++)
+            for (var i = 0; i < CurrentBatchTickIndex + 1; i++)
             {
                 newBatch.Add(TravelledPositions[i]);
             }
@@ -255,7 +257,7 @@ namespace CLP.Entities
         public override IHistoryItem CreatePackagedHistoryItem()
         {
             var clonedHistoryItem = Clone() as PageObjectsMoveBatchHistoryItem;
-            if(clonedHistoryItem == null)
+            if (clonedHistoryItem == null)
             {
                 return null;
             }
