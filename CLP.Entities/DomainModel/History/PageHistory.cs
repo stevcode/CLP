@@ -279,6 +279,19 @@ namespace CLP.Entities
 
         #region Methods
 
+        public void RefreshHistoryIndexes()
+        {
+            foreach (var historyItem in UndoItems)
+            {
+                historyItem.HistoryIndex = UndoItems.Count - UndoItems.IndexOf(historyItem) - 1;
+            }
+
+            foreach (var historyItem in RedoItems)
+            {
+                historyItem.HistoryIndex = UndoItems.Count + RedoItems.IndexOf(historyItem);
+            }
+        }
+
         public void OptimizeTrashedItems()
         {
             var inkStrokesToRemove = (from trashedInkStroke in TrashedInkStrokes
@@ -491,6 +504,7 @@ namespace CLP.Entities
                     return false;
                 }
 
+                historyItem.HistoryIndex = UndoItems.Count;
                 UndoItems.Insert(0, historyItem);
                 RedoItems.Clear();
             }

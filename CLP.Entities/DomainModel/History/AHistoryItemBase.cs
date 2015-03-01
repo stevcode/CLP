@@ -43,6 +43,17 @@ namespace CLP.Entities
         #region Properties
 
         /// <summary>
+        /// Location of the <see cref="IHistoryItem" /> in the entirety of history, including UndoItems and RedoItems.
+        /// </summary>
+        public int HistoryIndex
+        {
+            get { return GetValue<int>(HistoryIndexProperty); }
+            set { SetValue(HistoryIndexProperty, value); }
+        }
+
+        public static readonly PropertyData HistoryIndexProperty = RegisterProperty("HistoryIndex", typeof (int), -1);
+
+        /// <summary>
         /// Unique Identifier for the <see cref="AHistoryItemBase" />.
         /// </summary>
         /// <remarks>

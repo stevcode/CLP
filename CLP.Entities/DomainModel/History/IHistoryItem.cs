@@ -2,6 +2,7 @@
 {
     public interface IHistoryItem
     {
+        int HistoryIndex { get; set; }
         string ID { get; set; }
         string OwnerID { get; set; }
         uint VersionIndex { get; set; }
