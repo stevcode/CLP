@@ -107,12 +107,20 @@ namespace CLP.Entities
                 CurrentBatchTickIndex = NumberOfBatchTicks;
             }
 
-            foreach (var pageObject in PageObjectIDs.Select(id => ParentPage.GetPageObjectByID(ID)))
+            foreach (var pageObjectID in PageObjectIDs)
             {
+                var pageObject = ParentPage.GetPageObjectByID(pageObjectID);
+
                 if (pageObject == null)
                 {
-                    Console.WriteLine("ERROR: PageObject not  found on page for UNDO of PageObjectsMoveBatch.");
-                    continue;
+                    pageObject = ParentPage.History.GetPageObjectByID(pageObjectID);
+                    if (pageObject == null)
+                    {
+                        continue;
+                    }
+
+                    ParentPage.History.TrashedPageObjects.Remove(pageObject);
+                    ParentPage.PageObjects.Add(pageObject);
                 }
 
                 var initialX = pageObject.XPosition;
