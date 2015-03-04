@@ -278,6 +278,16 @@ namespace CLP.Entities
             }
         }
 
+        public StrokeCollection GetStrokesOverPageObject()
+        {
+            var multipleChoiceBoundingBox = new Rect(XPosition, YPosition, Width, Height);
+            var strokesOverObject = from stroke in ParentPage.InkStrokes
+                                    where stroke.HitTest(multipleChoiceBoundingBox, 80) //Stroke must be at least 80% contained by numberline.
+                                    select stroke;
+
+            return new StrokeCollection(strokesOverObject);
+        }
+
         public void RefreshAcceptedStrokes()
         {
             AcceptedStrokes.Clear();

@@ -442,6 +442,16 @@ namespace CLP.Entities
             }
         }
 
+        public StrokeCollection GetStrokesOverPageObject()
+        {
+            var stampBodyBoundingBox = new Rect(XPosition, YPosition + HandleHeight, Width, Height - HandleHeight - PartsHeight);
+            var strokesOverObject = from stroke in ParentPage.InkStrokes
+                                    where stroke.HitTest(stampBodyBoundingBox, 50) //Stroke must be at least 50% contained by Stamp body.
+                                    select stroke;
+
+            return new StrokeCollection(strokesOverObject);
+        }
+
         public void RefreshAcceptedStrokes()
         {
             AcceptedStrokes.Clear();

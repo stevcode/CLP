@@ -10,6 +10,7 @@ namespace CLP.Entities
         List<string> AcceptedStrokeParentIDs { get; set; }
 
         void AcceptStrokes(IEnumerable<Stroke> addedStrokes, IEnumerable<Stroke> removedStrokes);
+        StrokeCollection GetStrokesOverPageObject(); 
         void RefreshAcceptedStrokes();
     }
 }

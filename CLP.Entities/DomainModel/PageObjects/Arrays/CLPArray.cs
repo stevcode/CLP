@@ -531,6 +531,16 @@ namespace CLP.Entities
             }
         }
 
+        public StrokeCollection GetStrokesOverPageObject()
+        {
+            var arrayBoundingBox = new Rect(XPosition, YPosition, Width, Height);
+            var strokesOverObject = from stroke in ParentPage.InkStrokes
+                                    where stroke.HitTest(arrayBoundingBox, 90) //Stroke must be at least 90% contained by array.
+                                    select stroke;
+
+            return new StrokeCollection(strokesOverObject);
+        }
+
         public void RefreshAcceptedStrokes()
         {
             AcceptedStrokes.Clear();

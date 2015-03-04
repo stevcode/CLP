@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Ink;
+using System.Windows.Media;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -19,10 +20,15 @@ namespace CLP.Entities
         /// <summary>Initializes <see cref="ObjectsMovedBatchHistoryItem" /> with a parent <see cref="CLPPage" />.</summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryItem" /> is part of.</param>
         /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryItem" />.</param>
-        public ObjectsMovedBatchHistoryItem(CLPPage parentPage, Person owner)
+        public ObjectsMovedBatchHistoryItem(CLPPage parentPage, Person owner, List<string> pageObjectIDs, List<string> strokeIDs, Point currentPosition)
             : base(parentPage, owner)
         {
-
+            PageObjectIDs = pageObjectIDs;
+            StrokeIDs = strokeIDs;
+            TravelledPositions = new List<Point>
+                                 {
+                                     currentPosition
+                                 };
         }
 
         /// <summary>Initializes a new object based on <see cref="SerializationInfo" />.</summary>
@@ -109,18 +115,11 @@ namespace CLP.Entities
 
             foreach (var pageObjectID in PageObjectIDs)
             {
-                var pageObject = ParentPage.GetPageObjectByID(pageObjectID);
+                var pageObject = ParentPage.GetVerifiedPageObjectOnPageByID(pageObjectID);
 
                 if (pageObject == null)
                 {
-                    pageObject = ParentPage.History.GetPageObjectByID(pageObjectID);
-                    if (pageObject == null)
-                    {
-                        continue;
-                    }
-
-                    ParentPage.History.TrashedPageObjects.Remove(pageObject);
-                    ParentPage.PageObjects.Add(pageObject);
+                    continue;
                 }
 
                 var initialX = pageObject.XPosition;
@@ -130,19 +129,20 @@ namespace CLP.Entities
                 {
                     var travelledPosition = TravelledPositions[CurrentBatchTickIndex - 1];
 
-                    //if(pageObject.CanAcceptStrokes)
-                    //{
-                    //    var xDiff = travelledPosition.X - pageObject.XPosition;
-                    //    var yDiff = travelledPosition.Y - pageObject.YPosition;
-                    //    var moveStroke = new Matrix();
-                    //    moveStroke.Translate(xDiff, yDiff);
+                    if (pageObject is IStrokeAccepter &&
+                        (pageObject as IStrokeAccepter).CanAcceptStrokes)
+                    {
+                        var xDiff = travelledPosition.X - pageObject.XPosition;
+                        var yDiff = travelledPosition.Y - pageObject.YPosition;
+                        var moveStroke = new Matrix();
+                        moveStroke.Translate(xDiff, yDiff);
 
-                    //    var strokesToMove = pageObject.GetStrokesOverPageObject();
-                    //    foreach(var stroke in strokesToMove)
-                    //    {
-                    //        stroke.Transform(moveStroke, true);
-                    //    }
-                    //}
+                        var strokesToMove = (pageObject as IStrokeAccepter).GetStrokesOverPageObject();
+                        foreach (var stroke in strokesToMove)
+                        {
+                            stroke.Transform(moveStroke, true);
+                        }
+                    }
 
                     //TODO: move child pageObjects as well, also for REDO
 
@@ -154,19 +154,20 @@ namespace CLP.Entities
                 {
                     var originalPosition = TravelledPositions.First();
 
-                    //if(pageObject.CanAcceptStrokes) //TODO: move children pageObjects if pageObject.CannAcceptPageObjects
-                    //{
-                    //    var xDiff = originalPosition.X - pageObject.XPosition;
-                    //    var yDiff = originalPosition.Y - pageObject.YPosition;
-                    //    var moveStroke = new Matrix();
-                    //    moveStroke.Translate(xDiff, yDiff);
+                    if (pageObject is IStrokeAccepter &&
+                        (pageObject as IStrokeAccepter).CanAcceptStrokes) //TODO: move children pageObjects if pageObject.CanAcceptPageObjects
+                    {
+                        var xDiff = originalPosition.X - pageObject.XPosition;
+                        var yDiff = originalPosition.Y - pageObject.YPosition;
+                        var moveStroke = new Matrix();
+                        moveStroke.Translate(xDiff, yDiff);
 
-                    //    var strokesToMove = pageObject.GetStrokesOverPageObject();
-                    //    foreach(var stroke in strokesToMove)
-                    //    {
-                    //        stroke.Transform(moveStroke, true);
-                    //    }
-                    //}
+                        var strokesToMove = (pageObject as IStrokeAccepter).GetStrokesOverPageObject();
+                        foreach (var stroke in strokesToMove)
+                        {
+                            stroke.Transform(moveStroke, true);
+                        }
+                    }
 
                     pageObject.XPosition = originalPosition.X;
                     pageObject.YPosition = originalPosition.Y;
@@ -205,19 +206,20 @@ namespace CLP.Entities
                 {
                     var travelledPosition = TravelledPositions[CurrentBatchTickIndex];
 
-                    //if(pageObject.CanAcceptStrokes)
-                    //{
-                    //    var xDiff = travelledPosition.X - pageObject.XPosition;
-                    //    var yDiff = travelledPosition.Y - pageObject.YPosition;
-                    //    var moveStroke = new Matrix();
-                    //    moveStroke.Translate(xDiff, yDiff);
+                    if (pageObject is IStrokeAccepter &&
+                        (pageObject as IStrokeAccepter).CanAcceptStrokes)
+                    {
+                        var xDiff = travelledPosition.X - pageObject.XPosition;
+                        var yDiff = travelledPosition.Y - pageObject.YPosition;
+                        var moveStroke = new Matrix();
+                        moveStroke.Translate(xDiff, yDiff);
 
-                    //    var strokesToMove = pageObject.GetStrokesOverPageObject();
-                    //    foreach(var stroke in strokesToMove)
-                    //    {
-                    //        stroke.Transform(moveStroke, true);
-                    //    }
-                    //}
+                        var strokesToMove = (pageObject as IStrokeAccepter).GetStrokesOverPageObject();
+                        foreach (var stroke in strokesToMove)
+                        {
+                            stroke.Transform(moveStroke, true);
+                        }
+                    }
 
                     pageObject.XPosition = travelledPosition.X;
                     pageObject.YPosition = travelledPosition.Y;
@@ -227,19 +229,20 @@ namespace CLP.Entities
                 {
                     var lastPosition = TravelledPositions.Last();
 
-                    //if(pageObject.CanAcceptStrokes)
-                    //{
-                    //    var xDiff = lastPosition.X - pageObject.XPosition;
-                    //    var yDiff = lastPosition.Y - pageObject.YPosition;
-                    //    var moveStroke = new Matrix();
-                    //    moveStroke.Translate(xDiff, yDiff);
+                    if (pageObject is IStrokeAccepter &&
+                        (pageObject as IStrokeAccepter).CanAcceptStrokes)
+                    {
+                        var xDiff = lastPosition.X - pageObject.XPosition;
+                        var yDiff = lastPosition.Y - pageObject.YPosition;
+                        var moveStroke = new Matrix();
+                        moveStroke.Translate(xDiff, yDiff);
 
-                    //    var strokesToMove = pageObject.GetStrokesOverPageObject();
-                    //    foreach(var stroke in strokesToMove)
-                    //    {
-                    //        stroke.Transform(moveStroke, true);
-                    //    }
-                    //}
+                        var strokesToMove = (pageObject as IStrokeAccepter).GetStrokesOverPageObject();
+                        foreach (var stroke in strokesToMove)
+                        {
+                            stroke.Transform(moveStroke, true);
+                        }
+                    }
 
                     pageObject.XPosition = lastPosition.X;
                     pageObject.YPosition = lastPosition.Y;

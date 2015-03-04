@@ -731,7 +731,49 @@ namespace CLP.Entities
             return newPage;
         }
 
+        public Stroke GetVerifiedStrokeOnPageByID(string id)
+        {
+            var stroke = GetStrokeByID(id);
+
+            if (stroke != null)
+            {
+                return stroke;
+            }
+
+            stroke = History.GetStrokeByID(id);
+            if (stroke == null)
+            {
+                return null;
+            }
+
+            History.TrashedInkStrokes.Remove(stroke);
+            InkStrokes.Add(stroke);
+
+            return stroke;
+        }
+
         public Stroke GetStrokeByID(string id) { return !InkStrokes.Any() ? null : InkStrokes.FirstOrDefault(stroke => stroke.GetStrokeID() == id); }
+
+        public IPageObject GetVerifiedPageObjectOnPageByID(string id)
+        {
+            var pageObject = GetPageObjectByID(id);
+
+            if (pageObject != null)
+            {
+                return pageObject;
+            }
+
+            pageObject = History.GetPageObjectByID(id);
+            if (pageObject == null)
+            {
+                return null;
+            }
+
+            History.TrashedPageObjects.Remove(pageObject);
+            PageObjects.Add(pageObject);
+
+            return pageObject;
+        }
 
         public IPageObject GetPageObjectByID(string id) { return !PageObjects.Any() ? null : PageObjects.FirstOrDefault(pageObject => pageObject.ID == id); }
 
@@ -740,6 +782,25 @@ namespace CLP.Entities
             foreach (var reporter in PageObjects.OfType<IReporter>())
             {
                 reporter.UpdateReport();
+            }
+        }
+
+        public void ValidateStrokeIDs()
+        {
+            foreach (var stroke in InkStrokes)
+            {
+                if (stroke.GetStrokeID() == "noStrokeID")
+                {
+                    Console.WriteLine("Stroke without ID on page {0}, {1}", PageNumber, Owner.FullName);
+                }
+            }
+
+            foreach (var stroke in History.TrashedInkStrokes)
+            {
+                if (stroke.GetStrokeID() == "noStrokeID")
+                {
+                    Console.WriteLine("Trashed Stroke without ID on page {0}, {1}", PageNumber, Owner.FullName);
+                }
             }
         }
 

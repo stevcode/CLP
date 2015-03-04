@@ -534,6 +534,16 @@ namespace CLP.Entities
             }
         }
 
+        public StrokeCollection GetStrokesOverPageObject()
+        {
+            var numberLineBodyBoundingBox = new Rect(XPosition, YPosition, Width, Height);
+            var strokesOverObject = from stroke in ParentPage.InkStrokes
+                                    where stroke.HitTest(numberLineBodyBoundingBox, 5) //Stroke must be at least 5% contained by numberline.
+                                    select stroke;
+
+            return new StrokeCollection(strokesOverObject);
+        }
+
         public void RefreshAcceptedStrokes()
         {
             AcceptedStrokes.Clear();
@@ -543,12 +553,9 @@ namespace CLP.Entities
                 return;
             }
 
-            var numberLineBodyBoundingBox = new Rect(XPosition, YPosition, Width, Height);
-            var strokesOverObject = from stroke in ParentPage.InkStrokes
-                                    where stroke.HitTest(numberLineBodyBoundingBox, 5) //Stroke must be at least 5% contained by numberline.
-                                    select stroke;
+            var strokesOverObject = GetStrokesOverPageObject();
 
-            AcceptStrokes(new StrokeCollection(strokesOverObject), new StrokeCollection());
+            AcceptStrokes(strokesOverObject, new StrokeCollection());
         }
 
         public NumberLineTick FindClosestTick(StrokeCollection strokes, bool isLookingForRightTick)
