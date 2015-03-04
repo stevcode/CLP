@@ -417,6 +417,8 @@ namespace CLP.Entities
             }
         }
 
+        public override void OnMoved(double oldX, double oldY) { OnMoving(oldX, oldY); }
+
         public override IPageObject Duplicate()
         {
             var newNumberLine = Clone() as NumberLine;

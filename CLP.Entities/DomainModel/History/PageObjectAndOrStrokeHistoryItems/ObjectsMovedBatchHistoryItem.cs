@@ -195,11 +195,12 @@ namespace CLP.Entities
                 CurrentBatchTickIndex = 0;
             }
 
-            foreach (var pageObject in PageObjectIDs.Select(id => ParentPage.GetPageObjectByID(ID)))
+            foreach (var pageObjectID in PageObjectIDs)
             {
+                var pageObject = ParentPage.GetVerifiedPageObjectOnPageByID(pageObjectID);
+
                 if (pageObject == null)
                 {
-                    Console.WriteLine("ERROR: PageObject not  found on page for REDO of PageObjectMoveBatch.");
                     continue;
                 }
 

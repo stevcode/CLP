@@ -318,6 +318,8 @@ namespace CLP.Entities
             }
         }
 
+        public override void OnMoved(double oldX, double oldY) { OnMoving(oldX, oldY); }
+
         #endregion //Overrides of APageObjectBase
 
         public override void SizeArrayToGridLevel(double toSquareSize = -1, bool recalculateDivisions = true)
