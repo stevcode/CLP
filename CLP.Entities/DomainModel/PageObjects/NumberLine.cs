@@ -410,6 +410,11 @@ namespace CLP.Entities
             {
                 foreach (var stroke in AcceptedStrokes)
                 {
+                    if (stroke == null)
+                    {
+                        Console.WriteLine("Null stroke in OnMoving for Number Line");
+                        continue;
+                    }
                     var transform = new Matrix();
                     transform.Translate(deltaX, deltaY);
                     stroke.Transform(transform, true);

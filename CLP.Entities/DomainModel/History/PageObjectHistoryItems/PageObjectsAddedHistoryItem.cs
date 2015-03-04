@@ -98,6 +98,10 @@ namespace CLP.Entities
                 foreach(var pageObject in PageObjectIDs.Select(pageObjectID => ParentPage.History.GetPageObjectByID(pageObjectID)))
                 {
                     ParentPage.History.TrashedPageObjects.Remove(pageObject);
+
+                    var offSetHack = pageObject is NumberLine ? (pageObject as NumberLine).Height - (pageObject as NumberLine).NumberLineHeight : 0;
+                    pageObject.YPosition -= offSetHack;
+
                     ParentPage.PageObjects.Add(pageObject);
                     pageObject.OnAdded();
                 }

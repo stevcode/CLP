@@ -160,6 +160,8 @@ namespace CLP.Entities
                     continue;
                 }
 
+                
+
                 var initialX = pageObject.XPosition;
                 var initialY = pageObject.YPosition;
 
@@ -203,7 +205,7 @@ namespace CLP.Entities
                 {
                     continue;
                 }
-
+                var offSetHack = pageObject is NumberLine ? (pageObject as NumberLine).Height - (pageObject as NumberLine).NumberLineHeight : 0;
                 var initialX = pageObject.XPosition;
                 var initialY = pageObject.YPosition;
 
@@ -213,6 +215,10 @@ namespace CLP.Entities
 
                     pageObject.XPosition = travelledPosition.X;
                     pageObject.YPosition = travelledPosition.Y;
+                    if (CurrentBatchTickIndex == NumberOfBatchTicks)
+                    {
+                        pageObject.YPosition = travelledPosition.Y - offSetHack; //HACK
+                    }
                     CurrentBatchTickIndex++;
                 }
                 else if (TravelledPositions.Any())
@@ -220,7 +226,7 @@ namespace CLP.Entities
                     var lastPosition = TravelledPositions.Last();
 
                     pageObject.XPosition = lastPosition.X;
-                    pageObject.YPosition = lastPosition.Y;
+                    pageObject.YPosition = lastPosition.Y - offSetHack;  //HACK
                     CurrentBatchTickIndex = NumberOfBatchTicks + 1;
                 }
                 pageObject.OnMoved(initialX, initialY);

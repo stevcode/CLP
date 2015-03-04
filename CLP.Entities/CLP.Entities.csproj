@@ -130,10 +130,10 @@
     <Compile Include="DomainModel\History\IHistoryItem.cs" />
     <Compile Include="DomainModel\History\PageHistory.cs" />
     <Compile Include="DomainModel\History\PageObjectHistoryItems\PageObjectCutHistoryItem.cs" />
-    <Compile Include="DomainModel\History\PageObjectHistoryItems\PageObjectMoveBatchHistoryItem.cs" />
+    <Compile Include="DomainModel\History\OBSOLETE\PageObjectMoveBatchHistoryItem.cs" />
     <Compile Include="DomainModel\History\PageObjectHistoryItems\PageObjectResizeBatchHistoryItem.cs" />
     <Compile Include="DomainModel\History\PageObjectHistoryItems\PageObjectsAddedHistoryItem.cs" />
-    <Compile Include="DomainModel\History\PageObjectHistoryItems\PageObjectsMoveBatchHistoryItem.cs" />
+    <Compile Include="DomainModel\History\OBSOLETE\PageObjectsMoveBatchHistoryItem.cs" />
     <Compile Include="DomainModel\History\PageObjectHistoryItems\PageObjectsRemovedHistoryItem.cs" />
     <Compile Include="DomainModel\History\StrokesChangedHistoryItem.cs" />
     <Compile Include="DomainModel\IConnectedPerson.cs" />
