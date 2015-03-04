@@ -218,7 +218,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 ACLPPageBaseViewModel.ClearAdorners(PageObject.ParentPage);
             }
 
-            PageObject.ParentPage.History.BeginBatch(new PageObjectMoveBatchHistoryItem(PageObject.ParentPage,
+            PageObject.ParentPage.History.BeginBatch(new ObjectsMovedBatchHistoryItem(PageObject.ParentPage,
                                                                                         App.MainWindowViewModel.CurrentUser,
                                                                                         PageObject.ID,
                                                                                         new Point(PageObject.XPosition, PageObject.YPosition)));
@@ -260,11 +260,11 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             var batch = PageObject.ParentPage.History.CurrentHistoryBatch;
-            if (batch is PageObjectMoveBatchHistoryItem)
+            if (batch is ObjectsMovedBatchHistoryItem)
             {
-                (batch as PageObjectMoveBatchHistoryItem).AddPositionPointToBatch(PageObject.ID, new Point(PageObject.XPosition, PageObject.YPosition));
+                (batch as ObjectsMovedBatchHistoryItem).AddPositionPointToBatch(new Point(PageObject.XPosition, PageObject.YPosition));
             }
-            var batchHistoryItem = PageObject.ParentPage.History.EndBatch() as PageObjectMoveBatchHistoryItem;
+            var batchHistoryItem = PageObject.ParentPage.History.EndBatch() as ObjectsMovedBatchHistoryItem;
 
             var startingPoint = batchHistoryItem.TravelledPositions.FirstOrDefault();
 
@@ -396,9 +396,9 @@ namespace Classroom_Learning_Partner.ViewModels
             if (diff > PageHistory.SAMPLE_RATE && useHistory)
             {
                 var batch = pageObject.ParentPage.History.CurrentHistoryBatch;
-                if (batch is PageObjectMoveBatchHistoryItem)
+                if (batch is ObjectsMovedBatchHistoryItem)
                 {
-                    (batch as PageObjectMoveBatchHistoryItem).AddPositionPointToBatch(pageObject.ID, new Point(newX, newY));
+                    ((ObjectsMovedBatchHistoryItem)batch).AddPositionPointToBatch(new Point(newX, newY));
                 }
                 else
                 {

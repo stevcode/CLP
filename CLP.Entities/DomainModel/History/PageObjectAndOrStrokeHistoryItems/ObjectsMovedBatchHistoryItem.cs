@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows;
-using System.Windows.Ink;
-using System.Windows.Media;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -16,6 +14,22 @@ namespace CLP.Entities
 
         /// <summary>Initializes <see cref="ObjectsMovedBatchHistoryItem" /> from scratch.</summary>
         public ObjectsMovedBatchHistoryItem() { }
+
+        /// <summary>Initializes <see cref="ObjectsMovedBatchHistoryItem" /> with a parent <see cref="CLPPage" />.</summary>
+        /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryItem" /> is part of.</param>
+        /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryItem" />.</param>
+        public ObjectsMovedBatchHistoryItem(CLPPage parentPage, Person owner, string pageObjectID, Point currentPosition)
+            : base(parentPage, owner)
+        {
+            PageObjectIDs = new List<string>
+                            {
+                                pageObjectID
+                            };
+            TravelledPositions = new List<Point>
+                                 {
+                                     currentPosition
+                                 };
+        }
 
         /// <summary>Initializes <see cref="ObjectsMovedBatchHistoryItem" /> with a parent <see cref="CLPPage" />.</summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryItem" /> is part of.</param>
@@ -39,22 +53,55 @@ namespace CLP.Entities
 
         #endregion //Constructors
 
+        #region Converter
+
+        /// <summary>Initializes <see cref="ObjectsMovedBatchHistoryItem" /> from <see cref="PageObjectMoveBatchHistoryItem" />.</summary>
+        public ObjectsMovedBatchHistoryItem(PageObjectMoveBatchHistoryItem obsoleteHistoryItem)
+        {
+            ID = obsoleteHistoryItem.ID;
+            OwnerID = obsoleteHistoryItem.OwnerID;
+            VersionIndex = obsoleteHistoryItem.VersionIndex;
+            LastVersionIndex = obsoleteHistoryItem.LastVersionIndex;
+            DifferentiationGroup = obsoleteHistoryItem.DifferentiationGroup;
+            ParentPage = obsoleteHistoryItem.ParentPage;
+
+            CurrentBatchTickIndex = obsoleteHistoryItem.CurrentBatchTickIndex;
+            PageObjectIDs = new List<string>
+                            {
+                                obsoleteHistoryItem.PageObjectID
+                            };
+            TravelledPositions = obsoleteHistoryItem.TravelledPositions;
+        } 
+
+        /// <summary>Initializes <see cref="ObjectsMovedBatchHistoryItem" /> from <see cref="PageObjectsMoveBatchHistoryItem" />.</summary>
+        public ObjectsMovedBatchHistoryItem(PageObjectsMoveBatchHistoryItem obsoleteHistoryItem)
+        {
+            ID = obsoleteHistoryItem.ID;
+            OwnerID = obsoleteHistoryItem.OwnerID;
+            VersionIndex = obsoleteHistoryItem.VersionIndex;
+            LastVersionIndex = obsoleteHistoryItem.LastVersionIndex;
+            DifferentiationGroup = obsoleteHistoryItem.DifferentiationGroup;
+            ParentPage = obsoleteHistoryItem.ParentPage;
+
+            CurrentBatchTickIndex = obsoleteHistoryItem.CurrentBatchTickIndex;
+            PageObjectIDs = obsoleteHistoryItem.PageObjectIDs;
+            TravelledPositions = obsoleteHistoryItem.TravelledPositions;
+        } 
+
+        #endregion //Converter
+
         #region Properties
 
-        /// <summary>
-        /// List of the <see cref="IPageObject" />'s IDs that were moved.
-        /// </summary>
+        /// <summary>List of the <see cref="IPageObject" />'s IDs that were moved.</summary>
         public List<string> PageObjectIDs
         {
             get { return GetValue<List<string>>(PageObjectIDsProperty); }
             set { SetValue(PageObjectIDsProperty, value); }
         }
 
-        public static readonly PropertyData PageObjectIDsProperty = RegisterProperty("PageObjectIDs", typeof(List<string>), () => new List<string>());
+        public static readonly PropertyData PageObjectIDsProperty = RegisterProperty("PageObjectIDs", typeof (List<string>), () => new List<string>());
 
-        /// <summary>
-        /// List of the Stroke's IDs that were moved.
-        /// </summary>
+        /// <summary>List of the Stroke's IDs that were moved.</summary>
         public List<string> StrokeIDs
         {
             get { return GetValue<List<string>>(StrokeIDsProperty); }
@@ -63,45 +110,36 @@ namespace CLP.Entities
 
         public static readonly PropertyData StrokeIDsProperty = RegisterProperty("StrokeIDs", typeof (List<string>), () => new List<string>());
 
-        /// <summary>
-        /// The various points the pageObject has moved through during a single dragging operation.
-        /// </summary>
+        /// <summary>The various points the pageObject has moved through during a single dragging operation.</summary>
         public List<Point> TravelledPositions
         {
             get { return GetValue<List<Point>>(TravelledPositionsProperty); }
             set { SetValue(TravelledPositionsProperty, value); }
         }
 
-        public static readonly PropertyData TravelledPositionsProperty = RegisterProperty("TravelledPositions", typeof(List<Point>));
+        public static readonly PropertyData TravelledPositionsProperty = RegisterProperty("TravelledPositions", typeof (List<Point>));
 
         public int NumberOfBatchTicks
         {
             get { return TravelledPositions.Count - 1; }
         }
 
-        /// <summary>
-        /// Location within the Batch.
-        /// </summary>
+        /// <summary>Location within the Batch.</summary>
         public int CurrentBatchTickIndex
         {
             get { return GetValue<int>(CurrentBatchTickIndexProperty); }
             set { SetValue(CurrentBatchTickIndexProperty, value); }
         }
 
-        public static readonly PropertyData CurrentBatchTickIndexProperty = RegisterProperty("CurrentBatchTickIndex", typeof(int), 0);
+        public static readonly PropertyData CurrentBatchTickIndexProperty = RegisterProperty("CurrentBatchTickIndex", typeof (int), 0);
 
         #endregion //Properties
 
         #region Methods
 
-        public void AddPositionPointToBatch(Point currentPosition)
-        {
-            TravelledPositions.Add(currentPosition);
-        }
+        public void AddPositionPointToBatch(Point currentPosition) { TravelledPositions.Add(currentPosition); }
 
-        /// <summary>
-        /// Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.
-        /// </summary>
+        /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void UndoAction(bool isAnimationUndo)
         {
             if (CurrentBatchTickIndex < 0)
@@ -129,23 +167,6 @@ namespace CLP.Entities
                 {
                     var travelledPosition = TravelledPositions[CurrentBatchTickIndex - 1];
 
-                    if (pageObject is IStrokeAccepter &&
-                        (pageObject as IStrokeAccepter).CanAcceptStrokes)
-                    {
-                        var xDiff = travelledPosition.X - pageObject.XPosition;
-                        var yDiff = travelledPosition.Y - pageObject.YPosition;
-                        var moveStroke = new Matrix();
-                        moveStroke.Translate(xDiff, yDiff);
-
-                        var strokesToMove = (pageObject as IStrokeAccepter).GetStrokesOverPageObject();
-                        foreach (var stroke in strokesToMove)
-                        {
-                            stroke.Transform(moveStroke, true);
-                        }
-                    }
-
-                    //TODO: move child pageObjects as well, also for REDO
-
                     pageObject.XPosition = travelledPosition.X;
                     pageObject.YPosition = travelledPosition.Y;
                     CurrentBatchTickIndex--;
@@ -153,21 +174,6 @@ namespace CLP.Entities
                 else if (TravelledPositions.Any())
                 {
                     var originalPosition = TravelledPositions.First();
-
-                    if (pageObject is IStrokeAccepter &&
-                        (pageObject as IStrokeAccepter).CanAcceptStrokes) //TODO: move children pageObjects if pageObject.CanAcceptPageObjects
-                    {
-                        var xDiff = originalPosition.X - pageObject.XPosition;
-                        var yDiff = originalPosition.Y - pageObject.YPosition;
-                        var moveStroke = new Matrix();
-                        moveStroke.Translate(xDiff, yDiff);
-
-                        var strokesToMove = (pageObject as IStrokeAccepter).GetStrokesOverPageObject();
-                        foreach (var stroke in strokesToMove)
-                        {
-                            stroke.Transform(moveStroke, true);
-                        }
-                    }
 
                     pageObject.XPosition = originalPosition.X;
                     pageObject.YPosition = originalPosition.Y;
@@ -177,9 +183,7 @@ namespace CLP.Entities
             }
         }
 
-        /// <summary>
-        /// Method that will actually redo the action. Already incorporates error checking for existance of ParentPage.
-        /// </summary>
+        /// <summary>Method that will actually redo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void RedoAction(bool isAnimationRedo)
         {
             if (CurrentBatchTickIndex > NumberOfBatchTicks)
@@ -206,21 +210,6 @@ namespace CLP.Entities
                 {
                     var travelledPosition = TravelledPositions[CurrentBatchTickIndex];
 
-                    if (pageObject is IStrokeAccepter &&
-                        (pageObject as IStrokeAccepter).CanAcceptStrokes)
-                    {
-                        var xDiff = travelledPosition.X - pageObject.XPosition;
-                        var yDiff = travelledPosition.Y - pageObject.YPosition;
-                        var moveStroke = new Matrix();
-                        moveStroke.Translate(xDiff, yDiff);
-
-                        var strokesToMove = (pageObject as IStrokeAccepter).GetStrokesOverPageObject();
-                        foreach (var stroke in strokesToMove)
-                        {
-                            stroke.Transform(moveStroke, true);
-                        }
-                    }
-
                     pageObject.XPosition = travelledPosition.X;
                     pageObject.YPosition = travelledPosition.Y;
                     CurrentBatchTickIndex++;
@@ -228,21 +217,6 @@ namespace CLP.Entities
                 else if (TravelledPositions.Any())
                 {
                     var lastPosition = TravelledPositions.Last();
-
-                    if (pageObject is IStrokeAccepter &&
-                        (pageObject as IStrokeAccepter).CanAcceptStrokes)
-                    {
-                        var xDiff = lastPosition.X - pageObject.XPosition;
-                        var yDiff = lastPosition.Y - pageObject.YPosition;
-                        var moveStroke = new Matrix();
-                        moveStroke.Translate(xDiff, yDiff);
-
-                        var strokesToMove = (pageObject as IStrokeAccepter).GetStrokesOverPageObject();
-                        foreach (var stroke in strokesToMove)
-                        {
-                            stroke.Transform(moveStroke, true);
-                        }
-                    }
 
                     pageObject.XPosition = lastPosition.X;
                     pageObject.YPosition = lastPosition.Y;
@@ -262,12 +236,10 @@ namespace CLP.Entities
             TravelledPositions = new List<Point>(newBatch);
         }
 
-        /// <summary>
-        /// Method that prepares a clone of the <see cref="IHistoryItem" /> so that it can call Redo() when sent to another machine.
-        /// </summary>
+        /// <summary>Method that prepares a clone of the <see cref="IHistoryItem" /> so that it can call Redo() when sent to another machine.</summary>
         public override IHistoryItem CreatePackagedHistoryItem()
         {
-            var clonedHistoryItem = Clone() as PageObjectsMoveBatchHistoryItem;
+            var clonedHistoryItem = Clone() as ObjectsMovedBatchHistoryItem;
             if (clonedHistoryItem == null)
             {
                 return null;
@@ -278,9 +250,7 @@ namespace CLP.Entities
             return clonedHistoryItem;
         }
 
-        /// <summary>
-        /// Method that unpacks the <see cref="IHistoryItem" /> after it has been sent to another machine.
-        /// </summary>
+        /// <summary>Method that unpacks the <see cref="IHistoryItem" /> after it has been sent to another machine.</summary>
         public override void UnpackHistoryItem() { }
 
         #endregion //Methods

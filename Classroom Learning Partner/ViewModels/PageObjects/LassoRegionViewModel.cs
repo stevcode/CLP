@@ -158,9 +158,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            PageObject.ParentPage.History.BeginBatch(new PageObjectsMoveBatchHistoryItem(PageObject.ParentPage,
+            PageObject.ParentPage.History.BeginBatch(new ObjectsMovedBatchHistoryItem(PageObject.ParentPage,
                                                                                          App.MainWindowViewModel.CurrentUser,
                                                                                          region.LassoedPageObjects.Select(x => x.ID).ToList(),
+                                                                                         region.LassoedStrokes.Select(s => s.GetStrokeID()).ToList(),
                                                                                          new Point(PageObject.XPosition, PageObject.YPosition)));
         }
 
@@ -187,9 +188,9 @@ namespace Classroom_Learning_Partner.ViewModels
             if (diff > PageHistory.SAMPLE_RATE)
             {
                 var batch = PageObject.ParentPage.History.CurrentHistoryBatch;
-                if (batch is PageObjectsMoveBatchHistoryItem)
+                if (batch is ObjectsMovedBatchHistoryItem)
                 {
-                    (batch as PageObjectsMoveBatchHistoryItem).AddPositionPointToBatch(new Point(newX, newY));
+                    ((ObjectsMovedBatchHistoryItem)batch).AddPositionPointToBatch(new Point(newX, newY));
                 }
                 else
                 {
@@ -213,9 +214,9 @@ namespace Classroom_Learning_Partner.ViewModels
             var initialY = YPosition;
 
             var batch = PageObject.ParentPage.History.CurrentHistoryBatch;
-            if (batch is PageObjectsMoveBatchHistoryItem)
+            if (batch is ObjectsMovedBatchHistoryItem)
             {
-                (batch as PageObjectsMoveBatchHistoryItem).AddPositionPointToBatch(new Point(PageObject.XPosition, PageObject.YPosition));
+                ((ObjectsMovedBatchHistoryItem)batch).AddPositionPointToBatch(new Point(PageObject.XPosition, PageObject.YPosition));
             }
             var batchHistoryItem = PageObject.ParentPage.History.EndBatch();
             ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, batchHistoryItem, true);
