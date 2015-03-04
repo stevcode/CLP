@@ -27,7 +27,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public CLPArrayViewModel(CLPArray array)
         {
             PageObject = array;
-            array.AcceptedStrokes = array.AcceptedStrokeParentIDs.Select(id => PageObject.ParentPage.GetStrokeByID(id)).ToList();
+            array.AcceptedStrokes = array.AcceptedStrokeParentIDs.Select(id => PageObject.ParentPage.GetStrokeByID(id)).Where(s => s != null).ToList();
 
             //Commands
             ResizeArrayCommand = new Command<DragDeltaEventArgs>(OnResizeArrayCommandExecute);

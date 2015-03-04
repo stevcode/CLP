@@ -113,6 +113,11 @@ namespace CLP.Entities
                 }
                 catch(Exception ex) { }
             }
+
+            foreach (var pageObject in ParentPage.PageObjects.OfType<IStrokeAccepter>())
+            {
+                pageObject.AcceptedStrokes = pageObject.GetStrokesOverPageObject().ToList();
+            }
         }
 
         /// <summary>
@@ -138,6 +143,11 @@ namespace CLP.Entities
                     ParentPage.InkStrokes.Add(stroke);
                 }
                 catch(Exception ex) { }
+            }
+
+            foreach (var pageObject in ParentPage.PageObjects.OfType<IStrokeAccepter>())
+            {
+                pageObject.AcceptedStrokes = pageObject.GetStrokesOverPageObject().ToList();
             }
         }
 
