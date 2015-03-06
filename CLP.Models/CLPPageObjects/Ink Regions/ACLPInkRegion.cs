@@ -9,6 +9,7 @@ namespace CLP.Models
     [Serializable]
     public abstract class ACLPInkRegion : ACLPPageObjectBase
     {
+        //steve's comment
         #region Variables
 
         private Object interpretation_lock = new Object();
