@@ -67,15 +67,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public CLPPage CurrentPage
         {
             get { return GetValue<CLPPage>(CurrentPageProperty); }
-            set
-            {
-                SetValue(CurrentPageProperty, value);
-                if (value == null)
-                {
-                    CurrentPage.History.IsNonAnimationPlaybackEnabled = IsNonAnimationPlaybackEnabled;
-                }
-                RaisePropertyChanged("IsPlaybackEnabled");
-            }
+            set { SetValue(CurrentPageProperty, value); }
         }
 
         public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof (CLPPage), null, OnCurrentPageChanged);
@@ -83,9 +75,20 @@ namespace Classroom_Learning_Partner.ViewModels
         private static void OnCurrentPageChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
         {
             var animationControlRibbonViewModel = sender as AnimationControlRibbonViewModel;
+            if (animationControlRibbonViewModel == null)
+            {
+                return;
+            }
+            animationControlRibbonViewModel.RaisePropertyChanged("IsPlaybackEnabled");
+
+            var currentPage = advancedPropertyChangedEventArgs.NewValue as CLPPage;
+            if (currentPage != null)
+            {
+                currentPage.History.IsNonAnimationPlaybackEnabled = animationControlRibbonViewModel.IsNonAnimationPlaybackEnabled;
+            }
+
             var previousPage = advancedPropertyChangedEventArgs.OldValue as CLPPage;
-            if (animationControlRibbonViewModel == null ||
-                previousPage == null ||
+            if (previousPage == null ||
                 !animationControlRibbonViewModel.IsPlaying)
             {
                 return;
@@ -125,9 +128,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData IsPlayingProperty = RegisterProperty("IsPlaying", typeof (bool), false);
 
-        /// <summary>
-        /// Forces Playback on non-animation pages.
-        /// </summary>
+        /// <summary>Forces Playback on non-animation pages.</summary>
         public bool IsNonAnimationPlaybackEnabled
         {
             get { return GetValue<bool>(IsNonAnimationPlaybackEnabledProperty); }
@@ -157,23 +158,123 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>Undoes the last action.</summary>
         public Command SlowUndoCommand { get; private set; }
 
-        private void OnSlowUndoCommandExecute() { CurrentPage.History.Undo(true); }
+        private void OnSlowUndoCommandExecute() { SlowUndo(CurrentPage); }
 
         private bool OnSlowUndoCanExecute()
         {
             var page = CurrentPage;
-            return page != null && page.History.CanUndo;
+            return page != null && page.History.CanUndo && !IsPlaying && !IsRecording;
+        }
+
+        public void SlowUndo(CLPPage page)
+        {
+            if (IsRecording ||
+                IsPlaying ||
+                page == null ||
+                _pageInteractionService == null)
+            {
+                return;
+            }
+
+            page.History.IsAnimating = true;
+            IsPlaying = true;
+            _oldPageInteractionMode = _pageInteractionService.CurrentPageInteractionMode == PageInteractionModes.None
+                                          ? PageInteractionModes.Draw
+                                          : _pageInteractionService.CurrentPageInteractionMode;
+            _pageInteractionService.SetNoInteractionMode();
+
+            var t = new Thread(() =>
+            {
+                var undoItem = page.History.UndoItems.First() as IHistoryBatch;
+                var ticksToUndo = undoItem == null ? 1 : undoItem.CurrentBatchTickIndex;
+                var currentTick = ticksToUndo;
+                while (currentTick > 0 && IsPlaying)
+                {
+                    currentTick--;
+                    var historyItemAnimationDelay = Convert.ToInt32(Math.Round(page.History.CurrentAnimationDelay / CurrentPlaybackSpeed));
+                    Application.Current.Dispatcher.Invoke(DispatcherPriority.DataBind,
+                                                          (DispatcherOperationCallback)delegate
+                                                          {
+                                                              page.History.Undo(true);
+                                                              return null;
+                                                          },
+                                                          null);
+                    Thread.Sleep(historyItemAnimationDelay);
+                }
+
+                Application.Current.Dispatcher.Invoke(DispatcherPriority.DataBind,
+                                                      (DispatcherOperationCallback)delegate
+                                                      {
+                                                          IsPlaying = false;
+                                                          _pageInteractionService.SetPageInteractionMode(_oldPageInteractionMode);
+                                                          page.History.IsAnimating = false;
+                                                          return null;
+                                                      },
+                                                      null);
+            });
+
+            t.Start();
         }
 
         /// <summary>Redoes the last undone action.</summary>
         public Command SlowRedoCommand { get; private set; }
 
-        private void OnSlowRedoCommandExecute() { CurrentPage.History.Redo(true); }
+        private void OnSlowRedoCommandExecute() { SlowRedo(CurrentPage); }
 
         private bool OnSlowRedoCanExecute()
         {
             var page = CurrentPage;
-            return page != null && page.History.CanRedo;
+            return page != null && page.History.CanRedo && !IsPlaying && !IsRecording;
+        }
+
+        public void SlowRedo(CLPPage page)
+        {
+            if (IsRecording ||
+                IsPlaying ||
+                page == null ||
+                _pageInteractionService == null)
+            {
+                return;
+            }
+
+            page.History.IsAnimating = true;
+            IsPlaying = true;
+            _oldPageInteractionMode = _pageInteractionService.CurrentPageInteractionMode == PageInteractionModes.None
+                                          ? PageInteractionModes.Draw
+                                          : _pageInteractionService.CurrentPageInteractionMode;
+            _pageInteractionService.SetNoInteractionMode();
+
+            var t = new Thread(() =>
+                               {
+                                   var redoItem = page.History.RedoItems.First() as IHistoryBatch;
+                                   var ticksToRedo = redoItem == null ? 1 : redoItem.NumberOfBatchTicks - redoItem.CurrentBatchTickIndex;
+                                   var currentTick = ticksToRedo;
+                                   while (currentTick > 0 && IsPlaying)
+                                   {
+                                       currentTick--;
+                                       var historyItemAnimationDelay = Convert.ToInt32(Math.Round(page.History.CurrentAnimationDelay / CurrentPlaybackSpeed));
+                                       Application.Current.Dispatcher.Invoke(DispatcherPriority.DataBind,
+                                                                             (DispatcherOperationCallback)delegate
+                                                                                                          {
+                                                                                                              page.History.Redo(true);
+                                                                                                              return null;
+                                                                                                          },
+                                                                             null);
+                                       Thread.Sleep(historyItemAnimationDelay);
+                                   }
+
+                                   Application.Current.Dispatcher.Invoke(DispatcherPriority.DataBind,
+                                                                         (DispatcherOperationCallback)delegate
+                                                                                                      {
+                                                                                                          IsPlaying = false;
+                                                                                                          _pageInteractionService.SetPageInteractionMode(_oldPageInteractionMode);
+                                                                                                          page.History.IsAnimating = false;
+                                                                                                          return null;
+                                                                                                      },
+                                                                         null);
+                               });
+
+            t.Start();
         }
 
         #endregion //History Commands

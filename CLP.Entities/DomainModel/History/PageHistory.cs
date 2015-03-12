@@ -593,7 +593,6 @@ namespace CLP.Entities
                 //This if-statement exists to correctly undo any batch items that are half-way through
                 //playing, in the event an animation was paused in the middle of the batch. The historyItem
                 //is already in the RedoItems list, so we don't need to move from the UndoItems list.
-                //TODO: implement in Redo() if we ever want to "Play" an animation backwards.
                 if(RedoItems.Any() &&
                    RedoItems.First() is IHistoryBatch)
                 {
@@ -671,6 +670,33 @@ namespace CLP.Entities
 
             lock(_historyLock)
             {
+                //This if-statement exists to correctly redo any batch items that are half-way through
+                //playing, in the event an animation was paused in the middle of the batch. The historyItem
+                //is already in the UndoItems list, so we don't need to move from the RedoItems list.
+                if (UndoItems.Any() &&
+                    UndoItems.First() is IHistoryBatch)
+                {
+                    var clpHistoryItem = UndoItems.First() as IHistoryBatch;
+                    if (clpHistoryItem.CurrentBatchTickIndex < clpHistoryItem.NumberOfBatchTicks)
+                    {
+                        _isUndoingOperation = true;
+                        try
+                        {
+                            clpHistoryItem.Redo(isAnimationRedo);
+                            UpdateTicks();
+                            return true;
+                        }
+                        finally
+                        {
+                            lock (_historyLock)
+                            {
+                                _isUndoingOperation = false;
+                            }
+                        }
+                    }
+                }
+
+
                 if(RedoItems.Count > 0)
                 {
                     _isUndoingOperation = true;

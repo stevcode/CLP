@@ -324,7 +324,7 @@
                     FontSize="12"
                     FontWeight="Bold"
                     Background="White"
-                    Command="{Binding SlowRedoCommand}" />
+                    Command="{Binding SlowUndoCommand}" />
 
         </DockPanel>
 
@@ -358,6 +358,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
             <!--Rewind Button-->
@@ -404,7 +405,7 @@
                     VerticalAlignment="Center"
                     Style="{StaticResource AnimationSliderStyle}"
                     Height="25"
-                    Width="{Binding ActualWidth, ElementName=PlaybackControls, Converter={StaticResource AddLengthConverter}, ConverterParameter=-100}"
+                    Width="{Binding ActualWidth, ElementName=PlaybackControls, Converter={StaticResource AddLengthConverter}, ConverterParameter=-200}"
                     Minimum="0"
                     Maximum="{Binding CurrentPage.History.PlaybackLength}"
                     Value="{Binding CurrentPage.History.CurrentHistoryTick}"
@@ -418,6 +419,12 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </Slider>
+            
+            <StackPanel Grid.Column="2" Orientation="Horizontal">
+                <TextBlock Text="{Binding CurrentPage.History.CurrentHistoryTick}" />
+                <TextBlock Text=" / " />
+                <TextBlock Text="{Binding CurrentPage.History.PlaybackLength}" />
+            </StackPanel>
             
         </Grid>
 
