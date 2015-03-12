@@ -70,7 +70,11 @@ namespace Classroom_Learning_Partner.ViewModels
             set
             {
                 SetValue(CurrentPageProperty, value);
-                RaisePropertyChanged("CanPlayback");
+                if (value == null)
+                {
+                    CurrentPage.History.IsNonAnimationPlaybackEnabled = IsNonAnimationPlaybackEnabled;
+                }
+                RaisePropertyChanged("IsPlaybackEnabled");
             }
         }
 
@@ -121,22 +125,25 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData IsPlayingProperty = RegisterProperty("IsPlaying", typeof (bool), false);
 
-        /// <summary>Toggles visibility of animation controls for researcher Replay.</summary>
-        public bool IsNonAnimationPlayback
+        /// <summary>
+        /// Forces Playback on non-animation pages.
+        /// </summary>
+        public bool IsNonAnimationPlaybackEnabled
         {
-            get { return GetValue<bool>(IsNonAnimationPlaybackProperty); }
+            get { return GetValue<bool>(IsNonAnimationPlaybackEnabledProperty); }
             set
             {
-                SetValue(IsNonAnimationPlaybackProperty, value);
-                RaisePropertyChanged("CanPlayback");
+                SetValue(IsNonAnimationPlaybackEnabledProperty, value);
+                CurrentPage.History.IsNonAnimationPlaybackEnabled = value;
+                RaisePropertyChanged("IsPlaybackEnabled");
             }
         }
 
-        public static readonly PropertyData IsNonAnimationPlaybackProperty = RegisterProperty("IsNonAnimationPlayback", typeof (bool), false);
+        public static readonly PropertyData IsNonAnimationPlaybackEnabledProperty = RegisterProperty("IsNonAnimationPlaybackEnabled", typeof (bool), false);
 
-        public bool CanPlayback
+        public bool IsPlaybackEnabled
         {
-            get { return CurrentPage != null && (CurrentPage.History.IsAnimation || IsNonAnimationPlayback); }
+            get { return CurrentPage.History.IsAnimation || IsNonAnimationPlaybackEnabled; }
         }
 
         #endregion //Properties
@@ -178,7 +185,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public void Record(CLPPage page)
         {
-            if (IsNonAnimationPlayback || page == null)
+            if (IsNonAnimationPlaybackEnabled || page == null)
             {
                 return;
             }
@@ -215,7 +222,6 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 page.History.AddHistoryItem(new AnimationIndicator(page, App.MainWindowViewModel.CurrentUser, AnimationIndicatorType.Record));
             }
-            RaisePropertyChanged("CanPlayback");
         }
 
         /// <summary>Stops Recording, if recording. Stops Playing, if playing. Then rewinds animation to beginning.</summary>
@@ -237,7 +243,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             if (!page.History.IsAnimation &&
-                !IsNonAnimationPlayback)
+                !IsNonAnimationPlaybackEnabled)
             {
                 return;
             }
@@ -255,7 +261,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 page.History.Undo();
                 if (animationIndicator != null &&
                     animationIndicator.AnimationIndicatorType == AnimationIndicatorType.Record &&
-                    !IsNonAnimationPlayback)
+                    !IsNonAnimationPlaybackEnabled)
                 {
                     break;
                 }
@@ -332,7 +338,6 @@ namespace Classroom_Learning_Partner.ViewModels
             if (IsRecording)
             {
                 page.History.AddHistoryItem(new AnimationIndicator(page, App.MainWindowViewModel.CurrentUser, AnimationIndicatorType.Stop));
-                RaisePropertyChanged("CanPlayback");
             }
             IsPlaying = false;
             IsRecording = false;

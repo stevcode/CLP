@@ -446,19 +446,19 @@ namespace CLP.Entities
             get { return !Submissions.Any() ? Double.NaN : Math.Round(Submissions.Select(submission => submission.History.HistoryLength).Average()); }
         }
 
-        public double MinSubmissionAnimationLength
+        public int MinSubmissionAnimationLength
         {
-            get { return !Submissions.Any() ? Double.NaN : Submissions.Select(submission => submission.History.TotalHistoryTicks).Concat(new[] { Double.MaxValue }).Min(); }
+            get { return !Submissions.Any() ? -1 : Submissions.Select(submission => submission.History.AnimationLength).Concat(new[] { Int32.MaxValue }).Min(); }
         }
 
-        public double MaxSubmissionAnimationLength
+        public int MaxSubmissionAnimationLength
         {
-            get { return !Submissions.Any() ? Double.NaN : Submissions.Select(submission => submission.History.TotalHistoryTicks).Concat(new[] { 0.0 }).Max(); }
+            get { return !Submissions.Any() ? -1 : Submissions.Select(submission => submission.History.AnimationLength).Concat(new[] { 0 }).Max(); }
         }
 
         public double AverageSubmissionAnimationLength
         {
-            get { return !Submissions.Any() ? Double.NaN : Math.Round(Submissions.Select(submission => submission.History.TotalHistoryTicks).Average()); }
+            get { return !Submissions.Any() ? Double.NaN : Math.Round(Submissions.Select(submission => submission.History.AnimationLength).Average()); }
         }
 
         #region Calculated Sort Properties

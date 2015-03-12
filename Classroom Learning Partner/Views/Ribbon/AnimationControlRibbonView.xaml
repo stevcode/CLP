@@ -119,7 +119,7 @@
                     Width="70"
                     Background="Red"
                     Command="{Binding RecordAnimationCommand}"
-                    Visibility="{Binding IsNonAnimationPlayback, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}"
+                    Visibility="{Binding IsNonAnimationPlaybackEnabled, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}"
                     IsEnabled="{Binding IsPlaying, Converter={StaticResource BooleanToOppositeBooleanConverter}}">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -353,7 +353,8 @@
 
         <!--Animation Progress Bar-->
         <Grid Grid.Row="1"
-              Visibility="{Binding History.IsAnimation, Converter={StaticResource BooleanToHidingVisibilityConverter}}">
+              Visibility="{Binding IsPlaybackEnabled, Converter={StaticResource BooleanToHidingVisibilityConverter}}">
+
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
@@ -403,9 +404,9 @@
                     VerticalAlignment="Center"
                     Style="{StaticResource AnimationSliderStyle}"
                     Height="25"
-                    Width="{Binding ActualWidth, ElementName=PlaybackControls, Converter={StaticResource AddLengthConverter}, ConverterParameter=-75}"
+                    Width="{Binding ActualWidth, ElementName=PlaybackControls, Converter={StaticResource AddLengthConverter}, ConverterParameter=-100}"
                     Minimum="0"
-                    Maximum="{Binding CurrentPage.History.TotalHistoryTicks}"
+                    Maximum="{Binding CurrentPage.History.PlaybackLength}"
                     Value="{Binding CurrentPage.History.CurrentHistoryTick}"
                     IsSnapToTickEnabled="True"
                     TickFrequency="1.0"

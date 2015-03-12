@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading;
@@ -42,6 +43,8 @@ namespace CLP.Entities
         #endregion //Constructors
 
         #region Properties
+
+        #region ID
 
         /// <summary>
         /// Unique Identifier for the <see cref="PageHistory" />.
@@ -108,10 +111,15 @@ namespace CLP.Entities
 
         public static readonly PropertyData DifferentiationLevelProperty = RegisterProperty("DifferentiationLevel", typeof(string), "0");
 
-        public int CurrentAnimationDelay
+        #endregion //ID
+
+        public bool UseHistory
         {
-            get { return RedoItems.Any() ? RedoItems.First().AnimationDelay : 0; }
+            get { return GetValue<bool>(UseHistoryProperty); }
+            set { SetValue(UseHistoryProperty, value); }
         }
+
+        public static readonly PropertyData UseHistoryProperty = RegisterProperty("UseHistory", typeof(bool), true);
 
         /// <summary>
         /// All events available for Undo.
@@ -135,24 +143,49 @@ namespace CLP.Entities
 
         public static readonly PropertyData RedoItemsProperty = RegisterProperty("RedoItems", typeof(ObservableCollection<IHistoryItem>), () => new ObservableCollection<IHistoryItem>());
 
-        public bool UseHistory
+        public List<IHistoryItem> CompleteOrderedHistoryItems
         {
-            get { return GetValue<bool>(UseHistoryProperty); }
-            set { SetValue(UseHistoryProperty, value); }
+            get
+            {
+                return UndoItems.Reverse().Concat(RedoItems).ToList();
+            }
         }
 
-        public static readonly PropertyData UseHistoryProperty = RegisterProperty("UseHistory", typeof(bool), true);
-
-        /// <summary>
-        /// Flag to signify history is currently playing or rewinding.
-        /// </summary>
-        public bool IsAnimating
+        public List<IHistoryItem> OrderedAnimationHistoryItems
         {
-            get { return GetValue<bool>(IsAnimatingProperty); }
-            set { SetValue(IsAnimatingProperty, value); }
-        }
+            get
+            {
+                var combinedHistory = CompleteOrderedHistoryItems;
 
-        public static readonly PropertyData IsAnimatingProperty = RegisterProperty("IsAnimating", typeof(bool), false);
+                var startAnimationIndicator =
+                    combinedHistory.FirstOrDefault(
+                                                   clpHistoryItem =>
+                                                   clpHistoryItem is AnimationIndicator && (clpHistoryItem as AnimationIndicator).AnimationIndicatorType == AnimationIndicatorType.Record);
+                var stopAnimationIndicator =
+                    combinedHistory.FirstOrDefault(
+                                                   clpHistoryItem =>
+                                                   clpHistoryItem is AnimationIndicator && (clpHistoryItem as AnimationIndicator).AnimationIndicatorType == AnimationIndicatorType.Stop);
+                var startIndex = combinedHistory.IndexOf(startAnimationIndicator);
+                var stopIndex = combinedHistory.IndexOf(stopAnimationIndicator);
+
+                var animationHistoryItems = new List<IHistoryItem>();
+                if (startIndex > -1)
+                {
+                    animationHistoryItems = combinedHistory.Skip(startIndex).ToList();
+                }
+                else
+                {
+                    return animationHistoryItems;
+                }
+
+                if (stopIndex >= -1)
+                {
+                    animationHistoryItems = animationHistoryItems.Take(stopIndex - startIndex + 1).ToList();
+                }
+
+                return animationHistoryItems;
+            }
+        }
 
         public bool CanUndo
         {
@@ -176,16 +209,18 @@ namespace CLP.Entities
             }
         }
 
+        #region Playback Indication
+
         /// <summary>
-        /// Total Number of actions in the animation.
+        /// Flag to signify history is currently playing or rewinding.
         /// </summary>
-        public double TotalHistoryTicks
+        public bool IsAnimating
         {
-            get { return GetValue<double>(TotalHistoryTicksProperty); }
-            set { SetValue(TotalHistoryTicksProperty, value); }
+            get { return GetValue<bool>(IsAnimatingProperty); }
+            set { SetValue(IsAnimatingProperty, value); }
         }
 
-        public static readonly PropertyData TotalHistoryTicksProperty = RegisterProperty("TotalHistoryTicks", typeof(double), 0);
+        public static readonly PropertyData IsAnimatingProperty = RegisterProperty("IsAnimating", typeof(bool), false);
 
         /// <summary>
         /// Current position within the History.
@@ -198,6 +233,11 @@ namespace CLP.Entities
 
         public static readonly PropertyData CurrentHistoryTickProperty = RegisterProperty("CurrentHistoryTick", typeof(double), 0);
 
+        public int CurrentAnimationDelay
+        {
+            get { return RedoItems.Any() ? RedoItems.First().AnimationDelay : 0; }
+        }
+
         public bool IsAnimation
         {
             get
@@ -207,26 +247,47 @@ namespace CLP.Entities
             }
         }
 
+        /// <summary>Forces playback on non-animation pages.</summary>
+        [XmlIgnore] [ExcludeFromSerialization] private bool _isNonAnimationPlaybackEnabled = false;
+
+
+        [XmlIgnore]
+        [ExcludeFromSerialization]
+        public bool IsNonAnimationPlaybackEnabled 
+        {
+            get
+            {
+                return _isNonAnimationPlaybackEnabled;
+            }
+            set
+            {
+                if (_isNonAnimationPlaybackEnabled == value)
+                {
+                    return;
+                }
+                _isNonAnimationPlaybackEnabled = value;
+                UpdateTicks();
+            }
+        }
+
+
+        public bool IsPlaybackEnabled
+        {
+            get { return IsAnimation || IsNonAnimationPlaybackEnabled; }
+        }
+
+        #endregion //Playback Indication
+
+        #region Playback Lengths
+
         public int HistoryLength
         {
             get
             {
                 var totalTicks = 0;
-                foreach(var clpHistoryItem in UndoItems)
+                foreach (var clpHistoryItem in CompleteOrderedHistoryItems)
                 {
-                    if(clpHistoryItem is IHistoryBatch)
-                    {
-                        totalTicks += (clpHistoryItem as IHistoryBatch).NumberOfBatchTicks;
-                    }
-                    else
-                    {
-                        totalTicks++;
-                    }
-                }
-
-                foreach(var clpHistoryItem in RedoItems)
-                {
-                    if(clpHistoryItem is IHistoryBatch)
+                    if (clpHistoryItem is IHistoryBatch)
                     {
                         totalTicks += (clpHistoryItem as IHistoryBatch).NumberOfBatchTicks;
                     }
@@ -239,6 +300,37 @@ namespace CLP.Entities
                 return totalTicks;
             }
         }
+
+        public int AnimationLength
+        {
+            get
+            {
+                var totalAnimationTicks = 0;
+
+                foreach (var clpHistoryItem in OrderedAnimationHistoryItems)
+                {
+                    if (clpHistoryItem is IHistoryBatch)
+                    {
+                        totalAnimationTicks += (clpHistoryItem as IHistoryBatch).NumberOfBatchTicks;
+                    }
+                    else
+                    {
+                        totalAnimationTicks++;
+                    }
+                }
+
+                return totalAnimationTicks;
+            }
+        }
+
+        public double PlaybackLength
+        {
+            get { return IsNonAnimationPlaybackEnabled ? HistoryLength : AnimationLength; }
+        }
+
+        #endregion //Playback Lengths
+
+        #region Trashed Items
 
         /// <summary>
         /// A list of all the <see cref="IPageObject" />s that have been removed from a <see cref="CLPPage" />, but are needed for the <see cref="PageHistory" />.
@@ -274,6 +366,8 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData SerializedTrashedInkStrokesProperty = RegisterProperty("SerializedTrashedInkStrokes", typeof(List<StrokeDTO>), () => new List<StrokeDTO>());
+
+        #endregion //Trashed Items
 
         #endregion //Properties
 
@@ -370,54 +464,24 @@ namespace CLP.Entities
             lock(_historyLock)
             {
                 RaisePropertyChanged("HistoryLength");
+                RaisePropertyChanged("AnimationLength");
+                RaisePropertyChanged("PlaybackLength");
+                RaisePropertyChanged("IsAnimation");
+                RaisePropertyChanged("IsPlaybackEnabled");
 
-                var totalTicks = 0;
                 var currentTick = 0;
 
-                var combinedHistory = UndoItems.Reverse().Concat(RedoItems).ToList();
+                var combinedHistory = CompleteOrderedHistoryItems;
+
                 var startAnimationIndicator =
                     combinedHistory.FirstOrDefault(
                                                    clpHistoryItem =>
                                                    clpHistoryItem is AnimationIndicator && (clpHistoryItem as AnimationIndicator).AnimationIndicatorType == AnimationIndicatorType.Record);
-                var stopAnimationIndicator =
-                    combinedHistory.FirstOrDefault(
-                                                   clpHistoryItem =>
-                                                   clpHistoryItem is AnimationIndicator && (clpHistoryItem as AnimationIndicator).AnimationIndicatorType == AnimationIndicatorType.Stop);
-                var startIndex = combinedHistory.IndexOf(startAnimationIndicator);
-                var stopIndex = combinedHistory.IndexOf(stopAnimationIndicator);
 
-                List<IHistoryItem> animationHistoryItems;
-                if(startIndex > -1)
-                {
-                    animationHistoryItems = combinedHistory.Skip(startIndex).ToList();
-                }
-                else
-                {
-                    CurrentHistoryTick = 0;
-                    TotalHistoryTicks = 0;
-                    RaisePropertyChanged("IsAnimation");
-                    return;
-                }
+                var startIndex = Math.Max(0, combinedHistory.IndexOf(startAnimationIndicator));
+                var playbackItems = UndoItems.Reverse().Skip(startIndex);
 
-                if(stopIndex >= -1)
-                {
-                    animationHistoryItems = animationHistoryItems.Take(stopIndex - startIndex + 1).ToList();
-                }
-
-                foreach(var clpHistoryItem in animationHistoryItems)
-                {
-                    if(clpHistoryItem is IHistoryBatch)
-                    {
-                        totalTicks += (clpHistoryItem as IHistoryBatch).NumberOfBatchTicks;
-                    }
-                    else
-                    {
-                        totalTicks++;
-                    }
-                }
-
-                var animationUndoItems = UndoItems.Reverse().Skip(startIndex);
-                foreach(var clpHistoryItem in animationUndoItems)
+                foreach (var clpHistoryItem in playbackItems)
                 {
                     if(clpHistoryItem is IHistoryBatch)
                     {
@@ -428,16 +492,18 @@ namespace CLP.Entities
                         currentTick++;
                     }
                 }
+
                 if(RedoItems.Any() &&
                    RedoItems.First() is IHistoryBatch)
                 {
-                    var clpHistoryItem = (RedoItems.First() as IHistoryBatch);
-                    currentTick += clpHistoryItem.CurrentBatchTickIndex;
+                    var clpHistoryItem = RedoItems.First() as IHistoryBatch;
+                    if (clpHistoryItem != null)
+                    {
+                        currentTick += clpHistoryItem.CurrentBatchTickIndex;
+                    }
                 }
 
                 CurrentHistoryTick = currentTick;
-                TotalHistoryTicks = totalTicks;
-                RaisePropertyChanged("IsAnimation");
             }
         }
 

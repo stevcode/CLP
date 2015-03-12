@@ -130,7 +130,7 @@
                          Background="#66FF8C00" />
 
                 <TextBlock Text="Animation Length:" />
-                <TextBox Text="{Binding CurrentPage.History.TotalHistoryTicks, Mode=OneWay}"
+                <TextBox Text="{Binding CurrentPage.History.AnimationLength, Mode=OneWay}"
                          IsReadOnly="True" />
 
                 <TextBlock Text="Animation Z-Score:" />

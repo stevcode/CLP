@@ -312,8 +312,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
 
                 var mean = parentPage.AverageSubmissionAnimationLength;
-                var standardDeviation = Math.Sqrt(parentPage.Submissions.Select(x => x.History.TotalHistoryTicks).Average(x => Math.Pow(x - mean, 2)));
-                var zScore = (CurrentPage.History.TotalHistoryTicks - mean) / standardDeviation;
+                var standardDeviation = Math.Sqrt(parentPage.Submissions.Select(x => x.History.AnimationLength).Average(x => Math.Pow(x - mean, 2)));
+                var zScore = (CurrentPage.History.AnimationLength - mean) / standardDeviation;
                 return Math.Round(zScore, 4, MidpointRounding.AwayFromZero);
             }
         }
