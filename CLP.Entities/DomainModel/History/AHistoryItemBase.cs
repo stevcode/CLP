@@ -182,6 +182,11 @@ namespace CLP.Entities
 
         #endregion //Navigation Properties
 
+        public virtual string FormattedValue
+        {
+            get { return "History Item"; }
+        }
+
         #endregion //Properties
 
         #region Methods
