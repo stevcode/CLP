@@ -215,7 +215,7 @@
                         Margin="1" />
 
                 <Button Content="Run Skip Counting Analysis"
-                        Command="{Binding AnalyzeSkipCounting}"
+                        Command="{Binding AnalyzeSkipCountingCommand}"
                         Grid.ColumnSpan="2"
                         Height="20"
                         Margin="1" />
