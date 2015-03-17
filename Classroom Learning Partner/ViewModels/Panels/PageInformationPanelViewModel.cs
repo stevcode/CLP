@@ -927,7 +927,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command AnalyzeSkipCountingCommand { get; private set; }
 
-        private void OnAnalyzeSkipCountingCommandExecute()
+        private void OnAnalyzeSkipCountingCommandExecute() 
         {
             var arraysOnPage = CurrentPage.PageObjects.OfType<CLPArray>().ToList();
             var inkOnPage = CurrentPage.InkStrokes;
