@@ -922,6 +922,34 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+        /// <summary>
+        /// Analyzes ink strokes near array objects to determine if skip counting was used
+        /// </summary>
+        public Command AnalyzeSkipCountingCommand { get; private set; }
+
+        private void OnAnalyzeSkipCountingCommandExecute()
+        {
+            var arraysOnPage = CurrentPage.PageObjects.OfType<CLPArray>().ToList();
+            var inkOnPage = CurrentPage.InkStrokes;
+
+            foreach (var inkStroke in inkOnPage)
+            {
+                foreach (var array in arraysOnPage)
+                {
+                    var rectBound = Rect; //not sure how to make Rectangle object and set dimensions, position
+                    var height = array.ArrayHeight;
+                    var width = array.ArrayWidth;
+                    var xpos = array.XPosition;
+                    var ypos = array.YPosition;
+                    if (inkStroke.HitTest(rectBound, 0.8))
+                    {
+                        //create array, set to True
+                    }
+                }
+            }
+            
+        }
+
         #endregion //Commands
 
         /// <summary>TEMP</summary>
