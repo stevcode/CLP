@@ -105,7 +105,7 @@ namespace CLP.Entities
                 CurrentBatchTickIndex = NumberOfBatchTicks;
             }
 
-            foreach(var pageObject in PageObjectIDs.Select(id => ParentPage.GetPageObjectByID(ID)))
+            foreach(var pageObject in PageObjectIDs.Select(id => ParentPage.GetPageObjectByID(id)))
             {
                 if(pageObject == null)
                 {
@@ -180,7 +180,7 @@ namespace CLP.Entities
                 CurrentBatchTickIndex = 0;
             }
 
-            foreach(var pageObject in PageObjectIDs.Select(id => ParentPage.GetPageObjectByID(ID)))
+            foreach(var pageObject in PageObjectIDs.Select(id => ParentPage.GetPageObjectByID(id)))
             {
                 if(pageObject == null)
                 {

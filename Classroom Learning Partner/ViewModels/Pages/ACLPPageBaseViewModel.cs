@@ -628,7 +628,44 @@ namespace Classroom_Learning_Partner.ViewModels
 
             foreach (var pageObject in PageObjects.OfType<IStrokeAccepter>().Where(x => x.CreatorID == App.MainWindowViewModel.CurrentUser.ID || x.IsBackgroundInteractable))
             {
+                var numberLine = pageObject as NumberLine;
+                var oldJumpSizes = new List<NumberLineJumpSize>();
+                if (numberLine != null)
+                {
+                    oldJumpSizes = numberLine.JumpSizes.ToList();
+                }
+
                 pageObject.AcceptStrokes(addedStrokesEnumerable, removedStrokesEnumerable);
+
+                if (numberLine != null)
+                {
+                    var newJumpSizes = numberLine.JumpSizes.ToList();
+
+                    if (newJumpSizes.Count == oldJumpSizes.Count)
+                    {
+                        return false;
+                    }
+                    else if (newJumpSizes.Count > oldJumpSizes.Count)
+                    {
+                        var addedJumpSizes = newJumpSizes.Except(oldJumpSizes).ToList();
+                        AddHistoryItemToPage(numberLine.ParentPage,
+                                             new NumberLineJumpSizesChangedHistoryItem(numberLine.ParentPage,
+                                                                                       App.MainWindowViewModel.CurrentUser,
+                                                                                       numberLine.ID,
+                                                                                       addedJumpSizes,
+                                                                                       new List<NumberLineJumpSize>()));
+                    }
+                    else
+                    {
+                        var removedJumpSizes = oldJumpSizes.Except(newJumpSizes).ToList();
+                        AddHistoryItemToPage(numberLine.ParentPage,
+                                             new NumberLineJumpSizesChangedHistoryItem(numberLine.ParentPage,
+                                                                                       App.MainWindowViewModel.CurrentUser,
+                                                                                       numberLine.ID,
+                                                                                       new List<NumberLineJumpSize>(),
+                                                                                       removedJumpSizes));
+                    }
+                }
             }
 
             return false;
@@ -721,7 +758,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
             foreach (var pageObject in PageObjects)
             {
-                if (App.MainWindowViewModel.CurrentUser.ID != pageObject.CreatorID && !pageObject.IsManipulatableByNonCreator)
+                if (App.MainWindowViewModel.CurrentUser.ID != pageObject.CreatorID &&
+                    !pageObject.IsManipulatableByNonCreator)
                 {
                     continue;
                 }
@@ -945,7 +983,8 @@ namespace Classroom_Learning_Partner.ViewModels
         public static void TakePageThumbnail(CLPPage page)
         {
             var viewModels = CLPServiceAgent.Instance.GetViewModelsFromModel(page);
-            if (viewModels == null || !viewModels.Any())
+            if (viewModels == null ||
+                !viewModels.Any())
             {
                 return;
             }

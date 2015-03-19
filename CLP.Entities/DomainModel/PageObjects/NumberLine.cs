@@ -130,7 +130,7 @@ namespace CLP.Entities
     [Serializable]
     public class NumberLine : APageObjectBase, IStrokeAccepter
     {
-        private const int MAX_ALL_TICKS_VISIBLE_LENGTH = 30;
+        public const int MAX_ALL_TICKS_VISIBLE_LENGTH = 30;
         #region Constructors
 
         public NumberLine() { }
@@ -469,6 +469,8 @@ namespace CLP.Entities
                 foreach (var jump in jumpsToRemove)
                 {
                     JumpSizes.Remove(jump);
+
+                    //
                 }
 
                 if (JumpSizes.All(x => x.StartingTickIndex != tickR.TickValue))
@@ -538,6 +540,8 @@ namespace CLP.Entities
 
                 var jumpSize = tickRight.TickValue - tickLeft.TickValue;
                 JumpSizes.Add(new NumberLineJumpSize(jumpSize, tickLeft.TickValue));
+
+                //
             }
         }
 

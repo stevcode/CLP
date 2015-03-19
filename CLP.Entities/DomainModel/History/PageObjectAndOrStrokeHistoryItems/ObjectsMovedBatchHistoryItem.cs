@@ -151,6 +151,13 @@ namespace CLP.Entities
                 CurrentBatchTickIndex = NumberOfBatchTicks;
             }
 
+            if (!PageObjectIDs.Any())
+            {
+                Console.WriteLine("ERROR: PageObjectIDs is empty on ObjectsMovedBatch.");
+                CurrentBatchTickIndex = -1;
+                return;
+            }
+
             foreach (var pageObjectID in PageObjectIDs)
             {
                 var pageObject = ParentPage.GetVerifiedPageObjectOnPageByID(pageObjectID);
@@ -159,8 +166,6 @@ namespace CLP.Entities
                 {
                     continue;
                 }
-
-                
 
                 var initialX = pageObject.XPosition;
                 var initialY = pageObject.YPosition;
@@ -195,6 +200,13 @@ namespace CLP.Entities
             if (CurrentBatchTickIndex < 0)
             {
                 CurrentBatchTickIndex = 0;
+            }
+
+            if (!PageObjectIDs.Any())
+            {
+                Console.WriteLine("ERROR: PageObjectIDs is empty on ObjectsMovedBatch.");
+                CurrentBatchTickIndex = NumberOfBatchTicks + 1;
+                return;
             }
 
             foreach (var pageObjectID in PageObjectIDs)

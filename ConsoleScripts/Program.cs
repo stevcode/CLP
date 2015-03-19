@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Windows.Ink;
 using System.Windows.Media;
 using System.Xml.Serialization;
 using Catel.Data;
@@ -71,43 +72,130 @@ namespace ConsoleScripts
                     Console.WriteLine("Loaded {3}'s page {0}, differentiation {1}, version {2}", page.PageNumber, page.DifferentiationLevel, page.VersionIndex, page.Owner.FullName);
                     //Do stuff to each page here.
 
-                    for (int i = 0; i < page.History.UndoItems.Count; i++)
-                    {
-                        var historyItem = page.History.UndoItems[i];
-                        if (historyItem is PageObjectMoveBatchHistoryItem)
-                        {
-                            page.History.UndoItems[i] = new ObjectsMovedBatchHistoryItem(historyItem as PageObjectMoveBatchHistoryItem);
-                            continue;
-                        }
+                    //for (int i = 0; i < page.History.UndoItems.Count; i++)
+                    //{
+                    //    var historyItem = page.History.UndoItems[i];
+                    //    if (historyItem is PageObjectMoveBatchHistoryItem)
+                    //    {
+                    //        page.History.UndoItems[i] = new ObjectsMovedBatchHistoryItem(historyItem as PageObjectMoveBatchHistoryItem);
+                    //        continue;
+                    //    }
 
-                        if (historyItem is PageObjectsMoveBatchHistoryItem)
-                        {
-                            page.History.UndoItems[i] = new ObjectsMovedBatchHistoryItem(historyItem as PageObjectsMoveBatchHistoryItem);
-                            continue;
-                        }
-                    }
+                    //    if (historyItem is PageObjectsMoveBatchHistoryItem)
+                    //    {
+                    //        page.History.UndoItems[i] = new ObjectsMovedBatchHistoryItem(historyItem as PageObjectsMoveBatchHistoryItem);
+                    //        continue;
+                    //    }
+                    //}
 
-                    for (int i = 0; i < page.History.RedoItems.Count; i++)
-                    {
-                        var historyItem = page.History.RedoItems[i];
-                        if (historyItem is PageObjectMoveBatchHistoryItem)
-                        {
-                            page.History.RedoItems[i] = new ObjectsMovedBatchHistoryItem(historyItem as PageObjectMoveBatchHistoryItem);
-                            continue;
-                        }
+                    //for (int i = 0; i < page.History.RedoItems.Count; i++)
+                    //{
+                    //    var historyItem = page.History.RedoItems[i];
+                    //    if (historyItem is PageObjectMoveBatchHistoryItem)
+                    //    {
+                    //        page.History.RedoItems[i] = new ObjectsMovedBatchHistoryItem(historyItem as PageObjectMoveBatchHistoryItem);
+                    //        continue;
+                    //    }
 
-                        if (historyItem is PageObjectsMoveBatchHistoryItem)
-                        {
-                            page.History.RedoItems[i] = new ObjectsMovedBatchHistoryItem(historyItem as PageObjectsMoveBatchHistoryItem);
-                            continue;
-                        }
-                    }
+                    //    if (historyItem is PageObjectsMoveBatchHistoryItem)
+                    //    {
+                    //        page.History.RedoItems[i] = new ObjectsMovedBatchHistoryItem(historyItem as PageObjectsMoveBatchHistoryItem);
+                    //        continue;
+                    //    }
+                    //}
 
-                    page.History.RefreshHistoryIndexes();
+                    //page.History.RefreshHistoryIndexes();
+
+                    HackJumpSizeHistoryItems(page);
 
                     //Finished doing stuff to page, it'll save below.
                     page.ToXML(pageFilePath, true);
                 }
+            }
+        }
+
+        public static void HackJumpSizeHistoryItems(CLPPage page)
+        {
+            //Rewind entire page
+            page.History.IsAnimating = true;
+
+            while (page.History.UndoItems.Any())
+            {
+                page.History.Undo();
+            }
+
+            while (page.History.RedoItems.Any() &&
+                   page.History.IsAnimating)
+            {
+                var nextRedoItem = page.History.RedoItems.FirstOrDefault();
+                if (nextRedoItem == null)
+                {
+                    return;
+                }
+
+                page.History.Redo();
+
+                if (nextRedoItem is StrokesChangedHistoryItem)
+                {
+                    var strokesChanged = nextRedoItem as StrokesChangedHistoryItem;
+                    foreach (var removedStroke in strokesChanged.StrokeIDsRemoved.Select(page.History.GetStrokeByID))
+                    {
+                        foreach (var numberLine in page.PageObjects.OfType<NumberLine>())
+                        {
+                            var actuallyRemovedStrokes = new StrokeCollection
+                                                         {
+                                                             removedStroke
+                                                         };
+                            var tickR = numberLine.FindClosestTick(actuallyRemovedStrokes, true);
+                            var tickL = numberLine.FindClosestTick(actuallyRemovedStrokes, false);
+                            if (tickR != null &&
+                                tickL != null &&
+                                tickR != tickL)
+                            {
+                                var deletedStartTickValue = tickL.TickValue;
+                                var deletedJumpSize = tickR.TickValue - tickL.TickValue;
+
+                                var jumpsToRemove = numberLine.JumpSizes.Where(jump => jump.JumpSize == deletedJumpSize && jump.StartingTickIndex == deletedStartTickValue).ToList();
+                                var historyItem = new NumberLineJumpSizesChangedHistoryItem(numberLine.ParentPage,
+                                                                                                numberLine.ParentPage.Owner,
+                                                                                                numberLine.ID,
+                                                                                                new List<NumberLineJumpSize>(),
+                                                                                                jumpsToRemove);
+                                page.History.UndoItems.Insert(0, historyItem);
+                            }
+                        }
+                    }
+
+                    foreach (var addedStroke in strokesChanged.StrokeIDsAdded.Select(page.GetStrokeByID))
+                    {
+                        foreach (var numberLine in page.PageObjects.OfType<NumberLine>())
+                        {
+                            var actuallyAddedStrokes = new StrokeCollection
+                                                         {
+                                                             addedStroke
+                                                         };
+                            var tickR = numberLine.FindClosestTick(actuallyAddedStrokes, true);
+                            var tickL = numberLine.FindClosestTick(actuallyAddedStrokes, false);
+                            if (tickR != null &&
+                                tickL != null &&
+                                tickR != tickL)
+                            {
+                                var addedStartTickValue = tickL.TickValue;
+                                var addedJumpSize = tickR.TickValue - tickL.TickValue;
+
+                                var jumpsToAdd = numberLine.JumpSizes.Where(jump => jump.JumpSize == addedJumpSize && jump.StartingTickIndex == addedStartTickValue).ToList();
+                                var historyItem = new NumberLineJumpSizesChangedHistoryItem(numberLine.ParentPage,
+                                                                                                numberLine.ParentPage.Owner,
+                                                                                                numberLine.ID,
+                                                                                                jumpsToAdd,
+                                                                                                new List<NumberLineJumpSize>());
+                                page.History.UndoItems.Insert(0, historyItem);
+                            }
+                        }
+                    }
+                }
+
+                
             }
         }
 
