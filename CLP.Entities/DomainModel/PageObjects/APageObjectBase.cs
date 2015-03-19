@@ -222,19 +222,21 @@ namespace CLP.Entities
 
         public abstract IPageObject Duplicate();
 
-        public virtual void OnAdded() { }
+        public virtual void OnAdded(bool fromHistory = false) { }
 
-        public virtual void OnRestoredFromHistory() { }
+        public virtual void OnDeleted(bool fromHistory = false) { }
 
-        public virtual void OnDeleted() { }
+        public virtual void OnMoving(double oldX, double oldY, bool fromHistory = false) { }
 
-        public virtual void OnMoving(double oldX, double oldY) { }
+        public virtual void OnMoved(double oldX, double oldY, bool fromHistory = false) { ParentPage.UpdateAllReporters(); }
 
-        public virtual void OnMoved(double oldX, double oldY) { ParentPage.UpdateAllReporters(); }
+        public virtual void OnResizing(double oldWidth, double oldHeight, bool fromHistory = false) { }
 
-        public virtual void OnResizing(double oldWidth, double oldHeight) { }
+        public virtual void OnResized(double oldWidth, double oldHeight, bool fromHistory = false) { }
 
-        public virtual void OnResized(double oldWidth, double oldHeight) { }
+        public virtual void OnRotating(double oldAngle, bool fromHistory = false) { }
+
+        public virtual void OnRotated(double oldAngle, bool fromHistory = false) { }
 
         public virtual bool PageObjectIsOver(IPageObject pageObject, double percentage)
         {

@@ -2,6 +2,7 @@
 using System.Text;
 using System.Windows.Ink;
 using System.Windows.Input;
+using System.Windows.Media;
 using Catel;
 
 namespace CLP.Entities
@@ -50,11 +51,20 @@ namespace CLP.Entities
             return strokeDTO;
         }
 
+        #region ExtendedProperties
+
+        public static bool HasStrokeID(this Stroke stroke)
+        {
+            Argument.IsNotNull("stroke", stroke);
+
+            return stroke.ContainsPropertyData(StrokeIDKey);
+        }
+
         public static string GetStrokeID(this Stroke stroke)
         {
             Argument.IsNotNull("stroke", stroke);
 
-            if(stroke.ContainsPropertyData(StrokeIDKey))
+            if (stroke.ContainsPropertyData(StrokeIDKey))
             {
                 return stroke.GetPropertyData(StrokeIDKey) as string;
             }
@@ -72,8 +82,8 @@ namespace CLP.Entities
         public static string GetStrokeOwnerID(this Stroke stroke)
         {
             Argument.IsNotNull("stroke", stroke);
-            
-            if(stroke.ContainsPropertyData(StrokeOwnerIDKey))
+
+            if (stroke.ContainsPropertyData(StrokeOwnerIDKey))
             {
                 return stroke.GetPropertyData(StrokeOwnerIDKey) as string;
             }
@@ -92,7 +102,7 @@ namespace CLP.Entities
         {
             Argument.IsNotNull("stroke", stroke);
 
-            if(stroke.ContainsPropertyData(StrokeDifferentiationGroupKey))
+            if (stroke.ContainsPropertyData(StrokeDifferentiationGroupKey))
             {
                 return stroke.GetPropertyData(StrokeDifferentiationGroupKey) as string;
             }
@@ -111,8 +121,8 @@ namespace CLP.Entities
         {
             Argument.IsNotNull("stroke", stroke);
 
-            
-            if(stroke.ContainsPropertyData(StrokeVersionIndexKey))
+
+            if (stroke.ContainsPropertyData(StrokeVersionIndexKey))
             {
                 return stroke.GetPropertyData(StrokeVersionIndexKey) as string;
             }
@@ -127,11 +137,45 @@ namespace CLP.Entities
             stroke.AddPropertyData(StrokeVersionIndexKey, index);
         }
 
-        public static bool HasStrokeID(this Stroke stroke)
+        #endregion //ExtendedProperties
+
+        #region Transformation
+
+        /// <summary>
+        /// Scales a <see cref="Stroke" /> with respect to a center point.
+        /// </summary>
+        public static void Stretch(this Stroke stroke, double scaleX, double scaleY, double centerX, double centerY)
         {
             Argument.IsNotNull("stroke", stroke);
 
-            return stroke.ContainsPropertyData(StrokeIDKey);
+            var transform = new Matrix();
+            transform.ScaleAt(scaleX, scaleY, centerX, centerY);
+            stroke.Transform(transform, false);
         }
+
+        /// <summary>
+        /// Moves every <see cref="StylusPoint" /> in a <see cref="Stroke" /> by an offset.
+        /// </summary>
+        public static void Move(this Stroke stroke, double deltaX, double deltaY)
+        {
+            Argument.IsNotNull("stroke", stroke);
+
+            var transform = new Matrix();
+            transform.Translate(deltaX, deltaY);
+            stroke.Transform(transform, true);
+        }
+
+        public static void Rotate(this Stroke stroke, double angle, double centerX, double centerY, double offsetX, double offsetY)
+        {
+            Argument.IsNotNull("stroke", stroke);
+
+            var transform = new Matrix();
+            transform.RotateAt(90, centerX, centerY);
+            transform.Translate(offsetX, offsetY);
+            stroke.Transform(transform, false);
+        }
+
+        #endregion //Transformation
+
     }
 }

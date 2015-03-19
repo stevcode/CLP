@@ -280,7 +280,7 @@ namespace CLP.Entities
 
         #region Methods
 
-        public override void OnAdded()
+        public override void OnAdded(bool fromHistory = false)
         {
             ApplyDistinctPosition(this);
 
@@ -296,7 +296,7 @@ namespace CLP.Entities
             }
         }
 
-        public override void OnDeleted()
+        public override void OnDeleted(bool fromHistory = false)
         {
             var jumpSizes = JumpSizes.Select(x => x.JumpSize).ToList();
 
@@ -384,45 +384,34 @@ namespace CLP.Entities
             base.OnPropertyChanged(e);
         }
 
-        public override void OnResizing(double oldWidth, double oldHeight)
+        public override void OnResizing(double oldWidth, double oldHeight, bool fromHistory = false)
         {
+            if (!CanAcceptStrokes)
+            {
+                return;
+            }
+
             var scaleX = NumberLineLength / (oldWidth - 2 * ArrowLength);
 
-            if (CanAcceptStrokes)
-            {
-                foreach (var stroke in AcceptedStrokes)
-                {
-                    var transform = new Matrix();
-                    transform.ScaleAt(scaleX, 1.0, XPosition + ArrowLength, YPosition);
-                    stroke.Transform(transform, false);
-                }
-            }
+            AcceptedStrokes.StretchAll(scaleX, 1.0, XPosition + ArrowLength, YPosition);
         }
 
-        public override void OnResized(double oldWidth, double oldHeight) { OnResizing(oldWidth, oldHeight); }
+        public override void OnResized(double oldWidth, double oldHeight, bool fromHistory = false) { OnResizing(oldWidth, oldHeight, fromHistory); }
 
-        public override void OnMoving(double oldX, double oldY)
+        public override void OnMoving(double oldX, double oldY, bool fromHistory = false)
         {
+            if (!CanAcceptStrokes)
+            {
+                return;
+            }
+
             var deltaX = XPosition - oldX;
             var deltaY = YPosition - oldY;
 
-            if (CanAcceptStrokes)
-            {
-                foreach (var stroke in AcceptedStrokes)
-                {
-                    if (stroke == null)
-                    {
-                        Console.WriteLine("Null stroke in OnMoving for Number Line");
-                        continue;
-                    }
-                    var transform = new Matrix();
-                    transform.Translate(deltaX, deltaY);
-                    stroke.Transform(transform, true);
-                }
-            }
+            AcceptedStrokes.MoveAll(deltaX, deltaY);
         }
 
-        public override void OnMoved(double oldX, double oldY) { OnMoving(oldX, oldY); }
+        public override void OnMoved(double oldX, double oldY, bool fromHistory = false) { OnMoving(oldX, oldY, fromHistory); }
 
         public override IPageObject Duplicate()
         {
@@ -636,7 +625,7 @@ namespace CLP.Entities
             return Ticks[tickIndex];
         }
 
-        public double FindTallestPoint(StrokeCollection strokes)
+        public double FindTallestPoint(IEnumerable<Stroke> strokes)
         {
             return strokes.Select(stroke => stroke.GetBounds().Top).Concat(new[] { ParentPage.Height }).Min();
         }

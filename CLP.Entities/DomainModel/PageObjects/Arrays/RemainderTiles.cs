@@ -88,14 +88,13 @@ namespace CLP.Entities
             return newRemainderTiles;
         }
 
-        public override void OnDeleted()
+        public override void OnDeleted(bool fromHistory = false)
         {
             var fuzzyFactorCard = ParentPage.GetPageObjectByID(FuzzyFactorCardID) as FuzzyFactorCard;
             if(fuzzyFactorCard != null)
             {
                 fuzzyFactorCard.RemainderTiles = null;
             }
-            base.OnDeleted();
         }
 
         #endregion //Methods

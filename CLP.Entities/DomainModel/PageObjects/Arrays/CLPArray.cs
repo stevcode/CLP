@@ -4,7 +4,6 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Ink;
-using System.Windows.Media;
 using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
@@ -98,7 +97,7 @@ namespace CLP.Entities
             set { SetValue(CanAcceptStrokesProperty, value); }
         }
 
-        public static readonly PropertyData CanAcceptStrokesProperty = RegisterProperty("CanAcceptStrokes", typeof(bool), true);
+        public static readonly PropertyData CanAcceptStrokesProperty = RegisterProperty("CanAcceptStrokes", typeof (bool), true);
 
         /// <summary>The currently accepted <see cref="Stroke" />s.</summary>
         [XmlIgnore]
@@ -109,7 +108,7 @@ namespace CLP.Entities
             set { SetValue(AcceptedStrokesProperty, value); }
         }
 
-        public static readonly PropertyData AcceptedStrokesProperty = RegisterProperty("AcceptedStrokes", typeof(List<Stroke>), () => new List<Stroke>());
+        public static readonly PropertyData AcceptedStrokesProperty = RegisterProperty("AcceptedStrokes", typeof (List<Stroke>), () => new List<Stroke>());
 
         /// <summary>The IDs of the <see cref="Stroke" />s that have been accepted.</summary>
         public List<string> AcceptedStrokeParentIDs
@@ -118,7 +117,7 @@ namespace CLP.Entities
             set { SetValue(AcceptedStrokeParentIDsProperty, value); }
         }
 
-        public static readonly PropertyData AcceptedStrokeParentIDsProperty = RegisterProperty("AcceptedStrokeParentIDs", typeof(List<string>), () => new List<string>());
+        public static readonly PropertyData AcceptedStrokeParentIDsProperty = RegisterProperty("AcceptedStrokeParentIDs", typeof (List<string>), () => new List<string>());
 
         #endregion //IStrokeAccepter Members
 
@@ -144,7 +143,7 @@ namespace CLP.Entities
 
         #region Overrides of APageObjectBase
 
-        public override void OnAdded()
+        public override void OnAdded(bool fromHistory = false)
         {
             base.OnAdded();
 
@@ -254,7 +253,7 @@ namespace CLP.Entities
             }
         }
 
-        public override void OnDeleted()
+        public override void OnDeleted(bool fromHistory = false)
         {
             base.OnDeleted();
             // If FFC with remainder on page, update
@@ -280,50 +279,28 @@ namespace CLP.Entities
             ParentPage.History.TrashedInkStrokes.Add(strokesToTrash);
         }
 
-        public override void OnResizing(double oldWidth, double oldHeight)
-        {
-            //var scaleX = NumberLineLength / (oldWidth - 2 * ArrowLength);
+        public override void OnResizing(double oldWidth, double oldHeight, bool fromHistory = false) { }
 
-            //if (CanAcceptStrokes)
-            //{
-            //    foreach (var stroke in AcceptedStrokes)
-            //    {
-            //        var transform = new Matrix();
-            //        transform.ScaleAt(scaleX, 1.0, XPosition + ArrowLength, YPosition);
-            //        stroke.Transform(transform, false);
-            //    }
-            //}
-        }
-
-        public override void OnResized(double oldWidth, double oldHeight)
+        public override void OnResized(double oldWidth, double oldHeight, bool fromHistory = false)
         {
             SizeArrayToGridLevel(GridSquareSize);
             OnResizing(oldWidth, oldHeight);
-            
         }
 
-        public override void OnMoving(double oldX, double oldY)
+        public override void OnMoving(double oldX, double oldY, bool fromHistory = false)
         {
+            if (!CanAcceptStrokes)
+            {
+                return;
+            }
+
             var deltaX = XPosition - oldX;
             var deltaY = YPosition - oldY;
 
-            if (CanAcceptStrokes)
-            {
-                foreach (var stroke in AcceptedStrokes)
-                {
-                    if (stroke == null)
-                    {
-                        Console.WriteLine("Null stroke in OnMoving for Array");
-                        continue;
-                    }
-                    var transform = new Matrix();
-                    transform.Translate(deltaX, deltaY);
-                    stroke.Transform(transform, true);
-                }
-            }
+            AcceptedStrokes.MoveAll(deltaX, deltaY);
         }
 
-        public override void OnMoved(double oldX, double oldY) { OnMoving(oldX, oldY); }
+        public override void OnMoved(double oldX, double oldY, bool fromHistory = false) { OnMoving(oldX, oldY, fromHistory); }
 
         #endregion //Overrides of APageObjectBase
 
@@ -528,7 +505,7 @@ namespace CLP.Entities
                 AcceptedStrokes.Remove(stroke);
                 AcceptedStrokeParentIDs.Remove(stroke.GetStrokeID());
             }
-           
+
             // Add Strokes
             var numberLineBodyBoundingBox = new Rect(XPosition, YPosition, Width, Height);
             foreach (var stroke in addedStrokes.Where(stroke => stroke.HitTest(numberLineBodyBoundingBox, 90) && !AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))

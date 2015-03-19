@@ -313,25 +313,26 @@ namespace CLP.Entities
 
         #region Methods
 
-        public override void OnAdded()
+        public override void OnAdded(bool fromHistory = false)
         {
-            ApplyDistinctPosition(this);
-        }
-
-        public override void OnRestoredFromHistory()
-        {
-            if (!CanAcceptStrokes ||
-                !AcceptedStrokes.Any())
+            if (fromHistory)
             {
+                if (!CanAcceptStrokes ||
+                !AcceptedStrokes.Any())
+                {
+                    return;
+                }
+
+                //BUG: This is going to cause issues if you use Undo or Redo while not in Select Mode
+                ParentPage.InkStrokes.Add(new StrokeCollection(AcceptedStrokes));
+                ParentPage.History.TrashedInkStrokes.Remove(new StrokeCollection(AcceptedStrokes));
                 return;
             }
 
-            //BUG: This is going to cause issues if you use Undo or Redo while not in Select Mode
-            ParentPage.InkStrokes.Add(new StrokeCollection(AcceptedStrokes));
-            ParentPage.History.TrashedInkStrokes.Remove(new StrokeCollection(AcceptedStrokes));
+            ApplyDistinctPosition(this);
         }
 
-        public override void OnDeleted()
+        public override void OnDeleted(bool fromHistory = false)
         {
             if (!CanAcceptStrokes ||
                 !AcceptedStrokes.Any())
@@ -350,11 +351,7 @@ namespace CLP.Entities
             ParentPage.History.TrashedInkStrokes.Add(strokesToTrash);
         }
 
-        public override void OnResizing(double oldWidth, double oldHeight) { }
-
-        public override void OnResized(double oldWidth, double oldHeight) { OnResizing(oldWidth, oldHeight); }
-
-        public override void OnMoving(double oldX, double oldY)
+        public override void OnMoving(double oldX, double oldY, bool fromHistory = false)
         {
             var deltaX = XPosition - oldX;
             var deltaY = YPosition - oldY;
@@ -378,6 +375,8 @@ namespace CLP.Entities
                 }
             }
         }
+
+        //BUG?: Needs OnMoved();
 
         public override IPageObject Duplicate()
         {

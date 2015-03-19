@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Windows;
 using System.Windows.Ink;
 using System.Windows.Media;
 using System.Xml.Serialization;
@@ -142,6 +143,12 @@ namespace ConsoleScripts
                     {
                         foreach (var numberLine in page.PageObjects.OfType<NumberLine>())
                         {
+                            var pageObjectBounds = new Rect(numberLine.XPosition, numberLine.YPosition, numberLine.Width, numberLine.Height);
+                            if (removedStroke.HitTest(pageObjectBounds, 5))
+                            {
+                                continue;
+                            }
+
                             var actuallyRemovedStrokes = new StrokeCollection
                                                          {
                                                              removedStroke
@@ -156,6 +163,11 @@ namespace ConsoleScripts
                                 var deletedJumpSize = tickR.TickValue - tickL.TickValue;
 
                                 var jumpsToRemove = numberLine.JumpSizes.Where(jump => jump.JumpSize == deletedJumpSize && jump.StartingTickIndex == deletedStartTickValue).ToList();
+                                if (!jumpsToRemove.Any())
+                                {
+                                    Console.WriteLine("JumpsToRemove is empty on page {0}!", page.PageNumber);
+                                    continue;
+                                }
                                 var historyItem = new NumberLineJumpSizesChangedHistoryItem(numberLine.ParentPage,
                                                                                                 numberLine.ParentPage.Owner,
                                                                                                 numberLine.ID,
@@ -170,6 +182,12 @@ namespace ConsoleScripts
                     {
                         foreach (var numberLine in page.PageObjects.OfType<NumberLine>())
                         {
+                            var pageObjectBounds = new Rect(numberLine.XPosition, numberLine.YPosition, numberLine.Width, numberLine.Height);
+                            if (addedStroke.HitTest(pageObjectBounds, 5))
+                            {
+                                continue;
+                            }
+
                             var actuallyAddedStrokes = new StrokeCollection
                                                          {
                                                              addedStroke
@@ -184,6 +202,11 @@ namespace ConsoleScripts
                                 var addedJumpSize = tickR.TickValue - tickL.TickValue;
 
                                 var jumpsToAdd = numberLine.JumpSizes.Where(jump => jump.JumpSize == addedJumpSize && jump.StartingTickIndex == addedStartTickValue).ToList();
+                                if (!jumpsToAdd.Any())
+                                {
+                                    Console.WriteLine("JumpsToAdd is empty on page {0}!", page.PageNumber);
+                                    continue;
+                                }
                                 var historyItem = new NumberLineJumpSizesChangedHistoryItem(numberLine.ParentPage,
                                                                                                 numberLine.ParentPage.Owner,
                                                                                                 numberLine.ID,

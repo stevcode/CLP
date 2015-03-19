@@ -198,16 +198,14 @@ namespace CLP.Entities
             return newFuzzyFactorCard;
         }
 
-        public override void OnResized(double oldWidth, double oldHeight)
+        public override void OnResized(double oldWidth, double oldHeight, bool fromHistory = false)
         {
             base.OnResized(oldWidth, oldHeight);
             RaisePropertyChanged("LastDivisionPosition");
         }
 
-        public override void OnAdded()
+        public override void OnAdded(bool fromHistory = false)
         {
-            base.OnAdded();
-
             var divisionDefinitions = ParentPage.Tags.OfType<DivisionRelationDefinitionTag>().ToList();
 
             foreach (var divisionRelationDefinitionTag in divisionDefinitions)
@@ -276,10 +274,8 @@ namespace CLP.Entities
             }
         }
 
-        public override void OnDeleted()
+        public override void OnDeleted(bool fromHistory = false)
         {
-            base.OnDeleted();
-
             var divisionTemplateIDsInHistory = DivisionTemplateAnalysis.GetListOfDivisionTemplateIDsInHistory(ParentPage);
 
             var arrayDimensions = VerticalDivisions.Where(division => division.Value != 0).Select(division => Rows + "x" + division.Value).ToList();

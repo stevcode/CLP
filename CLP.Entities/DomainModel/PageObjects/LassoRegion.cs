@@ -99,13 +99,7 @@ namespace CLP.Entities
             return newLassoRegion;
         }
 
-        public override void OnResizing(double oldWidth, double oldHeight)
-        {
-        }
-
-        public override void OnResized(double oldWidth, double oldHeight) { OnResizing(oldWidth, oldHeight); }
-
-        public override void OnMoving(double oldX, double oldY)
+        public override void OnMoving(double oldX, double oldY, bool fromHistory = false)
         {
             var deltaX = XPosition - oldX;
             var deltaY = YPosition - oldY;
@@ -124,7 +118,7 @@ namespace CLP.Entities
             }
         }
 
-        public override void OnMoved(double oldX, double oldY)
+        public override void OnMoved(double oldX, double oldY, bool fromHistory = false)
         {
             if (ParentPage.History.IsAnimating)
             {
@@ -176,7 +170,6 @@ namespace CLP.Entities
             {
                 Console.WriteLine("LassoRegion.OnMoved() Exception: " + ex.Message);
             }
-            base.OnMoved(oldX, oldY);
         }
 
         #endregion //Methods

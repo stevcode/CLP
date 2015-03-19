@@ -191,7 +191,7 @@ namespace CLP.Entities
 
         #region Methods
 
-        public override void OnMoving(double oldX, double oldY)
+        public override void OnMoving(double oldX, double oldY, bool fromHistory = false)
         {
             var deltaX = XPosition - oldX;
             var deltaY = YPosition - oldY;
@@ -206,7 +206,7 @@ namespace CLP.Entities
             }
         }
 
-        public override void OnMoved(double oldX, double oldY)
+        public override void OnMoved(double oldX, double oldY, bool fromHistory = false)
         {
             if (ParentPage.History.IsAnimating)
             {
@@ -239,7 +239,6 @@ namespace CLP.Entities
             {
                 Console.WriteLine("StampedObject.OnMoved() Exception: " + ex.Message);
             }
-            base.OnMoved(oldX, oldY);
         }
 
         public override IPageObject Duplicate()
