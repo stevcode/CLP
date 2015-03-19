@@ -746,8 +746,31 @@ namespace CLP.Entities
                 return null;
             }
 
+            Console.WriteLine("Stroke incorrectly existed in TrashedInkStrokes.");
             History.TrashedInkStrokes.Remove(stroke);
             InkStrokes.Add(stroke);
+
+            return stroke;
+        }
+
+        public Stroke GetVerifiedStrokeInHistoryByID(string id)
+        {
+            var stroke = History.GetStrokeByID(id);
+
+            if (stroke != null)
+            {
+                return stroke;
+            }
+
+            stroke = GetStrokeByID(id);
+            if (stroke == null)
+            {
+                return null;
+            }
+
+            Console.WriteLine("Stroke incorrectly existed on Page.");
+            History.TrashedInkStrokes.Add(stroke);
+            InkStrokes.Remove(stroke);
 
             return stroke;
         }
@@ -769,8 +792,31 @@ namespace CLP.Entities
                 return null;
             }
 
+            Console.WriteLine("PageObject incorrectly existed in TrashedPageObjects.");
             History.TrashedPageObjects.Remove(pageObject);
             PageObjects.Add(pageObject);
+
+            return pageObject;
+        }
+
+        public IPageObject GetVerifiedPageObjectInTrashByID(string id)
+        {
+            var pageObject = History.GetPageObjectByID(id);
+
+            if (pageObject != null)
+            {
+                return pageObject;
+            }
+
+            pageObject = GetPageObjectByID(id);
+            if (pageObject == null)
+            {
+                return null;
+            }
+
+            Console.WriteLine("PageObject incorrectly existed on Page.");
+            History.TrashedPageObjects.Add(pageObject);
+            PageObjects.Remove(pageObject);
 
             return pageObject;
         }

@@ -66,7 +66,7 @@ namespace CLP.Entities
 
         private void ToggleGrid()
         {
-            var array = ParentPage.GetPageObjectByID(ArrayID) as ACLPArrayBase;
+            var array = ParentPage.GetVerifiedPageObjectOnPageByID(ArrayID) as ACLPArrayBase;
             if(array != null)
             {
                 array.IsGridOn = !array.IsGridOn;

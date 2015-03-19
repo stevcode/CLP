@@ -105,7 +105,7 @@ namespace CLP.Entities
 
         private void ToggleDivisionValue()
         {
-            var array = ParentPage.GetPageObjectByID(ArrayID) as CLPArray;
+            var array = ParentPage.GetVerifiedPageObjectOnPageByID(ArrayID) as CLPArray;
             if(array == null)
             {
                 return;
