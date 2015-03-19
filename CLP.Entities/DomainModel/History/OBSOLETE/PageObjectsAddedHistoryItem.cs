@@ -8,6 +8,7 @@ using Catel.Data;
 namespace CLP.Entities
 {
     [Serializable]
+    [Obsolete("Use ObjectsOnPageChangedHistoryItem instead.")]
     public class PageObjectsAddedHistoryItem : AHistoryItemBase
     {
         #region Constructors

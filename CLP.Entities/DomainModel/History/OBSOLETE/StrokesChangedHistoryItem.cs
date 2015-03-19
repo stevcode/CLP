@@ -9,6 +9,7 @@ using Catel.Data;
 namespace CLP.Entities
 {
     [Serializable]
+    [Obsolete("Use ObjectsOnPageChangedHistoryItem instead.")]
     public class StrokesChangedHistoryItem : AHistoryItemBase
     {
         #region Constructors
