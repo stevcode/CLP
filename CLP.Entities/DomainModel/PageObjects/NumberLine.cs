@@ -131,6 +131,7 @@ namespace CLP.Entities
     public class NumberLine : APageObjectBase, IStrokeAccepter
     {
         public const int MAX_ALL_TICKS_VISIBLE_LENGTH = 30;
+
         #region Constructors
 
         public NumberLine() { }
@@ -151,11 +152,6 @@ namespace CLP.Entities
 
         #region Properties
 
-        public override int ZIndex
-        {
-            get { return 60; }
-        }
-
         public double NumberLineHeight
         {
             get { return 75.0; }
@@ -174,11 +170,6 @@ namespace CLP.Entities
         public double TickLength
         {
             get { return NumberLineLength / NumberLineSize; }
-        }
-
-        public override bool IsBackgroundInteractable
-        {
-            get { return true; }
         }
 
         /// <summary>Length of number line</summary>
@@ -243,90 +234,9 @@ namespace CLP.Entities
                                                                              typeof (ObservableCollection<NumberLineTick>),
                                                                              () => new ObservableCollection<NumberLineTick>());
 
-        #region IStrokeAccepter Members
-
-        
-
-        #endregion //IStrokeAccepter Members
-
         #endregion //Properties
 
         #region Methods
-
-        public override void OnAdded(bool fromHistory = false)
-        {
-            if (!fromHistory)
-            {
-                ApplyDistinctPosition(this);
-
-                var multiplicationDefinitions = ParentPage.Tags.OfType<MultiplicationRelationDefinitionTag>().ToList();
-                var numberLineIDsInHistory = NumberLineAnalysis.GetListOfNumberLineIDsInHistory(ParentPage);
-
-                foreach (var multiplicationRelationDefinitionTag in multiplicationDefinitions)
-                {
-                    var distanceFromAnswer = NumberLineSize - multiplicationRelationDefinitionTag.Product;
-
-                    var tag = new NumberLineCreationTag(ParentPage, Origin.StudentPageObjectGenerated, ID, 0, NumberLineSize, numberLineIDsInHistory.IndexOf(ID), distanceFromAnswer);
-                    ParentPage.AddTag(tag);
-                }
-            }
-            else
-            {
-                if (!CanAcceptStrokes ||
-                !AcceptedStrokes.Any())
-                {
-                    return;
-                }
-
-                var strokesToRestore = new StrokeCollection();
-
-                foreach (var stroke in AcceptedStrokes.Where(stroke => ParentPage.History.TrashedInkStrokes.Contains(stroke)))
-                {
-                    strokesToRestore.Add(stroke);
-                }
-
-                ParentPage.InkStrokes.Add(strokesToRestore);
-                ParentPage.History.TrashedInkStrokes.Remove(strokesToRestore);
-            }
-        }
-
-        public override void OnDeleted(bool fromHistory = false)
-        {
-            if (!fromHistory)
-            {
-                var jumpSizes = JumpSizes.Select(x => x.JumpSize).ToList();
-
-                var lastMarkedTick = Ticks.LastOrDefault(x => x.IsMarked);
-                var lastMarkedTickNumber = lastMarkedTick != null ? (int?)lastMarkedTick.TickValue : null;
-
-                var numberLineIDsInHistory = NumberLineAnalysis.GetListOfNumberLineIDsInHistory(ParentPage);
-                var tag = new NumberLineDeletedTag(ParentPage,
-                                                   Origin.StudentPageObjectGenerated,
-                                                   ID,
-                                                   0,
-                                                   NumberLineSize,
-                                                   numberLineIDsInHistory.IndexOf(ID),
-                                                   jumpSizes,
-                                                   lastMarkedTickNumber);
-                ParentPage.AddTag(tag);
-            }
-
-            if (!CanAcceptStrokes ||
-                !AcceptedStrokes.Any())
-            {
-                return;
-            }
-
-            var strokesToTrash = new StrokeCollection();
-
-            foreach (var stroke in AcceptedStrokes.Where(stroke => ParentPage.InkStrokes.Contains(stroke)))
-            {
-                strokesToTrash.Add(stroke);
-            }
-
-            ParentPage.InkStrokes.Remove(strokesToTrash);
-            ParentPage.History.TrashedInkStrokes.Add(strokesToTrash);
-        }
 
         public void CreateTicks()
         {
@@ -370,63 +280,6 @@ namespace CLP.Entities
                 Ticks.Remove(Ticks.LastOrDefault());
             }
         }
-
-        protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "Width")
-            {
-                RaisePropertyChanged("TickLength");
-                RaisePropertyChanged("NumberLineLength");
-            }
-            base.OnPropertyChanged(e);
-        }
-
-        public override void OnResizing(double oldWidth, double oldHeight, bool fromHistory = false)
-        {
-            if (!CanAcceptStrokes)
-            {
-                return;
-            }
-
-            var scaleX = NumberLineLength / (oldWidth - 2 * ArrowLength);
-
-            AcceptedStrokes.StretchAll(scaleX, 1.0, XPosition + ArrowLength, YPosition);
-        }
-
-        public override void OnResized(double oldWidth, double oldHeight, bool fromHistory = false) { OnResizing(oldWidth, oldHeight, fromHistory); }
-
-        public override void OnMoving(double oldX, double oldY, bool fromHistory = false)
-        {
-            if (!CanAcceptStrokes)
-            {
-                return;
-            }
-
-            var deltaX = XPosition - oldX;
-            var deltaY = YPosition - oldY;
-
-            AcceptedStrokes.MoveAll(deltaX, deltaY);
-        }
-
-        public override void OnMoved(double oldX, double oldY, bool fromHistory = false) { OnMoving(oldX, oldY, fromHistory); }
-
-        public override IPageObject Duplicate()
-        {
-            var newNumberLine = Clone() as NumberLine;
-            if (newNumberLine == null)
-            {
-                return null;
-            }
-            newNumberLine.CreationDate = DateTime.Now;
-            newNumberLine.ID = Guid.NewGuid().ToCompactID();
-            newNumberLine.VersionIndex = 0;
-            newNumberLine.LastVersionIndex = null;
-            newNumberLine.ParentPage = ParentPage;
-
-            return newNumberLine;
-        }
-
-        
 
         public NumberLineTick FindClosestTick(StrokeCollection strokes, bool isLookingForRightTick)
         {
@@ -495,12 +348,153 @@ namespace CLP.Entities
             return Ticks[tickIndex];
         }
 
-        public double FindTallestPoint(IEnumerable<Stroke> strokes)
-        {
-            return strokes.Select(stroke => stroke.GetBounds().Top).Concat(new[] { ParentPage.Height }).Min();
-        }
+        public double FindTallestPoint(IEnumerable<Stroke> strokes) { return strokes.Select(stroke => stroke.GetBounds().Top).Concat(new[] { ParentPage.Height }).Min(); }
 
         #endregion //Methods
+
+        #region APageObjectBase Overrides
+
+        public override int ZIndex
+        {
+            get { return 60; }
+        }
+
+        public override bool IsBackgroundInteractable
+        {
+            get { return true; }
+        }
+
+        protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Width")
+            {
+                RaisePropertyChanged("TickLength");
+                RaisePropertyChanged("NumberLineLength");
+            }
+            base.OnPropertyChanged(e);
+        }
+
+        public override void OnAdded(bool fromHistory = false)
+        {
+            if (!fromHistory)
+            {
+                ApplyDistinctPosition(this);
+
+                var multiplicationDefinitions = ParentPage.Tags.OfType<MultiplicationRelationDefinitionTag>().ToList();
+                var numberLineIDsInHistory = NumberLineAnalysis.GetListOfNumberLineIDsInHistory(ParentPage);
+
+                foreach (var multiplicationRelationDefinitionTag in multiplicationDefinitions)
+                {
+                    var distanceFromAnswer = NumberLineSize - multiplicationRelationDefinitionTag.Product;
+
+                    var tag = new NumberLineCreationTag(ParentPage, Origin.StudentPageObjectGenerated, ID, 0, NumberLineSize, numberLineIDsInHistory.IndexOf(ID), distanceFromAnswer);
+                    ParentPage.AddTag(tag);
+                }
+            }
+            else
+            {
+                if (!CanAcceptStrokes ||
+                    !AcceptedStrokes.Any())
+                {
+                    return;
+                }
+
+                var strokesToRestore = new StrokeCollection();
+
+                foreach (var stroke in AcceptedStrokes.Where(stroke => ParentPage.History.TrashedInkStrokes.Contains(stroke)))
+                {
+                    strokesToRestore.Add(stroke);
+                }
+
+                ParentPage.InkStrokes.Add(strokesToRestore);
+                ParentPage.History.TrashedInkStrokes.Remove(strokesToRestore);
+            }
+        }
+
+        public override void OnDeleted(bool fromHistory = false)
+        {
+            if (!fromHistory)
+            {
+                var jumpSizes = JumpSizes.Select(x => x.JumpSize).ToList();
+
+                var lastMarkedTick = Ticks.LastOrDefault(x => x.IsMarked);
+                var lastMarkedTickNumber = lastMarkedTick != null ? (int?)lastMarkedTick.TickValue : null;
+
+                var numberLineIDsInHistory = NumberLineAnalysis.GetListOfNumberLineIDsInHistory(ParentPage);
+                var tag = new NumberLineDeletedTag(ParentPage,
+                                                   Origin.StudentPageObjectGenerated,
+                                                   ID,
+                                                   0,
+                                                   NumberLineSize,
+                                                   numberLineIDsInHistory.IndexOf(ID),
+                                                   jumpSizes,
+                                                   lastMarkedTickNumber);
+                ParentPage.AddTag(tag);
+            }
+
+            if (!CanAcceptStrokes ||
+                !AcceptedStrokes.Any())
+            {
+                return;
+            }
+
+            var strokesToTrash = new StrokeCollection();
+
+            foreach (var stroke in AcceptedStrokes.Where(stroke => ParentPage.InkStrokes.Contains(stroke)))
+            {
+                strokesToTrash.Add(stroke);
+            }
+
+            ParentPage.InkStrokes.Remove(strokesToTrash);
+            ParentPage.History.TrashedInkStrokes.Add(strokesToTrash);
+        }
+
+        public override void OnResizing(double oldWidth, double oldHeight, bool fromHistory = false)
+        {
+            if (!CanAcceptStrokes)
+            {
+                return;
+            }
+
+            var scaleX = NumberLineLength / (oldWidth - 2 * ArrowLength);
+
+            AcceptedStrokes.StretchAll(scaleX, 1.0, XPosition + ArrowLength, YPosition);
+        }
+
+        public override void OnResized(double oldWidth, double oldHeight, bool fromHistory = false) { OnResizing(oldWidth, oldHeight, fromHistory); }
+
+        public override void OnMoving(double oldX, double oldY, bool fromHistory = false)
+        {
+            if (!CanAcceptStrokes)
+            {
+                return;
+            }
+
+            var deltaX = XPosition - oldX;
+            var deltaY = YPosition - oldY;
+
+            AcceptedStrokes.MoveAll(deltaX, deltaY);
+        }
+
+        public override void OnMoved(double oldX, double oldY, bool fromHistory = false) { OnMoving(oldX, oldY, fromHistory); }
+
+        public override IPageObject Duplicate()
+        {
+            var newNumberLine = Clone() as NumberLine;
+            if (newNumberLine == null)
+            {
+                return null;
+            }
+            newNumberLine.CreationDate = DateTime.Now;
+            newNumberLine.ID = Guid.NewGuid().ToCompactID();
+            newNumberLine.VersionIndex = 0;
+            newNumberLine.LastVersionIndex = null;
+            newNumberLine.ParentPage = ParentPage;
+
+            return newNumberLine;
+        }
+
+        #endregion //APageObjectBase Overrides
 
         #region IStrokeAccepter Implementation
 
@@ -511,7 +505,7 @@ namespace CLP.Entities
             set { SetValue(CanAcceptStrokesProperty, value); }
         }
 
-        public static readonly PropertyData CanAcceptStrokesProperty = RegisterProperty("CanAcceptStrokes", typeof(bool), true);
+        public static readonly PropertyData CanAcceptStrokesProperty = RegisterProperty("CanAcceptStrokes", typeof (bool), true);
 
         /// <summary>The currently accepted <see cref="Stroke" />s.</summary>
         [XmlIgnore]
@@ -522,7 +516,7 @@ namespace CLP.Entities
             set { SetValue(AcceptedStrokesProperty, value); }
         }
 
-        public static readonly PropertyData AcceptedStrokesProperty = RegisterProperty("AcceptedStrokes", typeof(List<Stroke>), () => new List<Stroke>());
+        public static readonly PropertyData AcceptedStrokesProperty = RegisterProperty("AcceptedStrokes", typeof (List<Stroke>), () => new List<Stroke>());
 
         /// <summary>The IDs of the <see cref="Stroke" />s that have been accepted.</summary>
         public List<string> AcceptedStrokeParentIDs
@@ -531,7 +525,7 @@ namespace CLP.Entities
             set { SetValue(AcceptedStrokeParentIDsProperty, value); }
         }
 
-        public static readonly PropertyData AcceptedStrokeParentIDsProperty = RegisterProperty("AcceptedStrokeParentIDs", typeof(List<string>), () => new List<string>());
+        public static readonly PropertyData AcceptedStrokeParentIDsProperty = RegisterProperty("AcceptedStrokeParentIDs", typeof (List<string>), () => new List<string>());
 
         public void AcceptStrokes(IEnumerable<Stroke> addedStrokes, IEnumerable<Stroke> removedStrokes)
         {
