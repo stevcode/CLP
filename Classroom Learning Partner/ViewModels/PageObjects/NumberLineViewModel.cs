@@ -58,7 +58,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-             IsJumpSizeLabelsVisible = !(bool)toggleButton.IsChecked;
+            IsJumpSizeLabelsVisible = !(bool)toggleButton.IsChecked;
         }
 
         private void allowDragging_Checked(object sender, RoutedEventArgs e)
@@ -178,10 +178,9 @@ namespace Classroom_Learning_Partner.ViewModels
             var batch = PageObject.ParentPage.History.CurrentHistoryBatch;
             if (batch is PageObjectResizeBatchHistoryItem)
             {
-                (batch as PageObjectResizeBatchHistoryItem).AddResizePointToBatch(PageObject.ID, new Point(Width, Height));
+                ((PageObjectResizeBatchHistoryItem)batch).AddResizePointToBatch(PageObject.ID, new Point(Width, Height));
             }
             var batchHistoryItem = PageObject.ParentPage.History.EndBatch();
-            
 
             if (_isClicked)
             {
@@ -214,36 +213,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 //Number is more than current Number Line Size
                 if (newNumberLineSize > NumberLineSize)
                 {
-                    var difference = newNumberLineSize - NumberLineSize;
-
-                    var numberLine = PageObject as NumberLine;
-
-                    if (numberLine == null)
-                    {
-                        return;
-                    }
-                    var tickLength = numberLine.TickLength;
-
-                    foreach (var tickNumber in Enumerable.Range(0, difference))
-                    {
-                        NumberLineSize++;
-                    }
-                    ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
-                                                       new NumberLineEndPointsChangedHistoryItem(PageObject.ParentPage,
-                                                                                                   App.MainWindowViewModel.CurrentUser,
-                                                                                                   PageObject.ID, 0, NumberLineSize - difference));
-
-                    var oldWidth = Width;
-                    var oldHeight = Height;
-
-                    Width += (tickLength * difference);
-
-                    if (Width + XPosition > PageObject.ParentPage.Width)
-                    {
-                        var oldWidth2 = Width;
-                        Width = PageObject.ParentPage.Width - XPosition;
-                        PageObject.OnResized(oldWidth2, oldHeight);
-                    }
+                    ChangeNumberLineEndPoints(newNumberLineSize);
                 }
                 else if (newNumberLineSize < NumberLineSize)
                 {
@@ -251,25 +221,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     if (lastMarkedTick == null ||
                         lastMarkedTick.TickValue <= newNumberLineSize)
                     {
-                        var difference = NumberLineSize - newNumberLineSize;
-
-                        var numberLine = PageObject as NumberLine;
-                        if (numberLine == null)
-                        {
-                            return;
-                        }
-
-                        var tickLength = numberLine.TickLength;
-                        foreach (var tickNumber in Enumerable.Range(0, difference))
-                        {
-                            NumberLineSize--;
-                        }
-                        ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
-                                                       new NumberLineEndPointsChangedHistoryItem(PageObject.ParentPage,
-                                                                                                   App.MainWindowViewModel.CurrentUser,
-                                                                                                   PageObject.ID, 0, NumberLineSize + difference));
-
-                        Width -= (tickLength * difference);
+                        ChangeNumberLineEndPoints(newNumberLineSize);
                     }
                     else
                     {
@@ -290,14 +242,26 @@ namespace Classroom_Learning_Partner.ViewModels
             var multiplicationDefinitions = PageObject.ParentPage.Tags.OfType<MultiplicationRelationDefinitionTag>().ToList();
             var numberLineIDsInHistory = NumberLineAnalysis.GetListOfNumberLineIDsInHistory(PageObject.ParentPage);
 
-            var tooLowNumber = tooLow ? (int?) tooLowNumberTry : null;
+            var tooLowNumber = tooLow ? (int?)tooLowNumberTry : null;
 
             foreach (var multiplicationRelationDefinitionTag in multiplicationDefinitions)
             {
                 var oldDistanceFromAnswer = _oldEnd - multiplicationRelationDefinitionTag.Product;
                 var newDistanceFromAnswer = NumberLineSize - multiplicationRelationDefinitionTag.Product;
 
-                var tag = new NumberLineDimensionsChangedTag(PageObject.ParentPage, Origin.StudentPageObjectGenerated, PageObject.ID, 0, _oldEnd, numberLineIDsInHistory.IndexOf(PageObject.ID), 0, NumberLineSize, changeSize, _isClicked, oldDistanceFromAnswer, newDistanceFromAnswer, tooLowNumber);
+                var tag = new NumberLineDimensionsChangedTag(PageObject.ParentPage,
+                                                             Origin.StudentPageObjectGenerated,
+                                                             PageObject.ID,
+                                                             0,
+                                                             _oldEnd,
+                                                             numberLineIDsInHistory.IndexOf(PageObject.ID),
+                                                             0,
+                                                             NumberLineSize,
+                                                             changeSize,
+                                                             _isClicked,
+                                                             oldDistanceFromAnswer,
+                                                             newDistanceFromAnswer,
+                                                             tooLowNumber);
                 PageObject.ParentPage.AddTag(tag);
             }
         }
@@ -307,12 +271,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnResizeNumberLineLengthCommandExecute(DragDeltaEventArgs e)
         {
-            var parentPage = PageObject.ParentPage;
-            const int MIN_WIDTH = 250;
-
-            var newWidth = Math.Max(MIN_WIDTH, Width + e.HorizontalChange);
-            newWidth = Math.Min(newWidth, parentPage.Width - XPosition);
-
             var numberLine = PageObject as NumberLine;
 
             if (numberLine == null)
@@ -320,27 +278,70 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            if (_initialWidth + numberLine.TickLength < newWidth && IsArrowDraggingAllowed)
+            var parentPage = PageObject.ParentPage;
+            const int MIN_WIDTH = 250;
+
+            var newWidth = Math.Max(MIN_WIDTH, Width + e.HorizontalChange);
+            newWidth = Math.Min(newWidth, parentPage.Width - XPosition);
+
+            if (_initialWidth + numberLine.TickLength > newWidth ||
+                !IsArrowDraggingAllowed)
             {
-                _isClicked = false;
-                NumberLineSize++;
-                ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
-                                                       new NumberLineEndPointsChangedHistoryItem(PageObject.ParentPage,
-                                                                                                   App.MainWindowViewModel.CurrentUser,
-                                                                                                   PageObject.ID, 0, NumberLineSize - 1));
-                _initialWidth += numberLine.TickLength;
-                ChangePageObjectDimensions(PageObject, Height, newWidth);
+                return;
             }
+
+            _isClicked = false;
+            _initialWidth += numberLine.TickLength;
+            ChangeNumberLineEndPoints(NumberLineSize + 1);
+
+            //TODO: Use for conversion
+            //if (_initialWidth + numberLine.TickLength < newWidth && IsArrowDraggingAllowed)
+            //{
+            //    _isClicked = false;
+            //    NumberLineSize++;
+            //    ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
+            //                                           new NumberLineEndPointsChangedHistoryItem(PageObject.ParentPage,
+            //                                                                                       App.MainWindowViewModel.CurrentUser,
+            //                                                                                       PageObject.ID, 0, NumberLineSize - 1));
+            //    _initialWidth += numberLine.TickLength;
+            //    ChangePageObjectDimensions(PageObject, Height, newWidth);
+            //}
         }
 
         #endregion //Commands
 
         #region Methods
 
-        private void ExtendNumberLine(int newNumberLineSize)
+        private void ChangeNumberLineEndPoints(int newNumberLineEndPoint)
         {
-            var oldNumberLineSize = NumberLineSize;
-            
+            var numberLine = PageObject as NumberLine;
+
+            if (numberLine == null)
+            {
+                return;
+            }
+
+            var oldWidth = Width;
+            var oldHeight = Height;
+
+            var oldNumberLineEndPoint = NumberLineSize;
+            numberLine.ChangeNumberLineSize(newNumberLineEndPoint);
+
+            var preStretchedWidth = Width;
+            if (Width + XPosition > PageObject.ParentPage.Width)
+            {
+                Width = PageObject.ParentPage.Width - XPosition;
+                PageObject.OnResized(preStretchedWidth, oldHeight);
+            }
+
+            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
+                                                       new NumberLineEndPointsChangedHistoryItem(PageObject.ParentPage,
+                                                                                                 App.MainWindowViewModel.CurrentUser,
+                                                                                                 PageObject.ID,
+                                                                                                 0,
+                                                                                                 oldNumberLineEndPoint,
+                                                                                                 oldWidth,
+                                                                                                 preStretchedWidth));
         }
 
         #endregion //Methods

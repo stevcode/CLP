@@ -143,6 +143,7 @@ namespace CLP.Entities
             Height = NumberLineHeight;
             Width = parentPage.Width - 100;
             XPosition = (parentPage.Width / 2.0) - (Width / 2.0);
+            InitializeTicks();
         }
 
         public NumberLine(SerializationInfo info, StreamingContext context)
@@ -179,29 +180,7 @@ namespace CLP.Entities
             set { SetValue(NumberLineSizeProperty, value); }
         }
 
-        public static readonly PropertyData NumberLineSizeProperty = RegisterProperty("NumberLineSize", typeof (int), 0, OnNumberLineSizeChanged);
-
-        private static void OnNumberLineSizeChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
-        {
-            var numberLine = sender as NumberLine;
-            if (numberLine == null ||
-                !advancedPropertyChangedEventArgs.IsNewValueMeaningful)
-            {
-                return;
-            }
-
-            var oldValue = (int)advancedPropertyChangedEventArgs.OldValue;
-            var newValue = (int)advancedPropertyChangedEventArgs.NewValue;
-
-            if (oldValue < newValue)
-            {
-                numberLine.CreateTicks();
-            }
-            else
-            {
-                numberLine.DeleteTicks();
-            }
-        }
+        public static readonly PropertyData NumberLineSizeProperty = RegisterProperty("NumberLineSize", typeof (int), 0);
 
         /// <summary>Whether or not to show the Jump Size Labels.</summary>
         public bool IsJumpSizeLabelsVisible
@@ -238,22 +217,42 @@ namespace CLP.Entities
 
         #region Methods
 
-        public void CreateTicks()
+        public void InitializeTicks()
         {
-            Ticks.Add(new NumberLineTick(Ticks.Count, true));
-            RefreshTicks();
-        }
-
-        public void DeleteTicks()
-        {
-            if (Ticks.Any())
+            for (var i = 0; i <= NumberLineSize; i++)
             {
-                Ticks.Remove(Ticks.LastOrDefault());
+                Ticks.Add(new NumberLineTick(i, true));
             }
-            RefreshTicks();
+            RefreshTickLabels();
         }
 
-        public void RefreshTicks()
+        public void ChangeNumberLineSize(int newNumberLineEndPoint)
+        {
+            var oldNumberLineEndPoint = NumberLineSize;
+            var isBigger = newNumberLineEndPoint > oldNumberLineEndPoint;
+            var numberLineSizeDifference = isBigger ? newNumberLineEndPoint - oldNumberLineEndPoint : oldNumberLineEndPoint - newNumberLineEndPoint;
+            var tickLength = TickLength;
+
+            NumberLineSize = newNumberLineEndPoint;
+
+            foreach (var tickNumber in Enumerable.Range(0, numberLineSizeDifference))
+            {
+                if (isBigger)
+                {
+                    Ticks.Add(new NumberLineTick(Ticks.Count, true));
+                    Width += tickLength;
+                }
+                else if (Ticks.Any())
+                {
+                    Ticks.Remove(Ticks.LastOrDefault());
+                    Width -= tickLength;
+                }
+            }
+
+            RefreshTickLabels();
+        }
+
+        public void RefreshTickLabels()
         {
             var defaultInteger = NumberLineSize <= MAX_ALL_TICKS_VISIBLE_LENGTH ? 1 : 5;
             for (var i = 0; i < Ticks.Count; i++)
@@ -442,7 +441,7 @@ namespace CLP.Entities
                 return;
             }
 
-            var scaleX = NumberLineLength / (oldWidth - 2 * ArrowLength);
+            var scaleX = NumberLineLength / (oldWidth - (2 * ArrowLength));
 
             AcceptedStrokes.StretchAll(scaleX, 1.0, XPosition + ArrowLength, YPosition);
         }
