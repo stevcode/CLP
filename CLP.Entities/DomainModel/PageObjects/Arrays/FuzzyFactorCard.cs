@@ -9,6 +9,8 @@ namespace CLP.Entities
     [Serializable]
     public class FuzzyFactorCard : ACLPArrayBase
     {
+        private const double MIN_ARRAY_LENGTH = 185.0;
+
         #region Constructors
 
         /// <summary>Initializes <see cref="FuzzyFactorCard" /> from scratch.</summary>
@@ -44,8 +46,6 @@ namespace CLP.Entities
 
         #region Properties
 
-        public override int ZIndex { get { return 40; } }
-
         public override double LabelLength
         {
             get { return 35; }
@@ -69,23 +69,6 @@ namespace CLP.Entities
         public override double GridSquareSize
         {
             get { return ArrayWidth / Columns; }
-        }
-
-        public override bool IsBackgroundInteractable
-        {
-            get { return true; }
-        }
-
-        private const double MIN_ARRAY_LENGTH = 185.0;
-
-        public override double MinimumHeight
-        {
-            get { return MIN_ARRAY_LENGTH + (2 * LabelLength); }
-        }
-
-        public override double MinimumWidth
-        {
-            get { return MIN_ARRAY_LENGTH + LargeLabelLength + LabelLength; }
         }
 
         public override double MinimumGridSquareSize
@@ -181,108 +164,6 @@ namespace CLP.Entities
         #endregion //Properties
 
         #region Methods
-
-        public override IPageObject Duplicate()
-        {
-            var newFuzzyFactorCard = Clone() as FuzzyFactorCard;
-            if (newFuzzyFactorCard == null)
-            {
-                return null;
-            }
-            newFuzzyFactorCard.CreationDate = DateTime.Now;
-            newFuzzyFactorCard.ID = Guid.NewGuid().ToCompactID();
-            newFuzzyFactorCard.VersionIndex = 0;
-            newFuzzyFactorCard.LastVersionIndex = null;
-            newFuzzyFactorCard.ParentPage = ParentPage;
-
-            return newFuzzyFactorCard;
-        }
-
-        public override void OnResized(double oldWidth, double oldHeight, bool fromHistory = false)
-        {
-            base.OnResized(oldWidth, oldHeight);
-            RaisePropertyChanged("LastDivisionPosition");
-        }
-
-        public override void OnAdded(bool fromHistory = false)
-        {
-            var divisionDefinitions = ParentPage.Tags.OfType<DivisionRelationDefinitionTag>().ToList();
-
-            foreach (var divisionRelationDefinitionTag in divisionDefinitions)
-            {
-                if (Dividend == divisionRelationDefinitionTag.Dividend &&
-                    Rows == divisionRelationDefinitionTag.Divisor)
-                {
-                    continue;
-                }
-
-                var divisionTemplateIDsInHistory = DivisionTemplateAnalysis.GetListOfDivisionTemplateIDsInHistory(ParentPage);
-
-                ITag divisionCreationErrorTag = null;
-                if (Dividend == divisionRelationDefinitionTag.Divisor &&
-                    Rows == divisionRelationDefinitionTag.Dividend)
-                {
-                    divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(ParentPage,
-                                                                                    Origin.StudentPageGenerated,
-                                                                                    ID,
-                                                                                    Dividend,
-                                                                                    Rows,
-                                                                                    divisionTemplateIDsInHistory.IndexOf(ID),
-                                                                                    DivisionTemplateIncorrectCreationReasons.SwappedDividendAndDivisor);
-                }
-
-                if (Dividend == divisionRelationDefinitionTag.Dividend &&
-                    Rows != divisionRelationDefinitionTag.Divisor)
-                {
-                    divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(ParentPage,
-                                                                                    Origin.StudentPageGenerated,
-                                                                                    ID,
-                                                                                    Dividend,
-                                                                                    Rows,
-                                                                                    divisionTemplateIDsInHistory.IndexOf(ID),
-                                                                                    DivisionTemplateIncorrectCreationReasons.WrongDivisor);
-                }
-
-                if (Dividend != divisionRelationDefinitionTag.Dividend &&
-                    Rows == divisionRelationDefinitionTag.Divisor)
-                {
-                    divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(ParentPage,
-                                                                                    Origin.StudentPageGenerated,
-                                                                                    ID,
-                                                                                    Dividend,
-                                                                                    Rows,
-                                                                                    divisionTemplateIDsInHistory.IndexOf(ID),
-                                                                                    DivisionTemplateIncorrectCreationReasons.WrongDividend);
-                }
-
-                if (Dividend != divisionRelationDefinitionTag.Dividend &&
-                    Rows != divisionRelationDefinitionTag.Divisor)
-                {
-                    divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(ParentPage,
-                                                                                    Origin.StudentPageGenerated,
-                                                                                    ID,
-                                                                                    Dividend,
-                                                                                    Rows,
-                                                                                    divisionTemplateIDsInHistory.IndexOf(ID),
-                                                                                    DivisionTemplateIncorrectCreationReasons.WrongDividendAndDivisor);
-                }
-
-                if (divisionCreationErrorTag != null)
-                {
-                    ParentPage.AddTag(divisionCreationErrorTag);
-                }
-            }
-        }
-
-        public override void OnDeleted(bool fromHistory = false)
-        {
-            var divisionTemplateIDsInHistory = DivisionTemplateAnalysis.GetListOfDivisionTemplateIDsInHistory(ParentPage);
-
-            var arrayDimensions = VerticalDivisions.Where(division => division.Value != 0).Select(division => Rows + "x" + division.Value).ToList();
-
-            var tag = new DivisionTemplateDeletedTag(ParentPage, Origin.StudentPageObjectGenerated, ID, Dividend, Rows, divisionTemplateIDsInHistory.IndexOf(ID), arrayDimensions);
-            ParentPage.AddTag(tag);
-        }
 
         public override void SizeArrayToGridLevel(double toSquareSize = -1, bool recalculateDivisions = true)
         {
@@ -420,5 +301,131 @@ namespace CLP.Entities
         }
 
         #endregion //Methods
+
+        #region APageObjectBase Overrides
+
+        public override int ZIndex
+        {
+            get { return 40; }
+        }
+
+        public override bool IsBackgroundInteractable
+        {
+            get { return true; }
+        }
+
+        public override double MinimumHeight
+        {
+            get { return MIN_ARRAY_LENGTH + (2 * LabelLength); }
+        }
+
+        public override double MinimumWidth
+        {
+            get { return MIN_ARRAY_LENGTH + LargeLabelLength + LabelLength; }
+        }
+
+        public override void OnAdded(bool fromHistory = false)
+        {
+            var divisionDefinitions = ParentPage.Tags.OfType<DivisionRelationDefinitionTag>().ToList();
+
+            foreach (var divisionRelationDefinitionTag in divisionDefinitions)
+            {
+                if (Dividend == divisionRelationDefinitionTag.Dividend &&
+                    Rows == divisionRelationDefinitionTag.Divisor)
+                {
+                    continue;
+                }
+
+                var divisionTemplateIDsInHistory = DivisionTemplateAnalysis.GetListOfDivisionTemplateIDsInHistory(ParentPage);
+
+                ITag divisionCreationErrorTag = null;
+                if (Dividend == divisionRelationDefinitionTag.Divisor &&
+                    Rows == divisionRelationDefinitionTag.Dividend)
+                {
+                    divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(ParentPage,
+                                                                                    Origin.StudentPageGenerated,
+                                                                                    ID,
+                                                                                    Dividend,
+                                                                                    Rows,
+                                                                                    divisionTemplateIDsInHistory.IndexOf(ID),
+                                                                                    DivisionTemplateIncorrectCreationReasons.SwappedDividendAndDivisor);
+                }
+
+                if (Dividend == divisionRelationDefinitionTag.Dividend &&
+                    Rows != divisionRelationDefinitionTag.Divisor)
+                {
+                    divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(ParentPage,
+                                                                                    Origin.StudentPageGenerated,
+                                                                                    ID,
+                                                                                    Dividend,
+                                                                                    Rows,
+                                                                                    divisionTemplateIDsInHistory.IndexOf(ID),
+                                                                                    DivisionTemplateIncorrectCreationReasons.WrongDivisor);
+                }
+
+                if (Dividend != divisionRelationDefinitionTag.Dividend &&
+                    Rows == divisionRelationDefinitionTag.Divisor)
+                {
+                    divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(ParentPage,
+                                                                                    Origin.StudentPageGenerated,
+                                                                                    ID,
+                                                                                    Dividend,
+                                                                                    Rows,
+                                                                                    divisionTemplateIDsInHistory.IndexOf(ID),
+                                                                                    DivisionTemplateIncorrectCreationReasons.WrongDividend);
+                }
+
+                if (Dividend != divisionRelationDefinitionTag.Dividend &&
+                    Rows != divisionRelationDefinitionTag.Divisor)
+                {
+                    divisionCreationErrorTag = new DivisionTemplateCreationErrorTag(ParentPage,
+                                                                                    Origin.StudentPageGenerated,
+                                                                                    ID,
+                                                                                    Dividend,
+                                                                                    Rows,
+                                                                                    divisionTemplateIDsInHistory.IndexOf(ID),
+                                                                                    DivisionTemplateIncorrectCreationReasons.WrongDividendAndDivisor);
+                }
+
+                if (divisionCreationErrorTag != null)
+                {
+                    ParentPage.AddTag(divisionCreationErrorTag);
+                }
+            }
+        }
+
+        public override void OnDeleted(bool fromHistory = false)
+        {
+            var divisionTemplateIDsInHistory = DivisionTemplateAnalysis.GetListOfDivisionTemplateIDsInHistory(ParentPage);
+
+            var arrayDimensions = VerticalDivisions.Where(division => division.Value != 0).Select(division => Rows + "x" + division.Value).ToList();
+
+            var tag = new DivisionTemplateDeletedTag(ParentPage, Origin.StudentPageObjectGenerated, ID, Dividend, Rows, divisionTemplateIDsInHistory.IndexOf(ID), arrayDimensions);
+            ParentPage.AddTag(tag);
+        }
+
+        public override void OnResized(double oldWidth, double oldHeight, bool fromHistory = false)
+        {
+            base.OnResized(oldWidth, oldHeight);
+            RaisePropertyChanged("LastDivisionPosition");
+        }
+
+        public override IPageObject Duplicate()
+        {
+            var newFuzzyFactorCard = Clone() as FuzzyFactorCard;
+            if (newFuzzyFactorCard == null)
+            {
+                return null;
+            }
+            newFuzzyFactorCard.CreationDate = DateTime.Now;
+            newFuzzyFactorCard.ID = Guid.NewGuid().ToCompactID();
+            newFuzzyFactorCard.VersionIndex = 0;
+            newFuzzyFactorCard.LastVersionIndex = null;
+            newFuzzyFactorCard.ParentPage = ParentPage;
+
+            return newFuzzyFactorCard;
+        }
+
+        #endregion //APageObjectBase Overrides
     }
 }

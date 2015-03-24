@@ -245,34 +245,7 @@ namespace CLP.Entities
 
         #region IStrokeAccepter Members
 
-        /// <summary>Determines whether the <see cref="Stamp" /> can currently accept <see cref="Stroke" />s.</summary>
-        public bool CanAcceptStrokes
-        {
-            get { return GetValue<bool>(CanAcceptStrokesProperty); }
-            set { SetValue(CanAcceptStrokesProperty, value); }
-        }
-
-        public static readonly PropertyData CanAcceptStrokesProperty = RegisterProperty("CanAcceptStrokes", typeof (bool), true);
-
-        /// <summary>The currently accepted <see cref="Stroke" />s.</summary>
-        [XmlIgnore]
-        [ExcludeFromSerialization]
-        public List<Stroke> AcceptedStrokes
-        {
-            get { return GetValue<List<Stroke>>(AcceptedStrokesProperty); }
-            set { SetValue(AcceptedStrokesProperty, value); }
-        }
-
-        public static readonly PropertyData AcceptedStrokesProperty = RegisterProperty("AcceptedStrokes", typeof (List<Stroke>), () => new List<Stroke>());
-
-        /// <summary>The IDs of the <see cref="Stroke" />s that have been accepted.</summary>
-        public List<string> AcceptedStrokeParentIDs
-        {
-            get { return GetValue<List<string>>(AcceptedStrokeParentIDsProperty); }
-            set { SetValue(AcceptedStrokeParentIDsProperty, value); }
-        }
-
-        public static readonly PropertyData AcceptedStrokeParentIDsProperty = RegisterProperty("AcceptedStrokeParentIDs", typeof (List<string>), () => new List<string>());
+        
 
         #endregion //IStrokeAccepter Members
 
@@ -282,37 +255,61 @@ namespace CLP.Entities
 
         public override void OnAdded(bool fromHistory = false)
         {
-            ApplyDistinctPosition(this);
-
-            var multiplicationDefinitions = ParentPage.Tags.OfType<MultiplicationRelationDefinitionTag>().ToList();
-            var numberLineIDsInHistory = NumberLineAnalysis.GetListOfNumberLineIDsInHistory(ParentPage);
-
-            foreach (var multiplicationRelationDefinitionTag in multiplicationDefinitions)
+            if (!fromHistory)
             {
-                var distanceFromAnswer = NumberLineSize - multiplicationRelationDefinitionTag.Product;
+                ApplyDistinctPosition(this);
 
-                var tag = new NumberLineCreationTag(ParentPage, Origin.StudentPageObjectGenerated, ID, 0, NumberLineSize, numberLineIDsInHistory.IndexOf(ID), distanceFromAnswer);
-                ParentPage.AddTag(tag);
+                var multiplicationDefinitions = ParentPage.Tags.OfType<MultiplicationRelationDefinitionTag>().ToList();
+                var numberLineIDsInHistory = NumberLineAnalysis.GetListOfNumberLineIDsInHistory(ParentPage);
+
+                foreach (var multiplicationRelationDefinitionTag in multiplicationDefinitions)
+                {
+                    var distanceFromAnswer = NumberLineSize - multiplicationRelationDefinitionTag.Product;
+
+                    var tag = new NumberLineCreationTag(ParentPage, Origin.StudentPageObjectGenerated, ID, 0, NumberLineSize, numberLineIDsInHistory.IndexOf(ID), distanceFromAnswer);
+                    ParentPage.AddTag(tag);
+                }
+            }
+            else
+            {
+                if (!CanAcceptStrokes ||
+                !AcceptedStrokes.Any())
+                {
+                    return;
+                }
+
+                var strokesToRestore = new StrokeCollection();
+
+                foreach (var stroke in AcceptedStrokes.Where(stroke => ParentPage.History.TrashedInkStrokes.Contains(stroke)))
+                {
+                    strokesToRestore.Add(stroke);
+                }
+
+                ParentPage.InkStrokes.Add(strokesToRestore);
+                ParentPage.History.TrashedInkStrokes.Remove(strokesToRestore);
             }
         }
 
         public override void OnDeleted(bool fromHistory = false)
         {
-            var jumpSizes = JumpSizes.Select(x => x.JumpSize).ToList();
+            if (!fromHistory)
+            {
+                var jumpSizes = JumpSizes.Select(x => x.JumpSize).ToList();
 
-            var lastMarkedTick = Ticks.LastOrDefault(x => x.IsMarked);
-            var lastMarkedTickNumber = lastMarkedTick != null ? (int?)lastMarkedTick.TickValue : null;
+                var lastMarkedTick = Ticks.LastOrDefault(x => x.IsMarked);
+                var lastMarkedTickNumber = lastMarkedTick != null ? (int?)lastMarkedTick.TickValue : null;
 
-            var numberLineIDsInHistory = NumberLineAnalysis.GetListOfNumberLineIDsInHistory(ParentPage);
-            var tag = new NumberLineDeletedTag(ParentPage,
-                                               Origin.StudentPageObjectGenerated,
-                                               ID,
-                                               0,
-                                               NumberLineSize,
-                                               numberLineIDsInHistory.IndexOf(ID),
-                                               jumpSizes,
-                                               lastMarkedTickNumber);
-            ParentPage.AddTag(tag);
+                var numberLineIDsInHistory = NumberLineAnalysis.GetListOfNumberLineIDsInHistory(ParentPage);
+                var tag = new NumberLineDeletedTag(ParentPage,
+                                                   Origin.StudentPageObjectGenerated,
+                                                   ID,
+                                                   0,
+                                                   NumberLineSize,
+                                                   numberLineIDsInHistory.IndexOf(ID),
+                                                   jumpSizes,
+                                                   lastMarkedTickNumber);
+                ParentPage.AddTag(tag);
+            }
 
             if (!CanAcceptStrokes ||
                 !AcceptedStrokes.Any())
@@ -429,6 +426,113 @@ namespace CLP.Entities
             return newNumberLine;
         }
 
+        
+
+        public NumberLineTick FindClosestTick(StrokeCollection strokes, bool isLookingForRightTick)
+        {
+            // Get lowest Point
+            var x1 = ParentPage.Width;
+            var x2 = 0.0;
+            var y1 = ParentPage.Height;
+            var y2 = 0.0;
+
+            foreach (var stroke in strokes)
+            {
+                x1 = Math.Min(x1, stroke.GetBounds().Left);
+                x2 = Math.Max(x2, stroke.GetBounds().Right);
+                y1 = Math.Min(y1, stroke.GetBounds().Top);
+                y2 = Math.Max(y2, stroke.GetBounds().Bottom);
+            }
+
+            var midXOffSet = isLookingForRightTick ? TickLength * 0.05 : TickLength * -0.05;
+            var midX = (x2 - x1) / 2.0 + x1 + midXOffSet;
+
+            var pointClosestToNumberLine = new StylusPoint(0.0, 0.0);
+            var numberLineYPosition = YPosition + Height - NumberLineHeight / 2;
+            var pointCountAboveNumberLine = 0;
+            var pointCountBelowNumberLine = 0;
+            foreach (var point in from stroke in strokes
+                                  from point in stroke.StylusPoints
+                                  select point)
+            {
+                if (point.Y <= numberLineYPosition + 5)
+                {
+                    pointCountAboveNumberLine++;
+                }
+                else
+                {
+                    pointCountBelowNumberLine++;
+                }
+
+                if (isLookingForRightTick ? point.X > midX : point.X < midX)
+                {
+                    var closestPointYDifference = Math.Abs(pointClosestToNumberLine.Y - numberLineYPosition);
+                    var pointYDifference = Math.Abs(point.Y - numberLineYPosition);
+                    if (pointYDifference < closestPointYDifference)
+                    {
+                        pointClosestToNumberLine = point;
+                    }
+                }
+            }
+
+            if (pointClosestToNumberLine.Y > YPosition + Height ||
+                pointClosestToNumberLine.Y < YPosition + Height - NumberLineHeight ||
+                pointCountBelowNumberLine > pointCountAboveNumberLine)
+            {
+                return null;
+            }
+
+            //Find closest Tick
+            var normalXLowest = (pointClosestToNumberLine.X - XPosition - ArrowLength) / TickLength;
+            var tickIndex = (int)Math.Round(normalXLowest);
+
+            if (tickIndex < 0 ||
+                tickIndex >= Ticks.Count)
+            {
+                return null;
+            }
+
+            return Ticks[tickIndex];
+        }
+
+        public double FindTallestPoint(IEnumerable<Stroke> strokes)
+        {
+            return strokes.Select(stroke => stroke.GetBounds().Top).Concat(new[] { ParentPage.Height }).Min();
+        }
+
+        #endregion //Methods
+
+        #region IStrokeAccepter Implementation
+
+        /// <summary>Determines whether the <see cref="Stamp" /> can currently accept <see cref="Stroke" />s.</summary>
+        public bool CanAcceptStrokes
+        {
+            get { return GetValue<bool>(CanAcceptStrokesProperty); }
+            set { SetValue(CanAcceptStrokesProperty, value); }
+        }
+
+        public static readonly PropertyData CanAcceptStrokesProperty = RegisterProperty("CanAcceptStrokes", typeof(bool), true);
+
+        /// <summary>The currently accepted <see cref="Stroke" />s.</summary>
+        [XmlIgnore]
+        [ExcludeFromSerialization]
+        public List<Stroke> AcceptedStrokes
+        {
+            get { return GetValue<List<Stroke>>(AcceptedStrokesProperty); }
+            set { SetValue(AcceptedStrokesProperty, value); }
+        }
+
+        public static readonly PropertyData AcceptedStrokesProperty = RegisterProperty("AcceptedStrokes", typeof(List<Stroke>), () => new List<Stroke>());
+
+        /// <summary>The IDs of the <see cref="Stroke" />s that have been accepted.</summary>
+        public List<string> AcceptedStrokeParentIDs
+        {
+            get { return GetValue<List<string>>(AcceptedStrokeParentIDsProperty); }
+            set { SetValue(AcceptedStrokeParentIDsProperty, value); }
+        }
+
+        public static readonly PropertyData AcceptedStrokeParentIDsProperty = RegisterProperty("AcceptedStrokeParentIDs", typeof(List<string>), () => new List<string>());
+
         public void AcceptStrokes(IEnumerable<Stroke> addedStrokes, IEnumerable<Stroke> removedStrokes)
         {
             if (!CanAcceptStrokes)
@@ -476,7 +580,7 @@ namespace CLP.Entities
                     tickL.IsNumberVisible = NumberLineSize <= MAX_ALL_TICKS_VISIBLE_LENGTH || tickL.TickValue % 5 == 0;
                 }
             }
-            
+
             // Add Strokes
             var actuallyAcceptedStrokes = new StrokeCollection();
             var numberLineBodyBoundingBox = new Rect(XPosition, YPosition, Width, Height);
@@ -558,78 +662,6 @@ namespace CLP.Entities
             AcceptStrokes(strokesOverObject, new StrokeCollection());
         }
 
-        public NumberLineTick FindClosestTick(StrokeCollection strokes, bool isLookingForRightTick)
-        {
-            // Get lowest Point
-            var x1 = ParentPage.Width;
-            var x2 = 0.0;
-            var y1 = ParentPage.Height;
-            var y2 = 0.0;
-
-            foreach (var stroke in strokes)
-            {
-                x1 = Math.Min(x1, stroke.GetBounds().Left);
-                x2 = Math.Max(x2, stroke.GetBounds().Right);
-                y1 = Math.Min(y1, stroke.GetBounds().Top);
-                y2 = Math.Max(y2, stroke.GetBounds().Bottom);
-            }
-
-            var midXOffSet = isLookingForRightTick ? TickLength * 0.05 : TickLength * -0.05;
-            var midX = (x2 - x1) / 2.0 + x1 + midXOffSet;
-
-            var pointClosestToNumberLine = new StylusPoint(0.0, 0.0);
-            var numberLineYPosition = YPosition + Height - NumberLineHeight / 2;
-            var pointCountAboveNumberLine = 0;
-            var pointCountBelowNumberLine = 0;
-            foreach (var point in from stroke in strokes
-                                  from point in stroke.StylusPoints
-                                  select point)
-            {
-                if (point.Y <= numberLineYPosition + 5)
-                {
-                    pointCountAboveNumberLine++;
-                }
-                else
-                {
-                    pointCountBelowNumberLine++;
-                }
-
-                if (isLookingForRightTick ? point.X > midX : point.X < midX)
-                {
-                    var closestPointYDifference = Math.Abs(pointClosestToNumberLine.Y - numberLineYPosition);
-                    var pointYDifference = Math.Abs(point.Y - numberLineYPosition);
-                    if (pointYDifference < closestPointYDifference)
-                    {
-                        pointClosestToNumberLine = point;
-                    }
-                }
-            }
-
-            if (pointClosestToNumberLine.Y > YPosition + Height ||
-                pointClosestToNumberLine.Y < YPosition + Height - NumberLineHeight ||
-                pointCountBelowNumberLine > pointCountAboveNumberLine)
-            {
-                return null;
-            }
-
-            //Find closest Tick
-            var normalXLowest = (pointClosestToNumberLine.X - XPosition - ArrowLength) / TickLength;
-            var tickIndex = (int)Math.Round(normalXLowest);
-
-            if (tickIndex < 0 ||
-                tickIndex >= Ticks.Count)
-            {
-                return null;
-            }
-
-            return Ticks[tickIndex];
-        }
-
-        public double FindTallestPoint(IEnumerable<Stroke> strokes)
-        {
-            return strokes.Select(stroke => stroke.GetBounds().Top).Concat(new[] { ParentPage.Height }).Min();
-        }
-
-        #endregion //Methods
+        #endregion //IStrokeAccepter Implementation
     }
 }

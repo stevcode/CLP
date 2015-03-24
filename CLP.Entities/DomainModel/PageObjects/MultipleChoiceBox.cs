@@ -4,8 +4,6 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
@@ -71,9 +69,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData IsACorrectValueProperty = RegisterProperty("IsACorrectValue", typeof (bool), false);
 
-        /// <summary>
-        /// Indicates the choice bubble has been marked by ink.
-        /// </summary>
+        /// <summary>Indicates the choice bubble has been marked by ink.</summary>
         public bool IsMarked
         {
             get { return GetValue<bool>(IsMarkedProperty); }
@@ -128,16 +124,6 @@ namespace CLP.Entities
 
         #region Properties
 
-        public override int ZIndex
-        {
-            get { return 15; }
-        }
-
-        public override bool IsBackgroundInteractable
-        {
-            get { return false; }
-        }
-
         public double ChoiceBubbleDiameter
         {
             get { return 35.0; }
@@ -166,42 +152,29 @@ namespace CLP.Entities
 
         public static readonly PropertyData ChoiceBubblesProperty = RegisterProperty("ChoiceBubbles", typeof (List<MultipleChoiceBubble>), () => new List<MultipleChoiceBubble>());
 
-        #region IStrokeAccepter Members
-
-        /// <summary>Determines whether the <see cref="Stamp" /> can currently accept <see cref="Stroke" />s.</summary>
-        public bool CanAcceptStrokes
-        {
-            get { return GetValue<bool>(CanAcceptStrokesProperty); }
-            set { SetValue(CanAcceptStrokesProperty, value); }
-        }
-
-        public static readonly PropertyData CanAcceptStrokesProperty = RegisterProperty("CanAcceptStrokes", typeof(bool), true);
-
-        /// <summary>The currently accepted <see cref="Stroke" />s.</summary>
-        [XmlIgnore]
-        [ExcludeFromSerialization]
-        public List<Stroke> AcceptedStrokes
-        {
-            get { return GetValue<List<Stroke>>(AcceptedStrokesProperty); }
-            set { SetValue(AcceptedStrokesProperty, value); }
-        }
-
-        public static readonly PropertyData AcceptedStrokesProperty = RegisterProperty("AcceptedStrokes", typeof(List<Stroke>), () => new List<Stroke>());
-
-        /// <summary>The IDs of the <see cref="Stroke" />s that have been accepted.</summary>
-        public List<string> AcceptedStrokeParentIDs
-        {
-            get { return GetValue<List<string>>(AcceptedStrokeParentIDsProperty); }
-            set { SetValue(AcceptedStrokeParentIDsProperty, value); }
-        }
-
-        public static readonly PropertyData AcceptedStrokeParentIDsProperty = RegisterProperty("AcceptedStrokeParentIDs", typeof(List<string>), () => new List<string>());
-
-        #endregion //IStrokeAccepter Members
-
         #endregion //Properties
 
-        #region Methods
+        #region APageObjectBase Overrides
+
+        public override int ZIndex
+        {
+            get { return 15; }
+        }
+
+        public override bool IsBackgroundInteractable
+        {
+            get { return false; }
+        }
+
+        protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Width" ||
+                e.PropertyName == "Height")
+            {
+                RaisePropertyChanged("ChoiceBubbleGapLength");
+            }
+            base.OnPropertyChanged(e);
+        }
 
         public override IPageObject Duplicate()
         {
@@ -219,15 +192,38 @@ namespace CLP.Entities
             return newMultipleChoiceBox;
         }
 
-        protected override void OnPropertyChanged(AdvancedPropertyChangedEventArgs e)
+        #endregion //APageObjectBase Overrides
+
+        #region IStrokeAccepter Implementation
+
+        /// <summary>Determines whether the <see cref="Stamp" /> can currently accept <see cref="Stroke" />s.</summary>
+        public bool CanAcceptStrokes
         {
-            if (e.PropertyName == "Width" ||
-                e.PropertyName == "Height")
-            {
-                RaisePropertyChanged("ChoiceBubbleGapLength");
-            }
-            base.OnPropertyChanged(e);
+            get { return GetValue<bool>(CanAcceptStrokesProperty); }
+            set { SetValue(CanAcceptStrokesProperty, value); }
         }
+
+        public static readonly PropertyData CanAcceptStrokesProperty = RegisterProperty("CanAcceptStrokes", typeof (bool), true);
+
+        /// <summary>The currently accepted <see cref="Stroke" />s.</summary>
+        [XmlIgnore]
+        [ExcludeFromSerialization]
+        public List<Stroke> AcceptedStrokes
+        {
+            get { return GetValue<List<Stroke>>(AcceptedStrokesProperty); }
+            set { SetValue(AcceptedStrokesProperty, value); }
+        }
+
+        public static readonly PropertyData AcceptedStrokesProperty = RegisterProperty("AcceptedStrokes", typeof (List<Stroke>), () => new List<Stroke>());
+
+        /// <summary>The IDs of the <see cref="Stroke" />s that have been accepted.</summary>
+        public List<string> AcceptedStrokeParentIDs
+        {
+            get { return GetValue<List<string>>(AcceptedStrokeParentIDsProperty); }
+            set { SetValue(AcceptedStrokeParentIDsProperty, value); }
+        }
+
+        public static readonly PropertyData AcceptedStrokeParentIDsProperty = RegisterProperty("AcceptedStrokeParentIDs", typeof (List<string>), () => new List<string>());
 
         public void AcceptStrokes(IEnumerable<Stroke> addedStrokes, IEnumerable<Stroke> removedStrokes)
         {
@@ -305,6 +301,6 @@ namespace CLP.Entities
             AcceptStrokes(new StrokeCollection(strokesOverObject), new StrokeCollection());
         }
 
-        #endregion //Methods
+        #endregion //IStrokeAccepter Implementation
     }
 }

@@ -59,21 +59,6 @@ namespace CLP.Entities
 
         private const double MIN_ARRAY_LENGTH = 25.0;
 
-        public override bool IsBackgroundInteractable
-        {
-            get { return true; }
-        }
-
-        public override double MinimumHeight
-        {
-            get { return MIN_ARRAY_LENGTH + (2 * LabelLength); }
-        }
-
-        public override double MinimumWidth
-        {
-            get { return MIN_ARRAY_LENGTH + (2 * LabelLength); }
-        }
-
         public override double MinimumGridSquareSize
         {
             get { return Columns < Rows ? MIN_ARRAY_LENGTH / Columns : MIN_ARRAY_LENGTH / Rows; }
@@ -88,60 +73,73 @@ namespace CLP.Entities
 
         public static readonly PropertyData ArrayTypeProperty = RegisterProperty("ArrayType", typeof (ArrayTypes), ArrayTypes.Array);
 
-        #region IStrokeAccepter Members
-
-        /// <summary>Determines whether the <see cref="Stamp" /> can currently accept <see cref="Stroke" />s.</summary>
-        public bool CanAcceptStrokes
-        {
-            get { return GetValue<bool>(CanAcceptStrokesProperty); }
-            set { SetValue(CanAcceptStrokesProperty, value); }
-        }
-
-        public static readonly PropertyData CanAcceptStrokesProperty = RegisterProperty("CanAcceptStrokes", typeof (bool), true);
-
-        /// <summary>The currently accepted <see cref="Stroke" />s.</summary>
-        [XmlIgnore]
-        [ExcludeFromSerialization]
-        public List<Stroke> AcceptedStrokes
-        {
-            get { return GetValue<List<Stroke>>(AcceptedStrokesProperty); }
-            set { SetValue(AcceptedStrokesProperty, value); }
-        }
-
-        public static readonly PropertyData AcceptedStrokesProperty = RegisterProperty("AcceptedStrokes", typeof (List<Stroke>), () => new List<Stroke>());
-
-        /// <summary>The IDs of the <see cref="Stroke" />s that have been accepted.</summary>
-        public List<string> AcceptedStrokeParentIDs
-        {
-            get { return GetValue<List<string>>(AcceptedStrokeParentIDsProperty); }
-            set { SetValue(AcceptedStrokeParentIDsProperty, value); }
-        }
-
-        public static readonly PropertyData AcceptedStrokeParentIDsProperty = RegisterProperty("AcceptedStrokeParentIDs", typeof (List<string>), () => new List<string>());
-
-        #endregion //IStrokeAccepter Members
-
         #endregion //Properties
 
         #region Methods
 
-        public override IPageObject Duplicate()
+        public override void SizeArrayToGridLevel(double toSquareSize = -1, bool recalculateDivisions = true)
         {
-            var newCLPArray = Clone() as CLPArray;
-            if (newCLPArray == null)
+            var initialSquareSize = 45.0;
+            if (toSquareSize <= 0)
             {
-                return null;
+                while (XPosition + 2 * LabelLength + initialSquareSize * Columns >= ParentPage.Width ||
+                       YPosition + 2 * LabelLength + initialSquareSize * Rows >= ParentPage.Height)
+                {
+                    initialSquareSize = Math.Abs(initialSquareSize - 45.0) < .0001 ? 22.5 : initialSquareSize / 4 * 3;
+                }
             }
-            newCLPArray.CreationDate = DateTime.Now;
-            newCLPArray.ID = Guid.NewGuid().ToCompactID();
-            newCLPArray.VersionIndex = 0;
-            newCLPArray.LastVersionIndex = null;
-            newCLPArray.ParentPage = ParentPage;
+            else
+            {
+                initialSquareSize = toSquareSize;
+            }
 
-            return newCLPArray;
+            Height = (initialSquareSize * Rows) + (2 * LabelLength);
+            Width = (initialSquareSize * Columns) + (2 * LabelLength);
+
+            if (recalculateDivisions)
+            {
+                ResizeDivisions();
+            }
         }
 
-        #region Overrides of APageObjectBase
+        public int[,] GetPartialProducts()
+        {
+            var horizDivs = Math.Max(HorizontalDivisions.Count, 1);
+            var vertDivs = Math.Max(VerticalDivisions.Count, 1);
+            var partialProducts = new int[horizDivs, vertDivs];
+
+            for (var i = 0; i < horizDivs; i++)
+            {
+                for (var j = 0; j < vertDivs; j++)
+                {
+                    var yAxisValue = (horizDivs > 1 ? HorizontalDivisions[i].Value : Rows);
+                    var xAxisValue = (vertDivs > 1 ? VerticalDivisions[j].Value : Columns);
+
+                    partialProducts[i, j] = yAxisValue * xAxisValue;
+                }
+            }
+
+            return partialProducts;
+        }
+
+        #endregion //Methods
+
+        #region APageObjectBase Overrides
+
+        public override bool IsBackgroundInteractable
+        {
+            get { return true; }
+        }
+
+        public override double MinimumHeight
+        {
+            get { return MIN_ARRAY_LENGTH + (2 * LabelLength); }
+        }
+
+        public override double MinimumWidth
+        {
+            get { return MIN_ARRAY_LENGTH + (2 * LabelLength); }
+        }
 
         public override void OnAdded(bool fromHistory = false)
         {
@@ -302,56 +300,25 @@ namespace CLP.Entities
 
         public override void OnMoved(double oldX, double oldY, bool fromHistory = false) { OnMoving(oldX, oldY, fromHistory); }
 
-        #endregion //Overrides of APageObjectBase
-
-        public override void SizeArrayToGridLevel(double toSquareSize = -1, bool recalculateDivisions = true)
+        public override IPageObject Duplicate()
         {
-            var initialSquareSize = 45.0;
-            if (toSquareSize <= 0)
+            var newCLPArray = Clone() as CLPArray;
+            if (newCLPArray == null)
             {
-                while (XPosition + 2 * LabelLength + initialSquareSize * Columns >= ParentPage.Width ||
-                       YPosition + 2 * LabelLength + initialSquareSize * Rows >= ParentPage.Height)
-                {
-                    initialSquareSize = Math.Abs(initialSquareSize - 45.0) < .0001 ? 22.5 : initialSquareSize / 4 * 3;
-                }
+                return null;
             }
-            else
-            {
-                initialSquareSize = toSquareSize;
-            }
+            newCLPArray.CreationDate = DateTime.Now;
+            newCLPArray.ID = Guid.NewGuid().ToCompactID();
+            newCLPArray.VersionIndex = 0;
+            newCLPArray.LastVersionIndex = null;
+            newCLPArray.ParentPage = ParentPage;
 
-            Height = (initialSquareSize * Rows) + (2 * LabelLength);
-            Width = (initialSquareSize * Columns) + (2 * LabelLength);
-
-            if (recalculateDivisions)
-            {
-                ResizeDivisions();
-            }
+            return newCLPArray;
         }
 
-        public int[,] GetPartialProducts()
-        {
-            var horizDivs = Math.Max(HorizontalDivisions.Count, 1);
-            var vertDivs = Math.Max(VerticalDivisions.Count, 1);
-            var partialProducts = new int[horizDivs, vertDivs];
+        #endregion //APageObjectBase Overrides
 
-            for (var i = 0; i < horizDivs; i++)
-            {
-                for (var j = 0; j < vertDivs; j++)
-                {
-                    var yAxisValue = (horizDivs > 1 ? HorizontalDivisions[i].Value : Rows);
-                    var xAxisValue = (vertDivs > 1 ? VerticalDivisions[j].Value : Columns);
-
-                    partialProducts[i, j] = yAxisValue * xAxisValue;
-                }
-            }
-
-            return partialProducts;
-        }
-
-        #endregion //Methods
-
-        #region Implementation of ICountable
+        #region ICountable Implementation
 
         /// <summary>Number of Parts the <see cref="ICountable" /> represents.</summary>
         public int Parts
@@ -378,9 +345,9 @@ namespace CLP.Entities
 
         public static readonly PropertyData IsPartsAutoGeneratedProperty = RegisterProperty("IsPartsAutoGenerated", typeof (bool), true);
 
-        #endregion
+        #endregion //ICountable Implementation
 
-        #region Implementation of ICuttable
+        #region ICuttable Implementation
 
         public List<IPageObject> Cut(Stroke cuttingStroke)
         {
@@ -491,6 +458,39 @@ namespace CLP.Entities
             return halvedPageObjects;
         }
 
+        #endregion //ICuttable Implementation
+
+        #region IStrokeAccepter Implementation
+
+        /// <summary>Determines whether the <see cref="Stamp" /> can currently accept <see cref="Stroke" />s.</summary>
+        public bool CanAcceptStrokes
+        {
+            get { return GetValue<bool>(CanAcceptStrokesProperty); }
+            set { SetValue(CanAcceptStrokesProperty, value); }
+        }
+
+        public static readonly PropertyData CanAcceptStrokesProperty = RegisterProperty("CanAcceptStrokes", typeof (bool), true);
+
+        /// <summary>The currently accepted <see cref="Stroke" />s.</summary>
+        [XmlIgnore]
+        [ExcludeFromSerialization]
+        public List<Stroke> AcceptedStrokes
+        {
+            get { return GetValue<List<Stroke>>(AcceptedStrokesProperty); }
+            set { SetValue(AcceptedStrokesProperty, value); }
+        }
+
+        public static readonly PropertyData AcceptedStrokesProperty = RegisterProperty("AcceptedStrokes", typeof (List<Stroke>), () => new List<Stroke>());
+
+        /// <summary>The IDs of the <see cref="Stroke" />s that have been accepted.</summary>
+        public List<string> AcceptedStrokeParentIDs
+        {
+            get { return GetValue<List<string>>(AcceptedStrokeParentIDsProperty); }
+            set { SetValue(AcceptedStrokeParentIDsProperty, value); }
+        }
+
+        public static readonly PropertyData AcceptedStrokeParentIDsProperty = RegisterProperty("AcceptedStrokeParentIDs", typeof (List<string>), () => new List<string>());
+
         public void AcceptStrokes(IEnumerable<Stroke> addedStrokes, IEnumerable<Stroke> removedStrokes)
         {
             if (!CanAcceptStrokes)
@@ -542,6 +542,6 @@ namespace CLP.Entities
             AcceptStrokes(new StrokeCollection(strokesOverObject), new StrokeCollection());
         }
 
-        #endregion
+        #endregion //IStrokeAccepter Implementation
     }
 }
