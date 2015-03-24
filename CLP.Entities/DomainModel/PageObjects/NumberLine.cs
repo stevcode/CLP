@@ -240,37 +240,8 @@ namespace CLP.Entities
 
         public void CreateTicks()
         {
-            var defaultInteger = NumberLineSize <= MAX_ALL_TICKS_VISIBLE_LENGTH ? 1 : 5;
-            if (Ticks.LastOrDefault() != null)
-            {
-                if (Ticks.LastOrDefault().TickValue % defaultInteger != 0)
-                {
-                    Ticks.LastOrDefault().IsNumberVisible = false;
-                }
-            }
-
-            if (!Ticks.Any())
-            {
-                for (var i = 0; i <= NumberLineSize; i++)
-                {
-                    var labelVisible = false;
-                    if (i == 0 ||
-                        i == NumberLineSize)
-                    {
-                        labelVisible = true;
-                    }
-                    else if (i % defaultInteger == 0)
-                    {
-                        labelVisible = true;
-                    }
-
-                    Ticks.Add(new NumberLineTick(i, labelVisible));
-                }
-            }
-            else
-            {
-                Ticks.Add(new NumberLineTick(Ticks.Count, true));
-            }
+            Ticks.Add(new NumberLineTick(Ticks.Count, true));
+            RefreshTicks();
         }
 
         public void DeleteTicks()
@@ -278,6 +249,20 @@ namespace CLP.Entities
             if (Ticks.Any())
             {
                 Ticks.Remove(Ticks.LastOrDefault());
+            }
+            RefreshTicks();
+        }
+
+        public void RefreshTicks()
+        {
+            var defaultInteger = NumberLineSize <= MAX_ALL_TICKS_VISIBLE_LENGTH ? 1 : 5;
+            for (var i = 0; i < Ticks.Count; i++)
+            {
+                var isLabelVisible = i == 0 ||
+                                     i == NumberLineSize ||
+                                     i % defaultInteger == 0;
+
+                Ticks[i].IsNumberVisible = isLabelVisible;
             }
         }
 
@@ -451,7 +436,8 @@ namespace CLP.Entities
 
         public override void OnResizing(double oldWidth, double oldHeight, bool fromHistory = false)
         {
-            if (!CanAcceptStrokes)
+            if (!CanAcceptStrokes ||
+                !AcceptedStrokes.Any())
             {
                 return;
             }

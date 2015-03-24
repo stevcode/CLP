@@ -149,7 +149,6 @@ namespace Classroom_Learning_Partner.ViewModels
             PageObject.OnResizing(initialWidth, initialHeight);
         }
 
-
         /// <summary>Gets the ResizeStartPageObjectCommand command.</summary>
         public Command<DragStartedEventArgs> ResizeStartNumberLineLengthCommand { get; set; }
 
@@ -324,7 +323,7 @@ namespace Classroom_Learning_Partner.ViewModels
             if (_initialWidth + numberLine.TickLength < newWidth && IsArrowDraggingAllowed)
             {
                 _isClicked = false;
-                numberLine.NumberLineSize++;
+                NumberLineSize++;
                 ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
                                                        new NumberLineEndPointsChangedHistoryItem(PageObject.ParentPage,
                                                                                                    App.MainWindowViewModel.CurrentUser,
@@ -335,6 +334,16 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //Commands
+
+        #region Methods
+
+        private void ExtendNumberLine(int newNumberLineSize)
+        {
+            var oldNumberLineSize = NumberLineSize;
+            
+        }
+
+        #endregion //Methods
 
         #region Static Methods
 
