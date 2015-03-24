@@ -102,14 +102,7 @@ namespace CLP.Entities
                 return;
             }
 
-            if (Math.Abs(numberLine.Width - PreStretchedWidth) > 0.0001)
-            {
-                var oldWidth = numberLine.Width;
-                var oldHeight = numberLine.Height;
-                numberLine.Width = PreStretchedWidth;
-                PreStretchedWidth = oldWidth;
-                numberLine.OnResized(oldWidth, oldHeight, true);
-            }
+            StretchInk(numberLine);
 
             ToggleEndPointValues(numberLine);
         }
@@ -125,14 +118,7 @@ namespace CLP.Entities
 
             ToggleEndPointValues(numberLine);
 
-            if (Math.Abs(numberLine.Width - PreStretchedWidth) > 0.0001)
-            {
-                var oldWidth = numberLine.Width;
-                var oldHeight = numberLine.Height;
-                numberLine.Width = PreStretchedWidth;
-                PreStretchedWidth = oldWidth;
-                numberLine.OnResized(oldWidth, oldHeight, true);
-            }
+            StretchInk(numberLine);
         }
 
         private void ToggleEndPointValues(NumberLine numberLine)
@@ -140,6 +126,20 @@ namespace CLP.Entities
             var tempPreviousEnd = numberLine.NumberLineSize;
             numberLine.ChangeNumberLineSize(PreviousEndValue);
             PreviousEndValue = tempPreviousEnd;
+        }
+
+        private void StretchInk(NumberLine numberLine)
+        {
+            if (Math.Abs(numberLine.Width - PreStretchedWidth) < 0.0001)
+            {
+                return;
+            }
+
+            var oldWidth = numberLine.Width;
+            var oldHeight = numberLine.Height;
+            numberLine.Width = PreStretchedWidth;
+            PreStretchedWidth = oldWidth;
+            numberLine.OnResized(oldWidth, oldHeight, true);
         }
 
         /// <summary>Method that prepares a clone of the <see cref="IHistoryItem" /> so that it can call Redo() when sent to another machine.</summary>

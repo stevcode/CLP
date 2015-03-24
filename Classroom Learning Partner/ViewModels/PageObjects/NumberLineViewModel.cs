@@ -312,7 +312,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Methods
 
-        private void ChangeNumberLineEndPoints(int newNumberLineEndPoint)
+        public void ChangeNumberLineEndPoints(int newNumberLineEndPoint)
         {
             var numberLine = PageObject as NumberLine;
 
