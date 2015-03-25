@@ -196,13 +196,27 @@ namespace ConsoleScripts
                     var resizeBatchHistoryItem = previousUndoHistoryItem as PageObjectResizeBatchHistoryItem;
                     if (resizeBatchHistoryItem != null)
                     {
-                        var numberLine = page.GetVerifiedPageObjectOnPageByID(endPointsChangedHistoryItem.NumberLineID);
+                        var numberLine = page.GetVerifiedPageObjectOnPageByID(endPointsChangedHistoryItem.NumberLineID) as NumberLine;
                         if (numberLine == null)
                         {
                             Console.WriteLine("ERROR: Number Line not on page in NumberLineEndPointsChangedHistoryItem on History Index {0}.",
                                                   endPointsChangedHistoryItem.HistoryIndex);
                             continue;
                         }
+
+                        var previousWidth = resizeBatchHistoryItem.StretchedDimensions.First().X;
+                        var currentEndPoint = numberLine.NumberLineSize;
+                        var previousEndPoint = endPointsChangedHistoryItem.PreviousEndValue;
+
+                        var previousNumberLineWidth = previousWidth - (numberLine.ArrowLength * 2);
+                        var previousTickLength = previousNumberLineWidth / previousEndPoint;
+
+                        var preStretchedWidth = previousWidth + (previousTickLength * (currentEndPoint - previousEndPoint));
+                        if (Math.Abs(numberLine.Width - preStretchedWidth) < numberLine.TickLength / 2)
+                        {
+                            preStretchedWidth = numberLine.Width;
+                        }
+                        endPointsChangedHistoryItem.PreStretchedWidth = preStretchedWidth;
                     }
                 }
 

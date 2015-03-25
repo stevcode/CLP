@@ -323,7 +323,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            var oldWidth = Width;
             var oldHeight = Height;
 
             var oldNumberLineEndPoint = NumberLineSize;
@@ -342,7 +341,6 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                                  PageObject.ID,
                                                                                                  0,
                                                                                                  oldNumberLineEndPoint,
-                                                                                                 oldWidth,
                                                                                                  preStretchedWidth));
         }
 

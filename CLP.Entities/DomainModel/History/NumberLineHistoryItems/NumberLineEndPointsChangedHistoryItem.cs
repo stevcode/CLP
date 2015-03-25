@@ -15,13 +15,12 @@ namespace CLP.Entities
         /// <summary>Initializes <see cref="CLPArrayDivisionValueChangedHistoryItem" /> with a parent <see cref="CLPPage" />.</summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryItem" /> is part of.</param>
         /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryItem" />.</param>
-        public NumberLineEndPointsChangedHistoryItem(CLPPage parentPage, Person owner, string numberLineID, int previousStartValue, int previousEndValue, double previousWidth, double preStretchedWidth)
+        public NumberLineEndPointsChangedHistoryItem(CLPPage parentPage, Person owner, string numberLineID, int previousStartValue, int previousEndValue, double preStretchedWidth)
             : base(parentPage, owner)
         {
             NumberLineID = numberLineID;
             PreviousStartValue = previousStartValue;
             PreviousEndValue = previousEndValue;
-            PreviousWidth = previousWidth;
             PreStretchedWidth = preStretchedWidth;
         }
 
@@ -66,17 +65,6 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData PreviousEndValueProperty = RegisterProperty("PreviousEndValue", typeof (int));
-
-        /// <summary>
-        /// Previous Width of the Number Line in the event a resize was necessary after the EndValue changes.
-        /// </summary>
-        public double PreviousWidth
-        {
-            get { return GetValue<double>(PreviousWidthProperty); }
-            set { SetValue(PreviousWidthProperty, value); }
-        }
-
-        public static readonly PropertyData PreviousWidthProperty = RegisterProperty("PreviousWidth", typeof (double));
 
         /// <summary>
         /// Width before a resize that involves stretching captured ink strokes.
