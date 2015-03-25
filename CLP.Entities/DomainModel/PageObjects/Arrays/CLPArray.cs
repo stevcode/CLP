@@ -462,6 +462,12 @@ namespace CLP.Entities
 
         #region IStrokeAccepter Implementation
 
+        /// <summary>Stroke must be at least this percent contained by pageObject.</summary>
+        public int StrokeHitTestPercentage
+        {
+            get { return 90; }
+        }
+
         /// <summary>Determines whether the <see cref="Stamp" /> can currently accept <see cref="Stroke" />s.</summary>
         public bool CanAcceptStrokes
         {
@@ -507,19 +513,24 @@ namespace CLP.Entities
             }
 
             // Add Strokes
-            var numberLineBodyBoundingBox = new Rect(XPosition, YPosition, Width, Height);
-            foreach (var stroke in addedStrokes.Where(stroke => stroke.HitTest(numberLineBodyBoundingBox, 90) && !AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
+            foreach (var stroke in addedStrokes.Where(stroke => IsStrokeOverPageObject(stroke) && !AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
             {
                 AcceptedStrokes.Add(stroke);
                 AcceptedStrokeParentIDs.Add(stroke.GetStrokeID());
             }
         }
 
+        public bool IsStrokeOverPageObject(Stroke stroke)
+        {
+            var arrayBoundingBox = new Rect(XPosition, YPosition, Width, Height);
+            return stroke.HitTest(arrayBoundingBox, StrokeHitTestPercentage);
+        }
+
         public StrokeCollection GetStrokesOverPageObject()
         {
             var arrayBoundingBox = new Rect(XPosition, YPosition, Width, Height);
             var strokesOverObject = from stroke in ParentPage.InkStrokes
-                                    where stroke.HitTest(arrayBoundingBox, 90) //Stroke must be at least 90% contained by array.
+                                    where stroke.HitTest(arrayBoundingBox, StrokeHitTestPercentage)
                                     select stroke;
 
             return new StrokeCollection(strokesOverObject);
@@ -534,12 +545,9 @@ namespace CLP.Entities
                 return;
             }
 
-            var arrayBoundingBox = new Rect(XPosition, YPosition, Width, Height);
-            var strokesOverObject = from stroke in ParentPage.InkStrokes
-                                    where stroke.HitTest(arrayBoundingBox, 90) //Stroke must be at least 90% contained by array.
-                                    select stroke;
+            var strokesOverObject = GetStrokesOverPageObject();
 
-            AcceptStrokes(new StrokeCollection(strokesOverObject), new StrokeCollection());
+            AcceptStrokes(strokesOverObject, new StrokeCollection());
         }
 
         #endregion //IStrokeAccepter Implementation

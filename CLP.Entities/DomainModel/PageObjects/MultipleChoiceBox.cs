@@ -196,6 +196,12 @@ namespace CLP.Entities
 
         #region IStrokeAccepter Implementation
 
+        /// <summary>Stroke must be at least this percent contained by pageObject.</summary>
+        public int StrokeHitTestPercentage
+        {
+            get { return 80; }
+        }
+
         /// <summary>Determines whether the <see cref="Stamp" /> can currently accept <see cref="Stroke" />s.</summary>
         public bool CanAcceptStrokes
         {
@@ -274,11 +280,17 @@ namespace CLP.Entities
             }
         }
 
+        public bool IsStrokeOverPageObject(Stroke stroke)
+        {
+            var multipleChoiceBoundingBox = new Rect(XPosition, YPosition, Width, Height);
+            return stroke.HitTest(multipleChoiceBoundingBox, StrokeHitTestPercentage);
+        }
+
         public StrokeCollection GetStrokesOverPageObject()
         {
             var multipleChoiceBoundingBox = new Rect(XPosition, YPosition, Width, Height);
             var strokesOverObject = from stroke in ParentPage.InkStrokes
-                                    where stroke.HitTest(multipleChoiceBoundingBox, 80) //Stroke must be at least 80% contained by numberline.
+                                    where stroke.HitTest(multipleChoiceBoundingBox, StrokeHitTestPercentage)
                                     select stroke;
 
             return new StrokeCollection(strokesOverObject);
@@ -293,12 +305,9 @@ namespace CLP.Entities
                 return;
             }
 
-            var multipleChoiceBoundingBox = new Rect(XPosition, YPosition, Width, Height);
-            var strokesOverObject = from stroke in ParentPage.InkStrokes
-                                    where stroke.HitTest(multipleChoiceBoundingBox, 80) //Stroke must be at least 80% contained by numberline.
-                                    select stroke;
+            var strokesOverObject = GetStrokesOverPageObject();
 
-            AcceptStrokes(new StrokeCollection(strokesOverObject), new StrokeCollection());
+            AcceptStrokes(strokesOverObject, new StrokeCollection());
         }
 
         #endregion //IStrokeAccepter Implementation

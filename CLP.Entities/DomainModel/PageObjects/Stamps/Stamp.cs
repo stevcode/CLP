@@ -286,6 +286,12 @@ namespace CLP.Entities
 
         #region IStrokeAccepter Implementation
 
+        /// <summary>Stroke must be at least this percent contained by pageObject.</summary>
+        public int StrokeHitTestPercentage
+        {
+            get { return 50; }
+        }
+
         /// <summary>Determines whether the <see cref="Stamp" /> can currently accept <see cref="Stroke" />s.</summary>
         public bool CanAcceptStrokes
         {
@@ -337,11 +343,17 @@ namespace CLP.Entities
             }
         }
 
+        public bool IsStrokeOverPageObject(Stroke stroke)
+        {
+            var stampBodyBoundingBox = new Rect(XPosition, YPosition + HandleHeight, Width, Height - HandleHeight - PartsHeight);
+            return stroke.HitTest(stampBodyBoundingBox, StrokeHitTestPercentage);
+        }
+
         public StrokeCollection GetStrokesOverPageObject()
         {
             var stampBodyBoundingBox = new Rect(XPosition, YPosition + HandleHeight, Width, Height - HandleHeight - PartsHeight);
             var strokesOverObject = from stroke in ParentPage.InkStrokes
-                                    where stroke.HitTest(stampBodyBoundingBox, 50) //Stroke must be at least 50% contained by Stamp body.
+                                    where stroke.HitTest(stampBodyBoundingBox, StrokeHitTestPercentage)
                                     select stroke;
 
             return new StrokeCollection(strokesOverObject);
@@ -356,12 +368,9 @@ namespace CLP.Entities
                 return;
             }
 
-            var stampBodyBoundingBox = new Rect(XPosition, YPosition + HandleHeight, Width, Height - HandleHeight - PartsHeight);
-            var strokesOverObject = from stroke in ParentPage.InkStrokes
-                                    where stroke.HitTest(stampBodyBoundingBox, 50) //Stroke must be at least 50% contained by Stamp body.
-                                    select stroke;
+            var strokesOverObject = GetStrokesOverPageObject();
 
-            AcceptStrokes(new StrokeCollection(strokesOverObject), new StrokeCollection());
+            AcceptStrokes(strokesOverObject, new StrokeCollection());
         }
 
         #endregion //IStrokeAccepter Implementation

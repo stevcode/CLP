@@ -483,6 +483,12 @@ namespace CLP.Entities
 
         #region IStrokeAccepter Implementation
 
+        /// <summary>Stroke must be at least this percent contained by pageObject.</summary>
+        public int StrokeHitTestPercentage
+        {
+            get { return 5; }
+        }
+
         /// <summary>Determines whether the <see cref="Stamp" /> can currently accept <see cref="Stroke" />s.</summary>
         public bool CanAcceptStrokes
         {
@@ -617,11 +623,17 @@ namespace CLP.Entities
             }
         }
 
+        public bool IsStrokeOverPageObject(Stroke stroke)
+        {
+            var numberLineBodyBoundingBox = new Rect(XPosition, YPosition, Width, Height);
+            return stroke.HitTest(numberLineBodyBoundingBox, StrokeHitTestPercentage);
+        }
+
         public StrokeCollection GetStrokesOverPageObject()
         {
             var numberLineBodyBoundingBox = new Rect(XPosition, YPosition, Width, Height);
             var strokesOverObject = from stroke in ParentPage.InkStrokes
-                                    where stroke.HitTest(numberLineBodyBoundingBox, 5) //Stroke must be at least 5% contained by numberline.
+                                    where stroke.HitTest(numberLineBodyBoundingBox, StrokeHitTestPercentage) 
                                     select stroke;
 
             return new StrokeCollection(strokesOverObject);
