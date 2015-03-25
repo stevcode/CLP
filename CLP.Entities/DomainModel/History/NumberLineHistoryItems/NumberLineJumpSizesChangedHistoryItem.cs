@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Windows.Ink;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -20,13 +21,22 @@ namespace CLP.Entities
         public NumberLineJumpSizesChangedHistoryItem(CLPPage parentPage,
                                                      Person owner,
                                                      string numberLineID,
-                                                     List<NumberLineJumpSize> addedJumpSizes,
-                                                     List<NumberLineJumpSize> removedJumpSizes)
+                                                     List<Stroke> addedJumpStrokes,
+                                                     List<Stroke> removedJumpStrokes,
+                                                     double previousHeight,
+                                                     double previousYPosition)
             : base(parentPage, owner)
         {
             NumberLineID = numberLineID;
-            AddedJumpSizes = addedJumpSizes;
-            RemovedJumpSizes = removedJumpSizes;
+            PreviousHeight = previousHeight;
+            PreviousYPosition = previousYPosition;
+
+            AddedJumpStrokeIDs = addedJumpStrokes.Select(s => s.GetStrokeID()).ToList();
+            foreach (var stroke in removedJumpStrokes)
+            {
+                RemovedJumpStrokeIDs.Add(stroke.GetStrokeID());
+                ParentPage.History.TrashedInkStrokes.Add(stroke);
+            }
         }
 
         /// <summary>Initializes a new object based on <see cref="SerializationInfo" />.</summary>
@@ -53,23 +63,41 @@ namespace CLP.Entities
 
         public static readonly PropertyData NumberLineIDProperty = RegisterProperty("NumberLineID", typeof (string));
 
-        /// <summary>NumberLineJumpSizes added to the Number Line.</summary>
-        public List<NumberLineJumpSize> AddedJumpSizes
+        /// <summary>IDs of the Strokes used to create a Jump.</summary>
+        public List<string> AddedJumpStrokeIDs
         {
-            get { return GetValue<List<NumberLineJumpSize>>(AddedJumpSizesProperty); }
-            set { SetValue(AddedJumpSizesProperty, value); }
+            get { return GetValue<List<string>>(AddedJumpStrokeIDsProperty); }
+            set { SetValue(AddedJumpStrokeIDsProperty, value); }
         }
 
-        public static readonly PropertyData AddedJumpSizesProperty = RegisterProperty("AddedJumpSizes", typeof (List<NumberLineJumpSize>));
+        public static readonly PropertyData AddedJumpStrokeIDsProperty = RegisterProperty("AddedJumpStrokeIDs", typeof (List<string>));
 
-        /// <summary>NumberLineJumpSizes removed from the Number Line.</summary>
-        public List<NumberLineJumpSize> RemovedJumpSizes
+        /// <summary>IDs of the Strokes used in a removed Jump.</summary>
+        public List<string> RemovedJumpStrokeIDs
         {
-            get { return GetValue<List<NumberLineJumpSize>>(RemovedJumpSizesProperty); }
-            set { SetValue(RemovedJumpSizesProperty, value); }
+            get { return GetValue<List<string>>(RemovedJumpStrokeIDsProperty); }
+            set { SetValue(RemovedJumpStrokeIDsProperty, value); }
         }
 
-        public static readonly PropertyData RemovedJumpSizesProperty = RegisterProperty("RemovedJumpSizes", typeof (List<NumberLineJumpSize>));
+        public static readonly PropertyData RemovedJumpStrokeIDsProperty = RegisterProperty("RemovedJumpStrokeIDs", typeof (List<string>), () => new List<string>());
+
+        /// <summary>Previous Height of the number line.</summary>
+        public double PreviousHeight
+        {
+            get { return GetValue<double>(PreviousHeightProperty); }
+            set { SetValue(PreviousHeightProperty, value); }
+        }
+
+        public static readonly PropertyData PreviousHeightProperty = RegisterProperty("PreviousHeight", typeof (double));
+
+        /// <summary>Previous YPosition of the number line.</summary>
+        public double PreviousYPosition
+        {
+            get { return GetValue<double>(PreviousYPositionProperty); }
+            set { SetValue(PreviousYPositionProperty, value); }
+        }
+
+        public static readonly PropertyData PreviousYPositionProperty = RegisterProperty("PreviousYPosition", typeof (double));
 
         #endregion //Properties
 
@@ -84,51 +112,41 @@ namespace CLP.Entities
                 return;
             }
 
-            foreach (var jumpSize in AddedJumpSizes)
+            foreach (var stroke in AddedJumpStrokeIDs.Select(id => ParentPage.GetVerifiedStrokeOnPageByID(id)))
             {
-                var jumpSizeToRemove = numberLine.JumpSizes.FirstOrDefault(j => j.StartingTickIndex == jumpSize.StartingTickIndex && j.JumpSize == jumpSize.JumpSize);
-                numberLine.JumpSizes.Remove(jumpSizeToRemove);
-                var tickL = numberLine.Ticks.FirstOrDefault(t => t.TickValue == jumpSize.StartingTickIndex);
-                var tickR = numberLine.Ticks.FirstOrDefault(t => t.TickValue == jumpSize.StartingTickIndex + jumpSize.JumpSize);
-                if (tickL == null ||
-                    tickR == null)
+                if (stroke == null)
                 {
+                    Console.WriteLine("ERROR: Null stroke in AddedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryItem on History Index {0}.", HistoryIndex);
                     continue;
                 }
-
-                if (numberLine.JumpSizes.All(x => x.StartingTickIndex != tickR.TickValue))
-                {
-                    tickR.IsMarked = false;
-                    tickR.TickColor = "Black";
-                    tickR.IsNumberVisible = numberLine.NumberLineSize <= NumberLine.MAX_ALL_TICKS_VISIBLE_LENGTH || tickR.TickValue % 5 == 0;
-                }
-
-                if (numberLine.JumpSizes.All(x => x.StartingTickIndex + x.JumpSize != tickL.TickValue))
-                {
-                    tickL.IsMarked = false;
-                    tickL.TickColor = "Black";
-                    tickL.IsNumberVisible = numberLine.NumberLineSize <= NumberLine.MAX_ALL_TICKS_VISIBLE_LENGTH || tickL.TickValue % 5 == 0;
-                }
+                ParentPage.InkStrokes.Remove(stroke);
+                ParentPage.History.TrashedInkStrokes.Add(stroke);
+                numberLine.RemoveJumpFromStroke(stroke);
+                numberLine.ChangeAcceptedStrokes(new List<Stroke>(),
+                                                 new List<Stroke>
+                                                 {
+                                                     stroke
+                                                 });
             }
 
-            foreach (var jumpSize in RemovedJumpSizes)
+            foreach (var stroke in RemovedJumpStrokeIDs.Select(id => ParentPage.GetVerifiedStrokeInHistoryByID(id)))
             {
-                numberLine.JumpSizes.Add(jumpSize);
-                var tickL = numberLine.Ticks.FirstOrDefault(t => t.TickValue == jumpSize.StartingTickIndex);
-                var tickR = numberLine.Ticks.FirstOrDefault(t => t.TickValue == jumpSize.StartingTickIndex + jumpSize.JumpSize);
-                if (tickL == null ||
-                    tickR == null)
+                if (stroke == null)
                 {
+                    Console.WriteLine("ERROR: Null stroke in RemovedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryItem on History Index {0}.", HistoryIndex);
                     continue;
                 }
-
-                tickL.TickColor = "Blue";
-                tickL.IsMarked = true;
-                tickL.IsNumberVisible = true;
-                tickR.TickColor = "Blue";
-                tickR.IsMarked = false;
-                tickR.IsNumberVisible = true;
+                ParentPage.History.TrashedInkStrokes.Remove(stroke);
+                ParentPage.InkStrokes.Add(stroke);
+                numberLine.AddJumpFromStroke(stroke);
+                numberLine.ChangeAcceptedStrokes(new List<Stroke>
+                                                 {
+                                                     stroke
+                                                 },
+                                                 new List<Stroke>());
             }
+
+            ResizeNumberLineHeight();
         }
 
         /// <summary>Method that will actually redo the action. Already incorporates error checking for existance of ParentPage.</summary>
@@ -140,51 +158,61 @@ namespace CLP.Entities
                 return;
             }
 
-            foreach (var jumpSize in RemovedJumpSizes)
+            foreach (var stroke in RemovedJumpStrokeIDs.Select(id => ParentPage.GetVerifiedStrokeOnPageByID(id)))
             {
-                var jumpSizeToRemove = numberLine.JumpSizes.FirstOrDefault(j => j.StartingTickIndex == jumpSize.StartingTickIndex && j.JumpSize == jumpSize.JumpSize);
-                numberLine.JumpSizes.Remove(jumpSizeToRemove);
-                var tickL = numberLine.Ticks.FirstOrDefault(t => t.TickValue == jumpSize.StartingTickIndex);
-                var tickR = numberLine.Ticks.FirstOrDefault(t => t.TickValue == jumpSize.StartingTickIndex + jumpSize.JumpSize);
-                if (tickL == null ||
-                    tickR == null)
+                if (stroke == null)
                 {
+                    Console.WriteLine("ERROR: Null stroke in RemovedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryItem on History Index {0}.", HistoryIndex);
                     continue;
                 }
-
-                if (numberLine.JumpSizes.All(x => x.StartingTickIndex != tickR.TickValue))
-                {
-                    tickR.IsMarked = false;
-                    tickR.TickColor = "Black";
-                    tickR.IsNumberVisible = numberLine.NumberLineSize <= NumberLine.MAX_ALL_TICKS_VISIBLE_LENGTH || tickR.TickValue % 5 == 0;
-                }
-
-                if (numberLine.JumpSizes.All(x => x.StartingTickIndex + x.JumpSize != tickL.TickValue))
-                {
-                    tickL.IsMarked = false;
-                    tickL.TickColor = "Black";
-                    tickL.IsNumberVisible = numberLine.NumberLineSize <= NumberLine.MAX_ALL_TICKS_VISIBLE_LENGTH || tickL.TickValue % 5 == 0;
-                }
+                ParentPage.InkStrokes.Remove(stroke);
+                ParentPage.History.TrashedInkStrokes.Add(stroke);
+                numberLine.RemoveJumpFromStroke(stroke);
+                numberLine.ChangeAcceptedStrokes(new List<Stroke>(),
+                                                 new List<Stroke>
+                                                 {
+                                                     stroke
+                                                 });
             }
 
-            foreach (var jumpSize in AddedJumpSizes)
+            foreach (var stroke in AddedJumpStrokeIDs.Select(id => ParentPage.GetVerifiedStrokeInHistoryByID(id)))
             {
-                numberLine.JumpSizes.Add(jumpSize);
-                var tickL = numberLine.Ticks.FirstOrDefault(t => t.TickValue == jumpSize.StartingTickIndex);
-                var tickR = numberLine.Ticks.FirstOrDefault(t => t.TickValue == jumpSize.StartingTickIndex + jumpSize.JumpSize);
-                if (tickL == null ||
-                    tickR == null)
+                if (stroke == null)
                 {
+                    Console.WriteLine("ERROR: Null stroke in AddedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryItem on History Index {0}.", HistoryIndex);
                     continue;
                 }
-
-                tickL.TickColor = "Blue";
-                tickL.IsMarked = true;
-                tickL.IsNumberVisible = true;
-                tickR.TickColor = "Blue";
-                tickR.IsMarked = false;
-                tickR.IsNumberVisible = true;
+                ParentPage.History.TrashedInkStrokes.Remove(stroke);
+                ParentPage.InkStrokes.Add(stroke);
+                numberLine.AddJumpFromStroke(stroke);
+                numberLine.ChangeAcceptedStrokes(new List<Stroke>
+                                                 {
+                                                     stroke
+                                                 },
+                                                 new List<Stroke>());
             }
+
+            ResizeNumberLineHeight();
+        }
+
+        private void ResizeNumberLineHeight()
+        {
+            var numberLine = ParentPage.GetVerifiedPageObjectOnPageByID(NumberLineID) as NumberLine;
+            if (numberLine == null ||
+                Math.Abs(numberLine.Height - PreviousHeight) < 0.0001)
+            {
+                return;
+            }
+
+            var oldWidth = numberLine.Width;
+            var oldHeight = numberLine.Height;
+            numberLine.Height = PreviousHeight;
+            PreviousHeight = oldHeight;
+
+            var oldXPosition = numberLine.XPosition;
+            var oldYPosition = numberLine.YPosition;
+            numberLine.YPosition = PreviousYPosition;
+            PreviousYPosition = oldYPosition;
         }
 
         /// <summary>Method that prepares a clone of the <see cref="IHistoryItem" /> so that it can call Redo() when sent to another machine.</summary>

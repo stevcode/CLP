@@ -9,6 +9,7 @@ namespace Classroom_Learning_Partner.Services
     {
         PageInteractionModes CurrentPageInteractionMode { get; }
         DrawModes CurrentDrawMode { get; }
+        bool IsInkInteracting { get; set; }
         ErasingModes CurrentErasingMode { get; }
         InkCanvasEditingMode StrokeEraserMode { get; }
         Color PenColor { get; }

@@ -772,7 +772,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 PageObject.ParentPage.InkStrokes.Add(strokesToRestore);
                 PageObject.ParentPage.History.TrashedInkStrokes.Remove(strokesToRestore);
-                array.AcceptStrokes(strokesToRestore, new List<Stroke>());
+                array.ChangeAcceptedStrokes(strokesToRestore, new List<Stroke>());
             }
 
             //closestPersistingArray.RefreshStrokeParentIDs();
@@ -1135,12 +1135,41 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Static Methods
 
-        public static bool CreateDivision(CLPArray array, Stroke cuttingStroke)
+        public static bool InteractWithAcceptedStrokes(CLPArray array, IEnumerable<Stroke> addedStrokes, IEnumerable<Stroke> removedStrokes, bool canInteract)
         {
-            var strokeTop = cuttingStroke.GetBounds().Top;
-            var strokeBottom = cuttingStroke.GetBounds().Bottom;
-            var strokeLeft = cuttingStroke.GetBounds().Left;
-            var strokeRight = cuttingStroke.GetBounds().Right;
+            return false; //HACK: skip this new implementation for history conversions. Remove after generating new cache.
+
+            if (array == null ||
+                !canInteract)
+            {
+                return false;
+            }
+
+            var removedStrokesList = removedStrokes as IList<Stroke> ?? removedStrokes.ToList();
+            var addedStrokesList = addedStrokes as IList<Stroke> ?? addedStrokes.ToList();
+
+            if (removedStrokesList.Any() ||
+                addedStrokesList.Count() != 1)
+            {
+                return false;
+            }
+
+            var potentialDividingStroke = addedStrokesList.FirstOrDefault();
+            return CreateDivision(array, potentialDividingStroke);
+        }
+
+        public static bool CreateDivision(CLPArray array, Stroke dividingStroke)
+        {
+            if (array == null ||
+                dividingStroke == null)
+            {
+                return false;
+            }
+
+            var strokeTop = dividingStroke.GetBounds().Top;
+            var strokeBottom = dividingStroke.GetBounds().Bottom;
+            var strokeLeft = dividingStroke.GetBounds().Left;
+            var strokeRight = dividingStroke.GetBounds().Right;
 
             var cuttableTop = array.YPosition + array.LabelLength;
             var cuttableBottom = cuttableTop + array.ArrayHeight;
@@ -1214,7 +1243,8 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                                    removedDivisions));
                 return true;
             }
-            else if (Math.Abs(strokeLeft - strokeRight) > Math.Abs(strokeTop - strokeBottom) &&
+            
+            if (Math.Abs(strokeLeft - strokeRight) > Math.Abs(strokeTop - strokeBottom) &&
                      strokeBottom <= cuttableBottom &&
                      strokeTop >= cuttableTop &&
                      cuttableRight - strokeRight <= MIN_THRESHHOLD &&

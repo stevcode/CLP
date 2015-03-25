@@ -321,22 +321,24 @@ namespace CLP.Entities
 
         public static readonly PropertyData AcceptedStrokeParentIDsProperty = RegisterProperty("AcceptedStrokeParentIDs", typeof (List<string>), () => new List<string>());
 
-        public void AcceptStrokes(IEnumerable<Stroke> addedStrokes, IEnumerable<Stroke> removedStrokes)
+        public void ChangeAcceptedStrokes(IEnumerable<Stroke> addedStrokes, IEnumerable<Stroke> removedStrokes)
         {
             if (!CanAcceptStrokes)
             {
                 return;
             }
 
-            foreach (var stroke in removedStrokes.Where(stroke => AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
+            // Remove Strokes
+            var removedStrokesList = removedStrokes as IList<Stroke> ?? removedStrokes.ToList();
+            foreach (var stroke in removedStrokesList.Where(stroke => AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
             {
                 AcceptedStrokes.Remove(stroke);
                 AcceptedStrokeParentIDs.Remove(stroke.GetStrokeID());
             }
 
-            var stampBodyBoundingBox = new Rect(XPosition, YPosition + HandleHeight, Width, Height - HandleHeight - PartsHeight);
-            foreach (var stroke in
-                addedStrokes.Where(stroke => stroke.HitTest(stampBodyBoundingBox, 50) && !AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
+            // Add Strokes
+            var addedStrokesList = addedStrokes as IList<Stroke> ?? addedStrokes.ToList();
+            foreach (var stroke in addedStrokesList.Where(stroke => IsStrokeOverPageObject(stroke) && !AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
             {
                 AcceptedStrokes.Add(stroke);
                 AcceptedStrokeParentIDs.Add(stroke.GetStrokeID());
@@ -370,7 +372,7 @@ namespace CLP.Entities
 
             var strokesOverObject = GetStrokesOverPageObject();
 
-            AcceptStrokes(strokesOverObject, new StrokeCollection());
+            ChangeAcceptedStrokes(strokesOverObject, new StrokeCollection());
         }
 
         #endregion //IStrokeAccepter Implementation

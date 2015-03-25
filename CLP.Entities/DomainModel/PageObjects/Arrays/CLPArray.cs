@@ -497,7 +497,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData AcceptedStrokeParentIDsProperty = RegisterProperty("AcceptedStrokeParentIDs", typeof (List<string>), () => new List<string>());
 
-        public void AcceptStrokes(IEnumerable<Stroke> addedStrokes, IEnumerable<Stroke> removedStrokes)
+        public void ChangeAcceptedStrokes(IEnumerable<Stroke> addedStrokes, IEnumerable<Stroke> removedStrokes)
         {
             if (!CanAcceptStrokes)
             {
@@ -513,7 +513,8 @@ namespace CLP.Entities
             }
 
             // Add Strokes
-            foreach (var stroke in addedStrokes.Where(stroke => IsStrokeOverPageObject(stroke) && !AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
+            var addedStrokesList = addedStrokes as IList<Stroke> ?? addedStrokes.ToList();
+            foreach (var stroke in addedStrokesList.Where(stroke => IsStrokeOverPageObject(stroke) && !AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
             {
                 AcceptedStrokes.Add(stroke);
                 AcceptedStrokeParentIDs.Add(stroke.GetStrokeID());
@@ -547,7 +548,7 @@ namespace CLP.Entities
 
             var strokesOverObject = GetStrokesOverPageObject();
 
-            AcceptStrokes(strokesOverObject, new StrokeCollection());
+            ChangeAcceptedStrokes(strokesOverObject, new StrokeCollection());
         }
 
         #endregion //IStrokeAccepter Implementation

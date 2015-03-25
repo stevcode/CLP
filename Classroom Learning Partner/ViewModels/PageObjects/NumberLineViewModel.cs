@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls.Primitives;
+using System.Windows.Ink;
 using Catel.Data;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Views.Modal_Windows;
@@ -347,6 +349,103 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Methods
 
         #region Static Methods
+
+        public static bool InteractWithAcceptedStrokes(NumberLine numberLine, IEnumerable<Stroke> addedStrokes, IEnumerable<Stroke> removedStrokes, bool canInteract)
+        {
+            if (numberLine == null ||
+                !canInteract)
+            {
+                return false;
+            }
+
+            var removedStrokesList = removedStrokes as IList<Stroke> ?? removedStrokes.ToList();
+            var addedStrokesList = addedStrokes as IList<Stroke> ?? addedStrokes.ToList();
+
+            var nonJumpStrokes = new List<Stroke>();
+            foreach (var stroke in removedStrokesList.Where(stroke => numberLine.AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
+            {
+                var isStrokeAJump = numberLine.RemoveJumpFromStroke(stroke);
+                if (isStrokeAJump)
+                {
+                    numberLine.AcceptedStrokes.Remove(stroke);
+                    numberLine.AcceptedStrokeParentIDs.Remove(stroke.GetStrokeID());
+
+                    var oldHeight = numberLine.Height;
+                    var oldYPosition = numberLine.YPosition;
+                    if (!numberLine.JumpSizes.Any())
+                    {
+                        numberLine.Height = numberLine.NumberLineHeight;
+                        numberLine.YPosition += (oldHeight - numberLine.Height);
+                    }
+
+                    ACLPPageBaseViewModel.AddHistoryItemToPage(numberLine.ParentPage,
+                                                               new NumberLineJumpSizesChangedHistoryItem(numberLine.ParentPage,
+                                                                                                         App.MainWindowViewModel.CurrentUser,
+                                                                                                         numberLine.ID,
+                                                                                                         new List<Stroke>(),
+                                                                                                         new List<Stroke>
+                                                                                                         {
+                                                                                                             stroke
+                                                                                                         },
+                                                                                                         oldHeight,
+                                                                                                         oldYPosition));
+                }
+                else
+                {
+                    nonJumpStrokes.Add(stroke);
+                }
+            }
+
+            foreach (var stroke in addedStrokesList.Where(stroke => numberLine.IsStrokeOverPageObject(stroke) && !numberLine.AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID()))
+                )
+            {
+                var isStrokeAJump = numberLine.AddJumpFromStroke(stroke);
+                if (isStrokeAJump)
+                {
+                    numberLine.AcceptedStrokes.Add(stroke);
+                    numberLine.AcceptedStrokeParentIDs.Add(stroke.GetStrokeID());
+
+                    var oldHeight = numberLine.Height;
+                    var oldYPosition = numberLine.YPosition;
+                    if (numberLine.JumpSizes.Count == 1)
+                    {
+                        var tallestPoint = stroke.GetBounds().Top;
+                        tallestPoint = tallestPoint - 40;
+
+                        if (tallestPoint < 0)
+                        {
+                            tallestPoint = 0;
+                        }
+
+                        if (tallestPoint > numberLine.YPosition + numberLine.Height - numberLine.NumberLineHeight)
+                        {
+                            tallestPoint = numberLine.YPosition + numberLine.Height - numberLine.NumberLineHeight;
+                        }
+
+                        numberLine.Height += (numberLine.YPosition - tallestPoint);
+                        numberLine.YPosition = tallestPoint;
+                    }
+
+                    ACLPPageBaseViewModel.AddHistoryItemToPage(numberLine.ParentPage,
+                                                               new NumberLineJumpSizesChangedHistoryItem(numberLine.ParentPage,
+                                                                                                         App.MainWindowViewModel.CurrentUser,
+                                                                                                         numberLine.ID,
+                                                                                                         new List<Stroke>
+                                                                                                         {
+                                                                                                             stroke
+                                                                                                         },
+                                                                                                         new List<Stroke>(),
+                                                                                                         oldHeight,
+                                                                                                         oldYPosition));
+                }
+                else
+                {
+                    nonJumpStrokes.Add(stroke);
+                }
+            }
+
+            return !nonJumpStrokes.Any();
+        }
 
         public static void AddNumberLineToPage(CLPPage page)
         {

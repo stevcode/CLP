@@ -16,6 +16,20 @@ namespace CLP.Entities
         /// <summary>Initializes <see cref="ObjectsOnPageChangedHistoryItem" /> from scratch.</summary>
         public ObjectsOnPageChangedHistoryItem() { }
 
+        public ObjectsOnPageChangedHistoryItem(CLPPage parentPage,
+                                               Person owner,
+                                               IEnumerable<IPageObject> pageObjectsAdded,
+                                               IEnumerable<IPageObject> pageObjectsRemoved) 
+            : this(parentPage, owner, pageObjectsAdded, pageObjectsRemoved, new List<Stroke>(), new List<Stroke>())
+        { }
+
+        public ObjectsOnPageChangedHistoryItem(CLPPage parentPage,
+                                               Person owner,
+                                               IEnumerable<Stroke> strokesAdded,
+                                               IEnumerable<Stroke> strokesRemoved)
+            : this(parentPage, owner, new List<IPageObject>(), new List<IPageObject>(), strokesAdded, strokesRemoved)
+        { }
+
         /// <summary>Initializes <see cref="ObjectsOnPageChangedHistoryItem" /> with a parent <see cref="CLPPage" />.</summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryItem" /> is part of.</param>
         /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryItem" />.</param>
@@ -88,7 +102,7 @@ namespace CLP.Entities
             set { SetValue(PageObjectIDsRemovedProperty, value); }
         }
 
-        public static readonly PropertyData PageObjectIDsRemovedProperty = RegisterProperty("PageObjectIDsRemoved", typeof (List<string>));
+        public static readonly PropertyData PageObjectIDsRemovedProperty = RegisterProperty("PageObjectIDsRemoved", typeof(List<string>), () => new List<string>());
 
         /// <summary>List of the pageObjects that were removed from the page as a result of the UndoAction(). Cleared on Redo().</summary>
         [XmlIgnore]
@@ -120,7 +134,7 @@ namespace CLP.Entities
             set { SetValue(StrokeIDsRemovedProperty, value); }
         }
 
-        public static readonly PropertyData StrokeIDsRemovedProperty = RegisterProperty("StrokeIDsRemoved", typeof (List<string>), () => new List<string>());
+        public static readonly PropertyData StrokeIDsRemovedProperty = RegisterProperty("StrokeIDsRemoved", typeof(List<string>), () => new List<string>());
 
         /// <summary>List of serialized <see cref="Stroke" />s to be used on another machine when <see cref="StrokesChangedHistoryItem" /> is unpacked.</summary>
         [XmlIgnore]
@@ -186,6 +200,7 @@ namespace CLP.Entities
                 pageObject.OnAdded(true);
             }
 
+            var removedStrokes = new List<Stroke>();
             foreach (var stroke in StrokeIDsAdded.Select(id => ParentPage.GetVerifiedStrokeOnPageByID(id)))
             {
                 if (stroke == null)
@@ -193,10 +208,12 @@ namespace CLP.Entities
                     Console.WriteLine("ERROR: Null stroke in StrokeIDsAdded in ObjectsOnPageChangedHistoryItem on History Index {0}.", HistoryIndex);
                     continue;
                 }
+                removedStrokes.Add(stroke);
                 ParentPage.InkStrokes.Remove(stroke);
                 ParentPage.History.TrashedInkStrokes.Add(stroke);
             }
 
+            var addedStrokes = new List<Stroke>();
             foreach (var stroke in StrokeIDsRemoved.Select(id => ParentPage.GetVerifiedStrokeInHistoryByID(id)))
             {
                 if (stroke == null)
@@ -204,14 +221,14 @@ namespace CLP.Entities
                     Console.WriteLine("ERROR: Null stroke in StrokeIDsRemoved in ObjectsOnPageChangedHistoryItem on History Index {0}.", HistoryIndex);
                     continue;
                 }
+                addedStrokes.Add(stroke);
                 ParentPage.History.TrashedInkStrokes.Remove(stroke);
                 ParentPage.InkStrokes.Add(stroke);
             }
 
             foreach (var pageObject in ParentPage.PageObjects.OfType<IStrokeAccepter>())
             {
-                //BUG?: needs to call AccepStrokes()?
-                pageObject.AcceptedStrokes = pageObject.GetStrokesOverPageObject().ToList();
+                pageObject.ChangeAcceptedStrokes(addedStrokes, removedStrokes);
             }
         }
 
@@ -249,6 +266,7 @@ namespace CLP.Entities
                 pageObject.OnAdded(true);
             }
 
+            var removedStrokes = new List<Stroke>();
             foreach (var stroke in StrokeIDsRemoved.Select(id => ParentPage.GetVerifiedStrokeOnPageByID(id)))
             {
                 if (stroke == null)
@@ -256,10 +274,12 @@ namespace CLP.Entities
                     Console.WriteLine("ERROR: Null stroke in StrokeIDsRemoved in ObjectsOnPageChangedHistoryItem on History Index {0}.", HistoryIndex);
                     continue;
                 }
+                removedStrokes.Add(stroke);
                 ParentPage.InkStrokes.Remove(stroke);
                 ParentPage.History.TrashedInkStrokes.Add(stroke);
             }
 
+            var addedStrokes = new List<Stroke>();
             foreach (var stroke in StrokeIDsAdded.Select(id => ParentPage.GetVerifiedStrokeInHistoryByID(id)))
             {
                 if (stroke == null)
@@ -267,14 +287,14 @@ namespace CLP.Entities
                     Console.WriteLine("ERROR: Null stroke in StrokeIDsAdded in ObjectsOnPageChangedHistoryItem on History Index {0}.", HistoryIndex);
                     continue;
                 }
+                addedStrokes.Add(stroke);
                 ParentPage.History.TrashedInkStrokes.Remove(stroke);
                 ParentPage.InkStrokes.Add(stroke);
             }
 
             foreach (var pageObject in ParentPage.PageObjects.OfType<IStrokeAccepter>())
             {
-                //BUG?: needs to call AccepStrokes()?
-                pageObject.AcceptedStrokes = pageObject.GetStrokesOverPageObject().ToList();
+                pageObject.ChangeAcceptedStrokes(addedStrokes, removedStrokes);
             }
         }
 

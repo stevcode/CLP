@@ -231,7 +231,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData AcceptedStrokeParentIDsProperty = RegisterProperty("AcceptedStrokeParentIDs", typeof (List<string>), () => new List<string>());
 
-        public void AcceptStrokes(IEnumerable<Stroke> addedStrokes, IEnumerable<Stroke> removedStrokes)
+        public void ChangeAcceptedStrokes(IEnumerable<Stroke> addedStrokes, IEnumerable<Stroke> removedStrokes)
         {
             if (!CanAcceptStrokes)
             {
@@ -247,36 +247,11 @@ namespace CLP.Entities
             }
 
             // Add Strokes
-            var numberLineBodyBoundingBox = new Rect(XPosition, YPosition, Width, Height);
-            foreach (var stroke in addedStrokes.Where(stroke => stroke.HitTest(numberLineBodyBoundingBox, 5) && !AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
+            var addedStrokesList = addedStrokes as IList<Stroke> ?? addedStrokes.ToList();
+            foreach (var stroke in addedStrokesList.Where(stroke => IsStrokeOverPageObject(stroke) && !AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
             {
                 AcceptedStrokes.Add(stroke);
                 AcceptedStrokeParentIDs.Add(stroke.GetStrokeID());
-            }
-
-            MultipleChoiceBubble mostFilledBubble = null;
-            var previousStrokeLength = 0;
-            foreach (var multipleChoiceBubble in ChoiceBubbles)
-            {
-                multipleChoiceBubble.IsMarked = false;
-
-                var bubbleBoundary = new Rect(XPosition + multipleChoiceBubble.ChoiceBubbleIndex * ChoiceBubbleGapLength, YPosition, ChoiceBubbleDiameter, ChoiceBubbleDiameter);
-                var strokesOverBubble = AcceptedStrokes.Where(s => s.HitTest(bubbleBoundary, 80));
-
-                var totalStrokeLength = strokesOverBubble.Sum(s => s.StylusPoints.Count);
-                if (totalStrokeLength <= previousStrokeLength ||
-                    totalStrokeLength <= 100)
-                {
-                    continue;
-                }
-
-                mostFilledBubble = multipleChoiceBubble;
-                previousStrokeLength = totalStrokeLength;
-            }
-
-            if (mostFilledBubble != null)
-            {
-                mostFilledBubble.IsMarked = true;
             }
         }
 
@@ -307,7 +282,7 @@ namespace CLP.Entities
 
             var strokesOverObject = GetStrokesOverPageObject();
 
-            AcceptStrokes(strokesOverObject, new StrokeCollection());
+            ChangeAcceptedStrokes(strokesOverObject, new StrokeCollection());
         }
 
         #endregion //IStrokeAccepter Implementation

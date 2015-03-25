@@ -49,6 +49,7 @@ namespace Classroom_Learning_Partner.Services
             ActivePageViewModels = new List<ACLPPageBaseViewModel>();
             CurrentPageInteractionMode = PageInteractionModes.Draw;
             CurrentDrawMode = DrawModes.Pen;
+            IsInkInteracting = true;
             CurrentErasingMode = ErasingModes.Ink;
             StrokeEraserMode = InkCanvasEditingMode.EraseByStroke;
             PenColor = Colors.Black;
@@ -58,6 +59,7 @@ namespace Classroom_Learning_Partner.Services
 
         public PageInteractionModes CurrentPageInteractionMode { get; private set; }
         public DrawModes CurrentDrawMode { get; private set; }
+        public bool IsInkInteracting { get; set; }
         public ErasingModes CurrentErasingMode { get; private set; }
         public InkCanvasEditingMode StrokeEraserMode { get; private set; }
         public Color PenColor { get; private set; }

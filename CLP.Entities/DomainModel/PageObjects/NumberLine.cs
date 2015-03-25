@@ -259,10 +259,91 @@ namespace CLP.Entities
             {
                 var isLabelVisible = i == 0 ||
                                      i == NumberLineSize ||
-                                     i % defaultInteger == 0;
+                                     i % defaultInteger == 0 ||
+                                     JumpSizes.Any(j => j.StartingTickIndex == i || j.StartingTickIndex + j.JumpSize == i);
 
                 Ticks[i].IsNumberVisible = isLabelVisible;
             }
+        }
+
+        public bool RemoveJumpFromStroke(Stroke stroke)
+        {
+            var tickR = FindClosestTick(stroke, true);
+            var tickL = FindClosestTick(stroke, false);
+            if (tickR == null ||
+                tickL == null ||
+                tickR == tickL)
+            {
+                return false;
+            }
+
+            var deletedStartTickValue = tickL.TickValue;
+            var deletedJumpSize = tickR.TickValue - tickL.TickValue;
+
+            var jumpToRemove = JumpSizes.FirstOrDefault(jump => jump.JumpSize == deletedJumpSize && jump.StartingTickIndex == deletedStartTickValue);
+            if (jumpToRemove == null)
+            {
+                return false;
+            }
+
+            JumpSizes.Remove(jumpToRemove);
+
+            if (JumpSizes.All(x => x.StartingTickIndex != tickR.TickValue))
+            {
+                tickR.IsMarked = false;
+                tickR.TickColor = "Black";
+                tickR.IsNumberVisible = NumberLineSize <= MAX_ALL_TICKS_VISIBLE_LENGTH || tickR.TickValue % 5 == 0;
+            }
+
+            if (JumpSizes.All(x => x.StartingTickIndex + x.JumpSize != tickL.TickValue))
+            {
+                tickL.IsMarked = false;
+                tickL.TickColor = "Black";
+                tickL.IsNumberVisible = NumberLineSize <= MAX_ALL_TICKS_VISIBLE_LENGTH || tickL.TickValue % 5 == 0;
+            }
+
+            return true;
+        }
+
+        public bool AddJumpFromStroke(Stroke stroke)
+        {
+            var tickR = FindClosestTick(stroke, true);
+            var tickL = FindClosestTick(stroke, false);
+            if (tickR == null ||
+                tickL == null ||
+                tickR == tickL)
+            {
+                return false;
+            }
+
+            tickR.IsMarked = true;
+            tickR.IsNumberVisible = true;
+            tickL.IsMarked = true;
+            tickL.IsNumberVisible = true;
+            if (stroke.DrawingAttributes.Color == Colors.Black)
+            {
+                tickR.TickColor = "Blue";
+                tickL.TickColor = "Blue";
+            }
+            else
+            {
+                tickR.TickColor = stroke.DrawingAttributes.Color.ToString();
+                tickL.TickColor = stroke.DrawingAttributes.Color.ToString();
+            }
+
+            var jumpSize = tickR.TickValue - tickL.TickValue;
+            JumpSizes.Add(new NumberLineJumpSize(jumpSize, tickL.TickValue));
+
+            return true;
+        }
+
+        public NumberLineTick FindClosestTick(Stroke stroke, bool isLookingForRightTick)
+        {
+            return FindClosestTick(new StrokeCollection
+                                   {
+                                       stroke
+                                   },
+                                   isLookingForRightTick);
         }
 
         public NumberLineTick FindClosestTick(StrokeCollection strokes, bool isLookingForRightTick)
@@ -518,7 +599,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData AcceptedStrokeParentIDsProperty = RegisterProperty("AcceptedStrokeParentIDs", typeof (List<string>), () => new List<string>());
 
-        public void AcceptStrokes(IEnumerable<Stroke> addedStrokes, IEnumerable<Stroke> removedStrokes)
+        public void ChangeAcceptedStrokes(IEnumerable<Stroke> addedStrokes, IEnumerable<Stroke> removedStrokes)
         {
             if (!CanAcceptStrokes)
             {
@@ -527,99 +608,18 @@ namespace CLP.Entities
 
             // Remove Strokes
             var removedStrokesList = removedStrokes as IList<Stroke> ?? removedStrokes.ToList();
-            var actuallyRemovedStrokes = new StrokeCollection();
             foreach (var stroke in removedStrokesList.Where(stroke => AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
             {
                 AcceptedStrokes.Remove(stroke);
                 AcceptedStrokeParentIDs.Remove(stroke.GetStrokeID());
-                actuallyRemovedStrokes.Add(stroke);
-            }
-            var tickR = FindClosestTick(actuallyRemovedStrokes, true);
-            var tickL = FindClosestTick(actuallyRemovedStrokes, false);
-            if (tickR != null &&
-                tickL != null &&
-                tickR != tickL)
-            {
-                var deletedStartTickValue = tickL.TickValue;
-                var deletedJumpSize = tickR.TickValue - tickL.TickValue;
-
-                var jumpsToRemove = JumpSizes.Where(jump => jump.JumpSize == deletedJumpSize && jump.StartingTickIndex == deletedStartTickValue).ToList();
-                foreach (var jump in jumpsToRemove)
-                {
-                    JumpSizes.Remove(jump);
-
-                    //
-                }
-
-                if (JumpSizes.All(x => x.StartingTickIndex != tickR.TickValue))
-                {
-                    tickR.IsMarked = false;
-                    tickR.TickColor = "Black";
-                    tickR.IsNumberVisible = NumberLineSize <= MAX_ALL_TICKS_VISIBLE_LENGTH || tickR.TickValue % 5 == 0;
-                }
-
-                if (JumpSizes.All(x => x.StartingTickIndex + x.JumpSize != tickL.TickValue))
-                {
-                    tickL.IsMarked = false;
-                    tickL.TickColor = "Black";
-                    tickL.IsNumberVisible = NumberLineSize <= MAX_ALL_TICKS_VISIBLE_LENGTH || tickL.TickValue % 5 == 0;
-                }
             }
 
             // Add Strokes
-            var actuallyAcceptedStrokes = new StrokeCollection();
-            var numberLineBodyBoundingBox = new Rect(XPosition, YPosition, Width, Height);
-            foreach (var stroke in addedStrokes.Where(stroke => stroke.HitTest(numberLineBodyBoundingBox, 5) && !AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
+            var addedStrokesList = addedStrokes as IList<Stroke> ?? addedStrokes.ToList();
+            foreach (var stroke in addedStrokesList.Where(stroke => IsStrokeOverPageObject(stroke) && !AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
             {
                 AcceptedStrokes.Add(stroke);
                 AcceptedStrokeParentIDs.Add(stroke.GetStrokeID());
-                actuallyAcceptedStrokes.Add(stroke);
-            }
-            var tickRight = FindClosestTick(actuallyAcceptedStrokes, true);
-            var tickLeft = FindClosestTick(actuallyAcceptedStrokes, false);
-            if (tickRight != null &&
-                tickLeft != null &&
-                tickRight != tickLeft)
-            {
-                tickRight.IsMarked = true;
-                tickRight.IsNumberVisible = true;
-                tickLeft.IsMarked = true;
-                tickLeft.IsNumberVisible = true;
-                var lastStroke = actuallyAcceptedStrokes.Last();
-                if (lastStroke.DrawingAttributes.Color == Colors.Black)
-                {
-                    tickRight.TickColor = "Blue";
-                    tickLeft.TickColor = "Blue";
-                }
-                else
-                {
-                    tickRight.TickColor = lastStroke.DrawingAttributes.Color.ToString();
-                    tickLeft.TickColor = lastStroke.DrawingAttributes.Color.ToString();
-                }
-
-                if (!JumpSizes.Any())
-                {
-                    var tallestPoint = FindTallestPoint(actuallyAcceptedStrokes);
-                    tallestPoint = tallestPoint - 40;
-
-                    if (tallestPoint < 0)
-                    {
-                        tallestPoint = 0;
-                    }
-
-                    if (tallestPoint > YPosition + Height - NumberLineHeight)
-                    {
-                        tallestPoint = YPosition + Height - NumberLineHeight;
-                    }
-
-                    Height = Height + (YPosition - tallestPoint);
-                    YPosition = tallestPoint;
-                }
-
-                var jumpSize = tickRight.TickValue - tickLeft.TickValue;
-                JumpSizes.Add(new NumberLineJumpSize(jumpSize, tickLeft.TickValue));
-
-                //
             }
         }
 
@@ -650,7 +650,7 @@ namespace CLP.Entities
 
             var strokesOverObject = GetStrokesOverPageObject();
 
-            AcceptStrokes(strokesOverObject, new StrokeCollection());
+            ChangeAcceptedStrokes(strokesOverObject, new StrokeCollection());
         }
 
         #endregion //IStrokeAccepter Implementation

@@ -150,7 +150,7 @@ namespace CLP.Entities
 
                     var addStrokes = new StrokeCollection(addedStrokesOverObject);
                     var removeStrokes = new StrokeCollection(removedStrokesOverObject);
-                    acceptorPageObject.AcceptStrokes(addStrokes, removeStrokes);
+                    acceptorPageObject.ChangeAcceptedStrokes(addStrokes, removeStrokes);
                 }
             }
             catch (Exception ex)
