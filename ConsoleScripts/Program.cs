@@ -69,29 +69,30 @@ namespace ConsoleScripts
 
                     //ReplaceHistoryItems(page);
                     //HackJumpSizeHistoryItems(page);
+                    AdjustNumberLineEndPointChangedHistoryItem(page);
 
-                    for (int i = 0; i < page.History.UndoItems.Count; i++)
-                    {
-                        var historyItem = page.History.UndoItems[i];
+                    //for (int i = 0; i < page.History.UndoItems.Count; i++)
+                    //{
+                    //    var historyItem = page.History.UndoItems[i];
 
-                        if (historyItem is NumberLineEndPointsChangedHistoryItem)
-                        {
-                            if (i + 1 < page.History.UndoItems.Count)
-                            {
-                                var previousHistoryItem = page.History.UndoItems[i + 1] as PageObjectResizeBatchHistoryItem;
-                                if (previousHistoryItem != null)
-                                {
-                                    if (previousHistoryItem.StretchedDimensions.Count == 2 &&
-                                        previousHistoryItem.StretchedDimensions.First() != previousHistoryItem.StretchedDimensions.Last())
-                                    {
-                                        Console.WriteLine("Found resize BEFORE endpoints changed that actually resizes");
-                                    }
-                                }
-                            }
+                    //    if (historyItem is NumberLineEndPointsChangedHistoryItem)
+                    //    {
+                    //        if (i + 1 < page.History.UndoItems.Count)
+                    //        {
+                    //            var previousHistoryItem = page.History.UndoItems[i + 1] as PageObjectResizeBatchHistoryItem;
+                    //            if (previousHistoryItem != null)
+                    //            {
+                    //                if (previousHistoryItem.StretchedDimensions.Count == 2 &&
+                    //                    previousHistoryItem.StretchedDimensions.First() != previousHistoryItem.StretchedDimensions.Last())
+                    //                {
+                    //                    Console.WriteLine("Found resize BEFORE endpoints changed that actually resizes");
+                    //                }
+                    //            }
+                    //        }
 
-                            continue;
-                        }
-                    }
+                    //        continue;
+                    //    }
+                    //}
 
                     page.History.RefreshHistoryIndexes();
                     //Finished doing stuff to page, it'll save below.
@@ -282,7 +283,8 @@ namespace ConsoleScripts
                                                                                                             stroke
                                                                                                         },
                                                                                                         oldHeight,
-                                                                                                        oldYPosition);
+                                                                                                        oldYPosition,
+                                                                                                        true);
 
                                 page.History.UndoItems.Insert(0, jumpsChangedHistoryItem);
                                 break;
@@ -323,7 +325,8 @@ namespace ConsoleScripts
                                                                                                         },
                                                                                                         new List<Stroke>(),
                                                                                                         oldHeight,
-                                                                                                        oldYPosition);
+                                                                                                        oldYPosition,
+                                                                                                        true);
 
                                 page.History.UndoItems.Insert(0, jumpsChangedHistoryItem);
                                 break;

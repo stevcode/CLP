@@ -24,7 +24,8 @@ namespace CLP.Entities
                                                      List<Stroke> addedJumpStrokes,
                                                      List<Stroke> removedJumpStrokes,
                                                      double previousHeight,
-                                                     double previousYPosition)
+                                                     double previousYPosition,
+                                                     bool isConversionCreation = false)
             : base(parentPage, owner)
         {
             NumberLineID = numberLineID;
@@ -35,7 +36,10 @@ namespace CLP.Entities
             foreach (var stroke in removedJumpStrokes)
             {
                 RemovedJumpStrokeIDs.Add(stroke.GetStrokeID());
-                ParentPage.History.TrashedInkStrokes.Add(stroke);
+                if (!isConversionCreation)
+                {
+                    ParentPage.History.TrashedInkStrokes.Add(stroke);
+                }
             }
         }
 
