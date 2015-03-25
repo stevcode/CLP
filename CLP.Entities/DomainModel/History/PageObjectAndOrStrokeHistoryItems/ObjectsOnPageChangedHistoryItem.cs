@@ -64,6 +64,54 @@ namespace CLP.Entities
 
         #endregion //Constructors
 
+        #region Obsolete Constructors
+
+        /// <summary>Initializes <see cref="ObjectsMovedBatchHistoryItem" /> from <see cref="StrokesChangedHistoryItem" />.</summary>
+        public ObjectsOnPageChangedHistoryItem(StrokesChangedHistoryItem obsoleteHistoryItem)
+        {
+            ID = obsoleteHistoryItem.ID;
+            OwnerID = obsoleteHistoryItem.OwnerID;
+            VersionIndex = obsoleteHistoryItem.VersionIndex;
+            LastVersionIndex = obsoleteHistoryItem.LastVersionIndex;
+            DifferentiationGroup = obsoleteHistoryItem.DifferentiationGroup;
+            ParentPage = obsoleteHistoryItem.ParentPage;
+
+            PageObjectIDsAdded = new List<string>();
+            StrokeIDsAdded = obsoleteHistoryItem.StrokeIDsAdded;
+            StrokeIDsRemoved = obsoleteHistoryItem.StrokeIDsRemoved;
+        }
+
+        /// <summary>Initializes <see cref="ObjectsMovedBatchHistoryItem" /> from <see cref="PageObjectsAddedHistoryItem" />.</summary>
+        public ObjectsOnPageChangedHistoryItem(PageObjectsAddedHistoryItem obsoleteHistoryItem)
+        {
+            ID = obsoleteHistoryItem.ID;
+            OwnerID = obsoleteHistoryItem.OwnerID;
+            VersionIndex = obsoleteHistoryItem.VersionIndex;
+            LastVersionIndex = obsoleteHistoryItem.LastVersionIndex;
+            DifferentiationGroup = obsoleteHistoryItem.DifferentiationGroup;
+            ParentPage = obsoleteHistoryItem.ParentPage;
+
+            PageObjectIDsAdded = obsoleteHistoryItem.PageObjectIDs; 
+            StrokeIDsAdded = new List<string>();
+        }
+
+        /// <summary>Initializes <see cref="ObjectsMovedBatchHistoryItem" /> from <see cref="PageObjectsRemovedHistoryItem" />.</summary>
+        public ObjectsOnPageChangedHistoryItem(PageObjectsRemovedHistoryItem obsoleteHistoryItem)
+        {
+            ID = obsoleteHistoryItem.ID;
+            OwnerID = obsoleteHistoryItem.OwnerID;
+            VersionIndex = obsoleteHistoryItem.VersionIndex;
+            LastVersionIndex = obsoleteHistoryItem.LastVersionIndex;
+            DifferentiationGroup = obsoleteHistoryItem.DifferentiationGroup;
+            ParentPage = obsoleteHistoryItem.ParentPage;
+
+            PageObjectIDsRemoved = obsoleteHistoryItem.PageObjectIDs;
+            PageObjectIDsAdded = new List<string>();
+            StrokeIDsAdded = new List<string>();
+        } 
+
+        #endregion //Obsolete Constructors
+
         #region Properties
 
         public override int AnimationDelay
