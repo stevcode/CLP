@@ -933,9 +933,9 @@ namespace Classroom_Learning_Partner.ViewModels
             var arraysOnPage = CurrentPage.PageObjects.OfType<CLPArray>().ToList();
             var inkOnPage = CurrentPage.InkStrokes;
 
-            foreach (var inkStroke in inkOnPage)
+            foreach (var array in arraysOnPage) 
             {
-                foreach (var array in arraysOnPage)
+                foreach (var inkStroke in inkOnPage)
                 {
                     var skipCountStrokes = new Dictionary<int, StrokeCollection>();
                     var xpos = array.XPosition + array.LabelLength + array.ArrayWidth;
@@ -955,8 +955,7 @@ namespace Classroom_Learning_Partner.ViewModels
                             skipCountStrokes[i].Add(inkStroke);
                         }
                     }
-
-                    //print Console.WriteLine
+                    Console.WriteLine(inkStroke, skipCountStrokes);
                 }
             }
             
