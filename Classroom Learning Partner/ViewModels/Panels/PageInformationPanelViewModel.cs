@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Ink;
 using System.Windows.Media.Imaging;
 using Catel.Collections;
 using Catel.Data;
@@ -936,15 +937,26 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 foreach (var array in arraysOnPage)
                 {
-                    var rectBound = Rect; //not sure how to make Rectangle object and set dimensions, position
-                    var height = array.ArrayHeight;
-                    var width = array.ArrayWidth;
-                    var xpos = array.XPosition;
-                    var ypos = array.YPosition;
-                    if (inkStroke.HitTest(rectBound, 0.8))
+                    var skipCountStrokes = new Dictionary<int, StrokeCollection>();
+                    var xpos = array.XPosition + array.LabelLength + array.ArrayWidth;
+                    var width = 2 * array.LabelLength;
+                    var height = array.GridSquareSize;
+
+                    for (int i = 0; i < array.Rows; i++)
                     {
-                        //create array, set to True
+                        var ypos = array.YPosition + array.LabelLength + (array.GridSquareSize*i);
+                        var rectBound = new Rect(xpos, ypos, width, height);
+                        if (inkStroke.HitTest(rectBound, 80))
+                        {
+                            if (!skipCountStrokes.ContainsKey(i))
+                            {
+                                skipCountStrokes.Add(i, new StrokeCollection());
+                            }
+                            skipCountStrokes[i].Add(inkStroke);
+                        }
                     }
+
+                    //print Console.WriteLine
                 }
             }
             
