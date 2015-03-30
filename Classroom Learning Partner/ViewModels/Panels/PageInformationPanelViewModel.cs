@@ -955,7 +955,7 @@ namespace Classroom_Learning_Partner.ViewModels
                             skipCountStrokes[i].Add(inkStroke);
                         }
                     }
-                    Console.WriteLine(inkStroke, skipCountStrokes);
+                    Console.WriteLine(skipCountStrokes);
                 }
             }
             
