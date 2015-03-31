@@ -68,6 +68,7 @@ namespace CLP.Entities
             }
 
             ImageHashID = imageHashID;
+
             if (stampType == StampTypes.ObservingStamp)
             {
                 Parts = 1;
@@ -88,14 +89,6 @@ namespace CLP.Entities
         #endregion //Constructors
 
         #region Properties
-
-        public override int ZIndex { get { return 60; } }
-
-        /// <summary>Determines whether the <see cref="IPageObject" /> has properties can be changed by a <see cref="Person" /> anyone at any time.</summary>
-        public override bool IsBackgroundInteractable
-        {
-            get { return true; }
-        }
 
         public virtual double HandleHeight
         {
@@ -140,7 +133,118 @@ namespace CLP.Entities
 
         public static readonly PropertyData StampTypeProperty = RegisterProperty("StampType", typeof (StampTypes), StampTypes.GeneralStamp);
 
-        #region ICountable Members
+        #endregion //Properties
+
+        #region APageObjectBase Overrides
+
+        public override int ZIndex
+        {
+            get { return 60; }
+        }
+
+        public override bool IsBackgroundInteractable
+        {
+            get { return true; }
+        }
+
+        public override void OnAdded(bool fromHistory = false)
+        {
+            if (fromHistory)
+            {
+                if (!CanAcceptStrokes ||
+                    !AcceptedStrokes.Any())
+                {
+                    return;
+                }
+
+                //BUG: This is going to cause issues if you use Undo or Redo while not in Select Mode
+                ParentPage.InkStrokes.Add(new StrokeCollection(AcceptedStrokes));
+                ParentPage.History.TrashedInkStrokes.Remove(new StrokeCollection(AcceptedStrokes));
+                return;
+            }
+
+            ApplyDistinctPosition(this);
+        }
+
+        public override void OnDeleted(bool fromHistory = false)
+        {
+            if (!CanAcceptStrokes ||
+                !AcceptedStrokes.Any())
+            {
+                return;
+            }
+
+            var strokesToTrash = new StrokeCollection();
+
+            foreach (var stroke in AcceptedStrokes.Where(stroke => ParentPage.InkStrokes.Contains(stroke)))
+            {
+                strokesToTrash.Add(stroke);
+            }
+
+            ParentPage.InkStrokes.Remove(strokesToTrash);
+            ParentPage.History.TrashedInkStrokes.Add(strokesToTrash);
+        }
+
+        public override void OnMoving(double oldX, double oldY, bool fromHistory = false)
+        {
+            var deltaX = XPosition - oldX;
+            var deltaY = YPosition - oldY;
+
+            if (CanAcceptStrokes)
+            {
+                foreach (var stroke in AcceptedStrokes)
+                {
+                    var transform = new Matrix();
+                    transform.Translate(deltaX, deltaY);
+                    stroke.Transform(transform, true);
+                }
+            }
+
+            if (CanAcceptPageObjects)
+            {
+                foreach (var pageObject in AcceptedPageObjects)
+                {
+                    pageObject.XPosition += deltaX;
+                    pageObject.YPosition += deltaY;
+                }
+            }
+        }
+
+        public override void OnMoved(double oldX, double oldY, bool fromHistory = false) { OnMoving(oldX, oldY, fromHistory); }
+
+        public override bool PageObjectIsOver(IPageObject pageObject, double percentage)
+        {
+            var areaObject = pageObject.Height * pageObject.Width;
+            var area = (Height - HandleHeight - PartsHeight) * Width;
+            var top = Math.Max(YPosition + HandleHeight, pageObject.YPosition);
+            var bottom = Math.Min(YPosition + Height - PartsHeight, pageObject.YPosition + pageObject.Height);
+            var left = Math.Max(XPosition, pageObject.XPosition);
+            var right = Math.Min(XPosition + Width, pageObject.XPosition + pageObject.Width);
+            var deltaY = bottom - top;
+            var deltaX = right - left;
+            var intersectionArea = deltaY * deltaX;
+            return deltaY >= 0 && deltaX >= 0 && (intersectionArea / areaObject >= .90 || intersectionArea / area >= .90);
+        }
+
+        public override IPageObject Duplicate()
+        {
+            var newStamp = Clone() as Stamp;
+            if (newStamp == null)
+            {
+                return null;
+            }
+            newStamp.CreationDate = DateTime.Now;
+            newStamp.ID = Guid.NewGuid().ToCompactID();
+            newStamp.VersionIndex = 0;
+            newStamp.LastVersionIndex = null;
+            newStamp.ParentPage = ParentPage;
+
+            return newStamp;
+        }
+
+        #endregion //APageObjectBase Overrides
+
+        #region ICountable Implementation
 
         /// <summary>Number of parts the <see cref="Stamp" /> represents.</summary>
         public int Parts
@@ -169,9 +273,24 @@ namespace CLP.Entities
 
         public static readonly PropertyData IsPartsAutoGeneratedProperty = RegisterProperty("IsPartsAutoGenerated", typeof (bool), false);
 
-        #endregion
+        public void RefreshParts()
+        {
+            Parts = 0;
+            foreach (var pageObject in AcceptedPageObjects.OfType<ICountable>())
+            {
+                Parts += pageObject.Parts;
+            }
+        }
 
-        #region IStrokeAccepter Members
+        #endregion //ICountable Implementation
+
+        #region IStrokeAccepter Implementation
+
+        /// <summary>Stroke must be at least this percent contained by pageObject.</summary>
+        public int StrokeHitTestPercentage
+        {
+            get { return 50; }
+        }
 
         /// <summary>Determines whether the <see cref="Stamp" /> can currently accept <see cref="Stroke" />s.</summary>
         public bool CanAcceptStrokes
@@ -191,9 +310,7 @@ namespace CLP.Entities
             set { SetValue(AcceptedStrokesProperty, value); }
         }
 
-        public static readonly PropertyData AcceptedStrokesProperty = RegisterProperty("AcceptedStrokes",
-                                                                                       typeof (List<Stroke>),
-                                                                                       () => new List<Stroke>());
+        public static readonly PropertyData AcceptedStrokesProperty = RegisterProperty("AcceptedStrokes", typeof (List<Stroke>), () => new List<Stroke>());
 
         /// <summary>The IDs of the <see cref="Stroke" />s that have been accepted.</summary>
         public List<string> AcceptedStrokeParentIDs
@@ -202,251 +319,43 @@ namespace CLP.Entities
             set { SetValue(AcceptedStrokeParentIDsProperty, value); }
         }
 
-        public static readonly PropertyData AcceptedStrokeParentIDsProperty = RegisterProperty("AcceptedStrokeParentIDs",
-                                                                                               typeof (List<string>),
-                                                                                               () => new List<string>());
+        public static readonly PropertyData AcceptedStrokeParentIDsProperty = RegisterProperty("AcceptedStrokeParentIDs", typeof (List<string>), () => new List<string>());
 
-        #endregion //IStrokeAccepter Members
-
-        #region IPageObjectAccepter Members
-
-        /// <summary>Determines whether the <see cref="Stamp" /> can currently accept <see cref="IPageObject" />s.</summary>
-        public bool CanAcceptPageObjects
-        {
-            get { return GetValue<bool>(CanAcceptPageObjectsProperty); }
-            set { SetValue(CanAcceptPageObjectsProperty, value); }
-        }
-
-        public static readonly PropertyData CanAcceptPageObjectsProperty = RegisterProperty("CanAcceptPageObjects", typeof (bool), false);
-
-        /// <summary>The currently accepted <see cref="IPageObject" />s.</summary>
-        [XmlIgnore]
-        public List<IPageObject> AcceptedPageObjects
-        {
-            get { return GetValue<List<IPageObject>>(AcceptedPageObjectsProperty); }
-            set { SetValue(AcceptedPageObjectsProperty, value); }
-        }
-
-        public static readonly PropertyData AcceptedPageObjectsProperty = RegisterProperty("AcceptedPageObjects",
-                                                                                           typeof (List<IPageObject>),
-                                                                                           () => new List<IPageObject>());
-
-        /// <summary>The IDs of the <see cref="IPageObject" />s that have been accepted.</summary>
-        public List<string> AcceptedPageObjectIDs
-        {
-            get { return GetValue<List<string>>(AcceptedPageObjectIDsProperty); }
-            set { SetValue(AcceptedPageObjectIDsProperty, value); }
-        }
-
-        public static readonly PropertyData AcceptedPageObjectIDsProperty = RegisterProperty("AcceptedPageObjectIDs",
-                                                                                             typeof (List<string>),
-                                                                                             () => new List<string>());
-
-        #endregion //IPageObjectAccepter Members
-
-        #region IReporter Members
-
-        private int NumberInGroups
-        {
-            get
-            {
-                if (ParentPage == null)
-                {
-                    return 0;
-                }
-
-                var childStampedObjects = ParentPage.PageObjects.OfType<StampedObject>().Where(x => x.ParentStampID == ID).ToList();
-                var groupStampedObjects =
-                    ParentPage.PageObjects.OfType<StampedObject>()
-                              .Where(
-                                     x =>
-                                     (x.StampedObjectType == StampedObjectTypes.GroupStampedObject ||
-                                      x.StampedObjectType == StampedObjectTypes.EmptyGroupStampedObject) && x.Parts > 0)
-                              .ToList();
-
-                var groupedStampedObjects =
-                    childStampedObjects.Where(c => groupStampedObjects.Count(x => x.AcceptedPageObjectIDs.Contains(c.ID)) > 0).ToList();
-
-                return groupedStampedObjects.Count;
-            }
-        }
-
-        private int NumberNotInGroups
-        {
-            get
-            {
-                if (ParentPage == null)
-                {
-                    return 0;
-                }
-
-                var childStampedObjects = ParentPage.PageObjects.OfType<StampedObject>().Where(x => x.ParentStampID == ID).ToList();
-                var groupStampedObjects =
-                    ParentPage.PageObjects.OfType<StampedObject>()
-                              .Where(
-                                     x =>
-                                     (x.StampedObjectType == StampedObjectTypes.GroupStampedObject ||
-                                      x.StampedObjectType == StampedObjectTypes.EmptyGroupStampedObject) && x.Parts > 0)
-                              .ToList();
-
-                var groupedStampedObjects =
-                    childStampedObjects.Where(c => groupStampedObjects.Count(x => x.AcceptedPageObjectIDs.Contains(c.ID)) > 0).ToList();
-
-                return childStampedObjects.Count - groupedStampedObjects.Count;
-            }
-        }
-
-        /// <summary>Formatted value of the <see cref="IReporter" />.</summary>
-        public string FormattedReport
-        {
-            get
-            {
-                return StampType != StampTypes.ObservingStamp
-                           ? string.Empty
-                           : string.Format("{0} in groups\n" + "{1} not in groups", NumberInGroups, NumberNotInGroups);
-            }
-        }
-
-        #endregion //IReporter Members
-
-        #endregion //Properties
-
-        #region Methods
-
-        public override void OnAdded()
-        {
-            ApplyDistinctPosition(this);
-        }
-
-        public override void OnRestoredFromHistory()
-        {
-            if (!CanAcceptStrokes ||
-                !AcceptedStrokes.Any())
-            {
-                return;
-            }
-
-            //BUG: This is going to cause issues if you use Undo or Redo while not in Select Mode
-            ParentPage.InkStrokes.Add(new StrokeCollection(AcceptedStrokes));
-            ParentPage.History.TrashedInkStrokes.Remove(new StrokeCollection(AcceptedStrokes));
-        }
-
-        public override void OnDeleted()
-        {
-            if (!CanAcceptStrokes ||
-                !AcceptedStrokes.Any())
-            {
-                return;
-            }
-
-            var strokesToTrash = new StrokeCollection();
-
-            foreach (var stroke in AcceptedStrokes.Where(stroke => ParentPage.InkStrokes.Contains(stroke))) 
-            {
-                strokesToTrash.Add(stroke);
-            }
-
-            ParentPage.InkStrokes.Remove(strokesToTrash);
-            ParentPage.History.TrashedInkStrokes.Add(strokesToTrash);
-        }
-
-        public override void OnResizing(double oldWidth, double oldHeight) { }
-
-        public override void OnResized(double oldWidth, double oldHeight) { OnResizing(oldWidth, oldHeight); }
-
-        public override void OnMoving(double oldX, double oldY)
-        {
-            var deltaX = XPosition - oldX;
-            var deltaY = YPosition - oldY;
-
-            if (CanAcceptStrokes)
-            {
-                foreach (var stroke in AcceptedStrokes)
-                {
-                    var transform = new Matrix();
-                    transform.Translate(deltaX, deltaY);
-                    stroke.Transform(transform, true);
-                }
-            }
-
-            if (CanAcceptPageObjects)
-            {
-                foreach (var pageObject in AcceptedPageObjects)
-                {
-                    pageObject.XPosition += deltaX;
-                    pageObject.YPosition += deltaY;
-                }
-            }
-        }
-
-        public override IPageObject Duplicate()
-        {
-            var newStamp = Clone() as Stamp;
-            if (newStamp == null)
-            {
-                return null;
-            }
-            newStamp.CreationDate = DateTime.Now;
-            newStamp.ID = Guid.NewGuid().ToCompactID();
-            newStamp.VersionIndex = 0;
-            newStamp.LastVersionIndex = null;
-            newStamp.ParentPage = ParentPage;
-
-            return newStamp;
-        }
-
-        public override bool PageObjectIsOver(IPageObject pageObject, double percentage)
-        {
-            var areaObject = pageObject.Height * pageObject.Width;
-            var area = (Height - HandleHeight - PartsHeight) * Width;
-            var top = Math.Max(YPosition + HandleHeight, pageObject.YPosition);
-            var bottom = Math.Min(YPosition + Height - PartsHeight, pageObject.YPosition + pageObject.Height);
-            var left = Math.Max(XPosition, pageObject.XPosition);
-            var right = Math.Min(XPosition + Width, pageObject.XPosition + pageObject.Width);
-            var deltaY = bottom - top;
-            var deltaX = right - left;
-            var intersectionArea = deltaY * deltaX;
-            return deltaY >= 0 && deltaX >= 0 && (intersectionArea / areaObject >= .90 || intersectionArea / area >= .90);
-        }
-
-        public void RefreshParts()
-        {
-            Parts = 0;
-            foreach (var pageObject in AcceptedPageObjects.OfType<ICountable>())
-            {
-                Parts += pageObject.Parts;
-            }
-        }
-
-        #region IStrokeAccepter Methods
-
-        public void AcceptStrokes(IEnumerable<Stroke> addedStrokes, IEnumerable<Stroke> removedStrokes)
+        public void ChangeAcceptedStrokes(IEnumerable<Stroke> addedStrokes, IEnumerable<Stroke> removedStrokes)
         {
             if (!CanAcceptStrokes)
             {
                 return;
             }
 
-            foreach (var stroke in removedStrokes.Where(stroke => AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
+            // Remove Strokes
+            var removedStrokesList = removedStrokes as IList<Stroke> ?? removedStrokes.ToList();
+            foreach (var stroke in removedStrokesList.Where(stroke => AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
             {
                 AcceptedStrokes.Remove(stroke);
                 AcceptedStrokeParentIDs.Remove(stroke.GetStrokeID());
             }
 
-            var stampBodyBoundingBox = new Rect(XPosition, YPosition + HandleHeight, Width, Height - HandleHeight - PartsHeight);
-            foreach (var stroke in
-                addedStrokes.Where(stroke => stroke.HitTest(stampBodyBoundingBox, 50) && !AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
+            // Add Strokes
+            var addedStrokesList = addedStrokes as IList<Stroke> ?? addedStrokes.ToList();
+            foreach (var stroke in addedStrokesList.Where(stroke => IsStrokeOverPageObject(stroke) && !AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
             {
                 AcceptedStrokes.Add(stroke);
                 AcceptedStrokeParentIDs.Add(stroke.GetStrokeID());
             }
         }
 
+        public bool IsStrokeOverPageObject(Stroke stroke)
+        {
+            var stampBodyBoundingBox = new Rect(XPosition, YPosition + HandleHeight, Width, Height - HandleHeight - PartsHeight);
+            return stroke.HitTest(stampBodyBoundingBox, StrokeHitTestPercentage);
+        }
+
         public StrokeCollection GetStrokesOverPageObject()
         {
             var stampBodyBoundingBox = new Rect(XPosition, YPosition + HandleHeight, Width, Height - HandleHeight - PartsHeight);
             var strokesOverObject = from stroke in ParentPage.InkStrokes
-                                    where stroke.HitTest(stampBodyBoundingBox, 50) //Stroke must be at least 50% contained by Stamp body.
+                                    where stroke.HitTest(stampBodyBoundingBox, StrokeHitTestPercentage)
                                     select stroke;
 
             return new StrokeCollection(strokesOverObject);
@@ -461,17 +370,43 @@ namespace CLP.Entities
                 return;
             }
 
-            var stampBodyBoundingBox = new Rect(XPosition, YPosition + HandleHeight, Width, Height - HandleHeight - PartsHeight);
-            var strokesOverObject = from stroke in ParentPage.InkStrokes
-                                    where stroke.HitTest(stampBodyBoundingBox, 50) //Stroke must be at least 50% contained by Stamp body.
-                                    select stroke;
+            var strokesOverObject = GetStrokesOverPageObject();
 
-            AcceptStrokes(new StrokeCollection(strokesOverObject), new StrokeCollection());
+            ChangeAcceptedStrokes(strokesOverObject, new StrokeCollection());
         }
 
-        #endregion //IStrokeAccepter Methods
+        #endregion //IStrokeAccepter Implementation
 
-        #region IPageObjectAccepter Methods
+        #region IPageObjectAccepter Implementation
+
+        /// <summary>Determines whether the <see cref="Stamp" /> can currently accept <see cref="IPageObject" />s.</summary>
+        public bool CanAcceptPageObjects
+        {
+            get { return GetValue<bool>(CanAcceptPageObjectsProperty); }
+            set { SetValue(CanAcceptPageObjectsProperty, value); }
+        }
+
+        public static readonly PropertyData CanAcceptPageObjectsProperty = RegisterProperty("CanAcceptPageObjects", typeof (bool), false);
+
+        /// <summary>The currently accepted <see cref="IPageObject" />s.</summary>
+        [XmlIgnore]
+        [ExcludeFromSerialization]
+        public List<IPageObject> AcceptedPageObjects
+        {
+            get { return GetValue<List<IPageObject>>(AcceptedPageObjectsProperty); }
+            set { SetValue(AcceptedPageObjectsProperty, value); }
+        }
+
+        public static readonly PropertyData AcceptedPageObjectsProperty = RegisterProperty("AcceptedPageObjects", typeof (List<IPageObject>), () => new List<IPageObject>());
+
+        /// <summary>The IDs of the <see cref="IPageObject" />s that have been accepted.</summary>
+        public List<string> AcceptedPageObjectIDs
+        {
+            get { return GetValue<List<string>>(AcceptedPageObjectIDsProperty); }
+            set { SetValue(AcceptedPageObjectIDsProperty, value); }
+        }
+
+        public static readonly PropertyData AcceptedPageObjectIDsProperty = RegisterProperty("AcceptedPageObjectIDs", typeof (List<string>), () => new List<string>());
 
         public void AcceptPageObjects(IEnumerable<IPageObject> addedPageObjects, IEnumerable<IPageObject> removedPageObjects)
         {
@@ -519,14 +454,66 @@ namespace CLP.Entities
             AcceptPageObjects(pageObjectsOverStamp, new List<IPageObject>());
         }
 
-        #endregion //IPageObjectAccepter Methods
+        #endregion //IPageObjectAccepter Implementation
 
-        #region IReporter Methods
+        #region IReporter Implementation
+
+        private int NumberInGroups
+        {
+            get
+            {
+                if (ParentPage == null)
+                {
+                    return 0;
+                }
+
+                var childStampedObjects = ParentPage.PageObjects.OfType<StampedObject>().Where(x => x.ParentStampID == ID).ToList();
+                var groupStampedObjects =
+                    ParentPage.PageObjects.OfType<StampedObject>()
+                              .Where(
+                                     x =>
+                                     (x.StampedObjectType == StampedObjectTypes.GroupStampedObject || x.StampedObjectType == StampedObjectTypes.EmptyGroupStampedObject) &&
+                                     x.Parts > 0)
+                              .ToList();
+
+                var groupedStampedObjects = childStampedObjects.Where(c => groupStampedObjects.Count(x => x.AcceptedPageObjectIDs.Contains(c.ID)) > 0).ToList();
+
+                return groupedStampedObjects.Count;
+            }
+        }
+
+        private int NumberNotInGroups
+        {
+            get
+            {
+                if (ParentPage == null)
+                {
+                    return 0;
+                }
+
+                var childStampedObjects = ParentPage.PageObjects.OfType<StampedObject>().Where(x => x.ParentStampID == ID).ToList();
+                var groupStampedObjects =
+                    ParentPage.PageObjects.OfType<StampedObject>()
+                              .Where(
+                                     x =>
+                                     (x.StampedObjectType == StampedObjectTypes.GroupStampedObject || x.StampedObjectType == StampedObjectTypes.EmptyGroupStampedObject) &&
+                                     x.Parts > 0)
+                              .ToList();
+
+                var groupedStampedObjects = childStampedObjects.Where(c => groupStampedObjects.Count(x => x.AcceptedPageObjectIDs.Contains(c.ID)) > 0).ToList();
+
+                return childStampedObjects.Count - groupedStampedObjects.Count;
+            }
+        }
+
+        /// <summary>Formatted value of the <see cref="IReporter" />.</summary>
+        public string FormattedReport
+        {
+            get { return StampType != StampTypes.ObservingStamp ? string.Empty : string.Format("{0} in groups\n" + "{1} not in groups", NumberInGroups, NumberNotInGroups); }
+        }
 
         public void UpdateReport() { RaisePropertyChanged("FormattedReport"); }
 
-        #endregion //IReporter Methods
-
-        #endregion //Methods
+        #endregion //IReporter Implementation
     }
 }

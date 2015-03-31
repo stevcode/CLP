@@ -178,6 +178,13 @@ namespace CLP.Entities
                 CurrentBatchTickIndex = NumberOfBatchTicks;
             }
 
+            if (!PageObjectIDs.Any())
+            {
+                Console.WriteLine("ERROR: PageObjectIDs is empty on ObjectsMovedBatch.");
+                CurrentBatchTickIndex = -1;
+                return;
+            }
+
             foreach (var pageObjectID in PageObjectIDs)
             {
                 var pageObject = ParentPage.GetVerifiedPageObjectOnPageByID(pageObjectID);
@@ -186,8 +193,6 @@ namespace CLP.Entities
                 {
                     continue;
                 }
-
-                
 
                 var initialX = pageObject.XPosition;
                 var initialY = pageObject.YPosition;
@@ -224,6 +229,13 @@ namespace CLP.Entities
                 CurrentBatchTickIndex = 0;
             }
 
+            if (!PageObjectIDs.Any())
+            {
+                Console.WriteLine("ERROR: PageObjectIDs is empty on ObjectsMovedBatch.");
+                CurrentBatchTickIndex = NumberOfBatchTicks + 1;
+                return;
+            }
+
             foreach (var pageObjectID in PageObjectIDs)
             {
                 var pageObject = ParentPage.GetVerifiedPageObjectOnPageByID(pageObjectID);
@@ -232,7 +244,6 @@ namespace CLP.Entities
                 {
                     continue;
                 }
-                var offSetHack = pageObject is NumberLine ? (pageObject as NumberLine).Height - (pageObject as NumberLine).NumberLineHeight : 0;
                 var initialX = pageObject.XPosition;
                 var initialY = pageObject.YPosition;
 
@@ -244,7 +255,7 @@ namespace CLP.Entities
                     pageObject.YPosition = travelledPosition.Y;
                     if (CurrentBatchTickIndex == NumberOfBatchTicks)
                     {
-                        pageObject.YPosition = travelledPosition.Y - offSetHack; //HACK
+                        pageObject.YPosition = travelledPosition.Y;
                     }
                     CurrentBatchTickIndex++;
                 }
@@ -253,7 +264,7 @@ namespace CLP.Entities
                     var lastPosition = TravelledPositions.Last();
 
                     pageObject.XPosition = lastPosition.X;
-                    pageObject.YPosition = lastPosition.Y - offSetHack;  //HACK
+                    pageObject.YPosition = lastPosition.Y;
                     CurrentBatchTickIndex = NumberOfBatchTicks + 1;
                 }
                 pageObject.OnMoved(initialX, initialY);

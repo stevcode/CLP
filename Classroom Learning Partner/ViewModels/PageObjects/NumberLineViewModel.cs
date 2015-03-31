@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls.Primitives;
+using System.Windows.Ink;
 using Catel.Data;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Views.Modal_Windows;
@@ -58,7 +60,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-             IsJumpSizeLabelsVisible = !(bool)toggleButton.IsChecked;
+            IsJumpSizeLabelsVisible = !(bool)toggleButton.IsChecked;
         }
 
         private void allowDragging_Checked(object sender, RoutedEventArgs e)
@@ -149,7 +151,6 @@ namespace Classroom_Learning_Partner.ViewModels
             PageObject.OnResizing(initialWidth, initialHeight);
         }
 
-
         /// <summary>Gets the ResizeStartPageObjectCommand command.</summary>
         public Command<DragStartedEventArgs> ResizeStartNumberLineLengthCommand { get; set; }
 
@@ -179,10 +180,9 @@ namespace Classroom_Learning_Partner.ViewModels
             var batch = PageObject.ParentPage.History.CurrentHistoryBatch;
             if (batch is PageObjectResizeBatchHistoryItem)
             {
-                (batch as PageObjectResizeBatchHistoryItem).AddResizePointToBatch(PageObject.ID, new Point(Width, Height));
+                ((PageObjectResizeBatchHistoryItem)batch).AddResizePointToBatch(PageObject.ID, new Point(Width, Height));
             }
             var batchHistoryItem = PageObject.ParentPage.History.EndBatch();
-            
 
             if (_isClicked)
             {
@@ -215,36 +215,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 //Number is more than current Number Line Size
                 if (newNumberLineSize > NumberLineSize)
                 {
-                    var difference = newNumberLineSize - NumberLineSize;
-
-                    var numberLine = PageObject as NumberLine;
-
-                    if (numberLine == null)
-                    {
-                        return;
-                    }
-                    var tickLength = numberLine.TickLength;
-
-                    foreach (var tickNumber in Enumerable.Range(0, difference))
-                    {
-                        NumberLineSize++;
-                    }
-                    ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
-                                                       new NumberLineEndPointsChangedHistoryItem(PageObject.ParentPage,
-                                                                                                   App.MainWindowViewModel.CurrentUser,
-                                                                                                   PageObject.ID, 0, NumberLineSize - difference));
-
-                    var oldWidth = Width;
-                    var oldHeight = Height;
-
-                    Width += (tickLength * difference);
-
-                    if (Width + XPosition > PageObject.ParentPage.Width)
-                    {
-                        var oldWidth2 = Width;
-                        Width = PageObject.ParentPage.Width - XPosition;
-                        PageObject.OnResized(oldWidth2, oldHeight);
-                    }
+                    ChangeNumberLineEndPoints(newNumberLineSize);
                 }
                 else if (newNumberLineSize < NumberLineSize)
                 {
@@ -252,25 +223,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     if (lastMarkedTick == null ||
                         lastMarkedTick.TickValue <= newNumberLineSize)
                     {
-                        var difference = NumberLineSize - newNumberLineSize;
-
-                        var numberLine = PageObject as NumberLine;
-                        if (numberLine == null)
-                        {
-                            return;
-                        }
-
-                        var tickLength = numberLine.TickLength;
-                        foreach (var tickNumber in Enumerable.Range(0, difference))
-                        {
-                            NumberLineSize--;
-                        }
-                        ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
-                                                       new NumberLineEndPointsChangedHistoryItem(PageObject.ParentPage,
-                                                                                                   App.MainWindowViewModel.CurrentUser,
-                                                                                                   PageObject.ID, 0, NumberLineSize + difference));
-
-                        Width -= (tickLength * difference);
+                        ChangeNumberLineEndPoints(newNumberLineSize);
                     }
                     else
                     {
@@ -291,14 +244,26 @@ namespace Classroom_Learning_Partner.ViewModels
             var multiplicationDefinitions = PageObject.ParentPage.Tags.OfType<MultiplicationRelationDefinitionTag>().ToList();
             var numberLineIDsInHistory = NumberLineAnalysis.GetListOfNumberLineIDsInHistory(PageObject.ParentPage);
 
-            var tooLowNumber = tooLow ? (int?) tooLowNumberTry : null;
+            var tooLowNumber = tooLow ? (int?)tooLowNumberTry : null;
 
             foreach (var multiplicationRelationDefinitionTag in multiplicationDefinitions)
             {
                 var oldDistanceFromAnswer = _oldEnd - multiplicationRelationDefinitionTag.Product;
                 var newDistanceFromAnswer = NumberLineSize - multiplicationRelationDefinitionTag.Product;
 
-                var tag = new NumberLineDimensionsChangedTag(PageObject.ParentPage, Origin.StudentPageObjectGenerated, PageObject.ID, 0, _oldEnd, numberLineIDsInHistory.IndexOf(PageObject.ID), 0, NumberLineSize, changeSize, _isClicked, oldDistanceFromAnswer, newDistanceFromAnswer, tooLowNumber);
+                var tag = new NumberLineDimensionsChangedTag(PageObject.ParentPage,
+                                                             Origin.StudentPageObjectGenerated,
+                                                             PageObject.ID,
+                                                             0,
+                                                             _oldEnd,
+                                                             numberLineIDsInHistory.IndexOf(PageObject.ID),
+                                                             0,
+                                                             NumberLineSize,
+                                                             changeSize,
+                                                             _isClicked,
+                                                             oldDistanceFromAnswer,
+                                                             newDistanceFromAnswer,
+                                                             tooLowNumber);
                 PageObject.ParentPage.AddTag(tag);
             }
         }
@@ -308,12 +273,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnResizeNumberLineLengthCommandExecute(DragDeltaEventArgs e)
         {
-            var parentPage = PageObject.ParentPage;
-            const int MIN_WIDTH = 250;
-
-            var newWidth = Math.Max(MIN_WIDTH, Width + e.HorizontalChange);
-            newWidth = Math.Min(newWidth, parentPage.Width - XPosition);
-
             var numberLine = PageObject as NumberLine;
 
             if (numberLine == null)
@@ -321,22 +280,170 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            if (_initialWidth + numberLine.TickLength < newWidth && IsArrowDraggingAllowed)
+            var parentPage = PageObject.ParentPage;
+            const int MIN_WIDTH = 250;
+
+            var newWidth = Math.Max(MIN_WIDTH, Width + e.HorizontalChange);
+            newWidth = Math.Min(newWidth, parentPage.Width - XPosition);
+
+            if (_initialWidth + numberLine.TickLength > newWidth ||
+                !IsArrowDraggingAllowed)
             {
-                _isClicked = false;
-                numberLine.NumberLineSize++;
-                ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
-                                                       new NumberLineEndPointsChangedHistoryItem(PageObject.ParentPage,
-                                                                                                   App.MainWindowViewModel.CurrentUser,
-                                                                                                   PageObject.ID, 0, NumberLineSize - 1));
-                _initialWidth += numberLine.TickLength;
-                ChangePageObjectDimensions(PageObject, Height, newWidth);
+                return;
             }
+
+            _isClicked = false;
+            _initialWidth += numberLine.TickLength;
+            ChangeNumberLineEndPoints(NumberLineSize + 1);
+
+            //TODO: Use for conversion
+            //if (_initialWidth + numberLine.TickLength < newWidth && IsArrowDraggingAllowed)
+            //{
+            //    _isClicked = false;
+            //    NumberLineSize++;
+            //    ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
+            //                                           new NumberLineEndPointsChangedHistoryItem(PageObject.ParentPage,
+            //                                                                                       App.MainWindowViewModel.CurrentUser,
+            //                                                                                       PageObject.ID, 0, NumberLineSize - 1));
+            //    _initialWidth += numberLine.TickLength;
+            //    ChangePageObjectDimensions(PageObject, Height, newWidth);
+            //}
         }
 
         #endregion //Commands
 
+        #region Methods
+
+        public void ChangeNumberLineEndPoints(int newNumberLineEndPoint)
+        {
+            var numberLine = PageObject as NumberLine;
+
+            if (numberLine == null)
+            {
+                return;
+            }
+
+            var oldHeight = Height;
+
+            var oldNumberLineEndPoint = NumberLineSize;
+            numberLine.ChangeNumberLineSize(newNumberLineEndPoint);
+
+            var preStretchedWidth = Width;
+            if (Width + XPosition > PageObject.ParentPage.Width)
+            {
+                Width = PageObject.ParentPage.Width - XPosition;
+                PageObject.OnResized(preStretchedWidth, oldHeight);
+            }
+
+            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
+                                                       new NumberLineEndPointsChangedHistoryItem(PageObject.ParentPage,
+                                                                                                 App.MainWindowViewModel.CurrentUser,
+                                                                                                 PageObject.ID,
+                                                                                                 0,
+                                                                                                 oldNumberLineEndPoint,
+                                                                                                 preStretchedWidth));
+        }
+
+        #endregion //Methods
+
         #region Static Methods
+
+        public static bool InteractWithAcceptedStrokes(NumberLine numberLine, IEnumerable<Stroke> addedStrokes, IEnumerable<Stroke> removedStrokes, bool canInteract)
+        {
+            if (numberLine == null ||
+                !canInteract)
+            {
+                return false;
+            }
+
+            var removedStrokesList = removedStrokes as IList<Stroke> ?? removedStrokes.ToList();
+            var addedStrokesList = addedStrokes as IList<Stroke> ?? addedStrokes.ToList();
+
+            var nonJumpStrokes = new List<Stroke>();
+            foreach (var stroke in removedStrokesList.Where(stroke => numberLine.AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
+            {
+                var isStrokeAJump = numberLine.RemoveJumpFromStroke(stroke);
+                if (isStrokeAJump)
+                {
+                    numberLine.AcceptedStrokes.Remove(stroke);
+                    numberLine.AcceptedStrokeParentIDs.Remove(stroke.GetStrokeID());
+
+                    var oldHeight = numberLine.Height;
+                    var oldYPosition = numberLine.YPosition;
+                    if (!numberLine.JumpSizes.Any())
+                    {
+                        numberLine.Height = numberLine.NumberLineHeight;
+                        numberLine.YPosition += (oldHeight - numberLine.Height);
+                    }
+
+                    ACLPPageBaseViewModel.AddHistoryItemToPage(numberLine.ParentPage,
+                                                               new NumberLineJumpSizesChangedHistoryItem(numberLine.ParentPage,
+                                                                                                         App.MainWindowViewModel.CurrentUser,
+                                                                                                         numberLine.ID,
+                                                                                                         new List<Stroke>(),
+                                                                                                         new List<Stroke>
+                                                                                                         {
+                                                                                                             stroke
+                                                                                                         },
+                                                                                                         oldHeight,
+                                                                                                         oldYPosition));
+                }
+                else
+                {
+                    nonJumpStrokes.Add(stroke);
+                }
+            }
+
+            foreach (var stroke in addedStrokesList.Where(stroke => numberLine.IsStrokeOverPageObject(stroke) && !numberLine.AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID()))
+                )
+            {
+                var isStrokeAJump = numberLine.AddJumpFromStroke(stroke);
+                if (isStrokeAJump)
+                {
+                    numberLine.AcceptedStrokes.Add(stroke);
+                    numberLine.AcceptedStrokeParentIDs.Add(stroke.GetStrokeID());
+
+                    var oldHeight = numberLine.Height;
+                    var oldYPosition = numberLine.YPosition;
+                    if (numberLine.JumpSizes.Count == 1)
+                    {
+                        var tallestPoint = stroke.GetBounds().Top;
+                        tallestPoint = tallestPoint - 40;
+
+                        if (tallestPoint < 0)
+                        {
+                            tallestPoint = 0;
+                        }
+
+                        if (tallestPoint > numberLine.YPosition + numberLine.Height - numberLine.NumberLineHeight)
+                        {
+                            tallestPoint = numberLine.YPosition + numberLine.Height - numberLine.NumberLineHeight;
+                        }
+
+                        numberLine.Height += (numberLine.YPosition - tallestPoint);
+                        numberLine.YPosition = tallestPoint;
+                    }
+
+                    ACLPPageBaseViewModel.AddHistoryItemToPage(numberLine.ParentPage,
+                                                               new NumberLineJumpSizesChangedHistoryItem(numberLine.ParentPage,
+                                                                                                         App.MainWindowViewModel.CurrentUser,
+                                                                                                         numberLine.ID,
+                                                                                                         new List<Stroke>
+                                                                                                         {
+                                                                                                             stroke
+                                                                                                         },
+                                                                                                         new List<Stroke>(),
+                                                                                                         oldHeight,
+                                                                                                         oldYPosition));
+                }
+                else
+                {
+                    nonJumpStrokes.Add(stroke);
+                }
+            }
+
+            return !nonJumpStrokes.Any();
+        }
 
         public static void AddNumberLineToPage(CLPPage page)
         {

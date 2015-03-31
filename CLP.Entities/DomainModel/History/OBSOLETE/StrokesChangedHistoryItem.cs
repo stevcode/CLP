@@ -9,6 +9,7 @@ using Catel.Data;
 namespace CLP.Entities
 {
     [Serializable]
+    [Obsolete("Use ObjectsOnPageChangedHistoryItem instead.")]
     public class StrokesChangedHistoryItem : AHistoryItemBase
     {
         #region Constructors
@@ -94,7 +95,14 @@ namespace CLP.Entities
         /// </summary>
         protected override void UndoAction(bool isAnimationUndo)
         {
-            foreach(var stroke in StrokeIDsAdded.Select(id => ParentPage.GetStrokeByID(id)))
+            if (!StrokeIDsAdded.Any() && 
+                !StrokeIDsRemoved.Any())
+            {
+                Console.WriteLine("ERROR: No strokes Added or Removed in StrokesChangedHistoryItem on History Index {0}.", HistoryIndex);
+                return;
+            }
+
+            foreach(var stroke in StrokeIDsAdded.Select(id => ParentPage.GetVerifiedStrokeOnPageByID(id)))
             {
                 try
                 {
@@ -104,7 +112,7 @@ namespace CLP.Entities
                 catch(Exception ex) { }
             }
 
-            foreach(var stroke in StrokeIDsRemoved.Select(id => ParentPage.History.GetStrokeByID(id)))
+            foreach(var stroke in StrokeIDsRemoved.Select(id => ParentPage.GetVerifiedStrokeInHistoryByID(id)))
             {
                 try
                 {
@@ -125,7 +133,14 @@ namespace CLP.Entities
         /// </summary>
         protected override void RedoAction(bool isAnimationRedo)
         {
-            foreach(var stroke in StrokeIDsRemoved.Select(id => ParentPage.GetStrokeByID(id)))
+            if (!StrokeIDsAdded.Any() &&
+                !StrokeIDsRemoved.Any())
+            {
+                Console.WriteLine("ERROR: No strokes Added or Removed in StrokesChangedHistoryItem on History Index {0}.", HistoryIndex);
+                return;
+            }
+
+            foreach (var stroke in StrokeIDsRemoved.Select(id => ParentPage.GetVerifiedStrokeOnPageByID(id)))
             {
                 try
                 {
@@ -135,7 +150,7 @@ namespace CLP.Entities
                 catch(Exception ex) { }
             }
 
-            foreach(var stroke in StrokeIDsAdded.Select(id => ParentPage.History.GetStrokeByID(id)))
+            foreach (var stroke in StrokeIDsAdded.Select(id => ParentPage.GetVerifiedStrokeInHistoryByID(id)))
             {
                 try
                 {
@@ -157,7 +172,7 @@ namespace CLP.Entities
         public override IHistoryItem CreatePackagedHistoryItem()
         {
             PackagedSerializedStrokes.Clear();
-            foreach(var stroke in StrokeIDsAdded.Select(id => ParentPage.GetStrokeByID(id)))
+            foreach (var stroke in StrokeIDsAdded.Select(id => ParentPage.GetVerifiedStrokeOnPageByID(id)))
             {
                 PackagedSerializedStrokes.Add(stroke.ToStrokeDTO());
             }

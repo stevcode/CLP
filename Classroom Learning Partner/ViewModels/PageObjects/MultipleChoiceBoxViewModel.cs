@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls.Primitives;
+using System.Windows.Ink;
 using Catel.Data;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Views.Modal_Windows;
@@ -28,17 +30,15 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Model
 
-        /// <summary>
-        /// List of the available choices for the Multiple Choice Box.
-        /// </summary>
-        [ViewModelToModel("PageObject")] 
+        /// <summary>List of the available choices for the Multiple Choice Box.</summary>
+        [ViewModelToModel("PageObject")]
         public List<MultipleChoiceBubble> ChoiceBubbles
         {
             get { return GetValue<List<MultipleChoiceBubble>>(ChoiceBubblesProperty); }
             set { SetValue(ChoiceBubblesProperty, value); }
         }
 
-        public static readonly PropertyData ChoiceBubblesProperty = RegisterProperty("ChoiceBubbles", typeof(List<MultipleChoiceBubble>)); 
+        public static readonly PropertyData ChoiceBubblesProperty = RegisterProperty("ChoiceBubbles", typeof (List<MultipleChoiceBubble>));
 
         #endregion //Model
 
@@ -73,13 +73,11 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 ChangePageObjectDimensions(PageObject, newHeight, initialWidth);
             }
-            
-            PageObject.OnResizing(initialWidth, initialHeight);
-        } 
 
-        /// <summary>
-        /// Changes the Multiple Choice Box's correct answer.
-        /// </summary>
+            PageObject.OnResizing(initialWidth, initialHeight);
+        }
+
+        /// <summary>Changes the Multiple Choice Box's correct answer.</summary>
         public Command ChangeCorrectAnswerCommand { get; private set; }
 
         private void OnChangeCorrectAnswerCommandExecute()
@@ -91,10 +89,10 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             var keyPad = new KeypadWindowView("Index of Correct Answer", 5)
-            {
-                Owner = Application.Current.MainWindow,
-                WindowStartupLocation = WindowStartupLocation.Manual
-            };
+                         {
+                             Owner = Application.Current.MainWindow,
+                             WindowStartupLocation = WindowStartupLocation.Manual
+                         };
             keyPad.ShowDialog();
             if (keyPad.DialogResult != true ||
                 keyPad.NumbersEntered.Text.Length <= 0)
@@ -114,13 +112,57 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Static Methods
 
+        public static bool InteractWithAcceptedStrokes(MultipleChoiceBox multipleChoiceBox, IEnumerable<Stroke> addedStrokes, IEnumerable<Stroke> removedStrokes, bool canInteract)
+        {
+            if (multipleChoiceBox == null)
+            {
+                return false;
+            }
+
+            var removedStrokesList = removedStrokes as IList<Stroke> ?? removedStrokes.ToList();
+            var addedStrokesList = addedStrokes as IList<Stroke> ?? addedStrokes.ToList();
+            multipleChoiceBox.ChangeAcceptedStrokes(addedStrokesList, removedStrokesList);
+            //TODO: Create HistoryItem for this change instead of ObjectsOnPageChanged.
+            ACLPPageBaseViewModel.AddHistoryItemToPage(multipleChoiceBox.ParentPage, new ObjectsOnPageChangedHistoryItem(multipleChoiceBox.ParentPage, App.MainWindowViewModel.CurrentUser, addedStrokesList, removedStrokesList));
+
+            MultipleChoiceBubble mostFilledBubble = null;
+            var previousStrokeLength = 0;
+            foreach (var multipleChoiceBubble in multipleChoiceBox.ChoiceBubbles)
+            {
+                multipleChoiceBubble.IsMarked = false;
+
+                var bubbleBoundary = new Rect(multipleChoiceBox.XPosition + multipleChoiceBubble.ChoiceBubbleIndex * multipleChoiceBox.ChoiceBubbleGapLength,
+                                              multipleChoiceBox.YPosition,
+                                              multipleChoiceBox.ChoiceBubbleDiameter,
+                                              multipleChoiceBox.ChoiceBubbleDiameter);
+                var strokesOverBubble = multipleChoiceBox.AcceptedStrokes.Where(s => s.HitTest(bubbleBoundary, 80));
+
+                var totalStrokeLength = strokesOverBubble.Sum(s => s.StylusPoints.Count);
+                if (totalStrokeLength <= previousStrokeLength ||
+                    totalStrokeLength <= 100)
+                {
+                    continue;
+                }
+
+                mostFilledBubble = multipleChoiceBubble;
+                previousStrokeLength = totalStrokeLength;
+            }
+
+            if (mostFilledBubble != null)
+            {
+                mostFilledBubble.IsMarked = true;
+            }
+
+            return true;
+        }
+
         public static void AddMultipleChoiceBoxToPage(CLPPage page)
         {
             var keyPad = new KeypadWindowView("Index of Correct Answer", 5)
-            {
-                Owner = Application.Current.MainWindow,
-                WindowStartupLocation = WindowStartupLocation.Manual
-            };
+                         {
+                             Owner = Application.Current.MainWindow,
+                             WindowStartupLocation = WindowStartupLocation.Manual
+                         };
             keyPad.ShowDialog();
             if (keyPad.DialogResult != true ||
                 keyPad.NumbersEntered.Text.Length <= 0)

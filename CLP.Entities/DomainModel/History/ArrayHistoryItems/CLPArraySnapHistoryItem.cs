@@ -180,13 +180,13 @@ namespace CLP.Entities
         /// </summary>
         protected override void UndoAction(bool isAnimationUndo)
         {
-            var persistingArray = ParentPage.GetPageObjectByID(PersistingArrayID) as CLPArray;
+            var persistingArray = ParentPage.GetVerifiedPageObjectOnPageByID(PersistingArrayID) as CLPArray;
             if(persistingArray == null)
             {
                 return;
             }
 
-            var snappedArray = ParentPage.History.GetPageObjectByID(SnappedArrayID) as CLPArray;
+            var snappedArray = ParentPage.GetVerifiedPageObjectInTrashByID(SnappedArrayID) as CLPArray;
             if(snappedArray == null)
             {
                 return;
@@ -211,8 +211,8 @@ namespace CLP.Entities
         /// </summary>
         protected override void RedoAction(bool isAnimationRedo)
         {
-            var snappedArray = ParentPage.GetPageObjectByID(SnappedArrayID) as CLPArray;
-            var persistingArray = ParentPage.GetPageObjectByID(PersistingArrayID) as CLPArray;
+            var snappedArray = ParentPage.GetVerifiedPageObjectOnPageByID(SnappedArrayID) as CLPArray;
+            var persistingArray = ParentPage.GetVerifiedPageObjectOnPageByID(PersistingArrayID) as CLPArray;
             if(snappedArray == null ||
                persistingArray == null)
             {
@@ -271,7 +271,7 @@ namespace CLP.Entities
         public override IHistoryItem CreatePackagedHistoryItem()
         {
             var clonedHistoryItem = Clone() as CLPArraySnapHistoryItem;
-            var persistingArray = ParentPage.GetPageObjectByID(PersistingArrayID) as CLPArray;
+            var persistingArray = ParentPage.GetVerifiedPageObjectOnPageByID(PersistingArrayID) as CLPArray;
             if(clonedHistoryItem == null ||
                persistingArray == null)
             {

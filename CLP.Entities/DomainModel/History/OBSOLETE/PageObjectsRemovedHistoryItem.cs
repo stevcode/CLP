@@ -8,29 +8,37 @@ using Catel.Data;
 namespace CLP.Entities
 {
     [Serializable]
-    public class PageObjectsAddedHistoryItem : AHistoryItemBase
+    [Obsolete("Use ObjectsOnPageChangedHistoryItem instead.")]
+    public class PageObjectsRemovedHistoryItem : AHistoryItemBase
     {
         #region Constructors
 
         /// <summary>
-        /// Initializes <see cref="PageObjectsAddedHistoryItem" /> from scratch.
+        /// Initializes <see cref="PageObjectsRemovedHistoryItem" /> from scratch.
         /// </summary>
-        public PageObjectsAddedHistoryItem() { }
+        public PageObjectsRemovedHistoryItem() { }
 
         /// <summary>
-        /// Initializes <see cref="PageObjectsAddedHistoryItem" /> with a parent <see cref="CLPPage" />.
+        /// Initializes <see cref="PageObjectsRemovedHistoryItem" /> with a parent <see cref="CLPPage" />.
         /// </summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryItem" /> is part of.</param>
         /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryItem" />.</param>
-        public PageObjectsAddedHistoryItem(CLPPage parentPage, Person owner, List<string> pageObjectIDs)
-            : base(parentPage, owner) { PageObjectIDs = pageObjectIDs; }
+        public PageObjectsRemovedHistoryItem(CLPPage parentPage, Person owner, List<IPageObject> removedPageObjects)
+            : base(parentPage, owner)
+        {
+            foreach(var removedPageObject in removedPageObjects)
+            {
+                PageObjectIDs.Add(removedPageObject.ID);
+                ParentPage.History.TrashedPageObjects.Add(removedPageObject);
+            }
+        }
 
         /// <summary>
         /// Initializes a new object based on <see cref="SerializationInfo" />.
         /// </summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext" />.</param>
-        protected PageObjectsAddedHistoryItem(SerializationInfo info, StreamingContext context)
+        protected PageObjectsRemovedHistoryItem(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
         #endregion //Constructors
@@ -51,7 +59,7 @@ namespace CLP.Entities
             set { SetValue(PageObjectIDsProperty, value); }
         }
 
-        public static readonly PropertyData PageObjectIDsProperty = RegisterProperty("PageObjectIDs", typeof(List<string>));
+        public static readonly PropertyData PageObjectIDsProperty = RegisterProperty("PageObjectIDs", typeof(List<string>), () => new List<string>());
 
         /// <summary>
         /// List of the pageObjects that were removed from the page as a result of the UndoAction(). Cleared on Redo().
@@ -81,11 +89,11 @@ namespace CLP.Entities
                 {
                 }
                 
-                string formattedValue = string.Format("Index # {0}, Added {1} to page.", HistoryIndex, string.Join(", ", PageObjectTypes));
+                string formattedValue = string.Format("Index # {0}, Removed {1} from page.", HistoryIndex, string.Join(", ", PageObjectTypes));
                 return formattedValue;
             }
         }
-
+        
         #endregion //Properties
 
         #region Methods
@@ -94,6 +102,25 @@ namespace CLP.Entities
         /// Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.
         /// </summary>
         protected override void UndoAction(bool isAnimationUndo)
+        {
+            try
+            {
+                foreach(var pageObject in PageObjectIDs.Select(pageObjectID => ParentPage.History.GetPageObjectByID(pageObjectID)))
+                {
+                    ParentPage.History.TrashedPageObjects.Remove(pageObject);
+                    ParentPage.PageObjects.Add(pageObject);
+                    pageObject.OnAdded(true);
+                }
+            }
+            catch(Exception e)
+            {
+            }
+        }
+
+        /// <summary>
+        /// Method that will actually redo the action. Already incorporates error checking for existance of ParentPage.
+        /// </summary>
+        protected override void RedoAction(bool isAnimationRedo)
         {
             try
             {
@@ -110,64 +137,20 @@ namespace CLP.Entities
         }
 
         /// <summary>
-        /// Method that will actually redo the action. Already incorporates error checking for existance of ParentPage.
-        /// </summary>
-        protected override void RedoAction(bool isAnimationRedo)
-        {
-            try
-            {
-                foreach(var pageObject in PageObjectIDs.Select(pageObjectID => ParentPage.History.GetPageObjectByID(pageObjectID)))
-                {
-                    ParentPage.History.TrashedPageObjects.Remove(pageObject);
-
-                    var offSetHack = pageObject is NumberLine ? (pageObject as NumberLine).Height - (pageObject as NumberLine).NumberLineHeight : 0;
-                    pageObject.YPosition -= offSetHack;
-
-                    ParentPage.PageObjects.Add(pageObject);
-                    pageObject.OnAdded();
-                }
-            }
-            catch(Exception e)
-            {
-            }
-        }
-
-        /// <summary>
         /// Method that prepares a clone of the <see cref="IHistoryItem" /> so that it can call Redo() when sent to another machine.
         /// </summary>
         public override IHistoryItem CreatePackagedHistoryItem()
         {
-            var clonedHistoryItem = Clone() as PageObjectsAddedHistoryItem;
-            if(clonedHistoryItem == null)
-            {
-                return null;
-            }
-
-            clonedHistoryItem.PackagedPageObjects.Clear();
-            foreach(var pageObject in PageObjectIDs.Select(pageObjectID => ParentPage.GetPageObjectByID(pageObjectID)))
-            {
-                try
-                {
-                    clonedHistoryItem.PackagedPageObjects.Add(pageObject);
-                }
-                catch(Exception ex) { }
-            }
-
+            var clonedHistoryItem = Clone() as PageObjectsRemovedHistoryItem;
             return clonedHistoryItem;
         }
 
         /// <summary>
         /// Method that unpacks the <see cref="IHistoryItem" /> after it has been sent to another machine.
         /// </summary>
-        public override void UnpackHistoryItem()
-        {
-            foreach(var packagedPageObject in PackagedPageObjects)
-            {
-                ParentPage.History.TrashedPageObjects.Add(packagedPageObject);
-            }
-        }
+        public override void UnpackHistoryItem() { }
 
-        public override bool IsUsingTrashedPageObject(string id, bool isUndoItem) { return !isUndoItem && PageObjectIDs.Contains(id); }
+        public override bool IsUsingTrashedPageObject(string id, bool isUndoItem) { return isUndoItem && PageObjectIDs.Contains(id); }
 
         #endregion //Methods
     }

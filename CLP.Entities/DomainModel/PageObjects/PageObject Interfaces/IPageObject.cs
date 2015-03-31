@@ -27,13 +27,14 @@ namespace CLP.Entities
         CLPPage ParentPage { get; set; }
 
         IPageObject Duplicate();
-        void OnAdded();
-        void OnRestoredFromHistory();
-        void OnDeleted();
-        void OnMoving(double oldX, double oldY);
-        void OnMoved(double oldX, double oldY);
-        void OnResizing(double oldWidth, double oldHeight);
-        void OnResized(double oldWidth, double oldHeight);
+        void OnAdded(bool fromHistory = false);
+        void OnDeleted(bool fromHistory = false);
+        void OnMoving(double oldX, double oldY, bool fromHistory = false);
+        void OnMoved(double oldX, double oldY, bool fromHistory = false);
+        void OnResizing(double oldWidth, double oldHeight, bool fromHistory = false);
+        void OnResized(double oldWidth, double oldHeight, bool fromHistory = false);
+        void OnRotating(double oldAngle, bool fromHistory = false);
+        void OnRotated(double oldAngle, bool fromHistory = false);
         bool PageObjectIsOver(IPageObject pageObject, double percentage);
     }
 }

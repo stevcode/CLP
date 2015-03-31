@@ -102,7 +102,7 @@ namespace CLP.Entities
 
         private void RotateArray()
         {
-            var array = ParentPage.GetPageObjectByID(ArrayID) as ACLPArrayBase;
+            var array = ParentPage.GetVerifiedPageObjectOnPageByID(ArrayID) as ACLPArrayBase;
             if(array != null)
             {
                 var tempX = array.XPosition;

@@ -86,7 +86,7 @@ namespace CLP.Entities
         /// </summary>
         protected override void UndoAction(bool isAnimationUndo)
         {
-            var fuzzyFactorCard = ParentPage.GetPageObjectByID(FuzzyFactorCardID) as FuzzyFactorCard;
+            var fuzzyFactorCard = ParentPage.GetVerifiedPageObjectOnPageByID(FuzzyFactorCardID) as FuzzyFactorCard;
             if(fuzzyFactorCard != null)
             {
                 fuzzyFactorCard.SnapInArray(DivisionValue);
@@ -98,7 +98,7 @@ namespace CLP.Entities
         /// </summary>
         protected override void RedoAction(bool isAnimationRedo)
         {
-            var fuzzyFactorCard = ParentPage.GetPageObjectByID(FuzzyFactorCardID) as FuzzyFactorCard;
+            var fuzzyFactorCard = ParentPage.GetVerifiedPageObjectOnPageByID(FuzzyFactorCardID) as FuzzyFactorCard;
             if(fuzzyFactorCard != null)
             {
                 fuzzyFactorCard.RemoveLastDivision();

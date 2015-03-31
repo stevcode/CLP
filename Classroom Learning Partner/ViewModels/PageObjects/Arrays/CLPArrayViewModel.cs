@@ -6,7 +6,6 @@ using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Ink;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Shapes;
 using Catel.Data;
 using Catel.MVVM;
@@ -50,17 +49,17 @@ namespace Classroom_Learning_Partner.ViewModels
             _contextButtons.Add(new RibbonButton("Rotate", "pack://application:,,,/Resources/Images/AdornerImages/ArrayRotate64.png", RotateArrayCommand, null, true));
 
             var toggleLabelsButton = new ToggleRibbonButton("Show Labels", "Hide Labels", "pack://application:,,,/Resources/Images/ArrayCard32.png", true)
-            {
-                IsChecked = IsTopLabelVisible && IsSideLabelVisible
-            };
+                                     {
+                                         IsChecked = IsTopLabelVisible && IsSideLabelVisible
+                                     };
             toggleLabelsButton.Checked += toggleLabelsButton_Checked;
             toggleLabelsButton.Unchecked += toggleLabelsButton_Checked;
             _contextButtons.Add(toggleLabelsButton);
 
             var toggleGridLinesButton = new ToggleRibbonButton("Show Grid Lines", "Hide Grid Lines", "pack://application:,,,/Resources/Images/ArrayCard32.png", true)
-            {
-                IsChecked = IsGridOn
-            };
+                                        {
+                                            IsChecked = IsGridOn
+                                        };
             toggleGridLinesButton.Checked += toggleGridLinesButton_Checked;
             toggleGridLinesButton.Unchecked += toggleGridLinesButton_Checked;
             _contextButtons.Add(toggleGridLinesButton);
@@ -69,7 +68,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //    _contextButtons.Add(new RibbonButton("Size to Other Arrays", "pack://application:,,,/Resources/Images/AdornerImages/ArraySnap64.png", null, null, true));
         }
 
-        void toggleLabelsButton_Checked(object sender, RoutedEventArgs e)
+        private void toggleLabelsButton_Checked(object sender, RoutedEventArgs e)
         {
             var toggleButton = sender as ToggleRibbonButton;
             if (toggleButton == null ||
@@ -88,7 +87,7 @@ namespace Classroom_Learning_Partner.ViewModels
             clpArray.IsSideLabelVisible = (bool)toggleButton.IsChecked;
         }
 
-        void toggleGridLinesButton_Checked(object sender, RoutedEventArgs e)
+        private void toggleGridLinesButton_Checked(object sender, RoutedEventArgs e)
         {
             var toggleButton = sender as ToggleRibbonButton;
             if (toggleButton == null ||
@@ -102,9 +101,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 clpArray.IsGridOn = (bool)toggleButton.IsChecked;
                 ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
-                                                           new CLPArrayGridToggleHistoryItem(PageObject.ParentPage,
-                                                                                             App.MainWindowViewModel.CurrentUser,
-                                                                                             PageObject.ID));
+                                                           new CLPArrayGridToggleHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, PageObject.ID));
             }
         }
 
@@ -235,8 +232,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(VerticalDivisionsProperty, value); }
         }
 
-        public static readonly PropertyData VerticalDivisionsProperty = RegisterProperty("VerticalDivisions",
-                                                                                         typeof (ObservableCollection<CLPArrayDivision>));
+        public static readonly PropertyData VerticalDivisionsProperty = RegisterProperty("VerticalDivisions", typeof (ObservableCollection<CLPArrayDivision>));
 
         #endregion //Model
 
@@ -339,9 +335,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        /// <summary>
-        /// Snaps the array to an adjacent array.
-        /// </summary>
+        /// <summary>Snaps the array to an adjacent array.</summary>
         public Command SnapArrayCommand { get; private set; }
 
         private enum SnapType
@@ -377,15 +371,13 @@ namespace Classroom_Learning_Partner.ViewModels
                 var bottom = Math.Min(snappingArray.YPosition + snappingArray.LabelLength + snappingArray.ArrayHeight,
                                       persistingArray.YPosition + persistingArray.LabelLength + persistingArray.ArrayHeight);
                 var verticalIntersectionLength = bottom - top;
-                var isVerticalIntersection = verticalIntersectionLength > persistingArray.ArrayHeight / 2 ||
-                                             verticalIntersectionLength > snappingArray.ArrayHeight / 2;
+                var isVerticalIntersection = verticalIntersectionLength > persistingArray.ArrayHeight / 2 || verticalIntersectionLength > snappingArray.ArrayHeight / 2;
 
                 var left = Math.Max(snappingArray.XPosition + snappingArray.LabelLength, persistingArray.XPosition + persistingArray.LabelLength);
                 var right = Math.Min(snappingArray.XPosition + snappingArray.LabelLength + snappingArray.ArrayWidth,
                                      persistingArray.XPosition + persistingArray.LabelLength + persistingArray.ArrayWidth);
                 var horizontalIntersectionLength = right - left;
-                var isHorizontalIntersection = horizontalIntersectionLength > persistingArray.ArrayWidth / 2 ||
-                                               horizontalIntersectionLength > snappingArray.ArrayWidth / 2;
+                var isHorizontalIntersection = horizontalIntersectionLength > persistingArray.ArrayWidth / 2 || horizontalIntersectionLength > snappingArray.ArrayWidth / 2;
 
                 //   Update Remainder Region
                 //if(factorCard.IsRemainderRegionDisplayed && factorCard.CurrentRemainder == snappingArray.Columns * snappingArray.Rows)
@@ -414,17 +406,18 @@ namespace Classroom_Learning_Partner.ViewModels
 
                             if (divisionTemplate.CurrentRemainder != divisionTemplate.Dividend % divisionTemplate.Rows)
                             {
-                                var existingFactorPairErrorsTag = divisionTemplate.ParentPage.Tags.OfType<DivisionTemplateFactorPairErrorsTag>().FirstOrDefault(x => x.DivisionTemplateID == divisionTemplate.ID);
+                                var existingFactorPairErrorsTag =
+                                    divisionTemplate.ParentPage.Tags.OfType<DivisionTemplateFactorPairErrorsTag>().FirstOrDefault(x => x.DivisionTemplateID == divisionTemplate.ID);
                                 var isArrayDimensionErrorsTagOnPage = true;
 
                                 if (existingFactorPairErrorsTag == null)
                                 {
                                     existingFactorPairErrorsTag = new DivisionTemplateFactorPairErrorsTag(divisionTemplate.ParentPage,
-                                                                                                        Origin.StudentPageGenerated,
-                                                                                                        divisionTemplate.ID,
-                                                                                                        divisionTemplate.Dividend,
-                                                                                                        divisionTemplate.Rows,
-                                                              divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID));
+                                                                                                          Origin.StudentPageGenerated,
+                                                                                                          divisionTemplate.ID,
+                                                                                                          divisionTemplate.Dividend,
+                                                                                                          divisionTemplate.Rows,
+                                                                                                          divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID));
                                     isArrayDimensionErrorsTagOnPage = false;
                                 }
 
@@ -456,7 +449,8 @@ namespace Classroom_Learning_Partner.ViewModels
                             }
                             else
                             {
-                                var existingRemainderErrorsTag = divisionTemplate.ParentPage.Tags.OfType<DivisionTemplateRemainderErrorsTag>().FirstOrDefault(x => x.DivisionTemplateID == divisionTemplate.ID);
+                                var existingRemainderErrorsTag =
+                                    divisionTemplate.ParentPage.Tags.OfType<DivisionTemplateRemainderErrorsTag>().FirstOrDefault(x => x.DivisionTemplateID == divisionTemplate.ID);
                                 var isRemainderErrorsTagOnPage = true;
 
                                 if (existingRemainderErrorsTag == null)
@@ -466,7 +460,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                                         divisionTemplate.ID,
                                                                                                         divisionTemplate.Dividend,
                                                                                                         divisionTemplate.Rows,
-                                                              divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID));
+                                                                                                        divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID));
                                     isRemainderErrorsTagOnPage = false;
                                 }
 
@@ -534,8 +528,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 if (isVerticalIntersection && snappingArray.Rows == persistingArray.Rows)
                 {
                     var rightDiff =
-                        Math.Abs(snappingArray.XPosition + snappingArray.LabelLength -
-                                 (persistingArray.XPosition + persistingArray.LabelLength + persistingArray.ArrayWidth));
+                        Math.Abs(snappingArray.XPosition + snappingArray.LabelLength - (persistingArray.XPosition + persistingArray.LabelLength + persistingArray.ArrayWidth));
                     if (rightDiff < 50)
                     {
                         if (closestPersistingArray == null ||
@@ -548,8 +541,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
 
                     var leftDiff =
-                        Math.Abs(snappingArray.XPosition + snappingArray.LabelLength + snappingArray.ArrayWidth -
-                                 (persistingArray.XPosition + persistingArray.LabelLength));
+                        Math.Abs(snappingArray.XPosition + snappingArray.LabelLength + snappingArray.ArrayWidth - (persistingArray.XPosition + persistingArray.LabelLength));
                     if (leftDiff < 50)
                     {
                         if (closestPersistingArray == null ||
@@ -565,8 +557,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 if (isHorizontalIntersection && snappingArray.Columns == persistingArray.Columns)
                 {
                     var bottomDiff =
-                        Math.Abs(snappingArray.YPosition + snappingArray.LabelLength -
-                                 (persistingArray.YPosition + persistingArray.LabelLength + persistingArray.ArrayHeight));
+                        Math.Abs(snappingArray.YPosition + snappingArray.LabelLength - (persistingArray.YPosition + persistingArray.LabelLength + persistingArray.ArrayHeight));
                     if (bottomDiff < 50)
                     {
                         if (closestPersistingArray == null ||
@@ -579,8 +570,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
 
                     var topDiff =
-                        Math.Abs(snappingArray.YPosition + snappingArray.LabelLength + snappingArray.ArrayHeight -
-                                 (persistingArray.YPosition + persistingArray.LabelLength));
+                        Math.Abs(snappingArray.YPosition + snappingArray.LabelLength + snappingArray.ArrayHeight - (persistingArray.YPosition + persistingArray.LabelLength));
                     if (topDiff < 50)
                     {
                         if (closestPersistingArray == null ||
@@ -606,11 +596,7 @@ namespace Classroom_Learning_Partner.ViewModels
             switch (snapType)
             {
                 case SnapType.Top:
-                    arraySnapHistoryItem = new CLPArraySnapHistoryItem(PageObject.ParentPage,
-                                                                       App.MainWindowViewModel.CurrentUser,
-                                                                       closestPersistingArray,
-                                                                       snappingArray,
-                                                                       true);
+                    arraySnapHistoryItem = new CLPArraySnapHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, closestPersistingArray, snappingArray, true);
 
                     closestPersistingArray.VerticalDivisions.Clear();
 
@@ -625,19 +611,13 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         tempDivisions = new ObservableCollection<CLPArrayDivision>
                                         {
-                                            new CLPArrayDivision(ArrayDivisionOrientation.Horizontal,
-                                                                 0,
-                                                                 closestPersistingArray.ArrayHeight,
-                                                                 closestPersistingArray.Rows)
+                                            new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, 0, closestPersistingArray.ArrayHeight, closestPersistingArray.Rows)
                                         };
                     }
 
                     if (!snappingArray.HorizontalDivisions.Any())
                     {
-                        closestPersistingArray.HorizontalDivisions.Add(new CLPArrayDivision(ArrayDivisionOrientation.Horizontal,
-                                                                                            0,
-                                                                                            snappingArray.ArrayHeight,
-                                                                                            snappingArray.Rows));
+                        closestPersistingArray.HorizontalDivisions.Add(new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, 0, snappingArray.ArrayHeight, snappingArray.Rows));
                     }
 
                     foreach (var horizontalDivision in snappingArray.HorizontalDivisions)
@@ -656,11 +636,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     closestPersistingArray.YPosition -= snappingArray.ArrayHeight;
                     break;
                 case SnapType.Bottom:
-                    arraySnapHistoryItem = new CLPArraySnapHistoryItem(PageObject.ParentPage,
-                                                                       App.MainWindowViewModel.CurrentUser,
-                                                                       closestPersistingArray,
-                                                                       snappingArray,
-                                                                       true);
+                    arraySnapHistoryItem = new CLPArraySnapHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, closestPersistingArray, snappingArray, true);
 
                     closestPersistingArray.VerticalDivisions.Clear();
 
@@ -686,8 +662,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         foreach (var horizontalDivision in snappingArray.HorizontalDivisions)
                         {
                             closestPersistingArray.HorizontalDivisions.Add(new CLPArrayDivision(horizontalDivision.Orientation,
-                                                                                                horizontalDivision.Position +
-                                                                                                closestPersistingArray.ArrayHeight,
+                                                                                                horizontalDivision.Position + closestPersistingArray.ArrayHeight,
                                                                                                 horizontalDivision.Length,
                                                                                                 horizontalDivision.Value));
                         }
@@ -696,11 +671,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     closestPersistingArray.Rows += snappingArray.Rows;
                     break;
                 case SnapType.Left:
-                    arraySnapHistoryItem = new CLPArraySnapHistoryItem(PageObject.ParentPage,
-                                                                       App.MainWindowViewModel.CurrentUser,
-                                                                       closestPersistingArray,
-                                                                       snappingArray,
-                                                                       false);
+                    arraySnapHistoryItem = new CLPArraySnapHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, closestPersistingArray, snappingArray, false);
 
                     closestPersistingArray.HorizontalDivisions.Clear();
 
@@ -715,19 +686,13 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         tempDivisions = new ObservableCollection<CLPArrayDivision>
                                         {
-                                            new CLPArrayDivision(ArrayDivisionOrientation.Vertical,
-                                                                 0,
-                                                                 closestPersistingArray.ArrayWidth,
-                                                                 closestPersistingArray.Columns)
+                                            new CLPArrayDivision(ArrayDivisionOrientation.Vertical, 0, closestPersistingArray.ArrayWidth, closestPersistingArray.Columns)
                                         };
                     }
 
                     if (!snappingArray.VerticalDivisions.Any())
                     {
-                        closestPersistingArray.VerticalDivisions.Add(new CLPArrayDivision(ArrayDivisionOrientation.Vertical,
-                                                                                          0,
-                                                                                          snappingArray.ArrayWidth,
-                                                                                          snappingArray.Columns));
+                        closestPersistingArray.VerticalDivisions.Add(new CLPArrayDivision(ArrayDivisionOrientation.Vertical, 0, snappingArray.ArrayWidth, snappingArray.Columns));
                     }
 
                     foreach (var verticalDivision in snappingArray.VerticalDivisions)
@@ -746,11 +711,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     closestPersistingArray.XPosition -= snappingArray.ArrayWidth;
                     break;
                 case SnapType.Right:
-                    arraySnapHistoryItem = new CLPArraySnapHistoryItem(PageObject.ParentPage,
-                                                                       App.MainWindowViewModel.CurrentUser,
-                                                                       closestPersistingArray,
-                                                                       snappingArray,
-                                                                       false);
+                    arraySnapHistoryItem = new CLPArraySnapHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, closestPersistingArray, snappingArray, false);
 
                     closestPersistingArray.HorizontalDivisions.Clear();
 
@@ -776,8 +737,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         foreach (var verticalDivision in snappingArray.VerticalDivisions)
                         {
                             closestPersistingArray.VerticalDivisions.Add(new CLPArrayDivision(verticalDivision.Orientation,
-                                                                                              verticalDivision.Position +
-                                                                                              closestPersistingArray.ArrayWidth,
+                                                                                              verticalDivision.Position + closestPersistingArray.ArrayWidth,
                                                                                               verticalDivision.Length,
                                                                                               verticalDivision.Value));
                         }
@@ -812,7 +772,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 PageObject.ParentPage.InkStrokes.Add(strokesToRestore);
                 PageObject.ParentPage.History.TrashedInkStrokes.Remove(strokesToRestore);
-                array.AcceptStrokes(strokesToRestore, new List<Stroke>());
+                array.ChangeAcceptedStrokes(strokesToRestore, new List<Stroke>());
             }
 
             //closestPersistingArray.RefreshStrokeParentIDs();
@@ -843,70 +803,63 @@ namespace Classroom_Learning_Partner.ViewModels
 
         protected void OnRotateArrayCommandExecute()
         {
-            if ((PageObject as CLPArray).ArrayHeight > PageObject.ParentPage.Width ||
-                (PageObject as CLPArray).ArrayWidth > PageObject.ParentPage.Height)
+            var array = PageObject as CLPArray;
+            if (array == null)
+            {
+                return;
+            }
+            if (array.ArrayHeight > array.ParentPage.Width ||
+                array.ArrayWidth > array.ParentPage.Height)
             {
                 return;
             }
 
-            var initXPos = PageObject.XPosition;
-            var initYPos = PageObject.YPosition;
-            (PageObject as CLPArray).RotateArray();
-            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
-                                                       new CLPArrayRotateHistoryItem(PageObject.ParentPage,
-                                                                                     App.MainWindowViewModel.CurrentUser,
-                                                                                     PageObject.ID,
-                                                                                     initXPos,
-                                                                                     initYPos));
+            var initXPos = array.XPosition;
+            var initYPos = array.YPosition;
+            array.RotateArray();
+            ACLPPageBaseViewModel.AddHistoryItemToPage(array.ParentPage,
+                                                       new CLPArrayRotateHistoryItem(array.ParentPage, App.MainWindowViewModel.CurrentUser, array.ID, initXPos, initYPos));
 
-            if ((PageObject as CLPArray).CanAcceptStrokes)
+            if (array.CanAcceptStrokes)
             {
-                foreach (var stroke in (PageObject as CLPArray).AcceptedStrokes)
-                {
-                    var transform = new Matrix();
-                    transform.RotateAt(90, XPosition, YPosition);
-                    transform.Translate(Width, 0);
-                    stroke.Transform(transform, false);
-                }
+                array.AcceptedStrokes.RotateAll(90, XPosition, YPosition, Width, 0);
             }
 
-            var divisionTemplateIDsInHistory = DivisionTemplateAnalysis.GetListOfDivisionTemplateIDsInHistory(PageObject.ParentPage);
-            foreach (var divisionTemplate in PageObject.ParentPage.PageObjects.OfType<FuzzyFactorCard>())
+            var divisionTemplateIDsInHistory = DivisionTemplateAnalysis.GetListOfDivisionTemplateIDsInHistory(array.ParentPage);
+            foreach (var divisionTemplate in array.ParentPage.PageObjects.OfType<FuzzyFactorCard>())
             {
                 // Only increase OrientationChanged attempt if Division Template already full.
                 if (divisionTemplate.CurrentRemainder != divisionTemplate.Dividend % divisionTemplate.Rows)
                 {
                     var existingFactorPairErrorsTag =
-                    PageObject.ParentPage.Tags.OfType<DivisionTemplateRemainderErrorsTag>()
-                              .FirstOrDefault(x => x.DivisionTemplateID == divisionTemplate.ID);
+                        array.ParentPage.Tags.OfType<DivisionTemplateRemainderErrorsTag>().FirstOrDefault(x => x.DivisionTemplateID == divisionTemplate.ID);
 
                     if (existingFactorPairErrorsTag == null)
                     {
-                        existingFactorPairErrorsTag = new DivisionTemplateRemainderErrorsTag(PageObject.ParentPage,
-                                                                                                        Origin.StudentPageGenerated,
-                                                                                                        divisionTemplate.ID,
-                                                                                                        divisionTemplate.Dividend,
-                                                                                                        divisionTemplate.Rows,
-                                                              divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID));
-                        PageObject.ParentPage.AddTag(existingFactorPairErrorsTag);
+                        existingFactorPairErrorsTag = new DivisionTemplateRemainderErrorsTag(array.ParentPage,
+                                                                                             Origin.StudentPageGenerated,
+                                                                                             divisionTemplate.ID,
+                                                                                             divisionTemplate.Dividend,
+                                                                                             divisionTemplate.Rows,
+                                                                                             divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID));
+                        array.ParentPage.AddTag(existingFactorPairErrorsTag);
                     }
                     existingFactorPairErrorsTag.OrientationChangedDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
                 }
                 else
                 {
                     var existingRemainderErrorsTag =
-                        PageObject.ParentPage.Tags.OfType<DivisionTemplateRemainderErrorsTag>()
-                                  .FirstOrDefault(x => x.DivisionTemplateID == divisionTemplate.ID);
+                        array.ParentPage.Tags.OfType<DivisionTemplateRemainderErrorsTag>().FirstOrDefault(x => x.DivisionTemplateID == divisionTemplate.ID);
 
                     if (existingRemainderErrorsTag == null)
                     {
-                        existingRemainderErrorsTag = new DivisionTemplateRemainderErrorsTag(PageObject.ParentPage,
+                        existingRemainderErrorsTag = new DivisionTemplateRemainderErrorsTag(array.ParentPage,
                                                                                             Origin.StudentPageGenerated,
                                                                                             divisionTemplate.ID,
                                                                                             divisionTemplate.Dividend,
                                                                                             divisionTemplate.Rows,
-                                                              divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID));
-                        PageObject.ParentPage.AddTag(existingRemainderErrorsTag);
+                                                                                            divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID));
+                        array.ParentPage.AddTag(existingRemainderErrorsTag);
                     }
                     existingRemainderErrorsTag.OrientationChangedDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
                 }
@@ -999,10 +952,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                  Columns,
                                                                                  DividerValuesOrientation.Vertical,
                                                                                  dividerValues));
-                MessageBox.Show(
-                                "The side of the array is " + Rows + ". You broke the side into " + labelsString + ", which don’t add up to " + Rows +
-                                ".",
-                                "Oops");
+                MessageBox.Show("The side of the array is " + Rows + ". You broke the side into " + labelsString + ", which don’t add up to " + Rows + ".", "Oops");
             }
             else
             {
@@ -1050,10 +1000,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                  Columns,
                                                                                  DividerValuesOrientation.Horizontal,
                                                                                  dividerValues));
-                MessageBox.Show(
-                                "The side of the array is " + Columns + ". You broke the side into " + labelsString + ", which don’t add up to " +
-                                Columns + ".",
-                                "Oops");
+                MessageBox.Show("The side of the array is " + Columns + ". You broke the side into " + labelsString + ", which don’t add up to " + Columns + ".", "Oops");
             }
         }
 
@@ -1063,8 +1010,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnEraseDivisionCommandExecute(MouseEventArgs e)
         {
             var rectangle = e.Source as Rectangle;
-            if ((e.StylusDevice == null || !e.StylusDevice.Inverted || e.LeftButton != MouseButtonState.Pressed) &&
-                e.MiddleButton != MouseButtonState.Pressed ||
+            if ((e.StylusDevice == null || !e.StylusDevice.Inverted || e.LeftButton != MouseButtonState.Pressed) && e.MiddleButton != MouseButtonState.Pressed ||
                 rectangle == null)
             {
                 return;
@@ -1189,12 +1135,41 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Static Methods
 
-        public static bool CreateDivision(CLPArray array, Stroke cuttingStroke)
+        public static bool InteractWithAcceptedStrokes(CLPArray array, IEnumerable<Stroke> addedStrokes, IEnumerable<Stroke> removedStrokes, bool canInteract)
         {
-            var strokeTop = cuttingStroke.GetBounds().Top;
-            var strokeBottom = cuttingStroke.GetBounds().Bottom;
-            var strokeLeft = cuttingStroke.GetBounds().Left;
-            var strokeRight = cuttingStroke.GetBounds().Right;
+            return false; //HACK: skip this new implementation for history conversions. Remove after generating new cache.
+
+            if (array == null ||
+                !canInteract)
+            {
+                return false;
+            }
+
+            var removedStrokesList = removedStrokes as IList<Stroke> ?? removedStrokes.ToList();
+            var addedStrokesList = addedStrokes as IList<Stroke> ?? addedStrokes.ToList();
+
+            if (removedStrokesList.Any() ||
+                addedStrokesList.Count() != 1)
+            {
+                return false;
+            }
+
+            var potentialDividingStroke = addedStrokesList.FirstOrDefault();
+            return CreateDivision(array, potentialDividingStroke);
+        }
+
+        public static bool CreateDivision(CLPArray array, Stroke dividingStroke)
+        {
+            if (array == null ||
+                dividingStroke == null)
+            {
+                return false;
+            }
+
+            var strokeTop = dividingStroke.GetBounds().Top;
+            var strokeBottom = dividingStroke.GetBounds().Bottom;
+            var strokeLeft = dividingStroke.GetBounds().Left;
+            var strokeRight = dividingStroke.GetBounds().Right;
 
             var cuttableTop = array.YPosition + array.LabelLength;
             var cuttableBottom = cuttableTop + array.ArrayHeight;
@@ -1268,7 +1243,8 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                                    removedDivisions));
                 return true;
             }
-            else if (Math.Abs(strokeLeft - strokeRight) > Math.Abs(strokeTop - strokeBottom) &&
+            
+            if (Math.Abs(strokeLeft - strokeRight) > Math.Abs(strokeTop - strokeBottom) &&
                      strokeBottom <= cuttableBottom &&
                      strokeTop >= cuttableTop &&
                      cuttableRight - strokeRight <= MIN_THRESHHOLD &&
@@ -1340,7 +1316,10 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             int rows, columns, dividend = 1, numberOfArrays = 1;
-            var arrayCreationView = new ArrayCreationView { Owner = Application.Current.MainWindow };
+            var arrayCreationView = new ArrayCreationView
+                                    {
+                                        Owner = Application.Current.MainWindow
+                                    };
             arrayCreationView.ShowDialog();
 
             if (arrayCreationView.DialogResult != true)
@@ -1381,11 +1360,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var arraysToAdd = Enumerable.Range(1, numberOfArrays).Select(index => new CLPArray(page, gridSize, columns, rows, ArrayTypes.Array)).Cast<ACLPArrayBase>().ToList();
 
-            int arrayStacks = MatchArrayGridSize(arraysToAdd, page);
+            var arrayStacks = MatchArrayGridSize(arraysToAdd, page);
 
             var isHorizontallyAligned = page.Width / columns > page.Height / 4 * 3 / rows;
             var firstArray = arraysToAdd.First();
-            double initializedSquareSize = firstArray.ArrayHeight / firstArray.Rows;
+            var initializedSquareSize = firstArray.ArrayHeight / firstArray.Rows;
 
             firstArray.XPosition = 0.0;
             if (295.0 + firstArray.Height < page.Height)
@@ -1399,8 +1378,8 @@ namespace Classroom_Learning_Partner.ViewModels
             ACLPArrayBase.ApplyDistinctPosition(firstArray, App.MainWindowViewModel.CurrentUser.ID);
 
             PlaceArrayNextToExistingArray(arraysToAdd, page);
-            double xPosition = firstArray.XPosition;
-            double yPosition = firstArray.YPosition;
+            var xPosition = firstArray.XPosition;
+            var yPosition = firstArray.YPosition;
 
             //Place arrays on the page
             if (arraysToAdd.Count == 1)
@@ -1420,7 +1399,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             else
             {
-                double initialGridsquareSize = initializedSquareSize;
+                var initialGridsquareSize = initializedSquareSize;
                 if (isHorizontallyAligned)
                 {
                     while (xPosition + (firstArray.LabelLength + columns * initialGridsquareSize) * numberOfArrays + firstArray.LabelLength >= page.Width)
@@ -1528,10 +1507,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static int MatchArrayGridSize(List<ACLPArrayBase> arraysToAdd, CLPPage CurrentPage)
         {
-            int numberOfArrays = arraysToAdd.Count;
+            var numberOfArrays = arraysToAdd.Count;
             var firstArray = arraysToAdd.First();
-            int rows = firstArray.Rows;
-            int columns = firstArray.Columns;
+            var rows = firstArray.Rows;
+            var columns = firstArray.Columns;
 
             const double MIN_SIDE = 20.0;
             const double MIN_FFC_SIDE = 185.0;
@@ -1584,20 +1563,21 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         initializedSquareSize = Math.Abs(initializedSquareSize - 45.0) < .0001 ? 22.5 : initializedSquareSize / 4 * 3;
 
-                        if (numberOfArrays < 5 || xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH < CurrentPage.Width)
+                        if (numberOfArrays < 5 ||
+                            xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH < CurrentPage.Width)
                         {
                             continue;
                         }
 
                         if (xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 2) + LABEL_LENGTH < CurrentPage.Width &&
-                           yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * 2 + LABEL_LENGTH < CurrentPage.Height)
+                            yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * 2 + LABEL_LENGTH < CurrentPage.Height)
                         {
                             arrayStacks = 2;
                             break;
                         }
 
                         if (xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 3) + LABEL_LENGTH < CurrentPage.Width &&
-                           yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * 3 + LABEL_LENGTH < CurrentPage.Height)
+                            yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * 3 + LABEL_LENGTH < CurrentPage.Height)
                         {
                             arrayStacks = 3;
                             break;
@@ -1611,20 +1591,21 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         initializedSquareSize = Math.Abs(initializedSquareSize - 45.0) < .0001 ? 22.5 : initializedSquareSize / 4 * 3;
 
-                        if (numberOfArrays < 5 || yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH < CurrentPage.Height)
+                        if (numberOfArrays < 5 ||
+                            yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH < CurrentPage.Height)
                         {
                             continue;
                         }
 
                         if (yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 2) + LABEL_LENGTH < CurrentPage.Height &&
-                           xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * 2 + LABEL_LENGTH < CurrentPage.Width)
+                            xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * 2 + LABEL_LENGTH < CurrentPage.Width)
                         {
                             arrayStacks = 2;
                             break;
                         }
 
                         if (yPosition + (LABEL_LENGTH + rows * initializedSquareSize) * Math.Ceiling((double)numberOfArrays / 3) + LABEL_LENGTH < CurrentPage.Height &&
-                           xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * 3 + LABEL_LENGTH < CurrentPage.Width)
+                            xPosition + (LABEL_LENGTH + columns * initializedSquareSize) * 3 + LABEL_LENGTH < CurrentPage.Width)
                         {
                             arrayStacks = 3;
                             break;
@@ -1658,7 +1639,6 @@ namespace Classroom_Learning_Partner.ViewModels
             ////    }
             ////}
 
-
             ////double MAX_HEIGHT = CurrentPage.Height - 400.0;
             ////if (squareSize == 0.0)
             ////{
@@ -1673,12 +1653,12 @@ namespace Classroom_Learning_Partner.ViewModels
         public static void PlaceArrayNextToExistingArray(List<ACLPArrayBase> arraysToAdd, CLPPage CurrentPage)
         {
             const double LABEL_LENGTH = 22.0;
-            int numberOfArrays = arraysToAdd.Count;
+            var numberOfArrays = arraysToAdd.Count;
             var firstArray = arraysToAdd.First();
-            int rows = firstArray.Rows;
-            int columns = firstArray.Columns;
+            var rows = firstArray.Rows;
+            var columns = firstArray.Columns;
             var isHorizontallyAligned = CurrentPage.Width / columns > CurrentPage.Height / 4 * 3 / rows;
-            double initializedSquareSize = firstArray.ArrayHeight / rows;
+            var initializedSquareSize = firstArray.ArrayHeight / rows;
             var xPosition = firstArray.XPosition;
             var yPosition = firstArray.YPosition;
 
@@ -1702,14 +1682,15 @@ namespace Classroom_Learning_Partner.ViewModels
                 if (isHorizontallyAligned)
                 {
                     const double GAP = 35.0;
-                    if (!(onlyArray is FuzzyFactorCard && (onlyArray as FuzzyFactorCard).RemainderTiles != null) && onlyArray.XPosition + onlyArray.Width + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH + GAP <= CurrentPage.Width
-                        && rows * initializedSquareSize + LABEL_LENGTH < CurrentPage.Height)
+                    if (!(onlyArray is FuzzyFactorCard && (onlyArray as FuzzyFactorCard).RemainderTiles != null) &&
+                        onlyArray.XPosition + onlyArray.Width + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH + GAP <= CurrentPage.Width &&
+                        rows * initializedSquareSize + LABEL_LENGTH < CurrentPage.Height)
                     {
                         xPosition = onlyArray.XPosition + onlyArray.Width + GAP;
                         yPosition = onlyArray.YPosition;
                     }
-                    else if (onlyArray.XPosition + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH <= CurrentPage.Width
-                        && onlyArray.YPosition + onlyArray.Height + rows * initializedSquareSize + LABEL_LENGTH + GAP < CurrentPage.Height)
+                    else if (onlyArray.XPosition + (LABEL_LENGTH + columns * initializedSquareSize) * numberOfArrays + LABEL_LENGTH <= CurrentPage.Width &&
+                             onlyArray.YPosition + onlyArray.Height + rows * initializedSquareSize + LABEL_LENGTH + GAP < CurrentPage.Height)
                     {
                         yPosition = onlyArray.YPosition + onlyArray.Height + GAP;
                         xPosition = onlyArray.XPosition;
@@ -1723,14 +1704,15 @@ namespace Classroom_Learning_Partner.ViewModels
                 else
                 {
                     const double GAP = 35.0;
-                    if (!(onlyArray is FuzzyFactorCard && (onlyArray as FuzzyFactorCard).RemainderTiles != null) && onlyArray.YPosition + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH <= CurrentPage.Height
-                        && onlyArray.XPosition + onlyArray.Width + columns * initializedSquareSize + LABEL_LENGTH + GAP < CurrentPage.Width)
+                    if (!(onlyArray is FuzzyFactorCard && (onlyArray as FuzzyFactorCard).RemainderTiles != null) &&
+                        onlyArray.YPosition + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH <= CurrentPage.Height &&
+                        onlyArray.XPosition + onlyArray.Width + columns * initializedSquareSize + LABEL_LENGTH + GAP < CurrentPage.Width)
                     {
                         xPosition = onlyArray.XPosition + onlyArray.Width + GAP;
                         yPosition = onlyArray.YPosition;
                     }
-                    else if (onlyArray.YPosition + onlyArray.Height + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH + GAP <= CurrentPage.Width
-                        && onlyArray.XPosition + rows * initializedSquareSize + LABEL_LENGTH < CurrentPage.Height)
+                    else if (onlyArray.YPosition + onlyArray.Height + (LABEL_LENGTH + rows * initializedSquareSize) * numberOfArrays + LABEL_LENGTH + GAP <= CurrentPage.Width &&
+                             onlyArray.XPosition + rows * initializedSquareSize + LABEL_LENGTH < CurrentPage.Height)
                     {
                         yPosition = onlyArray.YPosition + onlyArray.Height + GAP;
                         xPosition = onlyArray.XPosition;

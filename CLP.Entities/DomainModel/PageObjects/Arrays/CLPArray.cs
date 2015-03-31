@@ -4,7 +4,6 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Ink;
-using System.Windows.Media;
 using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
@@ -60,6 +59,73 @@ namespace CLP.Entities
 
         private const double MIN_ARRAY_LENGTH = 25.0;
 
+        public override double MinimumGridSquareSize
+        {
+            get { return Columns < Rows ? MIN_ARRAY_LENGTH / Columns : MIN_ARRAY_LENGTH / Rows; }
+        }
+
+        /// <summary>The type of <see cref="CLPArray" />.</summary>
+        public ArrayTypes ArrayType
+        {
+            get { return GetValue<ArrayTypes>(ArrayTypeProperty); }
+            set { SetValue(ArrayTypeProperty, value); }
+        }
+
+        public static readonly PropertyData ArrayTypeProperty = RegisterProperty("ArrayType", typeof (ArrayTypes), ArrayTypes.Array);
+
+        #endregion //Properties
+
+        #region Methods
+
+        public override void SizeArrayToGridLevel(double toSquareSize = -1, bool recalculateDivisions = true)
+        {
+            var initialSquareSize = 45.0;
+            if (toSquareSize <= 0)
+            {
+                while (XPosition + 2 * LabelLength + initialSquareSize * Columns >= ParentPage.Width ||
+                       YPosition + 2 * LabelLength + initialSquareSize * Rows >= ParentPage.Height)
+                {
+                    initialSquareSize = Math.Abs(initialSquareSize - 45.0) < .0001 ? 22.5 : initialSquareSize / 4 * 3;
+                }
+            }
+            else
+            {
+                initialSquareSize = toSquareSize;
+            }
+
+            Height = (initialSquareSize * Rows) + (2 * LabelLength);
+            Width = (initialSquareSize * Columns) + (2 * LabelLength);
+
+            if (recalculateDivisions)
+            {
+                ResizeDivisions();
+            }
+        }
+
+        public int[,] GetPartialProducts()
+        {
+            var horizDivs = Math.Max(HorizontalDivisions.Count, 1);
+            var vertDivs = Math.Max(VerticalDivisions.Count, 1);
+            var partialProducts = new int[horizDivs, vertDivs];
+
+            for (var i = 0; i < horizDivs; i++)
+            {
+                for (var j = 0; j < vertDivs; j++)
+                {
+                    var yAxisValue = (horizDivs > 1 ? HorizontalDivisions[i].Value : Rows);
+                    var xAxisValue = (vertDivs > 1 ? VerticalDivisions[j].Value : Columns);
+
+                    partialProducts[i, j] = yAxisValue * xAxisValue;
+                }
+            }
+
+            return partialProducts;
+        }
+
+        #endregion //Methods
+
+        #region APageObjectBase Overrides
+
         public override bool IsBackgroundInteractable
         {
             get { return true; }
@@ -75,76 +141,7 @@ namespace CLP.Entities
             get { return MIN_ARRAY_LENGTH + (2 * LabelLength); }
         }
 
-        public override double MinimumGridSquareSize
-        {
-            get { return Columns < Rows ? MIN_ARRAY_LENGTH / Columns : MIN_ARRAY_LENGTH / Rows; }
-        }
-
-        /// <summary>The type of <see cref="CLPArray" />.</summary>
-        public ArrayTypes ArrayType
-        {
-            get { return GetValue<ArrayTypes>(ArrayTypeProperty); }
-            set { SetValue(ArrayTypeProperty, value); }
-        }
-
-        public static readonly PropertyData ArrayTypeProperty = RegisterProperty("ArrayType", typeof (ArrayTypes), ArrayTypes.Array);
-
-        #region IStrokeAccepter Members
-
-        /// <summary>Determines whether the <see cref="Stamp" /> can currently accept <see cref="Stroke" />s.</summary>
-        public bool CanAcceptStrokes
-        {
-            get { return GetValue<bool>(CanAcceptStrokesProperty); }
-            set { SetValue(CanAcceptStrokesProperty, value); }
-        }
-
-        public static readonly PropertyData CanAcceptStrokesProperty = RegisterProperty("CanAcceptStrokes", typeof(bool), true);
-
-        /// <summary>The currently accepted <see cref="Stroke" />s.</summary>
-        [XmlIgnore]
-        [ExcludeFromSerialization]
-        public List<Stroke> AcceptedStrokes
-        {
-            get { return GetValue<List<Stroke>>(AcceptedStrokesProperty); }
-            set { SetValue(AcceptedStrokesProperty, value); }
-        }
-
-        public static readonly PropertyData AcceptedStrokesProperty = RegisterProperty("AcceptedStrokes", typeof(List<Stroke>), () => new List<Stroke>());
-
-        /// <summary>The IDs of the <see cref="Stroke" />s that have been accepted.</summary>
-        public List<string> AcceptedStrokeParentIDs
-        {
-            get { return GetValue<List<string>>(AcceptedStrokeParentIDsProperty); }
-            set { SetValue(AcceptedStrokeParentIDsProperty, value); }
-        }
-
-        public static readonly PropertyData AcceptedStrokeParentIDsProperty = RegisterProperty("AcceptedStrokeParentIDs", typeof(List<string>), () => new List<string>());
-
-        #endregion //IStrokeAccepter Members
-
-        #endregion //Properties
-
-        #region Methods
-
-        public override IPageObject Duplicate()
-        {
-            var newCLPArray = Clone() as CLPArray;
-            if (newCLPArray == null)
-            {
-                return null;
-            }
-            newCLPArray.CreationDate = DateTime.Now;
-            newCLPArray.ID = Guid.NewGuid().ToCompactID();
-            newCLPArray.VersionIndex = 0;
-            newCLPArray.LastVersionIndex = null;
-            newCLPArray.ParentPage = ParentPage;
-
-            return newCLPArray;
-        }
-
-        #region Overrides of APageObjectBase
-
-        public override void OnAdded()
+        public override void OnAdded(bool fromHistory = false)
         {
             base.OnAdded();
 
@@ -254,7 +251,7 @@ namespace CLP.Entities
             }
         }
 
-        public override void OnDeleted()
+        public override void OnDeleted(bool fromHistory = false)
         {
             base.OnDeleted();
             // If FFC with remainder on page, update
@@ -280,101 +277,48 @@ namespace CLP.Entities
             ParentPage.History.TrashedInkStrokes.Add(strokesToTrash);
         }
 
-        public override void OnResizing(double oldWidth, double oldHeight)
-        {
-            //var scaleX = NumberLineLength / (oldWidth - 2 * ArrowLength);
+        public override void OnResizing(double oldWidth, double oldHeight, bool fromHistory = false) { }
 
-            //if (CanAcceptStrokes)
-            //{
-            //    foreach (var stroke in AcceptedStrokes)
-            //    {
-            //        var transform = new Matrix();
-            //        transform.ScaleAt(scaleX, 1.0, XPosition + ArrowLength, YPosition);
-            //        stroke.Transform(transform, false);
-            //    }
-            //}
-        }
-
-        public override void OnResized(double oldWidth, double oldHeight)
+        public override void OnResized(double oldWidth, double oldHeight, bool fromHistory = false)
         {
             SizeArrayToGridLevel(GridSquareSize);
             OnResizing(oldWidth, oldHeight);
-            
         }
 
-        public override void OnMoving(double oldX, double oldY)
+        public override void OnMoving(double oldX, double oldY, bool fromHistory = false)
         {
+            if (!CanAcceptStrokes)
+            {
+                return;
+            }
+
             var deltaX = XPosition - oldX;
             var deltaY = YPosition - oldY;
 
-            if (CanAcceptStrokes)
-            {
-                foreach (var stroke in AcceptedStrokes)
-                {
-                    if (stroke == null)
-                    {
-                        Console.WriteLine("Null stroke in OnMoving for Array");
-                        continue;
-                    }
-                    var transform = new Matrix();
-                    transform.Translate(deltaX, deltaY);
-                    stroke.Transform(transform, true);
-                }
-            }
+            AcceptedStrokes.MoveAll(deltaX, deltaY);
         }
 
-        public override void OnMoved(double oldX, double oldY) { OnMoving(oldX, oldY); }
+        public override void OnMoved(double oldX, double oldY, bool fromHistory = false) { OnMoving(oldX, oldY, fromHistory); }
 
-        #endregion //Overrides of APageObjectBase
-
-        public override void SizeArrayToGridLevel(double toSquareSize = -1, bool recalculateDivisions = true)
+        public override IPageObject Duplicate()
         {
-            var initialSquareSize = 45.0;
-            if (toSquareSize <= 0)
+            var newCLPArray = Clone() as CLPArray;
+            if (newCLPArray == null)
             {
-                while (XPosition + 2 * LabelLength + initialSquareSize * Columns >= ParentPage.Width ||
-                       YPosition + 2 * LabelLength + initialSquareSize * Rows >= ParentPage.Height)
-                {
-                    initialSquareSize = Math.Abs(initialSquareSize - 45.0) < .0001 ? 22.5 : initialSquareSize / 4 * 3;
-                }
+                return null;
             }
-            else
-            {
-                initialSquareSize = toSquareSize;
-            }
+            newCLPArray.CreationDate = DateTime.Now;
+            newCLPArray.ID = Guid.NewGuid().ToCompactID();
+            newCLPArray.VersionIndex = 0;
+            newCLPArray.LastVersionIndex = null;
+            newCLPArray.ParentPage = ParentPage;
 
-            Height = (initialSquareSize * Rows) + (2 * LabelLength);
-            Width = (initialSquareSize * Columns) + (2 * LabelLength);
-
-            if (recalculateDivisions)
-            {
-                ResizeDivisions();
-            }
+            return newCLPArray;
         }
 
-        public int[,] GetPartialProducts()
-        {
-            var horizDivs = Math.Max(HorizontalDivisions.Count, 1);
-            var vertDivs = Math.Max(VerticalDivisions.Count, 1);
-            var partialProducts = new int[horizDivs, vertDivs];
+        #endregion //APageObjectBase Overrides
 
-            for (var i = 0; i < horizDivs; i++)
-            {
-                for (var j = 0; j < vertDivs; j++)
-                {
-                    var yAxisValue = (horizDivs > 1 ? HorizontalDivisions[i].Value : Rows);
-                    var xAxisValue = (vertDivs > 1 ? VerticalDivisions[j].Value : Columns);
-
-                    partialProducts[i, j] = yAxisValue * xAxisValue;
-                }
-            }
-
-            return partialProducts;
-        }
-
-        #endregion //Methods
-
-        #region Implementation of ICountable
+        #region ICountable Implementation
 
         /// <summary>Number of Parts the <see cref="ICountable" /> represents.</summary>
         public int Parts
@@ -401,9 +345,9 @@ namespace CLP.Entities
 
         public static readonly PropertyData IsPartsAutoGeneratedProperty = RegisterProperty("IsPartsAutoGenerated", typeof (bool), true);
 
-        #endregion
+        #endregion //ICountable Implementation
 
-        #region Implementation of ICuttable
+        #region ICuttable Implementation
 
         public List<IPageObject> Cut(Stroke cuttingStroke)
         {
@@ -514,7 +458,46 @@ namespace CLP.Entities
             return halvedPageObjects;
         }
 
-        public void AcceptStrokes(IEnumerable<Stroke> addedStrokes, IEnumerable<Stroke> removedStrokes)
+        #endregion //ICuttable Implementation
+
+        #region IStrokeAccepter Implementation
+
+        /// <summary>Stroke must be at least this percent contained by pageObject.</summary>
+        public int StrokeHitTestPercentage
+        {
+            get { return 90; }
+        }
+
+        /// <summary>Determines whether the <see cref="Stamp" /> can currently accept <see cref="Stroke" />s.</summary>
+        public bool CanAcceptStrokes
+        {
+            get { return GetValue<bool>(CanAcceptStrokesProperty); }
+            set { SetValue(CanAcceptStrokesProperty, value); }
+        }
+
+        public static readonly PropertyData CanAcceptStrokesProperty = RegisterProperty("CanAcceptStrokes", typeof (bool), true);
+
+        /// <summary>The currently accepted <see cref="Stroke" />s.</summary>
+        [XmlIgnore]
+        [ExcludeFromSerialization]
+        public List<Stroke> AcceptedStrokes
+        {
+            get { return GetValue<List<Stroke>>(AcceptedStrokesProperty); }
+            set { SetValue(AcceptedStrokesProperty, value); }
+        }
+
+        public static readonly PropertyData AcceptedStrokesProperty = RegisterProperty("AcceptedStrokes", typeof (List<Stroke>), () => new List<Stroke>());
+
+        /// <summary>The IDs of the <see cref="Stroke" />s that have been accepted.</summary>
+        public List<string> AcceptedStrokeParentIDs
+        {
+            get { return GetValue<List<string>>(AcceptedStrokeParentIDsProperty); }
+            set { SetValue(AcceptedStrokeParentIDsProperty, value); }
+        }
+
+        public static readonly PropertyData AcceptedStrokeParentIDsProperty = RegisterProperty("AcceptedStrokeParentIDs", typeof (List<string>), () => new List<string>());
+
+        public void ChangeAcceptedStrokes(IEnumerable<Stroke> addedStrokes, IEnumerable<Stroke> removedStrokes)
         {
             if (!CanAcceptStrokes)
             {
@@ -528,21 +511,27 @@ namespace CLP.Entities
                 AcceptedStrokes.Remove(stroke);
                 AcceptedStrokeParentIDs.Remove(stroke.GetStrokeID());
             }
-           
+
             // Add Strokes
-            var numberLineBodyBoundingBox = new Rect(XPosition, YPosition, Width, Height);
-            foreach (var stroke in addedStrokes.Where(stroke => stroke.HitTest(numberLineBodyBoundingBox, 90) && !AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
+            var addedStrokesList = addedStrokes as IList<Stroke> ?? addedStrokes.ToList();
+            foreach (var stroke in addedStrokesList.Where(stroke => IsStrokeOverPageObject(stroke) && !AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
             {
                 AcceptedStrokes.Add(stroke);
                 AcceptedStrokeParentIDs.Add(stroke.GetStrokeID());
             }
         }
 
+        public bool IsStrokeOverPageObject(Stroke stroke)
+        {
+            var arrayBoundingBox = new Rect(XPosition, YPosition, Width, Height);
+            return stroke.HitTest(arrayBoundingBox, StrokeHitTestPercentage);
+        }
+
         public StrokeCollection GetStrokesOverPageObject()
         {
             var arrayBoundingBox = new Rect(XPosition, YPosition, Width, Height);
             var strokesOverObject = from stroke in ParentPage.InkStrokes
-                                    where stroke.HitTest(arrayBoundingBox, 90) //Stroke must be at least 90% contained by array.
+                                    where stroke.HitTest(arrayBoundingBox, StrokeHitTestPercentage)
                                     select stroke;
 
             return new StrokeCollection(strokesOverObject);
@@ -557,14 +546,11 @@ namespace CLP.Entities
                 return;
             }
 
-            var arrayBoundingBox = new Rect(XPosition, YPosition, Width, Height);
-            var strokesOverObject = from stroke in ParentPage.InkStrokes
-                                    where stroke.HitTest(arrayBoundingBox, 90) //Stroke must be at least 90% contained by array.
-                                    select stroke;
+            var strokesOverObject = GetStrokesOverPageObject();
 
-            AcceptStrokes(new StrokeCollection(strokesOverObject), new StrokeCollection());
+            ChangeAcceptedStrokes(strokesOverObject, new StrokeCollection());
         }
 
-        #endregion
+        #endregion //IStrokeAccepter Implementation
     }
 }

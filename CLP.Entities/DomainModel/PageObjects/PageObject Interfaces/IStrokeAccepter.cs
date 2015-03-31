@@ -5,11 +5,13 @@ namespace CLP.Entities
 {
     public interface IStrokeAccepter : IPageObject
     {
+        int StrokeHitTestPercentage { get; }
         bool CanAcceptStrokes { get; set; }
         List<Stroke> AcceptedStrokes { get; set; }
         List<string> AcceptedStrokeParentIDs { get; set; }
 
-        void AcceptStrokes(IEnumerable<Stroke> addedStrokes, IEnumerable<Stroke> removedStrokes);
+        void ChangeAcceptedStrokes(IEnumerable<Stroke> addedStrokes, IEnumerable<Stroke> removedStrokes);
+        bool IsStrokeOverPageObject(Stroke stroke);
         StrokeCollection GetStrokesOverPageObject(); 
         void RefreshAcceptedStrokes();
     }

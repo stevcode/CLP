@@ -16,14 +16,10 @@ namespace CLP.Entities
     {
         #region Constructors
 
-        /// <summary>
-        /// Initializes <see cref="LassoRegion" /> from scratch.
-        /// </summary>
+        /// <summary>Initializes <see cref="LassoRegion" /> from scratch.</summary>
         public LassoRegion() { }
 
-        /// <summary>
-        /// Initializes <see cref="LassoRegion" /> from 
-        /// </summary>
+        /// <summary>Initializes <see cref="LassoRegion" /> from</summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="LassoRegion" /> belongs to.</param>
         public LassoRegion(CLPPage parentPage, List<IPageObject> pageObjects, StrokeCollection inkStrokes, double xPosition, double yPosition, double height, double width)
             : base(parentPage)
@@ -36,9 +32,7 @@ namespace CLP.Entities
             Width = width;
         }
 
-        /// <summary>
-        /// Initializes <see cref="LassoRegion" /> based on <see cref="SerializationInfo" />.
-        /// </summary>
+        /// <summary>Initializes <see cref="LassoRegion" /> based on <see cref="SerializationInfo" />.</summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext" />.</param>
         public LassoRegion(SerializationInfo info, StreamingContext context)
@@ -48,11 +42,9 @@ namespace CLP.Entities
 
         #region Properties
 
-        public override int ZIndex { get { return 1000; } }
-
-        /// <summary>
-        /// List of all the lassoed <see cref="IPageObject" />s.
-        /// </summary>
+        /// <summary>List of all the lassoed <see cref="IPageObject" />s.</summary>
+        [XmlIgnore]
+        [ExcludeFromSerialization]
         public List<IPageObject> LassoedPageObjects
         {
             get { return GetValue<List<IPageObject>>(LassoedPageObjectsProperty); }
@@ -61,9 +53,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData LassoedPageObjectsProperty = RegisterProperty("LassoedPageObjects", typeof (List<IPageObject>), () => new List<IPageObject>());
 
-        /// <summary>
-        /// StrokeCollection of all the lassoed <see cref="Stroke" />s.
-        /// </summary>
+        /// <summary>StrokeCollection of all the lassoed <see cref="Stroke" />s.</summary>
         [XmlIgnore]
         [ExcludeFromSerialization]
         public StrokeCollection LassoedStrokes
@@ -74,38 +64,21 @@ namespace CLP.Entities
 
         public static readonly PropertyData LassoedStrokesProperty = RegisterProperty("LassoedStrokes", typeof (StrokeCollection), () => new StrokeCollection());
 
+        #endregion //Properties
+
+        #region APageObjectBase Overrides
+
+        public override int ZIndex
+        {
+            get { return 1000; }
+        }
+
         public override bool IsBackgroundInteractable
         {
             get { return false; }
         }
 
-        #endregion //Properties
-
-        #region Methods
-
-        public override IPageObject Duplicate()
-        {
-            var newLassoRegion = Clone() as LassoRegion;
-            if(newLassoRegion == null)
-            {
-                return null;
-            }
-            newLassoRegion.CreationDate = DateTime.Now;
-            newLassoRegion.ID = Guid.NewGuid().ToString();
-            newLassoRegion.VersionIndex = 0;
-            newLassoRegion.LastVersionIndex = null;
-            newLassoRegion.ParentPage = ParentPage;
-
-            return newLassoRegion;
-        }
-
-        public override void OnResizing(double oldWidth, double oldHeight)
-        {
-        }
-
-        public override void OnResized(double oldWidth, double oldHeight) { OnResizing(oldWidth, oldHeight); }
-
-        public override void OnMoving(double oldX, double oldY)
+        public override void OnMoving(double oldX, double oldY, bool fromHistory = false)
         {
             var deltaX = XPosition - oldX;
             var deltaY = YPosition - oldY;
@@ -124,7 +97,7 @@ namespace CLP.Entities
             }
         }
 
-        public override void OnMoved(double oldX, double oldY)
+        public override void OnMoved(double oldX, double oldY, bool fromHistory = false)
         {
             if (ParentPage.History.IsAnimating)
             {
@@ -133,19 +106,24 @@ namespace CLP.Entities
 
             try
             {
-                foreach (var acceptorPageObject in ParentPage.PageObjects.OfType<IPageObjectAccepter>().Where(pageObject => pageObject.CanAcceptPageObjects && pageObject.ID != ID && !LassoedPageObjects.Contains(pageObject)))
+                foreach (
+                    var acceptorPageObject in
+                        ParentPage.PageObjects.OfType<IPageObjectAccepter>()
+                                  .Where(pageObject => pageObject.CanAcceptPageObjects && pageObject.ID != ID && !LassoedPageObjects.Contains(pageObject)))
                 {
                     var removedPageObjects = new List<IPageObject>();
                     var addedPageObjects = new ObservableCollection<IPageObject>();
 
                     foreach (var lassoedPageObject in LassoedPageObjects)
                     {
-                        if (acceptorPageObject.AcceptedPageObjectIDs.Contains(lassoedPageObject.ID) && !acceptorPageObject.PageObjectIsOver(lassoedPageObject, .50))
+                        if (acceptorPageObject.AcceptedPageObjectIDs.Contains(lassoedPageObject.ID) &&
+                            !acceptorPageObject.PageObjectIsOver(lassoedPageObject, .50))
                         {
                             removedPageObjects.Add(lassoedPageObject);
                         }
 
-                        if (!acceptorPageObject.AcceptedPageObjectIDs.Contains(lassoedPageObject.ID) && acceptorPageObject.PageObjectIsOver(lassoedPageObject, .50))
+                        if (!acceptorPageObject.AcceptedPageObjectIDs.Contains(lassoedPageObject.ID) &&
+                            acceptorPageObject.PageObjectIsOver(lassoedPageObject, .50))
                         {
                             addedPageObjects.Add(lassoedPageObject);
                         }
@@ -154,7 +132,10 @@ namespace CLP.Entities
                     acceptorPageObject.AcceptPageObjects(addedPageObjects, removedPageObjects);
                 }
 
-                foreach (var acceptorPageObject in ParentPage.PageObjects.OfType<IStrokeAccepter>().Where(pageObject => pageObject.CanAcceptStrokes && pageObject.ID != ID && !LassoedPageObjects.Contains(pageObject)))
+                foreach (
+                    var acceptorPageObject in
+                        ParentPage.PageObjects.OfType<IStrokeAccepter>()
+                                  .Where(pageObject => pageObject.CanAcceptStrokes && pageObject.ID != ID && !LassoedPageObjects.Contains(pageObject)))
                 {
                     var pageObjectBounds = new Rect(acceptorPageObject.XPosition, acceptorPageObject.YPosition, acceptorPageObject.Width, acceptorPageObject.Height);
 
@@ -164,19 +145,34 @@ namespace CLP.Entities
 
                     var pageObject = acceptorPageObject;
                     var removedStrokesOverObject = from stroke in LassoedStrokes
-                                                   where pageObject.AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID()) && !stroke.HitTest(pageObjectBounds, 3) 
+                                                   where pageObject.AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID()) && !stroke.HitTest(pageObjectBounds, 3)
                                                    select stroke;
 
                     var addStrokes = new StrokeCollection(addedStrokesOverObject);
                     var removeStrokes = new StrokeCollection(removedStrokesOverObject);
-                    acceptorPageObject.AcceptStrokes(addStrokes, removeStrokes);
+                    acceptorPageObject.ChangeAcceptedStrokes(addStrokes, removeStrokes);
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine("LassoRegion.OnMoved() Exception: " + ex.Message);
             }
-            base.OnMoved(oldX, oldY);
+        }
+
+        public override IPageObject Duplicate()
+        {
+            var newLassoRegion = Clone() as LassoRegion;
+            if (newLassoRegion == null)
+            {
+                return null;
+            }
+            newLassoRegion.CreationDate = DateTime.Now;
+            newLassoRegion.ID = Guid.NewGuid().ToString();
+            newLassoRegion.VersionIndex = 0;
+            newLassoRegion.LastVersionIndex = null;
+            newLassoRegion.ParentPage = ParentPage;
+
+            return newLassoRegion;
         }
 
         #endregion //Methods

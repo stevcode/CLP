@@ -148,9 +148,16 @@ namespace CLP.Entities
         /// </summary>
         protected override void UndoAction(bool isAnimationUndo)
         {
-            var array = ParentPage.GetPageObjectByID(ArrayID) as ACLPArrayBase;
+            var array = ParentPage.GetVerifiedPageObjectOnPageByID(ArrayID) as ACLPArrayBase;
             if(array == null)
             {
+                return;
+            }
+
+            if (!AddedDivisions.Any() && 
+                !RemovedDivisions.Any())
+            {
+                Console.WriteLine("ERROR: AddedDivisions AND RemovedDivisions Empty in CLPArrayDivisionsChangedHistoryItem, History Index {0}.", HistoryIndex);
                 return;
             }
 
@@ -184,9 +191,16 @@ namespace CLP.Entities
         /// </summary>
         protected override void RedoAction(bool isAnimationRedo)
         {
-            var array = ParentPage.GetPageObjectByID(ArrayID) as ACLPArrayBase;
+            var array = ParentPage.GetVerifiedPageObjectOnPageByID(ArrayID) as ACLPArrayBase;
             if(array == null)
             {
+                return;
+            }
+
+            if (!AddedDivisions.Any() &&
+                !RemovedDivisions.Any())
+            {
+                Console.WriteLine("ERROR: AddedDivisions AND RemovedDivisions Empty in CLPArrayDivisionsChangedHistoryItem, History Index {0}.", HistoryIndex);
                 return;
             }
 

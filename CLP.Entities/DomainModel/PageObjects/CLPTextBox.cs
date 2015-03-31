@@ -9,14 +9,10 @@ namespace CLP.Entities
     {
         #region Constructors
 
-        /// <summary>
-        /// Initializes <see cref="CLPTextBox" /> from scratch.
-        /// </summary>
+        /// <summary>Initializes <see cref="CLPTextBox" /> from scratch.</summary>
         public CLPTextBox() { }
 
-        /// <summary>
-        /// Initializes <see cref="CLPTextBox" /> from <see cref="string" />.
-        /// </summary>
+        /// <summary>Initializes <see cref="CLPTextBox" /> from <see cref="string" />.</summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="CLPTextBox" /> belongs to.</param>
         /// <param name="text">The RTF formatted text of the <see cref="CLPTextBox" /></param>
         public CLPTextBox(CLPPage parentPage, string text)
@@ -29,9 +25,7 @@ namespace CLP.Entities
             Width = 400.0;
         }
 
-        /// <summary>
-        /// Initializes <see cref="CLPTextBox" /> based on <see cref="SerializationInfo" />.
-        /// </summary>
+        /// <summary>Initializes <see cref="CLPTextBox" /> based on <see cref="SerializationInfo" />.</summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext" />.</param>
         public CLPTextBox(SerializationInfo info, StreamingContext context)
@@ -41,32 +35,33 @@ namespace CLP.Entities
 
         #region Properties
 
-        public override int ZIndex { get { return 20; } }
-
-        public override bool IsBackgroundInteractable
-        {
-            get { return false; }
-        }
-
-        /// <summary>
-        /// The RTF formatted text of the <see cref="CLPTextBox" />.
-        /// </summary>
+        /// <summary>The RTF formatted text of the <see cref="CLPTextBox" />.</summary>
         public string Text
         {
             get { return GetValue<string>(TextProperty); }
             set { SetValue(TextProperty, value); }
         }
 
-        public static readonly PropertyData TextProperty = RegisterProperty("Text", typeof(string), string.Empty);
+        public static readonly PropertyData TextProperty = RegisterProperty("Text", typeof (string), string.Empty);
 
         #endregion //Properties
 
-        #region Methods
+        #region APageObjectBase Overrides
+
+        public override int ZIndex
+        {
+            get { return 20; }
+        }
+
+        public override bool IsBackgroundInteractable
+        {
+            get { return false; }
+        }
 
         public override IPageObject Duplicate()
         {
             var newTextBox = Clone() as CLPTextBox;
-            if(newTextBox == null)
+            if (newTextBox == null)
             {
                 return null;
             }
@@ -79,6 +74,6 @@ namespace CLP.Entities
             return newTextBox;
         }
 
-        #endregion //Methods
+        #endregion //APageObjectBase Overrides
     }
 }
