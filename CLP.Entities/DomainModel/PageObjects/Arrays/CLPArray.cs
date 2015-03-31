@@ -143,117 +143,140 @@ namespace CLP.Entities
 
         public override void OnAdded(bool fromHistory = false)
         {
-            base.OnAdded();
+            if (!fromHistory)
+            {
+                foreach (var divisionTemplate in ParentPage.PageObjects.OfType<FuzzyFactorCard>().ToList())
+                {
+                    divisionTemplate.UpdateRemainderRegion();
 
-            foreach (var divisionTemplate in ParentPage.PageObjects.OfType<FuzzyFactorCard>().ToList())
+                    if (ParentPage.IsTagAddPrevented)
+                    {
+                        continue;
+                    }
+
+                    var divisionTemplateIDsInHistory = DivisionTemplateAnalysis.GetListOfDivisionTemplateIDsInHistory(ParentPage);
+
+                    if (divisionTemplate.CurrentRemainder != divisionTemplate.Dividend % divisionTemplate.Rows)
+                    {
+                        var existingFactorPairErrorsTag = ParentPage.Tags.OfType<DivisionTemplateFactorPairErrorsTag>().FirstOrDefault(x => x.DivisionTemplateID == divisionTemplate.ID);
+                        var isArrayDimensionErrorsTagOnPage = true;
+
+                        if (existingFactorPairErrorsTag == null)
+                        {
+                            existingFactorPairErrorsTag = new DivisionTemplateFactorPairErrorsTag(ParentPage,
+                                                                                                  Origin.StudentPageGenerated,
+                                                                                                  divisionTemplate.ID,
+                                                                                                  divisionTemplate.Dividend,
+                                                                                                  divisionTemplate.Rows,
+                                                                                                  divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID));
+                            isArrayDimensionErrorsTagOnPage = false;
+                        }
+
+                        if (Columns == divisionTemplate.Dividend ||
+                            Rows == divisionTemplate.Dividend)
+                        {
+                            existingFactorPairErrorsTag.CreateDividendAsDimensionDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
+                        }
+
+                        if (Rows != divisionTemplate.Rows)
+                        {
+                            if (Columns == divisionTemplate.Rows)
+                            {
+                                existingFactorPairErrorsTag.CreateWrongOrientationDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
+                            }
+                            else
+                            {
+                                existingFactorPairErrorsTag.CreateIncorrectDimensionDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
+                            }
+                        }
+
+                        var totalAreaOfArraysOnPage = ParentPage.PageObjects.OfType<CLPArray>().Sum(x => x.Rows * x.Columns);
+                        if (totalAreaOfArraysOnPage > divisionTemplate.CurrentRemainder)
+                        {
+                            existingFactorPairErrorsTag.CreateArrayTooLargeDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
+                        }
+
+                        if (!isArrayDimensionErrorsTagOnPage &&
+                            existingFactorPairErrorsTag.ErrorAtemptsSum > 0)
+                        {
+                            ParentPage.AddTag(existingFactorPairErrorsTag);
+                        }
+                    }
+                    else
+                    {
+                        var existingRemainderErrorsTag = ParentPage.Tags.OfType<DivisionTemplateRemainderErrorsTag>().FirstOrDefault(x => x.DivisionTemplateID == divisionTemplate.ID);
+                        var isRemainderErrorsTagOnPage = true;
+
+                        if (existingRemainderErrorsTag == null)
+                        {
+                            existingRemainderErrorsTag = new DivisionTemplateRemainderErrorsTag(ParentPage,
+                                                                                                Origin.StudentPageGenerated,
+                                                                                                divisionTemplate.ID,
+                                                                                                divisionTemplate.Dividend,
+                                                                                                divisionTemplate.Rows,
+                                                                                                divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID));
+                            isRemainderErrorsTagOnPage = false;
+                        }
+
+                        if (Columns == divisionTemplate.Dividend ||
+                            Rows == divisionTemplate.Dividend)
+                        {
+                            existingRemainderErrorsTag.CreateDividendAsDimensionDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
+                        }
+
+                        if (Rows != divisionTemplate.Rows)
+                        {
+                            if (Columns == divisionTemplate.Rows)
+                            {
+                                existingRemainderErrorsTag.CreateWrongOrientationDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
+                            }
+                            else
+                            {
+                                existingRemainderErrorsTag.CreateIncorrectDimensionDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
+                            }
+                        }
+
+                        var totalAreaOfArraysOnPage = ParentPage.PageObjects.OfType<CLPArray>().Sum(x => x.Rows * x.Columns);
+                        if (totalAreaOfArraysOnPage > divisionTemplate.CurrentRemainder)
+                        {
+                            existingRemainderErrorsTag.CreateArrayTooLargeDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
+                        }
+
+                        if (!isRemainderErrorsTagOnPage &&
+                            existingRemainderErrorsTag.ErrorAtemptsSum > 0)
+                        {
+                            ParentPage.AddTag(existingRemainderErrorsTag);
+                        }
+                    }
+                }
+
+                return;
+            }
+
+            foreach (var divisionTemplate in ParentPage.PageObjects.OfType<FuzzyFactorCard>())
             {
                 divisionTemplate.UpdateRemainderRegion();
-
-                if (ParentPage.IsTagAddPrevented)
-                {
-                    continue;
-                }
-
-                var divisionTemplateIDsInHistory = DivisionTemplateAnalysis.GetListOfDivisionTemplateIDsInHistory(ParentPage);
-
-                if (divisionTemplate.CurrentRemainder != divisionTemplate.Dividend % divisionTemplate.Rows)
-                {
-                    var existingFactorPairErrorsTag = ParentPage.Tags.OfType<DivisionTemplateFactorPairErrorsTag>().FirstOrDefault(x => x.DivisionTemplateID == divisionTemplate.ID);
-                    var isArrayDimensionErrorsTagOnPage = true;
-
-                    if (existingFactorPairErrorsTag == null)
-                    {
-                        existingFactorPairErrorsTag = new DivisionTemplateFactorPairErrorsTag(ParentPage,
-                                                                                              Origin.StudentPageGenerated,
-                                                                                              divisionTemplate.ID,
-                                                                                              divisionTemplate.Dividend,
-                                                                                              divisionTemplate.Rows,
-                                                                                              divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID));
-                        isArrayDimensionErrorsTagOnPage = false;
-                    }
-
-                    if (Columns == divisionTemplate.Dividend ||
-                        Rows == divisionTemplate.Dividend)
-                    {
-                        existingFactorPairErrorsTag.CreateDividendAsDimensionDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
-                    }
-
-                    if (Rows != divisionTemplate.Rows)
-                    {
-                        if (Columns == divisionTemplate.Rows)
-                        {
-                            existingFactorPairErrorsTag.CreateWrongOrientationDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
-                        }
-                        else
-                        {
-                            existingFactorPairErrorsTag.CreateIncorrectDimensionDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
-                        }
-                    }
-
-                    var totalAreaOfArraysOnPage = ParentPage.PageObjects.OfType<CLPArray>().Sum(x => x.Rows * x.Columns);
-                    if (totalAreaOfArraysOnPage > divisionTemplate.CurrentRemainder)
-                    {
-                        existingFactorPairErrorsTag.CreateArrayTooLargeDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
-                    }
-
-                    if (!isArrayDimensionErrorsTagOnPage &&
-                        existingFactorPairErrorsTag.ErrorAtemptsSum > 0)
-                    {
-                        ParentPage.AddTag(existingFactorPairErrorsTag);
-                    }
-                }
-                else
-                {
-                    var existingRemainderErrorsTag = ParentPage.Tags.OfType<DivisionTemplateRemainderErrorsTag>().FirstOrDefault(x => x.DivisionTemplateID == divisionTemplate.ID);
-                    var isRemainderErrorsTagOnPage = true;
-
-                    if (existingRemainderErrorsTag == null)
-                    {
-                        existingRemainderErrorsTag = new DivisionTemplateRemainderErrorsTag(ParentPage,
-                                                                                            Origin.StudentPageGenerated,
-                                                                                            divisionTemplate.ID,
-                                                                                            divisionTemplate.Dividend,
-                                                                                            divisionTemplate.Rows,
-                                                                                            divisionTemplateIDsInHistory.IndexOf(divisionTemplate.ID));
-                        isRemainderErrorsTagOnPage = false;
-                    }
-
-                    if (Columns == divisionTemplate.Dividend ||
-                        Rows == divisionTemplate.Dividend)
-                    {
-                        existingRemainderErrorsTag.CreateDividendAsDimensionDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
-                    }
-
-                    if (Rows != divisionTemplate.Rows)
-                    {
-                        if (Columns == divisionTemplate.Rows)
-                        {
-                            existingRemainderErrorsTag.CreateWrongOrientationDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
-                        }
-                        else
-                        {
-                            existingRemainderErrorsTag.CreateIncorrectDimensionDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
-                        }
-                    }
-
-                    var totalAreaOfArraysOnPage = ParentPage.PageObjects.OfType<CLPArray>().Sum(x => x.Rows * x.Columns);
-                    if (totalAreaOfArraysOnPage > divisionTemplate.CurrentRemainder)
-                    {
-                        existingRemainderErrorsTag.CreateArrayTooLargeDimensions.Add(string.Format("{0}x{1}", Rows, Columns));
-                    }
-
-                    if (!isRemainderErrorsTagOnPage &&
-                        existingRemainderErrorsTag.ErrorAtemptsSum > 0)
-                    {
-                        ParentPage.AddTag(existingRemainderErrorsTag);
-                    }
-                }
             }
+
+            if (!CanAcceptStrokes ||
+                !AcceptedStrokes.Any())
+            {
+                return;
+            }
+
+            var strokesToRestore = new StrokeCollection();
+
+            foreach (var stroke in AcceptedStrokes.Where(stroke => ParentPage.History.TrashedInkStrokes.Contains(stroke)))
+            {
+                strokesToRestore.Add(stroke);
+            }
+
+            ParentPage.InkStrokes.Add(strokesToRestore);
+            ParentPage.History.TrashedInkStrokes.Remove(strokesToRestore);
         }
 
         public override void OnDeleted(bool fromHistory = false)
         {
-            base.OnDeleted();
             // If FFC with remainder on page, update
             foreach (var divisionTemplate in ParentPage.PageObjects.OfType<FuzzyFactorCard>())
             {

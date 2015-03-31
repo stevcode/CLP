@@ -455,25 +455,25 @@ namespace CLP.Entities
                     var tag = new NumberLineCreationTag(ParentPage, Origin.StudentPageObjectGenerated, ID, 0, NumberLineSize, numberLineIDsInHistory.IndexOf(ID), distanceFromAnswer);
                     ParentPage.AddTag(tag);
                 }
+
+                return;
             }
-            else
+
+            if (!CanAcceptStrokes ||
+                !AcceptedStrokes.Any())
             {
-                if (!CanAcceptStrokes ||
-                    !AcceptedStrokes.Any())
-                {
-                    return;
-                }
-
-                var strokesToRestore = new StrokeCollection();
-
-                foreach (var stroke in AcceptedStrokes.Where(stroke => ParentPage.History.TrashedInkStrokes.Contains(stroke)))
-                {
-                    strokesToRestore.Add(stroke);
-                }
-
-                ParentPage.InkStrokes.Add(strokesToRestore);
-                ParentPage.History.TrashedInkStrokes.Remove(strokesToRestore);
+                return;
             }
+
+            var strokesToRestore = new StrokeCollection();
+
+            foreach (var stroke in AcceptedStrokes.Where(stroke => ParentPage.History.TrashedInkStrokes.Contains(stroke)))
+            {
+                strokesToRestore.Add(stroke);
+            }
+
+            ParentPage.InkStrokes.Add(strokesToRestore);
+            ParentPage.History.TrashedInkStrokes.Remove(strokesToRestore);
         }
 
         public override void OnDeleted(bool fromHistory = false)
