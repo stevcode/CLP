@@ -71,6 +71,7 @@ namespace Classroom_Learning_Partner.ViewModels
             AddTagCommand = new Command(OnAddTagCommandExecute);
             AnalyzePageCommand = new Command(OnAnalyzePageCommandExecute);
             AnalyzePageHistoryCommand = new Command(OnAnalyzePageHistoryCommandExecute);
+            AnalyzeSkipCountingCommand = new Command(OnAnalyzeSkipCountingCommandExecute);
 
             //TEMP
             InterpretArrayDividersCommand = new Command(OnInterpretArrayDividersCommandExecute);
@@ -941,11 +942,14 @@ namespace Classroom_Learning_Partner.ViewModels
                     var xpos = array.XPosition + array.LabelLength + array.ArrayWidth;
                     var width = 2 * array.LabelLength;
                     var height = array.GridSquareSize;
+                    inkStroke.DrawingAttributes.Height *= 2;
+                    inkStroke.DrawingAttributes.Width *= 2;
 
                     for (int i = 0; i < array.Rows; i++)
                     {
                         var ypos = array.YPosition + array.LabelLength + (array.GridSquareSize*i);
                         var rectBound = new Rect(xpos, ypos, width, height);
+
                         if (inkStroke.HitTest(rectBound, 80))
                         {
                             if (!skipCountStrokes.ContainsKey(i))
@@ -953,9 +957,18 @@ namespace Classroom_Learning_Partner.ViewModels
                                 skipCountStrokes.Add(i, new StrokeCollection());
                             }
                             skipCountStrokes[i].Add(inkStroke);
+
+                            inkStroke.DrawingAttributes.Height *= 2;
+                            inkStroke.DrawingAttributes.Width *= 2;
+                            Console.WriteLine("{0}, {1}", inkStroke.GetStrokeID(), i);
+                            PageHistory.UISleep(1500);
+                            inkStroke.DrawingAttributes.Height /= 2;
+                            inkStroke.DrawingAttributes.Width /= 2;
                         }
+
                     }
-                    System.Diagnostics.Debug.WriteLine(skipCountStrokes);
+                    inkStroke.DrawingAttributes.Height /= 2;
+                    inkStroke.DrawingAttributes.Width /= 2;
                 }
             }
             
