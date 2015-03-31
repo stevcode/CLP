@@ -79,6 +79,66 @@ namespace CLP.Entities
 
         public static readonly PropertyData RemovedDivisionsProperty = RegisterProperty("RemovedDivisions", typeof(List<CLPArrayDivision>));
 
+        public override string FormattedValue
+        {
+            get
+            {
+                int addHorizontal = 0;
+                int addVertical = 0;
+                string addHorizontalString = "";
+                string addVerticalString = "";
+                foreach (CLPArrayDivision addedDivision in AddedDivisions)
+                {
+                    if (addedDivision.Orientation == ArrayDivisionOrientation.Horizontal)
+                    {
+                        addHorizontal += 1;
+                    }
+                    else
+                    {
+                        addVertical += 1;
+                    }
+                }
+
+                if (addHorizontal > 0)
+                {
+                    addHorizontalString = string.Format("Divided array horizontally {0} times.", addHorizontal);
+                }
+                if (addVertical > 0)
+                {
+                    addVerticalString = string.Format("Divided array vertically {0} times", addVertical);
+                }
+
+                int removeHorizontal = 0;
+                int removeVertical = 0;
+                string removeHorizontalString = "";
+                string removeVerticalString = "";
+                foreach (CLPArrayDivision removedDivision in RemovedDivisions)
+                {
+                    if (removedDivision.Orientation == ArrayDivisionOrientation.Horizontal)
+                    {
+                        removeHorizontal += 1;
+                    }
+                    else
+                    {
+                        removeVertical += 1;
+                    }
+                }
+
+                if (removeHorizontal > 0)
+                {
+                    removeHorizontalString = string.Format("Put array together horizontally {0} times.", removeHorizontal);
+                }
+                if (removeVertical > 0)
+                {
+                    removeVerticalString = string.Format("Put array together vertically {0} times", removeVertical);
+                }
+
+                string formattedValue = string.Format("Index # {0}, {1} {2} {3} {4}", 
+                    HistoryIndex, addHorizontalString, addVerticalString, removeHorizontalString, removeVerticalString);
+                return formattedValue;
+            }
+        }
+        
         #endregion //Properties
 
         #region Methods

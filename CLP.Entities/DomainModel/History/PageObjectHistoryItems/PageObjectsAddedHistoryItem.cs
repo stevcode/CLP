@@ -65,6 +65,27 @@ namespace CLP.Entities
 
         public static readonly PropertyData PackagedPageObjectsProperty = RegisterProperty("PackagedPageObjects", typeof(List<IPageObject>), () => new List<IPageObject>());
 
+        public override string FormattedValue
+        {
+            get
+            {
+                List<string> PageObjectTypes = new List<string>();
+                try
+                {
+                    foreach(var pageObject in PageObjectIDs.Select(pageObjectID => ParentPage.GetPageObjectByID(pageObjectID)))
+                    {
+                        PageObjectTypes.Add(pageObject.GetType().ToString());
+                    }
+                }
+                catch(Exception e)
+                {
+                }
+                
+                string formattedValue = string.Format("Index # {0}, Added {1} to page.", HistoryIndex, string.Join(", ", PageObjectTypes));
+                return formattedValue;
+            }
+        }
+
         #endregion //Properties
 
         #region Methods

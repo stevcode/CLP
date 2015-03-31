@@ -110,6 +110,27 @@ namespace CLP.Entities
 
         public static readonly PropertyData PackagedCuttingStrokeProperty = RegisterProperty("PackagedCuttingStroke", typeof(StrokeDTO));
 
+        public override string FormattedValue
+        {
+            get
+            {
+                List<string> PageObjectTypes = new List<string>();
+                try
+                {
+                    foreach(var pageObject in CutPageObjectIDs.Select(pageObjectID => ParentPage.GetPageObjectByID(pageObjectID)))
+                    {
+                        PageObjectTypes.Add(pageObject.GetType().ToString());
+                    }
+                }
+                catch(Exception e)
+                {
+                }
+                
+                string formattedValue = string.Format("Index # {0}, Cut {1} on page.", HistoryIndex, string.Join(", ", PageObjectTypes));
+                return formattedValue;
+            }
+        }
+        
         #endregion //Properties
 
         #region Methods

@@ -68,6 +68,15 @@ namespace CLP.Entities
         /// </summary>
         public static readonly PropertyData DivisionValueProperty = RegisterProperty("DivisionValue", typeof(int));
 
+        public override string FormattedValue
+        {
+            get
+            {
+                string formattedValue = string.Format("Index # {0}, Removed division of value {1} from FuzzyFactorCard", HistoryIndex, DivisionValue);
+                return formattedValue;
+            }
+        }
+
         #endregion //Properties
 
         #region Methods

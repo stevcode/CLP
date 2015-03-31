@@ -158,6 +158,19 @@ namespace CLP.Entities
 
         public static readonly PropertyData PersistingArrayXOrYPositionProperty = RegisterProperty("PersistingArrayXOrYPosition", typeof(double));
 
+        public override string FormattedValue
+        {
+            get
+            {
+                CLPArray PersistingArray = (CLPArray)ParentPage.GetPageObjectByID(PersistingArrayID);
+                CLPArray SnappedArray = (CLPArray)ParentPage.GetPageObjectByID(SnappedArrayID);
+                string formattedValue = string.Format("Index # {0}, Snapped {1} by {2} array onto {3} by {4} array", 
+                    HistoryIndex, SnappedArray.Rows, SnappedArray.Columns, PersistingArray.Rows, PersistingArray.Columns);
+
+                return formattedValue;
+            }
+        }
+        
         #endregion //Properties
 
         #region Methods

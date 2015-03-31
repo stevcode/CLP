@@ -99,6 +99,7 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <TextBlock Text="ID:" />
@@ -248,6 +249,12 @@
 
                 <Button Content="Run Divider Interpretation"
                         Command="{Binding InterpretArrayDividersCommand}"
+                        Grid.ColumnSpan="2"
+                        Height="20"
+                        Margin="1" />
+
+                <Button Content="Print Histories"
+                        Command="{Binding PrintAllHistoryItemsCommand}"
                         Grid.ColumnSpan="2"
                         Height="20"
                         Margin="1" />

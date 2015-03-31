@@ -81,6 +81,16 @@ namespace CLP.Entities
 
         public static readonly PropertyData PreviousEndValueProperty = RegisterProperty("PreviousEndValue", typeof (int), 0);
 
+        public override string FormattedValue
+        {
+            get
+            {
+                string formattedValue = string.Format("Index # {0}, Changed numberline {1} endpoints (previously {2} to {3}", 
+                    HistoryIndex, NumberLineID, PreviousStartValue, PreviousEndValue);
+                return formattedValue;
+            }
+        }
+        
         #endregion //Properties
 
         #region Methods

@@ -73,6 +73,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //TEMP
             InterpretArrayDividersCommand = new Command(OnInterpretArrayDividersCommandExecute);
+            PrintAllHistoryItemsCommand = new Command(OnPrintAllHistoryItemsCommandExecute);
         }
 
         private void PageInformationPanelViewModel_Initialized(object sender, EventArgs e)
@@ -1013,6 +1014,17 @@ namespace Classroom_Learning_Partner.ViewModels
                         tag.HorizontalDividers = verticalDivisions;
                     CurrentPage.AddTag(tag);
                 }
+            }
+        }
+
+        public Command PrintAllHistoryItemsCommand { get; private set; }
+
+        private void OnPrintAllHistoryItemsCommandExecute()
+        {
+            var HistoryItems = CurrentPage.History.CompleteOrderedHistoryItems;
+            foreach (var item in HistoryItems)
+            {
+                Console.WriteLine(item.FormattedValue);
             }
         }
     }

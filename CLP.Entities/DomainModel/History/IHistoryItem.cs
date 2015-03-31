@@ -13,6 +13,7 @@
         string ParentPageOwnerID { get; set; }
         uint ParentPageVersionIndex { get; set; }
         CLPPage ParentPage { get; set; }
+        string FormattedValue { get; }
         void Undo(bool isAnimationUndo);
         void Redo(bool isAnimationRedo);
         IHistoryItem CreatePackagedHistoryItem();

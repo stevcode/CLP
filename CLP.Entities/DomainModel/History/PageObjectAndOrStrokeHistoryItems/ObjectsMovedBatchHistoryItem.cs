@@ -133,6 +133,33 @@ namespace CLP.Entities
 
         public static readonly PropertyData CurrentBatchTickIndexProperty = RegisterProperty("CurrentBatchTickIndex", typeof (int), 0);
 
+        public override string FormattedValue
+        {
+            get
+            {
+                List<string> PageObjectTypes = new List<string>();
+                try
+                {
+                    foreach(var pageObject in PageObjectIDs.Select(pageObjectID => ParentPage.GetPageObjectByID(pageObjectID)))
+                    {
+                        PageObjectTypes.Add(pageObject.GetType().ToString());
+                    }
+                }
+                catch(Exception e)
+                {
+                }
+
+                string StrokesMoved = "";
+                if(StrokeIDs.Count() > 0)
+                {
+                    StrokesMoved = "Moved strokes on page.";
+                }
+                
+                string formattedValue = string.Format("Index # {0}, Moved {1} on page. {2}", HistoryIndex, string.Join(", ", PageObjectTypes), StrokesMoved);
+                return formattedValue;
+            }
+        }
+        
         #endregion //Properties
 
         #region Methods

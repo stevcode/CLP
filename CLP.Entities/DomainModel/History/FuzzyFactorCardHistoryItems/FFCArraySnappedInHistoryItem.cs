@@ -66,6 +66,17 @@ namespace CLP.Entities
 
         public static readonly PropertyData SnappedInArrayIDProperty = RegisterProperty("SnappedInArrayID", typeof(string), string.Empty);
 
+        public override string FormattedValue
+        {
+            get
+            {
+                CLPArray SnappedArray = (CLPArray)ParentPage.GetPageObjectByID(SnappedInArrayID);
+                string formattedValue = string.Format("Index # {0}, Snapped {1} by {2} array into fuzzy factor card", 
+                    HistoryIndex, SnappedArray.Rows, SnappedArray.Columns);
+                return formattedValue;
+            }
+        }
+        
         #endregion //Properties
 
         #region Methods

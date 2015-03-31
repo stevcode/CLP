@@ -82,6 +82,25 @@ namespace CLP.Entities
 
         public static readonly PropertyData CurrentBatchTickIndexProperty = RegisterProperty("CurrentBatchTickIndex", typeof(int), 0);
 
+        public override string FormattedValue
+        {
+            get
+            {
+                List<string> PageObjectTypes = new List<string>();
+                try
+                {
+                    var pageObject = ParentPage.GetPageObjectByID(PageObjectID);
+                    PageObjectTypes.Add(pageObject.GetType().ToString());
+                }
+                catch(Exception e)
+                {
+                }
+                
+                string formattedValue = string.Format("Index # {0}, Resized {1} on page.", HistoryIndex, string.Join(", ", PageObjectTypes));
+                return formattedValue;
+            }
+        }
+        
         #endregion //Properties
 
         #region Methods

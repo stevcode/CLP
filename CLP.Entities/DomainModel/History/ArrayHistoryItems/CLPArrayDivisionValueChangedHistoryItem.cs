@@ -89,6 +89,26 @@ namespace CLP.Entities
 
         public static readonly PropertyData PreviousValueProperty = RegisterProperty("PreviousValue", typeof(int), 0);
 
+        public override string FormattedValue
+        {
+            get
+            {
+                CLPArray changedArray = (CLPArray)ParentPage.GetPageObjectByID(ArrayID);
+                CLPArrayDivision divisionChangedValue;
+                if(IsHorizontalDivision)
+                {
+                    divisionChangedValue = changedArray.HorizontalDivisions[DivisionIndex];
+                }else 
+                {
+                    divisionChangedValue = changedArray.VerticalDivisions[DivisionIndex];
+                }
+
+                string formattedValue = string.Format("Index # {0}, Changed array division value from {1} to {2}",
+                    HistoryIndex, PreviousValue, divisionChangedValue.Value);
+                return formattedValue;
+            }
+        }
+        
         #endregion //Properties
 
         #region Methods

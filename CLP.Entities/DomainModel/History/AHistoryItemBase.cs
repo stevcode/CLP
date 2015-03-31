@@ -182,6 +182,11 @@ namespace CLP.Entities
 
         #endregion //Navigation Properties
 
+        public virtual string FormattedValue
+        {
+            get { return "Not yet Implemented."; }
+        }
+
         #endregion //Properties
 
         #region Methods

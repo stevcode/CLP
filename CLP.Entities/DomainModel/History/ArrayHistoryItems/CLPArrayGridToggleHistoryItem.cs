@@ -50,6 +50,15 @@ namespace CLP.Entities
 
         public static readonly PropertyData ArrayIDProperty = RegisterProperty("ArrayID", typeof(string));
 
+        public override string FormattedValue
+        {
+            get
+            {
+                string formattedValue = string.Format("Index # {0}, Toggled grid in array {1}", HistoryIndex, ArrayID);
+                return formattedValue;
+            }
+        }
+
         #endregion //Properties
 
         #region Methods
