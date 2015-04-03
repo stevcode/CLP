@@ -81,7 +81,7 @@ namespace CLP.Entities
         {
             get
             {
-                string formattedValue = string.Format("Index # {0}, Changed numberline {1} endpoints (previously {2} to {3}", 
+                string formattedValue = string.Format("Index # {0}, Changed number line {1} endpoints (previously {2} to {3}", 
                     HistoryIndex, NumberLineID, PreviousStartValue, PreviousEndValue);
                 return formattedValue;
             }

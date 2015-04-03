@@ -149,13 +149,13 @@ namespace CLP.Entities
                 {
                 }
 
-                string StrokesMoved = "";
-                if(StrokeIDs.Count() > 0)
+                var strokesMoved = string.Empty;
+                if(StrokeIDs.Any())
                 {
-                    StrokesMoved = "Moved strokes on page.";
+                    strokesMoved = "Moved strokes on page.";
                 }
                 
-                string formattedValue = string.Format("Index # {0}, Moved {1} on page. {2}", HistoryIndex, string.Join(", ", PageObjectTypes), StrokesMoved);
+                var formattedValue = string.Format("Index # {0}, Moved {1} on page. {2}", HistoryIndex, string.Join(", ", PageObjectTypes), strokesMoved);
                 return formattedValue;
             }
         }

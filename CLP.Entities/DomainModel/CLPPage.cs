@@ -775,6 +775,19 @@ namespace CLP.Entities
             return stroke;
         }
 
+        public Stroke GetStrokeByIDOnPageOrInHistory(string id)
+        {
+            var stroke = History.GetStrokeByID(id);
+
+            if (stroke != null)
+            {
+                return stroke;
+            }
+
+            stroke = GetStrokeByID(id);
+            return stroke;
+        }
+
         public Stroke GetStrokeByID(string id) { return !InkStrokes.Any() ? null : InkStrokes.FirstOrDefault(stroke => stroke.GetStrokeID() == id); }
 
         public IPageObject GetVerifiedPageObjectOnPageByID(string id)
@@ -818,6 +831,19 @@ namespace CLP.Entities
             History.TrashedPageObjects.Add(pageObject);
             PageObjects.Remove(pageObject);
 
+            return pageObject;
+        }
+
+        public IPageObject GetPageObjectByIDOnPageOrInHistory(string id)
+        {
+            var pageObject = History.GetPageObjectByID(id);
+
+            if (pageObject != null)
+            {
+                return pageObject;
+            }
+
+            pageObject = GetPageObjectByID(id);
             return pageObject;
         }
 

@@ -114,19 +114,17 @@ namespace CLP.Entities
         {
             get
             {
-                List<string> PageObjectTypes = new List<string>();
-                try
+                var pageObjectTypes = new List<string>();
+                foreach (var pageObject in CutPageObjectIDs.Select(pageObjectID => ParentPage.GetPageObjectByIDOnPageOrInHistory(pageObjectID)))
                 {
-                    foreach(var pageObject in CutPageObjectIDs.Select(pageObjectID => ParentPage.GetPageObjectByID(pageObjectID)))
+                    if (pageObject == null)
                     {
-                        PageObjectTypes.Add(pageObject.GetType().ToString());
+                        continue;
                     }
-                }
-                catch(Exception e)
-                {
+                    pageObjectTypes.Add(pageObject.GetType().Name);
                 }
                 
-                string formattedValue = string.Format("Index # {0}, Cut {1} on page.", HistoryIndex, string.Join(", ", PageObjectTypes));
+                var formattedValue = string.Format("Index # {0}, Cut {1} on page.", HistoryIndex, string.Join(", ", pageObjectTypes));
                 return formattedValue;
             }
         }

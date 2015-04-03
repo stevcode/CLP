@@ -55,7 +55,7 @@ namespace CLP.Entities
         public static readonly PropertyData PageObjectIDProperty = RegisterProperty("PageObjectID", typeof (string));
 
         /// <summary>
-        /// Previous value of the Division.
+        /// Previous value of the Part Value.
         /// </summary>
         public int PreviousValue
         {
