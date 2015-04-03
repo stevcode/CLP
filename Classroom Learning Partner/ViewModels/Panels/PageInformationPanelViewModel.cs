@@ -1033,12 +1033,12 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 File.Delete(filePath);
             }
-            File.Create(filePath);
+            File.WriteAllText(filePath, "");
             var historyItems = CurrentPage.History.CompleteOrderedHistoryItems;
 
             foreach (var item in historyItems)
             {
-                File.AppendAllText(filePath, item.FormattedValue);
+                File.AppendAllText(filePath, item.FormattedValue + "\n");
             }
         }
     }
