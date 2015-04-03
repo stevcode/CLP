@@ -14,7 +14,6 @@
         uint ParentPageVersionIndex { get; set; }
         string FormattedValue { get; }
         CLPPage ParentPage { get; set; }
-        string FormattedValue { get; }
         void Undo(bool isAnimationUndo);
         void Redo(bool isAnimationRedo);
         IHistoryItem CreatePackagedHistoryItem();

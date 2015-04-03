@@ -103,6 +103,16 @@ namespace CLP.Entities
 
         public static readonly PropertyData PreviousYPositionProperty = RegisterProperty("PreviousYPosition", typeof (double));
 
+        public override string FormattedValue
+        {
+            get
+            {
+                string formattedValue = string.Format("Index # {0}, Removed {1} jumps and added {2} jumps on number line {3}.",
+                     HistoryIndex, RemovedJumpStrokeIDs.Count, AddedJumpStrokeIDs.Count, NumberLineID);
+                return formattedValue;
+            }
+        }
+
         #endregion //Properties
 
         #region Methods

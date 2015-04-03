@@ -210,6 +210,35 @@ namespace CLP.Entities
 
         #endregion //Calculated Properties
 
+        public override string FormattedValue
+        {
+            get
+            {
+                List<string> PageObjectTypesAdded = new List<string>();
+                List<string> PageObjectTypesRemoved = new List<string>();
+                try
+                {
+                    foreach (var pageObject in PageObjectIDsAdded.Select(pageObjectID => ParentPage.GetPageObjectByID(pageObjectID)))
+                    {
+                        PageObjectTypesAdded.Add(pageObject.GetType().ToString());
+                    }
+
+                    foreach (var pageObject in PageObjectIDsRemoved.Select(pageObjectID => ParentPage.GetPageObjectByID(pageObjectID)))
+                    {
+                        PageObjectTypesRemoved.Add(pageObject.GetType().ToString());
+                    }
+
+                }
+                catch (Exception e)
+                {
+                }
+
+                string formattedValue = string.Format("Index # {0}, Added {1} on page, removed {2} from page. Added {3} strokes, removed {4} strokes",
+                    HistoryIndex, string.Join(", ", PageObjectTypesAdded), string.Join(", ", PageObjectTypesRemoved), StrokeIDsAdded.Count, StrokeIDsRemoved.Count);
+                return formattedValue;
+            }
+        }
+
         #endregion //Properties
 
         #region Methods

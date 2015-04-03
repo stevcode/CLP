@@ -65,6 +65,16 @@ namespace CLP.Entities
 
         public static readonly PropertyData PreviousValueProperty = RegisterProperty("PreviousValue", typeof(int), 0);
 
+        public override string FormattedValue
+        {
+            get
+            {
+                string formattedValue = string.Format("Index # {0}, Changed value of division (previously {1}).",
+                    HistoryIndex, PreviousValue);
+                return formattedValue;
+            }
+        }
+
         #endregion //Properties
 
         #region Methods
