@@ -1021,10 +1021,24 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnPrintAllHistoryItemsCommandExecute()
         {
-            var HistoryItems = CurrentPage.History.CompleteOrderedHistoryItems;
-            foreach (var item in HistoryItems)
+            var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            var fileDirectory = Path.Combine(desktopDirectory, "HistoryLogs");
+            if (!Directory.Exists(fileDirectory))
             {
-                Console.WriteLine(item.FormattedValue);
+                Directory.CreateDirectory(fileDirectory);
+            }
+
+            var filePath = Path.Combine(fileDirectory, PageNameComposite.ParsePageToNameComposite(CurrentPage).ToFileName() + ".txt");
+            if(File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+            File.Create(filePath);
+            var historyItems = CurrentPage.History.CompleteOrderedHistoryItems;
+
+            foreach (var item in historyItems)
+            {
+                File.AppendAllText(filePath, item.FormattedValue);
             }
         }
     }
