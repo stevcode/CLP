@@ -54,7 +54,9 @@ namespace CLP.Entities
         {
             get
             {
-                string formattedValue = string.Format("Index # {0}, Toggled grid in array {1}", HistoryIndex, ArrayID);
+                var array = ParentPage.GetPageObjectByIDOnPageOrInHistory(ArrayID) as CLPArray;
+                var formattedValue = string.Format("Index # {0}, Toggled grid in array({1} by {2})",
+                    HistoryIndex, array.Rows, array.Columns);
                 return formattedValue;
             }
         }

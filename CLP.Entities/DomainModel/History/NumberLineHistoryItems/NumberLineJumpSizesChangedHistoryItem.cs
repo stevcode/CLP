@@ -107,8 +107,9 @@ namespace CLP.Entities
         {
             get
             {
-                string formattedValue = string.Format("Index # {0}, Removed {1} jumps and added {2} jumps on number line {3}.",
-                     HistoryIndex, RemovedJumpStrokeIDs.Count, AddedJumpStrokeIDs.Count, NumberLineID);
+                var numberLine = ParentPage.GetPageObjectByIDOnPageOrInHistory(NumberLineID) as NumberLine;
+                var formattedValue = string.Format("Index # {0}, Removed {1} jumps and added {2} jumps on number line({3}).",
+                     HistoryIndex, RemovedJumpStrokeIDs.Count, AddedJumpStrokeIDs.Count, numberLine.NumberLineSize);
                 return formattedValue;
             }
         }

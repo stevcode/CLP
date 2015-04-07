@@ -72,7 +72,9 @@ namespace CLP.Entities
         {
             get
             {
-                string formattedValue = string.Format("Index # {0}, Removed division of value {1} from FuzzyFactorCard", HistoryIndex, DivisionValue);
+                var ffc = ParentPage.GetPageObjectByIDOnPageOrInHistory(FuzzyFactorCardID) as FuzzyFactorCard;
+                var formattedValue = string.Format("Index # {0}, Removed division of value {1} from FuzzyFactorCard ({2} by {3})", 
+                    HistoryIndex, DivisionValue, ffc.Rows, ffc.Columns);
                 return formattedValue;
             }
         }

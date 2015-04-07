@@ -81,7 +81,9 @@ namespace CLP.Entities
         {
             get
             {
-                string formattedValue = string.Format("Index # {0}, Rotated array {1}", HistoryIndex, ArrayID);
+                var array = ParentPage.GetPageObjectByIDOnPageOrInHistory(ArrayID) as CLPArray;
+                var formattedValue = string.Format("Index # {0}, Rotated array({1} by {2}) to be {2} by {1}.",
+                    HistoryIndex, array.Rows, array.Columns);
                 return formattedValue;
             }
         }

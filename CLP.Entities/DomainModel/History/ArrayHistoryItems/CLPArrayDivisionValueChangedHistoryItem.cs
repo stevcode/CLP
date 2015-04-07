@@ -93,18 +93,15 @@ namespace CLP.Entities
         {
             get
             {
-                CLPArray changedArray = (CLPArray)ParentPage.GetPageObjectByID(ArrayID);
-                CLPArrayDivision divisionChangedValue;
+                var changedArray = ParentPage.GetPageObjectByIDOnPageOrInHistory(ArrayID) as CLPArray;
+                var divisionChangedValue = changedArray.VerticalDivisions[DivisionIndex];
                 if(IsHorizontalDivision)
                 {
                     divisionChangedValue = changedArray.HorizontalDivisions[DivisionIndex];
-                }else 
-                {
-                    divisionChangedValue = changedArray.VerticalDivisions[DivisionIndex];
                 }
 
-                string formattedValue = string.Format("Index # {0}, Changed array division value from {1} to {2}",
-                    HistoryIndex, PreviousValue, divisionChangedValue.Value);
+                var formattedValue = string.Format("Index # {0}, Changed array({0} by {1}) division value from {1} to {2}",
+                    HistoryIndex, changedArray.Rows, changedArray.Columns, PreviousValue, divisionChangedValue.Value);
                 return formattedValue;
             }
         }

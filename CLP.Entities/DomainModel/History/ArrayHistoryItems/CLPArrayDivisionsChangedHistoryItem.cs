@@ -83,10 +83,12 @@ namespace CLP.Entities
         {
             get
             {
-                int addHorizontal = 0;
-                int addVertical = 0;
-                string addHorizontalString = "";
-                string addVerticalString = "";
+                var array = ParentPage.GetPageObjectByIDOnPageOrInHistory(ArrayID) as CLPArray;
+                
+                var addHorizontal = 0;
+                var addVertical = 0;
+                var addHorizontalString = string.Empty;
+                var addVerticalString = string.Empty;
                 foreach (CLPArrayDivision addedDivision in AddedDivisions)
                 {
                     if (addedDivision.Orientation == ArrayDivisionOrientation.Horizontal)
@@ -99,19 +101,20 @@ namespace CLP.Entities
                     }
                 }
 
-                if (addHorizontal > 0)
+                addHorizontalString = string.Format("horizontally {0} times", addHorizontal);               
+                addVerticalString = string.Format("vertically {0} times", addVertical);
+
+                var dividedArray = string.Empty;
+                if(addHorizontal > 0 || addVertical > 0)
                 {
-                    addHorizontalString = string.Format("Divided array horizontally {0} times.", addHorizontal);
-                }
-                if (addVertical > 0)
-                {
-                    addVerticalString = string.Format("Divided array vertically {0} times", addVertical);
+                    dividedArray = string.Format("Divided array ({0} by {1}) {2}, {3}.",
+                        array.Rows, array.Columns, addHorizontalString, addVerticalString);
                 }
 
-                int removeHorizontal = 0;
-                int removeVertical = 0;
-                string removeHorizontalString = "";
-                string removeVerticalString = "";
+                var removeHorizontal = 0;
+                var removeVertical = 0;
+                var removeHorizontalString = string.Empty;
+                var removeVerticalString = string.Empty;
                 foreach (CLPArrayDivision removedDivision in RemovedDivisions)
                 {
                     if (removedDivision.Orientation == ArrayDivisionOrientation.Horizontal)
@@ -124,17 +127,20 @@ namespace CLP.Entities
                     }
                 }
 
-                if (removeHorizontal > 0)
+
+                removeHorizontalString = string.Format("{0} horizontal divisions", removeHorizontal);
+                removeVerticalString = string.Format("{0} vertical divisions", removeVertical);
+
+                var removedDivisions = string.Empty;
+                if(removeHorizontal > 0 || removeVertical > 0)
                 {
-                    removeHorizontalString = string.Format("Put array together horizontally {0} times.", removeHorizontal);
-                }
-                if (removeVertical > 0)
-                {
-                    removeVerticalString = string.Format("Put array together vertically {0} times", removeVertical);
+                    removedDivisions = string.Format("Removed {0}, {1}.",
+                        removeHorizontalString, removeVerticalString);
                 }
 
-                string formattedValue = string.Format("Index # {0}, {1} {2} {3} {4}", 
-                    HistoryIndex, addHorizontalString, addVerticalString, removeHorizontalString, removeVerticalString);
+
+                var formattedValue = string.Format("Index # {0}, {1}{2}", 
+                    HistoryIndex, dividedArray, removedDivisions);
                 return formattedValue;
             }
         }

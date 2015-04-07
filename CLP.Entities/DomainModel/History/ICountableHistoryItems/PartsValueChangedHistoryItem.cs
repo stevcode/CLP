@@ -69,8 +69,10 @@ namespace CLP.Entities
         {
             get
             {
-                string formattedValue = string.Format("Index # {0}, Changed value of division (previously {1}).",
-                    HistoryIndex, PreviousValue);
+                var pageObject = ParentPage.GetPageObjectByIDOnPageOrInHistory(PageObjectID) as ICountable;
+                var objectParts = pageObject.Parts;
+                var formattedValue = string.Format("Index # {0}, Changed value of parts from {1} to {2}.",
+                    HistoryIndex, PreviousValue, objectParts);
                 return formattedValue;
             }
         }

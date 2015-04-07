@@ -81,8 +81,9 @@ namespace CLP.Entities
         {
             get
             {
-                string formattedValue = string.Format("Index # {0}, Changed number line {1} endpoints (previously {2} to {3}", 
-                    HistoryIndex, NumberLineID, PreviousStartValue, PreviousEndValue);
+                var numberLine = ParentPage.GetPageObjectByIDOnPageOrInHistory(NumberLineID) as NumberLine;
+                var formattedValue = string.Format("Index # {0}, Resized number line({1}) to be size {2}", 
+                    HistoryIndex, PreviousEndValue - PreviousStartValue, numberLine.NumberLineSize);
                 return formattedValue;
             }
         }

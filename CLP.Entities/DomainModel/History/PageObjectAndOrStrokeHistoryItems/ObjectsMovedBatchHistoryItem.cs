@@ -138,16 +138,22 @@ namespace CLP.Entities
             get
             {
                 List<string> PageObjectTypes = new List<string>();
-                try
+
+                foreach(var pageObject in PageObjectIDs.Select(pageObjectID => ParentPage.GetPageObjectByIDOnPageOrInHistory(pageObjectID)))
                 {
-                    foreach(var pageObject in PageObjectIDs.Select(pageObjectID => ParentPage.GetPageObjectByID(pageObjectID)))
+                    if (pageObject == null)
                     {
-                        PageObjectTypes.Add(pageObject.GetType().ToString());
+                        continue;
                     }
+                    PageObjectTypes.Add(pageObject.GetType().Name);
                 }
-                catch(Exception e)
+
+                var objectsMoved = string.Empty;
+                if(PageObjectTypes.Any())
                 {
+                    objectsMoved = string.Format("Moved {0} on page. ", string.Join(", ", PageObjectTypes));
                 }
+              
 
                 var strokesMoved = string.Empty;
                 if(StrokeIDs.Any())
@@ -155,7 +161,7 @@ namespace CLP.Entities
                     strokesMoved = "Moved strokes on page.";
                 }
                 
-                var formattedValue = string.Format("Index # {0}, Moved {1} on page. {2}", HistoryIndex, string.Join(", ", PageObjectTypes), strokesMoved);
+                var formattedValue = string.Format("Index # {0}, {1} {2}", HistoryIndex, objectsMoved, strokesMoved);
                 return formattedValue;
             }
         }

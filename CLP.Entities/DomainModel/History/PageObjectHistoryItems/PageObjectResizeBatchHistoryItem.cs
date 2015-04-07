@@ -86,17 +86,11 @@ namespace CLP.Entities
         {
             get
             {
-                List<string> PageObjectTypes = new List<string>();
-                try
-                {
-                    var pageObject = ParentPage.GetPageObjectByID(PageObjectID);
-                    PageObjectTypes.Add(pageObject.GetType().ToString());
-                }
-                catch(Exception e)
-                {
-                }
+
+                var pageObject = ParentPage.GetPageObjectByIDOnPageOrInHistory(PageObjectID);
+                var objectName = pageObject.GetType().Name;
                 
-                string formattedValue = string.Format("Index # {0}, Resized {1} on page.", HistoryIndex, string.Join(", ", PageObjectTypes));
+                var formattedValue = string.Format("Index # {0}, Resized {1} on page.", HistoryIndex, objectName);
                 return formattedValue;
             }
         }

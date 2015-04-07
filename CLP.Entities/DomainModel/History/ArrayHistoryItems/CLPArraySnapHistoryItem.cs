@@ -162,10 +162,21 @@ namespace CLP.Entities
         {
             get
             {
-                CLPArray PersistingArray = (CLPArray)ParentPage.GetPageObjectByID(PersistingArrayID);
-                CLPArray SnappedArray = (CLPArray)ParentPage.GetPageObjectByID(SnappedArrayID);
-                string formattedValue = string.Format("Index # {0}, Snapped {1} by {2} array onto {3} by {4} array", 
-                    HistoryIndex, SnappedArray.Rows, SnappedArray.Columns, PersistingArray.Rows, PersistingArray.Columns);
+                var persistingArray = ParentPage.GetPageObjectByIDOnPageOrInHistory(PersistingArrayID) as CLPArray;
+                var snappedArray = ParentPage.GetPageObjectByIDOnPageOrInHistory(SnappedArrayID) as CLPArray;
+
+                var direction = "vertically";
+                var persistingArrayRows = persistingArray.Rows - snappedArray.Rows;
+                var persistingArrayColumns = snappedArray.Columns;
+                if(IsHorizontal)
+                {
+                    direction = "horizontally";
+                    persistingArrayRows = persistingArray.Rows;
+                    persistingArrayColumns = persistingArray.Columns - snappedArray.Columns;
+                }
+                var formattedValue = string.Format("Index # {0}, Snapped array({1} by {2}) {3} onto array({4} by {5}), to create {6} by {7} array", 
+                    HistoryIndex, snappedArray.Rows, snappedArray.Columns, direction, 
+                    persistingArrayRows, persistingArrayColumns, persistingArray.Rows, persistingArray.Columns);
 
                 return formattedValue;
             }

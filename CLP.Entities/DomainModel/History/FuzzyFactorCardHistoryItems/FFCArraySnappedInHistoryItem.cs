@@ -70,9 +70,10 @@ namespace CLP.Entities
         {
             get
             {
-                CLPArray SnappedArray = (CLPArray)ParentPage.GetPageObjectByID(SnappedInArrayID);
-                string formattedValue = string.Format("Index # {0}, Snapped {1} by {2} array into fuzzy factor card", 
-                    HistoryIndex, SnappedArray.Rows, SnappedArray.Columns);
+                var snappedArray = ParentPage.GetPageObjectByIDOnPageOrInHistory(SnappedInArrayID) as CLPArray;
+                var ffc = ParentPage.GetPageObjectByIDOnPageOrInHistory(FuzzyFactorCardID) as FuzzyFactorCard;
+                string formattedValue = string.Format("Index # {0}, Snapped array({1} by {2}) into fuzzy factor card ({3} by {4}).", 
+                    HistoryIndex, snappedArray.Rows, snappedArray.Columns, ffc.Rows, ffc.Columns);
                 return formattedValue;
             }
         }

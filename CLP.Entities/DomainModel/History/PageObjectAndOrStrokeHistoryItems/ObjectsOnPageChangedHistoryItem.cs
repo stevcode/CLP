@@ -216,25 +216,50 @@ namespace CLP.Entities
             {
                 List<string> PageObjectTypesAdded = new List<string>();
                 List<string> PageObjectTypesRemoved = new List<string>();
-                try
+            
+                foreach (var pageObject in PageObjectIDsAdded.Select(pageObjectID => ParentPage.GetPageObjectByIDOnPageOrInHistory(pageObjectID)))
                 {
-                    foreach (var pageObject in PageObjectIDsAdded.Select(pageObjectID => ParentPage.GetPageObjectByID(pageObjectID)))
+                    if(pageObject == null)
                     {
-                        PageObjectTypesAdded.Add(pageObject.GetType().ToString());
+                        continue;
                     }
-
-                    foreach (var pageObject in PageObjectIDsRemoved.Select(pageObjectID => ParentPage.GetPageObjectByID(pageObjectID)))
-                    {
-                        PageObjectTypesRemoved.Add(pageObject.GetType().ToString());
-                    }
-
+                    PageObjectTypesAdded.Add(pageObject.GetType().Name);
                 }
-                catch (Exception e)
+                var objectsAdded = string.Empty;
+                if(PageObjectTypesAdded.Any())
                 {
+                    objectsAdded = string.Format("Added {0} on page. ", string.Join(", ", PageObjectTypesAdded));
                 }
 
-                string formattedValue = string.Format("Index # {0}, Added {1} on page, removed {2} from page. Added {3} strokes, removed {4} strokes",
-                    HistoryIndex, string.Join(", ", PageObjectTypesAdded), string.Join(", ", PageObjectTypesRemoved), StrokeIDsAdded.Count, StrokeIDsRemoved.Count);
+
+                foreach (var pageObject in PageObjectIDsRemoved.Select(pageObjectID => ParentPage.GetPageObjectByIDOnPageOrInHistory(pageObjectID)))
+                {
+                    if (pageObject == null)
+                    {
+                        continue;
+                    }
+                    PageObjectTypesRemoved.Add(pageObject.GetType().Name);
+                }
+                var objectsRemoved = string.Empty;
+                if(PageObjectTypesRemoved.Any())
+                {
+                    objectsRemoved = string.Format("Removed {0} on page. ", string.Join(", ", PageObjectTypesRemoved));
+                }
+
+                var strokesAdded = string.Empty;
+                if(StrokeIDsAdded.Any())
+                {
+                    strokesAdded = string.Format("Added {0} strokes. ", StrokeIDsAdded.Count);
+                }
+
+                var strokesRemoved = string.Empty;
+                if(StrokeIDsRemoved.Any())
+                {
+                    strokesRemoved = string.Format("Removed {0} strokes. ", StrokeIDsRemoved.Count);
+                }
+
+                var formattedValue = string.Format("Index # {0}, {1}{2}{3}{4}",
+                    HistoryIndex, objectsAdded, objectsRemoved, strokesAdded, strokesRemoved);
                 return formattedValue;
             }
         }
