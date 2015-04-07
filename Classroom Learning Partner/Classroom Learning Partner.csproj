@@ -286,6 +286,7 @@
     <Compile Include="ViewModels\Modal Windows\TextInputViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\MultipleChoiceBoxViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\NumberLineViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\Temporary\TemporaryBoundaryViewModel.cs" />
     <Compile Include="ViewModels\Ribbon\AnimationControlRibbonViewModel.cs" />
     <Compile Include="ViewModels\Ribbon\ContextRibbonViewModel.cs" />
     <Compile Include="ViewModels\Ribbon\MajorRibbonViewModel.cs" />
@@ -297,7 +298,7 @@
     <Compile Include="ViewModels\Modal Windows\GroupCreationViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\PersonCreationViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Arrays\RemainderTilesViewModel.cs" />
-    <Compile Include="ViewModels\PageObjects\LassoRegionViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\Temporary\LassoRegionViewModel.cs" />
     <Compile Include="ViewModels\Pages\CLPPageViewModel.cs" />
     <Compile Include="ViewModels\Displays\SingleDisplayViewModel.cs" />
     <Compile Include="ViewModels\Tags\DivisionTemplateTroubleWithRemaindersTagViewModel.cs" />
@@ -397,7 +398,7 @@
     <Compile Include="Views\PageObjects\NumberLineView.xaml.cs">
       <DependentUpon>NumberLineView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PageObjects\LassoRegionView.xaml.cs">
+    <Compile Include="Views\PageObjects\Temporary\LassoRegionView.xaml.cs">
       <DependentUpon>LassoRegionView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\Arrays\RemainderTilesView.xaml.cs">
@@ -486,6 +487,9 @@
     </Compile>
     <Compile Include="Views\Modal Windows\KeypadWindowView.xaml.cs">
       <DependentUpon>KeypadWindowView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PageObjects\Temporary\TemporaryBoundaryView.xaml.cs">
+      <DependentUpon>TemporaryBoundaryView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Pages\CLPPagePreviewView.xaml.cs">
       <DependentUpon>CLPPagePreviewView.xaml</DependentUpon>
@@ -697,7 +701,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PageObjects\LassoRegionView.xaml">
+    <Page Include="Views\PageObjects\Temporary\LassoRegionView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -792,6 +796,10 @@
     <Page Include="Views\Modal Windows\KeypadWindowView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\PageObjects\Temporary\TemporaryBoundaryView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Pages\CLPPagePreviewView.xaml">
       <SubType>Designer</SubType>

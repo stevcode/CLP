@@ -705,6 +705,21 @@ namespace CLP.Entities
             Tags.Remove(tag);
         }
 
+        public void AddBoundary(double xPos, double yPos, double height, double width)
+        {
+            var boundary = new TemporaryBoundary(this, xPos, yPos, height, width);
+            PageObjects.Add(boundary);
+        }
+
+        public void ClearBoundaries()
+        {
+            var boundariesToRemove = PageObjects.OfType<TemporaryBoundary>().ToList();
+            foreach (var temporaryBoundary in boundariesToRemove)
+            {
+                PageObjects.Remove(temporaryBoundary);
+            }
+        }
+
         public CLPPage CopyForNewOwner(Person owner)
         {
             var newPage = Clone() as CLPPage;
