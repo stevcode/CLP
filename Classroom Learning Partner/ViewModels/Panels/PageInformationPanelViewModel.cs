@@ -104,7 +104,7 @@ namespace Classroom_Learning_Partner.ViewModels
             private set { SetValue(NotebookProperty, value); }
         }
 
-        public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof (Notebook));
+        public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof(Notebook));
 
         /// <summary>Currently selected <see cref="CLPPage" /> of the <see cref="Notebook" />.</summary>
         [ViewModelToModel("Notebook")]
@@ -115,7 +115,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(CurrentPageProperty, value); }
         }
 
-        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof (CLPPage), propertyChangedEventHandler: CurrentPageChanged);
+        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage), propertyChangedEventHandler: CurrentPageChanged);
 
         private static void CurrentPageChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
         {
@@ -142,7 +142,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(IDProperty, value); }
         }
 
-        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof (string));
+        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string));
 
         /// <summary>Version Index of the <see cref="CLPPage" />.</summary>
         [ViewModelToModel("CurrentPage")]
@@ -152,7 +152,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(VersionIndexProperty, value); }
         }
 
-        public static readonly PropertyData VersionIndexProperty = RegisterProperty("VersionIndex", typeof (uint));
+        public static readonly PropertyData VersionIndexProperty = RegisterProperty("VersionIndex", typeof(uint));
 
         /// <summary>DifferentiationLevel of the <see cref="CLPPage" />.</summary>
         [ViewModelToModel("CurrentPage")]
@@ -162,7 +162,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(DifferentiationLevelProperty, value); }
         }
 
-        public static readonly PropertyData DifferentiationLevelProperty = RegisterProperty("DifferentiationLevel", typeof (string));
+        public static readonly PropertyData DifferentiationLevelProperty = RegisterProperty("DifferentiationLevel", typeof(string));
 
         /// <summary>Page Number of the <see cref="CLPPage" /> within the <see cref="Notebook" />.</summary>
         [ViewModelToModel("CurrentPage")]
@@ -172,7 +172,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(PageNumberProperty, value); }
         }
 
-        public static readonly PropertyData PageNumberProperty = RegisterProperty("PageNumber", typeof (decimal), 1);
+        public static readonly PropertyData PageNumberProperty = RegisterProperty("PageNumber", typeof(decimal), 1);
 
         /// <summary>
         ///     <see cref="ATagBase" />s for the <see cref="CLPPage" />.
@@ -184,7 +184,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(TagsProperty, value); }
         }
 
-        public static readonly PropertyData TagsProperty = RegisterProperty("Tags", typeof (ObservableCollection<ITag>), propertyChangedEventHandler: TagsChanged);
+        public static readonly PropertyData TagsProperty = RegisterProperty("Tags", typeof(ObservableCollection<ITag>), propertyChangedEventHandler: TagsChanged);
 
         private static void TagsChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
         {
@@ -210,7 +210,7 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData PageOrientationsProperty = RegisterProperty("PageOrientations",
-                                                                                        typeof (ObservableCollection<string>),
+                                                                                        typeof(ObservableCollection<string>),
                                                                                         () => new ObservableCollection<string>());
 
         /// <summary>The currently selected Page Orientation.</summary>
@@ -220,7 +220,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(SelectedPageOrientationProperty, value); }
         }
 
-        public static readonly PropertyData SelectedPageOrientationProperty = RegisterProperty("SelectedPageOrientation", typeof (string));
+        public static readonly PropertyData SelectedPageOrientationProperty = RegisterProperty("SelectedPageOrientation", typeof(string));
 
         /// <summary>Currently selected Answer Definition to add to the page.</summary>
         public AnswerDefinitions SelectedAnswerDefinition
@@ -229,7 +229,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(SelectedAnswerDefinitionProperty, value); }
         }
 
-        public static readonly PropertyData SelectedAnswerDefinitionProperty = RegisterProperty("SelectedAnswerDefinition", typeof (AnswerDefinitions));
+        public static readonly PropertyData SelectedAnswerDefinitionProperty = RegisterProperty("SelectedAnswerDefinition", typeof(AnswerDefinitions));
 
         /// <summary>Currently selected Tag to add to the page.</summary>
         public ManualTags SelectedTag
@@ -238,7 +238,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(SelectedTagProperty, value); }
         }
 
-        public static readonly PropertyData SelectedTagProperty = RegisterProperty("SelectedTag", typeof (ManualTags));
+        public static readonly PropertyData SelectedTagProperty = RegisterProperty("SelectedTag", typeof(ManualTags));
 
         /// <summary>Sorted list of <see cref="ITag" />s by category.</summary>
         public CollectionViewSource SortedTags
@@ -247,7 +247,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(SortedTagsProperty, value); }
         }
 
-        public static readonly PropertyData SortedTagsProperty = RegisterProperty("SortedTags", typeof (CollectionViewSource), () => new CollectionViewSource());
+        public static readonly PropertyData SortedTagsProperty = RegisterProperty("SortedTags", typeof(CollectionViewSource), () => new CollectionViewSource());
 
         public string FormattedMinMaxAverageHistoryLength
         {
@@ -929,12 +929,12 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public Command AnalyzeSkipCountingCommand { get; private set; }
 
-        private void OnAnalyzeSkipCountingCommandExecute() 
+        private void OnAnalyzeSkipCountingCommandExecute()
         {
             var arraysOnPage = CurrentPage.PageObjects.OfType<CLPArray>().ToList();
             var inkOnPage = CurrentPage.InkStrokes;
 
-            foreach (var array in arraysOnPage) 
+            foreach (var array in arraysOnPage)
             {
                 foreach (var inkStroke in inkOnPage)
                 {
@@ -942,36 +942,64 @@ namespace Classroom_Learning_Partner.ViewModels
                     var xpos = array.XPosition + array.LabelLength + array.ArrayWidth;
                     var width = 2 * array.LabelLength;
                     var height = array.GridSquareSize;
+                    var arrBound = new Rect(array.XPosition, array.YPosition, array.ArrayWidth, array.ArrayHeight);
+                    //CurrentPage.AddBoundary(arrBound);
                     inkStroke.DrawingAttributes.Height *= 2;
                     inkStroke.DrawingAttributes.Width *= 2;
+                    PageHistory.UISleep(1000);
 
-                    for (int i = 0; i < array.Rows; i++)
+                    if (inkStroke.HitTest(arrBound, 80))
                     {
-                        var ypos = array.YPosition + array.LabelLength + (array.GridSquareSize*i);
-                        var rectBound = new Rect(xpos, ypos, width, height);
-
-                        if (inkStroke.HitTest(rectBound, 80))
+                        if (!skipCountStrokes.ContainsKey(-1))
                         {
-                            if (!skipCountStrokes.ContainsKey(i))
-                            {
-                                skipCountStrokes.Add(i, new StrokeCollection());
-                            }
-                            skipCountStrokes[i].Add(inkStroke);
-
-                            inkStroke.DrawingAttributes.Height *= 2;
-                            inkStroke.DrawingAttributes.Width *= 2;
-                            Console.WriteLine("{0}, {1}", inkStroke.GetStrokeID(), i);
-                            PageHistory.UISleep(1500);
-                            inkStroke.DrawingAttributes.Height /= 2;
-                            inkStroke.DrawingAttributes.Width /= 2;
+                            skipCountStrokes.Add(-1, new StrokeCollection());
                         }
-
+                        skipCountStrokes[-1].Add(inkStroke);
+                        inkStroke.DrawingAttributes.Height *= 2;
+                        inkStroke.DrawingAttributes.Width *= 2;
+                        Console.WriteLine("{0},{1}", inkStroke.GetStrokeID(), -1);
+                        PageHistory.UISleep(1500);
+                        inkStroke.DrawingAttributes.Height /= 2;
+                        inkStroke.DrawingAttributes.Width /= 2;
                     }
+                    //CurrentPage.ClearBoundaries();
+
+                    else
+                    {
+                        for (int i = 0; i < array.Rows; i++)
+                        {
+                            var ypos = array.YPosition + array.LabelLength + (array.GridSquareSize * i);
+                            var rectBound = new Rect(xpos, ypos - 0.1 * height, 1.2 * width, 1.2 * height);
+                            //CurrentPage.AddBoundary(rectBound);
+                            //PageHistory.UISleep(1000);
+                            if (inkStroke.HitTest(rectBound, 80))
+                            {
+                                if (!skipCountStrokes.ContainsKey(i))
+                                {
+                                    skipCountStrokes.Add(i, new StrokeCollection());
+                                }
+                                skipCountStrokes[i].Add(inkStroke);
+
+                                inkStroke.DrawingAttributes.Height *= 2;
+                                inkStroke.DrawingAttributes.Width *= 2;
+                                Console.WriteLine("{0}, {1}", inkStroke.GetStrokeID(), i);
+                                PageHistory.UISleep(1500);
+                                inkStroke.DrawingAttributes.Height /= 2;
+                                inkStroke.DrawingAttributes.Width /= 2;
+                            }
+                            //CurrentPage.ClearBoundaries();
+                        }
+                    }
+
                     inkStroke.DrawingAttributes.Height /= 2;
                     inkStroke.DrawingAttributes.Width /= 2;
                 }
             }
-            
+            //foreach var row in skipCountStrokes.Keys
+            //{
+            //  var interpretation = CLPPageViewModel.InterpretStrokes(skipCountStrokes[row]);
+            //  Console.WriteLin("{0},{1}", row, interpretation);
+            //}
         }
 
         #endregion //Commands
@@ -1065,7 +1093,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     tag.ArrayName = array.Rows + "x" + array.Columns;
                     if (horizontalDivisions.Count > 1)
                         tag.VerticalDividers = horizontalDivisions;
-                    if (verticalDivisions.Count > 1) 
+                    if (verticalDivisions.Count > 1)
                         tag.HorizontalDividers = verticalDivisions;
                     CurrentPage.AddTag(tag);
                 }
