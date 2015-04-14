@@ -318,6 +318,7 @@
     <Compile Include="ViewModels\Panels\StudentProgressInfo.cs" />
     <Compile Include="ViewModels\Panels\SubmissionHistoryPanelViewModel.cs" />
     <Compile Include="ViewModels\Panels\WebcamPanelViewModel.cs" />
+    <Compile Include="ViewModels\Workspaces\NotebookWorkspaceViewModel.cs" />
     <Compile Include="Views\BackStage\BackStageView.xaml.cs">
       <DependentUpon>BackStageView.xaml</DependentUpon>
     </Compile>
@@ -446,7 +447,6 @@
     <Compile Include="ViewModels\Panels\IPanel.cs" />
     <Compile Include="ViewModels\RibbonViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\BlankWorkspaceViewModel.cs" />
-    <Compile Include="ViewModels\Workspaces\NotebookWorkspaceViewModel.cs" />
     <Compile Include="ViewModels\Workspaces\UserLoginWorkspaceViewModel.cs" />
     <Compile Include="Views\Controls\BindableRichTextBox.cs" />
     <Compile Include="Views\Displays\GridDisplayPreviewView.xaml.cs">
