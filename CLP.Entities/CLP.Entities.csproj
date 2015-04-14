@@ -101,6 +101,7 @@
     <Compile Include="DomainModel\Displays\ADisplayBase.cs" />
     <Compile Include="DomainModel\Displays\GridDisplay.cs" />
     <Compile Include="DomainModel\Displays\IDisplay.cs" />
+    <Compile Include="DomainModel\History Analysis\AHistoryActionBase.cs" />
     <Compile Include="DomainModel\History\AHistoryItemBase.cs" />
     <Compile Include="DomainModel\History\AnimationIndicator.cs" />
     <Compile Include="DomainModel\History\ArrayHistoryItems\CLPArrayDivisionsChangedHistoryItem.cs" />
