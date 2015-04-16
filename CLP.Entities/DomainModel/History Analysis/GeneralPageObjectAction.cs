@@ -18,18 +18,21 @@ namespace CLP.Entities
         #region Constructors
 
         /// <summary>Initializes <see cref="GeneralPageObjectAction" /> using <see cref="CLPPage" />.</summary>
-        public GeneralPageObjectAction(CLPPage parentPage)
+        public GeneralPageObjectAction(CLPPage parentPage, List<IHistoryItem> historyItems)
             : base(parentPage)
         {
-            var historyItems = HistoryItems;
+            HistoryItemIDs = historyItems.Select(h => h.ID).ToList();
             var movedPageObjects = historyItems.OfType<ObjectsMovedBatchHistoryItem>().SelectMany(h => h.PageObjectIDs.Select(x => ParentPage.GetPageObjectByID(x.Key))).ToList();
             var resizedPageObjects = historyItems.OfType<PageObjectResizeBatchHistoryItem>().Select(h => ParentPage.GetPageObjectByID(h.PageObjectID)).ToList();
             var addedPageObjects = historyItems.OfType<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.PageObjectIDsAdded.Select(ParentPage.GetPageObjectByID)).ToList();
             var removedPageObjects = historyItems.OfType<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.PageObjectIDsRemoved.Select(ParentPage.GetPageObjectByID)).ToList();
 
-            if (movedPageObjects.Any())
+            if (movedPageObjects.Count == 1 &&
+                !resizedPageObjects.Any())
             {
                 GeneralAction = GeneralActions.Move;
+                var pageObjectType = movedPageObjects.First().GetType().ToString();
+                PageObjectType = pageObjectType;
             }
             else if (resizedPageObjects.Any())
             {
@@ -42,6 +45,10 @@ namespace CLP.Entities
             else if (removedPageObjects.Any())
             {
                 GeneralAction = GeneralActions.Delete;
+            }
+            else
+            {
+                //throw error here
             }
         }
 

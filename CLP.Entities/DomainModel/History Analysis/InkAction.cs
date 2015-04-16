@@ -20,6 +20,7 @@ namespace CLP.Entities
 
         public enum InkLocations
         {
+            None,
             Over,
             Left,
             Right,
@@ -30,11 +31,23 @@ namespace CLP.Entities
         #region Constructors
 
         /// <summary>Initializes <see cref="InkAction" /> using <see cref="CLPPage" />.</summary>
-        public InkAction(CLPPage parentPage)
+        public InkAction(CLPPage parentPage, List<IHistoryItem> historyItems)
             : base(parentPage)
         {
-            var historyItems = HistoryItems;
-            
+            //validate
+
+            //PageObjectStructuredID.ID = pageObject.ID;
+            //PageObjectStructuredID.CodedID = pageObject.ID;
+        }
+
+        /// <summary>Initializes <see cref="InkAction" /> using <see cref="CLPPage" />.</summary>
+        public InkAction(CLPPage parentPage, List<InkAction> inkAction)
+            : base(parentPage)
+        {
+            //validate
+
+            //PageObjectStructuredID.ID = pageObject.ID;
+            //PageObjectStructuredID.CodedID = pageObject.ID;
         }
 
         /// <summary>Initializes <see cref="InkAction" /> based on <see cref="SerializationInfo" />.</summary>
@@ -47,6 +60,8 @@ namespace CLP.Entities
 
         #region Properties
 
+        //Make string CollectionID
+
         /// <summary>
         /// The type of Ink Action this HistoryAction represents.
         /// </summary>
@@ -57,6 +72,17 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData InkActionTypeProperty = RegisterProperty("InkActionType", typeof(InkActions));
+
+        /// <summary>
+        /// Location the Ink Action occurs.
+        /// </summary>
+        public InkLocations InkLocation
+        {
+            get { return GetValue<InkLocations>(InkLocationProperty); }
+            set { SetValue(InkLocationProperty, value); }
+        }
+
+        public static readonly PropertyData InkLocationProperty = RegisterProperty("InkLocation", typeof (InkLocations));
 
         public override string CodedValue
         {
