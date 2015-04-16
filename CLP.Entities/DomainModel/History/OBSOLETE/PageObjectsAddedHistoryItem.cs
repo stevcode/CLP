@@ -70,13 +70,20 @@ namespace CLP.Entities
         {
             get
             {
-                var pageObjectTypes = new List<string>();
-                foreach(var pageObject in PageObjectIDs.Select(pageObjectID => ParentPage.GetPageObjectByID(pageObjectID)))
+                List<string> PageObjectTypes = new List<string>();
+                try
                 {
-                    pageObjectTypes.Add(pageObject.GetType().ToString());
+                    foreach(var pageObject in PageObjectIDs.Select(pageObjectID => ParentPage.GetPageObjectByID(pageObjectID)))
+                    {
+                        PageObjectTypes.Add(pageObject.GetType().ToString());
+                    }
+                }
+                catch(Exception e)
+                {
                 }
                 
-                return string.Format("Added {0} to page.", string.Join(", ", pageObjectTypes));
+                string formattedValue = string.Format("Index # {0}, Added {1} to page.", HistoryIndex, string.Join(", ", PageObjectTypes));
+                return formattedValue;
             }
         }
 

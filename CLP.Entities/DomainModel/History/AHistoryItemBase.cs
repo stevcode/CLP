@@ -184,7 +184,7 @@ namespace CLP.Entities
 
         public virtual string FormattedValue
         {
-            get { return "History Item"; }
+            get { return "Not yet Implemented."; }
         }
 
         #endregion //Properties

@@ -79,6 +79,72 @@ namespace CLP.Entities
 
         public static readonly PropertyData RemovedDivisionsProperty = RegisterProperty("RemovedDivisions", typeof(List<CLPArrayDivision>));
 
+        public override string FormattedValue
+        {
+            get
+            {
+                var array = ParentPage.GetPageObjectByIDOnPageOrInHistory(ArrayID) as CLPArray;
+                
+                var addHorizontal = 0;
+                var addVertical = 0;
+                var addHorizontalString = string.Empty;
+                var addVerticalString = string.Empty;
+                foreach (CLPArrayDivision addedDivision in AddedDivisions)
+                {
+                    if (addedDivision.Orientation == ArrayDivisionOrientation.Horizontal)
+                    {
+                        addHorizontal += 1;
+                    }
+                    else
+                    {
+                        addVertical += 1;
+                    }
+                }
+
+                addHorizontalString = string.Format("horizontally {0} times", addHorizontal);               
+                addVerticalString = string.Format("vertically {0} times", addVertical);
+
+                var dividedArray = string.Empty;
+                if(addHorizontal > 0 || addVertical > 0)
+                {
+                    dividedArray = string.Format("Divided array ({0} by {1}) {2}, {3}.",
+                        array.Rows, array.Columns, addHorizontalString, addVerticalString);
+                }
+
+                var removeHorizontal = 0;
+                var removeVertical = 0;
+                var removeHorizontalString = string.Empty;
+                var removeVerticalString = string.Empty;
+                foreach (CLPArrayDivision removedDivision in RemovedDivisions)
+                {
+                    if (removedDivision.Orientation == ArrayDivisionOrientation.Horizontal)
+                    {
+                        removeHorizontal += 1;
+                    }
+                    else
+                    {
+                        removeVertical += 1;
+                    }
+                }
+
+
+                removeHorizontalString = string.Format("{0} horizontal divisions", removeHorizontal);
+                removeVerticalString = string.Format("{0} vertical divisions", removeVertical);
+
+                var removedDivisions = string.Empty;
+                if(removeHorizontal > 0 || removeVertical > 0)
+                {
+                    removedDivisions = string.Format("Removed {0}, {1}.",
+                        removeHorizontalString, removeVerticalString);
+                }
+
+
+                var formattedValue = string.Format("Index # {0}, {1}{2}", 
+                    HistoryIndex, dividedArray, removedDivisions);
+                return formattedValue;
+            }
+        }
+        
         #endregion //Properties
 
         #region Methods

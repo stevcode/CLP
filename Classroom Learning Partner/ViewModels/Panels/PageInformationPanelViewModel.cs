@@ -73,6 +73,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //TEMP
             InterpretArrayDividersCommand = new Command(OnInterpretArrayDividersCommandExecute);
+            PrintAllHistoryItemsCommand = new Command(OnPrintAllHistoryItemsCommandExecute);
         }
 
         private void PageInformationPanelViewModel_Initialized(object sender, EventArgs e)
@@ -1013,6 +1014,31 @@ namespace Classroom_Learning_Partner.ViewModels
                         tag.HorizontalDividers = verticalDivisions;
                     CurrentPage.AddTag(tag);
                 }
+            }
+        }
+
+        public Command PrintAllHistoryItemsCommand { get; private set; }
+
+        private void OnPrintAllHistoryItemsCommandExecute()
+        {
+            var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            var fileDirectory = Path.Combine(desktopDirectory, "HistoryLogs");
+            if (!Directory.Exists(fileDirectory))
+            {
+                Directory.CreateDirectory(fileDirectory);
+            }
+
+            var filePath = Path.Combine(fileDirectory, PageNameComposite.ParsePageToNameComposite(CurrentPage).ToFileName() + ".txt");
+            if(File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+            File.WriteAllText(filePath, "");
+            var historyItems = CurrentPage.History.CompleteOrderedHistoryItems;
+
+            foreach (var item in historyItems)
+            {
+                File.AppendAllText(filePath, item.FormattedValue + "\n");
             }
         }
     }

@@ -66,6 +66,18 @@ namespace CLP.Entities
 
         public static readonly PropertyData SnappedInArrayIDProperty = RegisterProperty("SnappedInArrayID", typeof(string), string.Empty);
 
+        public override string FormattedValue
+        {
+            get
+            {
+                var snappedArray = ParentPage.GetPageObjectByIDOnPageOrInHistory(SnappedInArrayID) as CLPArray;
+                var ffc = ParentPage.GetPageObjectByIDOnPageOrInHistory(FuzzyFactorCardID) as FuzzyFactorCard;
+                string formattedValue = string.Format("Index # {0}, Snapped array({1} by {2}) into fuzzy factor card ({3} by {4}).", 
+                    HistoryIndex, snappedArray.Rows, snappedArray.Columns, ffc.Rows, ffc.Columns);
+                return formattedValue;
+            }
+        }
+        
         #endregion //Properties
 
         #region Methods

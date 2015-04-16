@@ -55,7 +55,7 @@ namespace CLP.Entities
         public static readonly PropertyData PageObjectIDProperty = RegisterProperty("PageObjectID", typeof (string));
 
         /// <summary>
-        /// Previous value of the Division.
+        /// Previous value of the Part Value.
         /// </summary>
         public int PreviousValue
         {
@@ -64,6 +64,18 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData PreviousValueProperty = RegisterProperty("PreviousValue", typeof(int), 0);
+
+        public override string FormattedValue
+        {
+            get
+            {
+                var pageObject = ParentPage.GetPageObjectByIDOnPageOrInHistory(PageObjectID) as ICountable;
+                var objectParts = pageObject.Parts;
+                var formattedValue = string.Format("Index # {0}, Changed value of parts from {1} to {2}.",
+                    HistoryIndex, PreviousValue, objectParts);
+                return formattedValue;
+            }
+        }
 
         #endregion //Properties
 

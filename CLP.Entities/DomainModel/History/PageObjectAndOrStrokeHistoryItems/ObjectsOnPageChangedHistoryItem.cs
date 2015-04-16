@@ -210,6 +210,80 @@ namespace CLP.Entities
 
         #endregion //Calculated Properties
 
+        public override string FormattedValue
+        {
+            get
+            {
+                List<string> PageObjectTypesAdded = new List<string>();
+                List<string> PageObjectTypesRemoved = new List<string>();
+            
+                foreach (var pageObject in PageObjectIDsAdded.Select(pageObjectID => ParentPage.GetPageObjectByIDOnPageOrInHistory(pageObjectID)))
+                {
+                    if(pageObject == null)
+                    {
+                        continue;
+                    }
+                    PageObjectTypesAdded.Add(pageObject.GetType().Name);
+                }
+                var objectsAdded = string.Empty;
+                if(PageObjectTypesAdded.Any())
+                {
+                    objectsAdded = string.Format("Added {0} on page. ", string.Join(", ", PageObjectTypesAdded));
+                    if (PageObjectTypesAdded.Count == 1 && PageObjectTypesAdded[0] == "CLPArray")
+                    {
+                        var addedArray = ParentPage.GetPageObjectByIDOnPageOrInHistory(PageObjectIDsAdded[0]) as CLPArray;
+                        objectsAdded = string.Format("Added CLPArray [{0} x {1}] on page. ", addedArray.Rows, addedArray.Columns);
+                    }
+                }
+
+
+                foreach (var pageObject in PageObjectIDsRemoved.Select(pageObjectID => ParentPage.GetPageObjectByIDOnPageOrInHistory(pageObjectID)))
+                {
+                    if (pageObject == null)
+                    {
+                        continue;
+                    }
+                    PageObjectTypesRemoved.Add(pageObject.GetType().Name);
+                }
+                var objectsRemoved = string.Empty;
+                if(PageObjectTypesRemoved.Any())
+                {
+                    objectsRemoved = string.Format("Removed {0} on page. ", string.Join(", ", PageObjectTypesRemoved));
+                    if (PageObjectTypesRemoved.Count == 1 && PageObjectTypesRemoved[0] == "CLPArray")
+                    {
+                        var removedArray = ParentPage.GetPageObjectByIDOnPageOrInHistory(PageObjectIDsRemoved[0]) as CLPArray;
+                        objectsRemoved = string.Format("Removed CLPArray [{0} x {1}] on page. ", removedArray.Rows, removedArray.Columns);
+                    }
+                }
+
+                var strokesAdded = string.Empty;
+                if(StrokeIDsAdded.Any())
+                {
+                    if(StrokeIDsAdded.Count == 1){
+                        strokesAdded = "Added 1 stroke.";
+                    }else{
+                        strokesAdded = string.Format("Added {0} strokes. ", StrokeIDsAdded.Count);
+                    }
+                    
+                }    
+
+                var strokesRemoved = string.Empty;
+                if(StrokeIDsRemoved.Any())
+                {
+                    if (StrokeIDsRemoved.Count == 1)
+                    {
+                        strokesRemoved = "Removed 1 stroke.";
+                    }else {
+                        strokesRemoved = string.Format("Removed {0} strokes. ", StrokeIDsRemoved.Count);
+                    }         
+                }
+
+                var formattedValue = string.Format("Index # {0}, {1}{2}{3}{4}",
+                    HistoryIndex, objectsAdded, objectsRemoved, strokesAdded, strokesRemoved);
+                return formattedValue;
+            }
+        }
+
         #endregion //Properties
 
         #region Methods

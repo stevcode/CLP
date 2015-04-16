@@ -77,6 +77,17 @@ namespace CLP.Entities
 
         public static readonly PropertyData PreStretchedWidthProperty = RegisterProperty("PreStretchedWidth", typeof (double));
 
+        public override string FormattedValue
+        {
+            get
+            {
+                var numberLine = ParentPage.GetPageObjectByIDOnPageOrInHistory(NumberLineID) as NumberLine;
+                var formattedValue = string.Format("Index # {0}, Resized number line({1}) to be size {2}", 
+                    HistoryIndex, PreviousEndValue - PreviousStartValue, numberLine.NumberLineSize);
+                return formattedValue;
+            }
+        }
+        
         #endregion //Properties
 
         #region Methods

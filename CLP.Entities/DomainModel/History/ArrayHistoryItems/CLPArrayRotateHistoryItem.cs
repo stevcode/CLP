@@ -77,6 +77,17 @@ namespace CLP.Entities
 
         public static readonly PropertyData ArrayYCoordProperty = RegisterProperty("ArrayYCoord", typeof(double));
 
+        public override string FormattedValue
+        {
+            get
+            {
+                var array = ParentPage.GetPageObjectByIDOnPageOrInHistory(ArrayID) as CLPArray;
+                var formattedValue = string.Format("Index # {0}, Rotated array({1} by {2}) to be {2} by {1}.",
+                    HistoryIndex, array.Rows, array.Columns);
+                return formattedValue;
+            }
+        }
+        
         #endregion //Properties
 
         #region Methods
