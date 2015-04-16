@@ -149,21 +149,28 @@ namespace CLP.Entities
 
         public override void OnAdded(bool fromHistory = false)
         {
-            if (fromHistory)
+            if (!fromHistory)
             {
-                if (!CanAcceptStrokes ||
-                    !AcceptedStrokes.Any())
-                {
-                    return;
-                }
+                ApplyDistinctPosition(this);
 
-                //BUG: This is going to cause issues if you use Undo or Redo while not in Select Mode
-                ParentPage.InkStrokes.Add(new StrokeCollection(AcceptedStrokes));
-                ParentPage.History.TrashedInkStrokes.Remove(new StrokeCollection(AcceptedStrokes));
                 return;
             }
 
-            ApplyDistinctPosition(this);
+            if (!CanAcceptStrokes ||
+                !AcceptedStrokes.Any())
+            {
+                return;
+            }
+
+            var strokesToRestore = new StrokeCollection();
+
+            foreach (var stroke in AcceptedStrokes.Where(stroke => ParentPage.History.TrashedInkStrokes.Contains(stroke)))
+            {
+                strokesToRestore.Add(stroke);
+            }
+
+            ParentPage.InkStrokes.Add(strokesToRestore);
+            ParentPage.History.TrashedInkStrokes.Remove(strokesToRestore);
         }
 
         public override void OnDeleted(bool fromHistory = false)

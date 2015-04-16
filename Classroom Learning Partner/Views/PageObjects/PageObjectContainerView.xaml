@@ -80,6 +80,10 @@
                 <views:LassoRegionView DataContext="{Binding}" />
             </ControlTemplate>
 
+            <ControlTemplate x:Key="TemporaryBoundaryTemplate">
+                <views:TemporaryBoundaryView DataContext="{Binding}" />
+            </ControlTemplate>
+
             <ControlTemplate x:Key="MultipleChoiceBoxTemplate">
                 <views:MultipleChoiceBoxView DataContext="{Binding}" />
             </ControlTemplate>
@@ -175,6 +179,13 @@
                     <!-- LassoRegion trigger -->
                     <DataTrigger Binding="{Binding PageObject, Converter={StaticResource TypeToStringConverter}}" Value="LassoRegion">
                         <Setter Property="Template" Value="{StaticResource LassoRegionTemplate}" />
+                    </DataTrigger>
+
+                    <!-- TemporaryBoundary trigger -->
+                    <DataTrigger Binding="{Binding PageObject, Converter={StaticResource TypeToStringConverter}}"
+                                 Value="TemporaryBoundary">
+                        <Setter Property="Template"
+                                Value="{StaticResource TemporaryBoundaryTemplate}" />
                     </DataTrigger>
 
                     <!-- MultipleChoiceBox trigger -->

@@ -101,6 +101,9 @@
     <Compile Include="DomainModel\Displays\ADisplayBase.cs" />
     <Compile Include="DomainModel\Displays\GridDisplay.cs" />
     <Compile Include="DomainModel\Displays\IDisplay.cs" />
+    <Compile Include="DomainModel\History Analysis\AHistoryActionBase.cs" />
+    <Compile Include="DomainModel\History Analysis\GeneralPageObjectAction.cs" />
+    <Compile Include="DomainModel\History Analysis\InkAction.cs" />
     <Compile Include="DomainModel\History\AHistoryItemBase.cs" />
     <Compile Include="DomainModel\History\AnimationIndicator.cs" />
     <Compile Include="DomainModel\History\ArrayHistoryItems\CLPArrayDivisionsChangedHistoryItem.cs" />
@@ -116,6 +119,7 @@
     <Compile Include="DomainModel\PageObjects\MultipleChoiceBox.cs" />
     <Compile Include="DomainModel\PageObjects\NumberLine.cs" />
     <Compile Include="DomainModel\PageObjects\PageObject Interfaces\IReporter.cs" />
+    <Compile Include="DomainModel\PageObjects\Temporary\TemporaryBoundary.cs" />
     <Compile Include="DomainModel\Strokes\Extensions\StrokeCollectionExtension.cs" />
     <Compile Include="DomainModel\Tags\AnalysisRoutines\RelationAnalysis\AdditionRelationAnalysis.cs" />
     <Compile Include="DomainModel\Tags\AnalysisRoutines\PageObjectAnalysis\ArrayAnalysis.cs" />
@@ -148,7 +152,7 @@
     <Compile Include="DomainModel\PageObjects\Arrays\FuzzyFactorCard.cs" />
     <Compile Include="DomainModel\PageObjects\Arrays\RemainderTiles.cs" />
     <Compile Include="DomainModel\PageObjects\CLPImage.cs" />
-    <Compile Include="DomainModel\PageObjects\LassoRegion.cs" />
+    <Compile Include="DomainModel\PageObjects\Temporary\LassoRegion.cs" />
     <Compile Include="DomainModel\PageObjects\PageObject Interfaces\ICountable.cs" />
     <Compile Include="DomainModel\PageObjects\PageObject Interfaces\ICuttable.cs" />
     <Compile Include="DomainModel\PageObjects\PageObject Interfaces\IPageObject.cs" />
