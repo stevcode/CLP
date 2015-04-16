@@ -125,6 +125,27 @@ namespace CLP.Entities
                 }
                 
                 var formattedValue = string.Format("Index # {0}, Cut {1} on page.", HistoryIndex, string.Join(", ", pageObjectTypes));
+                if (pageObjectTypes.Count == 1)
+                {
+                    if (pageObjectTypes[0] == "CLPArray")
+                    {
+                        var cutArray = ParentPage.GetPageObjectByIDOnPageOrInHistory(CutPageObjectIDs[0]) as CLPArray;
+                        var halvedArrayRows = new List<int>();
+                        var halvedArrayColumns = new List<int>();
+                        foreach (var halfObject in HalvedPageObjectIDs.Select(pageObjectID => ParentPage.GetPageObjectByIDOnPageOrInHistory(pageObjectID) as CLPArray))
+                        {
+                            if (halfObject == null)
+                            {
+                                continue;
+                            }
+                            halvedArrayRows.Add(halfObject.Rows);
+                            halvedArrayColumns.Add(halfObject.Columns);
+                        }
+
+                        formattedValue = string.Format("Index # {0}, Cut CLPArray[{1} x {2}] into [{3} x {4}] and [{5} x {6}].", 
+                            HistoryIndex, cutArray.Rows, cutArray.Columns, halvedArrayRows[0], halvedArrayColumns[0], halvedArrayRows[1], halvedArrayColumns[1]);
+                    }
+                }
                 return formattedValue;
             }
         }

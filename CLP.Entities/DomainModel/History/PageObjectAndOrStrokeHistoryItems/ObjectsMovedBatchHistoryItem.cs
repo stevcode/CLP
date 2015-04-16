@@ -152,6 +152,11 @@ namespace CLP.Entities
                 if(PageObjectTypes.Any())
                 {
                     objectsMoved = string.Format("Moved {0} on page. ", string.Join(", ", PageObjectTypes));
+                    if (PageObjectTypes.Count == 1 && PageObjectTypes[0] == "CLPArray")
+                    {
+                        var movedArray = ParentPage.GetPageObjectByIDOnPageOrInHistory(PageObjectIDs[0]) as CLPArray;
+                        objectsMoved = string.Format("Moved CLPArray [{0} x {1}] on page. ", movedArray.Rows, movedArray.Columns);
+                    }               
                 }
               
 

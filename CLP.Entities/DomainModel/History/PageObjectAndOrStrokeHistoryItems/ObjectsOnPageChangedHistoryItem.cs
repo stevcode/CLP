@@ -229,6 +229,11 @@ namespace CLP.Entities
                 if(PageObjectTypesAdded.Any())
                 {
                     objectsAdded = string.Format("Added {0} on page. ", string.Join(", ", PageObjectTypesAdded));
+                    if (PageObjectTypesAdded.Count == 1 && PageObjectTypesAdded[0] == "CLPArray")
+                    {
+                        var addedArray = ParentPage.GetPageObjectByIDOnPageOrInHistory(PageObjectIDsAdded[0]) as CLPArray;
+                        objectsAdded = string.Format("Added CLPArray [{0} x {1}] on page. ", addedArray.Rows, addedArray.Columns);
+                    }
                 }
 
 
@@ -244,18 +249,33 @@ namespace CLP.Entities
                 if(PageObjectTypesRemoved.Any())
                 {
                     objectsRemoved = string.Format("Removed {0} on page. ", string.Join(", ", PageObjectTypesRemoved));
+                    if (PageObjectTypesRemoved.Count == 1 && PageObjectTypesRemoved[0] == "CLPArray")
+                    {
+                        var removedArray = ParentPage.GetPageObjectByIDOnPageOrInHistory(PageObjectIDsRemoved[0]) as CLPArray;
+                        objectsRemoved = string.Format("Removed CLPArray [{0} x {1}] on page. ", removedArray.Rows, removedArray.Columns);
+                    }
                 }
 
                 var strokesAdded = string.Empty;
                 if(StrokeIDsAdded.Any())
                 {
-                    strokesAdded = string.Format("Added {0} strokes. ", StrokeIDsAdded.Count);
-                }
+                    if(StrokeIDsAdded.Count == 1){
+                        strokesAdded = "Added 1 stroke.";
+                    }else{
+                        strokesAdded = string.Format("Added {0} strokes. ", StrokeIDsAdded.Count);
+                    }
+                    
+                }    
 
                 var strokesRemoved = string.Empty;
                 if(StrokeIDsRemoved.Any())
                 {
-                    strokesRemoved = string.Format("Removed {0} strokes. ", StrokeIDsRemoved.Count);
+                    if (StrokeIDsRemoved.Count == 1)
+                    {
+                        strokesRemoved = "Removed 1 stroke.";
+                    }else {
+                        strokesRemoved = string.Format("Removed {0} strokes. ", StrokeIDsRemoved.Count);
+                    }         
                 }
 
                 var formattedValue = string.Format("Index # {0}, {1}{2}{3}{4}",

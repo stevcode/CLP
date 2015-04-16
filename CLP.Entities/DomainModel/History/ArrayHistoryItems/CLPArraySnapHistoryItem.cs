@@ -168,7 +168,7 @@ namespace CLP.Entities
                 var direction = "vertically";
                 var persistingArrayRows = persistingArray.Rows - snappedArray.Rows;
                 var persistingArrayColumns = snappedArray.Columns;
-                if(IsHorizontal)
+                if(!IsHorizontal)
                 {
                     direction = "horizontally";
                     persistingArrayRows = persistingArray.Rows;
