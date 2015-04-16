@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
 {
-    public class AHistoryActionBase : AEntityBase
+    [Serializable]
+    public abstract class AHistoryActionBase : AEntityBase
     {
         #region Constructors
 
@@ -35,7 +38,7 @@ namespace CLP.Entities
             set { SetValue(IDProperty, value); }
         }
 
-        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string));
+        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof (string));
 
         /// <summary>Unique Identifier for the <see cref="AHistoryItemBase" />'s parent <see cref="CLPPage" />.</summary>
         /// <remarks>Composite Foreign Key.</remarks>
@@ -88,14 +91,44 @@ namespace CLP.Entities
 
         #endregion //Navigation Properties
 
+        /// <summary>List of the IDs of the HistoryItems that make up this HistoryAction.</summary>
+        public List<string> HistoryItemIDs
+        {
+            get { return GetValue<List<string>>(HistoryItemIDsProperty); }
+            set { SetValue(HistoryItemIDsProperty, value); }
+        }
+
+        public static readonly PropertyData HistoryItemIDsProperty = RegisterProperty("HistoryItemIDs", typeof (List<string>), () => new List<string>());
+
+        /// <summary>
+        /// List of the IDs of any HistoryActions that make up this HistoryAction.
+        /// </summary>
+        public List<string> HistoryActionIDs
+        {
+            get { return GetValue<List<string>>(HistoryActionIDsProperty); }
+            set { SetValue(HistoryActionIDsProperty, value); }
+        }
+
+        public static readonly PropertyData HistoryActionIDsProperty = RegisterProperty("HistoryActionIDs", typeof (List<string>), () => new List<string>());
+
         #region Calculated Properties
 
+        /// <summary>List of the HistoryItems that make up this HistoryAction.</summary>
+        public List<IHistoryItem> HistoryItems
+        {
+            get { return ParentPage.History.CompleteOrderedHistoryItems.Where(x => HistoryItemIDs.Contains(x.ID)).OrderBy(x => x.HistoryIndex).ToList(); }
+        }
 
+        ///// <summary>List of the HistoryActions that make up this HistoryAction.</summary>
+        //public List<IHistoryItem> HistoryActions
+        //{
+        //    get { return ParentPage.History.HistoryActions.Where(x => HistoryActionIDs.Contains(x.ID)).ToList(); }
+        //}
 
         #endregion //Calculated Properties
 
+        public abstract string CodedValue { get; }
+
         #endregion //Properties
-
-
     }
 }
