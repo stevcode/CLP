@@ -22,34 +22,39 @@ namespace CLP.Entities
             : base(parentPage)
         {
             HistoryItemIDs = historyItems.Select(h => h.ID).ToList();
-            var movedPageObjects = historyItems.OfType<ObjectsMovedBatchHistoryItem>().SelectMany(h => h.PageObjectIDs.Select(x => ParentPage.GetPageObjectByID(x.Key))).ToList();
-            var resizedPageObjects = historyItems.OfType<PageObjectResizeBatchHistoryItem>().Select(h => ParentPage.GetPageObjectByID(h.PageObjectID)).ToList();
-            var addedPageObjects = historyItems.OfType<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.PageObjectIDsAdded.Select(ParentPage.GetPageObjectByID)).ToList();
-            var removedPageObjects = historyItems.OfType<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.PageObjectIDsRemoved.Select(ParentPage.GetPageObjectByID)).ToList();
+            var movedPageObjects = historyItems.OfType<ObjectsMovedBatchHistoryItem>().SelectMany(h => h.PageObjectIDs.Select(ParentPage.GetPageObjectByIDOnPageOrInHistory)).ToList();
+            var resizedPageObjects = historyItems.OfType<PageObjectResizeBatchHistoryItem>().Select(h => ParentPage.GetPageObjectByIDOnPageOrInHistory(h.PageObjectID)).ToList();
+            var addedPageObjects = historyItems.OfType<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.PageObjectIDsAdded.Select(ParentPage.GetPageObjectByIDOnPageOrInHistory)).ToList();
+            var removedPageObjects = historyItems.OfType<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.PageObjectIDsRemoved.Select(ParentPage.GetPageObjectByIDOnPageOrInHistory)).ToList();
 
-            if (movedPageObjects.Count == 1 &&
-                !resizedPageObjects.Any())
+            if (movedPageObjects.Count + resizedPageObjects.Count +
+                addedPageObjects.Count + removedPageObjects.Count != 1)
+            {
+                //throw error
+            }
+
+            var pageObjectType = "";
+            if (movedPageObjects.Any())
             {
                 GeneralAction = GeneralActions.Move;
-                var pageObjectType = movedPageObjects.First().GetType().ToString();
-                PageObjectType = pageObjectType;
+                pageObjectType = movedPageObjects.First().GetType().ToString();               
             }
             else if (resizedPageObjects.Any())
             {
                 GeneralAction = GeneralActions.Resize;
+                pageObjectType = resizedPageObjects.First().GetType().ToString(); 
             }
             else if (addedPageObjects.Any())
             {
                 GeneralAction = GeneralActions.Add;
+                pageObjectType = addedPageObjects.First().GetType().ToString(); 
             }
             else if (removedPageObjects.Any())
             {
                 GeneralAction = GeneralActions.Delete;
+                pageObjectType = removedPageObjects.First().GetType().ToString(); 
             }
-            else
-            {
-                //throw error here
-            }
+            PageObjectType = pageObjectType;
         }
 
         /// <summary>Initializes <see cref="GeneralPageObjectAction" /> based on <see cref="SerializationInfo" />.</summary>
@@ -87,9 +92,37 @@ namespace CLP.Entities
         public override string CodedValue
         {
             get
-            {
-                var codedActionType = GeneralAction.ToString().ToLower();
-                return string.Format("{0} {1} {2}", PageObjectType, codedActionType, "[8x8]");
+            {            
+                var historyItems = HistoryItems;
+                var objectCode = "";
+                var objectDescriptor = "";
+                if (PageObjectType == "CLPArray")
+                {
+                    var arrayHistoryItem = historyItems.First() as CLPArray;
+                    objectCode = "ARR";
+                    objectDescriptor = string.Format(" [{0}x{1}]", arrayHistoryItem.Rows, arrayHistoryItem.Columns);
+                }
+                else if (PageObjectType == "NumberLine")
+                {
+                    var numberLineHistoryItem = historyItems.First() as NumberLine;
+                    objectCode = "NL";
+                    objectDescriptor = string.Format(" [{0}]", numberLineHistoryItem.NumberLineSize);
+                }
+                else if (PageObjectType == "StampedObject")
+                {
+                    var stampHistoryItem = historyItems.First() as StampedObject;
+                    objectCode = "STAMP";
+                    objectDescriptor = "[]"; //pictorial, parts?
+                }
+                
+                if (GeneralAction == GeneralActions.Add)
+                {  
+                    return string.Format("{0}{1}.", PageObjectType, objectDescriptor);
+
+                }
+
+                var codedActionType = GeneralAction.ToString().ToLower();       
+                return string.Format("{0} {1}{2}.", objectDescriptor, codedActionType, objectDescriptor);
             }
         }
 

@@ -34,6 +34,38 @@ namespace CLP.Entities
         public InkAction(CLPPage parentPage, List<IHistoryItem> historyItems)
             : base(parentPage)
         {
+            var addStrokes = false;
+            var removeStrokes = false;
+            foreach (var historyItem in historyItems)
+            {
+                if (!(historyItem is ObjectsOnPageChangedHistoryItem))
+                {
+                    //throw error
+                }
+                var pageChangedHistoryItem = (ObjectsOnPageChangedHistoryItem)historyItem;
+                if (!pageChangedHistoryItem.StrokeIDsAdded.Any() && 
+                    !pageChangedHistoryItem.StrokeIDsRemoved.Any()) 
+                {
+                    //throw error
+                }
+                
+                if (pageChangedHistoryItem.StrokeIDsAdded.Any())
+                {
+                    addStrokes = true;
+                }
+
+                if (pageChangedHistoryItem.StrokeIDsRemoved.Any())
+                {
+                    removeStrokes = true;
+                }
+
+            }
+
+            if (addStrokes && removeStrokes)
+            {
+                //throw error, can't have both
+            }
+
             //validate
 
             //PageObjectStructuredID.ID = pageObject.ID;
