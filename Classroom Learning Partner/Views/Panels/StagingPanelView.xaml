@@ -227,7 +227,7 @@
                                            Foreground="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
                                            FontWeight="Bold"
                                            VerticalAlignment="Bottom">
-                                    <Run Text="{Binding Owner.FullName}" />
+                                    <Run Text="{Binding Owner.DisplayName}" />
                                     <Run Text="   Page " />
                                     <Run Text="{Binding PageNumber}" />
                                     <TextBlock.LayoutTransform>
