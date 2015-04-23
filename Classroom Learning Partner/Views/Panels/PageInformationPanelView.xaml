@@ -251,9 +251,10 @@
                            TextAlignment="Center"
                            FontWeight="Bold">
                     <TextBlock.Text>
-                        <MultiBinding StringFormat="Page {0}{1} - NAME">
+                        <MultiBinding StringFormat="Page {0}{1} - {2}">
                             <Binding Path="PageNumber" />
                             <Binding Path="DifferentiationLevel" />
+                            <Binding Path="CurrentPage.Owner.DisplayName" />
                         </MultiBinding>
                     </TextBlock.Text>
                 </TextBlock>
