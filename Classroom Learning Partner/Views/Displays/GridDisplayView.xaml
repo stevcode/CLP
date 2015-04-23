@@ -76,7 +76,7 @@
                         <TextBlock Grid.Column="0"
                                    Grid.Row="1"
                                    Margin="0 0 0 5"
-                                   Text="{Binding Owner.FullName}"
+                                   Text="{Binding Owner.DisplayName, Mode=OneWay}"
                                    Foreground="{DynamicResource DynamicMainColor}"
                                    FontWeight="Bold"
                                    VerticalAlignment="Bottom"

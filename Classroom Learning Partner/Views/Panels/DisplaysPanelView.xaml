@@ -173,7 +173,7 @@
 
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <Grid Visibility="{Binding IsTrashed, Converter={StaticResource OppositeBooleanToCollapsingVisibilityConverter}, ConverterParameter=False}">
+                        <Grid Visibility="{Binding IsHidden, Converter={StaticResource OppositeBooleanToCollapsingVisibilityConverter}, ConverterParameter=False}">
                             <Grid.Style>
                                 <Style TargetType="Grid">
                                     <Setter Property="Background" Value="Transparent" />

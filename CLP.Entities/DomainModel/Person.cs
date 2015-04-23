@@ -52,7 +52,10 @@ namespace CLP.Entities
         public string FullName
         {
             get { return GetValue<string>(FullNameProperty); }
-            set { SetValue(FullNameProperty, value); }
+            set 
+            { 
+                SetValue(FullNameProperty, value);
+            }
         }
 
         public static readonly PropertyData FullNameProperty = RegisterProperty("FullName", typeof(string), string.Empty);
@@ -63,7 +66,10 @@ namespace CLP.Entities
         public string Alias
         {
             get { return GetValue<string>(AliasProperty); }
-            set { SetValue(AliasProperty, value); }
+            set 
+            { 
+                SetValue(AliasProperty, value);
+            }
         }
 
         public static readonly PropertyData AliasProperty = RegisterProperty("Alias", typeof(string), string.Empty);
@@ -73,7 +79,7 @@ namespace CLP.Entities
             get
             {
                 var nameParts = FullName.Split(' ');
-                var first = nameParts.FirstOrDefault() ?? "First";
+                var first = nameParts.FirstOrDefault() ?? "No First Name";
                 var last = nameParts.LastOrDefault();
                 var lastInitial = last == null ? string.Empty : " " + last[0];
                 var firstAndLastInitial = first + lastInitial + ".";

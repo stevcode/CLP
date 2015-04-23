@@ -244,6 +244,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     return;
                 }
+
+                gridDisplay.IsHidden = true;
             }
 
             // TODO: Entities

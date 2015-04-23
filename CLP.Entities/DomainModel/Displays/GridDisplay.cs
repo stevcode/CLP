@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
 
@@ -46,6 +47,19 @@ namespace CLP.Entities
         }
 
         #endregion //Methods
+
+        /// <summary>
+        /// SUMMARY
+        /// </summary>
+        [XmlIgnore]
+        [ExcludeFromSerialization]
+        public bool IsHidden
+        {
+            get { return GetValue<bool>(IsHiddenProperty); }
+            set { SetValue(IsHiddenProperty, value); }
+        }
+
+        public static readonly PropertyData IsHiddenProperty = RegisterProperty("IsHidden", typeof (bool), false);
 
         #region Cache
 

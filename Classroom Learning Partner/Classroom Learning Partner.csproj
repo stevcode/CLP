@@ -262,6 +262,7 @@
     <Compile Include="Converters\PageToSubmissionVisibilityConverter.cs" />
     <Compile Include="Converters\ProjectedDisplayBackgroundConverter.cs" />
     <Compile Include="Converters\RatioToRectMultiConverter.cs" />
+    <Compile Include="Converters\StringToEmptyStringConverter.cs" />
     <Compile Include="Converters\TypeToStringConverter.cs" />
     <Compile Include="Converters\WidthToHeightAspectRatioMultiConverter.cs" />
     <Compile Include="Converters\ZeroToQuestionMarkConverter.cs" />
@@ -1054,6 +1055,8 @@
     <Content Include="External Libraries\System.Reactive.Providers.dll" />
     <Content Include="External Libraries\System.Reactive.Windows.Threading.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
+    <Resource Include="Resources\Temp\Lock.png" />
+    <Resource Include="Resources\Temp\Unlock.png" />
     <Resource Include="Resources\Images\Marker128.png" />
     <Resource Include="Resources\Images\MajorRibbon\TextBox512.png" />
     <Resource Include="Resources\Images\ExtrasFolder256.png" />

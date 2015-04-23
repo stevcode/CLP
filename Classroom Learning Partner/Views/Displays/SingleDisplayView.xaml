@@ -53,7 +53,7 @@
 
             <TextBlock Grid.Column="0"
                        Margin="0 0 0 5"
-                       Text="{Binding CurrentPage.Owner.FullName}"
+                       Text="{Binding CurrentPage.Owner.DisplayName}"
                        Foreground="{DynamicResource DynamicMainColor}"
                        FontWeight="Bold"
                        VerticalAlignment="Bottom"

@@ -5,12 +5,14 @@
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
                    xmlns:sys="clr-namespace:System;assembly=mscorlib"
                    xmlns:viewModel="clr-namespace:Classroom_Learning_Partner.ViewModels"
-                   xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity">
+                   xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                   xmlns:entities="clr-namespace:CLP.Entities;assembly=CLP.Entities">
 
     <UserControl.Resources>
         <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
         <conv:PanelLocationToThicknessConverter x:Key="PanelLocationToThicknessConverter" />
-        <conv:TypeToStringConverter x:Key="TypeToStringConverter" />
+        <conv:EnumToBoolConverter x:Key="EnumToBoolConverter" />
+        <conv:StringToEmptyStringConverter x:Key="StringToEmptyStringConverter" />
         
         <ObjectDataProvider x:Key="AnswerDefinitions"
                             MethodName="GetValues"
@@ -49,19 +51,19 @@
         <DockPanel LastChildFill="True">
 
             <ToggleButton DockPanel.Dock="Top"
-                          Name="PageInfoToggleButton"
+                          Name="PageCommandsToggleButton"
                           IsChecked="False"
                           Height="20"
-                          Margin="1 1 1 5">
+                          Margin="1">
                 <ToggleButton.Style>
                     <Style TargetType="{x:Type ToggleButton}">
                         <Setter Property="Content"
-                                Value="Show Page Info" />
+                                Value="Show Page Commands" />
                         <Style.Triggers>
                             <Trigger Property="IsChecked"
                                      Value="True">
                                 <Setter Property="Content"
-                                        Value="Hide Page Info" />
+                                        Value="Hide Page Commands" />
                             </Trigger>
                         </Style.Triggers>
                     </Style>
@@ -70,7 +72,7 @@
 
             <catel:StackGrid DockPanel.Dock="Top"
                              Margin="5 0"
-                             Visibility="{Binding IsChecked, ElementName=PageInfoToggleButton, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
+                             Visibility="{Binding IsChecked, ElementName=PageCommandsToggleButton, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
@@ -91,57 +93,7 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-
-                <TextBlock Text="ID:" />
-                <TextBox Text="{Binding ID}"
-                         IsReadOnly="True" />
-
-                <TextBlock Text="DifferentiationLevel:" />
-                <TextBox Text="{Binding DifferentiationLevel}"
-                         IsReadOnly="True" />
-
-                <TextBlock Text="VersionIndex:" />
-                <TextBox Text="{Binding VersionIndex}"
-                         IsReadOnly="True" />
-
-                <TextBlock Text="Page Number:" />
-                <TextBox Text="{Binding PageNumber}" />
-
-                <TextBlock Text="History Length:" />
-                <TextBox Text="{Binding CurrentPage.History.HistoryLength, Mode=OneWay}"
-                         IsReadOnly="True" />
-
-                <TextBlock Text="History Z-Score:" />
-                <TextBox Text="{Binding StandardDeviationZScore, Mode=OneWay}"
-                         IsReadOnly="True" />
-
-                <TextBlock Text="Min/Max/Avg:" />
-                <TextBox IsReadOnly="True"
-                         Text="{Binding FormattedMinMaxAverageHistoryLength}"
-                         Background="#66FF8C00" />
-
-                <TextBlock Text="Animation Length:" />
-                <TextBox Text="{Binding CurrentPage.History.AnimationLength, Mode=OneWay}"
-                         IsReadOnly="True" />
-
-                <TextBlock Text="Animation Z-Score:" />
-                <TextBox Text="{Binding AnimationStandardDeviationZScore, Mode=OneWay}"
-                         IsReadOnly="True" />
-
-                <TextBlock Text="Min/Max/Avg:" />
-                <TextBox IsReadOnly="True"
-                         Text="{Binding FormattedMinMaxAverageAnimationLength}"
-                         Background="#66FF8C00" />
 
                 <Button Content="Add Page:"
                         Command="{Binding AddPageCommand}"
@@ -150,10 +102,17 @@
 
                 <ComboBox ItemsSource="{Binding PageOrientations}"
                           SelectedItem="{Binding SelectedPageOrientation}"
+                          FontSize="12"
                           Height="18"
                           Margin="1"
-                          VerticalAlignment="Center"
-                          VerticalContentAlignment="Center" />
+                          Padding="5 0"
+                          VerticalAlignment="Center">
+                    <ComboBox.ItemContainerStyle>
+                        <Style TargetType="{x:Type ComboBoxItem}">
+                            <Setter Property="FontSize" Value="18"/>
+                        </Style>
+                    </ComboBox.ItemContainerStyle>
+                </ComboBox>
 
                 <Button Content="Move Page Up"
                         Command="{Binding MovePageUpCommand}"
@@ -218,22 +177,22 @@
 
                 <ComboBox ItemsSource="{Binding Source={StaticResource AnswerDefinitions}}"
                           SelectedItem="{Binding SelectedAnswerDefinition}"
+                          FontSize="12"
                           Height="18"
                           Margin="1"
-                          VerticalAlignment="Center"
-                          VerticalContentAlignment="Center" />
+                          Padding="5 0"
+                          VerticalAlignment="Center">
+                    <ComboBox.ItemContainerStyle>
+                        <Style TargetType="{x:Type ComboBoxItem}">
+                            <Setter Property="FontSize" Value="18"/>
+                        </Style>
+                    </ComboBox.ItemContainerStyle>
+                </ComboBox>
 
-                <Button Content="Add Tag:"
-                        Command="{Binding AddTagCommand}"
-                        Height="20"
-                        Margin="1" />
-
-                <ComboBox ItemsSource="{Binding Source={StaticResource ManualTags}}"
-                          SelectedItem="{Binding SelectedTag}"
-                          Height="18"
-                          Margin="1"
-                          VerticalAlignment="Center"
-                          VerticalContentAlignment="Center" />
+                <Rectangle Grid.ColumnSpan="2"
+                           Height="1"
+                           Margin="1 5"
+                           Stroke="{StaticResource GrayBorderColor}" />
 
                 <Button Content="Run Page Analysis"
                         Command="{Binding AnalyzePageCommand}"
@@ -259,13 +218,159 @@
                         Height="20"
                         Margin="1" />
 
+                <Rectangle Grid.ColumnSpan="2"
+                           Height="1"
+                           Margin="1 5"
+                           Stroke="{StaticResource GrayBorderColor}" />
+
             </catel:StackGrid>
 
-            <TextBlock Text="TAGS"
-                       FontWeight="Bold"
-                       FontSize="16"
-                       HorizontalAlignment="Center"
-                       DockPanel.Dock="Top" />
+            <catel:StackGrid DockPanel.Dock="Top"
+                             Margin="5 0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!--
+                <TextBlock Text="ID:" />
+                <TextBox Text="{Binding ID}"
+                         IsReadOnly="True" />
+                -->
+                
+                <TextBlock Grid.ColumnSpan="2"
+                           TextAlignment="Center"
+                           FontWeight="Bold">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="Page {0}{1} - {2}">
+                            <Binding Path="PageNumber" />
+                            <Binding Path="DifferentiationLevel"
+                                     Converter="{StaticResource StringToEmptyStringConverter}"
+                                     ConverterParameter="0" />
+                            <Binding Path="CurrentPage.Owner.DisplayName" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+
+                <TextBlock Grid.ColumnSpan="2"
+                           TextAlignment="Center">
+                    <Run Text="Submitted at:" />
+                    <Run Text="{Binding CurrentPage.SubmissionTime, StringFormat=MM/dd/yy HH:mm tt}" />
+                </TextBlock>
+
+                <TextBlock Text="History Length:" />
+                <TextBox Text="{Binding CurrentPage.History.HistoryLength, Mode=OneWay}"
+                         IsReadOnly="True" />
+
+                <TextBlock Text="History Z-Score:" />
+                <TextBox Text="{Binding StandardDeviationZScore, Mode=OneWay}"
+                         IsReadOnly="True" />
+
+                <TextBlock Text="Min/Max/Avg:" />
+                <TextBox IsReadOnly="True"
+                         Text="{Binding FormattedMinMaxAverageHistoryLength}"
+                         Background="#66FF8C00" />
+
+                <catel:StackGrid Grid.ColumnSpan="2">
+                    <catel:StackGrid.Style>
+                        <Style TargetType="catel:StackGrid">
+                            <Setter Property="Visibility"
+                                    Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding CurrentPage.PageType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static entities:PageTypes.Animation}}"
+                                             Value="True">
+                                    <Setter Property="Visibility"
+                                            Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </catel:StackGrid.Style>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Text="Animation Length:" />
+                    <TextBox Text="{Binding CurrentPage.History.AnimationLength, Mode=OneWay}"
+                             IsReadOnly="True" />
+
+                    <TextBlock Text="Animation Z-Score:" />
+                    <TextBox Text="{Binding AnimationStandardDeviationZScore, Mode=OneWay}"
+                             IsReadOnly="True" />
+
+                    <TextBlock Text="Min/Max/Avg:" />
+                    <TextBox IsReadOnly="True"
+                             Text="{Binding FormattedMinMaxAverageAnimationLength}"
+                             Background="#66FF8C00" />
+
+                </catel:StackGrid>
+
+                <Rectangle Grid.ColumnSpan="2"
+                           Height="1"
+                           Margin="1 5"
+                           Stroke="{StaticResource GrayBorderColor}" />
+
+            </catel:StackGrid>
+            
+            <Grid DockPanel.Dock="Top">
+
+                <TextBlock Text="TAGS"
+                           FontWeight="Bold"
+                           FontSize="16"
+                           HorizontalAlignment="Center" />
+
+                <ToggleButton x:Name="TagLockToggleButton" 
+                              Width="18"
+                              Height="18"
+                              VerticalAlignment="Top"
+                              HorizontalAlignment="Right"
+                              Margin="5 0"
+                              IsChecked="True">
+
+                    <ToggleButton.Style>
+                        <Style TargetType="{x:Type ToggleButton}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                        <Image Source="pack://application:,,,/Resources/Temp/Unlock.png" />
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsChecked"
+                                         Value="True">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                                <Image Source="pack://application:,,,/Resources/Temp/Lock.png"
+                                                       Opacity="0.5" />
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ToggleButton.Style>
+                </ToggleButton>
+
+            </Grid>
 
             <ListBox ItemContainerStyle="{StaticResource ListBoxItemBlankStyle}"
                      ItemsSource="{Binding SortedTags.View, IsAsync=True}"
@@ -382,7 +487,8 @@
                                     Width="25"
                                     VerticalAlignment="Center"
                                     Command="{Binding DataContext.DeleteTagCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ItemsControl}}}"
-                                    CommandParameter="{Binding}">
+                                    CommandParameter="{Binding}"
+                                    Visibility="{Binding IsChecked, ElementName=TagLockToggleButton, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}">
                                 <Button.Template>
                                     <ControlTemplate TargetType="{x:Type Button}">
                                         <Grid>
