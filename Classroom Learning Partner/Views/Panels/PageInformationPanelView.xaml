@@ -49,19 +49,19 @@
         <DockPanel LastChildFill="True">
 
             <ToggleButton DockPanel.Dock="Top"
-                          Name="PageInfoToggleButton"
+                          Name="PageCommandsToggleButton"
                           IsChecked="False"
                           Height="20"
-                          Margin="1 1 1 5">
+                          Margin="1">
                 <ToggleButton.Style>
                     <Style TargetType="{x:Type ToggleButton}">
                         <Setter Property="Content"
-                                Value="Show Page Info" />
+                                Value="Show Page Commands" />
                         <Style.Triggers>
                             <Trigger Property="IsChecked"
                                      Value="True">
                                 <Setter Property="Content"
-                                        Value="Hide Page Info" />
+                                        Value="Hide Page Commands" />
                             </Trigger>
                         </Style.Triggers>
                     </Style>
@@ -70,7 +70,7 @@
 
             <catel:StackGrid DockPanel.Dock="Top"
                              Margin="5 0"
-                             Visibility="{Binding IsChecked, ElementName=PageInfoToggleButton, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
+                             Visibility="{Binding IsChecked, ElementName=PageCommandsToggleButton, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
@@ -91,57 +91,7 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-
-                <TextBlock Text="ID:" />
-                <TextBox Text="{Binding ID}"
-                         IsReadOnly="True" />
-
-                <TextBlock Text="DifferentiationLevel:" />
-                <TextBox Text="{Binding DifferentiationLevel}"
-                         IsReadOnly="True" />
-
-                <TextBlock Text="VersionIndex:" />
-                <TextBox Text="{Binding VersionIndex}"
-                         IsReadOnly="True" />
-
-                <TextBlock Text="Page Number:" />
-                <TextBox Text="{Binding PageNumber}" />
-
-                <TextBlock Text="History Length:" />
-                <TextBox Text="{Binding CurrentPage.History.HistoryLength, Mode=OneWay}"
-                         IsReadOnly="True" />
-
-                <TextBlock Text="History Z-Score:" />
-                <TextBox Text="{Binding StandardDeviationZScore, Mode=OneWay}"
-                         IsReadOnly="True" />
-
-                <TextBlock Text="Min/Max/Avg:" />
-                <TextBox IsReadOnly="True"
-                         Text="{Binding FormattedMinMaxAverageHistoryLength}"
-                         Background="#66FF8C00" />
-
-                <TextBlock Text="Animation Length:" />
-                <TextBox Text="{Binding CurrentPage.History.AnimationLength, Mode=OneWay}"
-                         IsReadOnly="True" />
-
-                <TextBlock Text="Animation Z-Score:" />
-                <TextBox Text="{Binding AnimationStandardDeviationZScore, Mode=OneWay}"
-                         IsReadOnly="True" />
-
-                <TextBlock Text="Min/Max/Avg:" />
-                <TextBox IsReadOnly="True"
-                         Text="{Binding FormattedMinMaxAverageAnimationLength}"
-                         Background="#66FF8C00" />
 
                 <Button Content="Add Page:"
                         Command="{Binding AddPageCommand}"
@@ -150,10 +100,17 @@
 
                 <ComboBox ItemsSource="{Binding PageOrientations}"
                           SelectedItem="{Binding SelectedPageOrientation}"
+                          FontSize="12"
                           Height="18"
                           Margin="1"
-                          VerticalAlignment="Center"
-                          VerticalContentAlignment="Center" />
+                          Padding="5 0"
+                          VerticalAlignment="Center">
+                    <ComboBox.ItemContainerStyle>
+                        <Style TargetType="{x:Type ComboBoxItem}">
+                            <Setter Property="FontSize" Value="18"/>
+                        </Style>
+                    </ComboBox.ItemContainerStyle>
+                </ComboBox>
 
                 <Button Content="Move Page Up"
                         Command="{Binding MovePageUpCommand}"
@@ -218,22 +175,22 @@
 
                 <ComboBox ItemsSource="{Binding Source={StaticResource AnswerDefinitions}}"
                           SelectedItem="{Binding SelectedAnswerDefinition}"
+                          FontSize="12"
                           Height="18"
                           Margin="1"
-                          VerticalAlignment="Center"
-                          VerticalContentAlignment="Center" />
+                          Padding="5 0"
+                          VerticalAlignment="Center">
+                    <ComboBox.ItemContainerStyle>
+                        <Style TargetType="{x:Type ComboBoxItem}">
+                            <Setter Property="FontSize" Value="18"/>
+                        </Style>
+                    </ComboBox.ItemContainerStyle>
+                </ComboBox>
 
-                <Button Content="Add Tag:"
-                        Command="{Binding AddTagCommand}"
-                        Height="20"
-                        Margin="1" />
-
-                <ComboBox ItemsSource="{Binding Source={StaticResource ManualTags}}"
-                          SelectedItem="{Binding SelectedTag}"
-                          Height="18"
-                          Margin="1"
-                          VerticalAlignment="Center"
-                          VerticalContentAlignment="Center" />
+                <Rectangle Grid.ColumnSpan="2"
+                           Height="1"
+                           Margin="1 5"
+                           Stroke="{StaticResource GrayBorderColor}" />
 
                 <Button Content="Run Page Analysis"
                         Command="{Binding AnalyzePageCommand}"
@@ -258,6 +215,79 @@
                         Grid.ColumnSpan="2"
                         Height="20"
                         Margin="1" />
+
+                <Rectangle Grid.ColumnSpan="2"
+                           Height="1"
+                           Margin="1 5"
+                           Stroke="{StaticResource GrayBorderColor}" />
+
+            </catel:StackGrid>
+
+            <catel:StackGrid DockPanel.Dock="Top"
+                             Margin="5 0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!--
+                <TextBlock Text="ID:" />
+                <TextBox Text="{Binding ID}"
+                         IsReadOnly="True" />
+                -->
+                
+                <TextBlock Grid.ColumnSpan="2"
+                           TextAlignment="Center"
+                           FontWeight="Bold">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="Page {0}{1} - NAME">
+                            <Binding Path="PageNumber" />
+                            <Binding Path="DifferentiationLevel" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+               
+                <TextBlock Text="History Length:" />
+                <TextBox Text="{Binding CurrentPage.History.HistoryLength, Mode=OneWay}"
+                         IsReadOnly="True" />
+
+                <TextBlock Text="History Z-Score:" />
+                <TextBox Text="{Binding StandardDeviationZScore, Mode=OneWay}"
+                         IsReadOnly="True" />
+
+                <TextBlock Text="Min/Max/Avg:" />
+                <TextBox IsReadOnly="True"
+                         Text="{Binding FormattedMinMaxAverageHistoryLength}"
+                         Background="#66FF8C00" />
+
+                <TextBlock Text="Animation Length:" />
+                <TextBox Text="{Binding CurrentPage.History.AnimationLength, Mode=OneWay}"
+                         IsReadOnly="True" />
+
+                <TextBlock Text="Animation Z-Score:" />
+                <TextBox Text="{Binding AnimationStandardDeviationZScore, Mode=OneWay}"
+                         IsReadOnly="True" />
+
+                <TextBlock Text="Min/Max/Avg:" />
+                <TextBox IsReadOnly="True"
+                         Text="{Binding FormattedMinMaxAverageAnimationLength}"
+                         Background="#66FF8C00" />
+
+                <Rectangle Grid.ColumnSpan="2"
+                           Height="1"
+                           Margin="1 5"
+                           Stroke="{StaticResource GrayBorderColor}" />
 
             </catel:StackGrid>
 
