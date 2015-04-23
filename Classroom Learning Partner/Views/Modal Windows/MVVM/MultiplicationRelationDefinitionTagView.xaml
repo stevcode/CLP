@@ -114,8 +114,9 @@
                         <Button Grid.Column="1"
                                 Command="{Binding DataContext.TagCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}}"
                                 CommandParameter="{Binding}"
-                                Content="Tag"
+                                Content="Defn"
                                 HorizontalAlignment="Right"
+                                Padding="4 0"
                                 Margin="1" />
                     </Grid>
                 </DataTemplate>
@@ -169,8 +170,9 @@
                         <Button Grid.Column="1"
                                 Command="{Binding DataContext.UntagCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}}"
                                 CommandParameter="{Binding}"
-                                Content="Untag"
+                                Content="Clear"
                                 HorizontalAlignment="Right"
+                                Padding="4 0"
                                 Margin="1" />
                     </Grid>
                 </DataTemplate>
