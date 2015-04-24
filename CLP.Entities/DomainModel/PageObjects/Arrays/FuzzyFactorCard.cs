@@ -169,7 +169,7 @@ namespace CLP.Entities
         {
             var initialWidth = Width;
             var initialHeight = Height;
-            var initialSquareSize = 45.0;
+            var initialSquareSize = DefaultGridSquareSize;
             if (toSquareSize <= 0)
             {
                 while (XPosition + LabelLength + LargeLabelLength + initialSquareSize * Columns >= ParentPage.Width ||

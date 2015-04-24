@@ -79,7 +79,7 @@ namespace CLP.Entities
 
         public override void SizeArrayToGridLevel(double toSquareSize = -1, bool recalculateDivisions = true)
         {
-            var initialSquareSize = 45.0;
+            var initialSquareSize = DefaultGridSquareSize;
             if (toSquareSize <= 0)
             {
                 while (XPosition + 2 * LabelLength + initialSquareSize * Columns >= ParentPage.Width ||

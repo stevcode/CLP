@@ -1315,7 +1315,14 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            int rows, columns, dividend = 1, numberOfArrays = 1;
+            //Initial Values.
+            int rows;
+            int columns;
+            int dividend = 1;
+            int numberOfArrays = 1;
+            var initialGridSize = ACLPArrayBase.DefaultGridSquareSize;
+
+            //Launch Array Creation Window.
             var arrayCreationView = new ArrayCreationView
                                     {
                                         Owner = Application.Current.MainWindow
@@ -1354,9 +1361,23 @@ namespace Classroom_Learning_Partner.ViewModels
                 numberOfArrays = 1;
             }
 
-            var arrayType = "ARRAY";
+            //
+            var divisionTemplatesOnpage = page.PageObjects.OfType<FuzzyFactorCard>().ToList();
+            if (divisionTemplatesOnpage.Any())
+            {
+               // var mostCommonDivisonTemplateGridSize = divisionTemplatesOnpage.GroupBy(d => d.GridSquareSize).OrderByDescending(g => g.Count()).SelectMany(x =-> )
+              //  initialGridSize = divisionTemplatesOnpage.Last(d => d.GridSquareSize == mostCommonDivisonTemplateGridSize).g;
+            }
+            
 
-            var gridSize = 34.0;
+            var arraysOnPage = page.PageObjects.OfType<CLPArray>().ToList();
+
+
+
+
+
+
+            var gridSize = ACLPArrayBase.DefaultGridSquareSize;
 
             var arraysToAdd = Enumerable.Range(1, numberOfArrays).Select(index => new CLPArray(page, gridSize, columns, rows, ArrayTypes.Array)).Cast<ACLPArrayBase>().ToList();
 

@@ -381,6 +381,15 @@ namespace CLP.Entities
 
         #endregion //APageObjectBase Overrides
 
+        #region Static Properties
+
+        public static double DefaultGridSquareSize
+        {
+            get { return 34.0; }
+        }
+
+        #endregion //Static Properties
+
         #region Static Methods
 
         public static void ApplyDistinctPosition(ACLPArrayBase array, string currentUserID)

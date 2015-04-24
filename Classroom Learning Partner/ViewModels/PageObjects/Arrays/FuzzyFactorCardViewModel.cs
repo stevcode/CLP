@@ -322,6 +322,8 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 return;
             }
+
+
             int rows, dividend = 1, numberOfArrays = 1;
             var isShowingTiles = false;
             var factorCreationView = new FuzzyFactorCardCreationView { Owner = Application.Current.MainWindow };
