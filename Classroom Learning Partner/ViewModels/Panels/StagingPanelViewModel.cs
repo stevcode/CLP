@@ -25,7 +25,8 @@ namespace Classroom_Learning_Partner.ViewModels
         TroubleWithFactorPairs,
         TroubleWithRemainders,
         TroubleWithDivision,
-        DivisionTemplateStrategy
+        DivisionTemplateStrategy,
+        MostUsedPageObject
     }
 
     public class StagingPanelViewModel : APanelBaseViewModel
@@ -40,6 +41,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private static readonly PropertyGroupDescription TroubleWithDivisionGroup = new PropertyGroupDescription("TroubleWithDivision");
         private static readonly PropertyGroupDescription IncorrectArrayCreationGroup = new PropertyGroupDescription("DivisionTemplateIncorrectArrayCreation");
         private static readonly PropertyGroupDescription DivisionTemplateStrategyGroup = new PropertyGroupDescription("DivisionTemplateStrategy");
+        private static readonly PropertyGroupDescription MostUsedPageObjectGroup = new PropertyGroupDescription("MostUsedPageObject");
 
         private static readonly SortDescription OwnerFullNameAscendingSort = new SortDescription("Owner.DisplayName", ListSortDirection.Ascending);
         private static readonly SortDescription OwnerFullNameDescendingSort = new SortDescription("Owner.DisplayName", ListSortDirection.Descending);
@@ -63,6 +65,8 @@ namespace Classroom_Learning_Partner.ViewModels
         private static readonly SortDescription IncorrectArrayCreationDescendingSort = new SortDescription("DivisionTemplateIncorrectArrayCreation", ListSortDirection.Descending);
         private static readonly SortDescription DivisionTemplateStrategyAscendingSort = new SortDescription("DivisionTemplateStrategy", ListSortDirection.Ascending);
         private static readonly SortDescription DivisionTemplateStrategyDescendingSort = new SortDescription("DivisionTemplateStrategy", ListSortDirection.Descending);
+        private static readonly SortDescription MostUsedPageObjectAscendingSort = new SortDescription("MostUsedPageObject", ListSortDirection.Ascending);
+        private static readonly SortDescription MostUsedPageObjectDescendingSort = new SortDescription("MostUsedPageObject", ListSortDirection.Descending);
 
         private readonly INotebookService _notebookService;
 
@@ -442,6 +446,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 case SortAndGroupTypes.DivisionTemplateStrategy:
                     ApplySortAndGroupByDivisionTemplateStrategy();
                     break;
+                case SortAndGroupTypes.MostUsedPageObject:
+                    ApplySortAndGroupByMostUsedPageObject();
+                    break;
                 default:
                     ApplySortAndGroupByName();
                     break;
@@ -580,6 +587,22 @@ namespace Classroom_Learning_Partner.ViewModels
 
             SortedAndGroupedPages.GroupDescriptions.Add(PageNumberGroup);
             SortedAndGroupedPages.SortDescriptions.Add(PageNumberAscendingSort);
+
+            SortedAndGroupedPages.SortDescriptions.Add(OwnerFullNameAscendingSort);
+            SortedAndGroupedPages.SortDescriptions.Add(SubmissionTimeAscendingSort);
+        }
+
+        public void ApplySortAndGroupByMostUsedPageObject()
+        {
+            SortedAndGroupedPages.GroupDescriptions.Clear();
+            SortedAndGroupedPages.SortDescriptions.Clear();
+
+            SortedAndGroupedPages.GroupDescriptions.Add(MostUsedPageObjectGroup);
+            SortedAndGroupedPages.SortDescriptions.Add(MostUsedPageObjectAscendingSort);
+
+            //HACK: for demo video
+            //SortedAndGroupedPages.GroupDescriptions.Add(PageNumberGroup);
+            //SortedAndGroupedPages.SortDescriptions.Add(PageNumberAscendingSort);
 
             SortedAndGroupedPages.SortDescriptions.Add(OwnerFullNameAscendingSort);
             SortedAndGroupedPages.SortDescriptions.Add(SubmissionTimeAscendingSort);
