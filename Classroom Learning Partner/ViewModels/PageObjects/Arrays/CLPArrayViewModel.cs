@@ -1361,13 +1361,20 @@ namespace Classroom_Learning_Partner.ViewModels
                 numberOfArrays = 1;
             }
 
-            //
-            var divisionTemplatesOnpage = page.PageObjects.OfType<FuzzyFactorCard>().ToList();
-            if (divisionTemplatesOnpage.Any())
+            //Initialize grid size if any Division Templates or Arrays are already on the page
+            //Attempts to match first against a gridSize shared by the most DTs, then by the DT that has been most recently added to the page.
+            //Ignores any Division Templates that are full, unless all DTs on the page are full.
+            //If no DTs on the page, match against other Arrays.
+            var divisionTemplatesOnPage = page.PageObjects.OfType<FuzzyFactorCard>().Where(d => d.CurrentRemainder < d.Rows).ToList();
+            if (!divisionTemplatesOnPage.Any())
             {
-                var groupSize = divisionTemplatesOnpage.GroupBy(d => d.GridSquareSize).OrderByDescending(g => g.Count()).First().Count();
-                var relevantDivisionTemplateIDs = divisionTemplatesOnpage.GroupBy(d => d.GridSquareSize).Where(g => g.Count() == groupSize).SelectMany(g => g).Select(d => d.ID).ToList();
-                initialGridSize = divisionTemplatesOnpage.Last(d => relevantDivisionTemplateIDs.Contains(d.ID)).GridSquareSize;
+                divisionTemplatesOnPage = page.PageObjects.OfType<FuzzyFactorCard>().ToList();
+            }
+            if (divisionTemplatesOnPage.Any())
+            {
+                var groupSize = divisionTemplatesOnPage.GroupBy(d => d.GridSquareSize).OrderByDescending(g => g.Count()).First().Count();
+                var relevantDivisionTemplateIDs = divisionTemplatesOnPage.GroupBy(d => d.GridSquareSize).Where(g => g.Count() == groupSize).SelectMany(g => g).Select(d => d.ID).ToList();
+                initialGridSize = divisionTemplatesOnPage.Last(d => relevantDivisionTemplateIDs.Contains(d.ID)).GridSquareSize;
             }
             else
             {
@@ -1380,15 +1387,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
 
-            
-
-
-
-
-
-            var gridSize = ACLPArrayBase.DefaultGridSquareSize;
-
-            var arraysToAdd = Enumerable.Range(1, numberOfArrays).Select(index => new CLPArray(page, gridSize, columns, rows, ArrayTypes.Array)).Cast<ACLPArrayBase>().ToList();
+            //Create arrays
+            var arraysToAdd = Enumerable.Range(1, numberOfArrays).Select(index => new CLPArray(page, initialGridSize, columns, rows, ArrayTypes.Array)).Cast<ACLPArrayBase>().ToList();
 
             var arrayStacks = MatchArrayGridSize(arraysToAdd, page);
 
