@@ -1365,13 +1365,22 @@ namespace Classroom_Learning_Partner.ViewModels
             var divisionTemplatesOnpage = page.PageObjects.OfType<FuzzyFactorCard>().ToList();
             if (divisionTemplatesOnpage.Any())
             {
-               // var mostCommonDivisonTemplateGridSize = divisionTemplatesOnpage.GroupBy(d => d.GridSquareSize).OrderByDescending(g => g.Count()).SelectMany(x =-> )
-              //  initialGridSize = divisionTemplatesOnpage.Last(d => d.GridSquareSize == mostCommonDivisonTemplateGridSize).g;
+                var groupSize = divisionTemplatesOnpage.GroupBy(d => d.GridSquareSize).OrderByDescending(g => g.Count()).First().Count();
+                var relevantDivisionTemplateIDs = divisionTemplatesOnpage.GroupBy(d => d.GridSquareSize).Where(g => g.Count() == groupSize).SelectMany(g => g).Select(d => d.ID).ToList();
+                initialGridSize = divisionTemplatesOnpage.Last(d => relevantDivisionTemplateIDs.Contains(d.ID)).GridSquareSize;
             }
+            else
+            {
+                var arraysOnPage = page.PageObjects.OfType<CLPArray>().ToList();
+                if (arraysOnPage.Any())
+                {
+                    var groupSize = arraysOnPage.GroupBy(a => a.GridSquareSize).OrderByDescending(g => g.Count()).First().Count();
+                    var relevantarrayIDs = arraysOnPage.GroupBy(a => a.GridSquareSize).Where(g => g.Count() == groupSize).SelectMany(g => g).Select(a => a.ID).ToList();
+                    initialGridSize = arraysOnPage.Last(a => relevantarrayIDs.Contains(a.ID)).GridSquareSize;
+                }
+            }
+
             
-
-            var arraysOnPage = page.PageObjects.OfType<CLPArray>().ToList();
-
 
 
 
