@@ -532,6 +532,54 @@ namespace CLP.Entities
             }
         }
 
+        public virtual string MostUsedPageObject
+        {
+            get
+            {
+                var objectTypes = new List<string>();
+                foreach (var pageObject in PageObjects.Where(pageObject => pageObject.OwnerID == OwnerID))
+                {
+                    if (pageObject is FuzzyFactorCard)
+                    {
+                        objectTypes.Add("Division Templates");
+                        continue;
+                    }
+
+                    if (pageObject is CLPArray)
+                    {
+                        objectTypes.Add("Arrays");
+                        continue;
+                    }
+
+                    if (pageObject is NumberLine)
+                    {
+                        objectTypes.Add("Number Lines");
+                        continue;
+                    }
+
+                    if (pageObject is Stamp ||
+                        pageObject is StampedObject)
+                    {
+                        objectTypes.Add("Stamps");
+                        continue;
+                    }
+
+                    if (pageObject is Shape)
+                    {
+                        objectTypes.Add("Shapes");
+                        continue;
+                    }
+                }
+
+                if (!objectTypes.Any())
+                {
+                    return "None";
+                }
+
+                return objectTypes.GroupBy(i => i).OrderByDescending(g => g.Count()).Select(g => g.Key).First();
+            }
+        }
+
         #endregion //Calculated Sort Properties
 
         #endregion //Properties

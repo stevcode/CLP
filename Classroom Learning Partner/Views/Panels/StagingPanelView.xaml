@@ -177,7 +177,7 @@
                                                                   x:Name="GroupVisibilityToggle"
                                                                   Margin="10 0 50 0"
                                                                   Height="20"
-                                                                  MinWidth="175">
+                                                                  MinWidth="50">
                                                         <ToggleButton.Style>
                                                             <Style TargetType="ToggleButton">
                                                                 <Setter Property="IsChecked"
