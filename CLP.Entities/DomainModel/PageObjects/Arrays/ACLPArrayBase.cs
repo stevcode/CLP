@@ -98,6 +98,11 @@ namespace CLP.Entities
     [Serializable]
     public abstract class ACLPArrayBase : APageObjectBase
     {
+        public const double ARRAY_STARING_Y_POSITION = 295.0;
+        public const double ARRAY_LABEL_LENGTH = 22.0;
+        public const double DT_LABEL_LENGTH = 35.0;
+        public const double DT_LARGE_LABEL_LENGTH = 52.5;
+
         #region Constructors
 
         /// <summary>Initializes <see cref="ACLPArrayBase" /> from scratch.</summary>
@@ -112,6 +117,8 @@ namespace CLP.Entities
         {
             Columns = columns;
             Rows = rows;
+            XPosition = 0.0;
+            YPosition = ARRAY_STARING_Y_POSITION;
         }
 
         /// <summary>Initializes <see cref="ACLPArrayBase" /> based on <see cref="SerializationInfo" />.</summary>
@@ -126,7 +133,7 @@ namespace CLP.Entities
 
         public virtual double LabelLength
         {
-            get { return 22; }
+            get { return ARRAY_LABEL_LENGTH; }
         }
 
         /// <summary>The number of rows in the <see cref="ACLPArrayBase" />.</summary>
@@ -381,61 +388,72 @@ namespace CLP.Entities
 
         #endregion //APageObjectBase Overrides
 
+        #region Static Properties
+
+        public static double DefaultGridSquareSize //used to be 45.0
+        {
+            get { return 34.0; }
+        }
+
+        #endregion //Static Properties
+
         #region Static Methods
 
-        public static void ApplyDistinctPosition(ACLPArrayBase array, string currentUserID)
+        public static void ApplyDistinctPosition(ACLPArrayBase array)
         {
-            //squareSize will be the grid size of the most recently placed array, or 0 if there are no non-background arrays
-            var lastArray =
-                array.ParentPage.PageObjects.LastOrDefault(x => x is ACLPArrayBase && (x.OwnerID != Person.Author.ID || currentUserID == Person.Author.ID) && x.ID != array.ID) as
-                ACLPArrayBase;
-            if (lastArray == null)
+            var currentPage = array.ParentPage;
+            if (currentPage == null)
             {
-                if (array.XPosition + array.Width >= array.ParentPage.Width)
-                {
-                    array.XPosition = array.ParentPage.Width - array.Width;
-                }
-                if (array.YPosition + array.Height >= array.ParentPage.Height)
-                {
-                    array.YPosition = array.ParentPage.Height - array.Height;
-                }
                 return;
             }
 
-            var previousGridSquareSize = array.GridSquareSize;
-            array.SizeArrayToGridLevel(lastArray.GridSquareSize);
-            if (lastArray is CLPArray)
+            var arraysToAvoid = currentPage.PageObjects.OfType<ACLPArrayBase>().Where(a => a.ID != array.ID).ToList();
+            while (arraysToAvoid.Any())
             {
-                array.YPosition = lastArray.YPosition;
-                array.XPosition = lastArray.YPosition + lastArray.LabelLength + lastArray.Width;
-                if (array.XPosition + array.Width >= array.ParentPage.Width ||
-                    array.YPosition + array.Height >= array.ParentPage.Height)
+                var overlappingArray = arraysToAvoid.FirstOrDefault(a => IsOverlapping(a, array));
+                if (overlappingArray == null)
                 {
-                    array.XPosition = lastArray.XPosition;
-                    array.YPosition = lastArray.YPosition + lastArray.LabelLength + lastArray.Height;
+                    break;
                 }
-                if (array.XPosition + array.Width >= array.ParentPage.Width ||
-                    array.YPosition + array.Height >= array.ParentPage.Height)
+
+                arraysToAvoid.Remove(overlappingArray);
+
+                if (overlappingArray is FuzzyFactorCard)
                 {
-                    ApplyDistinctPosition(array);
+                    array.YPosition = overlappingArray.YPosition + overlappingArray.Height;
+                }
+                else
+                {
+                    if (overlappingArray.Rows >= overlappingArray.Columns) //Move array right.
+                    {
+                        array.XPosition = overlappingArray.XPosition + overlappingArray.Width;
+                        if (array.XPosition + array.Width >= currentPage.Width)
+                        {
+                            array.XPosition = 0.0;
+                            array.YPosition = overlappingArray.YPosition + overlappingArray.Height;
+                        }
+                    }
+                    else //Move array down.
+                    {
+                        array.YPosition = overlappingArray.YPosition + overlappingArray.Height;
+                        if (array.YPosition + array.Height >= currentPage.Height)
+                        {
+                            array.XPosition = overlappingArray.XPosition + overlappingArray.Width;
+                            array.YPosition = ARRAY_STARING_Y_POSITION;
+                        }
+                    }
                 }
             }
-            else if (lastArray is FuzzyFactorCard ||
-                     (lastArray as FuzzyFactorCard).RemainderTiles != null)
+
+            var rnd = new Random();
+
+            if (array.YPosition + array.Height >= currentPage.Height)
             {
-                array.XPosition = lastArray.XPosition;
-                array.YPosition = lastArray.YPosition + lastArray.LabelLength + lastArray.Height + (lastArray as FuzzyFactorCard).LargeLabelLength - array.LabelLength;
-                if (array.XPosition + array.Width >= array.ParentPage.Width ||
-                    array.YPosition + array.Height >= array.ParentPage.Height)
-                {
-                    array.XPosition = 0.0;
-                }
-                if (array.XPosition + array.Width >= array.ParentPage.Width ||
-                    array.YPosition + array.Height >= array.ParentPage.Height)
-                {
-                    array.YPosition = 100.0;
-                    ApplyDistinctPosition(array);
-                }
+                array.YPosition = currentPage.Height - array.Height - rnd.Next(30);
+            }
+            if (array.XPosition + array.Width >= currentPage.Width)
+            {
+                array.XPosition = currentPage.Width - array.Width - rnd.Next(30);
             }
         }
 

@@ -38,13 +38,11 @@ namespace CLP.Entities
             ArrayType = arrayType;
         }
 
-        public CLPArray(CLPPage parentPage, double gridSize, int columns, int rows, ArrayTypes arrayType)
-            : base(parentPage, columns, rows)
+        public CLPArray(CLPPage parentPage, double gridSquareSize, int columns, int rows, ArrayTypes arrayType)
+            : this(parentPage, columns, rows, arrayType)
         {
-            IsGridOn = rows < 26 && columns < 26;
-            ArrayType = arrayType;
-            Width = gridSize * columns + 2 * LabelLength;
-            Height = gridSize * rows + 2 * LabelLength;
+            Width = (gridSquareSize * columns) + (2 * ARRAY_LABEL_LENGTH);
+            Height = (gridSquareSize * rows) + (2 * ARRAY_LABEL_LENGTH);
         }
 
         /// <summary>Initializes <see cref="CLPArray" /> based on <see cref="SerializationInfo" />.</summary>
@@ -79,7 +77,7 @@ namespace CLP.Entities
 
         public override void SizeArrayToGridLevel(double toSquareSize = -1, bool recalculateDivisions = true)
         {
-            var initialSquareSize = 45.0;
+            var initialSquareSize = DefaultGridSquareSize;
             if (toSquareSize <= 0)
             {
                 while (XPosition + 2 * LabelLength + initialSquareSize * Columns >= ParentPage.Width ||
@@ -158,7 +156,8 @@ namespace CLP.Entities
 
                     if (divisionTemplate.CurrentRemainder != divisionTemplate.Dividend % divisionTemplate.Rows)
                     {
-                        var existingFactorPairErrorsTag = ParentPage.Tags.OfType<DivisionTemplateFactorPairErrorsTag>().FirstOrDefault(x => x.DivisionTemplateID == divisionTemplate.ID);
+                        var existingFactorPairErrorsTag =
+                            ParentPage.Tags.OfType<DivisionTemplateFactorPairErrorsTag>().FirstOrDefault(x => x.DivisionTemplateID == divisionTemplate.ID);
                         var isArrayDimensionErrorsTagOnPage = true;
 
                         if (existingFactorPairErrorsTag == null)
@@ -204,7 +203,8 @@ namespace CLP.Entities
                     }
                     else
                     {
-                        var existingRemainderErrorsTag = ParentPage.Tags.OfType<DivisionTemplateRemainderErrorsTag>().FirstOrDefault(x => x.DivisionTemplateID == divisionTemplate.ID);
+                        var existingRemainderErrorsTag =
+                            ParentPage.Tags.OfType<DivisionTemplateRemainderErrorsTag>().FirstOrDefault(x => x.DivisionTemplateID == divisionTemplate.ID);
                         var isRemainderErrorsTagOnPage = true;
 
                         if (existingRemainderErrorsTag == null)
