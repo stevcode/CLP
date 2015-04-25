@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Windows;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -328,6 +329,13 @@ namespace CLP.Entities
         public static bool IsPageObjectAnAcceptedPageObject(IPageObject pageObject)
         {
             return pageObject.ParentPage.PageObjects.OfType<IPageObjectAccepter>().Any(x => x.AcceptedPageObjectIDs.Contains(pageObject.ID));
+        }
+
+        public static bool IsOverlapping(IPageObject firstPageObject, IPageObject secondPageObject)
+        {
+            var firstBounds = new Rect(firstPageObject.XPosition, firstPageObject.YPosition, firstPageObject.Width, firstPageObject.Height);
+            var secondBounds = new Rect(secondPageObject.XPosition, secondPageObject.YPosition, secondPageObject.Width, secondPageObject.Height);
+            return firstBounds.IntersectsWith(secondBounds);
         }
 
         #endregion //Utility Methods

@@ -396,7 +396,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 firstArray.YPosition = page.Height - firstArray.Height;
             }
-            ACLPArrayBase.ApplyDistinctPosition(firstArray, App.MainWindowViewModel.CurrentUser.ID);
+            ACLPArrayBase.ApplyDistinctPosition(firstArray);
 
             CLPArrayViewModel.PlaceArrayNextToExistingArray(arraysToAdd, page);
             double xPosition = firstArray.XPosition;

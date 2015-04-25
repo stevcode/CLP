@@ -1318,9 +1318,9 @@ namespace Classroom_Learning_Partner.ViewModels
             //Initial Values.
             int rows;
             int columns;
-            int dividend = 1;
-            int numberOfArrays = 1;
+            int numberOfArrays;
             var initialGridSize = ACLPArrayBase.DefaultGridSquareSize;
+            var isMatchingOtherGridSquareSize = false;
 
             //Launch Array Creation Window.
             var arrayCreationView = new ArrayCreationView
@@ -1361,10 +1361,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 numberOfArrays = 1;
             }
 
-            //Initialize grid size if any Division Templates or Arrays are already on the page
-            //Attempts to match first against a gridSize shared by the most DTs, then by the DT that has been most recently added to the page.
+            //Match GridSquareSize if any Division Templates or Arrays are already on the page.
+            //Attempts to match first against a GridSquareSize shared by the most DTs, then by the DT that has been most recently added to the page.
             //Ignores any Division Templates that are full, unless all DTs on the page are full.
-            //If no DTs on the page, match against other Arrays.
+            //If no DTs are on the page, match against other Arrays on the page.
             var divisionTemplatesOnPage = page.PageObjects.OfType<FuzzyFactorCard>().Where(d => d.CurrentRemainder < d.Rows).ToList();
             if (!divisionTemplatesOnPage.Any())
             {
@@ -1375,6 +1375,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 var groupSize = divisionTemplatesOnPage.GroupBy(d => d.GridSquareSize).OrderByDescending(g => g.Count()).First().Count();
                 var relevantDivisionTemplateIDs = divisionTemplatesOnPage.GroupBy(d => d.GridSquareSize).Where(g => g.Count() == groupSize).SelectMany(g => g).Select(d => d.ID).ToList();
                 initialGridSize = divisionTemplatesOnPage.Last(d => relevantDivisionTemplateIDs.Contains(d.ID)).GridSquareSize;
+                isMatchingOtherGridSquareSize = true;
             }
             else
             {
@@ -1384,157 +1385,93 @@ namespace Classroom_Learning_Partner.ViewModels
                     var groupSize = arraysOnPage.GroupBy(a => a.GridSquareSize).OrderByDescending(g => g.Count()).First().Count();
                     var relevantarrayIDs = arraysOnPage.GroupBy(a => a.GridSquareSize).Where(g => g.Count() == groupSize).SelectMany(g => g).Select(a => a.ID).ToList();
                     initialGridSize = arraysOnPage.Last(a => relevantarrayIDs.Contains(a.ID)).GridSquareSize;
+                    isMatchingOtherGridSquareSize = true;
                 }
+            }
+
+            //If no Division Templates or other Arrays are on the page, generate a GridSquareSize that accommodates all the arrays being created.
+            if (!isMatchingOtherGridSquareSize)
+            {
+                initialGridSize = AdjustGridSquareSize(page, rows, columns, numberOfArrays, initialGridSize);
             }
 
             //Create arrays
             var arraysToAdd = Enumerable.Range(1, numberOfArrays).Select(index => new CLPArray(page, initialGridSize, columns, rows, ArrayTypes.Array)).Cast<ACLPArrayBase>().ToList();
-
-            var arrayStacks = MatchArrayGridSize(arraysToAdd, page);
-
-            var isHorizontallyAligned = page.Width / columns > page.Height / 4 * 3 / rows;
             var firstArray = arraysToAdd.First();
-            var initializedSquareSize = firstArray.ArrayHeight / firstArray.Rows;
+            arraysToAdd.Remove(firstArray);
 
-            firstArray.XPosition = 0.0;
-            if (295.0 + firstArray.Height < page.Height)
+            //Reposition first array
+            ACLPArrayBase.ApplyDistinctPosition(firstArray);
+
+            //Reposition other arrays
+            var newXPosition = firstArray.XPosition;
+            var newYPosition = firstArray.YPosition;
+            var isVerticalArray = firstArray.Rows >= firstArray.Columns;
+            foreach (var array in arraysToAdd)
             {
-                firstArray.YPosition = 295.0;
-            }
-            else
-            {
-                firstArray.YPosition = page.Height - firstArray.Height;
-            }
-            ACLPArrayBase.ApplyDistinctPosition(firstArray, App.MainWindowViewModel.CurrentUser.ID);
-
-            PlaceArrayNextToExistingArray(arraysToAdd, page);
-            var xPosition = firstArray.XPosition;
-            var yPosition = firstArray.YPosition;
-
-            //Place arrays on the page
-            if (arraysToAdd.Count == 1)
-            {
-                firstArray.SizeArrayToGridLevel(initializedSquareSize);
-
-                if (firstArray.XPosition + firstArray.Width >= firstArray.ParentPage.Width)
+                if (isVerticalArray) //Move array right.
                 {
-                    firstArray.XPosition = firstArray.ParentPage.Width - firstArray.Width;
-                }
-                if (firstArray.YPosition + firstArray.Height >= firstArray.ParentPage.Height)
-                {
-                    firstArray.YPosition = firstArray.ParentPage.Height - firstArray.Height;
-                }
-
-                ACLPPageBaseViewModel.AddPageObjectToPage(firstArray);
-            }
-            else
-            {
-                var initialGridsquareSize = initializedSquareSize;
-                if (isHorizontallyAligned)
-                {
-                    while (xPosition + (firstArray.LabelLength + columns * initialGridsquareSize) * numberOfArrays + firstArray.LabelLength >= page.Width)
+                    array.XPosition = newXPosition + array.Width;
+                    if (array.XPosition + array.Width >= page.Width)
                     {
-                        initialGridsquareSize = Math.Abs(initialGridsquareSize - 45.0) < .0001 ? 22.5 : initialGridsquareSize / 4 * 3;
-
-                        if (numberOfArrays < 5 ||
-                            xPosition + (firstArray.LabelLength + columns * initialGridsquareSize) * numberOfArrays + firstArray.LabelLength < page.Width)
-                        {
-                            continue;
-                        }
-
-                        if (xPosition + (firstArray.LabelLength + columns * initialGridsquareSize) * Math.Ceiling((double)numberOfArrays / 2) + firstArray.LabelLength < page.Width &&
-                            yPosition + (firstArray.LabelLength + rows * initialGridsquareSize) * 2 + firstArray.LabelLength < page.Height)
-                        {
-                            arrayStacks = 2;
-                            break;
-                        }
-
-                        if (xPosition + (firstArray.LabelLength + columns * initialGridsquareSize) * Math.Ceiling((double)numberOfArrays / 3) + firstArray.LabelLength < page.Width &&
-                            yPosition + (firstArray.LabelLength + rows * initialGridsquareSize) * 3 + firstArray.LabelLength < page.Height)
-                        {
-                            arrayStacks = 3;
-                            break;
-                        }
+                        array.XPosition = 0.0;
+                        array.YPosition = newYPosition + array.Height;
                     }
                 }
-                else
+                else //Move array down.
                 {
-                    yPosition = 100;
-                    while (yPosition + (firstArray.LabelLength + rows * initialGridsquareSize) * numberOfArrays + firstArray.LabelLength >= page.Height)
+                    array.YPosition = newYPosition + array.Height;
+                    if (array.YPosition + array.Height >= page.Height)
                     {
-                        initialGridsquareSize = Math.Abs(initialGridsquareSize - 45.0) < .0001 ? 22.5 : initialGridsquareSize / 4 * 3;
-
-                        if (numberOfArrays < 5 ||
-                            yPosition + (firstArray.LabelLength + rows * initialGridsquareSize) * numberOfArrays + firstArray.LabelLength < page.Height)
-                        {
-                            continue;
-                        }
-
-                        if (yPosition + (firstArray.LabelLength + rows * initialGridsquareSize) * Math.Ceiling((double)numberOfArrays / 2) + firstArray.LabelLength < page.Height &&
-                            xPosition + (firstArray.LabelLength + columns * initialGridsquareSize) * 2 + firstArray.LabelLength < page.Width)
-                        {
-                            arrayStacks = 2;
-                            break;
-                        }
-
-                        if (yPosition + (firstArray.LabelLength + rows * initialGridsquareSize) * Math.Ceiling((double)numberOfArrays / 3) + firstArray.LabelLength < page.Height &&
-                            xPosition + (firstArray.LabelLength + columns * initialGridsquareSize) * 3 + firstArray.LabelLength < page.Width)
-                        {
-                            arrayStacks = 3;
-                            break;
-                        }
+                        array.XPosition = newXPosition + array.Width;
+                        array.YPosition = ACLPArrayBase.ARRAY_STARING_Y_POSITION;
                     }
                 }
-
-                foreach (var array in arraysToAdd)
-                {
-                    var index = arraysToAdd.IndexOf(array) + 1;
-                    if (isHorizontallyAligned)
-                    {
-                        if (arrayStacks == 2 &&
-                            index == (int)Math.Ceiling((double)numberOfArrays / 2) + 1)
-                        {
-                            xPosition = firstArray.XPosition;
-                            yPosition += firstArray.LabelLength + rows * initialGridsquareSize;
-                        }
-                        if (arrayStacks == 3 &&
-                            (index == (int)Math.Ceiling((double)numberOfArrays / 3) + 1 || index == (int)Math.Ceiling((double)numberOfArrays / 3) * 2 + 1))
-                        {
-                            xPosition = firstArray.XPosition;
-                            yPosition += firstArray.LabelLength + rows * initialGridsquareSize;
-                        }
-                        array.XPosition = xPosition;
-                        array.YPosition = yPosition;
-                        xPosition += firstArray.LabelLength + columns * initialGridsquareSize;
-                        array.SizeArrayToGridLevel(initialGridsquareSize);
-                    }
-                    else
-                    {
-                        if (arrayStacks == 2 &&
-                            index == (int)Math.Ceiling((double)numberOfArrays / 2) + 1)
-                        {
-                            xPosition += firstArray.LabelLength + columns * initialGridsquareSize;
-                            yPosition = firstArray.YPosition;
-                        }
-                        if (arrayStacks == 3 &&
-                            (index == (int)Math.Ceiling((double)numberOfArrays / 3) + 1 || index == (int)Math.Ceiling((double)numberOfArrays / 3) * 2 + 1))
-                        {
-                            xPosition += firstArray.LabelLength + columns * initialGridsquareSize;
-                            yPosition = firstArray.YPosition;
-                        }
-                        array.XPosition = xPosition;
-                        array.YPosition = yPosition;
-                        yPosition += firstArray.LabelLength + rows * initialGridsquareSize;
-                        array.SizeArrayToGridLevel(initialGridsquareSize);
-                    }
-                }
-
-                ACLPPageBaseViewModel.AddPageObjectsToPage(page, arraysToAdd);
             }
+
+            //Verify all arrays are on page.
+            var rnd = new Random();
+            foreach (var array in arraysToAdd)
+            {
+                if (array.YPosition + array.Height >= page.Height)
+                {
+                    array.YPosition = page.Height - array.Height - rnd.Next(30);
+                }
+                if (array.XPosition + array.Width >= page.Width)
+                {
+                    array.XPosition = page.Width - array.Width - rnd.Next(30);
+                }
+            }
+                
+            arraysToAdd.Insert(0, firstArray);
+            ACLPPageBaseViewModel.AddPageObjectsToPage(page, arraysToAdd);
 
             App.MainWindowViewModel.MajorRibbon.PageInteractionMode = PageInteractionModes.Select;
         }
 
+        public static double AdjustGridSquareSize(CLPPage page, int rows, int columns, int numberOfArrays, double initialGridSquareSize)
+        {
+            var availablePageHeight = page.Height - ACLPArrayBase.ARRAY_STARING_Y_POSITION;
+            var availablePageArea = page.Width * availablePageHeight;
+
+            while (true)
+            {
+                var arrayWidth = (initialGridSquareSize * columns) + (2 * ACLPArrayBase.ARRAY_LABEL_LENGTH);
+                var arrayHeight = (initialGridSquareSize * rows) + (2 * ACLPArrayBase.ARRAY_LABEL_LENGTH);
+                var totalArrayArea = arrayWidth * arrayHeight * numberOfArrays;
+
+                if (arrayWidth < page.Width &&
+                    arrayHeight < availablePageHeight &&
+                    totalArrayArea < availablePageArea)
+                {
+                    return initialGridSquareSize;
+                }
+
+                initialGridSquareSize = Math.Abs(initialGridSquareSize - ACLPArrayBase.DefaultGridSquareSize) < .0001 ? 22.5 : initialGridSquareSize * 0.75;
+            }
+        }
+
+        //GONE
         public static int MatchArrayGridSize(List<ACLPArrayBase> arraysToAdd, CLPPage CurrentPage)
         {
             var numberOfArrays = arraysToAdd.Count;
@@ -1643,39 +1580,6 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                 }
             }
-
-            // If it doesn't fit, resize all other non-background arrays on page to match new array grid size
-            ////if (squareSize > 0.0 && initializedSquareSize != squareSize)
-            ////{
-            ////    Dictionary<string, Point> oldDimensions = new Dictionary<string, Point>();
-            ////    foreach (var pageObject in CurrentPage.PageObjects)
-            ////    {
-            ////        if (pageObject is CLPArray && pageObject.CreatorID != Person.Author.ID)
-            ////        {
-            ////            oldDimensions.Add(pageObject.ID, new Point(pageObject.Width, pageObject.Height));
-            ////            if ((pageObject as ACLPArrayBase).Rows * initializedSquareSize > MIN_SIDE && (pageObject as ACLPArrayBase).Columns * initializedSquareSize > MIN_SIDE)
-            ////            {
-            ////                if (pageObject.XPosition + (pageObject as ACLPArrayBase).Columns * initializedSquareSize + 2 * LABEL_LENGTH <= CurrentPage.Width && pageObject.YPosition + (pageObject as ACLPArrayBase).Rows * initializedSquareSize + 2 * LABEL_LENGTH <= CurrentPage.Height)
-            ////                {
-            ////                    (pageObject as ACLPArrayBase).SizeArrayToGridLevel(initializedSquareSize);
-            ////                }
-            ////            }
-            ////            else
-            ////            {
-            ////                (pageObject as ACLPArrayBase).SizeArrayToGridLevel(MIN_SIDE / Math.Min((pageObject as ACLPArrayBase).Rows, (pageObject as ACLPArrayBase).Columns));
-            ////            }
-            ////        }
-            ////        initialGridsquareSize = initializedSquareSize;
-            ////    }
-            ////}
-
-            ////double MAX_HEIGHT = CurrentPage.Height - 400.0;
-            ////if (squareSize == 0.0)
-            ////{
-            ////    initializedSquareSize = Math.Min(initialGridsquareSize, MAX_HEIGHT / rows);
-            ////}
-
-            ////firstArray.SizeArrayToGridLevel(initializedSquareSize);
 
             return arrayStacks;
         }
