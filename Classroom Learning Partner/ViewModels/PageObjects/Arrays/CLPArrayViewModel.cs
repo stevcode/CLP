@@ -1389,11 +1389,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
 
-            //If no Division Templates or other Arrays are on the page, generate a GridSquareSize that accommodates all the arrays being created.
-            if (!isMatchingOtherGridSquareSize)
-            {
-                initialGridSize = AdjustGridSquareSize(page, rows, columns, numberOfArrays, initialGridSize);
-            }
+            //Generate a GridSquareSize that accommodates all the arrays being created.
+            initialGridSize = AdjustGridSquareSize(page, rows, columns, numberOfArrays, initialGridSize, isMatchingOtherGridSquareSize);
 
             //Create arrays.
             var arraysToAdd = Enumerable.Range(1, numberOfArrays).Select(index => new CLPArray(page, initialGridSize, columns, rows, ArrayTypes.Array)).Cast<ACLPArrayBase>().ToList();
@@ -1458,7 +1455,7 @@ namespace Classroom_Learning_Partner.ViewModels
             App.MainWindowViewModel.MajorRibbon.PageInteractionMode = PageInteractionModes.Select;
         }
 
-        public static double AdjustGridSquareSize(CLPPage page, int rows, int columns, int numberOfArrays, double initialGridSquareSize)
+        public static double AdjustGridSquareSize(CLPPage page, int rows, int columns, int numberOfArrays, double initialGridSquareSize, bool isMatchingOtherGridSquareSize)
         {
             var availablePageHeight = page.Height - ACLPArrayBase.ARRAY_STARING_Y_POSITION;
             var availablePageArea = page.Width * availablePageHeight;
@@ -1471,7 +1468,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 if (arrayWidth < page.Width &&
                     arrayHeight < availablePageHeight &&
-                    totalArrayArea < availablePageArea)
+                    (isMatchingOtherGridSquareSize ||
+                        totalArrayArea < availablePageArea))
                 {
                     return initialGridSquareSize;
                 }

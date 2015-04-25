@@ -97,8 +97,8 @@ namespace Classroom_Learning_Partner.Views
             int rowNum;
             int colNum;
             int numberOfArrays = 1;
-            const int MAX_ARRAY_ROWSCOLUMNS = 21;
-            const int MAX_NUMBER_OF_ARRAYS = 5;
+            const int MAX_ARRAY_ROWSCOLUMNS = 301;
+            const int MAX_NUMBER_OF_ARRAYS = 10;
             var isRowsNum = Int32.TryParse(Rows.Text, out rowNum);
             var isColsNum = Int32.TryParse(Columns.Text, out colNum);
             Int32.TryParse(NumberOfArrays.Text, out numberOfArrays);
