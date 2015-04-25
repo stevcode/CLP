@@ -91,7 +91,14 @@
                         <ComboBox Grid.Column="1"
                                   ItemsSource="{Binding Source={StaticResource dataFromEnum}}"
                                   SelectedItem="{Binding CurrentSortAndGroupType, Mode=TwoWay}"
-                                  VerticalContentAlignment="Center" />
+                                  VerticalContentAlignment="Center">
+                            <ComboBox.ItemContainerStyle>
+                                <Style TargetType="{x:Type ComboBoxItem}">
+                                    <Setter Property="FontSize"
+                                            Value="18" />
+                                </Style>
+                            </ComboBox.ItemContainerStyle>
+                        </ComboBox>
 
                     </Grid>
 
