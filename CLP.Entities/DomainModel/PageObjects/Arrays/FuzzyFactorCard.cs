@@ -36,6 +36,13 @@ namespace CLP.Entities
             UpdateRemainderRegion();
         }
 
+        public FuzzyFactorCard(CLPPage parentPage, double gridSquareSize, int columns, int rows, int dividend, bool isRemainderRegionDisplayed = false)
+            : this(parentPage, columns, rows, dividend, isRemainderRegionDisplayed)
+        {
+            Width = (gridSquareSize * columns) + DT_LABEL_LENGTH + DT_LARGE_LABEL_LENGTH;
+            Height = (gridSquareSize * rows) + (2 * DT_LABEL_LENGTH);
+        }
+
         /// <summary>Initializes <see cref="FuzzyFactorCard" /> based on <see cref="SerializationInfo" />.</summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext" />.</param>
@@ -48,12 +55,12 @@ namespace CLP.Entities
 
         public override double LabelLength
         {
-            get { return 35; }
+            get { return DT_LABEL_LENGTH; }
         }
 
         public double LargeLabelLength
         {
-            get { return LabelLength * 1.5; }
+            get { return DT_LARGE_LABEL_LENGTH; }
         }
 
         public override double ArrayWidth

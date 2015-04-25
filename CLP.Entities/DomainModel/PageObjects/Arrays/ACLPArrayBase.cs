@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Windows;
 using Catel.Data;
 
 namespace CLP.Entities
@@ -101,6 +100,8 @@ namespace CLP.Entities
     {
         public const double ARRAY_STARING_Y_POSITION = 295.0;
         public const double ARRAY_LABEL_LENGTH = 22.0;
+        public const double DT_LABEL_LENGTH = 35.0;
+        public const double DT_LARGE_LABEL_LENGTH = 52.5;
 
         #region Constructors
 

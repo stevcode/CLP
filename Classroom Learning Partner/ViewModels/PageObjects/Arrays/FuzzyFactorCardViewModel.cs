@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,13 +17,11 @@ namespace Classroom_Learning_Partner.ViewModels
     {
         #region Constructor
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="FuzzyFactorCardViewModel" /> class.
-        /// </summary>
+        /// <summary>Initializes a new instance of the <see cref="FuzzyFactorCardViewModel" /> class.</summary>
         public FuzzyFactorCardViewModel(FuzzyFactorCard fuzzyFactorCard)
         {
             PageObject = fuzzyFactorCard;
-            
+
             RemoveFuzzyFactorCardCommand = new Command(OnRemoveFuzzyFactorCardCommandExecute);
             ResizeFuzzyFactorCardCommand = new Command<DragDeltaEventArgs>(OnResizeFuzzyFactorCardCommandExecute);
             RemoveLastArrayCommand = new Command(OnRemoveLastArrayCommandExecute);
@@ -46,9 +43,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Model
 
-        /// <summary>
-        /// Gets or sets the Rows value
-        /// </summary>
+        /// <summary>Gets or sets the Rows value</summary>
         [ViewModelToModel("PageObject")]
         public int Rows
         {
@@ -56,11 +51,9 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(RowsProperty, value); }
         }
 
-        public static readonly PropertyData RowsProperty = RegisterProperty("Rows", typeof(int));
+        public static readonly PropertyData RowsProperty = RegisterProperty("Rows", typeof (int));
 
-        /// <summary>
-        /// Gets or sets the Columns value.
-        /// </summary>
+        /// <summary>Gets or sets the Columns value.</summary>
         [ViewModelToModel("PageObject")]
         public int Columns
         {
@@ -68,44 +61,36 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(ColumnsProperty, value); }
         }
 
-        public static readonly PropertyData ColumnsProperty = RegisterProperty("Columns", typeof(int));
+        public static readonly PropertyData ColumnsProperty = RegisterProperty("Columns", typeof (int));
 
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
+        /// <summary>Gets or sets the property value.</summary>
         [ViewModelToModel("PageObject")]
         public double ArrayHeight
         {
             get { return GetValue<double>(ArrayHeightProperty); }
         }
 
-        public static readonly PropertyData ArrayHeightProperty = RegisterProperty("ArrayHeight", typeof(double));
+        public static readonly PropertyData ArrayHeightProperty = RegisterProperty("ArrayHeight", typeof (double));
 
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
+        /// <summary>Gets or sets the property value.</summary>
         [ViewModelToModel("PageObject")]
         public double ArrayWidth
         {
             get { return GetValue<double>(ArrayWidthProperty); }
         }
 
-        public static readonly PropertyData ArrayWidthProperty = RegisterProperty("ArrayWidth", typeof(double));
+        public static readonly PropertyData ArrayWidthProperty = RegisterProperty("ArrayWidth", typeof (double));
 
-        /// <summary>
-        /// Length of the grid square.
-        /// </summary>
+        /// <summary>Length of the grid square.</summary>
         [ViewModelToModel("PageObject")]
         public double GridSquareSize
         {
             get { return GetValue<double>(GridSquareSizeProperty); }
         }
 
-        public static readonly PropertyData GridSquareSizeProperty = RegisterProperty("GridSquareSize", typeof(double));
+        public static readonly PropertyData GridSquareSizeProperty = RegisterProperty("GridSquareSize", typeof (double));
 
-        /// <summary>
-        /// Gets or sets the HorizontalDivisions value.
-        /// </summary>
+        /// <summary>Gets or sets the HorizontalDivisions value.</summary>
         [ViewModelToModel("PageObject")]
         public ObservableCollection<CLPArrayDivision> HorizontalDivisions
         {
@@ -113,11 +98,9 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(HorizontalDivisionsProperty, value); }
         }
 
-        public static readonly PropertyData HorizontalDivisionsProperty = RegisterProperty("HorizontalDivisions", typeof(ObservableCollection<CLPArrayDivision>));
+        public static readonly PropertyData HorizontalDivisionsProperty = RegisterProperty("HorizontalDivisions", typeof (ObservableCollection<CLPArrayDivision>));
 
-        /// <summary>
-        /// Gets or sets the VerticalDivisions value.
-        /// </summary>
+        /// <summary>Gets or sets the VerticalDivisions value.</summary>
         [ViewModelToModel("PageObject")]
         public ObservableCollection<CLPArrayDivision> VerticalDivisions
         {
@@ -125,11 +108,9 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(VerticalDivisionsProperty, value); }
         }
 
-        public static readonly PropertyData VerticalDivisionsProperty = RegisterProperty("VerticalDivisions", typeof(ObservableCollection<CLPArrayDivision>));
+        public static readonly PropertyData VerticalDivisionsProperty = RegisterProperty("VerticalDivisions", typeof (ObservableCollection<CLPArrayDivision>));
 
-        /// <summary>
-        /// Value of the Dividend.
-        /// </summary>
+        /// <summary>Value of the Dividend.</summary>
         [ViewModelToModel("PageObject")]
         public int Dividend
         {
@@ -137,11 +118,9 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(DividendProperty, value); }
         }
 
-        public static readonly PropertyData DividendProperty = RegisterProperty("Dividend", typeof(int));
+        public static readonly PropertyData DividendProperty = RegisterProperty("Dividend", typeof (int));
 
-        /// <summary>
-        /// Whether the grid is turned on.
-        /// </summary>
+        /// <summary>Whether the grid is turned on.</summary>
         [ViewModelToModel("PageObject")]
         public bool IsGridOn
         {
@@ -149,33 +128,29 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(IsGridOnProperty, value); }
         }
 
-        public static readonly PropertyData IsGridOnProperty = RegisterProperty("IsGridOn", typeof(bool));
+        public static readonly PropertyData IsGridOnProperty = RegisterProperty("IsGridOn", typeof (bool));
 
         #endregion //Model
 
         #region Bindings
 
-        /// <summary>
-        /// Color of the border - usually black but flashes red when extra arrays are snapped to it.
-        /// </summary>
+        /// <summary>Color of the border - usually black but flashes red when extra arrays are snapped to it.</summary>
         public string BorderColor
         {
             get { return GetValue<string>(BorderColorProperty); }
             set { SetValue(BorderColorProperty, value); }
         }
 
-        public static readonly PropertyData BorderColorProperty = RegisterProperty("BorderColor", typeof(string), "Black");
+        public static readonly PropertyData BorderColorProperty = RegisterProperty("BorderColor", typeof (string), "Black");
 
-        /// <summary>
-        /// Color of the fuzzy edge - usually gray but flashes red when extra arrays are snapped to it.
-        /// </summary>
+        /// <summary>Color of the fuzzy edge - usually gray but flashes red when extra arrays are snapped to it.</summary>
         public string FuzzyEdgeColor
         {
             get { return GetValue<string>(FuzzyEdgeColorProperty); }
             set { SetValue(FuzzyEdgeColorProperty, value); }
         }
 
-        public static readonly PropertyData FuzzyEdgeColorProperty = RegisterProperty("FuzzyEdgeColor", typeof(string), "DarkGray");
+        public static readonly PropertyData FuzzyEdgeColorProperty = RegisterProperty("FuzzyEdgeColor", typeof (string), "DarkGray");
 
         #endregion //Bindings
 
@@ -197,14 +172,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Commands
 
-        /// <summary>
-        /// Removes pageObject from page when Delete button is pressed.
-        /// </summary>
+        /// <summary>Removes pageObject from page when Delete button is pressed.</summary>
         public Command RemoveFuzzyFactorCardCommand { get; private set; }
 
         private void OnRemoveFuzzyFactorCardCommandExecute()
         {
-            if((PageObject as FuzzyFactorCard).RemainderTiles != null)
+            if ((PageObject as FuzzyFactorCard).RemainderTiles != null)
             {
                 //var currentIndex = PageObject.ParentPage.PageObjects.IndexOf(remainderRegion);
                 //ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryPageObjectRemove(PageObject.ParentPage, remainderRegion, currentIndex));
@@ -213,15 +186,13 @@ namespace Classroom_Learning_Partner.ViewModels
             ACLPPageBaseViewModel.RemovePageObjectFromPage(PageObject);
         }
 
-        /// <summary>
-        /// Gets the ResizePageObjectCommand command.
-        /// </summary>
+        /// <summary>Gets the ResizePageObjectCommand command.</summary>
         public Command<DragDeltaEventArgs> ResizeFuzzyFactorCardCommand { get; private set; }
 
         private void OnResizeFuzzyFactorCardCommandExecute(DragDeltaEventArgs e)
         {
             var clpArray = PageObject as FuzzyFactorCard;
-            if(clpArray == null)
+            if (clpArray == null)
             {
                 return;
             }
@@ -230,7 +201,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             double newArrayHeight;
             var isVerticalChange = e.VerticalChange > e.HorizontalChange;
-            if(isVerticalChange)
+            if (isVerticalChange)
             {
                 newArrayHeight = ArrayHeight + e.VerticalChange;
             }
@@ -239,17 +210,17 @@ namespace Classroom_Learning_Partner.ViewModels
                 newArrayHeight = (ArrayWidth + e.HorizontalChange) / Columns * Rows;
             }
 
-            const double MIN_HEIGHT = 150.0; 
+            const double MIN_HEIGHT = 150.0;
             const double MIN_WIDTH = 50.0;
 
             //Control Min Dimensions of Array.
-            if(newArrayHeight < MIN_HEIGHT)
+            if (newArrayHeight < MIN_HEIGHT)
             {
                 newArrayHeight = MIN_HEIGHT;
             }
             var newSquareSize = newArrayHeight / Rows;
             var newArrayWidth = newSquareSize * Columns;
-            if(newArrayWidth < MIN_WIDTH)
+            if (newArrayWidth < MIN_WIDTH)
             {
                 newArrayWidth = MIN_WIDTH;
                 newSquareSize = newArrayWidth / Columns;
@@ -257,14 +228,14 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             //Control Max Dimensions of Array.
-            if(newArrayHeight + 2 * clpArray.LabelLength + YPosition > clpArray.ParentPage.Height)
+            if (newArrayHeight + 2 * clpArray.LabelLength + YPosition > clpArray.ParentPage.Height)
             {
                 newArrayHeight = clpArray.ParentPage.Height - YPosition - 2 * clpArray.LabelLength;
                 newSquareSize = newArrayHeight / Rows;
                 newArrayWidth = newSquareSize * Columns;
             }
 
-            if(newArrayWidth + clpArray.LargeLabelLength + clpArray.LabelLength + XPosition > clpArray.ParentPage.Width)
+            if (newArrayWidth + clpArray.LargeLabelLength + clpArray.LabelLength + XPosition > clpArray.ParentPage.Width)
             {
                 newArrayWidth = clpArray.ParentPage.Width - XPosition - clpArray.LargeLabelLength - clpArray.LabelLength;
                 newSquareSize = newArrayWidth / Columns;
@@ -295,21 +266,20 @@ namespace Classroom_Learning_Partner.ViewModels
             //}
         }
 
-        /// <summary>
-        /// Gets the RemoveLastArrayCommand command.
-        /// </summary>
+        /// <summary>Gets the RemoveLastArrayCommand command.</summary>
         public Command RemoveLastArrayCommand { get; private set; }
 
         private void OnRemoveLastArrayCommandExecute()
         {
-            if(VerticalDivisions.Count <= 1)
+            if (VerticalDivisions.Count <= 1)
             {
                 return;
             }
             var divisionValue = (VerticalDivisions[VerticalDivisions.Count - 2]).Value;
             (PageObject as FuzzyFactorCard).RemoveLastDivision();
 
-            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new FFCArrayRemovedHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, PageObject.ID, divisionValue));
+            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
+                                                       new FFCArrayRemovedHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, PageObject.ID, divisionValue));
         }
 
         #endregion //Commands
@@ -323,10 +293,17 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-
-            int rows, dividend = 1, numberOfArrays = 1;
+            //Initial Values.
+            int rows;
+            int dividend;
             var isShowingTiles = false;
-            var factorCreationView = new FuzzyFactorCardCreationView { Owner = Application.Current.MainWindow };
+            var initialGridSize = ACLPArrayBase.DefaultGridSquareSize;
+
+            //Launch Division Template Creation Window.
+            var factorCreationView = new FuzzyFactorCardCreationView
+                                     {
+                                         Owner = Application.Current.MainWindow
+                                     };
             factorCreationView.ShowDialog();
 
             if (factorCreationView.DialogResult != true)
@@ -347,203 +324,85 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 return;
             }
-            
+
             var columns = dividend / rows;
+
+            //Match GridSquareSize if any Division Templates are already on the page.
+            //Attempts to match first against a GridSquareSize shared by the most DTs, then by the DT that has been most recently added to the page.
+            var divisionTemplatesOnPage = page.PageObjects.OfType<FuzzyFactorCard>().ToList();
+            if (divisionTemplatesOnPage.Any())
+            {
+                var groupSize = divisionTemplatesOnPage.GroupBy(d => d.GridSquareSize).OrderByDescending(g => g.Count()).First().Count();
+                var relevantDivisionTemplateIDs =
+                    divisionTemplatesOnPage.GroupBy(d => d.GridSquareSize).Where(g => g.Count() == groupSize).SelectMany(g => g).Select(d => d.ID).ToList();
+                initialGridSize = divisionTemplatesOnPage.Last(d => relevantDivisionTemplateIDs.Contains(d.ID)).GridSquareSize;
+            }
+            else //If no Division Templates or other Arrays are on the page, generate a GridSquareSize that accommodates all the arrays being created.
+            {
+                initialGridSize = AdjustGridSquareSize(page, rows, columns, initialGridSize);
+            }
+
+            //Create Division Template.
             var arrayType = isShowingTiles ? "FFCREMAINDER" : "FUZZYFACTORCARD";
-            
-            var arraysToAdd = new List<ACLPArrayBase>();
-            foreach (var index in Enumerable.Range(1, numberOfArrays))
+            FuzzyFactorCard divisionTemplate;
+            switch (arrayType)
             {
-                ACLPArrayBase array;
-                switch (arrayType)
-                {
-                    case "FUZZYFACTORCARD":
-                        array = new FuzzyFactorCard(page, columns, rows, dividend);
-                        // HACK: Find better way to set this
-                        array.CreatorID = App.MainWindowViewModel.CurrentUser.ID;
-                        array.OwnerID = App.MainWindowViewModel.CurrentUser.ID;
-                        break;
-                    case "FFCREMAINDER":
-                        bool isRemainderRegionDisplayed = (dividend <= 50);
-                        array = new FuzzyFactorCard(page, columns, rows, dividend, isRemainderRegionDisplayed);
-                        // HACK: Find better way to set this
-                        array.CreatorID = App.MainWindowViewModel.CurrentUser.ID;
-                        if (isRemainderRegionDisplayed)
-                        {
-                            (array as FuzzyFactorCard).RemainderTiles.CreatorID = array.CreatorID;
-                            (array as FuzzyFactorCard).RemainderTiles.OwnerID = array.OwnerID;
-                        }
-                        break;
-                    default:
-                        return;
-                }
+                case "FUZZYFACTORCARD":
+                    divisionTemplate = new FuzzyFactorCard(page, initialGridSize, columns, rows, dividend)
+                                       {
+                                           // HACK: Find better way to set this
+                                           CreatorID = App.MainWindowViewModel.CurrentUser.ID,
+                                           OwnerID = App.MainWindowViewModel.CurrentUser.ID
+                                       };
 
-                arraysToAdd.Add(array);
+                    break;
+                case "FFCREMAINDER":
+                    var isRemainderRegionDisplayed = (dividend <= 50);
+                    divisionTemplate = new FuzzyFactorCard(page, initialGridSize, columns, rows, dividend, isRemainderRegionDisplayed)
+                                       {
+                                           CreatorID = App.MainWindowViewModel.CurrentUser.ID,
+                                           OwnerID = App.MainWindowViewModel.CurrentUser.ID
+                                       };
+                    // HACK: Find better way to set this
+                    if (isRemainderRegionDisplayed)
+                    {
+                        divisionTemplate.RemainderTiles.CreatorID = divisionTemplate.CreatorID;
+                        divisionTemplate.RemainderTiles.OwnerID = divisionTemplate.OwnerID;
+                    }
+                    break;
+                default:
+                    return;
             }
 
-            int arrayStacks = CLPArrayViewModel.MatchArrayGridSize(arraysToAdd, page);
+            //Reposition Division Template.
+            ACLPArrayBase.ApplyDistinctPosition(divisionTemplate);
 
-            var isHorizontallyAligned = page.Width / columns > page.Height / 4 * 3 / rows;
-            var firstArray = arraysToAdd.First();
-            double initializedSquareSize = firstArray.ArrayHeight / firstArray.Rows;
-
-            firstArray.XPosition = 0.0;
-            if (295.0 + firstArray.Height < page.Height)
-            {
-                firstArray.YPosition = 295.0;
-            }
-            else
-            {
-                firstArray.YPosition = page.Height - firstArray.Height;
-            }
-            ACLPArrayBase.ApplyDistinctPosition(firstArray);
-
-            CLPArrayViewModel.PlaceArrayNextToExistingArray(arraysToAdd, page);
-            double xPosition = firstArray.XPosition;
-            double yPosition = firstArray.YPosition;
-
-            //Place arrays on the page
-            if (arraysToAdd.Count == 1)
-            {
-                firstArray.SizeArrayToGridLevel(initializedSquareSize);
-
-                if (firstArray.XPosition + firstArray.Width >= firstArray.ParentPage.Width)
-                {
-                    firstArray.XPosition = firstArray.ParentPage.Width - firstArray.Width;
-                }
-                if (firstArray.YPosition + firstArray.Height >= firstArray.ParentPage.Height)
-                {
-                    firstArray.YPosition = firstArray.ParentPage.Height - firstArray.Height;
-                }
-
-                ACLPPageBaseViewModel.AddPageObjectToPage(firstArray);
-
-                if (arrayType == "FFCREMAINDER" && dividend <= 50)
-                {
-                    if (xPosition + firstArray.Width + 20.0 + (firstArray as FuzzyFactorCard).RemainderTiles.Width <= page.Width)
-                    {
-                        (firstArray as FuzzyFactorCard).RemainderTiles.XPosition = xPosition + firstArray.Width + 20.0;
-                    }
-                    else
-                    {
-                        (firstArray as FuzzyFactorCard).RemainderTiles.XPosition = page.Width - (firstArray as FuzzyFactorCard).RemainderTiles.Width;
-                    }
-                    if (yPosition + (firstArray as FuzzyFactorCard).LabelLength + (firstArray as FuzzyFactorCard).RemainderTiles.Height <= page.Height)
-                    {
-                        (firstArray as FuzzyFactorCard).RemainderTiles.YPosition = yPosition + (firstArray as FuzzyFactorCard).LabelLength;
-                    }
-                    else
-                    {
-                        (firstArray as FuzzyFactorCard).RemainderTiles.YPosition = page.Height - (firstArray as FuzzyFactorCard).RemainderTiles.Height;
-                    }
-                }
-            }
-            else
-            {
-                double initialGridsquareSize = initializedSquareSize;
-                if (isHorizontallyAligned)
-                {
-                    while (xPosition + (firstArray.LabelLength + columns * initialGridsquareSize) * numberOfArrays + firstArray.LabelLength >= page.Width)
-                    {
-                        initialGridsquareSize = Math.Abs(initialGridsquareSize - 45.0) < .0001 ? 22.5 : initialGridsquareSize / 4 * 3;
-
-                        if (numberOfArrays < 5 ||
-                            xPosition + (firstArray.LabelLength + columns * initialGridsquareSize) * numberOfArrays + firstArray.LabelLength < page.Width)
-                        {
-                            continue;
-                        }
-
-                        if (xPosition + (firstArray.LabelLength + columns * initialGridsquareSize) * Math.Ceiling((double)numberOfArrays / 2) + firstArray.LabelLength < page.Width &&
-                            yPosition + (firstArray.LabelLength + rows * initialGridsquareSize) * 2 + firstArray.LabelLength < page.Height)
-                        {
-                            arrayStacks = 2;
-                            break;
-                        }
-
-                        if (xPosition + (firstArray.LabelLength + columns * initialGridsquareSize) * Math.Ceiling((double)numberOfArrays / 3) + firstArray.LabelLength < page.Width &&
-                            yPosition + (firstArray.LabelLength + rows * initialGridsquareSize) * 3 + firstArray.LabelLength < page.Height)
-                        {
-                            arrayStacks = 3;
-                            break;
-                        }
-                    }
-                }
-                else
-                {
-                    yPosition = 100;
-                    while (yPosition + (firstArray.LabelLength + rows * initialGridsquareSize) * numberOfArrays + firstArray.LabelLength >= page.Height)
-                    {
-                        initialGridsquareSize = Math.Abs(initialGridsquareSize - 45.0) < .0001 ? 22.5 : initialGridsquareSize / 4 * 3;
-
-                        if (numberOfArrays < 5 ||
-                            yPosition + (firstArray.LabelLength + rows * initialGridsquareSize) * numberOfArrays + firstArray.LabelLength < page.Height)
-                        {
-                            continue;
-                        }
-
-                        if (yPosition + (firstArray.LabelLength + rows * initialGridsquareSize) * Math.Ceiling((double)numberOfArrays / 2) + firstArray.LabelLength < page.Height &&
-                            xPosition + (firstArray.LabelLength + columns * initialGridsquareSize) * 2 + firstArray.LabelLength < page.Width)
-                        {
-                            arrayStacks = 2;
-                            break;
-                        }
-
-                        if (yPosition + (firstArray.LabelLength + rows * initialGridsquareSize) * Math.Ceiling((double)numberOfArrays / 3) + firstArray.LabelLength < page.Height &&
-                            xPosition + (firstArray.LabelLength + columns * initialGridsquareSize) * 3 + firstArray.LabelLength < page.Width)
-                        {
-                            arrayStacks = 3;
-                            break;
-                        }
-                    }
-                }
-
-                foreach (var array in arraysToAdd)
-                {
-                    var index = arraysToAdd.IndexOf(array) + 1;
-                    if (isHorizontallyAligned)
-                    {
-                        if (arrayStacks == 2 &&
-                            index == (int)Math.Ceiling((double)numberOfArrays / 2) + 1)
-                        {
-                            xPosition = firstArray.XPosition;
-                            yPosition += firstArray.LabelLength + rows * initialGridsquareSize;
-                        }
-                        if (arrayStacks == 3 &&
-                            (index == (int)Math.Ceiling((double)numberOfArrays / 3) + 1 || index == (int)Math.Ceiling((double)numberOfArrays / 3) * 2 + 1))
-                        {
-                            xPosition = firstArray.XPosition;
-                            yPosition += firstArray.LabelLength + rows * initialGridsquareSize;
-                        }
-                        array.XPosition = xPosition;
-                        array.YPosition = yPosition;
-                        xPosition += firstArray.LabelLength + columns * initialGridsquareSize;
-                        array.SizeArrayToGridLevel(initialGridsquareSize);
-                    }
-                    else
-                    {
-                        if (arrayStacks == 2 &&
-                            index == (int)Math.Ceiling((double)numberOfArrays / 2) + 1)
-                        {
-                            xPosition += firstArray.LabelLength + columns * initialGridsquareSize;
-                            yPosition = firstArray.YPosition;
-                        }
-                        if (arrayStacks == 3 &&
-                            (index == (int)Math.Ceiling((double)numberOfArrays / 3) + 1 || index == (int)Math.Ceiling((double)numberOfArrays / 3) * 2 + 1))
-                        {
-                            xPosition += firstArray.LabelLength + columns * initialGridsquareSize;
-                            yPosition = firstArray.YPosition;
-                        }
-                        array.XPosition = xPosition;
-                        array.YPosition = yPosition;
-                        yPosition += firstArray.LabelLength + rows * initialGridsquareSize;
-                        array.SizeArrayToGridLevel(initialGridsquareSize);
-                    }
-                }
-
-                ACLPPageBaseViewModel.AddPageObjectsToPage(page, arraysToAdd);
-            }
+            //Add Division Template to page.
+            ACLPPageBaseViewModel.AddPageObjectToPage(divisionTemplate);
 
             App.MainWindowViewModel.MajorRibbon.PageInteractionMode = PageInteractionModes.Select;
+        }
+
+        public static double AdjustGridSquareSize(CLPPage page, int rows, int columns, double initialGridSquareSize)
+        {
+            var availablePageHeight = page.Height - ACLPArrayBase.ARRAY_STARING_Y_POSITION;
+            var availablePageArea = page.Width * availablePageHeight;
+
+            while (true)
+            {
+                var arrayWidth = (initialGridSquareSize * columns) + ACLPArrayBase.DT_LABEL_LENGTH + ACLPArrayBase.DT_LARGE_LABEL_LENGTH;
+                var arrayHeight = (initialGridSquareSize * rows) + (2 * ACLPArrayBase.DT_LABEL_LENGTH);
+                var totalArrayArea = arrayWidth * arrayHeight;
+
+                if (arrayWidth < page.Width &&
+                    arrayHeight < availablePageHeight &&
+                    totalArrayArea < availablePageArea)
+                {
+                    return initialGridSquareSize;
+                }
+
+                initialGridSquareSize = Math.Abs(initialGridSquareSize - ACLPArrayBase.DefaultGridSquareSize) < .0001 ? 22.5 : initialGridSquareSize * 0.75;
+            }
         }
 
         #endregion //Static Methods
