@@ -532,7 +532,7 @@ namespace CLP.Entities
             }
         }
 
-        public virtual string MostUsedPageObject
+        public virtual string RepresentationType
         {
             get
             {
@@ -571,12 +571,19 @@ namespace CLP.Entities
                     }
                 }
 
-                if (!objectTypes.Any())
+                var usedRepresentationTypes = objectTypes.Distinct().ToList();
+
+                if (usedRepresentationTypes.Count == 1)
                 {
-                    return "None";
+                    return usedRepresentationTypes.First();
                 }
 
-                return objectTypes.GroupBy(i => i).OrderByDescending(g => g.Count()).Select(g => g.Key).First();
+                if (usedRepresentationTypes.Count > 1)
+                {
+                    return "Multiple Types";
+                }
+
+                return InkStrokes.Count > 2 ? "Ink" : "None";
             }
         }
 
