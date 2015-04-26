@@ -141,12 +141,12 @@ namespace CLP.Entities
 
         public override void OnAdded(bool fromHistory = false)
         {
+            ParentPage.UpdateAllReporters();
+
             if (!fromHistory)
             {
                 foreach (var divisionTemplate in ParentPage.PageObjects.OfType<FuzzyFactorCard>().ToList())
                 {
-                    divisionTemplate.UpdateRemainderRegion();
-
                     if (ParentPage.IsTagAddPrevented)
                     {
                         continue;
@@ -253,11 +253,6 @@ namespace CLP.Entities
                 return;
             }
 
-            foreach (var divisionTemplate in ParentPage.PageObjects.OfType<FuzzyFactorCard>())
-            {
-                divisionTemplate.UpdateRemainderRegion();
-            }
-
             if (!CanAcceptStrokes ||
                 !AcceptedStrokes.Any())
             {
@@ -277,11 +272,7 @@ namespace CLP.Entities
 
         public override void OnDeleted(bool fromHistory = false)
         {
-            // If FFC with remainder on page, update
-            foreach (var divisionTemplate in ParentPage.PageObjects.OfType<FuzzyFactorCard>())
-            {
-                divisionTemplate.UpdateRemainderRegion();
-            }
+            ParentPage.UpdateAllReporters();
 
             if (!CanAcceptStrokes ||
                 !AcceptedStrokes.Any())

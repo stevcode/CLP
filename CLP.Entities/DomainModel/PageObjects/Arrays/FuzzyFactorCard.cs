@@ -33,7 +33,6 @@ namespace CLP.Entities
             }
             RemainderTiles = new RemainderTiles(parentPage, this);
             parentPage.PageObjects.Add(RemainderTiles);
-            UpdateRemainderRegion();
         }
 
         public FuzzyFactorCard(CLPPage parentPage, double gridSquareSize, int columns, int rows, int dividend, bool isRemainderRegionDisplayed = false)
@@ -52,51 +51,6 @@ namespace CLP.Entities
         #endregion //Constructors
 
         #region Properties
-
-        public override double LabelLength
-        {
-            get { return DT_LABEL_LENGTH; }
-        }
-
-        public double LargeLabelLength
-        {
-            get { return DT_LARGE_LABEL_LENGTH; }
-        }
-
-        public override double ArrayWidth
-        {
-            get { return Width - (LargeLabelLength + LabelLength); }
-        }
-
-        public override double ArrayHeight
-        {
-            get { return Height - (2 * LabelLength); }
-        }
-
-        public override double GridSquareSize
-        {
-            get { return ArrayWidth / Columns; }
-        }
-
-        public override double MinimumGridSquareSize
-        {
-            get { return Columns < Rows ? MIN_ARRAY_LENGTH / Columns : MIN_ARRAY_LENGTH / Rows; }
-        }
-
-        public int GroupsSubtracted
-        {
-            get { return VerticalDivisions.Sum(division => division.Value); }
-        }
-
-        public int CurrentRemainder
-        {
-            get { return Dividend - GroupsSubtracted * Rows; }
-        }
-
-        public double LastDivisionPosition
-        {
-            get { return VerticalDivisions.Any() ? VerticalDivisions.Last().Position : 0.0; }
-        }
 
         /// <summary>The total number the <see cref="FuzzyFactorCard" /> represents.</summary>
         public int Dividend
@@ -168,37 +122,33 @@ namespace CLP.Entities
 
         #endregion //Navigation Properties
 
+        #region Calculated Properties
+
+        public double LargeLabelLength
+        {
+            get { return DT_LARGE_LABEL_LENGTH; }
+        }
+
+        public int GroupsSubtracted
+        {
+            get { return VerticalDivisions.Sum(division => division.Value); }
+        }
+
+        public int CurrentRemainder
+        {
+            get { return Dividend - GroupsSubtracted * Rows; }
+        }
+
+        public double LastDivisionPosition
+        {
+            get { return VerticalDivisions.Any() ? VerticalDivisions.Last().Position : 0.0; }
+        }
+
+        #endregion //Calculated Properties
+
         #endregion //Properties
 
         #region Methods
-
-        public override void SizeArrayToGridLevel(double toSquareSize = -1, bool recalculateDivisions = true)
-        {
-            var initialWidth = Width;
-            var initialHeight = Height;
-            var initialSquareSize = DefaultGridSquareSize;
-            if (toSquareSize <= 0)
-            {
-                while (XPosition + LabelLength + LargeLabelLength + initialSquareSize * Columns >= ParentPage.Width ||
-                       YPosition + 2 * LabelLength + initialSquareSize * Rows >= ParentPage.Height)
-                {
-                    initialSquareSize = Math.Abs(initialSquareSize - 45.0) < .0001 ? 22.5 : initialSquareSize / 4 * 3;
-                }
-            }
-            else
-            {
-                initialSquareSize = toSquareSize;
-            }
-
-            Height = (initialSquareSize * Rows) + 2 * LabelLength;
-            Width = (initialSquareSize * Columns) + LabelLength + LargeLabelLength;
-
-            if (recalculateDivisions)
-            {
-                ResizeDivisions();
-            }
-            OnResized(initialWidth, initialHeight);
-        }
 
         public void UpdateRemainderRegion()
         {
@@ -308,6 +258,63 @@ namespace CLP.Entities
         }
 
         #endregion //Methods
+
+        #region ACLPArrayBase Overrides
+
+        public override double LabelLength
+        {
+            get { return DT_LABEL_LENGTH; }
+        }
+
+        public override double ArrayWidth
+        {
+            get { return Width - (LargeLabelLength + LabelLength); }
+        }
+
+        public override double ArrayHeight
+        {
+            get { return Height - (2 * LabelLength); }
+        }
+
+        public override double GridSquareSize
+        {
+            get { return ArrayWidth / Columns; }
+        }
+
+        public override double MinimumGridSquareSize
+        {
+            get { return Columns < Rows ? MIN_ARRAY_LENGTH / Columns : MIN_ARRAY_LENGTH / Rows; }
+        }
+
+        public override void SizeArrayToGridLevel(double toSquareSize = -1, bool recalculateDivisions = true)
+        {
+            var initialWidth = Width;
+            var initialHeight = Height;
+            var initialSquareSize = DefaultGridSquareSize;
+            if (toSquareSize <= 0)
+            {
+                while (XPosition + LabelLength + LargeLabelLength + initialSquareSize * Columns >= ParentPage.Width ||
+                       YPosition + 2 * LabelLength + initialSquareSize * Rows >= ParentPage.Height)
+                {
+                    initialSquareSize = Math.Abs(initialSquareSize - 45.0) < .0001 ? 22.5 : initialSquareSize / 4 * 3;
+                }
+            }
+            else
+            {
+                initialSquareSize = toSquareSize;
+            }
+
+            Height = (initialSquareSize * Rows) + 2 * LabelLength;
+            Width = (initialSquareSize * Columns) + LabelLength + LargeLabelLength;
+
+            if (recalculateDivisions)
+            {
+                ResizeDivisions();
+            }
+            OnResized(initialWidth, initialHeight);
+        }
+
+        #endregion //ACLPArrayBase Overrides
 
         #region APageObjectBase Overrides
 

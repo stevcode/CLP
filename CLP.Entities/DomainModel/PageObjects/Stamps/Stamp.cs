@@ -513,7 +513,6 @@ namespace CLP.Entities
             }
         }
 
-        /// <summary>Formatted value of the <see cref="IReporter" />.</summary>
         public string FormattedReport
         {
             get { return StampType != StampTypes.ObservingStamp ? string.Empty : string.Format("{0} in groups\n" + "{1} not in groups", NumberInGroups, NumberNotInGroups); }

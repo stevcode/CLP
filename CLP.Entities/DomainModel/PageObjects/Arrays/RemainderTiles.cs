@@ -6,7 +6,7 @@ using Catel.Data;
 namespace CLP.Entities
 {
     [Serializable]
-    public class RemainderTiles : APageObjectBase
+    public class RemainderTiles : APageObjectBase, IReporter
     {
         #region Constructors
 
@@ -19,11 +19,11 @@ namespace CLP.Entities
         /// Initializes <see cref="RemainderTiles" /> from
         /// </summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="RemainderTiles" /> belongs to.</param>
-        public RemainderTiles(CLPPage parentPage, FuzzyFactorCard fuzzyFactorCard)
+        public RemainderTiles(CLPPage parentPage, FuzzyFactorCard divisionTemplate)
             : base(parentPage)
         {
-            FuzzyFactorCardID = fuzzyFactorCard.ID;
-            Height = Math.Ceiling(fuzzyFactorCard.CurrentRemainder / 5.0) * 61.0; 
+            FuzzyFactorCardID = divisionTemplate.ID;
+            Height = Math.Ceiling(divisionTemplate.CurrentRemainder / 5.0) * 61.0; 
             Width = 305.0; 
         }
 
@@ -39,8 +39,6 @@ namespace CLP.Entities
 
         #region Properties
 
-        public override int ZIndex { get { return 40; } }
-
         /// <summary>
         /// Unique Identifier of the <see cref="FuzzyFactorCard" /> this <see cref="RemainderTiles" /> is attached to.
         /// </summary>
@@ -51,11 +49,6 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData FuzzyFactorCardIDProperty = RegisterProperty("FuzzyFactorCardID", typeof(string), string.Empty);
-
-        public override bool IsBackgroundInteractable
-        {
-            get { return false; }
-        }
 
         /// <summary>
         /// Colors of each tile
@@ -70,12 +63,27 @@ namespace CLP.Entities
 
         #endregion //Properties
 
-        #region Methods
+        #region APageObjectBase Overrides
+
+        public override int ZIndex
+        {
+            get { return 40; }
+        }
+
+        public override bool IsBackgroundInteractable
+        {
+            get { return false; }
+        }
+
+        public override void OnAdded(bool fromHistory = false)
+        {
+            UpdateReport();
+        }
 
         public override IPageObject Duplicate()
         {
             var newRemainderTiles = Clone() as RemainderTiles;
-            if(newRemainderTiles == null)
+            if (newRemainderTiles == null)
             {
                 return null;
             }
@@ -88,15 +96,12 @@ namespace CLP.Entities
             return newRemainderTiles;
         }
 
-        public override void OnDeleted(bool fromHistory = false)
-        {
-            var fuzzyFactorCard = ParentPage.GetPageObjectByID(FuzzyFactorCardID) as FuzzyFactorCard;
-            if(fuzzyFactorCard != null)
-            {
-                fuzzyFactorCard.RemainderTiles = null;
-            }
-        }
+        #endregion //APageObjectBase Overrides
 
-        #endregion //Methods
+        #region IReporter Implementation
+
+        public void UpdateReport() { RaisePropertyChanged("FormattedReport"); }
+
+        #endregion //IReporter Implementation
     }
 }
