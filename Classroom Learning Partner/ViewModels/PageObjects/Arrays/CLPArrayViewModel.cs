@@ -915,7 +915,8 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                                    PageObject.ID,
                                                                                                    isHorizontalDivision,
                                                                                                    divisionIndex,
-                                                                                                   previousValue));
+                                                                                                   previousValue, 
+                                                                                                   division.Value));
 
             // Check if array labels add up to larger array dimension
             var dividerValues = new List<int>();
