@@ -69,6 +69,20 @@ namespace CLP.Entities
 
         #region Methods
 
+        protected override void ConversionUndoAction()
+        {
+            var array = ParentPage.GetVerifiedPageObjectOnPageByID(ArrayID) as ACLPArrayBase;
+            if (array == null)
+            {
+                Console.WriteLine("[ERROR] on Index #{0}, Array for Grid Toggle not found on page or in history.", HistoryIndex);
+                return;
+            }
+
+            IsToggledOn = array.IsGridOn;
+
+            array.IsGridOn = !IsToggledOn;
+        }
+
         /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void UndoAction(bool isAnimationUndo) { ToggleGrid(!IsToggledOn); }
 
