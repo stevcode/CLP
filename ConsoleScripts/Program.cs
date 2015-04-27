@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Ink;
+using Catel.Collections;
 using Catel.Data;
 using CLP.Entities;
 using Path = Catel.IO.Path;
@@ -45,17 +46,17 @@ namespace ConsoleScripts
         private static void Convert()
         {
             var convertFromFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Convert");
-            var convertToFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Converted");
-            if (!Directory.Exists(convertToFolderPath))
-            {
-                Directory.CreateDirectory(convertToFolderPath);
-            }
+            //var convertToFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Converted");
+            //if (!Directory.Exists(convertToFolderPath))
+            //{
+            //    Directory.CreateDirectory(convertToFolderPath);
+            //}
 
             var notebookFolderPaths = Directory.EnumerateDirectories(convertFromFolderPath);
             foreach (var notebookFolderPath in notebookFolderPaths)
             {
-                var filePath = Path.Combine(notebookFolderPath, "notebook.xml");
-                var notebook = ModelBase.Load<Notebook>(filePath, SerializationMode.Xml);
+                //var filePath = Path.Combine(notebookFolderPath, "notebook.xml");
+                //var notebook = ModelBase.Load<Notebook>(filePath, SerializationMode.Xml);
                 var pagesFolderPath = Path.Combine(notebookFolderPath, "Pages");
                 var pageFilePaths = Directory.EnumerateFiles(pagesFolderPath, "*.xml");
                 foreach (var pageFilePath in pageFilePaths)
@@ -65,7 +66,9 @@ namespace ConsoleScripts
                     page.History.TrashedInkStrokes = StrokeDTO.LoadInkStrokes(page.History.SerializedTrashedInkStrokes);
 
                     Console.WriteLine("Loaded {3}'s page {0}, differentiation {1}, version {2}", page.PageNumber, page.DifferentiationLevel, page.VersionIndex, page.Owner.FullName);
-                    //Do stuff to each page here.                   
+                    //Do stuff to each page here. 
+
+                    TheSlowRewind(page);
 
                     //ReplaceHistoryItems(page);
                     //HackJumpSizeHistoryItems(page);
@@ -99,6 +102,25 @@ namespace ConsoleScripts
                     page.ToXML(pageFilePath, true);
                 }
             }
+        }
+
+        public static void TheSlowRewind(CLPPage page)
+        {
+            //Rewind entire page
+            page.History.IsAnimating = true;
+
+            while (page.History.UndoItems.Any())
+            {
+                var historyItemToUndo = page.History.UndoItems.FirstOrDefault();
+                if (historyItemToUndo == null)
+                {
+                    break;
+                }
+
+
+
+            }
+
         }
 
         public static void ReplaceHistoryItems(CLPPage page)
@@ -186,6 +208,107 @@ namespace ConsoleScripts
                 {
                     break;
                 }
+
+                #region AsIs
+
+                //AnimationIndicator
+                //PageObjectResize
+                if (historyItemToUndo is AnimationIndicator ||
+                    historyItemToUndo is PageObjectResizeBatchHistoryItem)
+                {
+                    page.History.ConversionUndo(historyItemToUndo);
+                    continue;
+                }
+
+                #endregion //AsIs
+
+                #region ???PageObjectsAdded to ObjectsOnPageChanged
+
+                if (historyItemToUndo is PageObjectsAddedHistoryItem)
+                {
+                    var pageObjectsAdded = historyItemToUndo as PageObjectsAddedHistoryItem;
+                    page.History.UndoItems.RemoveFirst();
+                    if (!pageObjectsAdded.PageObjectIDs.Any())
+                    {
+                        continue;
+                    }
+
+                    var objectsChanged = new ObjectsOnPageChangedHistoryItem(pageObjectsAdded);
+                    page.History.UndoItems.Insert(0, objectsChanged);
+
+                    page.History.ConversionUndo(historyItemToUndo);  //?
+                    continue;
+                }
+
+                #endregion //PageObjectsAdded to ObjectsOnPageChanged
+
+                #region ???PageObjectsRemoved to ObjectsOnPageChanged
+
+                if (historyItemToUndo is PageObjectsRemovedHistoryItem)
+                {
+                    var pageObjectsRemoved = historyItemToUndo as PageObjectsRemovedHistoryItem;
+                    page.History.UndoItems.RemoveFirst();
+                    if (!pageObjectsRemoved.PageObjectIDs.Any())
+                    {
+                        continue;
+                    }
+
+                    var objectsChanged = new ObjectsOnPageChangedHistoryItem(pageObjectsRemoved);
+                    page.History.UndoItems.Insert(0, objectsChanged);
+
+                    page.History.ConversionUndo(historyItemToUndo);  //?
+                    continue;
+                }
+
+                #endregion //PageObjectsRemoved to ObjectsOnPageChanged
+
+                #region PageObjectMove to ObjectsOnPageChanged
+
+                if (historyItemToUndo is PageObjectMoveBatchHistoryItem)
+                {
+                    var pageObjectMove = historyItemToUndo as PageObjectMoveBatchHistoryItem;
+                    page.History.UndoItems.RemoveFirst();
+                    var pageObject = page.GetPageObjectByIDOnPageOrInHistory(pageObjectMove.PageObjectID);
+                    if (!pageObjectMove.TravelledPositions.Any() ||
+                        string.IsNullOrEmpty(pageObjectMove.PageObjectID) ||
+                        pageObject == null)
+                    {
+                        continue;
+                    }
+
+                    var objectsMoved = new ObjectsMovedBatchHistoryItem(pageObjectMove);
+                    page.History.UndoItems.Insert(0, objectsMoved);
+
+                    page.History.ConversionUndo(historyItemToUndo);
+                    continue;
+                }
+
+                #endregion //PageObjectMove to ObjectsOnPageChanged
+
+                #region PageObjectsMove to ObjectsOnPageChanged
+
+                if (historyItemToUndo is PageObjectsMoveBatchHistoryItem)
+                {
+                    var pageObjectsMove = historyItemToUndo as PageObjectsMoveBatchHistoryItem;
+                    page.History.UndoItems.RemoveFirst();
+                    var pageObjects = pageObjectsMove.PageObjectIDs.Select(id => pageObjectsMove.ParentPage.GetVerifiedPageObjectOnPageByID(id)).ToList();
+                    pageObjects = pageObjects.Where(p => p != null).ToList();
+                    if (!pageObjectsMove.TravelledPositions.Any() ||
+                        !pageObjectsMove.PageObjectIDs.Any() ||
+                        !pageObjects.Any())
+                    {
+                        continue;
+                    }
+
+                    var objectsMoved = new ObjectsMovedBatchHistoryItem(pageObjectsMove);
+                    page.History.UndoItems.Insert(0, objectsMoved);
+
+                    page.History.ConversionUndo(historyItemToUndo);
+                    continue;
+                }
+
+                #endregion //PageObjectMove to ObjectssOnPageChanged
+
 
                 #region EndPointChangedHistoryItem Adjustments
 
@@ -345,7 +468,7 @@ namespace ConsoleScripts
 
                 #endregion //JumpSizeHistoryItem Conversion
 
-                page.History.Undo();
+
             }
 
             while (page.History.RedoItems.Any())
