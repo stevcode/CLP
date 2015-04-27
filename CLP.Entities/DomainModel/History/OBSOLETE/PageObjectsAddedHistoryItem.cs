@@ -171,5 +171,10 @@ namespace CLP.Entities
         public override bool IsUsingTrashedPageObject(string id, bool isUndoItem) { return !isUndoItem && PageObjectIDs.Contains(id); }
 
         #endregion //Methods
+
+        protected override void ConversionUndoAction()
+        {
+
+        }
     }
 }

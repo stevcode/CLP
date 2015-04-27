@@ -277,5 +277,10 @@ namespace CLP.Entities
         public override void UnpackHistoryItem() { }
 
         #endregion //Methods
+
+        protected override void ConversionUndoAction()
+        {
+
+        }
     }
 }

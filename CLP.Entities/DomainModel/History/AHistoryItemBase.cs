@@ -209,7 +209,7 @@ namespace CLP.Entities
             UndoAction(isAnimationUndo);
         }
 
-        protected virtual void ConversionUndoAction() { }
+        protected abstract void ConversionUndoAction();
 
         protected abstract void UndoAction(bool isAnimationUndo);
 
