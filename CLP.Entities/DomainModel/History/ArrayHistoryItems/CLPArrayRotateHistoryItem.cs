@@ -15,12 +15,24 @@ namespace CLP.Entities
         /// <summary>Initializes <see cref="CLPArrayRotateHistoryItem" /> with a parent <see cref="CLPPage" />.</summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryItem" /> is part of.</param>
         /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryItem" />.</param>
-        public CLPArrayRotateHistoryItem(CLPPage parentPage, Person owner, string arrayID, double initialXPosition, double initialYPosition)
+        public CLPArrayRotateHistoryItem(CLPPage parentPage,
+                                         Person owner,
+                                         string arrayID,
+                                         double oldXPosition,
+                                         double oldYPosition,
+                                         double newXPosition,
+                                         double newYPosition,
+                                         int oldRows,
+                                         int oldColumns)
             : base(parentPage, owner)
         {
             ArrayID = arrayID;
-            ArrayXCoord = initialXPosition;
-            ArrayYCoord = initialYPosition;
+            ArrayXCoord = oldXPosition;
+            ArrayYCoord = oldYPosition;
+            NewXPosition = newXPosition;
+            NewYPosition = newYPosition;
+            OldRows = oldRows;
+            OldColumns = oldColumns;
         }
 
         /// <summary>Initializes a new object based on <see cref="SerializationInfo" />.</summary>
@@ -47,7 +59,8 @@ namespace CLP.Entities
 
         public static readonly PropertyData ArrayIDProperty = RegisterProperty("ArrayID", typeof (string));
 
-        /// <summary>X coordinate to restore the array's position to.</summary>
+        /// <summary>X Position before rotate.</summary>
+        /// <remarks>Legacy property name prior to conversion, should be OldXPosition.</remarks>
         public double ArrayXCoord
         {
             get { return GetValue<double>(ArrayXCoordProperty); }
@@ -56,7 +69,8 @@ namespace CLP.Entities
 
         public static readonly PropertyData ArrayXCoordProperty = RegisterProperty("ArrayXCoord", typeof (double));
 
-        /// <summary>Y coordinate to restore the array's position to.</summary>
+        /// <summary>Y Position before rotate.</summary>
+        /// <remarks>Legacy property name prior to conversion, should be OldYPosition.</remarks>
         public double ArrayYCoord
         {
             get { return GetValue<double>(ArrayYCoordProperty); }
@@ -65,13 +79,50 @@ namespace CLP.Entities
 
         public static readonly PropertyData ArrayYCoordProperty = RegisterProperty("ArrayYCoord", typeof (double));
 
+        /// <summary>X Position after rotate.</summary>
+        public double NewXPosition
+        {
+            get { return GetValue<double>(NewXPositionProperty); }
+            set { SetValue(NewXPositionProperty, value); }
+        }
+
+        public static readonly PropertyData NewXPositionProperty = RegisterProperty("NewXPosition", typeof (double));
+
+        /// <summary>Y Position after rotate.</summary>
+        public double NewYPosition
+        {
+            get { return GetValue<double>(NewYPositionProperty); }
+            set { SetValue(NewYPositionProperty, value); }
+        }
+
+        public static readonly PropertyData NewYPositionProperty = RegisterProperty("NewYPosition", typeof (double));
+
+        /// <summary>Rows value before rotate.</summary>
+        public int OldRows
+        {
+            get { return GetValue<int>(OldRowsProperty); }
+            set { SetValue(OldRowsProperty, value); }
+        }
+
+        public static readonly PropertyData OldRowsProperty = RegisterProperty("OldRows", typeof (int));
+
+        /// <summary>Columns value before rotate.</summary>
+        public int OldColumns
+        {
+            get { return GetValue<int>(OldColumnsProperty); }
+            set { SetValue(OldColumnsProperty, value); }
+        }
+
+        public static readonly PropertyData OldColumnsProperty = RegisterProperty("OldColumns", typeof (int));
+
         public override string FormattedValue
         {
             get
             {
-                var array = ParentPage.GetPageObjectByIDOnPageOrInHistory(ArrayID) as CLPArray;
-                var formattedValue = string.Format("Index # {0}, Rotated array({1} by {2}) to be {2} by {1}.", HistoryIndex, array.Rows, array.Columns);
-                return formattedValue;
+                var array = ParentPage.GetPageObjectByIDOnPageOrInHistory(ArrayID) as ACLPArrayBase;
+                return array == null
+                           ? string.Format("[ERROR] on Index #{0}, Array for Rotate not found on page or in history.", HistoryIndex)
+                           : string.Format("Index #{0}, Array rotated from [{1}x{2}] to [{2}x{1}]", HistoryIndex, OldRows, OldColumns);
             }
         }
 
@@ -79,25 +130,48 @@ namespace CLP.Entities
 
         #region Methods
 
-        /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
-        protected override void UndoAction(bool isAnimationUndo) { RotateArray(); }
-
-        /// <summary>Method that will actually redo the action. Already incorporates error checking for existance of ParentPage.</summary>
-        protected override void RedoAction(bool isAnimationRedo) { RotateArray(); }
-
-        private void RotateArray()
+        protected override void ConversionUndoAction()
         {
             var array = ParentPage.GetVerifiedPageObjectOnPageByID(ArrayID) as ACLPArrayBase;
-            if (array != null)
+            if (array == null)
             {
-                var tempX = array.XPosition;
-                var tempY = array.YPosition;
-                array.RotateArray();
-                array.XPosition = ArrayXCoord;
-                array.YPosition = ArrayYCoord;
-                ArrayXCoord = tempX;
-                ArrayYCoord = tempY;
+                Console.WriteLine("[ERROR] on Index #{0}, Array for Rotate not found on page or in history.", HistoryIndex);
+                return;
             }
+
+            NewXPosition = array.XPosition;
+            NewYPosition = array.YPosition;
+            array.RotateArray();
+            array.XPosition = ArrayXCoord;
+            array.YPosition = ArrayYCoord;
+            OldRows = array.Rows;
+            OldColumns = array.Columns;
+        }
+
+        /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
+        protected override void UndoAction(bool isAnimationUndo)
+        {
+            RotateArray(true);
+        }
+
+        /// <summary>Method that will actually redo the action. Already incorporates error checking for existance of ParentPage.</summary>
+        protected override void RedoAction(bool isAnimationRedo)
+        {
+            RotateArray(false);
+        }
+
+        private void RotateArray(bool isUndo)
+        {
+            var array = ParentPage.GetVerifiedPageObjectOnPageByID(ArrayID) as ACLPArrayBase;
+            if (array == null)
+            {
+                Console.WriteLine("[ERROR] on Index #{0}, Array for Rotate not found on page or in history.", HistoryIndex);
+                return;
+            }
+
+            array.RotateArray();
+            array.XPosition = isUndo ? ArrayXCoord : NewXPosition;
+            array.YPosition = isUndo ? ArrayYCoord : NewYPosition;
         }
 
         /// <summary>Method that prepares a clone of the <see cref="IHistoryItem" /> so that it can call Redo() when sent to another machine.</summary>

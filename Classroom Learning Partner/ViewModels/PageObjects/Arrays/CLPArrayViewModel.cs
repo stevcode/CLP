@@ -823,7 +823,15 @@ namespace Classroom_Learning_Partner.ViewModels
             var initYPos = array.YPosition;
             array.RotateArray();
             ACLPPageBaseViewModel.AddHistoryItemToPage(array.ParentPage,
-                                                       new CLPArrayRotateHistoryItem(array.ParentPage, App.MainWindowViewModel.CurrentUser, array.ID, initXPos, initYPos));
+                                                       new CLPArrayRotateHistoryItem(array.ParentPage,
+                                                                                     App.MainWindowViewModel.CurrentUser,
+                                                                                     array.ID,
+                                                                                     initXPos,
+                                                                                     initYPos,
+                                                                                     array.XPosition,
+                                                                                     array.YPosition,
+                                                                                     array.Columns,
+                                                                                     array.Rows));
 
             if (array.CanAcceptStrokes)
             {
