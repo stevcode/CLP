@@ -153,7 +153,7 @@ namespace ConsoleScripts
                     var objectsChanged = new ObjectsOnPageChangedHistoryItem(pageObjectsAdded);
                     page.History.UndoItems.Insert(0, objectsChanged);
 
-                    page.History.ConversionUndo(historyItemToUndo);  //?
+                    page.History.ConversionUndo(historyItemToUndo); //?
                     continue;
                 }
 
@@ -173,7 +173,7 @@ namespace ConsoleScripts
                     var objectsChanged = new ObjectsOnPageChangedHistoryItem(pageObjectsRemoved);
                     page.History.UndoItems.Insert(0, objectsChanged);
 
-                    page.History.ConversionUndo(historyItemToUndo);  //?
+                    page.History.ConversionUndo(historyItemToUndo); //?
                     continue;
                 }
 
@@ -263,7 +263,7 @@ namespace ConsoleScripts
                                                       pageObjectCut.HalvedPageObjectIDs[0],
                                                       pageObjectCut.HalvedPageObjectIDs[1]
                                                   };
-                        pageObjectCut.HalvedPageObjectIDs.RemoveRange(0,2);
+                        pageObjectCut.HalvedPageObjectIDs.RemoveRange(0, 2);
                         if (cutPageObject == null)
                         {
                             continue;
@@ -294,7 +294,7 @@ namespace ConsoleScripts
                 {
                     var endPointsChangedHistoryItem = historyItemToUndo as NumberLineEndPointsChangedHistoryItem;
                     var resizeBatchHistoryItem = page.History.RedoItems.FirstOrDefault() as PageObjectResizeBatchHistoryItem;
-             
+
                     if (resizeBatchHistoryItem != null)
                     {
                         var numberLine = page.GetVerifiedPageObjectOnPageByID(endPointsChangedHistoryItem.NumberLineID) as NumberLine;
@@ -335,127 +335,150 @@ namespace ConsoleScripts
 
                 #endregion //EndPointChangedHistoryItem Adjustments
 
-                #region JumpSizeHistoryItem Conversion
+                #region StrokesChanged to ObjectsOnPageChanged
 
-                var strokesChangedHistoryItem = historyItemToUndo as ObjectsOnPageChangedHistoryItem;
-                if (strokesChangedHistoryItem != null)
+                if (historyItemToUndo is StrokesChangedHistoryItem)
                 {
-                    if (strokesChangedHistoryItem.IsUsingStrokes &&
-                        !strokesChangedHistoryItem.IsUsingPageObjects)
+                    var strokesChanged = historyItemToUndo as StrokesChangedHistoryItem;
+                    page.History.UndoItems.RemoveFirst();
+                    if (!strokesChanged.StrokeIDsAdded.Any() &&
+                        !strokesChanged.StrokeIDsRemoved.Any())
                     {
-                        var removedJumpStrokeIDs = new List<string>();
-                        foreach (var stroke in strokesChangedHistoryItem.StrokeIDsRemoved.Select(page.GetVerifiedStrokeInHistoryByID))
+                        continue;
+                    }
+
+                    var objectsChanged = new ObjectsOnPageChangedHistoryItem(strokesChanged);
+                    if (objectsChanged.IsUsingPageObjects)
+                    {
+                        page.History.UndoItems.Insert(0, objectsChanged);
+                        page.History.ConversionUndo(historyItemToUndo); //?
+                    }
+
+                    #region JumpSizeConversion
+
+                    var removedJumpStrokeIDs = new List<string>();
+                    foreach (var strokeID in objectsChanged.StrokeIDsRemoved)
+                    {
+                        var stroke = page.GetVerifiedStrokeInHistoryByID(strokeID);
+                        if (stroke == null)
                         {
-                            if (stroke == null)
+                            removedJumpStrokeIDs.Add(strokeID);
+                            continue;
+                        }
+
+                        foreach (var numberLine in page.PageObjects.OfType<NumberLine>())
+                        {
+                            var tickR = numberLine.FindClosestTick(stroke, true);
+                            var tickL = numberLine.FindClosestTick(stroke, false);
+                            if (tickR == null ||
+                                tickL == null ||
+                                tickR == tickL)
                             {
-                                Console.WriteLine("ERROR: Null stroke in StrokeIDsRemoved in ObjectsOnPageChangedHistoryItem on History Index {0}.",
-                                                  strokesChangedHistoryItem.HistoryIndex);
                                 continue;
                             }
 
-                            foreach (var numberLine in page.PageObjects.OfType<NumberLine>())
+                            removedJumpStrokeIDs.Add(stroke.GetStrokeID());
+
+                            var oldHeight = numberLine.Height;
+                            var oldYPosition = numberLine.YPosition;
+                            if (numberLine.JumpSizes.Count == 0)
                             {
-                                var tickR = numberLine.FindClosestTick(stroke, true);
-                                var tickL = numberLine.FindClosestTick(stroke, false);
-                                if (tickR == null ||
-                                    tickL == null ||
-                                    tickR == tickL)
+                                var tallestPoint = stroke.GetBounds().Top;
+                                tallestPoint = tallestPoint - 40;
+
+                                if (tallestPoint < 0)
                                 {
-                                    continue;
+                                    tallestPoint = 0;
                                 }
 
-                                removedJumpStrokeIDs.Add(stroke.GetStrokeID());
-
-                                var oldHeight = numberLine.Height;
-                                var oldYPosition = numberLine.YPosition;
-                                if (numberLine.JumpSizes.Count == 0)
+                                if (tallestPoint > numberLine.YPosition + numberLine.Height - numberLine.NumberLineHeight)
                                 {
-                                    var tallestPoint = stroke.GetBounds().Top;
-                                    tallestPoint = tallestPoint - 40;
-
-                                    if (tallestPoint < 0)
-                                    {
-                                        tallestPoint = 0;
-                                    }
-
-                                    if (tallestPoint > numberLine.YPosition + numberLine.Height - numberLine.NumberLineHeight)
-                                    {
-                                        tallestPoint = numberLine.YPosition + numberLine.Height - numberLine.NumberLineHeight;
-                                    }
-
-                                    oldHeight += (numberLine.YPosition - tallestPoint);
-                                    oldYPosition = tallestPoint;
-                                }
-                                var jumpsChangedHistoryItem = new NumberLineJumpSizesChangedHistoryItem(page,
-                                                                                                        page.Owner,
-                                                                                                        numberLine.ID,
-                                                                                                        new List<Stroke>(),
-                                                                                                        new List<Stroke>
-                                                                                                        {
-                                                                                                            stroke
-                                                                                                        },
-                                                                                                        oldHeight,
-                                                                                                        oldYPosition,
-                                                                                                        true);
-
-                                page.History.UndoItems.Insert(0, jumpsChangedHistoryItem);
-                                break;
-                            }
-                        }
-
-                        var addedJumpStrokeIDs = new List<string>();
-                        foreach (var stroke in strokesChangedHistoryItem.StrokeIDsAdded.Select(page.GetVerifiedStrokeOnPageByID))
-                        {
-                            if (stroke == null)
-                            {
-                                Console.WriteLine("ERROR: Null stroke in StrokeIDsAdded in ObjectsOnPageChangedHistoryItem on History Index {0}.",
-                                                  strokesChangedHistoryItem.HistoryIndex);
-                                continue;
-                            }
-
-                            foreach (var numberLine in page.PageObjects.OfType<NumberLine>())
-                            {
-                                var tickR = numberLine.FindClosestTick(stroke, true);
-                                var tickL = numberLine.FindClosestTick(stroke, false);
-                                if (tickR == null ||
-                                    tickL == null ||
-                                    tickR == tickL)
-                                {
-                                    continue;
+                                    tallestPoint = numberLine.YPosition + numberLine.Height - numberLine.NumberLineHeight;
                                 }
 
-                                addedJumpStrokeIDs.Add(stroke.GetStrokeID());
-
-                                var oldHeight = numberLine.JumpSizes.Count == 1 ? numberLine.NumberLineHeight : numberLine.Height;
-                                var oldYPosition = numberLine.JumpSizes.Count == 1 ? numberLine.YPosition + numberLine.Height - numberLine.NumberLineHeight : numberLine.YPosition;
-                                var jumpsChangedHistoryItem = new NumberLineJumpSizesChangedHistoryItem(page,
-                                                                                                        page.Owner,
-                                                                                                        numberLine.ID,
-                                                                                                        new List<Stroke>
-                                                                                                        {
-                                                                                                            stroke
-                                                                                                        },
-                                                                                                        new List<Stroke>(),
-                                                                                                        oldHeight,
-                                                                                                        oldYPosition,
-                                                                                                        true);
-
-                                page.History.UndoItems.Insert(0, jumpsChangedHistoryItem);
-                                break;
+                                oldHeight += (numberLine.YPosition - tallestPoint);
+                                oldYPosition = tallestPoint;
                             }
-                        }
+                            var jumpsChangedHistoryItem = new NumberLineJumpSizesChangedHistoryItem(page,
+                                                                                                    page.Owner,
+                                                                                                    numberLine.ID,
+                                                                                                    new List<Stroke>(),
+                                                                                                    new List<Stroke>
+                                                                                                    {
+                                                                                                        stroke
+                                                                                                    },
+                                                                                                    oldHeight,
+                                                                                                    oldYPosition,
+                                                                                                    numberLine.Height,
+                                                                                                    numberLine.YPosition,
+                                                                                                    true);
 
-                        strokesChangedHistoryItem.StrokeIDsRemoved.RemoveAll(s => removedJumpStrokeIDs.Contains(s));
-                        strokesChangedHistoryItem.StrokeIDsAdded.RemoveAll(s => addedJumpStrokeIDs.Contains(s));
-
-                        if (!strokesChangedHistoryItem.IsUsingStrokes)
-                        {
-                            page.History.UndoItems.Remove(strokesChangedHistoryItem);
+                            page.History.UndoItems.Insert(0, jumpsChangedHistoryItem);
+                            page.History.ConversionUndo(historyItemToUndo);
+                            break;
                         }
                     }
+
+                    var addedJumpStrokeIDs = new List<string>();
+                    foreach (var strokeID in objectsChanged.StrokeIDsAdded)
+                    {
+                        var stroke = page.GetVerifiedStrokeOnPageByID(strokeID);
+                        if (stroke == null)
+                        {
+                            addedJumpStrokeIDs.Add(strokeID);
+                            continue;
+                        }
+
+                        foreach (var numberLine in page.PageObjects.OfType<NumberLine>())
+                        {
+                            var tickR = numberLine.FindClosestTick(stroke, true);
+                            var tickL = numberLine.FindClosestTick(stroke, false);
+                            if (tickR == null ||
+                                tickL == null ||
+                                tickR == tickL)
+                            {
+                                continue;
+                            }
+
+                            addedJumpStrokeIDs.Add(stroke.GetStrokeID());
+
+                            var oldHeight = numberLine.JumpSizes.Count == 1 ? numberLine.NumberLineHeight : numberLine.Height;
+                            var oldYPosition = numberLine.JumpSizes.Count == 1 ? numberLine.YPosition + numberLine.Height - numberLine.NumberLineHeight : numberLine.YPosition;
+                            var jumpsChangedHistoryItem = new NumberLineJumpSizesChangedHistoryItem(page,
+                                                                                                    page.Owner,
+                                                                                                    numberLine.ID,
+                                                                                                    new List<Stroke>
+                                                                                                    {
+                                                                                                        stroke
+                                                                                                    },
+                                                                                                    new List<Stroke>(),
+                                                                                                    oldHeight,
+                                                                                                    oldYPosition,
+                                                                                                    numberLine.Height,
+                                                                                                    numberLine.YPosition,
+                                                                                                    true);
+
+                            page.History.UndoItems.Insert(0, jumpsChangedHistoryItem);
+                            page.History.ConversionUndo(historyItemToUndo);
+                            break;
+                        }
+                    }
+
+                    objectsChanged.StrokeIDsRemoved.RemoveAll(removedJumpStrokeIDs.Contains);
+                    objectsChanged.StrokeIDsAdded.RemoveAll(addedJumpStrokeIDs.Contains);
+
+                    #endregion //JumpSizeConversion
+
+                    if (objectsChanged.IsUsingStrokes)
+                    {
+                        page.History.UndoItems.Insert(0, objectsChanged);
+                        page.History.ConversionUndo(historyItemToUndo); //?
+                    }
+
+                    continue;
                 }
 
-                #endregion //JumpSizeHistoryItem Conversion
+                #endregion //StrokesChanged to ObjectsOnPageChanged
             }
 
             while (page.History.RedoItems.Any())
@@ -464,12 +487,11 @@ namespace ConsoleScripts
             }
 
             page.History.IsAnimating = false;
-
         }
 
         public static void ReplaceHistoryItems(CLPPage page)
         {
-            for (int i = 0; i < page.History.UndoItems.Count; i++)
+            for (var i = 0; i < page.History.UndoItems.Count; i++)
             {
                 var historyItem = page.History.UndoItems[i];
 
@@ -504,7 +526,7 @@ namespace ConsoleScripts
                 }
             }
 
-            for (int i = 0; i < page.History.RedoItems.Count; i++)
+            for (var i = 0; i < page.History.RedoItems.Count; i++)
             {
                 var historyItem = page.History.RedoItems[i];
 
@@ -567,7 +589,7 @@ namespace ConsoleScripts
                         if (numberLine == null)
                         {
                             Console.WriteLine("ERROR: Number Line not on page in NumberLineEndPointsChangedHistoryItem on History Index {0}.",
-                                                  endPointsChangedHistoryItem.HistoryIndex);
+                                              endPointsChangedHistoryItem.HistoryIndex);
                             continue;
                         }
 
@@ -710,7 +732,6 @@ namespace ConsoleScripts
                 }
 
                 #endregion //JumpSizeHistoryItem Conversion
-
             }
 
             while (page.History.RedoItems.Any())
