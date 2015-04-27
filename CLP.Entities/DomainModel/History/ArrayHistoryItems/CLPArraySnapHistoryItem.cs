@@ -134,6 +134,7 @@ namespace CLP.Entities
         {
             get
             {
+                //TODO: Possibly needs some more work with conversion undo to correctly display formattedValue.
                 var persistingArray = ParentPage.GetPageObjectByIDOnPageOrInHistory(PersistingArrayID) as CLPArray;
                 if (persistingArray == null)
                 {
@@ -156,16 +157,15 @@ namespace CLP.Entities
                     persistingArrayColumns = persistingArray.Columns - snappedArray.Columns;
                 }
 
-                return string.Format("Index # {0}, Snapped array({1} by {2}) {3} onto array({4} by {5}), to create {6} by {7} array",
-                                                   HistoryIndex,
-                                                   snappedArray.Rows,
-                                                   snappedArray.Columns,
-                                                   direction,
-                                                   persistingArrayRows,
-                                                   persistingArrayColumns,
-                                                   persistingArray.Rows,
-                                                   persistingArray.Columns);
-
+                return string.Format("Index #{0}, Snapped array [{1}x{2}] {3} onto array [{4}x{5}] to create array [{6}x{7}].",
+                                     HistoryIndex,
+                                     snappedArray.Rows,
+                                     snappedArray.Columns,
+                                     direction,
+                                     persistingArrayRows,
+                                     persistingArrayColumns,
+                                     persistingArray.Rows,
+                                     persistingArray.Columns);
             }
         }
 
@@ -173,18 +173,25 @@ namespace CLP.Entities
 
         #region Methods
 
+        protected override void ConversionUndoAction()
+        {
+            UndoAction(false);
+        }
+
         /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void UndoAction(bool isAnimationUndo)
         {
             var persistingArray = ParentPage.GetVerifiedPageObjectOnPageByID(PersistingArrayID) as CLPArray;
             if (persistingArray == null)
             {
+                Console.WriteLine("[ERROR] on Index #{0}, Persisting Array not found on page or in history.", HistoryIndex);
                 return;
             }
 
             var snappedArray = ParentPage.GetVerifiedPageObjectInTrashByID(SnappedArrayID) as CLPArray;
             if (snappedArray == null)
             {
+                Console.WriteLine("[ERROR] on Index #{0}, Snapped Array not found on page or in history.", HistoryIndex);
                 return;
             }
 
@@ -200,6 +207,8 @@ namespace CLP.Entities
 
             persistingArray.IsDivisionBehaviorOn = PersistingArrayDivisionBehavior;
             persistingArray.SizeArrayToGridLevel(persistingArrayGridSquareSize, false);
+            persistingArray.RefreshAcceptedStrokes();
+            snappedArray.RefreshAcceptedStrokes();
         }
 
         /// <summary>Method that will actually redo the action. Already incorporates error checking for existance of ParentPage.</summary>
@@ -208,12 +217,14 @@ namespace CLP.Entities
             var persistingArray = ParentPage.GetVerifiedPageObjectOnPageByID(PersistingArrayID) as CLPArray;
             if (persistingArray == null)
             {
+                Console.WriteLine("[ERROR] on Index #{0}, Persisting Array not found on page or in history.", HistoryIndex);
                 return;
             }
 
             var snappedArray = ParentPage.GetVerifiedPageObjectOnPageByID(SnappedArrayID) as CLPArray;
             if (snappedArray == null)
             {
+                Console.WriteLine("[ERROR] on Index #{0}, Snapped Array not found on page or in history.", HistoryIndex);
                 return;
             }
 
@@ -227,6 +238,7 @@ namespace CLP.Entities
 
             persistingArray.IsDivisionBehaviorOn = true;
             persistingArray.SizeArrayToGridLevel(persistingArrayGridSquareSize, false);
+            persistingArray.RefreshAcceptedStrokes();
         }
 
         private void RestoreDivisions(CLPArray persistingArray)
