@@ -225,6 +225,7 @@
     </ApplicationDefinition>
     <Compile Include="Converters\AddLengthConverter.cs" />
     <Compile Include="Converters\DifferentiationGroupDisplayConverter.cs" />
+    <Compile Include="Converters\EmptyListToVisibilityConverter.cs" />
     <Compile Include="Converters\MultiplyAllMultiConverter.cs" />
     <Compile Include="Converters\StringsEqualMultiConverter.cs" />
     <Compile Include="Converters\PassMultipleValuesConverter.cs" />

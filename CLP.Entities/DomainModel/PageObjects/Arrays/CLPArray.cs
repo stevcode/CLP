@@ -141,7 +141,7 @@ namespace CLP.Entities
 
         public override void OnAdded(bool fromHistory = false)
         {
-            ParentPage.UpdateAllReporters();
+            base.OnAdded(fromHistory);
 
             if (!fromHistory)
             {
@@ -272,7 +272,7 @@ namespace CLP.Entities
 
         public override void OnDeleted(bool fromHistory = false)
         {
-            ParentPage.UpdateAllReporters();
+            base.OnDeleted(fromHistory);
 
             if (!CanAcceptStrokes ||
                 !AcceptedStrokes.Any())
@@ -295,6 +295,8 @@ namespace CLP.Entities
 
         public override void OnResized(double oldWidth, double oldHeight, bool fromHistory = false)
         {
+            base.OnResized(oldWidth, oldHeight, fromHistory);
+
             SizeArrayToGridLevel(GridSquareSize);
             OnResizing(oldWidth, oldHeight);
         }
@@ -312,7 +314,12 @@ namespace CLP.Entities
             AcceptedStrokes.MoveAll(deltaX, deltaY);
         }
 
-        public override void OnMoved(double oldX, double oldY, bool fromHistory = false) { OnMoving(oldX, oldY, fromHistory); }
+        public override void OnMoved(double oldX, double oldY, bool fromHistory = false)
+        {
+            base.OnResized(oldX, oldY, fromHistory);
+            
+            OnMoving(oldX, oldY, fromHistory);
+        }
 
         public override IPageObject Duplicate()
         {

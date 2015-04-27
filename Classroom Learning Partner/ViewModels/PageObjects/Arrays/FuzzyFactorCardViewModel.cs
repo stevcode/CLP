@@ -37,6 +37,63 @@ namespace Classroom_Learning_Partner.ViewModels
             _contextButtons.Add(MajorRibbonViewModel.Separater);
 
             _contextButtons.Add(new RibbonButton("Remove Last Snapped Array", "pack://application:,,,/Images/HorizontalLineIcon.png", RemoveLastArrayCommand, null, true));
+
+            if (Dividend > FuzzyFactorCard.MAX_NUMBER_OF_REMAINDER_TILES)
+            {
+                return;
+            }
+
+            var toggleRemainderTilesButton = new ToggleRibbonButton("Show Remainder Tiles", "Hide RemainderTiles", "pack://application:,,,/Resources/Images/ArrayCard32.png", true)
+            {
+                IsChecked = PageObject is FuzzyFactorCard && ((FuzzyFactorCard)PageObject).CanShowRemainderTiles
+            };
+            toggleRemainderTilesButton.Checked += toggleRemainderTilesButton_Checked;
+            toggleRemainderTilesButton.Unchecked += toggleRemainderTilesButton_Checked;
+            _contextButtons.Add(toggleRemainderTilesButton);
+        }
+
+        private void toggleRemainderTilesButton_Checked(object sender, RoutedEventArgs e)
+        {
+            var toggleButton = sender as ToggleRibbonButton;
+            if (toggleButton == null ||
+                toggleButton.IsChecked == null)
+            {
+                return;
+            }
+
+            var divisionTemplate = PageObject as FuzzyFactorCard;
+            if (divisionTemplate == null)
+            {
+                return;
+            }
+
+            var page = divisionTemplate.ParentPage;
+            if (page == null)
+            {
+                return;
+            }
+
+            divisionTemplate.IsRemainderTilesVisible = (bool)toggleButton.IsChecked;
+            if (divisionTemplate.CanShowRemainderTiles)
+            {
+                if (divisionTemplate.RemainderTiles == null)
+                {
+                    divisionTemplate.InitializeRemainderTiles();
+                    divisionTemplate.RemainderTiles.CreatorID = divisionTemplate.CreatorID;
+                }
+
+                if (!page.PageObjects.Contains(divisionTemplate.RemainderTiles))
+                {
+                    page.PageObjects.Add(divisionTemplate.RemainderTiles);
+                }
+            }
+            else if (divisionTemplate.RemainderTiles != null &&
+                     page.PageObjects.Contains(divisionTemplate.RemainderTiles))
+            {
+                page.PageObjects.Remove(divisionTemplate.RemainderTiles);
+            }
+
+            divisionTemplate.UpdateReport();
         }
 
         #endregion //Constructor    
@@ -296,7 +353,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //Initial Values.
             int rows;
             int dividend;
-            var isShowingTiles = false;
+            var isRemainderTilesVisible = false;
             var initialGridSize = ACLPArrayBase.DefaultGridSquareSize;
 
             //Launch Division Template Creation Window.
@@ -317,7 +374,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 rows = Convert.ToInt32(factorCreationView.Factor.Text);
                 if (factorCreationView.TileCheckBox.IsChecked != null)
                 {
-                    isShowingTiles = (bool)factorCreationView.TileCheckBox.IsChecked && dividend < 51;
+                    isRemainderTilesVisible = (bool)factorCreationView.TileCheckBox.IsChecked && dividend <= FuzzyFactorCard.MAX_NUMBER_OF_REMAINDER_TILES;
                 }
             }
             catch (FormatException)
@@ -343,39 +400,14 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             //Create Division Template.
-            var arrayType = isShowingTiles ? "FFCREMAINDER" : "FUZZYFACTORCARD";
-            FuzzyFactorCard divisionTemplate;
-            switch (arrayType)
-            {
-                case "FUZZYFACTORCARD":
-                    divisionTemplate = new FuzzyFactorCard(page, initialGridSize, columns, rows, dividend)
-                                       {
-                                           // HACK: Find better way to set this
-                                           CreatorID = App.MainWindowViewModel.CurrentUser.ID,
-                                           OwnerID = App.MainWindowViewModel.CurrentUser.ID
-                                       };
-
-                    break;
-                case "FFCREMAINDER":
-                    var isRemainderRegionDisplayed = (dividend <= 50);
-                    divisionTemplate = new FuzzyFactorCard(page, initialGridSize, columns, rows, dividend, isRemainderRegionDisplayed)
-                                       {
-                                           CreatorID = App.MainWindowViewModel.CurrentUser.ID,
-                                           OwnerID = App.MainWindowViewModel.CurrentUser.ID
-                                       };
-                    // HACK: Find better way to set this
-                    if (isRemainderRegionDisplayed)
-                    {
-                        divisionTemplate.RemainderTiles.CreatorID = divisionTemplate.CreatorID;
-                        divisionTemplate.RemainderTiles.OwnerID = divisionTemplate.OwnerID;
-                    }
-                    break;
-                default:
-                    return;
-            }
+            var divisionTemplate = new FuzzyFactorCard(page, initialGridSize, columns, rows, dividend, isRemainderTilesVisible);
 
             //Reposition Division Template.
             ACLPArrayBase.ApplyDistinctPosition(divisionTemplate);
+            if (isRemainderTilesVisible)
+            {
+                divisionTemplate.InitializeRemainderTiles();
+            }
 
             //Add Division Template to page.
             ACLPPageBaseViewModel.AddPageObjectToPage(divisionTemplate);

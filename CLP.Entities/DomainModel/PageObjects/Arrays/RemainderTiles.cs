@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Runtime.Serialization;
 using Catel.Data;
 
 namespace CLP.Entities
 {
     [Serializable]
-    public class RemainderTiles : APageObjectBase, IReporter
+    public class RemainderTiles : APageObjectBase
     {
+        public const double TILE_HEIGHT = 61.0;
+        public const double NUMBER_OF_TILES_PER_ROW = 5.0;
+
         #region Constructors
 
         /// <summary>
@@ -19,12 +23,12 @@ namespace CLP.Entities
         /// Initializes <see cref="RemainderTiles" /> from
         /// </summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="RemainderTiles" /> belongs to.</param>
+        /// <param name="divisionTemplate">Associated <see cref="FuzzyFactorCard" /> the <see cref="RemainderTiles" /> acts against.</param>
         public RemainderTiles(CLPPage parentPage, FuzzyFactorCard divisionTemplate)
             : base(parentPage)
         {
-            FuzzyFactorCardID = divisionTemplate.ID;
-            Height = Math.Ceiling(divisionTemplate.CurrentRemainder / 5.0) * 61.0; 
-            Width = 305.0; 
+            Height = Math.Ceiling(divisionTemplate.CurrentRemainder / NUMBER_OF_TILES_PER_ROW) * TILE_HEIGHT;
+            Width = NUMBER_OF_TILES_PER_ROW * TILE_HEIGHT;
         }
 
         /// <summary>
@@ -38,17 +42,6 @@ namespace CLP.Entities
         #endregion //Constructors
 
         #region Properties
-
-        /// <summary>
-        /// Unique Identifier of the <see cref="FuzzyFactorCard" /> this <see cref="RemainderTiles" /> is attached to.
-        /// </summary>
-        public string FuzzyFactorCardID
-        {
-            get { return GetValue<string>(FuzzyFactorCardIDProperty); }
-            set { SetValue(FuzzyFactorCardIDProperty, value); }
-        }
-
-        public static readonly PropertyData FuzzyFactorCardIDProperty = RegisterProperty("FuzzyFactorCardID", typeof(string), string.Empty);
 
         /// <summary>
         /// Colors of each tile
@@ -75,11 +68,6 @@ namespace CLP.Entities
             get { return false; }
         }
 
-        public override void OnAdded(bool fromHistory = false)
-        {
-            UpdateReport();
-        }
-
         public override IPageObject Duplicate()
         {
             var newRemainderTiles = Clone() as RemainderTiles;
@@ -97,11 +85,5 @@ namespace CLP.Entities
         }
 
         #endregion //APageObjectBase Overrides
-
-        #region IReporter Implementation
-
-        public void UpdateReport() { RaisePropertyChanged("FormattedReport"); }
-
-        #endregion //IReporter Implementation
     }
 }

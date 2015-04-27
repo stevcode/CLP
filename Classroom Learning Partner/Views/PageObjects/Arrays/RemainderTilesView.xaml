@@ -8,9 +8,9 @@
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters">
 
     <UserControl.Resources>
-        <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
         <oldconv:LengthConverter x:Key="LengthConverter" />
         <conv:IndexToMarginConverter x:Key="IndexToMarginConverter" />
+        <conv:EmptyListToVisibilityConverter x:Key="EmptyListToVisibilityConverter" />
     </UserControl.Resources>
 
     <ac:AdornedControl HorizontalAlignment="Center"
@@ -20,7 +20,8 @@
                        IsAdornerVisible="{Binding IsAdornerVisible, Mode=TwoWay}"
                        IsMouseOverShowEnabled="{Binding IsMouseOverShowEnabled}"
                        OpenAdornerTimeOut="{Binding OpenAdornerTimeOut}"
-                       CloseAdornerTimeOut="{Binding CloseAdornerTimeOut}">
+                       CloseAdornerTimeOut="{Binding CloseAdornerTimeOut}"
+                       Visibility="{Binding TileColors, Converter={StaticResource EmptyListToVisibilityConverter}}">
         <!--This is the adorner-->
         <ac:AdornedControl.AdornerContent>
             <Canvas HorizontalAlignment="Center"
@@ -47,44 +48,7 @@
                            Canvas.Top="-5"
                            Canvas.Left="-5"
                            Width="{Binding Width, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
-                           Height="{Binding Height, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
-                           Visibility="{Binding MainWindowViewModel.IsUsingOldPageObjectBoundary, Source={x:Static Application.Current}, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}" />
-
-                <Rectangle Stroke="Black"
-                           StrokeDashArray="0.5 1.0 0.3"
-                           StrokeThickness="2"
-                           RadiusX="10"
-                           RadiusY="10"
-                           Canvas.Top="-5"
-                           Canvas.Left="-5"
-                           Width="{Binding Width, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
-                           Height="{Binding Height, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
-                           Visibility="{Binding MainWindowViewModel.IsUsingOldPageObjectBoundary, Source={x:Static Application.Current}, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />
-
-                <!--Close Button - on left-->
-                <Button Command="{Binding RemovePageObjectCommand}"
-                        Cursor="Hand"
-                        Width="40"
-                        Height="40"
-                        Canvas.Left="-40"
-                        Canvas.Top="-40">
-                    <Button.Template>
-                        <ControlTemplate TargetType="{x:Type Button}">
-                            <Grid>
-                                <Ellipse Stroke="Black"
-                                         StrokeThickness="3"
-                                         Fill="White"
-                                         VerticalAlignment="Stretch"
-                                         HorizontalAlignment="Stretch" />
-                                <Path Data="M0,0 L1,1 M0,1 L1,0"
-                                      Stretch="Fill"
-                                      Margin="5"
-                                      Stroke="Red"
-                                      StrokeThickness="3" />
-                            </Grid>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
+                           Height="{Binding Height, Converter={StaticResource LengthConverter}, ConverterParameter=10}" />
 
             </Canvas>
         </ac:AdornedControl.AdornerContent>

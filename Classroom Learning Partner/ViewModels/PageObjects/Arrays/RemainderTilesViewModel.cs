@@ -15,6 +15,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public RemainderTilesViewModel(RemainderTiles remainderTiles)
         {
             PageObject = remainderTiles;
+            _contextButtons.Clear();
         }
 
         #endregion //Constructor
