@@ -85,12 +85,12 @@ namespace CLP.Entities
         }
 
         /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
-        protected override void UndoAction(bool isAnimationUndo) { ToggleGrid(!IsToggledOn); }
+        protected override void UndoAction(bool isAnimationUndo) { ToggleGrid(true); }
 
         /// <summary>Method that will actually redo the action. Already incorporates error checking for existance of ParentPage.</summary>
-        protected override void RedoAction(bool isAnimationRedo) { ToggleGrid(IsToggledOn); }
+        protected override void RedoAction(bool isAnimationRedo) { ToggleGrid(false); }
 
-        private void ToggleGrid(bool isToggledOn)
+        private void ToggleGrid(bool isUndo)
         {
             var array = ParentPage.GetVerifiedPageObjectOnPageByID(ArrayID) as ACLPArrayBase;
             if (array == null)
@@ -99,7 +99,7 @@ namespace CLP.Entities
                 return;
             }
 
-            array.IsGridOn = isToggledOn;
+            array.IsGridOn = isUndo ? !IsToggledOn : IsToggledOn; // isToggledOn;
         }
 
         /// <summary>Method that prepares a clone of the <see cref="IHistoryItem" /> so that it can call Redo() when sent to another machine.</summary>

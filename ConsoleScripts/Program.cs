@@ -219,7 +219,8 @@ namespace ConsoleScripts
                     historyItemToUndo is CLPArrayDivisionValueChangedHistoryItem ||
                     historyItemToUndo is FFCArrayRemovedHistoryItem ||
                     historyItemToUndo is FFCArraySnappedInHistoryItem ||
-                    historyItemToUndo is RemainderTilesVisibilityToggledHistoryItem)
+                    historyItemToUndo is RemainderTilesVisibilityToggledHistoryItem ||
+                    historyItemToUndo is PartsValueChangedHistoryItem)
                 {
                     page.History.ConversionUndo(historyItemToUndo);
                     continue;
