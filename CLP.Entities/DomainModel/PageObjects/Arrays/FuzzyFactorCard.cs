@@ -411,6 +411,7 @@ namespace CLP.Entities
             base.OnDeleted(fromHistory);
 
             if (ParentPage != null &&
+                RemainderTiles != null &&
                 ParentPage.PageObjects.Contains(RemainderTiles))
             {
                 ParentPage.PageObjects.Remove(RemainderTiles);

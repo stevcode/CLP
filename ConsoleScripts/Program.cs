@@ -209,18 +209,23 @@ namespace ConsoleScripts
                     break;
                 }
 
-                #region AsIs
+                #region WorksAsIs
 
-                //AnimationIndicator
-                //PageObjectResize
                 if (historyItemToUndo is AnimationIndicator ||
-                    historyItemToUndo is PageObjectResizeBatchHistoryItem)
+                    historyItemToUndo is PageObjectResizeBatchHistoryItem ||
+                    historyItemToUndo is CLPArrayRotateHistoryItem ||
+                    historyItemToUndo is CLPArrayGridToggleHistoryItem ||
+                    historyItemToUndo is CLPArrayDivisionsChangedHistoryItem ||
+                    historyItemToUndo is CLPArrayDivisionValueChangedHistoryItem ||
+                    historyItemToUndo is FFCArrayRemovedHistoryItem ||
+                    historyItemToUndo is FFCArraySnappedInHistoryItem ||
+                    historyItemToUndo is RemainderTilesVisibilityToggledHistoryItem)
                 {
                     page.History.ConversionUndo(historyItemToUndo);
                     continue;
                 }
 
-                #endregion //AsIs
+                #endregion //WorksAsIs
 
                 #region ???PageObjectsAdded to ObjectsOnPageChanged
 
@@ -308,7 +313,6 @@ namespace ConsoleScripts
                 }
 
                 #endregion //PageObjectMove to ObjectssOnPageChanged
-
 
                 #region EndPointChangedHistoryItem Adjustments
 
