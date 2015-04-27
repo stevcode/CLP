@@ -290,36 +290,47 @@ namespace ConsoleScripts
 
                 #region EndPointChangedHistoryItem Adjustments
 
-                var endPointsChangedHistoryItem = historyItemToUndo as NumberLineEndPointsChangedHistoryItem;
-                var previousUndoHistoryItem = page.History.RedoItems.FirstOrDefault();
-                if (endPointsChangedHistoryItem != null &&
-                    previousUndoHistoryItem != null)
+                if (historyItemToUndo is NumberLineEndPointsChangedHistoryItem)
                 {
-                    var resizeBatchHistoryItem = previousUndoHistoryItem as PageObjectResizeBatchHistoryItem;
+                    var endPointsChangedHistoryItem = historyItemToUndo as NumberLineEndPointsChangedHistoryItem;
+                    var resizeBatchHistoryItem = page.History.RedoItems.FirstOrDefault() as PageObjectResizeBatchHistoryItem;
+             
                     if (resizeBatchHistoryItem != null)
                     {
                         var numberLine = page.GetVerifiedPageObjectOnPageByID(endPointsChangedHistoryItem.NumberLineID) as NumberLine;
                         if (numberLine == null)
                         {
-                            Console.WriteLine("ERROR: Number Line not on page in NumberLineEndPointsChangedHistoryItem on History Index {0}.",
-                                                  endPointsChangedHistoryItem.HistoryIndex);
+                            page.History.UndoItems.RemoveFirst();
                             continue;
                         }
 
-                        var previousWidth = resizeBatchHistoryItem.StretchedDimensions.First().X;
-                        var currentEndPoint = numberLine.NumberLineSize;
-                        var previousEndPoint = endPointsChangedHistoryItem.PreviousEndValue;
-
-                        var previousNumberLineWidth = previousWidth - (numberLine.ArrowLength * 2);
-                        var previousTickLength = previousNumberLineWidth / previousEndPoint;
-
-                        var preStretchedWidth = previousWidth + (previousTickLength * (currentEndPoint - previousEndPoint));
-                        if (Math.Abs(numberLine.Width - preStretchedWidth) < numberLine.TickLength / 2)
+                        var potentialNumberLineMatch = page.GetVerifiedPageObjectOnPageByID(resizeBatchHistoryItem.PageObjectID) as NumberLine;
+                        if (potentialNumberLineMatch == null)
                         {
-                            preStretchedWidth = numberLine.Width;
+                            page.History.ConversionUndo(historyItemToUndo);
+                            continue;
                         }
-                        endPointsChangedHistoryItem.PreStretchedWidth = preStretchedWidth;
+
+                        if (numberLine.ID == potentialNumberLineMatch.ID)
+                        {
+                            var previousWidth = resizeBatchHistoryItem.StretchedDimensions.First().X;
+                            var currentEndPoint = numberLine.NumberLineSize;
+                            var previousEndPoint = endPointsChangedHistoryItem.PreviousEndValue;
+
+                            var previousNumberLineWidth = previousWidth - (numberLine.ArrowLength * 2);
+                            var previousTickLength = previousNumberLineWidth / previousEndPoint;
+
+                            var preStretchedWidth = previousWidth + (previousTickLength * (currentEndPoint - previousEndPoint));
+                            if (Math.Abs(numberLine.Width - preStretchedWidth) < numberLine.TickLength / 2)
+                            {
+                                preStretchedWidth = numberLine.Width;
+                            }
+                            endPointsChangedHistoryItem.PreStretchedWidth = preStretchedWidth;
+                        }
                     }
+
+                    page.History.ConversionUndo(historyItemToUndo);
+                    continue;
                 }
 
                 #endregion //EndPointChangedHistoryItem Adjustments
@@ -445,8 +456,6 @@ namespace ConsoleScripts
                 }
 
                 #endregion //JumpSizeHistoryItem Conversion
-
-
             }
 
             while (page.History.RedoItems.Any())
