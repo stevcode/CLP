@@ -156,6 +156,11 @@ namespace CLP.Entities
 
         #region APageObjectBase Overrides
 
+        public override string FormattedName
+        {
+            get { return "Multiple Choice Box"; }
+        }
+
         public override int ZIndex
         {
             get { return 15; }

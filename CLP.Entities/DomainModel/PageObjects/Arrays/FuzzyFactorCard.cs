@@ -300,6 +300,11 @@ namespace CLP.Entities
 
         #region APageObjectBase Overrides
 
+        public override string FormattedName
+        {
+            get { return "Division Template"; }
+        }
+
         public override int ZIndex
         {
             get { return 40; }

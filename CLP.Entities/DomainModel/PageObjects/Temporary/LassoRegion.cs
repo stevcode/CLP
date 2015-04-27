@@ -68,6 +68,11 @@ namespace CLP.Entities
 
         #region APageObjectBase Overrides
 
+        public override string FormattedName
+        {
+            get { return "Lasso"; }
+        }
+
         public override int ZIndex
         {
             get { return 1000; }
