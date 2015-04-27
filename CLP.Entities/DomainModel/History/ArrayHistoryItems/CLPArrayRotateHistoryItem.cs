@@ -9,14 +9,10 @@ namespace CLP.Entities
     {
         #region Constructors
 
-        /// <summary>
-        /// Initializes <see cref="CLPArrayRotateHistoryItem" /> from scratch.
-        /// </summary>
+        /// <summary>Initializes <see cref="CLPArrayRotateHistoryItem" /> from scratch.</summary>
         public CLPArrayRotateHistoryItem() { }
 
-        /// <summary>
-        /// Initializes <see cref="CLPArrayRotateHistoryItem" /> with a parent <see cref="CLPPage" />.
-        /// </summary>
+        /// <summary>Initializes <see cref="CLPArrayRotateHistoryItem" /> with a parent <see cref="CLPPage" />.</summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryItem" /> is part of.</param>
         /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryItem" />.</param>
         public CLPArrayRotateHistoryItem(CLPPage parentPage, Person owner, string arrayID, double initialXPosition, double initialYPosition)
@@ -27,9 +23,7 @@ namespace CLP.Entities
             ArrayYCoord = initialYPosition;
         }
 
-        /// <summary>
-        /// Initializes a new object based on <see cref="SerializationInfo" />.
-        /// </summary>
+        /// <summary>Initializes a new object based on <see cref="SerializationInfo" />.</summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext" />.</param>
         protected CLPArrayRotateHistoryItem(SerializationInfo info, StreamingContext context)
@@ -44,68 +38,57 @@ namespace CLP.Entities
             get { return 600; }
         }
 
-        /// <summary>
-        /// Unique Identifier for the <see cref="ACLPArrayBase" /> this <see cref="IHistoryItem" /> modifies.
-        /// </summary>
+        /// <summary>Unique Identifier for the <see cref="ACLPArrayBase" /> this <see cref="IHistoryItem" /> modifies.</summary>
         public string ArrayID
         {
             get { return GetValue<string>(ArrayIDProperty); }
             set { SetValue(ArrayIDProperty, value); }
         }
 
-        public static readonly PropertyData ArrayIDProperty = RegisterProperty("ArrayID", typeof(string));
+        public static readonly PropertyData ArrayIDProperty = RegisterProperty("ArrayID", typeof (string));
 
-        /// <summary>
-        /// X coordinate to restore the array's position to.
-        /// </summary>
+        /// <summary>X coordinate to restore the array's position to.</summary>
         public double ArrayXCoord
         {
             get { return GetValue<double>(ArrayXCoordProperty); }
             set { SetValue(ArrayXCoordProperty, value); }
         }
 
-        public static readonly PropertyData ArrayXCoordProperty = RegisterProperty("ArrayXCoord", typeof(double));
+        public static readonly PropertyData ArrayXCoordProperty = RegisterProperty("ArrayXCoord", typeof (double));
 
-        /// <summary>
-        /// Y coordinate to restore the array's position to.
-        /// </summary>
+        /// <summary>Y coordinate to restore the array's position to.</summary>
         public double ArrayYCoord
         {
             get { return GetValue<double>(ArrayYCoordProperty); }
             set { SetValue(ArrayYCoordProperty, value); }
         }
 
-        public static readonly PropertyData ArrayYCoordProperty = RegisterProperty("ArrayYCoord", typeof(double));
+        public static readonly PropertyData ArrayYCoordProperty = RegisterProperty("ArrayYCoord", typeof (double));
 
         public override string FormattedValue
         {
             get
             {
                 var array = ParentPage.GetPageObjectByIDOnPageOrInHistory(ArrayID) as CLPArray;
-                var formattedValue = string.Format("Index # {0}, Rotated array({1} by {2}) to be {2} by {1}.",
-                    HistoryIndex, array.Rows, array.Columns);
+                var formattedValue = string.Format("Index # {0}, Rotated array({1} by {2}) to be {2} by {1}.", HistoryIndex, array.Rows, array.Columns);
                 return formattedValue;
             }
         }
-        
+
         #endregion //Properties
 
         #region Methods
 
-        /// <summary>
-        /// Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.
-        /// </summary>
+        /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void UndoAction(bool isAnimationUndo) { RotateArray(); }
 
-        /// <summary>
-        /// Method that will actually redo the action. Already incorporates error checking for existance of ParentPage.
-        /// </summary>
+        /// <summary>Method that will actually redo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void RedoAction(bool isAnimationRedo) { RotateArray(); }
 
         private void RotateArray()
         {
             var array = ParentPage.GetVerifiedPageObjectOnPageByID(ArrayID) as ACLPArrayBase;
-            if(array != null)
+            if (array != null)
             {
                 var tempX = array.XPosition;
                 var tempY = array.YPosition;
@@ -117,13 +100,11 @@ namespace CLP.Entities
             }
         }
 
-        /// <summary>
-        /// Method that prepares a clone of the <see cref="IHistoryItem" /> so that it can call Redo() when sent to another machine.
-        /// </summary>
+        /// <summary>Method that prepares a clone of the <see cref="IHistoryItem" /> so that it can call Redo() when sent to another machine.</summary>
         public override IHistoryItem CreatePackagedHistoryItem()
         {
             var clonedHistoryItem = Clone() as CLPArrayRotateHistoryItem;
-            if(clonedHistoryItem == null)
+            if (clonedHistoryItem == null)
             {
                 return null;
             }
@@ -135,9 +116,7 @@ namespace CLP.Entities
             return clonedHistoryItem;
         }
 
-        /// <summary>
-        /// Method that unpacks the <see cref="IHistoryItem" /> after it has been sent to another machine.
-        /// </summary>
+        /// <summary>Method that unpacks the <see cref="IHistoryItem" /> after it has been sent to another machine.</summary>
         public override void UnpackHistoryItem() { }
 
         #endregion //Methods
