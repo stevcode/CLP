@@ -386,7 +386,9 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                                              stroke
                                                                                                          },
                                                                                                          oldHeight,
-                                                                                                         oldYPosition));
+                                                                                                         oldYPosition,
+                                                                                                         numberLine.Height,
+                                                                                                         numberLine.YPosition));
                 }
                 else
                 {
@@ -434,7 +436,9 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                                          },
                                                                                                          new List<Stroke>(),
                                                                                                          oldHeight,
-                                                                                                         oldYPosition));
+                                                                                                         oldYPosition,
+                                                                                                         numberLine.Height,
+                                                                                                         numberLine.YPosition));
                 }
                 else
                 {
@@ -447,7 +451,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static void AddNumberLineToPage(CLPPage page)
         {
-            var keyPad = new NumberLineCreationView()
+            var keyPad = new NumberLineCreationView
                          {
                              Owner = Application.Current.MainWindow,
                              WindowStartupLocation = WindowStartupLocation.Manual

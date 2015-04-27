@@ -60,7 +60,7 @@ namespace CLP.Entities
             get
             {
                 var array = ParentPage.GetPageObjectByIDOnPageOrInHistory(ArrayID) as CLPArray;
-                var formattedValue = string.Format("Index # {0}, Toggled grid in array({1} by {2})", HistoryIndex, array.Rows, array.Columns);
+                var formattedValue = string.Format("Index #{0}, Toggled grid in array({1} by {2})", HistoryIndex, array.Rows, array.Columns);
                 return formattedValue;
             }
         }
