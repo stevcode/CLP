@@ -12,14 +12,10 @@ namespace CLP.Entities
     {
         #region Constructors
 
-        /// <summary>
-        /// Initializes <see cref="CLPArraySnapHistoryItem" /> from scratch.
-        /// </summary>
+        /// <summary>Initializes <see cref="CLPArraySnapHistoryItem" /> from scratch.</summary>
         public CLPArraySnapHistoryItem() { }
 
-        /// <summary>
-        /// Initializes <see cref="CLPArraySnapHistoryItem" /> with a parent <see cref="CLPPage" />.
-        /// </summary>
+        /// <summary>Initializes <see cref="CLPArraySnapHistoryItem" /> with a parent <see cref="CLPPage" />.</summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryItem" /> is part of.</param>
         /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryItem" />.</param>
         public CLPArraySnapHistoryItem(CLPPage parentPage, Person owner, ACLPArrayBase persistingArray, ACLPArrayBase snappedArray, bool isHorizontal)
@@ -27,8 +23,8 @@ namespace CLP.Entities
         {
             IsHorizontal = isHorizontal;
             SnappedArrayID = snappedArray.ID;
-            SnappedArraySquareSize = snappedArray.ArrayWidth / snappedArray.Columns;
-            ParentPage.History.TrashedPageObjects.Add(snappedArray);
+            SnappedArraySquareSize = snappedArray.GridSquareSize;
+            parentPage.History.TrashedPageObjects.Add(snappedArray);
 
             PersistingArrayID = persistingArray.ID;
             PersistingArrayDivisionBehavior = persistingArray.IsDivisionBehaviorOn;
@@ -38,9 +34,7 @@ namespace CLP.Entities
             PersistingArrayXOrYPosition = isHorizontal ? persistingArray.YPosition : persistingArray.XPosition;
         }
 
-        /// <summary>
-        /// Initializes a new object based on <see cref="SerializationInfo" />.
-        /// </summary>
+        /// <summary>Initializes a new object based on <see cref="SerializationInfo" />.</summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext" />.</param>
         protected CLPArraySnapHistoryItem(SerializationInfo info, StreamingContext context)
@@ -55,150 +49,141 @@ namespace CLP.Entities
             get { return 600; }
         }
 
-        /// <summary>
-        /// True if the arrays snap together along a horizontal edge, false if along a vertical one
-        /// </summary>
+        /// <summary>True if the arrays snap together along a horizontal edge, false if along a vertical one</summary>
         public bool IsHorizontal
         {
             get { return GetValue<bool>(IsHorizontalProperty); }
             set { SetValue(IsHorizontalProperty, value); }
         }
 
-        public static readonly PropertyData IsHorizontalProperty = RegisterProperty("IsHorizontal", typeof(bool));
+        public static readonly PropertyData IsHorizontalProperty = RegisterProperty("IsHorizontal", typeof (bool));
 
-        /// <summary>
-        /// UniqueID of the array that is snapped onto and then deleted.
-        /// </summary>
+        /// <summary>UniqueID of the array that is snapped onto and then deleted.</summary>
         public string SnappedArrayID
         {
             get { return GetValue<string>(SnappedArrayIDProperty); }
             set { SetValue(SnappedArrayIDProperty, value); }
         }
 
-        public static readonly PropertyData SnappedArrayIDProperty = RegisterProperty("SnappedArrayID", typeof(string), string.Empty);
+        public static readonly PropertyData SnappedArrayIDProperty = RegisterProperty("SnappedArrayID", typeof (string), string.Empty);
 
-        /// <summary>
-        /// Original square size of the array that is snapped onto and then deleted.
-        /// </summary>
+        /// <summary>Original GridSquareSize of the array that is snapped onto and then deleted.</summary>
         public double SnappedArraySquareSize
         {
             get { return GetValue<double>(SnappedArraySquareSizeProperty); }
             set { SetValue(SnappedArraySquareSizeProperty, value); }
         }
 
-        public static readonly PropertyData SnappedArraySquareSizeProperty = RegisterProperty("SnappedArraySquareSize", typeof(double));
+        public static readonly PropertyData SnappedArraySquareSizeProperty = RegisterProperty("SnappedArraySquareSize", typeof (double));
 
-        /// <summary>
-        /// UniqueID of the array that snaps on and continues to exist.
-        /// </summary>
+        /// <summary>UniqueID of the array that snaps on and continues to exist.</summary>
         public string PersistingArrayID
         {
             get { return GetValue<string>(PersistingArrayIDProperty); }
             set { SetValue(PersistingArrayIDProperty, value); }
         }
 
-        public static readonly PropertyData PersistingArrayIDProperty = RegisterProperty("PersistingArrayID", typeof(string), string.Empty);
+        public static readonly PropertyData PersistingArrayIDProperty = RegisterProperty("PersistingArrayID", typeof (string), string.Empty);
 
-        /// <summary>
-        /// Horizontal divisions that the persisting array should be set to have when this
-        /// history event fires (undoes or redoes, whichever comes next).
-        /// </summary>
+        /// <summary>Horizontal divisions that the persisting array should be set to have when this history event fires (undoes or redoes, whichever comes next).</summary>
         public List<CLPArrayDivision> PersistingArrayHorizontalDivisions
         {
             get { return GetValue<List<CLPArrayDivision>>(PersistingArrayHorizontalDivisionsProperty); }
             set { SetValue(PersistingArrayHorizontalDivisionsProperty, value); }
         }
 
-        public static readonly PropertyData PersistingArrayHorizontalDivisionsProperty = RegisterProperty("PersistingArrayHorizontalDivisions", typeof(List<CLPArrayDivision>));
+        public static readonly PropertyData PersistingArrayHorizontalDivisionsProperty = RegisterProperty("PersistingArrayHorizontalDivisions", typeof (List<CLPArrayDivision>));
 
-        /// <summary>
-        /// Vertical divisions that the persisting array should be set to have when this
-        /// history event fires (undoes or redoes, whichever comes next).
-        /// </summary>
+        /// <summary>Vertical divisions that the persisting array should be set to have when this history event fires (undoes or redoes, whichever comes next).</summary>
         public List<CLPArrayDivision> PersistingArrayVerticalDivisions
         {
             get { return GetValue<List<CLPArrayDivision>>(PersistingArrayVerticalDivisionsProperty); }
             set { SetValue(PersistingArrayVerticalDivisionsProperty, value); }
         }
 
-        public static readonly PropertyData PersistingArrayVerticalDivisionsProperty = RegisterProperty("PersistingArrayVerticalDivisions", typeof(List<CLPArrayDivision>));
+        public static readonly PropertyData PersistingArrayVerticalDivisionsProperty = RegisterProperty("PersistingArrayVerticalDivisions", typeof (List<CLPArrayDivision>));
 
-        /// <summary>
-        /// Value of IsDivisionBehaviorOn prior to the history event (which sets it true)
-        /// </summary>
+        /// <summary>Value of IsDivisionBehaviorOn prior to the history event (which sets it true)</summary>
         public bool PersistingArrayDivisionBehavior
         {
             get { return GetValue<bool>(PersistingArrayDivisionBehaviorProperty); }
             set { SetValue(PersistingArrayDivisionBehaviorProperty, value); }
         }
 
-        public static readonly PropertyData PersistingArrayDivisionBehaviorProperty = RegisterProperty("PersistingArrayDivisionBehavior", typeof(bool));
+        public static readonly PropertyData PersistingArrayDivisionBehaviorProperty = RegisterProperty("PersistingArrayDivisionBehavior", typeof (bool));
 
-        /// <summary>
-        /// Rows or columns that the persisting array should be set to have when this history event fires (undoes or
-        /// redoes, whichever comes next).
-        /// </summary>
+        /// <summary>Rows or columns that the persisting array should be set to have when this history event fires (undoes or redoes, whichever comes next).</summary>
         public int PersistingArrayRowsOrColumns
         {
             get { return GetValue<int>(PersistingArrayRowsOrColumnsProperty); }
             set { SetValue(PersistingArrayRowsOrColumnsProperty, value); }
         }
 
-        public static readonly PropertyData PersistingArrayRowsOrColumnsProperty = RegisterProperty("PersistingArrayRowsOrColumns", typeof(int));
+        public static readonly PropertyData PersistingArrayRowsOrColumnsProperty = RegisterProperty("PersistingArrayRowsOrColumns", typeof (int));
 
-        /// <summary>
-        /// Rows or columns that the persisting array should be set to have when this history event fires (undoes
-        /// or redoes, whichever comes next).
-        /// </summary>
+        /// <summary>Rows or columns that the persisting array should be set to have when this history event fires (undoes or redoes, whichever comes next).</summary>
         public double PersistingArrayXOrYPosition
         {
             get { return GetValue<double>(PersistingArrayXOrYPositionProperty); }
             set { SetValue(PersistingArrayXOrYPositionProperty, value); }
         }
 
-        public static readonly PropertyData PersistingArrayXOrYPositionProperty = RegisterProperty("PersistingArrayXOrYPosition", typeof(double));
+        public static readonly PropertyData PersistingArrayXOrYPositionProperty = RegisterProperty("PersistingArrayXOrYPosition", typeof (double));
 
         public override string FormattedValue
         {
             get
             {
                 var persistingArray = ParentPage.GetPageObjectByIDOnPageOrInHistory(PersistingArrayID) as CLPArray;
-                var snappedArray = ParentPage.GetPageObjectByIDOnPageOrInHistory(SnappedArrayID) as CLPArray;
+                if (persistingArray == null)
+                {
+                    return string.Format("[ERROR] on Index #{0}, Persisting Array not found on page or in history.", HistoryIndex);
+                }
 
-                var direction = "vertically";
+                var snappedArray = ParentPage.GetPageObjectByIDOnPageOrInHistory(SnappedArrayID) as CLPArray;
+                if (snappedArray == null)
+                {
+                    return string.Format("[ERROR] on Index #{0}, Snapped Array not found on page or in history.", HistoryIndex);
+                }
+
+                var direction = IsHorizontal ? "horizontally" : "vertically";
                 var persistingArrayRows = persistingArray.Rows - snappedArray.Rows;
                 var persistingArrayColumns = snappedArray.Columns;
-                if(!IsHorizontal)
+                if (!IsHorizontal)
                 {
                     direction = "horizontally";
                     persistingArrayRows = persistingArray.Rows;
                     persistingArrayColumns = persistingArray.Columns - snappedArray.Columns;
                 }
-                var formattedValue = string.Format("Index # {0}, Snapped array({1} by {2}) {3} onto array({4} by {5}), to create {6} by {7} array", 
-                    HistoryIndex, snappedArray.Rows, snappedArray.Columns, direction, 
-                    persistingArrayRows, persistingArrayColumns, persistingArray.Rows, persistingArray.Columns);
 
-                return formattedValue;
+                return string.Format("Index # {0}, Snapped array({1} by {2}) {3} onto array({4} by {5}), to create {6} by {7} array",
+                                                   HistoryIndex,
+                                                   snappedArray.Rows,
+                                                   snappedArray.Columns,
+                                                   direction,
+                                                   persistingArrayRows,
+                                                   persistingArrayColumns,
+                                                   persistingArray.Rows,
+                                                   persistingArray.Columns);
+
             }
         }
-        
+
         #endregion //Properties
 
         #region Methods
 
-        /// <summary>
-        /// Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.
-        /// </summary>
+        /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void UndoAction(bool isAnimationUndo)
         {
             var persistingArray = ParentPage.GetVerifiedPageObjectOnPageByID(PersistingArrayID) as CLPArray;
-            if(persistingArray == null)
+            if (persistingArray == null)
             {
                 return;
             }
 
             var snappedArray = ParentPage.GetVerifiedPageObjectInTrashByID(SnappedArrayID) as CLPArray;
-            if(snappedArray == null)
+            if (snappedArray == null)
             {
                 return;
             }
@@ -208,37 +193,40 @@ namespace CLP.Entities
             ParentPage.PageObjects.Add(snappedArray);
             ParentPage.History.TrashedPageObjects.Remove(snappedArray);
 
-            var persistingArraySquareSize = persistingArray.ArrayWidth / persistingArray.Columns;
+            var persistingArrayGridSquareSize = persistingArray.GridSquareSize;
 
             RestoreDivisions(persistingArray);
             RestoreDimensionsAndPosition(persistingArray);
 
             persistingArray.IsDivisionBehaviorOn = PersistingArrayDivisionBehavior;
-            persistingArray.SizeArrayToGridLevel(persistingArraySquareSize, false);
+            persistingArray.SizeArrayToGridLevel(persistingArrayGridSquareSize, false);
         }
 
-        /// <summary>
-        /// Method that will actually redo the action. Already incorporates error checking for existance of ParentPage.
-        /// </summary>
+        /// <summary>Method that will actually redo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void RedoAction(bool isAnimationRedo)
         {
-            var snappedArray = ParentPage.GetVerifiedPageObjectOnPageByID(SnappedArrayID) as CLPArray;
             var persistingArray = ParentPage.GetVerifiedPageObjectOnPageByID(PersistingArrayID) as CLPArray;
-            if(snappedArray == null ||
-               persistingArray == null)
+            if (persistingArray == null)
+            {
+                return;
+            }
+
+            var snappedArray = ParentPage.GetVerifiedPageObjectOnPageByID(SnappedArrayID) as CLPArray;
+            if (snappedArray == null)
             {
                 return;
             }
 
             ParentPage.History.TrashedPageObjects.Add(snappedArray);
             ParentPage.PageObjects.Remove(snappedArray);
-            var persistingArraySquareSize = persistingArray.ArrayWidth / persistingArray.Columns;
+
+            var persistingArrayGridSquareSize = persistingArray.GridSquareSize;
 
             RestoreDivisions(persistingArray);
             RestoreDimensionsAndPosition(persistingArray);
 
             persistingArray.IsDivisionBehaviorOn = true;
-            persistingArray.SizeArrayToGridLevel(persistingArraySquareSize, false);
+            persistingArray.SizeArrayToGridLevel(persistingArrayGridSquareSize, false);
         }
 
         private void RestoreDivisions(CLPArray persistingArray)
@@ -254,7 +242,7 @@ namespace CLP.Entities
 
         private void RestoreDimensionsAndPosition(CLPArray persistingArray)
         {
-            if(IsHorizontal)
+            if (IsHorizontal)
             {
                 var tempRows = persistingArray.Rows;
                 persistingArray.Rows = PersistingArrayRowsOrColumns;
@@ -276,15 +264,13 @@ namespace CLP.Entities
             }
         }
 
-        /// <summary>
-        /// Method that prepares a clone of the <see cref="IHistoryItem" /> so that it can call Redo() when sent to another machine.
-        /// </summary>
+        /// <summary>Method that prepares a clone of the <see cref="IHistoryItem" /> so that it can call Redo() when sent to another machine.</summary>
         public override IHistoryItem CreatePackagedHistoryItem()
         {
             var clonedHistoryItem = Clone() as CLPArraySnapHistoryItem;
             var persistingArray = ParentPage.GetVerifiedPageObjectOnPageByID(PersistingArrayID) as CLPArray;
-            if(clonedHistoryItem == null ||
-               persistingArray == null)
+            if (clonedHistoryItem == null ||
+                persistingArray == null)
             {
                 return null;
             }
@@ -292,7 +278,7 @@ namespace CLP.Entities
             clonedHistoryItem.PersistingArrayHorizontalDivisions = persistingArray.HorizontalDivisions.ToList();
             clonedHistoryItem.PersistingArrayVerticalDivisions = persistingArray.VerticalDivisions.ToList();
 
-            if(IsHorizontal)
+            if (IsHorizontal)
             {
                 clonedHistoryItem.PersistingArrayRowsOrColumns = persistingArray.Rows;
                 clonedHistoryItem.PersistingArrayXOrYPosition = persistingArray.YPosition;
@@ -306,9 +292,7 @@ namespace CLP.Entities
             return clonedHistoryItem;
         }
 
-        /// <summary>
-        /// Method that unpacks the <see cref="IHistoryItem" /> after it has been sent to another machine.
-        /// </summary>
+        /// <summary>Method that unpacks the <see cref="IHistoryItem" /> after it has been sent to another machine.</summary>
         public override void UnpackHistoryItem() { }
 
         public override bool IsUsingTrashedPageObject(string id, bool isUndoItem) { return isUndoItem && SnappedArrayID == id; }
