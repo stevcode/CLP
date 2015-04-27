@@ -44,9 +44,9 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             var toggleRemainderTilesButton = new ToggleRibbonButton("Show Remainder Tiles", "Hide RemainderTiles", "pack://application:,,,/Resources/Images/ArrayCard32.png", true)
-            {
-                IsChecked = PageObject is FuzzyFactorCard && ((FuzzyFactorCard)PageObject).CanShowRemainderTiles
-            };
+                                             {
+                                                 IsChecked = PageObject is FuzzyFactorCard && ((FuzzyFactorCard)PageObject).CanShowRemainderTiles
+                                             };
             toggleRemainderTilesButton.Checked += toggleRemainderTilesButton_Checked;
             toggleRemainderTilesButton.Unchecked += toggleRemainderTilesButton_Checked;
             _contextButtons.Add(toggleRemainderTilesButton);
@@ -85,12 +85,22 @@ namespace Classroom_Learning_Partner.ViewModels
                 if (!page.PageObjects.Contains(divisionTemplate.RemainderTiles))
                 {
                     page.PageObjects.Add(divisionTemplate.RemainderTiles);
+                    ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
+                                                               new RemainderTilesVisibilityToggledHistoryItem(PageObject.ParentPage,
+                                                                                                              App.MainWindowViewModel.CurrentUser,
+                                                                                                              divisionTemplate.ID,
+                                                                                                              true));
                 }
             }
             else if (divisionTemplate.RemainderTiles != null &&
                      page.PageObjects.Contains(divisionTemplate.RemainderTiles))
             {
                 page.PageObjects.Remove(divisionTemplate.RemainderTiles);
+                ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
+                                                           new RemainderTilesVisibilityToggledHistoryItem(PageObject.ParentPage,
+                                                                                                          App.MainWindowViewModel.CurrentUser,
+                                                                                                          divisionTemplate.ID,
+                                                                                                          false));
             }
 
             divisionTemplate.UpdateReport();
