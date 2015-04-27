@@ -117,7 +117,7 @@ namespace CLP.Entities
                 var cutPageObject = ParentPage.GetPageObjectByIDOnPageOrInHistory(CutPageObjectID);
                 return cutPageObject == null
                            ? string.Format("[ERROR] on Index #{0}, Cut PageObject not found on page or in history.", HistoryIndex)
-                           : string.Format("Index # {0}, Cut {1}.", HistoryIndex, cutPageObject.FormattedName);
+                           : string.Format("Index #{0}, Cut {1}.", HistoryIndex, cutPageObject.FormattedName);
             }
         }
 

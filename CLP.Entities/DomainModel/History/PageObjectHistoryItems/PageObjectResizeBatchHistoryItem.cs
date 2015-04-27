@@ -12,14 +12,10 @@ namespace CLP.Entities
     {
         #region Constructors
 
-        /// <summary>
-        /// Initializes <see cref="PageObjectResizeBatchHistoryItem" /> from scratch.
-        /// </summary>
+        /// <summary>Initializes <see cref="PageObjectResizeBatchHistoryItem" /> from scratch.</summary>
         public PageObjectResizeBatchHistoryItem() { }
 
-        /// <summary>
-        /// Initializes <see cref="PageObjectResizeBatchHistoryItem" /> with a parent <see cref="CLPPage" />.
-        /// </summary>
+        /// <summary>Initializes <see cref="PageObjectResizeBatchHistoryItem" /> with a parent <see cref="CLPPage" />.</summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryItem" /> is part of.</param>
         /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryItem" />.</param>
         public PageObjectResizeBatchHistoryItem(CLPPage parentPage, Person owner, string pageObjectID, Point currentDimensions)
@@ -32,9 +28,7 @@ namespace CLP.Entities
                                   };
         }
 
-        /// <summary>
-        /// Initializes a new object based on <see cref="SerializationInfo" />.
-        /// </summary>
+        /// <summary>Initializes a new object based on <see cref="SerializationInfo" />.</summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext" />.</param>
         protected PageObjectResizeBatchHistoryItem(SerializationInfo info, StreamingContext context)
@@ -44,64 +38,80 @@ namespace CLP.Entities
 
         #region Properties
 
-        /// <summary>
-        /// The ID of the <see cref="IPageObject" /> that was moved.
-        /// </summary>
+        /// <summary>The ID of the <see cref="IPageObject" /> that was moved.</summary>
         public string PageObjectID
         {
             get { return GetValue<string>(PageObjectIDProperty); }
             set { SetValue(PageObjectIDProperty, value); }
         }
 
-        public static readonly PropertyData PageObjectIDProperty = RegisterProperty("PageObjectID", typeof(string), string.Empty);
+        public static readonly PropertyData PageObjectIDProperty = RegisterProperty("PageObjectID", typeof (string), string.Empty);
 
-        /// <summary>
-        /// Each point in the collection represents a change in dimensions during a single resize.
-        /// </summary>
+        /// <summary>Each point in the collection represents a change in dimensions during a single resize.</summary>
         public List<Point> StretchedDimensions
         {
             get { return GetValue<List<Point>>(StretchedDimensionsProperty); }
             set { SetValue(StretchedDimensionsProperty, value); }
         }
 
-        public static readonly PropertyData StretchedDimensionsProperty = RegisterProperty("StretchedDimensions", typeof(List<Point>));
+        public static readonly PropertyData StretchedDimensionsProperty = RegisterProperty("StretchedDimensions", typeof (List<Point>));
 
         public int NumberOfBatchTicks
         {
             get { return StretchedDimensions.Count - 1; }
         }
 
-        /// <summary>
-        /// Location within the Batch.
-        /// </summary>
+        /// <summary>Location within the Batch.</summary>
         public int CurrentBatchTickIndex
         {
             get { return GetValue<int>(CurrentBatchTickIndexProperty); }
             set { SetValue(CurrentBatchTickIndexProperty, value); }
         }
 
-        public static readonly PropertyData CurrentBatchTickIndexProperty = RegisterProperty("CurrentBatchTickIndex", typeof(int), 0);
+        public static readonly PropertyData CurrentBatchTickIndexProperty = RegisterProperty("CurrentBatchTickIndex", typeof (int), 0);
 
         public override string FormattedValue
         {
             get
             {
-
                 var pageObject = ParentPage.GetPageObjectByIDOnPageOrInHistory(PageObjectID);
-                var objectName = pageObject.GetType().Name;
-                
-                var formattedValue = string.Format("Index # {0}, Resized {1} on page.", HistoryIndex, objectName);
+
+                var formattedValue = string.Format("Index #{0}, Resized {1}. Changed width by {2} and height by {3}",
+                                                   HistoryIndex,
+                                                   pageObject.FormattedName,
+                                                   FinalWidth - InitialWidth,
+                                                   FinalHeight - InitialHeight);
                 return formattedValue;
             }
         }
-        
+
+        public double InitialWidth
+        {
+            get { return StretchedDimensions.First().X; }
+        }
+
+        public double InitialHeight
+        {
+            get { return StretchedDimensions.First().Y; }
+        }
+
+        public double FinalWidth
+        {
+            get { return StretchedDimensions.Last().X; }
+        }
+
+        public double FinalHeight
+        {
+            get { return StretchedDimensions.Last().Y; }
+        }
+
         #endregion //Properties
 
         #region Methods
 
         public void AddResizePointToBatch(string uniqueID, Point currentDimensions)
         {
-            if(PageObjectID != uniqueID)
+            if (PageObjectID != uniqueID)
             {
                 return;
             }
@@ -109,105 +119,119 @@ namespace CLP.Entities
             StretchedDimensions.Add(currentDimensions);
         }
 
-        /// <summary>
-        /// Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.
-        /// </summary>
+        /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void UndoAction(bool isAnimationUndo)
         {
-            if(CurrentBatchTickIndex < 0)
+            if (CurrentBatchTickIndex < 0)
             {
                 return;
             }
-            if(CurrentBatchTickIndex > NumberOfBatchTicks)
+
+            if (CurrentBatchTickIndex > NumberOfBatchTicks)
             {
                 CurrentBatchTickIndex = NumberOfBatchTicks;
             }
 
-            var pageObject = ParentPage.GetPageObjectByID(PageObjectID);
-            if(pageObject == null)
+            var pageObject = ParentPage.GetVerifiedPageObjectOnPageByID(PageObjectID);
+            if (pageObject == null)
             {
-                CurrentBatchTickIndex--;
+                Console.WriteLine("[ERROR] on Index #{0}, Resized PageObject not found on page or in history.", HistoryIndex);
+                CurrentBatchTickIndex = -1;
+                return;
+            }
+
+            if (!StretchedDimensions.Any())
+            {
+                Console.WriteLine("[ERROR] on Index #{0}, Resized PageObject has no Streched Dimensions", HistoryIndex);
+                CurrentBatchTickIndex = -1;
                 return;
             }
 
             var initialWidth = pageObject.Width;
             var initialHeight = pageObject.Height;
 
-            if(isAnimationUndo && CurrentBatchTickIndex > 0)
+            if (isAnimationUndo && CurrentBatchTickIndex > 0)
             {
                 var stretchedDimension = StretchedDimensions[CurrentBatchTickIndex - 1];
                 pageObject.Width = stretchedDimension.X;
                 pageObject.Height = stretchedDimension.Y;
                 CurrentBatchTickIndex--;
             }
-            else if(StretchedDimensions.Any())
+            else
             {
                 var originalDimension = StretchedDimensions.First();
                 pageObject.Width = originalDimension.X;
                 pageObject.Height = originalDimension.Y;
                 CurrentBatchTickIndex = -1;
             }
+
             pageObject.OnResized(initialWidth, initialHeight);
         }
 
-        /// <summary>
-        /// Method that will actually redo the action. Already incorporates error checking for existance of ParentPage.
-        /// </summary>
+        /// <summary>Method that will actually redo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void RedoAction(bool isAnimationRedo)
         {
-            if(CurrentBatchTickIndex > NumberOfBatchTicks)
+            if (CurrentBatchTickIndex > NumberOfBatchTicks)
             {
                 return;
             }
-            if(CurrentBatchTickIndex < 0)
+
+            if (CurrentBatchTickIndex < 0)
             {
                 CurrentBatchTickIndex = 0;
             }
 
-            var pageObject = ParentPage.GetPageObjectByID(PageObjectID);
-            if(pageObject == null)
+            var pageObject = ParentPage.GetVerifiedPageObjectOnPageByID(PageObjectID);
+            if (pageObject == null)
             {
-                CurrentBatchTickIndex++;
+                Console.WriteLine("[ERROR] on Index #{0}, Resized PageObject not found on page or in history.", HistoryIndex);
+                CurrentBatchTickIndex = NumberOfBatchTicks + 1;
+                return;
+            }
+
+            if (!StretchedDimensions.Any())
+            {
+                Console.WriteLine("[ERROR] on Index #{0}, Resized PageObject has no Streched Dimensions", HistoryIndex);
+                CurrentBatchTickIndex = NumberOfBatchTicks + 1;
                 return;
             }
 
             var initialWidth = pageObject.Width;
             var initialHeight = pageObject.Height;
 
-            if(isAnimationRedo)
+            if (isAnimationRedo)
             {
                 var stretchedDimension = StretchedDimensions[CurrentBatchTickIndex];
                 pageObject.Width = stretchedDimension.X;
                 pageObject.Height = stretchedDimension.Y;
                 CurrentBatchTickIndex++;
             }
-            else if(StretchedDimensions.Any())
+            else
             {
                 var lastDimensions = StretchedDimensions.Last();
                 pageObject.Width = lastDimensions.X;
                 pageObject.Height = lastDimensions.Y;
                 CurrentBatchTickIndex = NumberOfBatchTicks + 1;
             }
+
             pageObject.OnResized(initialWidth, initialHeight);
         }
 
         public void ClearBatchAfterCurrentIndex()
         {
             var newBatch = new List<Point>();
-            for(var i = 0; i < CurrentBatchTickIndex + 1; i++)
+            for (var i = 0; i < CurrentBatchTickIndex + 1; i++)
             {
                 newBatch.Add(StretchedDimensions[i]);
             }
             StretchedDimensions = newBatch;
         }
 
-        /// <summary>
-        /// Method that prepares a clone of the <see cref="IHistoryItem" /> so that it can call Redo() when sent to another machine.
-        /// </summary>
+        /// <summary>Method that prepares a clone of the <see cref="IHistoryItem" /> so that it can call Redo() when sent to another machine.</summary>
         public override IHistoryItem CreatePackagedHistoryItem()
         {
             var clonedHistoryItem = Clone() as PageObjectResizeBatchHistoryItem;
-            if(clonedHistoryItem == null)
+            if (clonedHistoryItem == null)
             {
                 return null;
             }
@@ -217,9 +241,7 @@ namespace CLP.Entities
             return clonedHistoryItem;
         }
 
-        /// <summary>
-        /// Method that unpacks the <see cref="IHistoryItem" /> after it has been sent to another machine.
-        /// </summary>
+        /// <summary>Method that unpacks the <see cref="IHistoryItem" /> after it has been sent to another machine.</summary>
         public override void UnpackHistoryItem() { }
 
         #endregion //Methods
