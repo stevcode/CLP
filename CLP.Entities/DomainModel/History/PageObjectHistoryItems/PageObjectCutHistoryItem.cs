@@ -165,7 +165,7 @@ namespace CLP.Entities
         /// <summary>Method that will actually redo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void RedoAction(bool isAnimationRedo)
         {
-            if (!CutPageObjectIDs.Any())
+            if (string.IsNullOrEmpty(CutPageObjectID))
             {
                 return;
             }
