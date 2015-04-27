@@ -7,9 +7,10 @@ using Catel.Data;
 namespace CLP.Entities
 {
     [Serializable]
-    public class FuzzyFactorCard : ACLPArrayBase
+    public class FuzzyFactorCard : ACLPArrayBase, IReporter
     {
         private const double MIN_ARRAY_LENGTH = 185.0;
+        public const int MAX_NUMBER_OF_REMAINDER_TILES = 50;
 
         #region Constructors
 
@@ -21,19 +22,19 @@ namespace CLP.Entities
         /// <param name="columns">The number of columns in the <see cref="FuzzyFactorCard" />.</param>
         /// <param name="rows">The number of rows in the <see cref="FuzzyFactorCard" />.</param>
         /// <param name="dividend">The total number the <see cref="FuzzyFactorCard" /> represents.</param>
-        /// <param name="isRemainderRegionDisplayed">Signifies the <see cref="FuzzyFactorCard" /> is using a <see cref="RemainderRegion" />.</param>
-        public FuzzyFactorCard(CLPPage parentPage, int columns, int rows, int dividend, bool isRemainderRegionDisplayed = false)
+        /// <param name="isRemainderTilesVisible">Signifies the <see cref="FuzzyFactorCard" /> is using a <see cref="RemainderRegion" />.</param>
+        public FuzzyFactorCard(CLPPage parentPage, int columns, int rows, int dividend, bool isRemainderTilesVisible = false)
             : base(parentPage, columns, rows)
         {
             Dividend = dividend;
             IsSnappable = true;
-            if (!isRemainderRegionDisplayed)
+            IsRemainderTilesVisible = isRemainderTilesVisible;
+            if (!CanShowRemainderTiles)
             {
                 return;
             }
-            RemainderTiles = new RemainderTiles(parentPage, this);
-            parentPage.PageObjects.Add(RemainderTiles);
-            UpdateRemainderRegion();
+
+            InitializeRemainderTiles();
         }
 
         public FuzzyFactorCard(CLPPage parentPage, double gridSquareSize, int columns, int rows, int dividend, bool isRemainderRegionDisplayed = false)
@@ -49,67 +50,55 @@ namespace CLP.Entities
         public FuzzyFactorCard(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
+        public void InitializeRemainderTiles()
+        {
+            if (RemainderTiles == null)
+            {
+                RemainderTiles = new RemainderTiles(ParentPage, this);
+            }
+
+            RemainderTiles.YPosition = YPosition;
+            RemainderTiles.XPosition = XPosition + Width;
+
+            if (RemainderTiles.YPosition + RemainderTiles.Height >= ParentPage.Height)
+            {
+                RemainderTiles.YPosition = ParentPage.Height - RemainderTiles.Height;
+            }
+
+            if (RemainderTiles.XPosition + RemainderTiles.Width >= ParentPage.Width)
+            {
+                RemainderTiles.XPosition = XPosition - RemainderTiles.Width;
+            }
+
+            if (RemainderTiles.XPosition < 0)
+            {
+                RemainderTiles.XPosition = 0;
+            }
+        }
+
         #endregion //Constructors
 
         #region Properties
-
-        public override double LabelLength
-        {
-            get { return DT_LABEL_LENGTH; }
-        }
-
-        public double LargeLabelLength
-        {
-            get { return DT_LARGE_LABEL_LENGTH; }
-        }
-
-        public override double ArrayWidth
-        {
-            get { return Width - (LargeLabelLength + LabelLength); }
-        }
-
-        public override double ArrayHeight
-        {
-            get { return Height - (2 * LabelLength); }
-        }
-
-        public override double GridSquareSize
-        {
-            get { return ArrayWidth / Columns; }
-        }
-
-        public override double MinimumGridSquareSize
-        {
-            get { return Columns < Rows ? MIN_ARRAY_LENGTH / Columns : MIN_ARRAY_LENGTH / Rows; }
-        }
-
-        public int GroupsSubtracted
-        {
-            get { return VerticalDivisions.Sum(division => division.Value); }
-        }
-
-        public int CurrentRemainder
-        {
-            get { return Dividend - GroupsSubtracted * Rows; }
-        }
-
-        public double LastDivisionPosition
-        {
-            get { return VerticalDivisions.Any() ? VerticalDivisions.Last().Position : 0.0; }
-        }
 
         /// <summary>The total number the <see cref="FuzzyFactorCard" /> represents.</summary>
         public int Dividend
         {
             get { return GetValue<int>(DividendProperty); }
-            set
-            {
-                SetValue(DividendProperty, value);
-                RaisePropertyChanged("CurrentRemainder");
-            }
+            set { SetValue(DividendProperty, value); }
         }
 
         public static readonly PropertyData DividendProperty = RegisterProperty("Dividend", typeof (int), 1);
+
+        /// <summary>
+        /// Toggles visibility of associated <see cref="RemainderTiles" />.
+        /// </summary>
+        public bool IsRemainderTilesVisible
+        {
+            get { return GetValue<bool>(IsRemainderTilesVisibleProperty); }
+            set { SetValue(IsRemainderTilesVisibleProperty, value); }
+        }
+
+        public static readonly PropertyData IsRemainderTilesVisibleProperty = RegisterProperty("IsRemainderTilesVisible", typeof (bool), false);
 
         #region Navigation Properties
 
@@ -168,9 +157,116 @@ namespace CLP.Entities
 
         #endregion //Navigation Properties
 
+        #region Calculated Properties
+
+        public double LargeLabelLength
+        {
+            get { return DT_LARGE_LABEL_LENGTH; }
+        }
+
+        public int GroupsSubtracted
+        {
+            get { return VerticalDivisions.Sum(division => division.Value); }
+        }
+
+        public int CurrentRemainder
+        {
+            get { return Dividend - GroupsSubtracted * Rows; }
+        }
+
+        public double LastDivisionPosition
+        {
+            get { return VerticalDivisions.Any() ? VerticalDivisions.Last().Position : 0.0; }
+        }
+
+        public bool CanShowRemainderTiles
+        {
+            get { return IsRemainderTilesVisible && Dividend <= MAX_NUMBER_OF_REMAINDER_TILES; }
+        }
+
+        #endregion //Calculated Properties
+
         #endregion //Properties
 
         #region Methods
+
+        public void SnapInArray(int value)
+        {
+            var position = LastDivisionPosition + value * (ArrayHeight / Rows);
+            var divAbove = FindDivisionAbove(position, VerticalDivisions);
+            var divBelow = FindDivisionBelow(position, VerticalDivisions);
+
+            CLPArrayDivision topDiv;
+            if (divAbove == null)
+            {
+                topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, 0, position, value);
+            }
+            else
+            {
+                topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, divAbove.Position, position - divAbove.Position, value);
+                VerticalDivisions.Remove(divAbove);
+            }
+            VerticalDivisions.Add(topDiv);
+            CLPArrayDivision bottomDiv;
+            bottomDiv = divBelow == null
+                            ? new CLPArrayDivision(ArrayDivisionOrientation.Vertical, position, ArrayWidth - position, 0)
+                            : new CLPArrayDivision(ArrayDivisionOrientation.Vertical, position, divBelow.Position - position, 0);
+            VerticalDivisions.Add(bottomDiv);
+            UpdateReport();
+
+            RaisePropertyChanged("GroupsSubtracted");
+            RaisePropertyChanged("CurrentRemainder");
+            RaisePropertyChanged("LastDivisionPosition");
+        }
+
+        public void RemoveLastDivision()
+        {
+            if (VerticalDivisions.Count <= 1)
+            {
+                return;
+            }
+            var lastDiv = VerticalDivisions.Last();
+            var prevDiv = VerticalDivisions[VerticalDivisions.Count - 2];
+
+            VerticalDivisions.Add(new CLPArrayDivision(ArrayDivisionOrientation.Vertical, prevDiv.Position, prevDiv.Length + lastDiv.Length, 0));
+            VerticalDivisions.Remove(lastDiv);
+            VerticalDivisions.Remove(prevDiv);
+
+            RaisePropertyChanged("GroupsSubtracted");
+            RaisePropertyChanged("CurrentRemainder");
+            RaisePropertyChanged("LastDivisionPosition");
+
+            UpdateReport();
+        }
+
+        #endregion //Methods
+
+        #region ACLPArrayBase Overrides
+
+        public override double LabelLength
+        {
+            get { return DT_LABEL_LENGTH; }
+        }
+
+        public override double ArrayWidth
+        {
+            get { return Width - (LargeLabelLength + LabelLength); }
+        }
+
+        public override double ArrayHeight
+        {
+            get { return Height - (2 * LabelLength); }
+        }
+
+        public override double GridSquareSize
+        {
+            get { return ArrayWidth / Columns; }
+        }
+
+        public override double MinimumGridSquareSize
+        {
+            get { return Columns < Rows ? MIN_ARRAY_LENGTH / Columns : MIN_ARRAY_LENGTH / Rows; }
+        }
 
         public override void SizeArrayToGridLevel(double toSquareSize = -1, bool recalculateDivisions = true)
         {
@@ -200,114 +296,7 @@ namespace CLP.Entities
             OnResized(initialWidth, initialHeight);
         }
 
-        public void UpdateRemainderRegion()
-        {
-            if (RemainderTiles == null)
-            {
-                return;
-            }
-
-            if (CurrentRemainder <= 0)
-            {
-                ParentPage.PageObjects.Remove(RemainderTiles);
-                return;
-            }
-
-            if (!ParentPage.PageObjects.Contains(RemainderTiles))
-            {
-                ParentPage.PageObjects.Add(RemainderTiles);
-            }
-
-            var numberOfBlackTiles = ParentPage.PageObjects.Where(pageObject => pageObject is CLPArray && (pageObject as CLPArray).ArrayType == ArrayTypes.Array).Sum(pageObject =>
-                                                                                                                                                                      {
-                                                                                                                                                                          var
-                                                                                                                                                                              clpArray
-                                                                                                                                                                                  =
-                                                                                                                                                                                  pageObject
-                                                                                                                                                                                  as
-                                                                                                                                                                                  CLPArray;
-                                                                                                                                                                          return
-                                                                                                                                                                              clpArray !=
-                                                                                                                                                                              null
-                                                                                                                                                                                  ? clpArray
-                                                                                                                                                                                        .Rows *
-                                                                                                                                                                                    clpArray
-                                                                                                                                                                                        .Columns
-                                                                                                                                                                                  : 0;
-                                                                                                                                                                      });
-            numberOfBlackTiles = Math.Min(numberOfBlackTiles, CurrentRemainder);
-
-            if (RemainderTiles.TileColors == null)
-            {
-                RemainderTiles.TileColors = new ObservableCollection<string>();
-            }
-            else
-            {
-                RemainderTiles.TileColors.Clear();
-            }
-            for (var i = 0; i < CurrentRemainder - numberOfBlackTiles; i++)
-            {
-                RemainderTiles.TileColors.Add("DodgerBlue");
-            }
-            for (var i = 0; i < numberOfBlackTiles; i++)
-            {
-                RemainderTiles.TileColors.Add("Black");
-            }
-
-            RemainderTiles.Height = Math.Ceiling(RemainderTiles.TileColors.Count / 5.0) * 61.0;
-            RemainderTiles.Width = 305.0;
-        }
-
-        public void SnapInArray(int value)
-        {
-            var position = LastDivisionPosition + value * (ArrayHeight / Rows);
-            var divAbove = FindDivisionAbove(position, VerticalDivisions);
-            var divBelow = FindDivisionBelow(position, VerticalDivisions);
-
-            CLPArrayDivision topDiv;
-            if (divAbove == null)
-            {
-                topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, 0, position, value);
-            }
-            else
-            {
-                topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, divAbove.Position, position - divAbove.Position, value);
-                VerticalDivisions.Remove(divAbove);
-            }
-            VerticalDivisions.Add(topDiv);
-            CLPArrayDivision bottomDiv;
-            bottomDiv = divBelow == null
-                            ? new CLPArrayDivision(ArrayDivisionOrientation.Vertical, position, ArrayWidth - position, 0)
-                            : new CLPArrayDivision(ArrayDivisionOrientation.Vertical, position, divBelow.Position - position, 0);
-            VerticalDivisions.Add(bottomDiv);
-            UpdateRemainderRegion();
-
-            RaisePropertyChanged("GroupsSubtracted");
-            RaisePropertyChanged("CurrentRemainder");
-            RaisePropertyChanged("LastDivisionPosition");
-        }
-
-        public void RemoveLastDivision()
-        {
-            if (VerticalDivisions.Count <= 1)
-            {
-                return;
-            }
-            var lastDiv = VerticalDivisions.Last();
-            var prevDiv = VerticalDivisions[VerticalDivisions.Count - 2];
-
-            VerticalDivisions.Add(new CLPArrayDivision(ArrayDivisionOrientation.Vertical, prevDiv.Position, prevDiv.Length + lastDiv.Length, 0));
-            VerticalDivisions.Remove(lastDiv);
-            VerticalDivisions.Remove(prevDiv);
-
-            RaisePropertyChanged("GroupsSubtracted");
-            RaisePropertyChanged("CurrentRemainder");
-            RaisePropertyChanged("LastDivisionPosition");
-
-            UpdateRemainderRegion();
-        }
-
-        #endregion //Methods
+        #endregion //ACLPArrayBase Overrides
 
         #region APageObjectBase Overrides
 
@@ -333,6 +322,17 @@ namespace CLP.Entities
 
         public override void OnAdded(bool fromHistory = false)
         {
+            base.OnAdded(fromHistory);
+
+            if (CanShowRemainderTiles &&
+                RemainderTiles != null &&
+                ParentPage != null)
+            {
+                ParentPage.PageObjects.Add(RemainderTiles);
+                RemainderTiles.CreatorID = CreatorID;
+                UpdateReport();
+            }
+
             var divisionDefinitions = ParentPage.Tags.OfType<DivisionRelationDefinitionTag>().ToList();
 
             foreach (var divisionRelationDefinitionTag in divisionDefinitions)
@@ -403,6 +403,14 @@ namespace CLP.Entities
 
         public override void OnDeleted(bool fromHistory = false)
         {
+            base.OnDeleted(fromHistory);
+
+            if (ParentPage != null &&
+                ParentPage.PageObjects.Contains(RemainderTiles))
+            {
+                ParentPage.PageObjects.Remove(RemainderTiles);
+            }
+
             var divisionTemplateIDsInHistory = DivisionTemplateAnalysis.GetListOfDivisionTemplateIDsInHistory(ParentPage);
 
             var arrayDimensions = VerticalDivisions.Where(division => division.Value != 0).Select(division => Rows + "x" + division.Value).ToList();
@@ -413,7 +421,8 @@ namespace CLP.Entities
 
         public override void OnResized(double oldWidth, double oldHeight, bool fromHistory = false)
         {
-            base.OnResized(oldWidth, oldHeight);
+            base.OnResized(oldWidth, oldHeight, fromHistory);
+
             RaisePropertyChanged("LastDivisionPosition");
         }
 
@@ -434,5 +443,50 @@ namespace CLP.Entities
         }
 
         #endregion //APageObjectBase Overrides
+
+        #region IReporter Implementation
+
+        public void UpdateReport()
+        {
+            if (ParentPage == null ||
+                RemainderTiles == null ||
+                !CanShowRemainderTiles)
+            {
+                return;
+            }
+
+            if (CurrentRemainder <= 0)
+            {
+                RemainderTiles.TileColors.Clear();
+                return;
+            }
+
+            var numberOfBlackTiles = ParentPage.PageObjects.OfType<CLPArray>().Where(a => a.ArrayType == ArrayTypes.Array).ToList().Sum(a => a.Rows * a.Columns);
+            numberOfBlackTiles = Math.Min(numberOfBlackTiles, CurrentRemainder);
+
+            if (RemainderTiles.TileColors == null)
+            {
+                RemainderTiles.TileColors = new ObservableCollection<string>();
+            }
+            else
+            {
+                RemainderTiles.TileColors.Clear();
+            }
+
+            for (var i = 0; i < CurrentRemainder - numberOfBlackTiles; i++)
+            {
+                RemainderTiles.TileColors.Add("DodgerBlue");
+            }
+
+            for (var i = 0; i < numberOfBlackTiles; i++)
+            {
+                RemainderTiles.TileColors.Add("Black");
+            }
+
+            RemainderTiles.Height = Math.Ceiling(RemainderTiles.TileColors.Count / RemainderTiles.NUMBER_OF_TILES_PER_ROW) * RemainderTiles.TILE_HEIGHT;
+            RemainderTiles.Width = RemainderTiles.NUMBER_OF_TILES_PER_ROW * RemainderTiles.TILE_HEIGHT;
+        }
+
+        #endregion //IReporter Implementation
     }
 }

@@ -441,6 +441,8 @@ namespace CLP.Entities
 
         public override void OnAdded(bool fromHistory = false)
         {
+            base.OnAdded(fromHistory);
+
             if (!fromHistory)
             {
                 ApplyDistinctPosition(this);
@@ -478,6 +480,8 @@ namespace CLP.Entities
 
         public override void OnDeleted(bool fromHistory = false)
         {
+            base.OnDeleted(fromHistory);
+
             if (!fromHistory)
             {
                 var jumpSizes = JumpSizes.Select(x => x.JumpSize).ToList();
@@ -527,7 +531,12 @@ namespace CLP.Entities
             AcceptedStrokes.StretchAll(scaleX, 1.0, XPosition + ArrowLength, YPosition);
         }
 
-        public override void OnResized(double oldWidth, double oldHeight, bool fromHistory = false) { OnResizing(oldWidth, oldHeight, fromHistory); }
+        public override void OnResized(double oldWidth, double oldHeight, bool fromHistory = false)
+        {
+            base.OnResized(oldWidth, oldHeight, fromHistory);
+            
+            OnResizing(oldWidth, oldHeight, fromHistory);
+        }
 
         public override void OnMoving(double oldX, double oldY, bool fromHistory = false)
         {
@@ -542,7 +551,12 @@ namespace CLP.Entities
             AcceptedStrokes.MoveAll(deltaX, deltaY);
         }
 
-        public override void OnMoved(double oldX, double oldY, bool fromHistory = false) { OnMoving(oldX, oldY, fromHistory); }
+        public override void OnMoved(double oldX, double oldY, bool fromHistory = false)
+        {
+            base.OnMoved(oldX, oldY, fromHistory);
+            
+            OnMoving(oldX, oldY, fromHistory);
+        }
 
         public override IPageObject Duplicate()
         {

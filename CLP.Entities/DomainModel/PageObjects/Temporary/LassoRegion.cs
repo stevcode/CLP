@@ -99,6 +99,8 @@ namespace CLP.Entities
 
         public override void OnMoved(double oldX, double oldY, bool fromHistory = false)
         {
+            base.OnMoved(oldX, oldY, fromHistory);
+
             if (ParentPage.History.IsAnimating)
             {
                 return;

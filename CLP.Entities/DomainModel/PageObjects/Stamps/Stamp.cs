@@ -149,6 +149,8 @@ namespace CLP.Entities
 
         public override void OnAdded(bool fromHistory = false)
         {
+            base.OnAdded(fromHistory);
+
             if (!fromHistory)
             {
                 ApplyDistinctPosition(this);
@@ -175,6 +177,8 @@ namespace CLP.Entities
 
         public override void OnDeleted(bool fromHistory = false)
         {
+            base.OnDeleted(fromHistory);
+
             if (!CanAcceptStrokes ||
                 !AcceptedStrokes.Any())
             {
@@ -217,7 +221,12 @@ namespace CLP.Entities
             }
         }
 
-        public override void OnMoved(double oldX, double oldY, bool fromHistory = false) { OnMoving(oldX, oldY, fromHistory); }
+        public override void OnMoved(double oldX, double oldY, bool fromHistory = false)
+        {
+            base.OnMoved(oldX, oldY, fromHistory);
+            
+            OnMoving(oldX, oldY, fromHistory);
+        }
 
         public override bool PageObjectIsOver(IPageObject pageObject, double percentage)
         {
@@ -513,7 +522,6 @@ namespace CLP.Entities
             }
         }
 
-        /// <summary>Formatted value of the <see cref="IReporter" />.</summary>
         public string FormattedReport
         {
             get { return StampType != StampTypes.ObservingStamp ? string.Empty : string.Format("{0} in groups\n" + "{1} not in groups", NumberInGroups, NumberNotInGroups); }

@@ -429,7 +429,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         protected void PageObjects_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            Page.UpdateAllReporters();
             if (IsPagePreview ||
                 PageInteractionService.CurrentPageInteractionMode == PageInteractionModes.None ||
                 History.IsAnimating)
