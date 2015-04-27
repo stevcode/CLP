@@ -34,7 +34,7 @@ namespace CLP.Entities
             {
                 CutPageObjectID = cutPageObject.ID;
             }
-            
+
             if (!parentPage.History.TrashedPageObjects.Contains(cutPageObject))
             {
                 parentPage.History.TrashedPageObjects.Add(cutPageObject);
@@ -125,78 +125,121 @@ namespace CLP.Entities
 
         #region Methods
 
+        protected override void ConversionUndoAction()
+        {
+            UndoAction(false);
+        }
+
         /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void UndoAction(bool isAnimationUndo)
         {
-            if (!HalvedPageObjectIDs.Any())
+            var cutPageObject = ParentPage.GetVerifiedPageObjectInTrashByID(CutPageObjectID);
+            if (cutPageObject == null)
             {
+                Console.WriteLine("[ERROR] on Index #{0}, Cut PageObject not found on page or in history.", HistoryIndex);
                 return;
             }
 
-            try
+            var halvedPageObjects = HalvedPageObjectIDs.Select(id => ParentPage.GetVerifiedPageObjectOnPageByID(id)).ToList();
+            halvedPageObjects = halvedPageObjects.Where(p => p != null).ToList();
+            if (!halvedPageObjects.Any())
             {
-                var cuttingStroke = ParentPage.History.GetStrokeByID(CuttingStrokeID);
-                if (isAnimationUndo)
-                {
-                    ParentPage.InkStrokes.Add(cuttingStroke);
-                    PageHistory.UISleep(STROKE_CUT_DELAY);
-                }
-                foreach (var halvedPageObject in HalvedPageObjectIDs.Select(halvedPageObjectID => ParentPage.GetPageObjectByID(halvedPageObjectID)))
-                {
-                    ParentPage.PageObjects.Remove(halvedPageObject);
-                    ParentPage.History.TrashedPageObjects.Add(halvedPageObject);
-                }
+                Console.WriteLine("[ERROR] on Index #{0}, No halved pageObjects found on page or in history.", HistoryIndex);
+                return;
+            }
 
-                foreach (var cutPageObject in CutPageObjectIDs.Select(cutPageObjectID => ParentPage.History.GetPageObjectByID(cutPageObjectID)))
+            var cuttingStroke = ParentPage.GetVerifiedStrokeInHistoryByID(CuttingStrokeID);
+            if (cuttingStroke == null)
+            {
+                Console.WriteLine("[ERROR] on Index #{0}, Cutting Stroke not found on page or in history.", HistoryIndex);
+                return;
+            }
+
+            if (isAnimationUndo)
+            {
+                ParentPage.InkStrokes.Add(cuttingStroke);
+                PageHistory.UISleep(STROKE_CUT_DELAY);
+            }
+
+            foreach (var halvedPageObject in halvedPageObjects)
+            {
+                ParentPage.PageObjects.Remove(halvedPageObject);
+                ParentPage.History.TrashedPageObjects.Add(halvedPageObject);
+            }
+
+            ParentPage.History.TrashedPageObjects.Remove(cutPageObject);
+            ParentPage.PageObjects.Add(cutPageObject);
+            if (!isAnimationUndo &&
+                cutPageObject is IStrokeAccepter)
+            {
+                (cutPageObject as IStrokeAccepter).RefreshAcceptedStrokes();
+            }
+
+            if (isAnimationUndo)
+            {
+                PageHistory.UISleep(STROKE_CUT_DELAY);
+                ParentPage.InkStrokes.Remove(cuttingStroke);
+
+                if (cutPageObject is IStrokeAccepter)
                 {
-                    ParentPage.History.TrashedPageObjects.Remove(cutPageObject);
-                    ParentPage.PageObjects.Add(cutPageObject);
-                    //cutPageObject.RefreshStrokeParentIDs(); //TODO: find way to do this after CutStroke removal if is an animation.
-                }
-                if (isAnimationUndo)
-                {
-                    PageHistory.UISleep(STROKE_CUT_DELAY);
-                    ParentPage.InkStrokes.Remove(cuttingStroke);
+                    (cutPageObject as IStrokeAccepter).RefreshAcceptedStrokes();
                 }
             }
-            catch (Exception e) { }
         }
 
         /// <summary>Method that will actually redo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void RedoAction(bool isAnimationRedo)
         {
-            if (string.IsNullOrEmpty(CutPageObjectID))
+            var cutPageObject = ParentPage.GetVerifiedPageObjectOnPageByID(CutPageObjectID);
+            if (cutPageObject == null)
             {
+                Console.WriteLine("[ERROR] on Index #{0}, Cut PageObject not found on page or in history.", HistoryIndex);
                 return;
             }
 
-            try
+            var halvedPageObjects = HalvedPageObjectIDs.Select(id => ParentPage.GetVerifiedPageObjectInTrashByID(id)).ToList();
+            halvedPageObjects = halvedPageObjects.Where(p => p != null).ToList();
+            if (!halvedPageObjects.Any())
             {
-                var cuttingStroke = ParentPage.History.GetStrokeByID(CuttingStrokeID);
-                if (isAnimationRedo)
-                {
-                    ParentPage.InkStrokes.Add(cuttingStroke);
-                    PageHistory.UISleep(STROKE_CUT_DELAY);
-                }
-                foreach (var cutPageObject in CutPageObjectIDs.Select(cutPageObjectID => ParentPage.GetPageObjectByID(cutPageObjectID)))
-                {
-                    ParentPage.PageObjects.Remove(cutPageObject);
-                    ParentPage.History.TrashedPageObjects.Add(cutPageObject);
-                }
+                Console.WriteLine("[ERROR] on Index #{0}, No halved pageObjects found on page or in history.", HistoryIndex);
+                return;
+            }
 
-                foreach (var halvedPageObject in HalvedPageObjectIDs.Select(halvedPageObjectID => ParentPage.History.GetPageObjectByID(halvedPageObjectID)))
+            var cuttingStroke = ParentPage.GetVerifiedStrokeInHistoryByID(CuttingStrokeID);
+            if (cuttingStroke == null)
+            {
+                Console.WriteLine("[ERROR] on Index #{0}, Cutting Stroke not found on page or in history.", HistoryIndex);
+                return;
+            }
+
+            if (isAnimationRedo)
+            {
+                ParentPage.InkStrokes.Add(cuttingStroke);
+                PageHistory.UISleep(STROKE_CUT_DELAY);
+            }
+            ParentPage.PageObjects.Remove(cutPageObject);
+            ParentPage.History.TrashedPageObjects.Add(cutPageObject);
+            foreach (var halvedPageObject in halvedPageObjects)
+            {
+                ParentPage.History.TrashedPageObjects.Remove(halvedPageObject);
+                ParentPage.PageObjects.Add(halvedPageObject);
+                if (!isAnimationRedo &&
+                    halvedPageObject is IStrokeAccepter)
                 {
-                    ParentPage.History.TrashedPageObjects.Remove(halvedPageObject);
-                    ParentPage.PageObjects.Add(halvedPageObject);
-                    //halvedPageObject.RefreshStrokeParentIDs(); //TODO: find way to do this after CutStroke removal if is an animation.
-                }
-                if (isAnimationRedo)
-                {
-                    PageHistory.UISleep(STROKE_CUT_DELAY);
-                    ParentPage.InkStrokes.Remove(cuttingStroke);
+                    (halvedPageObject as IStrokeAccepter).RefreshAcceptedStrokes();
                 }
             }
-            catch (Exception e) { }
+
+            if (isAnimationRedo)
+            {
+                PageHistory.UISleep(STROKE_CUT_DELAY);
+                ParentPage.InkStrokes.Remove(cuttingStroke);
+
+                foreach (var halvedPageObject in halvedPageObjects.OfType<IStrokeAccepter>())
+                {
+                    halvedPageObject.RefreshAcceptedStrokes();
+                }
+            }
         }
 
         /// <summary>Method that prepares a clone of the <see cref="IHistoryItem" /> so that it can call Redo() when sent to another machine.</summary>
