@@ -580,10 +580,15 @@ namespace CLP.Entities
         }
 
         //HACK
-        public void ConversionUndo(IHistoryItem historyItem)
+        public void ConversionUndo()
         {
             lock (_historyLock)
             {
+                var historyItem = UndoItems.FirstOrDefault();
+                if (historyItem == null)
+                {
+                    return;
+                }
                 historyItem.ConversionUndo();
 
                 UndoItems.RemoveFirst();

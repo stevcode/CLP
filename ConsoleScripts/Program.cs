@@ -41,6 +41,8 @@ namespace ConsoleScripts
             //}
 
             Convert();
+            Console.WriteLine("*****Finished*****");
+            Console.ReadLine();
         }
 
         private static void Convert()
@@ -72,7 +74,7 @@ namespace ConsoleScripts
 
                     //ReplaceHistoryItems(page);
                     //HackJumpSizeHistoryItems(page);
-                    AdjustNumberLineEndPointChangedHistoryItem(page);
+                    //AdjustNumberLineEndPointChangedHistoryItem(page);
 
                     //for (int i = 0; i < page.History.UndoItems.Count; i++)
                     //{
@@ -133,7 +135,7 @@ namespace ConsoleScripts
                     historyItemToUndo is PartsValueChangedHistoryItem ||
                     historyItemToUndo is CLPArraySnapHistoryItem)
                 {
-                    page.History.ConversionUndo(historyItemToUndo);
+                    page.History.ConversionUndo();
                     continue;
                 }
 
@@ -152,8 +154,7 @@ namespace ConsoleScripts
 
                     var objectsChanged = new ObjectsOnPageChangedHistoryItem(pageObjectsAdded);
                     page.History.UndoItems.Insert(0, objectsChanged);
-
-                    page.History.ConversionUndo(historyItemToUndo); //?
+                    page.History.ConversionUndo(); //?
                     continue;
                 }
 
@@ -172,8 +173,7 @@ namespace ConsoleScripts
 
                     var objectsChanged = new ObjectsOnPageChangedHistoryItem(pageObjectsRemoved);
                     page.History.UndoItems.Insert(0, objectsChanged);
-
-                    page.History.ConversionUndo(historyItemToUndo); //?
+                    page.History.ConversionUndo(); //?
                     continue;
                 }
 
@@ -195,8 +195,7 @@ namespace ConsoleScripts
 
                     var objectsMoved = new ObjectsMovedBatchHistoryItem(pageObjectMove);
                     page.History.UndoItems.Insert(0, objectsMoved);
-
-                    page.History.ConversionUndo(historyItemToUndo);
+                    page.History.ConversionUndo();
                     continue;
                 }
 
@@ -219,8 +218,7 @@ namespace ConsoleScripts
 
                     var objectsMoved = new ObjectsMovedBatchHistoryItem(pageObjectsMove);
                     page.History.UndoItems.Insert(0, objectsMoved);
-
-                    page.History.ConversionUndo(historyItemToUndo);
+                    page.History.ConversionUndo();
                     continue;
                 }
 
@@ -233,7 +231,7 @@ namespace ConsoleScripts
                     var pageObjectCut = historyItemToUndo as PageObjectCutHistoryItem;
                     if (!string.IsNullOrEmpty(pageObjectCut.CutPageObjectID))
                     {
-                        page.History.ConversionUndo(historyItemToUndo);
+                        page.History.ConversionUndo();
                         continue;
                     }
                     var cuttingStroke = pageObjectCut.ParentPage.GetVerifiedStrokeInHistoryByID(pageObjectCut.CuttingStrokeID);
@@ -246,7 +244,7 @@ namespace ConsoleScripts
                     if (pageObjectCut.CutPageObjectIDs.Count == 1)
                     {
                         pageObjectCut.CutPageObjectID = pageObjectCut.CutPageObjectIDs.First();
-                        page.History.ConversionUndo(historyItemToUndo);
+                        page.History.ConversionUndo();
                         continue;
                     }
 
@@ -307,7 +305,7 @@ namespace ConsoleScripts
                         var potentialNumberLineMatch = page.GetVerifiedPageObjectOnPageByID(resizeBatchHistoryItem.PageObjectID) as NumberLine;
                         if (potentialNumberLineMatch == null)
                         {
-                            page.History.ConversionUndo(historyItemToUndo);
+                            page.History.ConversionUndo();
                             continue;
                         }
 
@@ -329,7 +327,7 @@ namespace ConsoleScripts
                         }
                     }
 
-                    page.History.ConversionUndo(historyItemToUndo);
+                    page.History.ConversionUndo();
                     continue;
                 }
 
@@ -351,7 +349,7 @@ namespace ConsoleScripts
                     if (objectsChanged.IsUsingPageObjects)
                     {
                         page.History.UndoItems.Insert(0, objectsChanged);
-                        page.History.ConversionUndo(historyItemToUndo); //?
+                        page.History.ConversionUndo(); //?
                     }
 
                     #region JumpSizeConversion
@@ -414,7 +412,7 @@ namespace ConsoleScripts
                                                                                                     true);
 
                             page.History.UndoItems.Insert(0, jumpsChangedHistoryItem);
-                            page.History.ConversionUndo(historyItemToUndo);
+                            page.History.ConversionUndo();
                             break;
                         }
                     }
@@ -459,7 +457,7 @@ namespace ConsoleScripts
                                                                                                     true);
 
                             page.History.UndoItems.Insert(0, jumpsChangedHistoryItem);
-                            page.History.ConversionUndo(historyItemToUndo);
+                            page.History.ConversionUndo();
                             break;
                         }
                     }
@@ -472,7 +470,7 @@ namespace ConsoleScripts
                     if (objectsChanged.IsUsingStrokes)
                     {
                         page.History.UndoItems.Insert(0, objectsChanged);
-                        page.History.ConversionUndo(historyItemToUndo); //?
+                        page.History.ConversionUndo(); //?
                     }
 
                     continue;
