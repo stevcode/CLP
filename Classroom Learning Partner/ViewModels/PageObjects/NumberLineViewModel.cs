@@ -317,15 +317,14 @@ namespace Classroom_Learning_Partner.ViewModels
         public void ChangeNumberLineEndPoints(int newNumberLineEndPoint)
         {
             var numberLine = PageObject as NumberLine;
-
             if (numberLine == null)
             {
                 return;
             }
 
             var oldHeight = Height;
-
             var oldNumberLineEndPoint = NumberLineSize;
+
             numberLine.ChangeNumberLineSize(newNumberLineEndPoint);
 
             var preStretchedWidth = Width;
@@ -340,8 +339,11 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                                  App.MainWindowViewModel.CurrentUser,
                                                                                                  PageObject.ID,
                                                                                                  0,
+                                                                                                 0,
                                                                                                  oldNumberLineEndPoint,
-                                                                                                 preStretchedWidth));
+                                                                                                 newNumberLineEndPoint,
+                                                                                                 preStretchedWidth,
+                                                                                                 Width));
         }
 
         #endregion //Methods
