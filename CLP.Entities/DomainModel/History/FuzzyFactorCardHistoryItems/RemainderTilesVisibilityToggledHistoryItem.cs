@@ -95,6 +95,7 @@ namespace CLP.Entities
             var divisionTemplate = ParentPage.GetVerifiedPageObjectOnPageByID(DivisionTemplateID) as FuzzyFactorCard;
             if (divisionTemplate == null)
             {
+                Console.WriteLine("[ERROR] on Index #{0}, Division Template for Remainder Tiles Toggle not found on page or in history.", HistoryIndex);
                 return;
             }
 
