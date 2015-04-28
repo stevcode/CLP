@@ -94,6 +94,7 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <Button Content="Add Page:"
@@ -221,6 +222,12 @@
 
                 <Button Content="Generate Stamp Groupings"
                         Command="{Binding GenerateStampGroupingsCommand}"
+                        Grid.ColumnSpan="2"
+                        Height="20"
+                        Margin="1" />
+
+                <Button Content="Fix DTs"
+                        Command="{Binding FixCommand}"
                         Grid.ColumnSpan="2"
                         Height="20"
                         Margin="1" />

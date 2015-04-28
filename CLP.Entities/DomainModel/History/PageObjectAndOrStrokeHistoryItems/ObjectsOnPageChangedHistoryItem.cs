@@ -66,7 +66,7 @@ namespace CLP.Entities
 
         #region Obsolete Constructors
 
-        /// <summary>Initializes <see cref="ObjectsMovedBatchHistoryItem" /> from <see cref="StrokesChangedHistoryItem" />.</summary>
+        /// <summary>Initializes <see cref="ObjectsOnPageChangedHistoryItem" /> from <see cref="StrokesChangedHistoryItem" />.</summary>
         public ObjectsOnPageChangedHistoryItem(StrokesChangedHistoryItem obsoleteHistoryItem)
         {
             ID = obsoleteHistoryItem.ID;
@@ -81,7 +81,7 @@ namespace CLP.Entities
             StrokeIDsRemoved = obsoleteHistoryItem.StrokeIDsRemoved;
         }
 
-        /// <summary>Initializes <see cref="ObjectsMovedBatchHistoryItem" /> from <see cref="PageObjectsAddedHistoryItem" />.</summary>
+        /// <summary>Initializes <see cref="ObjectsOnPageChangedHistoryItem" /> from <see cref="PageObjectsAddedHistoryItem" />.</summary>
         public ObjectsOnPageChangedHistoryItem(PageObjectsAddedHistoryItem obsoleteHistoryItem)
         {
             ID = obsoleteHistoryItem.ID;
@@ -95,7 +95,7 @@ namespace CLP.Entities
             StrokeIDsAdded = new List<string>();
         }
 
-        /// <summary>Initializes <see cref="ObjectsMovedBatchHistoryItem" /> from <see cref="PageObjectsRemovedHistoryItem" />.</summary>
+        /// <summary>Initializes <see cref="ObjectsOnPageChangedHistoryItem" /> from <see cref="PageObjectsRemovedHistoryItem" />.</summary>
         public ObjectsOnPageChangedHistoryItem(PageObjectsRemovedHistoryItem obsoleteHistoryItem)
         {
             ID = obsoleteHistoryItem.ID;
@@ -287,6 +287,11 @@ namespace CLP.Entities
         #endregion //Properties
 
         #region Methods
+
+        protected override void ConversionUndoAction()
+        {
+            UndoAction(false);
+        }
 
         /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void UndoAction(bool isAnimationUndo)

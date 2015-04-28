@@ -83,13 +83,18 @@ namespace CLP.Entities
         {
             get
             {
-                var array = ParentPage.GetPageObjectByIDOnPageOrInHistory(ArrayID) as CLPArray;
+                //TODO: Clean up
+                var array = ParentPage.GetPageObjectByIDOnPageOrInHistory(ArrayID) as ACLPArrayBase;
+                if (array == null)
+                {
+                    return string.Format("[ERROR] on Index #{0}, Array for Divisions Changed not found on page or in history.", HistoryIndex);
+                }
                 
                 var addHorizontal = 0;
                 var addVertical = 0;
                 var addHorizontalString = string.Empty;
                 var addVerticalString = string.Empty;
-                foreach (CLPArrayDivision addedDivision in AddedDivisions)
+                foreach (var addedDivision in AddedDivisions)
                 {
                     if (addedDivision.Orientation == ArrayDivisionOrientation.Horizontal)
                     {
@@ -139,7 +144,7 @@ namespace CLP.Entities
                 }
 
 
-                var formattedValue = string.Format("Index # {0}, {1}{2}", 
+                var formattedValue = string.Format("Index #{0}, {1}{2}", 
                     HistoryIndex, dividedArray, removedDivisions);
                 return formattedValue;
             }
@@ -149,6 +154,11 @@ namespace CLP.Entities
 
         #region Methods
 
+        protected override void ConversionUndoAction()
+        {
+            UndoAction(false);
+        }
+
         /// <summary>
         /// Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.
         /// </summary>
@@ -157,13 +167,14 @@ namespace CLP.Entities
             var array = ParentPage.GetVerifiedPageObjectOnPageByID(ArrayID) as ACLPArrayBase;
             if(array == null)
             {
+                Console.WriteLine("[ERROR] on Index #{0}, Array for Divisions Changed not found on page or in history.", HistoryIndex);
                 return;
             }
 
             if (!AddedDivisions.Any() && 
                 !RemovedDivisions.Any())
             {
-                Console.WriteLine("ERROR: AddedDivisions AND RemovedDivisions Empty in CLPArrayDivisionsChangedHistoryItem, History Index {0}.", HistoryIndex);
+                Console.WriteLine("[ERROR] on Index #{0}, Array Divisions Changed is missing AddedDivisions and RemovedDivisions.", HistoryIndex);
                 return;
             }
 
@@ -200,13 +211,14 @@ namespace CLP.Entities
             var array = ParentPage.GetVerifiedPageObjectOnPageByID(ArrayID) as ACLPArrayBase;
             if(array == null)
             {
+                Console.WriteLine("[ERROR] on Index #{0}, Array for Divisions Changed not found on page or in history.", HistoryIndex);
                 return;
             }
 
             if (!AddedDivisions.Any() &&
                 !RemovedDivisions.Any())
             {
-                Console.WriteLine("ERROR: AddedDivisions AND RemovedDivisions Empty in CLPArrayDivisionsChangedHistoryItem, History Index {0}.", HistoryIndex);
+                Console.WriteLine("[ERROR] on Index #{0}, Array Divisions Changed is missing AddedDivisions and RemovedDivisions.", HistoryIndex);
                 return;
             }
 

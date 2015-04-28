@@ -296,9 +296,33 @@ namespace CLP.Entities
             OnResized(initialWidth, initialHeight);
         }
 
+        public override void ResizeDivisions()
+        {
+            var position = 0.0;
+            foreach (var division in HorizontalDivisions)
+            {
+                division.Position = position;
+                division.Length = GridSquareSize * division.Value;
+                position += division.Length;
+            }
+
+            position = 0.0;
+            foreach (var division in VerticalDivisions)
+            {
+                division.Position = position;
+                division.Length = GridSquareSize * division.Value;
+                position += division.Length;
+            }
+        }
+
         #endregion //ACLPArrayBase Overrides
 
         #region APageObjectBase Overrides
+
+        public override string FormattedName
+        {
+            get { return "Division Template"; }
+        }
 
         public override int ZIndex
         {
@@ -406,6 +430,7 @@ namespace CLP.Entities
             base.OnDeleted(fromHistory);
 
             if (ParentPage != null &&
+                RemainderTiles != null &&
                 ParentPage.PageObjects.Contains(RemainderTiles))
             {
                 ParentPage.PageObjects.Remove(RemainderTiles);
@@ -422,6 +447,11 @@ namespace CLP.Entities
         public override void OnResized(double oldWidth, double oldHeight, bool fromHistory = false)
         {
             base.OnResized(oldWidth, oldHeight, fromHistory);
+
+            if (fromHistory)
+            {
+                ResizeDivisions();
+            }
 
             RaisePropertyChanged("LastDivisionPosition");
         }

@@ -21,9 +21,9 @@ namespace CLP.Entities
         public ObjectsMovedBatchHistoryItem(CLPPage parentPage, Person owner, string pageObjectID, Point currentPosition)
             : base(parentPage, owner)
         {
-            PageObjectIDs = new List<string>
+            PageObjectIDs = new Dictionary<string, Point>
                             {
-                                pageObjectID
+                                { pageObjectID, new Point(0.0, 0.0) }
                             };
             TravelledPositions = new List<Point>
                                  {
@@ -34,7 +34,7 @@ namespace CLP.Entities
         /// <summary>Initializes <see cref="ObjectsMovedBatchHistoryItem" /> with a parent <see cref="CLPPage" />.</summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryItem" /> is part of.</param>
         /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryItem" />.</param>
-        public ObjectsMovedBatchHistoryItem(CLPPage parentPage, Person owner, List<string> pageObjectIDs, List<string> strokeIDs, Point currentPosition)
+        public ObjectsMovedBatchHistoryItem(CLPPage parentPage, Person owner, Dictionary<string, Point> pageObjectIDs, Dictionary<string, Point> strokeIDs, Point currentPosition)
             : base(parentPage, owner)
         {
             PageObjectIDs = pageObjectIDs;
@@ -66,12 +66,13 @@ namespace CLP.Entities
             ParentPage = obsoleteHistoryItem.ParentPage;
 
             CurrentBatchTickIndex = obsoleteHistoryItem.CurrentBatchTickIndex;
-            PageObjectIDs = new List<string>
+            PageObjectIDs = new Dictionary<string, Point>
                             {
-                                obsoleteHistoryItem.PageObjectID
+                                { obsoleteHistoryItem.PageObjectID, new Point(0.0, 0.0) }
                             };
+
             TravelledPositions = obsoleteHistoryItem.TravelledPositions;
-        } 
+        }
 
         /// <summary>Initializes <see cref="ObjectsMovedBatchHistoryItem" /> from <see cref="PageObjectsMoveBatchHistoryItem" />.</summary>
         public ObjectsMovedBatchHistoryItem(PageObjectsMoveBatchHistoryItem obsoleteHistoryItem)
@@ -84,31 +85,35 @@ namespace CLP.Entities
             ParentPage = obsoleteHistoryItem.ParentPage;
 
             CurrentBatchTickIndex = obsoleteHistoryItem.CurrentBatchTickIndex;
-            PageObjectIDs = obsoleteHistoryItem.PageObjectIDs;
+            var pageObjects = obsoleteHistoryItem.PageObjectIDs.Select(id => obsoleteHistoryItem.ParentPage.GetVerifiedPageObjectOnPageByID(id)).ToList();
+            pageObjects = pageObjects.Where(p => p != null).ToList();
+            var referencePageObject = pageObjects.First();
+            var pageObjectIDs = pageObjects.Where(p => p != null).ToDictionary(p => p.ID, p => new Point(p.XPosition - referencePageObject.XPosition, p.YPosition - referencePageObject.YPosition));
+            PageObjectIDs = pageObjectIDs;
             TravelledPositions = obsoleteHistoryItem.TravelledPositions;
-        } 
+        }
 
         #endregion //Converter
 
         #region Properties
 
-        /// <summary>List of the <see cref="IPageObject" />'s IDs that were moved.</summary>
-        public List<string> PageObjectIDs
+        /// <summary>List of the <see cref="IPageObject" />'s IDs that were moved and their x/y offset from the TravelledPositions Point.</summary>
+        public Dictionary<string, Point> PageObjectIDs
         {
-            get { return GetValue<List<string>>(PageObjectIDsProperty); }
+            get { return GetValue<Dictionary<string, Point>>(PageObjectIDsProperty); }
             set { SetValue(PageObjectIDsProperty, value); }
         }
 
-        public static readonly PropertyData PageObjectIDsProperty = RegisterProperty("PageObjectIDs", typeof (List<string>), () => new List<string>());
+        public static readonly PropertyData PageObjectIDsProperty = RegisterProperty("PageObjectIDs", typeof (Dictionary<string, Point>), () => new Dictionary<string, Point>());
 
-        /// <summary>List of the Stroke's IDs that were moved.</summary>
-        public List<string> StrokeIDs
+        /// <summary>List of the Stroke's IDs that were moved and their x/y offset from the TravelledPositions Point.</summary>
+        public Dictionary<string, Point> StrokeIDs
         {
-            get { return GetValue<List<string>>(StrokeIDsProperty); }
+            get { return GetValue<Dictionary<string, Point>>(StrokeIDsProperty); }
             set { SetValue(StrokeIDsProperty, value); }
         }
 
-        public static readonly PropertyData StrokeIDsProperty = RegisterProperty("StrokeIDs", typeof (List<string>), () => new List<string>());
+        public static readonly PropertyData StrokeIDsProperty = RegisterProperty("StrokeIDs", typeof (Dictionary<string, Point>), () => new Dictionary<string, Point>());
 
         /// <summary>The various points the pageObject has moved through during a single dragging operation.</summary>
         public List<Point> TravelledPositions
@@ -137,45 +142,53 @@ namespace CLP.Entities
         {
             get
             {
-                List<string> PageObjectTypes = new List<string>();
+                var PageObjectTypes = new List<string>();
 
-                foreach(var pageObject in PageObjectIDs.Select(pageObjectID => ParentPage.GetPageObjectByIDOnPageOrInHistory(pageObjectID)))
-                {
-                    if (pageObject == null)
-                    {
-                        continue;
-                    }
-                    PageObjectTypes.Add(pageObject.GetType().Name);
-                }
+                //TODO: fix formatting to use offsets
+                //foreach (var pageObject in PageObjectIDs.Select(pageObjectID => ParentPage.GetPageObjectByIDOnPageOrInHistory(pageObjectID)))
+                //{
+                //    if (pageObject == null)
+                //    {
+                //        continue;
+                //    }
+                //    PageObjectTypes.Add(pageObject.GetType().Name);
+                //}
 
-                var objectsMoved = string.Empty;
-                if(PageObjectTypes.Any())
-                {
-                    objectsMoved = string.Format("Moved {0} on page. ", string.Join(", ", PageObjectTypes));
-                    if (PageObjectTypes.Count == 1 && PageObjectTypes[0] == "CLPArray")
-                    {
-                        var movedArray = ParentPage.GetPageObjectByIDOnPageOrInHistory(PageObjectIDs[0]) as CLPArray;
-                        objectsMoved = string.Format("Moved CLPArray [{0} x {1}] on page. ", movedArray.Rows, movedArray.Columns);
-                    }               
-                }
-              
+                //var objectsMoved = string.Empty;
+                //if (PageObjectTypes.Any())
+                //{
+                //    objectsMoved = string.Format("Moved {0} on page. ", string.Join(", ", PageObjectTypes));
+                //    if (PageObjectTypes.Count == 1 &&
+                //        PageObjectTypes[0] == "CLPArray")
+                //    {
+                //        var movedArray = ParentPage.GetPageObjectByIDOnPageOrInHistory(PageObjectIDs[0]) as CLPArray;
+                //        objectsMoved = string.Format("Moved CLPArray [{0} x {1}] on page. ", movedArray.Rows, movedArray.Columns);
+                //    }
+                //}
 
                 var strokesMoved = string.Empty;
-                if(StrokeIDs.Any())
+                if (StrokeIDs.Any())
                 {
-                    strokesMoved = "Moved strokes on page.";
+                    return "Strokes Moved";
+                    //strokesMoved = "Moved strokes on page.";
                 }
-                
-                var formattedValue = string.Format("Index # {0}, {1} {2}", HistoryIndex, objectsMoved, strokesMoved);
-                return formattedValue;
+
+                return "PageObjects Moved";
+                //var formattedValue = string.Format("Index # {0}, {1} {2}", HistoryIndex, objectsMoved, strokesMoved);
+                //return formattedValue;
             }
         }
-        
+
         #endregion //Properties
 
         #region Methods
 
         public void AddPositionPointToBatch(Point currentPosition) { TravelledPositions.Add(currentPosition); }
+
+        protected override void ConversionUndoAction()
+        {
+            UndoAction(false);
+        }
 
         /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void UndoAction(bool isAnimationUndo)
@@ -198,7 +211,7 @@ namespace CLP.Entities
 
             foreach (var pageObjectID in PageObjectIDs)
             {
-                var pageObject = ParentPage.GetVerifiedPageObjectOnPageByID(pageObjectID);
+                var pageObject = ParentPage.GetVerifiedPageObjectOnPageByID(pageObjectID.Key);
 
                 if (pageObject == null)
                 {
@@ -212,19 +225,19 @@ namespace CLP.Entities
                 {
                     var travelledPosition = TravelledPositions[CurrentBatchTickIndex - 1];
 
-                    pageObject.XPosition = travelledPosition.X;
-                    pageObject.YPosition = travelledPosition.Y;
+                    pageObject.XPosition = travelledPosition.X + pageObjectID.Value.X;
+                    pageObject.YPosition = travelledPosition.Y + pageObjectID.Value.Y;
                     CurrentBatchTickIndex--;
                 }
                 else if (TravelledPositions.Any())
                 {
                     var originalPosition = TravelledPositions.First();
 
-                    pageObject.XPosition = originalPosition.X;
-                    pageObject.YPosition = originalPosition.Y;
+                    pageObject.XPosition = originalPosition.X + pageObjectID.Value.X;
+                    pageObject.YPosition = originalPosition.Y + pageObjectID.Value.Y;
                     CurrentBatchTickIndex = -1;
                 }
-                pageObject.OnMoved(initialX, initialY);
+                pageObject.OnMoved(initialX, initialY, true);
             }
         }
 
@@ -249,7 +262,7 @@ namespace CLP.Entities
 
             foreach (var pageObjectID in PageObjectIDs)
             {
-                var pageObject = ParentPage.GetVerifiedPageObjectOnPageByID(pageObjectID);
+                var pageObject = ParentPage.GetVerifiedPageObjectOnPageByID(pageObjectID.Key);
 
                 if (pageObject == null)
                 {
@@ -262,8 +275,8 @@ namespace CLP.Entities
                 {
                     var travelledPosition = TravelledPositions[CurrentBatchTickIndex];
 
-                    pageObject.XPosition = travelledPosition.X;
-                    pageObject.YPosition = travelledPosition.Y;
+                    pageObject.XPosition = travelledPosition.X + pageObjectID.Value.X;
+                    pageObject.YPosition = travelledPosition.Y + pageObjectID.Value.Y;
                     if (CurrentBatchTickIndex == NumberOfBatchTicks)
                     {
                         pageObject.YPosition = travelledPosition.Y;
@@ -274,11 +287,11 @@ namespace CLP.Entities
                 {
                     var lastPosition = TravelledPositions.Last();
 
-                    pageObject.XPosition = lastPosition.X;
-                    pageObject.YPosition = lastPosition.Y;
+                    pageObject.XPosition = lastPosition.X + pageObjectID.Value.X;
+                    pageObject.YPosition = lastPosition.Y + pageObjectID.Value.Y;
                     CurrentBatchTickIndex = NumberOfBatchTicks + 1;
                 }
-                pageObject.OnMoved(initialX, initialY);
+                pageObject.OnMoved(initialX, initialY, true);
             }
         }
 

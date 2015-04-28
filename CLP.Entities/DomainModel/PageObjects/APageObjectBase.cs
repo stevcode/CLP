@@ -36,6 +36,11 @@ namespace CLP.Entities
 
         #region Properties
 
+        public virtual string FormattedName
+        {
+            get { return GetType().Name; }
+        }
+
         /// <summary>Unique Identifier for the <see cref="IPageObject" />.</summary>
         /// <remarks>Composite Primary Key.</remarks>
         public string ID

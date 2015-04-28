@@ -579,6 +579,23 @@ namespace CLP.Entities
             return true;
         }
 
+        //HACK
+        public void ConversionUndo()
+        {
+            lock (_historyLock)
+            {
+                var historyItem = UndoItems.FirstOrDefault();
+                if (historyItem == null)
+                {
+                    return;
+                }
+                historyItem.ConversionUndo();
+
+                UndoItems.RemoveFirst();
+                RedoItems.Insert(0, historyItem);
+            }
+        }
+
         public bool Undo(bool isAnimationUndo = false)
         {
             if(!CanUndo)

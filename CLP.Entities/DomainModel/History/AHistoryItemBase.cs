@@ -191,6 +191,15 @@ namespace CLP.Entities
 
         #region Methods
 
+        public void ConversionUndo()
+        {
+            if (ParentPage == null)
+            {
+                return;
+            }
+            ConversionUndoAction();
+        }
+
         public void Undo(bool isAnimationUndo = false)
         {
             if(ParentPage == null)
@@ -199,6 +208,8 @@ namespace CLP.Entities
             }
             UndoAction(isAnimationUndo);
         }
+
+        protected abstract void ConversionUndoAction();
 
         protected abstract void UndoAction(bool isAnimationUndo);
 

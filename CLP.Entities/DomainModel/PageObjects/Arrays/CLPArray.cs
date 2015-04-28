@@ -124,6 +124,26 @@ namespace CLP.Entities
 
         #region APageObjectBase Overrides
 
+        public override string FormattedName
+        {
+            get
+            {
+                switch (ArrayType)
+                {
+                    case ArrayTypes.Array:
+                        return "Array";
+                    case ArrayTypes.ArrayCard:
+                        return "Array Card";
+                    case ArrayTypes.FactorCard:
+                        return "Factor Card";
+                    case ArrayTypes.TenByTen:
+                        return "10x10 Array";
+                    default:
+                        return "Default Array";
+                }
+            }
+        }
+
         public override bool IsBackgroundInteractable
         {
             get { return true; }
@@ -370,8 +390,59 @@ namespace CLP.Entities
 
         #region ICuttable Implementation
 
+        public double CuttingStrokeDistance(Stroke cuttingStroke)
+        {
+            if (ArrayType != ArrayTypes.Array)
+            {
+                return -1.0;
+            }
+
+            var strokeTop = cuttingStroke.GetBounds().Top;
+            var strokeBottom = cuttingStroke.GetBounds().Bottom;
+            var strokeLeft = cuttingStroke.GetBounds().Left;
+            var strokeRight = cuttingStroke.GetBounds().Right;
+
+            var cuttableTop = YPosition;
+            var cuttableBottom = YPosition + Height;
+            var cuttableLeft = XPosition;
+            var cuttableRight = XPosition + Width;
+
+            const double MIN_THRESHHOLD = 5.0;
+
+            if (Math.Abs(strokeLeft - strokeRight) < Math.Abs(strokeTop - strokeBottom) &&
+                strokeRight <= cuttableRight &&
+                strokeLeft >= cuttableLeft &&
+                strokeTop - cuttableTop <= MIN_THRESHHOLD &&
+                cuttableBottom - strokeBottom <= MIN_THRESHHOLD) //Vertical Cut Stroke. Stroke must be within the bounds of the pageObject
+            {
+                var verticalStrokeMidpoint = strokeTop + ((strokeBottom - strokeTop) / 2);
+                var verticalPageObjectMidpoint = cuttableTop + ((cuttableBottom - cuttableTop) / 2);
+                return Math.Abs(verticalPageObjectMidpoint - verticalStrokeMidpoint);
+            }
+
+            if (Math.Abs(strokeLeft - strokeRight) > Math.Abs(strokeTop - strokeBottom) &&
+                     strokeBottom <= cuttableBottom &&
+                     strokeTop >= cuttableTop &&
+                     cuttableRight - strokeRight <= MIN_THRESHHOLD &&
+                     strokeLeft - cuttableLeft <= MIN_THRESHHOLD) //Horizontal Cut Stroke. Stroke must be within the bounds of the pageObject
+            {
+                var horizontalStrokeMidpoint = strokeLeft + ((strokeRight - strokeLeft) / 2);
+                var horizontalPageObjectMidpoint = cuttableLeft + ((cuttableRight - cuttableLeft) / 2);
+                return Math.Abs(horizontalPageObjectMidpoint - horizontalStrokeMidpoint);
+            }
+
+            return -1.0;
+        }
+
         public List<IPageObject> Cut(Stroke cuttingStroke)
         {
+            var halvedPageObjects = new List<IPageObject>();
+
+            if (ArrayType != ArrayTypes.Array)
+            {
+                return halvedPageObjects;
+            }
+
             var strokeTop = cuttingStroke.GetBounds().Top;
             var strokeBottom = cuttingStroke.GetBounds().Bottom;
             var strokeLeft = cuttingStroke.GetBounds().Left;
@@ -381,13 +452,6 @@ namespace CLP.Entities
             var cuttableBottom = cuttableTop + ArrayHeight;
             var cuttableLeft = XPosition + LabelLength;
             var cuttableRight = cuttableLeft + ArrayWidth;
-
-            var halvedPageObjects = new List<IPageObject>();
-
-            if (ArrayType != ArrayTypes.Array)
-            {
-                return halvedPageObjects;
-            }
 
             const double MIN_THRESHHOLD = 5.0;
 

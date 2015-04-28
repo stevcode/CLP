@@ -97,12 +97,17 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             var clpArray = PageObject as CLPArray;
-            if (clpArray != null)
+            if (clpArray == null)
             {
-                clpArray.IsGridOn = (bool)toggleButton.IsChecked;
-                ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
-                                                           new CLPArrayGridToggleHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, PageObject.ID));
+                return;
             }
+
+            clpArray.IsGridOn = (bool)toggleButton.IsChecked;
+            ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
+                                                       new CLPArrayGridToggleHistoryItem(PageObject.ParentPage,
+                                                                                         App.MainWindowViewModel.CurrentUser,
+                                                                                         PageObject.ID,
+                                                                                         clpArray.IsGridOn));
         }
 
         #endregion //Constructor
@@ -818,7 +823,15 @@ namespace Classroom_Learning_Partner.ViewModels
             var initYPos = array.YPosition;
             array.RotateArray();
             ACLPPageBaseViewModel.AddHistoryItemToPage(array.ParentPage,
-                                                       new CLPArrayRotateHistoryItem(array.ParentPage, App.MainWindowViewModel.CurrentUser, array.ID, initXPos, initYPos));
+                                                       new CLPArrayRotateHistoryItem(array.ParentPage,
+                                                                                     App.MainWindowViewModel.CurrentUser,
+                                                                                     array.ID,
+                                                                                     initXPos,
+                                                                                     initYPos,
+                                                                                     array.XPosition,
+                                                                                     array.YPosition,
+                                                                                     array.Columns,
+                                                                                     array.Rows));
 
             if (array.CanAcceptStrokes)
             {
@@ -902,7 +915,8 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                                    PageObject.ID,
                                                                                                    isHorizontalDivision,
                                                                                                    divisionIndex,
-                                                                                                   previousValue));
+                                                                                                   previousValue, 
+                                                                                                   division.Value));
 
             // Check if array labels add up to larger array dimension
             var dividerValues = new List<int>();
@@ -1111,7 +1125,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     xPosition += ArrayWidth + LABEL_LENGTH;
                 }
-                    //If there isn't room, diagonally pile the rest
+                //If there isn't room, diagonally pile the rest
                 else if ((xPosition + ArrayWidth + LABEL_LENGTH + 20.0 <= PageObject.ParentPage.Width) &&
                          (yPosition + ArrayHeight + LABEL_LENGTH + 20.0 <= PageObject.ParentPage.Height))
                 {
@@ -1243,13 +1257,13 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                                    removedDivisions));
                 return true;
             }
-            
+
             if (Math.Abs(strokeLeft - strokeRight) > Math.Abs(strokeTop - strokeBottom) &&
-                     strokeBottom <= cuttableBottom &&
-                     strokeTop >= cuttableTop &&
-                     cuttableRight - strokeRight <= MIN_THRESHHOLD &&
-                     strokeLeft - cuttableLeft <= MIN_THRESHHOLD &&
-                     array.Rows > 1) //Horizontal Stroke. Stroke must be within the bounds of the pageObject
+                strokeBottom <= cuttableBottom &&
+                strokeTop >= cuttableTop &&
+                cuttableRight - strokeRight <= MIN_THRESHHOLD &&
+                strokeLeft - cuttableLeft <= MIN_THRESHHOLD &&
+                array.Rows > 1) //Horizontal Stroke. Stroke must be within the bounds of the pageObject
             {
                 var average = (strokeTop + strokeBottom) / 2;
                 var relativeAverage = average - array.LabelLength - array.YPosition;
@@ -1373,7 +1387,8 @@ namespace Classroom_Learning_Partner.ViewModels
             if (divisionTemplatesOnPage.Any())
             {
                 var groupSize = divisionTemplatesOnPage.GroupBy(d => d.GridSquareSize).OrderByDescending(g => g.Count()).First().Count();
-                var relevantDivisionTemplateIDs = divisionTemplatesOnPage.GroupBy(d => d.GridSquareSize).Where(g => g.Count() == groupSize).SelectMany(g => g).Select(d => d.ID).ToList();
+                var relevantDivisionTemplateIDs =
+                    divisionTemplatesOnPage.GroupBy(d => d.GridSquareSize).Where(g => g.Count() == groupSize).SelectMany(g => g).Select(d => d.ID).ToList();
                 initialGridSize = divisionTemplatesOnPage.Last(d => relevantDivisionTemplateIDs.Contains(d.ID)).GridSquareSize;
                 isMatchingOtherGridSquareSize = true;
             }
@@ -1393,7 +1408,8 @@ namespace Classroom_Learning_Partner.ViewModels
             initialGridSize = AdjustGridSquareSize(page, rows, columns, numberOfArrays, initialGridSize, isMatchingOtherGridSquareSize);
 
             //Create arrays.
-            var arraysToAdd = Enumerable.Range(1, numberOfArrays).Select(index => new CLPArray(page, initialGridSize, columns, rows, ArrayTypes.Array)).Cast<ACLPArrayBase>().ToList();
+            var arraysToAdd =
+                Enumerable.Range(1, numberOfArrays).Select(index => new CLPArray(page, initialGridSize, columns, rows, ArrayTypes.Array)).Cast<ACLPArrayBase>().ToList();
             var firstArray = arraysToAdd.First();
             arraysToAdd.Remove(firstArray);
 
@@ -1447,7 +1463,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     array.XPosition = page.Width - array.Width - rnd.Next(30);
                 }
             }
-                
+
             //Add to page.
             arraysToAdd.Insert(0, firstArray);
             ACLPPageBaseViewModel.AddPageObjectsToPage(page, arraysToAdd);
@@ -1468,8 +1484,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 if (arrayWidth < page.Width &&
                     arrayHeight < availablePageHeight &&
-                    (isMatchingOtherGridSquareSize ||
-                        totalArrayArea < availablePageArea))
+                    (isMatchingOtherGridSquareSize || totalArrayArea < availablePageArea))
                 {
                     return initialGridSquareSize;
                 }

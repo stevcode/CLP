@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls.Primitives;
-using System.Windows.Ink;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.CustomControls;
@@ -67,7 +66,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 ACLPPageBaseViewModel.RemovePageObjectsFromPage(region.ParentPage, pageObjectsToRemove);
             }
-            
+
             ACLPPageBaseViewModel.RemovePageObjectFromPage(PageObject, false);
         }
 
@@ -89,7 +88,10 @@ namespace Classroom_Learning_Partner.ViewModels
                          };
             keyPad.ShowDialog();
             if (keyPad.DialogResult != true ||
-               keyPad.NumbersEntered.Text.Length <= 0) { return; }
+                keyPad.NumbersEntered.Text.Length <= 0)
+            {
+                return;
+            }
             var numberOfCopies = Int32.Parse(keyPad.NumbersEntered.Text);
 
             var initialXPosition = XPosition + Width + 10.0;
@@ -158,11 +160,14 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
+            var pageObjectIDs = region.LassoedPageObjects.ToDictionary(p => p.ID, p => new Point(p.XPosition - XPosition, p.YPosition - YPosition));
+            var strokeIDs = region.LassoedStrokes.ToDictionary(s => s.GetStrokeID(), s => new Point(s.GetBounds().X - XPosition, s.GetBounds().Y - YPosition));
+
             PageObject.ParentPage.History.BeginBatch(new ObjectsMovedBatchHistoryItem(PageObject.ParentPage,
-                                                                                         App.MainWindowViewModel.CurrentUser,
-                                                                                         region.LassoedPageObjects.Select(x => x.ID).ToList(),
-                                                                                         region.LassoedStrokes.Select(s => s.GetStrokeID()).ToList(),
-                                                                                         new Point(PageObject.XPosition, PageObject.YPosition)));
+                                                                                      App.MainWindowViewModel.CurrentUser,
+                                                                                      pageObjectIDs,
+                                                                                      strokeIDs,
+                                                                                      new Point(PageObject.XPosition, PageObject.YPosition)));
         }
 
         /// <summary>Gets the DragPageObjectCommand command.</summary>

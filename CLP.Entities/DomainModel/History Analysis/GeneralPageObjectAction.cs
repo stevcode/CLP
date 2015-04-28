@@ -22,7 +22,7 @@ namespace CLP.Entities
             : base(parentPage)
         {
             var historyItems = HistoryItems;
-            var movedPageObjects = historyItems.OfType<ObjectsMovedBatchHistoryItem>().SelectMany(h => h.PageObjectIDs.Select(ParentPage.GetPageObjectByID)).ToList();
+            var movedPageObjects = historyItems.OfType<ObjectsMovedBatchHistoryItem>().SelectMany(h => h.PageObjectIDs.Select(x => ParentPage.GetPageObjectByID(x.Key))).ToList();
             var resizedPageObjects = historyItems.OfType<PageObjectResizeBatchHistoryItem>().Select(h => ParentPage.GetPageObjectByID(h.PageObjectID)).ToList();
             var addedPageObjects = historyItems.OfType<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.PageObjectIDsAdded.Select(ParentPage.GetPageObjectByID)).ToList();
             var removedPageObjects = historyItems.OfType<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.PageObjectIDsRemoved.Select(ParentPage.GetPageObjectByID)).ToList();

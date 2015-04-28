@@ -58,6 +58,11 @@ namespace CLP.Entities
 
         #region APageObjectBase Overrides
 
+        public override string FormattedName
+        {
+            get { return "Remainder Tiles"; }
+        }
+
         public override int ZIndex
         {
             get { return 40; }

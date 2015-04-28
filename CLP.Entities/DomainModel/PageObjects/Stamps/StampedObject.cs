@@ -114,6 +114,11 @@ namespace CLP.Entities
 
         #region APageObjectBase Overrides
 
+        public override string FormattedName
+        {
+            get { return "Stamped Object"; }
+        }
+
         public override int ZIndex
         {
             get { return StampedObjectType == StampedObjectTypes.GroupStampedObject || StampedObjectType == StampedObjectTypes.EmptyGroupStampedObject ? 70 : 80; }

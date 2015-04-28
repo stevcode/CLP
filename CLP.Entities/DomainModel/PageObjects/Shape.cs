@@ -79,6 +79,30 @@ namespace CLP.Entities
 
         #region APageObjectBase Overrides
 
+        public override string FormattedName
+        {
+            get
+            {
+                switch (ShapeType)
+                {
+                    case ShapeType.Rectangle:
+                        return "Rectangle";
+                    case ShapeType.Ellipse:
+                        return "Ellipse";
+                    case ShapeType.Triangle:
+                        return "Triangle";
+                    case ShapeType.HorizontalLine:
+                        return "Horizontal Line";
+                    case ShapeType.VerticalLine:
+                        return "Vertical Line";
+                    case ShapeType.Protractor:
+                        return "Protractor";
+                    default:
+                        return "Shape";
+                }
+            }
+        }
+
         public override int ZIndex
         {
             get { return 30; }
@@ -109,7 +133,7 @@ namespace CLP.Entities
 
         #region Implementation of ICuttable
 
-        public List<IPageObject> Cut(Stroke cuttingStroke)
+        public double CuttingStrokeDistance(Stroke cuttingStroke)
         {
             var strokeTop = cuttingStroke.GetBounds().Top;
             var strokeBottom = cuttingStroke.GetBounds().Bottom;
@@ -121,7 +145,47 @@ namespace CLP.Entities
             var cuttableLeft = XPosition;
             var cuttableRight = XPosition + Width;
 
+            const double MIN_THRESHHOLD = 5.0;
+
+            if (Math.Abs(strokeLeft - strokeRight) < Math.Abs(strokeTop - strokeBottom) &&
+                strokeRight <= cuttableRight &&
+                strokeLeft >= cuttableLeft &&
+                strokeTop - cuttableTop <= MIN_THRESHHOLD &&
+                cuttableBottom - strokeBottom <= MIN_THRESHHOLD) //Vertical Cut Stroke. Stroke must be within the bounds of the pageObject
+            {
+                var verticalStrokeMidpoint = strokeTop + ((strokeBottom - strokeTop) / 2);
+                var verticalPageObjectMidpoint = cuttableTop + ((cuttableBottom - cuttableTop) / 2);
+                return Math.Abs(verticalPageObjectMidpoint - verticalStrokeMidpoint);
+            }
+            
+            if (Math.Abs(strokeLeft - strokeRight) > Math.Abs(strokeTop - strokeBottom) &&
+                     strokeBottom <= cuttableBottom &&
+                     strokeTop >= cuttableTop &&
+                     cuttableRight - strokeRight <= MIN_THRESHHOLD &&
+                     strokeLeft - cuttableLeft <= MIN_THRESHHOLD) //Horizontal Cut Stroke. Stroke must be within the bounds of the pageObject
+            {
+                var horizontalStrokeMidpoint = strokeLeft + ((strokeRight - strokeLeft) / 2);
+                var horizontalPageObjectMidpoint = cuttableLeft + ((cuttableRight - cuttableLeft) / 2);
+                return Math.Abs(horizontalPageObjectMidpoint - horizontalStrokeMidpoint);
+            }
+
+            return -1.0;
+        }
+
+        public List<IPageObject> Cut(Stroke cuttingStroke)
+        {
             var halvedPageObjects = new List<IPageObject>();
+
+            var strokeTop = cuttingStroke.GetBounds().Top;
+            var strokeBottom = cuttingStroke.GetBounds().Bottom;
+            var strokeLeft = cuttingStroke.GetBounds().Left;
+            var strokeRight = cuttingStroke.GetBounds().Right;
+
+            var cuttableTop = YPosition;
+            var cuttableBottom = YPosition + Height;
+            var cuttableLeft = XPosition;
+            var cuttableRight = XPosition + Width;
+            
             const double MIN_THRESHHOLD = 5.0;
 
             if (Math.Abs(strokeLeft - strokeRight) < Math.Abs(strokeTop - strokeBottom) &&

@@ -25,12 +25,16 @@ namespace CLP.Entities
                                                      List<Stroke> removedJumpStrokes,
                                                      double previousHeight,
                                                      double previousYPosition,
+                                                     double newHeight,
+                                                     double newYPosition,
                                                      bool isConversionCreation = false)
             : base(parentPage, owner)
         {
             NumberLineID = numberLineID;
             PreviousHeight = previousHeight;
             PreviousYPosition = previousYPosition;
+            NewHeight = newHeight;
+            NewYPosition = newYPosition;
 
             AddedJumpStrokeIDs = addedJumpStrokes.Select(s => s.GetStrokeID()).ToList();
             foreach (var stroke in removedJumpStrokes)
@@ -103,13 +107,42 @@ namespace CLP.Entities
 
         public static readonly PropertyData PreviousYPositionProperty = RegisterProperty("PreviousYPosition", typeof (double));
 
+        /// <summary>New Height of the number line.</summary>
+        public double NewHeight
+        {
+            get { return GetValue<double>(NewHeightProperty); }
+            set { SetValue(NewHeightProperty, value); }
+        }
+
+        public static readonly PropertyData NewHeightProperty = RegisterProperty("NewHeight", typeof (double));
+
+        /// <summary>New YPositiong of the number line.</summary>
+        public double NewYPosition
+        {
+            get { return GetValue<double>(NewYPositionProperty); }
+            set { SetValue(NewYPositionProperty, value); }
+        }
+
+        public static readonly PropertyData NewYPositionProperty = RegisterProperty("NewYPosition", typeof (double));
+
         public override string FormattedValue
         {
             get
             {
                 var numberLine = ParentPage.GetPageObjectByIDOnPageOrInHistory(NumberLineID) as NumberLine;
-                var formattedValue = string.Format("Index # {0}, Removed {1} jumps and added {2} jumps on number line({3}).",
-                     HistoryIndex, RemovedJumpStrokeIDs.Count, AddedJumpStrokeIDs.Count, numberLine.NumberLineSize);
+                if (numberLine == null)
+                {
+                    return string.Format("[ERROR] on Index #{0}, Number Line not found on page or in history.", HistoryIndex);
+                }
+
+                var removedString = !RemovedJumpStrokeIDs.Any() ? string.Empty : string.Format("Removed {0} jump(s)", RemovedJumpStrokeIDs.Count);
+                var addedString = !AddedJumpStrokeIDs.Any()
+                                      ? string.Empty
+                                      : !RemovedJumpStrokeIDs.Any()
+                                            ? string.Format("Added {0} jumps", AddedJumpStrokeIDs.Count)
+                                            : string.Format(" and added {0} jumps", AddedJumpStrokeIDs.Count);
+
+                var formattedValue = string.Format("Index #{0}, {1}{2} on Number Line [{3}].", HistoryIndex, removedString, addedString, numberLine.NumberLineSize);
                 return formattedValue;
             }
         }
@@ -118,12 +151,12 @@ namespace CLP.Entities
 
         #region Methods
 
-        /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
-        protected override void UndoAction(bool isAnimationUndo)
+        protected override void ConversionUndoAction()
         {
             var numberLine = ParentPage.GetVerifiedPageObjectOnPageByID(NumberLineID) as NumberLine;
             if (numberLine == null)
             {
+                Console.WriteLine("[ERROR] on Index #{0}, Number Line for Jump Size Changed not found on page or in history.", HistoryIndex);
                 return;
             }
 
@@ -131,7 +164,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Console.WriteLine("ERROR: Null stroke in AddedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryItem on History Index {0}.", HistoryIndex);
+                    Console.WriteLine("[ERROR] on Index #{0}, Stroke in AddedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryItem not found on page or in history.", HistoryIndex);
                     continue;
                 }
                 ParentPage.InkStrokes.Remove(stroke);
@@ -148,7 +181,8 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Console.WriteLine("ERROR: Null stroke in RemovedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryItem on History Index {0}.", HistoryIndex);
+                    Console.WriteLine("[ERROR] on Index #{0}, Stroke in RemovedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryItem not found on page or in history.",
+                                      HistoryIndex);
                     continue;
                 }
                 ParentPage.History.TrashedInkStrokes.Remove(stroke);
@@ -161,7 +195,59 @@ namespace CLP.Entities
                                                  new List<Stroke>());
             }
 
-            ResizeNumberLineHeight();
+            NewYPosition = numberLine.YPosition;
+            NewHeight = numberLine.Height;
+            numberLine.YPosition = PreviousYPosition;
+            numberLine.Height = PreviousHeight;
+        }
+
+        /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
+        protected override void UndoAction(bool isAnimationUndo)
+        {
+            var numberLine = ParentPage.GetVerifiedPageObjectOnPageByID(NumberLineID) as NumberLine;
+            if (numberLine == null)
+            {
+                Console.WriteLine("[ERROR] on Index #{0}, Number Line for Jump Size Changed not found on page or in history.", HistoryIndex);
+                return;
+            }
+
+            foreach (var stroke in AddedJumpStrokeIDs.Select(id => ParentPage.GetVerifiedStrokeOnPageByID(id)))
+            {
+                if (stroke == null)
+                {
+                    Console.WriteLine("[ERROR] on Index #{0}, Stroke in AddedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryItem not found on page or in history.", HistoryIndex);
+                    continue;
+                }
+                ParentPage.InkStrokes.Remove(stroke);
+                ParentPage.History.TrashedInkStrokes.Add(stroke);
+                numberLine.RemoveJumpFromStroke(stroke);
+                numberLine.ChangeAcceptedStrokes(new List<Stroke>(),
+                                                 new List<Stroke>
+                                                 {
+                                                     stroke
+                                                 });
+            }
+
+            foreach (var stroke in RemovedJumpStrokeIDs.Select(id => ParentPage.GetVerifiedStrokeInHistoryByID(id)))
+            {
+                if (stroke == null)
+                {
+                    Console.WriteLine("[ERROR] on Index #{0}, Stroke in RemovedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryItem not found on page or in history.",
+                                      HistoryIndex);
+                    continue;
+                }
+                ParentPage.History.TrashedInkStrokes.Remove(stroke);
+                ParentPage.InkStrokes.Add(stroke);
+                numberLine.AddJumpFromStroke(stroke);
+                numberLine.ChangeAcceptedStrokes(new List<Stroke>
+                                                 {
+                                                     stroke
+                                                 },
+                                                 new List<Stroke>());
+            }
+
+            numberLine.YPosition = PreviousYPosition;
+            numberLine.Height = PreviousHeight;
         }
 
         /// <summary>Method that will actually redo the action. Already incorporates error checking for existance of ParentPage.</summary>
@@ -170,6 +256,7 @@ namespace CLP.Entities
             var numberLine = ParentPage.GetVerifiedPageObjectOnPageByID(NumberLineID) as NumberLine;
             if (numberLine == null)
             {
+                Console.WriteLine("[ERROR] on Index #{0}, Number Line for Jump Size Changed not found on page or in history.", HistoryIndex);
                 return;
             }
 
@@ -177,7 +264,8 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Console.WriteLine("ERROR: Null stroke in RemovedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryItem on History Index {0}.", HistoryIndex);
+                    Console.WriteLine("[ERROR] on Index #{0}, Stroke in RemovedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryItem not found on page or in history.",
+                                      HistoryIndex);
                     continue;
                 }
                 ParentPage.InkStrokes.Remove(stroke);
@@ -194,7 +282,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Console.WriteLine("ERROR: Null stroke in AddedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryItem on History Index {0}.", HistoryIndex);
+                    Console.WriteLine("[ERROR] on Index #{0}, Stroke in AddedJumpStrokeIDs in NumberLineJumpSizesChangedHistoryItem not found on page or in history.", HistoryIndex);
                     continue;
                 }
                 ParentPage.History.TrashedInkStrokes.Remove(stroke);
@@ -207,27 +295,8 @@ namespace CLP.Entities
                                                  new List<Stroke>());
             }
 
-            ResizeNumberLineHeight();
-        }
-
-        private void ResizeNumberLineHeight()
-        {
-            var numberLine = ParentPage.GetVerifiedPageObjectOnPageByID(NumberLineID) as NumberLine;
-            if (numberLine == null ||
-                Math.Abs(numberLine.Height - PreviousHeight) < 0.0001)
-            {
-                return;
-            }
-
-            var oldWidth = numberLine.Width;
-            var oldHeight = numberLine.Height;
-            numberLine.Height = PreviousHeight;
-            PreviousHeight = oldHeight;
-
-            var oldXPosition = numberLine.XPosition;
-            var oldYPosition = numberLine.YPosition;
-            numberLine.YPosition = PreviousYPosition;
-            PreviousYPosition = oldYPosition;
+            numberLine.YPosition = NewYPosition;
+            numberLine.Height = NewHeight;
         }
 
         /// <summary>Method that prepares a clone of the <see cref="IHistoryItem" /> so that it can call Redo() when sent to another machine.</summary>

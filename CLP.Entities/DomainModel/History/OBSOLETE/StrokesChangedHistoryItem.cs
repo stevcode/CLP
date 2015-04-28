@@ -193,5 +193,10 @@ namespace CLP.Entities
         public override bool IsUsingTrashedInkStroke(string id, bool isUndoItem) { return isUndoItem ? StrokeIDsRemoved.Contains(id) : StrokeIDsAdded.Contains(id); }
 
         #endregion //Methods
+
+        protected override void ConversionUndoAction()
+        {
+
+        }
     }
 }

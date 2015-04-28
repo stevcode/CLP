@@ -208,10 +208,10 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>Method to invoke when the DragStartPageObjectCommand command is executed.</summary>
         private void OnDragStartPageObjectCommandExecute(DragStartedEventArgs e)
         {
-            if (IsBackgroundPageObject)
-            {
-                return;
-            }
+            //if (IsBackgroundPageObject)
+            //{
+            //    return;
+            //}
 
             if (!IsAdornerVisible)
             {
@@ -229,10 +229,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnDragPageObjectCommandExecute(DragDeltaEventArgs e)
         {
-            if (IsBackgroundPageObject)
-            {
-                return;
-            }
+            //if (IsBackgroundPageObject)
+            //{
+            //    return;
+            //}
 
             var initialX = XPosition;
             var initialY = YPosition;
@@ -253,11 +253,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnDragStopPageObjectCommandExecute(DragCompletedEventArgs e)
         {
-            if (IsBackgroundPageObject)
-            {
-                ACLPPageBaseViewModel.ClearAdorners(PageObject.ParentPage);
-                return;
-            }
+            //if (IsBackgroundPageObject)
+            //{
+            //    ACLPPageBaseViewModel.ClearAdorners(PageObject.ParentPage);
+            //    return;
+            //}
 
             var batch = PageObject.ParentPage.History.CurrentHistoryBatch;
             if (batch is ObjectsMovedBatchHistoryItem)

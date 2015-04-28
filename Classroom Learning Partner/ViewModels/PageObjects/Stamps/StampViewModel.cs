@@ -6,7 +6,6 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Windows;
 using System.Windows.Controls.Primitives;
-using System.Windows.Controls.Ribbon;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Catel.Data;
@@ -18,27 +17,23 @@ using Classroom_Learning_Partner.Views;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.CustomControls;
 using CLP.Entities;
-using RibbonButton = CLP.CustomControls.RibbonButton;
+using Microsoft.Win32;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    /// <summary>
-    /// UserControl view model.
-    /// </summary>
+    /// <summary>UserControl view model.</summary>
     public class StampViewModel : APageObjectBaseViewModel
     {
         #region Constructor
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="StampViewModel"/> class.
-        /// </summary>
+        /// <summary>Initializes a new instance of the <see cref="StampViewModel" /> class.</summary>
         public StampViewModel(Stamp stamp, INotebookService notebookService)
         {
             PageObject = stamp;
             stamp.AcceptedStrokes = stamp.AcceptedStrokeParentIDs.Select(id => PageObject.ParentPage.GetStrokeByID(id)).ToList();
             RaisePropertyChanged("IsGroupStamp");
             RaisePropertyChanged("IsDraggableStamp");
-            if(App.MainWindowViewModel.ImagePool.ContainsKey(stamp.ImageHashID))
+            if (App.MainWindowViewModel.ImagePool.ContainsKey(stamp.ImageHashID))
             {
                 SourceImage = App.MainWindowViewModel.ImagePool[stamp.ImageHashID];
             }
@@ -46,17 +41,17 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 var filePath = string.Empty;
                 var imageFilePaths = Directory.EnumerateFiles(notebookService.CurrentImageCacheDirectory);
-                foreach(var imageFilePath in from imageFilePath in imageFilePaths
-                                             let imageHashID = Path.GetFileNameWithoutExtension(imageFilePath)
-                                             where imageHashID == stamp.ImageHashID
-                                             select imageFilePath) 
-                                             {
-                                                 filePath = imageFilePath;
-                                                 break;
-                                             }
+                foreach (var imageFilePath in from imageFilePath in imageFilePaths
+                                              let imageHashID = Path.GetFileNameWithoutExtension(imageFilePath)
+                                              where imageHashID == stamp.ImageHashID
+                                              select imageFilePath)
+                {
+                    filePath = imageFilePath;
+                    break;
+                }
 
                 var bitmapImage = CLPImage.GetImageFromPath(filePath);
-                if(bitmapImage != null)
+                if (bitmapImage != null)
                 {
                     SourceImage = bitmapImage;
                     App.MainWindowViewModel.ImagePool.Add(stamp.ImageHashID, bitmapImage);
@@ -78,10 +73,13 @@ namespace Classroom_Learning_Partner.ViewModels
 
             _contextButtons.Add(new RibbonButton("Create Copies", "pack://application:,,,/Images/AddToDisplay.png", ParameterizeStampCommand, null, true));
 
-            var toggleChildPartsButton = new ToggleRibbonButton("Show Group Sizes", "Hide Group Sizes", "pack://application:,,,/Resources/Images/WindowControls/RestoreButton.png", true)
-            {
-                IsChecked = IsPartsLabelVisibleForChildren
-            };
+            var toggleChildPartsButton = new ToggleRibbonButton("Show Group Sizes",
+                                                                "Hide Group Sizes",
+                                                                "pack://application:,,,/Resources/Images/WindowControls/RestoreButton.png",
+                                                                true)
+                                         {
+                                             IsChecked = IsPartsLabelVisibleForChildren
+                                         };
             toggleChildPartsButton.Checked += toggleChildPartsButton_Checked;
             toggleChildPartsButton.Unchecked += toggleChildPartsButton_Checked;
             _contextButtons.Add(toggleChildPartsButton);
@@ -91,7 +89,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            var toggleChildBoundariesButton = new ToggleRibbonButton("Show Borders", "Hide Borders", "pack://application:,,,/Resources/Images/WindowControls/RestoreButton.png", true)
+            var toggleChildBoundariesButton = new ToggleRibbonButton("Show Borders",
+                                                                     "Hide Borders",
+                                                                     "pack://application:,,,/Resources/Images/WindowControls/RestoreButton.png",
+                                                                     true)
                                               {
                                                   IsChecked = IsBoundaryVisibleForChildren
                                               };
@@ -100,7 +101,7 @@ namespace Classroom_Learning_Partner.ViewModels
             _contextButtons.Add(toggleChildBoundariesButton);
         }
 
-        void toggleChildPartsButton_Checked(object sender, RoutedEventArgs e)
+        private void toggleChildPartsButton_Checked(object sender, RoutedEventArgs e)
         {
             var button = sender as ToggleRibbonButton;
             if (button == null ||
@@ -117,7 +118,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        void toggleChildBoundariesButton_Checked(object sender, RoutedEventArgs e)
+        private void toggleChildBoundariesButton_Checked(object sender, RoutedEventArgs e)
         {
             var button = sender as ToggleRibbonButton;
             if (button == null ||
@@ -134,19 +135,18 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        /// <summary>
-        /// Gets the title of the view model.
-        /// </summary>
+        /// <summary>Gets the title of the view model.</summary>
         /// <value>The title.</value>
-        public override string Title { get { return "StampVM"; } }
+        public override string Title
+        {
+            get { return "StampVM"; }
+        }
 
         #endregion //Constructor
 
         #region Model
 
-        /// <summary>
-        /// The type of <see cref="Stamp" />.
-        /// </summary>
+        /// <summary>The type of <see cref="Stamp" />.</summary>
         [ViewModelToModel("PageObject")]
         public StampTypes StampType
         {
@@ -154,11 +154,9 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(StampTypeProperty, value); }
         }
 
-        public static readonly PropertyData StampTypeProperty = RegisterProperty("StampType", typeof(StampTypes));
+        public static readonly PropertyData StampTypeProperty = RegisterProperty("StampType", typeof (StampTypes));
 
-        /// <summary>
-        /// The number of parts the stamp represents.
-        /// </summary>
+        /// <summary>The number of parts the stamp represents.</summary>
         [ViewModelToModel("PageObject")]
         public int Parts
         {
@@ -166,15 +164,13 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(PartsProperty, value); }
         }
 
-        public static readonly PropertyData PartsProperty = RegisterProperty("Parts", typeof(int));
+        public static readonly PropertyData PartsProperty = RegisterProperty("Parts", typeof (int));
 
         #endregion //Model
 
         #region Bindings
 
-        /// <summary>
-        /// Is Stamp a CollectionStamp.
-        /// </summary>
+        /// <summary>Is Stamp a CollectionStamp.</summary>
         public bool IsGroupStamp
         {
             get
@@ -203,42 +199,34 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        /// <summary>
-        /// X offset for the ghost image of the <see cref="Stamp" /> as it's being dragged on the <see cref="CLPPage" />.
-        /// </summary>
+        /// <summary>X offset for the ghost image of the <see cref="Stamp" /> as it's being dragged on the <see cref="CLPPage" />.</summary>
         public double GhostOffsetX
         {
             get { return GetValue<double>(GhostOffsetXProperty); }
             set { SetValue(GhostOffsetXProperty, value); }
         }
 
-        public static readonly PropertyData GhostOffsetXProperty = RegisterProperty("GhostOffsetX", typeof(double), 0.0);
+        public static readonly PropertyData GhostOffsetXProperty = RegisterProperty("GhostOffsetX", typeof (double), 0.0);
 
-        /// <summary>
-        /// Y offset for the ghost image of the <see cref="Stamp" /> as it's being dragged on the <see cref="CLPPage" />.
-        /// </summary>
+        /// <summary>Y offset for the ghost image of the <see cref="Stamp" /> as it's being dragged on the <see cref="CLPPage" />.</summary>
         public double GhostOffsetY
         {
             get { return GetValue<double>(GhostOffsetYProperty); }
             set { SetValue(GhostOffsetYProperty, value); }
         }
 
-        public static readonly PropertyData GhostOffsetYProperty = RegisterProperty("GhostOffsetY", typeof(double), 0.0);
+        public static readonly PropertyData GhostOffsetYProperty = RegisterProperty("GhostOffsetY", typeof (double), 0.0);
 
-        /// <summary>
-        /// Screenshot of the <see cref="Stamp" />'s body.
-        /// </summary>
+        /// <summary>Screenshot of the <see cref="Stamp" />'s body.</summary>
         public ImageSource GhostBodyImage
         {
             get { return GetValue<ImageSource>(GhostBodyImageProperty); }
             set { SetValue(GhostBodyImageProperty, value); }
         }
 
-        public static readonly PropertyData GhostBodyImageProperty = RegisterProperty("GhostBodyImage", typeof(ImageSource));
+        public static readonly PropertyData GhostBodyImageProperty = RegisterProperty("GhostBodyImage", typeof (ImageSource));
 
-        /// <summary>
-        /// The visible image, loaded from the ImageCache.
-        /// </summary>
+        /// <summary>The visible image, loaded from the ImageCache.</summary>
         public ImageSource SourceImage
         {
             get { return GetValue<ImageSource>(SourceImageProperty); }
@@ -247,33 +235,27 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData SourceImageProperty = RegisterProperty("SourceImage", typeof (ImageSource));
 
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
+        /// <summary>Gets or sets the property value.</summary>
         public Visibility PartsRegionVisibility
         {
             get { return GetValue<Visibility>(PartsRegionVisibilityProperty); }
             set { SetValue(PartsRegionVisibilityProperty, value); }
         }
 
-        public static readonly PropertyData PartsRegionVisibilityProperty = RegisterProperty("PartsRegionVisibility", typeof(Visibility), Visibility.Visible);
+        public static readonly PropertyData PartsRegionVisibilityProperty = RegisterProperty("PartsRegionVisibility", typeof (Visibility), Visibility.Visible);
 
-        /// <summary>
-        /// Gets or sets the property value.
-        /// </summary>
+        /// <summary>Gets or sets the property value.</summary>
         public SolidColorBrush StampHandleColor
         {
             get { return GetValue<SolidColorBrush>(StampHandleColorProperty); }
             set { SetValue(StampHandleColorProperty, value); }
         }
 
-        public static readonly PropertyData StampHandleColorProperty = RegisterProperty("StampHandleColor", typeof(SolidColorBrush), new SolidColorBrush(Colors.Black));
+        public static readonly PropertyData StampHandleColorProperty = RegisterProperty("StampHandleColor", typeof (SolidColorBrush), new SolidColorBrush(Colors.Black));
 
         #region Visibilities
 
-        /// <summary>
-        /// Visibility of the Ghost stamp.
-        /// </summary>
+        /// <summary>Visibility of the Ghost stamp.</summary>
         public bool IsGhostVisible
         {
             get { return GetValue<bool>(IsGhostVisibleProperty); }
@@ -285,11 +267,9 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        public static readonly PropertyData IsGhostVisibleProperty = RegisterProperty("IsGhostVisible", typeof(bool), false);
+        public static readonly PropertyData IsGhostVisibleProperty = RegisterProperty("IsGhostVisible", typeof (bool), false);
 
-        /// <summary>
-        /// Visibility of other adorners.
-        /// </summary>
+        /// <summary>Visibility of other adorners.</summary>
         public bool IsDefaultAdornersVisible
         {
             get { return !IsGhostVisible; }
@@ -301,20 +281,16 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Properties
 
-        /// <summary>
-        /// Toggles the visibility of a boundary around the stampedObject.
-        /// </summary>
+        /// <summary>Toggles the visibility of a boundary around the stampedObject.</summary>
         public bool IsBoundaryVisibleForChildren
         {
             get { return GetValue<bool>(IsBoundaryVisibleForChildrenProperty); }
             set { SetValue(IsBoundaryVisibleForChildrenProperty, value); }
         }
 
-        public static readonly PropertyData IsBoundaryVisibleForChildrenProperty = RegisterProperty("IsBoundaryVisibleForChildren", typeof(bool), true);
+        public static readonly PropertyData IsBoundaryVisibleForChildrenProperty = RegisterProperty("IsBoundaryVisibleForChildren", typeof (bool), true);
 
-        /// <summary>
-        /// Toggles the visibility of Parts info for the Stamp's stampedObject children.
-        /// </summary>
+        /// <summary>Toggles the visibility of Parts info for the Stamp's stampedObject children.</summary>
         public bool IsPartsLabelVisibleForChildren
         {
             get { return GetValue<bool>(IsPartsLabelVisibleForChildrenProperty); }
@@ -327,9 +303,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Commands
 
-        /// <summary>
-        /// Pops up keypad that allows parameterization of stamp copies.
-        /// </summary>
+        /// <summary>Pops up keypad that allows parameterization of stamp copies.</summary>
         public Command ParameterizeStampCommand { get; private set; }
 
         private void OnParameterizeStampCommandExecute()
@@ -351,16 +325,16 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             var keypadPrompt = IsDraggableStamp
-                ? StampType == StampTypes.GeneralStamp ? "How many copies?" : "How many groups?"
-                : StampType == StampTypes.ObservingStamp ? "How many objects?" : "How many groups?";
+                                   ? StampType == StampTypes.GeneralStamp ? "How many copies?" : "How many groups?"
+                                   : StampType == StampTypes.ObservingStamp ? "How many objects?" : "How many groups?";
 
             var keypadLimit = StampType == StampTypes.EmptyGroupStamp || StampType == StampTypes.GroupStamp ? 21 : 101;
 
             var keyPad = new KeypadWindowView(keypadPrompt, keypadLimit)
-                {
-                    Owner = Application.Current.MainWindow,
-                    WindowStartupLocation = WindowStartupLocation.Manual
-                };
+                         {
+                             Owner = Application.Current.MainWindow,
+                             WindowStartupLocation = WindowStartupLocation.Manual
+                         };
             keyPad.ShowDialog();
             if (keyPad.DialogResult != true ||
                 keyPad.NumbersEntered.Text.Length <= 0)
@@ -383,7 +357,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var stampedObjectWidth = Width;
             var stampedObjectHeight = Height - stamp.HandleHeight - stamp.PartsHeight;
             if (!IsGroupStamp &&
-               stamp.ImageHashID == string.Empty) //Shrinks StampCopy to bounds of all strokePaths
+                stamp.ImageHashID == string.Empty) //Shrinks StampCopy to bounds of all strokePaths
             {
                 var x1 = PageObject.ParentPage.Width;
                 var y1 = PageObject.ParentPage.Height;
@@ -414,9 +388,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var stampObjectType = stamp.StampType == StampTypes.GeneralStamp || stamp.StampType == StampTypes.ObservingStamp
                                       ? StampedObjectTypes.GeneralStampedObject
-                                      : stamp.StampType == StampTypes.GroupStamp
-                                            ? StampedObjectTypes.GroupStampedObject
-                                            : StampedObjectTypes.EmptyGroupStampedObject;
+                                      : stamp.StampType == StampTypes.GroupStamp ? StampedObjectTypes.GroupStampedObject : StampedObjectTypes.EmptyGroupStampedObject;
 
             var stampCopiesToAdd = new List<IPageObject>();
 
@@ -432,10 +404,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 for (var i = 0; i < numberOfCopies; i++)
                 {
                     var miniGroupIndex = i % 6;
-                    var xOffset = (miniGroupIndex % miniGroupingColumns) * stampedObjectWidth + (miniGroupIndex % miniGroupingColumns == 0 ? 0 : 5) -
-                                  8 + random.NextDouble() * 16;
-                    var yOffset = (miniGroupIndex % miniGroupingRows) * stampedObjectHeight + (miniGroupIndex % miniGroupingRows == 0 ? 0 : 5) - 8 +
-                                  random.NextDouble() * 16;
+                    var xOffset = (miniGroupIndex % miniGroupingColumns) * stampedObjectWidth + (miniGroupIndex % miniGroupingColumns == 0 ? 0 : 5) - 8 + random.NextDouble() * 16;
+                    var yOffset = (miniGroupIndex % miniGroupingRows) * stampedObjectHeight + (miniGroupIndex % miniGroupingRows == 0 ? 0 : 5) - 8 + random.NextDouble() * 16;
 
                     var stampedObject = new StampedObject(stamp.ParentPage, stamp.ID, stamp.ImageHashID, stampObjectType)
                                         {
@@ -488,16 +458,16 @@ namespace Classroom_Learning_Partner.ViewModels
                 for (var i = 0; i < numberOfCopies; i++)
                 {
                     var stampedObject = new StampedObject(stamp.ParentPage, stamp.ID, stamp.ImageHashID, stampObjectType)
-                    {
-                        Width = stampedObjectWidth,
-                        Height = stampedObjectHeight,
-                        XPosition = initialXPosition,
-                        YPosition = initialYPosition,
-                        SerializedStrokes = serializedStrokes.Select(stroke => stroke.ToStroke().ToStrokeDTO()).ToList(),
-                        Parts = stamp.Parts,
-                        IsBoundaryVisible = !IsGroupStamp && IsBoundaryVisibleForChildren,
-                        IsPartsLabelVisible = IsPartsLabelVisibleForChildren && !IsGroupStamp
-                    };
+                                        {
+                                            Width = stampedObjectWidth,
+                                            Height = stampedObjectHeight,
+                                            XPosition = initialXPosition,
+                                            YPosition = initialYPosition,
+                                            SerializedStrokes = serializedStrokes.Select(stroke => stroke.ToStroke().ToStrokeDTO()).ToList(),
+                                            Parts = stamp.Parts,
+                                            IsBoundaryVisible = !IsGroupStamp && IsBoundaryVisibleForChildren,
+                                            IsPartsLabelVisible = IsPartsLabelVisibleForChildren && !IsGroupStamp
+                                        };
 
                     stampCopiesToAdd.Add(stampedObject);
                     if (initialXPosition + 2 * stampedObject.Width + 15 < PageObject.ParentPage.Width)
@@ -521,14 +491,13 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             ACLPPageBaseViewModel.AddPageObjectsToPage(stamp.ParentPage, stampCopiesToAdd);
-        }          
+        }
 
-        /// <summary>
-        /// Places copy of stamp below and displays StrokePathViews for dragging stamp.
-        /// </summary>
+        /// <summary>Places copy of stamp below and displays StrokePathViews for dragging stamp.</summary>
         public Command StartDragStampCommand { get; private set; }
 
-        bool _copyFailed;
+        private bool _copyFailed;
+
         private void OnStartDragStampCommandExecute()
         {
             if (!IsDraggableStamp)
@@ -536,7 +505,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            if (!HasParts() && !IsGroupStamp)
+            if (!HasParts() &&
+                !IsGroupStamp)
             {
                 _copyFailed = true;
                 IsGhostVisible = false;
@@ -556,7 +526,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var views = viewManager.GetViewsOfViewModel(pageViewModel);
             var pageView = views.FirstOrDefault(view => view is CLPPageView) as CLPPageView;
             if (pageView == null ||
-               stamp == null)
+                stamp == null)
             {
                 _copyFailed = true;
                 return;
@@ -577,7 +547,11 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             renderTarget.Render(drawingVisual);
 
-            var crop = new CroppedBitmap(renderTarget, new Int32Rect((int)(XPosition + 2), (int)(YPosition + stamp.HandleHeight + 2), (int)(Width - 4), (int)(Height - stamp.HandleHeight - stamp.PartsHeight - 4)));
+            var crop = new CroppedBitmap(renderTarget,
+                                         new Int32Rect((int)(XPosition + 2),
+                                                       (int)(YPosition + stamp.HandleHeight + 2),
+                                                       (int)(Width - 4),
+                                                       (int)(Height - stamp.HandleHeight - stamp.PartsHeight - 4)));
 
             byte[] imageArray;
             var encoder = new PngBitmapEncoder();
@@ -600,9 +574,7 @@ namespace Classroom_Learning_Partner.ViewModels
             PopulateContextRibbon(true);
         }
 
-        /// <summary>
-        /// Stamp Dragged By Handle
-        /// </summary>
+        /// <summary>Stamp Dragged By Handle</summary>
         public Command<DragDeltaEventArgs> DragStampCommand { get; private set; }
 
         private void OnDragStampCommandExecute(DragDeltaEventArgs e)
@@ -613,7 +585,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            if (!HasParts() && !IsGroupStamp)
+            if (!HasParts() &&
+                !IsGroupStamp)
             {
                 _copyFailed = true;
                 IsGhostVisible = false;
@@ -621,7 +594,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            if(_copyFailed)
+            if (_copyFailed)
             {
                 IsGhostVisible = false;
                 return;
@@ -642,9 +615,7 @@ namespace Classroom_Learning_Partner.ViewModels
             GhostOffsetY = newOffsetY;
         }
 
-        /// <summary>
-        /// Copies StampCopy to page on Stamp Placed (DragCompleted Event)
-        /// </summary>
+        /// <summary>Copies StampCopy to page on Stamp Placed (DragCompleted Event)</summary>
         public Command PlaceStampCommand { get; private set; }
 
         private void OnPlaceStampCommandExecute()
@@ -655,7 +626,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            if (!HasParts() && !IsGroupStamp)
+            if (!HasParts() &&
+                !IsGroupStamp)
             {
                 _copyFailed = true;
                 IsGhostVisible = false;
@@ -668,8 +640,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             IsGhostVisible = false;
             var stamp = PageObject as Stamp;
-            if(_copyFailed ||
-               stamp == null)
+            if (_copyFailed || stamp == null)
             {
                 return;
             }
@@ -677,17 +648,15 @@ namespace Classroom_Learning_Partner.ViewModels
             var deltaX = Math.Abs(GhostOffsetX);
             var deltaY = Math.Abs(GhostOffsetY);
 
-            if(deltaX < Width + 5 &&
-               deltaY < Height - stamp.PartsHeight)
+            if (deltaX < Width + 5 &&
+                deltaY < Height - stamp.PartsHeight)
             {
                 return;
             }
 
             var stampObjectType = stamp.StampType == StampTypes.GeneralStamp || stamp.StampType == StampTypes.ObservingStamp
                                       ? StampedObjectTypes.GeneralStampedObject
-                                      : stamp.StampType == StampTypes.GroupStamp
-                                            ? StampedObjectTypes.GroupStampedObject
-                                            : StampedObjectTypes.EmptyGroupStampedObject;
+                                      : stamp.StampType == StampTypes.GroupStamp ? StampedObjectTypes.GroupStampedObject : StampedObjectTypes.EmptyGroupStampedObject;
 
             var stampedObject = new StampedObject(stamp.ParentPage, stamp.ID, stamp.ImageHashID, stampObjectType)
                                 {
@@ -712,14 +681,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var xPosition = stampedObject.XPosition;
             var yPosition = stampedObject.YPosition;
-            if(!IsGroupStamp && 
-               stampedObject.ImageHashID == string.Empty) //Shrinks StampCopy to bounds of all strokePaths
+            if (!IsGroupStamp &&
+                stampedObject.ImageHashID == string.Empty) //Shrinks StampCopy to bounds of all strokePaths
             {
                 var x1 = PageObject.ParentPage.Width;
                 var y1 = PageObject.ParentPage.Height;
                 var x2 = 0.0;
                 var y2 = 0.0;
-                foreach(var bounds in stampedObject.SerializedStrokes.Select(serializedStroke => serializedStroke.ToStroke().GetBounds()))
+                foreach (var bounds in stampedObject.SerializedStrokes.Select(serializedStroke => serializedStroke.ToStroke().GetBounds()))
                 {
                     x1 = Math.Min(x1, bounds.Left);
                     y1 = Math.Min(y1, bounds.Top);
@@ -733,7 +702,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 stampedObject.Height = Math.Max(y2 - y1, 20);
 
                 var transformedSerializedStrokes = new List<StrokeDTO>();
-                foreach(var serializedStroke in stampedObject.SerializedStrokes)
+                foreach (var serializedStroke in stampedObject.SerializedStrokes)
                 {
                     var stroke = serializedStroke.ToStroke();
                     var transform = new Matrix();
@@ -751,7 +720,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                       {
                                           stampedObject
                                       };
-            foreach(var pageObject in stamp.AcceptedPageObjects)
+            foreach (var pageObject in stamp.AcceptedPageObjects)
             {
                 var newPageObject = pageObject.Duplicate();
                 newPageObject.XPosition = pageObject.XPosition + GhostOffsetX;
@@ -762,16 +731,14 @@ namespace Classroom_Learning_Partner.ViewModels
             ACLPPageBaseViewModel.AddPageObjectsToPage(stampedObject.ParentPage, combinedPageObjects);
         }
 
-        /// <summary>
-        /// Shows Modal Window Keypad to input Parts manually.
-        /// </summary>
+        /// <summary>Shows Modal Window Keypad to input Parts manually.</summary>
         public Command ShowKeyPadCommand { get; private set; }
-        
+
         private void OnShowKeyPadCommandExecute()
         {
             var stamp = PageObject as Stamp;
-            if(stamp == null ||
-               (!App.MainWindowViewModel.IsAuthoring && stamp.IsPartsAutoGenerated))
+            if (stamp == null ||
+                (!App.MainWindowViewModel.IsAuthoring && stamp.IsPartsAutoGenerated))
             {
                 return;
             }
@@ -782,8 +749,8 @@ namespace Classroom_Learning_Partner.ViewModels
                              WindowStartupLocation = WindowStartupLocation.Manual
                          };
             keyPad.ShowDialog();
-            if(keyPad.DialogResult != true ||
-               keyPad.NumbersEntered.Text.Length <= 0)
+            if (keyPad.DialogResult != true ||
+                keyPad.NumbersEntered.Text.Length <= 0)
             {
                 return;
             }
@@ -792,16 +759,14 @@ namespace Classroom_Learning_Partner.ViewModels
             var parts = Int32.Parse(keyPad.NumbersEntered.Text);
             stamp.Parts = parts;
             ACLPPageBaseViewModel.AddHistoryItemToPage(stamp.ParentPage,
-                                                       new PartsValueChangedHistoryItem(stamp.ParentPage, App.MainWindowViewModel.CurrentUser, stamp.ID, oldPartsValue));
-            if(App.MainWindowViewModel.IsAuthoring)
+                                                       new PartsValueChangedHistoryItem(stamp.ParentPage, App.MainWindowViewModel.CurrentUser, stamp.ID, oldPartsValue, parts));
+            if (App.MainWindowViewModel.IsAuthoring)
             {
                 stamp.IsPartsAutoGenerated = true;
             }
         }
 
-        /// <summary>
-        /// Toggles the boundary visibilities of all children stamps.
-        /// </summary>
+        /// <summary>Toggles the boundary visibilities of all children stamps.</summary>
         public Command ToggleChildBoundaryVisibilityCommand { get; private set; }
 
         private void OnToggleChildBoundaryVisibilityCommandExecute()
@@ -815,7 +780,7 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         #endregion //Commands
-        
+
         #region Methods
 
         private bool HasParts()
@@ -826,7 +791,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return false;
             }
 
-            if(stamp.IsPartsAutoGenerated)
+            if (stamp.IsPartsAutoGenerated)
             {
                 return true;
             }
@@ -841,7 +806,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 ContextRibbon.Buttons.Clear();
             }
 
-            if (!IsDefaultAdornersVisible || 
+            if (!IsDefaultAdornersVisible ||
                 !IsAdornerVisible)
             {
                 return;
@@ -866,23 +831,17 @@ namespace Classroom_Learning_Partner.ViewModels
             ACLPPageBaseViewModel.AddPageObjectToPage(stamp);
         }
 
-        public static void AddImageGeneralStampToPage(CLPPage page)
-        {
-            CreateImageStamp(StampTypes.GeneralStamp, page);
-        }
+        public static void AddImageGeneralStampToPage(CLPPage page) { CreateImageStamp(StampTypes.GeneralStamp, page); }
 
-        public static void AddImageGroupStampToPage(CLPPage page)
-        {
-            CreateImageStamp(StampTypes.GroupStamp, page);
-        }
+        public static void AddImageGroupStampToPage(CLPPage page) { CreateImageStamp(StampTypes.GroupStamp, page); }
 
         private static void CreateImageStamp(StampTypes stampType, CLPPage page)
         {
             // Configure open file dialog box
-            var dlg = new Microsoft.Win32.OpenFileDialog
-            {
-                Filter = "Images|*.png;*.jpg;*.jpeg;*.gif"
-            };
+            var dlg = new OpenFileDialog
+                      {
+                          Filter = "Images|*.png;*.jpg;*.jpeg;*.gif"
+                      };
 
             var result = dlg.ShowDialog();
             if (result != true)

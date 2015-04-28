@@ -78,6 +78,11 @@ namespace CLP.Entities
 
         #region Methods
 
+        protected override void ConversionUndoAction()
+        {
+            UndoAction(false);
+        }
+
         /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void UndoAction(bool isAnimationUndo)
         {
@@ -95,6 +100,7 @@ namespace CLP.Entities
             var divisionTemplate = ParentPage.GetVerifiedPageObjectOnPageByID(DivisionTemplateID) as FuzzyFactorCard;
             if (divisionTemplate == null)
             {
+                Console.WriteLine("[ERROR] on Index #{0}, Division Template for Remainder Tiles Toggle not found on page or in history.", HistoryIndex);
                 return;
             }
 

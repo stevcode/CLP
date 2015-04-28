@@ -12,7 +12,6 @@ using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
 using Catel.Data;
 using Catel.IoC;
 using Catel.MVVM;
@@ -602,7 +601,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 //Avoid uniqueID duplication
                 var removedStrokesList = removedStrokes as IList<Stroke> ?? removedStrokes.ToList();
                 var removedStrokeIDs = removedStrokesList.Select(stroke => stroke.GetStrokeID()).ToList();
-                
+
                 var addedStrokesList = addedStrokes as IList<Stroke> ?? addedStrokes.ToList();
                 foreach (var stroke in addedStrokesList)
                 {
@@ -676,7 +675,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var removedStrokesList = removedStrokes as IList<Stroke> ?? removedStrokes.ToList();
 
             var canInteract = PageInteractionService.IsInkInteracting;
-            
+
             foreach (var pageObject in PageObjects.OfType<IStrokeAccepter>().Where(x => x.CreatorID == App.MainWindowViewModel.CurrentUser.ID || x.IsBackgroundInteractable))
             {
                 bool didInteract;
@@ -735,17 +734,17 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var strokeGeometry = new PathGeometry();
             var pathFigure = new PathFigure
-            {
-                StartPoint = stroke.StylusPoints.First().ToPoint(),
-                Segments = new PathSegmentCollection()
-            };
+                             {
+                                 StartPoint = stroke.StylusPoints.First().ToPoint(),
+                                 Segments = new PathSegmentCollection()
+                             };
             var polyLine = new PolyLineSegment
-            {
-                Points = new PointCollection((Point[])stroke.StylusPoints)
+                           {
+                               Points = new PointCollection((Point[])stroke.StylusPoints)
                                         {
                                             stroke.StylusPoints.First().ToPoint()
                                         }
-            };
+                           };
             pathFigure.Segments.Add(polyLine);
 
             strokeGeometry.Figures.Add(pathFigure);
@@ -855,38 +854,37 @@ namespace Classroom_Learning_Partner.ViewModels
             stroke.SetStrokeVersionIndex(0);
             Page.InkStrokes.Remove(stroke);
 
-            var allCutPageObjects = new List<ICuttable>();
-            var allHalvedPageObjects = new List<IPageObject>();
-            foreach (var pageObject in PageObjects.OfType<ICuttable>())
+            var pageObjectToCut =
+                PageObjects.OfType<ICuttable>()
+                           .Where(c => App.MainWindowViewModel.CurrentUser.ID == c.CreatorID || c.IsManipulatableByNonCreator)
+                           .OrderBy(c => c.CuttingStrokeDistance(stroke))
+                           .FirstOrDefault();
+
+            
+            var halvedPageObjects = new List<IPageObject>();
+            if (pageObjectToCut != null)
             {
-                var halvedPageObjects = pageObject.Cut(stroke);
-                if (!halvedPageObjects.Any() ||
-                    (App.MainWindowViewModel.CurrentUser.ID != pageObject.CreatorID && !pageObject.IsManipulatableByNonCreator))
-                {
-                    continue;
-                }
-                allCutPageObjects.Add(pageObject);
-                allHalvedPageObjects.AddRange(halvedPageObjects);
+                halvedPageObjects = pageObjectToCut.Cut(stroke);
             }
 
-            foreach (var pageObject in allCutPageObjects)
+            var halvedPageObjectIDs = new List<string>();
+            foreach (var pageObject in halvedPageObjects)
             {
-                PageObjects.Remove(pageObject);
-            }
-
-            var allHalvedPageObjectIDs = new List<string>();
-            foreach (var pageObject in allHalvedPageObjects)
-            {
-                allHalvedPageObjectIDs.Add(pageObject.ID);
+                halvedPageObjectIDs.Add(pageObject.ID);
                 AddPageObjectToPage(Page, pageObject, false, false);
             }
-            AddHistoryItemToPage(Page, new PageObjectCutHistoryItem(Page, App.MainWindowViewModel.CurrentUser, stroke, allCutPageObjects, allHalvedPageObjectIDs));
+            AddHistoryItemToPage(Page, new PageObjectCutHistoryItem(Page, App.MainWindowViewModel.CurrentUser, stroke, pageObjectToCut, halvedPageObjectIDs));
 
             RefreshInkStrokes();
-            RefreshPageObjects(allHalvedPageObjects);
+            RefreshPageObjects(halvedPageObjects);
 
-            if (allHalvedPageObjects.Any())
+            if (halvedPageObjects.Any())
             {
+                if (pageObjectToCut != null && 
+                    PageObjects.Contains(pageObjectToCut))
+                {
+                    PageObjects.Remove(pageObjectToCut);
+                }
                 App.MainWindowViewModel.MajorRibbon.PageInteractionMode = PageInteractionModes.Select;
             }
 

@@ -60,6 +60,11 @@ namespace CLP.Entities
 
         #region Methods
 
+        protected override void ConversionUndoAction()
+        {
+
+        }
+
         /// <summary>
         /// Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.
         /// </summary>

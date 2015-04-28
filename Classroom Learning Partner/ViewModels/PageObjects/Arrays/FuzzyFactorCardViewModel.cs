@@ -25,6 +25,7 @@ namespace Classroom_Learning_Partner.ViewModels
             RemoveFuzzyFactorCardCommand = new Command(OnRemoveFuzzyFactorCardCommandExecute);
             ResizeFuzzyFactorCardCommand = new Command<DragDeltaEventArgs>(OnResizeFuzzyFactorCardCommandExecute);
             RemoveLastArrayCommand = new Command(OnRemoveLastArrayCommandExecute);
+            
             InitializeButtons();
         }
 
@@ -106,7 +107,7 @@ namespace Classroom_Learning_Partner.ViewModels
             divisionTemplate.UpdateReport();
         }
 
-        #endregion //Constructor    
+        #endregion //Constructor  
 
         #region Model
 

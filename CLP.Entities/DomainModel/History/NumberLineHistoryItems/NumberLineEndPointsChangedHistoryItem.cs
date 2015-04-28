@@ -15,13 +15,24 @@ namespace CLP.Entities
         /// <summary>Initializes <see cref="CLPArrayDivisionValueChangedHistoryItem" /> with a parent <see cref="CLPPage" />.</summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryItem" /> is part of.</param>
         /// <param name="owner">The <see cref="Person" /> who created the <see cref="IHistoryItem" />.</param>
-        public NumberLineEndPointsChangedHistoryItem(CLPPage parentPage, Person owner, string numberLineID, int previousStartValue, int previousEndValue, double preStretchedWidth)
+        public NumberLineEndPointsChangedHistoryItem(CLPPage parentPage,
+                                                     Person owner,
+                                                     string numberLineID,
+                                                     int previousStartValue,
+                                                     int newStartValue,
+                                                     int previousEndValue,
+                                                     int newEndValue,
+                                                     double preStretchedWidth,
+                                                     double newStretchedWidth)
             : base(parentPage, owner)
         {
             NumberLineID = numberLineID;
             PreviousStartValue = previousStartValue;
+            NewStartValue = newStartValue;
             PreviousEndValue = previousEndValue;
+            NewEndValue = newEndValue;
             PreStretchedWidth = preStretchedWidth;
+            NewStretchedWidth = newStretchedWidth;
         }
 
         /// <summary>Initializes a new object based on <see cref="SerializationInfo" />.</summary>
@@ -57,6 +68,15 @@ namespace CLP.Entities
 
         public static readonly PropertyData PreviousStartValueProperty = RegisterProperty("PreviousStartValue", typeof (int));
 
+        /// <summary>New start value of the number line.</summary>
+        public int NewStartValue
+        {
+            get { return GetValue<int>(NewStartValueProperty); }
+            set { SetValue(NewStartValueProperty, value); }
+        }
+
+        public static readonly PropertyData NewStartValueProperty = RegisterProperty("NewStartValue", typeof (int));
+
         /// <summary>Previous end value of the number line.</summary>
         public int PreviousEndValue
         {
@@ -66,9 +86,16 @@ namespace CLP.Entities
 
         public static readonly PropertyData PreviousEndValueProperty = RegisterProperty("PreviousEndValue", typeof (int));
 
-        /// <summary>
-        /// Width before a resize that involves stretching captured ink strokes.
-        /// </summary>
+        /// <summary>New end value of the number line.</summary>
+        public int NewEndValue
+        {
+            get { return GetValue<int>(NewEndValueProperty); }
+            set { SetValue(NewEndValueProperty, value); }
+        }
+
+        public static readonly PropertyData NewEndValueProperty = RegisterProperty("NewEndValue", typeof (int));
+
+        /// <summary>Width before a resize that involves stretching captured ink strokes.</summary>
         public double PreStretchedWidth
         {
             get { return GetValue<double>(PreStretchedWidthProperty); }
@@ -77,20 +104,50 @@ namespace CLP.Entities
 
         public static readonly PropertyData PreStretchedWidthProperty = RegisterProperty("PreStretchedWidth", typeof (double));
 
+        /// <summary>Width after a resize that involves stretching captured ink strokes.</summary>
+        public double NewStretchedWidth
+        {
+            get { return GetValue<double>(NewStretchedWidthProperty); }
+            set { SetValue(NewStretchedWidthProperty, value); }
+        }
+
+        public static readonly PropertyData NewStretchedWidthProperty = RegisterProperty("NewStretchedWidth", typeof (double));
+
         public override string FormattedValue
         {
             get
             {
                 var numberLine = ParentPage.GetPageObjectByIDOnPageOrInHistory(NumberLineID) as NumberLine;
-                var formattedValue = string.Format("Index # {0}, Resized number line({1}) to be size {2}", 
-                    HistoryIndex, PreviousEndValue - PreviousStartValue, numberLine.NumberLineSize);
-                return formattedValue;
+                return numberLine == null
+                           ? string.Format("[ERROR] on Index #{0}, Number Line not found on page or in history.", HistoryIndex)
+                           : string.Format("Index #{0}, Changed Number Line end point from {1} to {2}.",
+                                           HistoryIndex,
+                                           PreviousEndValue - PreviousStartValue,
+                                           numberLine.NumberLineSize);
             }
         }
-        
+
         #endregion //Properties
 
         #region Methods
+
+        protected override void ConversionUndoAction()
+        {
+            var numberLine = ParentPage.GetVerifiedPageObjectOnPageByID(NumberLineID) as NumberLine;
+            if (numberLine == null)
+            {
+                Console.WriteLine("[ERROR] on Index #{0}, Number Line for Jump Size Changed not found on page or in history.", HistoryIndex);
+                return;
+            }
+
+            NewStartValue = 0;
+
+            NewStretchedWidth = numberLine.Width;
+            StretchInk(numberLine, PreStretchedWidth);
+
+            NewEndValue = numberLine.NumberLineSize;
+            numberLine.ChangeNumberLineSize(PreviousEndValue);
+        }
 
         /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void UndoAction(bool isAnimationUndo)
@@ -98,12 +155,13 @@ namespace CLP.Entities
             var numberLine = ParentPage.GetVerifiedPageObjectOnPageByID(NumberLineID) as NumberLine;
             if (numberLine == null)
             {
+                Console.WriteLine("[ERROR] on Index #{0}, Number Line for Jump Size Changed not found on page or in history.", HistoryIndex);
                 return;
             }
 
-            StretchInk(numberLine);
+            StretchInk(numberLine, PreStretchedWidth);
 
-            ToggleEndPointValues(numberLine);
+            numberLine.ChangeNumberLineSize(PreviousEndValue);
         }
 
         /// <summary>Method that will actually redo the action. Already incorporates error checking for existance of ParentPage.</summary>
@@ -115,29 +173,21 @@ namespace CLP.Entities
                 return;
             }
 
-            ToggleEndPointValues(numberLine);
+            numberLine.ChangeNumberLineSize(NewEndValue);
 
-            StretchInk(numberLine);
+            StretchInk(numberLine, NewStretchedWidth);
         }
 
-        private void ToggleEndPointValues(NumberLine numberLine)
+        private void StretchInk(NumberLine numberLine, double newWidth)
         {
-            var tempPreviousEnd = numberLine.NumberLineSize;
-            numberLine.ChangeNumberLineSize(PreviousEndValue);
-            PreviousEndValue = tempPreviousEnd;
-        }
-
-        private void StretchInk(NumberLine numberLine)
-        {
-            if (Math.Abs(numberLine.Width - PreStretchedWidth) < 0.0001)
+            if (Math.Abs(NewStretchedWidth - PreStretchedWidth) < 0.0001)
             {
                 return;
             }
 
             var oldWidth = numberLine.Width;
             var oldHeight = numberLine.Height;
-            numberLine.Width = PreStretchedWidth;
-            PreStretchedWidth = oldWidth;
+            numberLine.Width = newWidth;
             numberLine.OnResized(oldWidth, oldHeight, true);
         }
 

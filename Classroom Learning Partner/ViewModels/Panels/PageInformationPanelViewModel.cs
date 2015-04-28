@@ -75,6 +75,7 @@ namespace Classroom_Learning_Partner.ViewModels
             InterpretArrayDividersCommand = new Command(OnInterpretArrayDividersCommandExecute);
             PrintAllHistoryItemsCommand = new Command(OnPrintAllHistoryItemsCommandExecute);
             GenerateStampGroupingsCommand = new Command(OnGenerateStampGroupingsCommandExecute);
+            FixCommand = new Command(OnFixCommandExecute);
         }
 
         private void PageInformationPanelViewModel_Initialized(object sender, EventArgs e)
@@ -1068,6 +1069,32 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 var tag = new StampGroupTag(CurrentPage, Origin.StudentPageGenerated, stampGroup.Key.Item1, stampGroup.Key.Item2, stampGroup.Value);
                 CurrentPage.AddTag(tag);
+            }
+        }
+
+        /// <summary>
+        /// SUMMARY
+        /// </summary>
+        public Command FixCommand { get; private set; }
+
+        private void OnFixCommandExecute()
+        {
+            foreach (var dt in CurrentPage.PageObjects.OfType<FuzzyFactorCard>())
+            {
+                var gridSize = dt.ArrayHeight / dt.Rows;
+
+
+                dt.SizeArrayToGridLevel(gridSize, false);
+
+                var position = 0.0;
+                foreach (var division in dt.VerticalDivisions)
+                {
+                    division.Position = position;
+                    division.Length = dt.GridSquareSize * division.Value;
+                    position = division.Position + division.Length;
+                }
+
+                dt.RaiseAllPropertiesChanged();
             }
         }
     }
