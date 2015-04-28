@@ -6,13 +6,17 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 using Catel.Data;
+using Catel.IoC;
 using Catel.MVVM;
+using Classroom_Learning_Partner.Services;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
     public class GridDisplayViewModel : ViewModelBase
     {
+        private INotebookService _notebookService;
+
         #region Constructor
 
         /// <summary>
@@ -20,9 +24,12 @@ namespace Classroom_Learning_Partner.ViewModels
         /// </summary>
         public GridDisplayViewModel(GridDisplay gridDisplay)
         {
+            _notebookService = DependencyResolver.Resolve<INotebookService>();
+
             GridDisplay = gridDisplay;
             Pages.CollectionChanged += Pages_CollectionChanged;
             UGridRows = Pages.Count < 3 ? 1 : 0;
+            SetPageAsCurrentPageCommand = new Command<CLPPage>(OnSetPageAsCurrentPageCommandExecute);
             RemovePageFromGridDisplayCommand = new Command<CLPPage>(OnRemovePageFromGridDisplayCommandExecute);
             ReplayHistoryCommand = new Command<CLPPage>(OnReplayHistoryCommandExecute);
         }
@@ -152,6 +159,22 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Methods
 
         #region Commands
+
+        /// <summary>
+        /// SUMMARY
+        /// </summary>
+        public Command<CLPPage> SetPageAsCurrentPageCommand { get; private set; }
+
+        private void OnSetPageAsCurrentPageCommandExecute(CLPPage page)
+        {
+            if (_notebookService == null ||
+                page == null)
+            {
+                return;
+            }
+
+            _notebookService.CurrentNotebook.CurrentPage = page;
+        }
 
         /// <summary>
         /// Gets the RemovePageFromGridDisplayCommand command.
