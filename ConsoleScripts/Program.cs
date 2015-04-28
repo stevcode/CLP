@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Windows;
 using System.Windows.Ink;
 using Catel.Collections;
 using Catel.Data;
@@ -106,6 +107,24 @@ namespace ConsoleScripts
             }
         }
 
+        public static void FixOldDivisionTemplateSizing(FuzzyFactorCard divisionTemplate)
+        {
+            //Comment the following line if converting any cache of Emily's
+            //return;
+            
+            var gridSize = divisionTemplate.ArrayHeight / divisionTemplate.Rows;
+
+            divisionTemplate.SizeArrayToGridLevel(gridSize, false);
+
+            var position = 0.0;
+            foreach (var division in divisionTemplate.VerticalDivisions)
+            {
+                division.Position = position;
+                division.Length = divisionTemplate.GridSquareSize * division.Value;
+                position = division.Position + division.Length;
+            }
+        }
+
         public static void TheSlowRewind(CLPPage page)
         {
             //Rewind entire page
@@ -124,7 +143,6 @@ namespace ConsoleScripts
                 #region WorksAsIs
 
                 if (historyItemToUndo is AnimationIndicator ||
-                    historyItemToUndo is PageObjectResizeBatchHistoryItem ||
                     historyItemToUndo is CLPArrayRotateHistoryItem ||
                     historyItemToUndo is CLPArrayGridToggleHistoryItem ||
                     historyItemToUndo is CLPArrayDivisionsChangedHistoryItem ||
@@ -141,6 +159,30 @@ namespace ConsoleScripts
 
                 #endregion //WorksAsIs
 
+                #region PageObjectResize fix for old Division Templates
+
+                if (historyItemToUndo is PageObjectResizeBatchHistoryItem)
+                {
+                    var pageObjectResized = historyItemToUndo as PageObjectResizeBatchHistoryItem;
+                    var divisionTemplate = page.GetVerifiedPageObjectOnPageByID(pageObjectResized.PageObjectID) as FuzzyFactorCard;
+                    if (divisionTemplate != null)
+                    {
+                        FixOldDivisionTemplateSizing(divisionTemplate);
+                        var fixStretchedDimensions = (from point in pageObjectResized.StretchedDimensions
+                                                      let height = point.Y
+                                                      let gridSize = (height - (2 * divisionTemplate.LabelLength)) / divisionTemplate.Rows
+                                                      let newWidth = (gridSize * divisionTemplate.Columns) + divisionTemplate.LabelLength + divisionTemplate.LargeLabelLength
+                                                      select new Point(newWidth, point.Y)).ToList();
+
+                        pageObjectResized.StretchedDimensions = fixStretchedDimensions;
+                    }
+
+                    page.History.ConversionUndo();
+                    continue;
+                }
+
+                #endregion //PageObjectResize fix for old Division Templates
+
                 #region ???PageObjectsAdded to ObjectsOnPageChanged
 
                 if (historyItemToUndo is PageObjectsAddedHistoryItem)
@@ -153,6 +195,16 @@ namespace ConsoleScripts
                     }
 
                     var objectsChanged = new ObjectsOnPageChangedHistoryItem(pageObjectsAdded);
+
+                    foreach (var id in objectsChanged.PageObjectIDsAdded)
+                    {
+                        var divisionTemplate = page.GetVerifiedPageObjectOnPageByID(id) as FuzzyFactorCard;
+                        if (divisionTemplate != null)
+                        {
+                            FixOldDivisionTemplateSizing(divisionTemplate);
+                        }
+                    }
+
                     page.History.UndoItems.Insert(0, objectsChanged);
                     page.History.ConversionUndo(); //?
                     continue;
@@ -172,6 +224,16 @@ namespace ConsoleScripts
                     }
 
                     var objectsChanged = new ObjectsOnPageChangedHistoryItem(pageObjectsRemoved);
+
+                    foreach (var id in objectsChanged.PageObjectIDsRemoved)
+                    {
+                        var divisionTemplate = page.GetVerifiedPageObjectInTrashByID(id) as FuzzyFactorCard;
+                        if (divisionTemplate != null)
+                        {
+                            FixOldDivisionTemplateSizing(divisionTemplate);
+                        }
+                    }
+
                     page.History.UndoItems.Insert(0, objectsChanged);
                     page.History.ConversionUndo(); //?
                     continue;
