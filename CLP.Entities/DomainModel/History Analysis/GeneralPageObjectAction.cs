@@ -129,7 +129,7 @@ namespace CLP.Entities
                 else if (GeneralAction == GeneralActions.Move)
                 {
                     var historyItem = historyItems.First() as ObjectsMovedBatchHistoryItem;
-                    firstObjectID = historyItem.PageObjectIDs.First();
+                    firstObjectID = historyItem.PageObjectIDs.First().Key;
                 }
                 else //resize
                 {
@@ -182,7 +182,7 @@ namespace CLP.Entities
 
         public List<IPageObject> MovedPageObjects
         {
-            get { return HistoryItems.OfType<ObjectsMovedBatchHistoryItem>().SelectMany(h => h.PageObjectIDs.Select(ParentPage.GetPageObjectByIDOnPageOrInHistory)).ToList();}
+            get { return HistoryItems.OfType<ObjectsMovedBatchHistoryItem>().SelectMany(h => h.PageObjectIDs.Keys.Select(ParentPage.GetPageObjectByIDOnPageOrInHistory)).ToList();}
         }
 
         public List<IPageObject> ResizedPageObjects
