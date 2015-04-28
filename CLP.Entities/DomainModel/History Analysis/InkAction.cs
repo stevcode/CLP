@@ -34,52 +34,55 @@ namespace CLP.Entities
         public InkAction(CLPPage parentPage, List<IHistoryItem> historyItems)
             : base(parentPage)
         {
-            var addStrokes = false;
-            var removeStrokes = false;
+            HistoryItemIDs = historyItems.Select(h => h.ID).ToList();
             foreach (var historyItem in historyItems)
             {
-                if (!(historyItem is ObjectsOnPageChangedHistoryItem))
-                {
-                    //throw error
-                }
                 var pageChangedHistoryItem = (ObjectsOnPageChangedHistoryItem)historyItem;
                 if (!pageChangedHistoryItem.StrokeIDsAdded.Any() && 
                     !pageChangedHistoryItem.StrokeIDsRemoved.Any()) 
                 {
-                    //throw error
+                    //throw error, no strokes
                 }
-                
-                if (pageChangedHistoryItem.StrokeIDsAdded.Any())
+                if(pageChangedHistoryItem.PageObjectIDsAdded.Any() ||
+                    pageChangedHistoryItem.PageObjectIDsRemoved.Any())
                 {
-                    addStrokes = true;
+                    //throw error, items besides strokes
                 }
-
-                if (pageChangedHistoryItem.StrokeIDsRemoved.Any())
-                {
-                    removeStrokes = true;
-                }
-
             }
-
-            if (addStrokes && removeStrokes)
-            {
-                //throw error, can't have both
-            }
-
-            //validate
-
-            //PageObjectStructuredID.ID = pageObject.ID;
-            //PageObjectStructuredID.CodedID = pageObject.ID;
         }
 
         /// <summary>Initializes <see cref="InkAction" /> using <see cref="CLPPage" />.</summary>
-        public InkAction(CLPPage parentPage, List<InkAction> inkAction)
+        public InkAction(CLPPage parentPage, List<InkAction> inkActions, List<IHistoryItem> historyItems, InkActions inkActionType)
             : base(parentPage)
         {
-            //validate
+            HistoryItemIDs = historyItems.Select(h => h.ID).ToList();
+            HistoryActionIDs = inkActions.Select(i => i.ID).ToList();
 
-            //PageObjectStructuredID.ID = pageObject.ID;
-            //PageObjectStructuredID.CodedID = pageObject.ID;
+            InkActionType = inkActionType;
+
+            foreach (var historyItem in HistoryItems)
+            {
+                var pageHistoryItem = (ObjectsOnPageChangedHistoryItem)historyItem;
+                //validate that all adds or removed
+                if (inkActionType == InkActions.Add)
+                {
+                    if (pageHistoryItem.StrokeIDsRemoved.Any() ||
+                        pageHistoryItem.PageObjectIDsAdded.Any() ||
+                        pageHistoryItem.PageObjectIDsRemoved.Any())
+                    {
+                        //throw error
+                    }
+                }
+                else if (inkActionType == InkActions.Erase)
+                {
+                    if (pageHistoryItem.StrokeIDsAdded.Any() ||
+                        pageHistoryItem.PageObjectIDsAdded.Any() ||
+                        pageHistoryItem.PageObjectIDsRemoved.Any())
+                    {
+                        //throw error
+                    }
+                }
+            }
         }
 
         /// <summary>Initializes <see cref="InkAction" /> based on <see cref="SerializationInfo" />.</summary>
@@ -120,7 +123,20 @@ namespace CLP.Entities
         {
             get
             {
+                if (InkActionType == InkActions.Change)
+                {
+                    return "INK change";
+                }
+
+                if (InkActionType == InkActions.Ignore)
+                {
+                    return "";
+                }
+
                 var codedActionType = InkActionType.ToString().ToLower();
+                //get location
+                //get relative object
+                //get type (add or remove)
                 return string.Format("INK {1} {2}", codedActionType, "[A]");
             }
         } 
