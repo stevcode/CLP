@@ -966,12 +966,13 @@ namespace Classroom_Learning_Partner.ViewModels
                         PageHistory.UISleep(1500);
                         inkStroke.DrawingAttributes.Height /= 2;
                         inkStroke.DrawingAttributes.Width /= 2;
+                        CurrentPage.ClearBoundaries();
                     }
-                    CurrentPage.ClearBoundaries();
 
                     //Checks if strokes lie next to array rows
                     else
                     {
+                        CurrentPage.ClearBoundaries();
                         for (int i = 0; i < array.Rows; i++)
                         {
                             var ypos = array.YPosition + array.LabelLength + (array.GridSquareSize * i);
@@ -996,7 +997,6 @@ namespace Classroom_Learning_Partner.ViewModels
                             CurrentPage.ClearBoundaries();
                         }
                     }
-
                     inkStroke.DrawingAttributes.Height /= 2;
                     inkStroke.DrawingAttributes.Width /= 2;
                 }
