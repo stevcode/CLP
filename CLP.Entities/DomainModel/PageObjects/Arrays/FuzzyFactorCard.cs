@@ -429,6 +429,11 @@ namespace CLP.Entities
         {
             base.OnResized(oldWidth, oldHeight, fromHistory);
 
+            if (fromHistory)
+            {
+                ResizeDivisions();
+            }
+
             RaisePropertyChanged("LastDivisionPosition");
         }
 

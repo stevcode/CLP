@@ -170,7 +170,7 @@ namespace CLP.Entities
                 CurrentBatchTickIndex = -1;
             }
 
-            pageObject.OnResized(initialWidth, initialHeight);
+            pageObject.OnResized(initialWidth, initialHeight, true);
         }
 
         /// <summary>Method that will actually redo the action. Already incorporates error checking for existance of ParentPage.</summary>
@@ -219,7 +219,7 @@ namespace CLP.Entities
                 CurrentBatchTickIndex = NumberOfBatchTicks + 1;
             }
 
-            pageObject.OnResized(initialWidth, initialHeight);
+            pageObject.OnResized(initialWidth, initialHeight, true);
         }
 
         public void ClearBatchAfterCurrentIndex()

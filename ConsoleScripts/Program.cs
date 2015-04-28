@@ -71,6 +71,7 @@ namespace ConsoleScripts
                     Console.WriteLine("Loaded {3}'s page {0}, differentiation {1}, version {2}", page.PageNumber, page.DifferentiationLevel, page.VersionIndex, page.Owner.FullName);
                     //Do stuff to each page here. 
 
+                    ConverDivisionTemplatesToUseNewRemainderTiles(page);
                     TheSlowRewind(page);
 
                     //ReplaceHistoryItems(page);
@@ -104,6 +105,19 @@ namespace ConsoleScripts
                     //Finished doing stuff to page, it'll save below.
                     page.ToXML(pageFilePath, true);
                 }
+            }
+        }
+
+        public static void ConverDivisionTemplatesToUseNewRemainderTiles(CLPPage page)
+        {
+            foreach (var divisionTemplate in page.PageObjects.OfType<FuzzyFactorCard>().Where(d => d.RemainderTiles != null))
+            {
+                divisionTemplate.IsRemainderTilesVisible = true;
+            }
+
+            foreach (var divisionTemplate in page.History.TrashedPageObjects.OfType<FuzzyFactorCard>().Where(d => d.RemainderTiles != null))
+            {
+                divisionTemplate.IsRemainderTilesVisible = true;
             }
         }
 
