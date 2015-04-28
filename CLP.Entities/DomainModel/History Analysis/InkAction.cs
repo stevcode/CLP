@@ -35,6 +35,7 @@ namespace CLP.Entities
             : base(parentPage)
         {
             HistoryItemIDs = historyItems.Select(h => h.ID).ToList();
+            InkActionType = InkActions.Change;
             foreach (var historyItem in historyItems)
             {
                 var pageChangedHistoryItem = (ObjectsOnPageChangedHistoryItem)historyItem;
@@ -60,7 +61,7 @@ namespace CLP.Entities
 
             InkActionType = inkActionType;
 
-            foreach (var historyItem in HistoryItems)
+            foreach (var historyItem in historyItems)
             {
                 var pageHistoryItem = (ObjectsOnPageChangedHistoryItem)historyItem;
                 //validate that all adds or removed
@@ -82,6 +83,16 @@ namespace CLP.Entities
                         //throw error
                     }
                 }
+            }
+
+            foreach (var pageObject in ParentPage.PageObjects.OfType<CLPArray>())
+            {
+                //objects on page at time ink strokes were added
+            }
+
+            foreach (var pageObject in ParentPage.History.TrashedPageObjects)
+            {
+
             }
         }
 
@@ -136,6 +147,7 @@ namespace CLP.Entities
                 var codedActionType = InkActionType.ToString().ToLower();
                 //get location
                 //get relative object
+                var historyItems = HistoryItems;
                 //get type (add or remove)
                 return string.Format("INK {1} {2}", codedActionType, "[A]");
             }

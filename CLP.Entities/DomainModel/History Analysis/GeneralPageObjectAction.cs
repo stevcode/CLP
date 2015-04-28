@@ -198,7 +198,7 @@ namespace CLP.Entities
 
         public List<IPageObject> RemovedPageObjects
         {
-            get { return HistoryItems.OfType<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.PageObjectIDsRemoved.Select(ParentPage.GetPageObjectByIDOnPageOrInHistory)).ToList();};}
+            get { return HistoryItems.OfType<ObjectsOnPageChangedHistoryItem>().SelectMany(h => h.PageObjectIDsRemoved.Select(ParentPage.GetPageObjectByIDOnPageOrInHistory)).ToList(); }
         }
 
         #endregion //Calculated Properties
