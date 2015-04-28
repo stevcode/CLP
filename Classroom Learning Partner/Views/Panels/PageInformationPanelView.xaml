@@ -220,6 +220,12 @@
                         Height="20"
                         Margin="1" />
 
+                <Button Content="Print Histories"
+                        Command="{Binding PrintAllHistoryItemsCommand}"
+                        Grid.ColumnSpan="2"
+                        Height="20"
+                        Margin="1" />
+
                 <Button Content="Generate Stamp Groupings"
                         Command="{Binding GenerateStampGroupingsCommand}"
                         Grid.ColumnSpan="2"

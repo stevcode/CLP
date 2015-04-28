@@ -8,6 +8,6 @@ namespace Classroom_Learning_Partner.Views
     {
         public TemporaryBoundaryView() { InitializeComponent(); }
 
-        protected override Type GetViewModelType() { return typeof (LassoRegionViewModel); }
+        protected override Type GetViewModelType() { return typeof (TemporaryBoundaryViewModel); }
     }
 }

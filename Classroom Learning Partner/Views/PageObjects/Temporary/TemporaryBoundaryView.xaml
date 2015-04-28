@@ -8,7 +8,7 @@
                IsHitTestVisible="False"
                Width="{Binding Width}"
                Height="{Binding Height}"
-               Opacity=".03"
+               Opacity=".3"
                Fill="PaleVioletRed"
                Stroke="PaleVioletRed"
                StrokeThickness="1"
