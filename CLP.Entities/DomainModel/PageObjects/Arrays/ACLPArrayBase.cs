@@ -297,7 +297,7 @@ namespace CLP.Entities
             return divBelow;
         }
 
-        public void ResizeDivisions()
+        public virtual void ResizeDivisions()
         {
             var oldHeight = HorizontalDivisions.Aggregate<CLPArrayDivision, double>(0, (current, division) => current + division.Length);
             foreach (var division in HorizontalDivisions)

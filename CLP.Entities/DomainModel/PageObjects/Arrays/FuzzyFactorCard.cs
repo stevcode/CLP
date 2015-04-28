@@ -296,6 +296,25 @@ namespace CLP.Entities
             OnResized(initialWidth, initialHeight);
         }
 
+        public override void ResizeDivisions()
+        {
+            var position = 0.0;
+            foreach (var division in HorizontalDivisions)
+            {
+                division.Position = position;
+                division.Length = GridSquareSize * division.Value;
+                position += division.Length;
+            }
+
+            position = 0.0;
+            foreach (var division in VerticalDivisions)
+            {
+                division.Position = position;
+                division.Length = GridSquareSize * division.Value;
+                position += division.Length;
+            }
+        }
+
         #endregion //ACLPArrayBase Overrides
 
         #region APageObjectBase Overrides

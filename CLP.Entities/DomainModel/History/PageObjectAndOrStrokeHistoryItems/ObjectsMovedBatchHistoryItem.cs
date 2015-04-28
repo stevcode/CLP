@@ -237,7 +237,7 @@ namespace CLP.Entities
                     pageObject.YPosition = originalPosition.Y + pageObjectID.Value.Y;
                     CurrentBatchTickIndex = -1;
                 }
-                pageObject.OnMoved(initialX, initialY);
+                pageObject.OnMoved(initialX, initialY, true);
             }
         }
 
@@ -291,7 +291,7 @@ namespace CLP.Entities
                     pageObject.YPosition = lastPosition.Y + pageObjectID.Value.Y;
                     CurrentBatchTickIndex = NumberOfBatchTicks + 1;
                 }
-                pageObject.OnMoved(initialX, initialY);
+                pageObject.OnMoved(initialX, initialY, true);
             }
         }
 
