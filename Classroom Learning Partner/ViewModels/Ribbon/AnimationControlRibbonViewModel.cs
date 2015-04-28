@@ -47,6 +47,7 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         private bool _isClosing;
+        private bool _isPageChangingHack;
 
         #endregion
 
@@ -79,6 +80,8 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 return;
             }
+
+            animationControlRibbonViewModel._isPageChangingHack = true;
             animationControlRibbonViewModel.RaisePropertyChanged("IsPlaybackEnabled");
 
             var currentPage = advancedPropertyChangedEventArgs.NewValue as CLPPage;
@@ -134,9 +137,11 @@ namespace Classroom_Learning_Partner.ViewModels
             get { return GetValue<bool>(IsNonAnimationPlaybackEnabledProperty); }
             set
             {
+                _isClosing = true;
                 SetValue(IsNonAnimationPlaybackEnabledProperty, value);
                 CurrentPage.History.IsNonAnimationPlaybackEnabled = value;
                 RaisePropertyChanged("IsPlaybackEnabled");
+                _isClosing = false;
             }
         }
 
@@ -457,8 +462,15 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             if (IsPlaying ||
                 IsRecording ||
-                _isClosing)
+                _isClosing ||
+                _pageInteractionService == null)
             {
+                return;
+            }
+
+            if (_isPageChangingHack)
+            {
+                _isPageChangingHack = false;
                 return;
             }
 
