@@ -391,9 +391,9 @@ namespace CLP.Entities
 
         #region Static Properties
 
-        public static double DefaultGridSquareSize //used to be 45.0
+        public static double DefaultGridSquareSize //used to be 45.0, then 34.0, now again 45.0
         {
-            get { return 34.0; }
+            get { return 45.0; }
         }
 
         #endregion //Static Properties
