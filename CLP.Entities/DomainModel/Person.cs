@@ -80,9 +80,12 @@ namespace CLP.Entities
             {
                 var nameParts = FullName.Split(' ');
                 var first = nameParts.FirstOrDefault() ?? "No First Name";
-                var last = nameParts.LastOrDefault();
-                var lastInitial = last == null ? string.Empty : " " + last[0];
-                var firstAndLastInitial = first + lastInitial + ".";
+                var last = nameParts.Count() > 1 ? nameParts.LastOrDefault() : null;
+                var lastInitial = last == null ? string.Empty : " " + last[0] + ".";
+
+                //HACK: temp for demo, remove later
+                lastInitial = string.Empty;
+                var firstAndLastInitial = first + lastInitial;
                 return ID == Author.ID ? "AUTHOR" : !string.IsNullOrEmpty(Alias) ? Alias : firstAndLastInitial;
             }
         }
