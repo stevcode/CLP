@@ -149,8 +149,6 @@ namespace CLP.Entities
 
         public override void OnMoved(double oldX, double oldY, bool fromHistory = false)
         {
-            base.OnMoved(oldX, oldY, fromHistory);
-
             if (ParentPage.History.IsAnimating)
             {
                 return;
@@ -182,6 +180,8 @@ namespace CLP.Entities
             {
                 Console.WriteLine("StampedObject.OnMoved() Exception: " + ex.Message);
             }
+
+            base.OnMoved(oldX, oldY, fromHistory);
         }
 
         public override IPageObject Duplicate()
