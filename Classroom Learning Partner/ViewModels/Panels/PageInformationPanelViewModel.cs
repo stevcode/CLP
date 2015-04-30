@@ -940,30 +940,34 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     var skipCountStrokes = new Dictionary<int, StrokeCollection>();
 
+                    //Thickens ink stroke in consideration
+                    inkStroke.DrawingAttributes.Height *= 2;
+                    inkStroke.DrawingAttributes.Width *= 2;
+                    PageHistory.UISleep(800);
+
                     //Checks if strokes fall inside array grid
                     var xpos = array.XPosition + array.LabelLength + array.ArrayWidth;
                     var width = 2*array.LabelLength;
                     var height = array.GridSquareSize;
                     var arrBound = new Rect(array.XPosition+array.LabelLength, array.YPosition+array.LabelLength, array.ArrayWidth, array.ArrayHeight);
                     CurrentPage.AddBoundary(arrBound);
-                    PageHistory.UISleep(1000);
-
-                    //Thickens ink stroke in consideration
-                    inkStroke.DrawingAttributes.Height *= 2;
-                    inkStroke.DrawingAttributes.Width *= 2;
-                    PageHistory.UISleep(1000);
+                    PageHistory.UISleep(800);
 
                     if (inkStroke.HitTest(arrBound, 80))
                     {
+                        //Thickens stroke to indicate match
+                        inkStroke.DrawingAttributes.Height *= 2;
+                        inkStroke.DrawingAttributes.Width *= 2;
+
+                        //Adds stroke to dictionary
                         if (!skipCountStrokes.ContainsKey(-1))
                         {
                             skipCountStrokes.Add(-1, new StrokeCollection());
                         }
                         skipCountStrokes[-1].Add(inkStroke);
-                        inkStroke.DrawingAttributes.Height *= 2;
-                        inkStroke.DrawingAttributes.Width *= 2;
                         Console.WriteLine("{0},{1}", inkStroke.GetStrokeID(), -1);
                         PageHistory.UISleep(1500);
+
                         inkStroke.DrawingAttributes.Height /= 2;
                         inkStroke.DrawingAttributes.Width /= 2;
                         CurrentPage.ClearBoundaries();
@@ -978,19 +982,22 @@ namespace Classroom_Learning_Partner.ViewModels
                             var ypos = array.YPosition + array.LabelLength + (array.GridSquareSize * i);
                             var rectBound = new Rect(xpos, ypos - 0.2*height, 1.5*width, 1.4*height);
                             CurrentPage.AddBoundary(rectBound);
-                            PageHistory.UISleep(1000);
+                            PageHistory.UISleep(800);
                             if (inkStroke.HitTest(rectBound, 80))
                             {
+                                //Thickens stroke to indicate match
+                                inkStroke.DrawingAttributes.Height *= 2;
+                                inkStroke.DrawingAttributes.Width *= 2;
+                                PageHistory.UISleep(1000);
+
+                                //Adds stroke to dictionary
                                 if (!skipCountStrokes.ContainsKey(i))
                                 {
                                     skipCountStrokes.Add(i, new StrokeCollection());
                                 }
                                 skipCountStrokes[i].Add(inkStroke);
-
-                                inkStroke.DrawingAttributes.Height *= 2;
-                                inkStroke.DrawingAttributes.Width *= 2;
                                 Console.WriteLine("{0}, {1}", inkStroke.GetStrokeID(), i);
-                                PageHistory.UISleep(1500);
+
                                 inkStroke.DrawingAttributes.Height /= 2;
                                 inkStroke.DrawingAttributes.Width /= 2;
                                 CurrentPage.ClearBoundaries();
