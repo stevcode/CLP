@@ -1014,7 +1014,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                 skipCountStrokes[i].Add(inkStroke);
 
                                 //Writes data to .txt file
-                                File.AppendAllText(filePath, inkStroke.GetStrokeID() + "\t" + i.ToString() + "\n");
+                                File.AppendAllText(filePath, inkStroke.GetStrokeID() + "\t" + i.ToString() + Environment.NewLine);
                                 Console.WriteLine("{0}, {1}", inkStroke.GetStrokeID(), i);
 
                                 inkStroke.DrawingAttributes.Height /= 2;
