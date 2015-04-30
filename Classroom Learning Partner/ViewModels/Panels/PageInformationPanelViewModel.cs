@@ -934,6 +934,22 @@ namespace Classroom_Learning_Partner.ViewModels
             var arraysOnPage = CurrentPage.PageObjects.OfType<CLPArray>().ToList();
             var inkOnPage = CurrentPage.InkStrokes;
 
+            //Makes .txt file to store data in
+            var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            var fileDirectory = Path.Combine(desktopDirectory, "SkipCountLogs");
+            Console.WriteLine(fileDirectory);
+            if (!Directory.Exists(fileDirectory))
+            {
+                Directory.CreateDirectory(fileDirectory);
+            }
+            var filePath = Path.Combine(fileDirectory, PageNameComposite.ParsePageToNameComposite(CurrentPage).ToFileName() + ".txt");
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+            File.WriteAllText(filePath, "");
+
+            //Iterates over arrays on page
             foreach (var array in arraysOnPage)
             {
                 foreach (var inkStroke in inkOnPage)
@@ -988,7 +1004,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                 //Thickens stroke to indicate match
                                 inkStroke.DrawingAttributes.Height *= 2;
                                 inkStroke.DrawingAttributes.Width *= 2;
-                                PageHistory.UISleep(1000);
+                                PageHistory.UISleep(800);
 
                                 //Adds stroke to dictionary
                                 if (!skipCountStrokes.ContainsKey(i))
@@ -996,6 +1012,9 @@ namespace Classroom_Learning_Partner.ViewModels
                                     skipCountStrokes.Add(i, new StrokeCollection());
                                 }
                                 skipCountStrokes[i].Add(inkStroke);
+
+                                //Writes data to .txt file
+                                File.AppendAllText(filePath, inkStroke.GetStrokeID() + "\t" + i.ToString() + "\n");
                                 Console.WriteLine("{0}, {1}", inkStroke.GetStrokeID(), i);
 
                                 inkStroke.DrawingAttributes.Height /= 2;
