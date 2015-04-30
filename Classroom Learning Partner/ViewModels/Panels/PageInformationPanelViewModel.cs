@@ -85,6 +85,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //TEMP
             InterpretArrayDividersCommand = new Command(OnInterpretArrayDividersCommandExecute);
             PrintAllHistoryItemsCommand = new Command(OnPrintAllHistoryItemsCommandExecute);
+            HistoryActionAnaylsisCommand = new Command(OnHistoryActionAnaylsisCommandExecute);
             GenerateStampGroupingsCommand = new Command(OnGenerateStampGroupingsCommandExecute);
             FixCommand = new Command(OnFixCommandExecute);
         }
@@ -1352,6 +1353,52 @@ namespace Classroom_Learning_Partner.ViewModels
             foreach (var item in historyItems)
             {
                 File.AppendAllText(filePath, item.FormattedValue + "\n");
+            }
+        }
+
+        /// <summary>
+        /// Analysizes the HistoryItems to generate appropriate HistoryActions and Tags.
+        /// </summary>
+        public Command HistoryActionAnaylsisCommand { get; private set; }
+
+        private void OnHistoryActionAnaylsisCommandExecute()
+        {
+            var page = CurrentPage;
+            page.History.IsAnimating = true;
+
+            page.History.RefreshHistoryIndexes();
+
+            while (page.History.UndoItems.Any())
+            {
+                page.History.Undo();
+            }
+
+            var pageObjectNumberInHistory = 1;
+
+            var redoItem = page.History.RedoItems.FirstOrDefault();
+            if (redoItem == null)
+            {
+                return;
+            }
+
+            var objectChanged = redoItem as ObjectsOnPageChangedHistoryItem;
+            if (objectChanged != null)
+            {
+                if (objectChanged.IsUsingPageObjects &&
+                    !objectChanged.IsUsingStrokes)
+                {
+                    var isAdd = !objectChanged.PageObjectIDsRemoved.Any() && objectChanged.PageObjectIDsAdded.Any();
+
+                    //get pageObject from ID
+                    //use pageObject to generate bounds in the form of a Rect
+                    //get history location.
+                    var historyAction = new GeneralPageObjectAction(page);
+                    pageObjectNumberInHistory++;
+                }
+                
+                
+
+
             }
         }
 

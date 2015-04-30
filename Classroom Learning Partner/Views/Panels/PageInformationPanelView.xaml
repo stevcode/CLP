@@ -95,6 +95,7 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <Button Content="Add Page:"
@@ -227,6 +228,12 @@
                         Height="20"
                         Margin="1"
                         Visibility="Collapsed" />
+
+                <Button Content="Run History Analysis"
+                        Command="{Binding HistoryActionAnaylsisCommand}"
+                        Grid.ColumnSpan="2"
+                        Height="20"
+                        Margin="1" />
 
                 <Button Content="Generate Stamp Groupings"
                         Command="{Binding GenerateStampGroupingsCommand}"
