@@ -614,6 +614,22 @@ namespace CLP.Entities
             get { return string.Format("Number Line from 0 to {0} with {1} jumps", NumberLineSize, JumpSizes.Count); }
         }
 
+        public override string CodedName
+        {
+            get
+            {
+                return "NL";
+            }
+        }
+        
+        public override string CodedID
+        {
+            get
+            {
+                return string.Format("[{0}]", NumberLineSize);
+            }
+        }
+
         public override int ZIndex
         {
             get { return 60; }

@@ -5,6 +5,8 @@ namespace CLP.Entities
     public interface IPageObject
     {
         string FormattedName { get; }
+        string CodedName { get; }
+        string CodedID { get; }
         string ID { get; set; }
         string OwnerID { get; set; }
         uint VersionIndex { get; set; }

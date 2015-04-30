@@ -103,8 +103,10 @@
     <Compile Include="DomainModel\Displays\GridDisplay.cs" />
     <Compile Include="DomainModel\Displays\IDisplay.cs" />
     <Compile Include="DomainModel\History Analysis\AHistoryActionBase.cs" />
+    <Compile Include="DomainModel\History Analysis\ArrayHistoryAction.cs" />
     <Compile Include="DomainModel\History Analysis\GeneralPageObjectAction.cs" />
     <Compile Include="DomainModel\History Analysis\InkAction.cs" />
+    <Compile Include="DomainModel\History Analysis\NumberLineHistoryAction.cs" />
     <Compile Include="DomainModel\History\AHistoryItemBase.cs" />
     <Compile Include="DomainModel\History\AnimationIndicator.cs" />
     <Compile Include="DomainModel\History\ArrayHistoryItems\CLPArrayDivisionsChangedHistoryItem.cs" />

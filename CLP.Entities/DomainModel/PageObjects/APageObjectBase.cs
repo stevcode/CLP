@@ -41,6 +41,16 @@ namespace CLP.Entities
             get { return GetType().Name; }
         }
 
+        public virtual string CodedName
+        {
+            get { return "Coded Name not implemented."; }
+        }
+
+        public virtual string CodedID
+        {
+            get { return "CodedID not implemented."; }
+        }
+
         /// <summary>Unique Identifier for the <see cref="IPageObject" />.</summary>
         /// <remarks>Composite Primary Key.</remarks>
         public string ID

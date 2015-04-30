@@ -207,6 +207,16 @@ namespace CLP.Entities
             }
         }
 
+        public override string CodedName
+        {
+            get { return "ARR"; }
+        }
+
+        public override string CodedID
+        {
+            get { return string.Format("[{0}x{1}]", Rows, Columns); }
+        }
+
         public override bool IsBackgroundInteractable
         {
             get { return true; }
