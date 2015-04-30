@@ -942,9 +942,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
                     //Checks if strokes fall inside array grid
                     var xpos = array.XPosition + array.LabelLength + array.ArrayWidth;
-                    var width = 2 * array.LabelLength;
+                    var width = 2*array.LabelLength;
                     var height = array.GridSquareSize;
-                    var arrBound = new Rect(array.XPosition, array.YPosition, array.ArrayWidth, array.ArrayHeight);
+                    var arrBound = new Rect(array.XPosition+array.LabelLength, array.YPosition+array.LabelLength, array.ArrayWidth, array.ArrayHeight);
                     CurrentPage.AddBoundary(arrBound);
                     PageHistory.UISleep(1000);
 
@@ -969,14 +969,14 @@ namespace Classroom_Learning_Partner.ViewModels
                         CurrentPage.ClearBoundaries();
                     }
 
-                    //Checks if strokes lie next to array rows
+                    //Checks if strokes align with array rows
                     else
                     {
                         CurrentPage.ClearBoundaries();
                         for (int i = 0; i < array.Rows; i++)
                         {
                             var ypos = array.YPosition + array.LabelLength + (array.GridSquareSize * i);
-                            var rectBound = new Rect(xpos, ypos - 0.1 * height, 1.2 * width, 1.2 * height);
+                            var rectBound = new Rect(xpos, ypos - 0.2*height, 1.5*width, 1.4*height);
                             CurrentPage.AddBoundary(rectBound);
                             PageHistory.UISleep(1000);
                             if (inkStroke.HitTest(rectBound, 80))
@@ -993,6 +993,8 @@ namespace Classroom_Learning_Partner.ViewModels
                                 PageHistory.UISleep(1500);
                                 inkStroke.DrawingAttributes.Height /= 2;
                                 inkStroke.DrawingAttributes.Width /= 2;
+                                CurrentPage.ClearBoundaries();
+                                break;
                             }
                             CurrentPage.ClearBoundaries();
                         }
