@@ -7,7 +7,7 @@ using Catel.Data;
 namespace CLP.Entities
 {
     [Serializable]
-    public abstract class AHistoryActionBase : AEntityBase
+    public abstract class AHistoryActionBase : AEntityBase, IHistoryAction
     {
         #region Constructors
 
@@ -119,11 +119,11 @@ namespace CLP.Entities
             get { return ParentPage.History.CompleteOrderedHistoryItems.Where(x => HistoryItemIDs.Contains(x.ID)).OrderBy(x => x.HistoryIndex).ToList(); }
         }
 
-        ///// <summary>List of the HistoryActions that make up this HistoryAction.</summary>
-        //public List<IHistoryItem> HistoryActions
-        //{
-        //    get { return ParentPage.History.HistoryActions.Where(x => HistoryActionIDs.Contains(x.ID)).ToList(); }
-        //}
+        /// <summary>List of the HistoryActions that make up this HistoryAction.</summary>
+        public List<IHistoryAction> HistoryActions
+        {
+            get { return ParentPage.History.HistoryActions.Where(x => HistoryActionIDs.Contains(x.ID)).ToList(); }
+        }
 
         #endregion //Calculated Properties
 

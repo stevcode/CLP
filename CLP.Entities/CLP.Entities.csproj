@@ -105,6 +105,7 @@
     <Compile Include="DomainModel\History Analysis\AHistoryActionBase.cs" />
     <Compile Include="DomainModel\History Analysis\ArrayHistoryAction.cs" />
     <Compile Include="DomainModel\History Analysis\GeneralPageObjectAction.cs" />
+    <Compile Include="DomainModel\History Analysis\IHistoryAction.cs" />
     <Compile Include="DomainModel\History Analysis\InkAction.cs" />
     <Compile Include="DomainModel\History Analysis\NumberLineHistoryAction.cs" />
     <Compile Include="DomainModel\History\AHistoryItemBase.cs" />
