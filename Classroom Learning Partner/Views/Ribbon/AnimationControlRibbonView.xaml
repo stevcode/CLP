@@ -310,22 +310,6 @@
                     Background="White"
                     Command="{Binding ClearPageCommand}" />
 
-            <Button Content="Slow Redo"
-                    DockPanel.Dock="Right"
-                    Width="70"
-                    FontSize="12"
-                    FontWeight="Bold"
-                    Background="White"
-                    Command="{Binding SlowRedoCommand}" />
-
-            <Button Content="Slow Undo"
-                    DockPanel.Dock="Right"
-                    Width="70"
-                    FontSize="12"
-                    FontWeight="Bold"
-                    Background="White"
-                    Command="{Binding SlowUndoCommand}" />
-
         </DockPanel>
 
         <!--Recording in Progress Indicator-->

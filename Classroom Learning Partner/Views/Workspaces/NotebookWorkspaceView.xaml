@@ -160,7 +160,7 @@
                    LastChildFill="True"
                    HorizontalAlignment="Stretch"
                    Background="{StaticResource GrayBackgroundColor}"
-                   Visibility="{Binding AnimationControlRibbon.IsPlaybackEnabled, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
+                   Visibility="{Binding AnimationControlRibbon.IsVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
 
             <Line DockPanel.Dock="Bottom"
                   Stretch="Fill"

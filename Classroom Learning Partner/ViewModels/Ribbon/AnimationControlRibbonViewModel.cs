@@ -83,6 +83,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             animationControlRibbonViewModel._isPageChangingHack = true;
             animationControlRibbonViewModel.RaisePropertyChanged("IsPlaybackEnabled");
+            animationControlRibbonViewModel.RaisePropertyChanged("IsVisible");
 
             var currentPage = advancedPropertyChangedEventArgs.NewValue as CLPPage;
             if (currentPage != null)
@@ -135,21 +136,34 @@ namespace Classroom_Learning_Partner.ViewModels
         public bool IsNonAnimationPlaybackEnabled
         {
             get { return GetValue<bool>(IsNonAnimationPlaybackEnabledProperty); }
-            set
-            {
-                _isClosing = true;
-                SetValue(IsNonAnimationPlaybackEnabledProperty, value);
-                CurrentPage.History.IsNonAnimationPlaybackEnabled = value;
-                RaisePropertyChanged("IsPlaybackEnabled");
-                _isClosing = false;
-            }
+            set { SetValue(IsNonAnimationPlaybackEnabledProperty, value); }
         }
 
-        public static readonly PropertyData IsNonAnimationPlaybackEnabledProperty = RegisterProperty("IsNonAnimationPlaybackEnabled", typeof (bool), false);
+        public static readonly PropertyData IsNonAnimationPlaybackEnabledProperty = RegisterProperty("IsNonAnimationPlaybackEnabled", typeof(bool), false, OnIsNonAnimationPlaybackEnabledChanged);
+
+        private static void OnIsNonAnimationPlaybackEnabledChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
+        {
+            var animationControlRibbonViewModel = sender as AnimationControlRibbonViewModel;
+            if (animationControlRibbonViewModel == null)
+            {
+                return;
+            }
+
+            animationControlRibbonViewModel._isClosing = true;
+            animationControlRibbonViewModel.CurrentPage.History.IsNonAnimationPlaybackEnabled = animationControlRibbonViewModel.IsNonAnimationPlaybackEnabled;
+            animationControlRibbonViewModel.RaisePropertyChanged("IsPlaybackEnabled");
+            animationControlRibbonViewModel.RaisePropertyChanged("IsVisible");
+            animationControlRibbonViewModel._isClosing = false;
+        }
 
         public bool IsPlaybackEnabled
         {
             get { return CurrentPage.History.IsAnimation || IsNonAnimationPlaybackEnabled; }
+        }
+
+        public bool IsVisible
+        {
+            get { return CurrentPage.PageType == PageTypes.Animation || IsNonAnimationPlaybackEnabled; }
         }
 
         #endregion //Properties
@@ -301,6 +315,7 @@ namespace Classroom_Learning_Partner.ViewModels
             if (IsRecording)
             {
                 Stop(page);
+                RaisePropertyChanged("IsPlaybackEnabled");
                 return;
             }
 
@@ -327,6 +342,7 @@ namespace Classroom_Learning_Partner.ViewModels
             else
             {
                 page.History.AddHistoryItem(new AnimationIndicator(page, App.MainWindowViewModel.CurrentUser, AnimationIndicatorType.Record));
+                RaisePropertyChanged("IsPlaybackEnabled");
             }
         }
 
