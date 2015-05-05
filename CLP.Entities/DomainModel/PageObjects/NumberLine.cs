@@ -456,7 +456,7 @@ namespace CLP.Entities
                         closestTick.TickColor = stroke.DrawingAttributes.Color == Colors.Black ? "Blue" : stroke.DrawingAttributes.Color.ToString();
                         wasJumpMade = true;
                     }
-
+                    
                     var markedTickToTheLeft = Ticks.LastOrDefault(t => t.IsMarked && t.TickValue < closestTick.TickValue);
                     if (markedTickToTheLeft != null)
                     {
@@ -478,6 +478,34 @@ namespace CLP.Entities
                 default:
                     return false;
             }
+        }
+        
+        public int GetJumpStartFromStroke(Stroke stroke)
+        {
+            var tickR = FindClosestTick(stroke, true);
+            var tickL = FindClosestTick(stroke, false);
+            if (tickR == null ||
+                tickL == null ||
+                tickR == tickL)
+            {
+                return -1;
+            }
+
+            return tickL.TickValue;
+        }
+
+        public int GetJumpEndFromStroke(Stroke stroke)
+        {
+            var tickR = FindClosestTick(stroke, true);
+            var tickL = FindClosestTick(stroke, false);
+            if (tickR == null ||
+                tickL == null ||
+                tickR == tickL)
+            {
+                return -1;
+            }
+
+            return tickR.TickValue;
         }
 
         public NumberLineTick FindClosestTickToArcStroke(Stroke stroke, bool isLookingForRightTick)
