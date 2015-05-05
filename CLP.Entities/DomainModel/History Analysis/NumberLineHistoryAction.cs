@@ -76,10 +76,32 @@ namespace CLP.Entities
                         return string.Format("NL ink change[{0}: {1}]", 80, 81); //new length, old length
                     case NumberLineActions.Jump:
                         var numberLineJumpActions = NumberLineJumpActions;
-                        var startJump = numberLineJumpActions.First();
-                        return string.Format("NL jump[{0}: {1}, {2}-{3}]", 42, 7, 0, 42); //numberline jump sizes+start/end values
-                         //possibly multiple jump sizes NL jump [70: 7, 0-35, 6, 35-41, 7, 48-55]
+                        var numberLine = ParentPage.GetPageObjectByIDOnPageOrInHistory(numberLineJumpActions.First().NumberLineID) as NumberLine;
 
+                        var currentJumpSize = 0;
+                        var jumpDescriptors = new List<string>();
+                        foreach (var jumpAction in numberLineJumpActions)
+                        {
+                            var stroke = ParentPage.GetStrokeByIDOnPageOrInHistory(jumpAction.AddedJumpStrokeIDs.First());
+                            var startPoint = numberLine.GetJumpStartFromStroke(stroke);
+                            var endPoint = numberLine.GetJumpEndFromStroke(stroke);
+                            var jumpSize = endPoint - startPoint;
+                            if (endPoint - startPoint != currentJumpSize)
+                            {
+                                currentJumpSize = jumpSize;
+                                jumpDescriptors.Add(jumpSize.ToString());
+                                jumpDescriptors.Add(string.Format("{0}-{1}", startPoint, endPoint));
+                            }
+                            else
+                            {
+                                string[] jumpEndpoints = jumpDescriptors.Last().split(new Char[] { '-' });
+                                jumpEndpoints[1] = endPoint.ToString();
+                                jumpDescriptors[jumpDescriptors.Count - 1] = string.Join("-", jumpEndpoints);
+                            }
+                        }
+
+                        return string.Format("NL jump[{0}: {1}]", numberLine.NumberLineSize, string.Join(", ",jumpDescriptors)); //numberline jump sizes+start/end values
+                         //possibly multiple jump sizes NL jump [70: 7, 0-35, 6, 35-41, 7, 48-55]
                         //possibly off numberline
                     default:
                         return "NL modified";

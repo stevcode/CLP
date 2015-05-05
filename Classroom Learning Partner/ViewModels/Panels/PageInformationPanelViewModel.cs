@@ -1376,6 +1376,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var pageObjectNumberInHistory = 1;
 
             var inkChange = false;
+            var numberLineJump = false;
             while (page.History.RedoItems.Any())
             {
                 var redoItem = page.History.RedoItems.First();
