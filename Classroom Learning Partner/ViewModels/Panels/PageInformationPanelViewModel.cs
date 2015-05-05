@@ -997,7 +997,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         {
                             //Creates array bound and stroke bound
                             var ypos = array.YPosition + array.LabelLength + (array.GridSquareSize * i);
-                            var rectBound = new Rect(xpos, ypos - 0.2*height, 1.5*width, 1.4*height);
+                            var rectBound = new Rect(xpos, ypos - 0.1*height, 1.5*width, 1.2*height);
                             CurrentPage.AddBoundary(rectBound);
                             PageHistory.UISleep(800);
                             var strokeBound = new Rect(inkStroke.GetBounds().X, inkStroke.GetBounds().Y, inkStroke.GetBounds().Width, inkStroke.GetBounds().Height);
@@ -1025,7 +1025,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                 skipCountStrokes[i].Add(inkStroke);
 
                                 //Writes data to .txt file
-                                File.AppendAllText(filePath, inkStroke.GetStrokeID() + "\t" + i.ToString() + Environment.NewLine);
+                                File.AppendAllText(filePath, inkStroke.GetStrokeID() + "\t" + i.ToString() + "\t" + percentIntersect.ToString() + Environment.NewLine);
 
                                 inkStroke.DrawingAttributes.Height /= 2;
                                 inkStroke.DrawingAttributes.Width /= 2;
