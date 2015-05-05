@@ -1375,8 +1375,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var pageObjectNumberInHistory = 1;
 
-            var inkChange = false;
-            var numberLineJump = false;
             while (page.History.RedoItems.Any())
             {
                 var redoItem = page.History.RedoItems.First();
@@ -1399,24 +1397,38 @@ namespace Classroom_Learning_Partner.ViewModels
                         page.History.HistoryActions.Add(historyAction);
                         page.History.Redo();
                         pageObjectNumberInHistory++;
-                        inkChange = false;
                         continue;
                     }
 
                     if (objectChanged.IsUsingStrokes &&
                         !objectChanged.IsUsingPageObjects)
                     {
-                        if (inkChange)
+                        var inkChangeItems = new List<IHistoryItem>();
+                        while (page.History.RedoItems.Any())
                         {
-                            continue; //group ink change together
+                            var changeItem = page.History.RedoItems.First() as ObjectsOnPageChangedHistoryItem;
+                            if (changeItem != null)
+                            {
+                                if (changeItem.IsUsingStrokes &&
+                                    !changeItem.IsUsingPageObjects)
+                                {
+                                    inkChangeItems.Add((IHistoryItem)changeItem);
+                                    page.History.Redo();
+                                    pageObjectNumberInHistory++;
+                                }
+                                else
+                                {
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                break;
+                            }
                         }
-                        var isAdd = !objectChanged.StrokeIDsRemoved.Any() && objectChanged.StrokeIDsRemoved.Any();
 
-                        var historyAction = new InkAction(page, new List<IHistoryItem> { (IHistoryItem)objectChanged });
+                        var historyAction = new InkAction(page, inkChangeItems);
                         page.History.HistoryActions.Add(historyAction);
-                        page.History.Redo();
-                        pageObjectNumberInHistory++;
-                        inkChange = true;
                     }                   
                 }
 
@@ -1427,7 +1439,6 @@ namespace Classroom_Learning_Partner.ViewModels
                     page.History.HistoryActions.Add(historyAction);
                     page.History.Redo();
                     pageObjectNumberInHistory++;
-                    inkChange = false;
                 }
 
                 var objectResized = redoItem as PageObjectResizeBatchHistoryItem;
@@ -1437,25 +1448,46 @@ namespace Classroom_Learning_Partner.ViewModels
                     page.History.HistoryActions.Add(historyAction);
                     page.History.Redo();
                     pageObjectNumberInHistory++;
-                    inkChange = false;
                 }
 
-                var objectCut = redoItem as PageObjectCutHistoryItem;
+                var objectCut = redoItem as PageObjectCutHistoryItem; //assuming it's an array
                 if (objectCut != null)
                 {
-                    
+                    var arrayAction = new ArrayHistoryAction(page, new List<IHistoryItem>{(IHistoryItem)objectCut});
+                    page.History.HistoryActions.Add(arrayAction);
+                    page.History.Redo();
+                    pageObjectNumberInHistory++;
                 }
 
                 var numberLineEndPointsChanged = redoItem as NumberLineEndPointsChangedHistoryItem;
                 if (numberLineEndPointsChanged != null)
                 {
-                    
+                    var numberLineAction = new NumberLineHistoryAction(page, new List<IHistoryItem>{(IHistoryItem)numberLineEndPointsChanged});
+                    page.History.HistoryActions.Add(numberLineAction);
+                    page.History.Redo();
+                    pageObjectNumberInHistory++;
                 }
 
                 var numberLineJumpSizesChanged = redoItem as NumberLineJumpSizesChangedHistoryItem;
                 if (numberLineJumpSizesChanged != null)
                 {
-
+                    var jumpItems = new List<IHistoryItem>();
+                    while (page.History.RedoItems.Any())
+                    {
+                        var jumpItem = page.History.RedoItems.First() as NumberLineJumpSizesChangedHistoryItem;
+                        if (jumpItem != null)
+                        {
+                            jumpItems.Add(jumpItem);
+                            page.History.Redo();
+                            pageObjectNumberInHistory++;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                    var numberLineAction = new NumberLineHistoryAction(page, jumpItems);
+                    page.History.HistoryActions.Add(numberLineAction);
                 }
 
                 var arrayDivisionsChanged = redoItem as CLPArrayDivisionsChangedHistoryItem;
@@ -1485,13 +1517,31 @@ namespace Classroom_Learning_Partner.ViewModels
                 var arraySnap = redoItem as CLPArraySnapHistoryItem;
                 if (arraySnap != null)
                 {
-                    
+                    var arrayAction = new ArrayHistoryAction(page, new List<IHistoryItem> { (IHistoryItem)objectCut });
+                    page.History.HistoryActions.Add(arrayAction);
+                    page.History.Redo();
+                    pageObjectNumberInHistory++;
                 }
             }
 
-            foreach(var action in page.History.HistoryActions)
+            var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            var fileDirectory = Path.Combine(desktopDirectory, "CodedHistoryLogs");
+            if (!Directory.Exists(fileDirectory))
             {
-                //print coded value
+                Directory.CreateDirectory(fileDirectory);
+            }
+
+            var filePath = Path.Combine(fileDirectory, PageNameComposite.ParsePageToNameComposite(CurrentPage).ToFileName() + ".txt");
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+            File.WriteAllText(filePath, "");
+            var historyActions = CurrentPage.History.HistoryActions;
+
+            foreach (var action in historyActions)
+            {
+                File.AppendAllText(filePath, action.CodedValue + "\n");
             }
         }
 

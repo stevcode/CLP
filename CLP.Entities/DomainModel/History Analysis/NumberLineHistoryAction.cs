@@ -8,7 +8,7 @@ using Catel.Data;
 
 namespace CLP.Entities
 {
-    class NumberLineHistoryAction : AHistoryActionBase
+    public class NumberLineHistoryAction : AHistoryActionBase
     {
         public enum NumberLineActions
         {
@@ -94,7 +94,7 @@ namespace CLP.Entities
                             }
                             else
                             {
-                                string[] jumpEndpoints = jumpDescriptors.Last().split(new Char[] { '-' });
+                                string[] jumpEndpoints = jumpDescriptors.Last().Split(new Char[] { '-' });
                                 jumpEndpoints[1] = endPoint.ToString();
                                 jumpDescriptors[jumpDescriptors.Count - 1] = string.Join("-", jumpEndpoints);
                             }
