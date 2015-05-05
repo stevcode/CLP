@@ -1000,12 +1000,13 @@ namespace Classroom_Learning_Partner.ViewModels
                             var rectBound = new Rect(xpos, ypos - 0.1*height, 1.5*width, 1.2*height);
                             CurrentPage.AddBoundary(rectBound);
                             PageHistory.UISleep(800);
-                            var strokeBound = new Rect(inkStroke.GetBounds().X, inkStroke.GetBounds().Y, inkStroke.GetBounds().Width, inkStroke.GetBounds().Height);
+                            var strokeBoundFixed = new Rect(inkStroke.GetBounds().X, inkStroke.GetBounds().Y, inkStroke.GetBounds().Width, inkStroke.GetBounds().Height);
 
                             //Finds intersection
+                            var strokeBound = new Rect(inkStroke.GetBounds().X, inkStroke.GetBounds().Y, inkStroke.GetBounds().Width, inkStroke.GetBounds().Height);
                             strokeBound.Intersect(rectBound);
                             var intersectArea = strokeBound.Height*strokeBound.Width;
-                            var strokeArea = inkStroke.GetBounds().Height * inkStroke.GetBounds().Width;
+                            var strokeArea = strokeBoundFixed.Height * strokeBoundFixed.Width;
                             var percentIntersect = 100*intersectArea/strokeArea;
                             Console.WriteLine("{0}, {1}, {2}", inkStroke.GetStrokeID(), i, percentIntersect);
 
@@ -1031,6 +1032,38 @@ namespace Classroom_Learning_Partner.ViewModels
                                 inkStroke.DrawingAttributes.Width /= 2;
                                 CurrentPage.ClearBoundaries();
                                 break;
+                            }
+
+                            else if (percentIntersect >= 60 && percentIntersect < 80)
+                            {
+                                CurrentPage.ClearBoundaries();
+                                //Check bounds above
+                                var percentAbove = -1.0;
+                                if (i > 0)
+                                {
+                                    var rectAbove = new Rect(xpos, ypos - array.GridSquareSize, 1.5*width, height);
+                                    CurrentPage.AddBoundary(rectAbove);
+                                    PageHistory.UISleep(1000);
+                                    strokeBound = strokeBoundFixed;
+                                    strokeBound.Intersect(rectAbove);
+                                    var intersectAbove = strokeBound.Height * strokeBound.Width;
+                                    percentAbove = 100 * intersectAbove / strokeArea;
+                                }
+
+                                //Check bounds below
+                                var percentBelow = -1.0;
+                                if (i < array.Rows - 1)
+                                {
+                                    var rectBelow = new Rect(xpos, ypos + array.GridSquareSize, 1.5*width, height);
+                                    CurrentPage.AddBoundary(rectBelow);
+                                    PageHistory.UISleep(1000);
+                                    strokeBound = strokeBoundFixed;
+                                    strokeBound.Intersect(rectBelow);
+                                    var intersectBelow = strokeBound.Height * strokeBound.Width;
+                                    percentBelow = 100 * intersectBelow / strokeArea;
+                                }
+
+                                Console.WriteLine("{0}, {1}, {2}, {3}", i-1, percentAbove, i+1, percentBelow);
                             }
                             CurrentPage.ClearBoundaries();
                         }
