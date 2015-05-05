@@ -1009,30 +1009,11 @@ namespace Classroom_Learning_Partner.ViewModels
                             var strokeArea = strokeBoundFixed.Height * strokeBoundFixed.Width;
                             var percentIntersect = 100*intersectArea/strokeArea;
                             Console.WriteLine("{0}, {1}, {2}", inkStroke.GetStrokeID(), i, percentIntersect);
+                            var row = -2;
 
                             //if (inkStroke.HitTest(rectBound, 80))
                             if (percentIntersect >= 80 && percentIntersect <= 100)
-                            {
-                                //Thickens stroke to indicate match
-                                inkStroke.DrawingAttributes.Height *= 2;
-                                inkStroke.DrawingAttributes.Width *= 2;
-                                PageHistory.UISleep(800);
-
-                                //Adds stroke to dictionary
-                                if (!skipCountStrokes.ContainsKey(i))
-                                {
-                                    skipCountStrokes.Add(i, new StrokeCollection());
-                                }
-                                skipCountStrokes[i].Add(inkStroke);
-
-                                //Writes data to .txt file
-                                File.AppendAllText(filePath, inkStroke.GetStrokeID() + "\t" + i.ToString() + "\t" + percentIntersect.ToString() + Environment.NewLine);
-
-                                inkStroke.DrawingAttributes.Height /= 2;
-                                inkStroke.DrawingAttributes.Width /= 2;
-                                CurrentPage.ClearBoundaries();
-                                break;
-                            }
+                                row = i;
 
                             else if (percentIntersect >= 60 && percentIntersect < 80)
                             {
@@ -1048,6 +1029,9 @@ namespace Classroom_Learning_Partner.ViewModels
                                     strokeBound.Intersect(rectAbove);
                                     var intersectAbove = strokeBound.Height * strokeBound.Width;
                                     percentAbove = 100 * intersectAbove / strokeArea;
+                                    if (percentAbove > 100)
+                                        percentAbove = -1.0;
+                                    CurrentPage.ClearBoundaries();
                                 }
 
                                 //Check bounds below
@@ -1061,9 +1045,49 @@ namespace Classroom_Learning_Partner.ViewModels
                                     strokeBound.Intersect(rectBelow);
                                     var intersectBelow = strokeBound.Height * strokeBound.Width;
                                     percentBelow = 100 * intersectBelow / strokeArea;
+                                    if (percentBelow > 100)
+                                        percentBelow = -1.0;
+                                    CurrentPage.ClearBoundaries();
                                 }
-
                                 Console.WriteLine("{0}, {1}, {2}, {3}", i-1, percentAbove, i+1, percentBelow);
+
+                                //Assigns best matching row
+                                if (percentIntersect > percentBelow && percentIntersect > percentAbove)
+                                    row = i;
+                                else if (percentBelow > percentIntersect && percentBelow > percentAbove)
+                                {
+                                    row = i + 1;
+                                    percentIntersect = percentBelow;
+                                }
+                                else if (percentAbove > percentIntersect && percentAbove > percentBelow)
+                                {
+                                    row = i - 1;
+                                    percentIntersect = percentAbove;
+                                }
+                            }
+
+                            if (row > -2)
+                            {
+                                //Thickens stroke to indicate match
+                                inkStroke.DrawingAttributes.Height *= 2;
+                                inkStroke.DrawingAttributes.Width *= 2;
+                                PageHistory.UISleep(800);
+
+                                //Adds stroke to dictionary
+                                if (!skipCountStrokes.ContainsKey(row))
+                                {
+                                    skipCountStrokes.Add(row, new StrokeCollection());
+                                }
+                                skipCountStrokes[i].Add(inkStroke);
+
+                                //Writes data to .txt file
+                                File.AppendAllText(filePath, inkStroke.GetStrokeID() + "\t" + row.ToString() + "\t" + percentIntersect.ToString() + Environment.NewLine);
+                                Console.WriteLine("{0}, {1}", "Added to row: ", i);
+
+                                inkStroke.DrawingAttributes.Height /= 2;
+                                inkStroke.DrawingAttributes.Width /= 2;
+                                CurrentPage.ClearBoundaries();
+                                break;
                             }
                             CurrentPage.ClearBoundaries();
                         }
