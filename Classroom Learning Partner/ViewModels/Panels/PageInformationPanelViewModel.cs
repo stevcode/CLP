@@ -995,11 +995,22 @@ namespace Classroom_Learning_Partner.ViewModels
                         CurrentPage.ClearBoundaries();
                         for (int i = 0; i < array.Rows; i++)
                         {
+                            //Creates array bound and stroke bound
                             var ypos = array.YPosition + array.LabelLength + (array.GridSquareSize * i);
                             var rectBound = new Rect(xpos, ypos - 0.2*height, 1.5*width, 1.4*height);
                             CurrentPage.AddBoundary(rectBound);
                             PageHistory.UISleep(800);
-                            if (inkStroke.HitTest(rectBound, 80))
+                            var strokeBound = new Rect(inkStroke.GetBounds().X, inkStroke.GetBounds().Y, inkStroke.GetBounds().Width, inkStroke.GetBounds().Height);
+
+                            //Finds intersection
+                            strokeBound.Intersect(rectBound);
+                            var intersectArea = strokeBound.Height*strokeBound.Width;
+                            var strokeArea = inkStroke.GetBounds().Height * inkStroke.GetBounds().Width;
+                            var percentIntersect = 100*intersectArea/strokeArea;
+                            Console.WriteLine("{0}, {1}, {2}", inkStroke.GetStrokeID(), i, percentIntersect);
+
+                            //if (inkStroke.HitTest(rectBound, 80))
+                            if (percentIntersect >= 80 && percentIntersect <= 100)
                             {
                                 //Thickens stroke to indicate match
                                 inkStroke.DrawingAttributes.Height *= 2;
@@ -1015,7 +1026,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
                                 //Writes data to .txt file
                                 File.AppendAllText(filePath, inkStroke.GetStrokeID() + "\t" + i.ToString() + Environment.NewLine);
-                                Console.WriteLine("{0}, {1}", inkStroke.GetStrokeID(), i);
 
                                 inkStroke.DrawingAttributes.Height /= 2;
                                 inkStroke.DrawingAttributes.Width /= 2;
