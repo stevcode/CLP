@@ -1375,30 +1375,122 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var pageObjectNumberInHistory = 1;
 
-            var redoItem = page.History.RedoItems.FirstOrDefault();
-            if (redoItem == null)
+            var inkChange = false;
+            while (page.History.RedoItems.Any())
             {
-                return;
+                var redoItem = page.History.RedoItems.First();
+
+                var objectChanged = redoItem as ObjectsOnPageChangedHistoryItem;
+                if (objectChanged != null)
+                {
+                    // check what type for all history items
+                    // do jordan's and john's first
+                    // step 1 only
+                    if (objectChanged.IsUsingPageObjects &&
+                        !objectChanged.IsUsingStrokes)
+                    {
+                        var isAdd = !objectChanged.PageObjectIDsRemoved.Any() && objectChanged.PageObjectIDsAdded.Any();
+
+                        //get pageObject from ID
+                        //use pageObject to generate bounds in the form of a Rect
+                        //get history location.
+                        var historyAction = new GeneralPageObjectAction(page, new List<IHistoryItem> { (IHistoryItem)objectChanged });
+                        page.History.HistoryActions.Add(historyAction);
+                        page.History.Redo();
+                        pageObjectNumberInHistory++;
+                        inkChange = false;
+                        continue;
+                    }
+
+                    if (objectChanged.IsUsingStrokes &&
+                        !objectChanged.IsUsingPageObjects)
+                    {
+                        if (inkChange)
+                        {
+                            continue; //group ink change together
+                        }
+                        var isAdd = !objectChanged.StrokeIDsRemoved.Any() && objectChanged.StrokeIDsRemoved.Any();
+
+                        var historyAction = new InkAction(page, new List<IHistoryItem> { (IHistoryItem)objectChanged });
+                        page.History.HistoryActions.Add(historyAction);
+                        page.History.Redo();
+                        pageObjectNumberInHistory++;
+                        inkChange = true;
+                    }                   
+                }
+
+                var objectMoved = redoItem as ObjectsMovedBatchHistoryItem;
+                if (objectMoved != null)
+                {
+                    var historyAction = new GeneralPageObjectAction(page, new List<IHistoryItem> { (IHistoryItem)objectMoved });
+                    page.History.HistoryActions.Add(historyAction);
+                    page.History.Redo();
+                    pageObjectNumberInHistory++;
+                    inkChange = false;
+                }
+
+                var objectResized = redoItem as PageObjectResizeBatchHistoryItem;
+                if (objectResized != null)
+                {
+                    var historyAction = new GeneralPageObjectAction(page, new List<IHistoryItem> { (IHistoryItem)objectResized });
+                    page.History.HistoryActions.Add(historyAction);
+                    page.History.Redo();
+                    pageObjectNumberInHistory++;
+                    inkChange = false;
+                }
+
+                var objectCut = redoItem as PageObjectCutHistoryItem;
+                if (objectCut != null)
+                {
+                    
+                }
+
+                var numberLineEndPointsChanged = redoItem as NumberLineEndPointsChangedHistoryItem;
+                if (numberLineEndPointsChanged != null)
+                {
+                    
+                }
+
+                var numberLineJumpSizesChanged = redoItem as NumberLineJumpSizesChangedHistoryItem;
+                if (numberLineJumpSizesChanged != null)
+                {
+
+                }
+
+                var arrayDivisionsChanged = redoItem as CLPArrayDivisionsChangedHistoryItem;
+                if (arrayDivisionsChanged != null)
+                {
+                    
+                }
+
+                var arrayDivisionValueChanged = redoItem as CLPArrayDivisionValueChangedHistoryItem;
+                if (arrayDivisionValueChanged != null)
+                {
+                    
+                }
+
+                var arrayGridToggle = redoItem as CLPArrayGridToggleHistoryItem;
+                if (arrayGridToggle != null)
+                {
+                    
+                }
+
+                var arrayRotate = redoItem as CLPArrayRotateHistoryItem;
+                if (arrayRotate != null)
+                {
+                    
+                }
+
+                var arraySnap = redoItem as CLPArraySnapHistoryItem;
+                if (arraySnap != null)
+                {
+                    
+                }
             }
 
-            var objectChanged = redoItem as ObjectsOnPageChangedHistoryItem;
-            if (objectChanged != null)
+            foreach(var action in page.History.HistoryActions)
             {
-                if (objectChanged.IsUsingPageObjects &&
-                    !objectChanged.IsUsingStrokes)
-                {
-                    var isAdd = !objectChanged.PageObjectIDsRemoved.Any() && objectChanged.PageObjectIDsAdded.Any();
-
-                    //get pageObject from ID
-                    //use pageObject to generate bounds in the form of a Rect
-                    //get history location.
-                    var historyAction = new GeneralPageObjectAction(page);
-                    pageObjectNumberInHistory++;
-                }
-                
-                
-
-
+                //print coded value
             }
         }
 

@@ -22,6 +22,26 @@ namespace CLP.Entities
             :base(parentPage)
         {
             HistoryItemIDs = historyItems.Select(h => h.ID).ToList();
+            var jumpSizesChangedActions = NumberLineJumpActions;
+            var endPointsChangedActions = NumberLineEndPointsChangedActions;
+
+            if (jumpSizesChangedActions.Any())
+            {
+                if (endPointsChangedActions.Any())
+                {
+                    //throw error
+                }
+                NumberLineAction = NumberLineActions.Jump;
+            }
+            else
+            {
+                if (endPointsChangedActions.Count != 1)
+                {
+                    ///throw error, no objects or too many
+                }
+                NumberLineAction = NumberLineActions.Change;
+            }
+
         }
 
         /// <summary>Initializes <see cref="ArrayHistoryAction" /> based on <see cref="SerializationInfo" />.</summary>
@@ -48,12 +68,18 @@ namespace CLP.Entities
                 switch (NumberLineAction)
                 {
                     case NumberLineActions.Change:
-                        return string.Format("NL cut[{0}x{1}: {2}x{3}, {4}x{5}]", 6, 7, 2, 7, 4, 7); //array rows/columns, smaller arrays
+                        var numberLineEndPointsChangedAction = NumberLineEndPointsChangedActions.First();
+                        var oldLength = numberLineEndPointsChangedAction.PreviousEndValue - numberLineEndPointsChangedAction.PreviousStartValue;
+                        var newLength = numberLineEndPointsChangedAction.NewEndValue - numberLineEndPointsChangedAction.NewStartValue;
+                        return string.Format("NL change[{0}: {1}]", newLength, oldLength);
                     case NumberLineActions.InkChange:
-                        return string.Format("NL divide[{0}x{1}: {2}x{3}, {4}x{5}]", 6, 7, 2, 7, 4, 7); //array rows/columns, smaller arrays
+                        return string.Format("NL ink change[{0}: {1}]", 80, 81); //new length, old length
                     case NumberLineActions.Jump:
+                        var numberLineJumpActions = NumberLineJumpActions;
+                        var startJump = numberLineJumpActions.First();
                         return string.Format("NL jump[{0}: {1}, {2}-{3}]", 42, 7, 0, 42); //numberline jump sizes+start/end values
                          //possibly multiple jump sizes NL jump [70: 7, 0-35, 6, 35-41, 7, 48-55]
+
                         //possibly off numberline
                     default:
                         return "NL modified";
@@ -62,5 +88,19 @@ namespace CLP.Entities
         }
 
         #endregion //Properties
+
+        #region Calculated Properties
+
+        public List<NumberLineJumpSizesChangedHistoryItem> NumberLineJumpActions
+        {
+            get { return HistoryItems.OfType<NumberLineJumpSizesChangedHistoryItem>().ToList(); }
+        }
+
+        public List<NumberLineEndPointsChangedHistoryItem> NumberLineEndPointsChangedActions
+
+        {
+            get { return HistoryItems.OfType<NumberLineEndPointsChangedHistoryItem>().ToList(); }
+        }
+        #endregion //Calculated Properties
     }
 }
