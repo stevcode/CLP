@@ -110,9 +110,12 @@ namespace CLP.Entities
                         var arrayCutAction = ArrayCutActions.First();
                         var cutArray = ParentPage.GetPageObjectByIDOnPageOrInHistory(arrayCutAction.CutPageObjectID) as CLPArray;
                         var halfArrays = arrayCutAction.HalvedPageObjectIDs.Select(h => ParentPage.GetPageObjectByIDOnPageOrInHistory(h) as CLPArray).ToList();
-                        var cutDirection = (cutArray.Rows == halfArrays[0].Rows) ? " v" : "";
+
+                        var halfRows1 = (cutArray.Rows == halfArrays[1].Rows) ? halfArrays[0].Rows : halfArrays[0].Rows - halfArrays[1].Rows;
+                        var halfColumns1 = (cutArray.Rows == halfArrays[1].Rows) ? halfArrays[0].Columns - halfArrays[1].Columns : halfArrays[0].Columns;
+                        var cutDirection = (cutArray.Rows == halfArrays[1].Rows) ? " v" : "";
                         return string.Format("ARR cut[{0}x{1}: {2}x{3}, {4}x{5}{6}]", cutArray.Rows, cutArray.Columns,
-                            halfArrays[0].Rows, halfArrays[0].Columns, halfArrays[1].Rows, halfArrays[1].Columns, cutDirection);
+                            halfRows1, halfColumns1, halfArrays[1].Rows, halfArrays[1].Columns, cutDirection);
                     
                     case ArrayActions.Divide:
                         return string.Format("ARR divide[{0}x{1}: {2}x{3}, {4}x{5}]", ArrayDimensions[0], ArrayDimensions[1],

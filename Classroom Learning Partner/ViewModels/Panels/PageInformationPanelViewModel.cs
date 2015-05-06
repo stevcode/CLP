@@ -1477,7 +1477,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         var jumpItem = page.History.RedoItems.First() as NumberLineJumpSizesChangedHistoryItem;
                         if (jumpItem != null)
                         {
-                            jumpItems.Add(jumpItem);
+                            jumpItems.Add((IHistoryItem) jumpItem);
                             page.History.Redo();
                             pageObjectNumberInHistory++;
                         }
@@ -1517,7 +1517,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 var arraySnap = redoItem as CLPArraySnapHistoryItem;
                 if (arraySnap != null)
                 {
-                    var arrayAction = new ArrayHistoryAction(page, new List<IHistoryItem> { (IHistoryItem)objectCut });
+                    var arrayAction = new ArrayHistoryAction(page, new List<IHistoryItem> { (IHistoryItem)arraySnap });
                     page.History.HistoryActions.Add(arrayAction);
                     page.History.Redo();
                     pageObjectNumberInHistory++;
@@ -1531,7 +1531,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 Directory.CreateDirectory(fileDirectory);
             }
 
-            var filePath = Path.Combine(fileDirectory, PageNameComposite.ParsePageToNameComposite(CurrentPage).ToFileName() + ".txt");
+            var filePath = Path.Combine(fileDirectory, PageNameComposite.ParsePageToNameComposite(CurrentPage).ToFileName() + page.Owner.FullName +".txt");
             if (File.Exists(filePath))
             {
                 File.Delete(filePath);

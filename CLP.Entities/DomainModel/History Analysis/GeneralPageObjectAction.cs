@@ -55,22 +55,22 @@ namespace CLP.Entities
             if (movedPageObjects.Any())
             {
                 GeneralAction = GeneralActions.Move;
-                PageObjectType = movedPageObjects.First().GetType().ToString();               
+                PageObjectType = movedPageObjects.First().GetType().Name;               
             }
             else if (resizedPageObjects.Any())
             {
                 GeneralAction = GeneralActions.Resize;
-                PageObjectType = resizedPageObjects.First().GetType().ToString(); 
+                PageObjectType = resizedPageObjects.First().GetType().Name; 
             }
             else if (addedPageObjects.Any())
             {
                 GeneralAction = GeneralActions.Add;
-                PageObjectType = addedPageObjects.First().GetType().ToString(); 
+                PageObjectType = addedPageObjects.First().GetType().Name; 
             }
             else if (removedPageObjects.Any())
             {
                 GeneralAction = GeneralActions.Delete;
-                PageObjectType = removedPageObjects.First().GetType().ToString(); 
+                PageObjectType = removedPageObjects.First().GetType().Name; 
             }
         }
 
@@ -169,10 +169,10 @@ namespace CLP.Entities
                 
                 if (GeneralAction == GeneralActions.Add) 
                 {
-                    return string.Format("{0}{1}.", PageObjectType, objectDescriptor);
+                    return string.Format("{0}{1}", objectCode, objectDescriptor);
                 }
                 var codedActionType = GeneralAction.ToString().ToLower();       
-                return string.Format("{0} {1}{2}.", objectDescriptor, codedActionType, objectDescriptor);
+                return string.Format("{0} {1}{2}", objectCode, codedActionType, objectDescriptor);
             }
         }
 
