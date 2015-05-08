@@ -1044,6 +1044,10 @@
       <Project>{c6b95a31-7045-4c7e-a72d-c03468e20b20}</Project>
       <Name>CLP.Entities</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CLP.InkInterpretation\CLP.InkInterpretation.csproj">
+      <Project>{e5c7736a-d92a-4d63-97b5-a1e1d4bbb7cf}</Project>
+      <Name>CLP.InkInterpretation</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ServiceModelEx\ServiceModelEx.csproj">
       <Project>{0858c710-af53-4049-b98e-cfe3638d1228}</Project>
       <Name>ServiceModelEx</Name>

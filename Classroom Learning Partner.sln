@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30723.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Classroom Learning Partner", "Classroom Learning Partner\Classroom Learning Partner.csproj", "{86FEBAD6-E946-4865-B189-D064B37DE607}"
 EndProject
@@ -14,6 +14,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CLP.Entities", "CLP.Entities\CLP.Entities.csproj", "{C6B95A31-7045-4C7E-A72D-C03468E20B20}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CLP.CustomControls", "CLP.CustomControls\CLP.CustomControls.csproj", "{9A23526F-813C-428B-9480-E83B90EFC3C8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CLP.InkInterpretation", "CLP.InkInterpretation\CLP.InkInterpretation.csproj", "{E5C7736A-D92A-4D63-97B5-A1E1D4BBB7CF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -157,6 +159,25 @@ Global
 		{9A23526F-813C-428B-9480-E83B90EFC3C8}.Release|x64.Build.0 = Release|x64
 		{9A23526F-813C-428B-9480-E83B90EFC3C8}.Release|x86.ActiveCfg = Release|x86
 		{9A23526F-813C-428B-9480-E83B90EFC3C8}.Release|x86.Build.0 = Release|x86
+		{E5C7736A-D92A-4D63-97B5-A1E1D4BBB7CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5C7736A-D92A-4D63-97B5-A1E1D4BBB7CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5C7736A-D92A-4D63-97B5-A1E1D4BBB7CF}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{E5C7736A-D92A-4D63-97B5-A1E1D4BBB7CF}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{E5C7736A-D92A-4D63-97B5-A1E1D4BBB7CF}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E5C7736A-D92A-4D63-97B5-A1E1D4BBB7CF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E5C7736A-D92A-4D63-97B5-A1E1D4BBB7CF}.Design|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5C7736A-D92A-4D63-97B5-A1E1D4BBB7CF}.Design|Any CPU.Build.0 = Debug|Any CPU
+		{E5C7736A-D92A-4D63-97B5-A1E1D4BBB7CF}.Design|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{E5C7736A-D92A-4D63-97B5-A1E1D4BBB7CF}.Design|Mixed Platforms.Build.0 = Debug|Any CPU
+		{E5C7736A-D92A-4D63-97B5-A1E1D4BBB7CF}.Design|x64.ActiveCfg = Debug|Any CPU
+		{E5C7736A-D92A-4D63-97B5-A1E1D4BBB7CF}.Design|x86.ActiveCfg = Debug|Any CPU
+		{E5C7736A-D92A-4D63-97B5-A1E1D4BBB7CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5C7736A-D92A-4D63-97B5-A1E1D4BBB7CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E5C7736A-D92A-4D63-97B5-A1E1D4BBB7CF}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{E5C7736A-D92A-4D63-97B5-A1E1D4BBB7CF}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{E5C7736A-D92A-4D63-97B5-A1E1D4BBB7CF}.Release|x64.ActiveCfg = Release|Any CPU
+		{E5C7736A-D92A-4D63-97B5-A1E1D4BBB7CF}.Release|x64.Build.0 = Release|Any CPU
+		{E5C7736A-D92A-4D63-97B5-A1E1D4BBB7CF}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

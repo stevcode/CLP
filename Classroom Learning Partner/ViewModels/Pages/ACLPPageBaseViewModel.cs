@@ -19,6 +19,7 @@ using Catel.MVVM.Views;
 using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.Views;
 using CLP.Entities;
+using CLP.InkInterpretation;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -684,6 +685,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                    };
 
                 ChangeAcceptedStrokes(addedStrokes, new List<Stroke>());
+                Console.WriteLine(InkInterpreter.StrokesToBestGuessText(InkStrokes));
             }
             catch (Exception ex)
             {
