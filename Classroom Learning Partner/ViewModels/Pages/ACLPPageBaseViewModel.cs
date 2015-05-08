@@ -685,7 +685,6 @@ namespace Classroom_Learning_Partner.ViewModels
                                    };
 
                 ChangeAcceptedStrokes(addedStrokes, new List<Stroke>());
-                Console.WriteLine(InkInterpreter.StrokesToBestGuessText(InkStrokes));
             }
             catch (Exception ex)
             {
