@@ -942,7 +942,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 Directory.CreateDirectory(fileDirectory);
             }
-            var filePath = Path.Combine(fileDirectory, PageNameComposite.ParsePageToNameComposite(CurrentPage).ToFileName() + ".txt");
+            var filePath = Path.Combine(fileDirectory, CurrentPage.Owner.FullName + CurrentPage.PageNumber +".txt");
             if (File.Exists(filePath))
             {
                 File.Delete(filePath);
