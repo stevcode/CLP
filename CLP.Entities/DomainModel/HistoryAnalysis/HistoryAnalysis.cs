@@ -187,7 +187,7 @@ namespace CLP.Entities
                     var arrayAction = new ArrayHistoryAction(page,
                                                              new List<IHistoryItem>
                                                              {
-                                                                 objectCut
+                                                                 arraySnap
                                                              });
                     page.History.HistoryActions.Add(arrayAction);
                     page.History.Redo();

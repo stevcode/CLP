@@ -1375,7 +1375,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 Directory.CreateDirectory(fileDirectory);
             }
 
-            var filePath = Path.Combine(fileDirectory, PageNameComposite.ParsePageToNameComposite(CurrentPage).ToFileName() + page.Owner.FullName +".txt");
+            var filePath = Path.Combine(fileDirectory, PageNameComposite.ParsePageToNameComposite(CurrentPage).ToFileName() + CurrentPage.Owner.FullName + ".txt");
             if (File.Exists(filePath))
             {
                 File.Delete(filePath);
