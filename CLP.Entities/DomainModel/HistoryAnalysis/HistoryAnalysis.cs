@@ -456,42 +456,51 @@ namespace CLP.Entities
                     {
                         var inkHistoryItem = page.GetPageObjectByIDOnPageOrInHistory(id) as ObjectsOnPageChangedHistoryItem;
                         var inkActionType = InkAction.InkActions.Ignore;
-                        if (inkHistoryItem.StrokeIDsAdded.Any() &&
-                            !inkHistoryItem.StrokeIDsRemoved.Any())
+                        if (inkHistoryItem != null)
                         {
-                            inkActionType = InkAction.InkActions.Add;
-                        }
-                        else if (!inkHistoryItem.StrokeIDsAdded.Any() &&
-                                 inkHistoryItem.StrokeIDsRemoved.Any())
-                        {
-                            inkActionType = InkAction.InkActions.Erase;
-                        }
-                        else
-                        {
-                            break; //throw error, neither inks add nor erase
-                        }
-                        if (inkActionType == currentActionType || //same type of action
-                            currentActionType == InkAction.InkActions.Ignore) //first action
-                        {
-                            currentActionType = inkActionType;
-                            currentHistoryItems.Add(inkHistoryItem);
-                        }
-                        else if (inkActionType != currentActionType)
-                        {
-                            //make action out of previous group
-                            numberInkGroups += 1;
+                            if (inkHistoryItem.StrokeIDsAdded.Any() &&
+                                !inkHistoryItem.StrokeIDsRemoved.Any())
+                            {
+                                inkActionType = InkAction.InkActions.Add;
+                            }
+                            else if (!inkHistoryItem.StrokeIDsAdded.Any() &&
+                                     inkHistoryItem.StrokeIDsRemoved.Any())
+                            {
+                                inkActionType = InkAction.InkActions.Erase;
+                            }
+                            else
+                            {
+                                break; //throw error, neither inks add nor erase
+                            }
 
-                            //restart grouping
-                            currentActionType = inkActionType;
-                            currentHistoryItems = new List<IHistoryItem>{inkHistoryItem};
+                            if (inkActionType == currentActionType || //same type of action
+                                currentActionType == InkAction.InkActions.Ignore) //first action
+                            {
+                                currentActionType = inkActionType;
+                                currentHistoryItems.Add(inkHistoryItem);
+                            }
+                            else if (inkActionType != currentActionType)
+                            {
+                                //make action out of previous group
+                                numberInkGroups += 1;
+                                var inkGroup = ((char)numberInkGroups + 64).ToString();
+                                var inkActionSecondPass = new InkAction(page, currentHistoryItems, inkActionType, InkAction.InkLocations.Over, "array [4x8]", inkGroup);
+                                revisedHistoryActions.Add(inkActionSecondPass);
+
+                                //restart grouping
+                                currentActionType = inkActionType;
+                                currentHistoryItems = new List<IHistoryItem>
+                                                      {
+                                                          inkHistoryItem
+                                                      };
+                            }
                         }
                     }
+                }
 
-                    //revisedHistoryActions.Add(inkAction);
                     //TODO: Adisa: This is 2nd pass, so this will always be "INK changed", sub-divide into INK strokes over array, left of array, etc
                     //Keep track of InkGroups you make, each one you make you'll want to increment currentInkGroup++;
                     //Then convert the currentInkGroup from int to string (0 = A, 1 = B, 2 = C, etc), pass that value in to the constructor for the InkAction, then you'll have that for the Ink group ID.
-                }
             }
 
             //Replace historyActions with revisedHistoryActions

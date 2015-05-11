@@ -57,7 +57,8 @@ namespace CLP.Entities
             : base(parentPage)
         {
             HistoryItemIDs = historyItems.Select(h => h.ID).ToList();
-            InkLocation - inkLocation;
+            InkLocation = inkLocation;
+            LocationString = locationDescriptor;
             InkGroup = inkGroup;
 
             InkActionType = inkActionType;
@@ -157,7 +158,7 @@ namespace CLP.Entities
                     codedActionType = "";
                 }
 
-                var location = InkLocation.ToString().Lower() + " of";
+                var location = InkLocation.ToString().ToLower() + " of";
                 if (location == "over of")
                 {
                     location = "over";
