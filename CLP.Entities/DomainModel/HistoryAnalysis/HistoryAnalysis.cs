@@ -454,7 +454,7 @@ namespace CLP.Entities
 
                     foreach (var id in inkHistoryItemIDs)
                     {
-                        var inkHistoryItem = page.GetPageObjectByIDOnPageOrInHistory(id) as ObjectsOnPageChangedHistoryItem;
+                        var inkHistoryItem = page.History.UndoItems.FirstOrDefault(h => h.ID == id) as ObjectsOnPageChangedHistoryItem;
                         var inkActionType = InkAction.InkActions.Ignore;
                         if (inkHistoryItem != null)
                         {
@@ -483,7 +483,7 @@ namespace CLP.Entities
                             {
                                 //make action out of previous group
                                 numberInkGroups += 1;
-                                var inkGroup = ((char)numberInkGroups + 64).ToString();
+                                var inkGroup = ((char)(numberInkGroups + 64)).ToString();
                                 var inkActionSecondPass = new InkAction(page, currentHistoryItems, inkActionType, InkAction.InkLocations.Over, "array [4x8]", inkGroup);
                                 revisedHistoryActions.Add(inkActionSecondPass);
 

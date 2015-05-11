@@ -124,7 +124,7 @@ namespace CLP.Entities
 
         public string LocationString
         {
-            get { return GetValue<string>(LocationString); }
+            get { return GetValue<string>(LocationStringProperty); }
             set { SetValue(LocationStringProperty, value); }
         }
 
