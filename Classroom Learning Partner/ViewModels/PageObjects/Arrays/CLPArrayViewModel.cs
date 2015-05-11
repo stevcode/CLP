@@ -915,7 +915,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                                    PageObject.ID,
                                                                                                    isHorizontalDivision,
                                                                                                    divisionIndex,
-                                                                                                   previousValue, 
+                                                                                                   previousValue,
                                                                                                    division.Value));
 
             // Check if array labels add up to larger array dimension
@@ -1024,8 +1024,10 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnEraseDivisionCommandExecute(MouseEventArgs e)
         {
             var rectangle = e.Source as Rectangle;
+            var array = PageObject as ACLPArrayBase;
             if ((e.StylusDevice == null || !e.StylusDevice.Inverted || e.LeftButton != MouseButtonState.Pressed) && e.MiddleButton != MouseButtonState.Pressed ||
-                rectangle == null)
+                rectangle == null ||
+                array == null)
             {
                 return;
             }
@@ -1038,49 +1040,50 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            var addedDivisions = new List<CLPArrayDivision>();
-            var removedDivisions = new List<CLPArrayDivision>();
+            var oldRegions = new List<CLPArrayDivision>();
+            var newRegions = new List<CLPArrayDivision>();
+
             if (division.Orientation == ArrayDivisionOrientation.Horizontal)
             {
-                var divAbove = (PageObject as CLPArray).FindDivisionAbove(division.Position, (PageObject as CLPArray).HorizontalDivisions);
-                (PageObject as CLPArray).HorizontalDivisions.Remove(divAbove);
-                (PageObject as CLPArray).HorizontalDivisions.Remove(division);
-                removedDivisions.Add(divAbove);
-                removedDivisions.Add(division);
+                oldRegions = array.HorizontalDivisions.ToList();
+                var divAbove = array.FindDivisionAbove(division.Position, array.HorizontalDivisions);
+                array.HorizontalDivisions.Remove(divAbove);
+                array.HorizontalDivisions.Remove(division);
 
                 //Add new division unless we removed the only division line
-                if ((PageObject as CLPArray).HorizontalDivisions.Count > 0)
+                if (array.HorizontalDivisions.Count > 0)
                 {
                     var newLength = divAbove.Length + division.Length;
                     var newDivision = new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, divAbove.Position, newLength, 0);
-                    (PageObject as CLPArray).HorizontalDivisions.Add(newDivision);
-                    addedDivisions.Add(newDivision);
+                    array.HorizontalDivisions.Add(newDivision);
                 }
+
+                newRegions = array.HorizontalDivisions.ToList();
             }
             if (division.Orientation == ArrayDivisionOrientation.Vertical)
             {
-                var divAbove = (PageObject as CLPArray).FindDivisionAbove(division.Position, (PageObject as CLPArray).VerticalDivisions);
-                (PageObject as CLPArray).VerticalDivisions.Remove(divAbove);
-                (PageObject as CLPArray).VerticalDivisions.Remove(division);
-                removedDivisions.Add(divAbove);
-                removedDivisions.Add(division);
+                oldRegions = array.VerticalDivisions.ToList();
+                var divAbove = array.FindDivisionAbove(division.Position, array.VerticalDivisions);
+                array.VerticalDivisions.Remove(divAbove);
+                array.VerticalDivisions.Remove(division);
 
                 //Add new division unless we removed the only division line
-                if ((PageObject as CLPArray).VerticalDivisions.Count > 0)
+                if (array.VerticalDivisions.Count > 0)
                 {
                     var newLength = divAbove.Length + division.Length;
                     var newDivision = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, divAbove.Position, newLength, 0);
-                    (PageObject as CLPArray).VerticalDivisions.Add(newDivision);
-                    addedDivisions.Add(newDivision);
+                    array.VerticalDivisions.Add(newDivision);
                 }
+
+                newRegions = array.VerticalDivisions.ToList();
             }
 
             ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage,
                                                        new CLPArrayDivisionsChangedHistoryItem(PageObject.ParentPage,
                                                                                                App.MainWindowViewModel.CurrentUser,
                                                                                                PageObject.ID,
-                                                                                               addedDivisions,
-                                                                                               removedDivisions));
+                                                                                               oldRegions,
+                                                                                               newRegions));
         }
 
         /// <summary>Brings up a menu to make multiple copies of an array</summary>
@@ -1197,6 +1200,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
             const double MIN_THRESHHOLD = 30.0;
 
+            List<CLPArrayDivision> oldRegions;
+            List<CLPArrayDivision> newRegions;
+
             if (Math.Abs(strokeLeft - strokeRight) < Math.Abs(strokeTop - strokeBottom) &&
                 strokeRight <= cuttableRight &&
                 strokeLeft >= cuttableLeft &&
@@ -1204,6 +1210,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 cuttableBottom - strokeBottom <= MIN_THRESHHOLD &&
                 array.Columns > 1) //Vertical Stroke. Stroke must be within the bounds of the pageObject
             {
+                oldRegions = array.VerticalDivisions.ToList();
                 var average = (strokeRight + strokeLeft) / 2;
                 var relativeAverage = average - array.LabelLength - array.XPosition;
                 var position = relativeAverage;
@@ -1225,9 +1232,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 var divAbove = array.FindDivisionAbove(position, array.VerticalDivisions);
                 var divBelow = array.FindDivisionBelow(position, array.VerticalDivisions);
 
-                var addedDivisions = new List<CLPArrayDivision>();
-                var removedDivisions = new List<CLPArrayDivision>();
-
                 CLPArrayDivision topDiv;
                 if (divAbove == null)
                 {
@@ -1237,24 +1241,22 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, divAbove.Position, position - divAbove.Position, 0);
                     array.VerticalDivisions.Remove(divAbove);
-                    removedDivisions.Add(divAbove);
                 }
                 array.VerticalDivisions.Add(topDiv);
-                addedDivisions.Add(topDiv);
 
                 var bottomDiv = divBelow == null
                                     ? new CLPArrayDivision(ArrayDivisionOrientation.Vertical, position, array.ArrayWidth - position, 0)
                                     : new CLPArrayDivision(ArrayDivisionOrientation.Vertical, position, divBelow.Position - position, 0);
 
                 array.VerticalDivisions.Add(bottomDiv);
-                addedDivisions.Add(bottomDiv);
 
+                newRegions = array.VerticalDivisions.ToList();
                 ACLPPageBaseViewModel.AddHistoryItemToPage(array.ParentPage,
                                                            new CLPArrayDivisionsChangedHistoryItem(array.ParentPage,
                                                                                                    App.MainWindowViewModel.CurrentUser,
                                                                                                    array.ID,
-                                                                                                   addedDivisions,
-                                                                                                   removedDivisions));
+                                                                                                   oldRegions,
+                                                                                                   newRegions));
                 return true;
             }
 
@@ -1265,6 +1267,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 strokeLeft - cuttableLeft <= MIN_THRESHHOLD &&
                 array.Rows > 1) //Horizontal Stroke. Stroke must be within the bounds of the pageObject
             {
+                oldRegions = array.HorizontalDivisions.ToList();
                 var average = (strokeTop + strokeBottom) / 2;
                 var relativeAverage = average - array.LabelLength - array.YPosition;
                 var position = relativeAverage;
@@ -1286,9 +1289,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 var divAbove = array.FindDivisionAbove(position, array.HorizontalDivisions);
                 var divBelow = array.FindDivisionBelow(position, array.HorizontalDivisions);
 
-                var addedDivisions = new List<CLPArrayDivision>();
-                var removedDivisions = new List<CLPArrayDivision>();
-
                 CLPArrayDivision topDiv;
                 if (divAbove == null)
                 {
@@ -1298,24 +1298,22 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     topDiv = new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, divAbove.Position, position - divAbove.Position, 0);
                     array.HorizontalDivisions.Remove(divAbove);
-                    removedDivisions.Add(divAbove);
                 }
                 array.HorizontalDivisions.Add(topDiv);
-                addedDivisions.Add(topDiv);
 
                 var bottomDiv = divBelow == null
                                     ? new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, position, array.ArrayHeight - position, 0)
                                     : new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, position, divBelow.Position - position, 0);
 
                 array.HorizontalDivisions.Add(bottomDiv);
-                addedDivisions.Add(bottomDiv);
 
+                newRegions = array.HorizontalDivisions.ToList();
                 ACLPPageBaseViewModel.AddHistoryItemToPage(array.ParentPage,
                                                            new CLPArrayDivisionsChangedHistoryItem(array.ParentPage,
                                                                                                    App.MainWindowViewModel.CurrentUser,
                                                                                                    array.ID,
-                                                                                                   addedDivisions,
-                                                                                                   removedDivisions));
+                                                                                                   oldRegions,
+                                                                                                   newRegions));
                 return true;
             }
 

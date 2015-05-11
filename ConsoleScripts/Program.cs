@@ -71,6 +71,7 @@ namespace ConsoleScripts
                     Console.WriteLine("Loaded {3}'s page {0}, differentiation {1}, version {2}", page.PageNumber, page.DifferentiationLevel, page.VersionIndex, page.Owner.FullName);
                     //Do stuff to each page here. 
 
+                    _isConvertingEmilyCache = true;
                     ConvertDivisionTemplatesToUseNewRemainderTiles(page);
                     TheSlowRewind(page);
 
@@ -80,6 +81,8 @@ namespace ConsoleScripts
                 }
             }
         }
+
+        private static bool _isConvertingEmilyCache = false;
 
         public static void ConvertDivisionTemplatesToUseNewRemainderTiles(CLPPage page)
         {
@@ -96,9 +99,11 @@ namespace ConsoleScripts
 
         public static void FixOldDivisionTemplateSizing(FuzzyFactorCard divisionTemplate)
         {
-            //Comment the following line if converting any cache of Emily's
-            //return;
-            
+            if (!_isConvertingEmilyCache)
+            {
+                return;
+            }
+
             var gridSize = divisionTemplate.ArrayHeight / divisionTemplate.Rows;
 
             divisionTemplate.SizeArrayToGridLevel(gridSize, false);
@@ -132,7 +137,6 @@ namespace ConsoleScripts
                 if (historyItemToUndo is AnimationIndicator ||
                     historyItemToUndo is CLPArrayRotateHistoryItem ||
                     historyItemToUndo is CLPArrayGridToggleHistoryItem ||
-                    historyItemToUndo is CLPArrayDivisionsChangedHistoryItem ||
                     historyItemToUndo is CLPArrayDivisionValueChangedHistoryItem ||
                     historyItemToUndo is FFCArrayRemovedHistoryItem ||
                     historyItemToUndo is FFCArraySnappedInHistoryItem ||
@@ -145,6 +149,24 @@ namespace ConsoleScripts
                 }
 
                 #endregion //WorksAsIs
+
+                #region CLPArrayDivisionsChanged fix
+
+                if (historyItemToUndo is CLPArrayDivisionsChangedHistoryItem)
+                {
+                    var divisionsChanged = historyItemToUndo as CLPArrayDivisionsChangedHistoryItem;
+                    if (!divisionsChanged.AddedDivisions.Any() &&
+                        !divisionsChanged.RemovedDivisions.Any())
+                    {
+                        page.History.UndoItems.RemoveFirst();
+                        continue;
+                    }
+
+                    page.History.ConversionUndo();
+                    continue;
+                }
+
+                #endregion //CLPArrayDivisionsChanged fix
 
                 #region PageObjectResize fix for old Division Templates
 
