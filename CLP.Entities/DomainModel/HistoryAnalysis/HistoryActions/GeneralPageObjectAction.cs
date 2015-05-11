@@ -18,10 +18,11 @@ namespace CLP.Entities
         #region Constructors
 
         /// <summary>Initializes <see cref="GeneralPageObjectAction" /> using <see cref="CLPPage" />.</summary>
-        public GeneralPageObjectAction(CLPPage parentPage, List<IHistoryItem> historyItems)
+        public GeneralPageObjectAction(CLPPage parentPage, List<IHistoryItem> historyItems, string objectIdentifier="")
             : base(parentPage)
         {
             HistoryItemIDs = historyItems.Select(h => h.ID).ToList();
+            ObjectCodedID = objectIdentifier;
             var movedPageObjects = MovedPageObjects;
             var resizedPageObjects = ResizedPageObjects;
             var addedPageObjects = AddedPageObjects;
@@ -34,9 +35,9 @@ namespace CLP.Entities
                     //throw error, no objects
                 }
 
-                var addedObject = addedPageObjects.First().GetType().ToString();
+                var addedObject = addedPageObjects.First().GetType().Name;
                 if (addedPageObjects.Count > 1 &&
-                    addedObject != "StampObject") 
+                    addedObject != "StampedObject") 
                 {
                     //throw error, more than one StampObject added
                 }
@@ -106,6 +107,14 @@ namespace CLP.Entities
 
         public static readonly PropertyData PageObjectTypeProperty = RegisterProperty("PageObjectType", typeof (string));
 
+        public string ObjectCodedID
+        {
+            get { return GetValue<string>(ObjectCodedIDProperty); }
+            set { SetValue(ObjectCodedIDProperty, value); }
+        }
+
+        public static readonly PropertyData ObjectCodedIDProperty = RegisterProperty("ObjectCodedID", typeof (string));
+
         public override string CodedValue
         {
             get
@@ -144,13 +153,13 @@ namespace CLP.Entities
                 {
                     var arrayHistoryItem = parentPage.GetPageObjectByIDOnPageOrInHistory(firstObjectID) as CLPArray;
                     objectCode = "ARR";
-                    objectDescriptor = string.Format(" [{0}x{1}]", arrayHistoryItem.Rows, arrayHistoryItem.Columns);
+                    objectDescriptor = string.Format(" [{0}x{1}{2}]", arrayHistoryItem.Rows, arrayHistoryItem.Columns, ObjectCodedID);
                 }
                 else if (PageObjectType == "NumberLine")
                 {
                     var numberLineHistoryItem = parentPage.GetPageObjectByIDOnPageOrInHistory(firstObjectID) as NumberLine;
                     objectCode = "NL";
-                    objectDescriptor = string.Format(" [{0}]", numberLineHistoryItem.NumberLineSize);
+                    objectDescriptor = string.Format(" [{0}{1}]", numberLineHistoryItem.NumberLineSize, ObjectCodedID);
                 }
                 else if (PageObjectType == "Stamp")
                 {

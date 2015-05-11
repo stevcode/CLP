@@ -53,11 +53,12 @@ namespace CLP.Entities
         }
 
         /// <summary>Initializes <see cref="InkAction" /> using <see cref="CLPPage" />.</summary>
-        public InkAction(CLPPage parentPage, List<InkAction> inkActions, List<IHistoryItem> historyItems, InkActions inkActionType)
+        public InkAction(CLPPage parentPage, List<IHistoryItem> historyItems, InkActions inkActionType, InkLocations inkLocation, String locationDescriptor, String inkGroup)
             : base(parentPage)
         {
             HistoryItemIDs = historyItems.Select(h => h.ID).ToList();
-            HistoryActionIDs = inkActions.Select(i => i.ID).ToList();
+            InkLocation - inkLocation;
+            InkGroup = inkGroup;
 
             InkActionType = inkActionType;
 
@@ -83,16 +84,6 @@ namespace CLP.Entities
                         //throw error
                     }
                 }
-            }
-
-            foreach (var pageObject in ParentPage.PageObjects.OfType<CLPArray>())
-            {
-                //objects on page at time ink strokes were added
-            }
-
-            foreach (var pageObject in ParentPage.History.TrashedPageObjects)
-            {
-
             }
         }
 
@@ -130,6 +121,22 @@ namespace CLP.Entities
 
         public static readonly PropertyData InkLocationProperty = RegisterProperty("InkLocation", typeof (InkLocations));
 
+        public string LocationString
+        {
+            get { return GetValue<string>(LocationString); }
+            set { SetValue(LocationStringProperty, value); }
+        }
+
+        public static readonly PropertyData LocationStringProperty = RegisterProperty("LocationString", typeof (string));
+
+        public string InkGroup
+        {
+            get { return GetValue<string>(InkGroupProperty); }
+            set { SetValue(InkGroupProperty, value); }
+        }
+
+        public static readonly PropertyData InkGroupProperty = RegisterProperty("InkGroup", typeof (string));
+
         public override string CodedValue
         {
             get
@@ -145,11 +152,17 @@ namespace CLP.Entities
                 }
 
                 var codedActionType = InkActionType.ToString().ToLower();
-                //get location
-                //get relative object
-                var historyItems = HistoryItems;
-                //get type (add or remove)
-                return string.Format("INK {1} {2}", codedActionType, "[A]");
+                if (codedActionType == "add")
+                {
+                    codedActionType = "";
+                }
+
+                var location = InkLocation.ToString().Lower() + " of";
+                if (location == "over of")
+                {
+                    location = "over";
+                }
+                return string.Format("INK strokes {0}[{1}:{2} {3}]", codedActionType, InkGroup, location, LocationString);
             }
         } 
 

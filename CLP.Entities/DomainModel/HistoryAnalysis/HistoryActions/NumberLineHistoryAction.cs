@@ -18,10 +18,11 @@ namespace CLP.Entities
         }
 
         #region Constructors
-        public NumberLineHistoryAction(CLPPage parentPage, List<IHistoryItem> historyItems)
+        public NumberLineHistoryAction(CLPPage parentPage, List<IHistoryItem> historyItems, string numberLineIdentifier="")
             :base(parentPage)
         {
             HistoryItemIDs = historyItems.Select(h => h.ID).ToList();
+            CodedID = numberLineIdentifier;
             var jumpSizesChangedActions = NumberLineJumpActions;
             var endPointsChangedActions = NumberLineEndPointsChangedActions;
 
@@ -60,6 +61,14 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData NumberLineActionProperty = RegisterProperty("NumberLineAction", typeof(NumberLineActions));
+
+        public string CodedID
+        {
+            get { return GetValue<string>(CodedIDProperty); }
+            set { SetValue(CodedIDProperty, value); }
+        }
+
+        public static readonly PropertyData CodedIDProperty = RegisterProperty("CodedID", typeof(string));
 
         public override string CodedValue
         {
@@ -100,7 +109,8 @@ namespace CLP.Entities
                             }
                         }
 
-                        return string.Format("NL jump[{0}: {1}]", numberLine.NumberLineSize, string.Join(", ",jumpDescriptors)); //numberline jump sizes+start/end values
+                        return string.Format("NL jump[{0}{2}: {1}]", numberLine.NumberLineSize, string.Join(", ",jumpDescriptors),
+                            CodedID); //numberline jump sizes+start/end values
                          //possibly multiple jump sizes NL jump [70: 7, 0-35, 6, 35-41, 7, 48-55]
                         //possibly off numberline
                     default:

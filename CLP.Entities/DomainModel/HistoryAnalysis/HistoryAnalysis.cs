@@ -34,14 +34,68 @@ namespace CLP.Entities
 
                 var objectChanged = redoItem as ObjectsOnPageChangedHistoryItem;
                 if (objectChanged != null)
-                {
-                    // check what type for all history items
-                    // do jordan's and john's first
-                    // step 1 only
+                {                  
                     if (objectChanged.IsUsingPageObjects &&
                         !objectChanged.IsUsingStrokes)
                     {
                         var isAdd = !objectChanged.PageObjectIDsRemoved.Any() && objectChanged.PageObjectIDsAdded.Any();
+                        var objectIdentifier = "";
+                        if (isAdd)
+                        {
+                            var objectAdded = page.GetPageObjectByIDOnPageOrInHistory(objectChanged.PageObjectIDsAdded.First());
+                            if (objectAdded.GetType().Name == "CLPArray")
+                            {
+                                var arr = (CLPArray)objectAdded;
+                                var dimensions = string.Format("{0}x{1}", arr.Rows, arr.Columns);
+                                if (arrayDimensions.ContainsKey(dimensions))
+                                {
+                                    objectIdentifier = ((char)arrayDimensions[dimensions] + 96).ToString();
+                                    arrayDimensions[dimensions] += 1;
+                                }
+                                else
+                                {
+                                    arrayDimensions[dimensions] = 1;
+                                }
+                            }
+                            else if (objectAdded.GetType().Name == "NumberLine")
+                            {
+                                var nl = objectAdded as NumberLine;
+                                var size = nl.NumberLineSize;
+                                if (numberLineSizes.ContainsKey(size))
+                                {
+                                    objectIdentifier = ((char)numberLineSizes[size] + 96).ToString();
+                                    numberLineSizes[size] += 1;
+                                }
+                                else
+                                {
+                                    numberLineSizes[size] = 1;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            var objectRemoved = page.GetPageObjectByIDOnPageOrInHistory(objectChanged.PageObjectIDsRemoved.First());
+                            if (objectRemoved.GetType().Name == "CLPArray")
+                            {
+                                var arr = (CLPArray)objectRemoved;
+                                var dimensions = string.Format("{0}x{1}", arr.Rows, arr.Columns);
+                                if (arrayDimensions.ContainsKey(dimensions))
+                                {
+                                    objectIdentifier = ((char)arrayDimensions[dimensions] + 96).ToString();
+                                    arrayDimensions[dimensions] -= 1;
+                                }
+                            }
+                            else if (objectRemoved.GetType().Name == "NumberLine")
+                            {
+                                var nl = (NumberLine)objectRemoved;
+                                var size = nl.NumberLineSize;
+                                if (numberLineSizes.ContainsKey(size))
+                                {
+                                    objectIdentifier = ((char)numberLineSizes[size] + 96).ToString();
+                                    numberLineSizes[size] -= 1;
+                                }
+                            }
+                        }
 
                         //get pageObject from ID
                         //use pageObject to generate bounds in the form of a Rect
@@ -50,7 +104,7 @@ namespace CLP.Entities
                                                                         new List<IHistoryItem>
                                                                         {
                                                                             objectChanged
-                                                                        });
+                                                                        }, objectIdentifier);
                         page.History.HistoryActions.Add(historyAction);
                         page.History.Redo();
                         pageObjectNumberInHistory++;
@@ -93,11 +147,37 @@ namespace CLP.Entities
                 var objectMoved = redoItem as ObjectsMovedBatchHistoryItem;
                 if (objectMoved != null)
                 {
+                    var objectMovedOnPage = page.GetPageObjectByIDOnPageOrInHistory(objectMoved.PageObjectIDs.First().Key);
+                    var objectIdentifier = "";
+                    if (objectMovedOnPage.GetType().Name == "CLPArray")
+                    {
+                        var arr = objectMovedOnPage as CLPArray;
+                        var dimensions = string.Format("{0}x{1}", arr.Rows, arr.Columns);
+                        if (arrayDimensions.ContainsKey(dimensions))
+                        {
+                            if (arrayDimensions[dimensions] > 1)
+                            {
+                                objectIdentifier = ((char)(arrayDimensions[dimensions] + 95)).ToString();
+                            }                           
+                        }
+                    }
+                    else if (objectMovedOnPage.GetType().Name == "NumberLine")
+                    {
+                        var nl = objectMovedOnPage as NumberLine;
+                        var size = nl.NumberLineSize;
+                        if (numberLineSizes.ContainsKey(size))
+                        {
+                            if (numberLineSizes[size] > 1)
+                            {
+                                objectIdentifier = ((char)(numberLineSizes[size] + 95)).ToString();
+                            }
+                        }
+                    }
                     var historyAction = new GeneralPageObjectAction(page,
                                                                     new List<IHistoryItem>
                                                                     {
                                                                         objectMoved
-                                                                    });
+                                                                    }, objectIdentifier);
                     page.History.HistoryActions.Add(historyAction);
                     page.History.Redo();
                     pageObjectNumberInHistory++;
@@ -107,11 +187,38 @@ namespace CLP.Entities
                 var objectResized = redoItem as PageObjectResizeBatchHistoryItem;
                 if (objectResized != null)
                 {
+                    var objectResizedOnPage = page.GetPageObjectByIDOnPageOrInHistory(objectResized.PageObjectID);
+                    var objectIdentifier = "";
+                    if (objectResizedOnPage.GetType().Name == "CLPArray")
+                    {
+                        var arr = objectResizedOnPage as CLPArray;
+                        var dimensions = string.Format("{0}x{1}", arr.Rows, arr.Columns);
+                        if (arrayDimensions.ContainsKey(dimensions))
+                        {
+                            if (arrayDimensions[dimensions] > 1)
+                            {
+                                objectIdentifier = ((char)arrayDimensions[dimensions] + 95).ToString();
+                            }
+                        }
+                    }
+                    else if (objectResizedOnPage.GetType().Name == "NumberLine")
+                    {
+                        var nl = objectResizedOnPage as NumberLine;
+                        var size = nl.NumberLineSize;
+                        if (numberLineSizes.ContainsKey(size))
+                        {
+                            if (numberLineSizes[size] > 1)
+                            {
+                                objectIdentifier = ((char)numberLineSizes[size] + 95).ToString();
+                            }
+                        }
+                    }
+
                     var historyAction = new GeneralPageObjectAction(page,
                                                                     new List<IHistoryItem>
                                                                     {
                                                                         objectResized
-                                                                    });
+                                                                    }, objectIdentifier);
                     page.History.HistoryActions.Add(historyAction);
                     page.History.Redo();
                     pageObjectNumberInHistory++;
@@ -121,11 +228,57 @@ namespace CLP.Entities
                 var objectCut = redoItem as PageObjectCutHistoryItem; //assuming it's an array
                 if (objectCut != null)
                 {
+                    var originalIdentifiers = new List<string>();
+                    var newIdentifiers = new List<string>();
+
+                    var cutArray = page.GetPageObjectByIDOnPageOrInHistory(objectCut.CutPageObjectID) as CLPArray;
+                    var dimensionsCut = string.Format("{0}x{1}", cutArray.Rows, cutArray.Columns);
+                    if (arrayDimensions[dimensionsCut] > 1)
+                    {
+                        originalIdentifiers.Add(((char)arrayDimensions[dimensionsCut] + 95).ToString());
+                    }
+                    else
+                    {
+                        originalIdentifiers.Add("");
+                    }
+                    arrayDimensions[dimensionsCut] -= 1;
+
+                    var halfArrays = objectCut.HalvedPageObjectIDs.Select(h => page.GetPageObjectByIDOnPageOrInHistory(h) as CLPArray).ToList();
+
+                    var halfRows1 = (cutArray.Rows == halfArrays[1].Rows) ? halfArrays[0].Rows : halfArrays[0].Rows - halfArrays[1].Rows;
+                    var halfColumns1 = (cutArray.Rows == halfArrays[1].Rows) ? halfArrays[0].Columns - halfArrays[1].Columns : halfArrays[0].Columns;
+                    var dimensionsHalf1 = string.Format("{0}x{1}", halfRows1, halfColumns1);
+                    if (arrayDimensions.ContainsKey(dimensionsHalf1))
+                    {
+                        newIdentifiers.Add(((char)(arrayDimensions[dimensionsHalf1] + 96)).ToString());
+                        arrayDimensions[dimensionsHalf1] += 1;
+                    }
+                    else
+                    {
+                        newIdentifiers.Add("");
+                        arrayDimensions[dimensionsHalf1] = 1;
+                    }
+
+                    var halfRows2 = halfArrays[1].Rows;
+                    var halfColumns2 = halfArrays[1].Columns;
+                    var dimensionsHalf2 = string.Format("{0}x{1}", halfRows2, halfColumns2);
+                    if (arrayDimensions.ContainsKey(dimensionsHalf2))
+                    {
+                        newIdentifiers.Add(((char)(arrayDimensions[dimensionsHalf2] + 96)).ToString());                        
+                        arrayDimensions[dimensionsHalf2] += 1;
+                    }
+                    else
+                    {
+                        newIdentifiers.Add("");
+                        arrayDimensions[dimensionsHalf2] = 1;
+                    }
+
+
                     var arrayAction = new ArrayHistoryAction(page,
                                                              new List<IHistoryItem>
                                                              {
                                                                  objectCut
-                                                             });
+                                                             }, originalIdentifiers, newIdentifiers);
                     page.History.HistoryActions.Add(arrayAction);
                     page.History.Redo();
                     pageObjectNumberInHistory++;
@@ -135,6 +288,17 @@ namespace CLP.Entities
                 var numberLineEndPointsChanged = redoItem as NumberLineEndPointsChangedHistoryItem;
                 if (numberLineEndPointsChanged != null)
                 {
+                    var numberLineChanged = page.GetPageObjectByIDOnPageOrInHistory(numberLineEndPointsChanged.NumberLineID) as NumberLine;
+                    var size = numberLineChanged.NumberLineSize;
+                    if (numberLineSizes.ContainsKey(size))
+                    {
+                        numberLineSizes[size] += 1;
+                    }
+                    else
+                    {
+                        numberLineSizes[size] = 1;
+                    }
+
                     var numberLineAction = new NumberLineHistoryAction(page,
                                                                        new List<IHistoryItem>
                                                                        {
@@ -149,6 +313,16 @@ namespace CLP.Entities
                 var numberLineJumpSizesChanged = redoItem as NumberLineJumpSizesChangedHistoryItem;
                 if (numberLineJumpSizesChanged != null)
                 {
+                    var numberLineIdentifier = "";
+                    var nl = page.GetPageObjectByIDOnPageOrInHistory(numberLineJumpSizesChanged.NumberLineID) as NumberLine;
+                    var size = nl.NumberLineSize;
+                    if (numberLineSizes.ContainsKey(size))
+                    {
+                        if (numberLineSizes[size] > 1)
+                        {
+                            numberLineIdentifier = ((char)(numberLineSizes[size] + 95)).ToString();
+                        }
+                    }
                     var jumpItems = new List<IHistoryItem>();
                     while (page.History.RedoItems.Any())
                     {
@@ -165,7 +339,7 @@ namespace CLP.Entities
                             break;
                         }
                     }
-                    var numberLineAction = new NumberLineHistoryAction(page, jumpItems);
+                    var numberLineAction = new NumberLineHistoryAction(page, jumpItems, numberLineIdentifier);
                     page.History.HistoryActions.Add(numberLineAction);
                 }
 
@@ -184,11 +358,54 @@ namespace CLP.Entities
                 var arraySnap = redoItem as CLPArraySnapHistoryItem;
                 if (arraySnap != null)
                 {
-                    var arrayAction = new ArrayHistoryAction(page,
-                                                             new List<IHistoryItem>
-                                                             {
-                                                                 arraySnap
-                                                             });
+                    var originalIdentifiers = new List<string>();
+                    var newIdentifiers = new List<string> ();
+                    var direction = arraySnap.IsHorizontal;
+                    var persistingArray = page.GetPageObjectByIDOnPageOrInHistory(arraySnap.PersistingArrayID) as CLPArray;
+                    var dimensionsNew = string.Format("{0}x{1}", persistingArray.Rows, persistingArray.Columns);
+                    if (arrayDimensions.ContainsKey(dimensionsNew))
+                    {
+                        if (arrayDimensions[dimensionsNew] > 1)
+                        {
+                            newIdentifiers.Add(((char)(arrayDimensions[dimensionsNew] + 95)).ToString());
+                        }
+                        else
+                        {
+                            newIdentifiers.Add("");
+                        }
+                        arrayDimensions[dimensionsNew] += 1;
+                    }
+                    else
+                    {
+                        newIdentifiers.Add("");
+                        arrayDimensions[dimensionsNew] = 1;
+                    }
+                    var snappedArray = page.GetPageObjectByIDOnPageOrInHistory(arraySnap.SnappedArrayID) as CLPArray;
+                    var dimensionsSnap1 = string.Format("{0}x{1}", snappedArray.Rows, snappedArray.Columns);
+                    if (arrayDimensions[dimensionsSnap1] > 1)
+                    {
+                        originalIdentifiers.Add(((char)(arrayDimensions[dimensionsSnap1] + 95)).ToString());
+                    }
+                    else
+                    {
+                        originalIdentifiers.Add("");
+                    }
+                    arrayDimensions[dimensionsSnap1] -= 1;
+                    
+                    var persistingArrayRows = (direction) ? persistingArray.Rows - snappedArray.Rows : persistingArray.Rows;
+                    var persistingArrayColumns = (direction) ? snappedArray.Columns:persistingArray.Columns - snappedArray.Columns;
+                    var dimensionsSnap2 = string.Format("{0}x{1}", persistingArrayRows, persistingArrayColumns);
+                    if (arrayDimensions[dimensionsSnap2] > 1)
+                    {
+                        originalIdentifiers.Add(((char)(arrayDimensions[dimensionsSnap2] + 95)).ToString());
+                    }
+                    else
+                    {
+                        originalIdentifiers.Add("");
+                    }
+                    arrayDimensions[dimensionsSnap2] -= 1;
+              
+                    var arrayAction = new ArrayHistoryAction(page,new List<IHistoryItem>{arraySnap}, originalIdentifiers, newIdentifiers);                   
                     page.History.HistoryActions.Add(arrayAction);
                     page.History.Redo();
                     pageObjectNumberInHistory++;
@@ -212,10 +429,65 @@ namespace CLP.Entities
                     revisedHistoryActions.Add(generalPageObjectAction);
                     continue;
                 }
+                
+                var arrayHistoryAction = historyAction as ArrayHistoryAction;
+                if (arrayHistoryAction != null)
+                {
+                    revisedHistoryActions.Add(arrayHistoryAction);
+                    continue;
+                }
+
+                var numberLineHistoryAction = historyAction as NumberLineHistoryAction;
+                if (numberLineHistoryAction != null)
+                {
+                    revisedHistoryActions.Add(numberLineHistoryAction);
+                    continue;
+                }
 
                 var inkAction = historyAction as InkAction;
                 if (inkAction != null)
                 {
+                    var inkHistoryItemIDs = inkAction.HistoryItemIDs;
+                    var numberInkGroups = 0;
+                    var currentActionType = InkAction.InkActions.Ignore;
+                    var currentHistoryItems = new List<IHistoryItem>();
+
+                    foreach (var id in inkHistoryItemIDs)
+                    {
+                        var inkHistoryItem = page.GetPageObjectByIDOnPageOrInHistory(id) as ObjectsOnPageChangedHistoryItem;
+                        var inkActionType = InkAction.InkActions.Ignore;
+                        if (inkHistoryItem.StrokeIDsAdded.Any() &&
+                            !inkHistoryItem.StrokeIDsRemoved.Any())
+                        {
+                            inkActionType = InkAction.InkActions.Add;
+                        }
+                        else if (!inkHistoryItem.StrokeIDsAdded.Any() &&
+                                 inkHistoryItem.StrokeIDsRemoved.Any())
+                        {
+                            inkActionType = InkAction.InkActions.Erase;
+                        }
+                        else
+                        {
+                            break; //throw error, neither inks add nor erase
+                        }
+                        if (inkActionType == currentActionType || //same type of action
+                            currentActionType == InkAction.InkActions.Ignore) //first action
+                        {
+                            currentActionType = inkActionType;
+                            currentHistoryItems.Add(inkHistoryItem);
+                        }
+                        else if (inkActionType != currentActionType)
+                        {
+                            //make action out of previous group
+                            numberInkGroups += 1;
+
+                            //restart grouping
+                            currentActionType = inkActionType;
+                            currentHistoryItems = new List<IHistoryItem>{inkHistoryItem};
+                        }
+                    }
+
+                    //revisedHistoryActions.Add(inkAction);
                     //TODO: Adisa: This is 2nd pass, so this will always be "INK changed", sub-divide into INK strokes over array, left of array, etc
                     //Keep track of InkGroups you make, each one you make you'll want to increment currentInkGroup++;
                     //Then convert the currentInkGroup from int to string (0 = A, 1 = B, 2 = C, etc), pass that value in to the constructor for the InkAction, then you'll have that for the Ink group ID.

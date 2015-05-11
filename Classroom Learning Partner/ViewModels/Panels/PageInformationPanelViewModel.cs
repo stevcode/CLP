@@ -1365,7 +1365,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             HistoryAnalysis.GenerateInitialHistoryActions(CurrentPage);
 
-            HistoryAnalysis.AnalyzeHistoryActions(CurrentPage);
+            //HistoryAnalysis.AnalyzeHistoryActions(CurrentPage);
 
             //Prints HistoryAction Coded Values to .txt file
             var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);

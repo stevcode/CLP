@@ -20,10 +20,12 @@ namespace CLP.Entities
         }
         
         #region Constructors
-        public ArrayHistoryAction(CLPPage parentPage, List<IHistoryItem> historyItems)
+        public ArrayHistoryAction(CLPPage parentPage, List<IHistoryItem> historyItems, List<string> originalArrayIdentifiers, List<string> newArrayIdentifiers)
             :base(parentPage)
         {
             HistoryItemIDs = historyItems.Select(h => h.ID).ToList();
+            OriginalArrayIDs = originalArrayIdentifiers;
+            NewArrayIDs = newArrayIdentifiers;
             var arrayCutActions = ArrayCutActions;
             var arrayDivisionActions = ArrayDivisionActions;
             var arrayRotateActions = ArrayRotateActions;
@@ -38,30 +40,21 @@ namespace CLP.Entities
             {
                 ArrayAction = ArrayActions.Cut;
                 var arrayCutAction = arrayCutActions.First();
-                ArrayDimensions = new List<int>{};
-                ChangedArrayDimensions = new List<int>{ };
             }
             else if (arrayDivisionActions.Any())
             {
                 ArrayAction = ArrayActions.Divide;
                 var arrayDivideAction = arrayDivisionActions.First();
-                ArrayDimensions = new List<int> { };
-                ChangedArrayDimensions = new List<int> { };
             }
             else if (arrayRotateActions.Any())
             {
                 ArrayAction = ArrayActions.Rotate;
                 var arrayRotateAction = arrayRotateActions.First();
-                ArrayDimensions = new List<int> { };
-                ChangedArrayDimensions = new List<int> { };
             }
             else if (arraySnapActions.Any())
             {
                 ArrayAction = ArrayActions.Snap;
                 
-
-                ArrayDimensions = new List<int> { };
-                ChangedArrayDimensions = new List<int> { };
             }
         }
 
@@ -100,6 +93,22 @@ namespace CLP.Entities
 
         public static readonly PropertyData ChangedArrayDimensionsProperty = RegisterProperty("ChangedArrayDimensions", typeof(List<int>));
 
+        public List<string> OriginalArrayIDs
+        {
+            get { return GetValue<List<string>>(OriginalArrayIDsProperty); }
+            set { SetValue(OriginalArrayIDsProperty, value); }
+        }
+
+        public static readonly PropertyData OriginalArrayIDsProperty = RegisterProperty("OriginalArrayIDs", typeof (List<string>));
+
+        public List<string> NewArrayIDs
+        {
+            get { return GetValue<List<string>>(NewArrayIDsProperty); }
+            set { SetValue(NewArrayIDsProperty, value); }
+        }
+
+        public static readonly PropertyData NewArrayIDsProperty = RegisterProperty("NewArrayIDs", typeof (List<string>));
+
         public override string CodedValue
         {
             get 
@@ -113,9 +122,10 @@ namespace CLP.Entities
 
                         var halfRows1 = (cutArray.Rows == halfArrays[1].Rows) ? halfArrays[0].Rows : halfArrays[0].Rows - halfArrays[1].Rows;
                         var halfColumns1 = (cutArray.Rows == halfArrays[1].Rows) ? halfArrays[0].Columns - halfArrays[1].Columns : halfArrays[0].Columns;
-                        var cutDirection = (cutArray.Rows == halfArrays[1].Rows) ? " v" : "";
-                        return string.Format("ARR cut[{0}x{1}: {2}x{3}, {4}x{5}{6}]", cutArray.Rows, cutArray.Columns,
-                            halfRows1, halfColumns1, halfArrays[1].Rows, halfArrays[1].Columns, cutDirection);
+                        var cutDirection = (cutArray.Rows == halfArrays[1].Rows) ? ", v" : "";
+                        return string.Format("ARR cut[{0}x{1}{7}: {2}x{3}{8}, {4}x{5}{9}{6}]", cutArray.Rows, cutArray.Columns,
+                            halfRows1, halfColumns1, halfArrays[1].Rows, halfArrays[1].Columns, cutDirection,
+                            OriginalArrayIDs[0], NewArrayIDs[0], NewArrayIDs[1]);
                     
                     case ArrayActions.Divide:
                         return string.Format("ARR divide[{0}x{1}: {2}x{3}, {4}x{5}]", ArrayDimensions[0], ArrayDimensions[1],
@@ -142,8 +152,9 @@ namespace CLP.Entities
                             persistingArrayRows = persistingArray.Rows;
                             persistingArrayColumns = persistingArray.Columns - snappedArray.Columns;
                         }
-                        return string.Format("ARR snap[{0}x{1}, {2}x{3}:{4}x{5}]", snappedArray.Rows, snappedArray.Columns,
-                            persistingArrayRows, persistingArrayColumns, persistingArray.Rows, persistingArray.Columns);
+                        return string.Format("ARR snap[{0}x{1}{6}, {2}x{3}{7}:{4}x{5}{8}]", snappedArray.Rows, snappedArray.Columns,
+                            persistingArrayRows, persistingArrayColumns, persistingArray.Rows, persistingArray.Columns,
+                            OriginalArrayIDs[0], OriginalArrayIDs[1], NewArrayIDs[0]);
                     default:
                         return "ARR modified";
                 }
