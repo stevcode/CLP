@@ -934,7 +934,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             var arraysOnPage = CurrentPage.PageObjects.OfType<CLPArray>().ToList();
             var inkOnPage = CurrentPage.InkStrokes;
-            var debug = true;
+            var debug = false;
 
             //Makes .txt file to store data in
             var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
@@ -1127,6 +1127,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                 //File.AppendAllText(filePath, inkStroke.GetStrokeID() + "\t" + inkText + "\t" + row.ToString() + "\t" + percentIntersect.ToString() + Environment.NewLine);
                                 //Console.WriteLine("{0}, {1}, {2}", inkText, "Added to row: ", row);
 
+                                //Clears visual markers
                                 if (debug == true)
                                 {
                                     inkStroke.DrawingAttributes.Height /= 2;
@@ -1146,15 +1147,15 @@ namespace Classroom_Learning_Partner.ViewModels
                         inkStroke.DrawingAttributes.Height /= 2;
                         inkStroke.DrawingAttributes.Width /= 2;
                     }
-                    
-                    //Writes row number and ink interpretation to txt file
-                    foreach (var row in skipCountStrokes.Keys)
-                    {
-                        //var interpretation = CLPPageViewModel.InterpretStrokes(skipCountStrokes[row]);
-                        var interpretation = InkInterpreter.StrokesToBestGuessText(skipCountStrokes[row]);
-                        File.AppendAllText(filePath, inkStroke.GetStrokeID() + "\t" + interpretation + "\t" + row.ToString() + Environment.NewLine);
-                        Console.WriteLine("{0},{1}", row, interpretation);
-                    }
+                }
+
+                //Writes row number and ink interpretation to txt file
+                foreach (var row in skipCountStrokes.Keys)
+                {
+                    //var interpretation = CLPPageViewModel.InterpretStrokes(skipCountStrokes[row]);
+                    var interpretation = InkInterpreter.StrokesToBestGuessText(skipCountStrokes[row]);
+                    File.AppendAllText(filePath, interpretation + "\tRow " + row.ToString() + Environment.NewLine);
+                    Console.WriteLine("{0},{1}", row, interpretation);
                 }
 
             }
