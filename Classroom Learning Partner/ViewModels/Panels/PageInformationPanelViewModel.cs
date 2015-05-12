@@ -934,7 +934,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             var arraysOnPage = CurrentPage.PageObjects.OfType<CLPArray>().ToList();
             var inkOnPage = CurrentPage.InkStrokes;
-            var debug = false;
+            var debug = true;
 
             //Makes .txt file to store data in
             var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
@@ -1020,11 +1020,17 @@ namespace Classroom_Learning_Partner.ViewModels
                         var prev_height = prevStroke.GetBounds().Height;
                         var curr_y = inkStroke.GetBounds().Y;
                         var curr_height = inkStroke.GetBounds().Height;
-                        if (curr_y >= prev_y - 0.2*prev_height && curr_y+curr_height <= prev_y + 1.2*prev_height)
+                        if (debug == false)
+                        {
+                            var prevBound = new Rect(prevStroke.GetBounds().X, prevStroke.GetBounds().Y, prevStroke.GetBounds().Width, prevStroke.GetBounds().Height);
+                            CurrentPage.AddBoundary(prevBound);
+                            PageHistory.UISleep(800);
+                        }
+                        if (curr_y >= prev_y - 0.2*height && curr_y+curr_height <= prev_y + 1.2*height)
                             row = prevRow;
 
                         //Check if in row after previous stroke
-                        else if (curr_y >= prev_y + 0.8*prev_height && curr_y+curr_height <= prev_y + 2.2*prev_height)
+                        else if (curr_y >= prev_y + 0.8*height && curr_y+curr_height <= prev_y + 2.2*height)
                             row = prevRow + 1;
 
                         //Iterates over other array rows
@@ -1037,6 +1043,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                 var rectBound = new Rect(xpos, ypos - 0.1 * height, 1.5 * width, 1.2 * height);
                                 if (debug == true)
                                 {
+                                    CurrentPage.ClearBoundaries();
                                     CurrentPage.AddBoundary(rectBound);
                                     PageHistory.UISleep(800);
                                 }
@@ -1052,7 +1059,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
                                 //Checks if 80% inside row
                                 if (percentIntersect >= 80 && percentIntersect <= 100)
+                                {
                                     row = i;
+                                    break;
+                                }
+
                             }
                         }
 
@@ -1083,7 +1094,6 @@ namespace Classroom_Learning_Partner.ViewModels
                                 inkStroke.DrawingAttributes.Width /= 2;
                                 CurrentPage.ClearBoundaries();
                             }
-                            break;
                         }
                         if (debug == true)
                         {
