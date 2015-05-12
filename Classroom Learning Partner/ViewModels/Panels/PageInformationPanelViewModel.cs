@@ -955,6 +955,8 @@ namespace Classroom_Learning_Partner.ViewModels
             foreach (var array in arraysOnPage)
             {
                 var skipCountStrokes = new Dictionary<int, StrokeCollection>();
+                var prevStroke = inkOnPage[0];
+                var prevRow = 0;
 
                 foreach (var inkStroke in inkOnPage)
                 {
@@ -1008,139 +1010,86 @@ namespace Classroom_Learning_Partner.ViewModels
                     //Checks if strokes align with array rows
                     else
                     {
+                        //Creates stroke bound
                         CurrentPage.ClearBoundaries();
-                        for (int i = 0; i < array.Rows; i++)
+                        var strokeBoundFixed = new Rect(inkStroke.GetBounds().X, inkStroke.GetBounds().Y, inkStroke.GetBounds().Width, inkStroke.GetBounds().Height);
+                        var row = -2;
+
+                        //Check if in the same row as previous stroke
+                        var prev_y = prevStroke.GetBounds().Y;
+                        var prev_height = prevStroke.GetBounds().Height;
+                        var curr_y = inkStroke.GetBounds().Y;
+                        var curr_height = inkStroke.GetBounds().Height;
+                        if (curr_y >= prev_y - 0.2*prev_height && curr_y+curr_height <= prev_y + 1.2*prev_height)
+                            row = prevRow;
+
+                        //Check if in row after previous stroke
+                        else if (curr_y >= prev_y + 0.8*prev_height && curr_y+curr_height <= prev_y + 2.2*prev_height)
+                            row = prevRow + 1;
+
+                        //Iterates over other array rows
+                        else
                         {
-                            //Creates array bound and stroke bound
-                            var ypos = array.YPosition + array.LabelLength + (array.GridSquareSize * i);
-                            var rectBound = new Rect(xpos, ypos - 0.1*height, 1.5*width, 1.2*height);
-                            var strokeBoundFixed = new Rect(inkStroke.GetBounds().X, inkStroke.GetBounds().Y, inkStroke.GetBounds().Width, inkStroke.GetBounds().Height);
-                            if (debug == true)
+                            for (int i = 0; i < array.Rows; i++)
                             {
-                                CurrentPage.AddBoundary(rectBound);
-                                PageHistory.UISleep(800);
-                            }
-
-                            //Finds intersection
-                            var strokeBound = new Rect(inkStroke.GetBounds().X, inkStroke.GetBounds().Y, inkStroke.GetBounds().Width, inkStroke.GetBounds().Height);
-                            strokeBound.Intersect(rectBound);
-                            var intersectArea = strokeBound.Height*strokeBound.Width;
-                            var strokeArea = strokeBoundFixed.Height * strokeBoundFixed.Width;
-                            var percentIntersect = 100*intersectArea/strokeArea;
-                            if (debug == true)
-                            {
-                                Console.WriteLine("{0}, {1}, {2}", inkStroke.GetStrokeID(), i, percentIntersect);
-                            }
-                            var row = -2;
-
-                            //80% inside row
-                            if (percentIntersect >= 80 && percentIntersect <= 100)
-                                row = i;
-
-                            //60-80% inside row
-                            else if (percentIntersect >= 60 && percentIntersect < 80)
-                            {
-                                CurrentPage.ClearBoundaries();
-                                //Check bounds above
-                                var percentAbove = -1.0;
-                                if (i > 0)
-                                {
-                                    var rectAbove = new Rect(xpos, ypos - array.GridSquareSize, 1.5*width, height);
-                                    if (debug == true)
-                                    {
-                                        CurrentPage.AddBoundary(rectAbove);
-                                        PageHistory.UISleep(1000);
-                                    }
-                                    strokeBound = strokeBoundFixed;
-                                    strokeBound.Intersect(rectAbove);
-                                    var intersectAbove = strokeBound.Height * strokeBound.Width;
-                                    percentAbove = 100 * intersectAbove / strokeArea;
-                                    if (percentAbove > 100)
-                                        percentAbove = -1.0;
-                                    if (debug == true)
-                                    {
-                                        CurrentPage.ClearBoundaries();
-                                    }
-                                }
-
-                                //Check bounds below
-                                var percentBelow = -1.0;
-                                if (i < array.Rows - 1)
-                                {
-                                    var rectBelow = new Rect(xpos, ypos + array.GridSquareSize, 1.5*width, height);
-                                    if (debug == true)
-                                    {
-                                        CurrentPage.AddBoundary(rectBelow);
-                                        PageHistory.UISleep(1000);
-                                    }
-                                    strokeBound = strokeBoundFixed;
-                                    strokeBound.Intersect(rectBelow);
-                                    var intersectBelow = strokeBound.Height * strokeBound.Width;
-                                    percentBelow = 100 * intersectBelow / strokeArea;
-                                    if (percentBelow > 100)
-                                        percentBelow = -1.0;
-                                    if (debug == true)
-                                    {
-                                        CurrentPage.ClearBoundaries();
-                                    }
-                                }
+                                //Creates array row bound
+                                var ypos = array.YPosition + array.LabelLength + (array.GridSquareSize * i);
+                                var rectBound = new Rect(xpos, ypos - 0.1 * height, 1.5 * width, 1.2 * height);
                                 if (debug == true)
                                 {
-                                    Console.WriteLine("{0}, {1}, {2}, {3}", i - 1, percentAbove, i + 1, percentBelow);
-                                }
-
-                                //Assigns best matching row
-                                if (percentIntersect > percentBelow && percentIntersect > percentAbove)
-                                    row = i;
-                                else if (percentBelow > percentIntersect && percentBelow > percentAbove)
-                                {
-                                    row = i + 1;
-                                    percentIntersect = percentBelow;
-                                }
-                                else if (percentAbove > percentIntersect && percentAbove > percentBelow)
-                                {
-                                    row = i - 1;
-                                    percentIntersect = percentAbove;
-                                }
-                            }
-
-                            //If stroke matched an array row
-                            if (row > -2)
-                            {
-                                //Thickens stroke to indicate match
-                                if (debug == true)
-                                {
-                                    inkStroke.DrawingAttributes.Height *= 2;
-                                    inkStroke.DrawingAttributes.Width *= 2;
+                                    CurrentPage.AddBoundary(rectBound);
                                     PageHistory.UISleep(800);
                                 }
 
-                                //Adds stroke to dictionary
-                                if (!skipCountStrokes.ContainsKey(row))
-                                {
-                                    skipCountStrokes.Add(row, new StrokeCollection());
-                                }
-                                skipCountStrokes[row].Add(inkStroke);
-
-                                //Writes data to .txt file
-                                //var inkText = InkInterpreter.StrokesToBestGuessText(skipCountStrokes[row]);
-                                //File.AppendAllText(filePath, inkStroke.GetStrokeID() + "\t" + inkText + "\t" + row.ToString() + "\t" + percentIntersect.ToString() + Environment.NewLine);
-                                //Console.WriteLine("{0}, {1}, {2}", inkText, "Added to row: ", row);
-
-                                //Clears visual markers
+                                //Finds intersection
+                                var strokeBound = new Rect(inkStroke.GetBounds().X, inkStroke.GetBounds().Y, inkStroke.GetBounds().Width, inkStroke.GetBounds().Height);
+                                strokeBound.Intersect(rectBound);
+                                var intersectArea = strokeBound.Height * strokeBound.Width;
+                                var strokeArea = strokeBoundFixed.Height * strokeBoundFixed.Width;
+                                var percentIntersect = 100 * intersectArea / strokeArea;
                                 if (debug == true)
-                                {
-                                    inkStroke.DrawingAttributes.Height /= 2;
-                                    inkStroke.DrawingAttributes.Width /= 2;
-                                    CurrentPage.ClearBoundaries();
-                                }
-                                break;
-                            }
-                            if (debug == true)
-                            {
-                                CurrentPage.ClearBoundaries();
+                                    Console.WriteLine("{0}, {1}, {2}", inkStroke.GetStrokeID(), i, percentIntersect);
+
+                                //Checks if 80% inside row
+                                if (percentIntersect >= 80 && percentIntersect <= 100)
+                                    row = i;
                             }
                         }
+
+                        //If stroke matched an array row
+                        if (row > -2)
+                        {
+                            //Thickens stroke to indicate match
+                            if (debug == true)
+                            {
+                                inkStroke.DrawingAttributes.Height *= 2;
+                                inkStroke.DrawingAttributes.Width *= 2;
+                                PageHistory.UISleep(800);
+                            }
+
+                            //Adds stroke to dictionary
+                            if (!skipCountStrokes.ContainsKey(row))
+                            {
+                                skipCountStrokes.Add(row, new StrokeCollection());
+                            }
+                            skipCountStrokes[row].Add(inkStroke);
+                            prevStroke = inkStroke;
+                            prevRow = row;
+
+                            //Clears visual markers
+                            if (debug == true)
+                            {
+                                inkStroke.DrawingAttributes.Height /= 2;
+                                inkStroke.DrawingAttributes.Width /= 2;
+                                CurrentPage.ClearBoundaries();
+                            }
+                            break;
+                        }
+                        if (debug == true)
+                        {
+                            CurrentPage.ClearBoundaries();
+                        }
+
                     }
                     if (debug == true)
                     {
