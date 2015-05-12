@@ -197,7 +197,9 @@ namespace CLP.Entities
             {
                 return;
             }
+            ParentPage.IsTagAddPrevented = true;
             ConversionUndoAction();
+            ParentPage.IsTagAddPrevented = false;
         }
 
         public void Undo(bool isAnimationUndo = false)
@@ -206,7 +208,9 @@ namespace CLP.Entities
             {
                 return;
             }
+            ParentPage.IsTagAddPrevented = true;
             UndoAction(isAnimationUndo);
+            ParentPage.IsTagAddPrevented = false;
         }
 
         protected abstract void ConversionUndoAction();
@@ -219,7 +223,9 @@ namespace CLP.Entities
             {
                 return;
             }
+            ParentPage.IsTagAddPrevented = true;
             RedoAction(isAnimationRedo);
+            ParentPage.IsTagAddPrevented = false;
         }
 
         protected abstract void RedoAction(bool isAnimationRedo);
