@@ -292,7 +292,7 @@ namespace CLP.Entities
             {
                 tickR.IsMarked = false;
                 tickR.TickColor = "Black";
-                tickR.IsNumberVisible = NumberLineSize <= MAX_ALL_TICKS_VISIBLE_LENGTH || tickR.TickValue % 5 == 0;
+                tickR.IsNumberVisible = NumberLineSize <= MAX_ALL_TICKS_VISIBLE_LENGTH || tickR.TickValue % 5 == 0 || tickR.TickValue == NumberLineSize;
             }
 
             if (JumpSizes.All(x => x.StartingTickIndex + x.JumpSize != tickL.TickValue))

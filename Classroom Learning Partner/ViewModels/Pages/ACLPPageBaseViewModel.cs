@@ -478,6 +478,12 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
+            if (History.RedoItems.Any())
+            {
+                MessageBox.Show("Can't make changes unless at the end of the history playback.");
+                return;
+            }
+
             StrokesChanged(e);
 
             //QueueTask(() => StrokesChanged(e));
