@@ -934,7 +934,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             var arraysOnPage = CurrentPage.PageObjects.OfType<CLPArray>().ToList();
             var inkOnPage = CurrentPage.InkStrokes;
-            var debug = true;
+            var debug = false;
 
             //Makes .txt file to store data in
             var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
@@ -1020,7 +1020,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         var prev_height = prevStroke.GetBounds().Height;
                         var curr_y = inkStroke.GetBounds().Y;
                         var curr_height = inkStroke.GetBounds().Height;
-                        if (debug == false)
+                        if (debug == true)
                         {
                             var prevBound = new Rect(prevStroke.GetBounds().X, prevStroke.GetBounds().Y, prevStroke.GetBounds().Width, prevStroke.GetBounds().Height);
                             CurrentPage.AddBoundary(prevBound);
