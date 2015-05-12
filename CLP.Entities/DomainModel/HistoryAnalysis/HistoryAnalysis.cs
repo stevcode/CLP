@@ -244,6 +244,8 @@ namespace CLP.Entities
                     }
                     arrayDimensions[dimensionsCut] -= 1;
 
+                    page.History.Redo();
+
                     var halfArrays = objectCut.HalvedPageObjectIDs.Select(h => page.GetPageObjectByIDOnPageOrInHistory(h) as CLPArray).ToList();
 
                     var halfRows1 = (cutArray.Rows == halfArrays[1].Rows) ? halfArrays[0].Rows : halfArrays[0].Rows - halfArrays[1].Rows;
@@ -281,7 +283,7 @@ namespace CLP.Entities
                                                                  objectCut
                                                              }, originalIdentifiers, newIdentifiers);
                     page.History.HistoryActions.Add(arrayAction);
-                    page.History.Redo();
+                    
                     pageObjectNumberInHistory++;
                     continue;
                 }
