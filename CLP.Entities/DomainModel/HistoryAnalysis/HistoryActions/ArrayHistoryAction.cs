@@ -119,7 +119,7 @@ namespace CLP.Entities
                         var arrayCutAction = ArrayCutActions.First();
                         var cutArray = ParentPage.GetPageObjectByIDOnPageOrInHistory(arrayCutAction.CutPageObjectID) as CLPArray;
                         var halfArrays = arrayCutAction.HalvedPageObjectIDs.Select(h => ParentPage.GetPageObjectByIDOnPageOrInHistory(h) as CLPArray).ToList();
-
+                       
                         var halfRows1 = (cutArray.Rows == halfArrays[1].Rows) ? halfArrays[0].Rows : halfArrays[0].Rows - halfArrays[1].Rows;
                         var halfColumns1 = (cutArray.Rows == halfArrays[1].Rows) ? halfArrays[0].Columns - halfArrays[1].Columns : halfArrays[0].Columns;
                         var cutDirection = (cutArray.Rows == halfArrays[1].Rows) ? ", v" : "";
@@ -142,16 +142,13 @@ namespace CLP.Entities
                     
                     case ArrayActions.Snap:
                         var arraySnapAction = ArraySnapActions.First();
+                        
                         var direction = arraySnapAction.IsHorizontal;
                         var persistingArray = ParentPage.GetPageObjectByIDOnPageOrInHistory(arraySnapAction.PersistingArrayID) as CLPArray;
                         var snappedArray = ParentPage.GetPageObjectByIDOnPageOrInHistory(arraySnapAction.SnappedArrayID) as CLPArray;
-                        var persistingArrayRows = persistingArray.Rows - snappedArray.Rows;
-                        var persistingArrayColumns = snappedArray.Columns;
-                        if (!direction)
-                        {
-                            persistingArrayRows = persistingArray.Rows;
-                            persistingArrayColumns = persistingArray.Columns - snappedArray.Columns;
-                        }
+                        var persistingArrayRows = (direction) ? persistingArray.Rows - snappedArray.Rows : persistingArray.Rows;
+                        var persistingArrayColumns = (direction) ? snappedArray.Columns : persistingArray.Columns - snappedArray.Columns;
+                       
                         return string.Format("ARR snap[{0}x{1}{6}, {2}x{3}{7}:{4}x{5}{8}]", snappedArray.Rows, snappedArray.Columns,
                             persistingArrayRows, persistingArrayColumns, persistingArray.Rows, persistingArray.Columns,
                             OriginalArrayIDs[0], OriginalArrayIDs[1], NewArrayIDs[0]);
