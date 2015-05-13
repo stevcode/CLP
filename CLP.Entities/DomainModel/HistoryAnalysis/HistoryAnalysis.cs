@@ -6,6 +6,24 @@ namespace CLP.Entities
 {
     public static class HistoryAnalysis
     {
+        public class InkGroupKey
+        {
+            public readonly InkAction.InkLocations Location;
+            public readonly IPageObject NearestObject;
+            public InkGroupKey(InkAction.InkLocations location, IPageObject nearestObject)
+            {
+                Location = location;
+                NearestObject = nearestObject;
+            }
+
+            public override bool Equals(object obj)
+            {
+                if (!(obj is InkGroupKey)) return false;
+                InkGroupKey keyObject = obj as InkGroupKey;
+                return (keyObject.Location == Location && keyObject.NearestObject.ID == NearestObject.ID);
+
+            }
+        }
         public static void GenerateInitialHistoryActions(CLPPage page)
         {
             //TODO: For Steve: Look into TypeSwitch static class as seen here: http://stackoverflow.com/questions/298976/is-there-a-better-alternative-than-this-to-switch-on-type
@@ -414,21 +432,96 @@ namespace CLP.Entities
             var isHistoryActiosAltered = false;
 
             var currentInkGroup = 0;
+            var inkGroupLetterIDs = new Dictionary<InkGroupKey,string>();
             var currentObjectsOnPage = new List<IPageObject>();
+
+            var numberLineSizes = new Dictionary<int,int>();
+            var numberLineLetterIDs = new Dictionary<string, string>();
+            var arrayDimensions = new Dictionary<string, int>();
+            var arrayLetterIDs = new Dictionary<string, string>();
             
             foreach (var historyAction in page.History.HistoryActions)
             {
-                //TODO: Adisa: Do this for the other HistoryActions on John and Jordan's pages that don't change between step 1 and step 2.
                 var generalPageObjectAction = historyAction as GeneralPageObjectAction;
                 if (generalPageObjectAction != null)
                 {
                     if (generalPageObjectAction.GeneralAction == GeneralPageObjectAction.GeneralActions.Add)
                     {
-                        currentObjectsOnPage.Add(generalPageObjectAction.AddedPageObjects.First());
+                        var obj = generalPageObjectAction.AddedPageObjects.First();
+                        currentObjectsOnPage.Add(obj);
+                        if (obj.GetType().Name == "CLPArray")
+                        {
+                            var arr = obj as CLPArray;
+                            var dimensions = string.Format("{0}x{1}", arr.Rows, arr.Columns);
+                            if (arrayDimensions.ContainsKey(dimensions))
+                            {
+                                arrayDimensions[dimensions] += 1;
+                            }
+                            else
+                            {
+                                arrayDimensions[dimensions] = 1;
+                            }
+                            
+                            arrayLetterIDs[arr.ID] = "";
+                            if (arrayDimensions[dimensions] > 1)
+                            {
+                                arrayLetterIDs[arr.ID] = ((char)(arrayDimensions[dimensions] + 95)).ToString();
+                            }
+                        }
+                        else if (obj.GetType().Name == "NumberLine")
+                        {
+                            var nl = obj as NumberLine;
+                            var size = nl.NumberLineSize;
+                            if (numberLineSizes.ContainsKey(size))
+                            {
+                                numberLineSizes[size] += 1;
+                            }
+                            else
+                            {
+                                numberLineSizes[size] = 1;
+                            }
+
+                            numberLineLetterIDs[nl.ID] = "";
+                            if (numberLineSizes[size] > 1)
+                            {
+                                numberLineLetterIDs[nl.ID] = ((char)(numberLineSizes[size] + 95)).ToString();
+                            }
+                        }
                     }
                     else if (generalPageObjectAction.GeneralAction == GeneralPageObjectAction.GeneralActions.Delete)
                     {
-                        currentObjectsOnPage.Remove(generalPageObjectAction.RemovedPageObjects.First());
+                        var obj = generalPageObjectAction.RemovedPageObjects.First();
+                        currentObjectsOnPage.Remove(obj);
+                        if (obj.GetType().Name == "CLPArray")
+                        {
+                            var arr = obj as CLPArray;
+                            var dimensions = string.Format("{0}x{1}", arr.Rows, arr.Columns);
+                            if (arrayDimensions.ContainsKey(dimensions))
+                            {
+                                arrayDimensions[dimensions] -= 1;
+                            }
+                            
+                            arrayLetterIDs[arr.ID] = "";
+                            if (arrayDimensions[dimensions] > 1)
+                            {
+                                arrayLetterIDs[arr.ID] = ((char)(arrayDimensions[dimensions] + 95)).ToString();
+                            }
+                        }
+                        else if (obj.GetType().Name == "NumberLine")
+                        {
+                            var nl = obj as NumberLine;
+                            var size = nl.NumberLineSize;
+                            if (numberLineSizes.ContainsKey(size))
+                            {
+                                numberLineSizes[size] -= 1;
+                            }
+
+                            numberLineLetterIDs[nl.ID] = "";
+                            if (numberLineSizes[size] > 1)
+                            {
+                                numberLineLetterIDs[nl.ID] = ((char)(numberLineSizes[size] + 95)).ToString();
+                            }    
+                        }
                     }
                     revisedHistoryActions.Add(generalPageObjectAction);
                     continue;
@@ -442,16 +535,90 @@ namespace CLP.Entities
                         var arrayCutHistoryItem = arrayHistoryAction.HistoryItems.First() as PageObjectCutHistoryItem;
                         var cutArray = page.GetPageObjectByIDOnPageOrInHistory(arrayCutHistoryItem.CutPageObjectID) as CLPArray;
                         currentObjectsOnPage.Remove(cutArray);
+                        var cutDim = string.Format("{0}x{1}", cutArray.Rows, cutArray.Columns);
+                        arrayDimensions[cutDim] -= 1;
+                        arrayLetterIDs[cutArray.ID] = "";
+                        if (arrayDimensions[cutDim] > 1)
+                        {
+                            arrayLetterIDs[cutArray.ID] = ((char)(arrayDimensions[cutDim] + 95)).ToString();
+                        }
+
                         var halfArray1 = page.GetPageObjectByIDOnPageOrInHistory(arrayCutHistoryItem.HalvedPageObjectIDs[0]) as CLPArray;
                         var halfArray2 = page.GetPageObjectByIDOnPageOrInHistory(arrayCutHistoryItem.HalvedPageObjectIDs[1]) as CLPArray;
                         currentObjectsOnPage.Add(halfArray1);
                         currentObjectsOnPage.Add(halfArray2);
+                        
+                        var halfDim1 = string.Format("{0}x{1}", halfArray1.Rows, halfArray1.Columns);
+                        if (arrayDimensions.ContainsKey(halfDim1))
+                        {
+                            arrayDimensions[halfDim1] += 1;
+                        }
+                        else
+                        {
+                            arrayDimensions[halfDim1] = 1;
+                            
+                        }
+                        arrayLetterIDs[halfArray1.ID] = "";
+                        if (arrayDimensions[halfDim1] > 1)
+                        {
+                            arrayLetterIDs[halfArray1.ID] = ((char)(arrayDimensions[halfDim1] + 95)).ToString();
+                        }
+                        var halfDim2 = string.Format("{0}x{1}", halfArray2.Rows, halfArray2.Columns);
+                        if (arrayDimensions.ContainsKey(halfDim2))
+                        {
+                            arrayDimensions[halfDim2] -= 1;
+                        }
+                        else
+                        {
+                            arrayDimensions[halfDim2] = 1;
+                            
+                        }
+                        arrayLetterIDs[halfArray2.ID] = "";
+                        if (arrayDimensions[halfDim2] > 1)
+                        {
+                            arrayLetterIDs[halfArray2.ID] = ((char)(arrayDimensions[halfDim2] + 95)).ToString();
+                        }
                     }
                     else if (arrayHistoryAction.ArrayAction == ArrayHistoryAction.ArrayActions.Snap)
                     {
                         var arraySnapHistoryItem = arrayHistoryAction.HistoryItems.First() as CLPArraySnapHistoryItem;
                         var snappedArray = page.GetPageObjectByIDOnPageOrInHistory(arraySnapHistoryItem.SnappedArrayID) as CLPArray;
                         currentObjectsOnPage.Remove(snappedArray);
+                        var dim = string.Format("{0}x{1}", snappedArray.Rows, snappedArray.Columns);
+                        if (arrayDimensions.ContainsKey(dim))
+                        {
+                            arrayDimensions[dim] -= 1;
+                        }
+                        
+                        arrayLetterIDs[snappedArray.ID] = "";
+                        if (arrayDimensions[dim] > 1)
+                        {
+                            arrayLetterIDs[snappedArray.ID] = ((char)(arrayDimensions[dim] + 95)).ToString();
+                        }
+
+                        var persistArray = page.GetPageObjectByIDOnPageOrInHistory(arraySnapHistoryItem.PersistingArrayID) as CLPArray;
+                        dim = string.Format("{0}x{1}", persistArray.Rows, persistArray.Columns);
+                        if (arrayDimensions.ContainsKey(dim))
+                        {
+                            arrayDimensions[dim] += 1;
+                        }
+                        else
+                        {
+                            arrayDimensions[dim] = 1;
+
+                        }
+                        arrayLetterIDs[persistArray.ID] = "";
+                        if (arrayDimensions[dim] > 1)
+                        {
+                            arrayLetterIDs[persistArray.ID] = ((char)(arrayDimensions[dim] + 95)).ToString();
+                        }
+
+                        var direction = arraySnapHistoryItem.IsHorizontal;
+                        var removedRows = (direction) ? persistArray.Rows - snappedArray.Rows : persistArray.Rows;
+                        var removedColumns = (direction) ? snappedArray.Columns : persistArray.Columns - snappedArray.Columns;
+                        dim = string.Format("{0}x{1}", removedRows, removedColumns);
+                        arrayDimensions[dim] -= 1;
+
                     }
                     revisedHistoryActions.Add(arrayHistoryAction);
                     continue;
@@ -575,8 +742,8 @@ namespace CLP.Entities
                                 currentNearestObject = nearestObject;
                             }
                             else if (inkActionType == currentActionType && //same type of action
-                                inkLocation == currentLocation &&
-                                nearestObject == currentNearestObject)
+                                     inkLocation == currentLocation &&
+                                     nearestObject == currentNearestObject)
                             {
                                 currentActionType = inkActionType;
                                 currentHistoryItems.Add(inkHistoryItem);
@@ -584,17 +751,33 @@ namespace CLP.Entities
                             else //new group: different action type or location
                             {
                                 //make action out of previous group
-                                currentInkGroup += 1;
-                                var inkGroup = ((char)(currentInkGroup + 64)).ToString();
+                                var inkGroup = "";
+                                if (currentActionType == InkAction.InkActions.Add)
+                                {
+                                    currentInkGroup += 1;
+                                    inkGroup = ((char)(currentInkGroup + 64)).ToString();
+                                }
+                                else if (currentActionType == InkAction.InkActions.Erase)
+                                {
+                                    foreach (var key in inkGroupLetterIDs.Keys)
+                                    {
+                                        if (key.Location == currentLocation &&
+                                            key.NearestObject.ID == currentNearestObject.ID)
+                                        {
+                                            inkGroup = inkGroupLetterIDs[key];
+                                            break;
+                                        }
+                                    }
+                                }
                                 var inkActionSecondPass = new InkAction(page, currentHistoryItems, currentActionType, currentLocation, "array [4x8]", inkGroup);
                                 revisedHistoryActions.Add(inkActionSecondPass);
 
                                 //restart grouping
                                 currentActionType = inkActionType;
                                 currentHistoryItems = new List<IHistoryItem>
-                                                      {
-                                                          inkHistoryItem
-                                                      };
+                                                          {
+                                                              inkHistoryItem
+                                                          };
                                 currentLocation = inkLocation;
                                 currentNearestObject = nearestObject;
                             }
