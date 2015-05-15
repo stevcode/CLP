@@ -241,7 +241,10 @@
                                                      Value="True">
                                             <Setter Property="Fill">
                                                 <Setter.Value>
-
+                                                    <!--HACK: This throws errors because DrawingBrush does not inherit DataContext
+                                                    therefore, it's DataContext=null. It then uses something called an InheritedContext
+                                                    to attempt the data binding, that's why it succeeds. Need to find a way to try this
+                                                    better. Similarly, MultipleChoiceBox's VisualBrush does the same thing-->
                                                     <DrawingBrush TileMode="Tile"
                                                                   ViewportUnits="RelativeToBoundingBox">
                                                         <DrawingBrush.Viewport>
