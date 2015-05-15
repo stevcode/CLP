@@ -298,6 +298,17 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </Thumb>
+            
+            <Polygon Grid.Row="1"
+                     Grid.Column="1"
+                     IsHitTestVisible="False"
+                     Stroke="PowderBlue"
+                     StrokeThickness="3"
+                     Fill="White"
+                     Points="5,0 15,0 12.5,30 17.5,30 12.5,60 17.5,60 15,100 5,100 7.5,70 2.5,70 7.5,40 2.5,40"
+                     Height="{Binding ArrayHeight}"
+                     Width="{Binding GridSquareSize}" 
+                     Stretch="Fill" />
 
             <!--Horizontal Divisions-->
             <ItemsControl Grid.Row="1"
