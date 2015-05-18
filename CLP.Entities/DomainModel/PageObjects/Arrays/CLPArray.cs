@@ -71,6 +71,43 @@ namespace CLP.Entities
 
         public static readonly PropertyData ArrayTypeProperty = RegisterProperty("ArrayType", typeof (ArrayTypes), ArrayTypes.Array);
 
+        /// <summary>Toggles visibility of obscuring shape over Rows.</summary>
+        public bool IsRowsObscured
+        {
+            get { return GetValue<bool>(IsRowsObscuredProperty); }
+            set { SetValue(IsRowsObscuredProperty, value); }
+        }
+
+        public static readonly PropertyData IsRowsObscuredProperty = RegisterProperty("IsRowsObscured", typeof (bool), false, OnIsRowsObscuredChanged);
+
+        private static void OnIsRowsObscuredChanged(object sender, AdvancedPropertyChangedEventArgs args)
+        {
+            var array = sender as CLPArray;
+            if (array == null)
+            {
+                return;
+            }
+        }
+
+        /// <summary>Toggles visibility of obscuring shape over Columns.</summary>
+        public bool IsColumnsObscured
+        {
+            get { return GetValue<bool>(IsColumnsObscuredProperty); }
+            set { SetValue(IsColumnsObscuredProperty, value); }
+        }
+
+        public static readonly PropertyData IsColumnsObscuredProperty = RegisterProperty("IsColumnsObscured", typeof(bool), false, OnIsColumnsObscuredChanged);
+
+        private static void OnIsColumnsObscuredChanged(object sender, AdvancedPropertyChangedEventArgs args)
+        {
+            var array = sender as CLPArray;
+            if (array == null)
+            {
+                return;
+            }
+
+        }
+
         #endregion //Properties
 
         #region Methods
@@ -337,7 +374,7 @@ namespace CLP.Entities
         public override void OnMoved(double oldX, double oldY, bool fromHistory = false)
         {
             base.OnResized(oldX, oldY, fromHistory);
-            
+
             OnMoving(oldX, oldY, fromHistory);
         }
 
@@ -421,10 +458,10 @@ namespace CLP.Entities
             }
 
             if (Math.Abs(strokeLeft - strokeRight) > Math.Abs(strokeTop - strokeBottom) &&
-                     strokeBottom <= cuttableBottom &&
-                     strokeTop >= cuttableTop &&
-                     cuttableRight - strokeRight <= MIN_THRESHHOLD &&
-                     strokeLeft - cuttableLeft <= MIN_THRESHHOLD) //Horizontal Cut Stroke. Stroke must be within the bounds of the pageObject
+                strokeBottom <= cuttableBottom &&
+                strokeTop >= cuttableTop &&
+                cuttableRight - strokeRight <= MIN_THRESHHOLD &&
+                strokeLeft - cuttableLeft <= MIN_THRESHHOLD) //Horizontal Cut Stroke. Stroke must be within the bounds of the pageObject
             {
                 var horizontalStrokeMidpoint = strokeLeft + ((strokeRight - strokeLeft) / 2);
                 var horizontalPageObjectMidpoint = cuttableLeft + ((cuttableRight - cuttableLeft) / 2);
