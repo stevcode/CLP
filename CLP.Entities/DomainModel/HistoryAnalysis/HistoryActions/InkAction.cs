@@ -163,6 +163,10 @@ namespace CLP.Entities
                 {
                     location = "over";
                 }
+                else if (location == "none of")
+                {
+                    location = "";
+                }
                 return string.Format("INK strokes {0}[{1}:{2} {3}]", codedActionType, InkGroup, location, LocationString);
             }
         } 

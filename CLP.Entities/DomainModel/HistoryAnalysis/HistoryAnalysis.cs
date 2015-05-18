@@ -9,20 +9,20 @@ namespace CLP.Entities
         public class InkGroupKey
         {
             public readonly InkAction.InkLocations Location;
-            public readonly IPageObject NearestObject;
-            public InkGroupKey(InkAction.InkLocations location, IPageObject nearestObject)
+            public readonly string NearestObject;
+            public InkGroupKey(InkAction.InkLocations location, string nearestObject)
             {
                 Location = location;
                 NearestObject = nearestObject;
             }
 
-            public override bool Equals(object obj)
+            /*public override bool Equals(object obj)
             {
                 if (!(obj is InkGroupKey)) return false;
                 InkGroupKey keyObject = obj as InkGroupKey;
                 return (keyObject.Location == Location && keyObject.NearestObject.ID == NearestObject.ID);
 
-            }
+            }*/
         }
         public static void GenerateInitialHistoryActions(CLPPage page)
         {
@@ -533,21 +533,19 @@ namespace CLP.Entities
                     if (arrayHistoryAction.ArrayAction == ArrayHistoryAction.ArrayActions.Cut)
                     {
                         var arrayCutHistoryItem = arrayHistoryAction.HistoryItems.First() as PageObjectCutHistoryItem;
+                        //cut array
                         var cutArray = page.GetPageObjectByIDOnPageOrInHistory(arrayCutHistoryItem.CutPageObjectID) as CLPArray;
                         currentObjectsOnPage.Remove(cutArray);
                         var cutDim = string.Format("{0}x{1}", cutArray.Rows, cutArray.Columns);
                         arrayDimensions[cutDim] -= 1;
-                        arrayLetterIDs[cutArray.ID] = "";
-                        if (arrayDimensions[cutDim] > 1)
-                        {
-                            arrayLetterIDs[cutArray.ID] = ((char)(arrayDimensions[cutDim] + 95)).ToString();
-                        }
+                        arrayLetterIDs[cutArray.ID] = "no longer on page";
 
                         var halfArray1 = page.GetPageObjectByIDOnPageOrInHistory(arrayCutHistoryItem.HalvedPageObjectIDs[0]) as CLPArray;
                         var halfArray2 = page.GetPageObjectByIDOnPageOrInHistory(arrayCutHistoryItem.HalvedPageObjectIDs[1]) as CLPArray;
                         currentObjectsOnPage.Add(halfArray1);
                         currentObjectsOnPage.Add(halfArray2);
                         
+                        //half array 1
                         var halfDim1 = string.Format("{0}x{1}", halfArray1.Rows, halfArray1.Columns);
                         if (arrayDimensions.ContainsKey(halfDim1))
                         {
@@ -563,10 +561,12 @@ namespace CLP.Entities
                         {
                             arrayLetterIDs[halfArray1.ID] = ((char)(arrayDimensions[halfDim1] + 95)).ToString();
                         }
+
+                        //half array 2
                         var halfDim2 = string.Format("{0}x{1}", halfArray2.Rows, halfArray2.Columns);
                         if (arrayDimensions.ContainsKey(halfDim2))
                         {
-                            arrayDimensions[halfDim2] -= 1;
+                            arrayDimensions[halfDim2] += 1;
                         }
                         else
                         {
@@ -578,10 +578,21 @@ namespace CLP.Entities
                         {
                             arrayLetterIDs[halfArray2.ID] = ((char)(arrayDimensions[halfDim2] + 95)).ToString();
                         }
+
+                        System.Console.WriteLine("Cut");
+                        foreach (var i in arrayLetterIDs)
+                        {
+                            var arr = page.GetPageObjectByIDOnPageOrInHistory(i.Key) as CLPArray;
+                            var arrDim = string.Format("Dimensions:{0}x{1}", arr.Rows, arr.Columns);
+                            System.Console.WriteLine(arrDim);
+                            System.Console.WriteLine("Key:" + i.Key);
+                            System.Console.WriteLine("Value:" + i.Value);
+                        }
                     }
                     else if (arrayHistoryAction.ArrayAction == ArrayHistoryAction.ArrayActions.Snap)
                     {
                         var arraySnapHistoryItem = arrayHistoryAction.HistoryItems.First() as CLPArraySnapHistoryItem;
+                        //snapped array
                         var snappedArray = page.GetPageObjectByIDOnPageOrInHistory(arraySnapHistoryItem.SnappedArrayID) as CLPArray;
                         currentObjectsOnPage.Remove(snappedArray);
                         var dim = string.Format("{0}x{1}", snappedArray.Rows, snappedArray.Columns);
@@ -590,13 +601,17 @@ namespace CLP.Entities
                             arrayDimensions[dim] -= 1;
                         }
                         
-                        arrayLetterIDs[snappedArray.ID] = "";
-                        if (arrayDimensions[dim] > 1)
-                        {
-                            arrayLetterIDs[snappedArray.ID] = ((char)(arrayDimensions[dim] + 95)).ToString();
-                        }
+                        arrayLetterIDs[snappedArray.ID] = "no longer on page";
 
+                        //persisting array, before snap
                         var persistArray = page.GetPageObjectByIDOnPageOrInHistory(arraySnapHistoryItem.PersistingArrayID) as CLPArray;
+                        var direction = arraySnapHistoryItem.IsHorizontal;
+                        var removedRows = (direction) ? persistArray.Rows - snappedArray.Rows : persistArray.Rows;
+                        var removedColumns = (direction) ? snappedArray.Columns : persistArray.Columns - snappedArray.Columns;
+                        dim = string.Format("{0}x{1}", removedRows, removedColumns);
+                        arrayDimensions[dim] -= 1;
+                        
+                        //persisting(large) array
                         dim = string.Format("{0}x{1}", persistArray.Rows, persistArray.Columns);
                         if (arrayDimensions.ContainsKey(dim))
                         {
@@ -613,11 +628,15 @@ namespace CLP.Entities
                             arrayLetterIDs[persistArray.ID] = ((char)(arrayDimensions[dim] + 95)).ToString();
                         }
 
-                        var direction = arraySnapHistoryItem.IsHorizontal;
-                        var removedRows = (direction) ? persistArray.Rows - snappedArray.Rows : persistArray.Rows;
-                        var removedColumns = (direction) ? snappedArray.Columns : persistArray.Columns - snappedArray.Columns;
-                        dim = string.Format("{0}x{1}", removedRows, removedColumns);
-                        arrayDimensions[dim] -= 1;
+                        System.Console.WriteLine("Snap");
+                        foreach (var i in arrayLetterIDs)
+                        {
+                            var arr = page.GetPageObjectByIDOnPageOrInHistory(i.Key) as CLPArray;
+                            var arrDim = string.Format("Dimensions:{0}x{1}", arr.Rows, arr.Columns);
+                            System.Console.WriteLine(arrDim);
+                            System.Console.WriteLine("Key:" + i.Key);
+                            System.Console.WriteLine("Value:" + i.Value);
+                        }
 
                     }
                     revisedHistoryActions.Add(arrayHistoryAction);
@@ -635,6 +654,7 @@ namespace CLP.Entities
                 if (inkAction != null)
                 {
                     var inkHistoryItemIDs = inkAction.HistoryItemIDs;
+
                     var currentActionType = InkAction.InkActions.Ignore;
                     var currentHistoryItems = new List<IHistoryItem>();
                     var currentLocation = InkAction.InkLocations.None;
@@ -649,6 +669,7 @@ namespace CLP.Entities
                         var inkLocation = InkAction.InkLocations.None;
                         IPageObject nearestObject = null;
                         System.Windows.Ink.Stroke inkStroke = null;
+
                         if (inkHistoryItem != null)
                         {
                             //type of action
@@ -669,7 +690,7 @@ namespace CLP.Entities
                                 break; //throw error, neither inks add nor erase
                             }
 
-                            //location
+                            //location & nearest object
                             if (!currentObjectsOnPage.Any())
                             {
                                 inkLocation = InkAction.InkLocations.Over;
@@ -688,6 +709,8 @@ namespace CLP.Entities
                                     var x2 = pageObject.XPosition + pageObject.Width;
                                     var y1 = pageObject.YPosition;
                                     var y2 = pageObject.YPosition + pageObject.Height;
+                                    
+                                    //over object
                                     if ((inkX1 > x1 && inkX2 < x2) &&
                                         (inkY1 > y1 && inkY2 < y2))
                                     {
@@ -695,44 +718,131 @@ namespace CLP.Entities
                                         nearestObject = pageObject;
                                         minDistance = 0;
                                         break;
-                                    }else if (inkX1 > x2)
+                                    }
+                                    
+                                    //relative position to object
+                                    var minDistanceToObject = double.PositiveInfinity;
+                                    var locationToObject = InkAction.InkLocations.None;
+
+                                    //right or left
+                                    if (inkX2 > x2) //to right
                                     {
-                                        if (inkX1 - x2 < minDistance)
+                                        double d = System.Math.Abs(inkX1 - x2);
+                                        if (d < minDistanceToObject)
                                         {
-                                            minDistance = inkX1 - x2;
-                                            nearestObject = pageObject;
-                                            inkLocation = InkAction.InkLocations.Right;
+                                            minDistanceToObject = d;
+                                            locationToObject = InkAction.InkLocations.Right;
                                         }
-                                    }else if (inkX2 < x1)
+                                    }else if (inkX1 < x1) //to left
                                     {
-                                        if (x1 - inkX2 < minDistance)
+                                        double d = System.Math.Abs(inkX2 - x1);
+                                        if (d < minDistanceToObject)
                                         {
-                                            minDistance = x1 - inkX2;
-                                            nearestObject = pageObject;
+                                            minDistanceToObject = d;
                                             inkLocation = InkAction.InkLocations.Left;
                                         }
-                                    }else if (inkY1 > y2)
+                                    }
+                                    
+                                    //top or bottom
+                                    if (inkY1 > y2)
                                     {
-                                        if (inkY1 - y2 < minDistance)
+                                        double d = System.Math.Abs(inkY1 - y2);
+                                        if (d < minDistanceToObject)
                                         {
-                                            minDistance = inkY1 - y2;
-                                            nearestObject = pageObject;
+                                            minDistanceToObject = d;
                                             inkLocation = InkAction.InkLocations.Bottom;
                                         }
                                     }else if (inkY2 < y1)
                                     {
-                                        if (y1- inkY2 < minDistance)
+                                        double d = System.Math.Abs(inkY2 - y1);
+                                        if (d < minDistanceToObject)
                                         {
-                                            minDistance = inkY2 - y1;
-                                            nearestObject = pageObject;
+                                            minDistanceToObject = d;
                                             inkLocation = InkAction.InkLocations.Top;
                                         }
+                                    }
+
+                                    if (minDistanceToObject < minDistance)
+                                    {
+                                        minDistance = minDistanceToObject;
+                                        inkLocation = locationToObject;
+                                        nearestObject = pageObject;
                                     }
                                 }
                             }
 
+                            //TESTING
+                            currentActionType = inkActionType;
+                            currentHistoryItems.Add(inkHistoryItem);
+                            currentLocation = inkLocation;
+                            currentNearestObject = nearestObject;
+                            //group letter
+                            var inkGroup = "";
+                            var nearestID = "";
+                            if (currentNearestObject != null)
+                            {
+                                nearestID = currentNearestObject.ID;
+                            }
+                            if (currentActionType == InkAction.InkActions.Add) //add ink
+                            {
+                                currentInkGroup += 1;
+                                inkGroup = ((char)(currentInkGroup + 64)).ToString();
+                                var key = new InkGroupKey(currentLocation, nearestID);
+                                inkGroupLetterIDs[key] = inkGroup;
+                            }
+                            else if (currentActionType == InkAction.InkActions.Erase) //erase ink
+                            {
+                                foreach (var key in inkGroupLetterIDs.Keys)
+                                {
+                                    if (key.Location == currentLocation &&
+                                        key.NearestObject == nearestID)
+                                    {
+                                        inkGroup = inkGroupLetterIDs[key];
+                                        break;
+                                    }
+                                }
+                            }
+                                
+                            //nearest object
+                            var locationDescription = "";
+                            var currentObjectId = "";
+                            if (currentNearestObject == null)
+                            {
+                                locationDescription = "page";
+                            }
+                            else
+                            {
+                                var nearestObjectName = currentNearestObject.GetType().Name;
+                                if (nearestObjectName == "CLPArray")
+                                {
+                                    var objectID = currentNearestObject.ID;
+                                    var array = currentNearestObject as CLPArray;
+                                    locationDescription = objectID;
+                                    //locationDescription = string.Format("ARR [{0}x{1}{2}]", array.Rows, array.Columns, arrayLetterIDs[objectID]);
+                                }
+                                else if (nearestObjectName == "NumberLine")
+                                {
+                                    var objectID = currentNearestObject.ID;
+                                    var nl = currentNearestObject as NumberLine;
+                                    locationDescription = string.Format("NL [{0}{1}]", nl.NumberLineSize, numberLineLetterIDs[objectID]);
+                                }
+                                else if (nearestObjectName == "Stamp")
+                                {
+                                    locationDescription = "STAMP";
+                                }
+                                else if (nearestObjectName == "StampedObject")
+                                {
+                                    locationDescription = "STAMP IMAGE";
+                                }
+                            }
+                                
+                            var inkActionSecondPass = new InkAction(page, currentHistoryItems, currentActionType, currentLocation, locationDescription, inkGroup);
+                            revisedHistoryActions.Add(inkActionSecondPass);
+
+                            //END TESTING
+
                             //decide whether to group
-                            if (currentActionType == InkAction.InkActions.Ignore || //first item
+                            /*if (currentActionType == InkAction.InkActions.Ignore || //first item
                                 currentLocation == InkAction.InkLocations.None ||
                                 currentNearestObject == null)
                             {
@@ -741,54 +851,152 @@ namespace CLP.Entities
                                 currentLocation = inkLocation;
                                 currentNearestObject = nearestObject;
                             }
-                            else if (inkActionType == currentActionType && //same type of action
-                                     inkLocation == currentLocation &&
-                                     nearestObject == currentNearestObject)
-                            {
-                                currentActionType = inkActionType;
-                                currentHistoryItems.Add(inkHistoryItem);
-                            }
-                            else //new group: different action type or location
+                            else if (!(inkActionType == currentActionType && //different action type or location
+                                       inkLocation == currentLocation && nearestObject == currentNearestObject)) //last ink stroke in group
                             {
                                 //make action out of previous group
+
+                                //group letter
                                 var inkGroup = "";
-                                if (currentActionType == InkAction.InkActions.Add)
+                                var nearestID = "";
+                                if (currentNearestObject != null)
+                                {
+                                    nearestID = currentNearestObject.ID;
+                                }
+                                if (currentActionType == InkAction.InkActions.Add) //add ink
                                 {
                                     currentInkGroup += 1;
                                     inkGroup = ((char)(currentInkGroup + 64)).ToString();
+                                    var key = new InkGroupKey(currentLocation, nearestID);
+                                    inkGroupLetterIDs[key] = inkGroup;
                                 }
-                                else if (currentActionType == InkAction.InkActions.Erase)
+                                else if (currentActionType == InkAction.InkActions.Erase) //erase ink
                                 {
                                     foreach (var key in inkGroupLetterIDs.Keys)
                                     {
                                         if (key.Location == currentLocation &&
-                                            key.NearestObject.ID == currentNearestObject.ID)
+                                            key.NearestObject == nearestID)
                                         {
                                             inkGroup = inkGroupLetterIDs[key];
                                             break;
                                         }
                                     }
                                 }
-                                var inkActionSecondPass = new InkAction(page, currentHistoryItems, currentActionType, currentLocation, "array [4x8]", inkGroup);
+                                
+                                //nearest object
+                                var locationDescription = "";
+                                var currentObjectId = "";
+                                if (currentNearestObject == null)
+                                {
+                                    locationDescription = "page";
+                                }
+                                else
+                                {
+                                    var nearestObjectName = currentNearestObject.GetType().Name;
+                                    if (nearestObjectName == "CLPArray")
+                                    {
+                                        var objectID = currentNearestObject.ID;
+                                        var array = currentNearestObject as CLPArray;
+                                        locationDescription = objectID;
+                                        //locationDescription = string.Format("ARR [{0}x{1}{2}]", array.Rows, array.Columns, arrayLetterIDs[objectID]);
+                                    }
+                                    else if (nearestObjectName == "NumberLine")
+                                    {
+                                        var objectID = currentNearestObject.ID;
+                                        var nl = currentNearestObject as NumberLine;
+                                        locationDescription = string.Format("NL [{0}{1}]", nl.NumberLineSize, numberLineLetterIDs[objectID]);
+                                    }
+                                    else if (nearestObjectName == "Stamp")
+                                    {
+                                        locationDescription = "STAMP";
+                                    }
+                                    else if (nearestObjectName == "StampedObject")
+                                    {
+                                        locationDescription = "STAMP IMAGE";
+                                    }
+                                }
+                                
+                                var inkActionSecondPass = new InkAction(page, currentHistoryItems, currentActionType, currentLocation, locationDescription, inkGroup);
                                 revisedHistoryActions.Add(inkActionSecondPass);
 
                                 //restart grouping
                                 currentActionType = inkActionType;
                                 currentHistoryItems = new List<IHistoryItem>
-                                                          {
-                                                              inkHistoryItem
-                                                          };
+                                                      {
+                                                          inkHistoryItem
+                                                      };
                                 currentLocation = inkLocation;
                                 currentNearestObject = nearestObject;
                             }
-
-                            if (id == idLast) //make sure last group of strokes
+                            else //same action type and location, not last in group
                             {
-                                currentInkGroup += 1;
-                                var inkGroup = ((char)(currentInkGroup + 64)).ToString();
-                                var inkActionSecondPass = new InkAction(page, currentHistoryItems, inkActionType, InkAction.InkLocations.Over, "array [4x8]", inkGroup);
-                                revisedHistoryActions.Add(inkActionSecondPass);
+                                currentHistoryItems.Add(inkHistoryItem);
                             }
+
+                            if (id == idLast)
+                            {
+                                //group letter
+                                var inkGroup = "";
+                                var nearestID = "";
+                                if (currentNearestObject != null)
+                                {
+                                    nearestID = currentNearestObject.ID;
+                                }
+                                if (currentActionType == InkAction.InkActions.Add) //add ink
+                                {
+                                    currentInkGroup += 1;
+                                    inkGroup = ((char)(currentInkGroup + 64)).ToString();
+                                    var key = new InkGroupKey(currentLocation, nearestID);
+                                    inkGroupLetterIDs[key] = inkGroup;
+                                }
+                                else if (currentActionType == InkAction.InkActions.Erase) //erase ink
+                                {
+                                    foreach (var key in inkGroupLetterIDs.Keys)
+                                    {
+                                        if (key.Location == currentLocation &&
+                                            key.NearestObject == nearestID)
+                                        {
+                                            inkGroup = inkGroupLetterIDs[key];
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                //nearest object
+                                var locationDescription = "";
+                                var currentObjectId = "";
+                                if (currentNearestObject == null)
+                                {
+                                    locationDescription = "page";
+                                }
+                                else
+                                {
+                                    var nearestObjectName = currentNearestObject.GetType().Name;
+                                    if (nearestObjectName == "CLPArray")
+                                    {
+                                        var objectID = currentNearestObject.ID;
+                                        var array = currentNearestObject as CLPArray;
+                                        locationDescription = string.Format("ARR [{0}x{1}{2}]", array.Rows, array.Columns, arrayLetterIDs[objectID]);
+                                    }
+                                    else if (nearestObjectName == "NumberLine")
+                                    {
+                                        var objectID = currentNearestObject.ID;
+                                        var nl = currentNearestObject as NumberLine;
+                                        locationDescription = string.Format("NL [{0}{1}]", nl.NumberLineSize, numberLineLetterIDs[objectID]);
+                                    }
+                                    else if (nearestObjectName == "Stamp")
+                                    {
+                                        locationDescription = "STAMP";
+                                    }
+                                    else if (nearestObjectName == "StampedObject")
+                                    {
+                                        locationDescription = "STAMP IMAGE";
+                                    }
+                                }
+
+                                var inkActionSecondPass = new InkAction(page, currentHistoryItems, currentActionType, currentLocation, locationDescription, inkGroup);
+                                revisedHistoryActions.Add(inkActionSecondPass);
+                            }*/
                         }
                     }
                 }
