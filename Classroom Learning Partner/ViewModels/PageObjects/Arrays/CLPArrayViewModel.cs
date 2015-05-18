@@ -105,14 +105,14 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            var clpArray = PageObject as CLPArray;
-            if (clpArray == null)
+            var array = PageObject as CLPArray;
+            if (array == null)
             {
                 return;
             }
 
-            clpArray.IsTopLabelVisible = (bool)toggleButton.IsChecked;
-            clpArray.IsSideLabelVisible = (bool)toggleButton.IsChecked;
+            array.IsTopLabelVisible = (bool)toggleButton.IsChecked && !array.IsColumnsObscured;
+            array.IsSideLabelVisible = (bool)toggleButton.IsChecked && !array.IsRowsObscured;
         }
 
         private void toggleObscureColumnsButton_Checked(object sender, RoutedEventArgs e)
@@ -130,7 +130,16 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            array.IsColumnsObscured = !array.IsColumnsObscured;
+            if (array.IsColumnsObscured)
+            {
+                array.Unobscure(true);
+            }
+            else
+            {
+                array.Obscure(true);
+            }
+
+            IsTopLabelVisible = !array.IsColumnsObscured;
             _toggleObscureRowsButton.IsEnabled = !array.IsColumnsObscured;
         }
 
@@ -149,7 +158,16 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            array.IsRowsObscured = !array.IsRowsObscured;
+            if (array.IsRowsObscured)
+            {
+                array.Unobscure(false);
+            }
+            else
+            {
+                array.Obscure(false);
+            }
+
+            IsSideLabelVisible = !array.IsRowsObscured;
             _toggleObscureColumnsButton.IsEnabled = !array.IsRowsObscured;
         }
 

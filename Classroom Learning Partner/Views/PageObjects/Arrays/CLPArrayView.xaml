@@ -160,7 +160,7 @@
                         </ControlTemplate>
                     </Button.Template>
                 </Button>
-                
+
             </Canvas>
 
         </ac:AdornedControl.AdornerContent>
@@ -299,41 +299,6 @@
                 </i:Interaction.Triggers>
             </Thumb>
 
-            <!--Row Obscurer-->
-            <Polygon Grid.Row="1"
-                     Grid.Column="1"
-                     IsHitTestVisible="False"
-                     Stroke="PowderBlue"
-                     StrokeThickness="3"
-                     Fill="White"
-                     Points="5,0 15,0 12.5,30 17.5,30 12.5,60 17.5,60 15,100 5,100 7.5,70 2.5,70 7.5,40 2.5,40"
-                     Height="{Binding ArrayWidth}"
-                     Width="{Binding GridSquareSize}"
-                     Stretch="Fill"
-                     Visibility="{Binding IsRowsObscured, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <Polygon.LayoutTransform>
-                    <TransformGroup>
-                        <ScaleTransform />
-                        <SkewTransform />
-                        <RotateTransform Angle="-90" />
-                        <TranslateTransform />
-                    </TransformGroup>
-                </Polygon.LayoutTransform>
-            </Polygon>
-            
-            <!--Column Obscurer-->
-            <Polygon Grid.Row="1"
-                     Grid.Column="1"
-                     IsHitTestVisible="False"
-                     Stroke="PowderBlue"
-                     StrokeThickness="3"
-                     Fill="White"
-                     Points="5,0 15,0 12.5,30 17.5,30 12.5,60 17.5,60 15,100 5,100 7.5,70 2.5,70 7.5,40 2.5,40"
-                     Height="{Binding ArrayHeight}"
-                     Width="{Binding GridSquareSize}" 
-                     Stretch="Fill"
-                     Visibility="{Binding IsColumnsObscured, Converter={StaticResource BooleanToVisibilityConverter}}" />
-
             <!--Horizontal Divisions-->
             <ItemsControl Grid.Row="1"
                           Grid.Column="1"
@@ -349,6 +314,30 @@
                     <DataTemplate>
                         <Canvas Height="{Binding Length}"
                                 Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
+                            <!--Row Obscurer-->
+                            <Grid Height="{Binding Length}"
+                                  Width="{Binding DataContext.ArrayWidth, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
+                                <Polygon IsHitTestVisible="False"
+                                         Stroke="PowderBlue"
+                                         StrokeThickness="3"
+                                         Fill="White"
+                                         Points="5,0 15,0 12.5,30 17.5,30 12.5,60 17.5,60 15,100 5,100 7.5,70 2.5,70 7.5,40 2.5,40"
+                                         Height="{Binding DataContext.ArrayWidth, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
+                                         Width="{Binding DataContext.GridSquareSize, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
+                                         Stretch="Fill"
+                                         VerticalAlignment="Center"
+                                         Visibility="{Binding IsObscured, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <Polygon.LayoutTransform>
+                                        <TransformGroup>
+                                            <ScaleTransform />
+                                            <SkewTransform />
+                                            <RotateTransform Angle="-90" />
+                                            <TranslateTransform />
+                                        </TransformGroup>
+                                    </Polygon.LayoutTransform>
+                                </Polygon>
+                            </Grid>
+                            
                             <!--The Visible Division Line-->
                             <Rectangle Tag="DivisionHitBox"
                                        Height="3"
@@ -375,7 +364,8 @@
                                                          Converter={conv:MultiplyNumberConverter},
                                                          ConverterParameter=-1}"
                                 Height="{Binding Length}"
-                                Width="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
+                                Width="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
+                                  Visibility="{Binding IsObscured, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}" >
                                 <TextBlock IsHitTestVisible="False"
                                            Text="{Binding Value, Converter={StaticResource ZeroToQuestionMarkConverter}}"
                                            TextAlignment="Center"
@@ -428,6 +418,21 @@
                     <DataTemplate>
                         <Canvas Width="{Binding Length}"
                                 Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
+                            <!--Column Obscurer-->
+                            <Grid Width="{Binding Length}"
+                                  Height="{Binding DataContext.ArrayHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
+                                <Polygon IsHitTestVisible="False"
+                                         Stroke="PowderBlue"
+                                         StrokeThickness="3"
+                                         Fill="White"
+                                         Points="5,0 15,0 12.5,30 17.5,30 12.5,60 17.5,60 15,100 5,100 7.5,70 2.5,70 7.5,40 2.5,40"
+                                         Height="{Binding DataContext.ArrayHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
+                                         Width="{Binding DataContext.GridSquareSize, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
+                                         Stretch="Fill"
+                                         HorizontalAlignment="Center"
+                                         Visibility="{Binding IsObscured, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            </Grid>
+                            
                             <!--The Visible Division Line-->
                             <Rectangle Tag="DivisionHitBox"
                                        Width="3"
@@ -454,14 +459,16 @@
                                                           Converter={conv:MultiplyNumberConverter},
                                                           ConverterParameter=-1}"
                                 Width="{Binding Length}"
-                                Height="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
+                                Height="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
+                                  Visibility="{Binding IsObscured, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}">
                                 <TextBlock IsHitTestVisible="False"
                                            Text="{Binding Value, Converter={StaticResource ZeroToQuestionMarkConverter}}"
                                            TextAlignment="Center"
                                            FontSize="20"
                                            Foreground="{StaticResource TopLabelColor}"
                                            Height="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
-                                           Width="{Binding Length}" />
+                                           Width="{Binding Length}"
+                                            />
                                 <Rectangle Tag="TopLabelHitBox"
                                            Fill="Transparent"
                                            Width="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"

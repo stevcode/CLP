@@ -74,6 +74,15 @@ namespace CLP.Entities
 
         public static readonly PropertyData ValueProperty = RegisterProperty("Value", typeof (int), 0);
 
+        /// <summary>Designates a Divider Region as obscured or not.</summary>
+        public bool IsObscured
+        {
+            get { return GetValue<bool>(IsObscuredProperty); }
+            set { SetValue(IsObscuredProperty, value); }
+        }
+
+        public static readonly PropertyData IsObscuredProperty = RegisterProperty("IsObscured", typeof(bool), false);
+
         #endregion //Properties
 
         #region Overrides of ModelBase

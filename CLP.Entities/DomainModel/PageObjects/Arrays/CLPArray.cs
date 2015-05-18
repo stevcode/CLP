@@ -71,41 +71,16 @@ namespace CLP.Entities
 
         public static readonly PropertyData ArrayTypeProperty = RegisterProperty("ArrayType", typeof (ArrayTypes), ArrayTypes.Array);
 
-        /// <summary>Toggles visibility of obscuring shape over Rows.</summary>
+        /// <summary>Signifies obscuring shape over Rows.</summary>
         public bool IsRowsObscured
         {
-            get { return GetValue<bool>(IsRowsObscuredProperty); }
-            set { SetValue(IsRowsObscuredProperty, value); }
+            get { return HorizontalDivisions.Any(d => d.IsObscured); }
         }
 
-        public static readonly PropertyData IsRowsObscuredProperty = RegisterProperty("IsRowsObscured", typeof (bool), false, OnIsRowsObscuredChanged);
-
-        private static void OnIsRowsObscuredChanged(object sender, AdvancedPropertyChangedEventArgs args)
-        {
-            var array = sender as CLPArray;
-            if (array == null)
-            {
-                return;
-            }
-        }
-
-        /// <summary>Toggles visibility of obscuring shape over Columns.</summary>
+        /// <summary>Signifies obscuring shape over Columns.</summary>
         public bool IsColumnsObscured
         {
-            get { return GetValue<bool>(IsColumnsObscuredProperty); }
-            set { SetValue(IsColumnsObscuredProperty, value); }
-        }
-
-        public static readonly PropertyData IsColumnsObscuredProperty = RegisterProperty("IsColumnsObscured", typeof(bool), false, OnIsColumnsObscuredChanged);
-
-        private static void OnIsColumnsObscuredChanged(object sender, AdvancedPropertyChangedEventArgs args)
-        {
-            var array = sender as CLPArray;
-            if (array == null)
-            {
-                return;
-            }
-
+            get { return VerticalDivisions.Any(d => d.IsObscured); }
         }
 
         #endregion //Properties
@@ -155,6 +130,46 @@ namespace CLP.Entities
             }
 
             return partialProducts;
+        }
+
+        public void Obscure(bool isColumnsObscured)
+        {
+            if (isColumnsObscured)
+            {
+                VerticalDivisions.Clear();
+                var obscuredDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, 0, ArrayWidth, Columns)
+                                  {
+                                      IsObscured = true
+                                  };
+                VerticalDivisions.Add(obscuredDiv);
+            }
+            else
+            {
+                HorizontalDivisions.Clear();
+                var obscuredDiv = new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, 0, ArrayHeight, Rows)
+                {
+                    IsObscured = true
+                };
+                HorizontalDivisions.Add(obscuredDiv);
+            }
+        }
+
+        public void Unobscure(bool isColumnsUnobscured)
+        {
+            if (isColumnsUnobscured)
+            {
+                foreach (var division in VerticalDivisions)
+                {
+                    division.IsObscured = false;
+                }
+            }
+            else
+            {
+                foreach (var division in HorizontalDivisions)
+                {
+                    division.IsObscured = false;
+                }
+            }
         }
 
         #endregion //Methods
