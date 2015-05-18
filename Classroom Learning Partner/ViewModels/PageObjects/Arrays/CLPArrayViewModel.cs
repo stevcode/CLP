@@ -38,6 +38,15 @@ namespace Classroom_Learning_Partner.ViewModels
             InitializeButtons();
         }
 
+        #endregion //Constructor
+
+        #region Buttons
+
+        private ToggleRibbonButton _toggleLabelsButton;
+        private ToggleRibbonButton _toggleObscureColumnsButton;
+        private ToggleRibbonButton _toggleObscureRowsButton;
+        private ToggleRibbonButton _toggleGridLinesButton;
+
         private void InitializeButtons()
         {
             _contextButtons.Add(MajorRibbonViewModel.Separater);
@@ -48,21 +57,40 @@ namespace Classroom_Learning_Partner.ViewModels
 
             _contextButtons.Add(new RibbonButton("Rotate", "pack://application:,,,/Resources/Images/AdornerImages/ArrayRotate64.png", RotateArrayCommand, null, true));
 
-            var toggleLabelsButton = new ToggleRibbonButton("Show Labels", "Hide Labels", "pack://application:,,,/Resources/Images/ArrayCard32.png", true)
-                                     {
-                                         IsChecked = IsTopLabelVisible && IsSideLabelVisible
-                                     };
-            toggleLabelsButton.Checked += toggleLabelsButton_Checked;
-            toggleLabelsButton.Unchecked += toggleLabelsButton_Checked;
-            _contextButtons.Add(toggleLabelsButton);
+            _toggleLabelsButton = new ToggleRibbonButton("Show Labels", "Hide Labels", "pack://application:,,,/Resources/Images/ArrayCard32.png", true)
+                                  {
+                                      IsChecked = IsTopLabelVisible && IsSideLabelVisible
+                                  };
+            _toggleLabelsButton.Checked += toggleLabelsButton_Checked;
+            _toggleLabelsButton.Unchecked += toggleLabelsButton_Checked;
+            _contextButtons.Add(_toggleLabelsButton);
 
-            var toggleGridLinesButton = new ToggleRibbonButton("Show Grid Lines", "Hide Grid Lines", "pack://application:,,,/Resources/Images/ArrayCard32.png", true)
-                                        {
-                                            IsChecked = IsGridOn
-                                        };
-            toggleGridLinesButton.Checked += toggleGridLinesButton_Checked;
-            toggleGridLinesButton.Unchecked += toggleGridLinesButton_Checked;
-            _contextButtons.Add(toggleGridLinesButton);
+            _toggleObscureColumnsButton = new ToggleRibbonButton("Show Columns", "Hide Columns", "pack://application:,,,/Resources/Images/ArrayCard32.png", true)
+                                          {
+                                              IsChecked = !IsColumnsObscured
+                                          };
+
+            _toggleObscureColumnsButton.Checked += toggleObscureColumnsButton_Checked;
+            _toggleObscureColumnsButton.Unchecked += toggleObscureColumnsButton_Checked;
+            _toggleObscureColumnsButton.IsEnabled = !IsRowsObscured;
+            _contextButtons.Add(_toggleObscureColumnsButton);
+
+            _toggleObscureRowsButton = new ToggleRibbonButton("Show Rows", "Hide Rows", "pack://application:,,,/Resources/Images/ArrayCard32.png", true)
+                                       {
+                                           IsChecked = !IsRowsObscured
+                                       };
+            _toggleObscureRowsButton.Checked += toggleObscureRowsButton_Checked;
+            _toggleObscureRowsButton.Unchecked += toggleObscureRowsButton_Checked;
+            _toggleObscureRowsButton.IsEnabled = !IsColumnsObscured;
+            _contextButtons.Add(_toggleObscureRowsButton);
+
+            _toggleGridLinesButton = new ToggleRibbonButton("Show Grid Lines", "Hide Grid Lines", "pack://application:,,,/Resources/Images/ArrayCard32.png", true)
+                                     {
+                                         IsChecked = IsGridOn
+                                     };
+            _toggleGridLinesButton.Checked += toggleGridLinesButton_Checked;
+            _toggleGridLinesButton.Unchecked += toggleGridLinesButton_Checked;
+            _contextButtons.Add(_toggleGridLinesButton);
 
             _contextButtons.Add(new RibbonButton("Snap", "pack://application:,,,/Resources/Images/AdornerImages/ArraySnap64.png", SnapArrayCommand, null, true));
             //    _contextButtons.Add(new RibbonButton("Size to Other Arrays", "pack://application:,,,/Resources/Images/AdornerImages/ArraySnap64.png", null, null, true));
@@ -85,6 +113,44 @@ namespace Classroom_Learning_Partner.ViewModels
 
             clpArray.IsTopLabelVisible = (bool)toggleButton.IsChecked;
             clpArray.IsSideLabelVisible = (bool)toggleButton.IsChecked;
+        }
+
+        private void toggleObscureColumnsButton_Checked(object sender, RoutedEventArgs e)
+        {
+            var toggleButton = sender as ToggleRibbonButton;
+            if (toggleButton == null ||
+                toggleButton.IsChecked == null)
+            {
+                return;
+            }
+
+            var array = PageObject as CLPArray;
+            if (array == null)
+            {
+                return;
+            }
+
+            array.IsColumnsObscured = !array.IsColumnsObscured;
+            _toggleObscureRowsButton.IsEnabled = !array.IsColumnsObscured;
+        }
+
+        private void toggleObscureRowsButton_Checked(object sender, RoutedEventArgs e)
+        {
+            var toggleButton = sender as ToggleRibbonButton;
+            if (toggleButton == null ||
+                toggleButton.IsChecked == null)
+            {
+                return;
+            }
+
+            var array = PageObject as CLPArray;
+            if (array == null)
+            {
+                return;
+            }
+
+            array.IsRowsObscured = !array.IsRowsObscured;
+            _toggleObscureColumnsButton.IsEnabled = !array.IsRowsObscured;
         }
 
         private void toggleGridLinesButton_Checked(object sender, RoutedEventArgs e)
@@ -110,7 +176,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                          clpArray.IsGridOn));
         }
 
-        #endregion //Constructor
+        #endregion //Buttons
 
         #region Model
 
@@ -219,15 +285,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(HorizontalDivisionsProperty, value); }
         }
 
-        public static readonly PropertyData HorizontalDivisionsProperty = RegisterProperty("HorizontalDivisions",
-                                                                                           typeof (ObservableCollection<CLPArrayDivision>),
-                                                                                           null,
-                                                                                           Divisions_Changed);
-
-        private static void Divisions_Changed(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
-        {
-            //throw new NotImplementedException();
-        }
+        public static readonly PropertyData HorizontalDivisionsProperty = RegisterProperty("HorizontalDivisions", typeof (ObservableCollection<CLPArrayDivision>));
 
         /// <summary>Gets or sets the VerticalDivisions value.</summary>
         [ViewModelToModel("PageObject")]
@@ -238,6 +296,26 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData VerticalDivisionsProperty = RegisterProperty("VerticalDivisions", typeof (ObservableCollection<CLPArrayDivision>));
+
+        /// <summary>Toggles visibility of Columns obscurer.</summary>
+        [ViewModelToModel("PageObject")]
+        public bool IsColumnsObscured
+        {
+            get { return GetValue<bool>(IsColumnsObscuredProperty); }
+            set { SetValue(IsColumnsObscuredProperty, value); }
+        }
+
+        public static readonly PropertyData IsColumnsObscuredProperty = RegisterProperty("IsColumnsObscured", typeof (bool));
+
+        /// <summary>Toggles visibity of Row obscurer.</summary>
+        [ViewModelToModel("PageObject")]
+        public bool IsRowsObscured
+        {
+            get { return GetValue<bool>(IsRowsObscuredProperty); }
+            set { SetValue(IsRowsObscuredProperty, value); }
+        }
+
+        public static readonly PropertyData IsRowsObscuredProperty = RegisterProperty("IsRowsObscured", typeof (bool));
 
         #endregion //Model
 

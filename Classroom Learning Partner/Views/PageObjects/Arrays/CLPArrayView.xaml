@@ -298,7 +298,30 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </Thumb>
+
+            <!--Row Obscurer-->
+            <Polygon Grid.Row="1"
+                     Grid.Column="1"
+                     IsHitTestVisible="False"
+                     Stroke="PowderBlue"
+                     StrokeThickness="3"
+                     Fill="White"
+                     Points="5,0 15,0 12.5,30 17.5,30 12.5,60 17.5,60 15,100 5,100 7.5,70 2.5,70 7.5,40 2.5,40"
+                     Height="{Binding ArrayWidth}"
+                     Width="{Binding GridSquareSize}"
+                     Stretch="Fill"
+                     Visibility="{Binding IsRowsObscured, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Polygon.LayoutTransform>
+                    <TransformGroup>
+                        <ScaleTransform />
+                        <SkewTransform />
+                        <RotateTransform Angle="-90" />
+                        <TranslateTransform />
+                    </TransformGroup>
+                </Polygon.LayoutTransform>
+            </Polygon>
             
+            <!--Column Obscurer-->
             <Polygon Grid.Row="1"
                      Grid.Column="1"
                      IsHitTestVisible="False"
@@ -308,7 +331,8 @@
                      Points="5,0 15,0 12.5,30 17.5,30 12.5,60 17.5,60 15,100 5,100 7.5,70 2.5,70 7.5,40 2.5,40"
                      Height="{Binding ArrayHeight}"
                      Width="{Binding GridSquareSize}" 
-                     Stretch="Fill" />
+                     Stretch="Fill"
+                     Visibility="{Binding IsColumnsObscured, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
             <!--Horizontal Divisions-->
             <ItemsControl Grid.Row="1"

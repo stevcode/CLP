@@ -21,6 +21,8 @@ namespace CLP.Entities
     [Serializable]
     public class CLPArray : ACLPArrayBase, ICountable, ICuttable, IStrokeAccepter
     {
+        private const double MIN_ARRAY_LENGTH = 25.0;
+
         #region Constructors
 
         /// <summary>Initializes <see cref="CLPArray" /> from scratch.</summary>
@@ -54,8 +56,6 @@ namespace CLP.Entities
         #endregion //Constructors
 
         #region Properties
-
-        private const double MIN_ARRAY_LENGTH = 25.0;
 
         public override double MinimumGridSquareSize
         {
