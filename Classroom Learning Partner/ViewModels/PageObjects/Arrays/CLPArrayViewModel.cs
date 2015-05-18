@@ -626,7 +626,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 #endregion //Snap to FFC
 
-                if (isVerticalIntersection && snappingArray.Rows == persistingArray.Rows)
+                if (isVerticalIntersection && snappingArray.Rows == persistingArray.Rows &&
+                    !snappingArray.IsRowsObscured &&
+                    !persistingArray.IsRowsObscured)
                 {
                     var rightDiff =
                         Math.Abs(snappingArray.XPosition + snappingArray.LabelLength - (persistingArray.XPosition + persistingArray.LabelLength + persistingArray.ArrayWidth));
@@ -655,7 +657,9 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                 }
 
-                if (isHorizontalIntersection && snappingArray.Columns == persistingArray.Columns)
+                if (isHorizontalIntersection && snappingArray.Columns == persistingArray.Columns &&
+                    !snappingArray.IsColumnsObscured &&
+                    !persistingArray.IsColumnsObscured)
                 {
                     var bottomDiff =
                         Math.Abs(snappingArray.YPosition + snappingArray.LabelLength - (persistingArray.YPosition + persistingArray.LabelLength + persistingArray.ArrayHeight));
@@ -730,7 +734,8 @@ namespace Classroom_Learning_Partner.ViewModels
                         closestPersistingArray.HorizontalDivisions.Add(new CLPArrayDivision(horizontalDivision.Orientation,
                                                                                             horizontalDivision.Position + snappingArray.ArrayHeight,
                                                                                             horizontalDivision.Length,
-                                                                                            horizontalDivision.Value));
+                                                                                            horizontalDivision.Value,
+                                                                                            horizontalDivision.IsObscured));
                     }
 
                     closestPersistingArray.Rows += snappingArray.Rows;
@@ -765,7 +770,8 @@ namespace Classroom_Learning_Partner.ViewModels
                             closestPersistingArray.HorizontalDivisions.Add(new CLPArrayDivision(horizontalDivision.Orientation,
                                                                                                 horizontalDivision.Position + closestPersistingArray.ArrayHeight,
                                                                                                 horizontalDivision.Length,
-                                                                                                horizontalDivision.Value));
+                                                                                                horizontalDivision.Value,
+                                                                                                horizontalDivision.IsObscured));
                         }
                     }
 
@@ -805,7 +811,8 @@ namespace Classroom_Learning_Partner.ViewModels
                         closestPersistingArray.VerticalDivisions.Add(new CLPArrayDivision(verticalDivision.Orientation,
                                                                                           verticalDivision.Position + snappingArray.ArrayWidth,
                                                                                           verticalDivision.Length,
-                                                                                          verticalDivision.Value));
+                                                                                          verticalDivision.Value,
+                                                                                          verticalDivision.IsObscured));
                     }
 
                     closestPersistingArray.Columns += snappingArray.Columns;
@@ -840,7 +847,8 @@ namespace Classroom_Learning_Partner.ViewModels
                             closestPersistingArray.VerticalDivisions.Add(new CLPArrayDivision(verticalDivision.Orientation,
                                                                                               verticalDivision.Position + closestPersistingArray.ArrayWidth,
                                                                                               verticalDivision.Length,
-                                                                                              verticalDivision.Value));
+                                                                                              verticalDivision.Value,
+                                                                                              verticalDivision.IsObscured));
                         }
                     }
 
@@ -1304,7 +1312,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 strokeLeft >= cuttableLeft &&
                 strokeTop - cuttableTop <= MIN_THRESHHOLD &&
                 cuttableBottom - strokeBottom <= MIN_THRESHHOLD &&
-                array.Columns > 1) //Vertical Stroke. Stroke must be within the bounds of the pageObject
+                array.Columns > 1 &&
+                !array.IsColumnsObscured) //Vertical Stroke. Stroke must be within the bounds of the pageObject
             {
                 oldRegions = array.VerticalDivisions.ToList();
                 var average = (strokeRight + strokeLeft) / 2;
@@ -1361,7 +1370,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 strokeTop >= cuttableTop &&
                 cuttableRight - strokeRight <= MIN_THRESHHOLD &&
                 strokeLeft - cuttableLeft <= MIN_THRESHHOLD &&
-                array.Rows > 1) //Horizontal Stroke. Stroke must be within the bounds of the pageObject
+                array.Rows > 1 &&
+                !array.IsRowsObscured) //Horizontal Stroke. Stroke must be within the bounds of the pageObject
             {
                 oldRegions = array.HorizontalDivisions.ToList();
                 var average = (strokeTop + strokeBottom) / 2;

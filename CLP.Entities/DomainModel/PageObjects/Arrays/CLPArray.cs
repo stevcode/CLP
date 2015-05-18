@@ -71,18 +71,6 @@ namespace CLP.Entities
 
         public static readonly PropertyData ArrayTypeProperty = RegisterProperty("ArrayType", typeof (ArrayTypes), ArrayTypes.Array);
 
-        /// <summary>Signifies obscuring shape over Rows.</summary>
-        public bool IsRowsObscured
-        {
-            get { return HorizontalDivisions.Any(d => d.IsObscured); }
-        }
-
-        /// <summary>Signifies obscuring shape over Columns.</summary>
-        public bool IsColumnsObscured
-        {
-            get { return VerticalDivisions.Any(d => d.IsObscured); }
-        }
-
         #endregion //Properties
 
         #region Methods

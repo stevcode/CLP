@@ -20,12 +20,13 @@ namespace CLP.Entities
 
         public CLPArrayDivision() { }
 
-        public CLPArrayDivision(ArrayDivisionOrientation orientation, double position, double length, int value)
+        public CLPArrayDivision(ArrayDivisionOrientation orientation, double position, double length, int value, bool isObscured = false)
         {
             Orientation = orientation;
             Position = position;
             Length = length;
             Value = value;
+            IsObscured = isObscured;
         }
 
         /// <summary>Initializes a new object based on <see cref="SerializationInfo" />.</summary>
@@ -252,6 +253,18 @@ namespace CLP.Entities
         }
 
         public abstract double MinimumGridSquareSize { get; }
+
+        /// <summary>Signifies obscuring shape over Rows.</summary>
+        public bool IsRowsObscured
+        {
+            get { return HorizontalDivisions.Any(d => d.IsObscured); }
+        }
+
+        /// <summary>Signifies obscuring shape over Columns.</summary>
+        public bool IsColumnsObscured
+        {
+            get { return VerticalDivisions.Any(d => d.IsObscured); }
+        }
 
         #endregion //Calculated Properties
 
