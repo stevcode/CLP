@@ -500,7 +500,8 @@ namespace CLP.Entities
                 strokeLeft >= cuttableLeft &&
                 strokeTop - cuttableTop <= MIN_THRESHHOLD &&
                 cuttableBottom - strokeBottom <= MIN_THRESHHOLD &&
-                Columns > 1) //Vertical Cut Stroke. Stroke must be within the bounds of the pageObject
+                Columns > 1 &&
+                !IsRowsObscured) //Vertical Cut Stroke. Stroke must be within the bounds of the pageObject
             {
                 var average = (strokeRight + strokeLeft) / 2;
                 var relativeAverage = average - LabelLength - XPosition;
@@ -542,7 +543,8 @@ namespace CLP.Entities
                      strokeTop >= cuttableTop &&
                      cuttableRight - strokeRight <= MIN_THRESHHOLD &&
                      strokeLeft - cuttableLeft <= MIN_THRESHHOLD &&
-                     Rows > 1) //Horizontal Cut Stroke. Stroke must be within the bounds of the pageObject
+                     Rows > 1 &&
+                     !IsColumnsObscured) //Horizontal Cut Stroke. Stroke must be within the bounds of the pageObject
             {
                 var average = (strokeTop + strokeBottom) / 2;
                 var relativeAverage = average - LabelLength - YPosition;
