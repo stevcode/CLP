@@ -574,9 +574,6 @@
     <Compile Include="Views\Panels\WebcamPanelView.xaml.cs">
       <DependentUpon>WebcamPanelView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\RibbonView.xaml.cs">
-      <DependentUpon>RibbonView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Ribbon\AnimationControlRibbonView.xaml.cs">
       <DependentUpon>AnimationControlRibbonView.xaml</DependentUpon>
     </Compile>
@@ -908,10 +905,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Panels\WebcamPanelView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\RibbonView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
