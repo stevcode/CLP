@@ -223,7 +223,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Converters\AddLengthConverter.cs" />
+    <Compile Include="Converters\IncreaseDoubleConverter.cs" />
     <Compile Include="Converters\DifferentiationGroupDisplayConverter.cs" />
     <Compile Include="Converters\EmptyListToVisibilityConverter.cs" />
     <Compile Include="Converters\MultiplyAllMultiConverter.cs" />

@@ -9,7 +9,6 @@
 
     <UserControl.Resources>
         <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
-        <oldconv:LengthConverter x:Key="LengthConverter" />
         <oldconv:NegativeLengthSubtractConverter x:Key="NegativeLengthSubtractConverter" />
         <conv:ZeroToQuestionMarkConverter x:Key="ZeroToQuestionMarkConverter" />
         <conv:DoubleToVisibilityConverter x:Key="DoubleToVisibilityConverter" />
@@ -60,8 +59,8 @@
                            RadiusY="10"
                            Canvas.Top="-5"
                            Canvas.Left="-5"
-                           Width="{Binding Width, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
-                           Height="{Binding Height, Converter={StaticResource LengthConverter}, ConverterParameter=10}" />
+                           Width="{Binding Width, Converter={conv:IncreaseDoubleConverter}, ConverterParameter=10}"
+                           Height="{Binding Height, Converter={conv:IncreaseDoubleConverter}, ConverterParameter=10}" />
 
                 <Rectangle Stroke="{DynamicResource DynamicMainColor}"
                            StrokeThickness="1"
@@ -69,8 +68,8 @@
                            RadiusY="10"
                            Canvas.Top="-5"
                            Canvas.Left="-5"
-                           Width="{Binding Width, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
-                           Height="{Binding Height, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
+                           Width="{Binding Width, Converter={conv:IncreaseDoubleConverter}, ConverterParameter=10}"
+                           Height="{Binding Height, Converter={conv:IncreaseDoubleConverter}, ConverterParameter=10}"
                            Visibility="{Binding MainWindowViewModel.IsUsingOldPageObjectBoundary, Source={x:Static Application.Current}, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}" />
 
                 <Rectangle Stroke="Black"
@@ -80,8 +79,8 @@
                            RadiusY="10"
                            Canvas.Top="-5"
                            Canvas.Left="-5"
-                           Width="{Binding Width, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
-                           Height="{Binding Height, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
+                           Width="{Binding Width, Converter={conv:IncreaseDoubleConverter}, ConverterParameter=10}"
+                           Height="{Binding Height, Converter={conv:IncreaseDoubleConverter}, ConverterParameter=10}"
                            Visibility="{Binding MainWindowViewModel.IsUsingOldPageObjectBoundary, Source={x:Static Application.Current}, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />
 
                 <!--Close Button-->
@@ -319,7 +318,7 @@
                                        Height="3"
                                        Margin="3 0"
                                        Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, 
-                                                                    Converter={StaticResource LengthConverter}, 
+                                                                    Converter={conv:IncreaseDoubleConverter}, 
                                                                     ConverterParameter=-6}"
                                        StrokeThickness="0"
                                        Fill="{StaticResource LeftLabelColor}"
@@ -398,7 +397,7 @@
                                        Width="3"
                                        Margin="0 3"
                                        Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, 
-                                                                      Converter={StaticResource LengthConverter}, 
+                                                                      Converter={conv:IncreaseDoubleConverter}, 
                                                                       ConverterParameter=-6}"
                                        StrokeThickness="0"
                                        Fill="{StaticResource TopLabelColor}"

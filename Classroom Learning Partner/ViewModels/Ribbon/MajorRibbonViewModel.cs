@@ -712,12 +712,12 @@ namespace Classroom_Learning_Partner.ViewModels
             Buttons.Add(_insertDivisionTemplateButton);
 
             //// Insert Shapes
-            //Buttons.Add(Separater);
-            //Buttons.Add(_insertSquareButton);
-            //Buttons.Add(_insertCircleButton);
-            //Buttons.Add(_insertHorizontalLineButton);
-            //Buttons.Add(_insertVerticalLineButton);
-            ////Buttons.Add(_insertProtractorButton);
+            Buttons.Add(Separater);
+            Buttons.Add(_insertSquareButton);
+            Buttons.Add(_insertCircleButton);
+            Buttons.Add(_insertHorizontalLineButton);
+            Buttons.Add(_insertVerticalLineButton);
+            //Buttons.Add(_insertProtractorButton);
 
             //// Insert Text Box
             Buttons.Add(Separater);
