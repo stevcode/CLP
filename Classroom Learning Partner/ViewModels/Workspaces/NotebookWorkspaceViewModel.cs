@@ -453,12 +453,10 @@ namespace Classroom_Learning_Partner.ViewModels
                     if (mainWindow.IsAuthoring)
                     {
                         WorkspaceBackgroundColor = new SolidColorBrush(Colors.Salmon);
-                        mainWindow.Ribbon.AuthoringTabVisibility = Visibility.Visible;
                     }
                     else
                     {
                         WorkspaceBackgroundColor = (SolidColorBrush)(new BrushConverter().ConvertFrom("#F3F3F3"));
-                        mainWindow.Ribbon.AuthoringTabVisibility = Visibility.Collapsed;
                     }
                 }
             }

@@ -232,6 +232,13 @@
         <StackPanel DockPanel.Dock="Right"
                     Orientation="Horizontal">
 
+            <customControls:ToggleRibbonButton UnCheckedText="Grid Display"
+                                               CheckedText="Single Display"
+                                               LargeImageSource="pack://application:,,,/Resources/Images/Projector32.png"
+                                               IsChecked="{Binding MainWindowViewModel.IsProjectorFrozen, Source={x:Static Application.Current}}"
+                                               IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
+                                               Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
+
             <customControls:ToggleRibbonButton UnCheckedText="Show Displays"
                                                CheckedText="Hide Displays"
                                                LargeImageSource="pack://application:,,,/Resources/Images/Displays32.png"
