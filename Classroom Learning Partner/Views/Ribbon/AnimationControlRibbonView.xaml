@@ -384,7 +384,7 @@
                     VerticalAlignment="Center"
                     Style="{StaticResource AnimationSliderStyle}"
                     Height="25"
-                    Width="{Binding ActualWidth, ElementName=PlaybackControls, Converter={conv:IncreaseDoubleConverter}, ConverterParameter=-200}"
+                    Width="{Binding ActualWidth, ElementName=PlaybackControls, Converter={conv:IncreaseNumberConverter}, ConverterParameter=-200}"
                     Minimum="0"
                     Maximum="{Binding CurrentPage.History.PlaybackLength}"
                     Value="{Binding CurrentPage.History.CurrentHistoryTick}"

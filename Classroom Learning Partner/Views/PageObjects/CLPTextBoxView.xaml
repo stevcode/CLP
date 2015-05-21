@@ -31,8 +31,8 @@
                            RadiusY="10"
                            Canvas.Top="-5"
                            Canvas.Left="-5"
-                           Width="{Binding Width, Converter={conv:IncreaseDoubleConverter}, ConverterParameter=10}"
-                           Height="{Binding Height, Converter={conv:IncreaseDoubleConverter}, ConverterParameter=10}" />
+                           Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}" />
 
                 <Rectangle Stroke="{DynamicResource DynamicMainColor}"
                            StrokeThickness="1"
@@ -40,8 +40,8 @@
                            RadiusY="10"
                            Canvas.Top="-5"
                            Canvas.Left="-5"
-                           Width="{Binding Width, Converter={conv:IncreaseDoubleConverter}, ConverterParameter=10}"
-                           Height="{Binding Height, Converter={conv:IncreaseDoubleConverter}, ConverterParameter=10}"
+                           Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
                            Visibility="{Binding MainWindowViewModel.IsUsingOldPageObjectBoundary, Source={x:Static Application.Current}, Converter={catel:BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}" />
 
                 <Rectangle Stroke="Black"
@@ -51,8 +51,8 @@
                            RadiusY="10"
                            Canvas.Top="-5"
                            Canvas.Left="-5"
-                           Width="{Binding Width, Converter={conv:IncreaseDoubleConverter}, ConverterParameter=10}"
-                           Height="{Binding Height, Converter={conv:IncreaseDoubleConverter}, ConverterParameter=10}"
+                           Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
                            Visibility="{Binding MainWindowViewModel.IsUsingOldPageObjectBoundary, Source={x:Static Application.Current}, Converter={catel:BooleanToCollapsingVisibilityConverter}}" />
 
                 <!--Close Button-->

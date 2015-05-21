@@ -4,32 +4,27 @@ using Catel.Windows.Data.Converters;
 
 namespace Classroom_Learning_Partner.Converters
 {
-    [ValueConversion(typeof(double), typeof(double))]
-    public class IncreaseDoubleConverter : ValueConverterBase
+    [ValueConversion(typeof (double), typeof (double))]
+    public class IncreaseNumberConverter : ValueConverterBase
     {
         protected override object Convert(object value, Type targetType, object parameter)
         {
-            var originalValue = 0d;
-
-            if (value is int)
+            double originalValue;
+            try
             {
                 originalValue = System.Convert.ToDouble(value);
             }
-            else if (value is double)
+            catch (Exception)
             {
-                originalValue = (double)value;
+                return 0;
             }
 
             double increasedAmount;
-            if (parameter is int)
+            try
             {
                 increasedAmount = System.Convert.ToDouble(parameter);
             }
-            else if (parameter is double)
-            {
-                increasedAmount = (double)parameter;
-            }
-            else if (!double.TryParse(parameter as string, out increasedAmount))
+            catch (Exception)
             {
                 return originalValue;
             }

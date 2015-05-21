@@ -20,8 +20,8 @@
                 <Rectangle Stroke="Black" StrokeDashArray="0.5 1.0 0.3" StrokeThickness="2" 
                                     RadiusX="10" RadiusY="10"
                                     Canvas.Top="-5" Canvas.Left="-5"
-                           Width="{Binding Converter={conv:IncreaseDoubleConverter},Path=Width, ConverterParameter=10}"
-                           Height="{Binding Converter={conv:IncreaseDoubleConverter},Path=Height, ConverterParameter=10}" />
+                           Width="{Binding Converter={conv:IncreaseNumberConverter},Path=Width, ConverterParameter=10}"
+                           Height="{Binding Converter={conv:IncreaseNumberConverter},Path=Height, ConverterParameter=10}" />
 
                 <!--Close Button-->
                 <Button x:Name="AdornerClose"

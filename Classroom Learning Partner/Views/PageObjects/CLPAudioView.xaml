@@ -36,8 +36,8 @@
                            RadiusY="10"
                            Canvas.Top="-5"
                            Canvas.Left="-5"
-                           Width="{Binding Width, Converter={conv:IncreaseDoubleConverter}, ConverterParameter=10}"
-                           Height="{Binding Height, Converter={conv:IncreaseDoubleConverter}, ConverterParameter=10}" />
+                           Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}" />
 
                 <Rectangle Stroke="{DynamicResource DynamicMainColor}"
                            StrokeThickness="1"
@@ -45,8 +45,8 @@
                            RadiusY="10"
                            Canvas.Top="-5"
                            Canvas.Left="-5"
-                           Width="{Binding Width, Converter={conv:IncreaseDoubleConverter}, ConverterParameter=10}"
-                           Height="{Binding Height, Converter={conv:IncreaseDoubleConverter}, ConverterParameter=10}" />
+                           Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}" />
 
             </Canvas>
         </ac:AdornedControl.AdornerContent>

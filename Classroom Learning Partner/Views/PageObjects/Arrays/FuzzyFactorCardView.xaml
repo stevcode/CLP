@@ -63,8 +63,8 @@
                            RadiusY="10"
                            Canvas.Top="-5"
                            Canvas.Left="-5"
-                           Width="{Binding Width, Converter={conv:IncreaseDoubleConverter}, ConverterParameter=14}"
-                           Height="{Binding Height, Converter={conv:IncreaseDoubleConverter}, ConverterParameter=14}" />
+                           Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=14}"
+                           Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=14}" />
 
                 <Rectangle Stroke="{DynamicResource DynamicMainColor}"
                            StrokeThickness="1"
@@ -72,8 +72,8 @@
                            RadiusY="10"
                            Canvas.Top="-5"
                            Canvas.Left="-5"
-                           Width="{Binding Width, Converter={conv:IncreaseDoubleConverter}, ConverterParameter=14}"
-                           Height="{Binding Height, Converter={conv:IncreaseDoubleConverter}, ConverterParameter=14}"
+                           Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=14}"
+                           Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=14}"
                            Visibility="{Binding MainWindowViewModel.IsUsingOldPageObjectBoundary, Source={x:Static Application.Current}, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}" />
 
                 <Rectangle Stroke="Black"
@@ -83,8 +83,8 @@
                            RadiusY="10"
                            Canvas.Top="-5"
                            Canvas.Left="-5"
-                           Width="{Binding Width, Converter={conv:IncreaseDoubleConverter}, ConverterParameter=10}"
-                           Height="{Binding Height, Converter={conv:IncreaseDoubleConverter}, ConverterParameter=10}"
+                           Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
                            Visibility="{Binding MainWindowViewModel.IsUsingOldPageObjectBoundary, Source={x:Static Application.Current}, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />
 
                 <!--Close Button-->
@@ -194,7 +194,7 @@
                     Grid.ColumnSpan="2"
                     Background="Transparent"
                     Height="{Binding ArrayHeight}"
-                    Width="{Binding ArrayWidth, Converter={conv:IncreaseDoubleConverter}, ConverterParameter=3}"
+                    Width="{Binding ArrayWidth, Converter={conv:IncreaseNumberConverter}, ConverterParameter=3}"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     BorderThickness="0 3 0 3"
@@ -311,7 +311,7 @@
                                 <Rectangle Width="{Binding Length}"
                                            Margin="0 3"
                                            Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, 
-                                                                      Converter={conv:IncreaseDoubleConverter}, 
+                                                                      Converter={conv:IncreaseNumberConverter}, 
                                                                       ConverterParameter=-6}"
                                            StrokeThickness="0"
                                            Opacity=".3">
@@ -329,7 +329,7 @@
                                            Width="3"
                                            Margin="0 3"
                                            Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, 
-                                                                      Converter={conv:IncreaseDoubleConverter}, 
+                                                                      Converter={conv:IncreaseNumberConverter}, 
                                                                       ConverterParameter=-6}"
                                            StrokeThickness="0"
                                            Fill="{StaticResource DividerColor}"
