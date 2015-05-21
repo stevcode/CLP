@@ -8,11 +8,7 @@
                    xmlns:entities="clr-namespace:CLP.Entities;assembly=CLP.Entities">
 
     <UserControl.Resources>
-        <catel:BooleanToHidingVisibilityConverter x:Key="BooleanToHidingVisibilityConverter" />
-        <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
-        <catel:BooleanToOppositeBooleanConverter x:Key="BooleanToOppositeBooleanConverter" />
         <conv:EnumToBoolConverter x:Key="EnumToBoolConverter" />
-        <conv:BoolToDoubleConverter x:Key="BoolToDoubleConverter" />
         <conv:BoolZeroToQuestionMarkMultiConverter x:Key="BoolZeroToQuestionMarkMultiConverter" />
     </UserControl.Resources>
 
@@ -42,7 +38,7 @@
                            Canvas.Left="-5"
                            Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
                            Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
-                           Visibility="{Binding IsDefaultAdornersVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />
+                           Visibility="{Binding IsDefaultAdornersVisible, Converter={catel:BooleanToCollapsingVisibilityConverter}}" />
 
                 <Rectangle Stroke="{DynamicResource DynamicMainColor}"
                            StrokeThickness="1"
@@ -52,7 +48,7 @@
                            Canvas.Left="-5"
                            Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
                            Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
-                           Visibility="{Binding IsDefaultAdornersVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />
+                           Visibility="{Binding IsDefaultAdornersVisible, Converter={catel:BooleanToCollapsingVisibilityConverter}}" />
                 
                 <!--Close Button-->
                 <Button Command="{Binding RemovePageObjectCommand}"
@@ -61,7 +57,7 @@
                         Canvas.Left="-40"
                         Canvas.Top="-40"
                         Cursor="Hand"
-                        Visibility="{Binding IsDefaultAdornersVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
+                        Visibility="{Binding IsDefaultAdornersVisible, Converter={catel:BooleanToCollapsingVisibilityConverter}}">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Grid>
@@ -86,7 +82,7 @@
                        Height="40"
                        Canvas.Right="-40"
                        Canvas.Bottom="-40"
-                       Visibility="{Binding IsDefaultAdornersVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
+                       Visibility="{Binding IsDefaultAdornersVisible, Converter={catel:BooleanToCollapsingVisibilityConverter}}">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="DragStarted">
                             <catel:EventToCommand Command="{Binding ResizeStartPageObjectCommand}"
@@ -124,7 +120,7 @@
                 <Grid Canvas.Left="{Binding GhostOffsetX}"
                       Canvas.Top="{Binding GhostOffsetY}"
                       Width="{Binding Width}"
-                      Visibility="{Binding IsGhostVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
+                      Visibility="{Binding IsGhostVisible, Converter={catel:BooleanToCollapsingVisibilityConverter}}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
@@ -154,9 +150,21 @@
                             Height="{Binding ActualHeight, Source={x:Reference StampBody}}"
                             BorderBrush="Black"
                             BorderThickness="2"
-                            CornerRadius="{Binding IsGroupStamp, Converter={StaticResource BoolToDoubleConverter}, ConverterParameter=5}"
                             VerticalAlignment="Stretch"
                             Margin="0">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius"
+                                        Value="0" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsGroupStamp}"
+                                                 Value="True">
+                                        <Setter Property="CornerRadius"
+                                                Value="5" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
                         <Image Source="{Binding GhostBodyImage}"
                                HorizontalAlignment="Stretch"
                                VerticalAlignment="Stretch"
@@ -178,7 +186,7 @@
             <Thumb Grid.Row="0"
                    MouseEnter="StampHandleHitBox_MouseEnter"
                    MouseLeave="StampHandleHitBox_MouseLeave"
-                   Visibility="{Binding IsDraggableStamp, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}">
+                   Visibility="{Binding IsDraggableStamp, Converter={catel:BooleanToCollapsingVisibilityConverter}}">
                 <Thumb.Template>
                     <ControlTemplate>
                         <Polygon Tag="StampHandleHitBox"
@@ -355,7 +363,7 @@
                         Margin="-5 2 0 0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
-                        Visibility="{Binding IsDraggableStamp, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}">
+                        Visibility="{Binding IsDraggableStamp, Converter={catel:BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}">
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Grid>
@@ -378,7 +386,7 @@
                            FontSize="60"
                            TextAlignment="Center"
                            VerticalAlignment="Bottom"
-                           Visibility="{Binding IsDraggableStamp, Converter={StaticResource BooleanToHidingVisibilityConverter}}">
+                           Visibility="{Binding IsDraggableStamp, Converter={catel:BooleanToHidingVisibilityConverter}}">
                     <TextBlock.Text>
                         <MultiBinding Converter="{StaticResource BoolZeroToQuestionMarkMultiConverter}">
                             <Binding Path="Parts" />
@@ -388,11 +396,11 @@
                 </TextBlock>
 
                 <Rectangle Tag="PartsHitBox"
-                           IsHitTestVisible="{Binding IsGroupStamp, Converter={StaticResource BooleanToOppositeBooleanConverter}}"
+                           IsHitTestVisible="{Binding IsGroupStamp, Converter={catel:BooleanToOppositeBooleanConverter}}"
                            StrokeThickness="0"
                            Fill="Transparent"
                            Height="{Binding PageObject.PartsHeight}"
-                           Visibility="{Binding IsDraggableStamp, Converter={StaticResource BooleanToHidingVisibilityConverter}}">
+                           Visibility="{Binding IsDraggableStamp, Converter={catel:BooleanToHidingVisibilityConverter}}">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="MouseUp">
                             <catel:EventToCommand Command="{Binding ShowKeyPadCommand}" />

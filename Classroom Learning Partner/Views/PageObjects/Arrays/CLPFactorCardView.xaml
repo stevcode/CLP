@@ -8,7 +8,6 @@
 
     <UserControl.Resources>
         <conv:MultiplyAllIntToTextMultiConverter x:Key="MultiplyAllIntToTextMultiConverter" />
-        <conv:BooleanToOppositeVisibilityConverter x:Key="BooleanToOppositeVisibilityConverter" />
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 
         <SolidColorBrush x:Key="TopLabelColor" Color="DarkOrange" />
@@ -186,7 +185,7 @@
                        Foreground="{StaticResource TopLabelColor}"
                        Height="{Binding PageObject.LabelLength}"
                        Width="{Binding ArrayWidth}"
-                       Visibility="{Binding IsTopLabelVisible, Converter={StaticResource BooleanToOppositeVisibilityConverter}}"/>
+                       Visibility="{Binding IsTopLabelVisible, Converter={catel:BooleanToHidingVisibilityConverter}, ConverterParameter=False}"/>
 
             <!--Left Labels-->
             <TextBlock Grid.Column="0" Grid.Row="1" IsHitTestVisible="False"
@@ -195,7 +194,7 @@
                        Foreground="{StaticResource LeftLabelColor}"
                        Height="{Binding PageObject.LabelLength}"
                        Width="{Binding ArrayHeight}"
-                       Visibility="{Binding IsTopLabelVisible, Converter={StaticResource BooleanToOppositeVisibilityConverter}}">
+                       Visibility="{Binding IsTopLabelVisible, Converter={catel:BooleanToHidingVisibilityConverter}, ConverterParameter=False}">
                 <TextBlock.LayoutTransform>
                     <TransformGroup>
                         <ScaleTransform />

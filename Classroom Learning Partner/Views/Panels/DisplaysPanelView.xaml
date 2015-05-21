@@ -18,7 +18,6 @@
             <catel:BooleanToCollapsingVisibilityConverter x:Key="OppositeBooleanToCollapsingVisibilityConverter" />
             <conv:PanelLocationToThicknessConverter x:Key="PanelLocationToThicknessConverter" />
             <conv:ItemSelectedToColorConverter x:Key="PageOrDisplaySelectionColorConverter" />
-            <conv:HeightToWidthAspectRatioMultiConverter x:Key="HeightToWidthAspectRatioMultiConverter" />
             <conv:WidthToHeightAspectRatioMultiConverter x:Key="WidthToHeightAspectRatioMultiConverter" />
 
             <!-- Style to override ListBoxItem selection visuals for Displays -->

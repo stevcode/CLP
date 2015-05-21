@@ -11,9 +11,9 @@ namespace Classroom_Learning_Partner.Converters
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             var result = false;
-            foreach(var value in values.Where(value => value is bool))
+            foreach (var value in values.Where(value => value is bool))
             {
-                if((bool)value)
+                if ((bool)value)
                 {
                     result = true;
                 }
@@ -24,12 +24,11 @@ namespace Classroom_Learning_Partner.Converters
                 }
             }
 
-            return result ? Visibility.Visible : Visibility.Collapsed;
+            var nonVisibleType = parameter is Visibility ? parameter : Visibility.Collapsed;
+
+            return result ? Visibility.Visible : nonVisibleType;
         }
 
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) { return null; }
     }
 }
