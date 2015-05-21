@@ -5,13 +5,12 @@
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:ac="clr-namespace:AdornedControl"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
-                   xmlns:oconv="clr-namespace:Classroom_Learning_Partner.Resources"
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views">
     
     <UserControl.Resources>
-        <oconv:HalfLengthConverter x:Key="HalfLengthConverter"/>
+        <!--<oconv:HalfLengthConverter x:Key="HalfLengthConverter"/>
         <oconv:LengthSubtractConverter x:Key="LengthSubtractConverter"/>
-        <oconv:HeaderVisibilityConverter x:Key="HeaderVisibilityConverter"/>
+        <oconv:HeaderVisibilityConverter x:Key="HeaderVisibilityConverter"/>-->
         
 
         <Style x:Key="GridPartStyle">
