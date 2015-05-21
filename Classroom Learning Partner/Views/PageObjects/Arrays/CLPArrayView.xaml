@@ -4,12 +4,10 @@
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:ac="clr-namespace:AdornedControl"
-                   xmlns:oldconv="clr-namespace:Classroom_Learning_Partner.Resources"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters">
 
     <UserControl.Resources>
         <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
-        <oldconv:NegativeLengthSubtractConverter x:Key="NegativeLengthSubtractConverter" />
         <conv:ZeroToQuestionMarkConverter x:Key="ZeroToQuestionMarkConverter" />
         <conv:DoubleToVisibilityConverter x:Key="DoubleToVisibilityConverter" />
         <conv:RatioToRectMultiConverter x:Key="RatioToRectMultiConverter" />
@@ -336,8 +334,8 @@
                             <Grid
                                 Canvas.Right="{Binding DataContext.PageObject.LabelLength, 
                                                          RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}},
-                                                         Converter={StaticResource NegativeLengthSubtractConverter},
-                                                         ConverterParameter=0}"
+                                                         Converter={conv:MultiplyNumberConverter},
+                                                         ConverterParameter=-1}"
                                 Height="{Binding Length}"
                                 Width="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
                                 <TextBlock IsHitTestVisible="False"
@@ -415,8 +413,8 @@
                             <Grid
                                 Canvas.Bottom="{Binding DataContext.PageObject.LabelLength, 
                                                           RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}},
-                                                          Converter={StaticResource NegativeLengthSubtractConverter},
-                                                          ConverterParameter=0}"
+                                                          Converter={conv:MultiplyNumberConverter},
+                                                          ConverterParameter=-1}"
                                 Width="{Binding Length}"
                                 Height="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
                                 <TextBlock IsHitTestVisible="False"
