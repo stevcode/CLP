@@ -347,11 +347,16 @@ namespace CLP.Entities
                     numberLineIdentifier = numberLineLetterIDs[nlID];
 
                     var jumpItems = new List<IHistoryItem>();
+                    var jumpAdded = numberLineJumpSizesChanged.AddedJumpStrokeIDs.Any();
                     while (page.History.RedoItems.Any())
                     {
                         var jumpItem = page.History.RedoItems.First() as NumberLineJumpSizesChangedHistoryItem;
                         if (jumpItem != null)
                         {
+                            if (jumpAdded && !jumpItem.AddedJumpStrokeIDs.Any())
+                            {
+                                break;
+                            }
                             jumpItems.Add(jumpItem);
                             page.History.Redo();
                             pageObjectNumberInHistory++;
@@ -602,7 +607,7 @@ namespace CLP.Entities
                         {
                             arrayLetterIDs[halfArray2.ID] = ((char)(arrayDimensions[halfDim2] + 95)).ToString();
                         }
-
+                        System.Console.WriteLine("Cut");
                     }
                     else if (arrayHistoryAction.ArrayAction == ArrayHistoryAction.ArrayActions.Snap)
                     {
@@ -643,6 +648,18 @@ namespace CLP.Entities
                             arrayLetterIDs[persistArray.ID] = ((char)(arrayDimensions[dim] + 95)).ToString();
                         }
 
+                    }
+                    else if (arrayHistoryAction.ArrayAction == ArrayHistoryAction.ArrayActions.Divide)
+                    {
+                        System.Console.WriteLine("Divide");
+                    }
+                    else if (arrayHistoryAction.ArrayAction == ArrayHistoryAction.ArrayActions.InkDivide)
+                    {
+                        System.Console.WriteLine("InkDivide");
+                    }
+                    else if (arrayHistoryAction.ArrayAction == ArrayHistoryAction.ArrayActions.Rotate)
+                    {
+                        System.Console.WriteLine("Rotate");
                     }
                     revisedHistoryActions.Add(arrayHistoryAction);
                     continue;
