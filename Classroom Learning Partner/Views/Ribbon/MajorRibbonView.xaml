@@ -232,12 +232,9 @@
         <StackPanel DockPanel.Dock="Right"
                     Orientation="Horizontal">
 
-            <customControls:ToggleRibbonButton UnCheckedText="Grid Display"
-                                               CheckedText="Single Display"
-                                               LargeImageSource="pack://application:,,,/Resources/Images/Projector32.png"
-                                               IsChecked="{Binding MainWindowViewModel.IsProjectorFrozen, Source={x:Static Application.Current}}"
-                                               IsEnabled="{Binding MainWindow.Workspace, Converter={StaticResource CurrentWorkspaceToButtonEnabledConverter}, ConverterParameter={x:Type viewModels:NotebookWorkspaceViewModel}}"
-                                               Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
+            <customControls:RibbonButton Text="Exit Grid Display"
+                                         Command="{Binding ExitMultiDisplayCommand}"
+                                         LargeImageSource="pack://application:,,,/Resources/Images/Displays32.png" />
 
             <customControls:ToggleRibbonButton UnCheckedText="Show Displays"
                                                CheckedText="Hide Displays"
@@ -272,8 +269,6 @@
             <customControls:RibbonButton Text="Send To Teacher"
                                          Command="{Binding SubmitPageCommand}"
                                          LargeImageSource="pack://application:,,,/Resources/Images/SingleSubmit32.png" />
-
-
 
         </StackPanel>
 

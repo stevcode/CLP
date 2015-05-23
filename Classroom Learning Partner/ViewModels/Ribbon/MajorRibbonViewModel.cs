@@ -58,6 +58,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void InitializeCommands()
         {
             ShowBackStageCommand = new Command(OnShowBackStageCommandExecute);
+            ExitMultiDisplayCommand = new Command(OnExitMultiDisplayCommandExecute, OnExitMultiDisplayCanExecute);
             UndoCommand = new Command(OnUndoCommandExecute, OnUndoCanExecute);
             RedoCommand = new Command(OnRedoCommandExecute, OnRedoCanExecute);
             LongerPageCommand = new Command(OnLongerPageCommandExecute, OnLongerPageCanExecute);
@@ -449,6 +450,34 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             MainWindow.BackStage.CurrentNavigationPane = NavigationPanes.Info;
             MainWindow.IsBackStageVisible = true;
+        }
+
+        /// <summary>
+        /// If viewing a MultiDisplay, switches to SingleDisplay and closes Displays Panel.
+        /// </summary>
+        public Command ExitMultiDisplayCommand { get; private set; }
+
+        private void OnExitMultiDisplayCommandExecute()
+        {
+            var notebookWorkspace = MainWindow.Workspace as NotebookWorkspaceViewModel;
+            if (notebookWorkspace == null)
+            {
+                return;
+            }
+
+            notebookWorkspace.CurrentDisplay = null;
+            CurrentRightPanel = null;
+        }
+
+        private bool OnExitMultiDisplayCanExecute()
+        {
+            var notebookWorkspace = MainWindow.Workspace as NotebookWorkspaceViewModel;
+            if (notebookWorkspace == null)
+            {
+                return false;
+            }
+
+            return notebookWorkspace.CurrentDisplay != null;
         }
 
         #region History Commands
