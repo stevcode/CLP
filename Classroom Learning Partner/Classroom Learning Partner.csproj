@@ -273,6 +273,8 @@
     <Compile Include="Utilities\RangeHelper.cs" />
     <Compile Include="ViewModels\BackStage\BackStageViewModel.cs" />
     <Compile Include="ViewModels\BackStage\APaneBaseViewModel.cs" />
+    <Compile Include="ViewModels\Displays\AMultiDisplayViewModelBase.cs" />
+    <Compile Include="ViewModels\Displays\ColumnDisplayViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\TextInputViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\MultipleChoiceBoxViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\NumberLineViewModel.cs" />
@@ -332,6 +334,9 @@
       <DependentUpon>OptionsPaneView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\BackStage\OptionsPaneViewModel.cs" />
+    <Compile Include="Views\Displays\ColumnDisplayView.xaml.cs">
+      <DependentUpon>ColumnDisplayView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Modal Windows\AdvancedStagingView.xaml.cs">
       <DependentUpon>AdvancedStagingView.xaml</DependentUpon>
     </Compile>
@@ -611,6 +616,10 @@
     <Page Include="Views\BackStage\OptionsPaneView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Displays\ColumnDisplayView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Modal Windows\AdvancedStagingView.xaml">
       <Generator>MSBuild:Compile</Generator>
