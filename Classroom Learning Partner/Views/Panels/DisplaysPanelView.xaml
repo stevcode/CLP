@@ -48,16 +48,18 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <Rectangle Grid.Row="1"
-                       Height="3"
-                       Stroke="{StaticResource GrayEdgeColor}"
-                       Fill="{StaticResource GrayEdgeColor}" />
-
-            <Button Grid.Row="2"
+            <Button Grid.Row="1"
                     VerticalAlignment="Bottom"
                     Height="32"
                     Command="{Binding AddGridDisplayCommand}">
             New Grid Display
+            </Button>
+
+            <Button Grid.Row="2"
+                    VerticalAlignment="Bottom"
+                    Height="32"
+                    Command="{Binding AddColumnDisplayCommand}">
+                New Column Display
             </Button>
 
             <ListBox Grid.Row="3"

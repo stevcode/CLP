@@ -188,6 +188,10 @@
                     <views:GridDisplayView DataContext="{Binding CurrentDisplay}" />
                 </ControlTemplate>
 
+                <ControlTemplate x:Key="ColumnDisplayTemplate">
+                    <views:ColumnDisplayView DataContext="{Binding CurrentDisplay}" />
+                </ControlTemplate>
+
             </Control.Resources>
 
             <Control.Style>
@@ -209,6 +213,13 @@
                                      Value="GridDisplay">
                             <Setter Property="Template"
                                     Value="{StaticResource GridDisplayTemplate}" />
+                        </DataTrigger>
+
+                        <!-- ColumnDisplay trigger -->
+                        <DataTrigger Binding="{Binding CurrentDisplay, Converter={StaticResource TypeToStringConverter}}"
+                                     Value="ColumnDisplay">
+                            <Setter Property="Template"
+                                    Value="{StaticResource ColumnDisplayTemplate}" />
                         </DataTrigger>
 
                     </Style.Triggers>

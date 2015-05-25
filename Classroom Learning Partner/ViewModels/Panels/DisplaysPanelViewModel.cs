@@ -46,6 +46,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void InitializeCommands()
         {
             AddGridDisplayCommand = new Command(OnAddGridDisplayCommandExecute);
+            AddColumnDisplayCommand = new Command(OnAddColumnDisplayCommandExecute);
             AddPageToNewGridDisplayCommand = new Command(OnAddPageToNewGridDisplayCommandExecute);
             SetSingleDisplayCommand = new Command(OnSetSingleDisplayCommandExecute);
             RemoveDisplayCommand = new Command<IDisplay>(OnRemoveDisplayCommandExecute);
@@ -175,7 +176,18 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnAddGridDisplayCommandExecute()
         {
-            Notebook.AddDisplayToNotebook(new GridDisplay());
+            Notebook.AddDisplayToNotebook(new GridDisplay(Notebook));
+            CurrentDisplay = Displays.LastOrDefault();
+        }
+
+        /// <summary>
+        /// Adds a ColumnDisplay to the notebook.
+        /// </summary>
+        public Command AddColumnDisplayCommand { get; private set; }
+
+        private void OnAddColumnDisplayCommandExecute()
+        {
+            Notebook.AddDisplayToNotebook(new ColumnDisplay(Notebook));
             CurrentDisplay = Displays.LastOrDefault();
         }
 
