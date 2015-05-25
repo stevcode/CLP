@@ -99,6 +99,7 @@
     <Compile Include="DomainModel\CLPPage.cs" />
     <Compile Include="DomainModel\AEntityBase.cs" />
     <Compile Include="DomainModel\Displays\ADisplayBase.cs" />
+    <Compile Include="DomainModel\Displays\ColumnDisplay.cs" />
     <Compile Include="DomainModel\Displays\GridDisplay.cs" />
     <Compile Include="DomainModel\Displays\IDisplay.cs" />
     <Compile Include="DomainModel\History Analysis\AHistoryActionBase.cs" />
