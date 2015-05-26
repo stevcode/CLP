@@ -15,7 +15,8 @@ namespace CLP.Entities
         Array,
         ArrayCard,
         FactorCard,
-        TenByTen
+        TenByTen,
+        ObscurableArray
     }
 
     [Serializable]
@@ -135,9 +136,9 @@ namespace CLP.Entities
             {
                 HorizontalDivisions.Clear();
                 var obscuredDiv = new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, 0, ArrayHeight, Rows)
-                {
-                    IsObscured = true
-                };
+                                  {
+                                      IsObscured = true
+                                  };
                 HorizontalDivisions.Add(obscuredDiv);
             }
         }
@@ -146,6 +147,11 @@ namespace CLP.Entities
         {
             if (isColumnsUnobscured)
             {
+                if (VerticalDivisions.Count == 1)
+                {
+                    VerticalDivisions.Clear();
+                }
+
                 foreach (var division in VerticalDivisions)
                 {
                     division.IsObscured = false;
@@ -153,6 +159,11 @@ namespace CLP.Entities
             }
             else
             {
+                if (HorizontalDivisions.Count == 1)
+                {
+                    HorizontalDivisions.Clear();
+                }
+
                 foreach (var division in HorizontalDivisions)
                 {
                     division.IsObscured = false;
@@ -178,6 +189,8 @@ namespace CLP.Entities
                         return "Factor Card";
                     case ArrayTypes.TenByTen:
                         return "10x10 Array";
+                    case ArrayTypes.ObscurableArray:
+                        return "Obscurable Array";
                     default:
                         return "Default Array";
                 }
@@ -432,11 +445,6 @@ namespace CLP.Entities
 
         public double CuttingStrokeDistance(Stroke cuttingStroke)
         {
-            if (ArrayType != ArrayTypes.Array)
-            {
-                return -1.0;
-            }
-
             var strokeTop = cuttingStroke.GetBounds().Top;
             var strokeBottom = cuttingStroke.GetBounds().Bottom;
             var strokeLeft = cuttingStroke.GetBounds().Left;
@@ -478,11 +486,6 @@ namespace CLP.Entities
         {
             var halvedPageObjects = new List<IPageObject>();
 
-            if (ArrayType != ArrayTypes.Array)
-            {
-                return halvedPageObjects;
-            }
-
             var strokeTop = cuttingStroke.GetBounds().Top;
             var strokeBottom = cuttingStroke.GetBounds().Bottom;
             var strokeLeft = cuttingStroke.GetBounds().Left;
@@ -500,8 +503,7 @@ namespace CLP.Entities
                 strokeLeft >= cuttableLeft &&
                 strokeTop - cuttableTop <= MIN_THRESHHOLD &&
                 cuttableBottom - strokeBottom <= MIN_THRESHHOLD &&
-                Columns > 1 &&
-                !IsRowsObscured) //Vertical Cut Stroke. Stroke must be within the bounds of the pageObject
+                Columns > 1) //Vertical Cut Stroke. Stroke must be within the bounds of the pageObject
             {
                 var average = (strokeRight + strokeLeft) / 2;
                 var relativeAverage = average - LabelLength - XPosition;
@@ -512,39 +514,83 @@ namespace CLP.Entities
                     return halvedPageObjects;
                 }
 
-                var leftArray = new CLPArray(ParentPage, closestColumn, Rows, ArrayTypes.Array)
-                                {
-                                    IsGridOn = IsGridOn,
-                                    IsDivisionBehaviorOn = false,
-                                    XPosition = XPosition,
-                                    YPosition = YPosition,
-                                    IsTopLabelVisible = IsTopLabelVisible,
-                                    IsSideLabelVisible = IsSideLabelVisible,
-                                    IsSnappable = IsSnappable
-                                };
-                leftArray.SizeArrayToGridLevel(GridSquareSize);
-                halvedPageObjects.Add(leftArray);
+                switch (ArrayType)
+                {
+                    case ArrayTypes.ArrayCard:
+                    case ArrayTypes.FactorCard:
+                    case ArrayTypes.TenByTen:
+                    case ArrayTypes.Array:
+                    {
+                        var leftArray = new CLPArray(ParentPage, closestColumn, Rows, ArrayTypes.Array)
+                                        {
+                                            IsGridOn = IsGridOn,
+                                            IsDivisionBehaviorOn = false,
+                                            XPosition = XPosition,
+                                            YPosition = YPosition,
+                                            IsTopLabelVisible = IsTopLabelVisible,
+                                            IsSideLabelVisible = IsSideLabelVisible,
+                                            IsSnappable = IsSnappable
+                                        };
+                        leftArray.SizeArrayToGridLevel(GridSquareSize);
+                        halvedPageObjects.Add(leftArray);
 
-                var rightArray = new CLPArray(ParentPage, Columns - closestColumn, Rows, ArrayTypes.Array)
-                                 {
-                                     IsGridOn = IsGridOn,
-                                     IsDivisionBehaviorOn = false,
-                                     XPosition = XPosition + leftArray.ArrayWidth,
-                                     YPosition = YPosition,
-                                     IsTopLabelVisible = IsTopLabelVisible,
-                                     IsSideLabelVisible = IsSideLabelVisible,
-                                     IsSnappable = IsSnappable
-                                 };
-                rightArray.SizeArrayToGridLevel(GridSquareSize);
-                halvedPageObjects.Add(rightArray);
+                        var rightArray = new CLPArray(ParentPage, Columns - closestColumn, Rows, ArrayTypes.Array)
+                                         {
+                                             IsGridOn = IsGridOn,
+                                             IsDivisionBehaviorOn = false,
+                                             XPosition = XPosition + leftArray.ArrayWidth,
+                                             YPosition = YPosition,
+                                             IsTopLabelVisible = IsTopLabelVisible,
+                                             IsSideLabelVisible = IsSideLabelVisible,
+                                             IsSnappable = IsSnappable
+                                         };
+                        rightArray.SizeArrayToGridLevel(GridSquareSize);
+                        halvedPageObjects.Add(rightArray);
+                    }
+                        break;
+                    case ArrayTypes.ObscurableArray:
+                    {
+                        if (IsColumnsObscured) { }
+                        else
+                        {
+                            var leftArray = new CLPArray(ParentPage, closestColumn, Rows, ArrayTypes.ObscurableArray)
+                                            {
+                                                IsGridOn = IsGridOn,
+                                                IsDivisionBehaviorOn = false,
+                                                XPosition = XPosition,
+                                                YPosition = YPosition,
+                                                IsTopLabelVisible = IsTopLabelVisible,
+                                                IsSideLabelVisible = IsSideLabelVisible,
+                                                IsSnappable = IsSnappable,
+                                            };
+                            leftArray.Obscure(false);
+                            leftArray.SizeArrayToGridLevel(GridSquareSize);
+                            halvedPageObjects.Add(leftArray);
+
+                            var rightArray = new CLPArray(ParentPage, Columns - closestColumn, Rows, ArrayTypes.ObscurableArray)
+                                             {
+                                                 IsGridOn = IsGridOn,
+                                                 IsDivisionBehaviorOn = false,
+                                                 XPosition = XPosition + leftArray.ArrayWidth,
+                                                 YPosition = YPosition,
+                                                 IsTopLabelVisible = IsTopLabelVisible,
+                                                 IsSideLabelVisible = IsSideLabelVisible,
+                                                 IsSnappable = IsSnappable
+                                             };
+                            rightArray.Obscure(false);
+                            rightArray.SizeArrayToGridLevel(GridSquareSize);
+                            halvedPageObjects.Add(rightArray);
+                        }
+                    }
+                        break;
+                }
             }
             else if (Math.Abs(strokeLeft - strokeRight) > Math.Abs(strokeTop - strokeBottom) &&
                      strokeBottom <= cuttableBottom &&
                      strokeTop >= cuttableTop &&
                      cuttableRight - strokeRight <= MIN_THRESHHOLD &&
                      strokeLeft - cuttableLeft <= MIN_THRESHHOLD &&
-                     Rows > 1 &&
-                     !IsColumnsObscured) //Horizontal Cut Stroke. Stroke must be within the bounds of the pageObject
+                     Rows > 1) //Horizontal Cut Stroke. Stroke must be within the bounds of the pageObject
             {
                 var average = (strokeTop + strokeBottom) / 2;
                 var relativeAverage = average - LabelLength - YPosition;
@@ -555,31 +601,76 @@ namespace CLP.Entities
                     return halvedPageObjects;
                 }
 
-                var topArray = new CLPArray(ParentPage, Columns, closestRow, ArrayTypes.Array)
-                               {
-                                   IsGridOn = IsGridOn,
-                                   IsDivisionBehaviorOn = false,
-                                   XPosition = XPosition,
-                                   YPosition = YPosition,
-                                   IsTopLabelVisible = IsTopLabelVisible,
-                                   IsSideLabelVisible = IsSideLabelVisible,
-                                   IsSnappable = IsSnappable
-                               };
-                topArray.SizeArrayToGridLevel(GridSquareSize);
-                halvedPageObjects.Add(topArray);
+                switch (ArrayType)
+                {
+                    case ArrayTypes.ArrayCard:
+                    case ArrayTypes.FactorCard:
+                    case ArrayTypes.TenByTen:
+                    case ArrayTypes.Array:
+                    {
+                        var topArray = new CLPArray(ParentPage, Columns, closestRow, ArrayTypes.Array)
+                                       {
+                                           IsGridOn = IsGridOn,
+                                           IsDivisionBehaviorOn = false,
+                                           XPosition = XPosition,
+                                           YPosition = YPosition,
+                                           IsTopLabelVisible = IsTopLabelVisible,
+                                           IsSideLabelVisible = IsSideLabelVisible,
+                                           IsSnappable = IsSnappable
+                                       };
+                        topArray.SizeArrayToGridLevel(GridSquareSize);
+                        halvedPageObjects.Add(topArray);
 
-                var bottomArray = new CLPArray(ParentPage, Columns, Rows - closestRow, ArrayTypes.Array)
-                                  {
-                                      IsGridOn = IsGridOn,
-                                      IsDivisionBehaviorOn = false,
-                                      XPosition = XPosition,
-                                      YPosition = YPosition + topArray.ArrayHeight,
-                                      IsTopLabelVisible = IsTopLabelVisible,
-                                      IsSideLabelVisible = IsSideLabelVisible,
-                                      IsSnappable = IsSnappable
-                                  };
-                bottomArray.SizeArrayToGridLevel(GridSquareSize);
-                halvedPageObjects.Add(bottomArray);
+                        var bottomArray = new CLPArray(ParentPage, Columns, Rows - closestRow, ArrayTypes.Array)
+                                          {
+                                              IsGridOn = IsGridOn,
+                                              IsDivisionBehaviorOn = false,
+                                              XPosition = XPosition,
+                                              YPosition = YPosition + topArray.ArrayHeight,
+                                              IsTopLabelVisible = IsTopLabelVisible,
+                                              IsSideLabelVisible = IsSideLabelVisible,
+                                              IsSnappable = IsSnappable
+                                          };
+                        bottomArray.SizeArrayToGridLevel(GridSquareSize);
+                        halvedPageObjects.Add(bottomArray);
+                    }
+                        break;
+                    case ArrayTypes.ObscurableArray:
+                    {
+                        if (IsColumnsObscured)
+                        {
+                            var topArray = new CLPArray(ParentPage, Columns, closestRow, ArrayTypes.ObscurableArray)
+                                           {
+                                               IsGridOn = IsGridOn,
+                                               IsDivisionBehaviorOn = false,
+                                               XPosition = XPosition,
+                                               YPosition = YPosition,
+                                               IsTopLabelVisible = IsTopLabelVisible,
+                                               IsSideLabelVisible = IsSideLabelVisible,
+                                               IsSnappable = IsSnappable
+                                           };
+                            topArray.Obscure(true);
+                            topArray.SizeArrayToGridLevel(GridSquareSize);
+                            halvedPageObjects.Add(topArray);
+
+                            var bottomArray = new CLPArray(ParentPage, Columns, Rows - closestRow, ArrayTypes.ObscurableArray)
+                                              {
+                                                  IsGridOn = IsGridOn,
+                                                  IsDivisionBehaviorOn = false,
+                                                  XPosition = XPosition,
+                                                  YPosition = YPosition + topArray.ArrayHeight,
+                                                  IsTopLabelVisible = IsTopLabelVisible,
+                                                  IsSideLabelVisible = IsSideLabelVisible,
+                                                  IsSnappable = IsSnappable
+                                              };
+                            bottomArray.Obscure(true);
+                            bottomArray.SizeArrayToGridLevel(GridSquareSize);
+                            halvedPageObjects.Add(bottomArray);
+                        }
+                        else { }
+                    }
+                        break;
+                }
             }
 
             return halvedPageObjects;

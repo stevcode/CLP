@@ -49,6 +49,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void InitializeButtons()
         {
+            var array = PageObject as CLPArray;
+            if (array == null)
+            {
+                return;
+            }
+
             _contextButtons.Add(MajorRibbonViewModel.Separater);
 
             _contextButtons.Add(new RibbonButton("Make Copies", "pack://application:,,,/Images/AddToDisplay.png", DuplicateArrayCommand, null, true));
@@ -57,32 +63,38 @@ namespace Classroom_Learning_Partner.ViewModels
 
             _contextButtons.Add(new RibbonButton("Rotate", "pack://application:,,,/Resources/Images/AdornerImages/ArrayRotate64.png", RotateArrayCommand, null, true));
 
-            _toggleLabelsButton = new ToggleRibbonButton("Show Labels", "Hide Labels", "pack://application:,,,/Resources/Images/ArrayCard32.png", true)
-                                  {
-                                      IsChecked = IsTopLabelVisible && IsSideLabelVisible
-                                  };
-            _toggleLabelsButton.Checked += toggleLabelsButton_Checked;
-            _toggleLabelsButton.Unchecked += toggleLabelsButton_Checked;
-            _contextButtons.Add(_toggleLabelsButton);
+            if (array.ArrayType == ArrayTypes.Array)
+            {
+                _toggleLabelsButton = new ToggleRibbonButton("Show Labels", "Hide Labels", "pack://application:,,,/Resources/Images/ArrayCard32.png", true)
+                {
+                    IsChecked = IsTopLabelVisible && IsSideLabelVisible
+                };
+                _toggleLabelsButton.Checked += toggleLabelsButton_Checked;
+                _toggleLabelsButton.Unchecked += toggleLabelsButton_Checked;
+                _contextButtons.Add(_toggleLabelsButton);
+            }
 
-            _toggleObscureColumnsButton = new ToggleRibbonButton("Show Columns", "Hide Columns", "pack://application:,,,/Resources/Images/ArrayCard32.png", true)
-                                          {
-                                              IsChecked = !IsColumnsObscured
-                                          };
+            if (array.ArrayType == ArrayTypes.ObscurableArray)
+            {
+                _toggleObscureColumnsButton = new ToggleRibbonButton("Show Columns", "Hide Columns", "pack://application:,,,/Resources/Images/ArrayCard32.png", true)
+                {
+                    IsChecked = !IsColumnsObscured
+                };
 
-            _toggleObscureColumnsButton.Checked += toggleObscureColumnsButton_Checked;
-            _toggleObscureColumnsButton.Unchecked += toggleObscureColumnsButton_Checked;
-            _toggleObscureColumnsButton.IsEnabled = !IsRowsObscured;
-            _contextButtons.Add(_toggleObscureColumnsButton);
+                _toggleObscureColumnsButton.Checked += toggleObscureColumnsButton_Checked;
+                _toggleObscureColumnsButton.Unchecked += toggleObscureColumnsButton_Checked;
+                _toggleObscureColumnsButton.IsEnabled = !IsRowsObscured;
+                _contextButtons.Add(_toggleObscureColumnsButton);
 
-            _toggleObscureRowsButton = new ToggleRibbonButton("Show Rows", "Hide Rows", "pack://application:,,,/Resources/Images/ArrayCard32.png", true)
-                                       {
-                                           IsChecked = !IsRowsObscured
-                                       };
-            _toggleObscureRowsButton.Checked += toggleObscureRowsButton_Checked;
-            _toggleObscureRowsButton.Unchecked += toggleObscureRowsButton_Checked;
-            _toggleObscureRowsButton.IsEnabled = !IsColumnsObscured;
-            _contextButtons.Add(_toggleObscureRowsButton);
+                _toggleObscureRowsButton = new ToggleRibbonButton("Show Rows", "Hide Rows", "pack://application:,,,/Resources/Images/ArrayCard32.png", true)
+                {
+                    IsChecked = !IsRowsObscured
+                };
+                _toggleObscureRowsButton.Checked += toggleObscureRowsButton_Checked;
+                _toggleObscureRowsButton.Unchecked += toggleObscureRowsButton_Checked;
+                _toggleObscureRowsButton.IsEnabled = !IsColumnsObscured;
+                _contextButtons.Add(_toggleObscureRowsButton);
+            }
 
             _toggleGridLinesButton = new ToggleRibbonButton("Show Grid Lines", "Hide Grid Lines", "pack://application:,,,/Resources/Images/ArrayCard32.png", true)
                                      {
@@ -1426,7 +1438,7 @@ namespace Classroom_Learning_Partner.ViewModels
             return false;
         }
 
-        public static void AddArrayToPage(CLPPage page)
+        public static void AddArrayToPage(CLPPage page, ArrayTypes arrayType)
         {
             if (page == null)
             {
@@ -1513,7 +1525,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Create arrays.
             var arraysToAdd =
-                Enumerable.Range(1, numberOfArrays).Select(index => new CLPArray(page, initialGridSize, columns, rows, ArrayTypes.Array)).Cast<ACLPArrayBase>().ToList();
+                Enumerable.Range(1, numberOfArrays).Select(index => new CLPArray(page, initialGridSize, columns, rows, arrayType)).Cast<ACLPArrayBase>().ToList();
             var firstArray = arraysToAdd.First();
             arraysToAdd.Remove(firstArray);
 
