@@ -188,6 +188,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void OnAddColumnDisplayCommandExecute()
         {
             Notebook.AddDisplayToNotebook(new ColumnDisplay(Notebook));
+            Notebook.CurrentPage = null;
             CurrentDisplay = Displays.LastOrDefault();
         }
 

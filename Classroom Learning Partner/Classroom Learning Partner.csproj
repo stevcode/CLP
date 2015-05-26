@@ -242,7 +242,7 @@
     <Compile Include="Converters\IndexToMarginConverter.cs" />
     <Compile Include="Converters\IntToOppositeVisibilityConverter.cs" />
     <Compile Include="Converters\IntToVisibilityConverter.cs" />
-    <Compile Include="Converters\IsNullConverter.cs" />
+    <Compile Include="Converters\Single Converters\IsNullConverter.cs" />
     <Compile Include="Converters\ShouldUseThumbnailConverter.cs" />
     <Compile Include="Converters\PageMatchToColorConverter.cs" />
     <Compile Include="Converters\ItemSelectedToColorConverter.cs" />

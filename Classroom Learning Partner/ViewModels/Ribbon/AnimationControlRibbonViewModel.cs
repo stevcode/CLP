@@ -158,12 +158,28 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public bool IsPlaybackEnabled
         {
-            get { return CurrentPage.History.IsAnimation || IsNonAnimationPlaybackEnabled; }
+            get
+            {
+                if (CurrentPage == null)
+                {
+                    return false;
+                }
+                
+                return CurrentPage.History.IsAnimation || IsNonAnimationPlaybackEnabled;
+            }
         }
 
         public bool IsVisible
         {
-            get { return CurrentPage.PageType == PageTypes.Animation || IsNonAnimationPlaybackEnabled; }
+            get
+            {
+                if (CurrentPage == null)
+                {
+                    return false;
+                }
+
+                return CurrentPage.PageType == PageTypes.Animation || IsNonAnimationPlaybackEnabled;
+            }
         }
 
         #endregion //Properties
@@ -479,7 +495,8 @@ namespace Classroom_Learning_Partner.ViewModels
             if (IsPlaying ||
                 IsRecording ||
                 _isClosing ||
-                _pageInteractionService == null)
+                _pageInteractionService == null ||
+                CurrentPage == null)
             {
                 return;
             }

@@ -232,7 +232,7 @@
         <StackPanel DockPanel.Dock="Right"
                     Orientation="Horizontal">
 
-            <customControls:RibbonButton Text="Exit Grid Display"
+            <customControls:RibbonButton Text="Exit Multi Display"
                                          Command="{Binding ExitMultiDisplayCommand}"
                                          LargeImageSource="pack://application:,,,/Resources/Images/Displays32.png" />
 

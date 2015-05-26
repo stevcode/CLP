@@ -130,7 +130,7 @@
                                 Margin="-20 0 0 -20"
                                 Cursor="Hand"
                                 Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}"
-                                Command="{Binding ElementName=ItemsControl, Path=DataContext.RemovePageFromGridDisplayCommand}"
+                                Command="{Binding ElementName=ItemsControl, Path=DataContext.RemovePageFromMultiDisplayCommand}"
                                 CommandParameter="{Binding}">
                             <Button.Template>
                                 <ControlTemplate TargetType="{x:Type Button}">
@@ -149,22 +149,6 @@
                                 </ControlTemplate>
                             </Button.Template>
                         </Button>
-
-                        <!--<Button Grid.Column="2"
-                                Grid.Row="0"
-                                Width="30"
-                                Height="30"
-                                Margin="-20 0 0 -100"
-                                Cursor="Hand"
-                                Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}"
-                                Command="{Binding ElementName=ItemsControl, Path=DataContext.ReplayHistoryCommand}"
-                                CommandParameter="{Binding}">
-                            <Button.Template>
-                                <ControlTemplate TargetType="{x:Type Button}">
-                                    <Image Source="pack://application:,,,/Images/video.png" />
-                                </ControlTemplate>
-                            </Button.Template>
-                        </Button>-->
 
                     </Grid>
                 </DataTemplate>
