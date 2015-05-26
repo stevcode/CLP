@@ -228,6 +228,7 @@
     <Compile Include="Converters\EmptyListToVisibilityConverter.cs" />
     <Compile Include="Converters\MultiplyAllMultiConverter.cs" />
     <Compile Include="Converters\Single Converters\MultiplyNumberConverter.cs" />
+    <Compile Include="Converters\Single Converters\TypeOfConverter.cs" />
     <Compile Include="Converters\StringsEqualMultiConverter.cs" />
     <Compile Include="Converters\PassMultipleValuesConverter.cs" />
     <Compile Include="Converters\Multi Converters\AllBoolToVisibilityMultiConverter.cs" />
@@ -334,6 +335,9 @@
       <DependentUpon>OptionsPaneView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\BackStage\OptionsPaneViewModel.cs" />
+    <Compile Include="Views\Displays\ColumnDisplayPreviewView.xaml.cs">
+      <DependentUpon>ColumnDisplayPreviewView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Displays\ColumnDisplayView.xaml.cs">
       <DependentUpon>ColumnDisplayView.xaml</DependentUpon>
     </Compile>
@@ -616,6 +620,10 @@
     <Page Include="Views\BackStage\OptionsPaneView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Displays\ColumnDisplayPreviewView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Displays\ColumnDisplayView.xaml">
       <SubType>Designer</SubType>
