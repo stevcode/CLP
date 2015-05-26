@@ -232,6 +232,10 @@
         <StackPanel DockPanel.Dock="Right"
                     Orientation="Horizontal">
 
+            <customControls:RibbonButton Text="Exit Multi Display"
+                                         Command="{Binding ExitMultiDisplayCommand}"
+                                         LargeImageSource="pack://application:,,,/Resources/Images/Displays32.png" />
+
             <customControls:ToggleRibbonButton UnCheckedText="Show Displays"
                                                CheckedText="Hide Displays"
                                                LargeImageSource="pack://application:,,,/Resources/Images/Displays32.png"
@@ -265,8 +269,6 @@
             <customControls:RibbonButton Text="Send To Teacher"
                                          Command="{Binding SubmitPageCommand}"
                                          LargeImageSource="pack://application:,,,/Resources/Images/SingleSubmit32.png" />
-
-
 
         </StackPanel>
 

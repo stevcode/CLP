@@ -119,7 +119,8 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             var viewModel = sender as PageInformationPanelViewModel;
             if (!advancedPropertyChangedEventArgs.IsNewValueMeaningful ||
-                viewModel == null)
+                viewModel == null ||
+                viewModel.CurrentPage == null)
             {
                 return;
             }

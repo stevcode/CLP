@@ -435,9 +435,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
-            App.MainWindowViewModel.Ribbon.CanGroupSendToTeacher = true;
-
             try
             {
                 foreach (var pageObject in PageObjects.OfType<IPageObjectAccepter>().Where(pageObject => pageObject.CanAcceptPageObjects))
@@ -491,8 +488,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void StrokesChanged(StrokeCollectionChangedEventArgs e)
         {
-            App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
-
             switch (PageInteractionService.CurrentPageInteractionMode)
             {
                 case PageInteractionModes.Select:
@@ -1022,19 +1017,20 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static void AddHistoryItemToPage(CLPPage page, IHistoryItem historyItem, bool isBatch = false)
         {
-            App.MainWindowViewModel.Ribbon.CanSendToTeacher = true;
-            App.MainWindowViewModel.Ribbon.CanGroupSendToTeacher = true;
             if (!isBatch)
             {
                 page.History.AddHistoryItem(historyItem);
             }
 
-            if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher ||
-                App.Network.ProjectorProxy == null ||
-                App.MainWindowViewModel.Ribbon.IsBroadcastHistoryDisabled)
-            {
-                return;
-            }
+            //IsBroadcastHistoryDisabled needs to take into account that the Property is now gone from the Ribbon.
+            return;
+
+            //if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher ||
+            //    App.Network.ProjectorProxy == null ||
+            //    App.MainWindowViewModel.Ribbon.IsBroadcastHistoryDisabled)
+            //{
+            //    return;
+            //}
 
             QueueTask(() =>
                       {

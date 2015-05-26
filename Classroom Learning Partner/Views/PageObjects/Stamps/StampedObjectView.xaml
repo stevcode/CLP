@@ -3,15 +3,8 @@
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:ac="clr-namespace:AdornedControl"
-                   xmlns:oldconv="clr-namespace:Classroom_Learning_Partner.Resources"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity">
-
-    <UserControl.Resources>
-        <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
-        <oldconv:LengthConverter x:Key="LengthConverter" />
-        <conv:BoolToHighlighterConverter x:Key="BoolToHighlighterConverter" />
-    </UserControl.Resources>
 
     <ac:AdornedControl HorizontalAlignment="Center"
                        VerticalAlignment="Center"
@@ -38,8 +31,8 @@
                            RadiusY="10"
                            Canvas.Top="-5"
                            Canvas.Left="-5"
-                           Width="{Binding Width, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
-                           Height="{Binding Height, Converter={StaticResource LengthConverter}, ConverterParameter=10}" />
+                           Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}" />
 
                 <Rectangle Stroke="{DynamicResource DynamicMainColor}"
                            StrokeThickness="1"
@@ -47,9 +40,9 @@
                            RadiusY="10"
                            Canvas.Top="-5"
                            Canvas.Left="-5"
-                           Width="{Binding Width, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
-                           Height="{Binding Height, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
-                           Visibility="{Binding MainWindowViewModel.IsUsingOldPageObjectBoundary, Source={x:Static Application.Current}, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}" />
+                           Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Visibility="{Binding MainWindowViewModel.IsUsingOldPageObjectBoundary, Source={x:Static Application.Current}, Converter={catel:BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}" />
 
                 <Rectangle Stroke="Black"
                            StrokeDashArray="0.5 1.0 0.3"
@@ -58,9 +51,9 @@
                            RadiusY="10"
                            Canvas.Top="-5"
                            Canvas.Left="-5"
-                           Width="{Binding Width, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
-                           Height="{Binding Height, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
-                           Visibility="{Binding MainWindowViewModel.IsUsingOldPageObjectBoundary, Source={x:Static Application.Current}, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />
+                           Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Visibility="{Binding MainWindowViewModel.IsUsingOldPageObjectBoundary, Source={x:Static Application.Current}, Converter={catel:BooleanToCollapsingVisibilityConverter}}" />
 
                 <!--Close Button-->
                 <Button Command="{Binding RemovePageObjectCommand}"
@@ -102,7 +95,7 @@
                     BorderThickness="2 0 2 2"
                     VerticalAlignment="Stretch"
                     Margin="0"
-                    Visibility="{Binding IsGroupStampedObject, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, Mode=OneWay, FallbackValue=Collapsed}" />
+                    Visibility="{Binding IsGroupStampedObject, Converter={catel:BooleanToCollapsingVisibilityConverter}, Mode=OneWay, FallbackValue=Collapsed}" />
 
             <Rectangle VerticalAlignment="Stretch"
                        HorizontalAlignment="Stretch"
@@ -113,7 +106,7 @@
                        Margin="-4"
                        RadiusX="5"
                        RadiusY="5"
-                       Visibility="{Binding IsBoundaryVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, Mode=OneWay, FallbackValue=Collapsed}" />
+                       Visibility="{Binding IsBoundaryVisible, Converter={catel:BooleanToCollapsingVisibilityConverter}, Mode=OneWay, FallbackValue=Collapsed}" />
 
             <ItemsControl ClipToBounds="True"
                           IsHitTestVisible="False"
@@ -133,12 +126,25 @@
                     <DataTemplate>
                         <Path Data="{Binding PathData}"
                               StrokeThickness="{Binding PathWidth}"
-                              Stroke="{Binding PathColor}"
-                              Opacity="{Binding IsHighlighter, Converter={StaticResource BoolToHighlighterConverter}, ConverterParameter=.5}" />
+                              Stroke="{Binding PathColor}">
+                            <Path.Style>
+                                <Style TargetType="Path">
+                                    <Setter Property="Opacity"
+                                            Value="1.0" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsHighlighter}"
+                                                     Value="True">
+                                            <Setter Property="Opacity"
+                                                    Value="0.5" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Path.Style>
+                        </Path>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-            
+
             <TextBlock TextAlignment="Center"
                        Margin="0 -18"
                        Height="{Binding PageObject.PartsHeight}"
@@ -146,7 +152,7 @@
                        VerticalAlignment="Bottom"
                        FontFamily="pack://application:,,,/Resources/Fonts/#SketchFlow Print"
                        FontSize="18"
-                       Visibility="{Binding IsGroupStampedObject, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, Mode=OneWay, FallbackValue=Collapsed}">
+                       Visibility="{Binding IsGroupStampedObject, Converter={catel:BooleanToCollapsingVisibilityConverter}, Mode=OneWay, FallbackValue=Collapsed}">
                 <Run Text="group of" />
                 <Run Text="{Binding Parts}" />
             </TextBlock>
@@ -158,8 +164,7 @@
                        HorizontalAlignment="Center"
                        VerticalAlignment="Bottom"
                        TextAlignment="Center"
-                       Visibility="{Binding IsPartsLabelVisible, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, Mode=OneWay, FallbackValue=Collapsed}">
-            </TextBlock>
+                       Visibility="{Binding IsPartsLabelVisible, Converter={catel:BooleanToCollapsingVisibilityConverter}, Mode=OneWay, FallbackValue=Collapsed}" />
 
             <Thumb Tag="PageObjectHitBox"
                    Width="{Binding Width}"

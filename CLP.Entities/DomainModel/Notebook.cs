@@ -335,7 +335,7 @@ namespace CLP.Entities
         public void AddDisplayToNotebook(IDisplay display)
         {
             display.NotebookID = ID;
-            display.DisplayNumber = Displays.Any() ? Displays.Last().DisplayNumber + 1 : 1;
+            display.DisplayNumber = Displays.Any(d => d.GetType() == display.GetType()) ? Displays.Last().DisplayNumber + 1 : 1;
             Displays.Add(display);
         }
 

@@ -4,13 +4,16 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Media;
+using System.Windows.Shapes;
 using Catel.Data;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Views;
 using CLP.CustomControls;
 using CLP.Entities;
+using Shape = System.Windows.Shapes.Shape;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -110,12 +113,25 @@ namespace Classroom_Learning_Partner.ViewModels
                                  };
             _contextButtons.Add(fontColorLabel);
 
+            var comboBoxItemDataTemplate = new DataTemplate(typeof(ComboBoxItem));
+
+            var brushBinding = new Binding();
+
+            var rectFactory = new FrameworkElementFactory(typeof(Rectangle));
+            rectFactory.SetValue(FrameworkElement.HeightProperty, 40.0);
+            rectFactory.SetValue(FrameworkElement.WidthProperty, 100.0);
+            rectFactory.SetBinding(Shape.FillProperty, brushBinding);
+
+            comboBoxItemDataTemplate.VisualTree = rectFactory;
+
             _fontColorComboxBox = new ComboBox
                                   {
                                       ItemsSource = AvailableFontColors,
                                       SelectedItem = CurrentFontColor,
-                                      VerticalContentAlignment = VerticalAlignment.Center
+                                      VerticalContentAlignment = VerticalAlignment.Center,
+                                      ItemTemplate = comboBoxItemDataTemplate
                                   };
+
             _fontColorComboxBox.SelectionChanged += _fontColorComboxBox_SelectionChanged;
             _contextButtons.Add(_fontColorComboxBox);
         }

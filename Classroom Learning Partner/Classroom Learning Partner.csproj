@@ -223,22 +223,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Converters\AddLengthConverter.cs" />
+    <Compile Include="Converters\Single Converters\IncreaseNumberConverter.cs" />
     <Compile Include="Converters\DifferentiationGroupDisplayConverter.cs" />
     <Compile Include="Converters\EmptyListToVisibilityConverter.cs" />
     <Compile Include="Converters\MultiplyAllMultiConverter.cs" />
+    <Compile Include="Converters\Single Converters\MultiplyNumberConverter.cs" />
+    <Compile Include="Converters\Single Converters\TypeOfConverter.cs" />
     <Compile Include="Converters\StringsEqualMultiConverter.cs" />
     <Compile Include="Converters\PassMultipleValuesConverter.cs" />
-    <Compile Include="Converters\AllBoolToColorMultiConverter.cs" />
-    <Compile Include="Converters\AllBoolToVisibilityMultiConverter.cs" />
-    <Compile Include="Converters\BooleanToOppositeVisibilityConverter.cs" />
-    <Compile Include="Converters\BoolToAlignmentConverter.cs" />
-    <Compile Include="Converters\BoolToHighlighterConverter.cs" />
+    <Compile Include="Converters\Multi Converters\AllBoolToVisibilityMultiConverter.cs" />
     <Compile Include="Converters\BoolZeroToQuestionMarkMultiConverter.cs" />
     <Compile Include="CLPServiceAgent.cs" />
-    <Compile Include="Converters\BoolToDoubleConverter.cs" />
-    <Compile Include="Converters\ByteArrayToBoolConverter.cs" />
-    <Compile Include="Converters\BytesToImageSourceConverter.cs" />
     <Compile Include="Converters\CurrentWorkspaceToButtonEnabledConverter.cs" />
     <Compile Include="Converters\DivisionPositionToColorMultiConverter.cs" />
     <Compile Include="Converters\DoubleToVisibilityConverter.cs" />
@@ -248,20 +243,15 @@
     <Compile Include="Converters\IndexToMarginConverter.cs" />
     <Compile Include="Converters\IntToOppositeVisibilityConverter.cs" />
     <Compile Include="Converters\IntToVisibilityConverter.cs" />
-    <Compile Include="Converters\IsNullConverter.cs" />
-    <Compile Include="Converters\ItemsControlItemIndexConverter.cs" />
-    <Compile Include="Converters\NumberIncrementConverter.cs" />
+    <Compile Include="Converters\Single Converters\IsNullConverter.cs" />
     <Compile Include="Converters\ShouldUseThumbnailConverter.cs" />
-    <Compile Include="Converters\PersonToSubmissionsCountConverter.cs" />
     <Compile Include="Converters\PageMatchToColorConverter.cs" />
     <Compile Include="Converters\ItemSelectedToColorConverter.cs" />
-    <Compile Include="Converters\MarginSingleSideConverter.cs" />
     <Compile Include="Converters\MultiplyAllIntToTextMultiConverter.cs" />
     <Compile Include="Converters\PageToSubmissionsListConverter.cs" />
     <Compile Include="Converters\Panel Converters\PanelLocationToThicknessConverter.cs" />
     <Compile Include="Converters\PageToStarredVisibilityConverter.cs" />
     <Compile Include="Converters\PageToSubmissionVisibilityConverter.cs" />
-    <Compile Include="Converters\ProjectedDisplayBackgroundConverter.cs" />
     <Compile Include="Converters\RatioToRectMultiConverter.cs" />
     <Compile Include="Converters\StringToEmptyStringConverter.cs" />
     <Compile Include="Converters\TypeToStringConverter.cs" />
@@ -274,7 +264,6 @@
     <Compile Include="Network\InstructorService.cs" />
     <Compile Include="Network\ProjectorService.cs" />
     <Compile Include="Network\StudentService.cs" />
-    <Compile Include="Resources\Converters.cs" />
     <Compile Include="Resources\InkInterpretation.cs" />
     <Compile Include="Services\INotebookService.cs" />
     <Compile Include="Services\IPageInteractionService.cs" />
@@ -285,6 +274,8 @@
     <Compile Include="Utilities\RangeHelper.cs" />
     <Compile Include="ViewModels\BackStage\BackStageViewModel.cs" />
     <Compile Include="ViewModels\BackStage\APaneBaseViewModel.cs" />
+    <Compile Include="ViewModels\Displays\AMultiDisplayViewModelBase.cs" />
+    <Compile Include="ViewModels\Displays\ColumnDisplayViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\TextInputViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\MultipleChoiceBoxViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\NumberLineViewModel.cs" />
@@ -344,6 +335,12 @@
       <DependentUpon>OptionsPaneView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\BackStage\OptionsPaneViewModel.cs" />
+    <Compile Include="Views\Displays\ColumnDisplayPreviewView.xaml.cs">
+      <DependentUpon>ColumnDisplayPreviewView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Displays\ColumnDisplayView.xaml.cs">
+      <DependentUpon>ColumnDisplayView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Modal Windows\AdvancedStagingView.xaml.cs">
       <DependentUpon>AdvancedStagingView.xaml</DependentUpon>
     </Compile>
@@ -574,9 +571,6 @@
     <Compile Include="Views\Panels\WebcamPanelView.xaml.cs">
       <DependentUpon>WebcamPanelView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\RibbonView.xaml.cs">
-      <DependentUpon>RibbonView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Ribbon\AnimationControlRibbonView.xaml.cs">
       <DependentUpon>AnimationControlRibbonView.xaml</DependentUpon>
     </Compile>
@@ -626,6 +620,14 @@
     <Page Include="Views\BackStage\OptionsPaneView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Displays\ColumnDisplayPreviewView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Displays\ColumnDisplayView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Modal Windows\AdvancedStagingView.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -908,10 +910,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Panels\WebcamPanelView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\RibbonView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

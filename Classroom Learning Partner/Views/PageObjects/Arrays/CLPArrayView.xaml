@@ -4,13 +4,10 @@
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:ac="clr-namespace:AdornedControl"
-                   xmlns:oldconv="clr-namespace:Classroom_Learning_Partner.Resources"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters">
 
     <UserControl.Resources>
         <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
-        <oldconv:LengthConverter x:Key="LengthConverter" />
-        <oldconv:NegativeLengthSubtractConverter x:Key="NegativeLengthSubtractConverter" />
         <conv:ZeroToQuestionMarkConverter x:Key="ZeroToQuestionMarkConverter" />
         <conv:DoubleToVisibilityConverter x:Key="DoubleToVisibilityConverter" />
         <conv:RatioToRectMultiConverter x:Key="RatioToRectMultiConverter" />
@@ -60,8 +57,8 @@
                            RadiusY="10"
                            Canvas.Top="-5"
                            Canvas.Left="-5"
-                           Width="{Binding Width, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
-                           Height="{Binding Height, Converter={StaticResource LengthConverter}, ConverterParameter=10}" />
+                           Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}" />
 
                 <Rectangle Stroke="{DynamicResource DynamicMainColor}"
                            StrokeThickness="1"
@@ -69,8 +66,8 @@
                            RadiusY="10"
                            Canvas.Top="-5"
                            Canvas.Left="-5"
-                           Width="{Binding Width, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
-                           Height="{Binding Height, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
+                           Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
                            Visibility="{Binding MainWindowViewModel.IsUsingOldPageObjectBoundary, Source={x:Static Application.Current}, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}" />
 
                 <Rectangle Stroke="Black"
@@ -80,8 +77,8 @@
                            RadiusY="10"
                            Canvas.Top="-5"
                            Canvas.Left="-5"
-                           Width="{Binding Width, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
-                           Height="{Binding Height, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
+                           Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
                            Visibility="{Binding MainWindowViewModel.IsUsingOldPageObjectBoundary, Source={x:Static Application.Current}, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />
 
                 <!--Close Button-->
@@ -319,7 +316,7 @@
                                        Height="3"
                                        Margin="3 0"
                                        Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, 
-                                                                    Converter={StaticResource LengthConverter}, 
+                                                                    Converter={conv:IncreaseNumberConverter}, 
                                                                     ConverterParameter=-6}"
                                        StrokeThickness="0"
                                        Fill="{StaticResource LeftLabelColor}"
@@ -337,8 +334,8 @@
                             <Grid
                                 Canvas.Right="{Binding DataContext.PageObject.LabelLength, 
                                                          RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}},
-                                                         Converter={StaticResource NegativeLengthSubtractConverter},
-                                                         ConverterParameter=0}"
+                                                         Converter={conv:MultiplyNumberConverter},
+                                                         ConverterParameter=-1}"
                                 Height="{Binding Length}"
                                 Width="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
                                 <TextBlock IsHitTestVisible="False"
@@ -398,7 +395,7 @@
                                        Width="3"
                                        Margin="0 3"
                                        Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}, 
-                                                                      Converter={StaticResource LengthConverter}, 
+                                                                      Converter={conv:IncreaseNumberConverter}, 
                                                                       ConverterParameter=-6}"
                                        StrokeThickness="0"
                                        Fill="{StaticResource TopLabelColor}"
@@ -416,8 +413,8 @@
                             <Grid
                                 Canvas.Bottom="{Binding DataContext.PageObject.LabelLength, 
                                                           RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}},
-                                                          Converter={StaticResource NegativeLengthSubtractConverter},
-                                                          ConverterParameter=0}"
+                                                          Converter={conv:MultiplyNumberConverter},
+                                                          ConverterParameter=-1}"
                                 Width="{Binding Length}"
                                 Height="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
                                 <TextBlock IsHitTestVisible="False"

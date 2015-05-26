@@ -4,12 +4,7 @@
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:ac="clr-namespace:AdornedControl"
-                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Resources">
-
-    <UserControl.Resources>
-        <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
-        <conv:LengthConverter x:Key="LengthConverter" />
-    </UserControl.Resources>
+                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters">
 
     <ac:AdornedControl HorizontalAlignment="Center"
                        VerticalAlignment="Center"
@@ -35,8 +30,8 @@
                            RadiusY="10"
                            Canvas.Top="-5"
                            Canvas.Left="-5"
-                           Width="{Binding Width, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
-                           Height="{Binding Height, Converter={StaticResource LengthConverter}, ConverterParameter=10}" />
+                           Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}" />
 
                 <Rectangle Stroke="{DynamicResource DynamicMainColor}"
                            StrokeThickness="1"
@@ -44,9 +39,9 @@
                            RadiusY="10"
                            Canvas.Top="-5"
                            Canvas.Left="-5"
-                           Width="{Binding Width, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
-                           Height="{Binding Height, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
-                           Visibility="{Binding MainWindowViewModel.IsUsingOldPageObjectBoundary, Source={x:Static Application.Current}, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}" />
+                           Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Visibility="{Binding MainWindowViewModel.IsUsingOldPageObjectBoundary, Source={x:Static Application.Current}, Converter={catel:BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}" />
 
                 <Rectangle Stroke="Black"
                            StrokeDashArray="0.5 1.0 0.3"
@@ -55,9 +50,9 @@
                            RadiusY="10"
                            Canvas.Top="-5"
                            Canvas.Left="-5"
-                           Width="{Binding Width, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
-                           Height="{Binding Height, Converter={StaticResource LengthConverter}, ConverterParameter=10}"
-                           Visibility="{Binding MainWindowViewModel.IsUsingOldPageObjectBoundary, Source={x:Static Application.Current}, Converter={StaticResource BooleanToCollapsingVisibilityConverter}}" />
+                           Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Visibility="{Binding MainWindowViewModel.IsUsingOldPageObjectBoundary, Source={x:Static Application.Current}, Converter={catel:BooleanToCollapsingVisibilityConverter}}" />
 
                 <!--Close Button-->
                 <Button Command="{Binding RemovePageObjectCommand}"

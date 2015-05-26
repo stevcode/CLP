@@ -6,7 +6,8 @@
                    xmlns:views="clr-namespace:Classroom_Learning_Partner.Views"
                    xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
                    xmlns:system="clr-namespace:System;assembly=mscorlib"
-                   xmlns:extenders="clr-namespace:Classroom_Learning_Partner.Views.Extenders">
+                   xmlns:extenders="clr-namespace:Classroom_Learning_Partner.Views.Extenders"
+                   xmlns:local="clr-namespace:CLP.Entities;assembly=CLP.Entities">
 
     <UserControl.Resources>
         <ResourceDictionary>
@@ -18,7 +19,6 @@
             <catel:BooleanToCollapsingVisibilityConverter x:Key="OppositeBooleanToCollapsingVisibilityConverter" />
             <conv:PanelLocationToThicknessConverter x:Key="PanelLocationToThicknessConverter" />
             <conv:ItemSelectedToColorConverter x:Key="PageOrDisplaySelectionColorConverter" />
-            <conv:HeightToWidthAspectRatioMultiConverter x:Key="HeightToWidthAspectRatioMultiConverter" />
             <conv:WidthToHeightAspectRatioMultiConverter x:Key="WidthToHeightAspectRatioMultiConverter" />
 
             <!-- Style to override ListBoxItem selection visuals for Displays -->
@@ -46,122 +46,24 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <Border Grid.Row="0"
-                    Margin="15 0 15 0"
-                    Height="140"
-                    Background="PaleGreen"
-                    BorderThickness="2"
-                    BorderBrush="Black"
-                    Visibility="{Binding MainWindowViewModel.IsProjectorFrozen, Source={x:Static Application.Current}, Converter={StaticResource OppositeBooleanToCollapsingVisibilityConverter}}">
-                <Grid>
-                    <Image Source="{Binding MainWindowViewModel.FrozenDisplayImageSource, Source={x:Static Application.Current}}" 
-                           Height="135"
-                           Width="135" />
-                    <TextBlock Text="Frozen Display"
-                               Foreground="Black"
-                               FontWeight="Bold"
-                               VerticalAlignment="Bottom"
-                               HorizontalAlignment="Center"
-                               FontSize="12" />
-                </Grid>
-
-            </Border>
-
-            <Rectangle Grid.Row="1"
-                       Height="3"
-                       Stroke="{StaticResource GrayEdgeColor}"
-                       Fill="{StaticResource GrayEdgeColor}" />
-
-            <Grid Grid.Row="2"
-                  Height="140"
-                  Background="{Binding SingleDisplaySelectedBackgroundColor}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-
-                <TextBlock Grid.Column="0"
-                           Margin="5 0 0 5"
-                           Text="Single Display"
-                           Foreground="{Binding SingleDisplaySelectedColor}"
-                           FontWeight="Bold"
-                           VerticalAlignment="Bottom">
-                    <TextBlock.LayoutTransform>
-                        <TransformGroup>
-                            <ScaleTransform />
-                            <SkewTransform />
-                            <RotateTransform Angle="-90" />
-                            <TranslateTransform />
-                        </TransformGroup>
-                    </TextBlock.LayoutTransform>
-                </TextBlock>
-
-                <views:CLPPagePreviewView x:Name="SingleDisplayPreview"
-                                          Grid.Column="1"
-                                          Margin="5"
-                                          HorizontalAlignment="Left"
-                                          DataContext="{Binding CurrentPage}">
-                    <views:CLPPagePreviewView.Width>
-                        <MultiBinding Converter="{StaticResource HeightToWidthAspectRatioMultiConverter}">
-                            <Binding ElementName="SingleDisplayPreview"
-                                     Path="ActualHeight" />
-                            <Binding Path="InitialAspectRatio" />
-                        </MultiBinding>
-                    </views:CLPPagePreviewView.Width>
-                </views:CLPPagePreviewView>
-
-                <Rectangle Grid.Column="1"
-                           Margin="5"
-                           HorizontalAlignment="Left"
-                           Stroke="{Binding SingleDisplaySelectedColor}"
-                           StrokeThickness="3"
-                           Fill="Transparent"
-                           Width="{Binding ElementName=SingleDisplayPreview, Path=ActualWidth}"
-                           Height="{Binding ElementName=SingleDisplayPreview, Path=ActualHeight}">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="MouseDown">
-                            <catel:EventToCommand Command="{Binding SetSingleDisplayCommand}"
-                                                  PassEventArgsToCommand="False" />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </Rectangle>
-
-                <Button Grid.Column="2"
-                        Margin="5 0 5 15"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Bottom"
-                        Width="32"
-                        Height="32"
-                        Command="{Binding AddPageToNewGridDisplayCommand}">
-                    <Button.Template>
-                        <ControlTemplate TargetType="{x:Type Button}">
-                            <Grid>
-                                <Image Source="pack://application:,,,/Resources/Images/GrayPlus32.png" />
-                            </Grid>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
-            </Grid>
-
-            <Rectangle Grid.Row="3"
-                       Height="3"
-                       Stroke="{StaticResource GrayEdgeColor}"
-                       Fill="{StaticResource GrayEdgeColor}" />
-
-            <Button Grid.Row="4"
+            <Button Grid.Row="1"
                     VerticalAlignment="Bottom"
                     Height="32"
                     Command="{Binding AddGridDisplayCommand}">
             New Grid Display
             </Button>
 
-            <ListBox Grid.Row="5"
+            <Button Grid.Row="2"
+                    VerticalAlignment="Bottom"
+                    Height="32"
+                    Command="{Binding AddColumnDisplayCommand}">
+                New Column Display
+            </Button>
+
+            <ListBox Grid.Row="3"
                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                      ScrollViewer.VerticalScrollBarVisibility="Visible"
                      ItemsSource="{Binding Displays}"
@@ -197,14 +99,14 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
 
+                            
+
                             <TextBlock x:Name="DisplayLabel"
                                        Grid.Column="0"
                                        Margin="5 15 0 0"
                                        Foreground="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Converter={StaticResource PageOrDisplaySelectionColorConverter}}"
                                        FontWeight="Bold"
                                        VerticalAlignment="Top">
-                                <Run Text="Grid Display " />
-                                <Run Text="{Binding DisplayNumber}" />
                                 <TextBlock.LayoutTransform>
                                     <TransformGroup>
                                         <ScaleTransform />
@@ -213,25 +115,93 @@
                                         <TranslateTransform />
                                     </TransformGroup>
                                 </TextBlock.LayoutTransform>
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Converter={conv:TypeOfConverter}}"
+                                                         Value="{x:Type local:GridDisplay}">
+                                                <Setter Property="Text"
+                                                        Value="Grid Display" />
+                                            </DataTrigger>
+
+                                            <DataTrigger Binding="{Binding Converter={conv:TypeOfConverter}}"
+                                                         Value="{x:Type local:ColumnDisplay}">
+                                                <Setter Property="Text"
+                                                        Value="Column Display" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
                             </TextBlock>
 
-                            <views:GridDisplayPreviewView x:Name="DisplayPreviewView"
-                                                          Grid.Column="1"
-                                                          Margin="5"
-                                                          DataContext="{Binding}">
-                                <views:GridDisplayPreviewView.Height>
-                                    <MultiBinding Converter="{StaticResource WidthToHeightAspectRatioMultiConverter}">
-                                        <Binding ElementName="DisplayPreviewView"
-                                                 Path="ActualWidth" />
-                                        <Binding>
-                                            <Binding.Source>
-                                                <system:Double>1.29</system:Double>
-                                            </Binding.Source>
-                                        </Binding>
-                                    </MultiBinding>
-                                </views:GridDisplayPreviewView.Height>
+                            <Control HorizontalAlignment="Stretch"
+                                     VerticalAlignment="Stretch"
+                                     Grid.Column="1"
+                                     Margin="5">
 
-                            </views:GridDisplayPreviewView>
+                                <Control.Resources>
+
+                                    <ControlTemplate x:Key="GridDisplayTemplate">
+                                        <views:GridDisplayPreviewView x:Name="DisplayPreviewView"
+                                                                      DataContext="{Binding}">
+                                            <views:GridDisplayPreviewView.Height>
+                                                <MultiBinding Converter="{StaticResource WidthToHeightAspectRatioMultiConverter}">
+                                                    <Binding ElementName="DisplayPreviewView"
+                                                             Path="ActualWidth" />
+                                                    <Binding>
+                                                        <Binding.Source>
+                                                            <system:Double>1.29</system:Double>
+                                                        </Binding.Source>
+                                                    </Binding>
+                                                </MultiBinding>
+                                            </views:GridDisplayPreviewView.Height>
+
+                                        </views:GridDisplayPreviewView>
+                                    </ControlTemplate>
+
+                                    <ControlTemplate x:Key="ColumnDisplayTemplate">
+                                        <views:ColumnDisplayPreviewView x:Name="DisplayPreviewView"
+                                                                      DataContext="{Binding}">
+                                            <views:ColumnDisplayPreviewView.Height>
+                                                <MultiBinding Converter="{StaticResource WidthToHeightAspectRatioMultiConverter}">
+                                                    <Binding ElementName="DisplayPreviewView"
+                                                             Path="ActualWidth" />
+                                                    <Binding>
+                                                        <Binding.Source>
+                                                            <system:Double>1.29</system:Double>
+                                                        </Binding.Source>
+                                                    </Binding>
+                                                </MultiBinding>
+                                            </views:ColumnDisplayPreviewView.Height>
+
+                                        </views:ColumnDisplayPreviewView>
+                                    </ControlTemplate>
+
+                                </Control.Resources>
+
+                                <Control.Style>
+                                    <Style TargetType="{x:Type Control}">
+
+                                        <Style.Triggers>
+
+                                            <!-- GridDisplay trigger -->
+                                            <DataTrigger Binding="{Binding Converter={conv:TypeOfConverter}}"
+                                                         Value="{x:Type local:GridDisplay}">
+                                                <Setter Property="Template"
+                                                        Value="{StaticResource GridDisplayTemplate}" />
+                                            </DataTrigger>
+
+                                            <!-- ColumnDisplay trigger -->
+                                            <DataTrigger Binding="{Binding Converter={conv:TypeOfConverter}}"
+                                                         Value="{x:Type local:ColumnDisplay}">
+                                                <Setter Property="Template"
+                                                        Value="{StaticResource ColumnDisplayTemplate}" />
+                                            </DataTrigger>
+
+                                        </Style.Triggers>
+                                    </Style>
+                                </Control.Style>
+                            </Control>
 
                             <Rectangle Grid.Column="1"
                                        Margin="5"
