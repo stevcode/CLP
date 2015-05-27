@@ -347,6 +347,17 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData IsRowsObscuredProperty = RegisterProperty("IsRowsObscured", typeof (bool));
 
+        /// <summary>The type of array.</summary>
+        [ViewModelToModel("PageObject")]
+        public ArrayTypes ArrayType
+        {
+            get { return GetValue<ArrayTypes>(ArrayTypeProperty); }
+            set { SetValue(ArrayTypeProperty, value); }
+        }
+
+        public static readonly PropertyData ArrayTypeProperty = RegisterProperty("ArrayType", typeof (ArrayTypes));
+
+
         #endregion //Model
 
         #region Bindings
