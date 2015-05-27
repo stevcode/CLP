@@ -319,20 +319,29 @@ namespace CLP.Entities
             return divBelow;
         }
 
+        public virtual void SortDivisions()
+        {
+            VerticalDivisions = new ObservableCollection<CLPArrayDivision>(VerticalDivisions.OrderBy(d => d.Position));
+            HorizontalDivisions = new ObservableCollection<CLPArrayDivision>(HorizontalDivisions.OrderBy(d => d.Position));
+        }
+
         public virtual void ResizeDivisions()
         {
-            var oldHeight = HorizontalDivisions.Aggregate<CLPArrayDivision, double>(0, (current, division) => current + division.Length);
+            SortDivisions();
+            var position = 0.0;
             foreach (var division in HorizontalDivisions)
             {
-                division.Position = division.Position * ArrayHeight / oldHeight;
-                division.Length = division.Length * ArrayHeight / oldHeight;
+                division.Position = position;
+                division.Length = (GridSquareSize * division.Value) - 1.0;
+                position += division.Length;
             }
 
-            var oldWidth = VerticalDivisions.Aggregate<CLPArrayDivision, double>(0, (current, division) => current + division.Length);
+            position = 0.0;
             foreach (var division in VerticalDivisions)
             {
-                division.Position = division.Position * ArrayWidth / oldWidth;
-                division.Length = division.Length * ArrayWidth / oldWidth;
+                division.Position = position;
+                division.Length = (GridSquareSize * division.Value) - 1.0;
+                position += division.Length;
             }
         }
 
