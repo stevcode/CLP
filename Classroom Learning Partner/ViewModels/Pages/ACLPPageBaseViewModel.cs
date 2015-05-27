@@ -859,7 +859,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 PageObjects.OfType<ICuttable>()
                            .Where(c => App.MainWindowViewModel.CurrentUser.ID == c.CreatorID || c.IsManipulatableByNonCreator)
                            .OrderBy(c => c.CuttingStrokeDistance(stroke))
-                           .FirstOrDefault();
+                           .LastOrDefault();
 
             
             var halvedPageObjects = new List<IPageObject>();

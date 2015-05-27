@@ -646,7 +646,6 @@ namespace CLP.Entities
                                                                           additionalLeftColumns * GridSquareSize,
                                                                           additionalLeftColumns);
                                     leftDividerRegions.Add(newLastDiv);
-
                                     var leftArray = new CLPArray(ParentPage, leftColumns, Rows, ArrayTypes.ObscurableArray)
                                                     {
                                                         IsGridOn = IsGridOn,
@@ -664,6 +663,7 @@ namespace CLP.Entities
                                     {
                                         leftArray.VerticalDivisions.Clear();
                                     }
+                                    leftArray.VerticalDivisions = new ObservableCollection<CLPArrayDivision>(leftArray.VerticalDivisions.Where(d => d.Length > 0));
                                     halvedPageObjects.Add(leftArray);
                                     
                                     var rightColumns = rightDividerRegions.Aggregate(0, (total, d) => d.Value + total) + additionalRightColumns;
