@@ -550,7 +550,53 @@ namespace CLP.Entities
                         break;
                     case ArrayTypes.ObscurableArray:
                     {
-                        if (IsColumnsObscured) { }
+                        if (IsColumnsObscured)
+                        {
+                            //Find if cuttingStroke is inside obscured divider region.
+                            var isObscuredColumnCut = VerticalDivisions.Any(d => d.IsObscured && d.Position < relativeAverage && d.Position + d.Length > relativeAverage);
+                            var isLeftSideCut = VerticalDivisions.Any(d => d.IsObscured && d.Position < relativeAverage && d.Position + (d.Length / 2) > relativeAverage);
+                            if (isObscuredColumnCut)
+                            {
+                                if (isLeftSideCut)
+                                {
+                                    var leftSingleColumnArray = new CLPArray(ParentPage, 1, Rows, ArrayTypes.ObscurableArray)
+                                                                {
+                                                                    IsGridOn = IsGridOn,
+                                                                    IsDivisionBehaviorOn = false,
+                                                                    XPosition = Math.Max(0, XPosition - GridSquareSize),
+                                                                    YPosition = YPosition,
+                                                                    IsTopLabelVisible = true,
+                                                                    IsSideLabelVisible = true,
+                                                                    IsSnappable = IsSnappable
+                                                                };
+                                    leftSingleColumnArray.SizeArrayToGridLevel(GridSquareSize);
+                                    halvedPageObjects.Add(leftSingleColumnArray);
+                                    halvedPageObjects.Add(this);
+                                }
+                                else
+                                {
+                                    halvedPageObjects.Add(this);
+                                    var rightSingleColumnArray = new CLPArray(ParentPage, 1, Rows, ArrayTypes.ObscurableArray)
+                                    {
+                                        IsGridOn = IsGridOn,
+                                        IsDivisionBehaviorOn = false,
+                                        XPosition = Math.Min(ParentPage.Width - GridSquareSize - (2 * LabelLength), XPosition + ArrayWidth),
+                                        YPosition = YPosition,
+                                        IsTopLabelVisible = true,
+                                        IsSideLabelVisible = true,
+                                        IsSnappable = IsSnappable
+                                    };
+                                    rightSingleColumnArray.SizeArrayToGridLevel(GridSquareSize);
+                                    halvedPageObjects.Add(rightSingleColumnArray);
+                                }
+                            }
+
+                            //find if left or right half of obscrured divider region
+
+                            //find if left or right of obscrured divider region
+
+                            //find out how much to take off left or right
+                        }
                         else
                         {
                             var leftArray = new CLPArray(ParentPage, closestColumn, Rows, ArrayTypes.ObscurableArray)
@@ -667,7 +713,53 @@ namespace CLP.Entities
                             bottomArray.SizeArrayToGridLevel(GridSquareSize);
                             halvedPageObjects.Add(bottomArray);
                         }
-                        else { }
+                        else
+                        {
+                            //Find if cuttingStroke is inside obscured divider region.
+                            var isObscuredRowCut = HorizontalDivisions.Any(d => d.IsObscured && d.Position < relativeAverage && d.Position + d.Length > relativeAverage);
+                            var isTopSideCut = HorizontalDivisions.Any(d => d.IsObscured && d.Position < relativeAverage && d.Position + (d.Length / 2) > relativeAverage);
+                            if (isObscuredRowCut)
+                            {
+                                if (isTopSideCut)
+                                {
+                                    var topSingleColumnArray = new CLPArray(ParentPage, Columns, 1, ArrayTypes.ObscurableArray)
+                                    {
+                                        IsGridOn = IsGridOn,
+                                        IsDivisionBehaviorOn = false,
+                                        XPosition = XPosition,
+                                        YPosition = Math.Max(0, YPosition - GridSquareSize),
+                                        IsTopLabelVisible = true,
+                                        IsSideLabelVisible = true,
+                                        IsSnappable = IsSnappable
+                                    };
+                                    topSingleColumnArray.SizeArrayToGridLevel(GridSquareSize);
+                                    halvedPageObjects.Add(topSingleColumnArray);
+                                    halvedPageObjects.Add(this);
+                                }
+                                else
+                                {
+                                    halvedPageObjects.Add(this);
+                                    var bottomSingleColumnArray = new CLPArray(ParentPage, Columns, 1, ArrayTypes.ObscurableArray)
+                                    {
+                                        IsGridOn = IsGridOn,
+                                        IsDivisionBehaviorOn = false,
+                                        XPosition = XPosition,
+                                        YPosition = Math.Min(ParentPage.Height - GridSquareSize - (2 * LabelLength), YPosition + ArrayHeight),
+                                        IsTopLabelVisible = true,
+                                        IsSideLabelVisible = true,
+                                        IsSnappable = IsSnappable
+                                    };
+                                    bottomSingleColumnArray.SizeArrayToGridLevel(GridSquareSize);
+                                    halvedPageObjects.Add(bottomSingleColumnArray);
+                                }
+                            }
+
+                            //find if left or right half of obscrured divider region
+
+                            //find if left or right of obscrured divider region
+
+                            //find out how much to take off left or right
+                        }
                     }
                         break;
                 }
