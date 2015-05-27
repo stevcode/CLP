@@ -38,8 +38,23 @@ namespace Classroom_Learning_Partner.ViewModels
             InitializeButtons();
         }
 
+        #endregion //Constructor
+
+        #region Buttons
+
+        private ToggleRibbonButton _toggleLabelsButton;
+        private ToggleRibbonButton _toggleObscureColumnsButton;
+        private ToggleRibbonButton _toggleObscureRowsButton;
+        private ToggleRibbonButton _toggleGridLinesButton;
+
         private void InitializeButtons()
         {
+            var array = PageObject as CLPArray;
+            if (array == null)
+            {
+                return;
+            }
+
             _contextButtons.Add(MajorRibbonViewModel.Separater);
 
             _contextButtons.Add(new RibbonButton("Make Copies", "pack://application:,,,/Images/AddToDisplay.png", DuplicateArrayCommand, null, true));
@@ -48,21 +63,46 @@ namespace Classroom_Learning_Partner.ViewModels
 
             _contextButtons.Add(new RibbonButton("Rotate", "pack://application:,,,/Resources/Images/AdornerImages/ArrayRotate64.png", RotateArrayCommand, null, true));
 
-            var toggleLabelsButton = new ToggleRibbonButton("Show Labels", "Hide Labels", "pack://application:,,,/Resources/Images/ArrayCard32.png", true)
-                                     {
-                                         IsChecked = IsTopLabelVisible && IsSideLabelVisible
-                                     };
-            toggleLabelsButton.Checked += toggleLabelsButton_Checked;
-            toggleLabelsButton.Unchecked += toggleLabelsButton_Checked;
-            _contextButtons.Add(toggleLabelsButton);
+            if (array.ArrayType == ArrayTypes.Array)
+            {
+                _toggleLabelsButton = new ToggleRibbonButton("Show Labels", "Hide Labels", "pack://application:,,,/Resources/Images/ArrayCard32.png", true)
+                {
+                    IsChecked = IsTopLabelVisible && IsSideLabelVisible
+                };
+                _toggleLabelsButton.Checked += toggleLabelsButton_Checked;
+                _toggleLabelsButton.Unchecked += toggleLabelsButton_Checked;
+                _contextButtons.Add(_toggleLabelsButton);
+            }
 
-            var toggleGridLinesButton = new ToggleRibbonButton("Show Grid Lines", "Hide Grid Lines", "pack://application:,,,/Resources/Images/ArrayCard32.png", true)
-                                        {
-                                            IsChecked = IsGridOn
-                                        };
-            toggleGridLinesButton.Checked += toggleGridLinesButton_Checked;
-            toggleGridLinesButton.Unchecked += toggleGridLinesButton_Checked;
-            _contextButtons.Add(toggleGridLinesButton);
+            if (array.ArrayType == ArrayTypes.ObscurableArray)
+            {
+                _toggleObscureColumnsButton = new ToggleRibbonButton("Show Columns", "Hide Columns", "pack://application:,,,/Resources/Images/ArrayCard32.png", true)
+                {
+                    IsChecked = !IsColumnsObscured
+                };
+
+                _toggleObscureColumnsButton.Checked += toggleObscureColumnsButton_Checked;
+                _toggleObscureColumnsButton.Unchecked += toggleObscureColumnsButton_Checked;
+                _toggleObscureColumnsButton.IsEnabled = !IsRowsObscured;
+                _contextButtons.Add(_toggleObscureColumnsButton);
+
+                _toggleObscureRowsButton = new ToggleRibbonButton("Show Rows", "Hide Rows", "pack://application:,,,/Resources/Images/ArrayCard32.png", true)
+                {
+                    IsChecked = !IsRowsObscured
+                };
+                _toggleObscureRowsButton.Checked += toggleObscureRowsButton_Checked;
+                _toggleObscureRowsButton.Unchecked += toggleObscureRowsButton_Checked;
+                _toggleObscureRowsButton.IsEnabled = !IsColumnsObscured;
+                _contextButtons.Add(_toggleObscureRowsButton);
+            }
+
+            _toggleGridLinesButton = new ToggleRibbonButton("Show Grid Lines", "Hide Grid Lines", "pack://application:,,,/Resources/Images/ArrayCard32.png", true)
+                                     {
+                                         IsChecked = IsGridOn
+                                     };
+            _toggleGridLinesButton.Checked += toggleGridLinesButton_Checked;
+            _toggleGridLinesButton.Unchecked += toggleGridLinesButton_Checked;
+            _contextButtons.Add(_toggleGridLinesButton);
 
             _contextButtons.Add(new RibbonButton("Snap", "pack://application:,,,/Resources/Images/AdornerImages/ArraySnap64.png", SnapArrayCommand, null, true));
             //    _contextButtons.Add(new RibbonButton("Size to Other Arrays", "pack://application:,,,/Resources/Images/AdornerImages/ArraySnap64.png", null, null, true));
@@ -77,14 +117,70 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            var clpArray = PageObject as CLPArray;
-            if (clpArray == null)
+            var array = PageObject as CLPArray;
+            if (array == null)
             {
                 return;
             }
 
-            clpArray.IsTopLabelVisible = (bool)toggleButton.IsChecked;
-            clpArray.IsSideLabelVisible = (bool)toggleButton.IsChecked;
+            array.IsTopLabelVisible = (bool)toggleButton.IsChecked && !array.IsColumnsObscured;
+            array.IsSideLabelVisible = (bool)toggleButton.IsChecked && !array.IsRowsObscured;
+        }
+
+        private void toggleObscureColumnsButton_Checked(object sender, RoutedEventArgs e)
+        {
+            var toggleButton = sender as ToggleRibbonButton;
+            if (toggleButton == null ||
+                toggleButton.IsChecked == null)
+            {
+                return;
+            }
+
+            var array = PageObject as CLPArray;
+            if (array == null)
+            {
+                return;
+            }
+
+            if (array.IsColumnsObscured)
+            {
+                array.Unobscure(true);
+            }
+            else
+            {
+                array.Obscure(true);
+            }
+
+            IsTopLabelVisible = !array.IsColumnsObscured;
+            _toggleObscureRowsButton.IsEnabled = !array.IsColumnsObscured;
+        }
+
+        private void toggleObscureRowsButton_Checked(object sender, RoutedEventArgs e)
+        {
+            var toggleButton = sender as ToggleRibbonButton;
+            if (toggleButton == null ||
+                toggleButton.IsChecked == null)
+            {
+                return;
+            }
+
+            var array = PageObject as CLPArray;
+            if (array == null)
+            {
+                return;
+            }
+
+            if (array.IsRowsObscured)
+            {
+                array.Unobscure(false);
+            }
+            else
+            {
+                array.Obscure(false);
+            }
+
+            IsSideLabelVisible = !array.IsRowsObscured;
+            _toggleObscureColumnsButton.IsEnabled = !array.IsRowsObscured;
         }
 
         private void toggleGridLinesButton_Checked(object sender, RoutedEventArgs e)
@@ -110,7 +206,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                                                                          clpArray.IsGridOn));
         }
 
-        #endregion //Constructor
+        #endregion //Buttons
 
         #region Model
 
@@ -219,15 +315,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(HorizontalDivisionsProperty, value); }
         }
 
-        public static readonly PropertyData HorizontalDivisionsProperty = RegisterProperty("HorizontalDivisions",
-                                                                                           typeof (ObservableCollection<CLPArrayDivision>),
-                                                                                           null,
-                                                                                           Divisions_Changed);
-
-        private static void Divisions_Changed(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
-        {
-            //throw new NotImplementedException();
-        }
+        public static readonly PropertyData HorizontalDivisionsProperty = RegisterProperty("HorizontalDivisions", typeof (ObservableCollection<CLPArrayDivision>));
 
         /// <summary>Gets or sets the VerticalDivisions value.</summary>
         [ViewModelToModel("PageObject")]
@@ -238,6 +326,37 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData VerticalDivisionsProperty = RegisterProperty("VerticalDivisions", typeof (ObservableCollection<CLPArrayDivision>));
+
+        /// <summary>Toggles visibility of Columns obscurer.</summary>
+        [ViewModelToModel("PageObject")]
+        public bool IsColumnsObscured
+        {
+            get { return GetValue<bool>(IsColumnsObscuredProperty); }
+            set { SetValue(IsColumnsObscuredProperty, value); }
+        }
+
+        public static readonly PropertyData IsColumnsObscuredProperty = RegisterProperty("IsColumnsObscured", typeof (bool));
+
+        /// <summary>Toggles visibity of Row obscurer.</summary>
+        [ViewModelToModel("PageObject")]
+        public bool IsRowsObscured
+        {
+            get { return GetValue<bool>(IsRowsObscuredProperty); }
+            set { SetValue(IsRowsObscuredProperty, value); }
+        }
+
+        public static readonly PropertyData IsRowsObscuredProperty = RegisterProperty("IsRowsObscured", typeof (bool));
+
+        /// <summary>The type of array.</summary>
+        [ViewModelToModel("PageObject")]
+        public ArrayTypes ArrayType
+        {
+            get { return GetValue<ArrayTypes>(ArrayTypeProperty); }
+            set { SetValue(ArrayTypeProperty, value); }
+        }
+
+        public static readonly PropertyData ArrayTypeProperty = RegisterProperty("ArrayType", typeof (ArrayTypes));
+
 
         #endregion //Model
 
@@ -530,7 +649,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 #endregion //Snap to FFC
 
-                if (isVerticalIntersection && snappingArray.Rows == persistingArray.Rows)
+                if (isVerticalIntersection && snappingArray.Rows == persistingArray.Rows &&
+                    snappingArray.IsRowsObscured == persistingArray.IsRowsObscured)
                 {
                     var rightDiff =
                         Math.Abs(snappingArray.XPosition + snappingArray.LabelLength - (persistingArray.XPosition + persistingArray.LabelLength + persistingArray.ArrayWidth));
@@ -559,7 +679,8 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
                 }
 
-                if (isHorizontalIntersection && snappingArray.Columns == persistingArray.Columns)
+                if (isHorizontalIntersection && snappingArray.Columns == persistingArray.Columns &&
+                    snappingArray.IsColumnsObscured == persistingArray.IsColumnsObscured)
                 {
                     var bottomDiff =
                         Math.Abs(snappingArray.YPosition + snappingArray.LabelLength - (persistingArray.YPosition + persistingArray.LabelLength + persistingArray.ArrayHeight));
@@ -603,7 +724,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 case SnapType.Top:
                     arraySnapHistoryItem = new CLPArraySnapHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, closestPersistingArray, snappingArray, true);
 
-                    closestPersistingArray.VerticalDivisions.Clear();
+                    if (!closestPersistingArray.IsColumnsObscured)
+                    {
+                        closestPersistingArray.VerticalDivisions.Clear();
+                    }
 
                     snappingArray.SizeArrayToGridLevel(squareSize);
 
@@ -634,7 +758,8 @@ namespace Classroom_Learning_Partner.ViewModels
                         closestPersistingArray.HorizontalDivisions.Add(new CLPArrayDivision(horizontalDivision.Orientation,
                                                                                             horizontalDivision.Position + snappingArray.ArrayHeight,
                                                                                             horizontalDivision.Length,
-                                                                                            horizontalDivision.Value));
+                                                                                            horizontalDivision.Value,
+                                                                                            horizontalDivision.IsObscured));
                     }
 
                     closestPersistingArray.Rows += snappingArray.Rows;
@@ -643,7 +768,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 case SnapType.Bottom:
                     arraySnapHistoryItem = new CLPArraySnapHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, closestPersistingArray, snappingArray, true);
 
-                    closestPersistingArray.VerticalDivisions.Clear();
+                    if (!closestPersistingArray.IsColumnsObscured)
+                    {
+                        closestPersistingArray.VerticalDivisions.Clear();
+                    }
 
                     snappingArray.SizeArrayToGridLevel(squareSize);
 
@@ -669,7 +797,8 @@ namespace Classroom_Learning_Partner.ViewModels
                             closestPersistingArray.HorizontalDivisions.Add(new CLPArrayDivision(horizontalDivision.Orientation,
                                                                                                 horizontalDivision.Position + closestPersistingArray.ArrayHeight,
                                                                                                 horizontalDivision.Length,
-                                                                                                horizontalDivision.Value));
+                                                                                                horizontalDivision.Value,
+                                                                                                horizontalDivision.IsObscured));
                         }
                     }
 
@@ -678,7 +807,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 case SnapType.Left:
                     arraySnapHistoryItem = new CLPArraySnapHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, closestPersistingArray, snappingArray, false);
 
-                    closestPersistingArray.HorizontalDivisions.Clear();
+                    if (!closestPersistingArray.IsRowsObscured)
+                    {
+                        closestPersistingArray.HorizontalDivisions.Clear();
+                    }
 
                     snappingArray.SizeArrayToGridLevel(squareSize);
 
@@ -709,7 +841,8 @@ namespace Classroom_Learning_Partner.ViewModels
                         closestPersistingArray.VerticalDivisions.Add(new CLPArrayDivision(verticalDivision.Orientation,
                                                                                           verticalDivision.Position + snappingArray.ArrayWidth,
                                                                                           verticalDivision.Length,
-                                                                                          verticalDivision.Value));
+                                                                                          verticalDivision.Value,
+                                                                                          verticalDivision.IsObscured));
                     }
 
                     closestPersistingArray.Columns += snappingArray.Columns;
@@ -718,7 +851,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 case SnapType.Right:
                     arraySnapHistoryItem = new CLPArraySnapHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, closestPersistingArray, snappingArray, false);
 
-                    closestPersistingArray.HorizontalDivisions.Clear();
+                    if (!closestPersistingArray.IsRowsObscured)
+                    {
+                        closestPersistingArray.HorizontalDivisions.Clear();
+                    }
 
                     snappingArray.SizeArrayToGridLevel(squareSize);
 
@@ -744,7 +880,8 @@ namespace Classroom_Learning_Partner.ViewModels
                             closestPersistingArray.VerticalDivisions.Add(new CLPArrayDivision(verticalDivision.Orientation,
                                                                                               verticalDivision.Position + closestPersistingArray.ArrayWidth,
                                                                                               verticalDivision.Length,
-                                                                                              verticalDivision.Value));
+                                                                                              verticalDivision.Value,
+                                                                                              verticalDivision.IsObscured));
                         }
                     }
 
@@ -822,6 +959,21 @@ namespace Classroom_Learning_Partner.ViewModels
             var initXPos = array.XPosition;
             var initYPos = array.YPosition;
             array.RotateArray();
+
+            _toggleObscureColumnsButton.Checked -= toggleObscureColumnsButton_Checked;
+            _toggleObscureColumnsButton.Unchecked -= toggleObscureColumnsButton_Checked;
+            _toggleObscureRowsButton.Checked -= toggleObscureRowsButton_Checked;
+            _toggleObscureRowsButton.Unchecked -= toggleObscureRowsButton_Checked;
+            _toggleObscureColumnsButton.IsEnabled = !array.IsRowsObscured;
+            _toggleObscureColumnsButton.IsChecked = !array.IsColumnsObscured;
+            
+            _toggleObscureRowsButton.IsEnabled = !array.IsColumnsObscured;
+            _toggleObscureRowsButton.IsChecked = !array.IsRowsObscured;
+            _toggleObscureColumnsButton.Checked += toggleObscureColumnsButton_Checked;
+            _toggleObscureColumnsButton.Unchecked += toggleObscureColumnsButton_Checked;
+            _toggleObscureRowsButton.Checked += toggleObscureRowsButton_Checked;
+            _toggleObscureRowsButton.Unchecked += toggleObscureRowsButton_Checked;
+
             ACLPPageBaseViewModel.AddHistoryItemToPage(array.ParentPage,
                                                        new CLPArrayRotateHistoryItem(array.ParentPage,
                                                                                      App.MainWindowViewModel.CurrentUser,
@@ -1208,7 +1360,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 strokeLeft >= cuttableLeft &&
                 strokeTop - cuttableTop <= MIN_THRESHHOLD &&
                 cuttableBottom - strokeBottom <= MIN_THRESHHOLD &&
-                array.Columns > 1) //Vertical Stroke. Stroke must be within the bounds of the pageObject
+                array.Columns > 1 &&
+                !array.IsColumnsObscured) //Vertical Stroke. Stroke must be within the bounds of the pageObject
             {
                 oldRegions = array.VerticalDivisions.ToList();
                 var average = (strokeRight + strokeLeft) / 2;
@@ -1265,7 +1418,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 strokeTop >= cuttableTop &&
                 cuttableRight - strokeRight <= MIN_THRESHHOLD &&
                 strokeLeft - cuttableLeft <= MIN_THRESHHOLD &&
-                array.Rows > 1) //Horizontal Stroke. Stroke must be within the bounds of the pageObject
+                array.Rows > 1 &&
+                !array.IsRowsObscured) //Horizontal Stroke. Stroke must be within the bounds of the pageObject
             {
                 oldRegions = array.HorizontalDivisions.ToList();
                 var average = (strokeTop + strokeBottom) / 2;
@@ -1320,7 +1474,7 @@ namespace Classroom_Learning_Partner.ViewModels
             return false;
         }
 
-        public static void AddArrayToPage(CLPPage page)
+        public static void AddArrayToPage(CLPPage page, ArrayTypes arrayType)
         {
             if (page == null)
             {
@@ -1407,7 +1561,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //Create arrays.
             var arraysToAdd =
-                Enumerable.Range(1, numberOfArrays).Select(index => new CLPArray(page, initialGridSize, columns, rows, ArrayTypes.Array)).Cast<ACLPArrayBase>().ToList();
+                Enumerable.Range(1, numberOfArrays).Select(index => new CLPArray(page, initialGridSize, columns, rows, arrayType)).Cast<ACLPArrayBase>().ToList();
             var firstArray = arraysToAdd.First();
             arraysToAdd.Remove(firstArray);
 

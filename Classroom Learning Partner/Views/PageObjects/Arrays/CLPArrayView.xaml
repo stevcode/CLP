@@ -4,7 +4,8 @@
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:ac="clr-namespace:AdornedControl"
-                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters">
+                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
+                   xmlns:entities="clr-namespace:CLP.Entities;assembly=CLP.Entities">
 
     <UserControl.Resources>
         <catel:BooleanToCollapsingVisibilityConverter x:Key="BooleanToCollapsingVisibilityConverter" />
@@ -112,6 +113,19 @@
                        Height="40"
                        Canvas.Right="-40"
                        Canvas.Bottom="-40">
+                    <Thumb.Style>
+                        <Style TargetType="Thumb">
+                            <Setter Property="Visibility"
+                                    Value="Visible" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ArrayType}"
+                                             Value="{x:Static entities:ArrayTypes.ObscurableArray}">
+                                    <Setter Property="Visibility"
+                                            Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Thumb.Style>
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="DragDelta">
                             <catel:EventToCommand Command="{Binding ResizeArrayCommand}"
@@ -160,7 +174,7 @@
                         </ControlTemplate>
                     </Button.Template>
                 </Button>
-                
+
             </Canvas>
 
         </ac:AdornedControl.AdornerContent>
@@ -241,7 +255,10 @@
                                                      Value="True">
                                             <Setter Property="Fill">
                                                 <Setter.Value>
-
+                                                    <!--HACK: This throws errors because DrawingBrush does not inherit DataContext
+                                                    therefore, it's DataContext=null. It then uses something called an InheritedContext
+                                                    to attempt the data binding, that's why it succeeds. Need to find a way to try this
+                                                    better. Similarly, MultipleChoiceBox's VisualBrush does the same thing-->
                                                     <DrawingBrush TileMode="Tile"
                                                                   ViewportUnits="RelativeToBoundingBox">
                                                         <DrawingBrush.Viewport>
@@ -311,6 +328,30 @@
                     <DataTemplate>
                         <Canvas Height="{Binding Length}"
                                 Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
+                            <!--Row Obscurer-->
+                            <Grid Height="{Binding Length}"
+                                  Width="{Binding DataContext.ArrayWidth, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
+                                <Polygon IsHitTestVisible="False"
+                                         Stroke="PowderBlue"
+                                         StrokeThickness="3"
+                                         Fill="White"
+                                         Points="5,0 15,0 12.5,30 17.5,30 12.5,60 17.5,60 15,100 5,100 7.5,70 2.5,70 7.5,40 2.5,40"
+                                         Height="{Binding DataContext.ArrayWidth, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
+                                         Width="{Binding DataContext.GridSquareSize, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
+                                         Stretch="Fill"
+                                         VerticalAlignment="Center"
+                                         Visibility="{Binding IsObscured, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <Polygon.LayoutTransform>
+                                        <TransformGroup>
+                                            <ScaleTransform />
+                                            <SkewTransform />
+                                            <RotateTransform Angle="-90" />
+                                            <TranslateTransform />
+                                        </TransformGroup>
+                                    </Polygon.LayoutTransform>
+                                </Polygon>
+                            </Grid>
+                            
                             <!--The Visible Division Line-->
                             <Rectangle Tag="DivisionHitBox"
                                        Height="3"
@@ -337,7 +378,8 @@
                                                          Converter={conv:MultiplyNumberConverter},
                                                          ConverterParameter=-1}"
                                 Height="{Binding Length}"
-                                Width="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
+                                Width="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
+                                  Visibility="{Binding IsObscured, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}" >
                                 <TextBlock IsHitTestVisible="False"
                                            Text="{Binding Value, Converter={StaticResource ZeroToQuestionMarkConverter}}"
                                            TextAlignment="Center"
@@ -390,6 +432,21 @@
                     <DataTemplate>
                         <Canvas Width="{Binding Length}"
                                 Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
+                            <!--Column Obscurer-->
+                            <Grid Width="{Binding Length}"
+                                  Height="{Binding DataContext.ArrayHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
+                                <Polygon IsHitTestVisible="False"
+                                         Stroke="PowderBlue"
+                                         StrokeThickness="3"
+                                         Fill="White"
+                                         Points="5,0 15,0 12.5,30 17.5,30 12.5,60 17.5,60 15,100 5,100 7.5,70 2.5,70 7.5,40 2.5,40"
+                                         Height="{Binding DataContext.ArrayHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
+                                         Width="{Binding DataContext.GridSquareSize, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
+                                         Stretch="Fill"
+                                         HorizontalAlignment="Center"
+                                         Visibility="{Binding IsObscured, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            </Grid>
+                            
                             <!--The Visible Division Line-->
                             <Rectangle Tag="DivisionHitBox"
                                        Width="3"
@@ -416,14 +473,16 @@
                                                           Converter={conv:MultiplyNumberConverter},
                                                           ConverterParameter=-1}"
                                 Width="{Binding Length}"
-                                Height="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}">
+                                Height="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
+                                  Visibility="{Binding IsObscured, Converter={StaticResource BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}">
                                 <TextBlock IsHitTestVisible="False"
                                            Text="{Binding Value, Converter={StaticResource ZeroToQuestionMarkConverter}}"
                                            TextAlignment="Center"
                                            FontSize="20"
                                            Foreground="{StaticResource TopLabelColor}"
                                            Height="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"
-                                           Width="{Binding Length}" />
+                                           Width="{Binding Length}"
+                                            />
                                 <Rectangle Tag="TopLabelHitBox"
                                            Fill="Transparent"
                                            Width="{Binding DataContext.PageObject.LabelLength, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}}"

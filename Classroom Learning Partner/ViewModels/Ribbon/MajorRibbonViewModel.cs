@@ -115,6 +115,7 @@ namespace Classroom_Learning_Partner.ViewModels
             _insert10x10ArrayButton = new RibbonButton("10x10 Array", "pack://application:,,,/Resources/Images/PresetArray32.png", AddPageObjectToPageCommand, "10X10");
             _insertArrayCardButton = new RibbonButton("Array Card", "pack://application:,,,/Resources/Images/ArrayCard32.png", AddPageObjectToPageCommand, "ARRAYCARD");
             _insertFactorCardButton = new RibbonButton("Factor Card", "pack://application:,,,/Resources/Images/FactorCard32.png", AddPageObjectToPageCommand, "FACTORCARD");
+            _insertObscurableArrayButton = new RibbonButton("Array", "pack://application:,,,/Resources/Images/Array32.png", AddPageObjectToPageCommand, "OBSCURABLE_ARRAY");
 
             //Division Templates
             _insertDivisionTemplateButton = new RibbonButton("Division Tool",
@@ -263,6 +264,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private RibbonButton _insert10x10ArrayButton;
         private RibbonButton _insertArrayCardButton;
         private RibbonButton _insertFactorCardButton;
+        private RibbonButton _insertObscurableArrayButton;
 
         //Division Templates
         private RibbonButton _insertDivisionTemplateButton;
@@ -669,7 +671,19 @@ namespace Classroom_Learning_Partner.ViewModels
 
                     //Arrays
                 case "ARRAY":
-                    CLPArrayViewModel.AddArrayToPage(CurrentPage);
+                    CLPArrayViewModel.AddArrayToPage(CurrentPage, ArrayTypes.Array);
+                    break;
+                case "10X10":
+                    CLPArrayViewModel.AddArrayToPage(CurrentPage, ArrayTypes.TenByTen);
+                    break;
+                case "ARRAYCARD":
+                    CLPArrayViewModel.AddArrayToPage(CurrentPage, ArrayTypes.ArrayCard);
+                    break;
+                case "FACTORCARD":
+                    CLPArrayViewModel.AddArrayToPage(CurrentPage, ArrayTypes.FactorCard);
+                    break;
+                case "OBSCURABLE_ARRAY":
+                    CLPArrayViewModel.AddArrayToPage(CurrentPage, ArrayTypes.ObscurableArray);
                     break;
 
                     //Number Line
@@ -727,9 +741,9 @@ namespace Classroom_Learning_Partner.ViewModels
             Buttons.Add(_setDrawModeButton);
             Buttons.Add(_setEraseModeButton);
             Buttons.Add(Separater);
-            Buttons.Add(_setLassoModeButton);
+            //Buttons.Add(_setLassoModeButton);
             Buttons.Add(_setCutModeButton);
-            Buttons.Add(_setDividerCreationModeButton);
+            //Buttons.Add(_setDividerCreationModeButton);
 
             // Insert Math Tools
             Buttons.Add(Separater);
@@ -737,6 +751,10 @@ namespace Classroom_Learning_Partner.ViewModels
             Buttons.Add(_insertGroupStampButton);
             Buttons.Add(_insertNumberLineButton);
             Buttons.Add(_insertArrayButton);
+            //Buttons.Add(_insert10x10ArrayButton);
+            //Buttons.Add(_insertArrayCardButton);
+            //Buttons.Add(_insertFactorCardButton);
+            Buttons.Add(_insertObscurableArrayButton);
             Buttons.Add(_insertPileButton);
             Buttons.Add(_insertDivisionTemplateButton);
 

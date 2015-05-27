@@ -20,12 +20,13 @@ namespace CLP.Entities
 
         public CLPArrayDivision() { }
 
-        public CLPArrayDivision(ArrayDivisionOrientation orientation, double position, double length, int value)
+        public CLPArrayDivision(ArrayDivisionOrientation orientation, double position, double length, int value, bool isObscured = false)
         {
             Orientation = orientation;
             Position = position;
             Length = length;
             Value = value;
+            IsObscured = isObscured;
         }
 
         /// <summary>Initializes a new object based on <see cref="SerializationInfo" />.</summary>
@@ -73,6 +74,15 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData ValueProperty = RegisterProperty("Value", typeof (int), 0);
+
+        /// <summary>Designates a Divider Region as obscured or not.</summary>
+        public bool IsObscured
+        {
+            get { return GetValue<bool>(IsObscuredProperty); }
+            set { SetValue(IsObscuredProperty, value); }
+        }
+
+        public static readonly PropertyData IsObscuredProperty = RegisterProperty("IsObscured", typeof(bool), false);
 
         #endregion //Properties
 
@@ -244,6 +254,18 @@ namespace CLP.Entities
 
         public abstract double MinimumGridSquareSize { get; }
 
+        /// <summary>Signifies obscuring shape over Rows.</summary>
+        public bool IsRowsObscured
+        {
+            get { return HorizontalDivisions.Any(d => d.IsObscured); }
+        }
+
+        /// <summary>Signifies obscuring shape over Columns.</summary>
+        public bool IsColumnsObscured
+        {
+            get { return VerticalDivisions.Any(d => d.IsObscured); }
+        }
+
         #endregion //Calculated Properties
 
         #endregion //Properties
@@ -297,20 +319,29 @@ namespace CLP.Entities
             return divBelow;
         }
 
+        public virtual void SortDivisions()
+        {
+            VerticalDivisions = new ObservableCollection<CLPArrayDivision>(VerticalDivisions.OrderBy(d => d.Position));
+            HorizontalDivisions = new ObservableCollection<CLPArrayDivision>(HorizontalDivisions.OrderBy(d => d.Position));
+        }
+
         public virtual void ResizeDivisions()
         {
-            var oldHeight = HorizontalDivisions.Aggregate<CLPArrayDivision, double>(0, (current, division) => current + division.Length);
+            SortDivisions();
+            var position = 0.0;
             foreach (var division in HorizontalDivisions)
             {
-                division.Position = division.Position * ArrayHeight / oldHeight;
-                division.Length = division.Length * ArrayHeight / oldHeight;
+                division.Position = position;
+                division.Length = (GridSquareSize * division.Value) - 1.0;
+                position += division.Length;
             }
 
-            var oldWidth = VerticalDivisions.Aggregate<CLPArrayDivision, double>(0, (current, division) => current + division.Length);
+            position = 0.0;
             foreach (var division in VerticalDivisions)
             {
-                division.Position = division.Position * ArrayWidth / oldWidth;
-                division.Length = division.Length * ArrayWidth / oldWidth;
+                division.Position = position;
+                division.Length = (GridSquareSize * division.Value) - 1.0;
+                position += division.Length;
             }
         }
 

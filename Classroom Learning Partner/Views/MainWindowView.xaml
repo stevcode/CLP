@@ -21,6 +21,10 @@
                   WindowState="Normal"
                   MinWidth="300"
                   MinHeight="300">
+    
+    <!--Debugging WindowState:
+        Release: Maximized
+        Debug: Normal-->
 
     <catel:DataWindow.Resources>
         <ResourceDictionary>
