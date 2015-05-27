@@ -639,8 +639,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 #endregion //Snap to FFC
 
                 if (isVerticalIntersection && snappingArray.Rows == persistingArray.Rows &&
-                    !snappingArray.IsRowsObscured &&
-                    !persistingArray.IsRowsObscured)
+                    snappingArray.IsRowsObscured == persistingArray.IsRowsObscured)
                 {
                     var rightDiff =
                         Math.Abs(snappingArray.XPosition + snappingArray.LabelLength - (persistingArray.XPosition + persistingArray.LabelLength + persistingArray.ArrayWidth));
@@ -670,8 +669,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
 
                 if (isHorizontalIntersection && snappingArray.Columns == persistingArray.Columns &&
-                    !snappingArray.IsColumnsObscured &&
-                    !persistingArray.IsColumnsObscured)
+                    snappingArray.IsColumnsObscured == persistingArray.IsColumnsObscured)
                 {
                     var bottomDiff =
                         Math.Abs(snappingArray.YPosition + snappingArray.LabelLength - (persistingArray.YPosition + persistingArray.LabelLength + persistingArray.ArrayHeight));
@@ -715,7 +713,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 case SnapType.Top:
                     arraySnapHistoryItem = new CLPArraySnapHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, closestPersistingArray, snappingArray, true);
 
-                    closestPersistingArray.VerticalDivisions.Clear();
+                    if (!closestPersistingArray.IsColumnsObscured)
+                    {
+                        closestPersistingArray.VerticalDivisions.Clear();
+                    }
 
                     snappingArray.SizeArrayToGridLevel(squareSize);
 
@@ -756,7 +757,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 case SnapType.Bottom:
                     arraySnapHistoryItem = new CLPArraySnapHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, closestPersistingArray, snappingArray, true);
 
-                    closestPersistingArray.VerticalDivisions.Clear();
+                    if (!closestPersistingArray.IsColumnsObscured)
+                    {
+                        closestPersistingArray.VerticalDivisions.Clear();
+                    }
 
                     snappingArray.SizeArrayToGridLevel(squareSize);
 
@@ -792,7 +796,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 case SnapType.Left:
                     arraySnapHistoryItem = new CLPArraySnapHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, closestPersistingArray, snappingArray, false);
 
-                    closestPersistingArray.HorizontalDivisions.Clear();
+                    if (!closestPersistingArray.IsRowsObscured)
+                    {
+                        closestPersistingArray.HorizontalDivisions.Clear();
+                    }
 
                     snappingArray.SizeArrayToGridLevel(squareSize);
 
@@ -833,7 +840,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 case SnapType.Right:
                     arraySnapHistoryItem = new CLPArraySnapHistoryItem(PageObject.ParentPage, App.MainWindowViewModel.CurrentUser, closestPersistingArray, snappingArray, false);
 
-                    closestPersistingArray.HorizontalDivisions.Clear();
+                    if (!closestPersistingArray.IsRowsObscured)
+                    {
+                        closestPersistingArray.HorizontalDivisions.Clear();
+                    }
 
                     snappingArray.SizeArrayToGridLevel(squareSize);
 
