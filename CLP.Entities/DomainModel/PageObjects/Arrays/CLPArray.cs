@@ -413,6 +413,52 @@ namespace CLP.Entities
 
         #endregion //APageObjectBase Overrides
 
+        #region ACLPArrayBase Overrides
+
+        public override void RotateArray()
+        {
+            var initialWidth = Width;
+            var initialHeight = Height;
+
+            var tempGridSquareSize = GridSquareSize;
+            var tempCols = Columns;
+            Columns = Rows;
+            Rows = tempCols;
+
+            var tempHorizontalDivisions = HorizontalDivisions;
+            HorizontalDivisions = VerticalDivisions;
+            VerticalDivisions = tempHorizontalDivisions;
+            foreach (var verticalDivision in VerticalDivisions)
+            {
+                verticalDivision.Orientation = ArrayDivisionOrientation.Vertical;
+            }
+            foreach (var horizontalDivision in HorizontalDivisions)
+            {
+                horizontalDivision.Orientation = ArrayDivisionOrientation.Horizontal;
+            }
+            SizeArrayToGridLevel(tempGridSquareSize);
+
+            if (XPosition + Width > ParentPage.Width)
+            {
+                XPosition = ParentPage.Width - Width;
+            }
+            if (YPosition + Height > ParentPage.Height)
+            {
+                YPosition = ParentPage.Height - Height;
+            }
+
+            if (ArrayType == ArrayTypes.ObscurableArray)
+            {
+                IsSideLabelVisible = !IsRowsObscured;
+                IsTopLabelVisible = !IsColumnsObscured;
+            }
+
+            //RefreshStrokeParentIDs();
+            OnResized(initialWidth, initialHeight);
+        } 
+
+        #endregion //ACLPArrayBase Overrides
+
         #region ICountable Implementation
 
         /// <summary>Number of Parts the <see cref="ICountable" /> represents.</summary>
@@ -665,16 +711,13 @@ namespace CLP.Entities
                                     }
                                     leftArray.VerticalDivisions = new ObservableCollection<CLPArrayDivision>(leftArray.VerticalDivisions.Where(d => d.Length > 0));
                                     halvedPageObjects.Add(leftArray);
-                                    
+
                                     var rightColumns = rightDividerRegions.Aggregate(0, (total, d) => d.Value + total) + additionalRightColumns;
                                     foreach (var dividerRegion in rightDividerRegions)
                                     {
                                         dividerRegion.Position += rightDividerRegionOffset;
                                     }
-                                    var newFirstDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical,
-                                                                          0.0,
-                                                                          additionalRightColumns * GridSquareSize,
-                                                                          additionalRightColumns);
+                                    var newFirstDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, 0.0, additionalRightColumns * GridSquareSize, additionalRightColumns);
                                     rightDividerRegions.Insert(0, newFirstDiv);
 
                                     var rightArray = new CLPArray(ParentPage, rightColumns, Rows, ArrayTypes.ObscurableArray)
@@ -695,6 +738,7 @@ namespace CLP.Entities
                                     {
                                         rightArray.VerticalDivisions.Clear();
                                     }
+                                    rightArray.VerticalDivisions = new ObservableCollection<CLPArrayDivision>(rightArray.VerticalDivisions.Where(d => d.Length > 0));
                                     halvedPageObjects.Add(rightArray);
                                 }
                             }
@@ -779,17 +823,16 @@ namespace CLP.Entities
                                                                           additionalLeftColumns * GridSquareSize,
                                                                           additionalLeftColumns);
                                     leftDividerRegions.Add(newLastDiv);
-
                                     var leftArray = new CLPArray(ParentPage, leftColumns, Rows, ArrayTypes.ObscurableArray)
-                                    {
-                                        IsGridOn = IsGridOn,
-                                        IsDivisionBehaviorOn = false,
-                                        XPosition = Math.Max(0, XPosition),
-                                        YPosition = YPosition,
-                                        IsSideLabelVisible = true,
-                                        IsSnappable = IsSnappable,
-                                        VerticalDivisions = new ObservableCollection<CLPArrayDivision>(leftDividerRegions)
-                                    };
+                                                    {
+                                                        IsGridOn = IsGridOn,
+                                                        IsDivisionBehaviorOn = false,
+                                                        XPosition = Math.Max(0, XPosition),
+                                                        YPosition = YPosition,
+                                                        IsSideLabelVisible = true,
+                                                        IsSnappable = IsSnappable,
+                                                        VerticalDivisions = new ObservableCollection<CLPArrayDivision>(leftDividerRegions)
+                                                    };
                                     leftArray.IsTopLabelVisible = !leftArray.IsColumnsObscured;
                                     leftArray.SizeArrayToGridLevel(GridSquareSize);
                                     if (leftArray.VerticalDivisions.Count == 1 &&
@@ -797,6 +840,7 @@ namespace CLP.Entities
                                     {
                                         leftArray.VerticalDivisions.Clear();
                                     }
+                                    leftArray.VerticalDivisions = new ObservableCollection<CLPArrayDivision>(leftArray.VerticalDivisions.Where(d => d.Length > 0));
                                     halvedPageObjects.Add(leftArray);
 
                                     var rightColumns = rightDividerRegions.Aggregate(0, (total, d) => d.Value + total) + additionalRightColumns;
@@ -804,23 +848,20 @@ namespace CLP.Entities
                                     {
                                         dividerRegion.Position += rightDividerRegionOffset;
                                     }
-                                    var newFirstDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical,
-                                                                          0.0,
-                                                                          additionalRightColumns * GridSquareSize,
-                                                                          additionalRightColumns);
+                                    var newFirstDiv = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, 0.0, additionalRightColumns * GridSquareSize, additionalRightColumns);
                                     rightDividerRegions.Insert(0, newFirstDiv);
 
                                     var rightArray = new CLPArray(ParentPage, rightColumns, Rows, ArrayTypes.ObscurableArray)
-                                    {
-                                        IsGridOn = IsGridOn,
-                                        IsDivisionBehaviorOn = false,
-                                        XPosition =
-                                            Math.Min(ParentPage.Width - (2 * LabelLength) - (rightColumns * GridSquareSize),
-                                                     leftArray.XPosition + leftArray.ArrayWidth),
-                                        YPosition = YPosition,
-                                        IsSideLabelVisible = true,
-                                        VerticalDivisions = new ObservableCollection<CLPArrayDivision>(rightDividerRegions)
-                                    };
+                                                     {
+                                                         IsGridOn = IsGridOn,
+                                                         IsDivisionBehaviorOn = false,
+                                                         XPosition =
+                                                             Math.Min(ParentPage.Width - (2 * LabelLength) - (rightColumns * GridSquareSize),
+                                                                      leftArray.XPosition + leftArray.ArrayWidth),
+                                                         YPosition = YPosition,
+                                                         IsSideLabelVisible = true,
+                                                         VerticalDivisions = new ObservableCollection<CLPArrayDivision>(rightDividerRegions)
+                                                     };
                                     rightArray.IsTopLabelVisible = !rightArray.IsColumnsObscured;
                                     rightArray.SizeArrayToGridLevel(GridSquareSize);
                                     if (rightArray.VerticalDivisions.Count == 1 &&
@@ -828,6 +869,7 @@ namespace CLP.Entities
                                     {
                                         rightArray.VerticalDivisions.Clear();
                                     }
+                                    rightArray.VerticalDivisions = new ObservableCollection<CLPArrayDivision>(rightArray.VerticalDivisions.Where(d => d.Length > 0));
                                     halvedPageObjects.Add(rightArray);
                                 }
                             }
@@ -919,7 +961,283 @@ namespace CLP.Entities
                         break;
                     case ArrayTypes.ObscurableArray:
                     {
-                        if (IsColumnsObscured)
+                        SortDivisions();
+                        if (IsRowsObscured)
+                        {
+                            var cutDividerRegion = HorizontalDivisions.FirstOrDefault(d => d.Position < relativeAverage && d.Position + d.Length > relativeAverage);
+                            if (cutDividerRegion == null)
+                            {
+                                return halvedPageObjects;
+                            }
+                            var topDividerRegions = HorizontalDivisions.TakeWhile(d => d != cutDividerRegion).ToList();
+                            var bottomDividerRegions = HorizontalDivisions.Reverse().TakeWhile(d => d != cutDividerRegion).ToList();
+                            var isCutOnTopHalfOfDividerRegion = cutDividerRegion.Position < relativeAverage &&
+                                                                cutDividerRegion.Position + (cutDividerRegion.Length / 2) > relativeAverage;
+
+                            if (isCutOnTopHalfOfDividerRegion)
+                            {
+                                if (cutDividerRegion.IsObscured)
+                                {
+                                    if (topDividerRegions.Any())
+                                    {
+                                        var topRows = topDividerRegions.Aggregate(0, (total, d) => d.Value + total);
+                                        var topArray = new CLPArray(ParentPage, Columns, topRows, ArrayTypes.ObscurableArray)
+                                                       {
+                                                           IsGridOn = IsGridOn,
+                                                           IsDivisionBehaviorOn = false,
+                                                           XPosition = XPosition,
+                                                           YPosition = Math.Max(0, YPosition),
+                                                           IsTopLabelVisible = true,
+                                                           IsSnappable = IsSnappable,
+                                                           HorizontalDivisions = new ObservableCollection<CLPArrayDivision>(topDividerRegions)
+                                                       };
+                                        topArray.IsSideLabelVisible = !topArray.IsRowsObscured;
+                                        topArray.SizeArrayToGridLevel(GridSquareSize);
+                                        if (topArray.HorizontalDivisions.Count == 1 &&
+                                            !topArray.IsRowsObscured)
+                                        {
+                                            topArray.HorizontalDivisions.Clear();
+                                        }
+                                        halvedPageObjects.Add(topArray);
+
+                                        bottomDividerRegions.Insert(0, cutDividerRegion);
+                                        foreach (var dividerRegion in bottomDividerRegions)
+                                        {
+                                            dividerRegion.Position -= topArray.ArrayHeight;
+                                        }
+                                        var bottomRows = bottomDividerRegions.Aggregate(0, (total, d) => d.Value + total);
+                                        var rightArray = new CLPArray(ParentPage, Columns, bottomRows, ArrayTypes.ObscurableArray)
+                                                         {
+                                                             IsGridOn = IsGridOn,
+                                                             IsDivisionBehaviorOn = false,
+                                                             XPosition = XPosition,
+                                                             YPosition =
+                                                                 Math.Min(ParentPage.Height - (2 * LabelLength) - (bottomRows * GridSquareSize),
+                                                                          topArray.YPosition + topArray.ArrayHeight),
+                                                             IsTopLabelVisible = true,
+                                                             HorizontalDivisions = new ObservableCollection<CLPArrayDivision>(bottomDividerRegions)
+                                                         };
+                                        rightArray.IsSideLabelVisible = !rightArray.IsRowsObscured;
+                                        rightArray.SizeArrayToGridLevel(GridSquareSize);
+                                        halvedPageObjects.Add(rightArray);
+                                    }
+                                    else
+                                    {
+                                        var topSingleRowArray = new CLPArray(ParentPage, Columns, 1, ArrayTypes.ObscurableArray)
+                                                                {
+                                                                    IsGridOn = IsGridOn,
+                                                                    IsDivisionBehaviorOn = false,
+                                                                    XPosition = XPosition,
+                                                                    YPosition = Math.Max(0, YPosition - GridSquareSize),
+                                                                    IsTopLabelVisible = true,
+                                                                    IsSideLabelVisible = true,
+                                                                    IsSnappable = IsSnappable
+                                                                };
+                                        topSingleRowArray.SizeArrayToGridLevel(GridSquareSize);
+                                        halvedPageObjects.Add(topSingleRowArray);
+                                        halvedPageObjects.Add(this);
+                                    }
+                                }
+                                else
+                                {
+                                    var cutDividerRegionTopRow = topDividerRegions.Aggregate(0, (total, d) => d.Value + total);
+                                    var additionalTopRows = closestRow - cutDividerRegionTopRow;
+                                    var additionalBottomRows = cutDividerRegion.Value - additionalTopRows;
+
+                                    var topRows = topDividerRegions.Aggregate(0, (total, d) => d.Value + total) + additionalTopRows;
+                                    var lastDiv = topDividerRegions.LastOrDefault();
+                                    var newLastDivPosition = lastDiv == null ? 0.0 : lastDiv.Position + lastDiv.Length;
+                                    var topDividerRegionOffset = (additionalBottomRows * GridSquareSize) - cutDividerRegion.Length -
+                                                                 topDividerRegions.Aggregate(0.0, (total, d) => total + d.Length);
+
+                                    var newLastDiv = new CLPArrayDivision(ArrayDivisionOrientation.Horizontal,
+                                                                          newLastDivPosition,
+                                                                          additionalTopRows * GridSquareSize,
+                                                                          additionalTopRows);
+                                    topDividerRegions.Add(newLastDiv);
+                                    var topArray = new CLPArray(ParentPage, Columns, topRows, ArrayTypes.ObscurableArray)
+                                                   {
+                                                       IsGridOn = IsGridOn,
+                                                       IsDivisionBehaviorOn = false,
+                                                       XPosition = XPosition,
+                                                       YPosition = Math.Max(0, YPosition),
+                                                       IsTopLabelVisible = true,
+                                                       IsSnappable = IsSnappable,
+                                                       HorizontalDivisions = new ObservableCollection<CLPArrayDivision>(topDividerRegions)
+                                                   };
+                                    topArray.IsSideLabelVisible = !topArray.IsRowsObscured;
+                                    topArray.SizeArrayToGridLevel(GridSquareSize);
+                                    if (topArray.HorizontalDivisions.Count == 1 &&
+                                        !topArray.IsRowsObscured)
+                                    {
+                                        topArray.HorizontalDivisions.Clear();
+                                    }
+                                    topArray.HorizontalDivisions = new ObservableCollection<CLPArrayDivision>(topArray.HorizontalDivisions.Where(d => d.Length > 0));
+                                    halvedPageObjects.Add(topArray);
+
+                                    var bottomRows = bottomDividerRegions.Aggregate(0, (total, d) => d.Value + total) + additionalBottomRows;
+                                    foreach (var dividerRegion in bottomDividerRegions)
+                                    {
+                                        dividerRegion.Position += topDividerRegionOffset;
+                                    }
+                                    var newFirstDiv = new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, 0.0, additionalBottomRows * GridSquareSize, additionalBottomRows);
+                                    bottomDividerRegions.Insert(0, newFirstDiv);
+
+                                    var rightArray = new CLPArray(ParentPage, Columns, bottomRows, ArrayTypes.ObscurableArray)
+                                                     {
+                                                         IsGridOn = IsGridOn,
+                                                         IsDivisionBehaviorOn = false,
+                                                         XPosition = XPosition,
+                                                         YPosition =
+                                                             Math.Min(ParentPage.Height - (2 * LabelLength) - (bottomRows * GridSquareSize),
+                                                                      topArray.YPosition + topArray.ArrayHeight),
+                                                         IsTopLabelVisible = true,
+                                                         HorizontalDivisions = new ObservableCollection<CLPArrayDivision>(bottomDividerRegions)
+                                                     };
+                                    rightArray.IsSideLabelVisible = !rightArray.IsRowsObscured;
+                                    rightArray.SizeArrayToGridLevel(GridSquareSize);
+                                    if (rightArray.HorizontalDivisions.Count == 1 &&
+                                        !rightArray.IsRowsObscured)
+                                    {
+                                        rightArray.HorizontalDivisions.Clear();
+                                    }
+                                    rightArray.HorizontalDivisions = new ObservableCollection<CLPArrayDivision>(rightArray.HorizontalDivisions.Where(d => d.Length > 0));
+                                    halvedPageObjects.Add(rightArray);
+                                }
+                            }
+                            else
+                            {
+                                if (cutDividerRegion.IsObscured)
+                                {
+                                    if (bottomDividerRegions.Any())
+                                    {
+                                        topDividerRegions.Add(cutDividerRegion);
+                                        var topRows = topDividerRegions.Aggregate(0, (total, d) => d.Value + total);
+                                        var topArray = new CLPArray(ParentPage, Columns, topRows, ArrayTypes.ObscurableArray)
+                                                       {
+                                                           IsGridOn = IsGridOn,
+                                                           IsDivisionBehaviorOn = false,
+                                                           XPosition = XPosition,
+                                                           YPosition = Math.Max(0, YPosition),
+                                                           IsTopLabelVisible = true,
+                                                           IsSnappable = IsSnappable,
+                                                           HorizontalDivisions = new ObservableCollection<CLPArrayDivision>(topDividerRegions)
+                                                       };
+                                        topArray.IsSideLabelVisible = !topArray.IsColumnsObscured;
+                                        topArray.SizeArrayToGridLevel(GridSquareSize);
+                                        halvedPageObjects.Add(topArray);
+
+                                        foreach (var dividerRegion in bottomDividerRegions)
+                                        {
+                                            dividerRegion.Position -= topArray.ArrayHeight;
+                                        }
+                                        var bottomRows = bottomDividerRegions.Aggregate(0, (total, d) => d.Value + total);
+                                        var bottomArray = new CLPArray(ParentPage, bottomRows, Rows, ArrayTypes.ObscurableArray)
+                                                          {
+                                                              IsGridOn = IsGridOn,
+                                                              IsDivisionBehaviorOn = false,
+                                                              XPosition = XPosition,
+                                                              YPosition =
+                                                                  Math.Min(ParentPage.Height - (2 * LabelLength) - (bottomRows * GridSquareSize),
+                                                                           topArray.YPosition + topArray.ArrayHeight),
+                                                              IsTopLabelVisible = true,
+                                                              HorizontalDivisions = new ObservableCollection<CLPArrayDivision>(bottomDividerRegions)
+                                                          };
+                                        bottomArray.IsSideLabelVisible = !bottomArray.IsRowsObscured;
+                                        bottomArray.SizeArrayToGridLevel(GridSquareSize);
+                                        if (bottomArray.HorizontalDivisions.Count == 1 &&
+                                            !bottomArray.IsRowsObscured)
+                                        {
+                                            bottomArray.HorizontalDivisions.Clear();
+                                        }
+                                        halvedPageObjects.Add(bottomArray);
+                                    }
+                                    else
+                                    {
+                                        halvedPageObjects.Add(this);
+                                        var bottomSingleRowArray = new CLPArray(ParentPage, Columns, 1, ArrayTypes.ObscurableArray)
+                                                                   {
+                                                                       IsGridOn = IsGridOn,
+                                                                       IsDivisionBehaviorOn = false,
+                                                                       XPosition = XPosition,
+                                                                       YPosition = Math.Min(ParentPage.Height - GridSquareSize - (2 * LabelLength), YPosition + ArrayHeight),
+                                                                       IsTopLabelVisible = true,
+                                                                       IsSideLabelVisible = true,
+                                                                       IsSnappable = IsSnappable
+                                                                   };
+                                        bottomSingleRowArray.SizeArrayToGridLevel(GridSquareSize);
+                                        halvedPageObjects.Add(bottomSingleRowArray);
+                                    }
+                                }
+                                else
+                                {
+                                    var cutDividerRegionTopRow = topDividerRegions.Aggregate(0, (total, d) => d.Value + total);
+                                    var additionalTopRows = closestRow - cutDividerRegionTopRow;
+                                    var additionalBottomRows = cutDividerRegion.Value - additionalTopRows;
+
+                                    var topRows = topDividerRegions.Aggregate(0, (total, d) => d.Value + total) + additionalTopRows;
+                                    var lastDiv = topDividerRegions.LastOrDefault();
+                                    var newLastDivPosition = lastDiv == null ? 0.0 : lastDiv.Position + lastDiv.Length;
+                                    var topDividerRegionOffset = (additionalBottomRows * GridSquareSize) - cutDividerRegion.Length -
+                                                                 topDividerRegions.Aggregate(0.0, (total, d) => total + d.Length);
+
+                                    var newLastDiv = new CLPArrayDivision(ArrayDivisionOrientation.Horizontal,
+                                                                          newLastDivPosition,
+                                                                          additionalTopRows * GridSquareSize,
+                                                                          additionalTopRows);
+                                    topDividerRegions.Add(newLastDiv);
+                                    var topArray = new CLPArray(ParentPage, Columns, topRows, ArrayTypes.ObscurableArray)
+                                                   {
+                                                       IsGridOn = IsGridOn,
+                                                       IsDivisionBehaviorOn = false,
+                                                       XPosition = XPosition,
+                                                       YPosition = Math.Max(0, YPosition),
+                                                       IsTopLabelVisible = true,
+                                                       IsSnappable = IsSnappable,
+                                                       HorizontalDivisions = new ObservableCollection<CLPArrayDivision>(topDividerRegions)
+                                                   };
+                                    topArray.IsSideLabelVisible = !topArray.IsRowsObscured;
+                                    topArray.SizeArrayToGridLevel(GridSquareSize);
+                                    if (topArray.HorizontalDivisions.Count == 1 &&
+                                        !topArray.IsRowsObscured)
+                                    {
+                                        topArray.HorizontalDivisions.Clear();
+                                    }
+                                    topArray.HorizontalDivisions = new ObservableCollection<CLPArrayDivision>(topArray.HorizontalDivisions.Where(d => d.Length > 0));
+                                    halvedPageObjects.Add(topArray);
+
+                                    var bottomRows = bottomDividerRegions.Aggregate(0, (total, d) => d.Value + total) + additionalBottomRows;
+                                    foreach (var dividerRegion in bottomDividerRegions)
+                                    {
+                                        dividerRegion.Position += topDividerRegionOffset;
+                                    }
+                                    var newFirstDiv = new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, 0.0, additionalBottomRows * GridSquareSize, additionalBottomRows);
+                                    bottomDividerRegions.Insert(0, newFirstDiv);
+
+                                    var rightArray = new CLPArray(ParentPage, Columns, bottomRows, ArrayTypes.ObscurableArray)
+                                                     {
+                                                         IsGridOn = IsGridOn,
+                                                         IsDivisionBehaviorOn = false,
+                                                         XPosition = XPosition,
+                                                         YPosition =
+                                                             Math.Min(ParentPage.Height - (2 * LabelLength) - (bottomRows * GridSquareSize),
+                                                                      topArray.YPosition + topArray.ArrayHeight),
+                                                         IsTopLabelVisible = true,
+                                                         HorizontalDivisions = new ObservableCollection<CLPArrayDivision>(bottomDividerRegions)
+                                                     };
+                                    rightArray.IsSideLabelVisible = !rightArray.IsRowsObscured;
+                                    rightArray.SizeArrayToGridLevel(GridSquareSize);
+                                    if (rightArray.HorizontalDivisions.Count == 1 &&
+                                        !rightArray.IsRowsObscured)
+                                    {
+                                        rightArray.HorizontalDivisions.Clear();
+                                    }
+                                    rightArray.HorizontalDivisions = new ObservableCollection<CLPArrayDivision>(rightArray.HorizontalDivisions.Where(d => d.Length > 0));
+                                    halvedPageObjects.Add(rightArray);
+                                }
+                            }
+                        }
+                        else
                         {
                             var topArray = new CLPArray(ParentPage, Columns, closestRow, ArrayTypes.ObscurableArray)
                                            {
@@ -929,9 +1247,9 @@ namespace CLP.Entities
                                                YPosition = YPosition,
                                                IsTopLabelVisible = IsTopLabelVisible,
                                                IsSideLabelVisible = IsSideLabelVisible,
-                                               IsSnappable = IsSnappable
+                                               IsSnappable = IsSnappable,
                                            };
-                            topArray.Obscure(true);
+                            topArray.Obscure(false);
                             topArray.SizeArrayToGridLevel(GridSquareSize);
                             halvedPageObjects.Add(topArray);
 
@@ -945,56 +1263,9 @@ namespace CLP.Entities
                                                   IsSideLabelVisible = IsSideLabelVisible,
                                                   IsSnappable = IsSnappable
                                               };
-                            bottomArray.Obscure(true);
+                            bottomArray.Obscure(false);
                             bottomArray.SizeArrayToGridLevel(GridSquareSize);
                             halvedPageObjects.Add(bottomArray);
-                        }
-                        else
-                        {
-                            //Find if cuttingStroke is inside obscured divider region.
-                            var isObscuredRowCut = HorizontalDivisions.Any(d => d.IsObscured && d.Position < relativeAverage && d.Position + d.Length > relativeAverage);
-                            var isTopSideCut = HorizontalDivisions.Any(d => d.IsObscured && d.Position < relativeAverage && d.Position + (d.Length / 2) > relativeAverage);
-                            if (isObscuredRowCut)
-                            {
-                                if (isTopSideCut)
-                                {
-                                    var topSingleColumnArray = new CLPArray(ParentPage, Columns, 1, ArrayTypes.ObscurableArray)
-                                                               {
-                                                                   IsGridOn = IsGridOn,
-                                                                   IsDivisionBehaviorOn = false,
-                                                                   XPosition = XPosition,
-                                                                   YPosition = Math.Max(0, YPosition - GridSquareSize),
-                                                                   IsTopLabelVisible = true,
-                                                                   IsSideLabelVisible = true,
-                                                                   IsSnappable = IsSnappable
-                                                               };
-                                    topSingleColumnArray.SizeArrayToGridLevel(GridSquareSize);
-                                    halvedPageObjects.Add(topSingleColumnArray);
-                                    halvedPageObjects.Add(this);
-                                }
-                                else
-                                {
-                                    halvedPageObjects.Add(this);
-                                    var bottomSingleColumnArray = new CLPArray(ParentPage, Columns, 1, ArrayTypes.ObscurableArray)
-                                                                  {
-                                                                      IsGridOn = IsGridOn,
-                                                                      IsDivisionBehaviorOn = false,
-                                                                      XPosition = XPosition,
-                                                                      YPosition = Math.Min(ParentPage.Height - GridSquareSize - (2 * LabelLength), YPosition + ArrayHeight),
-                                                                      IsTopLabelVisible = true,
-                                                                      IsSideLabelVisible = true,
-                                                                      IsSnappable = IsSnappable
-                                                                  };
-                                    bottomSingleColumnArray.SizeArrayToGridLevel(GridSquareSize);
-                                    halvedPageObjects.Add(bottomSingleColumnArray);
-                                }
-                            }
-
-                            //find if left or right half of obscrured divider region
-
-                            //find if left or right of obscrured divider region
-
-                            //find out how much to take off left or right
                         }
                     }
                         break;
