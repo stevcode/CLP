@@ -886,7 +886,10 @@ namespace CLP.Entities
                                                 IsSideLabelVisible = IsSideLabelVisible,
                                                 IsSnappable = IsSnappable,
                                             };
-                            leftArray.Obscure(false);
+                            if (IsRowsObscured)
+                            {
+                                leftArray.Obscure(false);
+                            }
                             leftArray.SizeArrayToGridLevel(GridSquareSize);
                             halvedPageObjects.Add(leftArray);
 
@@ -900,7 +903,10 @@ namespace CLP.Entities
                                                  IsSideLabelVisible = IsSideLabelVisible,
                                                  IsSnappable = IsSnappable
                                              };
-                            rightArray.Obscure(false);
+                            if (IsRowsObscured)
+                            {
+                                rightArray.Obscure(false);
+                            }
                             rightArray.SizeArrayToGridLevel(GridSquareSize);
                             halvedPageObjects.Add(rightArray);
                         }
@@ -1249,7 +1255,10 @@ namespace CLP.Entities
                                                IsSideLabelVisible = IsSideLabelVisible,
                                                IsSnappable = IsSnappable,
                                            };
-                            topArray.Obscure(false);
+                            if (IsColumnsObscured)
+                            {
+                                topArray.Obscure(true);
+                            }
                             topArray.SizeArrayToGridLevel(GridSquareSize);
                             halvedPageObjects.Add(topArray);
 
@@ -1263,7 +1272,10 @@ namespace CLP.Entities
                                                   IsSideLabelVisible = IsSideLabelVisible,
                                                   IsSnappable = IsSnappable
                                               };
-                            bottomArray.Obscure(false);
+                            if (IsColumnsObscured)
+                            {
+                                bottomArray.Obscure(true);
+                            }
                             bottomArray.SizeArrayToGridLevel(GridSquareSize);
                             halvedPageObjects.Add(bottomArray);
                         }
