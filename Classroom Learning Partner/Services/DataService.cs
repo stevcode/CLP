@@ -7,9 +7,9 @@ using CLP.Entities;
 
 namespace Classroom_Learning_Partner.Services
 {
-    public class Cache
+    public class CacheInfo
     {
-        public Cache(string cacheFolderPath) { CacheFolderPath = cacheFolderPath; }
+        public CacheInfo(string cacheFolderPath) { CacheFolderPath = cacheFolderPath; }
 
         public string CacheFolderPath { get; set; }
 
@@ -81,14 +81,17 @@ namespace Classroom_Learning_Partner.Services
 
         public string CurrentCachesFolderPath { get; set; }
 
-        public List<Cache> AvailableCaches
+        public List<CacheInfo> AvailableCaches
         {
             get { return GetAvailableCaches(CurrentCachesFolderPath); }
         }
 
-        public Cache CurrentCache { get; set; }
+        public CacheInfo CurrentCache { get; set; }
 
-
+        public List<NotebookInfo> NotebooksInCurrentCache
+        {
+            get { return GetNotebooksInFolder(CurrentCache.NotebooksFolderPath); }
+        }
 
         #endregion //Properties
 
@@ -96,13 +99,13 @@ namespace Classroom_Learning_Partner.Services
 
         #region Cache Methods
 
-        private List<Cache> GetAvailableCaches(string cachesFolderPath)
+        public static List<CacheInfo> GetAvailableCaches(string cachesFolderPath)
         {
             var directoryInfo = new DirectoryInfo(cachesFolderPath);
             return
                 directoryInfo.GetDirectories()
                              .Where(directory => directory.Name.StartsWith("Cache"))
-                             .Select(directory => new Cache(directory.FullName))
+                             .Select(directory => new CacheInfo(directory.FullName))
                              .OrderBy(c => c.CacheName)
                              .ToList();
         }
@@ -130,7 +133,7 @@ namespace Classroom_Learning_Partner.Services
                 Directory.CreateDirectory(cacheFolderPath);
             }
 
-            var newCache = new Cache(cacheFolderPath);
+            var newCache = new CacheInfo(cacheFolderPath);
             CurrentCache = newCache;
 
             return true;
@@ -140,15 +143,18 @@ namespace Classroom_Learning_Partner.Services
 
         #region Notebook Methods
 
-        private List<string> GetAvailableNotebooks(string notebooksFolderPath)
+        public static List<NotebookInfo> GetNotebooksInFolder(string notebooksFolderPath)
         {
             var directoryInfo = new DirectoryInfo(notebooksFolderPath);
-            return new List<string>();
-                //directoryInfo.GetDirectories()
-                //             .Where(directory => directory.Name.StartsWith("Cache"))
-                //             .Select(directory => new Cache(directory.FullName))
-                //             .OrderBy(c => c.CacheName)
-                //             .ToList();
+            return
+                directoryInfo.GetDirectories()
+                             .Select(directory => new NotebookInfo(directory.FullName))
+                             .Where(nc => nc != null)
+                             .OrderBy(nc => nc.NameComposite.OwnerTypeTag != "T")
+                             .ThenBy(nc => nc.NameComposite.OwnerTypeTag != "A")
+                             .ThenBy(nc => nc.NameComposite.OwnerTypeTag != "S")
+                             .ThenBy(nc => nc.NameComposite.OwnerName)
+                             .ToList();
         }
 
         #endregion //Notebook Methods

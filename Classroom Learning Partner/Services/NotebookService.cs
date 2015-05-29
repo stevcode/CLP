@@ -232,41 +232,41 @@ namespace Classroom_Learning_Partner.Services
             {
                 return;
             }
-            var authoredNotebookNameComposite = AvailableLocalNotebookNameComposites.FirstOrDefault(x => x.ID == classPeriod.NotebookID && x.OwnerID == Person.Author.ID);
-            var authoredPagesFolderPath = Path.Combine(authoredNotebookNameComposite.FullNotebookDirectoryPath, "Pages");
-            var pageIDs = GetPageIDsFromStartIDAndForwardRange(authoredPagesFolderPath, classPeriod.StartPageID, classPeriod.NumberOfPages);
-            if (!pageIDs.Contains(classPeriod.TitlePageID))
-            {
-                pageIDs.Insert(0, classPeriod.TitlePageID);
-            }
+            //var authoredNotebookNameComposite = AvailableLocalNotebookNameComposites.FirstOrDefault(x => x.ID == classPeriod.NotebookID && x.OwnerID == Person.Author.ID);
+            //var authoredPagesFolderPath = Path.Combine(authoredNotebookNameComposite.NotebookFolderPath, "Pages");
+            //var pageIDs = GetPageIDsFromStartIDAndForwardRange(authoredPagesFolderPath, classPeriod.StartPageID, classPeriod.NumberOfPages);
+            //if (!pageIDs.Contains(classPeriod.TitlePageID))
+            //{
+            //    pageIDs.Insert(0, classPeriod.TitlePageID);
+            //}
 
-            var authoredPages = LoadOrCopyPagesForNotebook(authoredNotebook, null, pageIDs, false);
-            authoredNotebook.Pages = new ObservableCollection<CLPPage>(authoredPages);
-            authoredNotebook.CurrentPage = authoredNotebook.Pages.FirstOrDefault(); //HACK
+            //var authoredPages = LoadOrCopyPagesForNotebook(authoredNotebook, null, pageIDs, false);
+            //authoredNotebook.Pages = new ObservableCollection<CLPPage>(authoredPages);
+            //authoredNotebook.CurrentPage = authoredNotebook.Pages.FirstOrDefault(); //HACK
 
-            var teacherNotebook = LoadClassPeriodNotebookForPerson(classPeriod, classPeriod.ClassSubject.TeacherID) ??
-                                  CopyNotebookForNewOwner(authoredNotebook, classPeriod.ClassSubject.Teacher);
+            //var teacherNotebook = LoadClassPeriodNotebookForPerson(classPeriod, classPeriod.ClassSubject.TeacherID) ??
+            //                      CopyNotebookForNewOwner(authoredNotebook, classPeriod.ClassSubject.Teacher);
 
-            var teacherPages = LoadOrCopyPagesForNotebook(teacherNotebook, authoredNotebook, pageIDs, true);
-            teacherNotebook.Pages = new ObservableCollection<CLPPage>(teacherPages);
-            teacherNotebook.CurrentPage = teacherNotebook.Pages.FirstOrDefault(); //HACK
+            //var teacherPages = LoadOrCopyPagesForNotebook(teacherNotebook, authoredNotebook, pageIDs, true);
+            //teacherNotebook.Pages = new ObservableCollection<CLPPage>(teacherPages);
+            //teacherNotebook.CurrentPage = teacherNotebook.Pages.FirstOrDefault(); //HACK
 
-            //Generates pages in cache
-            foreach (var student in classPeriod.ClassSubject.StudentList)
-            {
-                var studentNotebook = LoadClassPeriodNotebookForPerson(classPeriod, student.ID) ??
-                                  CopyNotebookForNewOwner(authoredNotebook, student);
+            ////Generates pages in cache
+            //foreach (var student in classPeriod.ClassSubject.StudentList)
+            //{
+            //    var studentNotebook = LoadClassPeriodNotebookForPerson(classPeriod, student.ID) ??
+            //                      CopyNotebookForNewOwner(authoredNotebook, student);
 
-                var studentPages = LoadOrCopyPagesForNotebook(studentNotebook, authoredNotebook, pageIDs, false);
-                studentNotebook.Pages = new ObservableCollection<CLPPage>(studentPages);
-                studentNotebook.CurrentPage = studentNotebook.Pages.FirstOrDefault(); //HACK
-                SaveNotebookLocally(studentNotebook);
-            }
+            //    var studentPages = LoadOrCopyPagesForNotebook(studentNotebook, authoredNotebook, pageIDs, false);
+            //    studentNotebook.Pages = new ObservableCollection<CLPPage>(studentPages);
+            //    studentNotebook.CurrentPage = studentNotebook.Pages.FirstOrDefault(); //HACK
+            //    SaveNotebookLocally(studentNotebook);
+            //}
 
-            OpenNotebooks.Clear();
-            OpenNotebooks.Add(authoredNotebook);
-            OpenNotebooks.Add(teacherNotebook);
-            SetNotebookAsCurrentNotebook(teacherNotebook);
+            //OpenNotebooks.Clear();
+            //OpenNotebooks.Add(authoredNotebook);
+            //OpenNotebooks.Add(teacherNotebook);
+            //SetNotebookAsCurrentNotebook(teacherNotebook);
         }
 
         public Notebook LoadClassPeriodNotebookForPerson(ClassPeriod classPeriod, string ownerID)
@@ -278,7 +278,7 @@ namespace Classroom_Learning_Partner.Services
                 return null;
             }
 
-            var notebook = Notebook.LoadLocalNotebook(notebookNameComposite.FullNotebookDirectoryPath);
+            Notebook notebook = null; // = Notebook.LoadLocalNotebook(notebookNameComposite.NotebookFolderPath);
             if (notebook == null)
             {
                 //MessageBox.Show("Notebook for Class Period could not be loaded " + ownerID + ".");
@@ -341,8 +341,8 @@ namespace Classroom_Learning_Partner.Services
             var pageNameComposites = new List<PageNameComposite>();
             if (notebookNameComposite != null)
             {
-                var pagesFolderPath = Path.Combine(notebookNameComposite.FullNotebookDirectoryPath, "Pages");
-                pageNameComposites = Directory.EnumerateFiles(pagesFolderPath, "*.xml").Select(PageNameComposite.ParseFilePathToNameComposite).Where(x => pageIDs.Contains(x.ID)).ToList();
+                //var pagesFolderPath = Path.Combine(notebookNameComposite.NotebookFolderPath, "Pages");
+                //pageNameComposites = Directory.EnumerateFiles(pagesFolderPath, "*.xml").Select(PageNameComposite.ParseFilePathToNameComposite).Where(x => pageIDs.Contains(x.ID)).ToList();
             }
 
             foreach (var pageID in pageIDs)
@@ -415,49 +415,49 @@ namespace Classroom_Learning_Partner.Services
             }
 
             //Open New Notebook from disk.
-            var folderPath = notebookNameComposite.FullNotebookDirectoryPath;
-            if (!Directory.Exists(folderPath))
-            {
-                MessageBox.Show("Notebook doesn't exist");
-                return;
-            }
+            //var folderPath = notebookNameComposite.NotebookFolderPath;
+            //if (!Directory.Exists(folderPath))
+            //{
+            //    MessageBox.Show("Notebook doesn't exist");
+            //    return;
+            //}
 
-            var notebook = pageNumbers == null ? Notebook.LoadLocalFullNotebook(folderPath) : Notebook.LoadLocalPartialNotebook(folderPath, pageNumbers);
+            //var notebook = pageNumbers == null ? Notebook.LoadLocalFullNotebook(folderPath) : Notebook.LoadLocalPartialNotebook(folderPath, pageNumbers);
             
-            if (notebook == null)
-            {
-                MessageBox.Show("Notebook could not be opened. Check error log.");
-                return;
-            }
+            //if (notebook == null)
+            //{
+            //    MessageBox.Show("Notebook could not be opened. Check error log.");
+            //    return;
+            //}
 
-            if ((App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Teacher ||
-                 App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Projector) &&
-                notebook.Owner.ID != Person.Author.ID &&
-                !notebook.Owner.IsStudent &&
-                includeSubmissions)
-            {
-                foreach (var page in notebook.Pages)
-                {
-                    var notebookNameComposites = GetAvailableNotebookNameCompositesInCache(localCacheFolderPath);
-                    foreach (var nameComposite in notebookNameComposites.Where(x => x.ID == notebook.ID && x.OwnerTypeTag == "S"))
-                    {
-                        var pageFolderPath = Path.Combine(nameComposite.FullNotebookDirectoryPath, "Pages");
-                        var pageNameComposites = GetAvailablePagesNameCompositesInFolder(pageFolderPath).Where(x => x.ID == page.ID && x.VersionIndex != "0").ToList();
-                        foreach (var pageNameComposite in pageNameComposites)
-                        {
-                            var submission = CLPPage.LoadLocalPage(pageNameComposite.FullPageFilePath);
-                            if (submission != null)
-                            {
-                                page.Submissions.Add(submission);
-                            }
-                        }
-                    }
-                }
-            }
+            //if ((App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Teacher ||
+            //     App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Projector) &&
+            //    notebook.Owner.ID != Person.Author.ID &&
+            //    !notebook.Owner.IsStudent &&
+            //    includeSubmissions)
+            //{
+            //    foreach (var page in notebook.Pages)
+            //    {
+            //        var notebookNameComposites = GetAvailableNotebookNameCompositesInCache(localCacheFolderPath);
+            //        foreach (var nameComposite in notebookNameComposites.Where(x => x.ID == notebook.ID && x.OwnerTypeTag == "S"))
+            //        {
+            //            var pageFolderPath = Path.Combine(nameComposite.NotebookFolderPath, "Pages");
+            //            var pageNameComposites = GetAvailablePagesNameCompositesInFolder(pageFolderPath).Where(x => x.ID == page.ID && x.VersionIndex != "0").ToList();
+            //            foreach (var pageNameComposite in pageNameComposites)
+            //            {
+            //                var submission = CLPPage.LoadLocalPage(pageNameComposite.FullPageFilePath);
+            //                if (submission != null)
+            //                {
+            //                    page.Submissions.Add(submission);
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
 
-            CurrentLocalCacheDirectory = localCacheFolderPath;
-            OpenNotebooks.Add(notebook);
-            SetNotebookAsCurrentNotebook(notebook);
+            //CurrentLocalCacheDirectory = localCacheFolderPath;
+            //OpenNotebooks.Add(notebook);
+            //SetNotebookAsCurrentNotebook(notebook);
         }
 
         public void SetNotebookAsCurrentNotebook(Notebook notebook, bool logInAsNotebookOwner = true)
@@ -482,7 +482,7 @@ namespace Classroom_Learning_Partner.Services
         public void SaveNotebookLocally(Notebook notebook, string alternativeLocation = null)
         {
             var savePath = alternativeLocation ?? CurrentNotebookCacheDirectory;
-            var folderPath = Path.Combine(savePath, NotebookNameComposite.ParseNotebookToNameComposite(notebook).ToFolderName());
+            var folderPath = Path.Combine(savePath, NotebookNameComposite.ParseNotebook(notebook).ToFolderName());
             var pagesFolderPath = Path.Combine(folderPath, "Pages");
             if (App.MainWindowViewModel.CurrentUser.ID == Person.Author.ID)
             {
@@ -560,7 +560,7 @@ namespace Classroom_Learning_Partner.Services
             var directoryInfo = new DirectoryInfo(notebookCacheDirectory);
             return
                 directoryInfo.GetDirectories()
-                             .Select(directory => NotebookNameComposite.ParseDirectoryToNameComposite(directory.FullName))
+                             .Select(directory => NotebookNameComposite.ParseFolderPath(directory.FullName))
                              .Where(x => x != null)
                              .OrderBy(x => x.OwnerTypeTag != "T")
                              .ThenBy(x => x.OwnerTypeTag != "A")
@@ -614,18 +614,18 @@ namespace Classroom_Learning_Partner.Services
 
         public static void GenerateSubmissionsFromNotebookPages(string cachePath)
         {
-            var notebookNameComposites = GetAvailableNotebookNameCompositesInCache(cachePath);
-            foreach (var notebookNameComposite in notebookNameComposites.Where(x => x.OwnerTypeTag == "S"))
-            {
-                var pageFolderPath = Path.Combine(notebookNameComposite.FullNotebookDirectoryPath, "Pages");
-                var pageNameComposites = GetAvailablePagesNameCompositesInFolder(pageFolderPath);
-                foreach (var pageNameComposite in pageNameComposites)
-                {
-                    var page = CLPPage.LoadLocalPage(pageNameComposite.FullPageFilePath);
-                    var submission = page.NextVersionCopy();
-                    submission.SavePageLocally(pageFolderPath);
-                }
-            }
+            //var notebookNameComposites = GetAvailableNotebookNameCompositesInCache(cachePath);
+            //foreach (var notebookNameComposite in notebookNameComposites.Where(x => x.OwnerTypeTag == "S"))
+            //{
+            //    var pageFolderPath = Path.Combine(notebookNameComposite.NotebookFolderPath, "Pages");
+            //    var pageNameComposites = GetAvailablePagesNameCompositesInFolder(pageFolderPath);
+            //    foreach (var pageNameComposite in pageNameComposites)
+            //    {
+            //        var page = CLPPage.LoadLocalPage(pageNameComposite.FullPageFilePath);
+            //        var submission = page.NextVersionCopy();
+            //        submission.SavePageLocally(pageFolderPath);
+            //    }
+            //}
         }
 
         #endregion //Static Notebook Methods

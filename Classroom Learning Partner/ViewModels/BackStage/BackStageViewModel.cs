@@ -157,7 +157,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     DisplayedPane = new NotebookInfoPaneViewModel();
                     break;
                 case NavigationPanes.New:
-                    DisplayedPane = new NewNotebookPaneViewModel();
+                    DisplayedPane = new NewPaneViewModel();
                     break;
                 case NavigationPanes.Open:
                     DisplayedPane = new OpenNotebookPaneViewModel();

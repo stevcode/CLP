@@ -19,8 +19,8 @@ namespace Classroom_Learning_Partner.ViewModels
         public OpenNotebookPaneViewModel()
         {
             InitializeCommands();
-            AvailableCacheNames.AddRange(LoadedNotebookService.AvailableLocalCacheNames);
-            SelectedCacheName = AvailableCacheNames.FirstOrDefault();
+            AvailableCaches.AddRange(DataService.AvailableCaches);
+            SelectedCache = AvailableCaches.FirstOrDefault();
         }
 
         private void InitializeCommands()
@@ -40,64 +40,60 @@ namespace Classroom_Learning_Partner.ViewModels
             get { return "Open Notebook"; }
         }
 
-        /// <summary>List of available Cache names.</summary>
-        public ObservableCollection<string> AvailableCacheNames
+        /// <summary>List of available Caches.</summary>
+        public ObservableCollection<CacheInfo> AvailableCaches
         {
-            get { return GetValue<ObservableCollection<string>>(AvailableCacheNamesProperty); }
-            set { SetValue(AvailableCacheNamesProperty, value); }
+            get { return GetValue<ObservableCollection<CacheInfo>>(AvailableCachesProperty); }
+            set { SetValue(AvailableCachesProperty, value); }
         }
 
-        public static readonly PropertyData AvailableCacheNamesProperty = RegisterProperty("AvailableCacheNames",
-                                                                                           typeof (ObservableCollection<string>),
-                                                                                           () => new ObservableCollection<string>());
+        public static readonly PropertyData AvailableCachesProperty = RegisterProperty("AvailableCaches",
+                                                                                       typeof(ObservableCollection<CacheInfo>),
+                                                                                       () => new ObservableCollection<CacheInfo>());
 
-        /// <summary>Selected Cache Name.</summary>
-        public string SelectedCacheName
+        /// <summary>Selected Cache.</summary>
+        public CacheInfo SelectedCache
         {
-            get { return GetValue<string>(SelectedCacheNameProperty); }
-            set
+            get { return GetValue<CacheInfo>(SelectedCacheProperty); }
+            set { SetValue(SelectedCacheProperty, value); }
+        }
+
+        public static readonly PropertyData SelectedCacheProperty = RegisterProperty("SelectedCache", typeof(CacheInfo), null, OnSelectedCacheChanged);
+
+        private static void OnSelectedCacheChanged(object sender, AdvancedPropertyChangedEventArgs args)
+        {
+            var openNotebookPaneViewModel = sender as OpenNotebookPaneViewModel;
+            if (openNotebookPaneViewModel == null ||
+                openNotebookPaneViewModel.SelectedCache == null)
             {
-                SetValue(SelectedCacheNameProperty, value);
-                if (value != null)
-                {
-                    SelectedCacheDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), value);
-                    AvailableNotebooks.Clear();
-                    AvailableNotebooks.AddRange(NotebookService.GetAvailableNotebookNameCompositesInCache(SelectedCacheDirectory));
-                    SelectedNotebook = AvailableNotebooks.FirstOrDefault();
-                }
+                return;
             }
+
+            openNotebookPaneViewModel.DataService.CurrentCache = openNotebookPaneViewModel.SelectedCache;
+            openNotebookPaneViewModel.AvailableNotebooks.Clear();
+            openNotebookPaneViewModel.AvailableNotebooks.AddRange(Services.DataService.GetNotebooksInFolder(openNotebookPaneViewModel.SelectedCache.NotebooksFolderPath));
+            openNotebookPaneViewModel.SelectedNotebook = openNotebookPaneViewModel.AvailableNotebooks.FirstOrDefault();
         }
-
-        public static readonly PropertyData SelectedCacheNameProperty = RegisterProperty("SelectedCacheName", typeof (string), string.Empty);
-
-        /// <summary>Path of the Selected Cache's Directory.</summary>
-        public string SelectedCacheDirectory
-        {
-            get { return GetValue<string>(SelectedCacheDirectoryProperty); }
-            set { SetValue(SelectedCacheDirectoryProperty, value); }
-        }
-
-        public static readonly PropertyData SelectedCacheDirectoryProperty = RegisterProperty("SelectedCacheDirectory", typeof (string), string.Empty);
 
         /// <summary>Available notebooks in the currently selected Cache.</summary>
-        public ObservableCollection<NotebookNameComposite> AvailableNotebooks
+        public ObservableCollection<NotebookInfo> AvailableNotebooks
         {
-            get { return GetValue<ObservableCollection<NotebookNameComposite>>(AvailableNotebooksProperty); }
+            get { return GetValue<ObservableCollection<NotebookInfo>>(AvailableNotebooksProperty); }
             set { SetValue(AvailableNotebooksProperty, value); }
         }
 
         public static readonly PropertyData AvailableNotebooksProperty = RegisterProperty("AvailableNotebooks",
-                                                                                          typeof (ObservableCollection<NotebookNameComposite>),
-                                                                                          () => new ObservableCollection<NotebookNameComposite>());
+                                                                                          typeof(ObservableCollection<NotebookInfo>),
+                                                                                          () => new ObservableCollection<NotebookInfo>());
 
         /// <summary>Currently selected Notebook.</summary>
-        public NotebookNameComposite SelectedNotebook
+        public NotebookInfo SelectedNotebook
         {
-            get { return GetValue<NotebookNameComposite>(SelectedNotebookProperty); }
+            get { return GetValue<NotebookInfo>(SelectedNotebookProperty); }
             set { SetValue(SelectedNotebookProperty, value); }
         }
 
-        public static readonly PropertyData SelectedNotebookProperty = RegisterProperty("SelectedNotebook", typeof (NotebookNameComposite));
+        public static readonly PropertyData SelectedNotebookProperty = RegisterProperty("SelectedNotebook", typeof(NotebookInfo));
 
         /// <summary>
         /// Toggles the loading of submissions when opening a notebook.
@@ -119,7 +115,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnOpenNotebookCommandExecute()
         {
-            PleaseWaitHelper.Show(() => LoadedNotebookService.OpenLocalNotebook(SelectedNotebook, SelectedCacheDirectory, IsIncludeSubmissionsChecked), null, "Loading Notebook");
+            //PleaseWaitHelper.Show(() => LoadedNotebookService.OpenLocalNotebook(SelectedNotebook, SelectedCacheDirectory, IsIncludeSubmissionsChecked), null, "Loading Notebook");
 
             if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Student)
             {
@@ -149,7 +145,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnStartClassPeriodCommandExecute()
         {
-            LoadedNotebookService.StartSoonestClassPeriod(SelectedCacheDirectory);
+            //LoadedNotebookService.StartSoonestClassPeriod(SelectedCacheDirectory);
             //    LoadedNotebookService.StartLocalClassPeriod(, SelectedCacheDirectory);
         }
 
@@ -177,7 +173,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            PleaseWaitHelper.Show(() => LoadedNotebookService.OpenLocalNotebook(SelectedNotebook, SelectedCacheDirectory, IsIncludeSubmissionsChecked, pagesToOpen), null, "Loading Notebook");
+            //PleaseWaitHelper.Show(() => LoadedNotebookService.OpenLocalNotebook(SelectedNotebook, SelectedCacheDirectory, IsIncludeSubmissionsChecked, pagesToOpen), null, "Loading Notebook");
         }
 
         #endregion //Commands

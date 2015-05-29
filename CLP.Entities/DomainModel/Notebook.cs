@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Windows.Media.Imaging;
 using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
@@ -12,9 +11,64 @@ using Path = Catel.IO.Path;
 
 namespace CLP.Entities
 {
+    public class NotebookInfo
+    {
+        public NotebookInfo(string notebookFolderPath) { NotebookFolderPath = notebookFolderPath; }
+
+        public Notebook Notebook { get; set; }
+
+        public string NotebookFolderPath { get; set; }
+
+        public string DisplaysFolderPath
+        {
+            get
+            {
+                var path = Path.Combine(NotebookFolderPath, "Displays");
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+
+                return path;
+            }
+        }
+
+        public string PagesFolderPath
+        {
+            get
+            {
+                var path = Path.Combine(NotebookFolderPath, "Pages");
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+
+                return path;
+            }
+        }
+
+        public string NotebookFilePath
+        {
+            get
+            {
+                var path = Path.Combine(NotebookFolderPath, "notebook.xml");
+                return !File.Exists(path) ? string.Empty : path;
+            }
+        }
+
+        public NotebookNameComposite NameComposite
+        {
+            get { return NotebookNameComposite.ParseFolderPath(NotebookFolderPath); }
+        }
+
+        public string LastSavedTime
+        {
+            get { return string.IsNullOrEmpty(NotebookFilePath) ? string.Empty : File.GetLastWriteTime(NotebookFilePath).ToString("MM/dd/yy HH:mm:ss"); }
+        }
+    }
+
     public class NotebookNameComposite
     {
-        public string FullNotebookDirectoryPath { get; set; }
         public string Name { get; set; }
         public string ID { get; set; }
         public string OwnerName { get; set; }
@@ -22,30 +76,26 @@ namespace CLP.Entities
         public string OwnerTypeTag { get; set; }
         public bool IsLocal { get; set; }
 
-        public string ToFolderName()
-        {
-            return string.Format("{0};{1};{2};{3}{4}",
-                Name, ID, OwnerName, OwnerID, OwnerTypeTag == "U" ? string.Empty : ";" + OwnerTypeTag);
-        }
+        public string ToFolderName() { return string.Format("{0};{1};{2};{3}{4}", Name, ID, OwnerName, OwnerID, OwnerTypeTag == "U" ? string.Empty : ";" + OwnerTypeTag); }
 
-        public static NotebookNameComposite ParseNotebookToNameComposite(Notebook notebook)
+        public static NotebookNameComposite ParseNotebook(Notebook notebook)
         {
             var nameComposite = new NotebookNameComposite
-            {
-                Name = notebook.Name,
-                ID = notebook.ID,
-                OwnerName = notebook.Owner.FullName,
-                OwnerID = notebook.Owner.ID,
-                OwnerTypeTag = notebook.Owner.ID == Person.Author.ID ? "A" : notebook.Owner.IsStudent ? "S" : "T",
-                IsLocal = true
-            };
+                                {
+                                    Name = notebook.Name,
+                                    ID = notebook.ID,
+                                    OwnerName = notebook.Owner.FullName,
+                                    OwnerID = notebook.Owner.ID,
+                                    OwnerTypeTag = notebook.Owner == null ? "U" : notebook.Owner.ID == Person.Author.ID ? "A" : notebook.Owner.IsStudent ? "S" : "T",
+                                    IsLocal = true
+                                };
 
             return nameComposite;
         }
 
-        public static NotebookNameComposite ParseDirectoryToNameComposite(string folderPath)
+        public static NotebookNameComposite ParseFolderPath(string notebookFolderPath)
         {
-            var directoryInfo = new DirectoryInfo(folderPath);
+            var directoryInfo = new DirectoryInfo(notebookFolderPath);
             var notebookDirectoryName = directoryInfo.Name;
             var notebookDirectoryParts = notebookDirectoryName.Split(';');
             if (notebookDirectoryParts.Length != 5 &&
@@ -56,7 +106,6 @@ namespace CLP.Entities
 
             var nameComposite = new NotebookNameComposite
                                 {
-                                    FullNotebookDirectoryPath = folderPath,
                                     Name = notebookDirectoryParts[0],
                                     ID = notebookDirectoryParts[1],
                                     OwnerName = notebookDirectoryParts[2],
@@ -74,18 +123,14 @@ namespace CLP.Entities
     {
         #region Constructors
 
-        /// <summary>
-        /// Initializes <see cref="Notebook" /> from scratch.
-        /// </summary>
+        /// <summary>Initializes <see cref="Notebook" /> from scratch.</summary>
         public Notebook()
         {
             CreationDate = DateTime.Now;
             ID = Guid.NewGuid().ToCompactID();
         }
 
-        /// <summary>
-        /// Initializes <see cref="Notebook" /> with name and owner.
-        /// </summary>
+        /// <summary>Initializes <see cref="Notebook" /> with name and owner.</summary>
         /// <param name="notebookName">The name of the notebook.</param>
         /// <param name="owner">The <see cref="Person" /> who owns the notebook.</param>
         public Notebook(string notebookName, Person owner)
@@ -95,9 +140,7 @@ namespace CLP.Entities
             Owner = owner;
         }
 
-        /// <summary>
-        /// Initializes <see cref="Notebook" /> based on <see cref="SerializationInfo" />.
-        /// </summary>
+        /// <summary>Initializes <see cref="Notebook" /> based on <see cref="SerializationInfo" />.</summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext" />.</param>
         public Notebook(SerializationInfo info, StreamingContext context)
@@ -107,48 +150,35 @@ namespace CLP.Entities
 
         #region Properties
 
-        /// <summary>
-        /// Unique Identifier for the <see cref="Notebook" />.
-        /// </summary>
-        /// <remarks>
-        /// Composite Primary Key.
-        /// </remarks>
+        /// <summary>Unique Identifier for the <see cref="Notebook" />.</summary>
+        /// <remarks>Composite Primary Key.</remarks>
         public string ID
         {
             get { return GetValue<string>(IDProperty); }
             set { SetValue(IDProperty, value); }
         }
 
-        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string));
+        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof (string));
 
-        /// <summary>
-        /// Unique Identifier for the <see cref="Person" /> who owns the <see cref="Notebook" />.
-        /// </summary>
-        /// <remarks>
-        /// Composite Primary Key.
-        /// Foreign Key.
-        /// </remarks>
+        /// <summary>Unique Identifier for the <see cref="Person" /> who owns the <see cref="Notebook" />.</summary>
+        /// <remarks>Composite Primary Key. Foreign Key.</remarks>
         public string OwnerID
         {
             get { return GetValue<string>(OwnerIDProperty); }
             set { SetValue(OwnerIDProperty, value); }
         }
 
-        public static readonly PropertyData OwnerIDProperty = RegisterProperty("OwnerID", typeof(string), String.Empty);
+        public static readonly PropertyData OwnerIDProperty = RegisterProperty("OwnerID", typeof (string), String.Empty);
 
-        /// <summary>
-        /// The <see cref="Person" /> who owns the <see cref="Notebook" />.
-        /// </summary>
-        /// <remarks>
-        /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
-        /// </remarks>
+        /// <summary>The <see cref="Person" /> who owns the <see cref="Notebook" />.</summary>
+        /// <remarks>Virtual to facilitate lazy loading of navigation property by Entity Framework.</remarks>
         public virtual Person Owner
         {
             get { return GetValue<Person>(OwnerProperty); }
             set
             {
                 SetValue(OwnerProperty, value);
-                if(value == null)
+                if (value == null)
                 {
                     return;
                 }
@@ -156,125 +186,94 @@ namespace CLP.Entities
             }
         }
 
-        public static readonly PropertyData OwnerProperty = RegisterProperty("Owner", typeof(Person));
+        public static readonly PropertyData OwnerProperty = RegisterProperty("Owner", typeof (Person));
 
-        /// <summary>
-        /// Date and Time the <see cref="Notebook" /> was created.
-        /// </summary>
+        /// <summary>Date and Time the <see cref="Notebook" /> was created.</summary>
         public DateTime CreationDate
         {
             get { return GetValue<DateTime>(CreationDateProperty); }
             set { SetValue(CreationDateProperty, value); }
         }
 
-        public static readonly PropertyData CreationDateProperty = RegisterProperty("CreationDate", typeof(DateTime));
+        public static readonly PropertyData CreationDateProperty = RegisterProperty("CreationDate", typeof (DateTime));
 
-        /// <summary>
-        /// Date and Time the <see cref="Notebook" /> was last saved.
-        /// </summary>
-        /// <remarks>
-        /// Type set to DateTime? (i.e. nullable DateTime) to allow NULL in database if LastSavedDate hasn't been set yet.
-        /// </remarks>
+        /// <summary>Date and Time the <see cref="Notebook" /> was last saved.</summary>
+        /// <remarks>Type set to DateTime? (i.e. nullable DateTime) to allow NULL in database if LastSavedDate hasn't been set yet.</remarks>
         public DateTime? LastSavedDate
         {
             get { return GetValue<DateTime?>(LastSavedDateProperty); }
             set { SetValue(LastSavedDateProperty, value); }
         }
 
-        public static readonly PropertyData LastSavedDateProperty = RegisterProperty("LastSavedDate", typeof(DateTime?));
+        public static readonly PropertyData LastSavedDateProperty = RegisterProperty("LastSavedDate", typeof (DateTime?));
 
-        /// <summary>
-        /// Name of the <see cref="Notebook" />.
-        /// </summary>
+        /// <summary>Name of the <see cref="Notebook" />.</summary>
         public string Name
         {
             get { return GetValue<string>(NameProperty); }
             set { SetValue(NameProperty, value); }
         }
 
-        public static readonly PropertyData NameProperty = RegisterProperty("Name", typeof(string), String.Empty);
+        public static readonly PropertyData NameProperty = RegisterProperty("Name", typeof (string), String.Empty);
 
-        /// <summary>
-        /// Overall Curriculum the <see cref="Notebook" /> employs. Curriculum of individual pages may vary.
-        /// </summary>
+        /// <summary>Overall Curriculum the <see cref="Notebook" /> employs. Curriculum of individual pages may vary.</summary>
         public string Curriculum
         {
             get { return GetValue<string>(CurriculumProperty); }
             set { SetValue(CurriculumProperty, value); }
         }
 
-        public static readonly PropertyData CurriculumProperty = RegisterProperty("Curriculum", typeof(string), String.Empty);
+        public static readonly PropertyData CurriculumProperty = RegisterProperty("Curriculum", typeof (string), String.Empty);
 
-        /// <summary>
-        /// List of all the HashIDs for each <see cref="CLPImage" /> that is in the notebook.
-        /// </summary>
+        /// <summary>List of all the HashIDs for each <see cref="CLPImage" /> that is in the notebook.</summary>
         public List<string> ImagePoolHashIDs
         {
-            get
-            {
-                return Pages.SelectMany(page => page.PageObjects).OfType<CLPImage>().Select(image => image.ImageHashID).ToList().Distinct().ToList();
-            }
+            get { return Pages.SelectMany(page => page.PageObjects).OfType<CLPImage>().Select(image => image.ImageHashID).ToList().Distinct().ToList(); }
         }
 
         #region Navigation Properties
 
-        /// <summary>
-        /// Unique Identifier of the currently selected <see cref="CLPPage" />.
-        /// </summary>
-        /// <remarks>
-        /// Composite Foreign Key for CurrentPage.
-        /// </remarks>
+        /// <summary>Unique Identifier of the currently selected <see cref="CLPPage" />.</summary>
+        /// <remarks>Composite Foreign Key for CurrentPage.</remarks>
         public string CurrentPageID
         {
             get { return GetValue<string>(CurrentPageIDProperty); }
             set { SetValue(CurrentPageIDProperty, value); }
         }
 
-        public static readonly PropertyData CurrentPageIDProperty = RegisterProperty("CurrentPageID", typeof(string));
+        public static readonly PropertyData CurrentPageIDProperty = RegisterProperty("CurrentPageID", typeof (string));
 
-        /// <summary>
-        /// Unique Identifier of the <see cref="Person" /> who owns the currently selected <see cref="CLPPage" />.
-        /// </summary>
-        /// <remarks>
-        /// Composite Foreign Key for CurrentPage.
-        /// </remarks>
+        /// <summary>Unique Identifier of the <see cref="Person" /> who owns the currently selected <see cref="CLPPage" />.</summary>
+        /// <remarks>Composite Foreign Key for CurrentPage.</remarks>
         public string CurrentPageOwnerID
         {
             get { return GetValue<string>(CurrentPageOwnerIDProperty); }
             set { SetValue(CurrentPageOwnerIDProperty, value); }
         }
 
-        public static readonly PropertyData CurrentPageOwnerIDProperty = RegisterProperty("CurrentPageOwnerID", typeof(string));
+        public static readonly PropertyData CurrentPageOwnerIDProperty = RegisterProperty("CurrentPageOwnerID", typeof (string));
 
-        /// <summary>
-        /// Version Index of the currently selected <see cref="CLPPage" />.
-        /// </summary>
-        /// <remarks>
-        /// Composite Foreign Key for CurrentPage.
-        /// </remarks>
+        /// <summary>Version Index of the currently selected <see cref="CLPPage" />.</summary>
+        /// <remarks>Composite Foreign Key for CurrentPage.</remarks>
         public uint CurrentPageVersionIndex
         {
             get { return GetValue<uint>(CurrentPageVersionIndexProperty); }
             set { SetValue(CurrentPageVersionIndexProperty, value); }
         }
 
-        public static readonly PropertyData CurrentPageVersionIndexProperty = RegisterProperty("CurrentPageVersionIndex", typeof(uint));
+        public static readonly PropertyData CurrentPageVersionIndexProperty = RegisterProperty("CurrentPageVersionIndex", typeof (uint));
 
-        /// <summary>
-        /// Currently selected <see cref="CLPPage" />.
-        /// </summary>
-        /// <remarks>
-        /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
-        /// </remarks>
+        /// <summary>Currently selected <see cref="CLPPage" />.</summary>
+        /// <remarks>Virtual to facilitate lazy loading of navigation property by Entity Framework.</remarks>
         [XmlIgnore]
-      //  [ExcludeFromSerialization]
+        //  [ExcludeFromSerialization]
         public virtual CLPPage CurrentPage
         {
             get { return GetValue<CLPPage>(CurrentPageProperty); }
             set
             {
                 SetValue(CurrentPageProperty, value);
-                if(value == null)
+                if (value == null)
                 {
                     return;
                 }
@@ -284,30 +283,22 @@ namespace CLP.Entities
             }
         }
 
-        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage));
+        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof (CLPPage));
 
-        /// <summary>
-        /// Collection of all the <see cref="CLPPage" />s in the <see cref="Notebook" />.
-        /// </summary>
-        /// <remarks>
-        /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
-        /// </remarks>
+        /// <summary>Collection of all the <see cref="CLPPage" />s in the <see cref="Notebook" />.</summary>
+        /// <remarks>Virtual to facilitate lazy loading of navigation property by Entity Framework.</remarks>
         [XmlIgnore]
-     //   [ExcludeFromSerialization]
+        //   [ExcludeFromSerialization]
         public virtual ObservableCollection<CLPPage> Pages
         {
             get { return GetValue<ObservableCollection<CLPPage>>(PagesProperty); }
             set { SetValue(PagesProperty, value); }
         }
 
-        public static readonly PropertyData PagesProperty = RegisterProperty("Pages", typeof(ObservableCollection<CLPPage>), () => new ObservableCollection<CLPPage>());
+        public static readonly PropertyData PagesProperty = RegisterProperty("Pages", typeof (ObservableCollection<CLPPage>), () => new ObservableCollection<CLPPage>());
 
-        /// <summary>
-        /// List of the <see cref="IDisplay" />s in the <see cref="Notebook" />.
-        /// </summary>
-        /// <remarks>
-        /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
-        /// </remarks>
+        /// <summary>List of the <see cref="IDisplay" />s in the <see cref="Notebook" />.</summary>
+        /// <remarks>Virtual to facilitate lazy loading of navigation property by Entity Framework.</remarks>
         [XmlIgnore]
         [ExcludeFromSerialization]
         public virtual ObservableCollection<IDisplay> Displays
@@ -316,7 +307,7 @@ namespace CLP.Entities
             set { SetValue(DisplaysProperty, value); }
         }
 
-        public static readonly PropertyData DisplaysProperty = RegisterProperty("Displays", typeof(ObservableCollection<IDisplay>), () => new ObservableCollection<IDisplay>());
+        public static readonly PropertyData DisplaysProperty = RegisterProperty("Displays", typeof (ObservableCollection<IDisplay>), () => new ObservableCollection<IDisplay>());
 
         #endregion //Navigation Properties
 
@@ -351,13 +342,13 @@ namespace CLP.Entities
 
         public void RemovePageAt(int index)
         {
-            if(Pages.Count <= index ||
-               index < 0)
+            if (Pages.Count <= index ||
+                index < 0)
             {
                 return;
             }
 
-            if(Pages.Count == 1)
+            if (Pages.Count == 1)
             {
                 var newPage = new CLPPage(Person.Author)
                               {
@@ -368,7 +359,7 @@ namespace CLP.Entities
             }
 
             int newIndex;
-            if(index + 1 < Pages.Count)
+            if (index + 1 < Pages.Count)
             {
                 newIndex = index + 1;
             }
@@ -379,7 +370,7 @@ namespace CLP.Entities
 
             var nextPage = Pages.ElementAt(newIndex);
             CurrentPage = nextPage;
-            if(index == 0)
+            if (index == 0)
             {
                 CurrentPage.PageNumber = Pages.First().PageNumber;
             }
@@ -393,13 +384,14 @@ namespace CLP.Entities
         {
             var initialPageNumber = Pages.Any() ? Pages.First().PageNumber - 1 : 0;
             CLPPage lastPage = null;
-            foreach(var page in Pages)
+            foreach (var page in Pages)
             {
-                if(lastPage == null || page.ID != lastPage.ID)
+                if (lastPage == null ||
+                    page.ID != lastPage.ID)
                 {
                     initialPageNumber++;
                 }
-                if(page.PageNumber != 999) // TODO: less stupid special case for exit tickets?
+                if (page.PageNumber != 999) // TODO: less stupid special case for exit tickets?
                 {
                     page.PageNumber = initialPageNumber;
                 }
@@ -410,30 +402,30 @@ namespace CLP.Entities
         public Notebook CopyForNewOwner(Person owner)
         {
             var newNotebook = Clone() as Notebook;
-            if(newNotebook == null)
+            if (newNotebook == null)
             {
                 return null;
             }
             newNotebook.Owner = owner;
             newNotebook.CurrentPage = CurrentPage == null ? null : CurrentPage.CopyForNewOwner(owner);
-            foreach(var newPage in Pages.Select(page => page.CopyForNewOwner(owner))) 
+            foreach (var newPage in Pages.Select(page => page.CopyForNewOwner(owner)))
             {
-                if(!owner.IsStudent)
+                if (!owner.IsStudent)
                 {
                     newNotebook.Pages.Add(newPage);
                     continue;
                 }
 
-                if(newPage.DifferentiationLevel == String.Empty ||
-                   newPage.DifferentiationLevel == "0" ||
-                   newPage.DifferentiationLevel == owner.CurrentDifferentiationGroup)
+                if (newPage.DifferentiationLevel == String.Empty ||
+                    newPage.DifferentiationLevel == "0" ||
+                    newPage.DifferentiationLevel == owner.CurrentDifferentiationGroup)
                 {
                     newNotebook.Pages.Add(newPage);
                     continue;
                 }
 
-                if(owner.CurrentDifferentiationGroup == String.Empty &&
-                   newPage.DifferentiationLevel == "A")
+                if (owner.CurrentDifferentiationGroup == String.Empty &&
+                    newPage.DifferentiationLevel == "A")
                 {
                     newNotebook.Pages.Add(newPage);
                 }
@@ -445,8 +437,9 @@ namespace CLP.Entities
         public CLPPage GetPageByCompositeKeys(string pageID, string pageOwnerID, string differentiationLevel, uint versionIndex, bool searchDatabaseAndCache = false)
         {
             // TODO: Database, search through cache and database if not found in memory.
-            var notebookPage = Pages.FirstOrDefault(x => x.ID == pageID && x.OwnerID == pageOwnerID && x.DifferentiationLevel == differentiationLevel && x.VersionIndex == versionIndex);
-            if(notebookPage != null)
+            var notebookPage =
+                Pages.FirstOrDefault(x => x.ID == pageID && x.OwnerID == pageOwnerID && x.DifferentiationLevel == differentiationLevel && x.VersionIndex == versionIndex);
+            if (notebookPage != null)
             {
                 return notebookPage;
             }
@@ -489,7 +482,7 @@ namespace CLP.Entities
                 var filePath = Path.Combine(notebookFolderPath, "notebook.xml");
                 var notebook = Load<Notebook>(filePath, SerializationMode.Xml);
 
-                var nameComposite = NotebookNameComposite.ParseDirectoryToNameComposite(notebookFolderPath);
+                var nameComposite = NotebookNameComposite.ParseFolderPath(notebookFolderPath);
                 if (nameComposite == null ||
                     notebook == null)
                 {
@@ -586,7 +579,7 @@ namespace CLP.Entities
         private static List<CLPPage> LoadLocalNotebookPages(string notebookFolderPath, List<string> pageIDs, bool includeSubmissions = true)
         {
             var pagesFolderPath = Path.Combine(notebookFolderPath, "Pages");
-            
+
             var pageFilePaths = Directory.EnumerateFiles(pagesFolderPath, "*.xml");
             var loadedPages = new List<CLPPage>();
             foreach (var pageFilePath in pageFilePaths)
@@ -628,7 +621,7 @@ namespace CLP.Entities
             ToXML(fileName);
 
             var pagesFolderPath = Path.Combine(folderPath, "Pages");
-            if(!Directory.Exists(pagesFolderPath))
+            if (!Directory.Exists(pagesFolderPath))
             {
                 Directory.CreateDirectory(pagesFolderPath);
             }
@@ -639,10 +632,10 @@ namespace CLP.Entities
             //    File.Delete(pageFilePath);
             //}
 
-            foreach(var page in Pages)
+            foreach (var page in Pages)
             {
-                if(page.IsCached &&
-                   !isFullSaveForced)
+                if (page.IsCached &&
+                    !isFullSaveForced)
                 {
                     continue;
                 }
@@ -704,12 +697,12 @@ namespace CLP.Entities
             //}
 
             var displaysFolderPath = Path.Combine(folderPath, "Displays");
-            if(!Directory.Exists(displaysFolderPath))
+            if (!Directory.Exists(displaysFolderPath))
             {
                 Directory.CreateDirectory(displaysFolderPath);
             }
 
-            foreach(var display in Displays)
+            foreach (var display in Displays)
             {
                 display.Save(displaysFolderPath);
             }
@@ -721,12 +714,12 @@ namespace CLP.Entities
             ToXML(fileName);
 
             var pagesFolderPath = Path.Combine(folderPath, "Pages");
-            if(!Directory.Exists(pagesFolderPath))
+            if (!Directory.Exists(pagesFolderPath))
             {
                 Directory.CreateDirectory(pagesFolderPath);
             }
 
-            foreach(var page in Pages)
+            foreach (var page in Pages)
             {
                 var pageFilePath = Path.Combine(pagesFolderPath, "p;" + page.PageNumber + ";" + page.ID + ";" + page.DifferentiationLevel + ";" + page.VersionIndex + ".xml");
                 page.ToXML(pageFilePath, serializeInkStrokes);
@@ -754,16 +747,18 @@ namespace CLP.Entities
 
         public void SaveSubmissions(string folderPath)
         {
-            if(!Directory.Exists(folderPath))
+            if (!Directory.Exists(folderPath))
             {
                 Directory.CreateDirectory(folderPath);
             }
 
-            foreach(var page in Pages)
+            foreach (var page in Pages)
             {
-                foreach(var submission in page.Submissions)
+                foreach (var submission in page.Submissions)
                 {
-                    var pageFilePath = Path.Combine(folderPath, "p;" + submission.PageNumber + ";" + submission.ID + ";" + submission.DifferentiationLevel + ";" + submission.VersionIndex + ".xml");
+                    var pageFilePath = Path.Combine(folderPath,
+                                                    "p;" + submission.PageNumber + ";" + submission.ID + ";" + submission.DifferentiationLevel + ";" + submission.VersionIndex +
+                                                    ".xml");
                     submission.ToXML(pageFilePath);
                     //if(submission.PageThumbnail == null)
                     //{
@@ -790,17 +785,19 @@ namespace CLP.Entities
 
         public void SaveOthersSubmissions(string folderPath)
         {
-            foreach(var page in Pages)
+            foreach (var page in Pages)
             {
-                foreach(var submission in page.Submissions)
+                foreach (var submission in page.Submissions)
                 {
                     var notebookFolderPaths = Directory.EnumerateDirectories(folderPath);
-                    foreach(var notebookFolderPath in notebookFolderPaths)
+                    foreach (var notebookFolderPath in notebookFolderPaths)
                     {
-                        if(notebookFolderPath.Contains(submission.OwnerID))
+                        if (notebookFolderPath.Contains(submission.OwnerID))
                         {
                             var pagesPath = Path.Combine(notebookFolderPath, "Pages");
-                            var pageFilePath = Path.Combine(pagesPath, "p;" + submission.PageNumber + ";" + submission.ID + ";" + submission.DifferentiationLevel + ";" + submission.VersionIndex + ".xml");
+                            var pageFilePath = Path.Combine(pagesPath,
+                                                            "p;" + submission.PageNumber + ";" + submission.ID + ";" + submission.DifferentiationLevel + ";" +
+                                                            submission.VersionIndex + ".xml");
                             submission.ToXML(pageFilePath);
                             //if(submission.PageThumbnail == null)
                             //{
@@ -826,6 +823,5 @@ namespace CLP.Entities
                 }
             }
         }
-
     }
 }

@@ -268,8 +268,8 @@
                        TextOptions.TextFormattingMode="Ideal" />
 
             <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                     ItemsSource="{Binding AvailableCacheNames}"
-                     SelectedItem="{Binding SelectedCacheName}"
+                     ItemsSource="{Binding AvailableCaches}"
+                     SelectedItem="{Binding SelectedCache}"
                      SelectionMode="Single"
                      ItemContainerStyle="{StaticResource BlankListBoxContainerStyle}"
                      Width="275"
@@ -296,7 +296,7 @@
                             </Grid.Style>
 
                             <!-- Button Content -->
-                            <TextBlock Text="{Binding}"
+                            <TextBlock Text="{Binding CacheName}"
                                        TextAlignment="Left"
                                        HorizontalAlignment="Left"
                                        VerticalAlignment="Center"
@@ -325,8 +325,8 @@
         <DockPanel LastChildFill="True"
                    HorizontalAlignment="Stretch">
 
-            <TextBlock DockPanel.Dock="Top" 
-                       Text="{Binding SelectedCacheDirectory}"
+            <TextBlock DockPanel.Dock="Top"
+                       Text="{Binding SelectedCache.CacheFolderPath}"
                        TextAlignment="Left"
                        HorizontalAlignment="Stretch"
                        VerticalAlignment="Center"
@@ -378,10 +378,12 @@
                                        Margin="26 5 5 5"
                                        TextOptions.TextRenderingMode="Auto"
                                        TextOptions.TextFormattingMode="Ideal">
-                                    <Run Text="Name: " />
-                                    <Run Text="{Binding Name}" />
-                                    <Run Text=",     Owner: " />
-                                    <Run Text="{Binding OwnerName}" />
+                                <Run Text="Name: " />
+                                <Run Text="{Binding NameComposite.Name}" />
+                                <Run Text=",     Owner: " />
+                                <Run Text="{Binding NameComposite.OwnerName}" />
+                                <Run Text=",     Last Saved: " />
+                                <Run Text="{Binding LastSavedTime, Mode=OneWay}" />
                             </TextBlock>
 
                         </Grid>

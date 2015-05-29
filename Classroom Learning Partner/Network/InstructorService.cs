@@ -129,7 +129,7 @@ namespace Classroom_Learning_Partner
             }
 
             var submissionNameComposite = PageNameComposite.ParsePageToNameComposite(submission);
-            var notebookNameComposite = NotebookNameComposite.ParseNotebookToNameComposite(currentNotebook);
+            var notebookNameComposite = NotebookNameComposite.ParseNotebook(currentNotebook);
             notebookNameComposite.OwnerID = submission.OwnerID;
             if (submission.Owner == null)
             {
@@ -238,7 +238,7 @@ namespace Classroom_Learning_Partner
                 page.History.TrashedInkStrokes = StrokeDTO.LoadInkStrokes(page.History.SerializedTrashedInkStrokes);
 
                 var pageNameComposite = PageNameComposite.ParsePageToNameComposite(page);
-                var notebookNameComposite = NotebookNameComposite.ParseNotebookToNameComposite(currentNotebook);
+                var notebookNameComposite = NotebookNameComposite.ParseNotebook(currentNotebook);
                 notebookNameComposite.OwnerID = page.OwnerID;
                 if (page.Owner == null)
                 {
@@ -286,7 +286,7 @@ namespace Classroom_Learning_Partner
                                           return;
                                       }
 
-                                      var notebookFolderName = NotebookNameComposite.ParseNotebookToNameComposite(notebook).ToFolderName();
+                                      var notebookFolderName = NotebookNameComposite.ParseNotebook(notebook).ToFolderName();
                                       var notebookFolderPath = Path.Combine(notebookService.CurrentNotebookCacheDirectory, notebookFolderName);
                                       notebook.SavePartialNotebook(notebookFolderPath, false);
                                   });
@@ -311,7 +311,7 @@ namespace Classroom_Learning_Partner
                     return;
                 }
 
-                var notebookFolderName = NotebookNameComposite.ParseNotebookToNameComposite(notebook).ToFolderName();
+                var notebookFolderName = NotebookNameComposite.ParseNotebook(notebook).ToFolderName();
                 var notebookFolderPath = Path.Combine(notebookService.CurrentNotebookCacheDirectory, notebookFolderName);
                 notebook.SavePartialNotebook(notebookFolderPath, false);
             });

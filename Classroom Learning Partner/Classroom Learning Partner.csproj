@@ -326,10 +326,10 @@
       <DependentUpon>ExportPaneView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\BackStage\ExportPaneViewModel.cs" />
-    <Compile Include="Views\BackStage\NewNotebookPaneView.xaml.cs">
-      <DependentUpon>NewNotebookPaneView.xaml</DependentUpon>
+    <Compile Include="Views\BackStage\NewPaneView.xaml.cs">
+      <DependentUpon>NewPaneView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModels\BackStage\NewNotebookPaneViewModel.cs" />
+    <Compile Include="ViewModels\BackStage\NewPaneViewModel.cs" />
     <Compile Include="Views\BackStage\NotebookInfoPaneView.xaml.cs">
       <DependentUpon>NotebookInfoPaneView.xaml</DependentUpon>
     </Compile>
@@ -621,7 +621,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\BackStage\NewNotebookPaneView.xaml">
+    <Page Include="Views\BackStage\NewPaneView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

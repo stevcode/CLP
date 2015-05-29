@@ -1,25 +1,26 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Windows;
 using Catel.Collections;
 using Catel.Data;
 using Catel.MVVM;
+using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.Views;
 using CLP.Entities;
 using Path = Catel.IO.Path;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
-    public class NewNotebookPaneViewModel : APaneBaseViewModel
+    public class NewPaneViewModel : APaneBaseViewModel
     {
         #region Constructor
 
-        public NewNotebookPaneViewModel()
+        public NewPaneViewModel()
         {
             InitializeCommands();
-            AvailableCacheNames.AddRange(LoadedNotebookService.AvailableLocalCacheNames);
-            SelectedCacheName = AvailableCacheNames.FirstOrDefault();
+            AvailableCaches.AddRange(DataService.AvailableCaches);
+            SelectedCache = AvailableCaches.FirstOrDefault();
         }
 
         private void InitializeCommands()
@@ -38,33 +39,6 @@ namespace Classroom_Learning_Partner.ViewModels
             get { return "New Notebook"; }
         }
 
-        /// <summary>List of available Cache names.</summary>
-        public ObservableCollection<string> AvailableCacheNames
-        {
-            get { return GetValue<ObservableCollection<string>>(AvailableCacheNamesProperty); }
-            set { SetValue(AvailableCacheNamesProperty, value); }
-        }
-
-        public static readonly PropertyData AvailableCacheNamesProperty = RegisterProperty("AvailableCacheNames",
-                                                                                           typeof (ObservableCollection<string>),
-                                                                                           () => new ObservableCollection<string>());
-
-        /// <summary>Selected Cache Name.</summary>
-        public string SelectedCacheName
-        {
-            get { return GetValue<string>(SelectedCacheNameProperty); }
-            set
-            {
-                SetValue(SelectedCacheNameProperty, value);
-                if (value != null)
-                {
-                    SelectedCacheDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), value);
-                }
-            }
-        }
-
-        public static readonly PropertyData SelectedCacheNameProperty = RegisterProperty("SelectedCacheName", typeof (string), string.Empty);
-
         /// <summary>Manually typed Cache Name for creating a new Cache.</summary>
         public string TypedCacheName
         {
@@ -74,16 +48,25 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData TypedCacheNameProperty = RegisterProperty("TypedCacheName", typeof (string), string.Empty);
 
-        /// <summary>Path of the Selected Cache's Directory.</summary>
-        public string SelectedCacheDirectory
+        /// <summary>List of available Caches.</summary>
+        public ObservableCollection<CacheInfo> AvailableCaches
         {
-            get { return GetValue<string>(SelectedCacheDirectoryProperty); }
-            set { SetValue(SelectedCacheDirectoryProperty, value); }
+            get { return GetValue<ObservableCollection<CacheInfo>>(AvailableCachesProperty); }
+            set { SetValue(AvailableCachesProperty, value); }
         }
 
-        public static readonly PropertyData SelectedCacheDirectoryProperty = RegisterProperty("SelectedCacheDirectory",
-                                                                                              typeof (string),
-                                                                                              Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Cache"));
+        public static readonly PropertyData AvailableCachesProperty = RegisterProperty("AvailableCaches",
+                                                                                       typeof (ObservableCollection<CacheInfo>),
+                                                                                       () => new ObservableCollection<CacheInfo>());
+
+        /// <summary>Selected Cache.</summary>
+        public CacheInfo SelectedCache
+        {
+            get { return GetValue<CacheInfo>(SelectedCacheProperty); }
+            set { SetValue(SelectedCacheProperty, value); }
+        }
+
+        public static readonly PropertyData SelectedCacheProperty = RegisterProperty("SelectedCache", typeof (CacheInfo));
 
         /// <summary>Notebook Name to use on creation.</summary>
         public string NotebookName
@@ -112,18 +95,17 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnCreateNotebookCommandExecute()
         {
-            var previousLocalCacheDirectory = LoadedNotebookService.CurrentLocalCacheDirectory;
             if (string.IsNullOrEmpty(TypedCacheName) ||
                 string.IsNullOrWhiteSpace(TypedCacheName))
             {
-                LoadedNotebookService.CurrentLocalCacheDirectory = SelectedCacheDirectory;
+                DataService.CurrentCache = SelectedCache;
             }
             else
             {
-                var createdNewCache = LoadedNotebookService.InitializeNewLocalCache(TypedCacheName);
+                var createdNewCache = DataService.CreateNewCache(TypedCacheName);
                 if (!createdNewCache)
                 {
-                    LoadedNotebookService.CurrentLocalCacheDirectory = previousLocalCacheDirectory;
+                    MessageBox.Show("A folder with that name already exists.");
                     return;
                 }
             }
@@ -137,11 +119,11 @@ namespace Classroom_Learning_Partner.ViewModels
             var newPage = new CLPPage(Person.Author);
             newNotebook.AddCLPPageToNotebook(newPage);
 
-            var folderName = NotebookNameComposite.ParseNotebookToNameComposite(newNotebook).ToFolderName();
+            var folderName = NotebookNameComposite.ParseNotebook(newNotebook).ToFolderName();
             var folderPath = Path.Combine(LoadedNotebookService.CurrentNotebookCacheDirectory, folderName);
             if (Directory.Exists(folderPath))
             {
-                LoadedNotebookService.CurrentLocalCacheDirectory = previousLocalCacheDirectory;
+//                LoadedNotebookService.CurrentLocalCacheDirectory = previousLocalCacheDirectory;
                 return;
             }
 
@@ -205,12 +187,12 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             classSubject.Projector = classSubject.Teacher;
-            var classesFolderPath = Path.Combine(SelectedCacheDirectory, "Classes");
-            if (!Directory.Exists(classesFolderPath))
-            {
-                Directory.CreateDirectory(classesFolderPath);
-            }
-            classSubject.SaveClassSubject(classesFolderPath);
+            //var classesFolderPath = Path.Combine(SelectedCacheDirectory, "Classes");
+            //if (!Directory.Exists(classesFolderPath))
+            //{
+            //    Directory.CreateDirectory(classesFolderPath);
+            //}
+            //classSubject.SaveClassSubject(classesFolderPath);
         }
 
         #endregion //Commands
