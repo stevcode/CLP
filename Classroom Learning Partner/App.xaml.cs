@@ -65,6 +65,9 @@ namespace Classroom_Learning_Partner
             var notebookService = new NotebookService();
             ServiceLocator.Default.RegisterInstance<INotebookService>(notebookService);
 
+            var dataService = new DataService();
+            ServiceLocator.Default.RegisterInstance<IDataService>(dataService);
+
             var pageInteractionService = new PageInteractionService();
             ServiceLocator.Default.RegisterInstance<IPageInteractionService>(pageInteractionService);
         }

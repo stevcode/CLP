@@ -567,7 +567,7 @@
         </DockPanel>
 
         <!-- Pane View -->
-        <ContentControl Margin="42 61 0 0">
+        <ContentControl Margin="42 20 0 0">
             <ContentControl.Resources>
 
                 <ControlTemplate x:Key="NotebookInfoPaneTemplate">

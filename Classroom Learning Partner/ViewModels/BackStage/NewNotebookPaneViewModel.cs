@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using Catel.Collections;
 using Catel.Data;
-using Catel.IoC;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Views;
 using CLP.Entities;
@@ -66,16 +65,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData SelectedCacheNameProperty = RegisterProperty("SelectedCacheName", typeof (string), string.Empty);
 
-        /// <summary>
-        /// Manually typed Cache Name for creating a new Cache.
-        /// </summary>
+        /// <summary>Manually typed Cache Name for creating a new Cache.</summary>
         public string TypedCacheName
         {
             get { return GetValue<string>(TypedCacheNameProperty); }
             set { SetValue(TypedCacheNameProperty, value); }
         }
 
-        public static readonly PropertyData TypedCacheNameProperty = RegisterProperty("TypedCacheName", typeof(string), string.Empty);
+        public static readonly PropertyData TypedCacheNameProperty = RegisterProperty("TypedCacheName", typeof (string), string.Empty);
 
         /// <summary>Path of the Selected Cache's Directory.</summary>
         public string SelectedCacheDirectory
@@ -130,7 +127,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     return;
                 }
             }
-            
+
             var notebookName = NotebookName;
             var newNotebook = new Notebook(notebookName, Person.Author)
                               {

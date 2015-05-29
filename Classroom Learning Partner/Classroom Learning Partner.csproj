@@ -267,6 +267,8 @@
     <Compile Include="Network\ProjectorService.cs" />
     <Compile Include="Network\StudentService.cs" />
     <Compile Include="Resources\InkInterpretation.cs" />
+    <Compile Include="Services\DataService.cs" />
+    <Compile Include="Services\IDataService.cs" />
     <Compile Include="Services\INotebookService.cs" />
     <Compile Include="Services\IPageInteractionService.cs" />
     <Compile Include="Services\NotebookService.cs" />
