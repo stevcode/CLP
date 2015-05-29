@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
 using Catel.Collections;
 using Catel.Data;
@@ -38,7 +37,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private GroupedRibbonButton _penModeButton;
         private GroupedRibbonButton _markerModeButton;
-        private GroupedRibbonButton _highlighterModeButton; 
+        private GroupedRibbonButton _highlighterModeButton;
+
+        private GroupedRibbonButton _inkEraserButton;
+        private GroupedRibbonButton _pageObjectEraserButton;
+        private GroupedRibbonButton _dividerEraserButton;
 
         #endregion //Buttons
 
@@ -51,9 +54,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(ButtonsProperty, value); }
         }
 
-        public static readonly PropertyData ButtonsProperty = RegisterProperty("Buttons",
-                                                                               typeof (ObservableCollection<UIElement>),
-                                                                               () => new ObservableCollection<UIElement>());
+        public static readonly PropertyData ButtonsProperty = RegisterProperty("Buttons", typeof (ObservableCollection<UIElement>), () => new ObservableCollection<UIElement>());
 
         /// <summary>Current Pen colors.</summary>
         public ObservableCollection<ColorButton> CurrentPenColors
@@ -74,27 +75,37 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void InitializeButtons()
         {
-            var groupName = "DrawModes" + catelHack;
-            _penModeButton = new GroupedRibbonButton("Pen",
-                                                        groupName,
-                                                        "pack://application:,,,/Resources/Images/Pen32.png",
-                                                        DrawModes.Pen.ToString(),
-                                                        true);
-            _penModeButton.Checked += _button_Checked;
-            
-            _markerModeButton = new GroupedRibbonButton("Marker",
-                                                           groupName,
-                                                           "pack://application:,,,/Resources/Images/Marker128.png",
-                                                           DrawModes.Marker.ToString(),
-                                                           true);
-            _markerModeButton.Checked += _button_Checked;
-            
+            var penGroupName = "DrawModes" + catelHack;
+            _penModeButton = new GroupedRibbonButton("Pen", penGroupName, "pack://application:,,,/Resources/Images/Pen32.png", DrawModes.Pen.ToString(), true);
+            _penModeButton.Checked += _penButton_Checked;
+
+            _markerModeButton = new GroupedRibbonButton("Marker", penGroupName, "pack://application:,,,/Resources/Images/Marker128.png", DrawModes.Marker.ToString(), true);
+            _markerModeButton.Checked += _penButton_Checked;
+
             _highlighterModeButton = new GroupedRibbonButton("Highlighter",
-                                                                groupName,
-                                                                "pack://application:,,,/Resources/Images/Highlighter32.png",
-                                                                DrawModes.Highlighter.ToString(),
-                                                                true);
-            _highlighterModeButton.Checked += _button_Checked;
+                                                             penGroupName,
+                                                             "pack://application:,,,/Resources/Images/Highlighter32.png",
+                                                             DrawModes.Highlighter.ToString(),
+                                                             true);
+            _highlighterModeButton.Checked += _penButton_Checked;
+
+            var eraserGroupName = "EraserModes" + catelHack;
+            _inkEraserButton = new GroupedRibbonButton("Erase Ink", eraserGroupName, "pack://application:,,,/Resources/Images/StrokeEraser32.png", ErasingModes.Ink.ToString(), true);
+            _inkEraserButton.Checked += _eraserButton_Checked;
+
+            _pageObjectEraserButton = new GroupedRibbonButton("Erase Objects",
+                                                              eraserGroupName,
+                                                              "pack://application:,,,/Resources/Images/StrokeEraser32.png",
+                                                              ErasingModes.PageObjects.ToString(),
+                                                              true);
+            _pageObjectEraserButton.Checked += _eraserButton_Checked;
+
+            _dividerEraserButton = new GroupedRibbonButton("Erase Dividers",
+                                                           eraserGroupName,
+                                                           "pack://application:,,,/Resources/Images/StrokeEraser32.png",
+                                                           ErasingModes.Dividers.ToString(),
+                                                           true);
+            _dividerEraserButton.Checked += _eraserButton_Checked;
         }
 
         public void SetPenContextButtons()
@@ -165,9 +176,9 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        private bool _isCheckedEventRunning = false;
+        private bool _isCheckedEventRunning;
 
-        private void _button_Checked(object sender, RoutedEventArgs e)
+        private void _penButton_Checked(object sender, RoutedEventArgs e)
         {
             _isCheckedEventRunning = true;
             _pageInteractionService = DependencyResolver.Resolve<IPageInteractionService>();
@@ -178,7 +189,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            var drawMode = (DrawModes)Enum.Parse(typeof(DrawModes), checkedButton.AssociatedEnumValue);
+            var drawMode = (DrawModes)Enum.Parse(typeof (DrawModes), checkedButton.AssociatedEnumValue);
             switch (drawMode)
             {
                 case DrawModes.Pen:
@@ -208,31 +219,60 @@ namespace Classroom_Learning_Partner.ViewModels
             _pageInteractionService.SetPenColor(colorButton.Color.Color);
         }
 
+        private void _eraserButton_Checked(object sender, RoutedEventArgs e)
+        {
+            _isCheckedEventRunning = true;
+            _pageInteractionService = DependencyResolver.Resolve<IPageInteractionService>();
+            var checkedButton = sender as GroupedRibbonButton;
+            if (checkedButton == null ||
+                _pageInteractionService == null)
+            {
+                return;
+            }
+
+            var eraserMode = (ErasingModes)Enum.Parse(typeof (ErasingModes), checkedButton.AssociatedEnumValue);
+            switch (eraserMode)
+            {
+                case ErasingModes.Ink:
+                    _pageInteractionService.SetInkEraserMode();
+                    break;
+                case ErasingModes.PageObjects:
+                    _pageInteractionService.SetPageObjectEraserMode();
+                    break;
+                case ErasingModes.Dividers:
+                    _pageInteractionService.SetDividerEraserMode();
+                    break;
+            }
+
+            _isCheckedEventRunning = false;
+        }
+
         public void SetEraserContextButtons()
         {
             Buttons.Clear();
+            _pageInteractionService = DependencyResolver.Resolve<IPageInteractionService>();
+            if (_pageInteractionService == null)
+            {
+                return;
+            }
 
-            //var setEraseInkButton = new GroupedRibbonButton("Erase Ink",
-            //                                                "EraserModes",
-            //                                                "pack://application:,,,/Resources/Images/StrokeEraser32.png",
-            //                                                PageInteractionModes.Select.ToString(),
-            //                                                true);
-            //setEraseInkButton.Checked += _setEraseModeButton_Checked;
+            Buttons.Add(_inkEraserButton);
+            //Buttons.Add(_pageObjectEraserButton);
+            Buttons.Add(_dividerEraserButton);
 
-            //var setErasePageObjectsButton = new GroupedRibbonButton("Erase PageObjects",
-            //                                                        "EraserModes",
-            //                                                        "pack://application:,,,/Resources/Images/ArrayCard32.png",
-            //                                                        PageInteractionModes.Select.ToString(),
-            //                                                        true);
-            //setErasePageObjectsButton.Checked += _setEraseModeButton_Checked;
-
-            //Buttons.Add(setEraseInkButton);
-            //Buttons.Add(setErasePageObjectsButton);
-
-            //setEraseInkButton.IsChecked = true;
+            switch (_pageInteractionService.CurrentErasingMode)
+            {
+                case ErasingModes.Ink:
+                    _inkEraserButton.IsChecked = true;
+                    break;
+                case ErasingModes.PageObjects:
+                    _pageObjectEraserButton.IsChecked = true;
+                    break;
+                case ErasingModes.Dividers:
+                    _dividerEraserButton.IsChecked = true;
+                    break;
+            }
         }
-
-        private void _setEraseModeButton_Checked(object sender, RoutedEventArgs e) { }
 
         #endregion //Methods
     }

@@ -298,19 +298,25 @@ namespace CLP.Entities
 
         public override void ResizeDivisions()
         {
+            SortDivisions();
             var position = 0.0;
+            var oldArrayWidth = VerticalDivisions.Aggregate(0.0, (total, d) => total + d.Length);
+            var oldArrayHeight = HorizontalDivisions.Aggregate(0.0, (total, d) => total + d.Length);
+            var oldGridSquareSize = VerticalDivisions.Any() ? oldArrayWidth / Columns : oldArrayHeight / Rows;
             foreach (var division in HorizontalDivisions)
             {
+                var actualValue = division.GetActualValue(oldGridSquareSize);
                 division.Position = position;
-                division.Length = GridSquareSize * division.Value;
+                division.Length = (GridSquareSize * actualValue) - 1.0;
                 position += division.Length;
             }
 
             position = 0.0;
             foreach (var division in VerticalDivisions)
             {
+                var actualValue = division.GetActualValue(oldGridSquareSize);
                 division.Position = position;
-                division.Length = GridSquareSize * division.Value;
+                division.Length = (GridSquareSize * actualValue) - 1.0;
                 position += division.Length;
             }
         }

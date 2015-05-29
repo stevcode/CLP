@@ -84,6 +84,8 @@ namespace CLP.Entities
 
         public static readonly PropertyData IsObscuredProperty = RegisterProperty("IsObscured", typeof(bool), false);
 
+        public double GetActualValue(double gridSquareSize) { return (Length + 1.0) / gridSquareSize; }
+
         #endregion //Properties
 
         #region Overrides of ModelBase
@@ -329,18 +331,23 @@ namespace CLP.Entities
         {
             SortDivisions();
             var position = 0.0;
+            var oldArrayWidth = VerticalDivisions.Aggregate(0.0, (total, d) => total + d.Length);
+            var oldArrayHeight = HorizontalDivisions.Aggregate(0.0, (total, d) => total + d.Length);
+            var oldGridSquareSize = VerticalDivisions.Any() ? oldArrayWidth / Columns : oldArrayHeight / Rows;
             foreach (var division in HorizontalDivisions)
             {
+                var actualValue = division.GetActualValue(oldGridSquareSize);
                 division.Position = position;
-                division.Length = (GridSquareSize * division.Value) - 1.0;
+                division.Length = (GridSquareSize * actualValue) - 1.0;
                 position += division.Length;
             }
 
             position = 0.0;
             foreach (var division in VerticalDivisions)
             {
+                var actualValue = division.GetActualValue(oldGridSquareSize);
                 division.Position = position;
-                division.Length = (GridSquareSize * division.Value) - 1.0;
+                division.Length = (GridSquareSize * actualValue) - 1.0;
                 position += division.Length;
             }
         }

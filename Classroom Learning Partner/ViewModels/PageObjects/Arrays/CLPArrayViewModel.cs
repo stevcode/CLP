@@ -8,6 +8,7 @@ using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Shapes;
 using Catel.Data;
+using Catel.IoC;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.Views;
@@ -22,10 +23,14 @@ namespace Classroom_Learning_Partner.ViewModels
     {
         #region Constructor
 
+        protected IPageInteractionService PageInteractionService;
+
         /// <summary>Initializes a new instance of the <see cref="CLPArrayViewModel" /> class.</summary>
         public CLPArrayViewModel(CLPArray array)
         {
             PageObject = array;
+            PageInteractionService = DependencyResolver.Resolve<IPageInteractionService>();
+
             array.AcceptedStrokes = array.AcceptedStrokeParentIDs.Select(id => PageObject.ParentPage.GetStrokeByID(id)).Where(s => s != null).ToList();
 
             //Commands
@@ -1177,9 +1182,11 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             var rectangle = e.Source as Rectangle;
             var array = PageObject as ACLPArrayBase;
-            if ((e.StylusDevice == null || !e.StylusDevice.Inverted || e.LeftButton != MouseButtonState.Pressed) && e.MiddleButton != MouseButtonState.Pressed ||
-                rectangle == null ||
-                array == null)
+            if (rectangle == null ||
+                array == null ||
+                PageInteractionService == null ||
+                PageInteractionService.CurrentPageInteractionMode != PageInteractionModes.Erase ||
+                PageInteractionService.CurrentErasingMode != ErasingModes.Dividers)
             {
                 return;
             }
@@ -1202,11 +1209,18 @@ namespace Classroom_Learning_Partner.ViewModels
                 array.HorizontalDivisions.Remove(divAbove);
                 array.HorizontalDivisions.Remove(division);
 
+                var isOsbscuredDividerRegionRemoved = divAbove.IsObscured || division.IsObscured;
+
                 //Add new division unless we removed the only division line
-                if (array.HorizontalDivisions.Count > 0)
+                if (array.HorizontalDivisions.Count > 0 ||
+                    isOsbscuredDividerRegionRemoved)
                 {
                     var newLength = divAbove.Length + division.Length;
                     var newDivision = new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, divAbove.Position, newLength, 0);
+                    if (isOsbscuredDividerRegionRemoved)
+                    {
+                        newDivision.IsObscured = true;
+                    }
                     array.HorizontalDivisions.Add(newDivision);
                 }
 
@@ -1219,11 +1233,18 @@ namespace Classroom_Learning_Partner.ViewModels
                 array.VerticalDivisions.Remove(divAbove);
                 array.VerticalDivisions.Remove(division);
 
+                var isOsbscuredDividerRegionRemoved = divAbove.IsObscured || division.IsObscured;
+
                 //Add new division unless we removed the only division line
-                if (array.VerticalDivisions.Count > 0)
+                if (array.VerticalDivisions.Count > 0 ||
+                    isOsbscuredDividerRegionRemoved)
                 {
                     var newLength = divAbove.Length + division.Length;
                     var newDivision = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, divAbove.Position, newLength, 0);
+                    if (isOsbscuredDividerRegionRemoved)
+                    {
+                        newDivision.IsObscured = true;
+                    }
                     array.VerticalDivisions.Add(newDivision);
                 }
 
