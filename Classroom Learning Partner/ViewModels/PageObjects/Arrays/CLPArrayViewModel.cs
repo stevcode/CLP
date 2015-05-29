@@ -8,6 +8,7 @@ using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Shapes;
 using Catel.Data;
+using Catel.IoC;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.Views;
@@ -22,10 +23,14 @@ namespace Classroom_Learning_Partner.ViewModels
     {
         #region Constructor
 
+        protected IPageInteractionService PageInteractionService;
+
         /// <summary>Initializes a new instance of the <see cref="CLPArrayViewModel" /> class.</summary>
         public CLPArrayViewModel(CLPArray array)
         {
             PageObject = array;
+            PageInteractionService = DependencyResolver.Resolve<IPageInteractionService>();
+
             array.AcceptedStrokes = array.AcceptedStrokeParentIDs.Select(id => PageObject.ParentPage.GetStrokeByID(id)).Where(s => s != null).ToList();
 
             //Commands
@@ -1177,12 +1182,16 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             var rectangle = e.Source as Rectangle;
             var array = PageObject as ACLPArrayBase;
-            if ((e.StylusDevice == null || !e.StylusDevice.Inverted || e.LeftButton != MouseButtonState.Pressed) && e.MiddleButton != MouseButtonState.Pressed ||
-                rectangle == null ||
-                array == null)
+            if (rectangle == null ||
+                array == null ||
+                PageInteractionService == null ||
+                PageInteractionService.CurrentPageInteractionMode != PageInteractionModes.Erase ||
+                PageInteractionService.CurrentErasingMode != ErasingModes.Dividers)
             {
                 return;
             }
+
+            Console.WriteLine("ERasing Divider");
 
             var division = rectangle.DataContext as CLPArrayDivision;
 

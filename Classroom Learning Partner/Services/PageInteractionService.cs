@@ -33,7 +33,8 @@ namespace Classroom_Learning_Partner.Services
     {
         Ink,
         PageObjects,
-        InkAndPageObjects
+        InkAndPageObjects,
+        Dividers
     }
 
     public class PageInteractionService : IPageInteractionService
@@ -143,17 +144,17 @@ namespace Classroom_Learning_Partner.Services
         public void SetEraseMode()
         {
             CurrentPageInteractionMode = PageInteractionModes.Erase;
-            foreach (var pageViewModel in ActivePageViewModels)
+            switch (CurrentErasingMode)
             {
-                pageViewModel.IsInkCanvasHitTestVisible = true;
-                pageViewModel.EditingMode = StrokeEraserMode;
-                pageViewModel.IsUsingCustomCursors = false;
-
-                pageViewModel.DefaultDA.IsHighlighter = false;
-                pageViewModel.DefaultDA.Height = PEN_SIZE;
-                pageViewModel.DefaultDA.Width = PEN_SIZE;
-                pageViewModel.DefaultDA.StylusTip = StylusTip.Rectangle;
-                pageViewModel.ClearAdorners();
+                case ErasingModes.Ink:
+                    SetInkEraserMode();
+                    break;
+                case ErasingModes.PageObjects:
+                    SetPageObjectEraserMode();
+                    break;
+                case ErasingModes.Dividers:
+                    SetDividerEraserMode();
+                    break;
             }
         }
 
@@ -310,7 +311,52 @@ namespace Classroom_Learning_Partner.Services
 
         #endregion //Set Draw Properties
 
-        public void SetErasingMode(ErasingModes erasingMode) { CurrentErasingMode = erasingMode; }
+        #region Set Erase Properties
+
+        public void SetInkEraserMode()
+        {
+            CurrentErasingMode = ErasingModes.Ink;
+            foreach (var pageViewModel in ActivePageViewModels)
+            {
+                pageViewModel.IsInkCanvasHitTestVisible = true;
+                pageViewModel.EditingMode = StrokeEraserMode;
+                pageViewModel.IsUsingCustomCursors = false;
+
+                pageViewModel.DefaultDA.IsHighlighter = false;
+                pageViewModel.DefaultDA.Height = PEN_SIZE;
+                pageViewModel.DefaultDA.Width = PEN_SIZE;
+                pageViewModel.DefaultDA.StylusTip = StylusTip.Rectangle;
+                pageViewModel.ClearAdorners();
+            }
+        }
+
+        public void SetPageObjectEraserMode()
+        {
+            CurrentErasingMode = ErasingModes.PageObjects;
+            foreach (var pageViewModel in ActivePageViewModels)
+            {
+                pageViewModel.IsInkCanvasHitTestVisible = false;
+                pageViewModel.IsUsingCustomCursors = true;
+                pageViewModel.PageCursor = Cursors.Arrow;
+
+                pageViewModel.ClearAdorners();
+            }
+        }
+
+        public void SetDividerEraserMode()
+        {
+            CurrentErasingMode = ErasingModes.Dividers;
+            foreach (var pageViewModel in ActivePageViewModels)
+            {
+                pageViewModel.IsInkCanvasHitTestVisible = false;
+                pageViewModel.IsUsingCustomCursors = true;
+                pageViewModel.PageCursor = Cursors.UpArrow;
+
+                pageViewModel.ClearAdorners();
+            }
+        }
+
+        #endregion //Set Erase Properties
 
         #endregion //Methods
     }

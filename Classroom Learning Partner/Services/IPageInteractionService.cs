@@ -27,6 +27,8 @@ namespace Classroom_Learning_Partner.Services
         void SetPenMode();
         void SetMarkerMode();
         void SetHighlighterMode();
-        void SetErasingMode(ErasingModes erasingMode);
+        void SetInkEraserMode();
+        void SetPageObjectEraserMode();
+        void SetDividerEraserMode();
     }
 }
