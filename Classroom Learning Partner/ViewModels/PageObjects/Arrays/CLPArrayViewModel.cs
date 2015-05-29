@@ -1191,8 +1191,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            Console.WriteLine("ERasing Divider");
-
             var division = rectangle.DataContext as CLPArrayDivision;
 
             if (division == null ||
@@ -1211,11 +1209,18 @@ namespace Classroom_Learning_Partner.ViewModels
                 array.HorizontalDivisions.Remove(divAbove);
                 array.HorizontalDivisions.Remove(division);
 
+                var isOsbscuredDividerRegionRemoved = divAbove.IsObscured || division.IsObscured;
+
                 //Add new division unless we removed the only division line
-                if (array.HorizontalDivisions.Count > 0)
+                if (array.HorizontalDivisions.Count > 0 ||
+                    isOsbscuredDividerRegionRemoved)
                 {
                     var newLength = divAbove.Length + division.Length;
                     var newDivision = new CLPArrayDivision(ArrayDivisionOrientation.Horizontal, divAbove.Position, newLength, 0);
+                    if (isOsbscuredDividerRegionRemoved)
+                    {
+                        newDivision.IsObscured = true;
+                    }
                     array.HorizontalDivisions.Add(newDivision);
                 }
 
@@ -1228,11 +1233,18 @@ namespace Classroom_Learning_Partner.ViewModels
                 array.VerticalDivisions.Remove(divAbove);
                 array.VerticalDivisions.Remove(division);
 
+                var isOsbscuredDividerRegionRemoved = divAbove.IsObscured || division.IsObscured;
+
                 //Add new division unless we removed the only division line
-                if (array.VerticalDivisions.Count > 0)
+                if (array.VerticalDivisions.Count > 0 ||
+                    isOsbscuredDividerRegionRemoved)
                 {
                     var newLength = divAbove.Length + division.Length;
                     var newDivision = new CLPArrayDivision(ArrayDivisionOrientation.Vertical, divAbove.Position, newLength, 0);
+                    if (isOsbscuredDividerRegionRemoved)
+                    {
+                        newDivision.IsObscured = true;
+                    }
                     array.VerticalDivisions.Add(newDivision);
                 }
 
