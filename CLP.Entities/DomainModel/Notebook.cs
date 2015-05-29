@@ -11,61 +11,7 @@ using Path = Catel.IO.Path;
 
 namespace CLP.Entities
 {
-    public class NotebookInfo
-    {
-        public NotebookInfo(string notebookFolderPath) { NotebookFolderPath = notebookFolderPath; }
-
-        public Notebook Notebook { get; set; }
-
-        public string NotebookFolderPath { get; set; }
-
-        public string DisplaysFolderPath
-        {
-            get
-            {
-                var path = Path.Combine(NotebookFolderPath, "Displays");
-                if (!Directory.Exists(path))
-                {
-                    Directory.CreateDirectory(path);
-                }
-
-                return path;
-            }
-        }
-
-        public string PagesFolderPath
-        {
-            get
-            {
-                var path = Path.Combine(NotebookFolderPath, "Pages");
-                if (!Directory.Exists(path))
-                {
-                    Directory.CreateDirectory(path);
-                }
-
-                return path;
-            }
-        }
-
-        public string NotebookFilePath
-        {
-            get
-            {
-                var path = Path.Combine(NotebookFolderPath, "notebook.xml");
-                return !File.Exists(path) ? string.Empty : path;
-            }
-        }
-
-        public NotebookNameComposite NameComposite
-        {
-            get { return NotebookNameComposite.ParseFolderPath(NotebookFolderPath); }
-        }
-
-        public string LastSavedTime
-        {
-            get { return string.IsNullOrEmpty(NotebookFilePath) ? string.Empty : File.GetLastWriteTime(NotebookFilePath).ToString("MM/dd/yy HH:mm:ss"); }
-        }
-    }
+    
 
     public class NotebookNameComposite
     {
@@ -315,7 +261,7 @@ namespace CLP.Entities
 
         #region Methods
 
-        public void AddCLPPageToNotebook(CLPPage page)
+        public void AddPage(CLPPage page)
         {
             page.PageNumber = Pages.Any() ? Pages.Last().PageNumber + 1 : 1;
             page.Curriculum = Curriculum;
@@ -323,7 +269,7 @@ namespace CLP.Entities
             CurrentPage = page;
         }
 
-        public void AddDisplayToNotebook(IDisplay display)
+        public void AddDisplay(IDisplay display)
         {
             display.NotebookID = ID;
             display.DisplayNumber = Displays.Any(d => d.GetType() == display.GetType()) ? Displays.Last().DisplayNumber + 1 : 1;

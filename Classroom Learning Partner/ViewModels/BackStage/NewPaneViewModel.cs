@@ -102,40 +102,20 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             else
             {
-                var createdNewCache = DataService.CreateNewCache(TypedCacheName);
-                if (!createdNewCache)
+                var newCache = DataService.CreateNewCache(TypedCacheName, false);
+                if (newCache == null)
                 {
                     MessageBox.Show("A folder with that name already exists.");
                     return;
                 }
+                DataService.CurrentCache = newCache;
             }
 
-            var notebookName = NotebookName;
-            var newNotebook = new Notebook(notebookName, Person.Author)
-                              {
-                                  Curriculum = NotebookCurriculum
-                              };
-
-            var newPage = new CLPPage(Person.Author);
-            newNotebook.AddCLPPageToNotebook(newPage);
-
-            var folderName = NotebookNameComposite.ParseNotebook(newNotebook).ToFolderName();
-            var folderPath = Path.Combine(LoadedNotebookService.CurrentNotebookCacheDirectory, folderName);
-            if (Directory.Exists(folderPath))
+            var newNotebook = DataService.CreateNewNotebook(NotebookName, NotebookCurriculum);
+            if (newNotebook == null)
             {
-//                LoadedNotebookService.CurrentLocalCacheDirectory = previousLocalCacheDirectory;
-                return;
+                MessageBox.Show("Something went wrong. The notebook you tried to create already exists in this cache.");
             }
-
-            // TODO: Reimplement when autosave returns
-            //SaveNotebook(newNotebook);
-
-            LoadedNotebookService.OpenNotebooks.Add(newNotebook);
-            LoadedNotebookService.CurrentNotebook = newNotebook;
-
-            App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(newNotebook);
-            App.MainWindowViewModel.IsAuthoring = true;
-            App.MainWindowViewModel.IsBackStageVisible = false;
         }
 
         private bool OnCreateNotebookCanExecute() { return NotebookName != string.Empty; }
