@@ -7,12 +7,9 @@ using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
-using Path = Catel.IO.Path;
 
 namespace CLP.Entities
 {
-    
-
     public class NotebookNameComposite
     {
         public string Name { get; set; }
@@ -415,11 +412,21 @@ namespace CLP.Entities
             }
         }
 
-        public void SaveNotebookLocally(string folderPath)
+        public static Notebook LoadFromXML(string notebookFilePath)
         {
-            var filePath = Path.Combine(folderPath, "notebook.xml");
-            ToXML(filePath);
+            try
+            {
+                return Load<Notebook>(notebookFilePath, SerializationMode.Xml);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
+
+        #endregion //Cache
+
+        #region Loading
 
         public static Notebook LoadLocalNotebook(string notebookFolderPath)
         {
@@ -443,10 +450,6 @@ namespace CLP.Entities
                 return null;
             }
         }
-
-        #endregion //Cache
-
-        #region Loading
 
         public static Notebook LoadLocalFullNotebook(string notebookFolderPath, bool includeSubmissions = true)
         {

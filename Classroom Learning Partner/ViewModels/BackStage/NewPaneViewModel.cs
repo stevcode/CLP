@@ -8,7 +8,6 @@ using Catel.MVVM;
 using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.Views;
 using CLP.Entities;
-using Path = Catel.IO.Path;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -39,6 +38,8 @@ namespace Classroom_Learning_Partner.ViewModels
             get { return "New Notebook"; }
         }
 
+        #region Cache Bindings
+
         /// <summary>Manually typed Cache Name for creating a new Cache.</summary>
         public string TypedCacheName
         {
@@ -46,7 +47,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(TypedCacheNameProperty, value); }
         }
 
-        public static readonly PropertyData TypedCacheNameProperty = RegisterProperty("TypedCacheName", typeof (string), string.Empty);
+        public static readonly PropertyData TypedCacheNameProperty = RegisterProperty("TypedCacheName", typeof(string), string.Empty);
 
         /// <summary>List of available Caches.</summary>
         public ObservableCollection<CacheInfo> AvailableCaches
@@ -56,7 +57,7 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData AvailableCachesProperty = RegisterProperty("AvailableCaches",
-                                                                                       typeof (ObservableCollection<CacheInfo>),
+                                                                                       typeof(ObservableCollection<CacheInfo>),
                                                                                        () => new ObservableCollection<CacheInfo>());
 
         /// <summary>Selected Cache.</summary>
@@ -66,7 +67,11 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(SelectedCacheProperty, value); }
         }
 
-        public static readonly PropertyData SelectedCacheProperty = RegisterProperty("SelectedCache", typeof (CacheInfo));
+        public static readonly PropertyData SelectedCacheProperty = RegisterProperty("SelectedCache", typeof(CacheInfo));
+
+        #endregion //Cache Bindings
+
+        #region Notebook Bindings
 
         /// <summary>Notebook Name to use on creation.</summary>
         public string NotebookName
@@ -75,7 +80,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(NotebookNameProperty, value); }
         }
 
-        public static readonly PropertyData NotebookNameProperty = RegisterProperty("NotebookName", typeof (string), string.Empty);
+        public static readonly PropertyData NotebookNameProperty = RegisterProperty("NotebookName", typeof(string), string.Empty);
 
         /// <summary>Curriculum for the new notebook.</summary>
         public string NotebookCurriculum
@@ -84,7 +89,9 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(NotebookCurriculumProperty, value); }
         }
 
-        public static readonly PropertyData NotebookCurriculumProperty = RegisterProperty("NotebookCurriculum", typeof (string), string.Empty);
+        public static readonly PropertyData NotebookCurriculumProperty = RegisterProperty("NotebookCurriculum", typeof(string), string.Empty);
+
+        #endregion //Notebook Bindings
 
         #endregion //Bindings
 
@@ -120,7 +127,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private bool OnCreateNotebookCanExecute() { return NotebookName != string.Empty; }
 
-        /// <summary>SUMMARY</summary>
+        /// <summary>Creates a new ClassSubject.</summary>
         public Command CreateClassSubjectCommand { get; private set; }
 
         private void OnCreateClassSubjectCommandExecute()

@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
 using Catel.Collections;
 using Catel.Data;
-using Catel.IO;
 using Catel.MVVM;
-using Catel.Windows;
 using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.Views;
 using CLP.Entities;
@@ -26,8 +23,8 @@ namespace Classroom_Learning_Partner.ViewModels
         private void InitializeCommands()
         {
             OpenNotebookCommand = new Command(OnOpenNotebookCommandExecute, OnOpenNotebookCanExecute);
-            StartClassPeriodCommand = new Command(OnStartClassPeriodCommandExecute);
             OpenPageRangeCommand = new Command(OnOpenPageRangeCommandExecute, OnOpenNotebookCanExecute);
+            StartClassPeriodCommand = new Command(OnStartClassPeriodCommandExecute);
         }
 
         #endregion //Constructor
@@ -40,6 +37,8 @@ namespace Classroom_Learning_Partner.ViewModels
             get { return "Open Notebook"; }
         }
 
+        #region Cache Bindings
+
         /// <summary>List of available Caches.</summary>
         public ObservableCollection<CacheInfo> AvailableCaches
         {
@@ -48,7 +47,7 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData AvailableCachesProperty = RegisterProperty("AvailableCaches",
-                                                                                       typeof(ObservableCollection<CacheInfo>),
+                                                                                       typeof (ObservableCollection<CacheInfo>),
                                                                                        () => new ObservableCollection<CacheInfo>());
 
         /// <summary>Selected Cache.</summary>
@@ -58,7 +57,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(SelectedCacheProperty, value); }
         }
 
-        public static readonly PropertyData SelectedCacheProperty = RegisterProperty("SelectedCache", typeof(CacheInfo), null, OnSelectedCacheChanged);
+        public static readonly PropertyData SelectedCacheProperty = RegisterProperty("SelectedCache", typeof (CacheInfo), null, OnSelectedCacheChanged);
 
         private static void OnSelectedCacheChanged(object sender, AdvancedPropertyChangedEventArgs args)
         {
@@ -71,9 +70,13 @@ namespace Classroom_Learning_Partner.ViewModels
 
             openNotebookPaneViewModel.DataService.CurrentCache = openNotebookPaneViewModel.SelectedCache;
             openNotebookPaneViewModel.AvailableNotebooks.Clear();
-            openNotebookPaneViewModel.AvailableNotebooks.AddRange(Services.DataService.GetNotebooksInFolder(openNotebookPaneViewModel.SelectedCache.NotebooksFolderPath));
+            openNotebookPaneViewModel.AvailableNotebooks.AddRange(Services.DataService.GetNotebooksInCache(openNotebookPaneViewModel.SelectedCache));
             openNotebookPaneViewModel.SelectedNotebook = openNotebookPaneViewModel.AvailableNotebooks.FirstOrDefault();
         }
+
+        #endregion //Cache Bindings
+
+        #region Notebook Bindings
 
         /// <summary>Available notebooks in the currently selected Cache.</summary>
         public ObservableCollection<NotebookInfo> AvailableNotebooks
@@ -83,7 +86,7 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData AvailableNotebooksProperty = RegisterProperty("AvailableNotebooks",
-                                                                                          typeof(ObservableCollection<NotebookInfo>),
+                                                                                          typeof (ObservableCollection<NotebookInfo>),
                                                                                           () => new ObservableCollection<NotebookInfo>());
 
         /// <summary>Currently selected Notebook.</summary>
@@ -93,11 +96,9 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(SelectedNotebookProperty, value); }
         }
 
-        public static readonly PropertyData SelectedNotebookProperty = RegisterProperty("SelectedNotebook", typeof(NotebookInfo));
+        public static readonly PropertyData SelectedNotebookProperty = RegisterProperty("SelectedNotebook", typeof (NotebookInfo));
 
-        /// <summary>
-        /// Toggles the loading of submissions when opening a notebook.
-        /// </summary>
+        /// <summary>Toggles the loading of submissions when opening a notebook.</summary>
         public bool IsIncludeSubmissionsChecked
         {
             get { return GetValue<bool>(IsIncludeSubmissionsCheckedProperty); }
@@ -105,6 +106,8 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData IsIncludeSubmissionsCheckedProperty = RegisterProperty("IsIncludeSubmissionsChecked", typeof (bool), true);
+
+        #endregion //Notebook Bindings
 
         #endregion //Bindings
 
@@ -149,9 +152,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //    LoadedNotebookService.StartLocalClassPeriod(, SelectedCacheDirectory);
         }
 
-        /// <summary>
-        /// Opens a range of pages in a notebook.
-        /// </summary>
+        /// <summary>Opens a range of pages in a notebook.</summary>
         public Command OpenPageRangeCommand { get; private set; }
 
         private void OnOpenPageRangeCommandExecute()
