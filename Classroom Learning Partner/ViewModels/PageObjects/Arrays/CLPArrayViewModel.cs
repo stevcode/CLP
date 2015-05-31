@@ -1649,8 +1649,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static double AdjustGridSquareSize(CLPPage page, int rows, int columns, int numberOfArrays, double initialGridSquareSize, bool isMatchingOtherGridSquareSize)
         {
-            var availablePageHeight = page.Height - ACLPArrayBase.ARRAY_STARING_Y_POSITION;
-            var availablePageArea = page.Width * availablePageHeight;
+            // HACK: set default gridsquaresize for all arrays
+            return (page.Width - (2 * ACLPArrayBase.ARRAY_LABEL_LENGTH) - 2.0) / 36;
+
+            var availablePageArea = page.Width * page.Height;
 
             while (true)
             {
@@ -1659,7 +1661,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 var totalArrayArea = arrayWidth * arrayHeight * numberOfArrays;
 
                 if (arrayWidth < page.Width &&
-                    arrayHeight < availablePageHeight &&
+                    arrayHeight < page.Height &&
                     (isMatchingOtherGridSquareSize || totalArrayArea < availablePageArea))
                 {
                     return initialGridSquareSize;
