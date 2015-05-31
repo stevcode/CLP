@@ -42,7 +42,6 @@ namespace CLP.Entities
         public string ID { get; set; }
         public string DifferentiationGroupName { get; set; }
         public string VersionIndex { get; set; }
-        public bool IsLocal { get; set; }
 
         public string ToFileName() { return string.Format("{0};{1};{2};{3};{4}", QUALIFIER_TEXT, PageNumber, ID, DifferentiationGroupName, VersionIndex); }
 
@@ -53,8 +52,7 @@ namespace CLP.Entities
                                     PageNumber = page.PageNumber.ToString(),
                                     ID = page.ID,
                                     DifferentiationGroupName = page.DifferentiationLevel,
-                                    VersionIndex = page.VersionIndex.ToString(),
-                                    IsLocal = true
+                                    VersionIndex = page.VersionIndex.ToString()
                                 };
 
             return nameComposite;
@@ -75,8 +73,7 @@ namespace CLP.Entities
                                     PageNumber = pageFileParts[1],
                                     ID = pageFileParts[2],
                                     DifferentiationGroupName = pageFileParts[3],
-                                    VersionIndex = pageFileParts[4],
-                                    IsLocal = true
+                                    VersionIndex = pageFileParts[4]
                                 };
 
             return nameComposite;

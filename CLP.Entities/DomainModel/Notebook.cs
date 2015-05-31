@@ -17,7 +17,6 @@ namespace CLP.Entities
         public string OwnerName { get; set; }
         public string OwnerID { get; set; }
         public string OwnerTypeTag { get; set; }
-        public bool IsLocal { get; set; }
 
         public string ToFolderName() { return string.Format("{0};{1};{2};{3}{4}", Name, ID, OwnerName, OwnerID, OwnerTypeTag == "U" ? string.Empty : ";" + OwnerTypeTag); }
 
@@ -29,8 +28,7 @@ namespace CLP.Entities
                                     ID = notebook.ID,
                                     OwnerName = notebook.Owner.FullName,
                                     OwnerID = notebook.Owner.ID,
-                                    OwnerTypeTag = notebook.Owner == null ? "U" : notebook.Owner.ID == Person.Author.ID ? "A" : notebook.Owner.IsStudent ? "S" : "T",
-                                    IsLocal = true
+                                    OwnerTypeTag = notebook.Owner == null ? "U" : notebook.Owner.ID == Person.Author.ID ? "A" : notebook.Owner.IsStudent ? "S" : "T"
                                 };
 
             return nameComposite;
@@ -53,8 +51,7 @@ namespace CLP.Entities
                                     ID = notebookDirectoryParts[1],
                                     OwnerName = notebookDirectoryParts[2],
                                     OwnerID = notebookDirectoryParts[3],
-                                    OwnerTypeTag = notebookDirectoryParts.Length == 5 ? notebookDirectoryParts[4] : "U",
-                                    IsLocal = true
+                                    OwnerTypeTag = notebookDirectoryParts.Length == 5 ? notebookDirectoryParts[4] : "U"
                                 };
 
             return nameComposite;
