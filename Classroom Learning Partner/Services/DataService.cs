@@ -292,6 +292,10 @@ namespace Classroom_Learning_Partner.Services
 
         public void OpenNotebook(NotebookInfo notebookInfo, bool isForcedOpen = false, bool isNotebookCurrentNotebook = true)
         {
+            // Guarantee folder structure.
+            notebookInfo.Cache.Initialize();
+            notebookInfo.Initialize();
+
             // Is Notebook already loaded in memory?
             var existingNotebookInfo = OpenNotebooksInfo.FirstOrDefault(n => n.NotebookFilePath == notebookInfo.NotebookFilePath);
             if (existingNotebookInfo != null)
@@ -344,10 +348,12 @@ namespace Classroom_Learning_Partner.Services
         public void SetCurrentNotebook(NotebookInfo notebookInfo)
         {
             CurrentNotebookInfo = notebookInfo;
-
+            
             App.MainWindowViewModel.Workspace = new BlankWorkspaceViewModel();
             App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(CurrentNotebookInfo.Notebook);
-            App.MainWindowViewModel.IsAuthoring = notebookInfo.Notebook.OwnerID == Person.Author.ID;
+            App.MainWindowViewModel.CurrentNotebookName = CurrentNotebookInfo.Notebook.Name;
+            App.MainWindowViewModel.CurrentUser = CurrentNotebookInfo.Notebook.Owner;
+            App.MainWindowViewModel.IsAuthoring = CurrentNotebookInfo.Notebook.OwnerID == Person.Author.ID;
             App.MainWindowViewModel.IsBackStageVisible = false;
         }
 
@@ -412,37 +418,57 @@ namespace Classroom_Learning_Partner.Services
                     index = ~index;
                 }
                 notebookInfo.Notebook.Pages.Insert(index, page);
+
+                if (notebookInfo.Notebook.CurrentPageID == page.ID &&
+                    notebookInfo.Notebook.CurrentPageOwnerID == page.OwnerID &&
+                    notebookInfo.Notebook.CurrentPageVersionIndex == page.VersionIndex)
+                {
+                    notebookInfo.Notebook.CurrentPage = page;
+                }
             }
 
-            
+            if (notebookInfo.Notebook.CurrentPage == null)
+            {
+                notebookInfo.Notebook.CurrentPage = notebookInfo.Notebook.Pages.FirstOrDefault();
+            }
 
-            //var notebook = pageNumbers == null ? Notebook.LoadLocalFullNotebook(folderPath) : Notebook.LoadLocalPartialNotebook(folderPath, pageNumbers);
+            if (!isLoadingSubmissions ||
+                notebookInfo.Pages != null && 
+                notebookInfo.Pages.Any())
+            {
+                return;
+            }
 
+            // Load submissions from disk.
+            if ((App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Teacher && 
+                 App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Projector) ||
+                notebookInfo.Notebook.Owner.ID == Person.Author.ID ||
+                notebookInfo.Notebook.Owner.IsStudent) // Load student's own submission history.
+            {
+                var submissions = LoadOwnSubmissionsForLoadedPages(notebookInfo);
 
-            //if ((App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Teacher ||
-            //     App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Projector) &&
-            //    notebook.Owner.ID != Person.Author.ID &&
-            //    !notebook.Owner.IsStudent &&
-            //    includeSubmissions)
-            //{
-            //    foreach (var page in notebook.Pages)
-            //    {
-            //        var notebookNameComposites = GetAvailableNotebookNameCompositesInCache(localCacheFolderPath);
-            //        foreach (var nameComposite in notebookNameComposites.Where(x => x.ID == notebook.ID && x.OwnerTypeTag == "S"))
-            //        {
-            //            var pageFolderPath = Path.Combine(nameComposite.NotebookFolderPath, "Pages");
-            //            var pageNameComposites = GetAvailablePagesNameCompositesInFolder(pageFolderPath).Where(x => x.ID == page.ID && x.VersionIndex != "0").ToList();
-            //            foreach (var pageNameComposite in pageNameComposites)
-            //            {
-            //                var submission = CLPPage.LoadLocalPage(pageNameComposite.FullPageFilePath);
-            //                if (submission != null)
-            //                {
-            //                    page.Submissions.Add(submission);
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
+                foreach (var page in notebookInfo.Notebook.Pages)
+                {
+                    page.Submissions = new ObservableCollection<CLPPage>(submissions.Where(p => p.ID == page.ID).OrderBy(p => p.VersionIndex).ToList());
+                }
+            }
+            else // Load all student submissions for Teacher Notebook.
+            {
+                var notebookInfos = GetNotebooksInCache(notebookInfo.Cache).Where(n => n.NameComposite.ID == notebookInfo.Notebook.ID && n.NameComposite.OwnerTypeTag == "S");
+                var pageFilePathsToCheck = new List<string>();
+
+                foreach (var info in notebookInfos)
+                {
+                    pageFilePathsToCheck.AddRange(Directory.EnumerateFiles(info.PagesFolderPath, "*.xml").ToList());
+                }
+
+                var submissions = LoadGivenSubmissionsForLoadedPages(notebookInfo, pageFilePathsToCheck);
+
+                foreach (var page in notebookInfo.Notebook.Pages)
+                {
+                    page.Submissions = new ObservableCollection<CLPPage>(submissions.Where(s => s.ID == page.ID && s.DifferentiationLevel == page.DifferentiationLevel).ToList());
+                }
+            }
         }
 
         public static List<string> GetAllPageIDsInNotebook(NotebookInfo notebookInfo)
@@ -463,7 +489,7 @@ namespace Classroom_Learning_Partner.Services
                                  pageIDs.Add(pageNameComposite.ID);
                              });
 
-            return pageIDs;
+            return pageIDs.Distinct().ToList();
         }
 
         public static List<string> GetPageIDsFromPageNumbers(NotebookInfo notebookInfo, List<int> pageNumbers)
@@ -497,7 +523,46 @@ namespace Classroom_Learning_Partner.Services
                                  pageIDs.Add(pageNameComposite.ID);
                              });
 
-            return pageIDs;
+            return pageIDs.Distinct().ToList();
+        }
+
+        public static List<CLPPage> LoadOwnSubmissionsForLoadedPages(NotebookInfo notebookInfo)
+        {
+            var pageFilePaths = Directory.EnumerateFiles(notebookInfo.PagesFolderPath, "*.xml").ToList();
+
+            return LoadGivenSubmissionsForLoadedPages(notebookInfo, pageFilePaths);
+        }
+
+        public static List<CLPPage> LoadGivenSubmissionsForLoadedPages(NotebookInfo notebookInfo, List<string> pageFilePathsToCheck)
+        {
+            var submissions = new List<CLPPage>();
+
+            Parallel.ForEach(pageFilePathsToCheck,
+                             pageFilePath =>
+                             {
+                                 var pageNameComposite = PageNameComposite.ParseFilePath(pageFilePath);
+                                 if (pageNameComposite == null ||
+                                     pageNameComposite.VersionIndex == "0")
+                                 {
+                                     return;
+                                 }
+
+                                 var isPageToBeLoaded = notebookInfo.Notebook.Pages.Any(p => p.ID == pageNameComposite.ID);
+                                 if (!isPageToBeLoaded)
+                                 {
+                                     return;
+                                 }
+
+                                 var page = CLPPage.LoadFromXML(pageFilePath);
+                                 if (page == null)
+                                 {
+                                     return;
+                                 }
+
+                                 submissions.Add(page);
+                             });
+
+            return submissions;
         }
 
         #endregion //Page Methods

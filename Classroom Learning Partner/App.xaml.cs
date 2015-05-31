@@ -62,9 +62,6 @@ namespace Classroom_Learning_Partner
 
         private static void InitializeServices()
         {
-            var notebookService = new NotebookService();
-            ServiceLocator.Default.RegisterInstance<INotebookService>(notebookService);
-
             var dataService = new DataService();
             ServiceLocator.Default.RegisterInstance<IDataService>(dataService);
 
