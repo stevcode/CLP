@@ -76,7 +76,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 };
                 _toggleLabelsButton.Checked += toggleLabelsButton_Checked;
                 _toggleLabelsButton.Unchecked += toggleLabelsButton_Checked;
-                _contextButtons.Add(_toggleLabelsButton);
+        //        _contextButtons.Add(_toggleLabelsButton);
             }
 
             if (array.ArrayType == ArrayTypes.ObscurableArray)
@@ -965,19 +965,22 @@ namespace Classroom_Learning_Partner.ViewModels
             var initYPos = array.YPosition;
             array.RotateArray();
 
-            _toggleObscureColumnsButton.Checked -= toggleObscureColumnsButton_Checked;
-            _toggleObscureColumnsButton.Unchecked -= toggleObscureColumnsButton_Checked;
-            _toggleObscureRowsButton.Checked -= toggleObscureRowsButton_Checked;
-            _toggleObscureRowsButton.Unchecked -= toggleObscureRowsButton_Checked;
-            _toggleObscureColumnsButton.IsEnabled = !array.IsRowsObscured;
-            _toggleObscureColumnsButton.IsChecked = !array.IsColumnsObscured;
-            
-            _toggleObscureRowsButton.IsEnabled = !array.IsColumnsObscured;
-            _toggleObscureRowsButton.IsChecked = !array.IsRowsObscured;
-            _toggleObscureColumnsButton.Checked += toggleObscureColumnsButton_Checked;
-            _toggleObscureColumnsButton.Unchecked += toggleObscureColumnsButton_Checked;
-            _toggleObscureRowsButton.Checked += toggleObscureRowsButton_Checked;
-            _toggleObscureRowsButton.Unchecked += toggleObscureRowsButton_Checked;
+            if (array.ArrayType == ArrayTypes.ObscurableArray)
+            {
+                _toggleObscureColumnsButton.Checked -= toggleObscureColumnsButton_Checked;
+                _toggleObscureColumnsButton.Unchecked -= toggleObscureColumnsButton_Checked;
+                _toggleObscureRowsButton.Checked -= toggleObscureRowsButton_Checked;
+                _toggleObscureRowsButton.Unchecked -= toggleObscureRowsButton_Checked;
+                _toggleObscureColumnsButton.IsEnabled = !array.IsRowsObscured;
+                _toggleObscureColumnsButton.IsChecked = !array.IsColumnsObscured;
+
+                _toggleObscureRowsButton.IsEnabled = !array.IsColumnsObscured;
+                _toggleObscureRowsButton.IsChecked = !array.IsRowsObscured;
+                _toggleObscureColumnsButton.Checked += toggleObscureColumnsButton_Checked;
+                _toggleObscureColumnsButton.Unchecked += toggleObscureColumnsButton_Checked;
+                _toggleObscureRowsButton.Checked += toggleObscureRowsButton_Checked;
+                _toggleObscureRowsButton.Unchecked += toggleObscureRowsButton_Checked;
+            }
 
             ACLPPageBaseViewModel.AddHistoryItemToPage(array.ParentPage,
                                                        new CLPArrayRotateHistoryItem(array.ParentPage,
