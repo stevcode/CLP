@@ -109,13 +109,12 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             else
             {
-                var newCache = DataService.CreateNewCache(TypedCacheName, false);
+                var newCache = DataService.CreateNewCache(TypedCacheName);
                 if (newCache == null)
                 {
                     MessageBox.Show("A folder with that name already exists.");
                     return;
                 }
-                DataService.CurrentCache = newCache;
             }
 
             var newNotebook = DataService.CreateNewNotebook(NotebookName, NotebookCurriculum);

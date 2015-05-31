@@ -128,7 +128,7 @@ namespace Classroom_Learning_Partner
                 return;
             }
 
-            var submissionNameComposite = PageNameComposite.ParsePageToNameComposite(submission);
+            var submissionNameComposite = PageNameComposite.ParsePage(submission);
             var notebookNameComposite = NotebookNameComposite.ParseNotebook(currentNotebook);
             notebookNameComposite.OwnerID = submission.OwnerID;
             if (submission.Owner == null)
@@ -237,7 +237,7 @@ namespace Classroom_Learning_Partner
                 page.InkStrokes = StrokeDTO.LoadInkStrokes(page.SerializedStrokes);
                 page.History.TrashedInkStrokes = StrokeDTO.LoadInkStrokes(page.History.SerializedTrashedInkStrokes);
 
-                var pageNameComposite = PageNameComposite.ParsePageToNameComposite(page);
+                var pageNameComposite = PageNameComposite.ParsePage(page);
                 var notebookNameComposite = NotebookNameComposite.ParseNotebook(currentNotebook);
                 notebookNameComposite.OwnerID = page.OwnerID;
                 if (page.Owner == null)

@@ -3,6 +3,7 @@ using System.Linq;
 using Catel.Collections;
 using Catel.Data;
 using Catel.MVVM;
+using Catel.Windows;
 using Classroom_Learning_Partner.Services;
 using Classroom_Learning_Partner.Views;
 using CLP.Entities;
@@ -120,10 +121,10 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             //PleaseWaitHelper.Show(() => LoadedNotebookService.OpenLocalNotebook(SelectedNotebook, SelectedCacheDirectory, IsIncludeSubmissionsChecked), null, "Loading Notebook");
 
-            if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Student)
-            {
-                return;
-            }
+            DataService.OpenNotebook(SelectedNotebook);
+            var pageIDs = Services.DataService.GetAllPageIDsInNotebook(SelectedNotebook);
+            DataService.LoadPages(SelectedNotebook, pageIDs, true, true);
+
 
             if (App.Network.InstructorProxy == null)
             {
@@ -139,17 +140,6 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 App.MainWindowViewModel.MajorRibbon.ConnectionStatus = ConnectionStatuses.LoggedIn;
             }
-        }
-
-        private bool OnOpenNotebookCanExecute() { return SelectedNotebook != null; }
-
-        /// <summary>Starts the closest <see cref="ClassPeriod" />.</summary>
-        public Command StartClassPeriodCommand { get; private set; }
-
-        private void OnStartClassPeriodCommandExecute()
-        {
-            //LoadedNotebookService.StartSoonestClassPeriod(SelectedCacheDirectory);
-            //    LoadedNotebookService.StartLocalClassPeriod(, SelectedCacheDirectory);
         }
 
         /// <summary>Opens a range of pages in a notebook.</summary>
@@ -168,13 +158,28 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            var pagesToOpen = RangeHelper.ParseStringToIntNumbers(textInputViewModel.InputText);
-            if (!pagesToOpen.Any())
+            var pageNumbersToOpen = RangeHelper.ParseStringToIntNumbers(textInputViewModel.InputText);
+            if (!pageNumbersToOpen.Any())
             {
                 return;
             }
 
+            DataService.OpenNotebook(SelectedNotebook);
+            var pageIDs = Services.DataService.GetPageIDsFromPageNumbers(SelectedNotebook, pageNumbersToOpen);
+            DataService.LoadPages(SelectedNotebook, pageIDs, false, true);
+
             //PleaseWaitHelper.Show(() => LoadedNotebookService.OpenLocalNotebook(SelectedNotebook, SelectedCacheDirectory, IsIncludeSubmissionsChecked, pagesToOpen), null, "Loading Notebook");
+        }
+
+        private bool OnOpenNotebookCanExecute() { return SelectedNotebook != null; }
+
+        /// <summary>Starts the closest <see cref="ClassPeriod" />.</summary>
+        public Command StartClassPeriodCommand { get; private set; }
+
+        private void OnStartClassPeriodCommandExecute()
+        {
+            //LoadedNotebookService.StartSoonestClassPeriod(SelectedCacheDirectory);
+            //    LoadedNotebookService.StartLocalClassPeriod(, SelectedCacheDirectory);
         }
 
         #endregion //Commands

@@ -395,16 +395,16 @@ namespace CLP.Entities
 
         #region Cache
 
-        public void ToXML(string filePath)
+        public void ToXML(string notebookFilePath)
         {
             LastSavedDate = DateTime.Now;
-            var fileInfo = new FileInfo(filePath);
+            var fileInfo = new FileInfo(notebookFilePath);
             if (!Directory.Exists(fileInfo.DirectoryName))
             {
                 Directory.CreateDirectory(fileInfo.DirectoryName);
             }
 
-            using (Stream stream = new FileStream(filePath, FileMode.Create))
+            using (Stream stream = new FileStream(notebookFilePath, FileMode.Create))
             {
                 var xmlSerializer = SerializationFactory.GetXmlSerializer();
                 xmlSerializer.Serialize(this, stream);
@@ -412,11 +412,27 @@ namespace CLP.Entities
             }
         }
 
-        public static Notebook LoadFromXML(string notebookFilePath)
+        public static Notebook LoadFromXML(string notebookFolderPath)
         {
             try
             {
-                return Load<Notebook>(notebookFilePath, SerializationMode.Xml);
+                var nameComposite = NotebookNameComposite.ParseFolderPath(notebookFolderPath);
+                var notebookFilePath = Path.Combine(notebookFolderPath, "notebook.xml");
+                if (nameComposite == null ||
+                    !File.Exists(notebookFilePath))
+                {
+                    return null;
+                }
+
+                var notebook = Load<Notebook>(notebookFilePath, SerializationMode.Xml);
+                if (notebook == null)
+                {
+                    return null;
+                }
+
+                notebook.Name = nameComposite.Name;
+
+                return notebook;
             }
             catch (Exception)
             {
@@ -454,7 +470,7 @@ namespace CLP.Entities
         public static Notebook LoadLocalFullNotebook(string notebookFolderPath, bool includeSubmissions = true)
         {
             var pagesFolderPath = Path.Combine(notebookFolderPath, "Pages");
-            var pageNameComposites = Directory.EnumerateFiles(pagesFolderPath, "*.xml").Select(PageNameComposite.ParseFilePathToNameComposite);
+            var pageNameComposites = Directory.EnumerateFiles(pagesFolderPath, "*.xml").Select(PageNameComposite.ParseFilePath);
             var allPageIDs = pageNameComposites.Select(x => x.ID).Distinct().ToList();
 
             return LoadLocalPartialNotebook(notebookFolderPath, allPageIDs, includeSubmissions);
@@ -468,7 +484,7 @@ namespace CLP.Entities
             var pageIDs = new List<string>();
             foreach (var pageFilePath in pageFilePaths)
             {
-                var pageNameComposite = PageNameComposite.ParseFilePathToNameComposite(pageFilePath);
+                var pageNameComposite = PageNameComposite.ParseFilePath(pageFilePath);
                 if (pageNameComposite == null)
                 {
                     continue;
@@ -533,7 +549,7 @@ namespace CLP.Entities
             var loadedPages = new List<CLPPage>();
             foreach (var pageFilePath in pageFilePaths)
             {
-                var pageNameComposite = PageNameComposite.ParseFilePathToNameComposite(pageFilePath);
+                var pageNameComposite = PageNameComposite.ParseFilePath(pageFilePath);
                 if (pageNameComposite == null)
                 {
                     continue;

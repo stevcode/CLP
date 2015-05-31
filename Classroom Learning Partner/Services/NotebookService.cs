@@ -342,56 +342,56 @@ namespace Classroom_Learning_Partner.Services
             if (notebookNameComposite != null)
             {
                 //var pagesFolderPath = Path.Combine(notebookNameComposite.NotebookFolderPath, "Pages");
-                //pageNameComposites = Directory.EnumerateFiles(pagesFolderPath, "*.xml").Select(PageNameComposite.ParseFilePathToNameComposite).Where(x => pageIDs.Contains(x.ID)).ToList();
+                //pageNameComposites = Directory.EnumerateFiles(pagesFolderPath, "*.xml").Select(PageNameComposite.ParseFilePath).Where(x => pageIDs.Contains(x.ID)).ToList();
             }
 
-            foreach (var pageID in pageIDs)
-            {
-                var pageNameComposite = pageNameComposites.FirstOrDefault(x => x.ID == pageID && x.VersionIndex == "0");
-                if (pageNameComposite == null)
-                {
-                    if (authoredNotebook == null)
-                    {
-                        continue;
-                    }
-                    var authoredPage = authoredNotebook.Pages.FirstOrDefault(x => x.ID == pageID && x.VersionIndex == 0);
-                    if (authoredPage == null)
-                    {
-                        continue;
-                    }
+            //foreach (var pageID in pageIDs)
+            //{
+            //    var pageNameComposite = pageNameComposites.FirstOrDefault(x => x.ID == pageID && x.VersionIndex == "0");
+            //    if (pageNameComposite == null)
+            //    {
+            //        if (authoredNotebook == null)
+            //        {
+            //            continue;
+            //        }
+            //        var authoredPage = authoredNotebook.Pages.FirstOrDefault(x => x.ID == pageID && x.VersionIndex == 0);
+            //        if (authoredPage == null)
+            //        {
+            //            continue;
+            //        }
 
-                    var newPage = CopyPageForNewOwner(authoredPage, notebook.Owner);
-                    if (newPage == null)
-                    {
-                        continue;
-                    }
+            //        var newPage = CopyPageForNewOwner(authoredPage, notebook.Owner);
+            //        if (newPage == null)
+            //        {
+            //            continue;
+            //        }
 
-                    pages.Add(newPage);
-                    continue;
-                }
+            //        pages.Add(newPage);
+            //        continue;
+            //    }
 
-                var page = CLPPage.LoadLocalPage(pageNameComposite.FullPageFilePath);
-                if (page == null)
-                {
-                    continue;
-                }
+            //    var page = CLPPage.LoadLocalPage(pageNameComposite.FullPageFilePath);
+            //    if (page == null)
+            //    {
+            //        continue;
+            //    }
 
-                if (includeSubmissions)
-                {
-                    var id = pageID;
-                    foreach (var submissionComposite in pageNameComposites.Where(x => x.ID == id && x.VersionIndex != "0"))
-                    {
-                        var submission = CLPPage.LoadLocalPage(submissionComposite.FullPageFilePath);
-                        if (submission == null)
-                        {
-                            continue;
-                        }
-                        page.Submissions.Add(submission);
-                    }
-                }
+            //    if (includeSubmissions)
+            //    {
+            //        var id = pageID;
+            //        foreach (var submissionComposite in pageNameComposites.Where(x => x.ID == id && x.VersionIndex != "0"))
+            //        {
+            //            var submission = CLPPage.LoadLocalPage(submissionComposite.FullPageFilePath);
+            //            if (submission == null)
+            //            {
+            //                continue;
+            //            }
+            //            page.Submissions.Add(submission);
+            //        }
+            //    }
 
-                pages.Add(page);
-            }
+            //    pages.Add(page);
+            //}
 
             return pages;
         }
@@ -574,7 +574,7 @@ namespace Classroom_Learning_Partner.Services
             var directoryInfo = new DirectoryInfo(folderPath);
             return
                 directoryInfo.GetFiles()
-                             .Select(file => PageNameComposite.ParseFilePathToNameComposite(file.FullName))
+                             .Select(file => PageNameComposite.ParseFilePath(file.FullName))
                              .Where(x => x != null)
                              .OrderBy(x => UInt32.Parse(x.PageNumber))
                              .ToList();

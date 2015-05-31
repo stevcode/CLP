@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using Catel.Runtime.Serialization;
 using Classroom_Learning_Partner.ViewModels;
@@ -68,11 +70,17 @@ namespace Classroom_Learning_Partner.Services
 
     public class NotebookInfo
     {
-        public NotebookInfo(string notebookFolderPath) { NotebookFolderPath = notebookFolderPath; }
+        public NotebookInfo(CacheInfo cache, string notebookFolderPath)
+        {
+            Cache = cache;
+            NotebookFolderPath = notebookFolderPath;
+        }
 
         public CacheInfo Cache { get; set; }
 
         public Notebook Notebook { get; set; }
+
+        public List<CLPPage> Pages { get; set; }
 
         public string NotebookFolderPath { get; set; }
 
@@ -194,9 +202,9 @@ namespace Classroom_Learning_Partner.Services
                              .ToList();
         }
 
-        public CacheInfo CreateNewCache(string cacheName, bool isNewCacheCurrentCache = true) { return CreateNewCache(cacheName, CurrentCachesFolderPath, isNewCacheCurrentCache); }
+        public CacheInfo CreateNewCache(string cacheName) { return CreateNewCache(cacheName, CurrentCachesFolderPath); }
 
-        public CacheInfo CreateNewCache(string cacheName, string cachesFolderPath, bool isNewCacheCurrentCache = true)
+        public CacheInfo CreateNewCache(string cacheName, string cachesFolderPath)
         {
             if (!Directory.Exists(cachesFolderPath))
             {
@@ -213,25 +221,18 @@ namespace Classroom_Learning_Partner.Services
             var existingCache = availableCaches.FirstOrDefault(c => c.CacheFolderPath == cacheFolderPath);
             if (existingCache != null)
             {
-                if (!isNewCacheCurrentCache)
-                {
-                    return null;
-                }
-
                 CurrentCache = existingCache;
                 return existingCache;
             }
 
+            //TODO: Necessary to create yet? Wait 'til save?
             if (!Directory.Exists(cacheFolderPath))
             {
                 Directory.CreateDirectory(cacheFolderPath);
             }
 
             var newCache = new CacheInfo(cacheFolderPath);
-            if (isNewCacheCurrentCache)
-            {
-                CurrentCache = newCache;
-            }
+            CurrentCache = newCache;
 
             return newCache;
         }
@@ -248,22 +249,18 @@ namespace Classroom_Learning_Partner.Services
             }
 
             var directoryInfo = new DirectoryInfo(cache.NotebooksFolderPath);
-            return directoryInfo.GetDirectories().Select(directory => new NotebookInfo(directory.FullName)
-                                                                      {
-                                                                          Cache = cache
-                                                                      })
-                                .Where(nc => nc != null)
-                                .OrderBy(nc => nc.NameComposite.OwnerTypeTag != "T")
-                                .ThenBy(nc => nc.NameComposite.OwnerTypeTag != "A")
-                                .ThenBy(nc => nc.NameComposite.OwnerTypeTag != "S")
-                                .ThenBy(nc => nc.NameComposite.OwnerName)
-                                .ToList();
+            return
+                directoryInfo.GetDirectories()
+                             .Select(directory => new NotebookInfo(cache, directory.FullName))
+                             .Where(nc => nc != null)
+                             .OrderBy(nc => nc.NameComposite.OwnerTypeTag != "T")
+                             .ThenBy(nc => nc.NameComposite.OwnerTypeTag != "A")
+                             .ThenBy(nc => nc.NameComposite.OwnerTypeTag != "S")
+                             .ThenBy(nc => nc.NameComposite.OwnerName)
+                             .ToList();
         }
 
-        public NotebookInfo CreateNewNotebook(string notebookName, string curriculum)
-        {
-            return CreateNewNotebook(notebookName, curriculum, CurrentCache, isNewNotebookCurrentNotebook);
-        }
+        public NotebookInfo CreateNewNotebook(string notebookName, string curriculum) { return CreateNewNotebook(notebookName, curriculum, CurrentCache); }
 
         public NotebookInfo CreateNewNotebook(string notebookName, string curriculum, CacheInfo cache)
         {
@@ -285,11 +282,7 @@ namespace Classroom_Learning_Partner.Services
                 return null;
             }
 
-            var notebookInfo = new NotebookInfo(notebookFolderPath)
-                               {
-                                   Notebook = newNotebook,
-                                   Cache = cache
-                               };
+            var notebookInfo = new NotebookInfo(cache, notebookFolderPath);
 
             OpenNotebooksInfo.Add(notebookInfo);
             SetCurrentNotebook(notebookInfo);
@@ -311,6 +304,8 @@ namespace Classroom_Learning_Partner.Services
                 {
                     if (CurrentNotebookInfo == existingNotebookInfo)
                     {
+                        notebookInfo.Notebook = CurrentNotebook;
+                        App.MainWindowViewModel.IsBackStageVisible = false;
                         return;
                     }
                     SetCurrentNotebook(existingNotebookInfo);
@@ -330,7 +325,7 @@ namespace Classroom_Learning_Partner.Services
             }
 
             // Load Notebook from disk.
-            var notebook = Notebook.LoadFromXML(notebookInfo.NotebookFilePath);
+            var notebook = Notebook.LoadFromXML(notebookInfo.NotebookFolderPath);
             if (notebook == null)
             {
                 MessageBox.Show("Notebook couldn't be loaded.");
@@ -346,15 +341,83 @@ namespace Classroom_Learning_Partner.Services
             }
         }
 
-        public void LoadPages(NotebookInfo notebookInfo)
+        public void SetCurrentNotebook(NotebookInfo notebookInfo)
         {
+            CurrentNotebookInfo = notebookInfo;
+
+            App.MainWindowViewModel.Workspace = new BlankWorkspaceViewModel();
+            App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(CurrentNotebookInfo.Notebook);
+            App.MainWindowViewModel.IsAuthoring = notebookInfo.Notebook.OwnerID == Person.Author.ID;
+            App.MainWindowViewModel.IsBackStageVisible = false;
+        }
+
+        #endregion //Notebook Methods
+
+        #region Page Methods
+
+        public void LoadPages(NotebookInfo notebookInfo, List<string> pageIDs, bool isExistingPagesReplaced, bool isLoadingSubmissions)
+        {
+            if (notebookInfo.Notebook == null)
+            {
+                return;
+            }
+
+            if (isExistingPagesReplaced)
+            {
+                notebookInfo.Notebook.Pages.Clear();
+            }
+
+            var newNotebookPages = new List<CLPPage>();
+
+            if (notebookInfo.Pages != null &&
+                notebookInfo.Pages.Any()) // Load pages includeded in notebookInfo (e.g. ones sent across the network).
+            {
+                newNotebookPages = notebookInfo.Pages;
+            }
+            else // Load local pages.
+            {
+                var pageFilePaths = Directory.EnumerateFiles(notebookInfo.PagesFolderPath, "*.xml").ToList();
+
+                Parallel.ForEach(pageFilePaths,
+                                 pageFilePath =>
+                                 {
+                                     var pageNameComposite = PageNameComposite.ParseFilePath(pageFilePath);
+                                     if (pageNameComposite == null ||
+                                         pageNameComposite.VersionIndex != "0")
+                                     {
+                                         return;
+                                     }
+
+                                     var isPageToBeLoaded = pageIDs.Any(pageID => pageID == pageNameComposite.ID);
+                                     if (!isPageToBeLoaded)
+                                     {
+                                         return;
+                                     }
+
+                                     var page = CLPPage.LoadFromXML(pageFilePath);
+                                     if (page == null)
+                                     {
+                                         return;
+                                     }
+
+                                     newNotebookPages.Add(page);
+                                 });
+            }
+
+            foreach (var page in newNotebookPages)
+            {
+                var index = notebookInfo.Notebook.Pages.ToList().BinarySearch(page, new PageNumberComparer());
+                if (index < 0)
+                {
+                    index = ~index;
+                }
+                notebookInfo.Notebook.Pages.Insert(index, page);
+            }
+
+            
+
             //var notebook = pageNumbers == null ? Notebook.LoadLocalFullNotebook(folderPath) : Notebook.LoadLocalPartialNotebook(folderPath, pageNumbers);
 
-            //if (notebook == null)
-            //{
-            //    MessageBox.Show("Notebook could not be opened. Check error log.");
-            //    return;
-            //}
 
             //if ((App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Teacher ||
             //     App.MainWindowViewModel.CurrentProgramMode == ProgramModes.Projector) &&
@@ -380,25 +443,62 @@ namespace Classroom_Learning_Partner.Services
             //        }
             //    }
             //}
-
-            //CurrentLocalCacheDirectory = localCacheFolderPath;
-            //OpenNotebooks.Add(notebook);
-            //SetNotebookAsCurrentNotebook(notebook);
         }
 
-        public void SetCurrentNotebook(NotebookInfo notebookInfo)
+        public static List<string> GetAllPageIDsInNotebook(NotebookInfo notebookInfo)
         {
-            CurrentNotebookInfo = notebookInfo;
+            var pageFilePaths = Directory.EnumerateFiles(notebookInfo.PagesFolderPath, "*.xml").ToList();
+            var pageIDs = new List<string>();
 
-            App.MainWindowViewModel.Workspace = new BlankWorkspaceViewModel();
-            App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(CurrentNotebookInfo.Notebook);
-            App.MainWindowViewModel.IsAuthoring = notebookInfo.Notebook.OwnerID == Person.Author.ID;
-            App.MainWindowViewModel.IsBackStageVisible = false;
+            Parallel.ForEach(pageFilePaths,
+                             pageFilePath =>
+                             {
+                                 var pageNameComposite = PageNameComposite.ParseFilePath(pageFilePath);
+                                 if (pageNameComposite == null ||
+                                     pageNameComposite.VersionIndex != "0")
+                                 {
+                                     return;
+                                 }
+
+                                 pageIDs.Add(pageNameComposite.ID);
+                             });
+
+            return pageIDs;
         }
 
-        #endregion //Notebook Methods
+        public static List<string> GetPageIDsFromPageNumbers(NotebookInfo notebookInfo, List<int> pageNumbers)
+        {
+            var pageFilePaths = Directory.EnumerateFiles(notebookInfo.PagesFolderPath, "*.xml").ToList();
+            var pageIDs = new List<string>();
 
-        #region Page Methods
+            Parallel.ForEach(pageFilePaths,
+                             pageFilePath =>
+                             {
+                                 var pageNameComposite = PageNameComposite.ParseFilePath(pageFilePath);
+                                 if (pageNameComposite == null ||
+                                     pageNameComposite.VersionIndex != "0")
+                                 {
+                                     return;
+                                 }
+
+                                 int pageNumber;
+                                 var isPageNumber = int.TryParse(pageNameComposite.PageNumber, out pageNumber);
+                                 if (!isPageNumber)
+                                 {
+                                     return;
+                                 }
+
+                                 var isPageToBeLoaded = pageNumbers.Contains(pageNumber);
+                                 if (!isPageToBeLoaded)
+                                 {
+                                     return;
+                                 }
+
+                                 pageIDs.Add(pageNameComposite.ID);
+                             });
+
+            return pageIDs;
+        }
 
         #endregion //Page Methods
 
