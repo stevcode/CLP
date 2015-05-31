@@ -110,7 +110,7 @@ namespace CLP.Entities
     [Serializable]
     public abstract class ACLPArrayBase : APageObjectBase
     {
-        public const double ARRAY_STARING_Y_POSITION = 295.0;
+        public const double ARRAY_STARING_Y_POSITION = 100;   // 295.0;
         public const double ARRAY_LABEL_LENGTH = 22.0;
         public const double DT_LABEL_LENGTH = 35.0;
         public const double DT_LARGE_LABEL_LENGTH = 52.5;
