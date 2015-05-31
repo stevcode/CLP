@@ -412,6 +412,12 @@ namespace CLP.Entities
             }
         }
 
+        public void SaveToXML(string folderPath)
+        {
+            var filePath = Path.Combine(folderPath, "notebook.xml");
+            ToXML(filePath);
+        }
+
         public static Notebook LoadFromXML(string notebookFolderPath)
         {
             try

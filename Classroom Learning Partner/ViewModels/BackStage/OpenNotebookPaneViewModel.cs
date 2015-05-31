@@ -119,11 +119,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnOpenNotebookCommandExecute()
         {
-            //PleaseWaitHelper.Show(() => LoadedNotebookService.OpenLocalNotebook(SelectedNotebook, SelectedCacheDirectory, IsIncludeSubmissionsChecked), null, "Loading Notebook");
-
-            DataService.OpenNotebook(SelectedNotebook);
+            PleaseWaitHelper.Show(() => DataService.OpenNotebook(SelectedNotebook), null, "Loading Notebook");
             var pageIDs = Services.DataService.GetAllPageIDsInNotebook(SelectedNotebook);
-            DataService.LoadPages(SelectedNotebook, pageIDs, true, true);
+            PleaseWaitHelper.Show(() => DataService.LoadPages(SelectedNotebook, pageIDs, true, IsIncludeSubmissionsChecked), null, "Loading Pages");
 
 
             if (App.Network.InstructorProxy == null)
@@ -164,11 +162,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            DataService.OpenNotebook(SelectedNotebook);
+            PleaseWaitHelper.Show(() => DataService.OpenNotebook(SelectedNotebook), null, "Loading Notebook");
             var pageIDs = Services.DataService.GetPageIDsFromPageNumbers(SelectedNotebook, pageNumbersToOpen);
-            DataService.LoadPages(SelectedNotebook, pageIDs, false, true);
-
-            //PleaseWaitHelper.Show(() => LoadedNotebookService.OpenLocalNotebook(SelectedNotebook, SelectedCacheDirectory, IsIncludeSubmissionsChecked, pagesToOpen), null, "Loading Notebook");
+            PleaseWaitHelper.Show(() => DataService.LoadPages(SelectedNotebook, pageIDs, false, IsIncludeSubmissionsChecked), null, "Loading Pages");
         }
 
         private bool OnOpenNotebookCanExecute() { return SelectedNotebook != null; }

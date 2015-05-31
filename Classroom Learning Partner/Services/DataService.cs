@@ -345,6 +345,23 @@ namespace Classroom_Learning_Partner.Services
             }
         }
 
+        public void SaveNotebook(NotebookInfo notebookInfo, bool isFullSave, bool isLocalSave, bool isRemoteSave, bool isExported)
+        {
+            if (isLocalSave)
+            {
+                notebookInfo.Cache.Initialize();
+                if (isFullSave)
+                {
+                    Directory.Delete(notebookInfo.NotebookFolderPath);
+                }
+                notebookInfo.Initialize();
+
+                notebookInfo.Notebook.SaveToXML(notebookInfo.NotebookFolderPath);
+            }
+
+            
+        }
+
         public void SetCurrentNotebook(NotebookInfo notebookInfo)
         {
             CurrentNotebookInfo = notebookInfo;

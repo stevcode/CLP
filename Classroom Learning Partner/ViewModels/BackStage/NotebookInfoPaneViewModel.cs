@@ -14,7 +14,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public NotebookInfoPaneViewModel()
         {
-            Notebook = LoadedNotebookService.CurrentNotebook;
+            Notebook = DataService.CurrentNotebook;
             InitializeCommands();
         }
 
@@ -82,8 +82,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void SaveCurrentNotebook()
         {
-            if (LoadedNotebookService == null ||
-                LoadedNotebookService.CurrentNotebook == null)
+            if (DataService == null ||
+                DataService.CurrentNotebook == null)
             {
                 return;
             }

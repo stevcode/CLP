@@ -980,6 +980,13 @@ namespace CLP.Entities
             IsCached = true;
         }
 
+        public void SaveToXML(string folderPath)
+        {
+            var nameComposite = PageNameComposite.ParsePage(this);
+            var filePath = Path.Combine(folderPath, nameComposite.ToFileName() + ".xml");
+            ToXML(filePath);
+        }
+
         public static CLPPage LoadFromXML(string pageFilePath)
         {
             try
@@ -1004,44 +1011,6 @@ namespace CLP.Entities
 
                 // BUG: loaded thumbnails don't let go of their disk reference.
                 //var fileInfo = new FileInfo(pageFilePath);
-                //var thumbnailsFolderPath = Path.Combine(fileInfo.DirectoryName, "Thumbnails");
-                //var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, nameComposite.ToFileName() + ".png");
-                //page.PageThumbnail = CLPImage.GetImageFromPath(thumbnailFilePath);
-
-                return page;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
-        public void SavePageLocally(string folderPath)
-        {
-            var nameComposite = PageNameComposite.ParsePage(this);
-            var filePath = Path.Combine(folderPath, nameComposite.ToFileName() + ".xml");
-            ToXML(filePath);
-        }
-
-        public static CLPPage LoadLocalPage(string filePath)
-        {
-            try
-            {
-                var page = Load<CLPPage>(filePath, SerializationMode.Xml);
-                var nameComposite = PageNameComposite.ParseFilePath(filePath);
-                if (nameComposite == null ||
-                    page == null)
-                {
-                    return null;
-                }
-                page.PageNumber = decimal.Parse(nameComposite.PageNumber);
-                page.ID = nameComposite.ID;
-                page.DifferentiationLevel = nameComposite.DifferentiationGroupName;
-                page.VersionIndex = uint.Parse(nameComposite.VersionIndex);
-                page.AfterDeserialization();
-
-                // BUG: loaded thumbnails don't let go of their disk reference.
-                //var fileInfo = new FileInfo(filePath);
                 //var thumbnailsFolderPath = Path.Combine(fileInfo.DirectoryName, "Thumbnails");
                 //var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, nameComposite.ToFileName() + ".png");
                 //page.PageThumbnail = CLPImage.GetImageFromPath(thumbnailFilePath);
