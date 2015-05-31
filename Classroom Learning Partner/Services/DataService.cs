@@ -68,6 +68,36 @@ namespace Classroom_Learning_Partner.Services
         }
     }
 
+    public class ClassPeriodInfo
+    {
+        public ClassPeriodInfo(CacheInfo cache, string classPeriodFilePath)
+        {
+            Cache = cache;
+            ClassPeriodFilePath = classPeriodFilePath;
+        }
+
+        public CacheInfo Cache { get; set; }
+
+        public string ClassPeriodFilePath { get; set; }
+
+        public ClassPeriod ClassPeriod { get; set; }
+
+        public ClassPeriodNameComposite NameComposite
+        {
+            get { return ClassPeriodNameComposite.ParseFilePath(ClassPeriodFilePath); }
+        }
+
+        public string StartTime
+        {
+            get { return NameComposite.StartTime; }
+        }
+
+        public string PageNumbers
+        {
+            get { return NameComposite.PageNumbers; }
+        }
+    }
+
     public class NotebookInfo
     {
         public NotebookInfo(CacheInfo cache, string notebookFolderPath)
@@ -78,11 +108,11 @@ namespace Classroom_Learning_Partner.Services
 
         public CacheInfo Cache { get; set; }
 
+        public string NotebookFolderPath { get; set; }
+
         public Notebook Notebook { get; set; }
 
         public List<CLPPage> Pages { get; set; }
-
-        public string NotebookFolderPath { get; set; }
 
         public string DisplaysFolderPath
         {
@@ -611,26 +641,21 @@ namespace Classroom_Learning_Partner.Services
 
         public static List<ClassPeriodInfo> GetClassPeriodsInFolder(CacheInfo cache)
         {
-            if (!Directory.Exists(cache.NotebooksFolderPath))
+            if (!Directory.Exists(cache.ClassesFolderPath))
             {
-                return new List<NotebookInfo>();
+                return new List<ClassPeriodInfo>();
             }
 
             var directoryInfo = new DirectoryInfo(cache.ClassesFolderPath);
             return
-                directoryInfo.GetDirectories()
+                directoryInfo.GetFiles()
+                             .Select(fileInfo => new ClassPeriodInfo(cache, fileInfo.FullName))
+                             .Where(c => c != null)
+                             .OrderBy(c => c.PageNumbers)
+                             .ToList();
         }
 
         #endregion //ClassPeriod Methods
-
-        #region ClassInformation Methods
-
-        #endregion //ClassInformation Methods
-
-        public static List<ClassSubjectInfo> GetClassSubjectsInFolder(CacheInfo cache)
-        {
-
-        }
 
         #endregion //Methods
     }
