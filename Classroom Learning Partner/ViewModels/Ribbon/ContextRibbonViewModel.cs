@@ -118,7 +118,10 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             Buttons.Add(_penModeButton);
-            Buttons.Add(_markerModeButton);
+            if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Student)
+            {
+                Buttons.Add(_markerModeButton);
+            }
             Buttons.Add(_highlighterModeButton);
 
             Buttons.Add(MajorRibbonViewModel.Separater);
@@ -126,7 +129,10 @@ namespace Classroom_Learning_Partner.ViewModels
             if (!CurrentPenColors.Any())
             {
                 CurrentPenColors.Add(new ColorButton(Colors.Black));
-                CurrentPenColors.Add(new ColorButton(Colors.White));
+                if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Student)
+                {
+                    CurrentPenColors.Add(new ColorButton(Colors.White));
+                }
                 CurrentPenColors.Add(new ColorButton(Colors.Red));
                 CurrentPenColors.Add(new ColorButton(Colors.DarkOrange));
                 CurrentPenColors.Add(new ColorButton(Colors.Tan));
