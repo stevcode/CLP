@@ -37,13 +37,14 @@ namespace CLP.Entities
 
     public class PageNameComposite
     {
+        public const string QUALIFIER_TEXT = "p";
         public string PageNumber { get; set; }
         public string ID { get; set; }
         public string DifferentiationGroupName { get; set; }
         public string VersionIndex { get; set; }
         public bool IsLocal { get; set; }
 
-        public string ToFileName() { return string.Format("p;{0};{1};{2};{3}", PageNumber, ID, DifferentiationGroupName, VersionIndex); }
+        public string ToFileName() { return string.Format("{0};{1};{2};{3};{4}", QUALIFIER_TEXT, PageNumber, ID, DifferentiationGroupName, VersionIndex); }
 
         public static PageNameComposite ParsePage(CLPPage page)
         {

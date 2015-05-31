@@ -29,7 +29,7 @@ namespace Classroom_Learning_Partner.ViewModels
             var notebookService = DependencyResolver.Resolve<INotebookService>();
             if (notebookService != null && notebookService.CurrentClassPeriod != null)
             {
-                StudentList = notebookService.CurrentClassPeriod.ClassSubject.StudentList;
+                StudentList = notebookService.CurrentClassPeriod.ClassInformation.StudentList;
             }
             else
             {

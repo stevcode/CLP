@@ -12,83 +12,7 @@ namespace Classroom_Learning_Partner.Services
 {
     public class NotebookService
     {
-        public NotebookService()
-        {
-            //Warm up Serializer to make loading of notebook faster.
-            var typesToWarmup = new[] { typeof (Notebook), typeof (ClassPeriod) };
-            var xmlSerializer = SerializationFactory.GetXmlSerializer();
-            xmlSerializer.Warmup(typesToWarmup);
-        }
-
         #region Properties
-
-        #region Cache
-
-        public List<string> AvailableLocalCacheNames
-        {
-            get
-            {
-                var directoryInfo = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.Desktop));
-                return directoryInfo.GetDirectories().Where(directory => directory.Name.StartsWith("Cache")).Select(directory => directory.Name).OrderBy(x => x).ToList();
-            }
-        }
-
-        public string CurrentLocalCacheDirectory { get; set; }
-
-        public string CurrentClassCacheDirectory
-        {
-            get
-            {
-                var path = Path.Combine(CurrentLocalCacheDirectory, "Classes");
-                if (!Directory.Exists(path))
-                {
-                    Directory.CreateDirectory(path);
-                }
-
-                return path;
-            }
-        }
-
-        public string CurrentImageCacheDirectory
-        {
-            get
-            {
-                var path = Path.Combine(CurrentLocalCacheDirectory, "Images");
-                if (!Directory.Exists(path))
-                {
-                    Directory.CreateDirectory(path);
-                }
-
-                return path;
-            }
-        }
-
-        public string CurrentNotebookCacheDirectory
-        {
-            get
-            {
-                var path = Path.Combine(CurrentLocalCacheDirectory, "Notebooks");
-                if (!Directory.Exists(path))
-                {
-                    Directory.CreateDirectory(path);
-                }
-
-                return path;
-            }
-        }
-
-        #endregion //Cache
-
-        #region ClassPeriod
-
-        public List<ClassPeriodNameComposite> AvailableLocalClassPeriodNameComposites
-        {
-            get { return CurrentLocalCacheDirectory == null ? new List<ClassPeriodNameComposite>() : GetAvailableClassPeriodNameCompositesInCache(CurrentLocalCacheDirectory); }
-        }
-
-        public ClassPeriod CurrentClassPeriod { get; set; }
-
-        #endregion //ClassPeriod
 
         #region Notebook
 
@@ -115,53 +39,6 @@ namespace Classroom_Learning_Partner.Services
 
         #endregion //Properties
 
-        #region Cache Methods
-
-        public bool InitializeNewLocalCache(string cacheName) { return InitializeNewLocalCache(cacheName, Environment.GetFolderPath(Environment.SpecialFolder.Desktop)); }
-
-        public bool InitializeNewLocalCache(string cacheName, string cacheDirectoryPath)
-        {
-            cacheName = "Cache" + cacheName;
-            var directoryInfo = new DirectoryInfo(cacheDirectoryPath);
-            var availableCacheNames =
-                directoryInfo.GetDirectories().Where(directory => directory.Name.StartsWith("Cache")).Select(directory => directory.Name).OrderBy(x => x).ToList();
-
-            if (availableCacheNames.Contains(cacheName))
-            {
-                return false;
-            }
-
-            CurrentLocalCacheDirectory = Path.Combine(cacheDirectoryPath, cacheName);
-            if (!Directory.Exists(CurrentLocalCacheDirectory))
-            {
-                Directory.CreateDirectory(CurrentLocalCacheDirectory);
-            }
-            var initializeClassDirectory = CurrentClassCacheDirectory;
-            var initializeImageDirectory = CurrentImageCacheDirectory;
-            var initializeNotebookDirectory = CurrentNotebookCacheDirectory;
-
-            return true;
-        }
-
-        public void ArchiveNotebookCache(string notebookCacheDirectory)
-        {
-            if (!Directory.Exists(notebookCacheDirectory))
-            {
-                return;
-            }
-
-            var archiveDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "ArchivedCaches");
-            var now = DateTime.Now.ToString("yyyy.MM.dd.HH.mm.ss");
-            var newCacheDirectory = Path.Combine(archiveDirectory, "Cache-" + now);
-            if (!Directory.Exists(archiveDirectory))
-            {
-                Directory.CreateDirectory(archiveDirectory);
-            }
-            Directory.Move(notebookCacheDirectory, newCacheDirectory);
-        }
-
-        #endregion //Cache Methods
-
         #region Methods
 
         #region Class Period
@@ -175,7 +52,7 @@ namespace Classroom_Learning_Partner.Services
             var now = DateTime.Now;
             foreach (var classPeriodFilePath in classPeriodFilePaths)
             {
-                var classPeriodNameComposite = ClassPeriodNameComposite.ParseFilePathToNameComposite(classPeriodFilePath);
+                var classPeriodNameComposite = ClassPeriodNameComposite.ParseFilePath(classPeriodFilePath);
                 if (classPeriodNameComposite == null)
                 {
                     continue;
@@ -244,15 +121,15 @@ namespace Classroom_Learning_Partner.Services
             //authoredNotebook.Pages = new ObservableCollection<CLPPage>(authoredPages);
             //authoredNotebook.CurrentPage = authoredNotebook.Pages.FirstOrDefault(); //HACK
 
-            //var teacherNotebook = LoadClassPeriodNotebookForPerson(classPeriod, classPeriod.ClassSubject.TeacherID) ??
-            //                      CopyNotebookForNewOwner(authoredNotebook, classPeriod.ClassSubject.Teacher);
+            //var teacherNotebook = LoadClassPeriodNotebookForPerson(classPeriod, classPeriod.ClassInformation.TeacherID) ??
+            //                      CopyNotebookForNewOwner(authoredNotebook, classPeriod.ClassInformation.Teacher);
 
             //var teacherPages = LoadOrCopyPagesForNotebook(teacherNotebook, authoredNotebook, pageIDs, true);
             //teacherNotebook.Pages = new ObservableCollection<CLPPage>(teacherPages);
             //teacherNotebook.CurrentPage = teacherNotebook.Pages.FirstOrDefault(); //HACK
 
             ////Generates pages in cache
-            //foreach (var student in classPeriod.ClassSubject.StudentList)
+            //foreach (var student in classPeriod.ClassInformation.StudentList)
             //{
             //    var studentNotebook = LoadClassPeriodNotebookForPerson(classPeriod, student.ID) ??
             //                      CopyNotebookForNewOwner(authoredNotebook, student);
@@ -465,7 +342,7 @@ namespace Classroom_Learning_Partner.Services
             var directoryInfo = new DirectoryInfo(classesCacheDirectory);
             return
                 directoryInfo.GetFiles()
-                             .Select(file => ClassPeriodNameComposite.ParseFilePathToNameComposite(file.FullName))
+                             .Select(file => ClassPeriodNameComposite.ParseFilePath(file.FullName))
                              .Where(x => x != null)
                              .OrderByDescending(x => x.StartTime)
                              .ToList();

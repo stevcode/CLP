@@ -9,13 +9,11 @@ namespace CLP.Entities
 {
     public class ClassPeriodNameComposite
     {
-        public string FullClassPeriodFilePath { get; set; }
         public string ID { get; set; }
         public string StartTime { get; set; }
         public string StartPageID { get; set; }
         public string NumberOfPages { get; set; }
         public string AllowedBlankPages { get; set; }
-        public bool IsLocal { get; set; }
 
         public string ToFileName()
         {
@@ -23,7 +21,7 @@ namespace CLP.Entities
             ID, StartTime, StartPageID, NumberOfPages, AllowedBlankPages);
         }
 
-        public static ClassPeriodNameComposite ParseClassPeriodToNameComposite(ClassPeriod classPeriod)
+        public static ClassPeriodNameComposite ParseClassPeriod(ClassPeriod classPeriod)
         {
             var nameComposite = new ClassPeriodNameComposite
                                 {
@@ -32,13 +30,12 @@ namespace CLP.Entities
                                     StartPageID = classPeriod.StartPageID,
                                     NumberOfPages = classPeriod.NumberOfPages.ToString(),
                                     AllowedBlankPages = classPeriod.NumberOfAllowedBlankPages.ToString(),
-                                    IsLocal = true
                                 };
 
             return nameComposite;
         }
 
-        public static ClassPeriodNameComposite ParseFilePathToNameComposite(string filePath)
+        public static ClassPeriodNameComposite ParseFilePath(string filePath)
         {
             var classPeriodFileName = Path.GetFileNameWithoutExtension(filePath);
             var classPeriodFileNameParts = classPeriodFileName.Split(';');
@@ -49,13 +46,11 @@ namespace CLP.Entities
 
             var nameComposite = new ClassPeriodNameComposite
             {
-                FullClassPeriodFilePath = filePath,
                 ID = classPeriodFileNameParts[1],
                 StartTime = classPeriodFileNameParts[2],
                 StartPageID = classPeriodFileNameParts[3],
                 NumberOfPages = classPeriodFileNameParts[4],
                 AllowedBlankPages = classPeriodFileNameParts[5],
-                IsLocal = true
             };
 
             return nameComposite;
@@ -67,10 +62,10 @@ namespace CLP.Entities
     {
         #region Constructors
 
-        public ClassPeriod(ClassSubject classSubject, string notebookID, DateTime startTime, string titlePageID, string startPageID, uint numberOfPages, uint numberOfAllowedBlankPages)
+        public ClassPeriod(ClassInformation classInformation, string notebookID, DateTime startTime, string titlePageID, string startPageID, uint numberOfPages, uint numberOfAllowedBlankPages)
             :this()
         {
-            ClassSubject = classSubject;
+            ClassInformation = classInformation;
             NotebookID = notebookID;
             StartTime = startTime;
             TitlePageID = titlePageID;
@@ -176,7 +171,7 @@ namespace CLP.Entities
         #region Navigation Properties
 
         /// <summary>
-        /// Unique Identifier of the <see cref="ClassSubject" /> of the <see cref="ClassPeriod" />.
+        /// Unique Identifier of the <see cref="ClassInformation" /> of the <see cref="ClassPeriod" />.
         /// </summary>
         /// <remarks>
         /// Foreign Key.
@@ -190,16 +185,16 @@ namespace CLP.Entities
         public static readonly PropertyData ClassSubjectIDProperty = RegisterProperty("ClassSubjectID", typeof(string));
 
         /// <summary>
-        /// <see cref="ClassSubject" /> of the <see cref="ClassPeriod" />
+        /// <see cref="ClassInformation" /> of the <see cref="ClassPeriod" />
         /// </summary>
         /// <remarks>
         /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
         /// </remarks>
         [XmlIgnore]
         [ExcludeFromSerialization]
-        public virtual ClassSubject ClassSubject
+        public virtual ClassInformation ClassInformation
         {
-            get { return GetValue<ClassSubject>(ClassSubjectProperty); }
+            get { return GetValue<ClassInformation>(ClassSubjectProperty); }
             set
             {
                 SetValue(ClassSubjectProperty, value);
@@ -211,7 +206,7 @@ namespace CLP.Entities
             }
         }
 
-        public static readonly PropertyData ClassSubjectProperty = RegisterProperty("ClassSubject", typeof(ClassSubject));
+        public static readonly PropertyData ClassSubjectProperty = RegisterProperty("ClassInformation", typeof(ClassInformation));
 
         #endregion //Navigation Properties
 
@@ -219,15 +214,15 @@ namespace CLP.Entities
 
         #region Cache
 
-        public void ToXML(string filePath)
+        public void ToXML(string classPeriodFilePath)
         {
-            var fileInfo = new FileInfo(filePath);
+            var fileInfo = new FileInfo(classPeriodFilePath);
             if(!Directory.Exists(fileInfo.DirectoryName))
             {
                 Directory.CreateDirectory(fileInfo.DirectoryName);
             }
 
-            using(Stream stream = new FileStream(filePath, FileMode.Create))
+            using (Stream stream = new FileStream(classPeriodFilePath, FileMode.Create))
             {
                 var xmlSerializer = SerializationFactory.GetXmlSerializer();
                 xmlSerializer.Serialize(this, stream);
@@ -235,11 +230,54 @@ namespace CLP.Entities
             }
         }
 
-        public void SaveClassPeriodLocally(string folderPath)
+        public void SaveToXML(string folderPath)
         {
-            var nameComposite = ClassPeriodNameComposite.ParseClassPeriodToNameComposite(this);
+            var nameComposite = ClassPeriodNameComposite.ParseClassPeriod(this);
             var filePath = Path.Combine(folderPath, nameComposite.ToFileName() + ".xml");
             ToXML(filePath);
+        }
+
+        public static ClassPeriod LoadFromXML(string classPeriodFilePath)
+        {
+            try
+            {
+                var nameComposite = ClassPeriodNameComposite.ParseFilePath(classPeriodFilePath);
+                if (nameComposite == null)
+                {
+                    return null;
+                }
+
+                var classPeriod = Load<ClassPeriod>(classPeriodFilePath, SerializationMode.Xml);
+                if (classPeriod == null)
+                {
+                    return null;
+                }
+
+                classPeriod.ID = nameComposite.ID;
+
+                var time = nameComposite.StartTime;
+                var timeParts = time.Split('.');
+                var year = Int32.Parse(timeParts[0]);
+                var month = Int32.Parse(timeParts[1]);
+                var day = Int32.Parse(timeParts[2]);
+                var hour = Int32.Parse(timeParts[3]);
+                var minute = Int32.Parse(timeParts[4]);
+                var dateTime = new DateTime(year, month, day, hour, minute, 0);
+                classPeriod.StartTime = dateTime;
+                classPeriod.StartPageID = nameComposite.StartPageID;
+                classPeriod.NumberOfPages = UInt32.Parse(nameComposite.NumberOfPages);
+                classPeriod.NumberOfAllowedBlankPages = UInt32.Parse(nameComposite.AllowedBlankPages);
+
+                var classPeriodFolderPath = Path.GetDirectoryName(classPeriodFilePath);
+                var classSubjectFilePath = Path.Combine(classPeriodFolderPath, "subject" + ";" + classPeriod.ClassSubjectID + ".xml");
+                classPeriod.ClassInformation = ClassInformation.OpenClassSubject(classSubjectFilePath);
+
+                return classPeriod;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public static ClassPeriod LoadLocalClassPeriod(string filePath)
@@ -247,7 +285,7 @@ namespace CLP.Entities
             try
             {
                 var classPeriod = Load<ClassPeriod>(filePath, SerializationMode.Xml);
-                var nameComposite = ClassPeriodNameComposite.ParseFilePathToNameComposite(filePath);
+                var nameComposite = ClassPeriodNameComposite.ParseFilePath(filePath);
                 if (nameComposite == null ||
                     classPeriod == null)
                 {
@@ -270,7 +308,7 @@ namespace CLP.Entities
 
                 var classPeriodFolderPath = Path.GetDirectoryName(filePath);
                 var classSubjectFilePath = Path.Combine(classPeriodFolderPath, "subject" + ";" + classPeriod.ClassSubjectID + ".xml");
-                classPeriod.ClassSubject = ClassSubject.OpenClassSubject(classSubjectFilePath);
+                classPeriod.ClassInformation = ClassInformation.OpenClassSubject(classSubjectFilePath);
 
                 return classPeriod;
             }

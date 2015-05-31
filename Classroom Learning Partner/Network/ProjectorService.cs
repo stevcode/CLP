@@ -455,14 +455,14 @@ namespace Classroom_Learning_Partner
             }
 
             var unZippedClassSubject = CLPServiceAgent.Instance.UnZip(zippedClassSubject);
-            var classSubject = ObjectSerializer.ToObject(unZippedClassSubject) as ClassSubject;
+            var classSubject = ObjectSerializer.ToObject(unZippedClassSubject) as ClassInformation;
             if(classSubject == null)
             {
                 Logger.Instance.WriteToLog("Failed to load classperiod.");
                 return;
             }
 
-            classPeriod.ClassSubject = classSubject;
+            classPeriod.ClassInformation = classSubject;
 
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                                                        (DispatcherOperationCallback)delegate
@@ -474,8 +474,8 @@ namespace Classroom_Learning_Partner
                                                                                         }
 
                                                                                         notebookService.CurrentClassPeriod = classPeriod;
-                                                                                        App.MainWindowViewModel.AvailableUsers = classPeriod.ClassSubject.StudentList;
-                                                                                        App.MainWindowViewModel.CurrentUser = notebookService.CurrentClassPeriod.ClassSubject.Teacher;
+                                                                                        App.MainWindowViewModel.AvailableUsers = classPeriod.ClassInformation.StudentList;
+                                                                                        App.MainWindowViewModel.CurrentUser = notebookService.CurrentClassPeriod.ClassInformation.Teacher;
 
                                                                                         return null;
                                                                                     },
@@ -492,7 +492,7 @@ namespace Classroom_Learning_Partner
             //    return;
             //}
 
-            //App.MainWindowViewModel.CurrentUser = App.MainWindowViewModel.CurrentClassPeriod.ClassSubject.Teacher;
+            //App.MainWindowViewModel.CurrentUser = App.MainWindowViewModel.CurrentClassPeriod.ClassInformation.Teacher;
 
             //notebook.CurrentPage = notebook.Pages.First();
             //foreach(var page in notebook.Pages)

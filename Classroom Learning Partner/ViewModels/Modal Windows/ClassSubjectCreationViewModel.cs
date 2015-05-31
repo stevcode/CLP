@@ -9,10 +9,10 @@ namespace Classroom_Learning_Partner.ViewModels
 {
     public class ClassSubjectCreationViewModel : ViewModelBase
     {
-        public ClassSubjectCreationViewModel(ClassSubject classSubject)
+        public ClassSubjectCreationViewModel(ClassInformation classInformation)
         {
-            ClassSubject = classSubject;
-            ClassSubject.Teacher = new Person
+            ClassInformation = classInformation;
+            ClassInformation.Teacher = new Person
                                    {
                                        IsStudent = false
                                    };
@@ -28,21 +28,21 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Model
 
         /// <summary>
-        /// <see cref="ClassSubject" /> being created.
+        /// <see cref="ClassInformation" /> being created.
         /// </summary>
         [Model]
-        public ClassSubject ClassSubject
+        public ClassInformation ClassInformation
         {
-            get { return GetValue<ClassSubject>(ClassSubjectProperty); }
+            get { return GetValue<ClassInformation>(ClassSubjectProperty); }
             set { SetValue(ClassSubjectProperty, value); }
         }
 
-        public static readonly PropertyData ClassSubjectProperty = RegisterProperty("ClassSubject", typeof(ClassSubject));
+        public static readonly PropertyData ClassSubjectProperty = RegisterProperty("ClassInformation", typeof(ClassInformation));
 
         /// <summary>
-        /// Name of the <see cref="ClassSubject" />.
+        /// Name of the <see cref="ClassInformation" />.
         /// </summary>
-        [ViewModelToModel("ClassSubject")]
+        [ViewModelToModel("ClassInformation")]
         public string Name
         {
             get { return GetValue<string>(NameProperty); }
@@ -52,9 +52,9 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData NameProperty = RegisterProperty("Name", typeof(string), string.Empty);
 
         /// <summary>
-        /// Grade Level to which the <see cref="ClassSubject" /> is taught.
+        /// Grade Level to which the <see cref="ClassInformation" /> is taught.
         /// </summary>
-        [ViewModelToModel("ClassSubject")]
+        [ViewModelToModel("ClassInformation")]
         public string GradeLevel
         {
             get { return GetValue<string>(GradeLevelProperty); }
@@ -64,9 +64,9 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData GradeLevelProperty = RegisterProperty("GradeLevel", typeof(string), "unknown");
 
         /// <summary>
-        /// Start date of the <see cref="ClassSubject" />.
+        /// Start date of the <see cref="ClassInformation" />.
         /// </summary>
-        [ViewModelToModel("ClassSubject")]
+        [ViewModelToModel("ClassInformation")]
         public DateTime? StartDate
         {
             get { return GetValue<DateTime?>(StartDateProperty); }
@@ -76,9 +76,9 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData StartDateProperty = RegisterProperty("StartDate", typeof(DateTime?));
 
         /// <summary>
-        /// End date of the <see cref="ClassSubject" />.
+        /// End date of the <see cref="ClassInformation" />.
         /// </summary>
-        [ViewModelToModel("ClassSubject")]
+        [ViewModelToModel("ClassInformation")]
         public DateTime? EndDate
         {
             get { return GetValue<DateTime?>(EndDateProperty); }
@@ -90,7 +90,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Name of the school.
         /// </summary>
-        [ViewModelToModel("ClassSubject")]
+        [ViewModelToModel("ClassInformation")]
         public string SchoolName
         {
             get { return GetValue<string>(SchoolNameProperty); }
@@ -102,7 +102,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Name of the school district.
         /// </summary>
-        [ViewModelToModel("ClassSubject")]
+        [ViewModelToModel("ClassInformation")]
         public string SchoolDistrict
         {
             get { return GetValue<string>(SchoolDistrictProperty); }
@@ -114,7 +114,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Name of the city in which the school exists.
         /// </summary>
-        [ViewModelToModel("ClassSubject")]
+        [ViewModelToModel("ClassInformation")]
         public string City
         {
             get { return GetValue<string>(CityProperty); }
@@ -126,7 +126,7 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// Name of the state in which the school exists.
         /// </summary>
-        [ViewModelToModel("ClassSubject")]
+        [ViewModelToModel("ClassInformation")]
         public string State
         {
             get { return GetValue<string>(StateProperty); }
@@ -136,12 +136,12 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData StateProperty = RegisterProperty("State", typeof(string), string.Empty);
 
         /// <summary>
-        /// List of all the Students in the <see cref="CLP.Entities.ClassSubject" />.
+        /// List of all the Students in the <see cref="ClassInformation" />.
         /// </summary>
         /// <remarks>
         /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
         /// </remarks>
-        [ViewModelToModel("ClassSubject")]
+        [ViewModelToModel("ClassInformation")]
         public virtual ObservableCollection<Person> StudentList
         {
             get { return GetValue<ObservableCollection<Person>>(StudentListProperty); }

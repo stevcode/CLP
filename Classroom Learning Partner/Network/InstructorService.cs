@@ -91,7 +91,7 @@ namespace Classroom_Learning_Partner
                 var classPeriodString = ObjectSerializer.ToString(notebookService.CurrentClassPeriod);
                 var classPeriod = CLPServiceAgent.Instance.Zip(classPeriodString);
 
-                var classSubjectString = ObjectSerializer.ToString(notebookService.CurrentClassPeriod.ClassSubject);
+                var classSubjectString = ObjectSerializer.ToString(notebookService.CurrentClassPeriod.ClassInformation);
                 var classsubject = CLPServiceAgent.Instance.Zip(classSubjectString);
 
                 var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(App.Network.DefaultBinding, new EndpointAddress(machineAddress));
@@ -425,7 +425,7 @@ namespace Classroom_Learning_Partner
                 return;
             }
 
-            var student = notebookService.CurrentClassPeriod.ClassSubject.StudentList.FirstOrDefault(x => x.ID == studentID);
+            var student = notebookService.CurrentClassPeriod.ClassInformation.StudentList.FirstOrDefault(x => x.ID == studentID);
             if (student == null)
             {
                 Logger.Instance.WriteToLog("Failed to log out student. student is null.");

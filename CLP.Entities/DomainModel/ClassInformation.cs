@@ -4,26 +4,66 @@ using System.IO;
 using System.Runtime.Serialization;
 using Catel.Data;
 using Catel.Runtime.Serialization;
-using Path = Catel.IO.Path;
 
 namespace CLP.Entities
 {
+    public class ClassInformationNameComposite
+    {
+        public const string QUALIFIER_TEXT = "ClassInformation";
+        public string TeacherName { get; set; }
+        public string ID { get; set; }
+        
+        public string ToFileName()
+        {
+            return string.Format("{0};{1};{2}", QUALIFIER_TEXT, TeacherName, ID);
+        }
+
+        public static ClassInformationNameComposite ParseClassInformation(ClassInformation classInformation)
+        {
+            var nameComposite = new ClassInformationNameComposite
+            {
+                ID = classInformation.ID,
+                TeacherName = classInformation.Teacher.FullName
+            };
+
+            return nameComposite;
+        }
+
+        public static ClassInformationNameComposite ParseFilePath(string classInformationFilePath)
+        {
+            var classInformationFileName = Path.GetFileNameWithoutExtension(classInformationFilePath);
+            var classInformationFileNameParts = classInformationFileName.Split(';');
+            if (classInformationFileNameParts.Length != 3)
+            {
+                return null;
+            }
+
+            var nameComposite = new ClassInformationNameComposite
+            {
+                TeacherName = classInformationFileNameParts[1],
+                ID = classInformationFileNameParts[2]
+            };
+
+            return nameComposite;
+        }
+    }
+
     [Serializable]
-    public class ClassSubject : AEntityBase
+    public class ClassInformation : AEntityBase
     {
         #region Constructors
 
         /// <summary>
-        /// Initializes <see cref="ClassSubject" /> from scratch.
+        /// Initializes <see cref="ClassInformation" /> from scratch.
         /// </summary>
-        public ClassSubject() { ID = Guid.NewGuid().ToCompactID(); }
+        public ClassInformation() { ID = Guid.NewGuid().ToCompactID(); }
 
         /// <summary>
-        /// Initializes <see cref="ClassSubject" /> based on <see cref="SerializationInfo" />.
+        /// Initializes <see cref="ClassInformation" /> based on <see cref="SerializationInfo" />.
         /// </summary>
         /// <param name="info"><see cref="SerializationInfo" /> that contains the information.</param>
         /// <param name="context"><see cref="StreamingContext" />.</param>
-        public ClassSubject(SerializationInfo info, StreamingContext context)
+        public ClassInformation(SerializationInfo info, StreamingContext context)
             : base(info, context) { }
 
         #endregion //Constructors
@@ -31,7 +71,7 @@ namespace CLP.Entities
         #region Properties
 
         /// <summary>
-        /// Unique Identifier for the <see cref="ClassSubject" />.
+        /// Unique Identifier for the <see cref="ClassInformation" />.
         /// </summary>
         public string ID
         {
@@ -42,7 +82,7 @@ namespace CLP.Entities
         public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string));
 
         /// <summary>
-        /// Name of the <see cref="ClassSubject" />.
+        /// Name of the <see cref="ClassInformation" />.
         /// </summary>
         public string Name
         {
@@ -53,7 +93,7 @@ namespace CLP.Entities
         public static readonly PropertyData NameProperty = RegisterProperty("Name", typeof(string), string.Empty);
 
         /// <summary>
-        /// Grade Level to which the <see cref="ClassSubject" /> is taught.
+        /// Grade Level to which the <see cref="ClassInformation" /> is taught.
         /// </summary>
         public string GradeLevel
         {
@@ -64,7 +104,7 @@ namespace CLP.Entities
         public static readonly PropertyData GradeLevelProperty = RegisterProperty("GradeLevel", typeof(string), string.Empty);
 
         /// <summary>
-        /// Start date of the <see cref="ClassSubject" />.
+        /// Start date of the <see cref="ClassInformation" />.
         /// </summary>
         public DateTime? StartDate
         {
@@ -75,7 +115,7 @@ namespace CLP.Entities
         public static readonly PropertyData StartDateProperty = RegisterProperty("StartDate", typeof(DateTime?));
 
         /// <summary>
-        /// End date of the <see cref="ClassSubject" />.
+        /// End date of the <see cref="ClassInformation" />.
         /// </summary>
         public DateTime? EndDate
         {
@@ -132,7 +172,7 @@ namespace CLP.Entities
         #region Navigation Properties
 
         /// <summary>
-        /// Unique Identifier of the <see cref="Person" /> teaching the <see cref="ClassSubject" />.
+        /// Unique Identifier of the <see cref="Person" /> teaching the <see cref="ClassInformation" />.
         /// </summary>
         /// <remarks>
         /// Foreign Key.
@@ -146,7 +186,7 @@ namespace CLP.Entities
         public static readonly PropertyData TeacherIDProperty = RegisterProperty("TeacherID", typeof(string), string.Empty);
 
         /// <summary>
-        /// The <see cref="Person" /> teaching the <see cref="ClassSubject" />.
+        /// The <see cref="Person" /> teaching the <see cref="ClassInformation" />.
         /// </summary>
         /// <remarks>
         /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
@@ -168,7 +208,7 @@ namespace CLP.Entities
         public static readonly PropertyData TeacherProperty = RegisterProperty("Teacher", typeof(Person));
 
         /// <summary>
-        /// Unique Identifier of the <see cref="Person" /> projector in the <see cref="ClassSubject" />.
+        /// Unique Identifier of the <see cref="Person" /> projector in the <see cref="ClassInformation" />.
         /// </summary>
         /// <remarks>
         /// Foreign Key.
@@ -182,7 +222,7 @@ namespace CLP.Entities
         public static readonly PropertyData ProjectorIDProperty = RegisterProperty("ProjectorID", typeof(string), string.Empty);
 
         /// <summary>
-        /// The <see cref="Person" /> projector in the <see cref="ClassSubject" />.
+        /// The <see cref="Person" /> projector in the <see cref="ClassInformation" />.
         /// </summary>
         /// <remarks>
         /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
@@ -204,7 +244,7 @@ namespace CLP.Entities
         public static readonly PropertyData ProjectorProperty = RegisterProperty("Projector", typeof(Person));
 
         /// <summary>
-        /// List of all the Students in the <see cref="ClassSubject" />.
+        /// List of all the Students in the <see cref="ClassInformation" />.
         /// </summary>
         /// <remarks>
         /// Virtual to facilitate lazy loading of navigation property by Entity Framework.
@@ -223,15 +263,15 @@ namespace CLP.Entities
 
         #region Cache
 
-        public void ToXML(string filePath)
+        public void ToXML(string classInformationFilePath)
         {
-            var fileInfo = new FileInfo(filePath);
+            var fileInfo = new FileInfo(classInformationFilePath);
             if(!Directory.Exists(fileInfo.DirectoryName))
             {
                 Directory.CreateDirectory(fileInfo.DirectoryName);
             }
 
-            using (Stream stream = new FileStream(filePath, FileMode.Create))
+            using (Stream stream = new FileStream(classInformationFilePath, FileMode.Create))
             {
                 var xmlSerializer = SerializationFactory.GetXmlSerializer();
                 xmlSerializer.Serialize(this, stream);
@@ -239,21 +279,34 @@ namespace CLP.Entities
             }
         }
 
-        public void SaveClassSubject(string folderPath)
+        public void SaveToXML(string folderPath)
         {
-            var fileName = Path.Combine(folderPath, "subject;" + ID + ".xml");
-            ToXML(fileName);
+            var nameComposite = ClassInformationNameComposite.ParseClassInformation(this);
+            var filePath = Path.Combine(folderPath, nameComposite.ToFileName() + ".xml");
+            ToXML(filePath);
         }
 
-        public static ClassSubject OpenClassSubject(string filePath)
+        public static ClassInformation LoadFromXML(string classInformationFilePath)
         {
             try
             {
-                var classSubject = Load<ClassSubject>(filePath, SerializationMode.Xml);
+                var nameComposite = ClassInformationNameComposite.ParseFilePath(classInformationFilePath);
+                if (nameComposite == null)
+                {
+                    return null;
+                }
 
-                return classSubject;
+                var classInformation = Load<ClassInformation>(classInformationFilePath, SerializationMode.Xml);
+                if (classInformation == null)
+                {
+                    return null;
+                }
+
+                classInformation.ID = nameComposite.ID;
+
+                return classInformation;
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return null;
             }

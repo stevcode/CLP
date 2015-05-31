@@ -126,12 +126,12 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private bool OnCreateNotebookCanExecute() { return NotebookName != string.Empty; }
 
-        /// <summary>Creates a new ClassSubject.</summary>
+        /// <summary>Creates a new ClassInformation.</summary>
         public Command CreateClassSubjectCommand { get; private set; }
 
         private void OnCreateClassSubjectCommandExecute()
         {
-            var classSubject = new ClassSubject();
+            var classSubject = new ClassInformation();
             var classSubjectCreationViewModel = new ClassSubjectCreationViewModel(classSubject);
             var classSubjectCreationView = new ClassSubjectCreationView(classSubjectCreationViewModel);
             classSubjectCreationView.ShowDialog();
@@ -178,7 +178,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //{
             //    Directory.CreateDirectory(classesFolderPath);
             //}
-            //classSubject.SaveClassSubject(classesFolderPath);
+            //ClassInformation.SaveClassSubject(classesFolderPath);
         }
 
         #endregion //Commands

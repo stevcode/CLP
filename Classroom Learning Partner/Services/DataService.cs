@@ -135,11 +135,12 @@ namespace Classroom_Learning_Partner.Services
         public DataService()
         {
             //Warm up Serializer to make deserializing Notebooks, ClassPeriods, and ClassSubjects faster.
-            var typesToWarmup = new[] { typeof (Notebook), typeof (ClassPeriod), typeof (ClassSubject) };
+            var typesToWarmup = new[] { typeof (Notebook), typeof (ClassPeriod), typeof (ClassInformation) };
             var xmlSerializer = SerializationFactory.GetXmlSerializer();
             xmlSerializer.Warmup(typesToWarmup);
 
             CurrentCachesFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            ArchivedCachesFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
         }
 
         #region Properties
@@ -147,6 +148,8 @@ namespace Classroom_Learning_Partner.Services
         #region Cache Properties
 
         public string CurrentCachesFolderPath { get; set; }
+
+        public string ArchivedCachesFolderPath { get; set; }
 
         public List<CacheInfo> AvailableCaches
         {
@@ -235,6 +238,23 @@ namespace Classroom_Learning_Partner.Services
             CurrentCache = newCache;
 
             return newCache;
+        }
+
+        public void ArchiveCache(CacheInfo cacheInfo)
+        {
+            if (!Directory.Exists(cacheInfo.CacheFolderPath))
+            {
+                return;
+            }
+
+            var archiveDirectory = Path.Combine(ArchivedCachesFolderPath, "ArchivedCaches");
+            var now = DateTime.Now.ToString("yyyy.MM.dd.HH.mm.ss");
+            var newCacheDirectory = Path.Combine(archiveDirectory, "Cache-" + now);
+            if (!Directory.Exists(archiveDirectory))
+            {
+                Directory.CreateDirectory(archiveDirectory);
+            }
+            Directory.Move(cacheInfo.CacheFolderPath, newCacheDirectory);
         }
 
         #endregion //Cache Methods 
@@ -359,7 +379,10 @@ namespace Classroom_Learning_Partner.Services
                 notebookInfo.Notebook.SaveToXML(notebookInfo.NotebookFolderPath);
             }
 
-            
+            if (isExported)
+            {
+                
+            }
         }
 
         public void SetCurrentNotebook(NotebookInfo notebookInfo)
@@ -586,11 +609,28 @@ namespace Classroom_Learning_Partner.Services
 
         #region ClassPeriod Methods
 
+        public static List<ClassPeriodInfo> GetClassPeriodsInFolder(CacheInfo cache)
+        {
+            if (!Directory.Exists(cache.NotebooksFolderPath))
+            {
+                return new List<NotebookInfo>();
+            }
+
+            var directoryInfo = new DirectoryInfo(cache.ClassesFolderPath);
+            return
+                directoryInfo.GetDirectories()
+        }
+
         #endregion //ClassPeriod Methods
 
-        #region ClassSubject Methods
+        #region ClassInformation Methods
 
-        #endregion //ClassSubject Methods
+        #endregion //ClassInformation Methods
+
+        public static List<ClassSubjectInfo> GetClassSubjectsInFolder(CacheInfo cache)
+        {
+
+        }
 
         #endregion //Methods
     }
