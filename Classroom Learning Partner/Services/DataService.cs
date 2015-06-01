@@ -395,12 +395,12 @@ namespace Classroom_Learning_Partner.Services
             }
         }
 
-        public void SaveNotebook(NotebookInfo notebookInfo, bool isFullSave, bool isLocalSave, bool isRemoteSave, bool isExported)
+        public void SaveNotebook(NotebookInfo notebookInfo, bool isForcedFullSave, bool isLocalSave, bool isExported)
         {
             if (isLocalSave)
             {
                 notebookInfo.Cache.Initialize();
-                if (isFullSave)
+                if (isForcedFullSave)
                 {
                     Directory.Delete(notebookInfo.NotebookFolderPath);
                 }
@@ -413,6 +413,48 @@ namespace Classroom_Learning_Partner.Services
             {
                 
             }
+
+
+            //switch (App.MainWindowViewModel.CurrentProgramMode)
+            //{
+            //    case ProgramModes.Author:
+            //    case ProgramModes.Database:
+            //        break;
+            //    case ProgramModes.Teacher:
+            //     //   notebook.SaveOthersSubmissions(CurrentNotebookCacheDirectory);
+            //        break;
+            //    case ProgramModes.Projector:
+            //      //  notebook.SaveOthersSubmissions(CurrentNotebookCacheDirectory);
+            //        break;
+            //    case ProgramModes.Student:
+            //        var submissionsPath = Path.Combine(folderPath, "Pages");
+            //        notebook.SaveSubmissions(submissionsPath);
+            //        if (App.Network.InstructorProxy != null)
+            //        {
+            //            var sNotebook = ObjectSerializer.ToString(notebook);
+            //            var zippedNotebook = CLPServiceAgent.Instance.Zip(sNotebook);
+            //            App.Network.InstructorProxy.CollectStudentNotebook(zippedNotebook, App.MainWindowViewModel.CurrentUser.FullName);
+            //        }
+            //        break;
+            //}
+        }
+
+        public void PackageAndSendNotebook(NotebookInfo notebookInfo, bool isNotebookSaved = true)
+        {
+            if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Student ||
+                App.Network.InstructorProxy == null)
+            {
+                return;
+            }
+
+            if (!isNotebookSaved)
+            {
+                
+            }
+
+            var sNotebook = ObjectSerializer.ToString(notebookInfo.Notebook);
+            var zippedNotebook = CLPServiceAgent.Instance.Zip(sNotebook);
+            App.Network.InstructorProxy.CollectStudentNotebook(zippedNotebook, App.MainWindowViewModel.CurrentUser.FullName);
         }
 
         public void SetCurrentNotebook(NotebookInfo notebookInfo)
@@ -541,6 +583,64 @@ namespace Classroom_Learning_Partner.Services
             }
         }
 
+        public void SaveNotebookPages(NotebookInfo notebookInfo, bool isForcedFullSave, bool serializeInkStrokes = true)
+        {
+            if (notebookInfo.Notebook == null)
+            {
+                return;
+            }
+
+            if (!Directory.Exists(notebookInfo.PagesFolderPath))
+            {
+                Directory.CreateDirectory(notebookInfo.PagesFolderPath);
+            }
+
+            foreach (var page in notebookInfo.Notebook.Pages)
+            {
+                if (page.IsCached &&
+                    !isForcedFullSave)
+                {
+                    continue;
+                }
+
+                page.SaveToXML(notebookInfo.PagesFolderPath, serializeInkStrokes);
+            }
+
+            //var pageFilePaths = Directory.EnumerateFiles(pagesFolderPath, "*.xml").ToList();
+            //foreach(var pageFilePath in from trashedPage in _trashedPages
+            //                            from pageFilePath in pageFilePaths
+            //                            where pageFilePath.Contains(trashedPage.ID)
+            //                            select pageFilePath)
+            //{
+            //    File.Delete(pageFilePath);
+            //}
+            //_trashedPages.Clear();
+
+            //foreach(var page in Pages)
+            //{
+            //    foreach(var pageFilePath in pageFilePaths)
+            //    {
+            //        if(pageFilePath.Contains(page.ID))
+            //        {
+            //            var pageNumberOfFile = Convert.ToInt32(Path.GetFileName(pageFilePath).Split(' ')[1]);
+            //            if(page.PageNumber != pageNumberOfFile)
+            //            {
+            //                File.Delete(pageFilePath);
+            //            }
+            //        }
+            //    }
+            //}
+
+            //foreach(var pageFilePath in from pageFilePath in pageFilePaths
+            //                            let pageNumberOfFile = Convert.ToInt32(Path.GetFileName(pageFilePath).Split(' ')[1])
+            //                            from page in Pages
+            //                            where pageFilePath.Contains(page.ID) && page.PageNumber != pageNumberOfFile
+            //                            select pageFilePath) 
+            //{
+            //    File.Delete(pageFilePath);
+            //}
+        }
+
         public static List<string> GetAllPageIDsInNotebook(NotebookInfo notebookInfo)
         {
             var pageFilePaths = Directory.EnumerateFiles(notebookInfo.PagesFolderPath, "*.xml").ToList();
@@ -651,11 +751,245 @@ namespace Classroom_Learning_Partner.Services
                 directoryInfo.GetFiles()
                              .Select(fileInfo => new ClassPeriodInfo(cache, fileInfo.FullName))
                              .Where(c => c != null)
-                             .OrderBy(c => c.PageNumbers)
+                             .OrderBy(c => c.StartTime)
                              .ToList();
         }
 
         #endregion //ClassPeriod Methods
+
+        #region Old ClassPeriod Methods
+
+        //public void StartSoonestClassPeriod(string localCacheFolderPath)
+        //{
+        //    var classesFolderPath = Path.Combine(localCacheFolderPath, "Classes");
+        //    var classPeriodFilePaths = Directory.GetFiles(classesFolderPath);
+        //    ClassPeriodNameComposite closestClassPeriodNameComposite = null;
+        //    var closestTimeSpan = TimeSpan.MaxValue;
+        //    var now = DateTime.Now;
+        //    foreach (var classPeriodFilePath in classPeriodFilePaths)
+        //    {
+        //        var classPeriodNameComposite = ClassPeriodNameComposite.ParseFilePath(classPeriodFilePath);
+        //        if (classPeriodNameComposite == null)
+        //        {
+        //            continue;
+        //        }
+        //        var time = classPeriodNameComposite.StartTime;
+        //        var timeParts = time.Split('.');
+        //        var year = Int32.Parse(timeParts[0]);
+        //        var month = Int32.Parse(timeParts[1]);
+        //        var day = Int32.Parse(timeParts[2]);
+        //        var hour = Int32.Parse(timeParts[3]);
+        //        var minute = Int32.Parse(timeParts[4]);
+        //        var dateTime = new DateTime(year, month, day, hour, minute, 0);
+
+        //        var timeSpan = now - dateTime;
+        //        var duration = timeSpan.Duration();
+        //        var closestTimeSpanDuration = closestTimeSpan.Duration();
+        //        if (duration >= closestTimeSpanDuration)
+        //        {
+        //            continue;
+        //        }
+        //        closestTimeSpan = timeSpan;
+        //        closestClassPeriodNameComposite = classPeriodNameComposite;
+        //    }
+
+        //    if (closestClassPeriodNameComposite == null)
+        //    {
+        //        MessageBox.Show("ERROR: Could not find ClassPeriod .xml file.");
+        //        return;
+        //    }
+
+        //    StartLocalClassPeriod(closestClassPeriodNameComposite, localCacheFolderPath);
+        //}
+
+        //public void StartLocalClassPeriod(ClassPeriodNameComposite classPeriodNameComposite, string localCacheFolderPath)
+        //{
+        //    var filePath = classPeriodNameComposite.FullClassPeriodFilePath;
+        //    if (!File.Exists(filePath))
+        //    {
+        //        MessageBox.Show("Class Period doesn't exist!");
+        //        return;
+        //    }
+
+        //    var classPeriod = ClassPeriod.LoadLocalClassPeriod(filePath);
+        //    if (classPeriod == null)
+        //    {
+        //        MessageBox.Show("Class Period could not be opened. Check error log.");
+        //        return;
+        //    }
+
+        //    CurrentLocalCacheDirectory = localCacheFolderPath;
+        //    CurrentClassPeriod = classPeriod;
+        //    var authoredNotebook = LoadClassPeriodNotebookForPerson(classPeriod, Person.Author.ID);
+        //    if (authoredNotebook == null)
+        //    {
+        //        return;
+        //    }
+        //    //var authoredNotebookNameComposite = AvailableLocalNotebookNameComposites.FirstOrDefault(x => x.ID == classPeriod.NotebookID && x.OwnerID == Person.Author.ID);
+        //    //var authoredPagesFolderPath = Path.Combine(authoredNotebookNameComposite.NotebookFolderPath, "Pages");
+        //    //var pageIDs = GetPageIDsFromStartIDAndForwardRange(authoredPagesFolderPath, classPeriod.StartPageID, classPeriod.NumberOfPages);
+        //    //if (!pageIDs.Contains(classPeriod.TitlePageID))
+        //    //{
+        //    //    pageIDs.Insert(0, classPeriod.TitlePageID);
+        //    //}
+
+        //    //var authoredPages = LoadOrCopyPagesForNotebook(authoredNotebook, null, pageIDs, false);
+        //    //authoredNotebook.Pages = new ObservableCollection<CLPPage>(authoredPages);
+        //    //authoredNotebook.CurrentPage = authoredNotebook.Pages.FirstOrDefault(); //HACK
+
+        //    //var teacherNotebook = LoadClassPeriodNotebookForPerson(classPeriod, classPeriod.ClassInformation.TeacherID) ??
+        //    //                      CopyNotebookForNewOwner(authoredNotebook, classPeriod.ClassInformation.Teacher);
+
+        //    //var teacherPages = LoadOrCopyPagesForNotebook(teacherNotebook, authoredNotebook, pageIDs, true);
+        //    //teacherNotebook.Pages = new ObservableCollection<CLPPage>(teacherPages);
+        //    //teacherNotebook.CurrentPage = teacherNotebook.Pages.FirstOrDefault(); //HACK
+
+        //    ////Generates pages in cache
+        //    //foreach (var student in classPeriod.ClassInformation.StudentList)
+        //    //{
+        //    //    var studentNotebook = LoadClassPeriodNotebookForPerson(classPeriod, student.ID) ??
+        //    //                      CopyNotebookForNewOwner(authoredNotebook, student);
+
+        //    //    var studentPages = LoadOrCopyPagesForNotebook(studentNotebook, authoredNotebook, pageIDs, false);
+        //    //    studentNotebook.Pages = new ObservableCollection<CLPPage>(studentPages);
+        //    //    studentNotebook.CurrentPage = studentNotebook.Pages.FirstOrDefault(); //HACK
+        //    //    SaveNotebookLocally(studentNotebook);
+        //    //}
+
+        //    //OpenNotebooks.Clear();
+        //    //OpenNotebooks.Add(authoredNotebook);
+        //    //OpenNotebooks.Add(teacherNotebook);
+        //    //SetNotebookAsCurrentNotebook(teacherNotebook);
+        //}
+
+        //public Notebook LoadClassPeriodNotebookForPerson(ClassPeriod classPeriod, string ownerID)
+        //{
+        //    var notebookNameComposite = AvailableLocalNotebookNameComposites.FirstOrDefault(x => x.ID == classPeriod.NotebookID && x.OwnerID == ownerID);
+        //    if (notebookNameComposite == null)
+        //    {
+        //       // MessageBox.Show("Notebook for Class Period not found for " + ownerID + ".");
+        //        return null;
+        //    }
+
+        //    Notebook notebook = null; // = Notebook.LoadLocalNotebook(notebookNameComposite.NotebookFolderPath);
+        //    if (notebook == null)
+        //    {
+        //        //MessageBox.Show("Notebook for Class Period could not be loaded " + ownerID + ".");
+        //        return null;
+        //    }
+
+        //    return notebook;
+        //}
+
+        //public Notebook CopyNotebookForNewOwner(Notebook originalNotebook, Person newOwner)
+        //{
+        //    var newNotebook = originalNotebook.Clone() as Notebook;
+        //    if (newNotebook == null)
+        //    {
+        //        return null;
+        //    }
+        //    newNotebook.Owner = newOwner;
+        //    newNotebook.CreationDate = DateTime.Now;
+        //    newNotebook.LastSavedDate = null;
+
+        //    return newNotebook;
+        //}
+
+        //public CLPPage CopyPageForNewOwner(CLPPage originalPage, Person newOwner)
+        //{
+        //    var newPage = originalPage.Clone() as CLPPage;
+        //    if (newPage == null)
+        //    {
+        //        return null;
+        //    }
+        //    newPage.Owner = newOwner;
+        //    newPage.CreationDate = DateTime.Now;
+
+        //    foreach (var pageObject in newPage.PageObjects)
+        //    {
+        //        pageObject.ParentPage = newPage;
+        //        if (pageObject.IsBackgroundInteractable)
+        //        {
+        //            pageObject.OwnerID = newOwner.ID;
+        //        }
+        //    }
+
+        //    foreach (var tag in newPage.Tags)
+        //    {
+        //        tag.ParentPage = newPage;
+        //    }
+
+        //    newPage.AfterDeserialization();
+
+        //    return newPage;
+        //}
+
+        //public List<CLPPage> LoadOrCopyPagesForNotebook(Notebook notebook, Notebook authoredNotebook, List<string> pageIDs, bool includeSubmissions)
+        //{
+        //    var pages = new List<CLPPage>();
+
+        //    //var notebookNameComposite =
+        //    //    GetAvailableNotebookNameCompositesInCache(CurrentLocalCacheDirectory).FirstOrDefault(x => x.ID == notebook.ID && x.OwnerID == notebook.Owner.ID);
+
+        //    //var pageNameComposites = new List<PageNameComposite>();
+        //    //if (notebookNameComposite != null)
+        //    //{
+        //    //    var pagesFolderPath = Path.Combine(notebookNameComposite.NotebookFolderPath, "Pages");
+        //    //    pageNameComposites = Directory.EnumerateFiles(pagesFolderPath, "*.xml").Select(PageNameComposite.ParseFilePath).Where(x => pageIDs.Contains(x.ID)).ToList();
+        //    //}
+
+        //    //foreach (var pageID in pageIDs)
+        //    //{
+        //    //    var pageNameComposite = pageNameComposites.FirstOrDefault(x => x.ID == pageID && x.VersionIndex == "0");
+        //    //    if (pageNameComposite == null)
+        //    //    {
+        //    //        if (authoredNotebook == null)
+        //    //        {
+        //    //            continue;
+        //    //        }
+        //    //        var authoredPage = authoredNotebook.Pages.FirstOrDefault(x => x.ID == pageID && x.VersionIndex == 0);
+        //    //        if (authoredPage == null)
+        //    //        {
+        //    //            continue;
+        //    //        }
+
+        //    //        var newPage = CopyPageForNewOwner(authoredPage, notebook.Owner);
+        //    //        if (newPage == null)
+        //    //        {
+        //    //            continue;
+        //    //        }
+
+        //    //        pages.Add(newPage);
+        //    //        continue;
+        //    //    }
+
+        //    //    var page = CLPPage.LoadLocalPage(pageNameComposite.FullPageFilePath);
+        //    //    if (page == null)
+        //    //    {
+        //    //        continue;
+        //    //    }
+
+        //    //    if (includeSubmissions)
+        //    //    {
+        //    //        var id = pageID;
+        //    //        foreach (var submissionComposite in pageNameComposites.Where(x => x.ID == id && x.VersionIndex != "0"))
+        //    //        {
+        //    //            var submission = CLPPage.LoadLocalPage(submissionComposite.FullPageFilePath);
+        //    //            if (submission == null)
+        //    //            {
+        //    //                continue;
+        //    //            }
+        //    //            page.Submissions.Add(submission);
+        //    //        }
+        //    //    }
+
+        //    //    pages.Add(page);
+        //    //}
+
+        //    return pages;
+        //} 
+
+        #endregion //Old ClassPeriod Methods
 
         #endregion //Methods
     }

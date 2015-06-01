@@ -955,9 +955,9 @@ namespace CLP.Entities
 
         public bool IsCached { get; set; }
 
-        public void ToXML(string pageFilePath, bool serializeStrokes = true)
+        public void ToXML(string pageFilePath, bool serializeInkStrokes = true)
         {
-            if (serializeStrokes)
+            if (serializeInkStrokes)
             {
                 SerializedStrokes = StrokeDTO.SaveInkStrokes(InkStrokes);
                 History.SerializedTrashedInkStrokes = StrokeDTO.SaveInkStrokes(History.TrashedInkStrokes);
@@ -978,11 +978,31 @@ namespace CLP.Entities
             IsCached = true;
         }
 
-        public void SaveToXML(string folderPath)
+        public void SaveToXML(string folderPath, bool serializeInkStrokes = true)
         {
             var nameComposite = PageNameComposite.ParsePage(this);
             var filePath = Path.Combine(folderPath, nameComposite.ToFileName() + ".xml");
-            ToXML(filePath);
+            ToXML(filePath, serializeInkStrokes);
+
+            //if(page.PageThumbnail == null)
+            //{
+            //    return;
+            //}
+
+            //var thumbnailsFolderPath = Path.Combine(folderPath, "Thumbnails");
+            //if(!Directory.Exists(thumbnailsFolderPath))
+            //{
+            //    Directory.CreateDirectory(thumbnailsFolderPath);
+            //}
+            //var thumbnailFilePath = Path.Combine(thumbnailsFolderPath, nameComposite.ToFileName() + ".png");
+
+            //var pngEncoder = new PngBitmapEncoder();
+            //pngEncoder.Frames.Add(BitmapFrame.Create(page.PageThumbnail as BitmapSource));
+            //using(var outputStream = new MemoryStream())
+            //{
+            //    pngEncoder.Save(outputStream);
+            //    File.WriteAllBytes(thumbnailFilePath, outputStream.ToArray());
+            //}
         }
 
         public static CLPPage LoadFromXML(string pageFilePath)
