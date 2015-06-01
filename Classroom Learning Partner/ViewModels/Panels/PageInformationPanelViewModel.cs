@@ -934,7 +934,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             var arraysOnPage = CurrentPage.PageObjects.OfType<CLPArray>().ToList();
             var inkOnPage = CurrentPage.InkStrokes;
-            var debug = false;
+            var debug = true;
 
             //Makes .txt file to store data in
             var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
@@ -1025,14 +1025,14 @@ namespace Classroom_Learning_Partner.ViewModels
                             var prev_height = prevStroke.GetBounds().Height;
                             var curr_y = inkStroke.GetBounds().Y;
                             var curr_height = inkStroke.GetBounds().Height;
+
+                            //Check if in the same row as previous stroke
                             if (debug)
                             {
-                                var prevBound = new Rect(prevStroke.GetBounds().X, prevStroke.GetBounds().Y, prevStroke.GetBounds().Width, prevStroke.GetBounds().Height);
+                                var prevBound = new Rect(xpos, prevStroke.GetBounds().Y - 0.2 * height, width, 1.4 * height);
                                 CurrentPage.AddBoundary(prevBound);
                                 PageHistory.UISleep(800);
                             }
-
-                            //Check if in the same row as previous stroke
                             if ((curr_y >= prev_y - 0.2 * height) && (curr_y + curr_height <= prev_y + 1.2 * height))
                             {
                                 row = prevRow;
@@ -1040,10 +1040,20 @@ namespace Classroom_Learning_Partner.ViewModels
                             }
 
                             //Check if in row after previous stroke
-                            else if (curr_y >= prev_y + 0.8 * height && curr_y + curr_height <= prev_y + 2.2 * height)
+                            else
                             {
-                                row = prevRow + 1;
-                                iterate = false;
+                                if (debug)
+                                {
+                                    CurrentPage.ClearBoundaries();
+                                    var nextBound = new Rect(xpos, prevStroke.GetBounds().Y + 0.8*height, width, 1.4*height);
+                                    CurrentPage.AddBoundary(nextBound);
+                                    PageHistory.UISleep(800);
+                                }
+                                if (curr_y >= prev_y + 0.8 * height && curr_y + curr_height <= prev_y + 2.2 * height)
+                                {
+                                    row = prevRow + 1;
+                                    iterate = false;
+                                }
                             }
                         }
 
