@@ -141,7 +141,7 @@
                     Height="30"
                     Margin="-20 40 0 0"
                     Cursor="Hand"
-                    Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}"
+                    Visibility="Collapsed"
                     Command="{Binding ReplayHistoryCommand}"
                     VerticalAlignment="Top">
                 <Button.Template>
