@@ -234,7 +234,8 @@
 
             <customControls:RibbonButton Text="Exit Multi Display"
                                          Command="{Binding ExitMultiDisplayCommand}"
-                                         LargeImageSource="pack://application:,,,/Resources/Images/Displays32.png" />
+                                         LargeImageSource="pack://application:,,,/Resources/Images/Displays32.png"
+                                         Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
 
             <customControls:ToggleRibbonButton UnCheckedText="Show Displays"
                                                CheckedText="Hide Displays"
