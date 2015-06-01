@@ -18,7 +18,7 @@
                   ResizeMode="CanResize"
                   SizeToContent="Manual"
                   WindowStartupLocation="CenterScreen"
-                  WindowState="Normal"
+                  WindowState="Maximized"
                   MinWidth="300"
                   MinHeight="300">
     

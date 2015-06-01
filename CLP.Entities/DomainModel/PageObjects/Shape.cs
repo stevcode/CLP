@@ -31,6 +31,7 @@ namespace CLP.Entities
             : base(parentPage)
         {
             ShapeType = shapeType;
+            
             switch (shapeType)
             {
                 case ShapeType.Rectangle:
@@ -110,7 +111,7 @@ namespace CLP.Entities
 
         public override bool IsBackgroundInteractable
         {
-            get { return false; }
+            get { return true; }
         }
 
         public override IPageObject Duplicate()
