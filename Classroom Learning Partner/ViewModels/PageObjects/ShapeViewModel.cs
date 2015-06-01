@@ -19,6 +19,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public ShapeViewModel(Shape shape)
         {
             PageObject = shape;
+            PageObject.IsManipulatableByNonCreator = true;
 
             ResizeShapeCommand = new Command<DragDeltaEventArgs>(OnResizeShapeCommandExecute);
             DuplicateShapeCommand = new Command(OnDuplicateShapeCommandExecute);

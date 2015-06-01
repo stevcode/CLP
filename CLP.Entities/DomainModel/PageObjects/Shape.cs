@@ -31,6 +31,7 @@ namespace CLP.Entities
             : base(parentPage)
         {
             ShapeType = shapeType;
+            
             switch (shapeType)
             {
                 case ShapeType.Rectangle:
