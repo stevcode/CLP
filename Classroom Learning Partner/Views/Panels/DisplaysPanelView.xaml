@@ -58,8 +58,7 @@
 
             <Button Grid.Row="2"
                     VerticalAlignment="Bottom"
-                    Height="32"
-                    Command="{Binding AddColumnDisplayCommand}">
+                    Height="32">
                 New Column Display
             </Button>
 
