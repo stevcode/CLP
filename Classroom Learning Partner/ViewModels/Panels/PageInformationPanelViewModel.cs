@@ -955,13 +955,13 @@ namespace Classroom_Learning_Partner.ViewModels
             foreach (var array in arraysOnPage)
             {
                 var skipCountStrokes = new Dictionary<int, StrokeCollection>();
-                var prevStroke = inkOnPage[0];
-                var prevRow = 0;
+                Stroke prevStroke = null;
+                int prevRow = -2;
 
                 foreach (var inkStroke in inkOnPage)
                 {
                     //Thickens ink stroke in consideration
-                    if (debug == true)
+                    if (debug)
                     {
                         inkStroke.DrawingAttributes.Height *= 2;
                         inkStroke.DrawingAttributes.Width *= 2;
@@ -969,11 +969,8 @@ namespace Classroom_Learning_Partner.ViewModels
                     }
 
                     //Checks if strokes fall inside array grid
-                    var xpos = array.XPosition + array.LabelLength + array.ArrayWidth;
-                    var width = 2*array.LabelLength;
-                    var height = array.GridSquareSize;
                     var arrBound = new Rect(array.XPosition+array.LabelLength, array.YPosition+array.LabelLength, array.ArrayWidth, array.ArrayHeight);
-                    if (debug == true)
+                    if (debug)
                     {
                         CurrentPage.AddBoundary(arrBound);
                         PageHistory.UISleep(800);
@@ -982,7 +979,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     if (inkStroke.HitTest(arrBound, 80))
                     {
                         //Thickens stroke to indicate match
-                        if (debug == true)
+                        if (debug)
                         {
                             inkStroke.DrawingAttributes.Height *= 2;
                             inkStroke.DrawingAttributes.Width *= 2;
@@ -995,7 +992,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         }
                         skipCountStrokes[-1].Add(inkStroke);
 
-                        if (debug == true)
+                        if (debug)
                         {
                             Console.WriteLine("{0},{1}", inkStroke.GetStrokeID(), -1);
                             PageHistory.UISleep(1500);
@@ -1010,38 +1007,55 @@ namespace Classroom_Learning_Partner.ViewModels
                     //Checks if strokes align with array rows
                     else
                     {
-                        //Creates stroke bound
+                        //Defines location variables
+                        var xpos = array.XPosition + array.LabelLength + array.ArrayWidth;
+                        var width = 2 * array.LabelLength;
+                        var height = array.GridSquareSize;
+
+                        //Creates current ink stroke's bounds
                         CurrentPage.ClearBoundaries();
                         var strokeBoundFixed = new Rect(inkStroke.GetBounds().X, inkStroke.GetBounds().Y, inkStroke.GetBounds().Width, inkStroke.GetBounds().Height);
                         var row = -2;
+                        bool iterate = true;
 
-                        //Check if in the same row as previous stroke
-                        var prev_y = prevStroke.GetBounds().Y;
-                        var prev_height = prevStroke.GetBounds().Height;
-                        var curr_y = inkStroke.GetBounds().Y;
-                        var curr_height = inkStroke.GetBounds().Height;
-                        if (debug == true)
+                        //Creates previous ink stroke's bounds
+                        if (prevStroke != null)
                         {
-                            var prevBound = new Rect(prevStroke.GetBounds().X, prevStroke.GetBounds().Y, prevStroke.GetBounds().Width, prevStroke.GetBounds().Height);
-                            CurrentPage.AddBoundary(prevBound);
-                            PageHistory.UISleep(800);
-                        }
-                        if (curr_y >= prev_y - 0.2*height && curr_y+curr_height <= prev_y + 1.2*height)
-                            row = prevRow;
+                            var prev_y = prevStroke.GetBounds().Y;
+                            var prev_height = prevStroke.GetBounds().Height;
+                            var curr_y = inkStroke.GetBounds().Y;
+                            var curr_height = inkStroke.GetBounds().Height;
+                            if (debug)
+                            {
+                                var prevBound = new Rect(prevStroke.GetBounds().X, prevStroke.GetBounds().Y, prevStroke.GetBounds().Width, prevStroke.GetBounds().Height);
+                                CurrentPage.AddBoundary(prevBound);
+                                PageHistory.UISleep(800);
+                            }
 
-                        //Check if in row after previous stroke
-                        else if (curr_y >= prev_y + 0.8*height && curr_y+curr_height <= prev_y + 2.2*height)
-                            row = prevRow + 1;
+                            //Check if in the same row as previous stroke
+                            if ((curr_y >= prev_y - 0.2 * height) && (curr_y + curr_height <= prev_y + 1.2 * height))
+                            {
+                                row = prevRow;
+                                iterate = false;
+                            }
+
+                            //Check if in row after previous stroke
+                            else if (curr_y >= prev_y + 0.8 * height && curr_y + curr_height <= prev_y + 2.2 * height)
+                            {
+                                row = prevRow + 1;
+                                iterate = false;
+                            }
+                        }
 
                         //Iterates over other array rows
-                        else
+                        if (iterate)
                         {
                             for (int i = 0; i < array.Rows; i++)
                             {
                                 //Creates array row bound
                                 var ypos = array.YPosition + array.LabelLength + (array.GridSquareSize * i);
                                 var rectBound = new Rect(xpos, ypos - 0.1 * height, 1.5 * width, 1.2 * height);
-                                if (debug == true)
+                                if (debug)
                                 {
                                     CurrentPage.ClearBoundaries();
                                     CurrentPage.AddBoundary(rectBound);
@@ -1054,7 +1068,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                 var intersectArea = strokeBound.Height * strokeBound.Width;
                                 var strokeArea = strokeBoundFixed.Height * strokeBoundFixed.Width;
                                 var percentIntersect = 100 * intersectArea / strokeArea;
-                                if (debug == true)
+                                if (debug)
                                     Console.WriteLine("{0}, {1}, {2}", inkStroke.GetStrokeID(), i, percentIntersect);
 
                                 //Checks if 80% inside row
@@ -1071,7 +1085,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         if (row > -2)
                         {
                             //Thickens stroke to indicate match
-                            if (debug == true)
+                            if (debug)
                             {
                                 inkStroke.DrawingAttributes.Height *= 2;
                                 inkStroke.DrawingAttributes.Width *= 2;
@@ -1088,20 +1102,20 @@ namespace Classroom_Learning_Partner.ViewModels
                             prevRow = row;
 
                             //Clears visual markers
-                            if (debug == true)
+                            if (debug)
                             {
                                 inkStroke.DrawingAttributes.Height /= 2;
                                 inkStroke.DrawingAttributes.Width /= 2;
                                 CurrentPage.ClearBoundaries();
                             }
                         }
-                        if (debug == true)
+                        if (debug)
                         {
                             CurrentPage.ClearBoundaries();
                         }
 
                     }
-                    if (debug == true)
+                    if (debug)
                     {
                         inkStroke.DrawingAttributes.Height /= 2;
                         inkStroke.DrawingAttributes.Width /= 2;
