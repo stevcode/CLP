@@ -121,25 +121,25 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             PleaseWaitHelper.Show(() => LoadedNotebookService.OpenLocalNotebook(SelectedNotebook, SelectedCacheDirectory, IsIncludeSubmissionsChecked), null, "Loading Notebook");
 
-            //if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Student)
-            //{
-            //    return;
-            //}
+            if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Student)
+            {
+                return;
+            }
 
-            //if (App.Network.InstructorProxy == null)
-            //{
-            //    return;
-            //}
+            if (App.Network.InstructorProxy == null)
+            {
+                return;
+            }
 
-            //var connectionString = App.Network.InstructorProxy.StudentLogin(App.MainWindowViewModel.CurrentUser.FullName,
-            //                                         App.MainWindowViewModel.CurrentUser.ID,
-            //                                         App.Network.CurrentMachineName,
-            //                                         App.Network.CurrentMachineAddress);
+            var connectionString = App.Network.InstructorProxy.StudentLogin(App.MainWindowViewModel.CurrentUser.FullName,
+                                                     App.MainWindowViewModel.CurrentUser.ID,
+                                                     App.Network.CurrentMachineName,
+                                                     App.Network.CurrentMachineAddress);
 
-            //if (connectionString == "connected")
-            //{
-            //    App.MainWindowViewModel.MajorRibbon.ConnectionStatus = ConnectionStatuses.LoggedIn;
-            //}
+            if (connectionString == "connected")
+            {
+                App.MainWindowViewModel.MajorRibbon.ConnectionStatus = ConnectionStatuses.LoggedIn;
+            }
         }
 
         private bool OnOpenNotebookCanExecute() { return SelectedNotebook != null; }
