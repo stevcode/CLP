@@ -190,7 +190,8 @@ namespace Classroom_Learning_Partner
                                                                                                                 {
                                                                                                                     ID = displayID,
                                                                                                                     DisplayNumber = displayNumber,
-                                                                                                                    NotebookID = notebookWorkspaceViewModel.Notebook.ID
+                                                                                                                    NotebookID = notebookWorkspaceViewModel.Notebook.ID,
+                                                                                                                    ParentNotebook = notebookWorkspaceViewModel.Notebook
                                                                                                                 };
                                                                                         newGridDisplay.AddPageToDisplay(page);
                                                                                         notebookWorkspaceViewModel.Notebook.Displays.Add(newGridDisplay);
