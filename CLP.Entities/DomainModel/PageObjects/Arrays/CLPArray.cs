@@ -38,7 +38,7 @@ namespace CLP.Entities
         public CLPArray(CLPPage parentPage, int columns, int rows, ArrayTypes arrayType)
             : base(parentPage, columns, rows)
         {
-            IsGridOn = rows < 26 && columns < 26;
+            IsGridOn = rows < 40 && columns < 40;
             ArrayType = arrayType;
         }
 
