@@ -134,6 +134,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //TODO: Better Icons
             _insertSquareButton = new RibbonButton("Square", "pack://application:,,,/Images/AddSquare.png", AddPageObjectToPageCommand, "SQUARE");
             _insertCircleButton = new RibbonButton("Circle", "pack://application:,,,/Images/AddCircle.png", AddPageObjectToPageCommand, "CIRCLE");
+            _insertTriangleButton = new RibbonButton("Triangle", "pack://application:,,,/Images/AddTriangle.png", AddPageObjectToPageCommand, "TRIANGLE");
             _insertHorizontalLineButton = new RibbonButton("Horizontal Line", "pack://application:,,,/Images/HorizontalLineIcon.png", AddPageObjectToPageCommand, "HORIZONTALLINE");
             _insertVerticalLineButton = new RibbonButton("Vertical Line", "pack://application:,,,/Images/VerticalLineIcon.png", AddPageObjectToPageCommand, "VERTICALLINE");
             _insertProtractorButton = new RibbonButton("Protractor", "pack://application:,,,/Images/Protractor64.png", AddPageObjectToPageCommand, "PROTRACTOR");
@@ -281,6 +282,7 @@ namespace Classroom_Learning_Partner.ViewModels
         //Shapes
         private RibbonButton _insertSquareButton;
         private RibbonButton _insertCircleButton;
+        private RibbonButton _insertTriangleButton;
         private RibbonButton _insertHorizontalLineButton;
         private RibbonButton _insertVerticalLineButton;
         private RibbonButton _insertProtractorButton;
@@ -703,6 +705,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 case "CIRCLE":
                     ShapeViewModel.AddShapeToPage(CurrentPage, ShapeType.Ellipse);
                     break;
+                case "TRIANGLE":
+                    ShapeViewModel.AddShapeToPage(CurrentPage, ShapeType.Triangle);
+                    break;
                 case "HORIZONTALLINE":
                     ShapeViewModel.AddShapeToPage(CurrentPage, ShapeType.HorizontalLine);
                     break;
@@ -762,6 +767,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //Buttons.Add(Separater);
             //Buttons.Add(_insertSquareButton);
             //Buttons.Add(_insertCircleButton);
+            Buttons.Add(_insertTriangleButton);
             //Buttons.Add(_insertHorizontalLineButton);
             //Buttons.Add(_insertVerticalLineButton);
             //Buttons.Add(_insertProtractorButton);

@@ -1054,6 +1054,7 @@
     <Content Include="External Libraries\System.Reactive.Providers.dll" />
     <Content Include="External Libraries\System.Reactive.Windows.Threading.dll" />
     <Content Include="External Libraries\System.Windows.Interactivity.dll" />
+    <Resource Include="Images\AddTriangle.png" />
     <Resource Include="Resources\Temp\Lock.png" />
     <Resource Include="Resources\Temp\Unlock.png" />
     <Resource Include="Resources\Images\Marker128.png" />
