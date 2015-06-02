@@ -934,7 +934,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             var arraysOnPage = CurrentPage.PageObjects.OfType<CLPArray>().ToList();
             var inkOnPage = CurrentPage.InkStrokes;
-            var debug = true;
+            var debug = false;
 
             //Makes .txt file to store data in
             var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
@@ -1018,7 +1018,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         var row = -2;
                         bool iterate = true;
 
-                        //Creates previous ink stroke's bounds
+                        //Checks previous ink stroke's bounds
                         if (prevStroke != null)
                         {
                             var prev_y = prevStroke.GetBounds().Y;
@@ -1026,14 +1026,24 @@ namespace Classroom_Learning_Partner.ViewModels
                             var curr_y = inkStroke.GetBounds().Y;
                             var curr_height = inkStroke.GetBounds().Height;
 
-                            //Check if in the same row as previous stroke
+                            //Creates previous stroke's row bound
+                            var prevBound = new Rect(xpos, prevStroke.GetBounds().Y - 0.1 * height, 1.5 * width, 1.2 * height);
                             if (debug)
                             {
-                                var prevBound = new Rect(xpos, prevStroke.GetBounds().Y - 0.2 * height, width, 1.4 * height);
+                                CurrentPage.ClearBoundaries();
                                 CurrentPage.AddBoundary(prevBound);
                                 PageHistory.UISleep(800);
                             }
-                            if ((curr_y >= prev_y - 0.2 * height) && (curr_y + curr_height <= prev_y + 1.2 * height))
+
+                            //Finds intersection
+                            var strokeBound = new Rect(inkStroke.GetBounds().X, inkStroke.GetBounds().Y, inkStroke.GetBounds().Width, inkStroke.GetBounds().Height);
+                            strokeBound.Intersect(prevBound);
+                            var intersectArea = strokeBound.Height * strokeBound.Width;
+                            var strokeArea = strokeBoundFixed.Height * strokeBoundFixed.Width;
+                            var percentIntersect = 100 * intersectArea / strokeArea;
+
+                            //Checks if 80% inside row
+                            if (percentIntersect >= 80 && percentIntersect <= 100)
                             {
                                 row = prevRow;
                                 iterate = false;
@@ -1042,14 +1052,24 @@ namespace Classroom_Learning_Partner.ViewModels
                             //Check if in row after previous stroke
                             else
                             {
+                                //Creates previous stroke's row bound
+                                var nextBound = new Rect(xpos, prevStroke.GetBounds().Y + 0.9 * height, 1.5*width, 1.2 * height);
                                 if (debug)
                                 {
                                     CurrentPage.ClearBoundaries();
-                                    var nextBound = new Rect(xpos, prevStroke.GetBounds().Y + 0.8*height, width, 1.4*height);
                                     CurrentPage.AddBoundary(nextBound);
                                     PageHistory.UISleep(800);
                                 }
-                                if (curr_y >= prev_y + 0.8 * height && curr_y + curr_height <= prev_y + 2.2 * height)
+
+                                //Finds intersection
+                                strokeBound = new Rect(inkStroke.GetBounds().X, inkStroke.GetBounds().Y, inkStroke.GetBounds().Width, inkStroke.GetBounds().Height);
+                                strokeBound.Intersect(nextBound);
+                                intersectArea = strokeBound.Height * strokeBound.Width;
+                                strokeArea = strokeBoundFixed.Height * strokeBoundFixed.Width;
+                                percentIntersect = 100 * intersectArea / strokeArea;
+
+                                //Checks if 80% inside row
+                                if (percentIntersect >= 80 && percentIntersect <= 100)
                                 {
                                     row = prevRow + 1;
                                     iterate = false;
