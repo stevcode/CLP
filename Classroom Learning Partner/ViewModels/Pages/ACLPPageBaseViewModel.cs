@@ -477,7 +477,11 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if (History.RedoItems.Any())
             {
-                MessageBox.Show("Can't make changes unless at the end of the history playback.");
+                InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
+                InkStrokes.Add(e.Removed);
+                InkStrokes.Remove(e.Added);
+                MessageBox.Show("Sorry, you need to play all the way to the end and then write.");
+                InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
                 return;
             }
 

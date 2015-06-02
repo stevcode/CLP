@@ -389,6 +389,7 @@
             </Button>
 
             <Slider Grid.Column="1"
+                    IsHitTestVisible="False"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Style="{StaticResource AnimationSliderStyle}"

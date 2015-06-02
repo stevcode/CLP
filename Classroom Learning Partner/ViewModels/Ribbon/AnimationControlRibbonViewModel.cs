@@ -341,7 +341,7 @@ namespace Classroom_Learning_Partner.ViewModels
             if (page.History.IsAnimation)
             {
                 var eraseRedoAnimation =
-                    MessageBox.Show("Do you wish to Record from this spot? If you do, any animation after this point will be erased!", "", MessageBoxButton.YesNo) ==
+                    MessageBox.Show("Do you want to erase the rest and start over from here?", "", MessageBoxButton.YesNo) ==
                     MessageBoxResult.Yes;
                 if (!eraseRedoAnimation)
                 {
