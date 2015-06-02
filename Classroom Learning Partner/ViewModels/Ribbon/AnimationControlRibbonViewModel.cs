@@ -527,9 +527,15 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
+            var pageObjectsToDelete = CurrentPage.PageObjects.Where(p => p.CreatorID == App.MainWindowViewModel.CurrentUser.ID).ToList();
+            foreach (var pageObject in pageObjectsToDelete)
+            {
+                CurrentPage.PageObjects.Remove(pageObject);
+            }
+
             CurrentPage.InkStrokes.Clear();
-            CurrentPage.PageObjects.Clear();
             CurrentPage.History.ClearHistory();
+            RaisePropertyChanged("IsPlaybackEnabled");
         }
 
         /// <summary>
