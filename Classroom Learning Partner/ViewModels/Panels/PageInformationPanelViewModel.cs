@@ -944,7 +944,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 Directory.CreateDirectory(fileDirectory);
             }
-            var filePath = Path.Combine(fileDirectory, CurrentPage.Owner.FullName + CurrentPage.PageNumber +"_V4.txt");
+            var filePath = Path.Combine(fileDirectory, CurrentPage.Owner.FullName + CurrentPage.PageNumber +"_V5.txt");
             if (File.Exists(filePath))
             {
                 File.Delete(filePath);
@@ -960,6 +960,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 foreach (var inkStroke in inkOnPage)
                 {
+                    var row = -2;
                     //Thickens ink stroke in consideration
                     if (debug)
                     {
@@ -975,33 +976,9 @@ namespace Classroom_Learning_Partner.ViewModels
                         CurrentPage.AddBoundary(arrBound);
                         PageHistory.UISleep(800);
                     }
-
                     if (inkStroke.HitTest(arrBound, 80))
                     {
-                        //Thickens stroke to indicate match
-                        if (debug)
-                        {
-                            inkStroke.DrawingAttributes.Height *= 2;
-                            inkStroke.DrawingAttributes.Width *= 2;
-                        }
-
-                        //Adds stroke to dictionary
-                        if (!skipCountStrokes.ContainsKey(-1))
-                        {
-                            skipCountStrokes.Add(-1, new StrokeCollection());
-                        }
-                        skipCountStrokes[-1].Add(inkStroke);
-
-                        if (debug)
-                        {
-                            Console.WriteLine("{0},{1}", inkStroke.GetStrokeID(), -1);
-                            PageHistory.UISleep(1500);
-
-                            inkStroke.DrawingAttributes.Height /= 2;
-                            inkStroke.DrawingAttributes.Width /= 2;
-                            CurrentPage.ClearBoundaries();
-                        }
-
+                        row = -1;
                     }
 
                     //Checks if strokes align with array rows
@@ -1013,18 +990,16 @@ namespace Classroom_Learning_Partner.ViewModels
                         var height = array.GridSquareSize;
 
                         //Creates current ink stroke's bounds
-                        CurrentPage.ClearBoundaries();
                         var strokeBoundFixed = new Rect(inkStroke.GetBounds().X, inkStroke.GetBounds().Y, inkStroke.GetBounds().Width, inkStroke.GetBounds().Height);
-                        var row = -2;
                         bool iterate = true;
 
                         //Checks previous ink stroke's bounds
                         if (prevStroke != null)
                         {
                             var prev_y = prevStroke.GetBounds().Y;
-                            var prev_height = prevStroke.GetBounds().Height;
+                            //var prev_height = prevStroke.GetBounds().Height;
                             var curr_y = inkStroke.GetBounds().Y;
-                            var curr_height = inkStroke.GetBounds().Height;
+                            //var curr_height = inkStroke.GetBounds().Height;
 
                             //Creates previous stroke's row bound
                             var prevBound = new Rect(xpos, prevStroke.GetBounds().Y - 0.2 * height, 1.5 * width, 1.4 * height);
@@ -1098,8 +1073,8 @@ namespace Classroom_Learning_Partner.ViewModels
                                 var intersectArea = strokeBound.Height * strokeBound.Width;
                                 var strokeArea = strokeBoundFixed.Height * strokeBoundFixed.Width;
                                 var percentIntersect = 100 * intersectArea / strokeArea;
-                                if (debug)
-                                    Console.WriteLine("{0}, {1}, {2}", inkStroke.GetStrokeID(), i, percentIntersect);
+                                //if (debug)
+                                //    Console.WriteLine("{0}, {1}, {2}", inkStroke.GetStrokeID(), i, percentIntersect);
 
                                 //Checks if 80% inside row
                                 if (percentIntersect >= 80 && percentIntersect <= 100)
@@ -1107,46 +1082,38 @@ namespace Classroom_Learning_Partner.ViewModels
                                     row = i;
                                     break;
                                 }
-
                             }
                         }
+                    }
 
-                        //If stroke matched an array row
-                        if (row > -2)
-                        {
-                            //Thickens stroke to indicate match
-                            if (debug)
-                            {
-                                inkStroke.DrawingAttributes.Height *= 2;
-                                inkStroke.DrawingAttributes.Width *= 2;
-                                PageHistory.UISleep(800);
-                            }
 
-                            //Adds stroke to dictionary
-                            if (!skipCountStrokes.ContainsKey(row))
-                            {
-                                skipCountStrokes.Add(row, new StrokeCollection());
-                            }
-                            skipCountStrokes[row].Add(inkStroke);
-                            prevStroke = inkStroke;
-                            prevRow = row;
+                    //If stroke matched an array row
+                    if (row > -2)
+                    {
+                        Console.WriteLine("Stroke added to row {0}", row);
 
-                            //Clears visual markers
-                            if (debug)
-                            {
-                                inkStroke.DrawingAttributes.Height /= 2;
-                                inkStroke.DrawingAttributes.Width /= 2;
-                                CurrentPage.ClearBoundaries();
-                            }
-                        }
+                        //Thickens stroke to indicate match
                         if (debug)
                         {
-                            CurrentPage.ClearBoundaries();
+                            inkStroke.DrawingAttributes.Height *= 2;
+                            inkStroke.DrawingAttributes.Width *= 2;
+                            PageHistory.UISleep(800);
                         }
 
+                        //Adds stroke to dictionary
+                        if (!skipCountStrokes.ContainsKey(row))
+                        {
+                            skipCountStrokes.Add(row, new StrokeCollection());
+                        }
+                        skipCountStrokes[row].Add(inkStroke);
+                        prevStroke = inkStroke;
+                        prevRow = row;
                     }
+
+                    //Clears visual markers
                     if (debug)
                     {
+                        CurrentPage.ClearBoundaries();
                         inkStroke.DrawingAttributes.Height /= 2;
                         inkStroke.DrawingAttributes.Width /= 2;
                     }
@@ -1155,7 +1122,6 @@ namespace Classroom_Learning_Partner.ViewModels
                 //Writes row number and ink interpretation to txt file
                 foreach (var row in skipCountStrokes.Keys)
                 {
-                    //var interpretation = CLPPageViewModel.InterpretStrokes(skipCountStrokes[row]);
                     var interpretation = InkInterpreter.StrokesToBestGuessText(skipCountStrokes[row]);
                     File.AppendAllText(filePath, interpretation + "\tRow " + row.ToString() + Environment.NewLine);
                     Console.WriteLine("{0},{1}", row, interpretation);
