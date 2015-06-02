@@ -944,7 +944,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 Directory.CreateDirectory(fileDirectory);
             }
-            var filePath = Path.Combine(fileDirectory, CurrentPage.Owner.FullName + CurrentPage.PageNumber +".txt");
+            var filePath = Path.Combine(fileDirectory, CurrentPage.Owner.FullName + CurrentPage.PageNumber +"_V4.txt");
             if (File.Exists(filePath))
             {
                 File.Delete(filePath);
@@ -1027,7 +1027,7 @@ namespace Classroom_Learning_Partner.ViewModels
                             var curr_height = inkStroke.GetBounds().Height;
 
                             //Creates previous stroke's row bound
-                            var prevBound = new Rect(xpos, prevStroke.GetBounds().Y - 0.1 * height, 1.5 * width, 1.2 * height);
+                            var prevBound = new Rect(xpos, prevStroke.GetBounds().Y - 0.2 * height, 1.5 * width, 1.4 * height);
                             if (debug)
                             {
                                 CurrentPage.ClearBoundaries();
@@ -1053,7 +1053,7 @@ namespace Classroom_Learning_Partner.ViewModels
                             else
                             {
                                 //Creates previous stroke's row bound
-                                var nextBound = new Rect(xpos, prevStroke.GetBounds().Y + 0.9 * height, 1.5*width, 1.2 * height);
+                                var nextBound = new Rect(xpos, prevStroke.GetBounds().Y + 0.8 * height, 1.5*width, 1.4 * height);
                                 if (debug)
                                 {
                                     CurrentPage.ClearBoundaries();
