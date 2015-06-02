@@ -480,7 +480,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
                 InkStrokes.Add(e.Removed);
                 InkStrokes.Remove(e.Added);
-                MessageBox.Show("Sorry, you need to play all the way to the end and then write.");
+                MessageBox.Show("Sorry, you need to play all the way to the end and then write.", "", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                 InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
                 return;
             }
