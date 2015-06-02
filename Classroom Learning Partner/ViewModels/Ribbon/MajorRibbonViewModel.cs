@@ -750,11 +750,11 @@ namespace Classroom_Learning_Partner.ViewModels
             //Buttons.Add(_insertGeneralStampButton);
             //Buttons.Add(_insertGroupStampButton);
             //Buttons.Add(_insertNumberLineButton);
-            //Buttons.Add(_insertArrayButton);
+            Buttons.Add(_insertArrayButton);
             //Buttons.Add(_insert10x10ArrayButton);
             //Buttons.Add(_insertArrayCardButton);
             //Buttons.Add(_insertFactorCardButton);
-            Buttons.Add(_insertObscurableArrayButton);
+            //Buttons.Add(_insertObscurableArrayButton);
             //Buttons.Add(_insertPileButton);
             //Buttons.Add(_insertDivisionTemplateButton);
 
