@@ -345,6 +345,8 @@ namespace Classroom_Learning_Partner.ViewModels
                     MessageBoxResult.Yes;
                 if (!eraseRedoAnimation)
                 {
+                    IsRecording = false;
+                    RaisePropertyChanged("IsPlaybackEnabled");
                     return;
                 }
 
@@ -356,6 +358,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     page.History.UndoItems.Remove(firstUndoItem);
                 }
                 page.History.UpdateTicks();
+                RaisePropertyChanged("IsPlaybackEnabled");
             }
             else
             {
