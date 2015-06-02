@@ -979,6 +979,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     if (inkStroke.HitTest(arrBound, 80))
                     {
                         row = -1;
+                        Console.WriteLine("Passed internal grid test");
                     }
 
                     //Checks if strokes align with array rows
@@ -1016,12 +1017,14 @@ namespace Classroom_Learning_Partner.ViewModels
                             var intersectArea = strokeBound.Height * strokeBound.Width;
                             var strokeArea = strokeBoundFixed.Height * strokeBoundFixed.Width;
                             var percentIntersect = 100 * intersectArea / strokeArea;
+                            Console.WriteLine("Checking prevRow {0}. Percent intersect is {1}", prevRow, percentIntersect);
 
                             //Checks if 80% inside row
-                            if (percentIntersect >= 80 && percentIntersect <= 100)
+                            if (percentIntersect >= 80 && percentIntersect <= 101)
                             {
                                 row = prevRow;
                                 iterate = false;
+                                Console.WriteLine("Passed prevRow test");
                             }
 
                             //Check if in row after previous stroke
@@ -1042,12 +1045,14 @@ namespace Classroom_Learning_Partner.ViewModels
                                 intersectArea = strokeBound.Height * strokeBound.Width;
                                 strokeArea = strokeBoundFixed.Height * strokeBoundFixed.Width;
                                 percentIntersect = 100 * intersectArea / strokeArea;
+                                Console.WriteLine("Checking prevRow+1 {0}. Percent intersect is {1}", prevRow+1, percentIntersect);
 
                                 //Checks if 80% inside row
-                                if (percentIntersect >= 80 && percentIntersect <= 100)
+                                if (percentIntersect >= 80 && percentIntersect <= 101)
                                 {
                                     row = prevRow + 1;
                                     iterate = false;
+                                    Console.WriteLine("Passed prevRow+1 test");
                                 }
                             }
                         }
@@ -1055,6 +1060,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         //Iterates over other array rows
                         if (iterate)
                         {
+                            Console.WriteLine("Checking row iterations");
                             for (int i = 0; i < array.Rows; i++)
                             {
                                 //Creates array row bound
@@ -1077,7 +1083,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                 //    Console.WriteLine("{0}, {1}, {2}", inkStroke.GetStrokeID(), i, percentIntersect);
 
                                 //Checks if 80% inside row
-                                if (percentIntersect >= 80 && percentIntersect <= 100)
+                                if (percentIntersect >= 80 && percentIntersect <= 101)
                                 {
                                     row = i;
                                     break;
@@ -1090,7 +1096,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     //If stroke matched an array row
                     if (row > -2)
                     {
-                        Console.WriteLine("Stroke added to row {0}", row);
+                        Console.WriteLine("***Stroke added to row {0}***", row);
 
                         //Thickens stroke to indicate match
                         if (debug)
