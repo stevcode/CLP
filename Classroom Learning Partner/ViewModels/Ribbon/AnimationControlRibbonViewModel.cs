@@ -28,6 +28,8 @@ namespace Classroom_Learning_Partner.ViewModels
             RewindAnimationCommand = new Command(OnRewindAnimationCommandExecute);
             PlayAnimationCommand = new Command(OnPlayAnimationCommandExecute);
             SliderChangedCommand = new Command<RoutedPropertyChangedEventArgs<double>>(OnSliderChangedCommandExecute);
+            ClearAnimationPageCommand = new Command(OnClearAnimationPageCommandExecute);
+            UndoCommand = new Command(OnUndoCommandExecute, OnUndoCanExecute);
         }
 
         public override string Title
@@ -508,6 +510,40 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             CurrentPage.History.MoveToHistoryPoint(e.OldValue, e.NewValue);
+        }
+
+        /// <summary>
+        /// SUMMARY
+        /// </summary>
+        public Command ClearAnimationPageCommand { get; private set; }
+
+        private void OnClearAnimationPageCommandExecute()
+        {
+            if (MessageBox.Show("Are you sure you want clear the page of everything?", "Confirmation", MessageBoxButton.YesNo) == MessageBoxResult.No)
+            {
+                return;
+            }
+
+            CurrentPage.InkStrokes.Clear();
+            CurrentPage.PageObjects.Clear();
+            CurrentPage.History.ClearHistory();
+        }
+
+        /// <summary>
+        /// SUMMARY
+        /// </summary>
+        public Command UndoCommand { get; private set; }
+
+        private void OnUndoCommandExecute()
+        {
+            CurrentPage.History.Undo();
+            CurrentPage.History.RedoItems.Clear();
+        }
+
+        private bool OnUndoCanExecute()
+        {
+            return !CurrentPage.History.RedoItems.Any() &&
+                   CurrentPage.History.UndoItems.Any();
         }
 
         #endregion //Commands

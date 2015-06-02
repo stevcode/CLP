@@ -303,7 +303,16 @@
                     FontSize="12"
                     FontWeight="Bold"
                     Background="White"
-                    Command="{Binding ClearPageCommand}" />
+                    Command="{Binding ClearAnimationPageCommand}" />
+
+            <!--<Button Content="Undo"
+                    Margin="20 0"
+                    DockPanel.Dock="Right"
+                    Width="70"
+                    FontSize="12"
+                    FontWeight="Bold"
+                    Background="White"
+                    Command="{Binding UndoCommand}" />-->
 
         </DockPanel>
 
