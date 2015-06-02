@@ -126,6 +126,17 @@
                                  Fill="Transparent" Stroke="Black" StrokeThickness="3" />
                     </ControlTemplate>
 
+                    <ControlTemplate x:Key="TriangleTemplate">
+                        <Polygon DataContext="{Binding}"
+                                 Points="0,2 2,2 1,0"
+                                 Height="{Binding Height, Mode=TwoWay}"
+                                 Width="{Binding Width, Mode=TwoWay}"
+                                 Stretch="Uniform"
+                                 Fill="Transparent"
+                                 Stroke="Black"
+                                 StrokeThickness="3" />
+                    </ControlTemplate>
+
                     <ControlTemplate x:Key="HorizontalLineTemplate">
                         <Line DataContext="{Binding}"  
                               Width="{Binding Width, Mode=TwoWay}"
@@ -163,6 +174,13 @@
                             <!-- Ellipse trigger -->
                             <DataTrigger Binding="{Binding ShapeType}" Value="Ellipse">
                                 <Setter Property="Template" Value="{StaticResource EllipseTemplate}" />
+                            </DataTrigger>
+
+                            <!-- Triangle trigger -->
+                            <DataTrigger Binding="{Binding ShapeType}"
+                                         Value="Triangle">
+                                <Setter Property="Template"
+                                        Value="{StaticResource TriangleTemplate}" />
                             </DataTrigger>
 
                             <!-- HorizontalLine trigger -->
