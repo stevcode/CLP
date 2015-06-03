@@ -1071,6 +1071,9 @@ namespace Classroom_Learning_Partner.ViewModels
                         //Console.WriteLine("Checking row iterations");
                         for (int i = 0; i < array.Rows; i++)
                         {
+                            if (i == prevRow || i == prevRow + 1)
+                                continue;
+
                             //Creates array row bound
                             var ypos = array.YPosition + array.LabelLength + (array.GridSquareSize * i);
                             var rectBound = new Rect(curr_xpos, ypos - 0.1 * height, width, 1.2 * height);
