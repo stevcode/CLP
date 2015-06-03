@@ -76,7 +76,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 };
                 _toggleLabelsButton.Checked += toggleLabelsButton_Checked;
                 _toggleLabelsButton.Unchecked += toggleLabelsButton_Checked;
-        //        _contextButtons.Add(_toggleLabelsButton);
+                _contextButtons.Add(_toggleLabelsButton);
             }
 
             if (array.ArrayType == ArrayTypes.ObscurableArray)
