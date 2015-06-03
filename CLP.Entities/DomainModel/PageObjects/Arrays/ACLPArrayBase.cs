@@ -259,13 +259,28 @@ namespace CLP.Entities
         /// <summary>Signifies obscuring shape over Rows.</summary>
         public bool IsRowsObscured
         {
-            get { return HorizontalDivisions.Any(d => d.IsObscured); }
+            get
+            {
+                if (HorizontalDivisions == null)
+                {
+                    return false;
+                }
+                return HorizontalDivisions.Any(d => d.IsObscured);
+            }
         }
 
         /// <summary>Signifies obscuring shape over Columns.</summary>
         public bool IsColumnsObscured
         {
-            get { return VerticalDivisions.Any(d => d.IsObscured); }
+
+            get
+            {
+                if (VerticalDivisions == null)
+                {
+                    return false;
+                }
+                return VerticalDivisions.Any(d => d.IsObscured);
+            }
         }
 
         #endregion //Calculated Properties

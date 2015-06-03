@@ -31,6 +31,10 @@ namespace Classroom_Learning_Partner.ViewModels
             PageObject = array;
             PageInteractionService = DependencyResolver.Resolve<IPageInteractionService>();
 
+            if (array.AcceptedStrokeParentIDs == null)
+            {
+                array.AcceptedStrokeParentIDs = new List<string>();
+            }
             array.AcceptedStrokes = array.AcceptedStrokeParentIDs.Select(id => PageObject.ParentPage.GetStrokeByID(id)).Where(s => s != null).ToList();
 
             //Commands
