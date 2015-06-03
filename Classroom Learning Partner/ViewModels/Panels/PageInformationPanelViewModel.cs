@@ -934,7 +934,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             var arraysOnPage = CurrentPage.PageObjects.OfType<CLPArray>().ToList();
             var inkOnPage = CurrentPage.InkStrokes;
-            var debug = false;
+            var debug = true;
 
             //Makes .txt file to store data in
             var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
@@ -987,7 +987,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         //Defines location variables
                         var xpos = array.XPosition + array.LabelLength + array.ArrayWidth;
-                        var width = 2 * array.LabelLength;
+                        var width = 4.5 * array.LabelLength;
                         var height = array.GridSquareSize;
 
                         //Creates current ink stroke's bounds
@@ -1003,7 +1003,7 @@ namespace Classroom_Learning_Partner.ViewModels
                             //var curr_height = inkStroke.GetBounds().Height;
 
                             //Creates previous stroke's row bound
-                            var prevBound = new Rect(xpos, prevStroke.GetBounds().Y - 0.2 * height, 1.5 * width, 1.4 * height);
+                            var prevBound = new Rect(xpos, prevStroke.GetBounds().Y - 0.2 * height, width, 1.4 * height);
                             if (debug)
                             {
                                 CurrentPage.ClearBoundaries();
@@ -1031,7 +1031,7 @@ namespace Classroom_Learning_Partner.ViewModels
                             else
                             {
                                 //Creates previous stroke's row bound
-                                var nextBound = new Rect(xpos, prevStroke.GetBounds().Y + 0.8 * height, 1.5*width, 1.4 * height);
+                                var nextBound = new Rect(xpos, prevStroke.GetBounds().Y + 0.8 * height, width, 1.4 * height);
                                 if (debug)
                                 {
                                     CurrentPage.ClearBoundaries();
@@ -1065,7 +1065,7 @@ namespace Classroom_Learning_Partner.ViewModels
                             {
                                 //Creates array row bound
                                 var ypos = array.YPosition + array.LabelLength + (array.GridSquareSize * i);
-                                var rectBound = new Rect(xpos, ypos - 0.1 * height, 1.5 * width, 1.2 * height);
+                                var rectBound = new Rect(xpos, ypos - 0.1 * height, width, 1.2 * height);
                                 if (debug)
                                 {
                                     CurrentPage.ClearBoundaries();
@@ -1079,8 +1079,8 @@ namespace Classroom_Learning_Partner.ViewModels
                                 var intersectArea = strokeBound.Height * strokeBound.Width;
                                 var strokeArea = strokeBoundFixed.Height * strokeBoundFixed.Width;
                                 var percentIntersect = 100 * intersectArea / strokeArea;
-                                //if (debug)
-                                //    Console.WriteLine("{0}, {1}, {2}", inkStroke.GetStrokeID(), i, percentIntersect);
+                                if (debug)
+                                    Console.WriteLine("{0}, {1}, {2}", inkStroke.GetStrokeID(), i, percentIntersect);
 
                                 //Checks if 80% inside row
                                 if (percentIntersect >= 80 && percentIntersect <= 101)
@@ -1112,8 +1112,18 @@ namespace Classroom_Learning_Partner.ViewModels
                             skipCountStrokes.Add(row, new StrokeCollection());
                         }
                         skipCountStrokes[row].Add(inkStroke);
-                        prevStroke = inkStroke;
-                        prevRow = row;
+                        if (row > -1)
+                        {
+                            prevStroke = inkStroke;
+                            prevRow = row;
+                        }
+
+                        if (debug)
+                        {
+                            CurrentPage.ClearBoundaries();
+                            inkStroke.DrawingAttributes.Height /= 2;
+                            inkStroke.DrawingAttributes.Width /= 2;
+                        }
                     }
 
                     //Clears visual markers
@@ -1123,6 +1133,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         inkStroke.DrawingAttributes.Height /= 2;
                         inkStroke.DrawingAttributes.Width /= 2;
                     }
+
                 }
 
                 //Writes row number and ink interpretation to txt file
