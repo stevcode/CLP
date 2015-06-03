@@ -15,7 +15,7 @@ namespace Classroom_Learning_Partner.ViewModels
     /// <summary>
     /// UserControl view model.
     /// </summary>
-    [InterestedIn(typeof(RibbonViewModel))]
+    [InterestedIn(typeof(MainWindowViewModel))]
     public class DisplaysPanelViewModel : APanelBaseViewModel
     {
         #region Constructor
