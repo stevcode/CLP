@@ -767,7 +767,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //Buttons.Add(Separater);
             //Buttons.Add(_insertSquareButton);
             //Buttons.Add(_insertCircleButton);
-            Buttons.Add(_insertTriangleButton);
+            //Buttons.Add(_insertTriangleButton);
             //Buttons.Add(_insertHorizontalLineButton);
             //Buttons.Add(_insertVerticalLineButton);
             //Buttons.Add(_insertProtractorButton);
