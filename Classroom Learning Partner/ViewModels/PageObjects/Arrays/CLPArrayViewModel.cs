@@ -109,7 +109,7 @@ namespace Classroom_Learning_Partner.ViewModels
             _toggleGridLinesButton.Unchecked += toggleGridLinesButton_Checked;
             _contextButtons.Add(_toggleGridLinesButton);
 
-            _contextButtons.Add(new RibbonButton("Snap", "pack://application:,,,/Resources/Images/AdornerImages/ArraySnap64.png", SnapArrayCommand, null, true));
+   //         _contextButtons.Add(new RibbonButton("Snap", "pack://application:,,,/Resources/Images/AdornerImages/ArraySnap64.png", SnapArrayCommand, null, true));
             //    _contextButtons.Add(new RibbonButton("Size to Other Arrays", "pack://application:,,,/Resources/Images/AdornerImages/ArraySnap64.png", null, null, true));
         }
 
