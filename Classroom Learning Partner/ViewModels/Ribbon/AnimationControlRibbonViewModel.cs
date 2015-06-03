@@ -341,7 +341,7 @@ namespace Classroom_Learning_Partner.ViewModels
             if (page.History.IsAnimation)
             {
                 var eraseRedoAnimation =
-                    MessageBox.Show("Do you want to erase the rest and start over from here?", "", MessageBoxButton.YesNo, MessageBoxImage.Question) ==
+                    MessageBox.Show("Do you want to recording from here?", "", MessageBoxButton.YesNo, MessageBoxImage.Question) ==
                     MessageBoxResult.Yes;
                 if (!eraseRedoAnimation)
                 {
@@ -527,9 +527,15 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
+            var pageObjectsToDelete = CurrentPage.PageObjects.Where(p => p.CreatorID == App.MainWindowViewModel.CurrentUser.ID).ToList();
+            foreach (var pageObject in pageObjectsToDelete)
+            {
+                CurrentPage.PageObjects.Remove(pageObject);
+            }
+
             CurrentPage.InkStrokes.Clear();
-            CurrentPage.PageObjects.Clear();
             CurrentPage.History.ClearHistory();
+            RaisePropertyChanged("IsPlaybackEnabled");
         }
 
         /// <summary>
