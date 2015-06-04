@@ -994,25 +994,6 @@ namespace Classroom_Learning_Partner.ViewModels
                         Console.WriteLine("Failed general bound test");
 
                     /************************/
-                    /*   INSIDE ARRAY TEST  */
-                    /************************/
-                    if (cont)
-                    {
-                        var arrBound = new Rect(array.XPosition + array.LabelLength, array.YPosition + array.LabelLength, array.ArrayWidth, array.ArrayHeight);
-                        if (debug)
-                        {
-                            CurrentPage.ClearBoundaries();
-                            CurrentPage.AddBoundary(arrBound);
-                            PageHistory.UISleep(800);
-                        }
-                        if (inkStroke.HitTest(arrBound, 80))
-                        {
-                            row = -1;
-                            //curr_xpos = xpos - array.GridSquareSize;
-                        }
-                    }
-
-                    /************************/
                     /* PREVIOUS STROKE TEST */
                     /************************/
 
@@ -1047,7 +1028,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         if (percentIntersect >= 80 && percentIntersect <= 101)
                         {
                             row = prevRow;
-                            iterate = false;
+                            cont = false;
                             Console.WriteLine("Passed prevRow test");
                         }
 
@@ -1075,7 +1056,7 @@ namespace Classroom_Learning_Partner.ViewModels
                             if (percentIntersect >= 80 && percentIntersect <= 101)
                             {
                                 row = prevRow + 1;
-                                iterate = false;
+                                cont = false;
                                 Console.WriteLine("Passed prevRow+1 test");
                             }
                         }
@@ -1085,7 +1066,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     /*  ROW ITERATION TEST  */
                     /************************/
 
-                    if (cont && iterate)
+                    if (cont)
                     {
                         for (int i = 0; i < array.Rows; i++)
                         {
@@ -1113,11 +1094,30 @@ namespace Classroom_Learning_Partner.ViewModels
                             if (percentIntersect >= 80 && percentIntersect <= 101)
                             {
                                 row = i;
+                                cont = false;
                                 break;
                             }
                         }
                     }
 
+                    /************************/
+                    /*   INSIDE ARRAY TEST  */
+                    /************************/
+                    if (cont)
+                    {
+                        var arrBound = new Rect(array.XPosition + array.LabelLength, array.YPosition + array.LabelLength, array.ArrayWidth, array.ArrayHeight);
+                        if (debug)
+                        {
+                            CurrentPage.ClearBoundaries();
+                            CurrentPage.AddBoundary(arrBound);
+                            PageHistory.UISleep(800);
+                        }
+                        if (inkStroke.HitTest(arrBound, 80))
+                        {
+                            row = -1;
+                            //curr_xpos = xpos - array.GridSquareSize;
+                        }
+                    }
 
                     /***************/
                     /*  ROW MATCH  */
