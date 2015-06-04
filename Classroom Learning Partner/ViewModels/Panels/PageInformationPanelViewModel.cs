@@ -944,7 +944,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 Directory.CreateDirectory(fileDirectory);
             }
-            var filePath = Path.Combine(fileDirectory, CurrentPage.Owner.FullName + CurrentPage.PageNumber +"_V5.txt");
+            var filePath = Path.Combine(fileDirectory, CurrentPage.Owner.FullName + CurrentPage.PageNumber +"_V6.txt");
             if (File.Exists(filePath))
             {
                 File.Delete(filePath);
@@ -957,16 +957,16 @@ namespace Classroom_Learning_Partner.ViewModels
                 var skipCountStrokes = new Dictionary<int, StrokeCollection>();
                 Stroke prevStroke = null;
                 var prevRow = -2;
-                var prev_xpos = -2.0; 
+                //var prev_xpos = -2.0; 
 
                 foreach (var inkStroke in inkOnPage)
                 {
                     //Defines location variables
                     var row = -2;
-                    var xpos = array.XPosition + array.LabelLength + array.ArrayWidth;
-                    var width = 4.5 * array.LabelLength;
+                    var xpos = array.XPosition + array.LabelLength + array.ArrayWidth - array.GridSquareSize;
+                    var width = 4.5 * array.LabelLength + array.GridSquareSize;
                     var height = array.GridSquareSize;
-                    var curr_xpos = xpos;
+                    //var curr_xpos = xpos;
                     bool iterate = true;
 
                     //Thickens ink stroke in consideration
@@ -977,21 +977,31 @@ namespace Classroom_Learning_Partner.ViewModels
                         PageHistory.UISleep(800);
                     }
 
+                    /*******************************/
+                    /*   INSIDE GENERAL AREA TEST  */
+                    /*******************************/
+                    bool cont = false;
+                    var generalBound = new Rect(array.XPosition + array.LabelLength, array.YPosition + array.LabelLength, array.ArrayWidth + width, array.ArrayHeight);
+                    if (inkStroke.HitTest(generalBound, 90))
+                        cont = true;
+
                     /************************/
                     /*   INSIDE ARRAY TEST  */
                     /************************/
-                    var arrBound = new Rect(array.XPosition+array.LabelLength, array.YPosition+array.LabelLength, array.ArrayWidth, array.ArrayHeight);
-                    if (debug)
+                    if (cont)
                     {
-                        CurrentPage.AddBoundary(arrBound);
-                        PageHistory.UISleep(800);
+                        var arrBound = new Rect(array.XPosition + array.LabelLength, array.YPosition + array.LabelLength, array.ArrayWidth, array.ArrayHeight);
+                        if (debug)
+                        {
+                            CurrentPage.AddBoundary(arrBound);
+                            PageHistory.UISleep(800);
+                        }
+                        if (inkStroke.HitTest(arrBound, 80))
+                        {
+                            row = -1;
+                            //curr_xpos = xpos - array.GridSquareSize;
+                        }
                     }
-                    if (inkStroke.HitTest(arrBound, 80))
-                    {
-                        row = -1;
-                        curr_xpos = xpos - array.GridSquareSize;
-                    }
-
 
                     /************************/
                     /* PREVIOUS STROKE TEST */
@@ -1001,14 +1011,14 @@ namespace Classroom_Learning_Partner.ViewModels
                     var strokeBoundFixed = new Rect(inkStroke.GetBounds().X, inkStroke.GetBounds().Y, inkStroke.GetBounds().Width, inkStroke.GetBounds().Height);
 
                     //Checks previous ink stroke's bounds
-                    if (prevStroke != null && prev_xpos == curr_xpos)
+                    if (prevStroke != null && cont) //&& prev_xpos == curr_xpos)
                     {
                         var prev_y = prevStroke.GetBounds().Y;
                         //var prev_height = prevStroke.GetBounds().Height;
                         var curr_y = inkStroke.GetBounds().Y;
                         //var curr_height = inkStroke.GetBounds().Height;
 
-                        var prevBound = new Rect(prev_xpos, prevStroke.GetBounds().Y - 0.2 * height, width, 1.4 * height);
+                        var prevBound = new Rect(xpos, prevStroke.GetBounds().Y - 0.2 * height, width, 1.4 * height);
                         if (debug)
                         {
                             CurrentPage.ClearBoundaries();
@@ -1036,7 +1046,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         else
                         {
                             //Creates previous stroke's row bound
-                            var nextBound = new Rect(prev_xpos, prevStroke.GetBounds().Y + 0.8 * height, width, 1.4 * height);
+                            var nextBound = new Rect(xpos, prevStroke.GetBounds().Y + 0.8 * height, width, 1.4 * height);
                             if (debug)
                             {
                                 CurrentPage.ClearBoundaries();
@@ -1066,9 +1076,8 @@ namespace Classroom_Learning_Partner.ViewModels
                     /*  ROW ITERATION TEST  */
                     /************************/
 
-                    if (iterate)
+                    if (cont && iterate)
                     {
-                        //Console.WriteLine("Checking row iterations");
                         for (int i = 0; i < array.Rows; i++)
                         {
                             if (i == prevRow || i == prevRow + 1)
@@ -1076,9 +1085,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
                             //Creates array row bound
                             var ypos = array.YPosition + array.LabelLength + (array.GridSquareSize * i);
-                            var rectBound = new Rect(curr_xpos, ypos - 0.1 * height, width, 1.2 * height);
+                            var rectBound = new Rect(xpos, ypos - 0.1 * height, width, 1.2 * height);
                             if (debug)
                             {
+                                //Console.WriteLine("Checking row iterations");
                                 CurrentPage.ClearBoundaries();
                                 CurrentPage.AddBoundary(rectBound);
                                 PageHistory.UISleep(800);
@@ -1128,7 +1138,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         {
                             prevStroke = inkStroke;
                             prevRow = row;
-                            prev_xpos = curr_xpos;
+                            //prev_xpos = curr_xpos;
                         }
 
                         if (debug)
