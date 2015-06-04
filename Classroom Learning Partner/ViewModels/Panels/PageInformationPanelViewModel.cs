@@ -984,6 +984,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     var generalBound = new Rect(array.XPosition + array.LabelLength, array.YPosition + array.LabelLength, array.ArrayWidth + width, array.ArrayHeight);
                     if (debug)
                     {
+                        CurrentPage.ClearBoundaries();
                         CurrentPage.AddBoundary(generalBound);
                         PageHistory.UISleep(800);
                     }
@@ -1000,6 +1001,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         var arrBound = new Rect(array.XPosition + array.LabelLength, array.YPosition + array.LabelLength, array.ArrayWidth, array.ArrayHeight);
                         if (debug)
                         {
+                            CurrentPage.ClearBoundaries();
                             CurrentPage.AddBoundary(arrBound);
                             PageHistory.UISleep(800);
                         }
@@ -1087,9 +1089,6 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         for (int i = 0; i < array.Rows; i++)
                         {
-                            if (i == prevRow || i == prevRow + 1)
-                                continue;
-
                             //Creates array row bound
                             var ypos = array.YPosition + array.LabelLength + (array.GridSquareSize * i);
                             var rectBound = new Rect(xpos, ypos - 0.1 * height, width, 1.2 * height);
