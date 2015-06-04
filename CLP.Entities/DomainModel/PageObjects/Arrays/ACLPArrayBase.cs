@@ -169,7 +169,16 @@ namespace CLP.Entities
         /// <summary>List of horizontal divisions in the array.</summary>
         public ObservableCollection<CLPArrayDivision> HorizontalDivisions
         {
-            get { return GetValue<ObservableCollection<CLPArrayDivision>>(HorizontalDivisionsProperty); }
+            get
+            {
+                var val = GetValue<ObservableCollection<CLPArrayDivision>>(HorizontalDivisionsProperty);
+                if (val == null)
+                {
+                    return new ObservableCollection<CLPArrayDivision>();
+                }
+                
+                return val;
+            }
             set { SetValue(HorizontalDivisionsProperty, value); }
         }
 
@@ -180,7 +189,16 @@ namespace CLP.Entities
         /// <summary>List of vertical divisions in the array.</summary>
         public ObservableCollection<CLPArrayDivision> VerticalDivisions
         {
-            get { return GetValue<ObservableCollection<CLPArrayDivision>>(VerticalDivisionsProperty); }
+            get
+            {
+                var val = GetValue<ObservableCollection<CLPArrayDivision>>(VerticalDivisionsProperty);
+                if (val == null)
+                {
+                    return new ObservableCollection<CLPArrayDivision>();
+                }
+
+                return val;
+            }
             set { SetValue(VerticalDivisionsProperty, value); }
         }
 

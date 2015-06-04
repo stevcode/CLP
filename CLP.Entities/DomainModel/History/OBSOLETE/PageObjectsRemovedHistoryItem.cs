@@ -105,7 +105,7 @@ namespace CLP.Entities
         {
             try
             {
-                foreach(var pageObject in PageObjectIDs.Select(pageObjectID => ParentPage.History.GetPageObjectByID(pageObjectID)))
+                foreach (var pageObject in PageObjectIDs.Select(pageObjectID => ParentPage.GetVerifiedPageObjectInTrashByID(pageObjectID)))
                 {
                     ParentPage.History.TrashedPageObjects.Remove(pageObject);
                     ParentPage.PageObjects.Add(pageObject);
@@ -124,7 +124,7 @@ namespace CLP.Entities
         {
             try
             {
-                foreach(var pageObject in PageObjectIDs.Select(pageObjectID => ParentPage.GetPageObjectByID(pageObjectID)))
+                foreach (var pageObject in PageObjectIDs.Select(pageObjectID => ParentPage.GetVerifiedPageObjectOnPageByID(pageObjectID)))
                 {
                     ParentPage.PageObjects.Remove(pageObject);
                     pageObject.OnDeleted();

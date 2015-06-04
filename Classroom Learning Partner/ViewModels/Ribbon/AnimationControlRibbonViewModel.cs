@@ -27,6 +27,7 @@ namespace Classroom_Learning_Partner.ViewModels
             RecordAnimationCommand = new Command(OnRecordAnimationCommandExecute);
             RewindAnimationCommand = new Command(OnRewindAnimationCommandExecute);
             PlayAnimationCommand = new Command(OnPlayAnimationCommandExecute);
+            PlayBackwardsCommand = new Command(OnPlayBackwardsCommandExecute);
             SliderChangedCommand = new Command<RoutedPropertyChangedEventArgs<double>>(OnSliderChangedCommandExecute);
             ClearAnimationPageCommand = new Command(OnClearAnimationPageCommandExecute);
             UndoCommand = new Command(OnUndoCommandExecute, OnUndoCanExecute);
@@ -490,6 +491,64 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 _pageInteractionService.SetPageInteractionMode(_oldPageInteractionMode);
             }
+        }
+
+        /// <summary>
+        /// Plays the animation in reverse
+        /// </summary>
+        public Command PlayBackwardsCommand { get; private set; }
+
+        private void OnPlayBackwardsCommandExecute() { PlayBackwards(CurrentPage); }
+
+        private void PlayBackwards(CLPPage page)
+        {
+            if (IsRecording ||
+                page == null ||
+                _pageInteractionService == null)
+            {
+                return;
+            }
+
+            if (IsPlaying)
+            {
+                IsPlaying = false;
+                return;
+            }
+
+            page.History.IsAnimating = true;
+            IsPlaying = true;
+            _oldPageInteractionMode = _pageInteractionService.CurrentPageInteractionMode == PageInteractionModes.None
+                                          ? PageInteractionModes.Draw
+                                          : _pageInteractionService.CurrentPageInteractionMode;
+            _pageInteractionService.SetNoInteractionMode();
+
+            var t = new Thread(() =>
+            {
+                while (page.History.UndoItems.Any() && IsPlaying)
+                {
+                    var historyItemAnimationDelay = Convert.ToInt32(Math.Round(page.History.CurrentAnimationDelay / CurrentPlaybackSpeed));
+                    Application.Current.Dispatcher.Invoke(DispatcherPriority.DataBind,
+                                                          (DispatcherOperationCallback)delegate
+                                                          {
+                                                              page.History.Undo(true);
+                                                              return null;
+                                                          },
+                                                          null);
+                    Thread.Sleep(historyItemAnimationDelay);
+                }
+
+                Application.Current.Dispatcher.Invoke(DispatcherPriority.DataBind,
+                                                      (DispatcherOperationCallback)delegate
+                                                      {
+                                                          IsPlaying = false;
+                                                          _pageInteractionService.SetPageInteractionMode(_oldPageInteractionMode);
+                                                          page.History.IsAnimating = false;
+                                                          return null;
+                                                      },
+                                                      null);
+            });
+
+            t.Start();
         }
 
         /// <summary>Plays the animation through to the specified point.</summary>

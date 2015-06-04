@@ -92,7 +92,7 @@ namespace CLP.Entities
             set { SetValue(PersistingArrayHorizontalDivisionsProperty, value); }
         }
 
-        public static readonly PropertyData PersistingArrayHorizontalDivisionsProperty = RegisterProperty("PersistingArrayHorizontalDivisions", typeof (List<CLPArrayDivision>));
+        public static readonly PropertyData PersistingArrayHorizontalDivisionsProperty = RegisterProperty("PersistingArrayHorizontalDivisions", typeof (List<CLPArrayDivision>), () => new List<CLPArrayDivision>());
 
         /// <summary>Vertical divisions that the persisting array should be set to have when this history event fires (undoes or redoes, whichever comes next).</summary>
         public List<CLPArrayDivision> PersistingArrayVerticalDivisions
@@ -101,7 +101,7 @@ namespace CLP.Entities
             set { SetValue(PersistingArrayVerticalDivisionsProperty, value); }
         }
 
-        public static readonly PropertyData PersistingArrayVerticalDivisionsProperty = RegisterProperty("PersistingArrayVerticalDivisions", typeof (List<CLPArrayDivision>));
+        public static readonly PropertyData PersistingArrayVerticalDivisionsProperty = RegisterProperty("PersistingArrayVerticalDivisions", typeof (List<CLPArrayDivision>), () => new List<CLPArrayDivision>());
 
         /// <summary>Value of IsDivisionBehaviorOn prior to the history event (which sets it true)</summary>
         public bool PersistingArrayDivisionBehavior
@@ -243,13 +243,13 @@ namespace CLP.Entities
 
         private void RestoreDivisions(CLPArray persistingArray)
         {
-            var tempHorizontalDivisions = persistingArray.HorizontalDivisions;
+            var tempHorizontalDivisions = persistingArray.HorizontalDivisions.ToList();
             persistingArray.HorizontalDivisions = new ObservableCollection<CLPArrayDivision>(PersistingArrayHorizontalDivisions);
-            PersistingArrayHorizontalDivisions = tempHorizontalDivisions.ToList();
+            PersistingArrayHorizontalDivisions = tempHorizontalDivisions;
 
-            var tempVerticalDivisions = persistingArray.VerticalDivisions;
+            var tempVerticalDivisions = persistingArray.VerticalDivisions.ToList();
             persistingArray.VerticalDivisions = new ObservableCollection<CLPArrayDivision>(PersistingArrayVerticalDivisions);
-            PersistingArrayVerticalDivisions = tempVerticalDivisions.ToList();
+            PersistingArrayVerticalDivisions = tempVerticalDivisions;
         }
 
         private void RestoreDimensionsAndPosition(CLPArray persistingArray)
