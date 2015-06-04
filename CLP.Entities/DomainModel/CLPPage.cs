@@ -670,26 +670,26 @@ namespace CLP.Entities
                 return null;
             }
             copy.SubmissionType = SubmissionTypes.Single;
-            copy.VersionIndex = LastVersionIndex.Value;
-            copy.History.VersionIndex = LastVersionIndex.Value;
+            copy.VersionIndex = LastVersionIndex.GetValueOrDefault(1);
+            copy.History.VersionIndex = LastVersionIndex.GetValueOrDefault(1);
             copy.History.LastVersionIndex = LastVersionIndex;
             foreach (var pageObject in copy.PageObjects)
             {
-                pageObject.VersionIndex = LastVersionIndex.Value;
+                pageObject.VersionIndex = LastVersionIndex.GetValueOrDefault(1);
                 pageObject.LastVersionIndex = LastVersionIndex;
                 pageObject.ParentPage = copy;
             }
 
             foreach (var pageObject in copy.History.TrashedPageObjects)
             {
-                pageObject.VersionIndex = LastVersionIndex.Value;
+                pageObject.VersionIndex = LastVersionIndex.GetValueOrDefault(1);
                 pageObject.LastVersionIndex = LastVersionIndex;
                 pageObject.ParentPage = copy;
             }
 
             foreach (var tag in copy.Tags)
             {
-                tag.VersionIndex = LastVersionIndex.Value;
+                tag.VersionIndex = LastVersionIndex.GetValueOrDefault(1);
                 tag.LastVersionIndex = LastVersionIndex;
                 tag.ParentPage = copy;
             }
@@ -697,12 +697,12 @@ namespace CLP.Entities
             foreach (var serializedStroke in copy.SerializedStrokes)
             {
                 //TODO: Stroke Version Index should be uint
-                serializedStroke.VersionIndex = (int)LastVersionIndex.Value;
+                serializedStroke.VersionIndex = (int)LastVersionIndex.GetValueOrDefault(1);
             }
 
             foreach (var serializedStroke in copy.History.SerializedTrashedInkStrokes)
             {
-                serializedStroke.VersionIndex = (int)LastVersionIndex.Value;
+                serializedStroke.VersionIndex = (int)LastVersionIndex.GetValueOrDefault(1);
             }
 
             return copy;
