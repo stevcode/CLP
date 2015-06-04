@@ -772,16 +772,16 @@ namespace Classroom_Learning_Partner.ViewModels
 
             // Insert Math Tools
             Buttons.Add(Separater);
-            //Buttons.Add(_insertGeneralStampButton);
-            //Buttons.Add(_insertGroupStampButton);
-            //Buttons.Add(_insertNumberLineButton);
+            Buttons.Add(_insertGeneralStampButton);
+            Buttons.Add(_insertGroupStampButton);
+            Buttons.Add(_insertNumberLineButton);
             Buttons.Add(_insertArrayButton);
             //Buttons.Add(_insert10x10ArrayButton);
             //Buttons.Add(_insertArrayCardButton);
             //Buttons.Add(_insertFactorCardButton);
-            //Buttons.Add(_insertObscurableArrayButton);
-            //Buttons.Add(_insertPileButton);
-            //Buttons.Add(_insertDivisionTemplateButton);
+            Buttons.Add(_insertObscurableArrayButton);
+            Buttons.Add(_insertPileButton);
+            Buttons.Add(_insertDivisionTemplateButton);
 
             // Insert Shapes
             Buttons.Add(Separater);
