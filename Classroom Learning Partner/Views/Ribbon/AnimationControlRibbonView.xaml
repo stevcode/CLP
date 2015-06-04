@@ -185,6 +185,103 @@
                 </Grid>
             </Button>
 
+            <!-- Clear Page -->
+            <Button Content="Clear Page"
+                    DockPanel.Dock="Right"
+                    Width="70"
+                    FontSize="12"
+                    FontWeight="Bold"
+                    Background="White"
+                    Command="{Binding ClearAnimationPageCommand}" />
+
+            <!-- Create Animation from History -->
+            <Button Content="Forgot To Record?"
+                    DockPanel.Dock="Right"
+                    Padding="5 0"
+                    Margin="20 0"
+                    FontSize="12"
+                    FontWeight="Bold"
+                    Background="IndianRed"
+                    Command="{Binding MakeAnimationFromHistoryCommand}" />
+
+            <!--<Button Content="Undo"
+                    Margin="20 0"
+                    DockPanel.Dock="Right"
+                    Width="70"
+                    FontSize="12"
+                    FontWeight="Bold"
+                    Background="White"
+                    Command="{Binding UndoCommand}" />-->
+
+        </DockPanel>
+
+        <!--Recording in Progress Indicator-->
+        <Ellipse Grid.Row="1"
+                 Visibility="{Binding IsRecording, Converter={catel:BooleanToHidingVisibilityConverter}}"
+                 HorizontalAlignment="Center"
+                 VerticalAlignment="Center"
+                 Height="34"
+                 Width="34"
+                 StrokeThickness="0"
+                 Fill="Transparent">
+            <Ellipse.Triggers>
+                <EventTrigger RoutedEvent="Loaded">
+                    <BeginStoryboard>
+                        <Storyboard Storyboard.TargetProperty="(Ellipse.Fill).(SolidColorBrush.Color)">
+                            <ColorAnimation To="Red"
+                                            AutoReverse="True"
+                                            RepeatBehavior="Forever"
+                                            Duration="00:00:01" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Ellipse.Triggers>
+        </Ellipse>
+
+        <!--Animation Progress Bar-->
+        <DockPanel Grid.Row="1"
+                   LastChildFill="True"
+                   Visibility="{Binding IsPlaybackEnabled, Converter={catel:BooleanToHidingVisibilityConverter}}">
+
+            <!--Rewind Button-->
+            <Button DockPanel.Dock="Left"
+                    Width="70"
+                    Background="MediumPurple"
+                    Margin="0 0 0 0"
+                    Command="{Binding RewindAnimationCommand}"
+                    IsEnabled="{Binding IsPlaying, Converter={catel:BooleanToOppositeBooleanConverter}}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Polygon Grid.Column="0"
+                             StrokeThickness="0"
+                             Fill="Black"
+                             Points="0,5 10,0 10,10"
+                             Margin="0 3 3 3"
+                             HorizontalAlignment="Center" />
+                    <Rectangle Grid.Column="0"
+                               StrokeThickness="0"
+                               Fill="Black"
+                               Height="10"
+                               Width="2"
+                               HorizontalAlignment="Left" />
+                    <TextBlock Grid.Column="1"
+                               TextAlignment="Center"
+                               FontWeight="Bold">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Text"
+                                        Value="Rewind" />
+                                <Setter Property="FontSize"
+                                        Value="12" />
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </Grid>
+            </Button>
+
             <!--Play Button-->
             <Button DockPanel.Dock="Left"
                     Width="70"
@@ -280,121 +377,41 @@
                 </Grid>
             </Button>
 
-            <TextBlock DockPanel.Dock="Left"
-                       Text="Playback Speed:"
-                       TextAlignment="Right"
-                       VerticalAlignment="Center"
-                       Margin="10 0 5 0"
-                       FontWeight="Bold" />
+            <!-- Progress Location in Ticks -->
+            <StackPanel DockPanel.Dock="Right"
+                        Orientation="Horizontal">
+                <TextBlock Text="{Binding CurrentPage.History.CurrentHistoryTick}" />
+                <TextBlock Text=" / " />
+                <TextBlock Text="{Binding CurrentPage.History.PlaybackLength}" />
+            </StackPanel>
 
-            <Slider DockPanel.Dock="Left"
-                    Minimum="0.25"
-                    Maximum="4"
-                    IsSnapToTickEnabled="True"
-                    TickFrequency="0.25"
-                    TickPlacement="BottomRight"
-                    Width="130"
-                    Margin="0 0 10 0"
-                    Value="{Binding CurrentPlaybackSpeed}" />
+            <!-- Playback Speed -->
+            <StackPanel DockPanel.Dock="Right"
+                        Orientation="Horizontal">
 
-            <Button Content="Clear Page"
-                    DockPanel.Dock="Right"
-                    Width="70"
-                    FontSize="12"
-                    FontWeight="Bold"
-                    Background="White"
-                    Command="{Binding ClearAnimationPageCommand}" />
+                <TextBlock Text="Playback Speed:"
+                           TextAlignment="Right"
+                           VerticalAlignment="Center"
+                           Margin="10 0 5 0"
+                           FontWeight="Bold" />
 
-            <!--<Button Content="Undo"
-                    Margin="20 0"
-                    DockPanel.Dock="Right"
-                    Width="70"
-                    FontSize="12"
-                    FontWeight="Bold"
-                    Background="White"
-                    Command="{Binding UndoCommand}" />-->
+                <Slider Minimum="0.25"
+                        Maximum="4"
+                        IsSnapToTickEnabled="True"
+                        TickFrequency="0.25"
+                        TickPlacement="BottomRight"
+                        Width="130"
+                        Margin="0 0 10 0"
+                        Value="{Binding CurrentPlaybackSpeed}" />
+            </StackPanel>
 
-        </DockPanel>
-
-        <!--Recording in Progress Indicator-->
-        <Ellipse Grid.Row="1"
-                 Visibility="{Binding IsRecording, Converter={catel:BooleanToHidingVisibilityConverter}}"
-                 HorizontalAlignment="Center"
-                 VerticalAlignment="Center"
-                 Height="34"
-                 Width="34"
-                 StrokeThickness="0"
-                 Fill="Transparent">
-            <Ellipse.Triggers>
-                <EventTrigger RoutedEvent="Loaded">
-                    <BeginStoryboard>
-                        <Storyboard Storyboard.TargetProperty="(Ellipse.Fill).(SolidColorBrush.Color)">
-                            <ColorAnimation To="Red"
-                                            AutoReverse="True"
-                                            RepeatBehavior="Forever"
-                                            Duration="00:00:01" />
-                        </Storyboard>
-                    </BeginStoryboard>
-                </EventTrigger>
-            </Ellipse.Triggers>
-        </Ellipse>
-
-        <!--Animation Progress Bar-->
-        <Grid Grid.Row="1"
-              Visibility="{Binding IsPlaybackEnabled, Converter={catel:BooleanToHidingVisibilityConverter}}">
-
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-
-            <!--Rewind Button-->
-            <Button Grid.Column="0"
-                    Width="70"
-                    Background="MediumPurple"
-                    Margin="0 0 5 0"
-                    Command="{Binding RewindAnimationCommand}"
-                    IsEnabled="{Binding IsPlaying, Converter={catel:BooleanToOppositeBooleanConverter}}">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Polygon Grid.Column="0"
-                             StrokeThickness="0"
-                             Fill="Black"
-                             Points="0,5 10,0 10,10"
-                             Margin="0 3 3 3"
-                             HorizontalAlignment="Center" />
-                    <Rectangle Grid.Column="0"
-                               StrokeThickness="0"
-                               Fill="Black"
-                               Height="10"
-                               Width="2"
-                               HorizontalAlignment="Left" />
-                    <TextBlock Grid.Column="1"
-                               TextAlignment="Center"
-                               FontWeight="Bold">
-                        <TextBlock.Style>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="Text"
-                                        Value="Rewind" />
-                                <Setter Property="FontSize"
-                                        Value="12" />
-                            </Style>
-                        </TextBlock.Style>
-                    </TextBlock>
-                </Grid>
-            </Button>
-
-            <Slider Grid.Column="1"
+            <!-- Progress Slider -->
+            <Slider Margin="10 0"
                     IsHitTestVisible="False"
-                    HorizontalAlignment="Center"
+                    HorizontalAlignment="Stretch"
                     VerticalAlignment="Center"
                     Style="{StaticResource AnimationSliderStyle}"
                     Height="25"
-                    Width="{Binding ActualWidth, ElementName=PlaybackControls, Converter={conv:IncreaseNumberConverter}, ConverterParameter=-200}"
                     Minimum="0"
                     Maximum="{Binding CurrentPage.History.PlaybackLength}"
                     Value="{Binding CurrentPage.History.CurrentHistoryTick}"
@@ -408,15 +425,9 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </Slider>
-            
-            <StackPanel Grid.Column="2" Orientation="Horizontal">
-                <TextBlock Text="{Binding CurrentPage.History.CurrentHistoryTick}" />
-                <TextBlock Text=" / " />
-                <TextBlock Text="{Binding CurrentPage.History.PlaybackLength}" />
-            </StackPanel>
-            
-        </Grid>
+
+        </DockPanel>
 
     </Grid>
-    
+
 </catel:UserControl>

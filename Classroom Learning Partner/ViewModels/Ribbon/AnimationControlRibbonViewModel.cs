@@ -29,6 +29,7 @@ namespace Classroom_Learning_Partner.ViewModels
             PlayAnimationCommand = new Command(OnPlayAnimationCommandExecute);
             PlayBackwardsCommand = new Command(OnPlayBackwardsCommandExecute);
             SliderChangedCommand = new Command<RoutedPropertyChangedEventArgs<double>>(OnSliderChangedCommandExecute);
+            MakeAnimationFromHistoryCommand = new Command(OnMakeAnimationFromHistoryCommandExecute);
             ClearAnimationPageCommand = new Command(OnClearAnimationPageCommandExecute);
             UndoCommand = new Command(OnUndoCommandExecute, OnUndoCanExecute);
         }
@@ -363,6 +364,8 @@ namespace Classroom_Learning_Partner.ViewModels
             }
             else
             {
+                page.History.UndoItems.Clear();
+                page.History.RedoItems.Clear();
                 page.History.AddHistoryItem(new AnimationIndicator(page, App.MainWindowViewModel.CurrentUser, AnimationIndicatorType.Record));
                 RaisePropertyChanged("IsPlaybackEnabled");
             }
@@ -577,6 +580,24 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>
         /// SUMMARY
         /// </summary>
+        public Command MakeAnimationFromHistoryCommand { get; private set; }
+
+        private void OnMakeAnimationFromHistoryCommandExecute()
+        {
+            if (MessageBox.Show("Do you want to make an animation from what you just did?", "Forgot to Record?", MessageBoxButton.YesNo) == MessageBoxResult.No ||
+                IsRecording ||
+                IsPlaying)
+            {
+                return;
+            }
+
+            CurrentPage.History.ForceIntoAnimation(CurrentPage, App.MainWindowViewModel.CurrentUser);
+            RaisePropertyChanged("IsPlaybackEnabled");
+        }
+
+        /// <summary>
+        /// Clears the page of the animation and all ink and pageObjects that aren't background.
+        /// </summary>
         public Command ClearAnimationPageCommand { get; private set; }
 
         private void OnClearAnimationPageCommandExecute()
@@ -598,7 +619,7 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         /// <summary>
-        /// SUMMARY
+        /// 
         /// </summary>
         public Command UndoCommand { get; private set; }
 

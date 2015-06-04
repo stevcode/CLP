@@ -552,6 +552,33 @@ namespace CLP.Entities
             return batch;
         }
 
+        public bool ForceIntoAnimation(CLPPage page, Person owner)
+        {
+            EndBatch();
+
+            if (_isUndoingOperation || !UseHistory)
+            {
+                return false;
+            }
+
+            lock (_historyLock)
+            {
+                if (!UndoItems.Any() ||
+                    IsAnimation)
+                {
+                    return false;
+                }
+
+                UndoItems.Insert(0, new AnimationIndicator(page, owner, AnimationIndicatorType.Stop));
+                UndoItems.Add(new AnimationIndicator(page, owner, AnimationIndicatorType.Record));
+                RedoItems.Clear();
+                RefreshHistoryIndexes();
+            }
+
+            UpdateTicks();
+            return true;
+        }
+
         public bool AddHistoryItem(IHistoryItem historyItem)
         {
             EndBatch();
@@ -563,13 +590,6 @@ namespace CLP.Entities
 
             lock(_historyLock)
             {
-                if(UndoItems.Any() &&
-                   UndoItems.First() is AnimationIndicator &&
-                   (UndoItems.First() as AnimationIndicator).AnimationIndicatorType == AnimationIndicatorType.Stop)
-                {
-                    return false;
-                }
-
                 historyItem.HistoryIndex = UndoItems.Count;
                 UndoItems.Insert(0, historyItem);
                 RedoItems.Clear();
