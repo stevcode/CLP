@@ -185,8 +185,6 @@
                 </Grid>
             </Button>
 
-            
-
             <!-- Clear Page -->
             <Button Content="Clear Page"
                     DockPanel.Dock="Right"
@@ -195,6 +193,16 @@
                     FontWeight="Bold"
                     Background="White"
                     Command="{Binding ClearAnimationPageCommand}" />
+
+            <!-- Create Animation from History -->
+            <Button Content="Forgot To Record?"
+                    DockPanel.Dock="Right"
+                    Padding="5 0"
+                    Margin="20 0"
+                    FontSize="12"
+                    FontWeight="Bold"
+                    Background="IndianRed"
+                    Command="{Binding MakeAnimationFromHistoryCommand}" />
 
             <!--<Button Content="Undo"
                     Margin="20 0"
@@ -233,15 +241,7 @@
         <!--Animation Progress Bar-->
         <DockPanel Grid.Row="1"
                    LastChildFill="True"
-              Visibility="{Binding IsPlaybackEnabled, Converter={catel:BooleanToHidingVisibilityConverter}}">
-
-            <!--<Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>-->
+                   Visibility="{Binding IsPlaybackEnabled, Converter={catel:BooleanToHidingVisibilityConverter}}">
 
             <!--Rewind Button-->
             <Button DockPanel.Dock="Left"
@@ -376,7 +376,7 @@
                     </TextBlock>
                 </Grid>
             </Button>
-            
+
             <!-- Progress Location in Ticks -->
             <StackPanel DockPanel.Dock="Right"
                         Orientation="Horizontal">
@@ -412,7 +412,6 @@
                     VerticalAlignment="Center"
                     Style="{StaticResource AnimationSliderStyle}"
                     Height="25"
-                    
                     Minimum="0"
                     Maximum="{Binding CurrentPage.History.PlaybackLength}"
                     Value="{Binding CurrentPage.History.CurrentHistoryTick}"
@@ -430,5 +429,5 @@
         </DockPanel>
 
     </Grid>
-    
+
 </catel:UserControl>
