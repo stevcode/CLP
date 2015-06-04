@@ -601,11 +601,23 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             try
             {
-                //TODO: test to see if OwnerID == CurrentUser.ID. If not, remove CollectionChanged handler and re-add stroke
+                var removedStrokesList = removedStrokes as IList<Stroke> ?? removedStrokes.ToList();
+                var removedOwnerStrokes = new List<Stroke>();
+                foreach (var stroke in removedStrokesList)
+                {
+                    var strokeOwner = stroke.GetStrokeOwnerID();
+                    if (strokeOwner != App.MainWindowViewModel.CurrentUser.ID)
+                    {
+                        InkStrokes.StrokesChanged -= InkStrokes_StrokesChanged;
+                        InkStrokes.Add(stroke);
+                        InkStrokes.StrokesChanged += InkStrokes_StrokesChanged;
+                        continue;
+                    }
+                    removedOwnerStrokes.Add(stroke);
+                }
 
                 //Avoid uniqueID duplication
-                var removedStrokesList = removedStrokes as IList<Stroke> ?? removedStrokes.ToList();
-                var removedStrokeIDs = removedStrokesList.Select(stroke => stroke.GetStrokeID()).ToList();
+                var removedStrokeIDs = removedOwnerStrokes.Select(stroke => stroke.GetStrokeID()).ToList();
 
                 var addedStrokesList = addedStrokes as IList<Stroke> ?? addedStrokes.ToList();
                 foreach (var stroke in addedStrokesList)
@@ -624,7 +636,7 @@ namespace Classroom_Learning_Partner.ViewModels
                         stroke.SetStrokeID(newUniqueID);
                     }
                 }
-                AcceptStrokes(addedStrokesList.ToList(), removedStrokesList.ToList());
+                AcceptStrokes(addedStrokesList.ToList(), removedOwnerStrokes.ToList());
             }
             catch (Exception ex)
             {

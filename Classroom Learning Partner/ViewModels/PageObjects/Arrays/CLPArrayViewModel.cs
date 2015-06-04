@@ -80,7 +80,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 };
                 _toggleLabelsButton.Checked += toggleLabelsButton_Checked;
                 _toggleLabelsButton.Unchecked += toggleLabelsButton_Checked;
-        //        _contextButtons.Add(_toggleLabelsButton);
+                _contextButtons.Add(_toggleLabelsButton);
             }
 
             if (array.ArrayType == ArrayTypes.ObscurableArray)
@@ -113,7 +113,7 @@ namespace Classroom_Learning_Partner.ViewModels
             _toggleGridLinesButton.Unchecked += toggleGridLinesButton_Checked;
             _contextButtons.Add(_toggleGridLinesButton);
 
-            _contextButtons.Add(new RibbonButton("Snap", "pack://application:,,,/Resources/Images/AdornerImages/ArraySnap64.png", SnapArrayCommand, null, true));
+   //         _contextButtons.Add(new RibbonButton("Snap", "pack://application:,,,/Resources/Images/AdornerImages/ArraySnap64.png", SnapArrayCommand, null, true));
             //    _contextButtons.Add(new RibbonButton("Size to Other Arrays", "pack://application:,,,/Resources/Images/AdornerImages/ArraySnap64.png", null, null, true));
         }
 
@@ -1654,7 +1654,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public static double AdjustGridSquareSize(CLPPage page, int rows, int columns, int numberOfArrays, double initialGridSquareSize, bool isMatchingOtherGridSquareSize)
         {
             // HACK: set default gridsquaresize for all arrays
-            return (page.Width - (2 * ACLPArrayBase.ARRAY_LABEL_LENGTH) - 2.0) / 36;
+            //return (page.Width - (2 * ACLPArrayBase.ARRAY_LABEL_LENGTH) - 2.0) / 36;
 
             var availablePageArea = page.Width * page.Height;
 

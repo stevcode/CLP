@@ -139,7 +139,8 @@ namespace Classroom_Learning_Partner
                                                                                                                      {
                                                                                                                          ID = displayID,
                                                                                                                          DisplayNumber = displayNumber,
-                                                                                                                         NotebookID = notebookWorkspaceViewModel.Notebook.ID
+                                                                                                                         NotebookID = notebookWorkspaceViewModel.Notebook.ID,
+                                                                                                                         ParentNotebook = notebookWorkspaceViewModel.Notebook
                                                                                                                      };
                                                                                                 notebookWorkspaceViewModel.Notebook.Displays.Add(newGridDisplay);
                                                                                                 notebookWorkspaceViewModel.CurrentDisplay = null;
