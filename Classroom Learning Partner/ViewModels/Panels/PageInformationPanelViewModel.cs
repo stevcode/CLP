@@ -982,8 +982,15 @@ namespace Classroom_Learning_Partner.ViewModels
                     /*******************************/
                     bool cont = false;
                     var generalBound = new Rect(array.XPosition + array.LabelLength, array.YPosition + array.LabelLength, array.ArrayWidth + width, array.ArrayHeight);
-                    if (inkStroke.HitTest(generalBound, 90))
+                    if (debug)
+                    {
+                        CurrentPage.AddBoundary(generalBound);
+                        PageHistory.UISleep(800);
+                    }
+                    if (inkStroke.HitTest(generalBound, 80))
                         cont = true;
+                    else
+                        Console.WriteLine("Failed general bound test");
 
                     /************************/
                     /*   INSIDE ARRAY TEST  */
