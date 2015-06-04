@@ -745,9 +745,9 @@ namespace Classroom_Learning_Partner.ViewModels
             Buttons.Add(_setSelectModeButton);
             Buttons.Add(_setDrawModeButton);
             Buttons.Add(_setEraseModeButton);
-            Buttons.Add(Separater);
-            Buttons.Add(_setLassoModeButton);
-            Buttons.Add(_setCutModeButton);
+            //Buttons.Add(Separater);
+            //Buttons.Add(_setLassoModeButton);
+            //Buttons.Add(_setCutModeButton);
             //Buttons.Add(_setDividerCreationModeButton);
 
             // Insert Math Tools
