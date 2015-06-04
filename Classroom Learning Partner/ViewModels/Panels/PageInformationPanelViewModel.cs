@@ -934,7 +934,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             var arraysOnPage = CurrentPage.PageObjects.OfType<CLPArray>().ToList();
             var inkOnPage = CurrentPage.InkStrokes;
-            var debug = true;
+            var debug = false;
 
             //Makes .txt file to store data in
             var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
@@ -963,11 +963,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 {
                     //Defines location variables
                     var row = -2;
-                    var xpos = array.XPosition + array.LabelLength + array.ArrayWidth - array.GridSquareSize;
-                    var width = 4.5 * array.LabelLength + array.GridSquareSize;
+                    var xpos = array.XPosition + array.LabelLength + array.ArrayWidth - 1.1*array.GridSquareSize;
+                    var width = (4.5*array.LabelLength) + (1.1*array.GridSquareSize);
                     var height = array.GridSquareSize;
                     //var curr_xpos = xpos;
-                    bool iterate = true;
 
                     //Thickens ink stroke in consideration
                     if (debug)
