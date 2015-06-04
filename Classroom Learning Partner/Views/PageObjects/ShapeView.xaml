@@ -160,6 +160,60 @@
                                Source="..\..\Images\Protractor.png" />
                     </ControlTemplate>
 
+                    <ControlTemplate x:Key="RightDiagonalLineTemplate">
+                        <Line DataContext="{Binding}"
+                              Height="{Binding Height, Mode=TwoWay}"
+                              Width="{Binding Width, Mode=TwoWay}"
+                              Stretch="Uniform"
+                              StrokeThickness="3"
+                              Stroke="Black"
+                              X1="0"
+                              Y1="1"
+                              X2="1"
+                              Y2="0" />
+                    </ControlTemplate>
+
+                    <ControlTemplate x:Key="RightDiagonalDashedLineTemplate">
+                        <Line DataContext="{Binding}"
+                              Height="{Binding Height, Mode=TwoWay}"
+                              Width="{Binding Width, Mode=TwoWay}"
+                              StrokeDashArray="3,1"
+                              Stretch="Uniform"
+                              StrokeThickness="2"
+                              Stroke="Black"
+                              X1="0"
+                              Y1="1"
+                              X2="1"
+                              Y2="0" />
+                    </ControlTemplate>
+
+                    <ControlTemplate x:Key="LeftDiagonalLineTemplate">
+                        <Line DataContext="{Binding}"
+                              Height="{Binding Height, Mode=TwoWay}"
+                              Width="{Binding Width, Mode=TwoWay}"
+                              Stretch="Uniform"
+                              StrokeThickness="3"
+                              Stroke="Black"
+                              X1="0"
+                              Y1="0"
+                              X2="1"
+                              Y2="1" />
+                    </ControlTemplate>
+
+                    <ControlTemplate x:Key="LeftDiagonalDashedLineTemplate">
+                        <Line DataContext="{Binding}"
+                              Height="{Binding Height, Mode=TwoWay}"
+                              Width="{Binding Width, Mode=TwoWay}"
+                              StrokeDashArray="3,1"
+                              Stretch="Uniform"
+                              StrokeThickness="2"
+                              Stroke="Black"
+                              X1="0"
+                              Y1="0"
+                              X2="1"
+                              Y2="1" />
+                    </ControlTemplate>
+
                 </Control.Resources>
 
                 <Control.Style>
@@ -196,6 +250,34 @@
                             <!-- Protractor trigger -->
                             <DataTrigger Binding="{Binding ShapeType}" Value="Protractor">
                                 <Setter Property="Template" Value="{StaticResource ProtractorTemplate}" />
+                            </DataTrigger>
+
+                            <!-- RightDiagonalLine trigger -->
+                            <DataTrigger Binding="{Binding ShapeType}"
+                                         Value="RightDiagonal">
+                                <Setter Property="Template"
+                                        Value="{StaticResource RightDiagonalLineTemplate}" />
+                            </DataTrigger>
+
+                            <!-- RightDiagonalDashedLine trigger -->
+                            <DataTrigger Binding="{Binding ShapeType}"
+                                         Value="RightDiagonalDashed">
+                                <Setter Property="Template"
+                                        Value="{StaticResource RightDiagonalDashedLineTemplate}" />
+                            </DataTrigger>
+
+                            <!-- LeftDiagonalLine trigger -->
+                            <DataTrigger Binding="{Binding ShapeType}"
+                                         Value="LeftDiagonal">
+                                <Setter Property="Template"
+                                        Value="{StaticResource LeftDiagonalLineTemplate}" />
+                            </DataTrigger>
+
+                            <!-- LeftDiagonalDashedLine trigger -->
+                            <DataTrigger Binding="{Binding ShapeType}"
+                                         Value="LeftDiagonalDashed">
+                                <Setter Property="Template"
+                                        Value="{StaticResource LeftDiagonalDashedLineTemplate}" />
                             </DataTrigger>
 
                         </Style.Triggers>

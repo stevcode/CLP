@@ -583,7 +583,7 @@ namespace CLP.Entities
         {
             EndBatch();
 
-            if(_isUndoingOperation || !UseHistory)
+            if(_isUndoingOperation || !UseHistory || IsAnimation)
             {
                 return false;
             }
