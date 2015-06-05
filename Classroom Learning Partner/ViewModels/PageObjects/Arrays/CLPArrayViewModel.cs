@@ -113,7 +113,7 @@ namespace Classroom_Learning_Partner.ViewModels
             _toggleGridLinesButton.Unchecked += toggleGridLinesButton_Checked;
             _contextButtons.Add(_toggleGridLinesButton);
 
-   //         _contextButtons.Add(new RibbonButton("Snap", "pack://application:,,,/Resources/Images/AdornerImages/ArraySnap64.png", SnapArrayCommand, null, true));
+            _contextButtons.Add(new RibbonButton("Snap", "pack://application:,,,/Resources/Images/AdornerImages/ArraySnap64.png", SnapArrayCommand, null, true));
             //    _contextButtons.Add(new RibbonButton("Size to Other Arrays", "pack://application:,,,/Resources/Images/AdornerImages/ArraySnap64.png", null, null, true));
         }
 
@@ -151,6 +151,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
+            var oldRegions = array.VerticalDivisions.ToList();
+
             if (array.IsColumnsObscured)
             {
                 array.Unobscure(true);
@@ -159,6 +161,14 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 array.Obscure(true);
             }
+
+            var newRegions = array.VerticalDivisions.ToList();
+            ACLPPageBaseViewModel.AddHistoryItemToPage(array.ParentPage,
+                                                       new CLPArrayDivisionsChangedHistoryItem(array.ParentPage,
+                                                                                               App.MainWindowViewModel.CurrentUser,
+                                                                                               array.ID,
+                                                                                               oldRegions,
+                                                                                               newRegions));
 
             IsTopLabelVisible = !array.IsColumnsObscured;
             _toggleObscureRowsButton.IsEnabled = !array.IsColumnsObscured;
@@ -179,6 +189,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
+            var oldRegions = array.HorizontalDivisions.ToList();
+
             if (array.IsRowsObscured)
             {
                 array.Unobscure(false);
@@ -187,6 +199,14 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 array.Obscure(false);
             }
+
+            var newRegions = array.HorizontalDivisions.ToList();
+            ACLPPageBaseViewModel.AddHistoryItemToPage(array.ParentPage,
+                                                       new CLPArrayDivisionsChangedHistoryItem(array.ParentPage,
+                                                                                               App.MainWindowViewModel.CurrentUser,
+                                                                                               array.ID,
+                                                                                               oldRegions,
+                                                                                               newRegions));
 
             IsSideLabelVisible = !array.IsRowsObscured;
             _toggleObscureColumnsButton.IsEnabled = !array.IsRowsObscured;
