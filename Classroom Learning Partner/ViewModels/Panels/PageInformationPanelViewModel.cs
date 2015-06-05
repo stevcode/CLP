@@ -934,7 +934,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             var arraysOnPage = CurrentPage.PageObjects.OfType<CLPArray>().ToList();
             var inkOnPage = CurrentPage.InkStrokes;
-            var debug = false;
+            var debug = true;
 
             //Makes .txt file to store data in
             var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
@@ -979,8 +979,8 @@ namespace Classroom_Learning_Partner.ViewModels
                     /*******************************/
                     /*   INSIDE GENERAL AREA TEST  */
                     /*******************************/
-                    bool cont = false;
-                    var generalBound = new Rect(array.XPosition+array.LabelLength, array.YPosition+array.LabelLength-0.1*height, array.ArrayWidth+4.5*array.LabelLength, array.ArrayHeight+1.2*height);
+                    bool cont = true;
+                    var generalBound = new Rect(array.XPosition+array.LabelLength, array.YPosition+array.LabelLength-0.1*height, array.ArrayWidth+4.5*array.LabelLength, array.ArrayHeight+0.2*height);
                     if (debug)
                     {
                         CurrentPage.ClearBoundaries();
