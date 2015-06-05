@@ -201,7 +201,7 @@
                     Margin="20 0"
                     FontSize="12"
                     FontWeight="Bold"
-                    Background="IndianRed"
+                    Background="CornflowerBlue"
                     Command="{Binding MakeAnimationFromHistoryCommand}" />
 
             <!--<Button Content="Undo"

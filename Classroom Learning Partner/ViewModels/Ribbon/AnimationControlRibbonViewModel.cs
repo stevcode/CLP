@@ -584,7 +584,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnMakeAnimationFromHistoryCommandExecute()
         {
-            if (MessageBox.Show("Do you want to make an animation from what you just did?", "Forgot to Record?", MessageBoxButton.YesNo) == MessageBoxResult.No ||
+            if (MessageBox.Show("Do you want to make an animation of what you just did?", "Forgot to Record?", MessageBoxButton.YesNo) == MessageBoxResult.No ||
                 IsRecording ||
                 IsPlaying)
             {
