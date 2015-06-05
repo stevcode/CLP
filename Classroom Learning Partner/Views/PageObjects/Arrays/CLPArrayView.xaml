@@ -108,7 +108,7 @@
                 </Button>
 
                 <!--Resize Thumb-->
-                <Thumb Cursor="SizeNWSE"
+                <!--<Thumb Cursor="SizeNWSE"
                        Width="40"
                        Height="40"
                        Canvas.Right="-40"
@@ -157,10 +157,10 @@
                             </Grid>
                         </ControlTemplate>
                     </Thumb.Template>
-                </Thumb>
+                </Thumb>-->
 
                 <!--Snap Button-->
-                <!--<Button Command="{Binding SnapArrayCommand}"
+                <Button Command="{Binding SnapArrayCommand}"
                         Width="40"
                         Height="40"
                         Canvas.Right="-40"
@@ -173,7 +173,7 @@
                                    Source="pack://application:,,,/Resources/Images/AdornerImages/ArraySnap64.png" />
                         </ControlTemplate>
                     </Button.Template>
-                </Button>-->
+                </Button>
 
             </Canvas>
 
