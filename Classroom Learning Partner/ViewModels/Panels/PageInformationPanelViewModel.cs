@@ -979,7 +979,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     /*******************************/
                     /*   INSIDE GENERAL AREA TEST  */
                     /*******************************/
-                    bool cont = true;
+                    bool cont = false;
                     var generalBound = new Rect(array.XPosition+array.LabelLength, array.YPosition+array.LabelLength-0.1*height, array.ArrayWidth+4.5*array.LabelLength, array.ArrayHeight+0.2*height);
                     if (debug)
                     {
