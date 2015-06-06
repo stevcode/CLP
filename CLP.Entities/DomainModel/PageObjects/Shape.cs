@@ -13,7 +13,11 @@ namespace CLP.Entities
         Triangle,
         HorizontalLine,
         VerticalLine,
-        Protractor
+        Protractor,
+        RightDiagonal,
+        LeftDiagonal,
+        RightDiagonalDashed,
+        LeftDiagonalDashed
     }
 
     [Serializable]
@@ -51,6 +55,13 @@ namespace CLP.Entities
                 case ShapeType.Protractor:
                     Height = 200;
                     Width = 2 * Height;
+                    break;
+                case ShapeType.RightDiagonal:
+                case ShapeType.RightDiagonalDashed:
+                case ShapeType.LeftDiagonal:
+                case ShapeType.LeftDiagonalDashed:
+                    Height = 100;
+                    Width = 100;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("shapeType");
@@ -98,6 +109,14 @@ namespace CLP.Entities
                         return "Vertical Line";
                     case ShapeType.Protractor:
                         return "Protractor";
+                    case ShapeType.RightDiagonal:
+                        return "Right Diagonal";
+                    case ShapeType.RightDiagonalDashed:
+                        return "Right Dashed Diagonal";
+                    case ShapeType.LeftDiagonal:
+                        return "Left Diagonal";
+                    case ShapeType.LeftDiagonalDashed:
+                        return "Left Dashed Diagonal";
                     default:
                         return "Shape";
                 }

@@ -138,6 +138,10 @@ namespace Classroom_Learning_Partner.ViewModels
             _insertHorizontalLineButton = new RibbonButton("Horizontal Line", "pack://application:,,,/Images/HorizontalLineIcon.png", AddPageObjectToPageCommand, "HORIZONTALLINE");
             _insertVerticalLineButton = new RibbonButton("Vertical Line", "pack://application:,,,/Images/VerticalLineIcon.png", AddPageObjectToPageCommand, "VERTICALLINE");
             _insertProtractorButton = new RibbonButton("Protractor", "pack://application:,,,/Images/Protractor64.png", AddPageObjectToPageCommand, "PROTRACTOR");
+            _insertRightDiagonalButton = new RibbonButton("Right Diagonal", "pack://application:,,,/Images/LargeIcon.png", AddPageObjectToPageCommand, "RIGHT_DIAGONAL");
+            _insertRightDiagonalDashedButton = new RibbonButton("Right Diagonal Dashed", "pack://application:,,,/Images/LargeIcon.png", AddPageObjectToPageCommand, "RIGHT_DIAGONAL_DASHED");
+            _insertLeftDiagonalButton = new RibbonButton("Left Diagonal", "pack://application:,,,/Images/LargeIcon.png", AddPageObjectToPageCommand, "LEFT_DIAGONAL");
+            _insertLeftDiagonalDashedButton = new RibbonButton("Left Diagonal Dashed", "pack://application:,,,/Images/LargeIcon.png", AddPageObjectToPageCommand, "LEFT_DIAGONAL_DASHED");
 
             //Text
             //TODO: Better Icons
@@ -286,6 +290,10 @@ namespace Classroom_Learning_Partner.ViewModels
         private RibbonButton _insertHorizontalLineButton;
         private RibbonButton _insertVerticalLineButton;
         private RibbonButton _insertProtractorButton;
+        private RibbonButton _insertRightDiagonalButton;
+        private RibbonButton _insertRightDiagonalDashedButton;
+        private RibbonButton _insertLeftDiagonalButton;
+        private RibbonButton _insertLeftDiagonalDashedButton;
 
         #endregion //Insert PageObject Buttons
 
@@ -717,6 +725,18 @@ namespace Classroom_Learning_Partner.ViewModels
                 case "PROTRACTOR":
                     ShapeViewModel.AddShapeToPage(CurrentPage, ShapeType.Protractor);
                     break;
+                case "RIGHT_DIAGONAL":
+                    ShapeViewModel.AddShapeToPage(CurrentPage, ShapeType.RightDiagonal);
+                    break;
+                case "RIGHT_DIAGONAL_DASHED":
+                    ShapeViewModel.AddShapeToPage(CurrentPage, ShapeType.RightDiagonalDashed);
+                    break;
+                case "LEFT_DIAGONAL":
+                    ShapeViewModel.AddShapeToPage(CurrentPage, ShapeType.LeftDiagonal);
+                    break;
+                case "LEFT_DIAGONAL_DASHED":
+                    ShapeViewModel.AddShapeToPage(CurrentPage, ShapeType.LeftDiagonalDashed);
+                    break;
 
                     //Text
                 case "TEXTBOX":
@@ -759,7 +779,7 @@ namespace Classroom_Learning_Partner.ViewModels
             //Buttons.Add(_insert10x10ArrayButton);
             //Buttons.Add(_insertArrayCardButton);
             //Buttons.Add(_insertFactorCardButton);
-            Buttons.Add(_insertObscurableArrayButton);
+            //Buttons.Add(_insertObscurableArrayButton);
             //Buttons.Add(_insertPileButton);
             //Buttons.Add(_insertDivisionTemplateButton);
 
@@ -770,7 +790,11 @@ namespace Classroom_Learning_Partner.ViewModels
             //Buttons.Add(_insertTriangleButton);
             //Buttons.Add(_insertHorizontalLineButton);
             //Buttons.Add(_insertVerticalLineButton);
-            //Buttons.Add(_insertProtractorButton);
+            ////Buttons.Add(_insertProtractorButton);
+            //Buttons.Add(_insertRightDiagonalButton);
+            //Buttons.Add(_insertRightDiagonalDashedButton);
+            //Buttons.Add(_insertLeftDiagonalButton);
+            //Buttons.Add(_insertLeftDiagonalDashedButton);
 
             // Insert Text Box
             //Buttons.Add(Separater);
