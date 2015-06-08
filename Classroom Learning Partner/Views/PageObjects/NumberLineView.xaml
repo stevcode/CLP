@@ -313,7 +313,7 @@
                             <Canvas ClipToBounds="False">
                                 <Path x:Name="ArcPath"
                                       ClipToBounds="False"
-                                      Stroke="Green"
+                                      Stroke="{Binding JumpColor}"
                                       StrokeThickness="3"
                                       VerticalAlignment="Top"
                                       Stretch="UniformToFill">
