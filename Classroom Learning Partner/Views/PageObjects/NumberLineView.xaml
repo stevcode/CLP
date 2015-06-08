@@ -147,7 +147,7 @@
                               HorizontalAlignment="Left">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <Canvas/>
+                            <Canvas />
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemContainerStyle>
@@ -168,9 +168,10 @@
                             <TextBlock Text="{Binding JumpSize}"
                                        Foreground="Green"
                                        TextAlignment="Center"
+                                       VerticalAlignment="Top"
                                        FontWeight="Bold"
                                        FontSize="20">
-                                
+
                                 <TextBlock.Width>
                                     <MultiBinding Converter="{StaticResource MultiplyAllMultiConverter}">
                                         <Binding Path="DataContext.PageObject.TickLength"
@@ -280,6 +281,64 @@
 
                 </ItemsControl>
             </Canvas>
+
+            <!-- Auto Generated Jump Arcs -->
+            <Grid Grid.Column="1"
+                  Grid.Row="1"
+                  VerticalAlignment="Top"
+                  HorizontalAlignment="Stretch"
+                  Visibility="{Binding IsJumpSizeLabelsVisible, Converter={catel:BooleanToHidingVisibilityConverter}}">
+                <ItemsControl ItemsSource="{Binding JumpSizes}"
+                              HorizontalAlignment="Left">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemContainerStyle>
+                        <Style TargetType="ContentPresenter">
+                            <Setter Property="Canvas.Left">
+                                <Setter.Value>
+                                    <MultiBinding Converter="{StaticResource MultiplyAllMultiConverter}">
+                                        <Binding Path="DataContext.PageObject.TickLength"
+                                                 RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}" />
+                                        <Binding Path="StartingTickIndex" />
+                                    </MultiBinding>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Path Stroke="Green"
+                                  StrokeThickness="3"
+                                  VerticalAlignment="Top"
+                                  Stretch="UniformToFill">
+                                <Path.Data>
+                                    <PathGeometry>
+                                        <PathGeometry.Figures>
+                                            <PathFigure StartPoint="0,0"
+                                                        IsClosed="False">
+                                                <ArcSegment Point="4,0"
+                                                            Size="2 1"
+                                                            SweepDirection="Clockwise" />
+                                            </PathFigure>
+                                        </PathGeometry.Figures>
+                                    </PathGeometry>
+                                </Path.Data>
+
+                                <Path.Width>
+                                    <MultiBinding Converter="{StaticResource MultiplyAllMultiConverter}">
+                                        <Binding Path="DataContext.PageObject.TickLength"
+                                                 RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}" />
+                                        <Binding Path="JumpSize" />
+                                    </MultiBinding>
+                                </Path.Width>
+                            </Path>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
 
             <Thumb Grid.Column="0"
                    Grid.Row="0"

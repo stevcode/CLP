@@ -840,7 +840,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Buttons.Add(_setSelectModeButton);
             Buttons.Add(_setDrawModeButton);
             Buttons.Add(_setEraseModeButton);
-            Buttons.Add(Separater);
+            //Buttons.Add(Separater);
             Buttons.Add(_setLassoModeButton);
             //Buttons.Add(_setCutModeButton);
             //Buttons.Add(_setDividerCreationModeButton);
@@ -849,7 +849,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Buttons.Add(Separater);
             //Buttons.Add(_insertGeneralStampButton);
             //Buttons.Add(_insertGroupStampButton);
-            //Buttons.Add(_insertNumberLineButton);
+            Buttons.Add(_insertNumberLineButton);
             //Buttons.Add(_insertAutoNumberLineButton);
             //Buttons.Add(_insertArrayButton);
             //Buttons.Add(_insert10x10ArrayButton);
