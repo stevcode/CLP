@@ -292,7 +292,7 @@
                               HorizontalAlignment="Left">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <Canvas />
+                            <Canvas ClipToBounds="False" />
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemContainerStyle>
@@ -310,36 +310,43 @@
                     </ItemsControl.ItemContainerStyle>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Path Stroke="Green"
-                                  StrokeThickness="3"
-                                  VerticalAlignment="Top"
-                                  Stretch="UniformToFill">
-                                <Path.Data>
-                                    <PathGeometry>
-                                        <PathGeometry.Figures>
-                                            <PathFigure StartPoint="0,0"
-                                                        IsClosed="False">
-                                                <ArcSegment Point="4,0"
-                                                            Size="2 1"
-                                                            SweepDirection="Clockwise" />
-                                            </PathFigure>
-                                        </PathGeometry.Figures>
-                                    </PathGeometry>
-                                </Path.Data>
+                            <Canvas ClipToBounds="False">
+                                <Path x:Name="ArcPath"
+                                      ClipToBounds="False"
+                                      Stroke="Green"
+                                      StrokeThickness="3"
+                                      VerticalAlignment="Top"
+                                      Stretch="UniformToFill">
+                                    <Path.Data>
+                                        <PathGeometry>
+                                            <PathGeometry.Figures>
+                                                <PathFigure StartPoint="0,0"
+                                                            IsClosed="False">
+                                                    <ArcSegment Point="{Binding Width, ElementName=ArcPath, Converter={conv:PointXConverter}, ConverterParameter=0.0}"
+                                                                Size="{Binding Width, ElementName=ArcPath, Converter={conv:SizeHalfHeightConverter}, ConverterParameter=35}"
+                                                                SweepDirection="Clockwise">
+                                                    </ArcSegment>
+                                                </PathFigure>
+                                            </PathGeometry.Figures>
+                                        </PathGeometry>
+                                    </Path.Data>
 
-                                <Path.Width>
-                                    <MultiBinding Converter="{StaticResource MultiplyAllMultiConverter}">
-                                        <Binding Path="DataContext.PageObject.TickLength"
-                                                 RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}" />
-                                        <Binding Path="JumpSize" />
-                                    </MultiBinding>
-                                </Path.Width>
-                            </Path>
+                                    <Path.Width>
+                                        <MultiBinding Converter="{StaticResource MultiplyAllMultiConverter}">
+                                            <Binding Path="DataContext.PageObject.TickLength"
+                                                     RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}" />
+                                            <Binding Path="JumpSize" />
+                                        </MultiBinding>
+                                    </Path.Width>
+                                </Path>
+                            </Canvas>
+                            
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
             </Grid>
 
+            <!-- Movement/Selection Thumb -->
             <Thumb Grid.Column="0"
                    Grid.Row="0"
                    Grid.RowSpan="2"
@@ -370,6 +377,7 @@
                 </i:Interaction.Triggers>
             </Thumb>
 
+            <!-- Right Arrow Thumb -->
             <Thumb Cursor="Hand"
                    Grid.Column="2"
                    Grid.Row="1"

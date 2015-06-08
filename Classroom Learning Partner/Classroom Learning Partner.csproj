@@ -228,6 +228,8 @@
     <Compile Include="Converters\EmptyListToVisibilityConverter.cs" />
     <Compile Include="Converters\MultiplyAllMultiConverter.cs" />
     <Compile Include="Converters\Single Converters\MultiplyNumberConverter.cs" />
+    <Compile Include="Converters\Single Converters\PointXConverter.cs" />
+    <Compile Include="Converters\Single Converters\SizeHalfHeightConverter.cs" />
     <Compile Include="Converters\Single Converters\TypeOfConverter.cs" />
     <Compile Include="Converters\StringsEqualMultiConverter.cs" />
     <Compile Include="Converters\PassMultipleValuesConverter.cs" />
