@@ -14,7 +14,7 @@ namespace Classroom_Learning_Partner.Views.Modal_Windows
             Left = SystemParameters.FullPrimaryScreenWidth / 2 - 150;
         }
 
-        private const int LIMIT = 85;
+        private const int LIMIT = 94;
 
         private void ValueButton_Click(object sender, RoutedEventArgs e)
         {
