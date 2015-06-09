@@ -347,36 +347,36 @@ namespace CLP.Entities
                     foreach (var jump in jumpsToRemove.Where(jump => JumpSizes.Contains(jump))) 
                     {
                         JumpSizes.Remove(jump);
-                        var leftJumpTickValue = jump.StartingTickIndex;
-                        var rightJumpTickValue = jump.StartingTickIndex + jump.JumpSize;
+                        var leftTick = Ticks.FirstOrDefault(t => t.TickValue == jump.StartingTickIndex);
+                        var rightTick = Ticks.FirstOrDefault(t => t.TickValue == jump.StartingTickIndex + jump.JumpSize);
+
+                        if (rightTick != null && JumpSizes.All(x => x.StartingTickIndex != rightTick.TickValue))
+                        {
+                            rightTick.IsMarked = false;
+                            rightTick.TickColor = "Black";
+                            rightTick.IsNumberVisible = NumberLineSize <= MAX_ALL_TICKS_VISIBLE_LENGTH || rightTick.TickValue % 5 == 0 || rightTick.TickValue == NumberLineSize;
+                        }
+
+                        if (leftTick != null && JumpSizes.All(x => x.StartingTickIndex + x.JumpSize != leftTick.TickValue))
+                        {
+                            leftTick.IsMarked = false;
+                            leftTick.TickColor = "Black";
+                            leftTick.IsNumberVisible = NumberLineSize <= MAX_ALL_TICKS_VISIBLE_LENGTH || leftTick.TickValue % 5 == 0 || leftTick.TickValue == NumberLineSize;
+                        }
 
                         wasJumpRemoved = true;
                     }
 
-
                     if (closestTick.IsMarked)
                     {
-                        
-                    }
-                    closestTick.IsMarked = false;
-                    closestTick.IsNumberVisible = NumberLineSize <= MAX_ALL_TICKS_VISIBLE_LENGTH || closestTick.TickValue % 5 == 0 || closestTick.TickValue == NumberLineSize;
-                    closestTick.TickColor = "Black";
+                        closestTick.IsMarked = false;
+                        closestTick.IsNumberVisible = NumberLineSize <= MAX_ALL_TICKS_VISIBLE_LENGTH || closestTick.TickValue % 5 == 0 || closestTick.TickValue == NumberLineSize;
+                        closestTick.TickColor = "Black";
 
-                    var markedTickToTheLeft = Ticks.LastOrDefault(t => t.IsMarked && t.TickValue < closestTick.TickValue);
-                    if (markedTickToTheLeft != null)
-                    {
-                        var leftJumpSize = closestTick.TickValue - markedTickToTheLeft.TickValue;
-                        JumpSizes.Add(new NumberLineJumpSize(leftJumpSize, markedTickToTheLeft.TickValue, stroke.DrawingAttributes.Color.ToString()));
+                        wasJumpRemoved = true;
                     }
 
-                    var markedTickToTheRight = Ticks.FirstOrDefault(t => t.IsMarked && t.TickValue > closestTick.TickValue);
-                    if (markedTickToTheRight != null)
-                    {
-                        var rightJumpSize = markedTickToTheRight.TickValue - closestTick.TickValue;
-                        JumpSizes.Add(new NumberLineJumpSize(rightJumpSize, closestTick.TickValue, stroke.DrawingAttributes.Color.ToString()));
-                    }
-
-                    return true;
+                    return wasJumpRemoved;
                 }
                 default:
                     return false;
