@@ -115,7 +115,7 @@ namespace Classroom_Learning_Partner.ViewModels
             _insert10x10ArrayButton = new RibbonButton("10x10 Array", "pack://application:,,,/Resources/Images/PresetArray32.png", AddPageObjectToPageCommand, "10X10");
             _insertArrayCardButton = new RibbonButton("Array Card", "pack://application:,,,/Resources/Images/ArrayCard32.png", AddPageObjectToPageCommand, "ARRAYCARD");
             _insertFactorCardButton = new RibbonButton("Factor Card", "pack://application:,,,/Resources/Images/FactorCard32.png", AddPageObjectToPageCommand, "FACTORCARD");
-            _insertObscurableArrayButton = new RibbonButton("Array", "pack://application:,,,/Resources/Images/Array32.png", AddPageObjectToPageCommand, "OBSCURABLE_ARRAY");
+            _insertObscurableArrayButton = new RibbonButton("Fuzzy Array", "pack://application:,,,/Resources/Images/Array32.png", AddPageObjectToPageCommand, "OBSCURABLE_ARRAY");
 
             //Division Templates
             _insertDivisionTemplateButton = new RibbonButton("Division Tool",
@@ -129,6 +129,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //NumberLine
             _insertNumberLineButton = new RibbonButton("Number Line", "pack://application:,,,/Resources/Images/NumberLine32.png", AddPageObjectToPageCommand, "NUMBERLINE");
+            _insertAutoNumberLineButton = new RibbonButton("Auto Number Line", "pack://application:,,,/Resources/Images/NumberLine32.png", AddPageObjectToPageCommand, "AUTO_NUMBERLINE");
 
             //Shapes
             //TODO: Better Icons
@@ -277,6 +278,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         //NumberLine
         private RibbonButton _insertNumberLineButton;
+        private RibbonButton _insertAutoNumberLineButton;
 
         //Text
         private RibbonButton _insertTextBoxButton;
@@ -696,8 +698,11 @@ namespace Classroom_Learning_Partner.ViewModels
                     CLPArrayViewModel.AddArrayToPage(CurrentPage, ArrayTypes.ObscurableArray);
                     break;
 
-                    //Number Line
+                    //Number Line 
                 case "NUMBERLINE":
+                    NumberLineViewModel.AddNumberLineToPage(CurrentPage);
+                    break;
+                case "AUTO_NUMBERLINE":
                     NumberLineViewModel.AddNumberLineToPage(CurrentPage);
                     break;
 
@@ -766,41 +771,42 @@ namespace Classroom_Learning_Partner.ViewModels
             Buttons.Add(_setDrawModeButton);
             Buttons.Add(_setEraseModeButton);
             Buttons.Add(Separater);
-            //Buttons.Add(_setLassoModeButton);
+            Buttons.Add(_setLassoModeButton);
             Buttons.Add(_setCutModeButton);
             //Buttons.Add(_setDividerCreationModeButton);
 
             // Insert Math Tools
             Buttons.Add(Separater);
-            //Buttons.Add(_insertGeneralStampButton);
-            //Buttons.Add(_insertGroupStampButton);
-            //Buttons.Add(_insertNumberLineButton);
-            //Buttons.Add(_insertArrayButton);
+            Buttons.Add(_insertGeneralStampButton);
+            Buttons.Add(_insertGroupStampButton);
+            Buttons.Add(_insertNumberLineButton);
+            //Buttons.Add(_insertAutoNumberLineButton);
+            Buttons.Add(_insertArrayButton);
             //Buttons.Add(_insert10x10ArrayButton);
             //Buttons.Add(_insertArrayCardButton);
             //Buttons.Add(_insertFactorCardButton);
-            //Buttons.Add(_insertObscurableArrayButton);
-            //Buttons.Add(_insertPileButton);
-            //Buttons.Add(_insertDivisionTemplateButton);
+            Buttons.Add(_insertObscurableArrayButton);
+            Buttons.Add(_insertPileButton);
+            Buttons.Add(_insertDivisionTemplateButton);
 
             // Insert Shapes
-            //Buttons.Add(Separater);
-            //Buttons.Add(_insertSquareButton);
-            //Buttons.Add(_insertCircleButton);
-            //Buttons.Add(_insertTriangleButton);
-            //Buttons.Add(_insertHorizontalLineButton);
-            //Buttons.Add(_insertVerticalLineButton);
-            ////Buttons.Add(_insertProtractorButton);
+            Buttons.Add(Separater);
+            Buttons.Add(_insertSquareButton);
+            Buttons.Add(_insertCircleButton);
+            Buttons.Add(_insertTriangleButton);
+            Buttons.Add(_insertHorizontalLineButton);
+            Buttons.Add(_insertVerticalLineButton);
+            //Buttons.Add(_insertProtractorButton);
             //Buttons.Add(_insertRightDiagonalButton);
             //Buttons.Add(_insertRightDiagonalDashedButton);
             //Buttons.Add(_insertLeftDiagonalButton);
             //Buttons.Add(_insertLeftDiagonalDashedButton);
 
             // Insert Text Box
-            //Buttons.Add(Separater);
-            //Buttons.Add(_insertImageButton);
-            //Buttons.Add(_insertTextBoxButton);
-            //Buttons.Add(_insertMultipleChoiceTextBoxButton);
+            Buttons.Add(Separater);
+            Buttons.Add(_insertImageButton);
+            Buttons.Add(_insertTextBoxButton);
+            Buttons.Add(_insertMultipleChoiceTextBoxButton);
             
         }
 
