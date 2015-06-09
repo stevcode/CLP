@@ -438,8 +438,8 @@ namespace ConsoleScripts
 
                         foreach (var numberLine in page.PageObjects.OfType<NumberLine>())
                         {
-                            var tickR = numberLine.FindClosestTick(stroke, true);
-                            var tickL = numberLine.FindClosestTick(stroke, false);
+                            var tickR = numberLine.FindClosestTickToArcStroke(stroke, true);
+                            var tickL = numberLine.FindClosestTickToArcStroke(stroke, false);
                             if (tickR == null ||
                                 tickL == null ||
                                 tickR == tickL)
@@ -501,8 +501,8 @@ namespace ConsoleScripts
 
                         foreach (var numberLine in page.PageObjects.OfType<NumberLine>())
                         {
-                            var tickR = numberLine.FindClosestTick(stroke, true);
-                            var tickL = numberLine.FindClosestTick(stroke, false);
+                            var tickR = numberLine.FindClosestTickToArcStroke(stroke, true);
+                            var tickL = numberLine.FindClosestTickToArcStroke(stroke, false);
                             if (tickR == null ||
                                 tickL == null ||
                                 tickR == tickL)

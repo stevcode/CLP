@@ -411,7 +411,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 var oldHeight = numberLine.Height;
                 var oldYPosition = numberLine.YPosition;
-                if (numberLine.JumpSizes.Count == 1)
+                    if (numberLine.JumpSizes.Count == 1 &&
+                        numberLine.NumberLineType == NumberLineTypes.NumberLine)
                 {
                     var tallestPoint = stroke.GetBounds().Top;
                     tallestPoint = tallestPoint - 40;
