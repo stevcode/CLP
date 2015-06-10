@@ -64,6 +64,8 @@ namespace Classroom_Learning_Partner.ViewModels
             LongerPageCommand = new Command(OnLongerPageCommandExecute, OnLongerPageCanExecute);
             SubmitPageCommand = new Command(OnSubmitPageCommandExecute, OnSubmitPageCanExecute);
             AddPageObjectToPageCommand = new Command<string>(OnAddPageObjectToPageCommandExecute, OnAddPageObjectToPageCanExecute);
+
+            ReverseSubmitPageCommand = new Command(OnReverseSubmitPageCommandExecute);
         }
 
         private void InitializeButtons()
@@ -761,6 +763,74 @@ namespace Classroom_Learning_Partner.ViewModels
         #endregion //Insert PageObject Commands
 
         #endregion //Commands
+
+        /// <summary>
+        /// SUMMARY
+        /// </summary>
+        public Command ReverseSubmitPageCommand { get; private set; }
+
+        private void OnReverseSubmitPageCommandExecute()
+        {
+            var submission = CurrentPage;
+            var notebookService = DependencyResolver.Resolve<INotebookService>();
+            if (notebookService == null ||
+                submission == null)
+            {
+                return;
+            }
+
+            var parentPage = notebookService.CurrentNotebook.GetPageByCompositeKeys(submission.ID, submission.OwnerID, submission.DifferentiationLevel, 0);
+            submission.SerializedStrokes = StrokeDTO.SaveInkStrokes(submission.InkStrokes);
+            submission.History.SerializedTrashedInkStrokes = StrokeDTO.SaveInkStrokes(submission.History.TrashedInkStrokes);
+            var copy = submission.Clone() as CLPPage;
+            if (copy == null ||
+                parentPage == null)
+            {
+                return;
+            }
+
+            copy.LastVersionIndex = submission.VersionIndex;
+            copy.SubmissionType = SubmissionTypes.Unsubmitted;
+            copy.VersionIndex = 0;
+            copy.History.VersionIndex = 0;
+            copy.History.LastVersionIndex = submission.VersionIndex;
+            foreach (var pageObject in copy.PageObjects)
+            {
+                pageObject.VersionIndex = 0;
+                pageObject.LastVersionIndex = submission.VersionIndex;
+                pageObject.ParentPage = copy;
+            }
+
+            foreach (var pageObject in copy.History.TrashedPageObjects)
+            {
+                pageObject.VersionIndex = 0;
+                pageObject.LastVersionIndex = submission.VersionIndex;
+                pageObject.ParentPage = copy;
+            }
+
+            foreach (var tag in copy.Tags)
+            {
+                tag.VersionIndex = 0;
+                tag.LastVersionIndex = submission.VersionIndex;
+                tag.ParentPage = copy;
+            }
+
+            foreach (var serializedStroke in copy.SerializedStrokes)
+            {
+                //TODO: Stroke Version Index should be uint
+                serializedStroke.VersionIndex = 0;
+            }
+
+            foreach (var serializedStroke in copy.History.SerializedTrashedInkStrokes)
+            {
+                serializedStroke.VersionIndex = 0;
+            }
+
+            copy.Submissions = parentPage.Submissions;
+            var pageIndex = notebookService.CurrentNotebook.Pages.IndexOf(parentPage);
+            notebookService.CurrentNotebook.Pages.RemoveAt(pageIndex);
+            notebookService.CurrentNotebook.Pages.Insert(pageIndex, copy);
+        }
 
         #region Methods
 

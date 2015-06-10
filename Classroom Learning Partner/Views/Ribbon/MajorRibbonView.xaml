@@ -206,6 +206,10 @@
         <StackPanel DockPanel.Dock="Right"
                     Orientation="Horizontal">
 
+            <!--<customControls:RibbonButton Text="Create Original from Submission."
+                                         Command="{Binding ReverseSubmitPageCommand}"
+                                         LargeImageSource="pack://application:,,,/Resources/Images/SingleSubmit32.png" />-->
+
             <customControls:ToggleRibbonButton UnCheckedText="Pens Down"
                                                CheckedText="Pens Up"
                                                IsChecked="{Binding BlockStudentPenInput}"
@@ -270,6 +274,8 @@
             <customControls:RibbonButton Text="Send To Teacher"
                                          Command="{Binding SubmitPageCommand}"
                                          LargeImageSource="pack://application:,,,/Resources/Images/SingleSubmit32.png" />
+
+            
 
         </StackPanel>
 
