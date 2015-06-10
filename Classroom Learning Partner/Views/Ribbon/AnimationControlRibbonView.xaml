@@ -195,14 +195,14 @@
                     Command="{Binding ClearAnimationPageCommand}" />
 
             <!-- Create Animation from History -->
-            <Button Content="Forgot To Record?"
+            <!--<Button Content="Forgot To Record?"
                     DockPanel.Dock="Right"
                     Padding="5 0"
                     Margin="20 0"
                     FontSize="12"
                     FontWeight="Bold"
                     Background="CornflowerBlue"
-                    Command="{Binding MakeAnimationFromHistoryCommand}" />
+                    Command="{Binding MakeAnimationFromHistoryCommand}" />-->
 
             <!--<Button Content="Undo"
                     Margin="20 0"

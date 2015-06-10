@@ -31,8 +31,8 @@
                     FontSize="22"
                     FontWeight="Bold" />
 
-            <Button Content="Toggle Boundary Style"
-                    Command="{Binding ToggleBindingStyleCommand}"
+            <Button Content="Toggle Replay"
+                    Command="{Binding ReplayHistoryCommand}"
                     Width="300"
                     Margin="10"
                     FontWeight="Bold" />

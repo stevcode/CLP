@@ -18,6 +18,7 @@ namespace Classroom_Learning_Partner.ViewModels
             GenerateRandomMainColorCommand = new Command(OnGenerateRandomMainColorCommandExecute);
             ApplyRenameToCacheCommand = new Command(OnApplyRenameToCacheCommandExecute);
             ToggleBindingStyleCommand = new Command(OnToggleBindingStyleCommandExecute);
+            ReplayHistoryCommand = new Command(OnReplayHistoryCommandExecute);
         }
 
         #endregion //Constructor
@@ -80,6 +81,20 @@ namespace Classroom_Learning_Partner.ViewModels
         public Command ToggleBindingStyleCommand { get; private set; }
 
         private void OnToggleBindingStyleCommandExecute() { App.MainWindowViewModel.IsUsingOldPageObjectBoundary = !App.MainWindowViewModel.IsUsingOldPageObjectBoundary; }
+
+        /// <summary>Replays the interaction history of the page on the Grid Display.</summary>
+        public Command ReplayHistoryCommand { get; private set; }
+
+        private void OnReplayHistoryCommandExecute()
+        {
+            var animationControlRibbon = NotebookWorkspaceViewModel.GetAnimationControlRibbon();
+            if (animationControlRibbon == null)
+            {
+                return;
+            }
+
+            animationControlRibbon.IsNonAnimationPlaybackEnabled = !animationControlRibbon.IsNonAnimationPlaybackEnabled;
+        }
 
         #endregion //Commands
     }
