@@ -1354,7 +1354,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static bool InteractWithAcceptedStrokes(CLPArray array, IEnumerable<Stroke> addedStrokes, IEnumerable<Stroke> removedStrokes, bool canInteract)
         {
-            return false; //HACK: skip this new implementation for history conversions. Remove after generating new cache.
+            //return false; //HACK: skip this new implementation for history conversions. Remove after generating new cache.
 
             if (array == null ||
                 !canInteract)
