@@ -271,16 +271,14 @@ namespace CLP.Entities
                 var initialX = pageObject.XPosition;
                 var initialY = pageObject.YPosition;
 
-                if (isAnimationRedo)
+                if (isAnimationRedo &&
+                    CurrentBatchTickIndex < TravelledPositions.Count)
                 {
                     var travelledPosition = TravelledPositions[CurrentBatchTickIndex];
 
                     pageObject.XPosition = travelledPosition.X + pageObjectID.Value.X;
                     pageObject.YPosition = travelledPosition.Y + pageObjectID.Value.Y;
-                    if (CurrentBatchTickIndex == NumberOfBatchTicks)
-                    {
-                        pageObject.YPosition = travelledPosition.Y;
-                    }
+        
                     CurrentBatchTickIndex++;
                 }
                 else if (TravelledPositions.Any())
