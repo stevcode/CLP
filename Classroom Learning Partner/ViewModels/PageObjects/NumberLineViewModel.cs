@@ -98,6 +98,15 @@ namespace Classroom_Learning_Partner.ViewModels
         public static readonly PropertyData IsJumpSizeLabelsVisibleProperty = RegisterProperty("IsJumpSizeLabelsVisible", typeof (bool));
 
         [ViewModelToModel("PageObject")]
+        public bool IsAutoArcsVisible
+        {
+            get { return GetValue<bool>(IsAutoArcsVisibleProperty); }
+            set { SetValue(IsAutoArcsVisibleProperty, value); }
+        }
+
+        public static readonly PropertyData IsAutoArcsVisibleProperty = RegisterProperty("IsAutoArcsVisible", typeof(bool));
+
+        [ViewModelToModel("PageObject")]
         public ObservableCollection<NumberLineJumpSize> JumpSizes
         {
             get { return GetValue<ObservableCollection<NumberLineJumpSize>>(JumpSizesProperty); }
@@ -467,7 +476,27 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var numberLineSize = Int32.Parse(keyPad.NumbersEntered.Text);
 
-            var numberLine = new NumberLine(page, numberLineSize);
+            var numberLine = new NumberLine(page, numberLineSize, NumberLineTypes.NumberLine);
+            ACLPPageBaseViewModel.AddPageObjectToPage(numberLine);
+        }
+
+        public static void AddNumberLine2ToPage(CLPPage page)
+        {
+            var keyPad = new NumberLineCreationView
+            {
+                Owner = Application.Current.MainWindow,
+                WindowStartupLocation = WindowStartupLocation.Manual
+            };
+            keyPad.ShowDialog();
+            if (keyPad.DialogResult != true ||
+                keyPad.NumbersEntered.Text.Length <= 0)
+            {
+                return;
+            }
+
+            var numberLineSize = Int32.Parse(keyPad.NumbersEntered.Text);
+
+            var numberLine = new NumberLine(page, numberLineSize, NumberLineTypes.AutoArcs);
             ACLPPageBaseViewModel.AddPageObjectToPage(numberLine);
         }
 

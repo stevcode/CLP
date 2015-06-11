@@ -152,13 +152,15 @@ namespace CLP.Entities
 
         public NumberLine() { }
 
-        public NumberLine(CLPPage parentPage, int numberLength)
+        public NumberLine(CLPPage parentPage, int numberLength, NumberLineTypes numberLineType)
             : base(parentPage)
         {
             NumberLineSize = numberLength;
             Height = NumberLineHeight;
             Width = parentPage.Width - 100;
             XPosition = (parentPage.Width / 2.0) - (Width / 2.0);
+            NumberLineType = numberLineType;
+            IsAutoArcsVisible = NumberLineType == NumberLineTypes.AutoArcs;
             InitializeTicks();
         }
 
@@ -215,6 +217,15 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData IsJumpSizeLabelsVisibleProperty = RegisterProperty("IsJumpSizeLabelsVisible", typeof (bool), true);
+
+        /// <summary>Toggles visibility of auto-generated arcs.</summary>
+        public bool IsAutoArcsVisible
+        {
+            get { return GetValue<bool>(IsAutoArcsVisibleProperty); }
+            set { SetValue(IsAutoArcsVisibleProperty, value); }
+        }
+
+        public static readonly PropertyData IsAutoArcsVisibleProperty = RegisterProperty("IsAutoArcsVisible", typeof(bool), false);
 
         /// <summary>List of the values of the jumps</summary>
         public ObservableCollection<NumberLineJumpSize> JumpSizes
@@ -343,8 +354,8 @@ namespace CLP.Entities
 
                     var wasJumpRemoved = false;
 
-                    var jumpsToRemove = JumpSizes.Where(j => j.StartingTickIndex == closestTick.TickValue || j.StartingTickIndex + j.JumpSize == closestTick.TickValue);
-                    foreach (var jump in jumpsToRemove.Where(jump => JumpSizes.Contains(jump))) 
+                    var jumpsToRemove = JumpSizes.Where(j => j.StartingTickIndex == closestTick.TickValue || j.StartingTickIndex + j.JumpSize == closestTick.TickValue).ToList();
+                    foreach (var jump in jumpsToRemove) 
                     {
                         JumpSizes.Remove(jump);
                         var leftTick = Ticks.FirstOrDefault(t => t.TickValue == jump.StartingTickIndex);

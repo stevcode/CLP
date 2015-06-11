@@ -287,7 +287,7 @@
                   Grid.Row="1"
                   VerticalAlignment="Top"
                   HorizontalAlignment="Stretch"
-                  Visibility="{Binding IsJumpSizeLabelsVisible, Converter={catel:BooleanToHidingVisibilityConverter}}">
+                  Visibility="{Binding IsAutoArcsVisible, Converter={catel:BooleanToHidingVisibilityConverter}}">
                 <ItemsControl ItemsSource="{Binding JumpSizes}"
                               HorizontalAlignment="Left">
                     <ItemsControl.ItemsPanel>
