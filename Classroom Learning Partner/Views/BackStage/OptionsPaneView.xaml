@@ -23,19 +23,23 @@
         </StackPanel>
 
         <StackPanel>
-            <Button Content="Change Main Color"
-                    Command="{Binding GenerateRandomMainColorCommand}"
-                    Height="100"
+
+            <Button Content="Toggle Replay"
+                    Command="{Binding ReplayHistoryCommand}"
+                    Height="80"
                     Width="300"
                     Margin="10"
                     FontSize="22"
                     FontWeight="Bold" />
-
-            <Button Content="Toggle Replay"
-                    Command="{Binding ReplayHistoryCommand}"
+            
+            <Button Content="Change Main Color"
+                    Command="{Binding GenerateRandomMainColorCommand}"
+                    Height="80"
                     Width="300"
                     Margin="10"
+                    FontSize="22"
                     FontWeight="Bold" />
+            
         </StackPanel>
     </DockPanel>
 
