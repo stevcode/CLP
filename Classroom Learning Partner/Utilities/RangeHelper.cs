@@ -37,10 +37,10 @@ namespace Classroom_Learning_Partner
             return rangeNumbers.Count == 2 ? Enumerable.Range(rangeNumbers.Min(), (rangeNumbers.Max() + 1) - rangeNumbers.Min()).ToList() : rangeNumbers;
         }
 
-        public static string ParseIntNumbersToString(IEnumerable<int> numberList, bool isSorted = false, bool isDistinct = false)
+        public static string ParseIntNumbersToString(IEnumerable<int> numberList, bool isSort = false, bool isDistinct = false)
         {
             var enumeratedList = numberList as IList<int> ?? numberList.ToList();
-            if (isSorted)
+            if (isSort)
             {
                 enumeratedList.Sort();
             }

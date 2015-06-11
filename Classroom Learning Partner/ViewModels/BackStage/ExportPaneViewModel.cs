@@ -243,7 +243,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             var pageNumbers = clpPages.Where(p => p.PageNumber == Math.Floor(p.PageNumber)).Select(p => (int)p.PageNumber); //Selects only Whole numbers.
-            var pageNumberRanges = RangeHelper.ParseIntNumbersToString(pageNumbers);
+            var pageNumberRanges = RangeHelper.ParseIntNumbersToString(pageNumbers, true, true);
 
             var fileName = notebook.Name + ", " + notebook.Owner.FullName + " pp " + pageNumberRanges + (submissions ? " Submissions" : string.Empty) + " [" +
                            DateTime.Now.ToString("yyyy-M-dd hh.mm.ss") + "].pdf";
