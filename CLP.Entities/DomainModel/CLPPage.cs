@@ -662,8 +662,8 @@ namespace CLP.Entities
                 LastVersionIndex++;
             }
             SubmissionTime = DateTime.Now;
-            SerializedStrokes = StrokeDTO.SaveInkStrokes(InkStrokes);
-            History.SerializedTrashedInkStrokes = StrokeDTO.SaveInkStrokes(History.TrashedInkStrokes);
+            SerializedStrokes = StrokeDTO.SaveInkStrokes(InkStrokes.Where(x => x != null));
+            History.SerializedTrashedInkStrokes = StrokeDTO.SaveInkStrokes(History.TrashedInkStrokes.Where(x => x!= null));
             var copy = Clone() as CLPPage;
             if (copy == null)
             {
@@ -673,34 +673,34 @@ namespace CLP.Entities
             copy.VersionIndex = LastVersionIndex.GetValueOrDefault(1);
             copy.History.VersionIndex = LastVersionIndex.GetValueOrDefault(1);
             copy.History.LastVersionIndex = LastVersionIndex;
-            foreach (var pageObject in copy.PageObjects)
+            foreach (var pageObject in copy.PageObjects.Where(x => x != null))
             {
                 pageObject.VersionIndex = LastVersionIndex.GetValueOrDefault(1);
                 pageObject.LastVersionIndex = LastVersionIndex;
                 pageObject.ParentPage = copy;
             }
 
-            foreach (var pageObject in copy.History.TrashedPageObjects)
+            foreach (var pageObject in copy.History.TrashedPageObjects.Where(x => x != null))
             {
                 pageObject.VersionIndex = LastVersionIndex.GetValueOrDefault(1);
                 pageObject.LastVersionIndex = LastVersionIndex;
                 pageObject.ParentPage = copy;
             }
 
-            foreach (var tag in copy.Tags)
+            foreach (var tag in copy.Tags.Where(x => x != null))
             {
                 tag.VersionIndex = LastVersionIndex.GetValueOrDefault(1);
                 tag.LastVersionIndex = LastVersionIndex;
                 tag.ParentPage = copy;
             }
 
-            foreach (var serializedStroke in copy.SerializedStrokes)
+            foreach (var serializedStroke in copy.SerializedStrokes.Where(x => x != null))
             {
                 //TODO: Stroke Version Index should be uint
                 serializedStroke.VersionIndex = (int)LastVersionIndex.GetValueOrDefault(1);
             }
 
-            foreach (var serializedStroke in copy.History.SerializedTrashedInkStrokes)
+            foreach (var serializedStroke in copy.History.SerializedTrashedInkStrokes.Where(x => x != null))
             {
                 serializedStroke.VersionIndex = (int)LastVersionIndex.GetValueOrDefault(1);
             }
