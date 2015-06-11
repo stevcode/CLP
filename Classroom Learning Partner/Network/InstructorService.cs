@@ -333,24 +333,24 @@ namespace Classroom_Learning_Partner
                                                              App.MainWindowViewModel.AvailableUsers.Add(student);
                                                          }
 
-                                                         if (student.IsConnected)
-                                                         {
-                                                             try
-                                                             {
-                                                                 var binding = new NetTcpBinding
-                                                                               {
-                                                                                   Security =
-                                                                                   {
-                                                                                       Mode = SecurityMode.None
-                                                                                   }
-                                                                               };
-                                                                 var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(binding,
-                                                                                                                                   new EndpointAddress(student.CurrentMachineAddress));
-                                                                 studentProxy.ForceLogOut(machineName);
-                                                                 (studentProxy as ICommunicationObject).Close();
-                                                             }
-                                                             catch (Exception) { }
-                                                         }
+                                                         //if (student.IsConnected)
+                                                         //{
+                                                         //    try
+                                                         //    {
+                                                         //        var binding = new NetTcpBinding
+                                                         //                      {
+                                                         //                          Security =
+                                                         //                          {
+                                                         //                              Mode = SecurityMode.None
+                                                         //                          }
+                                                         //                      };
+                                                         //        var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(binding,
+                                                         //                                                                          new EndpointAddress(student.CurrentMachineAddress));
+                                                         //        studentProxy.ForceLogOut(machineName);
+                                                         //        (studentProxy as ICommunicationObject).Close();
+                                                         //    }
+                                                         //    catch (Exception) { }
+                                                         //}
 
                                                          student.CurrentMachineAddress = machineAddress;
                                                          student.CurrentMachineName = machineName;
