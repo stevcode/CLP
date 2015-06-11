@@ -396,7 +396,7 @@ namespace Classroom_Learning_Partner.ViewModels
             {
                 var random = new Random();
                 var miniGroupingXPosition = 5.0;
-                var miniGroupingYPosition = YPosition + Height + 100;
+                var miniGroupingYPosition = YPosition + Height + 50;
                 var miniGroupingColumns = stampedObjectWidth / stampedObjectHeight <= 1.0 ? 3 : 2;
                 var miniGroupingRows = miniGroupingColumns == 3 ? 2 : 3;
                 var miniGroupingWidth = stampedObjectWidth * miniGroupingColumns + 10;
@@ -444,7 +444,7 @@ namespace Classroom_Learning_Partner.ViewModels
             else
             {
                 var initialXPosition = 25.0;
-                var initialYPosition = YPosition + Height + 125;
+                var initialYPosition = YPosition + Height + 125 + 120; //HACK: the +120 is to compensate for Piles in Ann's Trial because reduced height of Empty Group Stamp by 40 and moved YPos up 15
                 if (initialYPosition + stampedObjectHeight > PageObject.ParentPage.Height)
                 {
                     initialYPosition = PageObject.ParentPage.Height - stampedObjectHeight;

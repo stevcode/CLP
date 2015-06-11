@@ -45,7 +45,7 @@ namespace CLP.Entities
                     break;
                 case StampTypes.ObservingStamp:
                     XPosition = 730;
-                    YPosition = 90;
+                    YPosition = 30;
                     Width = 90;
                     Height = 140;
                     break;
@@ -57,9 +57,9 @@ namespace CLP.Entities
                     break;
                 case StampTypes.EmptyGroupStamp:
                     XPosition = 850;
-                    YPosition = 90;
+                    YPosition = 30;
                     Width = 200;
-                    Height = 230;
+                    Height = 190;
                     break;
                 default:
                     Width = 75;
