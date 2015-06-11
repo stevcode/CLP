@@ -97,8 +97,11 @@ namespace CLP.Entities
 
             foreach (var pageObject in LassoedPageObjects)
             {
+                var oldXPos = pageObject.XPosition;
+                var oldYPos = pageObject.YPosition;
                 pageObject.XPosition += deltaX;
                 pageObject.YPosition += deltaY;
+                pageObject.OnMoving(oldXPos, oldYPos);
             }
         }
 

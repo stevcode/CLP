@@ -795,7 +795,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
 
-            var lassoedStrokes = InkStrokes.Where(inkStroke => inkStroke.HitTest(stroke.StylusPoints.Select(x => x.ToPoint()).ToList(), 90)).ToList();
+            var lassoedStrokes = new List<Stroke>(); // = InkStrokes.Where(inkStroke => inkStroke.HitTest(stroke.StylusPoints.Select(x => x.ToPoint()).ToList(), 90)).ToList();
 
             var pageObjectBoundsX1Position = Page.Width;
             var pageObjectBoundsY1Position = Page.Height;
