@@ -27,6 +27,7 @@ namespace Classroom_Learning_Partner.ViewModels
             ResizeNumberLineLengthCommand = new Command<DragDeltaEventArgs>(OnResizeNumberLineLengthCommandExecute);
             ResizeStartNumberLineLengthCommand = new Command<DragStartedEventArgs>(OnResizeStartNumberLineLengthCommandExecute);
             ResizeStopNumberLineLengthCommand = new Command<DragCompletedEventArgs>(OnResizeStopNumberLineLengthCommandExecute);
+            CheckArrayCompletenessCommand = new Command(OnCheckArrayCompletenessCommandExecute);
             InitializeButtons();
         }
 
@@ -49,6 +50,11 @@ namespace Classroom_Learning_Partner.ViewModels
             allowDragging.Checked += allowDragging_Checked;
             allowDragging.Unchecked += allowDragging_Checked;
             _contextButtons.Add(allowDragging);
+
+            if (NumberLineType == NumberLineTypes.NumberLine)
+            {
+                _contextButtons.Add(new RibbonButton("Check Number Line", "pack://application:,,,/Resources/Images/Correct32.png", CheckArrayCompletenessCommand, null, true));
+            }
         }
 
         private void jumpSizeVisibility_Checked(object sender, RoutedEventArgs e)
@@ -80,6 +86,15 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Model
 
         [ViewModelToModel("PageObject")]
+        public NumberLineTypes NumberLineType
+        {
+            get { return GetValue<NumberLineTypes>(NumberLineTypeProperty); }
+            set { SetValue(NumberLineTypeProperty, value); }
+        }
+
+        public static readonly PropertyData NumberLineTypeProperty = RegisterProperty("NumberLineType", typeof(NumberLineTypes));
+
+        [ViewModelToModel("PageObject")]
         public int NumberLineSize
         {
             get { return GetValue<int>(NumberLineSizeProperty); }
@@ -96,6 +111,15 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData IsJumpSizeLabelsVisibleProperty = RegisterProperty("IsJumpSizeLabelsVisible", typeof (bool));
+
+        [ViewModelToModel("PageObject")]
+        public bool IsAutoArcsVisible
+        {
+            get { return GetValue<bool>(IsAutoArcsVisibleProperty); }
+            set { SetValue(IsAutoArcsVisibleProperty, value); }
+        }
+
+        public static readonly PropertyData IsAutoArcsVisibleProperty = RegisterProperty("IsAutoArcsVisible", typeof(bool));
 
         [ViewModelToModel("PageObject")]
         public ObservableCollection<NumberLineJumpSize> JumpSizes
@@ -310,6 +334,55 @@ namespace Classroom_Learning_Partner.ViewModels
             //}
         }
 
+        /// <summary>
+        /// SUMMARY
+        /// </summary>
+        public Command CheckArrayCompletenessCommand { get; private set; }
+
+        private void OnCheckArrayCompletenessCommandExecute()
+        {
+            var arcs = new List<dynamic>();
+            foreach (var jump in JumpSizes)
+            {
+                arcs.Add(new
+                         {
+                             Start = jump.StartingTickIndex,
+                             End = jump.JumpSize + jump.StartingTickIndex
+                         });
+            }
+            var sortedArcs = arcs.Distinct().OrderBy(x => x.Start).ToList();
+            var gaps = 0;
+            var overlaps = 0;
+
+            for (var i = 0; i < sortedArcs.Count - 1; i++)
+            {
+                if (sortedArcs[i].End < sortedArcs[i + 1].Start)
+                {
+                    gaps++;
+                }
+                else if(sortedArcs[i].End > sortedArcs[i+1].Start)
+                {
+                    overlaps++;
+                }
+            }
+
+            if (gaps > 0 ||
+                overlaps > 0)
+            {
+                var gapsErrorMessage = string.Format("It looks like you have {0} gap(s) between jumps. ", gaps);
+                var overlapsErrorMessage = string.Format("It looks like you have {0} overlapping jump(s). ", overlaps);
+
+                var errorMessage = gaps > 0 ? gapsErrorMessage : string.Empty;
+                errorMessage += overlaps > 0 ? overlapsErrorMessage : string.Empty;
+
+                MessageBox.Show(errorMessage, "Number Line Check", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+            else
+            {
+                MessageBox.Show("Your Number Line looks okay!", "Number Line Check", MessageBoxButton.OK);
+            }
+        }
+
         #endregion //Commands
 
         #region Methods
@@ -411,7 +484,8 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 var oldHeight = numberLine.Height;
                 var oldYPosition = numberLine.YPosition;
-                if (numberLine.JumpSizes.Count == 1)
+                    if (numberLine.JumpSizes.Count == 1 &&
+                        numberLine.NumberLineType == NumberLineTypes.NumberLine)
                 {
                     var tallestPoint = stroke.GetBounds().Top;
                     tallestPoint = tallestPoint - 40;
@@ -466,7 +540,27 @@ namespace Classroom_Learning_Partner.ViewModels
 
             var numberLineSize = Int32.Parse(keyPad.NumbersEntered.Text);
 
-            var numberLine = new NumberLine(page, numberLineSize);
+            var numberLine = new NumberLine(page, numberLineSize, NumberLineTypes.NumberLine);
+            ACLPPageBaseViewModel.AddPageObjectToPage(numberLine);
+        }
+
+        public static void AddNumberLine2ToPage(CLPPage page)
+        {
+            var keyPad = new NumberLineCreationView
+            {
+                Owner = Application.Current.MainWindow,
+                WindowStartupLocation = WindowStartupLocation.Manual
+            };
+            keyPad.ShowDialog();
+            if (keyPad.DialogResult != true ||
+                keyPad.NumbersEntered.Text.Length <= 0)
+            {
+                return;
+            }
+
+            var numberLineSize = Int32.Parse(keyPad.NumbersEntered.Text);
+
+            var numberLine = new NumberLine(page, numberLineSize, NumberLineTypes.AutoArcs);
             ACLPPageBaseViewModel.AddPageObjectToPage(numberLine);
         }
 

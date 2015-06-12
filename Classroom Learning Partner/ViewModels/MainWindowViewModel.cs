@@ -49,6 +49,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             SetUserModeCommand = new Command<string>(OnSetUserModeCommandExecute);
             TogglePenDownCommand = new Command(OnTogglePenDownCommandExecute);
+            ToggleAutoNumberLineCommand = new Command(OnToggleAutoNumberLineCommandExecute);
             MoveWindowCommand = new Command<MouseButtonEventArgs>(OnMoveWindowCommandExecute);
             ToggleMinimizeStateCommand = new Command(OnToggleMinimizeStateCommandExecute);
             ToggleMaximizeStateCommand = new Command(OnToggleMaximizeStateCommandExecute);
@@ -268,6 +269,15 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData IsUsingOldPageObjectBoundaryProperty = RegisterProperty("IsUsingOldPageObjectBoundary", typeof (bool), false);
 
+        /// <summary>SUMMARY</summary>
+        public bool CanUseAutoNumberLine
+        {
+            get { return GetValue<bool>(CanUseAutoNumberLineProperty); }
+            set { SetValue(CanUseAutoNumberLineProperty, value); }
+        }
+
+        public static readonly PropertyData CanUseAutoNumberLineProperty = RegisterProperty("CanUseAutoNumberLine", typeof(bool), false);
+
         #endregion //Global Bindings
 
         #endregion //Bindings
@@ -383,6 +393,11 @@ namespace Classroom_Learning_Partner.ViewModels
         public Command TogglePenDownCommand { get; private set; }
 
         private void OnTogglePenDownCommandExecute() { IsPenDownActivated = !IsPenDownActivated; }
+
+        /// <summary>Toggles the Pen Down screen.</summary>
+        public Command ToggleAutoNumberLineCommand { get; private set; }
+
+        private void OnToggleAutoNumberLineCommandExecute() { CanUseAutoNumberLine = !CanUseAutoNumberLine; }
 
         /// <summary>
         /// Moves the CLP Window.

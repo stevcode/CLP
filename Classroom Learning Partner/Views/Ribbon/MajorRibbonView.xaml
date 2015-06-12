@@ -221,6 +221,12 @@
                                                LargeImageSource="pack://application:,,,/Resources/Images/ExtrasFolder32.png"
                                                Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
 
+            <customControls:ToggleRibbonButton UnCheckedText="Allow NL2"
+                                               CheckedText="Disable NL2"
+                                               IsChecked="{Binding AllowAutoNumberLine}"
+                                               LargeImageSource="pack://application:,,,/Resources/Images/NumberLine32.png"
+                                               Visibility="{Binding MainWindowViewModel.TeacherOnlyVisibility, Source={x:Static Application.Current}}" />
+
         </StackPanel>
 
         <Line DockPanel.Dock="Right"

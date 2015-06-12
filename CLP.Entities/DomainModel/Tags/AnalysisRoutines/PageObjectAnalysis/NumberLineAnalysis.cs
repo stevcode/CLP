@@ -66,14 +66,8 @@ namespace CLP.Entities
             var arcs = new List<dynamic>();
             foreach (var stroke in numberLine.AcceptedStrokes)
             {
-                var tickRight = numberLine.FindClosestTick(new StrokeCollection
-                                                           {
-                                                               stroke
-                                                           }, true);
-                var tickLeft = numberLine.FindClosestTick(new StrokeCollection
-                                                              {
-                                                                  stroke
-                                                              }, false);
+                var tickRight = numberLine.FindClosestTickToArcStroke(stroke, true);
+                var tickLeft = numberLine.FindClosestTickToArcStroke(stroke, false);
                 arcs.Add(new
                          {
                              Start = tickLeft.TickValue,

@@ -4,7 +4,8 @@
                    xmlns:catel="http://catel.codeplex.com"
                    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
                    xmlns:ac="clr-namespace:AdornedControl"
-                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters">
+                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters"
+                   xmlns:entities="clr-namespace:CLP.Entities;assembly=CLP.Entities">
 
     <UserControl.Resources>
         <conv:MultiplyAllMultiConverter x:Key="MultiplyAllMultiConverter" />
@@ -147,7 +148,7 @@
                               HorizontalAlignment="Left">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <Canvas/>
+                            <Canvas />
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemContainerStyle>
@@ -168,9 +169,10 @@
                             <TextBlock Text="{Binding JumpSize}"
                                        Foreground="Green"
                                        TextAlignment="Center"
+                                       VerticalAlignment="Top"
                                        FontWeight="Bold"
                                        FontSize="20">
-                                
+
                                 <TextBlock.Width>
                                     <MultiBinding Converter="{StaticResource MultiplyAllMultiConverter}">
                                         <Binding Path="DataContext.PageObject.TickLength"
@@ -192,10 +194,23 @@
                   VerticalAlignment="Center"
                   HorizontalAlignment="Stretch">
 
-                <Path Stroke="Black"
-                      StrokeThickness="2"
+                <Path StrokeThickness="2"
                       Stretch="Fill"
-                      Data="M 1,0 L 0,1 L 1,2 M 0,1 L 2,1" />
+                      Data="M 1,0 L 0,1 L 1,2 M 0,1 L 2,1">
+                    <Path.Style>
+                        <Style TargetType="Path">
+                            <Setter Property="Stroke"
+                                    Value="Black" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding NumberLineType}"
+                                             Value="{x:Static entities:NumberLineTypes.AutoArcs}">
+                                    <Setter Property="Stroke"
+                                            Value="Blue" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Path.Style>
+                </Path>
             </Grid>
 
             <!-- Middle Line -->
@@ -215,10 +230,23 @@
                   VerticalAlignment="Center"
                   HorizontalAlignment="Stretch">
 
-                <Path Stroke="Black"
-                      StrokeThickness="2"
+                <Path StrokeThickness="2"
                       Stretch="Fill"
-                      Data="M 1,0 L 2,1 L 1,2 M 0,1 L 2,1" />
+                      Data="M 1,0 L 2,1 L 1,2 M 0,1 L 2,1">
+                    <Path.Style>
+                        <Style TargetType="Path">
+                            <Setter Property="Stroke"
+                                    Value="Black" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding NumberLineType}"
+                                             Value="{x:Static entities:NumberLineTypes.AutoArcs}">
+                                    <Setter Property="Stroke"
+                                            Value="Blue" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Path.Style>
+                </Path>
             </Grid>
 
             <!-- Tick Marks -->
@@ -281,6 +309,71 @@
                 </ItemsControl>
             </Canvas>
 
+            <!-- Auto Generated Jump Arcs -->
+            <Grid Grid.Column="1"
+                  Grid.Row="1"
+                  VerticalAlignment="Top"
+                  HorizontalAlignment="Stretch"
+                  Visibility="{Binding IsAutoArcsVisible, Converter={catel:BooleanToHidingVisibilityConverter}}">
+                <ItemsControl ItemsSource="{Binding JumpSizes}"
+                              HorizontalAlignment="Left">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas ClipToBounds="False" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemContainerStyle>
+                        <Style TargetType="ContentPresenter">
+                            <Setter Property="Canvas.Left">
+                                <Setter.Value>
+                                    <MultiBinding Converter="{StaticResource MultiplyAllMultiConverter}">
+                                        <Binding Path="DataContext.PageObject.TickLength"
+                                                 RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}" />
+                                        <Binding Path="StartingTickIndex" />
+                                    </MultiBinding>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Canvas ClipToBounds="False">
+                                <Path x:Name="ArcPath"
+                                      ClipToBounds="False"
+                                      Stroke="{Binding JumpColor}"
+                                      StrokeThickness="3"
+                                      VerticalAlignment="Top"
+                                      Stretch="UniformToFill">
+                                    <Path.Data>
+                                        <PathGeometry>
+                                            <PathGeometry.Figures>
+                                                <PathFigure StartPoint="0,0"
+                                                            IsClosed="False">
+                                                    <ArcSegment Point="{Binding Width, ElementName=ArcPath, Converter={conv:PointXConverter}, ConverterParameter=0.0}"
+                                                                Size="{Binding Width, ElementName=ArcPath, Converter={conv:SizeHalfHeightConverter}, ConverterParameter=35}"
+                                                                SweepDirection="Clockwise">
+                                                    </ArcSegment>
+                                                </PathFigure>
+                                            </PathGeometry.Figures>
+                                        </PathGeometry>
+                                    </Path.Data>
+
+                                    <Path.Width>
+                                        <MultiBinding Converter="{StaticResource MultiplyAllMultiConverter}">
+                                            <Binding Path="DataContext.PageObject.TickLength"
+                                                     RelativeSource="{RelativeSource Mode=FindAncestor,AncestorType={x:Type ItemsControl}}" />
+                                            <Binding Path="JumpSize" />
+                                        </MultiBinding>
+                                    </Path.Width>
+                                </Path>
+                            </Canvas>
+                            
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
+
+            <!-- Movement/Selection Thumb -->
             <Thumb Grid.Column="0"
                    Grid.Row="0"
                    Grid.RowSpan="2"
@@ -311,6 +404,7 @@
                 </i:Interaction.Triggers>
             </Thumb>
 
+            <!-- Right Arrow Thumb -->
             <Thumb Cursor="Hand"
                    Grid.Column="2"
                    Grid.Row="1"
