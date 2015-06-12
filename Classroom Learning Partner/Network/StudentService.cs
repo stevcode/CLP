@@ -18,6 +18,9 @@ namespace Classroom_Learning_Partner
         void TogglePenDownMode(bool isPenDownModeEnabled);
 
         [OperationContract]
+        void ToggleAutoNumberLine(bool isAutoNumberLineEnabled);
+
+        [OperationContract]
         void AddWebcamImage(List<byte> image);
 
         [OperationContract]
@@ -37,6 +40,17 @@ namespace Classroom_Learning_Partner
                                                                                         App.MainWindowViewModel.IsPenDownActivated = isPenDownModeEnabled;
                                                                                         return null;
                                                                                     },
+                                                       null);
+        }
+
+        public void ToggleAutoNumberLine(bool isAutoNumberLineEnabled)
+        {
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                                                       (DispatcherOperationCallback)delegate
+                                                       {
+                                                           App.MainWindowViewModel.CanUseAutoNumberLine = isAutoNumberLineEnabled;
+                                                           return null;
+                                                       },
                                                        null);
         }
 

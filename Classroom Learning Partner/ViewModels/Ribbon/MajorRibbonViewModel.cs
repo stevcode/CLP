@@ -64,6 +64,7 @@ namespace Classroom_Learning_Partner.ViewModels
             LongerPageCommand = new Command(OnLongerPageCommandExecute, OnLongerPageCanExecute);
             SubmitPageCommand = new Command(OnSubmitPageCommandExecute, OnSubmitPageCanExecute);
             AddPageObjectToPageCommand = new Command<string>(OnAddPageObjectToPageCommandExecute, OnAddPageObjectToPageCanExecute);
+            AddAutoNumberLineCommand = new Command(OnAddAutoNumberLineCommandExecute, OnAddAutoNumberLineCanExecute);
 
             ReverseSubmitPageCommand = new Command(OnReverseSubmitPageCommandExecute);
         }
@@ -131,7 +132,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //NumberLine
             _insertNumberLineButton = new RibbonButton("Number Line", "pack://application:,,,/Resources/Images/NumberLine32.png", AddPageObjectToPageCommand, "NUMBERLINE");
-            _insertAutoNumberLineButton = new RibbonButton("Auto Number Line", "pack://application:,,,/Resources/Images/NumberLine32.png", AddPageObjectToPageCommand, "AUTO_NUMBERLINE");
+            _insertAutoNumberLineButton = new RibbonButton("Auto Number Line", "pack://application:,,,/Resources/Images/NumberLine32.png", AddAutoNumberLineCommand, "AUTO_NUMBERLINE");
 
             //Shapes
             //TODO: Better Icons
@@ -410,6 +411,47 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData BlockStudentPenInputProperty = RegisterProperty("BlockStudentPenInput", typeof (bool), false);
+
+        public bool AllowAutoNumberLine
+        {
+            get { return GetValue<bool>(AllowAutoNumberLineProperty); }
+            set
+            {
+                SetValue(AllowAutoNumberLineProperty, value);
+
+                var discoveredStudentAddresses = App.Network.DiscoveredStudents.Addresses.ToList();
+                if (discoveredStudentAddresses.Any())
+                {
+                    Parallel.ForEach(discoveredStudentAddresses,
+                                     address =>
+                                     {
+                                         try
+                                         {
+                                             var binding = new NetTcpBinding
+                                             {
+                                                 Security =
+                                                 {
+                                                     Mode = SecurityMode.None
+                                                 }
+                                             };
+                                             var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(binding, address);
+                                             studentProxy.ToggleAutoNumberLine(value);
+                                             (studentProxy as ICommunicationObject).Close();
+                                         }
+                                         catch (Exception e)
+                                         {
+                                             Console.WriteLine(e.Message);
+                                         }
+                                     });
+                }
+                else
+                {
+                    Logger.Instance.WriteToLog("No Students Found");
+                }
+            }
+        }
+
+        public static readonly PropertyData AllowAutoNumberLineProperty = RegisterProperty("AllowAutoNumberLine", typeof(bool), false);
 
         #endregion //Bindings
 
@@ -759,6 +801,22 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         private bool OnAddPageObjectToPageCanExecute(string pageObjectType) { return CurrentPage != null; }
+
+        /// <summary>
+        /// SUMMARY
+        /// </summary>
+        public Command AddAutoNumberLineCommand { get; private set; }
+
+        private void OnAddAutoNumberLineCommandExecute()
+        {
+            NumberLineViewModel.AddNumberLine2ToPage(CurrentPage);
+            PageInteractionMode = PageInteractionModes.Select;
+        }
+
+        private bool OnAddAutoNumberLineCanExecute()
+        {
+            return CurrentPage != null && MainWindow.CanUseAutoNumberLine;
+        }
 
         #endregion //Insert PageObject Commands
 
