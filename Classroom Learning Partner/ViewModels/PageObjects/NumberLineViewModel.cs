@@ -27,6 +27,7 @@ namespace Classroom_Learning_Partner.ViewModels
             ResizeNumberLineLengthCommand = new Command<DragDeltaEventArgs>(OnResizeNumberLineLengthCommandExecute);
             ResizeStartNumberLineLengthCommand = new Command<DragStartedEventArgs>(OnResizeStartNumberLineLengthCommandExecute);
             ResizeStopNumberLineLengthCommand = new Command<DragCompletedEventArgs>(OnResizeStopNumberLineLengthCommandExecute);
+            CheckArrayCompletenessCommand = new Command(OnCheckArrayCompletenessCommandExecute);
             InitializeButtons();
         }
 
@@ -49,6 +50,11 @@ namespace Classroom_Learning_Partner.ViewModels
             allowDragging.Checked += allowDragging_Checked;
             allowDragging.Unchecked += allowDragging_Checked;
             _contextButtons.Add(allowDragging);
+
+            if (NumberLineType == NumberLineTypes.NumberLine)
+            {
+                _contextButtons.Add(new RibbonButton("Check Number Line", "pack://application:,,,/Resources/Images/Correct32.png", CheckArrayCompletenessCommand, null, true));
+            }
         }
 
         private void jumpSizeVisibility_Checked(object sender, RoutedEventArgs e)
@@ -326,6 +332,55 @@ namespace Classroom_Learning_Partner.ViewModels
             //    _initialWidth += numberLine.TickLength;
             //    ChangePageObjectDimensions(PageObject, Height, newWidth);
             //}
+        }
+
+        /// <summary>
+        /// SUMMARY
+        /// </summary>
+        public Command CheckArrayCompletenessCommand { get; private set; }
+
+        private void OnCheckArrayCompletenessCommandExecute()
+        {
+            var arcs = new List<dynamic>();
+            foreach (var jump in JumpSizes)
+            {
+                arcs.Add(new
+                         {
+                             Start = jump.StartingTickIndex,
+                             End = jump.JumpSize + jump.StartingTickIndex
+                         });
+            }
+            var sortedArcs = arcs.Distinct().OrderBy(x => x.Start).ToList();
+            var gaps = 0;
+            var overlaps = 0;
+
+            for (var i = 0; i < sortedArcs.Count - 1; i++)
+            {
+                if (sortedArcs[i].End < sortedArcs[i + 1].Start)
+                {
+                    gaps++;
+                }
+                else if(sortedArcs[i].End > sortedArcs[i+1].Start)
+                {
+                    overlaps++;
+                }
+            }
+
+            if (gaps > 0 ||
+                overlaps > 0)
+            {
+                var gapsErrorMessage = string.Format("It looks like you have {0} gap(s) between jumps. ", gaps);
+                var overlapsErrorMessage = string.Format("It looks like you have {0} overlapping jump(s). ", overlaps);
+
+                var errorMessage = gaps > 0 ? gapsErrorMessage : string.Empty;
+                errorMessage += overlaps > 0 ? overlapsErrorMessage : string.Empty;
+
+                MessageBox.Show(errorMessage, "Number Line Check", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+            else
+            {
+                MessageBox.Show("Your Number Line looks okay!", "Number Line Check", MessageBoxButton.OK);
+            }
         }
 
         #endregion //Commands
