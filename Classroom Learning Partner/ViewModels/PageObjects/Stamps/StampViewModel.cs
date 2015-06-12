@@ -195,7 +195,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     return false;
                 }
 
-                return StampType == StampTypes.GroupStamp || StampType == StampTypes.GeneralStamp;
+                return StampType != StampTypes.EmptyGroupStamp;
             }
         }
 
@@ -324,9 +324,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            var keypadPrompt = IsDraggableStamp
-                                   ? StampType == StampTypes.GeneralStamp ? "How many copies?" : "How many groups?"
-                                   : StampType == StampTypes.ObservingStamp ? "How many objects?" : "How many groups?";
+            var keypadPrompt = StampType == StampTypes.GeneralStamp ? "How many copies?" : StampType == StampTypes.ObservingStamp ? "How many objects?" : "How many groups?";
 
             var keypadLimit = StampType == StampTypes.EmptyGroupStamp || StampType == StampTypes.GroupStamp ? 21 : 101;
 
@@ -444,7 +442,8 @@ namespace Classroom_Learning_Partner.ViewModels
             else
             {
                 var initialXPosition = 25.0;
-                var initialYPosition = YPosition + Height + 125 + 120; //HACK: the +120 is to compensate for Piles in Ann's Trial because reduced height of Empty Group Stamp by 40 and moved YPos up 15
+                var initialYPosition = YPosition + Height + 125 + 120;
+                    //HACK: the +120 is to compensate for Piles in Ann's Trial because reduced height of Empty Group Stamp by 40 and moved YPos up 15
                 if (initialYPosition + stampedObjectHeight > PageObject.ParentPage.Height)
                 {
                     initialYPosition = PageObject.ParentPage.Height - stampedObjectHeight;

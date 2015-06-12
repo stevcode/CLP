@@ -354,7 +354,6 @@
                     <TextBlock FontSize="16"
                                Text="{Binding PageObject.FormattedReport}" />
                 </Canvas>
-                
 
                 <Button Command="{Binding ParameterizeStampCommand}"
                         Cursor="Hand"
@@ -362,8 +361,27 @@
                         Height="25"
                         Margin="-5 2 0 0"
                         HorizontalAlignment="Left"
-                        VerticalAlignment="Top"
-                        Visibility="{Binding IsDraggableStamp, Converter={catel:BooleanToCollapsingVisibilityConverter}, ConverterParameter=False}">
+                        VerticalAlignment="Top">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Visibility"
+                                    Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger
+                                        Binding="{Binding StampType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static entities:StampTypes.EmptyGroupStamp}}"
+                                             Value="True">
+                                    <Setter Property="Visibility"
+                                            Value="Visible" />
+                                </DataTrigger>
+                                <DataTrigger
+                                        Binding="{Binding StampType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static entities:StampTypes.ObservingStamp}}"
+                                             Value="True">
+                                    <Setter Property="Visibility"
+                                            Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
                     <Button.Template>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Grid>
@@ -385,8 +403,27 @@
                 <TextBlock FontFamily="pack://application:,,,/Resources/Fonts/#SketchFlow Print"
                            FontSize="60"
                            TextAlignment="Center"
-                           VerticalAlignment="Bottom"
-                           Visibility="{Binding IsDraggableStamp, Converter={catel:BooleanToHidingVisibilityConverter}}">
+                           VerticalAlignment="Bottom">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Visibility"
+                                    Value="Visible" />
+                            <Style.Triggers>
+                                <DataTrigger
+                                        Binding="{Binding StampType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static entities:StampTypes.EmptyGroupStamp}}"
+                                             Value="True">
+                                    <Setter Property="Visibility"
+                                            Value="Hidden" />
+                                </DataTrigger>
+                                <DataTrigger
+                                        Binding="{Binding StampType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static entities:StampTypes.ObservingStamp}}"
+                                             Value="True">
+                                    <Setter Property="Visibility"
+                                            Value="Hidden" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
                     <TextBlock.Text>
                         <MultiBinding Converter="{StaticResource BoolZeroToQuestionMarkMultiConverter}">
                             <Binding Path="Parts" />
@@ -399,13 +436,32 @@
                            IsHitTestVisible="{Binding IsGroupStamp, Converter={catel:BooleanToOppositeBooleanConverter}}"
                            StrokeThickness="0"
                            Fill="Transparent"
-                           Height="{Binding PageObject.PartsHeight}"
-                           Visibility="{Binding IsDraggableStamp, Converter={catel:BooleanToHidingVisibilityConverter}}">
+                           Height="{Binding PageObject.PartsHeight}">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="MouseUp">
                             <catel:EventToCommand Command="{Binding ShowKeyPadCommand}" />
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
+                    <Rectangle.Style>
+                        <Style TargetType="Rectangle">
+                            <Setter Property="Visibility"
+                                    Value="Visible" />
+                            <Style.Triggers>
+                                <DataTrigger
+                                        Binding="{Binding StampType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static entities:StampTypes.EmptyGroupStamp}}"
+                                             Value="True">
+                                    <Setter Property="Visibility"
+                                            Value="Hidden" />
+                                </DataTrigger>
+                                <DataTrigger
+                                        Binding="{Binding StampType, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static entities:StampTypes.ObservingStamp}}"
+                                             Value="True">
+                                    <Setter Property="Visibility"
+                                            Value="Hidden" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Rectangle.Style>
                 </Rectangle>
 
             </Grid>
