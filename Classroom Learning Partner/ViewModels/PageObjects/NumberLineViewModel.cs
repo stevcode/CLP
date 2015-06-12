@@ -80,6 +80,15 @@ namespace Classroom_Learning_Partner.ViewModels
         #region Model
 
         [ViewModelToModel("PageObject")]
+        public NumberLineTypes NumberLineType
+        {
+            get { return GetValue<NumberLineTypes>(NumberLineTypeProperty); }
+            set { SetValue(NumberLineTypeProperty, value); }
+        }
+
+        public static readonly PropertyData NumberLineTypeProperty = RegisterProperty("NumberLineType", typeof(NumberLineTypes));
+
+        [ViewModelToModel("PageObject")]
         public int NumberLineSize
         {
             get { return GetValue<int>(NumberLineSizeProperty); }
