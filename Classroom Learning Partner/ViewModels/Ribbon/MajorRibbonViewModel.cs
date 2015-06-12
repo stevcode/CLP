@@ -841,31 +841,31 @@ namespace Classroom_Learning_Partner.ViewModels
             Buttons.Add(_setDrawModeButton);
             Buttons.Add(_setEraseModeButton);
             //Buttons.Add(Separater);
-            //Buttons.Add(_setLassoModeButton);
-            //Buttons.Add(_setCutModeButton);
+            Buttons.Add(_setLassoModeButton);
+            Buttons.Add(_setCutModeButton);
             //Buttons.Add(_setDividerCreationModeButton);
 
             // Insert Math Tools
             Buttons.Add(Separater);
-            //Buttons.Add(_insertGeneralStampButton);
+            Buttons.Add(_insertGeneralStampButton);
             //Buttons.Add(_insertGroupStampButton);
             Buttons.Add(_insertNumberLineButton);
             Buttons.Add(_insertAutoNumberLineButton);
-            //Buttons.Add(_insertArrayButton);
+            Buttons.Add(_insertArrayButton);
             //Buttons.Add(_insert10x10ArrayButton);
             //Buttons.Add(_insertArrayCardButton);
             //Buttons.Add(_insertFactorCardButton);
             //Buttons.Add(_insertObscurableArrayButton);
-            //Buttons.Add(_insertPileButton);
+            Buttons.Add(_insertPileButton);
             //Buttons.Add(_insertDivisionTemplateButton);
 
             // Insert Shapes
-            //Buttons.Add(Separater);
-            //Buttons.Add(_insertSquareButton);
-            //Buttons.Add(_insertCircleButton);
-            //Buttons.Add(_insertTriangleButton);
-            //Buttons.Add(_insertHorizontalLineButton);
-            //Buttons.Add(_insertVerticalLineButton);
+            Buttons.Add(Separater);
+            Buttons.Add(_insertSquareButton);
+            Buttons.Add(_insertCircleButton);
+            Buttons.Add(_insertTriangleButton);
+            Buttons.Add(_insertHorizontalLineButton);
+            Buttons.Add(_insertVerticalLineButton);
             //Buttons.Add(_insertProtractorButton);
             //Buttons.Add(_insertRightDiagonalButton);
             //Buttons.Add(_insertRightDiagonalDashedButton);
@@ -873,10 +873,10 @@ namespace Classroom_Learning_Partner.ViewModels
             //Buttons.Add(_insertLeftDiagonalDashedButton);
 
             // Insert Text Box
-            //Buttons.Add(Separater);
-            //Buttons.Add(_insertImageButton);
-            //Buttons.Add(_insertTextBoxButton);
-            //Buttons.Add(_insertMultipleChoiceTextBoxButton);
+            Buttons.Add(Separater);
+            Buttons.Add(_insertImageButton);
+            Buttons.Add(_insertTextBoxButton);
+            Buttons.Add(_insertMultipleChoiceTextBoxButton);
             
         }
 
