@@ -156,7 +156,20 @@ namespace CLP.Entities
             : base(parentPage)
         {
             NumberLineSize = numberLength;
-            Height = NumberLineHeight;
+
+            switch (numberLineType)
+            {
+                case NumberLineTypes.NumberLine:
+                    Height = NumberLineHeight;
+                    break;
+                case NumberLineTypes.AutoArcs:
+                    Height = NumberLineHeight + 50;
+                    break;
+                default:
+                    Height = NumberLineHeight;
+                    break;
+            }
+
             Width = parentPage.Width - 100;
             XPosition = (parentPage.Width / 2.0) - (Width / 2.0);
             NumberLineType = numberLineType;
