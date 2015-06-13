@@ -352,6 +352,7 @@
                         </Style>
                     </Canvas.Style>
                     <TextBlock FontSize="16"
+                               FontWeight="Bold"
                                Text="{Binding PageObject.FormattedReport}" />
                 </Canvas>
 
