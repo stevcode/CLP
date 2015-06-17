@@ -210,7 +210,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if (_isClicked)
             {
-                var keyPad = new KeypadWindowView("Change End Number", 85)
+                var keyPad = new KeypadWindowView("Change End Number", NumberLine.NUMBER_LINE_MAX_SIZE + 1)
                              {
                                  Owner = Application.Current.MainWindow,
                                  WindowStartupLocation = WindowStartupLocation.Manual
@@ -224,7 +224,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
                 var newNumberLineSize = Int32.Parse(keyPad.NumbersEntered.Text);
 
-                if (newNumberLineSize >= 85)
+                if (newNumberLineSize > NumberLine.NUMBER_LINE_MAX_SIZE)
                 {
                     MessageBox.Show("You have entered too large of a number for the endpoint of the number line.");
                     return;

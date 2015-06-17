@@ -147,6 +147,7 @@ namespace CLP.Entities
     public class NumberLine : APageObjectBase, IStrokeAccepter
     {
         public const int MAX_ALL_TICKS_VISIBLE_LENGTH = 30;
+        public const int NUMBER_LINE_MAX_SIZE = 93;
 
         #region Constructors
 
