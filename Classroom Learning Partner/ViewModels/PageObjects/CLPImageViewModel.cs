@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -10,6 +11,8 @@ using Catel.Data;
 using Catel.IoC;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Services;
+using Classroom_Learning_Partner.Views.Modal_Windows;
+using CLP.CustomControls;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -48,6 +51,16 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             ResizeImageCommand = new Command<DragDeltaEventArgs>(OnResizeImageCommandExecute);
+            CreateImageCopyCommand = new Command(OnCreateImageCopyCommandExecute);
+
+            InitializeButtons();
+        }
+
+        private void InitializeButtons()
+        {
+            _contextButtons.Add(MajorRibbonViewModel.Separater);
+
+            _contextButtons.Add(new RibbonButton("Create Copies", "pack://application:,,,/Images/AddToDisplay.png", CreateImageCopyCommand, null, true));
         }
 
         public override string Title { get { return "ImageVM"; } }
@@ -67,8 +80,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Binding
 
+        #region Commands
+
         /// <summary>
-        /// Gets the CLPImageResize command.
+        /// Resizes the image while keeping aspect ratio.
         /// </summary>
         public Command<DragDeltaEventArgs> ResizeImageCommand { get; set; }
 
@@ -78,25 +93,25 @@ namespace Classroom_Learning_Partner.ViewModels
 
             PageObject.Height = PageObject.Height + e.VerticalChange;
             PageObject.Width = PageObject.Width + e.HorizontalChange;
-            if(PageObject.Height < 10)
+            if (PageObject.Height < 10)
             {
                 PageObject.Height = 10;
             }
-            if(PageObject.Width < 10)
+            if (PageObject.Width < 10)
             {
                 PageObject.Width = 10;
             }
-            if(PageObject.Height + PageObject.YPosition > parentPage.Height)
+            if (PageObject.Height + PageObject.YPosition > parentPage.Height)
             {
                 PageObject.Height = PageObject.Height;
             }
-            if(PageObject.Width + PageObject.XPosition > parentPage.Width)
+            if (PageObject.Width + PageObject.XPosition > parentPage.Width)
             {
                 PageObject.Width = PageObject.Width;
             }
 
             var aspectRatio = 1.0;
-            if(SourceImage.Width > 0)
+            if (SourceImage.Width > 0)
             {
                 aspectRatio = SourceImage.Width / SourceImage.Height;
             }
@@ -104,6 +119,75 @@ namespace Classroom_Learning_Partner.ViewModels
 
             ChangePageObjectDimensions(PageObject, PageObject.Height, PageObject.Width);
         }
+
+        /// <summary>
+        /// SUMMARY
+        /// </summary>
+        public Command CreateImageCopyCommand { get; private set; }
+
+        private void OnCreateImageCopyCommandExecute()
+        {
+            var keyPad = new KeypadWindowView("How many copies?", 21)
+            {
+                Owner = Application.Current.MainWindow,
+                WindowStartupLocation = WindowStartupLocation.Manual
+            };
+            keyPad.ShowDialog();
+            if (keyPad.DialogResult != true ||
+               keyPad.NumbersEntered.Text.Length <= 0)
+            {
+                return;
+            }
+            var numberOfImages = Int32.Parse(keyPad.NumbersEntered.Text);
+
+            var xPosition = 10.0;
+            var yPosition = 160.0;
+            if (YPosition + 2 * Height + 10.0 < PageObject.ParentPage.Height)
+            {
+                yPosition = YPosition + Height + 10.0;
+            }
+            else if (XPosition + 2 * Width + 10.0 < PageObject.ParentPage.Width)
+            {
+                yPosition = YPosition;
+                xPosition = XPosition + Width + 10.0;
+            }
+
+            var imagesToAdd = new List<CLPImage>();
+            foreach (var index in Enumerable.Range(1, numberOfImages))
+            {
+                var image = PageObject.Duplicate() as CLPImage;
+                if (image == null)
+                {
+                    continue;
+                }
+                image.XPosition = xPosition;
+                image.YPosition = yPosition;
+
+                if (xPosition + 2 * image.Width <= PageObject.ParentPage.Width)
+                {
+                    xPosition += image.Width;
+                }
+                //If there isn't room, diagonally pile the rest
+                else if ((xPosition + image.Width + 20.0 <= PageObject.ParentPage.Width) &&
+                        (yPosition + image.Height + 20.0 <= PageObject.ParentPage.Height))
+                {
+                    xPosition += 20.0;
+                    yPosition += 20.0;
+                }
+                imagesToAdd.Add(image);
+            }
+
+            if (imagesToAdd.Count == 1)
+            {
+                ACLPPageBaseViewModel.AddPageObjectToPage(imagesToAdd.First());
+            }
+            else
+            {
+                ACLPPageBaseViewModel.AddPageObjectsToPage(PageObject.ParentPage, imagesToAdd);
+            }
+        }
+
+        #endregion //Commands
 
         #region Static Methods
 
