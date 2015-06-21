@@ -1,0 +1,90 @@
+﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.BinReporterView"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:catel="http://catel.codeplex.com"
+                   xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+                   xmlns:ac="clr-namespace:AdornedControl"
+                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters">
+
+    <ac:AdornedControl HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       HorizontalAdornerPlacement="Outside"
+                       VerticalAdornerPlacement="Outside"
+                       IsAdornerVisible="{Binding IsAdornerVisible, Mode=TwoWay}"
+                       IsMouseOverShowEnabled="{Binding IsMouseOverShowEnabled}"
+                       OpenAdornerTimeOut="{Binding OpenAdornerTimeOut}"
+                       CloseAdornerTimeOut="{Binding CloseAdornerTimeOut}">
+        <!--This is the adorner-->
+        <ac:AdornedControl.AdornerContent>
+            <Canvas HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Width="{Binding Width}"
+                    Height="{Binding Height}">
+
+                <Rectangle Stroke="Transparent"
+                           StrokeThickness="1"
+                           Fill="{DynamicResource DynamicMainColor}"
+                           Opacity=".03"
+                           IsHitTestVisible="False"
+                           RadiusX="10"
+                           RadiusY="10"
+                           Canvas.Top="-5"
+                           Canvas.Left="-5"
+                           Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}" />
+
+                <Rectangle Stroke="{DynamicResource DynamicMainColor}"
+                           StrokeThickness="1"
+                           RadiusX="10"
+                           RadiusY="10"
+                           Canvas.Top="-5"
+                           Canvas.Left="-5"
+                           Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}" />
+
+            </Canvas>
+        </ac:AdornedControl.AdornerContent>
+        
+        <Grid>
+            <TextBlock Height="{Binding Height}"
+                       Width="{Binding Width}"
+                       TextAlignment="Center"
+                       FontSize="16"
+                       FontWeight="Bold"
+                       Text="{Binding PageObject.FormattedReport}" />
+
+            <Thumb Tag="PageObjectHitBox"
+                   Width="{Binding Width}"
+                   Height="{Binding Height}">
+                <Thumb.Template>
+                    <ControlTemplate>
+                        <Rectangle Fill="Transparent"
+                                   Stroke="Transparent"
+                                   Stretch="Fill" />
+                    </ControlTemplate>
+                </Thumb.Template>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="DragStarted">
+                        <catel:EventToCommand Command="{Binding DragStartPageObjectCommand}"
+                                              PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="DragDelta">
+                        <catel:EventToCommand Command="{Binding DragPageObjectCommand}"
+                                              PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="DragCompleted">
+                        <catel:EventToCommand Command="{Binding DragStopPageObjectCommand}"
+                                              PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Thumb>
+
+        </Grid>
+
+    </ac:AdornedControl>
+
+</catel:UserControl>
+    
+
+
+

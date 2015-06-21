@@ -12,6 +12,7 @@ namespace CLP.Entities
         Square,
         Circle,
         Triangle,
+        Tick,
         Custom
     }
 

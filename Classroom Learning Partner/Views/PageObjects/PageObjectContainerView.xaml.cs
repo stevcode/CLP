@@ -70,6 +70,18 @@ namespace Classroom_Learning_Partner.Views
             {
                 return typeof(MultipleChoiceBoxViewModel);
             }
+            if (dataContext is Mark)
+            {
+                return typeof(MarkViewModel);
+            }
+            if (dataContext is Bin)
+            {
+                return typeof(BinViewModel);
+            }
+            if (dataContext is BinReporter)
+            {
+                return typeof(BinReporterViewModel);
+            }
 
             return null;
         }

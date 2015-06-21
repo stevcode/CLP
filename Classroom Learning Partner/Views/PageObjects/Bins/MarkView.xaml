@@ -1,0 +1,188 @@
+﻿<catel:UserControl x:Class="Classroom_Learning_Partner.Views.MarkView"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:catel="http://catel.codeplex.com"
+                   xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+                   xmlns:ac="clr-namespace:AdornedControl"
+                   xmlns:conv="clr-namespace:Classroom_Learning_Partner.Converters">
+
+    <ac:AdornedControl HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       HorizontalAdornerPlacement="Outside"
+                       VerticalAdornerPlacement="Outside"
+                       IsAdornerVisible="{Binding IsAdornerVisible, Mode=TwoWay}"
+                       IsMouseOverShowEnabled="{Binding IsMouseOverShowEnabled}"
+                       OpenAdornerTimeOut="{Binding OpenAdornerTimeOut}"
+                       CloseAdornerTimeOut="{Binding CloseAdornerTimeOut}">
+        <!--This is the adorner-->
+        <ac:AdornedControl.AdornerContent>
+            <Canvas HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Width="{Binding Width}"
+                    Height="{Binding Height}">
+
+                <Rectangle Stroke="Transparent"
+                           StrokeThickness="1"
+                           Fill="{DynamicResource DynamicMainColor}"
+                           Opacity=".03"
+                           IsHitTestVisible="False"
+                           RadiusX="10"
+                           RadiusY="10"
+                           Canvas.Top="-5"
+                           Canvas.Left="-5"
+                           Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}" />
+
+                <Rectangle Stroke="{DynamicResource DynamicMainColor}"
+                           StrokeThickness="1"
+                           RadiusX="10"
+                           RadiusY="10"
+                           Canvas.Top="-5"
+                           Canvas.Left="-5"
+                           Width="{Binding Width, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}"
+                           Height="{Binding Height, Converter={conv:IncreaseNumberConverter}, ConverterParameter=10}" />
+
+                <!--Close Button-->
+                <Button Command="{Binding RemovePageObjectCommand}"
+                        Width="40"
+                        Height="40"
+                        Canvas.Left="-40"
+                        Canvas.Top="-40"
+                        Cursor="Hand">
+                    <Button.Template>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Grid>
+                                <Ellipse Stroke="Black"
+                                         StrokeThickness="3"
+                                         Fill="White"
+                                         VerticalAlignment="Stretch"
+                                         HorizontalAlignment="Stretch" />
+                                <Path Data="M0,0 L1,1 M0,1 L1,0"
+                                      Stretch="Fill"
+                                      Margin="5"
+                                      Stroke="Red"
+                                      StrokeThickness="3" />
+                            </Grid>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
+            </Canvas>
+        </ac:AdornedControl.AdornerContent>
+
+        <Grid>
+
+            <Control>
+                <Control.Resources>
+
+                    <ControlTemplate x:Key="RectangleTemplate">
+                        <Rectangle DataContext="{Binding}"
+                                   Height="{Binding Height, Mode=TwoWay}"
+                                   Width="{Binding Width, Mode=TwoWay}"
+                                   Fill="{Binding MarkColor}" />
+                    </ControlTemplate>
+
+                    <ControlTemplate x:Key="EllipseTemplate">
+                        <Ellipse DataContext="{Binding}"
+                                 Height="{Binding Height, Mode=TwoWay}"
+                                 Width="{Binding Width, Mode=TwoWay}"
+                                 Fill="{Binding MarkColor}" />
+                    </ControlTemplate>
+
+                    <ControlTemplate x:Key="TriangleTemplate">
+                        <Polygon DataContext="{Binding}"
+                                 Points="0,2 2,2 1,0"
+                                 Height="{Binding Height, Mode=TwoWay}"
+                                 Width="{Binding Width, Mode=TwoWay}"
+                                 Stretch="Uniform"
+                                 Fill="{Binding MarkColor}" />
+                    </ControlTemplate>
+
+                    <ControlTemplate x:Key="TickTemplate">
+                        <Line DataContext="{Binding}"
+                              Height="{Binding Height, Mode=TwoWay}"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Top"
+                              Stretch="UniformToFill"
+                              StrokeThickness="3"
+                              Stroke="{Binding MarkColor}"
+                              X1="0"
+                              Y1="0"
+                              X2="0"
+                              Y2="1" />
+                    </ControlTemplate>
+            
+                </Control.Resources>
+
+                <Control.Style>
+                    <Style TargetType="{x:Type Control}">
+                        <Style.Triggers>
+
+                            <!-- Rectangle trigger -->
+                            <DataTrigger Binding="{Binding MarkShape}"
+                                         Value="Square">
+                                <Setter Property="Template"
+                                        Value="{StaticResource RectangleTemplate}" />
+                            </DataTrigger>
+
+                            <!-- Ellipse trigger -->
+                            <DataTrigger Binding="{Binding MarkShape}"
+                                         Value="Circle">
+                                <Setter Property="Template"
+                                        Value="{StaticResource EllipseTemplate}" />
+                            </DataTrigger>
+
+                            <!-- Triangle trigger -->
+                            <DataTrigger Binding="{Binding MarkShape}"
+                                         Value="Triangle">
+                                <Setter Property="Template"
+                                        Value="{StaticResource TriangleTemplate}" />
+                            </DataTrigger>
+
+                            <!-- Tick trigger -->
+                            <DataTrigger Binding="{Binding MarkShape}"
+                                         Value="Tick">
+                                <Setter Property="Template"
+                                        Value="{StaticResource TickTemplate}" />
+                            </DataTrigger>
+
+                        </Style.Triggers>
+                    </Style>
+                </Control.Style>
+            </Control>
+
+            <Thumb Tag="PageObjectHitBox"
+                   Width="{Binding Width}"
+                   Height="{Binding Height}">
+                <Thumb.Template>
+                    <ControlTemplate>
+                        <Rectangle Fill="Transparent"
+                                   Stroke="Transparent"
+                                   Stretch="Fill" />
+                    </ControlTemplate>
+                </Thumb.Template>
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="DragStarted">
+                        <catel:EventToCommand Command="{Binding DragStartPageObjectCommand}"
+                                              PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="DragDelta">
+                        <catel:EventToCommand Command="{Binding DragPageObjectCommand}"
+                                              PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                    <i:EventTrigger EventName="DragCompleted">
+                        <catel:EventToCommand Command="{Binding DragStopPageObjectCommand}"
+                                              PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </Thumb>
+
+        </Grid>
+
+    </ac:AdornedControl>
+
+</catel:UserControl>
+    
+
+
+

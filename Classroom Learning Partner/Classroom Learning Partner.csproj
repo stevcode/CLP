@@ -394,6 +394,15 @@
     <Compile Include="Views\Modal Windows\NotebookMetadataWindowView.xaml.cs">
       <DependentUpon>NotebookMetadataWindowView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\PageObjects\Bins\BinReporterView.xaml.cs">
+      <DependentUpon>BinReporterView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PageObjects\Bins\BinView.xaml.cs">
+      <DependentUpon>BinView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PageObjects\Bins\MarkView.xaml.cs">
+      <DependentUpon>MarkView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PageObjects\MultipleChoiceBoxView.xaml.cs">
       <DependentUpon>MultipleChoiceBoxView.xaml</DependentUpon>
     </Compile>
@@ -696,6 +705,18 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Modal Windows\NotebookMetadataWindowView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PageObjects\Bins\BinReporterView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PageObjects\Bins\BinView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PageObjects\Bins\MarkView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1336,7 +1357,6 @@
     <Folder Include="Converters\List Converters\" />
     <Folder Include="Resources\Images\ContextRibbon\PageObjectBase\" />
     <Folder Include="Resources\Images\ContextRibbon\TextBox\" />
-    <Folder Include="Views\PageObjects\Bins\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
