@@ -17,6 +17,7 @@ namespace Classroom_Learning_Partner.Services
         Select,
         Draw,
         Erase,
+        Mark,
         Lasso,
         Cut,
         DividerCreation
@@ -88,6 +89,9 @@ namespace Classroom_Learning_Partner.Services
                 case PageInteractionModes.Erase:
                     SetEraseMode();
                     break;
+                case PageInteractionModes.Mark:
+                    SetMarkMode();
+                    break;
                 case PageInteractionModes.Lasso:
                     SetLassoMode();
                     break;
@@ -155,6 +159,18 @@ namespace Classroom_Learning_Partner.Services
                 case ErasingModes.Dividers:
                     SetDividerEraserMode();
                     break;
+            }
+        }
+
+        public void SetMarkMode()
+        {
+            CurrentPageInteractionMode = PageInteractionModes.Mark;
+            foreach (var pageViewModel in ActivePageViewModels)
+            {
+                pageViewModel.IsInkCanvasHitTestVisible = false;
+                pageViewModel.IsUsingCustomCursors = true;
+                pageViewModel.PageCursor = Cursors.Cross;
+                pageViewModel.ClearAdorners();
             }
         }
 

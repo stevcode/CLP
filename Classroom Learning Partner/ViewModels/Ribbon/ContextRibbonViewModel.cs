@@ -280,6 +280,16 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+        public void SetMarkContextButtons()
+        {
+            Buttons.Clear();
+            _pageInteractionService = DependencyResolver.Resolve<IPageInteractionService>();
+            if (_pageInteractionService == null)
+            {
+                return;
+            }
+        }
+
         #endregion //Methods
     }
 }

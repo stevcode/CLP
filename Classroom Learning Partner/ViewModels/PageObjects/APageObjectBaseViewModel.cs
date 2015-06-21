@@ -6,7 +6,9 @@ using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using Catel.Data;
+using Catel.IoC;
 using Catel.MVVM;
+using Classroom_Learning_Partner.Services;
 using CLP.CustomControls;
 using CLP.Entities;
 
@@ -20,11 +22,13 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         protected ObservableCollection<UIElement> _contextButtons = new ObservableCollection<UIElement>();
+        protected IPageInteractionService PageInteractionService;
 
         #region Constructor
 
         protected APageObjectBaseViewModel()
         {
+            PageInteractionService = DependencyResolver.Resolve<IPageInteractionService>();
             InitializeCommands();
             _contextButtons.Add(new RibbonButton("Delete", "pack://application:,,,/Images/Delete.png", RemovePageObjectCommand, null, true));
         }
@@ -208,6 +212,13 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>Method to invoke when the DragStartPageObjectCommand command is executed.</summary>
         private void OnDragStartPageObjectCommandExecute(DragStartedEventArgs e)
         {
+            if (PageInteractionService == null ||
+                PageInteractionService.CurrentPageInteractionMode != PageInteractionModes.Select)
+            {
+                e.Handled = false;
+                return;
+            }
+
             if (IsBackgroundPageObject)
             {
                 return;
@@ -229,6 +240,13 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnDragPageObjectCommandExecute(DragDeltaEventArgs e)
         {
+            if (PageInteractionService == null ||
+                PageInteractionService.CurrentPageInteractionMode != PageInteractionModes.Select)
+            {
+                e.Handled = false;
+                return;
+            }
+
             if (IsBackgroundPageObject)
             {
                 return;
@@ -253,6 +271,13 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnDragStopPageObjectCommandExecute(DragCompletedEventArgs e)
         {
+            if (PageInteractionService == null ||
+                PageInteractionService.CurrentPageInteractionMode != PageInteractionModes.Select)
+            {
+                e.Handled = false;
+                return;
+            }
+
             if (IsBackgroundPageObject)
             {
                 ACLPPageBaseViewModel.ClearAdorners(PageObject.ParentPage);

@@ -13,7 +13,6 @@ using Catel.MVVM;
 using Classroom_Learning_Partner.Services;
 using CLP.CustomControls;
 using CLP.Entities;
-using RibbonButton = CLP.CustomControls.RibbonButton;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -76,20 +75,28 @@ namespace Classroom_Learning_Partner.ViewModels
                                                            "pack://application:,,,/Resources/Images/Hand32.png",
                                                            PageInteractionModes.Select.ToString());
             _setSelectModeButton.Checked += _button_Checked;
+
             _setDrawModeButton = new GroupedRibbonButton("Draw", "PageInteractionMode", "pack://application:,,,/Resources/Images/Pen32.png", PageInteractionModes.Draw.ToString());
             _setDrawModeButton.Checked += _button_Checked;
+
             _setEraseModeButton = new GroupedRibbonButton("Erase",
                                                           "PageInteractionMode",
                                                           "pack://application:,,,/Resources/Images/PointEraser32.png",
                                                           PageInteractionModes.Erase.ToString());
             _setEraseModeButton.Checked += _button_Checked;
+
+            _setMarkModeButton = new GroupedRibbonButton("Mark", "PageInteractionMode", "pack://application:,,,/Images/AddCircle.png", PageInteractionModes.Mark.ToString());
+            _setMarkModeButton.Checked += _button_Checked;
+
             _setLassoModeButton = new GroupedRibbonButton("Lasso",
                                                           "PageInteractionMode",
                                                           "pack://application:,,,/Resources/Images/Lasso32.png",
                                                           PageInteractionModes.Lasso.ToString());
             _setLassoModeButton.Checked += _button_Checked;
+
             _setCutModeButton = new GroupedRibbonButton("Cut", "PageInteractionMode", "pack://application:,,,/Resources/Images/Scissors32.png", PageInteractionModes.Cut.ToString());
             _setCutModeButton.Checked += _button_Checked;
+
             _setDividerCreationModeButton = new GroupedRibbonButton("Add Divider",
                                                                     "PageInteractionMode",
                                                                     "pack://application:,,,/Resources/Images/InkArray32.png",
@@ -131,7 +138,10 @@ namespace Classroom_Learning_Partner.ViewModels
 
             //NumberLine
             _insertNumberLineButton = new RibbonButton("Number Line", "pack://application:,,,/Resources/Images/NumberLine32.png", AddPageObjectToPageCommand, "NUMBERLINE");
-            _insertAutoNumberLineButton = new RibbonButton("Auto Number Line", "pack://application:,,,/Resources/Images/NumberLine32.png", AddPageObjectToPageCommand, "AUTO_NUMBERLINE");
+            _insertAutoNumberLineButton = new RibbonButton("Auto Number Line",
+                                                           "pack://application:,,,/Resources/Images/NumberLine32.png",
+                                                           AddPageObjectToPageCommand,
+                                                           "AUTO_NUMBERLINE");
 
             //Shapes
             //TODO: Better Icons
@@ -142,9 +152,15 @@ namespace Classroom_Learning_Partner.ViewModels
             _insertVerticalLineButton = new RibbonButton("Vertical Line", "pack://application:,,,/Images/VerticalLineIcon.png", AddPageObjectToPageCommand, "VERTICALLINE");
             _insertProtractorButton = new RibbonButton("Protractor", "pack://application:,,,/Images/Protractor64.png", AddPageObjectToPageCommand, "PROTRACTOR");
             _insertRightDiagonalButton = new RibbonButton("Right Diagonal", "pack://application:,,,/Images/LargeIcon.png", AddPageObjectToPageCommand, "RIGHT_DIAGONAL");
-            _insertRightDiagonalDashedButton = new RibbonButton("Right Diagonal Dashed", "pack://application:,,,/Images/LargeIcon.png", AddPageObjectToPageCommand, "RIGHT_DIAGONAL_DASHED");
+            _insertRightDiagonalDashedButton = new RibbonButton("Right Diagonal Dashed",
+                                                                "pack://application:,,,/Images/LargeIcon.png",
+                                                                AddPageObjectToPageCommand,
+                                                                "RIGHT_DIAGONAL_DASHED");
             _insertLeftDiagonalButton = new RibbonButton("Left Diagonal", "pack://application:,,,/Images/LargeIcon.png", AddPageObjectToPageCommand, "LEFT_DIAGONAL");
-            _insertLeftDiagonalDashedButton = new RibbonButton("Left Diagonal Dashed", "pack://application:,,,/Images/LargeIcon.png", AddPageObjectToPageCommand, "LEFT_DIAGONAL_DASHED");
+            _insertLeftDiagonalDashedButton = new RibbonButton("Left Diagonal Dashed",
+                                                               "pack://application:,,,/Images/LargeIcon.png",
+                                                               AddPageObjectToPageCommand,
+                                                               "LEFT_DIAGONAL_DASHED");
 
             //Bin
             _insertBinButton = new RibbonButton("Bin", "pack://application:,,,/Images/AddSquare.png", AddPageObjectToPageCommand, "BIN");
@@ -153,7 +169,10 @@ namespace Classroom_Learning_Partner.ViewModels
             //TODO: Better Icons
             _insertTextBoxButton = new RibbonButton("Text", "pack://application:,,,/Resources/Images/MajorRibbon/TextBox512.png", AddPageObjectToPageCommand, "TEXTBOX");
 
-            _insertMultipleChoiceTextBoxButton = new RibbonButton("Multiple Choice", "pack://application:,,,/Resources/Images/TempIcon32.png", AddPageObjectToPageCommand, "MULTIPLECHOICEBOX");
+            _insertMultipleChoiceTextBoxButton = new RibbonButton("Multiple Choice",
+                                                                  "pack://application:,,,/Resources/Images/TempIcon32.png",
+                                                                  AddPageObjectToPageCommand,
+                                                                  "MULTIPLECHOICEBOX");
         }
 
         private bool _isCheckedEventRunning = false;
@@ -201,6 +220,10 @@ namespace Classroom_Learning_Partner.ViewModels
                         case PageInteractionModes.Erase:
                             _pageInteractionService.SetEraseMode();
                             contextRibbon.SetEraserContextButtons();
+                            break;
+                        case PageInteractionModes.Mark:
+                            _pageInteractionService.SetMarkMode();
+                            contextRibbon.SetMarkContextButtons();
                             break;
                         case PageInteractionModes.Lasso:
                             _pageInteractionService.SetLassoMode();
@@ -252,6 +275,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private GroupedRibbonButton _setSelectModeButton;
         private GroupedRibbonButton _setDrawModeButton;
         private GroupedRibbonButton _setEraseModeButton;
+        private GroupedRibbonButton _setMarkModeButton;
         private GroupedRibbonButton _setLassoModeButton;
         private GroupedRibbonButton _setCutModeButton;
         private GroupedRibbonButton _setDividerCreationModeButton;
@@ -384,30 +408,30 @@ namespace Classroom_Learning_Partner.ViewModels
                                          }
                                      });
                 }
-                    //if (App.MainWindowViewModel.AvailableUsers.Any())
-                    //{
-                    //    Parallel.ForEach(App.MainWindowViewModel.AvailableUsers,
-                    //                     student =>
-                    //                     {
-                    //                         try
-                    //                         {
-                    //                             var binding = new NetTcpBinding
-                    //                             {
-                    //                                 Security =
-                    //                                 {
-                    //                                     Mode = SecurityMode.None
-                    //                                 }
-                    //                             };
-                    //                             var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(binding, new EndpointAddress(student.CurrentMachineAddress));
-                    //                             studentProxy.TogglePenDownMode(value);
-                    //                             (studentProxy as ICommunicationObject).Close();
-                    //                         }
-                    //                         catch (Exception ex)
-                    //                         {
-                    //                             Console.WriteLine(ex.Message);
-                    //                         }
-                    //                     });
-                    //}
+                //if (App.MainWindowViewModel.AvailableUsers.Any())
+                //{
+                //    Parallel.ForEach(App.MainWindowViewModel.AvailableUsers,
+                //                     student =>
+                //                     {
+                //                         try
+                //                         {
+                //                             var binding = new NetTcpBinding
+                //                             {
+                //                                 Security =
+                //                                 {
+                //                                     Mode = SecurityMode.None
+                //                                 }
+                //                             };
+                //                             var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(binding, new EndpointAddress(student.CurrentMachineAddress));
+                //                             studentProxy.TogglePenDownMode(value);
+                //                             (studentProxy as ICommunicationObject).Close();
+                //                         }
+                //                         catch (Exception ex)
+                //                         {
+                //                             Console.WriteLine(ex.Message);
+                //                         }
+                //                     });
+                //}
                 else
                 {
                     Logger.Instance.WriteToLog("No Students Found");
@@ -416,47 +440,6 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData BlockStudentPenInputProperty = RegisterProperty("BlockStudentPenInput", typeof (bool), false);
-
-        public bool AllowAutoNumberLine
-        {
-            get { return GetValue<bool>(AllowAutoNumberLineProperty); }
-            set
-            {
-                SetValue(AllowAutoNumberLineProperty, value);
-
-                var discoveredStudentAddresses = App.Network.DiscoveredStudents.Addresses.ToList();
-                if (discoveredStudentAddresses.Any())
-                {
-                    Parallel.ForEach(discoveredStudentAddresses,
-                                     address =>
-                                     {
-                                         try
-                                         {
-                                             var binding = new NetTcpBinding
-                                             {
-                                                 Security =
-                                                 {
-                                                     Mode = SecurityMode.None
-                                                 }
-                                             };
-                                             var studentProxy = ChannelFactory<IStudentContract>.CreateChannel(binding, address);
-                                             studentProxy.ToggleAutoNumberLine(value);
-                                             (studentProxy as ICommunicationObject).Close();
-                                         }
-                                         catch (Exception e)
-                                         {
-                                             Console.WriteLine(e.Message);
-                                         }
-                                     });
-                }
-                else
-                {
-                    Logger.Instance.WriteToLog("No Students Found");
-                }
-            }
-        }
-
-        public static readonly PropertyData AllowAutoNumberLineProperty = RegisterProperty("AllowAutoNumberLine", typeof(bool), false);
 
         #endregion //Bindings
 
@@ -487,6 +470,9 @@ namespace Classroom_Learning_Partner.ViewModels
                     case PageInteractionModes.Erase:
                         _setEraseModeButton.IsChecked = true;
                         break;
+                    case PageInteractionModes.Mark:
+                        _setMarkModeButton.IsChecked = true;
+                        break;
                     case PageInteractionModes.Lasso:
                         _setLassoModeButton.IsChecked = true;
                         break;
@@ -515,9 +501,7 @@ namespace Classroom_Learning_Partner.ViewModels
             MainWindow.IsBackStageVisible = true;
         }
 
-        /// <summary>
-        /// If viewing a MultiDisplay, switches to SingleDisplay and closes Displays Panel.
-        /// </summary>
+        /// <summary>If viewing a MultiDisplay, switches to SingleDisplay and closes Displays Panel.</summary>
         public Command ExitMultiDisplayCommand { get; private set; }
 
         private void OnExitMultiDisplayCommandExecute()
@@ -603,14 +587,13 @@ namespace Classroom_Learning_Partner.ViewModels
             catch (Exception e)
             {
                 Logger.Instance.WriteToLog("Failed To stringify submission");
-                Logger.Instance.WriteToLog("[UNHANDLED ERROR] - " + e.Message + " " +
-                                       (e.InnerException != null ? "\n" + e.InnerException.Message : null));
+                Logger.Instance.WriteToLog("[UNHANDLED ERROR] - " + e.Message + " " + (e.InnerException != null ? "\n" + e.InnerException.Message : null));
                 Logger.Instance.WriteToLog("[HResult]: " + e.HResult);
                 Logger.Instance.WriteToLog("[Source]: " + e.Source);
                 Logger.Instance.WriteToLog("[Method]: " + e.TargetSite);
                 Logger.Instance.WriteToLog("[StackTrace]: " + e.StackTrace);
             }
-            
+
             CurrentPage.Submissions.Add(submission);
             CurrentPage.IsCached = true;
 
@@ -632,23 +615,23 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             var t = new Thread(() =>
-            {
-                try
-                {
-                    //var sPage = ObjectSerializer.ToString(submission);
-                    var zippedPage = CLPServiceAgent.Instance.Zip(sPage);
+                               {
+                                   try
+                                   {
+                                       //var sPage = ObjectSerializer.ToString(submission);
+                                       var zippedPage = CLPServiceAgent.Instance.Zip(sPage);
 
-                    App.Network.InstructorProxy.AddSerializedSubmission(zippedPage, notebookService.CurrentNotebook.ID);
-                }
-                catch (Exception ex)
-                {
-                    Logger.Instance.WriteToLog("Error Sending Submission: " + ex.Message);
-                    return;
-                }
-            })
-            {
-                IsBackground = true
-            };
+                                       App.Network.InstructorProxy.AddSerializedSubmission(zippedPage, notebookService.CurrentNotebook.ID);
+                                   }
+                                   catch (Exception ex)
+                                   {
+                                       Logger.Instance.WriteToLog("Error Sending Submission: " + ex.Message);
+                                       return;
+                                   }
+                               })
+                    {
+                        IsBackground = true
+                    };
             t.Start();
         }
 
@@ -697,9 +680,7 @@ namespace Classroom_Learning_Partner.ViewModels
             return CurrentPage.Height < initialHeight * 2;
         }
 
-        /// <summary>
-        /// Sets the Version 0 page to the state of the selected submission.
-        /// </summary>
+        /// <summary>Sets the Version 0 page to the state of the selected submission.</summary>
         public Command ReverseSubmitPageCommand { get; private set; }
 
         private void OnReverseSubmitPageCommandExecute()
@@ -776,12 +757,12 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             switch (pageObjectType)
             {
-                    //Image
+                //Image
                 case "IMAGE":
                     CLPImageViewModel.AddImageToPage(CurrentPage);
                     break;
 
-                    //Stamps
+                //Stamps
                 case "BLANK_GENERAL_STAMP":
                     StampViewModel.AddBlankGeneralStampToPage(CurrentPage);
                     break;
@@ -798,7 +779,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     StampViewModel.AddPileToPage(CurrentPage);
                     break;
 
-                    //Arrays
+                //Arrays
                 case "ARRAY":
                     CLPArrayViewModel.AddArrayToPage(CurrentPage, ArrayTypes.Array);
                     break;
@@ -815,7 +796,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     CLPArrayViewModel.AddArrayToPage(CurrentPage, ArrayTypes.ObscurableArray);
                     break;
 
-                    //Number Line 
+                //Number Line 
                 case "NUMBERLINE":
                     NumberLineViewModel.AddNumberLineToPage(CurrentPage);
                     break;
@@ -823,12 +804,12 @@ namespace Classroom_Learning_Partner.ViewModels
                     NumberLineViewModel.AddNumberLine2ToPage(CurrentPage);
                     break;
 
-                    //Division Template
+                //Division Template
                 case "DIVISIONTEMPLATE":
                     FuzzyFactorCardViewModel.AddDivisionTemplateToPage(CurrentPage);
                     break;
 
-                    //Shapes
+                //Shapes
                 case "SQUARE":
                     ShapeViewModel.AddShapeToPage(CurrentPage, ShapeType.Rectangle);
                     break;
@@ -860,12 +841,12 @@ namespace Classroom_Learning_Partner.ViewModels
                     ShapeViewModel.AddShapeToPage(CurrentPage, ShapeType.LeftDiagonalDashed);
                     break;
 
-                    //Bin
+                //Bin
                 case "BIN":
                     BinViewModel.AddBinToPage(CurrentPage);
                     break;
 
-                    //Text
+                //Text
                 case "TEXTBOX":
                     CLPTextBoxViewModel.AddTextBoxToPage(CurrentPage);
                     break;
@@ -892,9 +873,10 @@ namespace Classroom_Learning_Partner.ViewModels
             Buttons.Add(_setSelectModeButton);
             Buttons.Add(_setDrawModeButton);
             Buttons.Add(_setEraseModeButton);
-            //Buttons.Add(Separater);
+            Buttons.Add(_setMarkModeButton);
+            Buttons.Add(Separater);
             Buttons.Add(_setLassoModeButton);
-            //Buttons.Add(_setCutModeButton);
+            Buttons.Add(_setCutModeButton);
             //Buttons.Add(_setDividerCreationModeButton);
 
             // Insert Math Tools
@@ -930,7 +912,6 @@ namespace Classroom_Learning_Partner.ViewModels
             //Buttons.Add(_insertImageButton);
             //Buttons.Add(_insertTextBoxButton);
             //Buttons.Add(_insertMultipleChoiceTextBoxButton);
-            
         }
 
         #endregion //Methods

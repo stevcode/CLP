@@ -20,6 +20,7 @@ namespace Classroom_Learning_Partner.Services
         void SetSelectMode();
         void SetDrawMode();
         void SetEraseMode();
+        void SetMarkMode();
         void SetLassoMode();
         void SetCutMode();
         void SetDividerCreationMode();
