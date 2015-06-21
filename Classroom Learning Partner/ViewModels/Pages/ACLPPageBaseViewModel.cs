@@ -358,9 +358,18 @@ namespace Classroom_Learning_Partner.ViewModels
             var point = e.GetPosition(TopCanvas);
             var newMark = new Mark(Page, MarkShapes.Circle, "Black")
                           {
-                              XPosition = point.X,
-                              YPosition = point.Y
+                              XPosition = point.X - 10,
+                              YPosition = point.Y - 10
                           };
+
+            if (newMark.YPosition + newMark.Height >= Height)
+            {
+                newMark.YPosition = Height - newMark.Height;
+            }
+            if (newMark.XPosition + newMark.Width >= Width)
+            {
+                newMark.XPosition = Width - newMark.Width;
+            }
 
             AddPageObjectToPage(newMark, forceSelectMode: false);
         }
