@@ -16,8 +16,10 @@ namespace CLP.Entities
         public BinReporter(CLPPage parentPage)
             : base(parentPage)
         {
-            Height = 65;
-            Width = 90;
+            Height = 45;
+            Width = 100;
+            XPosition = parentPage.Width - Width - 20;
+            YPosition = 20;
         }
 
         /// <summary>Initializes <see cref="BinReporter" /> based on <see cref="SerializationInfo" />.</summary>

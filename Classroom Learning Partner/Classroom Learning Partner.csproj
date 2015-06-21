@@ -279,6 +279,9 @@
     <Compile Include="ViewModels\Displays\AMultiDisplayViewModelBase.cs" />
     <Compile Include="ViewModels\Displays\ColumnDisplayViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\TextInputViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\Bins\BinReporterViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\Bins\BinViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\Bins\MarkViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\MultipleChoiceBoxViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\NumberLineViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Temporary\TemporaryBoundaryViewModel.cs" />

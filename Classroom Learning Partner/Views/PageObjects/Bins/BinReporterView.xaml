@@ -48,7 +48,7 @@
         <Grid>
             <TextBlock Height="{Binding Height}"
                        Width="{Binding Width}"
-                       TextAlignment="Center"
+                       TextAlignment="Left"
                        FontSize="16"
                        FontWeight="Bold"
                        Text="{Binding PageObject.FormattedReport}" />

@@ -146,6 +146,9 @@ namespace Classroom_Learning_Partner.ViewModels
             _insertLeftDiagonalButton = new RibbonButton("Left Diagonal", "pack://application:,,,/Images/LargeIcon.png", AddPageObjectToPageCommand, "LEFT_DIAGONAL");
             _insertLeftDiagonalDashedButton = new RibbonButton("Left Diagonal Dashed", "pack://application:,,,/Images/LargeIcon.png", AddPageObjectToPageCommand, "LEFT_DIAGONAL_DASHED");
 
+            //Bin
+            _insertBinButton = new RibbonButton("Bin", "pack://application:,,,/Images/AddSquare.png", AddPageObjectToPageCommand, "BIN");
+
             //Text
             //TODO: Better Icons
             _insertTextBoxButton = new RibbonButton("Text", "pack://application:,,,/Resources/Images/MajorRibbon/TextBox512.png", AddPageObjectToPageCommand, "TEXTBOX");
@@ -298,6 +301,9 @@ namespace Classroom_Learning_Partner.ViewModels
         private RibbonButton _insertRightDiagonalDashedButton;
         private RibbonButton _insertLeftDiagonalButton;
         private RibbonButton _insertLeftDiagonalDashedButton;
+
+        //Bin
+        private RibbonButton _insertBinButton;
 
         #endregion //Insert PageObject Buttons
 
@@ -854,6 +860,11 @@ namespace Classroom_Learning_Partner.ViewModels
                     ShapeViewModel.AddShapeToPage(CurrentPage, ShapeType.LeftDiagonalDashed);
                     break;
 
+                    //Bin
+                case "BIN":
+                    BinViewModel.AddBinToPage(CurrentPage);
+                    break;
+
                     //Text
                 case "TEXTBOX":
                     CLPTextBoxViewModel.AddTextBoxToPage(CurrentPage);
@@ -883,7 +894,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Buttons.Add(_setEraseModeButton);
             //Buttons.Add(Separater);
             Buttons.Add(_setLassoModeButton);
-            Buttons.Add(_setCutModeButton);
+            //Buttons.Add(_setCutModeButton);
             //Buttons.Add(_setDividerCreationModeButton);
 
             // Insert Math Tools
@@ -898,13 +909,14 @@ namespace Classroom_Learning_Partner.ViewModels
             //Buttons.Add(_insertFactorCardButton);
             //Buttons.Add(_insertObscurableArrayButton);
             Buttons.Add(_insertPileButton);
-            Buttons.Add(_insertDivisionTemplateButton);
+            //Buttons.Add(_insertDivisionTemplateButton);
+            Buttons.Add(_insertBinButton);
 
             // Insert Shapes
-            Buttons.Add(Separater);
-            Buttons.Add(_insertSquareButton);
-            Buttons.Add(_insertCircleButton);
-            Buttons.Add(_insertTriangleButton);
+            //Buttons.Add(Separater);
+            //Buttons.Add(_insertSquareButton);
+            //Buttons.Add(_insertCircleButton);
+            //Buttons.Add(_insertTriangleButton);
             //Buttons.Add(_insertHorizontalLineButton);
             //Buttons.Add(_insertVerticalLineButton);
             //Buttons.Add(_insertProtractorButton);
@@ -914,10 +926,10 @@ namespace Classroom_Learning_Partner.ViewModels
             //Buttons.Add(_insertLeftDiagonalDashedButton);
 
             // Insert Text Box
-            Buttons.Add(Separater);
-            Buttons.Add(_insertImageButton);
-            Buttons.Add(_insertTextBoxButton);
-            Buttons.Add(_insertMultipleChoiceTextBoxButton);
+            //Buttons.Add(Separater);
+            //Buttons.Add(_insertImageButton);
+            //Buttons.Add(_insertTextBoxButton);
+            //Buttons.Add(_insertMultipleChoiceTextBoxButton);
             
         }
 
