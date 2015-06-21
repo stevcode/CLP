@@ -51,8 +51,6 @@
                     Gesture="CTRL+SHIFT+P" />
         <KeyBinding Command="{Binding TogglePenDownCommand}"
                     Gesture="CTRL+SHIFT+D" />
-        <KeyBinding Command="{Binding ToggleAutoNumberLineCommand}"
-                    Gesture="CTRL+SHIFT+N" />
         <KeyBinding Command="{Binding ToggleMaximizeStateCommand}"
                     Gesture="CTRL+M" />
     </Window.InputBindings>
