@@ -1336,6 +1336,7 @@
     <Folder Include="Converters\List Converters\" />
     <Folder Include="Resources\Images\ContextRibbon\PageObjectBase\" />
     <Folder Include="Resources\Images\ContextRibbon\TextBox\" />
+    <Folder Include="Views\PageObjects\Bins\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
