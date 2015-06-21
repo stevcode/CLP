@@ -384,7 +384,49 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Static Methods
 
-        public static void ApplyDistinctPosition(IPageObject pageObject) { }
+        public static void ApplyDistinctPosition(IPageObject pageObject)
+        {
+            if (pageObject == null)
+            {
+                return;
+            }
+
+            var currentPage = pageObject.ParentPage;
+            if (currentPage == null)
+            {
+                return;
+            }
+
+            var pageObjectsToAvoid = currentPage.PageObjects.Where(p => p.ID != pageObject.ID && p.OwnerID == App.MainWindowViewModel.CurrentUser.ID).ToList();
+            while (pageObjectsToAvoid.Any())
+            {
+                var overlappingPageObject = pageObjectsToAvoid.FirstOrDefault(a => APageObjectBase.IsOverlapping(a, pageObject));
+                if (overlappingPageObject == null)
+                {
+                    break;
+                }
+
+                pageObjectsToAvoid.Remove(overlappingPageObject);
+
+                pageObject.XPosition = overlappingPageObject.XPosition + overlappingPageObject.Width + 5;
+                if (pageObject.XPosition + pageObject.Width >= currentPage.Width)
+                {
+                    pageObject.XPosition = 0.0;
+                    pageObject.YPosition = overlappingPageObject.YPosition + overlappingPageObject.Height + 5;
+                }
+            }
+
+            var rnd = new Random();
+
+            if (pageObject.YPosition + pageObject.Height >= currentPage.Height)
+            {
+                pageObject.YPosition = currentPage.Height - pageObject.Height - rnd.Next(30);
+            }
+            if (pageObject.XPosition + pageObject.Width >= currentPage.Width)
+            {
+                pageObject.XPosition = currentPage.Width - pageObject.Width - rnd.Next(30);
+            }
+        }
 
         public static void ApplyDistinctPosition(IEnumerable<IPageObject> pageObjects) { }
 

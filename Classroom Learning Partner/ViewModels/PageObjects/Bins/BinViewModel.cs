@@ -100,6 +100,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             var pageObjectsToAdd = new List<IPageObject>();
             var bin = new Bin(page);
+            ApplyDistinctPosition(bin);
             pageObjectsToAdd.Add(bin);
             if (!page.PageObjects.OfType<BinReporter>().Any())
             {
