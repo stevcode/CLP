@@ -195,7 +195,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     return false;
                 }
 
-                return StampType != StampTypes.EmptyGroupStamp;
+                return StampType == StampTypes.GeneralStamp || StampType == StampTypes.GroupStamp;
             }
         }
 

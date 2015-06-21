@@ -47,7 +47,7 @@ namespace CLP.Entities
                     XPosition = 730;
                     YPosition = 30;
                     Width = 90;
-                    Height = 140 + HandleHeight;
+                    Height = 140;
                     break;
                 case StampTypes.GroupStamp:
                     XPosition = 800;
@@ -92,7 +92,7 @@ namespace CLP.Entities
 
         public virtual double HandleHeight
         {
-            get { return StampType != StampTypes.EmptyGroupStamp ? 35 : 0; }
+            get { return StampType == StampTypes.GeneralStamp || StampType == StampTypes.GroupStamp ? 35 : 0; }
         }
 
         public virtual double PartsHeight
