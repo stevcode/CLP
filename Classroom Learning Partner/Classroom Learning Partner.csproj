@@ -279,6 +279,9 @@
     <Compile Include="ViewModels\Displays\AMultiDisplayViewModelBase.cs" />
     <Compile Include="ViewModels\Displays\ColumnDisplayViewModel.cs" />
     <Compile Include="ViewModels\Modal Windows\TextInputViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\Bins\BinReporterViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\Bins\BinViewModel.cs" />
+    <Compile Include="ViewModels\PageObjects\Bins\MarkViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\MultipleChoiceBoxViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\NumberLineViewModel.cs" />
     <Compile Include="ViewModels\PageObjects\Temporary\TemporaryBoundaryViewModel.cs" />
@@ -393,6 +396,15 @@
     </Compile>
     <Compile Include="Views\Modal Windows\NotebookMetadataWindowView.xaml.cs">
       <DependentUpon>NotebookMetadataWindowView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PageObjects\Bins\BinReporterView.xaml.cs">
+      <DependentUpon>BinReporterView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PageObjects\Bins\BinView.xaml.cs">
+      <DependentUpon>BinView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PageObjects\Bins\MarkView.xaml.cs">
+      <DependentUpon>MarkView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PageObjects\MultipleChoiceBoxView.xaml.cs">
       <DependentUpon>MultipleChoiceBoxView.xaml</DependentUpon>
@@ -696,6 +708,18 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Modal Windows\NotebookMetadataWindowView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PageObjects\Bins\BinReporterView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PageObjects\Bins\BinView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PageObjects\Bins\MarkView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

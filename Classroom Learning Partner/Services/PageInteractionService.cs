@@ -17,6 +17,7 @@ namespace Classroom_Learning_Partner.Services
         Select,
         Draw,
         Erase,
+        Mark,
         Lasso,
         Cut,
         DividerCreation
@@ -54,6 +55,7 @@ namespace Classroom_Learning_Partner.Services
             CurrentErasingMode = ErasingModes.Ink;
             StrokeEraserMode = InkCanvasEditingMode.EraseByStroke;
             PenColor = Colors.Black;
+            CurrentMarkShape = MarkShapes.Circle;
         }
 
         #region Properties
@@ -64,6 +66,7 @@ namespace Classroom_Learning_Partner.Services
         public ErasingModes CurrentErasingMode { get; private set; }
         public InkCanvasEditingMode StrokeEraserMode { get; private set; }
         public Color PenColor { get; private set; }
+        public MarkShapes CurrentMarkShape { get; set; }
         public List<ACLPPageBaseViewModel> ActivePageViewModels { get; private set; }
 
         #endregion //Properties
@@ -87,6 +90,9 @@ namespace Classroom_Learning_Partner.Services
                     break;
                 case PageInteractionModes.Erase:
                     SetEraseMode();
+                    break;
+                case PageInteractionModes.Mark:
+                    SetMarkMode();
                     break;
                 case PageInteractionModes.Lasso:
                     SetLassoMode();
@@ -155,6 +161,18 @@ namespace Classroom_Learning_Partner.Services
                 case ErasingModes.Dividers:
                     SetDividerEraserMode();
                     break;
+            }
+        }
+
+        public void SetMarkMode()
+        {
+            CurrentPageInteractionMode = PageInteractionModes.Mark;
+            foreach (var pageViewModel in ActivePageViewModels)
+            {
+                pageViewModel.IsInkCanvasHitTestVisible = false;
+                pageViewModel.IsUsingCustomCursors = true;
+                pageViewModel.PageCursor = Cursors.Cross;
+                pageViewModel.ClearAdorners();
             }
         }
 

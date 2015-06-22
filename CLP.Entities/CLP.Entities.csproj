@@ -119,6 +119,9 @@
     <Compile Include="DomainModel\History\PageObjectAndOrStrokeHistoryItems\ObjectsMovedBatchHistoryItem.cs" />
     <Compile Include="DomainModel\History\PageObjectAndOrStrokeHistoryItems\ObjectsOnPageChangedHistoryItem.cs" />
     <Compile Include="DomainModel\History\ICountableHistoryItems\PartsValueChangedHistoryItem.cs" />
+    <Compile Include="DomainModel\PageObjects\Bins\Bin.cs" />
+    <Compile Include="DomainModel\PageObjects\Bins\BinReporter.cs" />
+    <Compile Include="DomainModel\PageObjects\Bins\Mark.cs" />
     <Compile Include="DomainModel\PageObjects\MultipleChoiceBox.cs" />
     <Compile Include="DomainModel\PageObjects\NumberLine.cs" />
     <Compile Include="DomainModel\PageObjects\PageObject Interfaces\IReporter.cs" />

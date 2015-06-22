@@ -9,6 +9,7 @@ using Catel.IoC;
 using Catel.MVVM;
 using Classroom_Learning_Partner.Services;
 using CLP.CustomControls;
+using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -30,6 +31,9 @@ namespace Classroom_Learning_Partner.ViewModels
                 case PageInteractionModes.Erase:
                     SetEraserContextButtons();
                     break;
+                case PageInteractionModes.Mark:
+                    SetMarkContextButtons();
+                    break;
             }
         }
 
@@ -42,6 +46,11 @@ namespace Classroom_Learning_Partner.ViewModels
         private GroupedRibbonButton _inkEraserButton;
         private GroupedRibbonButton _pageObjectEraserButton;
         private GroupedRibbonButton _dividerEraserButton;
+
+        private GroupedRibbonButton _circleMarkButton;
+        private GroupedRibbonButton _squareMarkButton;
+        private GroupedRibbonButton _triangleMarkButton;
+        private GroupedRibbonButton _tickMarkButton;
 
         #endregion //Buttons
 
@@ -75,6 +84,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void InitializeButtons()
         {
+            // Pen
             var penGroupName = "DrawModes" + catelHack;
             _penModeButton = new GroupedRibbonButton("Pen", penGroupName, "pack://application:,,,/Resources/Images/Pen32.png", DrawModes.Pen.ToString(), true);
             _penModeButton.Checked += _penButton_Checked;
@@ -89,6 +99,7 @@ namespace Classroom_Learning_Partner.ViewModels
                                                              true);
             _highlighterModeButton.Checked += _penButton_Checked;
 
+            // Eraser
             var eraserGroupName = "EraserModes" + catelHack;
             _inkEraserButton = new GroupedRibbonButton("Erase Ink", eraserGroupName, "pack://application:,,,/Resources/Images/StrokeEraser32.png", ErasingModes.Ink.ToString(), true);
             _inkEraserButton.Checked += _eraserButton_Checked;
@@ -106,6 +117,20 @@ namespace Classroom_Learning_Partner.ViewModels
                                                            ErasingModes.Dividers.ToString(),
                                                            true);
             _dividerEraserButton.Checked += _eraserButton_Checked;
+
+            // Mark
+            var markGroupName = "MarkShapes" + catelHack;
+            _circleMarkButton = new GroupedRibbonButton(string.Empty, markGroupName, "pack://application:,,,/Images/AddCircle.png", MarkShapes.Circle.ToString(), true);
+            _circleMarkButton.Checked += _markButton_Checked;
+
+            _squareMarkButton = new GroupedRibbonButton(string.Empty, markGroupName, "pack://application:,,,/Images/AddSquare.png", MarkShapes.Square.ToString(), true);
+            _squareMarkButton.Checked += _markButton_Checked;
+
+            _triangleMarkButton = new GroupedRibbonButton(string.Empty, markGroupName, "pack://application:,,,/Images/AddTriangle.png", MarkShapes.Triangle.ToString(), true);
+            _triangleMarkButton.Checked += _markButton_Checked;
+
+            _tickMarkButton = new GroupedRibbonButton(string.Empty, markGroupName, "pack://application:,,,/Images/VerticalLineIcon.png", MarkShapes.Tick.ToString(), true);
+            _tickMarkButton.Checked += _markButton_Checked;
         }
 
         public void SetPenContextButtons()
@@ -253,6 +278,22 @@ namespace Classroom_Learning_Partner.ViewModels
             _isCheckedEventRunning = false;
         }
 
+        private void _markButton_Checked(object sender, RoutedEventArgs e)
+        {
+            _isCheckedEventRunning = true;
+            _pageInteractionService = DependencyResolver.Resolve<IPageInteractionService>();
+            var checkedButton = sender as GroupedRibbonButton;
+            if (checkedButton == null ||
+                _pageInteractionService == null)
+            {
+                return;
+            }
+
+            _pageInteractionService.CurrentMarkShape = (MarkShapes)Enum.Parse(typeof(MarkShapes), checkedButton.AssociatedEnumValue);
+
+            _isCheckedEventRunning = false;
+        }
+
         public void SetEraserContextButtons()
         {
             Buttons.Clear();
@@ -276,6 +317,72 @@ namespace Classroom_Learning_Partner.ViewModels
                     break;
                 case ErasingModes.Dividers:
                     _dividerEraserButton.IsChecked = true;
+                    break;
+            }
+        }
+
+        public void SetMarkContextButtons()
+        {
+            Buttons.Clear();
+            _pageInteractionService = DependencyResolver.Resolve<IPageInteractionService>();
+            if (_pageInteractionService == null)
+            {
+                return;
+            }
+
+            Buttons.Add(_circleMarkButton);
+            Buttons.Add(_squareMarkButton);
+            Buttons.Add(_triangleMarkButton);
+            Buttons.Add(_tickMarkButton);
+
+            Buttons.Add(MajorRibbonViewModel.Separater);
+
+            if (!CurrentPenColors.Any())
+            {
+                CurrentPenColors.Add(new ColorButton(Colors.Black));
+                if (App.MainWindowViewModel.CurrentProgramMode != ProgramModes.Student)
+                {
+                    CurrentPenColors.Add(new ColorButton(Colors.White));
+                }
+                CurrentPenColors.Add(new ColorButton(Colors.Red));
+                CurrentPenColors.Add(new ColorButton(Colors.DarkOrange));
+                CurrentPenColors.Add(new ColorButton(Colors.Tan));
+                CurrentPenColors.Add(new ColorButton(Colors.Gold));
+                CurrentPenColors.Add(new ColorButton(Colors.SaddleBrown));
+                CurrentPenColors.Add(new ColorButton(Colors.DarkGreen));
+                CurrentPenColors.Add(new ColorButton(Colors.MediumSeaGreen));
+                CurrentPenColors.Add(new ColorButton(Colors.Blue));
+                CurrentPenColors.Add(new ColorButton(Colors.HotPink));
+                CurrentPenColors.Add(new ColorButton(Colors.BlueViolet));
+                CurrentPenColors.Add(new ColorButton(Colors.Aquamarine));
+                CurrentPenColors.Add(new ColorButton(Colors.SlateGray));
+                CurrentPenColors.Add(new ColorButton(Colors.SkyBlue));
+                CurrentPenColors.Add(new ColorButton(Colors.DeepSkyBlue));
+                CurrentPenColors.Add(new ColorButton(Color.FromRgb(0, 152, 247)));
+
+                foreach (var colorButton in CurrentPenColors)
+                {
+                    colorButton.Checked += colorButton_Checked;
+                }
+            }
+
+            Buttons.AddRange(CurrentPenColors);
+
+            switch (_pageInteractionService.CurrentMarkShape)
+            {
+                case MarkShapes.Square:
+                    _squareMarkButton.IsChecked = true;
+                    break;
+                case MarkShapes.Circle:
+                    _circleMarkButton.IsChecked = true;
+                    break;
+                case MarkShapes.Triangle:
+                    _triangleMarkButton.IsChecked = true;
+                    break;
+                case MarkShapes.Tick:
+                    _tickMarkButton.IsChecked = true;
+                    break;
+                case MarkShapes.Custom:
                     break;
             }
         }

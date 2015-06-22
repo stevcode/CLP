@@ -315,9 +315,9 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnMouseDownCommandExecute(MouseEventArgs e)
         {
-            if (PageInteractionService.CurrentPageInteractionMode != PageInteractionModes.Select ||
-                TopCanvas == null ||
-                IsPagePreview)
+            if (TopCanvas == null ||
+                IsPagePreview ||
+                PageInteractionService.CurrentPageInteractionMode != PageInteractionModes.Select)
             {
                 return;
             }
@@ -346,7 +346,33 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>Gets the MouseUpCommand command.</summary>
         public Command<MouseEventArgs> MouseUpCommand { get; private set; }
 
-        private void OnMouseUpCommandExecute(MouseEventArgs e) { }
+        private void OnMouseUpCommandExecute(MouseEventArgs e)
+        {
+            if (TopCanvas == null ||
+                IsPagePreview ||
+                PageInteractionService.CurrentPageInteractionMode != PageInteractionModes.Mark)
+            {
+                return;
+            }
+
+            var point = e.GetPosition(TopCanvas);
+            var newMark = new Mark(Page, PageInteractionService.CurrentMarkShape, PageInteractionService.PenColor.ToString())
+                          {
+                              XPosition = point.X - 10,
+                              YPosition = point.Y - 10
+                          };
+
+            if (newMark.YPosition + newMark.Height >= Height)
+            {
+                newMark.YPosition = Height - newMark.Height;
+            }
+            if (newMark.XPosition + newMark.Width >= Width)
+            {
+                newMark.XPosition = Width - newMark.Width;
+            }
+
+            AddPageObjectToPage(newMark, forceSelectMode: false);
+        }
 
         /// <summary>Clears all non-background pageObjects, all strokes, and deletes History. If in AuthoringMode, even background pageObjects will be removed.</summary>
         public Command ClearPageCommand { get; private set; }

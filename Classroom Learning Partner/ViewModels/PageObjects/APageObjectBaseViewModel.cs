@@ -6,7 +6,9 @@ using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using Catel.Data;
+using Catel.IoC;
 using Catel.MVVM;
+using Classroom_Learning_Partner.Services;
 using CLP.CustomControls;
 using CLP.Entities;
 
@@ -20,11 +22,13 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         protected ObservableCollection<UIElement> _contextButtons = new ObservableCollection<UIElement>();
+        protected IPageInteractionService PageInteractionService;
 
         #region Constructor
 
         protected APageObjectBaseViewModel()
         {
+            PageInteractionService = DependencyResolver.Resolve<IPageInteractionService>();
             InitializeCommands();
             _contextButtons.Add(new RibbonButton("Delete", "pack://application:,,,/Images/Delete.png", RemovePageObjectCommand, null, true));
         }
@@ -208,6 +212,13 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>Method to invoke when the DragStartPageObjectCommand command is executed.</summary>
         private void OnDragStartPageObjectCommandExecute(DragStartedEventArgs e)
         {
+            if (PageInteractionService == null ||
+                PageInteractionService.CurrentPageInteractionMode != PageInteractionModes.Select)
+            {
+                e.Handled = false;
+                return;
+            }
+
             if (IsBackgroundPageObject)
             {
                 return;
@@ -229,6 +240,13 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnDragPageObjectCommandExecute(DragDeltaEventArgs e)
         {
+            if (PageInteractionService == null ||
+                PageInteractionService.CurrentPageInteractionMode != PageInteractionModes.Select)
+            {
+                e.Handled = false;
+                return;
+            }
+
             if (IsBackgroundPageObject)
             {
                 return;
@@ -253,6 +271,13 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnDragStopPageObjectCommandExecute(DragCompletedEventArgs e)
         {
+            if (PageInteractionService == null ||
+                PageInteractionService.CurrentPageInteractionMode != PageInteractionModes.Select)
+            {
+                e.Handled = false;
+                return;
+            }
+
             if (IsBackgroundPageObject)
             {
                 ACLPPageBaseViewModel.ClearAdorners(PageObject.ParentPage);
@@ -359,9 +384,98 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Static Methods
 
-        public static void ApplyDistinctPosition(IPageObject pageObject) { }
+        public static void ApplyDistinctPosition(IPageObject pageObject)
+        {
+            if (pageObject == null)
+            {
+                return;
+            }
 
-        public static void ApplyDistinctPosition(IEnumerable<IPageObject> pageObjects) { }
+            var currentPage = pageObject.ParentPage;
+            if (currentPage == null)
+            {
+                return;
+            }
+
+            var pageObjectsToAvoid = currentPage.PageObjects.Where(p => p.ID != pageObject.ID && p.OwnerID == App.MainWindowViewModel.CurrentUser.ID).ToList();
+            while (pageObjectsToAvoid.Any())
+            {
+                var overlappingPageObject = pageObjectsToAvoid.FirstOrDefault(a => APageObjectBase.IsOverlapping(a, pageObject));
+                if (overlappingPageObject == null)
+                {
+                    break;
+                }
+
+                pageObjectsToAvoid.Remove(overlappingPageObject);
+
+                pageObject.XPosition = overlappingPageObject.XPosition + overlappingPageObject.Width + 5;
+                if (pageObject.XPosition + pageObject.Width >= currentPage.Width)
+                {
+                    pageObject.XPosition = 0.0;
+                    pageObject.YPosition = overlappingPageObject.YPosition + overlappingPageObject.Height + 5;
+                }
+            }
+
+            var rnd = new Random();
+
+            if (pageObject.YPosition + pageObject.Height >= currentPage.Height)
+            {
+                pageObject.YPosition = currentPage.Height - pageObject.Height - rnd.Next(30);
+            }
+            if (pageObject.XPosition + pageObject.Width >= currentPage.Width)
+            {
+                pageObject.XPosition = currentPage.Width - pageObject.Width - rnd.Next(30);
+            }
+        }
+
+        public static void ApplyDistinctPosition(CLPPage page, List<IPageObject> pageObjects)
+        {
+            if (pageObjects == null ||
+                !pageObjects.Any() ||
+                page == null)
+            {
+                return;
+            }
+
+            var newPageObjectsAlreadyAddedToPage = new List<IPageObject>();
+
+            foreach (var pageObject in pageObjects)
+            {
+                var o = pageObject;
+                var pageObjectsToAvoid = page.PageObjects.Where(p => p.ID != o.ID && p.OwnerID == App.MainWindowViewModel.CurrentUser.ID).ToList();
+                pageObjectsToAvoid.AddRange(newPageObjectsAlreadyAddedToPage);
+                while (pageObjectsToAvoid.Any())
+                {
+                    var overlappingPageObject = pageObjectsToAvoid.FirstOrDefault(a => APageObjectBase.IsOverlapping(a, pageObject));
+                    if (overlappingPageObject == null)
+                    {
+                        break;
+                    }
+
+                    pageObjectsToAvoid.Remove(overlappingPageObject);
+
+                    pageObject.XPosition = overlappingPageObject.XPosition + overlappingPageObject.Width + 5;
+                    if (pageObject.XPosition + pageObject.Width >= page.Width)
+                    {
+                        pageObject.XPosition = 0.0;
+                        pageObject.YPosition = overlappingPageObject.YPosition + overlappingPageObject.Height + 5;
+                    }
+                }
+
+                var rnd = new Random();
+
+                if (pageObject.YPosition + pageObject.Height >= page.Height)
+                {
+                    pageObject.YPosition = page.Height - pageObject.Height - rnd.Next(30);
+                }
+                if (pageObject.XPosition + pageObject.Width >= page.Width)
+                {
+                    pageObject.XPosition = page.Width - pageObject.Width - rnd.Next(30);
+                }
+
+                newPageObjectsAlreadyAddedToPage.Add(pageObject);
+            }
+        }
 
         public static void ChangePageObjectPosition(IPageObject pageObject, double newX, double newY, bool useHistory = true)
         {
