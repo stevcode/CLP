@@ -146,6 +146,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public static void AddShapeToPage(CLPPage page, ShapeType shapeType)
         {
             var shape = new Shape(page, shapeType);
+            ApplyDistinctPosition(shape);
             ACLPPageBaseViewModel.AddPageObjectToPage(shape);
         } 
 
