@@ -356,7 +356,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             var point = e.GetPosition(TopCanvas);
-            var newMark = new Mark(Page, MarkShapes.Circle, "Black")
+            var newMark = new Mark(Page, PageInteractionService.CurrentMarkShape, PageInteractionService.PenColor.ToString())
                           {
                               XPosition = point.X - 10,
                               YPosition = point.Y - 10

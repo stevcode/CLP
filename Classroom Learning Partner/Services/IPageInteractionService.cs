@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Windows.Controls;
 using System.Windows.Media;
 using Classroom_Learning_Partner.ViewModels;
+using CLP.Entities;
 
 namespace Classroom_Learning_Partner.Services
 {
@@ -13,6 +14,7 @@ namespace Classroom_Learning_Partner.Services
         ErasingModes CurrentErasingMode { get; }
         InkCanvasEditingMode StrokeEraserMode { get; }
         Color PenColor { get; }
+        MarkShapes CurrentMarkShape { get; set; }
         List<ACLPPageBaseViewModel> ActivePageViewModels { get; }
 
         void SetPageInteractionMode(PageInteractionModes pageInteractionMode);
