@@ -84,35 +84,32 @@ namespace CLP.Entities
 
         public override void OnMoved(double oldX, double oldY, bool fromHistory = false)
         {
-            if (!ParentPage.History.IsAnimating)
+            try
             {
-                try
+                foreach (
+                    var acceptorPageObject in ParentPage.PageObjects.OfType<IPageObjectAccepter>().Where(pageObject => pageObject.CanAcceptPageObjects && pageObject.ID != ID))
                 {
-                    foreach (
-                        var acceptorPageObject in ParentPage.PageObjects.OfType<IPageObjectAccepter>().Where(pageObject => pageObject.CanAcceptPageObjects && pageObject.ID != ID))
+                    var removedPageObjects = new List<IPageObject>();
+                    var addedPageObjects = new ObservableCollection<IPageObject>();
+
+                    if (acceptorPageObject.AcceptedPageObjectIDs.Contains(ID) &&
+                        !acceptorPageObject.PageObjectIsOver(this, .50))
                     {
-                        var removedPageObjects = new List<IPageObject>();
-                        var addedPageObjects = new ObservableCollection<IPageObject>();
-
-                        if (acceptorPageObject.AcceptedPageObjectIDs.Contains(ID) &&
-                            !acceptorPageObject.PageObjectIsOver(this, .50))
-                        {
-                            removedPageObjects.Add(this);
-                        }
-
-                        if (!acceptorPageObject.AcceptedPageObjectIDs.Contains(ID) &&
-                            acceptorPageObject.PageObjectIsOver(this, .50))
-                        {
-                            addedPageObjects.Add(this);
-                        }
-
-                        acceptorPageObject.AcceptPageObjects(addedPageObjects, removedPageObjects);
+                        removedPageObjects.Add(this);
                     }
+
+                    if (!acceptorPageObject.AcceptedPageObjectIDs.Contains(ID) &&
+                        acceptorPageObject.PageObjectIsOver(this, .50))
+                    {
+                        addedPageObjects.Add(this);
+                    }
+
+                    acceptorPageObject.AcceptPageObjects(addedPageObjects, removedPageObjects);
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Mark.OnMoved() Exception: " + ex.Message);
-                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Mark.OnMoved() Exception: " + ex.Message);
             }
 
             base.OnMoved(oldX, oldY, fromHistory);

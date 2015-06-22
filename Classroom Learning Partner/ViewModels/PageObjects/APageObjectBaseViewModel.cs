@@ -428,7 +428,54 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        public static void ApplyDistinctPosition(IEnumerable<IPageObject> pageObjects) { }
+        public static void ApplyDistinctPosition(CLPPage page, List<IPageObject> pageObjects)
+        {
+            if (pageObjects == null ||
+                !pageObjects.Any() ||
+                page == null)
+            {
+                return;
+            }
+
+            var newPageObjectsAlreadyAddedToPage = new List<IPageObject>();
+
+            foreach (var pageObject in pageObjects)
+            {
+                var o = pageObject;
+                var pageObjectsToAvoid = page.PageObjects.Where(p => p.ID != o.ID && p.OwnerID == App.MainWindowViewModel.CurrentUser.ID).ToList();
+                pageObjectsToAvoid.AddRange(newPageObjectsAlreadyAddedToPage);
+                while (pageObjectsToAvoid.Any())
+                {
+                    var overlappingPageObject = pageObjectsToAvoid.FirstOrDefault(a => APageObjectBase.IsOverlapping(a, pageObject));
+                    if (overlappingPageObject == null)
+                    {
+                        break;
+                    }
+
+                    pageObjectsToAvoid.Remove(overlappingPageObject);
+
+                    pageObject.XPosition = overlappingPageObject.XPosition + overlappingPageObject.Width + 5;
+                    if (pageObject.XPosition + pageObject.Width >= page.Width)
+                    {
+                        pageObject.XPosition = 0.0;
+                        pageObject.YPosition = overlappingPageObject.YPosition + overlappingPageObject.Height + 5;
+                    }
+                }
+
+                var rnd = new Random();
+
+                if (pageObject.YPosition + pageObject.Height >= page.Height)
+                {
+                    pageObject.YPosition = page.Height - pageObject.Height - rnd.Next(30);
+                }
+                if (pageObject.XPosition + pageObject.Width >= page.Width)
+                {
+                    pageObject.XPosition = page.Width - pageObject.Width - rnd.Next(30);
+                }
+
+                newPageObjectsAlreadyAddedToPage.Add(pageObject);
+            }
+        }
 
         public static void ChangePageObjectPosition(IPageObject pageObject, double newX, double newY, bool useHistory = true)
         {

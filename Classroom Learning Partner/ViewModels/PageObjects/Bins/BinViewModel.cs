@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 using Catel.Data;
 using Catel.MVVM;
+using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.CustomControls;
 using CLP.Entities;
 
@@ -57,7 +60,64 @@ namespace Classroom_Learning_Partner.ViewModels
         /// <summary>Copies a Bin and any containing Marks.</summary>
         public Command DuplicateBinCommand { get; private set; }
 
-        private void OnDuplicateBinCommandExecute() { }
+        private void OnDuplicateBinCommandExecute()
+        {
+            var keyPad = new KeypadWindowView("How many copies?", 21)
+            {
+                Owner = Application.Current.MainWindow,
+                WindowStartupLocation = WindowStartupLocation.Manual
+            };
+            keyPad.ShowDialog();
+            if (keyPad.DialogResult != true ||
+                keyPad.NumbersEntered.Text.Length <= 0)
+            {
+                return;
+            }
+            var numberOfBins = Int32.Parse(keyPad.NumbersEntered.Text);
+
+            var binsToAdd = new List<IPageObject>();
+            foreach (var index in Enumerable.Range(1, numberOfBins))
+            {
+                var newBin = PageObject.Duplicate() as Bin;
+                if (newBin == null)
+                {
+                    continue;
+                }
+
+                binsToAdd.Add(newBin);
+            }
+
+            ApplyDistinctPosition(PageObject.ParentPage, binsToAdd);
+
+            var marksToAdd = new List<IPageObject>();
+            foreach (var addedBin in binsToAdd)
+            {
+                var bin = PageObject as Bin;
+                if (bin == null)
+                {
+                    continue;
+                }
+
+                foreach (var mark in bin.AcceptedPageObjects)
+                {
+                    var newMark = mark.Duplicate();
+                    newMark.XPosition = newMark.XPosition + (addedBin.XPosition - bin.XPosition);
+                    newMark.YPosition = newMark.YPosition + (addedBin.YPosition - bin.YPosition);
+                    marksToAdd.Add(newMark);
+                } 
+            }
+
+            binsToAdd.AddRange(marksToAdd);
+
+            if (binsToAdd.Count == 1)
+            {
+                ACLPPageBaseViewModel.AddPageObjectToPage(binsToAdd.First());
+            }
+            else
+            {
+                ACLPPageBaseViewModel.AddPageObjectsToPage(PageObject.ParentPage, binsToAdd);
+            }
+        }
 
         /// <summary>
         /// Removes a Bin from the page and removed the BinReporter if this Bin is the last on the page.

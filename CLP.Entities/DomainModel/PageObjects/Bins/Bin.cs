@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
+using Catel.Collections;
 using Catel.Data;
 using Catel.Runtime.Serialization;
 
@@ -56,6 +57,56 @@ namespace CLP.Entities
         public override bool IsBackgroundInteractable
         {
             get { return true; }
+        }
+
+        public override void OnAdded(bool fromHistory = false)
+        {
+            if (!CanAcceptPageObjects ||
+                !AcceptedPageObjects.Any() ||
+                !fromHistory)
+            {
+                return;
+            }
+
+            var pageObjectsToRestore = new List<IPageObject>();
+
+            foreach (var pageObject in AcceptedPageObjects.Where(p => ParentPage.History.TrashedPageObjects.Contains(p)))
+            {
+                pageObjectsToRestore.Add(pageObject);
+            }
+
+            ParentPage.PageObjects.AddRange(pageObjectsToRestore);
+            foreach (var pageObject in pageObjectsToRestore)
+            {
+                ParentPage.History.TrashedPageObjects.Remove(pageObject);
+            }
+
+            base.OnAdded(fromHistory);
+        }
+
+        public override void OnDeleted(bool fromHistory = false)
+        {
+            if (!CanAcceptPageObjects ||
+                !AcceptedPageObjects.Any())
+            {
+                return;
+            }
+
+            var pageObjectsToTrash = new List<IPageObject>();
+
+            foreach (var pageObject in AcceptedPageObjects.Where(p => ParentPage.PageObjects.Contains(p)))
+            {
+                pageObjectsToTrash.Add(pageObject);
+            }
+
+            foreach (var pageObject in pageObjectsToTrash)
+            {
+                ParentPage.PageObjects.Remove(pageObject);
+            }
+            
+            ParentPage.History.TrashedPageObjects.AddRange(pageObjectsToTrash);
+
+            base.OnDeleted(fromHistory);
         }
 
         public override void OnMoving(double oldX, double oldY, bool fromHistory = false)
