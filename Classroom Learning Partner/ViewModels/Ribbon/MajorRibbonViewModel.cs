@@ -883,7 +883,7 @@ namespace Classroom_Learning_Partner.ViewModels
             Buttons.Add(Separater);
             Buttons.Add(_insertGeneralStampButton);
             //Buttons.Add(_insertGroupStampButton);
-            //Buttons.Add(_insertNumberLineButton);
+            Buttons.Add(_insertNumberLineButton);
             //Buttons.Add(_insertAutoNumberLineButton);
             //Buttons.Add(_insertArrayButton);
             //Buttons.Add(_insert10x10ArrayButton);
