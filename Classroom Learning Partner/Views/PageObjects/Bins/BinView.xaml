@@ -128,6 +128,7 @@
                        Height="{Binding PageObject.PartsHeight}"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Bottom"
+                       FontWeight="Bold"
                        FontFamily="pack://application:,,,/Resources/Fonts/#SketchFlow Print"
                        FontSize="18">
                 <Run Text="Bin of" />
