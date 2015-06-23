@@ -38,10 +38,10 @@ namespace CLP.Entities
             switch (stampType)
             {
                 case StampTypes.GeneralStamp:
-                    XPosition = 800;
-                    YPosition = 90;
-                    Width = 75;
-                    Height = 180;
+                    XPosition = 877;
+                    YPosition = 25;
+                    Width = 95;
+                    Height = 190;
                     break;
                 case StampTypes.ObservingStamp:
                     XPosition = 730;
