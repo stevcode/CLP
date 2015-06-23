@@ -305,7 +305,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             Buttons.Add(_inkEraserButton);
             //Buttons.Add(_pageObjectEraserButton);
-            //Buttons.Add(_dividerEraserButton);
+            Buttons.Add(_dividerEraserButton);
 
             switch (_pageInteractionService.CurrentErasingMode)
             {
