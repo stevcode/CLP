@@ -26,6 +26,7 @@ namespace Classroom_Learning_Partner.ViewModels
         {
             DuplicateBinCommand = new Command(OnDuplicateBinCommandExecute);
             RemoveBinCommand = new Command(OnRemoveBinCommandExecute);
+            EmptyBinCommand = new Command(OnEmptyBinCommandExecute);
         }
 
         private void InitializeButtons()
@@ -37,6 +38,7 @@ namespace Classroom_Learning_Partner.ViewModels
             _contextButtons.Add(MajorRibbonViewModel.Separater);
 
             _contextButtons.Add(new RibbonButton("Create Copies", "pack://application:,,,/Images/AddToDisplay.png", DuplicateBinCommand, null, true));
+            _contextButtons.Add(new RibbonButton("Empty Bin", "pack://application:,,,/Resources/Images/Trash32.png", EmptyBinCommand, null, true));
         }
 
         #endregion //Constructors
@@ -150,6 +152,23 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             ACLPPageBaseViewModel.RemovePageObjectsFromPage(page, pageObjectsToRemove);
+        }
+
+        /// <summary>
+        /// Deletes all of the Marks that have been accepted by this Bin.
+        /// </summary>
+        public Command EmptyBinCommand { get; private set; }
+
+        private void OnEmptyBinCommandExecute()
+        {
+            var bin = PageObject as Bin;
+            if (bin == null)
+            {
+                return;
+            }
+
+            var marksToDelete = bin.AcceptedPageObjects.OfType<Mark>().Cast<IPageObject>().ToList();
+            ACLPPageBaseViewModel.RemovePageObjectsFromPage(bin.ParentPage, marksToDelete);
         }
 
         #endregion //Commands
