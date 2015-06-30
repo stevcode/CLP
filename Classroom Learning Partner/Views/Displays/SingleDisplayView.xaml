@@ -141,7 +141,6 @@
                     Height="30"
                     Margin="-20 40 0 0"
                     Cursor="Hand"
-                    Visibility="Collapsed"
                     Command="{Binding ReplayHistoryCommand}"
                     VerticalAlignment="Top">
                 <Button.Template>
