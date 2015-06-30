@@ -377,16 +377,8 @@
                 </Grid>
             </Button>
 
-            <!-- Progress Location in Ticks -->
-            <StackPanel DockPanel.Dock="Right"
-                        Orientation="Horizontal">
-                <TextBlock Text="{Binding CurrentPage.History.CurrentHistoryTick}" />
-                <TextBlock Text=" / " />
-                <TextBlock Text="{Binding CurrentPage.History.PlaybackLength}" />
-            </StackPanel>
-
             <!-- Playback Speed -->
-            <StackPanel DockPanel.Dock="Right"
+            <StackPanel DockPanel.Dock="Left"
                         Orientation="Horizontal">
 
                 <TextBlock Text="Playback Speed:"
@@ -403,6 +395,14 @@
                         Width="130"
                         Margin="0 0 10 0"
                         Value="{Binding CurrentPlaybackSpeed}" />
+            </StackPanel>
+
+            <!-- Progress Location in Ticks -->
+            <StackPanel DockPanel.Dock="Right"
+                        Orientation="Horizontal">
+                <TextBlock Text="{Binding CurrentPage.History.CurrentHistoryTick}" />
+                <TextBlock Text=" / " />
+                <TextBlock Text="{Binding CurrentPage.History.PlaybackLength}" />
             </StackPanel>
 
             <!-- Progress Slider -->

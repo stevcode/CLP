@@ -60,6 +60,7 @@ namespace Classroom_Learning_Partner.ViewModels
             ExitMultiDisplayCommand = new Command(OnExitMultiDisplayCommandExecute, OnExitMultiDisplayCanExecute);
             UndoCommand = new Command(OnUndoCommandExecute, OnUndoCanExecute);
             RedoCommand = new Command(OnRedoCommandExecute, OnRedoCanExecute);
+            AddNewPageCommand = new Command(OnAddNewPageCommandExecute);
             LongerPageCommand = new Command(OnLongerPageCommandExecute, OnLongerPageCanExecute);
             SubmitPageCommand = new Command(OnSubmitPageCommandExecute, OnSubmitPageCanExecute);
             AddPageObjectToPageCommand = new Command<string>(OnAddPageObjectToPageCommandExecute, OnAddPageObjectToPageCanExecute);
@@ -648,6 +649,21 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Page Commands
 
+        /// <summary>Adds new page to current notebook.</summary>
+        public Command AddNewPageCommand { get; private set; }
+
+        private void OnAddNewPageCommandExecute()
+        {
+            var notebookWorkspace = MainWindow.Workspace as NotebookWorkspaceViewModel;
+            if (notebookWorkspace == null)
+            {
+                return;
+            }
+
+            var newPage = new CLPPage(App.MainWindowViewModel.CurrentUser);
+            notebookWorkspace.Notebook.AddCLPPageToNotebook(newPage);
+        }
+
         /// <summary>Doubles height of the current page.</summary>
         public Command LongerPageCommand { get; private set; }
 
@@ -873,10 +889,10 @@ namespace Classroom_Learning_Partner.ViewModels
             Buttons.Add(_setSelectModeButton);
             Buttons.Add(_setDrawModeButton);
             Buttons.Add(_setEraseModeButton);
-            //Buttons.Add(_setMarkModeButton);
-            //Buttons.Add(Separater);
-            //Buttons.Add(_setLassoModeButton);
-            //Buttons.Add(_setCutModeButton);
+            Buttons.Add(_setMarkModeButton);
+            Buttons.Add(Separater);
+            Buttons.Add(_setLassoModeButton);
+            Buttons.Add(_setCutModeButton);
             //Buttons.Add(_setDividerCreationModeButton);
 
             // Insert Math Tools
@@ -884,21 +900,21 @@ namespace Classroom_Learning_Partner.ViewModels
             Buttons.Add(_insertGeneralStampButton);
             //Buttons.Add(_insertGroupStampButton);
             Buttons.Add(_insertNumberLineButton);
-            //Buttons.Add(_insertAutoNumberLineButton);
+            Buttons.Add(_insertAutoNumberLineButton);
             //Buttons.Add(_insertArrayButton);
             //Buttons.Add(_insert10x10ArrayButton);
             //Buttons.Add(_insertArrayCardButton);
             //Buttons.Add(_insertFactorCardButton);
-            //Buttons.Add(_insertObscurableArrayButton);
-            //Buttons.Add(_insertPileButton);
-            //Buttons.Add(_insertDivisionTemplateButton);
-            //Buttons.Add(_insertBinButton);
+            Buttons.Add(_insertObscurableArrayButton);
+            Buttons.Add(_insertPileButton);
+            Buttons.Add(_insertDivisionTemplateButton);
+            Buttons.Add(_insertBinButton);
 
             // Insert Shapes
-            Buttons.Add(Separater);
-            Buttons.Add(_insertSquareButton);
-            Buttons.Add(_insertCircleButton);
-            Buttons.Add(_insertTriangleButton);
+            //Buttons.Add(Separater);
+            //Buttons.Add(_insertSquareButton);
+            //Buttons.Add(_insertCircleButton);
+            //Buttons.Add(_insertTriangleButton);
             //Buttons.Add(_insertHorizontalLineButton);
             //Buttons.Add(_insertVerticalLineButton);
             //Buttons.Add(_insertProtractorButton);
