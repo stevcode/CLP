@@ -68,7 +68,7 @@ namespace Classroom_Learning_Partner.ViewModels
             _contextButtons.Add(MajorRibbonViewModel.Separater);
             if (IsGroupStampedObject)
             {
-                _contextButtons.Add(new RibbonButton("Create Copies", "pack://application:,,,/Images/AddToDisplay.png", ParameterizeStampedObjectCommand, null, true));
+                _contextButtons.Add(new RibbonButton("Create Copies", "pack://application:,,,/Images/AddToDisplay.png", ParameterizeStampedObjectCommand, StampedObjectType == StampedObjectTypes.EmptyGroupStampedObject, true));
 
                 IsBoundaryVisible = false;
                 IsPartsLabelVisible = false;
@@ -282,6 +282,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     {
                         var referenceAcceptedPageObject = stampedObject.AcceptedPageObjects[n];
                         var ungroupedStampObject = ungroupedStampedObjects[ungroupedStampedObjectsIndex];
+                        //BUG: This position change needs to be recorded in the history.
                         ungroupedStampObject.XPosition = newStampedObject.XPosition + (referenceAcceptedPageObject.XPosition - stampedObject.XPosition);
                         ungroupedStampObject.YPosition = newStampedObject.YPosition + (referenceAcceptedPageObject.YPosition - stampedObject.YPosition);
                         newStampedObject.AcceptedPageObjectIDs.Add(ungroupedStampObject.ID);
@@ -303,6 +304,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             ACLPPageBaseViewModel.AddPageObjectsToPage(stampedObject.ParentPage, stampCopiesToAdd);
+            stampedObject.ParentPage.UpdateAllReporters();
         }
 
         #endregion //Commands
