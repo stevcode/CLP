@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
+using Catel.Collections;
 using Catel.Data;
 using Catel.Runtime.Serialization;
 
@@ -130,6 +131,56 @@ namespace CLP.Entities
             get { return false; }
         }
 
+        public override void OnAdded(bool fromHistory = false)
+        {
+            if (!CanAcceptPageObjects ||
+                !AcceptedPageObjects.Any() ||
+                !fromHistory)
+            {
+                return;
+            }
+
+            var pageObjectsToRestore = new List<IPageObject>();
+
+            foreach (var pageObject in AcceptedPageObjects.Where(p => ParentPage.History.TrashedPageObjects.Contains(p)))
+            {
+                pageObjectsToRestore.Add(pageObject);
+            }
+
+            ParentPage.PageObjects.AddRange(pageObjectsToRestore);
+            foreach (var pageObject in pageObjectsToRestore)
+            {
+                ParentPage.History.TrashedPageObjects.Remove(pageObject);
+            }
+
+            base.OnAdded(fromHistory);
+        }
+
+        public override void OnDeleted(bool fromHistory = false)
+        {
+            if (!CanAcceptPageObjects ||
+                !AcceptedPageObjects.Any())
+            {
+                return;
+            }
+
+            var pageObjectsToTrash = new List<IPageObject>();
+
+            foreach (var pageObject in AcceptedPageObjects.Where(p => ParentPage.PageObjects.Contains(p)))
+            {
+                pageObjectsToTrash.Add(pageObject);
+            }
+
+            foreach (var pageObject in pageObjectsToTrash)
+            {
+                ParentPage.PageObjects.Remove(pageObject);
+            }
+
+            ParentPage.History.TrashedPageObjects.AddRange(pageObjectsToTrash);
+
+            base.OnDeleted(fromHistory);
+        }
+
         public override void OnMoving(double oldX, double oldY, bool fromHistory = false)
         {
             var deltaX = XPosition - oldX;
@@ -149,14 +200,10 @@ namespace CLP.Entities
 
         public override void OnMoved(double oldX, double oldY, bool fromHistory = false)
         {
-            if (ParentPage.History.IsAnimating)
-            {
-                return;
-            }
-
             try
             {
-                foreach (var acceptorPageObject in ParentPage.PageObjects.OfType<IPageObjectAccepter>().Where(pageObject => pageObject.CanAcceptPageObjects && pageObject.ID != ID))
+                foreach (
+                    var acceptorPageObject in ParentPage.PageObjects.OfType<IPageObjectAccepter>().Where(pageObject => pageObject.CanAcceptPageObjects && pageObject.ID != ID))
                 {
                     var removedPageObjects = new List<IPageObject>();
                     var addedPageObjects = new ObservableCollection<IPageObject>();
@@ -178,7 +225,7 @@ namespace CLP.Entities
             }
             catch (Exception ex)
             {
-                Console.WriteLine("StampedObject.OnMoved() Exception: " + ex.Message);
+                Console.WriteLine("Mark.OnMoved() Exception: " + ex.Message);
             }
 
             base.OnMoved(oldX, oldY, fromHistory);
