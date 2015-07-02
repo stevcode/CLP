@@ -80,8 +80,9 @@ namespace CLP.Entities
                 var marksOnPage = ParentPage.PageObjects.OfType<Mark>().ToList();
                 var binsOnPage = ParentPage.PageObjects.OfType<Bin>().ToList();
                 var marksInBins = marksOnPage.Where(m => binsOnPage.Any(b => b.AcceptedPageObjectIDs.Contains(m.ID))).ToList();
+                var numberOfStrokesInBins = ParentPage.PageObjects.OfType<Bin>().Aggregate(0, (sum, b) => sum + b.AcceptedStrokes.Count);
 
-                return marksInBins.Count;
+                return marksInBins.Count + numberOfStrokesInBins;
             }
         }
 

@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Windows;
+using System.Windows.Ink;
+using System.Windows.Media;
 using System.Xml.Serialization;
 using Catel.Collections;
 using Catel.Data;
@@ -9,7 +12,7 @@ using Catel.Runtime.Serialization;
 
 namespace CLP.Entities
 {
-    public class Bin : APageObjectBase, ICountable, IPageObjectAccepter
+    public class Bin : APageObjectBase, ICountable, IPageObjectAccepter, IStrokeAccepter
     {
         #region Constructors
 
@@ -61,24 +64,37 @@ namespace CLP.Entities
 
         public override void OnAdded(bool fromHistory = false)
         {
-            if (!CanAcceptPageObjects ||
-                !AcceptedPageObjects.Any() ||
-                !fromHistory)
+            if (CanAcceptStrokes &&
+                AcceptedStrokes.Any() &&
+                fromHistory)
             {
-                return;
+                var strokesToRestore = new StrokeCollection();
+
+                foreach (var stroke in AcceptedStrokes.Where(stroke => ParentPage.History.TrashedInkStrokes.Contains(stroke)))
+                {
+                    strokesToRestore.Add(stroke);
+                }
+
+                ParentPage.History.TrashedInkStrokes.Remove(strokesToRestore);
+                ParentPage.InkStrokes.Add(strokesToRestore);
             }
 
-            var pageObjectsToRestore = new List<IPageObject>();
-
-            foreach (var pageObject in AcceptedPageObjects.Where(p => ParentPage.History.TrashedPageObjects.Contains(p)))
+            if (CanAcceptPageObjects &&
+                AcceptedPageObjects.Any() &&
+                fromHistory)
             {
-                pageObjectsToRestore.Add(pageObject);
-            }
+                var pageObjectsToRestore = new List<IPageObject>();
 
-            ParentPage.PageObjects.AddRange(pageObjectsToRestore);
-            foreach (var pageObject in pageObjectsToRestore)
-            {
-                ParentPage.History.TrashedPageObjects.Remove(pageObject);
+                foreach (var pageObject in AcceptedPageObjects.Where(p => ParentPage.History.TrashedPageObjects.Contains(p)))
+                {
+                    pageObjectsToRestore.Add(pageObject);
+                }
+
+                ParentPage.PageObjects.AddRange(pageObjectsToRestore);
+                foreach (var pageObject in pageObjectsToRestore)
+                {
+                    ParentPage.History.TrashedPageObjects.Remove(pageObject);
+                }
             }
 
             base.OnAdded(fromHistory);
@@ -86,25 +102,37 @@ namespace CLP.Entities
 
         public override void OnDeleted(bool fromHistory = false)
         {
-            if (!CanAcceptPageObjects ||
-                !AcceptedPageObjects.Any())
+            if (CanAcceptStrokes &&
+                AcceptedStrokes.Any())
             {
-                return;
+                var strokesToTrash = new StrokeCollection();
+
+                foreach (var stroke in AcceptedStrokes.Where(stroke => ParentPage.InkStrokes.Contains(stroke)))
+                {
+                    strokesToTrash.Add(stroke);
+                }
+
+                ParentPage.History.TrashedInkStrokes.Add(strokesToTrash);
+                ParentPage.InkStrokes.Remove(strokesToTrash);
             }
 
-            var pageObjectsToTrash = new List<IPageObject>();
-
-            foreach (var pageObject in AcceptedPageObjects.Where(p => ParentPage.PageObjects.Contains(p)))
+            if (CanAcceptPageObjects && 
+                AcceptedPageObjects.Any())
             {
-                pageObjectsToTrash.Add(pageObject);
-            }
+                var pageObjectsToTrash = new List<IPageObject>();
 
-            foreach (var pageObject in pageObjectsToTrash)
-            {
-                ParentPage.PageObjects.Remove(pageObject);
+                foreach (var pageObject in AcceptedPageObjects.Where(p => ParentPage.PageObjects.Contains(p)))
+                {
+                    pageObjectsToTrash.Add(pageObject);
+                }
+
+                foreach (var pageObject in pageObjectsToTrash)
+                {
+                    ParentPage.PageObjects.Remove(pageObject);
+                }
+
+                ParentPage.History.TrashedPageObjects.AddRange(pageObjectsToTrash);
             }
-            
-            ParentPage.History.TrashedPageObjects.AddRange(pageObjectsToTrash);
 
             base.OnDeleted(fromHistory);
         }
@@ -113,6 +141,16 @@ namespace CLP.Entities
         {
             var deltaX = XPosition - oldX;
             var deltaY = YPosition - oldY;
+
+            if (CanAcceptStrokes)
+            {
+                foreach (var stroke in AcceptedStrokes)
+                {
+                    var transform = new Matrix();
+                    transform.Translate(deltaX, deltaY);
+                    stroke.Transform(transform, true);
+                }
+            }
 
             if (!CanAcceptPageObjects)
             {
@@ -182,9 +220,17 @@ namespace CLP.Entities
         public void RefreshParts()
         {
             Parts = 0;
-            foreach (var pageObject in AcceptedPageObjects.OfType<ICountable>())
+            if (CanAcceptPageObjects)
             {
-                Parts += pageObject.Parts;
+                foreach (var pageObject in AcceptedPageObjects.OfType<ICountable>())
+                {
+                    Parts += pageObject.Parts;
+                }
+            }
+
+            if (CanAcceptStrokes)
+            {
+                Parts += AcceptedStrokes.Count;
             }
         }
 
@@ -260,5 +306,101 @@ namespace CLP.Entities
         }
 
         #endregion //IPageObjectAccepter Implementation
+
+        #region IStrokeAccepter Implementation
+
+        /// <summary>Stroke must be at least this percent contained by pageObject.</summary>
+        public int StrokeHitTestPercentage
+        {
+            get { return 90; }
+        }
+
+        /// <summary>Determines whether the <see cref="Bin" /> can currently accept <see cref="Stroke" />s.</summary>
+        public bool CanAcceptStrokes
+        {
+            get { return GetValue<bool>(CanAcceptStrokesProperty); }
+            set { SetValue(CanAcceptStrokesProperty, value); }
+        }
+
+        public static readonly PropertyData CanAcceptStrokesProperty = RegisterProperty("CanAcceptStrokes", typeof(bool), true);
+
+        /// <summary>The currently accepted <see cref="Stroke" />s.</summary>
+        [XmlIgnore]
+        [ExcludeFromSerialization]
+        public List<Stroke> AcceptedStrokes
+        {
+            get { return GetValue<List<Stroke>>(AcceptedStrokesProperty); }
+            set { SetValue(AcceptedStrokesProperty, value); }
+        }
+
+        public static readonly PropertyData AcceptedStrokesProperty = RegisterProperty("AcceptedStrokes", typeof(List<Stroke>), () => new List<Stroke>());
+
+        /// <summary>The IDs of the <see cref="Stroke" />s that have been accepted.</summary>
+        public List<string> AcceptedStrokeParentIDs
+        {
+            get { return GetValue<List<string>>(AcceptedStrokeParentIDsProperty); }
+            set { SetValue(AcceptedStrokeParentIDsProperty, value); }
+        }
+
+        public static readonly PropertyData AcceptedStrokeParentIDsProperty = RegisterProperty("AcceptedStrokeParentIDs", typeof(List<string>), () => new List<string>());
+
+        public void ChangeAcceptedStrokes(IEnumerable<Stroke> addedStrokes, IEnumerable<Stroke> removedStrokes)
+        {
+            if (!CanAcceptStrokes)
+            {
+                return;
+            }
+
+            // Remove Strokes
+            var removedStrokesList = removedStrokes as IList<Stroke> ?? removedStrokes.ToList();
+            foreach (var stroke in removedStrokesList.Where(stroke => AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
+            {
+                AcceptedStrokes.Remove(stroke);
+                AcceptedStrokeParentIDs.Remove(stroke.GetStrokeID());
+            }
+
+            // Add Strokes
+            var addedStrokesList = addedStrokes as IList<Stroke> ?? addedStrokes.ToList();
+            foreach (var stroke in addedStrokesList.Where(stroke => IsStrokeOverPageObject(stroke) && !AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
+            {
+                AcceptedStrokes.Add(stroke);
+                AcceptedStrokeParentIDs.Add(stroke.GetStrokeID());
+            }
+
+            RefreshParts();
+            ParentPage.UpdateAllReporters();
+        }
+
+        public bool IsStrokeOverPageObject(Stroke stroke)
+        {
+            var binBoundingBox = new Rect(XPosition, YPosition, Width, Height);
+            return stroke.HitTest(binBoundingBox, StrokeHitTestPercentage);
+        }
+
+        public StrokeCollection GetStrokesOverPageObject()
+        {
+            var binBoundingBox = new Rect(XPosition, YPosition, Width, Height);
+            var strokesOverObject = from stroke in ParentPage.InkStrokes
+                                    where stroke.HitTest(binBoundingBox, StrokeHitTestPercentage)
+                                    select stroke;
+
+            return new StrokeCollection(strokesOverObject);
+        }
+
+        public void RefreshAcceptedStrokes()
+        {
+            AcceptedStrokes.Clear();
+            AcceptedStrokeParentIDs.Clear();
+            if (!CanAcceptStrokes)
+            {
+                return;
+            }
+
+            var strokesOverObject = GetStrokesOverPageObject();
+
+            ChangeAcceptedStrokes(strokesOverObject, new StrokeCollection());
+        }
+
+        #endregion //IStrokeAccepter Implementation
     }
 }
