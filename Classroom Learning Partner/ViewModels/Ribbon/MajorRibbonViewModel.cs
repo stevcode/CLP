@@ -128,14 +128,10 @@ namespace Classroom_Learning_Partner.ViewModels
             _insertObscurableArrayButton = new RibbonButton("Array", "pack://application:,,,/Resources/Images/Array32.png", AddPageObjectToPageCommand, "OBSCURABLE_ARRAY");
 
             //Division Templates
-            _insertDivisionTemplateButton = new RibbonButton("Division Tool",
+            _insertDivisionTemplateButton = new RibbonButton("Division Template",
                                                              "pack://application:,,,/Resources/Images/FuzzyFactorCard32.png",
                                                              AddPageObjectToPageCommand,
                                                              "DIVISIONTEMPLATE");
-            _insertDivisionTemplateWithTilesButton = new RibbonButton("Division Tool with Tiles",
-                                                                      "pack://application:,,,/Resources/Images/FuzzyFactorCard32.png",
-                                                                      AddPageObjectToPageCommand,
-                                                                      "DIVISIONTEMPLATEWITHTILES");
 
             //NumberLine
             _insertNumberLineButton = new RibbonButton("Number Line", "pack://application:,,,/Resources/Images/NumberLine32.png", AddPageObjectToPageCommand, "NUMBERLINE");
@@ -304,7 +300,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         //Division Templates
         private RibbonButton _insertDivisionTemplateButton;
-        private RibbonButton _insertDivisionTemplateWithTilesButton;
 
         //NumberLine
         private RibbonButton _insertNumberLineButton;
