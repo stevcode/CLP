@@ -33,11 +33,10 @@ namespace CLP.Entities
             if (cutPageObject != null)
             {
                 CutPageObjectID = cutPageObject.ID;
-            }
-
-            if (!parentPage.History.TrashedPageObjects.Contains(cutPageObject))
-            {
-                parentPage.History.TrashedPageObjects.Add(cutPageObject);
+                if (!parentPage.History.TrashedPageObjects.Contains(cutPageObject))
+                {
+                    parentPage.History.TrashedPageObjects.Add(cutPageObject);
+                }
             }
 
             HalvedPageObjectIDs = halvedPageObjectIDs;
@@ -125,28 +124,14 @@ namespace CLP.Entities
 
         #region Methods
 
-        protected override void ConversionUndoAction()
-        {
-            UndoAction(false);
-        }
+        protected override void ConversionUndoAction() { UndoAction(false); }
 
         /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void UndoAction(bool isAnimationUndo)
         {
             var cutPageObject = ParentPage.GetVerifiedPageObjectInTrashByID(CutPageObjectID);
-            if (cutPageObject == null)
-            {
-                Console.WriteLine("[ERROR] on Index #{0}, Cut PageObject not found on page or in history.", HistoryIndex);
-                return;
-            }
-
             var halvedPageObjects = HalvedPageObjectIDs.Select(id => ParentPage.GetVerifiedPageObjectOnPageByID(id)).ToList();
             halvedPageObjects = halvedPageObjects.Where(p => p != null).ToList();
-            if (!halvedPageObjects.Any())
-            {
-                Console.WriteLine("[ERROR] on Index #{0}, No halved pageObjects found on page or in history.", HistoryIndex);
-                return;
-            }
 
             var cuttingStroke = ParentPage.GetVerifiedStrokeInHistoryByID(CuttingStrokeID);
             if (cuttingStroke == null)
@@ -166,24 +151,28 @@ namespace CLP.Entities
                 ParentPage.PageObjects.Remove(halvedPageObject);
                 ParentPage.History.TrashedPageObjects.Add(halvedPageObject);
             }
-
             ParentPage.History.TrashedPageObjects.Remove(cutPageObject);
             ParentPage.PageObjects.Add(cutPageObject);
-            if (!isAnimationUndo &&
-                cutPageObject is IStrokeAccepter)
-            {
-                (cutPageObject as IStrokeAccepter).RefreshAcceptedStrokes();
-            }
 
             if (isAnimationUndo)
             {
                 PageHistory.UISleep(STROKE_CUT_DELAY);
                 ParentPage.InkStrokes.Remove(cuttingStroke);
+            }
 
-                if (cutPageObject is IStrokeAccepter)
-                {
-                    (cutPageObject as IStrokeAccepter).RefreshAcceptedStrokes();
-                }
+            if (halvedPageObjects.Any() &&
+                cutPageObject != null)
+            {
+                AStrokeAccepter.SplitAcceptedStrokes(halvedPageObjects,
+                                                     new List<IPageObject>
+                                                     {
+                                                         cutPageObject
+                                                     });
+                APageObjectAccepter.SplitAcceptedPageObjects(halvedPageObjects,
+                                                             new List<IPageObject>
+                                                             {
+                                                                 cutPageObject
+                                                             });
             }
         }
 
@@ -191,19 +180,8 @@ namespace CLP.Entities
         protected override void RedoAction(bool isAnimationRedo)
         {
             var cutPageObject = ParentPage.GetVerifiedPageObjectOnPageByID(CutPageObjectID);
-            if (cutPageObject == null)
-            {
-                Console.WriteLine("[ERROR] on Index #{0}, Cut PageObject not found on page or in history.", HistoryIndex);
-                return;
-            }
-
             var halvedPageObjects = HalvedPageObjectIDs.Select(id => ParentPage.GetVerifiedPageObjectInTrashByID(id)).ToList();
             halvedPageObjects = halvedPageObjects.Where(p => p != null).ToList();
-            if (!halvedPageObjects.Any())
-            {
-                Console.WriteLine("[ERROR] on Index #{0}, No halved pageObjects found on page or in history.", HistoryIndex);
-                return;
-            }
 
             var cuttingStroke = ParentPage.GetVerifiedStrokeInHistoryByID(CuttingStrokeID);
             if (cuttingStroke == null)
@@ -217,28 +195,34 @@ namespace CLP.Entities
                 ParentPage.InkStrokes.Add(cuttingStroke);
                 PageHistory.UISleep(STROKE_CUT_DELAY);
             }
+
             ParentPage.PageObjects.Remove(cutPageObject);
             ParentPage.History.TrashedPageObjects.Add(cutPageObject);
             foreach (var halvedPageObject in halvedPageObjects)
             {
                 ParentPage.History.TrashedPageObjects.Remove(halvedPageObject);
                 ParentPage.PageObjects.Add(halvedPageObject);
-                if (!isAnimationRedo &&
-                    halvedPageObject is IStrokeAccepter)
-                {
-                    (halvedPageObject as IStrokeAccepter).RefreshAcceptedStrokes();
-                }
             }
 
             if (isAnimationRedo)
             {
                 PageHistory.UISleep(STROKE_CUT_DELAY);
                 ParentPage.InkStrokes.Remove(cuttingStroke);
+            }
 
-                foreach (var halvedPageObject in halvedPageObjects.OfType<IStrokeAccepter>())
-                {
-                    halvedPageObject.RefreshAcceptedStrokes();
-                }
+            if (halvedPageObjects.Any() &&
+                cutPageObject != null)
+            {
+                AStrokeAccepter.SplitAcceptedStrokes(new List<IPageObject>
+                                                     {
+                                                         cutPageObject
+                                                     },
+                                                     halvedPageObjects);
+                APageObjectAccepter.SplitAcceptedPageObjects(new List<IPageObject>
+                                                             {
+                                                                 cutPageObject
+                                                             },
+                                                             halvedPageObjects);
             }
         }
 

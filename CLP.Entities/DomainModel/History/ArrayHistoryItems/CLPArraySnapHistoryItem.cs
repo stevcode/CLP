@@ -207,8 +207,18 @@ namespace CLP.Entities
 
             persistingArray.IsDivisionBehaviorOn = PersistingArrayDivisionBehavior;
             persistingArray.SizeArrayToGridLevel(persistingArrayGridSquareSize, false);
-            persistingArray.RefreshAcceptedStrokes();
-            snappedArray.RefreshAcceptedStrokes();
+
+            var oldPageObjects = new List<IPageObject>
+                                 {
+                                     persistingArray
+                                 };
+            var newPageObjects = new List<IPageObject>
+                                 {
+                                     persistingArray, snappedArray
+                                 };
+
+            AStrokeAccepter.SplitAcceptedStrokes(oldPageObjects, newPageObjects);
+            APageObjectAccepter.SplitAcceptedPageObjects(oldPageObjects, newPageObjects);
         }
 
         /// <summary>Method that will actually redo the action. Already incorporates error checking for existance of ParentPage.</summary>
@@ -238,7 +248,18 @@ namespace CLP.Entities
 
             persistingArray.IsDivisionBehaviorOn = true;
             persistingArray.SizeArrayToGridLevel(persistingArrayGridSquareSize, false);
-            persistingArray.RefreshAcceptedStrokes();
+
+            var oldPageObjects = new List<IPageObject>
+                                 {
+                                     snappedArray
+                                 };
+            var newPageObjects = new List<IPageObject>
+                                 {
+                                     persistingArray
+                                 };
+
+            AStrokeAccepter.SplitAcceptedStrokes(oldPageObjects, newPageObjects);
+            APageObjectAccepter.SplitAcceptedPageObjects(oldPageObjects, newPageObjects);
         }
 
         private void RestoreDivisions(CLPArray persistingArray)

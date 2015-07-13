@@ -1291,20 +1291,25 @@ namespace CLP.Entities
 
         #region IStrokeAccepter Implementation
 
-        /// <summary>Stroke must be at least this percent contained by pageObject.</summary>
+        /// <summary>Stroke must be at least this percent contained by StrokeAcceptanceBoundingBox.</summary>
         public int StrokeHitTestPercentage
         {
             get { return 90; }
         }
 
-        /// <summary>Determines whether the <see cref="Stamp" /> can currently accept <see cref="Stroke" />s.</summary>
+        public Rect StrokeAcceptanceBoundingBox
+        {
+            get { return new Rect(XPosition, YPosition, Width, Height); }
+        }
+
+        /// <summary>Determines whether the <see cref="IStrokeAccepter" /> can currently accept <see cref="Stroke" />s.</summary>
         public bool CanAcceptStrokes
         {
             get { return GetValue<bool>(CanAcceptStrokesProperty); }
             set { SetValue(CanAcceptStrokesProperty, value); }
         }
 
-        public static readonly PropertyData CanAcceptStrokesProperty = RegisterProperty("CanAcceptStrokes", typeof (bool), true);
+        public static readonly PropertyData CanAcceptStrokesProperty = RegisterProperty("CanAcceptStrokes", typeof(bool), true);
 
         /// <summary>The currently accepted <see cref="Stroke" />s.</summary>
         [XmlIgnore]
@@ -1315,7 +1320,7 @@ namespace CLP.Entities
             set { SetValue(AcceptedStrokesProperty, value); }
         }
 
-        public static readonly PropertyData AcceptedStrokesProperty = RegisterProperty("AcceptedStrokes", typeof (List<Stroke>), () => new List<Stroke>());
+        public static readonly PropertyData AcceptedStrokesProperty = RegisterProperty("AcceptedStrokes", typeof(List<Stroke>), () => new List<Stroke>());
 
         /// <summary>The IDs of the <see cref="Stroke" />s that have been accepted.</summary>
         public List<string> AcceptedStrokeParentIDs
@@ -1324,7 +1329,7 @@ namespace CLP.Entities
             set { SetValue(AcceptedStrokeParentIDsProperty, value); }
         }
 
-        public static readonly PropertyData AcceptedStrokeParentIDsProperty = RegisterProperty("AcceptedStrokeParentIDs", typeof (List<string>), () => new List<string>());
+        public static readonly PropertyData AcceptedStrokeParentIDsProperty = RegisterProperty("AcceptedStrokeParentIDs", typeof(List<string>), () => new List<string>());
 
         public void ChangeAcceptedStrokes(IEnumerable<Stroke> addedStrokes, IEnumerable<Stroke> removedStrokes)
         {
@@ -1343,41 +1348,24 @@ namespace CLP.Entities
 
             // Add Strokes
             var addedStrokesList = addedStrokes as IList<Stroke> ?? addedStrokes.ToList();
-            foreach (var stroke in addedStrokesList.Where(stroke => IsStrokeOverPageObject(stroke) && !AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
+            foreach (var stroke in addedStrokesList.Where(stroke => !AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
             {
                 AcceptedStrokes.Add(stroke);
                 AcceptedStrokeParentIDs.Add(stroke.GetStrokeID());
             }
         }
 
-        public bool IsStrokeOverPageObject(Stroke stroke)
-        {
-            var arrayBoundingBox = new Rect(XPosition, YPosition, Width, Height);
-            return stroke.HitTest(arrayBoundingBox, StrokeHitTestPercentage);
-        }
+        public bool IsStrokeOverPageObject(Stroke stroke) { return stroke.HitTest(StrokeAcceptanceBoundingBox, StrokeHitTestPercentage); }
+
+        public double PercentageOfStrokeOverPageObject(Stroke stroke) { return stroke.PercentContainedByBounds(StrokeAcceptanceBoundingBox); }
 
         public StrokeCollection GetStrokesOverPageObject()
         {
-            var arrayBoundingBox = new Rect(XPosition, YPosition, Width, Height);
             var strokesOverObject = from stroke in ParentPage.InkStrokes
-                                    where stroke.HitTest(arrayBoundingBox, StrokeHitTestPercentage)
+                                    where IsStrokeOverPageObject(stroke)
                                     select stroke;
 
             return new StrokeCollection(strokesOverObject);
-        }
-
-        public void RefreshAcceptedStrokes()
-        {
-            AcceptedStrokes.Clear();
-            AcceptedStrokeParentIDs.Clear();
-            if (!CanAcceptStrokes)
-            {
-                return;
-            }
-
-            var strokesOverObject = GetStrokesOverPageObject();
-
-            ChangeAcceptedStrokes(strokesOverObject, new StrokeCollection());
         }
 
         #endregion //IStrokeAccepter Implementation

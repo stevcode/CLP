@@ -124,6 +124,9 @@
     <Compile Include="DomainModel\PageObjects\Bins\Mark.cs" />
     <Compile Include="DomainModel\PageObjects\MultipleChoiceBox.cs" />
     <Compile Include="DomainModel\PageObjects\NumberLine.cs" />
+    <Compile Include="DomainModel\PageObjects\PageObject Abstract Base Classes\APageObjectAccepter.cs" />
+    <Compile Include="DomainModel\PageObjects\PageObject Abstract Base Classes\AStrokeAccepter.cs" />
+    <Compile Include="DomainModel\PageObjects\PageObject Abstract Base Classes\AStrokeAndPageObjectAccepter.cs" />
     <Compile Include="DomainModel\PageObjects\PageObject Interfaces\IReporter.cs" />
     <Compile Include="DomainModel\PageObjects\Temporary\TemporaryBoundary.cs" />
     <Compile Include="DomainModel\Strokes\Extensions\StrokeCollectionExtension.cs" />

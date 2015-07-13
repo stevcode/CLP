@@ -104,7 +104,7 @@ namespace CLP.Entities
                         addedPageObjects.Add(this);
                     }
 
-                    acceptorPageObject.AcceptPageObjects(addedPageObjects, removedPageObjects);
+                    acceptorPageObject.ChangeAcceptedPageObjects(addedPageObjects, removedPageObjects);
                 }
             }
             catch (Exception ex)

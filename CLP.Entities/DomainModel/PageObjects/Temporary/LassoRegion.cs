@@ -139,7 +139,7 @@ namespace CLP.Entities
                         }
                     }
 
-                    acceptorPageObject.AcceptPageObjects(addedPageObjects, removedPageObjects);
+                    acceptorPageObject.ChangeAcceptedPageObjects(addedPageObjects, removedPageObjects);
                 }
 
                 foreach (
