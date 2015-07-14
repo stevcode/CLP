@@ -115,7 +115,7 @@ namespace CLP.Entities
             {
                 var cutPageObject = ParentPage.GetPageObjectByIDOnPageOrInHistory(CutPageObjectID);
                 return cutPageObject == null
-                           ? string.Format("[ERROR] on Index #{0}, Cut PageObject not found on page or in history.", HistoryIndex)
+                           ? string.Format("Index #{0}, Nothing Cut.", HistoryIndex)
                            : string.Format("Index #{0}, Cut {1}.", HistoryIndex, cutPageObject.FormattedName);
             }
         }
@@ -260,7 +260,7 @@ namespace CLP.Entities
             }
         }
 
-        public override bool IsUsingTrashedPageObject(string id, bool isUndoItem) { return isUndoItem ? CutPageObjectIDs.Contains(id) : HalvedPageObjectIDs.Contains(id); }
+        public override bool IsUsingTrashedPageObject(string id, bool isUndoItem) { return isUndoItem ? CutPageObjectID == id : HalvedPageObjectIDs.Contains(id); }
 
         public override bool IsUsingTrashedInkStroke(string id, bool isUndoItem) { return CuttingStrokeID == id; }
 

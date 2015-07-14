@@ -180,21 +180,30 @@ namespace CLP.Entities
         {
             get
             {
+                string arrayType;
                 switch (ArrayType)
                 {
                     case ArrayTypes.Array:
-                        return "Array";
+                        arrayType = "Array";
+                        break;
                     case ArrayTypes.ArrayCard:
-                        return "Array Card";
+                        arrayType = "Array Card";
+                        break;
                     case ArrayTypes.FactorCard:
-                        return "Factor Card";
+                        arrayType = "Factor Card";
+                        break;
                     case ArrayTypes.TenByTen:
-                        return "10x10 Array";
+                        arrayType = "Array (Static)";
+                        break;
                     case ArrayTypes.ObscurableArray:
-                        return "Obscurable Array";
+                        arrayType = "Obscurable Array";
+                        break;
                     default:
-                        return "Default Array";
+                        arrayType = "Default Array";
+                        break;
                 }
+
+                return string.Format("{0}x{1} {2}", Rows, Columns, arrayType);
             }
         }
 

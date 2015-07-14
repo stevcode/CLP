@@ -137,6 +137,34 @@ namespace CLP.Entities
 
         #region APageObjectBase Overrides
 
+        public override string FormattedName
+        {
+            get
+            {
+                string stampType;
+                switch (StampType)
+                {
+                    case StampTypes.GeneralStamp:
+                        stampType = "Stamp";
+                        break;
+                    case StampTypes.ObservingStamp:
+                        stampType = "Object Stamp";
+                        break;
+                    case StampTypes.GroupStamp:
+                        stampType = "Group Stamp";
+                        break;
+                    case StampTypes.EmptyGroupStamp:
+                        stampType = "Empty Group Stamp";
+                        break;
+                    default:
+                        stampType = "Stamp";
+                        break;
+                }
+
+                return string.Format("{0} with {1} Part(s)", stampType, Parts);
+            }
+        }
+
         public override int ZIndex
         {
             get { return 60; }

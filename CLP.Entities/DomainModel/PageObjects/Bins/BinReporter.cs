@@ -34,7 +34,7 @@ namespace CLP.Entities
 
         public override string FormattedName
         {
-            get { return "BinReporter"; }
+            get { return string.Format("Bin Reporter reporting: {0}", FormattedReport); }
         }
 
         public override int ZIndex

@@ -611,7 +611,7 @@ namespace CLP.Entities
 
         public override string FormattedName
         {
-            get { return "Number Line"; }
+            get { return string.Format("Number Line from 0 to {0} with {1} jumps", NumberLineSize, JumpSizes.Count); }
         }
 
         public override int ZIndex

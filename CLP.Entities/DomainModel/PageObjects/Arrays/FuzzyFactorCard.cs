@@ -327,7 +327,7 @@ namespace CLP.Entities
 
         public override string FormattedName
         {
-            get { return "Division Template"; }
+            get { return string.Format("{0} / {1} Division Template with {2} remaining", Dividend, Columns, CurrentRemainder); }
         }
 
         public override int ZIndex

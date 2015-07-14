@@ -68,7 +68,7 @@ namespace CLP.Entities
 
         public override string FormattedName
         {
-            get { return string.Format("{0} {1} Mark", MarkShape, MarkColor); }
+            get { return string.Format("{0} {1} Mark", MarkColor, MarkShape); }
         }
 
         public override int ZIndex

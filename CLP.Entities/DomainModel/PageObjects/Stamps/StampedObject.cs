@@ -115,7 +115,29 @@ namespace CLP.Entities
 
         public override string FormattedName
         {
-            get { return "Stamped Object"; }
+            get
+            {
+                string stampObjectType;
+                switch (StampedObjectType)
+                {
+                    case StampedObjectTypes.GeneralStampedObject:
+                        stampObjectType = "Stamped Object";
+                        break;
+                    case StampedObjectTypes.VisibleParts:
+                        stampObjectType = "Stamped Object";
+                        break;
+                    case StampedObjectTypes.GroupStampedObject:
+                        stampObjectType = "Group Stamped Object";
+                        break;
+                    case StampedObjectTypes.EmptyGroupStampedObject:
+                        stampObjectType = "Empty Group Stamped Object";
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+
+                return string.Format("{0} with {1} Part(s)", stampObjectType, Parts);
+            }
         }
 
         public override int ZIndex

@@ -70,7 +70,7 @@ namespace CLP.Entities
 
         public override string FormattedName
         {
-            get { return "Lasso"; }
+            get { return string.Format("{0} PageObjects and {1} Strokes in a Lasso", LassoedPageObjects.Count, LassoedStrokes.Count); }
         }
 
         public override int ZIndex
