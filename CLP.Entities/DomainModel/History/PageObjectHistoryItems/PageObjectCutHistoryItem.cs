@@ -124,11 +124,24 @@ namespace CLP.Entities
 
         #region Methods
 
-        protected override void ConversionUndoAction() { UndoAction(false); }
+        protected override void ConversionUndoAction()
+        {
+            if (!HalvedPageObjectIDs.Any())
+            {
+                CutPageObjectID = string.Empty;
+            }
+            
+            UndoAction(false);
+        }
 
         /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void UndoAction(bool isAnimationUndo)
         {
+            if (!HalvedPageObjectIDs.Any())
+            {
+                CutPageObjectID = string.Empty;
+            }
+
             var cutPageObject = ParentPage.GetVerifiedPageObjectInTrashByID(CutPageObjectID);
             var halvedPageObjects = HalvedPageObjectIDs.Select(id => ParentPage.GetVerifiedPageObjectOnPageByID(id)).ToList();
             halvedPageObjects = halvedPageObjects.Where(p => p != null).ToList();
@@ -151,12 +164,15 @@ namespace CLP.Entities
                 ParentPage.PageObjects.Remove(halvedPageObject);
                 ParentPage.History.TrashedPageObjects.Add(halvedPageObject);
             }
-            ParentPage.History.TrashedPageObjects.Remove(cutPageObject);
-            ParentPage.PageObjects.Add(cutPageObject);
+            if (cutPageObject != null)
+            {
+                ParentPage.History.TrashedPageObjects.Remove(cutPageObject);
+                ParentPage.PageObjects.Add(cutPageObject);
+            }
 
             if (isAnimationUndo)
             {
-                PageHistory.UISleep(STROKE_CUT_DELAY);
+                //PageHistory.UISleep(STROKE_CUT_DELAY);
                 ParentPage.InkStrokes.Remove(cuttingStroke);
             }
 
@@ -179,6 +195,11 @@ namespace CLP.Entities
         /// <summary>Method that will actually redo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void RedoAction(bool isAnimationRedo)
         {
+            if (!HalvedPageObjectIDs.Any())
+            {
+                CutPageObjectID = string.Empty;
+            }
+
             var cutPageObject = ParentPage.GetVerifiedPageObjectOnPageByID(CutPageObjectID);
             var halvedPageObjects = HalvedPageObjectIDs.Select(id => ParentPage.GetVerifiedPageObjectInTrashByID(id)).ToList();
             halvedPageObjects = halvedPageObjects.Where(p => p != null).ToList();
@@ -196,8 +217,11 @@ namespace CLP.Entities
                 PageHistory.UISleep(STROKE_CUT_DELAY);
             }
 
-            ParentPage.PageObjects.Remove(cutPageObject);
-            ParentPage.History.TrashedPageObjects.Add(cutPageObject);
+            if (cutPageObject != null)
+            {
+                ParentPage.PageObjects.Remove(cutPageObject);
+                ParentPage.History.TrashedPageObjects.Add(cutPageObject);
+            }
             foreach (var halvedPageObject in halvedPageObjects)
             {
                 ParentPage.History.TrashedPageObjects.Remove(halvedPageObject);
@@ -206,7 +230,7 @@ namespace CLP.Entities
 
             if (isAnimationRedo)
             {
-                PageHistory.UISleep(STROKE_CUT_DELAY);
+                //PageHistory.UISleep(STROKE_CUT_DELAY);
                 ParentPage.InkStrokes.Remove(cuttingStroke);
             }
 

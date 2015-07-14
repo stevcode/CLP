@@ -906,8 +906,8 @@ namespace Classroom_Learning_Partner.ViewModels
             Buttons.Add(_insertBinButton);
 
             // Insert Shapes
-            //Buttons.Add(Separater);
-            //Buttons.Add(_insertSquareButton);
+            Buttons.Add(Separater);
+            Buttons.Add(_insertSquareButton);
             //Buttons.Add(_insertCircleButton);
             //Buttons.Add(_insertTriangleButton);
             //Buttons.Add(_insertHorizontalLineButton);

@@ -926,6 +926,10 @@ namespace Classroom_Learning_Partner.ViewModels
                 halvedPageObjects = pageObjectToCut.Cut(stroke);
             }
 
+            if (!halvedPageObjects.Any())
+            {
+                pageObjectToCut = null;
+            }
             var halvedPageObjectIDs = new List<string>();
             foreach (var pageObject in halvedPageObjects)
             {
