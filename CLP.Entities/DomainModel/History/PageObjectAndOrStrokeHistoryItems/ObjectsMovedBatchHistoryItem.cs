@@ -320,6 +320,10 @@ namespace CLP.Entities
         /// <summary>Method that unpacks the <see cref="IHistoryItem" /> after it has been sent to another machine.</summary>
         public override void UnpackHistoryItem() { }
 
+        public override bool IsUsingTrashedPageObject(string id) { return PageObjectIDs.Keys.Contains(id); }
+
+        public override bool IsUsingTrashedInkStroke(string id) { return StrokeIDs.Keys.Contains(id); }
+
         #endregion //Methods
     }
 }

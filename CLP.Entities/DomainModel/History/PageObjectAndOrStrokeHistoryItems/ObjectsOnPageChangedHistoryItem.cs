@@ -445,7 +445,9 @@ namespace CLP.Entities
             }
         }
 
-        public override bool IsUsingTrashedInkStroke(string id, bool isUndoItem) { return isUndoItem ? StrokeIDsRemoved.Contains(id) : StrokeIDsAdded.Contains(id); }
+        public override bool IsUsingTrashedPageObject(string id) { return PageObjectIDsRemoved.Contains(id) || PageObjectIDsAdded.Contains(id); }
+
+        public override bool IsUsingTrashedInkStroke(string id) { return StrokeIDsRemoved.Contains(id) || StrokeIDsAdded.Contains(id); }
 
         #endregion //Methods
     }

@@ -137,6 +137,8 @@ namespace CLP.Entities
             // TODO: Unpack history item.
         }
 
+        public override bool IsUsingTrashedPageObject(string id) { return DivisionTemplateID == id; }
+
         #endregion //Methods
     }
 }

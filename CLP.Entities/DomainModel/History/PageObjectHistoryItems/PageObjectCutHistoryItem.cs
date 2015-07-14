@@ -130,7 +130,7 @@ namespace CLP.Entities
             {
                 CutPageObjectID = string.Empty;
             }
-            
+
             UndoAction(false);
         }
 
@@ -176,20 +176,22 @@ namespace CLP.Entities
                 ParentPage.InkStrokes.Remove(cuttingStroke);
             }
 
-            if (halvedPageObjects.Any() &&
-                cutPageObject != null)
+            if (!halvedPageObjects.Any() ||
+                cutPageObject == null)
             {
-                AStrokeAccepter.SplitAcceptedStrokes(halvedPageObjects,
-                                                     new List<IPageObject>
-                                                     {
-                                                         cutPageObject
-                                                     });
-                APageObjectAccepter.SplitAcceptedPageObjects(halvedPageObjects,
-                                                             new List<IPageObject>
-                                                             {
-                                                                 cutPageObject
-                                                             });
+                return;
             }
+
+            AStrokeAccepter.SplitAcceptedStrokes(halvedPageObjects,
+                                                 new List<IPageObject>
+                                                 {
+                                                     cutPageObject
+                                                 });
+            APageObjectAccepter.SplitAcceptedPageObjects(halvedPageObjects,
+                                                         new List<IPageObject>
+                                                         {
+                                                             cutPageObject
+                                                         });
         }
 
         /// <summary>Method that will actually redo the action. Already incorporates error checking for existance of ParentPage.</summary>
@@ -234,20 +236,22 @@ namespace CLP.Entities
                 ParentPage.InkStrokes.Remove(cuttingStroke);
             }
 
-            if (halvedPageObjects.Any() &&
-                cutPageObject != null)
+            if (!halvedPageObjects.Any() ||
+                cutPageObject == null)
             {
-                AStrokeAccepter.SplitAcceptedStrokes(new List<IPageObject>
-                                                     {
-                                                         cutPageObject
-                                                     },
-                                                     halvedPageObjects);
-                APageObjectAccepter.SplitAcceptedPageObjects(new List<IPageObject>
-                                                             {
-                                                                 cutPageObject
-                                                             },
-                                                             halvedPageObjects);
+                return;
             }
+
+            AStrokeAccepter.SplitAcceptedStrokes(new List<IPageObject>
+                                                 {
+                                                     cutPageObject
+                                                 },
+                                                 halvedPageObjects);
+            APageObjectAccepter.SplitAcceptedPageObjects(new List<IPageObject>
+                                                         {
+                                                             cutPageObject
+                                                         },
+                                                         halvedPageObjects);
         }
 
         /// <summary>Method that prepares a clone of the <see cref="IHistoryItem" /> so that it can call Redo() when sent to another machine.</summary>
@@ -268,7 +272,7 @@ namespace CLP.Entities
                 {
                     clonedHistoryItem.PackagedPageObjects.Add(pageObject);
                 }
-                catch (Exception ex) { }
+                catch (Exception) { }
             }
 
             return clonedHistoryItem;
@@ -284,9 +288,9 @@ namespace CLP.Entities
             }
         }
 
-        public override bool IsUsingTrashedPageObject(string id, bool isUndoItem) { return isUndoItem ? CutPageObjectID == id : HalvedPageObjectIDs.Contains(id); }
+        public override bool IsUsingTrashedPageObject(string id) { return CutPageObjectID == id || HalvedPageObjectIDs.Contains(id); }
 
-        public override bool IsUsingTrashedInkStroke(string id, bool isUndoItem) { return CuttingStrokeID == id; }
+        public override bool IsUsingTrashedInkStroke(string id) { return CuttingStrokeID == id; }
 
         #endregion //Methods
     }

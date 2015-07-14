@@ -389,8 +389,8 @@ namespace CLP.Entities
         public void OptimizeTrashedItems()
         {
             var inkStrokesToRemove = (from trashedInkStroke in TrashedInkStrokes
-                                      let isTrashedInkStrokeBeingUsed = UndoItems.Any(historyItem => historyItem.IsUsingTrashedInkStroke(trashedInkStroke.GetStrokeID(), true)) || 
-                                                                        RedoItems.Any(historyItem => historyItem.IsUsingTrashedInkStroke(trashedInkStroke.GetStrokeID(), false))
+                                      let isTrashedInkStrokeBeingUsed = UndoItems.Any(historyItem => historyItem.IsUsingTrashedInkStroke(trashedInkStroke.GetStrokeID())) || 
+                                                                        RedoItems.Any(historyItem => historyItem.IsUsingTrashedInkStroke(trashedInkStroke.GetStrokeID()))
                                       where !isTrashedInkStrokeBeingUsed
                                       select trashedInkStroke).ToList();
             foreach(var stroke in inkStrokesToRemove)
@@ -400,8 +400,8 @@ namespace CLP.Entities
 
 
             var pageObjectsToRemove = (from trashedPageObject in TrashedPageObjects
-                                       let isTrashedPageObjectBeingUsed = UndoItems.Any(historyItem => historyItem.IsUsingTrashedPageObject(trashedPageObject.ID, true)) || 
-                                                                          RedoItems.Any(historyItem => historyItem.IsUsingTrashedPageObject(trashedPageObject.ID, false))
+                                       let isTrashedPageObjectBeingUsed = UndoItems.Any(historyItem => historyItem.IsUsingTrashedPageObject(trashedPageObject.ID)) || 
+                                                                          RedoItems.Any(historyItem => historyItem.IsUsingTrashedPageObject(trashedPageObject.ID))
                                        where !isTrashedPageObjectBeingUsed
                                        select trashedPageObject).ToList();
             foreach(var pageObject in pageObjectsToRemove)

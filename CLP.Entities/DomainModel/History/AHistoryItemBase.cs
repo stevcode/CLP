@@ -234,9 +234,9 @@ namespace CLP.Entities
 
         public abstract void UnpackHistoryItem();
 
-        public virtual bool IsUsingTrashedPageObject(string id, bool isUndoItem) { return false; }
+        public virtual bool IsUsingTrashedPageObject(string id) { return false; }
 
-        public virtual bool IsUsingTrashedInkStroke(string id, bool isUndoItem) { return false; }
+        public virtual bool IsUsingTrashedInkStroke(string id) { return false; }
 
         #endregion //Methods
     }
