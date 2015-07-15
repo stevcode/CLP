@@ -22,8 +22,8 @@ namespace CLP.Entities
             : base(parentPage, owner)
         {
             ArrayID = arrayID;
-            OldRegions = oldRegions;
-            NewRegions = newRegions;
+            OldRegions = oldRegions.Select(d => new CLPArrayDivision(d.Orientation, d.Position, d.Length, d.Value, d.IsObscured)).ToList();
+            NewRegions = newRegions.Select(d => new CLPArrayDivision(d.Orientation, d.Position, d.Length, d.Value, d.IsObscured)).ToList();
         }
 
         /// <summary>Initializes a new object based on <see cref="SerializationInfo" />.</summary>
@@ -188,7 +188,7 @@ namespace CLP.Entities
             if ((AddedDivisions.Any() && AddedDivisions[0].Orientation == ArrayDivisionOrientation.Horizontal) ||
                 (RemovedDivisions.Any() && RemovedDivisions[0].Orientation == ArrayDivisionOrientation.Horizontal))
             {
-                NewRegions = array.HorizontalDivisions.ToList();
+                NewRegions = array.HorizontalDivisions.Select(d => new CLPArrayDivision(d.Orientation, d.Position, d.Length, d.Value, d.IsObscured)).ToList();
 
                 foreach (var clpArrayDivision in AddedDivisions)
                 {
@@ -199,11 +199,11 @@ namespace CLP.Entities
                     array.HorizontalDivisions.Add(clpArrayDivision);
                 }
 
-                OldRegions = array.HorizontalDivisions.ToList();
+                OldRegions = array.HorizontalDivisions.Select(d => new CLPArrayDivision(d.Orientation, d.Position, d.Length, d.Value, d.IsObscured)).ToList();
             }
             else
             {
-                NewRegions = array.VerticalDivisions.ToList();
+                NewRegions = array.VerticalDivisions.Select(d => new CLPArrayDivision(d.Orientation, d.Position, d.Length, d.Value, d.IsObscured)).ToList();
 
                 foreach (var clpArrayDivision in AddedDivisions)
                 {
@@ -214,7 +214,7 @@ namespace CLP.Entities
                     array.VerticalDivisions.Add(clpArrayDivision);
                 }
 
-                OldRegions = array.VerticalDivisions.ToList();
+                OldRegions = array.VerticalDivisions.Select(d => new CLPArrayDivision(d.Orientation, d.Position, d.Length, d.Value, d.IsObscured)).ToList();
             }
 
             AddedDivisions.Clear();
@@ -245,30 +245,6 @@ namespace CLP.Entities
             {
                 array.HorizontalDivisions = new ObservableCollection<CLPArrayDivision>(OldRegions);
             }
-
-            //if ((AddedDivisions.Any() && AddedDivisions[0].Orientation == ArrayDivisionOrientation.Horizontal) ||
-            //    (RemovedDivisions.Any() && RemovedDivisions[0].Orientation == ArrayDivisionOrientation.Horizontal))
-            //{
-            //    foreach (var clpArrayDivision in AddedDivisions)
-            //    {
-            //        array.HorizontalDivisions.Remove(clpArrayDivision);
-            //    }
-            //    foreach (var clpArrayDivision in RemovedDivisions)
-            //    {
-            //        array.HorizontalDivisions.Add(clpArrayDivision);
-            //    }
-            //}
-            //else
-            //{
-            //    foreach (var clpArrayDivision in AddedDivisions)
-            //    {
-            //        array.VerticalDivisions.Remove(clpArrayDivision);
-            //    }
-            //    foreach (var clpArrayDivision in RemovedDivisions)
-            //    {
-            //        array.VerticalDivisions.Add(clpArrayDivision);
-            //    }
-            //}
         }
 
         /// <summary>Method that will actually redo the action. Already incorporates error checking for existance of ParentPage.</summary>
@@ -295,30 +271,6 @@ namespace CLP.Entities
             {
                 array.HorizontalDivisions = new ObservableCollection<CLPArrayDivision>(NewRegions);
             }
-
-            //if ((AddedDivisions.Any() && AddedDivisions[0].Orientation == ArrayDivisionOrientation.Horizontal) ||
-            //    (RemovedDivisions.Any() && RemovedDivisions[0].Orientation == ArrayDivisionOrientation.Horizontal))
-            //{
-            //    foreach (var clpArrayDivision in AddedDivisions)
-            //    {
-            //        array.HorizontalDivisions.Add(clpArrayDivision);
-            //    }
-            //    foreach (var clpArrayDivision in RemovedDivisions)
-            //    {
-            //        array.HorizontalDivisions.Remove(clpArrayDivision);
-            //    }
-            //}
-            //else
-            //{
-            //    foreach (var clpArrayDivision in AddedDivisions)
-            //    {
-            //        array.VerticalDivisions.Add(clpArrayDivision);
-            //    }
-            //    foreach (var clpArrayDivision in RemovedDivisions)
-            //    {
-            //        array.VerticalDivisions.Remove(clpArrayDivision);
-            //    }
-            //}
         }
 
         /// <summary>Method that prepares a clone of the <see cref="IHistoryItem" /> so that it can call Redo() when sent to another machine.</summary>
