@@ -1214,12 +1214,14 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if (addToHistory)
             {
-                var pageObjectIDs = new List<string>
-                                    {
-                                        pageObject.ID
-                                    };
-
-                AddHistoryItemToPage(page, new PageObjectsAddedHistoryItem(page, App.MainWindowViewModel.CurrentUser, pageObjectIDs));
+                AddHistoryItemToPage(page,
+                                     new ObjectsOnPageChangedHistoryItem(page,
+                                                                         App.MainWindowViewModel.CurrentUser,
+                                                                         new List<IPageObject>
+                                                                         {
+                                                                             pageObject
+                                                                         },
+                                                                         new List<IPageObject>()));
             }
 
             pageObject.OnAdded();
@@ -1232,23 +1234,22 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static void AddPageObjectsToPage(CLPPage page, IEnumerable<IPageObject> pageObjects, bool addToHistory = true, bool forceSelectMode = true)
         {
-            var pageObjectIDs = new List<string>();
-            foreach (var pageObject in pageObjects)
+            var pageObjectsAdded = pageObjects as IList<IPageObject> ?? pageObjects.ToList();
+            foreach (var pageObject in pageObjectsAdded)
             {
                 if (string.IsNullOrEmpty(pageObject.CreatorID))
                 {
                     pageObject.CreatorID = App.MainWindowViewModel.CurrentUser.ID;
                 }
-                pageObjectIDs.Add(pageObject.ID);
                 page.PageObjects.Add(pageObject);
             }
 
             if (addToHistory)
             {
-                AddHistoryItemToPage(page, new PageObjectsAddedHistoryItem(page, App.MainWindowViewModel.CurrentUser, pageObjectIDs));
+                AddHistoryItemToPage(page, new ObjectsOnPageChangedHistoryItem(page, App.MainWindowViewModel.CurrentUser, pageObjectsAdded, new List<IPageObject>()));
             }
 
-            foreach (var pageObject in pageObjects)
+            foreach (var pageObject in pageObjectsAdded)
             {
                 pageObject.OnAdded();
             }
@@ -1270,12 +1271,13 @@ namespace Classroom_Learning_Partner.ViewModels
             if (addToHistory)
             {
                 AddHistoryItemToPage(page,
-                                     new PageObjectsRemovedHistoryItem(page,
-                                                                       App.MainWindowViewModel.CurrentUser,
-                                                                       new List<IPageObject>
-                                                                       {
-                                                                           pageObject
-                                                                       }));
+                                     new ObjectsOnPageChangedHistoryItem(page,
+                                                                         App.MainWindowViewModel.CurrentUser,
+                                                                         new List<IPageObject>(),
+                                                                         new List<IPageObject>
+                                                                         {
+                                                                             pageObject
+                                                                         }));
             }
 
             page.PageObjects.Remove(pageObject);
@@ -1303,7 +1305,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
             if (addToHistory)
             {
-                AddHistoryItemToPage(page, new PageObjectsRemovedHistoryItem(page, App.MainWindowViewModel.CurrentUser, pageObjects));
+                AddHistoryItemToPage(page, new ObjectsOnPageChangedHistoryItem(page, App.MainWindowViewModel.CurrentUser, new List<IPageObject>(), pageObjects));
             }
 
             foreach (var pageObject in pageObjects)

@@ -16,19 +16,11 @@ namespace CLP.Entities
         /// <summary>Initializes <see cref="ObjectsOnPageChangedHistoryItem" /> from scratch.</summary>
         public ObjectsOnPageChangedHistoryItem() { }
 
-        public ObjectsOnPageChangedHistoryItem(CLPPage parentPage,
-                                               Person owner,
-                                               IEnumerable<IPageObject> pageObjectsAdded,
-                                               IEnumerable<IPageObject> pageObjectsRemoved) 
-            : this(parentPage, owner, pageObjectsAdded, pageObjectsRemoved, new List<Stroke>(), new List<Stroke>())
-        { }
+        public ObjectsOnPageChangedHistoryItem(CLPPage parentPage, Person owner, IEnumerable<IPageObject> pageObjectsAdded, IEnumerable<IPageObject> pageObjectsRemoved)
+            : this(parentPage, owner, pageObjectsAdded, pageObjectsRemoved, new List<Stroke>(), new List<Stroke>()) { }
 
-        public ObjectsOnPageChangedHistoryItem(CLPPage parentPage,
-                                               Person owner,
-                                               IEnumerable<Stroke> strokesAdded,
-                                               IEnumerable<Stroke> strokesRemoved)
-            : this(parentPage, owner, new List<IPageObject>(), new List<IPageObject>(), strokesAdded, strokesRemoved)
-        { }
+        public ObjectsOnPageChangedHistoryItem(CLPPage parentPage, Person owner, IEnumerable<Stroke> strokesAdded, IEnumerable<Stroke> strokesRemoved)
+            : this(parentPage, owner, new List<IPageObject>(), new List<IPageObject>(), strokesAdded, strokesRemoved) { }
 
         /// <summary>Initializes <see cref="ObjectsOnPageChangedHistoryItem" /> with a parent <see cref="CLPPage" />.</summary>
         /// <param name="parentPage">The <see cref="CLPPage" /> the <see cref="IHistoryItem" /> is part of.</param>
@@ -91,7 +83,7 @@ namespace CLP.Entities
             DifferentiationGroup = obsoleteHistoryItem.DifferentiationGroup;
             ParentPage = obsoleteHistoryItem.ParentPage;
 
-            PageObjectIDsAdded = obsoleteHistoryItem.PageObjectIDs; 
+            PageObjectIDsAdded = obsoleteHistoryItem.PageObjectIDs;
             StrokeIDsAdded = new List<string>();
         }
 
@@ -108,7 +100,7 @@ namespace CLP.Entities
             PageObjectIDsRemoved = obsoleteHistoryItem.PageObjectIDs;
             PageObjectIDsAdded = new List<string>();
             StrokeIDsAdded = new List<string>();
-        } 
+        }
 
         #endregion //Obsolete Constructors
 
@@ -141,7 +133,7 @@ namespace CLP.Entities
             set { SetValue(PageObjectIDsAddedProperty, value); }
         }
 
-        public static readonly PropertyData PageObjectIDsAddedProperty = RegisterProperty("PageObjectIDsAdded", typeof (List<string>));
+        public static readonly PropertyData PageObjectIDsAddedProperty = RegisterProperty("PageObjectIDsAdded", typeof (List<string>), () => new List<string>());
 
         /// <summary>Unique IDs of the pageObjects removed.</summary>
         public List<string> PageObjectIDsRemoved
@@ -150,7 +142,7 @@ namespace CLP.Entities
             set { SetValue(PageObjectIDsRemovedProperty, value); }
         }
 
-        public static readonly PropertyData PageObjectIDsRemovedProperty = RegisterProperty("PageObjectIDsRemoved", typeof(List<string>), () => new List<string>());
+        public static readonly PropertyData PageObjectIDsRemovedProperty = RegisterProperty("PageObjectIDsRemoved", typeof (List<string>), () => new List<string>());
 
         /// <summary>List of the pageObjects that were removed from the page as a result of the UndoAction(). Cleared on Redo().</summary>
         [XmlIgnore]
@@ -173,7 +165,7 @@ namespace CLP.Entities
             set { SetValue(StrokeIDsAddedProperty, value); }
         }
 
-        public static readonly PropertyData StrokeIDsAddedProperty = RegisterProperty("StrokeIDsAdded", typeof (List<string>));
+        public static readonly PropertyData StrokeIDsAddedProperty = RegisterProperty("StrokeIDsAdded", typeof (List<string>), () => new List<string>());
 
         /// <summary>Unique IDs of the strokes removed.</summary>
         public List<string> StrokeIDsRemoved
@@ -182,7 +174,7 @@ namespace CLP.Entities
             set { SetValue(StrokeIDsRemovedProperty, value); }
         }
 
-        public static readonly PropertyData StrokeIDsRemovedProperty = RegisterProperty("StrokeIDsRemoved", typeof(List<string>), () => new List<string>());
+        public static readonly PropertyData StrokeIDsRemovedProperty = RegisterProperty("StrokeIDsRemoved", typeof (List<string>), () => new List<string>());
 
         /// <summary>List of serialized <see cref="Stroke" />s to be used on another machine when <see cref="StrokesChangedHistoryItem" /> is unpacked.</summary>
         [XmlIgnore]
@@ -214,73 +206,18 @@ namespace CLP.Entities
         {
             get
             {
-                List<string> PageObjectTypesAdded = new List<string>();
-                List<string> PageObjectTypesRemoved = new List<string>();
-            
-                foreach (var pageObject in PageObjectIDsAdded.Select(pageObjectID => ParentPage.GetPageObjectByIDOnPageOrInHistory(pageObjectID)))
-                {
-                    if(pageObject == null)
-                    {
-                        continue;
-                    }
-                    PageObjectTypesAdded.Add(pageObject.GetType().Name);
-                }
-                var objectsAdded = string.Empty;
-                if(PageObjectTypesAdded.Any())
-                {
-                    objectsAdded = string.Format("Added {0} on page. ", string.Join(", ", PageObjectTypesAdded));
-                    if (PageObjectTypesAdded.Count == 1 && PageObjectTypesAdded[0] == "CLPArray")
-                    {
-                        var addedArray = ParentPage.GetPageObjectByIDOnPageOrInHistory(PageObjectIDsAdded[0]) as CLPArray;
-                        objectsAdded = string.Format("Added CLPArray [{0} x {1}] on page. ", addedArray.Rows, addedArray.Columns);
-                    }
-                }
+                var pageObjectsAdded = PageObjectIDsAdded.Select(id => ParentPage.GetPageObjectByIDOnPageOrInHistory(id)).Where(p => p != null).ToList();
+                var pageObjectsRemoved = PageObjectIDsRemoved.Select(id => ParentPage.GetPageObjectByIDOnPageOrInHistory(id)).Where(p => p != null).ToList();
 
+                var objectsAdded = pageObjectsAdded.Any() ? string.Format(" Added {0}.", string.Join(",", pageObjectsAdded.Select(p => p.FormattedName))) : string.Empty;
+                var objectsRemoved = pageObjectsRemoved.Any() ? string.Format(" Removed {0}.", string.Join(",", pageObjectsRemoved.Select(p => p.FormattedName))) : string.Empty;
 
-                foreach (var pageObject in PageObjectIDsRemoved.Select(pageObjectID => ParentPage.GetPageObjectByIDOnPageOrInHistory(pageObjectID)))
-                {
-                    if (pageObject == null)
-                    {
-                        continue;
-                    }
-                    PageObjectTypesRemoved.Add(pageObject.GetType().Name);
-                }
-                var objectsRemoved = string.Empty;
-                if(PageObjectTypesRemoved.Any())
-                {
-                    objectsRemoved = string.Format("Removed {0} on page. ", string.Join(", ", PageObjectTypesRemoved));
-                    if (PageObjectTypesRemoved.Count == 1 && PageObjectTypesRemoved[0] == "CLPArray")
-                    {
-                        var removedArray = ParentPage.GetPageObjectByIDOnPageOrInHistory(PageObjectIDsRemoved[0]) as CLPArray;
-                        objectsRemoved = string.Format("Removed CLPArray [{0} x {1}] on page. ", removedArray.Rows, removedArray.Columns);
-                    }
-                }
+                var strokesAdded = StrokeIDsAdded.Any() ? StrokeIDsAdded.Count == 1 ? " Added 1 stroke." : string.Format(" Added {0} strokes.", StrokeIDsAdded.Count) : string.Empty;
+                var strokesRemoved = StrokeIDsRemoved.Any()
+                                         ? StrokeIDsRemoved.Count == 1 ? " Removed 1 stroke." : string.Format(" Removed {0} strokes.", StrokeIDsRemoved.Count)
+                                         : string.Empty;
 
-                var strokesAdded = string.Empty;
-                if(StrokeIDsAdded.Any())
-                {
-                    if(StrokeIDsAdded.Count == 1){
-                        strokesAdded = "Added 1 stroke.";
-                    }else{
-                        strokesAdded = string.Format("Added {0} strokes. ", StrokeIDsAdded.Count);
-                    }
-                    
-                }    
-
-                var strokesRemoved = string.Empty;
-                if(StrokeIDsRemoved.Any())
-                {
-                    if (StrokeIDsRemoved.Count == 1)
-                    {
-                        strokesRemoved = "Removed 1 stroke.";
-                    }else {
-                        strokesRemoved = string.Format("Removed {0} strokes. ", StrokeIDsRemoved.Count);
-                    }         
-                }
-
-                var formattedValue = string.Format("Index # {0}, {1}{2}{3}{4}",
-                    HistoryIndex, objectsAdded, objectsRemoved, strokesAdded, strokesRemoved);
-                return formattedValue;
+                return string.Format("Index # {0},{1}{2}{3}{4}", HistoryIndex, objectsAdded, objectsRemoved, strokesAdded, strokesRemoved);
             }
         }
 
@@ -288,10 +225,7 @@ namespace CLP.Entities
 
         #region Methods
 
-        protected override void ConversionUndoAction()
-        {
-            UndoAction(false);
-        }
+        protected override void ConversionUndoAction() { UndoAction(false); }
 
         /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void UndoAction(bool isAnimationUndo)
@@ -299,7 +233,7 @@ namespace CLP.Entities
             if (!IsUsingPageObjects &&
                 !IsUsingStrokes)
             {
-                Console.WriteLine("ERROR: No strokes or pageObjects Added or Removed in ObjectsOnPageChangedHistoryItem on History Index {0}.", HistoryIndex);
+                Console.WriteLine("[ERROR] on Index #{0}, No strokes or pageObjects Added or Removed in ObjectsOnPageChangedHistoryItem.", HistoryIndex);
                 return;
             }
 
@@ -307,7 +241,7 @@ namespace CLP.Entities
             {
                 if (pageObject == null)
                 {
-                    Console.WriteLine("ERROR: Null pageObject in PageObjectIDsAdded in ObjectsOnPageChangedHistoryItem on History Index {0}.", HistoryIndex);
+                    Console.WriteLine("[ERROR] on Index #{0}, Null pageObject in PageObjectIDsAdded in ObjectsOnPageChangedHistoryItem.", HistoryIndex);
                     continue;
                 }
                 ParentPage.PageObjects.Remove(pageObject);
@@ -319,7 +253,7 @@ namespace CLP.Entities
             {
                 if (pageObject == null)
                 {
-                    Console.WriteLine("ERROR: Null pageObject in PageObjectIDsRemoved in ObjectsOnPageChangedHistoryItem on History Index {0}.", HistoryIndex);
+                    Console.WriteLine("[ERROR] on Index #{0}, Null pageObject in PageObjectIDsRemoved in ObjectsOnPageChangedHistoryItem.", HistoryIndex);
                     continue;
                 }
                 ParentPage.History.TrashedPageObjects.Remove(pageObject);
@@ -327,35 +261,69 @@ namespace CLP.Entities
                 pageObject.OnAdded(true);
             }
 
-            var removedStrokes = new List<Stroke>();
+            var addedStrokes = new List<Stroke>();
             foreach (var stroke in StrokeIDsAdded.Select(id => ParentPage.GetVerifiedStrokeOnPageByID(id)))
             {
                 if (stroke == null)
                 {
-                    Console.WriteLine("ERROR: Null stroke in StrokeIDsAdded in ObjectsOnPageChangedHistoryItem on History Index {0}.", HistoryIndex);
+                    Console.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsAdded in ObjectsOnPageChangedHistoryItem.", HistoryIndex);
                     continue;
                 }
-                removedStrokes.Add(stroke);
+                addedStrokes.Add(stroke);
                 ParentPage.InkStrokes.Remove(stroke);
                 ParentPage.History.TrashedInkStrokes.Add(stroke);
             }
 
-            var addedStrokes = new List<Stroke>();
+            var removedStrokes = new List<Stroke>();
             foreach (var stroke in StrokeIDsRemoved.Select(id => ParentPage.GetVerifiedStrokeInHistoryByID(id)))
             {
                 if (stroke == null)
                 {
-                    Console.WriteLine("ERROR: Null stroke in StrokeIDsRemoved in ObjectsOnPageChangedHistoryItem on History Index {0}.", HistoryIndex);
+                    Console.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsRemoved in ObjectsOnPageChangedHistoryItem.", HistoryIndex);
                     continue;
                 }
-                addedStrokes.Add(stroke);
+                removedStrokes.Add(stroke);
                 ParentPage.History.TrashedInkStrokes.Remove(stroke);
                 ParentPage.InkStrokes.Add(stroke);
             }
 
             foreach (var pageObject in ParentPage.PageObjects.OfType<IStrokeAccepter>())
             {
-                pageObject.ChangeAcceptedStrokes(addedStrokes, removedStrokes);
+                pageObject.ChangeAcceptedStrokes(new List<Stroke>(), addedStrokes);
+            }
+
+            foreach (var stroke in removedStrokes)
+            {
+                var validStrokeAccepters =
+                    ParentPage.PageObjects.OfType<IStrokeAccepter>()
+                              .Where(p => (p.CreatorID == ParentPage.OwnerID || p.IsBackgroundInteractable) && p.IsStrokeOverPageObject(stroke))
+                              .ToList();
+
+                IStrokeAccepter closestPageObject = null;
+                foreach (var pageObject in validStrokeAccepters)
+                {
+                    if (closestPageObject == null)
+                    {
+                        closestPageObject = pageObject;
+                        continue;
+                    }
+
+                    if (closestPageObject.PercentageOfStrokeOverPageObject(stroke) < pageObject.PercentageOfStrokeOverPageObject(stroke))
+                    {
+                        closestPageObject = pageObject;
+                    }
+                }
+
+                if (closestPageObject == null)
+                {
+                    continue;
+                }
+
+                closestPageObject.ChangeAcceptedStrokes(new List<Stroke>
+                                                        {
+                                                            stroke
+                                                        },
+                                                        new List<Stroke>());
             }
         }
 
@@ -365,7 +333,7 @@ namespace CLP.Entities
             if (!IsUsingPageObjects &&
                 !IsUsingStrokes)
             {
-                Console.WriteLine("ERROR: No strokes or pageObjects Added or Removed in ObjectsOnPageChangedHistoryItem on History Index {0}.", HistoryIndex);
+                Console.WriteLine("[ERROR] on Index #{0}, No strokes or pageObjects Added or Removed in ObjectsOnPageChangedHistoryItem.", HistoryIndex);
                 return;
             }
 
@@ -373,7 +341,7 @@ namespace CLP.Entities
             {
                 if (pageObject == null)
                 {
-                    Console.WriteLine("ERROR: Null pageObject in PageObjectIDsAdded in ObjectsOnPageChangedHistoryItem on History Index {0}.", HistoryIndex);
+                    Console.WriteLine("[ERROR] on Index #{0}, Null pageObject in PageObjectIDsAdded in ObjectsOnPageChangedHistoryItem.", HistoryIndex);
                     continue;
                 }
                 ParentPage.PageObjects.Remove(pageObject);
@@ -385,7 +353,7 @@ namespace CLP.Entities
             {
                 if (pageObject == null)
                 {
-                    Console.WriteLine("ERROR: Null pageObject in PageObjectIDsRemoved in ObjectsOnPageChangedHistoryItem on History Index {0}.", HistoryIndex);
+                    Console.WriteLine("[ERROR] on Index #{0}, Null pageObject in PageObjectIDsRemoved in ObjectsOnPageChangedHistoryItem.", HistoryIndex);
                     continue;
                 }
                 ParentPage.History.TrashedPageObjects.Remove(pageObject);
@@ -398,7 +366,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Console.WriteLine("ERROR: Null stroke in StrokeIDsRemoved in ObjectsOnPageChangedHistoryItem on History Index {0}.", HistoryIndex);
+                    Console.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsRemoved in ObjectsOnPageChangedHistoryItem.", HistoryIndex);
                     continue;
                 }
                 removedStrokes.Add(stroke);
@@ -411,7 +379,7 @@ namespace CLP.Entities
             {
                 if (stroke == null)
                 {
-                    Console.WriteLine("ERROR: Null stroke in StrokeIDsAdded in ObjectsOnPageChangedHistoryItem on History Index {0}.", HistoryIndex);
+                    Console.WriteLine("[ERROR] on Index #{0}, Null stroke in StrokeIDsAdded in ObjectsOnPageChangedHistoryItem.", HistoryIndex);
                     continue;
                 }
                 addedStrokes.Add(stroke);
@@ -421,7 +389,41 @@ namespace CLP.Entities
 
             foreach (var pageObject in ParentPage.PageObjects.OfType<IStrokeAccepter>())
             {
-                pageObject.ChangeAcceptedStrokes(addedStrokes, removedStrokes);
+                pageObject.ChangeAcceptedStrokes(new List<Stroke>(), removedStrokes);
+            }
+
+            foreach (var stroke in addedStrokes)
+            {
+                var validStrokeAccepters =
+                    ParentPage.PageObjects.OfType<IStrokeAccepter>()
+                              .Where(p => (p.CreatorID == ParentPage.OwnerID || p.IsBackgroundInteractable) && p.IsStrokeOverPageObject(stroke))
+                              .ToList();
+
+                IStrokeAccepter closestPageObject = null;
+                foreach (var pageObject in validStrokeAccepters)
+                {
+                    if (closestPageObject == null)
+                    {
+                        closestPageObject = pageObject;
+                        continue;
+                    }
+
+                    if (closestPageObject.PercentageOfStrokeOverPageObject(stroke) < pageObject.PercentageOfStrokeOverPageObject(stroke))
+                    {
+                        closestPageObject = pageObject;
+                    }
+                }
+
+                if (closestPageObject == null)
+                {
+                    continue;
+                }
+
+                closestPageObject.ChangeAcceptedStrokes(new List<Stroke>
+                                                        {
+                                                            stroke
+                                                        },
+                                                        new List<Stroke>());
             }
         }
 
