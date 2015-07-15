@@ -12,6 +12,7 @@ namespace CLP.Entities
         List<Stroke> AcceptedStrokes { get; set; }
         List<string> AcceptedStrokeParentIDs { get; set; }
 
+        void LoadAcceptedStrokes();
         void ChangeAcceptedStrokes(IEnumerable<Stroke> addedStrokes, IEnumerable<Stroke> removedStrokes);
         bool IsStrokeOverPageObject(Stroke stroke);
         double PercentageOfStrokeOverPageObject(Stroke stroke);

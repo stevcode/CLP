@@ -643,7 +643,6 @@ namespace CLP.Entities
             {
                 clonedPageObject.ParentPage = newPage;
                 newPage.PageObjects.Add(clonedPageObject);
-                // clonedPageObject.RefreshStrokeParentIDs();
             }
 
             newPage.History.ClearHistory();
@@ -1023,6 +1022,22 @@ namespace CLP.Entities
         {
             InkStrokes = StrokeDTO.LoadInkStrokes(SerializedStrokes);
             History.TrashedInkStrokes = StrokeDTO.LoadInkStrokes(History.SerializedTrashedInkStrokes);
+            foreach (var pageObject in PageObjects.OfType<IStrokeAccepter>())
+            {
+                pageObject.LoadAcceptedStrokes();
+            }
+            foreach (var pageObject in History.TrashedPageObjects.OfType<IStrokeAccepter>())
+            {
+                pageObject.LoadAcceptedStrokes();
+            }
+            foreach (var pageObject in PageObjects.OfType<IPageObjectAccepter>())
+            {
+                pageObject.LoadAcceptedPageObjects();
+            }
+            foreach (var pageObject in History.TrashedPageObjects.OfType<IPageObjectAccepter>())
+            {
+                pageObject.LoadAcceptedPageObjects();
+            }
             IsCached = true;
         }
 

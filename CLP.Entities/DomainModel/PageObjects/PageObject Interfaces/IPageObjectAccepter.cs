@@ -10,7 +10,8 @@ namespace CLP.Entities
         bool CanAcceptPageObjects { get; set; }
         List<IPageObject> AcceptedPageObjects { get; set; }
         List<string> AcceptedPageObjectIDs { get; set; }
-        
+
+        void LoadAcceptedPageObjects();
         void ChangeAcceptedPageObjects(IEnumerable<IPageObject> addedPageObjects, IEnumerable<IPageObject> removedPageObjects);
         bool IsPageObjectTypeAcceptedByThisPageObject(IPageObject pageObject);
         bool IsPageObjectOverThisPageObject(IPageObject pageObject);

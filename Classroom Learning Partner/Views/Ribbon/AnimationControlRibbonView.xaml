@@ -377,6 +377,101 @@
                 </Grid>
             </Button>
 
+            <!--Play Backwards Button-->
+            <Button DockPanel.Dock="Left"
+                    Width="70"
+                    Background="Lavender"
+                    Command="{Binding PlayBackwardsCommand}"
+                    IsEnabled="{Binding IsRecording, Converter={catel:BooleanToOppositeBooleanConverter}}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Polygon Grid.Column="0"
+                             StrokeThickness="0"
+                             Fill="Black"
+                             Points="0,0 10,5 0,10"
+                             Margin="3"
+                             HorizontalAlignment="Center">
+                        <Polygon.Style>
+                            <Style TargetType="Polygon">
+                                <Setter Property="Visibility"
+                                        Value="Visible" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsPlaying}"
+                                                 Value="True">
+                                        <Setter Property="Visibility"
+                                                Value="Hidden" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Polygon.Style>
+                    </Polygon>
+                    <Rectangle Grid.Column="0"
+                               StrokeThickness="0"
+                               Fill="Black"
+                               Height="10"
+                               Width="3.5"
+                               Margin="3"
+                               HorizontalAlignment="Left">
+                        <Rectangle.Style>
+                            <Style TargetType="Rectangle">
+                                <Setter Property="Visibility"
+                                        Value="Hidden" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsPlaying}"
+                                                 Value="True">
+                                        <Setter Property="Visibility"
+                                                Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Rectangle.Style>
+                    </Rectangle>
+                    <Rectangle Grid.Column="0"
+                               StrokeThickness="0"
+                               Fill="Black"
+                               Height="10"
+                               Width="3.5"
+                               Margin="3"
+                               HorizontalAlignment="Right">
+                        <Rectangle.Style>
+                            <Style TargetType="Rectangle">
+                                <Setter Property="Visibility"
+                                        Value="Hidden" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsPlaying}"
+                                                 Value="True">
+                                        <Setter Property="Visibility"
+                                                Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Rectangle.Style>
+                    </Rectangle>
+                    <TextBlock Grid.Column="1"
+                               TextAlignment="Center"
+                               FontWeight="Bold">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Text"
+                                        Value="Play Backwards" />
+                                <Setter Property="FontSize"
+                                        Value="12" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsPlaying}"
+                                                 Value="True">
+                                        <Setter Property="Text"
+                                                Value="Pause" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </Grid>
+            </Button>
+
             <!-- Playback Speed -->
             <StackPanel DockPanel.Dock="Left"
                         Orientation="Horizontal">

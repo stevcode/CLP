@@ -194,7 +194,12 @@ namespace CLP.Entities
 
         #region Methods
 
-        protected override void ConversionUndoAction() { UndoAction(false); }
+        protected override void ConversionUndoAction()
+        {
+            PersistingArrayHorizontalDivisions = PersistingArrayHorizontalDivisions.Select(d => new CLPArrayDivision(d.Orientation, d.Position, d.Length, d.Value, d.IsObscured)).ToList();
+            PersistingArrayVerticalDivisions = PersistingArrayVerticalDivisions.Select(d => new CLPArrayDivision(d.Orientation, d.Position, d.Length, d.Value, d.IsObscured)).ToList();
+            UndoAction(false);
+        }
 
         /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void UndoAction(bool isAnimationUndo)

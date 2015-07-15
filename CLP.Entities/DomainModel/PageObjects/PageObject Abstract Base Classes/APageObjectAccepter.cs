@@ -66,6 +66,16 @@ namespace CLP.Entities
 
         public static readonly PropertyData AcceptedPageObjectIDsProperty = RegisterProperty("AcceptedPageObjectIDs", typeof (List<string>), () => new List<string>());
 
+        public void LoadAcceptedPageObjects()
+        {
+            if (!AcceptedPageObjectIDs.Any())
+            {
+                return;
+            }
+
+            AcceptedPageObjects = AcceptedPageObjectIDs.Select(id => ParentPage.GetPageObjectByIDOnPageOrInHistory(id)).Where(p => p != null).ToList();
+        }
+
         public virtual void ChangeAcceptedPageObjects(IEnumerable<IPageObject> addedPageObjects, IEnumerable<IPageObject> removedPageObjects)
         {
             if (!CanAcceptPageObjects)

@@ -65,6 +65,16 @@ namespace CLP.Entities
 
         public static readonly PropertyData AcceptedStrokeParentIDsProperty = RegisterProperty("AcceptedStrokeParentIDs", typeof (List<string>), () => new List<string>());
 
+        public void LoadAcceptedStrokes()
+        {
+            if (!AcceptedStrokeParentIDs.Any())
+            {
+                return;
+            }
+
+            AcceptedStrokes = AcceptedStrokeParentIDs.Select(id => ParentPage.GetStrokeByIDOnPageOrInHistory(id)).Where(s => s != null).ToList();
+        }
+
         public virtual void ChangeAcceptedStrokes(IEnumerable<Stroke> addedStrokes, IEnumerable<Stroke> removedStrokes)
         {
             if (!CanAcceptStrokes)
