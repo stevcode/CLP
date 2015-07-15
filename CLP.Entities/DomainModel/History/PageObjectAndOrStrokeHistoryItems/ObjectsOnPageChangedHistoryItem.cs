@@ -217,7 +217,7 @@ namespace CLP.Entities
                                          ? StrokeIDsRemoved.Count == 1 ? " Removed 1 stroke." : string.Format(" Removed {0} strokes.", StrokeIDsRemoved.Count)
                                          : string.Empty;
 
-                return string.Format("Index # {0},{1}{2}{3}{4}", HistoryIndex, objectsAdded, objectsRemoved, strokesAdded, strokesRemoved);
+                return string.Format("Index #{0},{1}{2}{3}{4}", HistoryIndex, objectsAdded, objectsRemoved, strokesAdded, strokesRemoved);
             }
         }
 

@@ -147,7 +147,7 @@ namespace CLP.Entities
                 var objectsMoved = pageObjectsMoved.Any() ? string.Format(" Moved {0}.", string.Join(",", pageObjectsMoved.Select(p => p.FormattedName))) : string.Empty;
                 var strokesMoved = StrokeIDs.Keys.Any() ? StrokeIDs.Keys.Count == 1 ? " Moved 1 stroke." : string.Format(" Moved {0} strokes.", StrokeIDs.Keys.Count) : string.Empty;
 
-                return string.Format("Index # {0},{1}{2}", HistoryIndex, objectsMoved, strokesMoved);
+                return string.Format("Index #{0},{1}{2}", HistoryIndex, objectsMoved, strokesMoved);
             }
         }
 

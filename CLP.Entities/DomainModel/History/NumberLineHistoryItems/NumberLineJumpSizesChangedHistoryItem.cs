@@ -139,8 +139,8 @@ namespace CLP.Entities
                 var addedString = !AddedJumpStrokeIDs.Any()
                                       ? string.Empty
                                       : !RemovedJumpStrokeIDs.Any()
-                                            ? string.Format("Added {0} jumps", AddedJumpStrokeIDs.Count)
-                                            : string.Format(" and added {0} jumps", AddedJumpStrokeIDs.Count);
+                                            ? string.Format("Added {0} jump(s)", AddedJumpStrokeIDs.Count)
+                                            : string.Format(" and added {0} jump(s)", AddedJumpStrokeIDs.Count);
 
                 var formattedValue = string.Format("Index #{0}, {1}{2} on Number Line [{3}].", HistoryIndex, removedString, addedString, numberLine.NumberLineSize);
                 return formattedValue;
