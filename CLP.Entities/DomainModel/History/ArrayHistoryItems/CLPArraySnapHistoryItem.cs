@@ -34,8 +34,6 @@ namespace CLP.Entities
                 persistingArray.VerticalDivisions.Select(d => new CLPArrayDivision(d.Orientation, d.Position, d.Length, d.Value, d.IsObscured)).ToList();
             PersistingArrayRowsOrColumns = isHorizontal ? persistingArray.Rows : persistingArray.Columns;
             PersistingArrayXOrYPosition = isHorizontal ? persistingArray.YPosition : persistingArray.XPosition;
-
-            CachedFormattedValue = FormattedValue;
         }
 
         /// <summary>Initializes a new object based on <see cref="SerializationInfo" />.</summary>

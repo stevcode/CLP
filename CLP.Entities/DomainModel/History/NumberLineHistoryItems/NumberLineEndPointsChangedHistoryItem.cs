@@ -33,8 +33,6 @@ namespace CLP.Entities
             NewEndValue = newEndValue;
             PreStretchedWidth = preStretchedWidth;
             NewStretchedWidth = newStretchedWidth;
-
-            CachedFormattedValue = FormattedValue;
         }
 
         /// <summary>Initializes a new object based on <see cref="SerializationInfo" />.</summary>

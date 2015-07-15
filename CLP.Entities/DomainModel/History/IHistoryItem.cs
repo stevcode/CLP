@@ -2,7 +2,6 @@
 {
     public interface IHistoryItem
     {
-        string CachedFormattedValue { get; set; }
         int HistoryIndex { get; set; }
         string ID { get; set; }
         string OwnerID { get; set; }
@@ -13,6 +12,7 @@
         string ParentPageID { get; set; }
         string ParentPageOwnerID { get; set; }
         uint ParentPageVersionIndex { get; set; }
+        string CachedFormattedValue { get; set; }
         string FormattedValue { get; }
         CLPPage ParentPage { get; set; }
         void ConversionUndo();

@@ -42,15 +42,6 @@ namespace CLP.Entities
 
         #region Properties
 
-        /// <summary>Cached value of FormattedValue with correct page state.</summary>
-        public string CachedFormattedValue
-        {
-            get { return GetValue<string>(CachedFormattedValueProperty); }
-            set { SetValue(CachedFormattedValueProperty, value); }
-        }
-
-        public static readonly PropertyData CachedFormattedValueProperty = RegisterProperty("CachedFormattedValue", typeof(string), string.Empty);
-
         /// <summary>
         /// Location of the <see cref="IHistoryItem" /> in the entirety of history, including UndoItems and RedoItems.
         /// </summary>
@@ -190,6 +181,15 @@ namespace CLP.Entities
         public static readonly PropertyData ParentPageProperty = RegisterProperty("ParentPage", typeof(CLPPage));
 
         #endregion //Navigation Properties
+
+        /// <summary>Cached value of FormattedValue with correct page state.</summary>
+        public string CachedFormattedValue
+        {
+            get { return GetValue<string>(CachedFormattedValueProperty); }
+            set { SetValue(CachedFormattedValueProperty, value); }
+        }
+
+        public static readonly PropertyData CachedFormattedValueProperty = RegisterProperty("CachedFormattedValue", typeof(string), string.Empty);
 
         public virtual string FormattedValue
         {

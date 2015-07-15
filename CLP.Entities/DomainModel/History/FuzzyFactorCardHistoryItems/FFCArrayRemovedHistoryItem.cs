@@ -20,8 +20,6 @@ namespace CLP.Entities
         {
             FuzzyFactorCardID = divisionTemplateID;
             DivisionValue = divisionValue;
-
-            CachedFormattedValue = FormattedValue;
         }
 
         /// <summary>Initializes a new object based on <see cref="SerializationInfo" />.</summary>

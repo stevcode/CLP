@@ -40,8 +40,6 @@ namespace CLP.Entities
             }
 
             HalvedPageObjectIDs = halvedPageObjectIDs;
-
-            CachedFormattedValue = FormattedValue;
         }
 
         /// <summary>Initializes a new object based on <see cref="SerializationInfo" />.</summary>

@@ -591,6 +591,7 @@ namespace CLP.Entities
             lock(_historyLock)
             {
                 historyItem.HistoryIndex = UndoItems.Count;
+                historyItem.CachedFormattedValue = historyItem.FormattedValue;
                 UndoItems.Insert(0, historyItem);
                 RedoItems.Clear();
             }

@@ -20,8 +20,6 @@ namespace CLP.Entities
         {
             ArrayID = arrayID;
             IsToggledOn = isToggledOn;
-
-            CachedFormattedValue = FormattedValue;
         }
 
         /// <summary>Initializes a new object based on <see cref="SerializationInfo" />.</summary>
