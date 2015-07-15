@@ -123,6 +123,8 @@ namespace CLP.Entities
                 var oldRegion = OldRegions.Any() ? string.Join(",", OldRegions.Select(d => d.Value)) : "none";
                 var newRegion = NewRegions.Any() ? string.Join(",", NewRegions.Select(d => d.Value)) : "none";
 
+                //TODO: Created FormattedValue for situation where IsObscuring is being toggled.
+                //BUG: IsSideLabelVisible and IsTopLabelVisible need to be changed when dealing is obscuration playback.
                 return string.Format("Index #{0}, Changed {1} divisions on {2} from {3} to {4}.", HistoryIndex, orientation, array.FormattedName, oldRegion, newRegion);
             }
         }
