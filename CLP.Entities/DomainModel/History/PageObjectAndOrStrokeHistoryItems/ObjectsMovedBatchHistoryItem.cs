@@ -29,8 +29,6 @@ namespace CLP.Entities
                                  {
                                      currentPosition
                                  };
-
-            CachedFormattedValue = FormattedValue;
         }
 
         /// <summary>Initializes <see cref="ObjectsMovedBatchHistoryItem" /> with a parent <see cref="CLPPage" />.</summary>
@@ -45,8 +43,6 @@ namespace CLP.Entities
                                  {
                                      currentPosition
                                  };
-
-            CachedFormattedValue = FormattedValue;
         }
 
         /// <summary>Initializes a new object based on <see cref="SerializationInfo" />.</summary>
@@ -76,8 +72,6 @@ namespace CLP.Entities
                             };
 
             TravelledPositions = obsoleteHistoryItem.TravelledPositions;
-
-            CachedFormattedValue = FormattedValue;
         }
 
         /// <summary>Initializes <see cref="ObjectsMovedBatchHistoryItem" /> from <see cref="PageObjectsMoveBatchHistoryItem" />.</summary>
@@ -97,8 +91,6 @@ namespace CLP.Entities
             var pageObjectIDs = pageObjects.Where(p => p != null).ToDictionary(p => p.ID, p => new Point(p.XPosition - referencePageObject.XPosition, p.YPosition - referencePageObject.YPosition));
             PageObjectIDs = pageObjectIDs;
             TravelledPositions = obsoleteHistoryItem.TravelledPositions;
-
-            CachedFormattedValue = FormattedValue;
         }
 
         #endregion //Converter
@@ -150,40 +142,12 @@ namespace CLP.Entities
         {
             get
             {
-                var PageObjectTypes = new List<string>();
+                var pageObjectsMoved = PageObjectIDs.Keys.Select(id => ParentPage.GetPageObjectByIDOnPageOrInHistory(id)).Where(p => p != null).ToList();
 
-                //TODO: fix formatting to use offsets
-                //foreach (var pageObject in PageObjectIDs.Select(pageObjectID => ParentPage.GetPageObjectByIDOnPageOrInHistory(pageObjectID)))
-                //{
-                //    if (pageObject == null)
-                //    {
-                //        continue;
-                //    }
-                //    PageObjectTypes.Add(pageObject.GetType().Name);
-                //}
+                var objectsMoved = pageObjectsMoved.Any() ? string.Format(" Moved {0}.", string.Join(",", pageObjectsMoved.Select(p => p.FormattedName))) : string.Empty;
+                var strokesMoved = StrokeIDs.Keys.Any() ? StrokeIDs.Keys.Count == 1 ? " Moved 1 stroke." : string.Format(" Moved {0} strokes.", StrokeIDs.Keys.Count) : string.Empty;
 
-                //var objectsMoved = string.Empty;
-                //if (PageObjectTypes.Any())
-                //{
-                //    objectsMoved = string.Format("Moved {0} on page. ", string.Join(", ", PageObjectTypes));
-                //    if (PageObjectTypes.Count == 1 &&
-                //        PageObjectTypes[0] == "CLPArray")
-                //    {
-                //        var movedArray = ParentPage.GetPageObjectByIDOnPageOrInHistory(PageObjectIDs[0]) as CLPArray;
-                //        objectsMoved = string.Format("Moved CLPArray [{0} x {1}] on page. ", movedArray.Rows, movedArray.Columns);
-                //    }
-                //}
-
-                var strokesMoved = string.Empty;
-                if (StrokeIDs.Any())
-                {
-                    return "Strokes Moved";
-                    //strokesMoved = "Moved strokes on page.";
-                }
-
-                return "PageObjects Moved";
-                //var formattedValue = string.Format("Index # {0}, {1} {2}", HistoryIndex, objectsMoved, strokesMoved);
-                //return formattedValue;
+                return string.Format("Index # {0},{1}{2}", HistoryIndex, objectsMoved, strokesMoved);
             }
         }
 
