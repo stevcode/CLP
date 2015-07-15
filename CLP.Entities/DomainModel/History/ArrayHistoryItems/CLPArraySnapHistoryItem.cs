@@ -28,8 +28,10 @@ namespace CLP.Entities
 
             PersistingArrayID = persistingArray.ID;
             PersistingArrayDivisionBehavior = persistingArray.IsDivisionBehaviorOn;
-            PersistingArrayHorizontalDivisions = new List<CLPArrayDivision>(persistingArray.HorizontalDivisions);
-            PersistingArrayVerticalDivisions = new List<CLPArrayDivision>(persistingArray.VerticalDivisions);
+            PersistingArrayHorizontalDivisions =
+                persistingArray.HorizontalDivisions.Select(d => new CLPArrayDivision(d.Orientation, d.Position, d.Length, d.Value, d.IsObscured)).ToList();
+            PersistingArrayVerticalDivisions =
+                persistingArray.VerticalDivisions.Select(d => new CLPArrayDivision(d.Orientation, d.Position, d.Length, d.Value, d.IsObscured)).ToList();
             PersistingArrayRowsOrColumns = isHorizontal ? persistingArray.Rows : persistingArray.Columns;
             PersistingArrayXOrYPosition = isHorizontal ? persistingArray.YPosition : persistingArray.XPosition;
         }
@@ -92,7 +94,9 @@ namespace CLP.Entities
             set { SetValue(PersistingArrayHorizontalDivisionsProperty, value); }
         }
 
-        public static readonly PropertyData PersistingArrayHorizontalDivisionsProperty = RegisterProperty("PersistingArrayHorizontalDivisions", typeof (List<CLPArrayDivision>), () => new List<CLPArrayDivision>());
+        public static readonly PropertyData PersistingArrayHorizontalDivisionsProperty = RegisterProperty("PersistingArrayHorizontalDivisions",
+                                                                                                          typeof (List<CLPArrayDivision>),
+                                                                                                          () => new List<CLPArrayDivision>());
 
         /// <summary>Vertical divisions that the persisting array should be set to have when this history event fires (undoes or redoes, whichever comes next).</summary>
         public List<CLPArrayDivision> PersistingArrayVerticalDivisions
@@ -101,7 +105,9 @@ namespace CLP.Entities
             set { SetValue(PersistingArrayVerticalDivisionsProperty, value); }
         }
 
-        public static readonly PropertyData PersistingArrayVerticalDivisionsProperty = RegisterProperty("PersistingArrayVerticalDivisions", typeof (List<CLPArrayDivision>), () => new List<CLPArrayDivision>());
+        public static readonly PropertyData PersistingArrayVerticalDivisionsProperty = RegisterProperty("PersistingArrayVerticalDivisions",
+                                                                                                        typeof (List<CLPArrayDivision>),
+                                                                                                        () => new List<CLPArrayDivision>());
 
         /// <summary>Value of IsDivisionBehaviorOn prior to the history event (which sets it true)</summary>
         public bool PersistingArrayDivisionBehavior
@@ -134,7 +140,6 @@ namespace CLP.Entities
         {
             get
             {
-                //TODO: Possibly needs some more work with conversion undo to correctly display formattedValue.
                 var persistingArray = ParentPage.GetPageObjectByIDOnPageOrInHistory(PersistingArrayID) as CLPArray;
                 if (persistingArray == null)
                 {
@@ -148,24 +153,40 @@ namespace CLP.Entities
                 }
 
                 var direction = IsHorizontal ? "horizontally" : "vertically";
-                var persistingArrayRows = persistingArray.Rows - snappedArray.Rows;
-                var persistingArrayColumns = snappedArray.Columns;
-                if (!IsHorizontal)
+                var persistingArrayRows = IsHorizontal ? persistingArray.Rows - snappedArray.Rows : persistingArray.Rows;
+                var persistingArrayColumns = IsHorizontal ? snappedArray.Columns : persistingArray.Columns - snappedArray.Columns;
+
+                string persisitingArrayType;
+                switch (persistingArray.ArrayType)
                 {
-                    direction = "horizontally";
-                    persistingArrayRows = persistingArray.Rows;
-                    persistingArrayColumns = persistingArray.Columns - snappedArray.Columns;
+                    case ArrayTypes.Array:
+                        persisitingArrayType = "Array";
+                        break;
+                    case ArrayTypes.ArrayCard:
+                        persisitingArrayType = "Array Card";
+                        break;
+                    case ArrayTypes.FactorCard:
+                        persisitingArrayType = "Factor Card";
+                        break;
+                    case ArrayTypes.TenByTen:
+                        persisitingArrayType = "Array (Static)";
+                        break;
+                    case ArrayTypes.ObscurableArray:
+                        persisitingArrayType = "Obscurable Array";
+                        break;
+                    default:
+                        persisitingArrayType = "Default Array";
+                        break;
                 }
 
-                return string.Format("Index #{0}, Snapped array [{1}x{2}] {3} onto array [{4}x{5}] to create array [{6}x{7}].",
+                var presnapPersisitingArrayFormatedName = string.Format("{0}x{1} {2}", persistingArrayRows, persistingArrayColumns, persisitingArrayType);
+
+                return string.Format("Index #{0}, Snapped {1} {2} onto {3} to create {4}.",
                                      HistoryIndex,
-                                     snappedArray.Rows,
-                                     snappedArray.Columns,
+                                     snappedArray.FormattedName,
                                      direction,
-                                     persistingArrayRows,
-                                     persistingArrayColumns,
-                                     persistingArray.Rows,
-                                     persistingArray.Columns);
+                                     presnapPersisitingArrayFormatedName,
+                                     persistingArray.FormattedName);
             }
         }
 
@@ -173,10 +194,7 @@ namespace CLP.Entities
 
         #region Methods
 
-        protected override void ConversionUndoAction()
-        {
-            UndoAction(false);
-        }
+        protected override void ConversionUndoAction() { UndoAction(false); }
 
         /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void UndoAction(bool isAnimationUndo)
@@ -214,7 +232,8 @@ namespace CLP.Entities
                                  };
             var newPageObjects = new List<IPageObject>
                                  {
-                                     persistingArray, snappedArray
+                                     persistingArray,
+                                     snappedArray
                                  };
 
             AStrokeAccepter.SplitAcceptedStrokes(oldPageObjects, newPageObjects);
@@ -264,11 +283,11 @@ namespace CLP.Entities
 
         private void RestoreDivisions(CLPArray persistingArray)
         {
-            var tempHorizontalDivisions = persistingArray.HorizontalDivisions.ToList();
+            var tempHorizontalDivisions = persistingArray.HorizontalDivisions.Select(d => new CLPArrayDivision(d.Orientation, d.Position, d.Length, d.Value, d.IsObscured)).ToList();
             persistingArray.HorizontalDivisions = new ObservableCollection<CLPArrayDivision>(PersistingArrayHorizontalDivisions);
             PersistingArrayHorizontalDivisions = tempHorizontalDivisions;
 
-            var tempVerticalDivisions = persistingArray.VerticalDivisions.ToList();
+            var tempVerticalDivisions = persistingArray.VerticalDivisions.Select(d => new CLPArrayDivision(d.Orientation, d.Position, d.Length, d.Value, d.IsObscured)).ToList();
             persistingArray.VerticalDivisions = new ObservableCollection<CLPArrayDivision>(PersistingArrayVerticalDivisions);
             PersistingArrayVerticalDivisions = tempVerticalDivisions;
         }
