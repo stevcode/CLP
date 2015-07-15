@@ -65,8 +65,7 @@ namespace ConsoleScripts
                 foreach (var pageFilePath in pageFilePaths)
                 {
                     var page = ModelBase.Load<CLPPage>(pageFilePath, SerializationMode.Xml);
-                    page.InkStrokes = StrokeDTO.LoadInkStrokes(page.SerializedStrokes);
-                    page.History.TrashedInkStrokes = StrokeDTO.LoadInkStrokes(page.History.SerializedTrashedInkStrokes);
+                    page.AfterDeserialization();
 
                     Console.WriteLine("Loaded {3}'s page {0}, differentiation {1}, version {2}", page.PageNumber, page.DifferentiationLevel, page.VersionIndex, page.Owner.FullName);
                     //Do stuff to each page here. 
@@ -75,7 +74,6 @@ namespace ConsoleScripts
                     ConvertDivisionTemplatesToUseNewRemainderTiles(page);
                     TheSlowRewind(page);
 
-                    page.History.RefreshHistoryIndexes();
                     //Finished doing stuff to page, it'll save below.
                     page.ToXML(pageFilePath, true);
                 }

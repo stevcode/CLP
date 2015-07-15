@@ -494,10 +494,15 @@
 
             <!-- Progress Location in Ticks -->
             <StackPanel DockPanel.Dock="Right"
-                        Orientation="Horizontal">
-                <TextBlock Text="{Binding CurrentPage.History.CurrentHistoryTick}" />
-                <TextBlock Text=" / " />
-                <TextBlock Text="{Binding CurrentPage.History.PlaybackLength}" />
+                        Orientation="Vertical">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="{Binding CurrentPage.History.CurrentHistoryIndex}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="{Binding CurrentPage.History.CurrentHistoryTick}" />
+                    <TextBlock Text=" / " />
+                    <TextBlock Text="{Binding CurrentPage.History.PlaybackLength}" />
+                </StackPanel>
             </StackPanel>
 
             <!-- Progress Slider -->

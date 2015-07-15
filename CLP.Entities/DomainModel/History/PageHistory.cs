@@ -233,6 +233,11 @@ namespace CLP.Entities
 
         public static readonly PropertyData CurrentHistoryTickProperty = RegisterProperty("CurrentHistoryTick", typeof(double), 0);
 
+        public int CurrentHistoryIndex
+        {
+            get { return UndoItems.Any() ? UndoItems.First().HistoryIndex : 0; }
+        }
+
         public int CurrentAnimationDelay
         {
             get { return RedoItems.Any() ? RedoItems.First().AnimationDelay : 0; }
@@ -463,6 +468,7 @@ namespace CLP.Entities
         {
             lock(_historyLock)
             {
+                RaisePropertyChanged("CurrentHistoryIndex");
                 RaisePropertyChanged("HistoryLength");
                 RaisePropertyChanged("AnimationLength");
                 RaisePropertyChanged("PlaybackLength");
