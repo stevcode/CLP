@@ -65,11 +65,10 @@ namespace CLP.Entities
                     return string.Format("[ERROR] on Index #{0}, Division Template for Array Removed not found on page or in history.", HistoryIndex);
                 }
 
-                return string.Format("Index #{0}, Removed division of value {1} from Division Template [{2}/{3}]",
+                return string.Format("Index #{0}, Removed division of value {1} from {2}.",
                                      HistoryIndex,
                                      DivisionValue,
-                                     divisionTemplate.Dividend,
-                                     divisionTemplate.Rows);
+                                     divisionTemplate.FormattedName);
             }
         }
 
@@ -91,6 +90,7 @@ namespace CLP.Entities
                 Console.WriteLine("[ERROR] on Index #{0}, Division Template for Array Removed not found on page or in history.", HistoryIndex);
                 return;
             }
+
             divisionTemplate.SnapInArray(DivisionValue);
         }
 
@@ -103,6 +103,7 @@ namespace CLP.Entities
                 Console.WriteLine("[ERROR] on Index #{0}, Division Template for Array Removed not found on page or in history.", HistoryIndex);
                 return;
             }
+
             divisionTemplate.RemoveLastDivision();
         }
 

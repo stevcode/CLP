@@ -207,10 +207,8 @@ namespace CLP.Entities
                 VerticalDivisions.Remove(divAbove);
             }
             VerticalDivisions.Add(topDiv);
-            CLPArrayDivision bottomDiv;
-            bottomDiv = divBelow == null
-                            ? new CLPArrayDivision(ArrayDivisionOrientation.Vertical, position, ArrayWidth - position, 0)
-                            : new CLPArrayDivision(ArrayDivisionOrientation.Vertical, position, divBelow.Position - position, 0);
+            var bottomDiv = divBelow == null ? new CLPArrayDivision(ArrayDivisionOrientation.Vertical, position, ArrayWidth - position, 0)
+                                             : new CLPArrayDivision(ArrayDivisionOrientation.Vertical, position, divBelow.Position - position, 0);
             VerticalDivisions.Add(bottomDiv);
             UpdateReport();
 
