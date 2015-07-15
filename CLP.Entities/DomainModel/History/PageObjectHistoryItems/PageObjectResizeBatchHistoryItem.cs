@@ -76,12 +76,11 @@ namespace CLP.Entities
             {
                 var pageObject = ParentPage.GetPageObjectByIDOnPageOrInHistory(PageObjectID);
 
-                var formattedValue = string.Format("Index #{0}, Resized {1}. Changed width by {2} and height by {3}",
+                return string.Format("Index #{0}, Resized {1}. Changed width by {2} and height by {3}",
                                                    HistoryIndex,
                                                    pageObject.FormattedName,
                                                    FinalWidth - InitialWidth,
                                                    FinalHeight - InitialHeight);
-                return formattedValue;
             }
         }
 
