@@ -98,7 +98,7 @@ namespace CLP.Entities
                 var array = ParentPage.GetPageObjectByIDOnPageOrInHistory(ArrayID) as ACLPArrayBase;
                 return array == null
                            ? string.Format("[ERROR] on Index #{0}, Array for Division Value Changed not found on page or in history.", HistoryIndex)
-                           : string.Format("Index #{0}, Changed Array [{1}x{2}] division value from {3} to {4}", HistoryIndex, array.Rows, array.Columns, PreviousValue, NewValue);
+                           : string.Format("Index #{0}, Changed {1} division value from {2} to {3}", HistoryIndex, array.FormattedName, PreviousValue, NewValue);
             }
         }
 
@@ -122,7 +122,7 @@ namespace CLP.Entities
                 NewValue = division.Value;
                 division.Value = PreviousValue;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Console.WriteLine("[ERROR] on Index #{0}, Array for Division Value Changed DivisionIndex out of bounds.", HistoryIndex);
             }
@@ -155,7 +155,7 @@ namespace CLP.Entities
 
                 division.Value = isUndo ? PreviousValue : NewValue;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Console.WriteLine("[ERROR] on Index #{0}, Array for Division Value Changed DivisionIndex out of bounds.", HistoryIndex);
             }
