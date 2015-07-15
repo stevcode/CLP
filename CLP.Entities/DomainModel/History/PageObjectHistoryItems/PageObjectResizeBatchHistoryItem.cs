@@ -76,20 +76,22 @@ namespace CLP.Entities
             {
                 var pageObject = ParentPage.GetPageObjectByIDOnPageOrInHistory(PageObjectID);
 
-                return string.Format("Index #{0}, Resized {1}. Changed width by {2} and height by {3}",
+                return pageObject == null
+                           ? string.Format("[ERROR] on Index #{0}, Resized PageObject not found on page or in history.", HistoryIndex)
+                           : string.Format("Index #{0}, Resized {1}. Changed width by {2} and height by {3}",
                                                    HistoryIndex,
                                                    pageObject.FormattedName,
-                                                   FinalWidth - InitialWidth,
-                                                   FinalHeight - InitialHeight);
+                                                   FinalWidth - OriginalWidth,
+                                                   FinalHeight - OriginalHeight);
             }
         }
 
-        public double InitialWidth
+        public double OriginalWidth
         {
             get { return StretchedDimensions.First().X; }
         }
 
-        public double InitialHeight
+        public double OriginalHeight
         {
             get { return StretchedDimensions.First().Y; }
         }
@@ -163,9 +165,8 @@ namespace CLP.Entities
             }
             else
             {
-                var originalDimension = StretchedDimensions.First();
-                pageObject.Width = originalDimension.X;
-                pageObject.Height = originalDimension.Y;
+                pageObject.Width = OriginalWidth;
+                pageObject.Height = OriginalHeight;
                 CurrentBatchTickIndex = -1;
             }
 
@@ -212,9 +213,8 @@ namespace CLP.Entities
             }
             else
             {
-                var lastDimensions = StretchedDimensions.Last();
-                pageObject.Width = lastDimensions.X;
-                pageObject.Height = lastDimensions.Y;
+                pageObject.Width = FinalWidth;
+                pageObject.Height = FinalHeight;
                 CurrentBatchTickIndex = NumberOfBatchTicks + 1;
             }
 
