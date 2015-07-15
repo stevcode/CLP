@@ -20,6 +20,8 @@ namespace CLP.Entities
         {
             DivisionTemplateID = divisionTemplateID;
             IsVisible = isVisibile;
+
+            CachedFormattedValue = FormattedValue;
         }
 
         /// <summary>Initializes a new object based on <see cref="SerializationInfo" />.</summary>

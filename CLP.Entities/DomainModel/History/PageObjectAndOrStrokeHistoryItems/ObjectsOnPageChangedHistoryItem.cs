@@ -46,6 +46,8 @@ namespace CLP.Entities
                 StrokeIDsRemoved.Add(stroke.GetStrokeID());
                 ParentPage.History.TrashedInkStrokes.Add(stroke);
             }
+
+            CachedFormattedValue = FormattedValue;
         }
 
         /// <summary>Initializes a new object based on <see cref="SerializationInfo" />.</summary>
@@ -71,6 +73,8 @@ namespace CLP.Entities
             PageObjectIDsAdded = new List<string>();
             StrokeIDsAdded = obsoleteHistoryItem.StrokeIDsAdded;
             StrokeIDsRemoved = obsoleteHistoryItem.StrokeIDsRemoved;
+
+            CachedFormattedValue = FormattedValue;
         }
 
         /// <summary>Initializes <see cref="ObjectsOnPageChangedHistoryItem" /> from <see cref="PageObjectsAddedHistoryItem" />.</summary>
@@ -85,6 +89,8 @@ namespace CLP.Entities
 
             PageObjectIDsAdded = obsoleteHistoryItem.PageObjectIDs;
             StrokeIDsAdded = new List<string>();
+
+            CachedFormattedValue = FormattedValue;
         }
 
         /// <summary>Initializes <see cref="ObjectsOnPageChangedHistoryItem" /> from <see cref="PageObjectsRemovedHistoryItem" />.</summary>
@@ -100,6 +106,8 @@ namespace CLP.Entities
             PageObjectIDsRemoved = obsoleteHistoryItem.PageObjectIDs;
             PageObjectIDsAdded = new List<string>();
             StrokeIDsAdded = new List<string>();
+
+            CachedFormattedValue = FormattedValue;
         }
 
         #endregion //Obsolete Constructors

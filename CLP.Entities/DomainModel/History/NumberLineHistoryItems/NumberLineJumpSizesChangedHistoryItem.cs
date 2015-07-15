@@ -45,6 +45,8 @@ namespace CLP.Entities
                     ParentPage.History.TrashedInkStrokes.Add(stroke);
                 }
             }
+
+            CachedFormattedValue = FormattedValue;
         }
 
         /// <summary>Initializes a new object based on <see cref="SerializationInfo" />.</summary>

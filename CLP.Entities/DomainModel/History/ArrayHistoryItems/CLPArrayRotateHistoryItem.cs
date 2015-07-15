@@ -33,6 +33,8 @@ namespace CLP.Entities
             NewYPosition = newYPosition;
             OldRows = oldRows;
             OldColumns = oldColumns;
+
+            CachedFormattedValue = FormattedValue;
         }
 
         /// <summary>Initializes a new object based on <see cref="SerializationInfo" />.</summary>

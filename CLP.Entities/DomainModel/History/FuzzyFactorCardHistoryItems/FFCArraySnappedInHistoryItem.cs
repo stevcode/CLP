@@ -21,6 +21,8 @@ namespace CLP.Entities
             FuzzyFactorCardID = divisionTemplateID;
             SnappedInArrayID = snappedInArray.ID;
             parentPage.History.TrashedPageObjects.Add(snappedInArray);
+
+            CachedFormattedValue = FormattedValue;
         }
 
         /// <summary>Initializes a new object based on <see cref="SerializationInfo" />.</summary>

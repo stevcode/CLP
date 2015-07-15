@@ -42,6 +42,15 @@ namespace CLP.Entities
 
         #region Properties
 
+        /// <summary>Cached value of FormattedValue with correct page state.</summary>
+        public string CachedFormattedValue
+        {
+            get { return GetValue<string>(CachedFormattedValueProperty); }
+            set { SetValue(CachedFormattedValueProperty, value); }
+        }
+
+        public static readonly PropertyData CachedFormattedValueProperty = RegisterProperty("CachedFormattedValue", typeof(string), string.Empty);
+
         /// <summary>
         /// Location of the <see cref="IHistoryItem" /> in the entirety of history, including UndoItems and RedoItems.
         /// </summary>
@@ -225,6 +234,7 @@ namespace CLP.Entities
             }
             ParentPage.IsTagAddPrevented = true;
             RedoAction(isAnimationRedo);
+            CachedFormattedValue = FormattedValue;
             ParentPage.IsTagAddPrevented = false;
         }
 

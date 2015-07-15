@@ -29,6 +29,8 @@ namespace CLP.Entities
                                  {
                                      currentPosition
                                  };
+
+            CachedFormattedValue = FormattedValue;
         }
 
         /// <summary>Initializes <see cref="ObjectsMovedBatchHistoryItem" /> with a parent <see cref="CLPPage" />.</summary>
@@ -43,6 +45,8 @@ namespace CLP.Entities
                                  {
                                      currentPosition
                                  };
+
+            CachedFormattedValue = FormattedValue;
         }
 
         /// <summary>Initializes a new object based on <see cref="SerializationInfo" />.</summary>
@@ -72,6 +76,8 @@ namespace CLP.Entities
                             };
 
             TravelledPositions = obsoleteHistoryItem.TravelledPositions;
+
+            CachedFormattedValue = FormattedValue;
         }
 
         /// <summary>Initializes <see cref="ObjectsMovedBatchHistoryItem" /> from <see cref="PageObjectsMoveBatchHistoryItem" />.</summary>
@@ -91,6 +97,8 @@ namespace CLP.Entities
             var pageObjectIDs = pageObjects.Where(p => p != null).ToDictionary(p => p.ID, p => new Point(p.XPosition - referencePageObject.XPosition, p.YPosition - referencePageObject.YPosition));
             PageObjectIDs = pageObjectIDs;
             TravelledPositions = obsoleteHistoryItem.TravelledPositions;
+
+            CachedFormattedValue = FormattedValue;
         }
 
         #endregion //Converter

@@ -29,6 +29,8 @@ namespace CLP.Entities
             DivisionIndex = divisionIndex;
             PreviousValue = previousValue;
             NewValue = newValue;
+
+            CachedFormattedValue = FormattedValue;
         }
 
         /// <summary>Initializes a new object based on <see cref="SerializationInfo" />.</summary>

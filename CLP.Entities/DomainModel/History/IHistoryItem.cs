@@ -2,6 +2,7 @@
 {
     public interface IHistoryItem
     {
+        string CachedFormattedValue { get; set; }
         int HistoryIndex { get; set; }
         string ID { get; set; }
         string OwnerID { get; set; }

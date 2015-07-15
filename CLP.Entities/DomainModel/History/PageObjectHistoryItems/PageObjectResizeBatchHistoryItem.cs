@@ -26,6 +26,8 @@ namespace CLP.Entities
                                   {
                                       currentDimensions
                                   };
+
+            CachedFormattedValue = FormattedValue;
         }
 
         /// <summary>Initializes a new object based on <see cref="SerializationInfo" />.</summary>
