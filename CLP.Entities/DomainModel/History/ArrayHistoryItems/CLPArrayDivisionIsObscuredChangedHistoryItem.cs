@@ -113,7 +113,7 @@ namespace CLP.Entities
 
                 division.IsObscured = isUndo ? PreviousIsObscuredValue : !PreviousIsObscuredValue;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Console.WriteLine("[ERROR] on Index #{0}, Array for Division Value Changed DivisionIndex out of bounds.", HistoryIndex);
             }

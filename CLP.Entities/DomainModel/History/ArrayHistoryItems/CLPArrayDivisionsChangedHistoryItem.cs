@@ -108,67 +108,22 @@ namespace CLP.Entities
         {
             get
             {
-                //TODO: Clean up
                 var array = ParentPage.GetPageObjectByIDOnPageOrInHistory(ArrayID) as ACLPArrayBase;
                 if (array == null)
                 {
                     return string.Format("[ERROR] on Index #{0}, Array for Divisions Changed not found on page or in history.", HistoryIndex);
                 }
 
-                var addHorizontal = 0;
-                var addVertical = 0;
-                var addHorizontalString = string.Empty;
-                var addVerticalString = string.Empty;
-                foreach (var addedDivision in AddedDivisions)
+                if (IsColumnRegionsChange == null)
                 {
-                    if (addedDivision.Orientation == ArrayDivisionOrientation.Horizontal)
-                    {
-                        addHorizontal += 1;
-                    }
-                    else
-                    {
-                        addVertical += 1;
-                    }
+                    return string.Format("[ERROR] on Index #{0}, Array Divisions Changed is missing Old and New Regions.", HistoryIndex);
                 }
 
-                addHorizontalString = string.Format("horizontally {0} times", addHorizontal);
-                addVerticalString = string.Format("vertically {0} times", addVertical);
+                var orientation = (bool)IsColumnRegionsChange ? "vertical" : "horizontal";
+                var oldRegion = OldRegions.Any() ? string.Join(",", OldRegions.Select(d => d.Value)) : "none";
+                var newRegion = NewRegions.Any() ? string.Join(",", NewRegions.Select(d => d.Value)) : "none";
 
-                var dividedArray = string.Empty;
-                if (addHorizontal > 0 ||
-                    addVertical > 0)
-                {
-                    dividedArray = string.Format("Divided array ({0} by {1}) {2}, {3}.", array.Rows, array.Columns, addHorizontalString, addVerticalString);
-                }
-
-                var removeHorizontal = 0;
-                var removeVertical = 0;
-                var removeHorizontalString = string.Empty;
-                var removeVerticalString = string.Empty;
-                foreach (CLPArrayDivision removedDivision in RemovedDivisions)
-                {
-                    if (removedDivision.Orientation == ArrayDivisionOrientation.Horizontal)
-                    {
-                        removeHorizontal += 1;
-                    }
-                    else
-                    {
-                        removeVertical += 1;
-                    }
-                }
-
-                removeHorizontalString = string.Format("{0} horizontal divisions", removeHorizontal);
-                removeVerticalString = string.Format("{0} vertical divisions", removeVertical);
-
-                var removedDivisions = string.Empty;
-                if (removeHorizontal > 0 ||
-                    removeVertical > 0)
-                {
-                    removedDivisions = string.Format("Removed {0}, {1}.", removeHorizontalString, removeVerticalString);
-                }
-
-                var formattedValue = string.Format("Index #{0}, {1}{2}", HistoryIndex, dividedArray, removedDivisions);
-                return formattedValue;
+                return string.Format("Index #{0}, Changed {1} divisions on {2} from {3} to {4}.", HistoryIndex, orientation, array.FormattedName, oldRegion, newRegion);
             }
         }
 

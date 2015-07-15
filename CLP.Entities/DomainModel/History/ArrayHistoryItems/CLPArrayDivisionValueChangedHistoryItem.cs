@@ -82,7 +82,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData PreviousValueProperty = RegisterProperty("PreviousValue", typeof (int));
 
-        /// <summary>SUMMARY</summary>
+        /// <summary>New value of the Division.</summary>
         public int NewValue
         {
             get { return GetValue<int>(NewValueProperty); }
