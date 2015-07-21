@@ -72,12 +72,7 @@ namespace CLP.Entities
                     return string.Format("[ERROR] on Index #{0}, Array for Array Snapped In not found on page or in history.", HistoryIndex);
                 }
 
-                return string.Format("Index #{0}, Snapped Array [{1}x{2}] into Division Template [{3}/{4}].",
-                                     HistoryIndex,
-                                     array.Rows,
-                                     array.Columns,
-                                     divisionTemplate.Dividend,
-                                     divisionTemplate.Rows);
+                return string.Format("Index #{0}, Snapped {1} into {2}.", HistoryIndex, array.FormattedName, divisionTemplate.FormattedName);
             }
         }
 
@@ -85,10 +80,7 @@ namespace CLP.Entities
 
         #region Methods
 
-        protected override void ConversionUndoAction()
-        {
-            UndoAction(false);
-        }
+        protected override void ConversionUndoAction() { UndoAction(false); }
 
         /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
         protected override void UndoAction(bool isAnimationUndo)
@@ -107,9 +99,9 @@ namespace CLP.Entities
                 return;
             }
 
+            divisionTemplate.RemoveLastDivision();
             ParentPage.History.TrashedPageObjects.Remove(array);
             ParentPage.PageObjects.Add(array);
-            divisionTemplate.RemoveLastDivision();
         }
 
         /// <summary>Method that will actually redo the action. Already incorporates error checking for existance of ParentPage.</summary>
@@ -143,6 +135,8 @@ namespace CLP.Entities
 
         /// <summary>Method that unpacks the <see cref="IHistoryItem" /> after it has been sent to another machine.</summary>
         public override void UnpackHistoryItem() { }
+
+        public override bool IsUsingTrashedPageObject(string id) { return FuzzyFactorCardID == id || SnappedInArrayID == id; }
 
         #endregion //Methods
     }

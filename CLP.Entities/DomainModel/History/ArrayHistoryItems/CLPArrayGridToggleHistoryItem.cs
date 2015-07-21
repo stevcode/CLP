@@ -62,7 +62,7 @@ namespace CLP.Entities
                 var array = ParentPage.GetPageObjectByIDOnPageOrInHistory(ArrayID) as ACLPArrayBase;
                 return array == null
                            ? string.Format("[ERROR] on Index #{0}, Array for Grid Toggle not found on page or in history.", HistoryIndex)
-                           : string.Format("Index #{0}, Toggled grid on array [{1}x{2}]", HistoryIndex, array.Rows, array.Columns);
+                           : string.Format("Index #{0}, Toggled Grid of {1} {2}.", HistoryIndex, array.FormattedName, IsToggledOn ? "on" : "off");
             }
         }
 
@@ -99,7 +99,7 @@ namespace CLP.Entities
                 return;
             }
 
-            array.IsGridOn = isUndo ? !IsToggledOn : IsToggledOn; // isToggledOn;
+            array.IsGridOn = isUndo ? !IsToggledOn : IsToggledOn;
         }
 
         /// <summary>Method that prepares a clone of the <see cref="IHistoryItem" /> so that it can call Redo() when sent to another machine.</summary>
@@ -111,6 +111,8 @@ namespace CLP.Entities
 
         /// <summary>Method that unpacks the <see cref="IHistoryItem" /> after it has been sent to another machine.</summary>
         public override void UnpackHistoryItem() { }
+
+        public override bool IsUsingTrashedPageObject(string id) { return ArrayID == id; }
 
         #endregion //Methods
     }

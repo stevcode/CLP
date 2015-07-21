@@ -2,17 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Windows;
 using System.Windows.Ink;
 using System.Windows.Media;
-using System.Xml.Serialization;
 using Catel.Collections;
 using Catel.Data;
-using Catel.Runtime.Serialization;
 
 namespace CLP.Entities
 {
-    public class Bin : APageObjectBase, ICountable, IPageObjectAccepter, IStrokeAccepter
+    public class Bin : AStrokeAndPageObjectAccepter, ICountable
     {
         #region Constructors
 
@@ -102,8 +99,7 @@ namespace CLP.Entities
 
         public override void OnDeleted(bool fromHistory = false)
         {
-            if (CanAcceptStrokes &&
-                AcceptedStrokes.Any())
+            if (CanAcceptStrokes && AcceptedStrokes.Any())
             {
                 var strokesToTrash = new StrokeCollection();
 
@@ -116,8 +112,7 @@ namespace CLP.Entities
                 ParentPage.InkStrokes.Remove(strokesToTrash);
             }
 
-            if (CanAcceptPageObjects && 
-                AcceptedPageObjects.Any())
+            if (CanAcceptPageObjects && AcceptedPageObjects.Any())
             {
                 var pageObjectsToTrash = new List<IPageObject>();
 
@@ -188,6 +183,35 @@ namespace CLP.Entities
 
         #endregion //APageObjectBase Overrides
 
+        #region AStrokeAccepter Overrides
+
+        /// <summary>Stroke must be at least this percent contained by pageObject.</summary>
+        public override int StrokeHitTestPercentage
+        {
+            get { return 90; }
+        }
+
+        public override void ChangeAcceptedStrokes(IEnumerable<Stroke> addedStrokes, IEnumerable<Stroke> removedStrokes)
+        {
+            base.ChangeAcceptedStrokes(addedStrokes, removedStrokes);
+
+            RefreshParts();
+            ParentPage.UpdateAllReporters();
+        }
+
+        #endregion //AStrokeAccepter Overrides
+
+        #region APageObjectAccepter Overrides
+
+        public override void ChangeAcceptedPageObjects(IEnumerable<IPageObject> addedPageObjects, IEnumerable<IPageObject> removedPageObjects)
+        {
+            base.ChangeAcceptedPageObjects(addedPageObjects, removedPageObjects);
+
+            RefreshParts();
+        }
+
+        #endregion //APageObjectAccepter Overrides
+
         #region ICountable Implementation
 
         /// <summary>Number of parts the <see cref="Bin" /> represents.</summary>
@@ -235,172 +259,5 @@ namespace CLP.Entities
         }
 
         #endregion //ICountable Implementation
-
-        #region IPageObjectAccepter Implementation
-
-        /// <summary>Determines whether the <see cref="Stamp" /> can currently accept <see cref="IPageObject" />s.</summary>
-        public bool CanAcceptPageObjects
-        {
-            get { return GetValue<bool>(CanAcceptPageObjectsProperty); }
-            set { SetValue(CanAcceptPageObjectsProperty, value); }
-        }
-
-        public static readonly PropertyData CanAcceptPageObjectsProperty = RegisterProperty("CanAcceptPageObjects", typeof (bool), true);
-
-        /// <summary>The currently accepted <see cref="IPageObject" />s.</summary>
-        [XmlIgnore]
-        [ExcludeFromSerialization]
-        public List<IPageObject> AcceptedPageObjects
-        {
-            get { return GetValue<List<IPageObject>>(AcceptedPageObjectsProperty); }
-            set { SetValue(AcceptedPageObjectsProperty, value); }
-        }
-
-        public static readonly PropertyData AcceptedPageObjectsProperty = RegisterProperty("AcceptedPageObjects", typeof (List<IPageObject>), () => new List<IPageObject>());
-
-        /// <summary>The IDs of the <see cref="IPageObject" />s that have been accepted.</summary>
-        public List<string> AcceptedPageObjectIDs
-        {
-            get { return GetValue<List<string>>(AcceptedPageObjectIDsProperty); }
-            set { SetValue(AcceptedPageObjectIDsProperty, value); }
-        }
-
-        public static readonly PropertyData AcceptedPageObjectIDsProperty = RegisterProperty("AcceptedPageObjectIDs", typeof (List<string>), () => new List<string>());
-
-        public void AcceptPageObjects(IEnumerable<IPageObject> addedPageObjects, IEnumerable<IPageObject> removedPageObjects)
-        {
-            if (!CanAcceptPageObjects)
-            {
-                return;
-            }
-
-            foreach (var pageObject in removedPageObjects.Where(pageObject => AcceptedPageObjectIDs.Contains(pageObject.ID)))
-            {
-                AcceptedPageObjects.Remove(pageObject);
-                AcceptedPageObjectIDs.Remove(pageObject.ID);
-            }
-
-            foreach (var pageObject in addedPageObjects.OfType<Mark>())
-            {
-                AcceptedPageObjects.Add(pageObject);
-                AcceptedPageObjectIDs.Add(pageObject.ID);
-            }
-
-            RefreshParts();
-        }
-
-        public void RefreshAcceptedPageObjects()
-        {
-            AcceptedPageObjects.Clear();
-            AcceptedPageObjectIDs.Clear();
-            if (!CanAcceptPageObjects)
-            {
-                return;
-            }
-
-            var pageObjectsOverStamp = from pageObject in ParentPage.PageObjects
-                                       where PageObjectIsOver(pageObject, .90) //PageObject must be at least 90% contained by Bin.
-                                       select pageObject;
-
-            AcceptPageObjects(pageObjectsOverStamp, new List<IPageObject>());
-        }
-
-        #endregion //IPageObjectAccepter Implementation
-
-        #region IStrokeAccepter Implementation
-
-        /// <summary>Stroke must be at least this percent contained by pageObject.</summary>
-        public int StrokeHitTestPercentage
-        {
-            get { return 90; }
-        }
-
-        /// <summary>Determines whether the <see cref="Bin" /> can currently accept <see cref="Stroke" />s.</summary>
-        public bool CanAcceptStrokes
-        {
-            get { return GetValue<bool>(CanAcceptStrokesProperty); }
-            set { SetValue(CanAcceptStrokesProperty, value); }
-        }
-
-        public static readonly PropertyData CanAcceptStrokesProperty = RegisterProperty("CanAcceptStrokes", typeof(bool), true);
-
-        /// <summary>The currently accepted <see cref="Stroke" />s.</summary>
-        [XmlIgnore]
-        [ExcludeFromSerialization]
-        public List<Stroke> AcceptedStrokes
-        {
-            get { return GetValue<List<Stroke>>(AcceptedStrokesProperty); }
-            set { SetValue(AcceptedStrokesProperty, value); }
-        }
-
-        public static readonly PropertyData AcceptedStrokesProperty = RegisterProperty("AcceptedStrokes", typeof(List<Stroke>), () => new List<Stroke>());
-
-        /// <summary>The IDs of the <see cref="Stroke" />s that have been accepted.</summary>
-        public List<string> AcceptedStrokeParentIDs
-        {
-            get { return GetValue<List<string>>(AcceptedStrokeParentIDsProperty); }
-            set { SetValue(AcceptedStrokeParentIDsProperty, value); }
-        }
-
-        public static readonly PropertyData AcceptedStrokeParentIDsProperty = RegisterProperty("AcceptedStrokeParentIDs", typeof(List<string>), () => new List<string>());
-
-        public void ChangeAcceptedStrokes(IEnumerable<Stroke> addedStrokes, IEnumerable<Stroke> removedStrokes)
-        {
-            if (!CanAcceptStrokes)
-            {
-                return;
-            }
-
-            // Remove Strokes
-            var removedStrokesList = removedStrokes as IList<Stroke> ?? removedStrokes.ToList();
-            foreach (var stroke in removedStrokesList.Where(stroke => AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
-            {
-                AcceptedStrokes.Remove(stroke);
-                AcceptedStrokeParentIDs.Remove(stroke.GetStrokeID());
-            }
-
-            // Add Strokes
-            var addedStrokesList = addedStrokes as IList<Stroke> ?? addedStrokes.ToList();
-            foreach (var stroke in addedStrokesList.Where(stroke => IsStrokeOverPageObject(stroke) && !AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
-            {
-                AcceptedStrokes.Add(stroke);
-                AcceptedStrokeParentIDs.Add(stroke.GetStrokeID());
-            }
-
-            RefreshParts();
-            ParentPage.UpdateAllReporters();
-        }
-
-        public bool IsStrokeOverPageObject(Stroke stroke)
-        {
-            var binBoundingBox = new Rect(XPosition, YPosition, Width, Height);
-            return stroke.HitTest(binBoundingBox, StrokeHitTestPercentage);
-        }
-
-        public StrokeCollection GetStrokesOverPageObject()
-        {
-            var binBoundingBox = new Rect(XPosition, YPosition, Width, Height);
-            var strokesOverObject = from stroke in ParentPage.InkStrokes
-                                    where stroke.HitTest(binBoundingBox, StrokeHitTestPercentage)
-                                    select stroke;
-
-            return new StrokeCollection(strokesOverObject);
-        }
-
-        public void RefreshAcceptedStrokes()
-        {
-            AcceptedStrokes.Clear();
-            AcceptedStrokeParentIDs.Clear();
-            if (!CanAcceptStrokes)
-            {
-                return;
-            }
-
-            var strokesOverObject = GetStrokesOverPageObject();
-
-            ChangeAcceptedStrokes(strokesOverObject, new StrokeCollection());
-        }
-
-        #endregion //IStrokeAccepter Implementation
     }
 }

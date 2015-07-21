@@ -207,10 +207,8 @@ namespace CLP.Entities
                 VerticalDivisions.Remove(divAbove);
             }
             VerticalDivisions.Add(topDiv);
-            CLPArrayDivision bottomDiv;
-            bottomDiv = divBelow == null
-                            ? new CLPArrayDivision(ArrayDivisionOrientation.Vertical, position, ArrayWidth - position, 0)
-                            : new CLPArrayDivision(ArrayDivisionOrientation.Vertical, position, divBelow.Position - position, 0);
+            var bottomDiv = divBelow == null ? new CLPArrayDivision(ArrayDivisionOrientation.Vertical, position, ArrayWidth - position, 0)
+                                             : new CLPArrayDivision(ArrayDivisionOrientation.Vertical, position, divBelow.Position - position, 0);
             VerticalDivisions.Add(bottomDiv);
             UpdateReport();
 
@@ -327,7 +325,7 @@ namespace CLP.Entities
 
         public override string FormattedName
         {
-            get { return "Division Template"; }
+            get { return string.Format("{0} / {1} Division Template with {2} remaining", Dividend, Columns, CurrentRemainder); }
         }
 
         public override int ZIndex

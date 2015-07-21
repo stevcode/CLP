@@ -107,7 +107,6 @@
     <Compile Include="DomainModel\History Analysis\InkAction.cs" />
     <Compile Include="DomainModel\History\AHistoryItemBase.cs" />
     <Compile Include="DomainModel\History\AnimationIndicator.cs" />
-    <Compile Include="DomainModel\History\ArrayHistoryItems\CLPArrayDivisionIsObscuredChangedHistoryItem.cs" />
     <Compile Include="DomainModel\History\ArrayHistoryItems\CLPArrayDivisionsChangedHistoryItem.cs" />
     <Compile Include="DomainModel\History\ArrayHistoryItems\CLPArrayDivisionValueChangedHistoryItem.cs" />
     <Compile Include="DomainModel\History\ArrayHistoryItems\CLPArrayGridToggleHistoryItem.cs" />
@@ -124,6 +123,9 @@
     <Compile Include="DomainModel\PageObjects\Bins\Mark.cs" />
     <Compile Include="DomainModel\PageObjects\MultipleChoiceBox.cs" />
     <Compile Include="DomainModel\PageObjects\NumberLine.cs" />
+    <Compile Include="DomainModel\PageObjects\PageObject Abstract Base Classes\APageObjectAccepter.cs" />
+    <Compile Include="DomainModel\PageObjects\PageObject Abstract Base Classes\AStrokeAccepter.cs" />
+    <Compile Include="DomainModel\PageObjects\PageObject Abstract Base Classes\AStrokeAndPageObjectAccepter.cs" />
     <Compile Include="DomainModel\PageObjects\PageObject Interfaces\IReporter.cs" />
     <Compile Include="DomainModel\PageObjects\Temporary\TemporaryBoundary.cs" />
     <Compile Include="DomainModel\Strokes\Extensions\StrokeCollectionExtension.cs" />

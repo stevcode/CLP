@@ -60,7 +60,7 @@ namespace CLP.Entities
 
         public override string FormattedName
         {
-            get { return "Remainder Tiles"; }
+            get { return string.Format("Remainder Tiles with {0} tiles", TileColors.Count); }
         }
 
         public override int ZIndex

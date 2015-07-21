@@ -30,7 +30,7 @@ namespace Classroom_Learning_Partner.ViewModels
         public StampViewModel(Stamp stamp, INotebookService notebookService)
         {
             PageObject = stamp;
-            stamp.AcceptedStrokes = stamp.AcceptedStrokeParentIDs.Select(id => PageObject.ParentPage.GetStrokeByID(id)).ToList();
+            
             RaisePropertyChanged("IsGroupStamp");
             RaisePropertyChanged("IsDraggableStamp");
             if (App.MainWindowViewModel.ImagePool.ContainsKey(stamp.ImageHashID))

@@ -12,6 +12,7 @@
         string ParentPageID { get; set; }
         string ParentPageOwnerID { get; set; }
         uint ParentPageVersionIndex { get; set; }
+        string CachedFormattedValue { get; set; }
         string FormattedValue { get; }
         CLPPage ParentPage { get; set; }
         void ConversionUndo();
@@ -19,7 +20,7 @@
         void Redo(bool isAnimationRedo);
         IHistoryItem CreatePackagedHistoryItem();
         void UnpackHistoryItem();
-        bool IsUsingTrashedPageObject(string id, bool isUndoItem);
-        bool IsUsingTrashedInkStroke(string id, bool isUndoItem);
+        bool IsUsingTrashedPageObject(string id);
+        bool IsUsingTrashedInkStroke(string id);
     }
 }

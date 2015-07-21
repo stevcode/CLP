@@ -65,24 +65,22 @@ namespace ConsoleScripts
                 foreach (var pageFilePath in pageFilePaths)
                 {
                     var page = ModelBase.Load<CLPPage>(pageFilePath, SerializationMode.Xml);
-                    page.InkStrokes = StrokeDTO.LoadInkStrokes(page.SerializedStrokes);
-                    page.History.TrashedInkStrokes = StrokeDTO.LoadInkStrokes(page.History.SerializedTrashedInkStrokes);
+                    page.AfterDeserialization();
 
                     Console.WriteLine("Loaded {3}'s page {0}, differentiation {1}, version {2}", page.PageNumber, page.DifferentiationLevel, page.VersionIndex, page.Owner.FullName);
                     //Do stuff to each page here. 
 
-                    _isConvertingEmilyCache = true;
+                    _isConvertingEmilyCache = false;
                     ConvertDivisionTemplatesToUseNewRemainderTiles(page);
                     TheSlowRewind(page);
 
-                    page.History.RefreshHistoryIndexes();
                     //Finished doing stuff to page, it'll save below.
                     page.ToXML(pageFilePath, true);
                 }
             }
         }
 
-        private static bool _isConvertingEmilyCache = false;
+        private static bool _isConvertingEmilyCache;
 
         public static void ConvertDivisionTemplatesToUseNewRemainderTiles(CLPPage page)
         {
@@ -192,7 +190,7 @@ namespace ConsoleScripts
 
                 #endregion //PageObjectResize fix for old Division Templates
 
-                #region ???PageObjectsAdded to ObjectsOnPageChanged
+                #region PageObjectsAdded to ObjectsOnPageChanged
 
                 if (historyItemToUndo is PageObjectsAddedHistoryItem)
                 {
@@ -215,13 +213,13 @@ namespace ConsoleScripts
                     }
 
                     page.History.UndoItems.Insert(0, objectsChanged);
-                    page.History.ConversionUndo(); //?
+                    page.History.ConversionUndo();
                     continue;
                 }
 
                 #endregion //PageObjectsAdded to ObjectsOnPageChanged
 
-                #region ???PageObjectsRemoved to ObjectsOnPageChanged
+                #region PageObjectsRemoved to ObjectsOnPageChanged
 
                 if (historyItemToUndo is PageObjectsRemovedHistoryItem)
                 {
@@ -244,13 +242,13 @@ namespace ConsoleScripts
                     }
 
                     page.History.UndoItems.Insert(0, objectsChanged);
-                    page.History.ConversionUndo(); //?
+                    page.History.ConversionUndo();
                     continue;
                 }
 
                 #endregion //PageObjectsRemoved to ObjectsOnPageChanged
 
-                #region PageObjectMove to ObjectsOnPageChanged
+                #region PageObjectMove to ObjectsMovedChanged
 
                 if (historyItemToUndo is PageObjectMoveBatchHistoryItem)
                 {
@@ -265,6 +263,13 @@ namespace ConsoleScripts
                     }
 
                     var objectsMoved = new ObjectsMovedBatchHistoryItem(pageObjectMove);
+                    if (objectsMoved.TravelledPositions.Count == 2 &&
+                        Math.Abs(objectsMoved.TravelledPositions.First().X - objectsMoved.TravelledPositions.Last().X) < 0.00001 &&
+                        Math.Abs(objectsMoved.TravelledPositions.First().Y - objectsMoved.TravelledPositions.Last().Y) < 0.00001)
+                    {
+                        continue;
+                    }
+
                     page.History.UndoItems.Insert(0, objectsMoved);
                     page.History.ConversionUndo();
                     continue;
@@ -272,7 +277,7 @@ namespace ConsoleScripts
 
                 #endregion //PageObjectMove to ObjectsOnPageChanged
 
-                #region PageObjectsMove to ObjectsOnPageChanged
+                #region PageObjectsMove to ObjectsMovedChanged
 
                 if (historyItemToUndo is PageObjectsMoveBatchHistoryItem)
                 {
@@ -288,6 +293,12 @@ namespace ConsoleScripts
                     }
 
                     var objectsMoved = new ObjectsMovedBatchHistoryItem(pageObjectsMove);
+                    if (objectsMoved.TravelledPositions.Count == 2 &&
+                        Math.Abs(objectsMoved.TravelledPositions.First().X - objectsMoved.TravelledPositions.Last().X) < 0.00001 &&
+                        Math.Abs(objectsMoved.TravelledPositions.First().Y - objectsMoved.TravelledPositions.Last().Y) < 0.00001)
+                    {
+                        continue;
+                    }
                     page.History.UndoItems.Insert(0, objectsMoved);
                     page.History.ConversionUndo();
                     continue;
@@ -299,6 +310,7 @@ namespace ConsoleScripts
 
                 if (historyItemToUndo is PageObjectCutHistoryItem)
                 {
+                    //BUG: Fix to allow strokes that don't cut any pageObjects.
                     var pageObjectCut = historyItemToUndo as PageObjectCutHistoryItem;
                     if (!string.IsNullOrEmpty(pageObjectCut.CutPageObjectID))
                     {
@@ -542,7 +554,7 @@ namespace ConsoleScripts
                     if (objectsChanged.IsUsingStrokes)
                     {
                         page.History.UndoItems.Insert(0, objectsChanged);
-                        page.History.ConversionUndo(); //?
+                        page.History.ConversionUndo();
                     }
 
                     continue;
@@ -551,6 +563,7 @@ namespace ConsoleScripts
                 #endregion //StrokesChanged to ObjectsOnPageChanged
             }
 
+            page.History.RefreshHistoryIndexes();
             while (page.History.RedoItems.Any())
             {
                 page.History.Redo();

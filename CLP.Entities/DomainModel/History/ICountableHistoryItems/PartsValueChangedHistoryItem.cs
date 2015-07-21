@@ -69,10 +69,10 @@ namespace CLP.Entities
         {
             get
             {
-                var iCountable = ParentPage.GetPageObjectByIDOnPageOrInHistory(PageObjectID) as ICountable;
-                return iCountable == null
-                           ? string.Format("[ERROR] on Index #{0}, iCountable for Parts Value Changed not found on page or in history.", HistoryIndex)
-                           : string.Format("Index #{0}, Changed value of {1} parts from {2} to {3}.", HistoryIndex, iCountable.FormattedName, PreviousValue, NewValue);
+                var pageObject = ParentPage.GetPageObjectByIDOnPageOrInHistory(PageObjectID) as ICountable;
+                return pageObject == null
+                           ? string.Format("[ERROR] on Index #{0}, ICountable for Parts Value Changed not found on page or in history.", HistoryIndex)
+                           : string.Format("Index #{0}, Changed value of {1} parts from {2} to {3}.", HistoryIndex, pageObject.FormattedName, PreviousValue, NewValue);
             }
         }
 
@@ -82,15 +82,15 @@ namespace CLP.Entities
 
         protected override void ConversionUndoAction()
         {
-            var iCountable = ParentPage.GetVerifiedPageObjectOnPageByID(PageObjectID) as ICountable;
-            if (iCountable == null)
+            var pageObject = ParentPage.GetVerifiedPageObjectOnPageByID(PageObjectID) as ICountable;
+            if (pageObject == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, iCountable for Parts Value Changed not found on page or in history.", HistoryIndex);
+                Console.WriteLine("[ERROR] on Index #{0}, ICountable for Parts Value Changed not found on page or in history.", HistoryIndex);
                 return;
             }
 
-            NewValue = iCountable.Parts;
-            iCountable.Parts = PreviousValue;
+            NewValue = pageObject.Parts;
+            pageObject.Parts = PreviousValue;
         }
 
         /// <summary>Method that will actually undo the action. Already incorporates error checking for existance of ParentPage.</summary>
@@ -107,14 +107,14 @@ namespace CLP.Entities
 
         private void TogglePartsValue(bool isUndo)
         {
-            var iCountable = ParentPage.GetVerifiedPageObjectOnPageByID(PageObjectID) as ICountable;
-            if (iCountable == null)
+            var pageObject = ParentPage.GetVerifiedPageObjectOnPageByID(PageObjectID) as ICountable;
+            if (pageObject == null)
             {
-                Console.WriteLine("[ERROR] on Index #{0}, iCountable for Parts Value Changed not found on page or in history.", HistoryIndex);
+                Console.WriteLine("[ERROR] on Index #{0}, ICountable for Parts Value Changed not found on page or in history.", HistoryIndex);
                 return;
             }
 
-            iCountable.Parts = isUndo ? PreviousValue : NewValue;
+            pageObject.Parts = isUndo ? PreviousValue : NewValue;
         }
 
         /// <summary>Method that prepares a clone of the <see cref="IHistoryItem" /> so that it can call Redo() when sent to another machine.</summary>
@@ -138,6 +138,8 @@ namespace CLP.Entities
 
         /// <summary>Method that unpacks the <see cref="IHistoryItem" /> after it has been sent to another machine.</summary>
         public override void UnpackHistoryItem() { }
+
+        public override bool IsUsingTrashedPageObject(string id) { return PageObjectID == id; }
 
         #endregion //Methods
     }

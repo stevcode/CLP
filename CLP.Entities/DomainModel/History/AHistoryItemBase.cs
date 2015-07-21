@@ -182,6 +182,15 @@ namespace CLP.Entities
 
         #endregion //Navigation Properties
 
+        /// <summary>Cached value of FormattedValue with correct page state.</summary>
+        public string CachedFormattedValue
+        {
+            get { return GetValue<string>(CachedFormattedValueProperty); }
+            set { SetValue(CachedFormattedValueProperty, value); }
+        }
+
+        public static readonly PropertyData CachedFormattedValueProperty = RegisterProperty("CachedFormattedValue", typeof(string), string.Empty);
+
         public virtual string FormattedValue
         {
             get { return "Not yet Implemented."; }
@@ -225,6 +234,7 @@ namespace CLP.Entities
             }
             ParentPage.IsTagAddPrevented = true;
             RedoAction(isAnimationRedo);
+            CachedFormattedValue = FormattedValue;
             ParentPage.IsTagAddPrevented = false;
         }
 
@@ -234,9 +244,9 @@ namespace CLP.Entities
 
         public abstract void UnpackHistoryItem();
 
-        public virtual bool IsUsingTrashedPageObject(string id, bool isUndoItem) { return false; }
+        public virtual bool IsUsingTrashedPageObject(string id) { return false; }
 
-        public virtual bool IsUsingTrashedInkStroke(string id, bool isUndoItem) { return false; }
+        public virtual bool IsUsingTrashedInkStroke(string id) { return false; }
 
         #endregion //Methods
     }

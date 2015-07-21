@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Xml.Serialization;
 using Catel.Collections;
 using Catel.Data;
-using Catel.Runtime.Serialization;
 
 namespace CLP.Entities
 {
@@ -19,7 +17,7 @@ namespace CLP.Entities
     }
 
     [Serializable]
-    public class StampedObject : APageObjectBase, ICountable, IPageObjectAccepter
+    public class StampedObject : APageObjectAccepter, ICountable
     {
         #region Constructors
 
@@ -117,7 +115,29 @@ namespace CLP.Entities
 
         public override string FormattedName
         {
-            get { return "Stamped Object"; }
+            get
+            {
+                string stampObjectType;
+                switch (StampedObjectType)
+                {
+                    case StampedObjectTypes.GeneralStampedObject:
+                        stampObjectType = "Stamped Object";
+                        break;
+                    case StampedObjectTypes.VisibleParts:
+                        stampObjectType = "Stamped Object";
+                        break;
+                    case StampedObjectTypes.GroupStampedObject:
+                        stampObjectType = "Group Stamped Object";
+                        break;
+                    case StampedObjectTypes.EmptyGroupStampedObject:
+                        stampObjectType = "Empty Group Stamped Object";
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+
+                return string.Format("{0} with {1} Part(s)", stampObjectType, Parts);
+            }
         }
 
         public override int ZIndex
@@ -202,8 +222,7 @@ namespace CLP.Entities
         {
             try
             {
-                foreach (
-                    var acceptorPageObject in ParentPage.PageObjects.OfType<IPageObjectAccepter>().Where(pageObject => pageObject.CanAcceptPageObjects && pageObject.ID != ID))
+                foreach (var acceptorPageObject in ParentPage.PageObjects.OfType<IPageObjectAccepter>().Where(pageObject => pageObject.CanAcceptPageObjects && pageObject.ID != ID))
                 {
                     var removedPageObjects = new List<IPageObject>();
                     var addedPageObjects = new ObservableCollection<IPageObject>();
@@ -220,7 +239,7 @@ namespace CLP.Entities
                         addedPageObjects.Add(this);
                     }
 
-                    acceptorPageObject.AcceptPageObjects(addedPageObjects, removedPageObjects);
+                    acceptorPageObject.ChangeAcceptedPageObjects(addedPageObjects, removedPageObjects);
                 }
             }
             catch (Exception ex)
@@ -249,84 +268,27 @@ namespace CLP.Entities
 
         #endregion //APageObjectBase Overrides
 
-        #region IPageObjectAccepter Implementation
+        #region APageObjectAccepter Overrides
 
-        /// <summary>Determines whether the <see cref="Stamp" /> can currently accept <see cref="IPageObject" />s.</summary>
-        public bool CanAcceptPageObjects
+        public override void ChangeAcceptedPageObjects(IEnumerable<IPageObject> addedPageObjects, IEnumerable<IPageObject> removedPageObjects)
         {
-            get { return GetValue<bool>(CanAcceptPageObjectsProperty); }
-            set { SetValue(CanAcceptPageObjectsProperty, value); }
-        }
-
-        public static readonly PropertyData CanAcceptPageObjectsProperty = RegisterProperty("CanAcceptPageObjects", typeof (bool), false);
-
-        /// <summary>The currently accepted <see cref="IPageObject" />s.</summary>
-        [XmlIgnore]
-        [ExcludeFromSerialization]
-        public List<IPageObject> AcceptedPageObjects
-        {
-            get { return GetValue<List<IPageObject>>(AcceptedPageObjectsProperty); }
-            set { SetValue(AcceptedPageObjectsProperty, value); }
-        }
-
-        public static readonly PropertyData AcceptedPageObjectsProperty = RegisterProperty("AcceptedPageObjects", typeof (List<IPageObject>), () => new List<IPageObject>());
-
-        /// <summary>The IDs of the <see cref="IPageObject" />s that have been accepted.</summary>
-        public List<string> AcceptedPageObjectIDs
-        {
-            get { return GetValue<List<string>>(AcceptedPageObjectIDsProperty); }
-            set { SetValue(AcceptedPageObjectIDsProperty, value); }
-        }
-
-        public static readonly PropertyData AcceptedPageObjectIDsProperty = RegisterProperty("AcceptedPageObjectIDs", typeof (List<string>), () => new List<string>());
-
-        public void AcceptPageObjects(IEnumerable<IPageObject> addedPageObjects, IEnumerable<IPageObject> removedPageObjects)
-        {
-            if (!CanAcceptPageObjects)
-            {
-                return;
-            }
-
-            foreach (var pageObject in removedPageObjects.Where(pageObject => AcceptedPageObjectIDs.Contains(pageObject.ID)))
-            {
-                AcceptedPageObjects.Remove(pageObject);
-                AcceptedPageObjectIDs.Remove(pageObject.ID);
-            }
-
-            foreach (
-                var pageObject in
-                    addedPageObjects.OfType<ICountable>()
-                                    .Where(
-                                           pageObject =>
-                                           !AcceptedPageObjectIDs.Contains(pageObject.ID) && !(pageObject is Stamp) &&
-                                           (!(pageObject is StampedObject) ||
-                                            ((pageObject as StampedObject).StampedObjectType != StampedObjectTypes.EmptyGroupStampedObject &&
-                                             (pageObject as StampedObject).StampedObjectType != StampedObjectTypes.GroupStampedObject))))
-            {
-                AcceptedPageObjects.Add(pageObject);
-                AcceptedPageObjectIDs.Add(pageObject.ID);
-            }
+            base.ChangeAcceptedPageObjects(addedPageObjects, removedPageObjects);
 
             RefreshParts();
         }
 
-        public void RefreshAcceptedPageObjects()
+        public override bool IsPageObjectTypeAcceptedByThisPageObject(IPageObject pageObject)
         {
-            AcceptedPageObjects.Clear();
-            AcceptedPageObjectIDs.Clear();
-            if (!CanAcceptPageObjects)
+            var stampedObject = pageObject as StampedObject;
+            if (stampedObject == null)
             {
-                return;
+                return false;
             }
 
-            var pageObjectsOverStamp = from pageObject in ParentPage.PageObjects
-                                       where PageObjectIsOver(pageObject, .90) //PageObject must be at least 90% contained by Stamp body.
-                                       select pageObject;
-
-            AcceptPageObjects(pageObjectsOverStamp, new List<IPageObject>());
+            return stampedObject.StampedObjectType == StampedObjectTypes.GeneralStampedObject;
         }
 
-        #endregion //IPageObjectAccepter Implementation
+        #endregion //APageObjectAccepter Overrides
 
         #region ICountable Implementation
 

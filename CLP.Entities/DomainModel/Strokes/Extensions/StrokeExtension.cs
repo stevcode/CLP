@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Windows;
 using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -177,5 +178,55 @@ namespace CLP.Entities
 
         #endregion //Transformation
 
+        #region HitTesting
+
+        public static double PercentContainedByBounds(this Stroke stroke, Rect bounds)
+        {
+            Argument.IsNotNull("stroke", stroke);
+            Argument.IsNotNull("bounds", bounds);
+
+            var da = stroke.DrawingAttributes;
+            var stylusPoints = stroke.StylusPoints;
+            var weightContained = 0.0;
+            var weightNotContained = 0.0;
+            for (var i = 0; i < stylusPoints.Count; i++)
+            {
+                var pointWeight = 0.0;
+                if (i == 0)
+                {
+                    pointWeight += Math.Sqrt(da.Width * da.Width + da.Height * da.Height) / 2.0;
+                }
+                else
+                {
+                    var spine = (Point)stylusPoints[i] - (Point)stylusPoints[i - 1];
+                    pointWeight += Math.Sqrt(spine.LengthSquared) / 2.0;
+                }
+
+                if (i == stylusPoints.Count - 1)
+                {
+                    pointWeight += Math.Sqrt(da.Width * da.Width + da.Height * da.Height) / 2.0;
+                }
+                else
+                {
+                    var spine = (Point)stylusPoints[i + 1] - (Point)stylusPoints[i];
+                    pointWeight += Math.Sqrt(spine.LengthSquared) / 2.0;
+                    
+                }
+
+                if (bounds.Contains((Point)stylusPoints[i]))
+                {
+                    weightContained += pointWeight;
+                }
+                else
+                {
+                    weightNotContained += pointWeight;
+                }
+            }
+
+            var totalWeight = weightContained + weightNotContained;
+            return weightContained / totalWeight;
+        }
+
+        #endregion //HitTesting
     }
 }

@@ -3,13 +3,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Windows;
 using System.Windows.Ink;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Xml.Serialization;
 using Catel.Data;
-using Catel.Runtime.Serialization;
 
 namespace CLP.Entities
 {
@@ -138,13 +135,13 @@ namespace CLP.Entities
             set { SetValue(JumpColorProperty, value); }
         }
 
-        public static readonly PropertyData JumpColorProperty = RegisterProperty("JumpColor", typeof(string), "Black");
+        public static readonly PropertyData JumpColorProperty = RegisterProperty("JumpColor", typeof (string), "Black");
 
         #endregion //Properties
     }
 
     [Serializable]
-    public class NumberLine : APageObjectBase, IStrokeAccepter
+    public class NumberLine : AStrokeAccepter
     {
         public const int MAX_ALL_TICKS_VISIBLE_LENGTH = 30;
         public const int NUMBER_LINE_MAX_SIZE = 93;
@@ -192,7 +189,7 @@ namespace CLP.Entities
             set { SetValue(NumberLineTypeProperty, value); }
         }
 
-        public static readonly PropertyData NumberLineTypeProperty = RegisterProperty("NumberLineType", typeof(NumberLineTypes), NumberLineTypes.NumberLine);
+        public static readonly PropertyData NumberLineTypeProperty = RegisterProperty("NumberLineType", typeof (NumberLineTypes), NumberLineTypes.NumberLine);
 
         public double NumberLineHeight
         {
@@ -239,7 +236,7 @@ namespace CLP.Entities
             set { SetValue(IsAutoArcsVisibleProperty, value); }
         }
 
-        public static readonly PropertyData IsAutoArcsVisibleProperty = RegisterProperty("IsAutoArcsVisible", typeof(bool), false);
+        public static readonly PropertyData IsAutoArcsVisibleProperty = RegisterProperty("IsAutoArcsVisible", typeof (bool), false);
 
         /// <summary>List of the values of the jumps</summary>
         public ObservableCollection<NumberLineJumpSize> JumpSizes
@@ -307,9 +304,7 @@ namespace CLP.Entities
             var defaultInteger = NumberLineSize <= MAX_ALL_TICKS_VISIBLE_LENGTH ? 1 : 5;
             for (var i = 0; i < Ticks.Count; i++)
             {
-                var isLabelVisible = i == 0 ||
-                                     i == NumberLineSize ||
-                                     i % defaultInteger == 0 ||
+                var isLabelVisible = i == 0 || i == NumberLineSize || i % defaultInteger == 0 ||
                                      JumpSizes.Any(j => j.StartingTickIndex == i || j.StartingTickIndex + j.JumpSize == i);
 
                 Ticks[i].IsNumberVisible = isLabelVisible;
@@ -369,20 +364,22 @@ namespace CLP.Entities
                     var wasJumpRemoved = false;
 
                     var jumpsToRemove = JumpSizes.Where(j => j.StartingTickIndex == closestTick.TickValue || j.StartingTickIndex + j.JumpSize == closestTick.TickValue).ToList();
-                    foreach (var jump in jumpsToRemove) 
+                    foreach (var jump in jumpsToRemove)
                     {
                         JumpSizes.Remove(jump);
                         var leftTick = Ticks.FirstOrDefault(t => t.TickValue == jump.StartingTickIndex);
                         var rightTick = Ticks.FirstOrDefault(t => t.TickValue == jump.StartingTickIndex + jump.JumpSize);
 
-                        if (rightTick != null && JumpSizes.All(x => x.StartingTickIndex != rightTick.TickValue))
+                        if (rightTick != null &&
+                            JumpSizes.All(x => x.StartingTickIndex != rightTick.TickValue))
                         {
                             rightTick.IsMarked = false;
                             rightTick.TickColor = "Black";
                             rightTick.IsNumberVisible = NumberLineSize <= MAX_ALL_TICKS_VISIBLE_LENGTH || rightTick.TickValue % 5 == 0 || rightTick.TickValue == NumberLineSize;
                         }
 
-                        if (leftTick != null && JumpSizes.All(x => x.StartingTickIndex + x.JumpSize != leftTick.TickValue))
+                        if (leftTick != null &&
+                            JumpSizes.All(x => x.StartingTickIndex + x.JumpSize != leftTick.TickValue))
                         {
                             leftTick.IsMarked = false;
                             leftTick.TickColor = "Black";
@@ -406,8 +403,6 @@ namespace CLP.Entities
                 default:
                     return false;
             }
-
-            
         }
 
         public bool AddJumpFromStroke(Stroke stroke)
@@ -488,10 +483,10 @@ namespace CLP.Entities
         public NumberLineTick FindClosestTickToArcStroke(Stroke stroke, bool isLookingForRightTick)
         {
             return FindClosestTickToArcStroke(new StrokeCollection
-                                   {
-                                       stroke
-                                   },
-                                   isLookingForRightTick);
+                                              {
+                                                  stroke
+                                              },
+                                              isLookingForRightTick);
         }
 
         private NumberLineTick FindClosestTickToArcStroke(StrokeCollection strokes, bool isLookingForRightTick)
@@ -616,7 +611,7 @@ namespace CLP.Entities
 
         public override string FormattedName
         {
-            get { return "Number Line"; }
+            get { return string.Format("Number Line from 0 to {0} with {1} jumps", NumberLineSize, JumpSizes.Count); }
         }
 
         public override int ZIndex
@@ -734,7 +729,7 @@ namespace CLP.Entities
         public override void OnResized(double oldWidth, double oldHeight, bool fromHistory = false)
         {
             base.OnResized(oldWidth, oldHeight, fromHistory);
-            
+
             OnResizing(oldWidth, oldHeight, fromHistory);
         }
 
@@ -754,7 +749,7 @@ namespace CLP.Entities
         public override void OnMoved(double oldX, double oldY, bool fromHistory = false)
         {
             base.OnMoved(oldX, oldY, fromHistory);
-            
+
             OnMoving(oldX, oldY, fromHistory);
         }
 
@@ -776,97 +771,14 @@ namespace CLP.Entities
 
         #endregion //APageObjectBase Overrides
 
-        #region IStrokeAccepter Implementation
+        #region AStrokeAccepter Overrides
 
         /// <summary>Stroke must be at least this percent contained by pageObject.</summary>
-        public int StrokeHitTestPercentage
+        public override int StrokeHitTestPercentage
         {
             get { return 5; }
         }
 
-        /// <summary>Determines whether the <see cref="Stamp" /> can currently accept <see cref="Stroke" />s.</summary>
-        public bool CanAcceptStrokes
-        {
-            get { return GetValue<bool>(CanAcceptStrokesProperty); }
-            set { SetValue(CanAcceptStrokesProperty, value); }
-        }
-
-        public static readonly PropertyData CanAcceptStrokesProperty = RegisterProperty("CanAcceptStrokes", typeof (bool), true);
-
-        /// <summary>The currently accepted <see cref="Stroke" />s.</summary>
-        [XmlIgnore]
-        [ExcludeFromSerialization]
-        public List<Stroke> AcceptedStrokes
-        {
-            get { return GetValue<List<Stroke>>(AcceptedStrokesProperty); }
-            set { SetValue(AcceptedStrokesProperty, value); }
-        }
-
-        public static readonly PropertyData AcceptedStrokesProperty = RegisterProperty("AcceptedStrokes", typeof (List<Stroke>), () => new List<Stroke>());
-
-        /// <summary>The IDs of the <see cref="Stroke" />s that have been accepted.</summary>
-        public List<string> AcceptedStrokeParentIDs
-        {
-            get { return GetValue<List<string>>(AcceptedStrokeParentIDsProperty); }
-            set { SetValue(AcceptedStrokeParentIDsProperty, value); }
-        }
-
-        public static readonly PropertyData AcceptedStrokeParentIDsProperty = RegisterProperty("AcceptedStrokeParentIDs", typeof (List<string>), () => new List<string>());
-
-        public void ChangeAcceptedStrokes(IEnumerable<Stroke> addedStrokes, IEnumerable<Stroke> removedStrokes)
-        {
-            if (!CanAcceptStrokes)
-            {
-                return;
-            }
-
-            // Remove Strokes
-            var removedStrokesList = removedStrokes as IList<Stroke> ?? removedStrokes.ToList();
-            foreach (var stroke in removedStrokesList.Where(stroke => AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
-            {
-                AcceptedStrokes.Remove(stroke);
-                AcceptedStrokeParentIDs.Remove(stroke.GetStrokeID());
-            }
-
-            // Add Strokes
-            var addedStrokesList = addedStrokes as IList<Stroke> ?? addedStrokes.ToList();
-            foreach (var stroke in addedStrokesList.Where(stroke => IsStrokeOverPageObject(stroke) && !AcceptedStrokeParentIDs.Contains(stroke.GetStrokeID())))
-            {
-                AcceptedStrokes.Add(stroke);
-                AcceptedStrokeParentIDs.Add(stroke.GetStrokeID());
-            }
-        }
-
-        public bool IsStrokeOverPageObject(Stroke stroke)
-        {
-            var numberLineBodyBoundingBox = new Rect(XPosition, YPosition, Width, Height);
-            return stroke.HitTest(numberLineBodyBoundingBox, StrokeHitTestPercentage);
-        }
-
-        public StrokeCollection GetStrokesOverPageObject()
-        {
-            var numberLineBodyBoundingBox = new Rect(XPosition, YPosition, Width, Height);
-            var strokesOverObject = from stroke in ParentPage.InkStrokes
-                                    where stroke.HitTest(numberLineBodyBoundingBox, StrokeHitTestPercentage) 
-                                    select stroke;
-
-            return new StrokeCollection(strokesOverObject);
-        }
-
-        public void RefreshAcceptedStrokes()
-        {
-            AcceptedStrokes.Clear();
-            AcceptedStrokeParentIDs.Clear();
-            if (!CanAcceptStrokes)
-            {
-                return;
-            }
-
-            var strokesOverObject = GetStrokesOverPageObject();
-
-            ChangeAcceptedStrokes(strokesOverObject, new StrokeCollection());
-        }
-
-        #endregion //IStrokeAccepter Implementation
+        #endregion //AStrokeAccepter Overrides
     }
 }

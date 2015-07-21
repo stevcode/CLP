@@ -62,15 +62,14 @@ namespace CLP.Entities
                 var divisionTemplate = ParentPage.GetPageObjectByIDOnPageOrInHistory(DivisionTemplateID) as FuzzyFactorCard;
                 if (divisionTemplate == null)
                 {
-                    return string.Format("[ERROR] on Index #{0}, Division Template not found on page or in history.", HistoryIndex);
+                    return string.Format("[ERROR] on Index #{0}, Division Template for Remainder Tiles Toggle not found on page or in history.", HistoryIndex);
                 }
 
                 var toggleState = IsVisible ? "on" : "off";
-                return string.Format("Index #{0}, Toggled Remainder Tiles {1} for Division Template [{2}/{3}]",
+                return string.Format("Index #{0}, Toggled Remainder Tiles {1} for {2}.",
                                      HistoryIndex,
                                      toggleState,
-                                     divisionTemplate.Dividend,
-                                     divisionTemplate.Rows);
+                                     divisionTemplate.FormattedName);
             }
         }
 
@@ -136,6 +135,8 @@ namespace CLP.Entities
         {
             // TODO: Unpack history item.
         }
+
+        public override bool IsUsingTrashedPageObject(string id) { return DivisionTemplateID == id; }
 
         #endregion //Methods
     }
