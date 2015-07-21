@@ -214,6 +214,12 @@
                         Height="20"
                         Margin="1" />
 
+                <Button Content="Run Skip Counting Analysis"
+                        Command="{Binding AnalyzeSkipCountingCommand}"
+                        Grid.ColumnSpan="2"
+                        Height="20"
+                        Margin="1" />
+
                 <Button Content="Print Histories"
                         Command="{Binding PrintAllHistoryItemsCommand}"
                         Grid.ColumnSpan="2"

@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Ink;
 using System.Windows.Media.Imaging;
 using Catel.Collections;
 using Catel.Data;
@@ -16,6 +17,7 @@ using Classroom_Learning_Partner.Views;
 using Classroom_Learning_Partner.Views.Modal_Windows;
 using CLP.Entities;
 using ServiceModelEx;
+using CLP.InkInterpretation;
 
 namespace Classroom_Learning_Partner.ViewModels
 {
@@ -70,6 +72,7 @@ namespace Classroom_Learning_Partner.ViewModels
             AddTagCommand = new Command(OnAddTagCommandExecute);
             AnalyzePageCommand = new Command(OnAnalyzePageCommandExecute);
             AnalyzePageHistoryCommand = new Command(OnAnalyzePageHistoryCommandExecute);
+            AnalyzeSkipCountingCommand = new Command(OnAnalyzeSkipCountingCommandExecute);
 
             //TEMP
             InterpretArrayDividersCommand = new Command(OnInterpretArrayDividersCommandExecute);
@@ -102,7 +105,7 @@ namespace Classroom_Learning_Partner.ViewModels
             private set { SetValue(NotebookProperty, value); }
         }
 
-        public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof (Notebook));
+        public static readonly PropertyData NotebookProperty = RegisterProperty("Notebook", typeof(Notebook));
 
         /// <summary>Currently selected <see cref="CLPPage" /> of the <see cref="Notebook" />.</summary>
         [ViewModelToModel("Notebook")]
@@ -113,7 +116,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(CurrentPageProperty, value); }
         }
 
-        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof (CLPPage), propertyChangedEventHandler: CurrentPageChanged);
+        public static readonly PropertyData CurrentPageProperty = RegisterProperty("CurrentPage", typeof(CLPPage), propertyChangedEventHandler: CurrentPageChanged);
 
         private static void CurrentPageChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
         {
@@ -140,7 +143,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(IDProperty, value); }
         }
 
-        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof (string));
+        public static readonly PropertyData IDProperty = RegisterProperty("ID", typeof(string));
 
         /// <summary>Version Index of the <see cref="CLPPage" />.</summary>
         [ViewModelToModel("CurrentPage")]
@@ -150,7 +153,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(VersionIndexProperty, value); }
         }
 
-        public static readonly PropertyData VersionIndexProperty = RegisterProperty("VersionIndex", typeof (uint));
+        public static readonly PropertyData VersionIndexProperty = RegisterProperty("VersionIndex", typeof(uint));
 
         /// <summary>DifferentiationLevel of the <see cref="CLPPage" />.</summary>
         [ViewModelToModel("CurrentPage")]
@@ -160,7 +163,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(DifferentiationLevelProperty, value); }
         }
 
-        public static readonly PropertyData DifferentiationLevelProperty = RegisterProperty("DifferentiationLevel", typeof (string));
+        public static readonly PropertyData DifferentiationLevelProperty = RegisterProperty("DifferentiationLevel", typeof(string));
 
         /// <summary>Page Number of the <see cref="CLPPage" /> within the <see cref="Notebook" />.</summary>
         [ViewModelToModel("CurrentPage")]
@@ -170,7 +173,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(PageNumberProperty, value); }
         }
 
-        public static readonly PropertyData PageNumberProperty = RegisterProperty("PageNumber", typeof (decimal), 1);
+        public static readonly PropertyData PageNumberProperty = RegisterProperty("PageNumber", typeof(decimal), 1);
 
         /// <summary>
         ///     <see cref="ATagBase" />s for the <see cref="CLPPage" />.
@@ -182,7 +185,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(TagsProperty, value); }
         }
 
-        public static readonly PropertyData TagsProperty = RegisterProperty("Tags", typeof (ObservableCollection<ITag>), propertyChangedEventHandler: TagsChanged);
+        public static readonly PropertyData TagsProperty = RegisterProperty("Tags", typeof(ObservableCollection<ITag>), propertyChangedEventHandler: TagsChanged);
 
         private static void TagsChanged(object sender, AdvancedPropertyChangedEventArgs advancedPropertyChangedEventArgs)
         {
@@ -208,7 +211,7 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         public static readonly PropertyData PageOrientationsProperty = RegisterProperty("PageOrientations",
-                                                                                        typeof (ObservableCollection<string>),
+                                                                                        typeof(ObservableCollection<string>),
                                                                                         () => new ObservableCollection<string>());
 
         /// <summary>The currently selected Page Orientation.</summary>
@@ -218,7 +221,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(SelectedPageOrientationProperty, value); }
         }
 
-        public static readonly PropertyData SelectedPageOrientationProperty = RegisterProperty("SelectedPageOrientation", typeof (string));
+        public static readonly PropertyData SelectedPageOrientationProperty = RegisterProperty("SelectedPageOrientation", typeof(string));
 
         /// <summary>Currently selected Answer Definition to add to the page.</summary>
         public AnswerDefinitions SelectedAnswerDefinition
@@ -227,7 +230,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(SelectedAnswerDefinitionProperty, value); }
         }
 
-        public static readonly PropertyData SelectedAnswerDefinitionProperty = RegisterProperty("SelectedAnswerDefinition", typeof (AnswerDefinitions));
+        public static readonly PropertyData SelectedAnswerDefinitionProperty = RegisterProperty("SelectedAnswerDefinition", typeof(AnswerDefinitions));
 
         /// <summary>Currently selected Tag to add to the page.</summary>
         public ManualTags SelectedTag
@@ -236,7 +239,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(SelectedTagProperty, value); }
         }
 
-        public static readonly PropertyData SelectedTagProperty = RegisterProperty("SelectedTag", typeof (ManualTags));
+        public static readonly PropertyData SelectedTagProperty = RegisterProperty("SelectedTag", typeof(ManualTags));
 
         /// <summary>Sorted list of <see cref="ITag" />s by category.</summary>
         public CollectionViewSource SortedTags
@@ -245,7 +248,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(SortedTagsProperty, value); }
         }
 
-        public static readonly PropertyData SortedTagsProperty = RegisterProperty("SortedTags", typeof (CollectionViewSource), () => new CollectionViewSource());
+        public static readonly PropertyData SortedTagsProperty = RegisterProperty("SortedTags", typeof(CollectionViewSource), () => new CollectionViewSource());
 
         public string FormattedMinMaxAverageHistoryLength
         {
@@ -922,6 +925,257 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
+        /// <summary>
+        /// Analyzes ink strokes near array objects to determine if skip counting was used
+        /// </summary>
+        public Command AnalyzeSkipCountingCommand { get; private set; }
+
+        private void OnAnalyzeSkipCountingCommandExecute()
+        {
+            var arraysOnPage = CurrentPage.PageObjects.OfType<CLPArray>().ToList();
+            var inkOnPage = CurrentPage.InkStrokes;
+            var debug = true;
+
+            //Makes .txt file to store data in
+            var desktopDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            var fileDirectory = Path.Combine(desktopDirectory, "SkipCountLogs");
+            Console.WriteLine(fileDirectory);
+            if (!Directory.Exists(fileDirectory))
+            {
+                Directory.CreateDirectory(fileDirectory);
+            }
+            var filePath = Path.Combine(fileDirectory, CurrentPage.Owner.FullName + CurrentPage.PageNumber +"_V6.txt");
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+            File.WriteAllText(filePath, "");
+
+            //Iterates over arrays on page
+            foreach (var array in arraysOnPage)
+            {
+                var skipCountStrokes = new Dictionary<int, StrokeCollection>();
+                Stroke prevStroke = null;
+                var prevRow = -2;
+                //var prev_xpos = -2.0; 
+
+                foreach (var inkStroke in inkOnPage)
+                {
+                    //Defines location variables
+                    var row = -2;
+                    var xpos = array.XPosition + array.LabelLength + array.ArrayWidth - 1.1*array.GridSquareSize;
+                    var width = (4.5*array.LabelLength) + (1.1*array.GridSquareSize);
+                    var height = array.GridSquareSize;
+                    //var curr_xpos = xpos;
+
+                    //Thickens ink stroke in consideration
+                    if (debug)
+                    {
+                        inkStroke.DrawingAttributes.Height *= 2;
+                        inkStroke.DrawingAttributes.Width *= 2;
+                        PageHistory.UISleep(800);
+                    }
+
+                    /*******************************/
+                    /*   INSIDE GENERAL AREA TEST  */
+                    /*******************************/
+                    bool cont = false;
+                    var generalBound = new Rect(array.XPosition+array.LabelLength, array.YPosition+array.LabelLength-0.1*height, array.ArrayWidth+4.5*array.LabelLength, array.ArrayHeight+0.2*height);
+                    if (debug)
+                    {
+                        CurrentPage.ClearBoundaries();
+                        CurrentPage.AddBoundary(generalBound);
+                        PageHistory.UISleep(800);
+                    }
+                    if (inkStroke.HitTest(generalBound, 80))
+                        cont = true;
+                    else
+                        Console.WriteLine("Failed general bound test");
+
+                    /************************/
+                    /* PREVIOUS STROKE TEST */
+                    /************************/
+
+                    //Creates fixed stroke bounds
+                    var strokeBoundFixed = new Rect(inkStroke.GetBounds().X, inkStroke.GetBounds().Y, inkStroke.GetBounds().Width, inkStroke.GetBounds().Height);
+
+                    //Checks previous ink stroke's bounds
+                    if (prevStroke != null && cont) //&& prev_xpos == curr_xpos)
+                    {
+                        var prev_y = prevStroke.GetBounds().Y;
+                        //var prev_height = prevStroke.GetBounds().Height;
+                        var curr_y = inkStroke.GetBounds().Y;
+                        //var curr_height = inkStroke.GetBounds().Height;
+
+                        var prevBound = new Rect(xpos, prevStroke.GetBounds().Y - 0.2 * height, width, 1.4 * height);
+                        if (debug)
+                        {
+                            CurrentPage.ClearBoundaries();
+                            CurrentPage.AddBoundary(prevBound);
+                            PageHistory.UISleep(800);
+                        }
+
+                        //Finds intersection
+                        var strokeBound = new Rect(inkStroke.GetBounds().X, inkStroke.GetBounds().Y, inkStroke.GetBounds().Width, inkStroke.GetBounds().Height);
+                        strokeBound.Intersect(prevBound);
+                        var intersectArea = strokeBound.Height * strokeBound.Width;
+                        var strokeArea = strokeBoundFixed.Height * strokeBoundFixed.Width;
+                        var percentIntersect = 100 * intersectArea / strokeArea;
+                        Console.WriteLine("Checking prevRow {0}. Percent intersect is {1}", prevRow, percentIntersect);
+
+                        //Checks if 80% inside row
+                        if (percentIntersect >= 80 && percentIntersect <= 101)
+                        {
+                            row = prevRow;
+                            cont = false;
+                            Console.WriteLine("Passed prevRow test");
+                        }
+
+                        //Check if in row after previous stroke
+                        else
+                        {
+                            //Creates previous stroke's row bound
+                            var nextBound = new Rect(xpos, prevStroke.GetBounds().Y + 0.8 * height, width, 1.4 * height);
+                            if (debug)
+                            {
+                                CurrentPage.ClearBoundaries();
+                                CurrentPage.AddBoundary(nextBound);
+                                PageHistory.UISleep(800);
+                            }
+
+                            //Finds intersection
+                            strokeBound = new Rect(inkStroke.GetBounds().X, inkStroke.GetBounds().Y, inkStroke.GetBounds().Width, inkStroke.GetBounds().Height);
+                            strokeBound.Intersect(nextBound);
+                            intersectArea = strokeBound.Height * strokeBound.Width;
+                            strokeArea = strokeBoundFixed.Height * strokeBoundFixed.Width;
+                            percentIntersect = 100 * intersectArea / strokeArea;
+                            Console.WriteLine("Checking prevRow+1 {0}. Percent intersect is {1}", prevRow + 1, percentIntersect);
+
+                            //Checks if 80% inside row
+                            if (percentIntersect >= 80 && percentIntersect <= 101)
+                            {
+                                row = prevRow + 1;
+                                cont = false;
+                                Console.WriteLine("Passed prevRow+1 test");
+                            }
+                        }
+                    }
+
+                    /************************/
+                    /*  ROW ITERATION TEST  */
+                    /************************/
+
+                    if (cont)
+                    {
+                        for (int i = 0; i < array.Rows; i++)
+                        {
+                            //Creates array row bound
+                            var ypos = array.YPosition + array.LabelLength + (array.GridSquareSize * i);
+                            var rectBound = new Rect(xpos, ypos - 0.1 * height, width, 1.2 * height);
+                            if (debug)
+                            {
+                                //Console.WriteLine("Checking row iterations");
+                                CurrentPage.ClearBoundaries();
+                                CurrentPage.AddBoundary(rectBound);
+                                PageHistory.UISleep(800);
+                            }
+
+                            //Finds intersection
+                            var strokeBound = new Rect(inkStroke.GetBounds().X, inkStroke.GetBounds().Y, inkStroke.GetBounds().Width, inkStroke.GetBounds().Height);
+                            strokeBound.Intersect(rectBound);
+                            var intersectArea = strokeBound.Height * strokeBound.Width;
+                            var strokeArea = strokeBoundFixed.Height * strokeBoundFixed.Width;
+                            var percentIntersect = 100 * intersectArea / strokeArea;
+                            if (debug)
+                                Console.WriteLine("{0}, {1}, {2}", inkStroke.GetStrokeID(), i, percentIntersect);
+
+                            //Checks if 80% inside row
+                            if (percentIntersect >= 80 && percentIntersect <= 101)
+                            {
+                                row = i;
+                                cont = false;
+                                break;
+                            }
+                        }
+                    }
+
+                    /************************/
+                    /*   INSIDE ARRAY TEST  */
+                    /************************/
+                    if (cont)
+                    {
+                        var arrBound = new Rect(array.XPosition + array.LabelLength, array.YPosition + array.LabelLength, array.ArrayWidth, array.ArrayHeight);
+                        if (debug)
+                        {
+                            CurrentPage.ClearBoundaries();
+                            CurrentPage.AddBoundary(arrBound);
+                            PageHistory.UISleep(800);
+                        }
+                        if (inkStroke.HitTest(arrBound, 80))
+                        {
+                            row = -1;
+                            //curr_xpos = xpos - array.GridSquareSize;
+                        }
+                    }
+
+                    /***************/
+                    /*  ROW MATCH  */
+                    /***************/
+                    if (row > -2)
+                    {
+                        Console.WriteLine("***Stroke added to row {0}***", row);
+
+                        //Thickens stroke to indicate match
+                        if (debug)
+                        {
+                            inkStroke.DrawingAttributes.Height *= 2;
+                            inkStroke.DrawingAttributes.Width *= 2;
+                            PageHistory.UISleep(800);
+                        }
+
+                        //Adds stroke to dictionary
+                        if (!skipCountStrokes.ContainsKey(row))
+                        {
+                            skipCountStrokes.Add(row, new StrokeCollection());
+                        }
+                        skipCountStrokes[row].Add(inkStroke);
+                        if (row > -1)
+                        {
+                            prevStroke = inkStroke;
+                            prevRow = row;
+                            //prev_xpos = curr_xpos;
+                        }
+
+                        if (debug)
+                        {
+                            CurrentPage.ClearBoundaries();
+                            inkStroke.DrawingAttributes.Height /= 2;
+                            inkStroke.DrawingAttributes.Width /= 2;
+                        }
+                    }
+
+                    //Clears visual markers
+                    if (debug)
+                    {
+                        CurrentPage.ClearBoundaries();
+                        inkStroke.DrawingAttributes.Height /= 2;
+                        inkStroke.DrawingAttributes.Width /= 2;
+                    }
+
+                }
+
+                //Writes row number and ink interpretation to txt file
+                foreach (var row in skipCountStrokes.Keys)
+                {
+                    var interpretation = InkInterpreter.StrokesToBestGuessText(skipCountStrokes[row]);
+                    File.AppendAllText(filePath, interpretation + "\tRow " + row.ToString() + Environment.NewLine);
+                    Console.WriteLine("{0},{1}", row, interpretation);
+                }
+
+            }
+
+        }
+
         #endregion //Commands
 
         /// <summary>TEMP</summary>
@@ -1013,7 +1267,7 @@ namespace Classroom_Learning_Partner.ViewModels
                     tag.ArrayName = array.Rows + "x" + array.Columns;
                     if (horizontalDivisions.Count > 1)
                         tag.VerticalDividers = horizontalDivisions;
-                    if (verticalDivisions.Count > 1) 
+                    if (verticalDivisions.Count > 1)
                         tag.HorizontalDividers = verticalDivisions;
                     CurrentPage.AddTag(tag);
                 }
