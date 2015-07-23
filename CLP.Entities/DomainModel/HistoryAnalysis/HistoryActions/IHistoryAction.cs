@@ -4,6 +4,7 @@ namespace CLP.Entities
 {
     public interface IHistoryAction
     {
+        int HistoryActionIndex { get; set; }
         string ID { get; set; }
         string ParentPageID { get; set; }
         string ParentPageOwnerID { get; set; }
@@ -11,8 +12,9 @@ namespace CLP.Entities
         CLPPage ParentPage { get; set; }
         List<string> HistoryItemIDs { get; set; }
         List<string> HistoryActionIDs { get; set; }
+        string CachedCodedValue { get; set; }
+        string CodedValue { get; }
         List<IHistoryItem> HistoryItems { get; }
         List<IHistoryAction> HistoryActions { get; }
-        string CodedValue { get; }
     }
 }

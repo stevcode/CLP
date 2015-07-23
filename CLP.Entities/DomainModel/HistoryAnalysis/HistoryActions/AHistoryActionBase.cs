@@ -30,6 +30,15 @@ namespace CLP.Entities
 
         #region Navigation Properties
 
+        /// <summary>Location of the <see cref="IHistoryAction" /> in the list of <see cref="IHistoryAction" />s.</summary>
+        public int HistoryActionIndex
+        {
+            get { return GetValue<int>(HistoryActionIndexProperty); }
+            set { SetValue(HistoryActionIndexProperty, value); }
+        }
+
+        public static readonly PropertyData HistoryActionIndexProperty = RegisterProperty("HistoryActionIndex", typeof(int), -1);
+
         /// <summary>Unique Identifier for the <see cref="AHistoryItemBase" />.</summary>
         /// <remarks>Composite Primary Key.</remarks>
         public string ID
@@ -100,9 +109,7 @@ namespace CLP.Entities
 
         public static readonly PropertyData HistoryItemIDsProperty = RegisterProperty("HistoryItemIDs", typeof (List<string>), () => new List<string>());
 
-        /// <summary>
-        /// List of the IDs of any HistoryActions that make up this HistoryAction.
-        /// </summary>
+        /// <summary>List of the IDs of any HistoryActions that make up this HistoryAction.</summary>
         public List<string> HistoryActionIDs
         {
             get { return GetValue<List<string>>(HistoryActionIDsProperty); }
@@ -110,6 +117,17 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData HistoryActionIDsProperty = RegisterProperty("HistoryActionIDs", typeof (List<string>), () => new List<string>());
+
+        /// <summary>Cached value of CodedValue with correct page state.</summary>
+        public string CachedCodedValue
+        {
+            get { return GetValue<string>(CachedCodedValueProperty); }
+            set { SetValue(CachedCodedValueProperty, value); }
+        }
+
+        public static readonly PropertyData CachedCodedValueProperty = RegisterProperty("CachedCodedValue", typeof(string), string.Empty);
+
+        public abstract string CodedValue { get; }
 
         #region Calculated Properties
 
@@ -126,8 +144,6 @@ namespace CLP.Entities
         }
 
         #endregion //Calculated Properties
-
-        public abstract string CodedValue { get; }
 
         #endregion //Properties
     }
