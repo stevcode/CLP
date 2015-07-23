@@ -482,8 +482,8 @@ namespace CLP.Entities
         
         public int GetJumpStartFromStroke(Stroke stroke)
         {
-            var tickR = FindClosestTick(stroke, true);
-            var tickL = FindClosestTick(stroke, false);
+            var tickR = FindClosestTickToArcStroke(stroke, true);
+            var tickL = FindClosestTickToArcStroke(stroke, false);
             if (tickR == null ||
                 tickL == null ||
                 tickR == tickL)
@@ -496,8 +496,8 @@ namespace CLP.Entities
 
         public int GetJumpEndFromStroke(Stroke stroke)
         {
-            var tickR = FindClosestTick(stroke, true);
-            var tickL = FindClosestTick(stroke, false);
+            var tickR = FindClosestTickToArcStroke(stroke, true);
+            var tickL = FindClosestTickToArcStroke(stroke, false);
             if (tickR == null ||
                 tickL == null ||
                 tickR == tickL)

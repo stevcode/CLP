@@ -286,26 +286,6 @@ namespace CLP.Entities
             return newStamp;
         }
 
-        public override string FormattedName
-        {
-            get
-            {
-                switch (StampType)
-                {
-                    case StampTypes.GeneralStamp:
-                        return "Stamp";
-                    case StampTypes.ObservingStamp:
-                        return "Observing Stamp";
-                    case StampTypes.GroupStamp:
-                        return "Group Stamp";
-                    case StampTypes.EmptyGroupStamp:
-                        return "Empty Group Stamp";
-                    default:
-                        return "Stamp";
-                }
-            }
-        }
-
         public override string CodedName
         {
             get { return "STAMP"; }

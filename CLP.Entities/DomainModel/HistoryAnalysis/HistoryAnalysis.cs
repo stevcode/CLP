@@ -827,8 +827,8 @@ namespace CLP.Entities
                                         {
                                             if (resizeHistoryItem.PageObjectID == pageObject.ID)
                                             {
-                                                x2 = x1 + resizeHistoryItem.InitialWidth;
-                                                y2 = y1 + resizeHistoryItem.InitialHeight;
+                                                x2 = x1 + resizeHistoryItem.OriginalWidth;
+                                                y2 = y1 + resizeHistoryItem.OriginalHeight;
                                                 if (pageObject.GetType().Name == "CLPArray")
                                                 {
                                                     var arr = pageObject as CLPArray;
