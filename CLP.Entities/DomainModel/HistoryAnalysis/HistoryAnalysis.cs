@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Security.AccessControl;
+using System.Windows.Ink;
 
 namespace CLP.Entities
 {
@@ -11,6 +11,7 @@ namespace CLP.Entities
         {
             public readonly InkAction.InkLocations Location;
             public readonly string NearestObject;
+
             public InkGroupKey(InkAction.InkLocations location, string nearestObject)
             {
                 Location = location;
@@ -25,12 +26,12 @@ namespace CLP.Entities
 
             }*/
         }
+
         public static void GenerateInitialHistoryActions(CLPPage page)
         {
             //TODO: For Steve: Look into TypeSwitch static class as seen here: http://stackoverflow.com/questions/298976/is-there-a-better-alternative-than-this-to-switch-on-type
 
             page.History.IsAnimating = true;
-            page.History.RefreshHistoryIndexes();
 
             //Start from beginning of the History, e.g. the original page.
             while (page.History.UndoItems.Any())
@@ -42,7 +43,7 @@ namespace CLP.Entities
 
             //keep track of numberlines throughout history Key<int>:NumberLineSize, Value<int>:Number of Number Lines with that Size, increment on NumberLine creation and when NL size changes
             //Pass into constructors of actions that need identifiers, first converting int value to string (0 = string.Empty, 1 = a, 2 = b, etc)
-            var numberLineSizes = new Dictionary<int,int>();
+            var numberLineSizes = new Dictionary<int, int>();
 
             //Associate number line IDs with letter ID
             var numberLineLetterIDs = new Dictionary<string, string>();
@@ -60,7 +61,7 @@ namespace CLP.Entities
 
                 var objectChanged = redoItem as ObjectsOnPageChangedHistoryItem;
                 if (objectChanged != null) //object added or deleted, strokes added or deleted
-                {                  
+                {
                     if (objectChanged.IsUsingPageObjects &&
                         !objectChanged.IsUsingStrokes)
                     {
@@ -70,7 +71,7 @@ namespace CLP.Entities
                         {
                             var objectAddedID = objectChanged.PageObjectIDsAdded.First();
                             var objectAdded = page.GetPageObjectByIDOnPageOrInHistory(objectAddedID);
-                            
+
                             if (objectAdded.GetType().Name == "CLPArray")
                             {
                                 var arr = objectAdded as CLPArray;
@@ -80,7 +81,7 @@ namespace CLP.Entities
                                     arrayDimensions[dimensions] += 1;
                                     if (arrayDimensions[dimensions] > 1)
                                     {
-                                        objectIdentifier = ((char)(arrayDimensions[dimensions] + 95)).ToString();                                        
+                                        objectIdentifier = ((char)(arrayDimensions[dimensions] + 95)).ToString();
                                     }
                                 }
                                 else
@@ -98,7 +99,7 @@ namespace CLP.Entities
                                     numberLineSizes[size] += 1;
                                     if (numberLineSizes[size] > 1)
                                     {
-                                        objectIdentifier = ((char)(numberLineSizes[size] + 96)).ToString();                                        
+                                        objectIdentifier = ((char)(numberLineSizes[size] + 96)).ToString();
                                     }
                                 }
                                 else
@@ -117,7 +118,7 @@ namespace CLP.Entities
                                 var arr = objectRemoved as CLPArray;
                                 var dimensions = string.Format("{0}x{1}", arr.Rows, arr.Columns);
                                 objectIdentifier = arrayLetterIDs[objectRemovedID];
-                                
+
                                 arrayDimensions[dimensions] -= 1;
                                 arrayLetterIDs[objectRemovedID] = "No longer on page";
                             }
@@ -126,7 +127,7 @@ namespace CLP.Entities
                                 var nl = objectRemoved as NumberLine;
                                 var size = nl.NumberLineSize;
                                 objectIdentifier = numberLineLetterIDs[objectRemovedID];
-                                
+
                                 numberLineSizes[size] -= 1;
                                 numberLineLetterIDs[objectRemovedID] = "No longer on page";
                             }
@@ -139,7 +140,8 @@ namespace CLP.Entities
                                                                         new List<IHistoryItem>
                                                                         {
                                                                             objectChanged
-                                                                        }, objectIdentifier);
+                                                                        },
+                                                                        objectIdentifier);
                         page.History.HistoryActions.Add(historyAction);
                         page.History.Redo();
                         pageObjectNumberInHistory++;
@@ -201,7 +203,8 @@ namespace CLP.Entities
                                                                     new List<IHistoryItem>
                                                                     {
                                                                         objectMoved
-                                                                    }, objectIdentifier);
+                                                                    },
+                                                                    objectIdentifier);
                     page.History.HistoryActions.Add(historyAction);
                     page.History.Redo();
                     pageObjectNumberInHistory++;
@@ -231,7 +234,8 @@ namespace CLP.Entities
                                                                     new List<IHistoryItem>
                                                                     {
                                                                         objectResized
-                                                                    }, objectIdentifier);
+                                                                    },
+                                                                    objectIdentifier);
                     page.History.HistoryActions.Add(historyAction);
                     page.History.Redo();
                     pageObjectNumberInHistory++;
@@ -279,7 +283,7 @@ namespace CLP.Entities
                     {
                         var halfID = ((char)(arrayDimensions[dimensionsHalf2] + 96)).ToString();
                         newIdentifiers.Add(halfID);
-                        arrayLetterIDs[objectCut.HalvedPageObjectIDs[1]] = halfID;                        
+                        arrayLetterIDs[objectCut.HalvedPageObjectIDs[1]] = halfID;
                         arrayDimensions[dimensionsHalf2] += 1;
                     }
                     else
@@ -289,14 +293,15 @@ namespace CLP.Entities
                         arrayDimensions[dimensionsHalf2] = 1;
                     }
 
-
                     var arrayAction = new ArrayHistoryAction(page,
                                                              new List<IHistoryItem>
                                                              {
                                                                  objectCut
-                                                             }, originalIdentifiers, newIdentifiers);
+                                                             },
+                                                             originalIdentifiers,
+                                                             newIdentifiers);
                     page.History.HistoryActions.Add(arrayAction);
-                    
+
                     pageObjectNumberInHistory++;
                     continue;
                 }
@@ -318,7 +323,7 @@ namespace CLP.Entities
                         else
                         {
                             numberLineLetterIDs[numberLineID] = "";
-                        }                   
+                        }
                     }
                     else
                     {
@@ -387,7 +392,7 @@ namespace CLP.Entities
                 if (arraySnap != null)
                 {
                     var originalIdentifiers = new List<string>();
-                    var newIdentifiers = new List<string> ();
+                    var newIdentifiers = new List<string>();
 
                     var direction = arraySnap.IsHorizontal;
                     var persistingID = arraySnap.PersistingArrayID;
@@ -399,7 +404,7 @@ namespace CLP.Entities
                     originalIdentifiers.Add(arrayLetterIDs[snappedID]);
                     arrayDimensions[dimensionsSnap1] -= 1;
                     arrayLetterIDs[snappedID] = "No longer on page";
-                   
+
                     var dimensionsSnap2 = string.Format("{0}x{1}", persistingArray.Rows, persistingArray.Columns);
                     originalIdentifiers.Add(arrayLetterIDs[persistingID]);
                     arrayDimensions[dimensionsSnap2] -= 1;
@@ -414,7 +419,7 @@ namespace CLP.Entities
                         if (arrayDimensions[dimensionsNew] > 1)
                         {
                             newArrayIdentifier = ((char)(arrayDimensions[dimensionsNew] + 95)).ToString();
-                        }                                       
+                        }
                     }
                     else
                     {
@@ -422,8 +427,14 @@ namespace CLP.Entities
                     }
                     newIdentifiers.Add(newArrayIdentifier);
                     arrayLetterIDs[persistingID] = newArrayIdentifier;
-              
-                    var arrayAction = new ArrayHistoryAction(page,new List<IHistoryItem>{arraySnap}, originalIdentifiers, newIdentifiers);                   
+
+                    var arrayAction = new ArrayHistoryAction(page,
+                                                             new List<IHistoryItem>
+                                                             {
+                                                                 arraySnap
+                                                             },
+                                                             originalIdentifiers,
+                                                             newIdentifiers);
                     page.History.HistoryActions.Add(arrayAction);
                     page.History.Redo();
                     pageObjectNumberInHistory++;
@@ -438,16 +449,16 @@ namespace CLP.Entities
             var isHistoryActiosAltered = false;
 
             var currentInkGroup = 0;
-            var inkGroupLetterIDs = new Dictionary<InkGroupKey,string>();
+            var inkGroupLetterIDs = new Dictionary<InkGroupKey, string>();
             var currentObjectsOnPage = new List<IPageObject>();
 
-            var numberLineSizes = new Dictionary<int,int>();
+            var numberLineSizes = new Dictionary<int, int>();
             var numberLineLetterIDs = new Dictionary<string, string>();
             var arrayDimensions = new Dictionary<string, int>();
             var arrayLetterIDs = new Dictionary<string, string>();
-            
+
             foreach (var historyAction in page.History.HistoryActions)
-            {    
+            {
                 var generalPageObjectAction = historyAction as GeneralPageObjectAction;
                 if (generalPageObjectAction != null)
                 {
@@ -467,13 +478,12 @@ namespace CLP.Entities
                             {
                                 arrayDimensions[dimensions] = 1;
                             }
-                            
+
                             arrayLetterIDs[arr.ID] = "";
                             if (arrayDimensions[dimensions] > 1)
                             {
                                 arrayLetterIDs[arr.ID] = ((char)(arrayDimensions[dimensions] + 95)).ToString();
                             }
-
                         }
                         else if (obj.GetType().Name == "NumberLine")
                         {
@@ -507,7 +517,7 @@ namespace CLP.Entities
                             {
                                 arrayDimensions[dimensions] -= 1;
                             }
-                            
+
                             arrayLetterIDs[arr.ID] = "";
                             if (arrayDimensions[dimensions] > 1)
                             {
@@ -527,7 +537,7 @@ namespace CLP.Entities
                             if (numberLineSizes[size] > 1)
                             {
                                 numberLineLetterIDs[nl.ID] = ((char)(numberLineSizes[size] + 95)).ToString();
-                            }    
+                            }
                         }
                     }
                     else if (generalPageObjectAction.GeneralAction == GeneralPageObjectAction.GeneralActions.Move)
@@ -535,20 +545,20 @@ namespace CLP.Entities
                         var obj = generalPageObjectAction.MovedPageObjects.First();
                         if (obj.GetType().Name == "CLPArray")
                         {
-                            System.Console.WriteLine("Array moved");
+                            Console.WriteLine("Array moved");
                             var moveHistoryItem = generalPageObjectAction.HistoryItems.OfType<ObjectsMovedBatchHistoryItem>().FirstOrDefault();
                             foreach (var p in moveHistoryItem.TravelledPositions)
                             {
-                                System.Console.WriteLine(string.Format("x:{0}, y:{1}", p.X, p.Y));
+                                Console.WriteLine(string.Format("x:{0}, y:{1}", p.X, p.Y));
                             }
-                            System.Console.WriteLine(string.Format("width:{0}, height:{0}", obj.Width, obj.Height));
-                            System.Console.WriteLine("\n");
+                            Console.WriteLine(string.Format("width:{0}, height:{0}", obj.Width, obj.Height));
+                            Console.WriteLine("\n");
                         }
                     }
                     revisedHistoryActions.Add(generalPageObjectAction);
                     continue;
                 }
-                
+
                 var arrayHistoryAction = historyAction as ArrayHistoryAction;
                 if (arrayHistoryAction != null)
                 {
@@ -561,12 +571,12 @@ namespace CLP.Entities
                         var cutDim = string.Format("{0}x{1}", cutArray.Rows, cutArray.Columns);
                         arrayDimensions[cutDim] -= 1;
                         arrayLetterIDs[cutArray.ID] = "no longer on page";
-                        
+
                         var halfArray1 = page.GetPageObjectByIDOnPageOrInHistory(arrayCutHistoryItem.HalvedPageObjectIDs[0]) as CLPArray;
                         var halfArray2 = page.GetPageObjectByIDOnPageOrInHistory(arrayCutHistoryItem.HalvedPageObjectIDs[1]) as CLPArray;
                         currentObjectsOnPage.Add(halfArray1);
                         currentObjectsOnPage.Add(halfArray2);
-                        
+
                         //half array 1
                         var halfDim1 = string.Format("{0}x{1}", halfArray1.Rows, halfArray1.Columns);
                         if (halfArray1.Rows == cutArray.Rows && //some buggy cutting
@@ -583,7 +593,6 @@ namespace CLP.Entities
                         else
                         {
                             arrayDimensions[halfDim1] = 1;
-                            
                         }
                         arrayLetterIDs[halfArray1.ID] = "";
                         if (arrayDimensions[halfDim1] > 1)
@@ -600,14 +609,13 @@ namespace CLP.Entities
                         else
                         {
                             arrayDimensions[halfDim2] = 1;
-                            
                         }
                         arrayLetterIDs[halfArray2.ID] = "";
                         if (arrayDimensions[halfDim2] > 1)
                         {
                             arrayLetterIDs[halfArray2.ID] = ((char)(arrayDimensions[halfDim2] + 95)).ToString();
                         }
-                        System.Console.WriteLine("Cut");
+                        Console.WriteLine("Cut");
                     }
                     else if (arrayHistoryAction.ArrayAction == ArrayHistoryAction.ArrayActions.Snap)
                     {
@@ -619,9 +627,8 @@ namespace CLP.Entities
                         if (arrayDimensions.ContainsKey(dim))
                         {
                             arrayDimensions[dim] -= 1;
-                        }                      
+                        }
                         arrayLetterIDs[snappedArray.ID] = "no longer on page";
-
 
                         //persisting array, before snap
                         var persistArray = page.GetPageObjectByIDOnPageOrInHistory(arraySnapHistoryItem.PersistingArrayID) as CLPArray;
@@ -630,7 +637,7 @@ namespace CLP.Entities
                         var removedColumns = (direction) ? snappedArray.Columns : persistArray.Columns - snappedArray.Columns;
                         dim = string.Format("{0}x{1}", removedRows, removedColumns);
                         arrayDimensions[dim] -= 1;
-                        
+
                         //persisting(large) array
                         dim = string.Format("{0}x{1}", persistArray.Rows, persistArray.Columns);
                         if (arrayDimensions.ContainsKey(dim))
@@ -640,26 +647,24 @@ namespace CLP.Entities
                         else
                         {
                             arrayDimensions[dim] = 1;
-
                         }
                         arrayLetterIDs[persistArray.ID] = "";
                         if (arrayDimensions[dim] > 1)
                         {
                             arrayLetterIDs[persistArray.ID] = ((char)(arrayDimensions[dim] + 95)).ToString();
                         }
-
                     }
                     else if (arrayHistoryAction.ArrayAction == ArrayHistoryAction.ArrayActions.Divide)
                     {
-                        System.Console.WriteLine("Divide");
+                        Console.WriteLine("Divide");
                     }
                     else if (arrayHistoryAction.ArrayAction == ArrayHistoryAction.ArrayActions.InkDivide)
                     {
-                        System.Console.WriteLine("InkDivide");
+                        Console.WriteLine("InkDivide");
                     }
                     else if (arrayHistoryAction.ArrayAction == ArrayHistoryAction.ArrayActions.Rotate)
                     {
-                        System.Console.WriteLine("Rotate");
+                        Console.WriteLine("Rotate");
                     }
                     revisedHistoryActions.Add(arrayHistoryAction);
                     continue;
@@ -696,12 +701,10 @@ namespace CLP.Entities
                     var moveHistoryActionsAfterNow =
                         historyActionsAfterNow.OfType<GeneralPageObjectAction>().Where(h => h.GeneralAction == GeneralPageObjectAction.GeneralActions.Move).ToList();
                     var resizeHistoryActionsAfterNow =
-                        historyActionsAfterNow.OfType<GeneralPageObjectAction>()
-                                              .Where(h => h.GeneralAction == GeneralPageObjectAction.GeneralActions.Resize)
-                                              .ToList();
+                        historyActionsAfterNow.OfType<GeneralPageObjectAction>().Where(h => h.GeneralAction == GeneralPageObjectAction.GeneralActions.Resize).ToList();
                     var arraySnapHistoryActionsAfterNow =
                         historyActionsAfterNow.OfType<ArrayHistoryAction>().Where(h => h.ArrayAction == ArrayHistoryAction.ArrayActions.Snap).ToList();
-                    
+
                     var inkHistoryItemIDs = inkAction.HistoryItemIDs;
 
                     //iterating through inkHistoryItems
@@ -719,7 +722,7 @@ namespace CLP.Entities
                         var inkActionType = InkAction.InkActions.Ignore;
                         var inkLocation = InkAction.InkLocations.None;
                         IPageObject nearestObject = null;
-                        System.Windows.Ink.Stroke inkStroke = null;
+                        Stroke inkStroke = null;
 
                         if (inkHistoryItem != null)
                         {
@@ -733,7 +736,7 @@ namespace CLP.Entities
                             else if (!inkHistoryItem.StrokeIDsAdded.Any() &&
                                      inkHistoryItem.StrokeIDsRemoved.Any())
                             {
-                                inkStroke = page.GetStrokeByIDOnPageOrInHistory(inkHistoryItem.StrokeIDsRemoved.First());                               
+                                inkStroke = page.GetStrokeByIDOnPageOrInHistory(inkHistoryItem.StrokeIDsRemoved.First());
                                 inkActionType = InkAction.InkActions.Erase;
                             }
                             else
@@ -759,17 +762,16 @@ namespace CLP.Entities
                                 var inkX2 = inkStroke.GetBounds().X + inkStroke.GetBounds().Width;
                                 var inkY1 = inkStroke.GetBounds().Y;
                                 var inkY2 = inkStroke.GetBounds().Y + inkStroke.GetBounds().Height;
-                                System.Console.WriteLine(string.Format("X1:{0} X2:{1} Y1:{2} Y2:{3}",
-                                            inkX1, inkX2, inkY1, inkY2));
+                                Console.WriteLine(string.Format("X1:{0} X2:{1} Y1:{2} Y2:{3}", inkX1, inkX2, inkY1, inkY2));
 
                                 double minDistance = double.PositiveInfinity;
-                                foreach(var pageObject in currentObjectsOnPage)
+                                foreach (var pageObject in currentObjectsOnPage)
                                 {
                                     var x1 = pageObject.XPosition;
                                     var y1 = pageObject.YPosition;
-                                                                
+
                                     var oldPersistingArrayDimensions = "";
-                                    
+
                                     foreach (var pageObjectAction in moveHistoryActionsAfterNow)
                                     {
                                         var moveHistoryItem = pageObjectAction.HistoryItems.OfType<ObjectsMovedBatchHistoryItem>().FirstOrDefault();
@@ -802,8 +804,8 @@ namespace CLP.Entities
                                             var persistArray = page.GetPageObjectByIDOnPageOrInHistory(snapHistoryItem.PersistingArrayID) as CLPArray;
                                             if (persistArray.ID == pageObject.ID)
                                             {
-                                                System.Console.WriteLine(persistArray.GridSquareSize);
-                                                var snapArray = page.GetPageObjectByIDOnPageOrInHistory(snapHistoryItem.SnappedArrayID) as CLPArray;                                                
+                                                Console.WriteLine(persistArray.GridSquareSize);
+                                                var snapArray = page.GetPageObjectByIDOnPageOrInHistory(snapHistoryItem.SnappedArrayID) as CLPArray;
                                                 var rows = (persistArray.Columns == snapArray.Columns) ? persistArray.Rows - snapArray.Rows : persistArray.Rows;
                                                 var cols = (persistArray.Columns == snapArray.Columns) ? persistArray.Columns : persistArray.Columns - snapArray.Columns;
                                                 x2 = x1 + cols * persistArray.GridSquareSize;
@@ -816,10 +818,9 @@ namespace CLP.Entities
                                                 x2 = x1 + snapArray.Columns * snapArray.GridSquareSize;
                                                 y2 = y1 + snapArray.Rows * snapArray.GridSquareSize;
                                             }*/
-
                                         }
                                     }
-                                    
+
                                     foreach (var pageObjectAction in resizeHistoryActionsAfterNow)
                                     {
                                         var resizeHistoryItem = pageObjectAction.HistoryItems.OfType<PageObjectResizeBatchHistoryItem>().FirstOrDefault();
@@ -839,7 +840,7 @@ namespace CLP.Entities
                                             }
                                         }
                                     }
-                                    
+
                                     //over object
                                     if ((inkX1 > x1 && inkX2 < x2) &&
                                         (inkY1 > y1 && inkY2 < y2))
@@ -849,15 +850,14 @@ namespace CLP.Entities
                                         changedArrayDescription = oldPersistingArrayDimensions;
                                         minDistance = 0;
 
-                                        System.Console.WriteLine(inkActionType.ToString().ToLower());                                        
-                                        System.Console.WriteLine(nearestObject.ID);
-                                        System.Console.WriteLine("over");
-                                        System.Console.WriteLine(string.Format("X1:{0} X2:{1} Y1:{2} Y2:{3}",
-                                            x1, x2, y1, y2));
-                                        System.Console.WriteLine("\n");
+                                        Console.WriteLine(inkActionType.ToString().ToLower());
+                                        Console.WriteLine(nearestObject.ID);
+                                        Console.WriteLine("over");
+                                        Console.WriteLine(string.Format("X1:{0} X2:{1} Y1:{2} Y2:{3}", x1, x2, y1, y2));
+                                        Console.WriteLine("\n");
                                         break;
                                     }
-                                    
+
                                     //relative position to object
                                     var minDistanceToObject = double.PositiveInfinity;
                                     var locationToObject = InkAction.InkLocations.None;
@@ -865,38 +865,40 @@ namespace CLP.Entities
                                     //right or left
                                     if (inkX2 > x2) //to right
                                     {
-                                        double d = System.Math.Abs(inkX1 - x2);
+                                        double d = Math.Abs(inkX1 - x2);
                                         if (d < minDistanceToObject)
                                         {
                                             minDistanceToObject = d;
                                             locationToObject = InkAction.InkLocations.Right;
                                         }
-                                    }else if (inkX1 < x1) //to left
+                                    }
+                                    else if (inkX1 < x1) //to left
                                     {
-                                        double d = System.Math.Abs(inkX2 - x1);
+                                        double d = Math.Abs(inkX2 - x1);
                                         if (d < minDistanceToObject)
                                         {
                                             minDistanceToObject = d;
                                             locationToObject = InkAction.InkLocations.Left;
                                         }
                                     }
-                                    
+
                                     //top or bottom
                                     if (inkY1 > y2)
                                     {
-                                        double d = System.Math.Abs(inkY1 - y2);
+                                        double d = Math.Abs(inkY1 - y2);
                                         if (d < minDistanceToObject)
                                         {
                                             minDistanceToObject = d;
-                                            locationToObject = InkAction.InkLocations.Bottom;
+                                            locationToObject = InkAction.InkLocations.Below;
                                         }
-                                    }else if (inkY2 < y1)
+                                    }
+                                    else if (inkY2 < y1)
                                     {
-                                        double d = System.Math.Abs(inkY2 - y1);
+                                        double d = Math.Abs(inkY2 - y1);
                                         if (d < minDistanceToObject)
                                         {
                                             minDistanceToObject = d;
-                                            locationToObject = InkAction.InkLocations.Top;
+                                            locationToObject = InkAction.InkLocations.Above;
                                         }
                                     }
 
@@ -907,12 +909,11 @@ namespace CLP.Entities
                                         nearestObject = pageObject;
                                         changedArrayDescription = oldPersistingArrayDimensions;
 
-                                        System.Console.WriteLine(inkActionType.ToString().ToLower());
-                                        System.Console.WriteLine(nearestObject.ID);
-                                        System.Console.WriteLine(inkLocation.ToString().ToLower() );
-                                        System.Console.WriteLine(string.Format("X1:{0} X2:{1} Y1:{2} Y2:{3}",
-                                            x1, x2, y1, y2));
-                                        System.Console.WriteLine("\n");
+                                        Console.WriteLine(inkActionType.ToString().ToLower());
+                                        Console.WriteLine(nearestObject.ID);
+                                        Console.WriteLine(inkLocation.ToString().ToLower());
+                                        Console.WriteLine(string.Format("X1:{0} X2:{1} Y1:{2} Y2:{3}", x1, x2, y1, y2));
+                                        Console.WriteLine("\n");
                                     }
                                 }
                             }
@@ -1027,7 +1028,7 @@ namespace CLP.Entities
                                         }
                                     }
                                 }
-                                
+
                                 //nearest object
                                 var locationDescription = "";
                                 if (currentNearestObject == null)
@@ -1044,7 +1045,7 @@ namespace CLP.Entities
                                         locationDescription = string.Format("ARR [{0}x{1}{2}]", array.Rows, array.Columns, arrayLetterIDs[objectID]);
                                         if (changedArrayDescription != "")
                                         {
-                                            locationDescription = string.Format("ARR [{0}{1}]", changedArrayDescription, arrayLetterIDs[objectID]);                                            
+                                            locationDescription = string.Format("ARR [{0}{1}]", changedArrayDescription, arrayLetterIDs[objectID]);
                                         }
                                     }
                                     else if (nearestObjectName == "NumberLine")
@@ -1062,7 +1063,7 @@ namespace CLP.Entities
                                         locationDescription = "STAMP IMAGE";
                                     }
                                 }
-                                
+
                                 var inkActionSecondPass = new InkAction(page, currentHistoryItems, currentActionType, currentLocation, locationDescription, inkGroup);
                                 revisedHistoryActions.Add(inkActionSecondPass);
 
@@ -1152,9 +1153,9 @@ namespace CLP.Entities
                     }
                 }
 
-                    //TODO: Adisa: This is 2nd pass, so this will always be "INK changed", sub-divide into INK strokes over array, left of array, etc
-                    //Keep track of InkGroups you make, each one you make you'll want to increment currentInkGroup++;
-                    //Then convert the currentInkGroup from int to string (0 = A, 1 = B, 2 = C, etc), pass that value in to the constructor for the InkAction, then you'll have that for the Ink group ID.
+                //TODO: Adisa: This is 2nd pass, so this will always be "INK changed", sub-divide into INK strokes over array, left of array, etc
+                //Keep track of InkGroups you make, each one you make you'll want to increment currentInkGroup++;
+                //Then convert the currentInkGroup from int to string (0 = A, 1 = B, 2 = C, etc), pass that value in to the constructor for the InkAction, then you'll have that for the Ink group ID.
             }
 
             //Replace historyActions with revisedHistoryActions

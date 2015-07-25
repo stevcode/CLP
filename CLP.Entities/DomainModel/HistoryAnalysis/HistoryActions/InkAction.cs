@@ -24,8 +24,8 @@ namespace CLP.Entities
             Over,
             Left,
             Right,
-            Top,
-            Bottom
+            Above,
+            Below
         }
 
         #region Constructors
@@ -112,7 +112,7 @@ namespace CLP.Entities
         public static readonly PropertyData InkActionTypeProperty = RegisterProperty("InkActionType", typeof(InkActions));
 
         /// <summary>
-        /// Location the Ink Action occurs.
+        /// Location relative to an <see cref="IPageObject" /> the Ink Action occurs.
         /// </summary>
         public InkLocations InkLocation
         {
@@ -136,7 +136,7 @@ namespace CLP.Entities
             set { SetValue(InkGroupProperty, value); }
         }
 
-        public static readonly PropertyData InkGroupProperty = RegisterProperty("InkGroup", typeof (string));
+        public static readonly PropertyData InkGroupProperty = RegisterProperty("InkGroup", typeof (string), string.Empty);
 
         public override string CodedValue
         {
