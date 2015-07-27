@@ -158,7 +158,7 @@
     <Compile Include="DomainModel\History\OBSOLETE\StrokesChangedHistoryItem.cs" />
     <Compile Include="DomainModel\IConnectedPerson.cs" />
     <Compile Include="DomainModel\Notebook.cs" />
-    <Compile Include="DomainModel\PageObjects\APageObjectBase.cs" />
+    <Compile Include="DomainModel\PageObjects\PageObject Abstract Base Classes\APageObjectBase.cs" />
     <Compile Include="DomainModel\PageObjects\Arrays\ACLPArrayBase.cs" />
     <Compile Include="DomainModel\PageObjects\Arrays\CLPArray.cs" />
     <Compile Include="DomainModel\PageObjects\Arrays\FuzzyFactorCard.cs" />

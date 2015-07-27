@@ -277,6 +277,44 @@ namespace CLP.Entities
             return deltaY >= 0 && deltaX >= 0 && (intersectionArea / areaObject >= percentage || intersectionArea / area >= percentage);
         }
 
+        #region History Methods
+
+        public virtual string GetCodedIDAtHistoryIndex(int historyIndex) { return ID; }
+
+        public virtual Point GetDimensionsAtHistoryIndex(int historyIndex)
+        {
+            var resizeHistoryItem =
+                ParentPage.History.CompleteOrderedHistoryItems.OfType<PageObjectResizeBatchHistoryItem>()
+                          .FirstOrDefault(h => h.PageObjectID == ID && h.HistoryIndex >= historyIndex);
+            if (resizeHistoryItem == null ||
+                !resizeHistoryItem.StretchedDimensions.Any())
+            {
+                return new Point(Width, Height);
+            }
+
+            return resizeHistoryItem.StretchedDimensions.First();
+        }
+
+        public virtual Point GetPositionAtHistoryIndex(int historyIndex)
+        {
+            var moveHistoryItem =
+                ParentPage.History.CompleteOrderedHistoryItems.OfType<ObjectsMovedBatchHistoryItem>()
+                          .FirstOrDefault(h => h.PageObjectIDs.ContainsKey(ID) && h.HistoryIndex >= historyIndex);
+
+            if (moveHistoryItem == null ||
+                !moveHistoryItem.TravelledPositions.Any())
+            {
+                return new Point(XPosition, YPosition);
+            }
+
+            var initialPosition = moveHistoryItem.TravelledPositions.First();
+            var offset = moveHistoryItem.PageObjectIDs[ID];
+            var adjustedPosition = new Point(initialPosition.X + offset.X, initialPosition.Y + offset.Y);
+            return adjustedPosition;
+        }
+
+        #endregion //History Methods
+
         #endregion //Methods
 
         #region Utility Methods

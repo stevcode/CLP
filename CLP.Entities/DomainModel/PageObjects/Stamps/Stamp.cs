@@ -5,9 +5,7 @@ using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Ink;
 using System.Windows.Media;
-using System.Xml.Serialization;
 using Catel.Data;
-using Catel.Runtime.Serialization;
 
 namespace CLP.Entities
 {
@@ -135,6 +133,17 @@ namespace CLP.Entities
 
         #endregion //Properties
 
+        #region Methods
+
+        public int GetPartsAtHistoryIndex(int historyIndex)
+        {
+            var partsHistoryItem =
+                ParentPage.History.CompleteOrderedHistoryItems.OfType<PartsValueChangedHistoryItem>().FirstOrDefault(h => h.PageObjectID == ID && h.HistoryIndex >= historyIndex);
+            return partsHistoryItem == null ? Parts : partsHistoryItem.PreviousValue;
+        }
+
+        #endregion //Methods
+
         #region APageObjectBase Overrides
 
         public override string FormattedName
@@ -163,6 +172,11 @@ namespace CLP.Entities
 
                 return string.Format("{0} with {1} Part(s)", stampType, Parts);
             }
+        }
+
+        public override string CodedName
+        {
+            get { return "STAMP"; }
         }
 
         public override int ZIndex
@@ -252,7 +266,7 @@ namespace CLP.Entities
         public override void OnMoved(double oldX, double oldY, bool fromHistory = false)
         {
             base.OnMoved(oldX, oldY, fromHistory);
-            
+
             OnMoving(oldX, oldY, fromHistory);
         }
 
@@ -286,14 +300,10 @@ namespace CLP.Entities
             return newStamp;
         }
 
-        public override string CodedName
+        public override string GetCodedIDAtHistoryIndex(int historyIndex)
         {
-            get { return "STAMP"; }
-        }
-
-        public override string CodedID
-        {
-            get { return ""; } //pictorial, discrete/unitized, parts info
+            var parts = GetPartsAtHistoryIndex(historyIndex);
+            return parts <= 0 ? "blank" : parts.ToString();
         }
 
         #endregion //APageObjectBase Overrides

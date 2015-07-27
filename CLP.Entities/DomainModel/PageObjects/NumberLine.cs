@@ -456,7 +456,7 @@ namespace CLP.Entities
                         closestTick.TickColor = stroke.DrawingAttributes.Color == Colors.Black ? "Blue" : stroke.DrawingAttributes.Color.ToString();
                         wasJumpMade = true;
                     }
-                    
+
                     var markedTickToTheLeft = Ticks.LastOrDefault(t => t.IsMarked && t.TickValue < closestTick.TickValue);
                     if (markedTickToTheLeft != null)
                     {
@@ -479,7 +479,7 @@ namespace CLP.Entities
                     return false;
             }
         }
-        
+
         public int GetJumpStartFromStroke(Stroke stroke)
         {
             var tickR = FindClosestTickToArcStroke(stroke, true);
@@ -633,6 +633,14 @@ namespace CLP.Entities
 
         public double FindTallestPoint(IEnumerable<Stroke> strokes) { return strokes.Select(stroke => stroke.GetBounds().Top).Concat(new[] { ParentPage.Height }).Min(); }
 
+        public int GetNumberLineSizeAtHistoryIndex(int historyIndex)
+        {
+            var sizeHistoryItem =
+                ParentPage.History.CompleteOrderedHistoryItems.OfType<NumberLineEndPointsChangedHistoryItem>()
+                          .FirstOrDefault(h => h.NumberLineID == ID && h.HistoryIndex >= historyIndex);
+            return sizeHistoryItem == null ? NumberLineSize : sizeHistoryItem.PreviousEndValue;
+        }
+
         #endregion //Methods
 
         #region APageObjectBase Overrides
@@ -644,18 +652,7 @@ namespace CLP.Entities
 
         public override string CodedName
         {
-            get
-            {
-                return "NL";
-            }
-        }
-        
-        public override string CodedID
-        {
-            get
-            {
-                return string.Format("[{0}]", NumberLineSize);
-            }
+            get { return "NL"; }
         }
 
         public override int ZIndex
@@ -812,6 +809,8 @@ namespace CLP.Entities
 
             return newNumberLine;
         }
+
+        public override string GetCodedIDAtHistoryIndex(int historyIndex) { return GetNumberLineSizeAtHistoryIndex(historyIndex).ToString(); }
 
         #endregion //APageObjectBase Overrides
 

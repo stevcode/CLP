@@ -172,6 +172,39 @@ namespace CLP.Entities
             }
         }
 
+        public Point GetColumnsAndRowsAtHistoryIndex(int historyIndex)
+        {
+            var rows = Rows;
+            var columns = Columns;
+            foreach (var historyItem in ParentPage.History.CompleteOrderedHistoryItems.Where(h => h.HistoryIndex >= historyIndex).Reverse())
+            {
+                TypeSwitch.On(historyItem).Case<CLPArrayRotateHistoryItem>(h =>
+                                                                           {
+                                                                               if (h.ArrayID == ID)
+                                                                               {
+                                                                                   rows = h.OldRows;
+                                                                                   columns = h.OldColumns;
+                                                                               }
+                                                                           })
+                                          .Case<CLPArraySnapHistoryItem>(h =>
+                                                                         {
+                                                                             if (h.PersistingArrayID == ID)
+                                                                             {
+                                                                                 if (h.IsHorizontal)
+                                                                                 {
+                                                                                     columns = h.PersistingArrayRowsOrColumns;
+                                                                                 }
+                                                                                 else
+                                                                                 {
+                                                                                     rows = h.PersistingArrayRowsOrColumns;
+                                                                                 }
+                                                                             }
+                                                                         });
+            }
+
+            return new Point(columns, rows);
+        }
+
         #endregion //Methods
 
         #region APageObjectBase Overrides
@@ -430,6 +463,12 @@ namespace CLP.Entities
             return newCLPArray;
         }
 
+        public override string GetCodedIDAtHistoryIndex(int historyIndex)
+        {
+            var dimensions = GetColumnsAndRowsAtHistoryIndex(historyIndex);
+            return string.Format("{0}x{1}", dimensions.Y, dimensions.X);
+        }
+
         #endregion //APageObjectBase Overrides
 
         #region ACLPArrayBase Overrides
@@ -474,7 +513,7 @@ namespace CLP.Entities
 
             //RefreshStrokeParentIDs();
             OnResized(initialWidth, initialHeight);
-        } 
+        }
 
         #endregion //ACLPArrayBase Overrides
 
@@ -1328,7 +1367,7 @@ namespace CLP.Entities
             set { SetValue(CanAcceptStrokesProperty, value); }
         }
 
-        public static readonly PropertyData CanAcceptStrokesProperty = RegisterProperty("CanAcceptStrokes", typeof(bool), true);
+        public static readonly PropertyData CanAcceptStrokesProperty = RegisterProperty("CanAcceptStrokes", typeof (bool), true);
 
         /// <summary>The currently accepted <see cref="Stroke" />s.</summary>
         [XmlIgnore]
@@ -1339,7 +1378,7 @@ namespace CLP.Entities
             set { SetValue(AcceptedStrokesProperty, value); }
         }
 
-        public static readonly PropertyData AcceptedStrokesProperty = RegisterProperty("AcceptedStrokes", typeof(List<Stroke>), () => new List<Stroke>());
+        public static readonly PropertyData AcceptedStrokesProperty = RegisterProperty("AcceptedStrokes", typeof (List<Stroke>), () => new List<Stroke>());
 
         /// <summary>The IDs of the <see cref="Stroke" />s that have been accepted.</summary>
         public List<string> AcceptedStrokeParentIDs
@@ -1348,7 +1387,7 @@ namespace CLP.Entities
             set { SetValue(AcceptedStrokeParentIDsProperty, value); }
         }
 
-        public static readonly PropertyData AcceptedStrokeParentIDsProperty = RegisterProperty("AcceptedStrokeParentIDs", typeof(List<string>), () => new List<string>());
+        public static readonly PropertyData AcceptedStrokeParentIDsProperty = RegisterProperty("AcceptedStrokeParentIDs", typeof (List<string>), () => new List<string>());
 
         public void LoadAcceptedStrokes()
         {
