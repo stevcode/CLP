@@ -231,11 +231,13 @@ namespace Classroom_Learning_Partner.ViewModels
                 ungroupedStampedObjects =
                     stampedObjects.Where(c => groupStampedObjects.Count(x => x.AcceptedPageObjectIDs.Contains(c.ID)) == 0).ToList();
 
-                
-
-                if (ungroupedStampedObjects.Count < numberOfAcceptedStampedObjects * numberOfCopies)
+                if (!ungroupedStampedObjects.Any())
                 {
-                    MessageBox.Show("Not enough objects on page.");
+                    isDuplicateAndTake = false;
+                }
+                else if (ungroupedStampedObjects.Count < numberOfAcceptedStampedObjects * numberOfCopies)
+                {
+                    MessageBox.Show("Not enough objects on the page.");
                     return;
                 }
             }
