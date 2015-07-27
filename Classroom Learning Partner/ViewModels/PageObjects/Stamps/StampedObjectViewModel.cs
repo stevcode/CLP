@@ -240,8 +240,18 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
 
+            //TODO: Make this work with a universal ApplyDistinctPosition Method.
             var initialXPosition = XPosition + Width + 10.0;
             var initialYPosition = YPosition;
+            if (initialXPosition + Width > PageObject.ParentPage.Width)
+            {
+                initialXPosition = 25;
+                initialYPosition += Height + 5;
+            }
+            if (initialYPosition + Height > PageObject.ParentPage.Height)
+            {
+                initialYPosition = PageObject.ParentPage.Height - Height;
+            }
 
             var stampCopiesToAdd = new List<IPageObject>();
             var ungroupedStampedObjectsIndex = 0;
