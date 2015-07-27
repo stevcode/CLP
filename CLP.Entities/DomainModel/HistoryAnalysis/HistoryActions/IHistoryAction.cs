@@ -13,8 +13,10 @@ namespace CLP.Entities
         List<string> HistoryItemIDs { get; set; }
         List<string> HistoryActionIDs { get; set; }
         string CachedCodedValue { get; set; }
+        string CachedFormattedValue { get; set; }
         string CodedValue { get; }
         List<IHistoryItem> HistoryItems { get; }
         List<IHistoryAction> HistoryActions { get; }
+        void GenerateValues();
     }
 }

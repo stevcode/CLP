@@ -127,6 +127,15 @@ namespace CLP.Entities
 
         public static readonly PropertyData CachedCodedValueProperty = RegisterProperty("CachedCodedValue", typeof(string), string.Empty);
 
+        /// <summary>Cached value of the FormattedValue with correct page state.</summary>
+        public string CachedFormattedValue
+        {
+            get { return GetValue<string>(CachedFormattedValueProperty); }
+            set { SetValue(CachedFormattedValueProperty, value); }
+        }
+
+        public static readonly PropertyData CachedFormattedValueProperty = RegisterProperty("CachedFormattedValue", typeof(string), string.Empty);
+
         public abstract string CodedValue { get; }
 
         #region Calculated Properties
@@ -146,5 +155,11 @@ namespace CLP.Entities
         #endregion //Calculated Properties
 
         #endregion //Properties
+
+        #region Methods
+
+        public abstract void GenerateValues();
+
+        #endregion //Methods
     }
 }

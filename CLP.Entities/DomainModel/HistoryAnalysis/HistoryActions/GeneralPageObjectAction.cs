@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using Catel.Data;
@@ -18,61 +19,30 @@ namespace CLP.Entities
         #region Constructors
 
         /// <summary>Initializes <see cref="GeneralPageObjectAction" /> using <see cref="CLPPage" />.</summary>
-        public GeneralPageObjectAction(CLPPage parentPage, List<IHistoryItem> historyItems, string objectIdentifier = "")
+        public GeneralPageObjectAction(CLPPage parentPage, List<IHistoryItem> historyItems)
             : base(parentPage)
         {
             HistoryItemIDs = historyItems.Select(h => h.ID).ToList();
-            ObjectCodedID = objectIdentifier;
             var movedPageObjects = MovedPageObjects;
             var resizedPageObjects = ResizedPageObjects;
             var addedPageObjects = AddedPageObjects;
             var removedPageObjects = RemovedPageObjects;
 
-            if (movedPageObjects.Count + resizedPageObjects.Count + removedPageObjects.Count == 0)
-            {
-                if (addedPageObjects.Count < 1)
-                {
-                    //throw error, no objects
-                }
-
-                var addedObject = addedPageObjects.First().GetType().Name;
-                if (addedPageObjects.Count > 1 &&
-                    addedObject != "StampedObject")
-                {
-                    //throw error, more than one StampObject added
-                }
-            }
-            else if (movedPageObjects.Count + resizedPageObjects.Count + removedPageObjects.Count == 1)
-            {
-                if (addedPageObjects.Count > 0)
-                {
-                    //throw error
-                }
-            }
-            else
-            {
-                //throw error
-            }
-
             if (movedPageObjects.Any())
             {
                 GeneralAction = GeneralActions.Move;
-                PageObjectType = movedPageObjects.First().GetType().Name;
             }
             else if (resizedPageObjects.Any())
             {
                 GeneralAction = GeneralActions.Resize;
-                PageObjectType = resizedPageObjects.First().GetType().Name;
             }
             else if (addedPageObjects.Any())
             {
                 GeneralAction = GeneralActions.Add;
-                PageObjectType = addedPageObjects.First().GetType().Name;
             }
             else if (removedPageObjects.Any())
             {
                 GeneralAction = GeneralActions.Delete;
-                PageObjectType = removedPageObjects.First().GetType().Name;
             }
         }
 
@@ -94,23 +64,6 @@ namespace CLP.Entities
         }
 
         public static readonly PropertyData GeneralActionProperty = RegisterProperty("GeneralAction", typeof (GeneralActions));
-
-        /// <summary>SUMMARY</summary>
-        public string PageObjectType
-        {
-            get { return GetValue<string>(PageObjectTypeProperty); }
-            set { SetValue(PageObjectTypeProperty, value); }
-        }
-
-        public static readonly PropertyData PageObjectTypeProperty = RegisterProperty("PageObjectType", typeof (string));
-
-        public string ObjectCodedID
-        {
-            get { return GetValue<string>(ObjectCodedIDProperty); }
-            set { SetValue(ObjectCodedIDProperty, value); }
-        }
-
-        public static readonly PropertyData ObjectCodedIDProperty = RegisterProperty("ObjectCodedID", typeof (string));
 
         public override string CodedValue
         {
@@ -213,5 +166,29 @@ namespace CLP.Entities
         }
 
         #endregion //Calculated Properties
+
+        #region Methods
+
+        #region Overrides of AHistoryActionBase
+
+        public override void GenerateValues()
+        {
+            switch (GeneralAction)
+            {
+                case GeneralActions.Move:
+                    break;
+                case GeneralActions.Resize:
+                    break;
+                case GeneralActions.Add:
+
+                    break;
+                case GeneralActions.Delete:
+                    break;
+            }
+        }
+
+        #endregion
+
+        #endregion //Methods
     }
 }
