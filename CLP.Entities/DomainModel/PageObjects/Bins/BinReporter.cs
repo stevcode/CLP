@@ -135,9 +135,9 @@ namespace CLP.Entities
                         return string.Format("{0} in Bins\n" + "{1} not in Bins", MarksInBins, MarksNotInBins);
                         break;
                     case "1":
-                        var notInBinsReporter = MarksNotInBins + MarksInBins > 0 ? string.Format("{0} not in Bins\n", MarksNotInBins) : string.Empty;
+                        var notInBinsReporter = MarksNotInBins + MarksInBins > 0 ? string.Format("{0} not in Bins", MarksNotInBins) : string.Empty;
                         var totalMarks = MarksInBins + InkMarksInBins;
-                        return string.Format("{0} in Bins\n" + "{1}" + "{2} Bins", totalMarks, notInBinsReporter, NumberOfBins);
+                        return string.Format("{0} in Bins\n" + "{1}\n" + "{2} Bins", totalMarks, notInBinsReporter, NumberOfBins);
                         break;
                 }
 
