@@ -245,13 +245,23 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnRemoveFuzzyFactorCardCommandExecute()
         {
-            if ((PageObject as FuzzyFactorCard).RemainderTiles != null)
+            var contextRibbon = NotebookWorkspaceViewModel.GetContextRibbon();
+            if (contextRibbon != null)
             {
-                //var currentIndex = PageObject.ParentPage.PageObjects.IndexOf(remainderRegion);
-                //ACLPPageBaseViewModel.AddHistoryItemToPage(PageObject.ParentPage, new CLPHistoryPageObjectRemove(PageObject.ParentPage, remainderRegion, currentIndex));
-                PageObject.ParentPage.PageObjects.Remove((PageObject as FuzzyFactorCard).RemainderTiles);
+                contextRibbon.Buttons.Clear();
             }
-            ACLPPageBaseViewModel.RemovePageObjectFromPage(PageObject);
+
+            var divisionTemplate = PageObject as FuzzyFactorCard;
+            if (divisionTemplate == null)
+            {
+                return;
+            }
+            if (divisionTemplate.RemainderTiles != null)
+            {
+                PageObject.ParentPage.PageObjects.Remove(divisionTemplate.RemainderTiles);
+            }
+
+            ACLPPageBaseViewModel.RemovePageObjectFromPage(divisionTemplate);
         }
 
         /// <summary>Gets the ResizePageObjectCommand command.</summary>
