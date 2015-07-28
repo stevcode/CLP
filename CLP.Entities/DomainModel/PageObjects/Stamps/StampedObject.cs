@@ -157,6 +157,7 @@ namespace CLP.Entities
                 !AcceptedPageObjects.Any() ||
                 !fromHistory)
             {
+                base.OnAdded(fromHistory);
                 return;
             }
 
