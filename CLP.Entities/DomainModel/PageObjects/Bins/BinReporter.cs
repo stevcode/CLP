@@ -69,7 +69,7 @@ namespace CLP.Entities
 
         #region IReporter Implementation
 
-        private int NumberInBins
+        private int MarksInBins
         {
             get
             {
@@ -81,13 +81,25 @@ namespace CLP.Entities
                 var marksOnPage = ParentPage.PageObjects.OfType<Mark>().ToList();
                 var binsOnPage = ParentPage.PageObjects.OfType<Bin>().ToList();
                 var marksInBins = marksOnPage.Where(m => binsOnPage.Any(b => b.AcceptedPageObjectIDs.Contains(m.ID))).ToList();
-                var numberOfStrokesInBins = ParentPage.PageObjects.OfType<Bin>().Aggregate(0, (sum, b) => sum + b.AcceptedStrokes.Count);
 
-                return marksInBins.Count + numberOfStrokesInBins;
+                return marksInBins.Count;
             }
         }
 
-        private int NumberNotInBins
+        private int InkMarksInBins
+        {
+            get
+            {
+                if (ParentPage == null)
+                {
+                    return 0;
+                }
+
+                return ParentPage.PageObjects.OfType<Bin>().Aggregate(0, (sum, b) => sum + b.AcceptedStrokes.Count);
+            }
+        }
+
+        private int MarksNotInBins
         {
             get
             {
@@ -120,10 +132,12 @@ namespace CLP.Entities
                 switch (PageObjectFunctionalityVersion)
                 {
                     case "0":
-                        return string.Format("{0} in Bins\n" + "{1} not in Bins", NumberInBins, NumberNotInBins);
+                        return string.Format("{0} in Bins\n" + "{1} not in Bins", MarksInBins, MarksNotInBins);
                         break;
                     case "1":
-                        return string.Format("{0} in Bins\n" + "{1} not in Bins\n" + "{2} Bins", NumberInBins, NumberNotInBins, NumberOfBins);
+                        var notInBinsReporter = MarksNotInBins + MarksInBins > 0 ? string.Format("{0} not in Bins\n", MarksNotInBins) : string.Empty;
+                        var totalMarks = MarksInBins + InkMarksInBins;
+                        return string.Format("{0} in Bins\n" + "{1}" + "{2} Bins", totalMarks, notInBinsReporter, NumberOfBins);
                         break;
                 }
 
