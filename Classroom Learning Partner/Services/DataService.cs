@@ -332,8 +332,10 @@ namespace Classroom_Learning_Partner.Services
                 return null;
             }
 
-            var notebookInfo = new NotebookInfo(cache, notebookFolderPath);
-            notebookInfo.Notebook = newNotebook;
+            var notebookInfo = new NotebookInfo(cache, notebookFolderPath)
+                               {
+                                   Notebook = newNotebook
+                               };
 
             OpenNotebooksInfo.Add(notebookInfo);
             SetCurrentNotebook(notebookInfo);
