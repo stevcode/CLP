@@ -840,6 +840,15 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
 
+            var acceptedPageObjects = (from lassoedPageObject in lassoedPageObjects
+                                       from pageObjectAccepter in lassoedPageObjects.OfType<IPageObjectAccepter>()
+                                       where pageObjectAccepter.AcceptedPageObjectIDs.Contains(lassoedPageObject.ID)
+                                       select lassoedPageObject).ToList();
+            foreach (var acceptedPageObject in acceptedPageObjects)
+            {
+                lassoedPageObjects.Remove(acceptedPageObject);
+            }
+
             var lassoedStrokes = new List<Stroke>(); // = InkStrokes.Where(inkStroke => inkStroke.HitTest(stroke.StylusPoints.Select(x => x.ToPoint()).ToList(), 90)).ToList();
 
             var pageObjectBoundsX1Position = Page.Width;
