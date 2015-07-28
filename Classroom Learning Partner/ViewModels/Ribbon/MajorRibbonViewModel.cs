@@ -901,15 +901,15 @@ namespace Classroom_Learning_Partner.ViewModels
             //Buttons.Add(_insertArrayCardButton);
             //Buttons.Add(_insertFactorCardButton);
             //Buttons.Add(_insertObscurableArrayButton);
-            Buttons.Add(_insertPileButton);
             Buttons.Add(_insertDivisionTemplateButton);
+            Buttons.Add(_insertPileButton);
             Buttons.Add(_insertBinButton);
 
             // Insert Shapes
             Buttons.Add(Separater);
             Buttons.Add(_insertSquareButton);
-            //Buttons.Add(_insertCircleButton);
-            //Buttons.Add(_insertTriangleButton);
+            Buttons.Add(_insertCircleButton);
+            Buttons.Add(_insertTriangleButton);
             //Buttons.Add(_insertHorizontalLineButton);
             //Buttons.Add(_insertVerticalLineButton);
             //Buttons.Add(_insertProtractorButton);
