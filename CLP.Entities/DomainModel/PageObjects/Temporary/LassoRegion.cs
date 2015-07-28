@@ -107,10 +107,9 @@ namespace CLP.Entities
 
         public override void OnMoved(double oldX, double oldY, bool fromHistory = false)
         {
-            base.OnMoved(oldX, oldY, fromHistory);
-
             if (ParentPage.History.IsAnimating)
             {
+                base.OnMoved(oldX, oldY, fromHistory);
                 return;
             }
 
@@ -162,10 +161,12 @@ namespace CLP.Entities
                     var removeStrokes = new StrokeCollection(removedStrokesOverObject);
                     acceptorPageObject.ChangeAcceptedStrokes(addStrokes, removeStrokes);
                 }
+                base.OnMoved(oldX, oldY, fromHistory);
             }
             catch (Exception ex)
             {
                 Console.WriteLine("LassoRegion.OnMoved() Exception: " + ex.Message);
+                base.OnMoved(oldX, oldY, fromHistory);
             }
         }
 
