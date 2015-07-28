@@ -175,13 +175,15 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnDragLassoCommandExecute(DragDeltaEventArgs e)
         {
-            var oldXPos = PageObject.XPosition;
-            var oldYPos = PageObject.YPosition;
+            var oldXPos = XPosition;
+            var oldYPos = YPosition;
             var parentPage = PageObject.ParentPage;
 
-            var newX = Math.Max(0, PageObject.XPosition + e.HorizontalChange);
+            //BUG: http://stackoverflow.com/questions/26298398/wpf-thumb-drag-behaviour-wrong#comment49592425_26298398
+            var newX = Math.Max(0, XPosition + e.HorizontalChange);
             newX = Math.Min(newX, parentPage.Width - Width);
-            var newY = Math.Max(0, PageObject.YPosition + e.VerticalChange);
+            
+            var newY = Math.Max(0, YPosition + e.VerticalChange);
             newY = Math.Min(newY, parentPage.Height - Height);
 
             var xDelta = newX - oldXPos;
@@ -205,8 +207,8 @@ namespace Classroom_Learning_Partner.ViewModels
                 }
             }
 
-            PageObject.XPosition = newX;
-            PageObject.YPosition = newY;
+            XPosition = newX;
+            YPosition = newY;
             PageObject.OnMoving(oldXPos, oldYPos);
         }
 
