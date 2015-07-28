@@ -804,6 +804,7 @@ namespace Classroom_Learning_Partner.ViewModels
             pathFigure.Segments.Add(polyLine);
 
             strokeGeometry.Figures.Add(pathFigure);
+            strokeGeometry.FillRule = FillRule.EvenOdd;
 
             foreach (var pageObject in PageObjects)
             {
@@ -817,11 +818,16 @@ namespace Classroom_Learning_Partner.ViewModels
                 if (pageObject.Width > 10.0 ||
                     pageObject.Height > 10.0)
                 {
+                    const double TOLERANCE = 0.5;
+                    var width = pageObject.Width * TOLERANCE;
+                    var height = pageObject.Height * TOLERANCE;
+                    var xOffset = (pageObject.Width - width) / 2.0;
+                    var yOffset = (pageObject.Height - height) / 2.0;
                     pageObjectGeometry =
-                        new RectangleGeometry(new Rect(pageObject.XPosition + Math.Max(pageObject.Width / 2 - 5.0, 0.0),
-                                                       pageObject.YPosition + Math.Max(pageObject.Height / 2 - 5.0, 0.0),
-                                                       Math.Min(10.0, pageObject.Width),
-                                                       Math.Min(10.0, pageObject.Height)));
+                        new RectangleGeometry(new Rect(pageObject.XPosition + xOffset,
+                                                       pageObject.YPosition + yOffset,
+                                                       width,
+                                                       height));
                 }
                 else
                 {
