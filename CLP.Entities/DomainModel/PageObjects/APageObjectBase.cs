@@ -89,6 +89,15 @@ namespace CLP.Entities
 
         public static readonly PropertyData DifferentiationLevelProperty = RegisterProperty("DifferentiationLevel", typeof (string), "0");
 
+        /// <summary>Version marker to trigger different looks or calculated property values based on a previous, prototyped version of a <see cref="IPageObject" />.</summary>
+        public string PageObjectFunctionalityVersion
+        {
+            get { return GetValue<string>(PageObjectFunctionalityVersionProperty); }
+            set { SetValue(PageObjectFunctionalityVersionProperty, value); }
+        }
+
+        public static readonly PropertyData PageObjectFunctionalityVersionProperty = RegisterProperty("PageObjectFunctionalityVersion", typeof(string), "0");
+
         /// <summary>Date and Time the <see cref="IPageObject" /> was created.</summary>
         public DateTime CreationDate
         {

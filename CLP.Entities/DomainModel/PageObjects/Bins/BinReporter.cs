@@ -16,10 +16,11 @@ namespace CLP.Entities
         public BinReporter(CLPPage parentPage)
             : base(parentPage)
         {
-            Height = 60;
+            Height = 90;
             Width = 145;
             XPosition = parentPage.Width - Width - 20;
             YPosition = 20;
+            PageObjectFunctionalityVersion = "1";
         }
 
         /// <summary>Initializes <see cref="BinReporter" /> based on <see cref="SerializationInfo" />.</summary>
@@ -103,9 +104,31 @@ namespace CLP.Entities
             }
         }
 
+        private int NumberOfBins
+        {
+            get
+            {
+                var binsOnPage = ParentPage.PageObjects.OfType<Bin>().ToList();
+                return binsOnPage.Count;
+            }
+        }
+
         public string FormattedReport
         {
-            get { return string.Format("{0} in Bins\n" + "{1} not in Bins", NumberInBins, NumberNotInBins); }
+            get
+            {
+                switch (PageObjectFunctionalityVersion)
+                {
+                    case "0":
+                        return string.Format("{0} in Bins\n" + "{1} not in Bins", NumberInBins, NumberNotInBins);
+                        break;
+                    case "1":
+                        return string.Format("{0} in Bins\n" + "{1} not in Bins\n" + "{2} Bins", NumberInBins, NumberNotInBins, NumberOfBins);
+                        break;
+                }
+
+                return "[ERROR] Invalid PageObjectFunctionalityVersion";
+            }
         }
 
         public void UpdateReport() { RaisePropertyChanged("FormattedReport"); }
