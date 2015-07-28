@@ -211,6 +211,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             var copiedNotebook = LoadedNotebookService.CurrentNotebook.CopyForNewOwner(person);
+            copiedNotebook.CurrentPage = copiedNotebook.Pages.FirstOrDefault();
             LoadedNotebookService.OpenNotebooks.Add(copiedNotebook);
             LoadedNotebookService.CurrentNotebook = copiedNotebook;
             App.MainWindowViewModel.CurrentUser = person;

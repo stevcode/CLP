@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -57,9 +54,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #endregion //Constructor
 
-        /// <summary>
-        /// ribbon, obsolete
-        /// </summary>
+        /// <summary>ribbon, obsolete</summary>
         public RibbonViewModel Ribbon
         {
             get { return GetValue<RibbonViewModel>(RibbonProperty); }
@@ -70,9 +65,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Bindings
 
-        /// <summary>
-        /// Visibility of the top drag bar when program is not minimized.
-        /// </summary>
+        /// <summary>Visibility of the top drag bar when program is not minimized.</summary>
         public bool IsDragBarVisible
         {
             get { return GetValue<bool>(IsDragBarVisibleProperty); }
@@ -190,8 +183,6 @@ namespace Classroom_Learning_Partner.ViewModels
 
         public static readonly PropertyData CurrentConvertingPageProperty = RegisterProperty("CurrentConvertingPage", typeof (CLPPage));
 
-        
-
         /// <summary>Signifies navigation through the notebook is disabled and can only  be ahieved through network commands.</summary>
         public bool IsLinked
         {
@@ -244,22 +235,18 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(HandednessProperty, value); }
         }
 
-        public static readonly PropertyData HandednessProperty = RegisterProperty("Handedness", typeof(Handedness), Handedness.Right);
+        public static readonly PropertyData HandednessProperty = RegisterProperty("Handedness", typeof (Handedness), Handedness.Right);
 
-        /// <summary>
-        /// Name of the currently loaded notebook.
-        /// </summary>
+        /// <summary>Name of the currently loaded notebook.</summary>
         public string CurrentNotebookName
         {
             get { return GetValue<string>(CurrentNotebookNameProperty); }
             set { SetValue(CurrentNotebookNameProperty, value); }
         }
 
-        public static readonly PropertyData CurrentNotebookNameProperty = RegisterProperty("CurrentNotebookName", typeof(string), string.Empty);
+        public static readonly PropertyData CurrentNotebookNameProperty = RegisterProperty("CurrentNotebookName", typeof (string), string.Empty);
 
-        /// <summary>
-        /// Toggles style of the boundary around selected PageObjects to the old version.
-        /// </summary>
+        /// <summary>Toggles style of the boundary around selected PageObjects to the old version.</summary>
         public bool IsUsingOldPageObjectBoundary
         {
             get { return GetValue<bool>(IsUsingOldPageObjectBoundaryProperty); }
@@ -275,7 +262,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(CanUseAutoNumberLineProperty, value); }
         }
 
-        public static readonly PropertyData CanUseAutoNumberLineProperty = RegisterProperty("CanUseAutoNumberLine", typeof(bool), false);
+        public static readonly PropertyData CanUseAutoNumberLineProperty = RegisterProperty("CanUseAutoNumberLine", typeof (bool), false);
 
         #endregion //Global Bindings
 
@@ -298,9 +285,7 @@ namespace Classroom_Learning_Partner.ViewModels
             }
         }
 
-        public static readonly PropertyData CurrentProgramModeProperty = RegisterProperty("CurrentProgramMode",
-                                                                                          typeof (ProgramModes),
-                                                                                          ProgramModes.Teacher);
+        public static readonly PropertyData CurrentProgramModeProperty = RegisterProperty("CurrentProgramMode", typeof (ProgramModes), ProgramModes.Teacher);
 
         /// <summary>ImagePool for the current CLP instance, populated by all open notebooks.</summary>
         public Dictionary<string, BitmapImage> ImagePool
@@ -309,9 +294,7 @@ namespace Classroom_Learning_Partner.ViewModels
             set { SetValue(ImagePoolProperty, value); }
         }
 
-        public static readonly PropertyData ImagePoolProperty = RegisterProperty("ImagePool",
-                                                                                 typeof (Dictionary<string, BitmapImage>),
-                                                                                 () => new Dictionary<string, BitmapImage>());
+        public static readonly PropertyData ImagePoolProperty = RegisterProperty("ImagePool", typeof (Dictionary<string, BitmapImage>), () => new Dictionary<string, BitmapImage>());
 
         /// <summary>The <see cref="Person" /> using the program.</summary>
         public Person CurrentUser
@@ -393,9 +376,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         private void OnTogglePenDownCommandExecute() { IsPenDownActivated = !IsPenDownActivated; }
 
-        /// <summary>
-        /// Moves the CLP Window.
-        /// </summary>
+        /// <summary>Moves the CLP Window.</summary>
         public Command<MouseButtonEventArgs> MoveWindowCommand { get; private set; }
 
         private void OnMoveWindowCommandExecute(MouseButtonEventArgs args)
@@ -410,9 +391,7 @@ namespace Classroom_Learning_Partner.ViewModels
             mainWindow.DragMove();
         }
 
-        /// <summary>
-        /// Toggles CLP between minimized and not.
-        /// </summary>
+        /// <summary>Toggles CLP between minimized and not.</summary>
         public Command ToggleMinimizeStateCommand { get; private set; }
 
         private void OnToggleMinimizeStateCommandExecute()
@@ -426,9 +405,7 @@ namespace Classroom_Learning_Partner.ViewModels
             mainWindow.WindowState = WindowState.Minimized;
         }
 
-        /// <summary>
-        /// Toggles CLP Window State between Maximized and Normal.
-        /// </summary>
+        /// <summary>Toggles CLP Window State between Maximized and Normal.</summary>
         public Command ToggleMaximizeStateCommand { get; private set; }
 
         private void OnToggleMaximizeStateCommandExecute()
@@ -443,9 +420,7 @@ namespace Classroom_Learning_Partner.ViewModels
             mainWindow.WindowState = mainWindow.WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
         }
 
-        /// <summary>
-        /// Closes CLP
-        /// </summary>
+        /// <summary>Closes CLP</summary>
         public Command ExitProgramCommand { get; private set; }
 
         private void OnExitProgramCommandExecute()
@@ -462,10 +437,7 @@ namespace Classroom_Learning_Partner.ViewModels
 
         #region Static Methods
 
-        public static void ChangeApplicationMainColor(string hexString)
-        {
-            Application.Current.Resources["DynamicMainColor"] = new BrushConverter().ConvertFrom(hexString);
-        }
+        public static void ChangeApplicationMainColor(string hexString) { Application.Current.Resources["DynamicMainColor"] = new BrushConverter().ConvertFrom(hexString); }
 
         public static void ChangeApplicationMainColor(Color color) { Application.Current.Resources["DynamicMainColor"] = new SolidColorBrush(color); }
 

@@ -3,6 +3,7 @@ using System.Linq;
 using Catel.Data;
 using Catel.MVVM;
 using Catel.Windows;
+using Classroom_Learning_Partner.Views;
 using CLP.Entities;
 
 namespace Classroom_Learning_Partner.ViewModels
@@ -20,6 +21,7 @@ namespace Classroom_Learning_Partner.ViewModels
         private void InitializeCommands()
         {
             SaveCurrentNotebookCommand = new Command(OnSaveCurrentNotebookCommandExecute, OnSaveCurrentNotebookCanExecute);
+            SaveNotebookForStudentCommand = new Command(OnSaveNotebookForStudentCommandExecute, OnSaveNotebookForStudentCanExecute);
             ClearPagesNonAnimationHistoryCommand = new Command(OnClearPagesNonAnimationHistoryCommandExecute, OnClearHistoryCommandCanExecute);
         }
 
@@ -127,6 +129,54 @@ namespace Classroom_Learning_Partner.ViewModels
         }
 
         private bool OnSaveCurrentNotebookCanExecute() { return Notebook != null; }
+
+        public Command SaveNotebookForStudentCommand { get; private set; }
+
+        private void OnSaveNotebookForStudentCommandExecute()
+        {
+            if (LoadedNotebookService == null ||
+                LoadedNotebookService.CurrentNotebook == null)
+            {
+                return;
+            }
+
+            var textInputViewModel = new TextInputViewModel
+                                     {
+                                         TextPrompt = "Student Name: "
+                                     };
+            var textInputView = new TextInputView(textInputViewModel);
+            textInputView.ShowDialog();
+
+            if (textInputView.DialogResult == null ||
+                textInputView.DialogResult != true ||
+                string.IsNullOrEmpty(textInputViewModel.InputText))
+            {
+                return;
+            }
+
+            var person = new Person
+                         {
+                             IsStudent = true,
+                             FullName = textInputViewModel.InputText
+                         };
+
+            var copiedNotebook = LoadedNotebookService.CurrentNotebook.CopyForNewOwner(person);
+            copiedNotebook.CurrentPage = copiedNotebook.Pages.FirstOrDefault();
+            LoadedNotebookService.OpenNotebooks.Clear();
+            LoadedNotebookService.OpenNotebooks.Add(copiedNotebook);
+            LoadedNotebookService.CurrentNotebook = copiedNotebook;
+            App.MainWindowViewModel.CurrentUser = person;
+            App.MainWindowViewModel.IsAuthoring = false;
+            App.MainWindowViewModel.Workspace = new BlankWorkspaceViewModel();
+            PleaseWaitHelper.Show(LoadedNotebookService.SaveCurrentNotebookLocally, null, "Saving Notebook");
+            App.MainWindowViewModel.Workspace = new NotebookWorkspaceViewModel(copiedNotebook);
+            App.MainWindowViewModel.IsBackStageVisible = false;
+        }
+
+        private bool OnSaveNotebookForStudentCanExecute()
+        {
+            return Notebook != null; 
+        }
 
         /// <summary>Completely clears all non-animation histories for regular pages in a notebook.</summary>
         public Command ClearPagesNonAnimationHistoryCommand { get; private set; }
