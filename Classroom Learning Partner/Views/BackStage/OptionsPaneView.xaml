@@ -31,7 +31,15 @@
                     Margin="10"
                     FontSize="22"
                     FontWeight="Bold" />
-            
+
+            <Button Content="Toggle Boundaries"
+                    Command="{Binding ToggleBindingStyleCommand}"
+                    Height="80"
+                    Width="300"
+                    Margin="10"
+                    FontSize="22"
+                    FontWeight="Bold" />
+
             <Button Content="Change Main Color"
                     Command="{Binding GenerateRandomMainColorCommand}"
                     Height="80"
