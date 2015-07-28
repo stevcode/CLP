@@ -296,6 +296,10 @@
                                          Command="{Binding AddNewPageCommand}"
                                          LargeImageSource="pack://application:,,,/Resources/Images/NewNotebook32.png" />
 
+            <customControls:RibbonButton Text="Add New Animation Page"
+                                         Command="{Binding AddNewAnimationPageCommand}"
+                                         LargeImageSource="pack://application:,,,/Resources/Images/NewNotebook32.png" />
+
             <customControls:RibbonButton Text="Longer Page"
                                          Command="{Binding LongerPageCommand}"
                                          LargeImageSource="pack://application:,,,/Resources/Images/MakePageLonger32.png" />

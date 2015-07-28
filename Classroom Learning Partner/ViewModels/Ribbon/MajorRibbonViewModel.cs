@@ -61,6 +61,7 @@ namespace Classroom_Learning_Partner.ViewModels
             UndoCommand = new Command(OnUndoCommandExecute, OnUndoCanExecute);
             RedoCommand = new Command(OnRedoCommandExecute, OnRedoCanExecute);
             AddNewPageCommand = new Command(OnAddNewPageCommandExecute);
+            AddNewAnimationPageCommand = new Command(OnAddNewAnimationPageCommandExecute);
             LongerPageCommand = new Command(OnLongerPageCommandExecute, OnLongerPageCanExecute);
             SubmitPageCommand = new Command(OnSubmitPageCommandExecute, OnSubmitPageCanExecute);
             AddPageObjectToPageCommand = new Command<string>(OnAddPageObjectToPageCommandExecute, OnAddPageObjectToPageCanExecute);
@@ -656,6 +657,26 @@ namespace Classroom_Learning_Partner.ViewModels
             }
 
             var newPage = new CLPPage(App.MainWindowViewModel.CurrentUser);
+            notebookWorkspace.Notebook.AddCLPPageToNotebook(newPage);
+        }
+
+        /// <summary>
+        /// Adds a new animation page to the current notebook.
+        /// </summary>
+        public Command AddNewAnimationPageCommand { get; private set; }
+
+        private void OnAddNewAnimationPageCommandExecute()
+        {
+            var notebookWorkspace = MainWindow.Workspace as NotebookWorkspaceViewModel;
+            if (notebookWorkspace == null)
+            {
+                return;
+            }
+
+            var newPage = new CLPPage(App.MainWindowViewModel.CurrentUser)
+                          {
+                              PageType = PageTypes.Animation
+                          };
             notebookWorkspace.Notebook.AddCLPPageToNotebook(newPage);
         }
 
