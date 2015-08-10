@@ -69,7 +69,7 @@ namespace Classroom_Learning_Partner.ViewModels
                 return;
             }
 
-            openNotebookPaneViewModel.DataService.CurrentCache = openNotebookPaneViewModel.SelectedCache;
+            openNotebookPaneViewModel.DataService.CurrentCacheInfo = openNotebookPaneViewModel.SelectedCache;
             openNotebookPaneViewModel.AvailableNotebooks.Clear();
             openNotebookPaneViewModel.AvailableNotebooks.AddRange(Services.DataService.GetNotebooksInCache(openNotebookPaneViewModel.SelectedCache));
             openNotebookPaneViewModel.SelectedNotebook = openNotebookPaneViewModel.AvailableNotebooks.FirstOrDefault();

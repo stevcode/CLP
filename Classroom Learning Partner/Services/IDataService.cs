@@ -7,7 +7,7 @@ namespace Classroom_Learning_Partner.Services
     {
         string CurrentCachesFolderPath { get; set; }
         List<CacheInfo> AvailableCaches { get; }
-        CacheInfo CurrentCache { get; set; }
+        CacheInfo CurrentCacheInfo { get; set; }
         List<NotebookInfo> NotebooksInCurrentCache { get; }
         List<NotebookInfo> OpenNotebooksInfo { get; }
         NotebookInfo CurrentNotebookInfo { get; set; }

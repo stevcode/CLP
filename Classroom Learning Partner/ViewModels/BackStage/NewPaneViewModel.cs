@@ -105,7 +105,7 @@ namespace Classroom_Learning_Partner.ViewModels
             if (string.IsNullOrEmpty(TypedCacheName) ||
                 string.IsNullOrWhiteSpace(TypedCacheName))
             {
-                DataService.CurrentCache = SelectedCache;
+                DataService.CurrentCacheInfo = SelectedCache;
             }
             else
             {
